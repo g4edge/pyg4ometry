@@ -1115,19 +1115,18 @@ class Region(object):
     def _select_zones(self, zones):
         if zones is None:
             return self.zones
-        else:
-            try:
-                return [self.zones[key] for key in zones]
-            except TypeError:
-                pass
-            try:
-                # if no __getitem__, or __iter__, then try using it as a
-                # key directly:
-                return [self.zones[zones]]
-            except TypeError:
-                msg = ("Unknown selection "
-                       "provided for zones {}").format(type(zones))
-                raise TypeError(msg)
+        try:
+            return [self.zones[key] for key in zones]
+        except TypeError:
+            pass
+        try:
+            # if no __getitem__, or __iter__, then try using it as a
+            # key directly:
+            return [self.zones[zones]]
+        except TypeError:
+            msg = ("Unknown selection "
+                   "provided for zones {}").format(type(zones))
+            raise TypeError(msg)
 
     def extent(self, zones=None):
         boolean = self.evaluate(zones)
