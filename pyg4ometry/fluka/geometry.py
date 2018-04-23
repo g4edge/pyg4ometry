@@ -927,7 +927,7 @@ class ZCC(InfiniteCylinder):
         self.rotation = np.matrix(np.identity(3))
 
 
-class XEC(Body):
+class XEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the x-axis.
 
     Parameters:
@@ -968,7 +968,7 @@ class XEC(Body):
         )
 
 
-class YEC(Body):
+class YEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the y-axis.
 
     Parameters:
@@ -1007,7 +1007,7 @@ class YEC(Body):
         )
 
 
-class ZEC(Body):
+class ZEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the z-axis.
 
     Parameters:
