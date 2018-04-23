@@ -96,7 +96,7 @@ class Model(object):
         return visitor.regions
 
     def write_to_gdml(self, regions=None, out_path=None,
-                      make_gmad=True, bounding_subtrahend=None,
+                      make_gmad=True, bounding_subtrahends=None,
                       just_bounding_box=False, survey=None):
         """Convert the region to GDML.  Returns the centre (in mm) of the GDML
                       bounding box in the original Fluka coordinate
@@ -115,10 +115,11 @@ class Model(object):
         - make_gmad: Generate a skeleton GMAD file pre-filled with
         references to corresponding the GDML file.
 
-        - bounding_subtrahend: Body to be subtracted from the bounding
-          box, e.g. space for a beampipe.  The case where the
-          subtraction affects the bounding box extent is not tested.
-          Maybe it will give you what you expect, but probably not.
+        - bounding_subtrahends: Iterable of Body instances to be
+          subtracted from the bounding box, e.g. space for a beampipe.
+          The case where the subtraction affects the bounding box
+          extent is not tested.  Maybe it will give you what you
+          expect, or maybe not.
 
         - just_bounding_box: Write only the bounding box.  This can be
           useful when trying to place this as external geometry.  If
@@ -139,7 +140,7 @@ class Model(object):
         # Make the mesh for the given regions.
         self._generate_mesh(regions, setclip=True,
                             optimise=True,
-                            bounding_subtrahend=bounding_subtrahend,
+                            bounding_subtrahends=bounding_subtrahends,
                             just_bounding_box=just_bounding_box,
                             survey=survey)
         # If no path to write to provided, then generate one
@@ -160,35 +161,28 @@ class Model(object):
         if make_gmad is True:
             self._write_test_gmad(out_path)
 
-        bounding_solid = self._world_volume.currentVolume
-        if isinstance(bounding_solid, pygdml.Box):
-            bounding_box = bounding_solid
-        elif (isinstance(bounding_solid, pygdml.Subtraction)
-              and isinstance(bounding_solid.obj1,
-                             pygdml.Box)):
-            bounding_box = bounding_solid.obj1
-        else:
-            raise RuntimeError(
-                "Unknown bounding box type: {}".format(type(bounding_solid)))
+        # world solid is perhaps a subtraction from a box, or a simple
+        # box.  Either way, get that box, as it determines the extent
+        # of our world.
+        base_bounding_box = _get_world_volume_box(self._world_volume)
+
         info_out = {"origin": self._world_volume.origin,
                     "extent":
-                    pyfluka.geometry.Extent.from_gdml_box(bounding_box)}
+                    pyfluka.geometry.Extent.from_gdml_box(base_bounding_box)}
         return info_out
 
     def _print_bounding_extent(self):
         # When writing, print the extent, because this is useful
         # information when wanting to place it, which has to be done manually.
-        bound = self._world_volume.currentVolume
-        if isinstance(bound, pygdml.solid.Subtraction):
-            bound = bound.obj1
+        lengths = _get_world_volume_dimensions(self._world_volume)
         msg = ("Bounding box has dimensions (in metres): "
-               "({:.9f}, {:.9f}, {:.9f})\n").format(2 * bound.pX / 1000,
-                                                    2 * bound.pY / 1000,
-                                                    2 * bound.pZ / 1000)
+               "({:.9f}, {:.9f}, {:.9f})\n").format(lengths.x / 1000,
+                                                    lengths.y / 1000,
+                                                    lengths.z / 1000)
         print(msg)
 
     def view(self, regions=None, setclip=True, optimise=False,
-             bounding_subtrahend=None, just_bounding_box=False):
+             bounding_subtrahends=None, just_bounding_box=False):
         """View the mesh for this model.
 
         Parameters
@@ -202,23 +196,23 @@ class Model(object):
         placements and as an optimisation--the mesh will only be
         generated once.  By default, the bounding box will be clipped.
 
-        - bounding_subtrahend: Body to be subtracted from the bounding
-          box, e.g. space for a beampipe.  The case where the
-          subtraction affects the bounding box extent is not tested.
-          Maybe it will give you what you expect, but probably not.
-          For now, it is just a single body.
+        - bounding_subtrahends: iterable of Body instances to be
+          subtracted from the bounding box, e.g. space for a beampipe.
+          The case where the subtraction affects the bounding box
+          extent is not tested.  Maybe it will give you what you
+          expect, or maybe not.
 
         """
         world_mesh = self._generate_mesh(
             regions, setclip=setclip, optimise=optimise,
-            bounding_subtrahend=bounding_subtrahend,
+            bounding_subtrahends=bounding_subtrahends,
             just_bounding_box=just_bounding_box)
         viewer = pygdml.VtkViewer()
         viewer.addSource(world_mesh)
         viewer.view()
 
     def _generate_mesh(self, region_names, setclip,
-                       optimise, bounding_subtrahend,
+                       optimise, bounding_subtrahends,
                        just_bounding_box=False,
                        survey=None):
         """This function has the side effect of recreating the world volume if
@@ -232,8 +226,8 @@ class Model(object):
         """
         self._add_regions_to_world_volume(region_names, optimise, survey)
         # If we are subtracting from the world box
-        if bounding_subtrahend:
-            self._subtract_from_world_volume(bounding_subtrahend)
+        if bounding_subtrahends:
+            self._subtract_from_world_volume(bounding_subtrahends)
         elif setclip:
             self._clip_world_volume()
 
@@ -270,10 +264,10 @@ class Model(object):
                 msg = ("unusable argument for just_bounding_box!")
                 raise TypeError(msg)
 
-    def _subtract_from_world_volume(self, subtrahend):
+    def _subtract_from_world_volume(self, subtrahends):
         """Nice pyfluka interface for subtracting from bounding boxes
         in pygdml.  We create an RPP out of the clipped bounding box
-        and then subtract from it the subtrahend, which is defined in
+        and then subtract from it the subtrahends, which is defined in
         the unclipped geometry's coordinate system.
 
         This works by first getting the "true" centre of
@@ -295,7 +289,6 @@ class Model(object):
         world_material = self._world_volume.currentVolume.material
         world_solid = self._world_volume.currentVolume
 
-
         # Deal with the trailing floating points introduced somewhere
         # in pygdml that cause the box to be marginally too big:
         decimal_places = int((-1 * np.log10(pyfluka.geometry.LENGTH_SAFETY)))
@@ -303,12 +296,19 @@ class Model(object):
                           -1 * world_solid.pY, world_solid.pY,
                           -1 * world_solid.pZ, world_solid.pZ]
         box_parameters = [round(i, decimal_places) for i in box_parameters]
-        world_rpp = pyfluka.geometry.RPP(world_name, box_parameters)
+        world = pyfluka.geometry.RPP(world_name, box_parameters)
         # We make the subtraction a bit smaller just to be sure we
         # don't subract from a placed solid within, so safety='trim'.
-        subtraction = world_rpp.subtraction(subtrahend, safety="trim",
-                                            other_offset=other_offset)
-        self._world_volume.currentVolume = subtraction.gdml_solid()
+        for subtrahend in subtrahends:
+            if isinstance(subtrahend,
+                          (pyfluka.geometry.InfiniteCylinder,
+                           pyfluka.geometry.InfiniteHalfSpace,
+                           pyfluka.geometry.InfiniteEllipticalCylinder)):
+                raise TypeError("Subtrahends must be finite!")
+
+            world = world.subtraction(subtrahend, safety="trim",
+                                      other_offset=other_offset)
+        self._world_volume.currentVolume = world.gdml_solid()
         self._world_volume.currentVolume.material = world_material
 
     def _clip_world_volume(self):
@@ -452,26 +452,15 @@ class Model(object):
         gdml_name = os.path.basename(gdml_path)
 
         with open(gmad_path, 'w') as gmad:
-            # If the bounding box is a boolean, then get the extent of
-            # obj1, which is assumed to always be the bounding box.
-            world_solid = self._world_volume.currentVolume
-            if isinstance(world_solid, pygdml.solid.Boolean):
-                assert isinstance(world_solid.obj1, pygdml.solid.Box)
-                bounding_x = world_solid.obj1.pX / 1000.
-                bounding_y = world_solid.obj1.pY / 1000.
-                diameter = 2 * max(bounding_x, bounding_y)
-                length = 2 * world_solid.obj1.pZ / 1000.
-            elif isinstance(world_solid, pygdml.solid.Box):
-                bounding_x = world_solid.pX / 1000.
-                bounding_y = world_solid.pY / 1000.
-                diameter = 2 * max(bounding_x, bounding_y)
-                length = 2 * world_solid.pZ / 1000.
+            lengths = _get_world_volume_dimensions(self._world_volume)
+            diameter = max(lengths.x, lengths.y)
 
+            # divide by 1000.0 to convert mm to metres.
             gmad.write("test_component: element, l={!r}*m,"
                        " geometryFile=\"gdml:./{}\","
-                       " outerDiameter={}*m;\n".format(length,
+                       " outerDiameter={}*m;\n".format(lengths.z / 1000.0,
                                                        gdml_name,
-                                                       diameter))
+                                                       diameter / 1000.0))
             gmad.write('\n')
             gmad.write("component : line = (test_component);\n")
             gmad.write('\n')
@@ -508,7 +497,7 @@ class Model(object):
                 self._generate_mesh(region_name,
                                     setclip=False,
                                     optimise=optimise,
-                                    bounding_subtrahend=None)
+                                    bounding_subtrahends=None)
                 output["good"].append(region_name)
             except pygdml.solid.NullMeshError as error:
                 output["bad"].append(region_name)
@@ -854,3 +843,22 @@ def _gdml_world_volume():
     name = "world_volume_{}".format(uuid.uuid4())
     return pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                          name, None, 1, False, "G4_Galactic")
+
+def _get_world_volume_box(world_volume):
+    bound = world_volume.currentVolume # bounding box
+    if isinstance(bound, pygdml.solid.Subtraction):
+        # get left most solid of tree, which is the Box from which all
+        # else is subtracted.
+        while isinstance(bound, pygdml.solid.Subtraction):
+            bound = bound.obj1
+        return bound
+    elif not isinstance(bound, pygdml.solid.Box):
+        raise ValueError("Malformed bounding box!")
+
+def _get_world_volume_dimensions(world_volume):
+    """Given a world volume, get the extents in x, y, and z.  This
+    works for either a solid which is just a box, or has had an
+    arbitrary number of subtractions from it."""
+    box = _get_world_volume_box(world_volume)
+    # Double because pX, pY, pZ are half-lengths for a pygdml.solid.Box.
+    return pyfluka.vector.Three(2 * box.pX, 2 * box.pY, 2 * box.pZ)
