@@ -544,18 +544,22 @@ class Model(object):
                 if do_all is False:
                     break
 
-    def survey(self, pickle=False):
+    def survey(self, pickle=False, extents=True, connected_zones=True,
+               optimised_extents=True):
         """Extents of every zone and the connected_zones of every region."""
         regions = {region_name: {"extents": {},
                                  "connected_zones": None}
                    for region_name in self.regions}
         for region_name, region in self.regions.iteritems():
-            regions[region_name]["connected_zones"] = list(
-                region.connected_zones(verbose=True))
-            for zone_no, zone in enumerate(region.zones):
-                print("Meshing Region: {}, Zone: {} ...".format(region_name,
-                                                                zone_no))
-                regions[region_name]["extents"][zone_no] = zone.extent(True)
+            if connected_zones:
+                regions[region_name]["connected_zones"] = list(
+                    region.connected_zones(verbose=True))
+            if extents:
+                for zone_no, zone in enumerate(region.zones):
+                    print("Meshing Region: {}, Zone: {} ...".format(region_name,
+                                                                    zone_no))
+                    regions[region_name]["extents"][zone_no] = zone.extent(
+                        optimised_extents)
 
         if pickle is True:
             pickle_name = "./{}_survey.pickle".format(
