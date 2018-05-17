@@ -794,10 +794,16 @@ class PLA(Body):
 
     def _apply_extent(self, extent):
         self.surface_point = self._closest_point(extent.centre)
-        self._scale = max(extent.size.x * (SCALING_TOLERANCE + 1),
-                          extent.size.y * (SCALING_TOLERANCE + 1),
-                          extent.size.z * (SCALING_TOLERANCE + 1))
-
+        root3 = math.sqrt(3) # root3 to ensure that the box is big enough to
+        # effectively act as a plane regardless of any rotations
+        # present.  This is necessary because an extent is a box
+        # without any rotation, but the PLA may in fact have rotation,
+        # so to ensure the PLA is definitely big enough, make it have
+        # the same dimensions as a sphere which completely contains
+        # any rotation of the extent.
+        self._scale = max(extent.size.x * (SCALING_TOLERANCE + 1) * root3,
+                          extent.size.y * (SCALING_TOLERANCE + 1) * root3,
+                          extent.size.z * (SCALING_TOLERANCE + 1) * root3)
 
     def _set_rotation_matrix(self, transformation):
         # Choose the face pointing in the direction of the positive
