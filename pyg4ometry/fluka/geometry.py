@@ -1547,6 +1547,14 @@ class Extent(object):
         return bool((np.isclose(self.lower, other.lower).all()
                      and np.isclose(self.upper, other.upper).all()))
 
+    def within_length_safety_of(self, other):
+        """Check if this extent differs from the other within a factor
+        of 10 times LENGTH_SAFETY."""
+        diff = self - other
+        lower_is_lt_safety = [x <= 10 * LENGTH_SAFETY for x in abs(diff.lower)]
+        upper_is_lt_safety = [x <= 10 * LENGTH_SAFETY for x in abs(diff.upper)]
+        return all(lower_is_lt_safety) and all(upper_is_lt_safety)
+
     def __repr__(self):
         return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
                 " Upper({upper.x}, {upper.y}, {upper.z})>".format(
@@ -1555,6 +1563,8 @@ class Extent(object):
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
 
+    def __sub__(self, other):
+        return Extent(self.lower - other.lower, self.upper - other.upper)
 def are_extents_overlapping(first, second):
     """Check if two Extent instances are overlapping."""
     return not (first.upper.x < second.lower.x
