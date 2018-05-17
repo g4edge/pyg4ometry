@@ -852,8 +852,9 @@ def _get_world_volume_box(world_volume):
         while isinstance(bound, pygdml.solid.Subtraction):
             bound = bound.obj1
         return bound
-    elif not isinstance(bound, pygdml.solid.Box):
-        raise ValueError("Malformed bounding box!")
+    elif isinstance(bound, pygdml.solid.Box):
+        return bound
+    raise ValueError("Malformed bounding box!")
 
 def _get_world_volume_dimensions(world_volume):
     """Given a world volume, get the extents in x, y, and z.  This
