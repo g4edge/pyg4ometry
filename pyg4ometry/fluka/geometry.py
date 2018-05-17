@@ -5,7 +5,7 @@ Note:  All units are in millimetres, c.f. centimetres in Fluka.
 """
 
 from __future__ import (absolute_import, print_function, division)
-from math import pi
+import math
 import uuid
 import collections
 import numpy as np
@@ -288,7 +288,7 @@ class InfiniteCylinder(Body):
         return pygdml.solid.Tubs(self._unique_body_name(),
                                  0.0, self._radius + safety_addend,
                                  self._scale * 0.5,
-                                 0.0, 2*pi)
+                                 0.0, 2*math.pi)
 
 class InfiniteEllipticalCylinder(Body):
     """Currently just for type checking XEC, YEC, and ZEC.  No functionality."""
@@ -523,7 +523,7 @@ class RCC(Body):
                                  self.radius + safety_addend,
                                  self.length * 0.5 + safety_addend,
                                  0.0,
-                                 2*pi)
+                                 2*math.pi)
 
 
 class REC(Body):
@@ -672,7 +672,7 @@ class TRC(Body):
                                  0.0, self.major_radius + safety_addend,
                                  0.0, self.minor_radius + safety_addend,
                                  0.5 * self.length + safety_addend,
-                                 0.0, 2*pi)
+                                 0.0, 2*math.pi)
 
 
 class XYP(InfiniteHalfSpace):
