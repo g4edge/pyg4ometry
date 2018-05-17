@@ -1266,6 +1266,25 @@ class Zone(object):
     def view(self, setclip=True, optimise=False):
         self.evaluate(optimise=optimise).view(setclip=setclip)
 
+    def view_compare_optimisation(self, setclip=True):
+        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_volume = pygdml.Volume(
+            [0, 0, 0], [0, 0, 0], world_box, "world-volume",
+            None, 1, False, "G4_NITROUS_OXIDE"
+        )
+        optimised = self.evaluate(optimise=True)
+        unoptimised = self.evaluate(optimise=False)
+        optimised.add_to_volume(world_volume)
+        unoptimised.add_to_volume(world_volume)
+
+        if setclip is True:
+            world_volume.setClip()
+
+        mesh = world_volume.pycsgmesh()
+        viewer = pygdml.VtkViewer()
+        viewer.addSource(mesh)
+        viewer.view()
+
     def evaluate_with_extent(self, optimise):
         boolean = self.evaluate(optimise=optimise)
         extent = boolean._extent()
