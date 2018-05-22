@@ -97,7 +97,7 @@ class Model(object):
 
     def write_to_gdml(self, regions=None, out_path=None,
                       make_gmad=True, bounding_subtrahends=None,
-                      just_bounding_box=False, survey=None):
+                      just_bounding_box=False, survey=None, optimise=True):
         """Convert the region to GDML.  Returns the centre (in mm) of the GDML
                       bounding box in the original Fluka coordinate
                       system, which can be useful for placing the
@@ -139,7 +139,7 @@ class Model(object):
         """
         # Make the mesh for the given regions.
         self._generate_mesh(regions, setclip=True,
-                            optimise=True,
+                            optimise=optimise,
                             bounding_subtrahends=bounding_subtrahends,
                             just_bounding_box=just_bounding_box,
                             survey=survey)
