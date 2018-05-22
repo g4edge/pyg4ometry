@@ -31,6 +31,17 @@ _IDENTITY_TYPE = collections.namedtuple("_IDENTITY_TYPE", [])
 _IDENTITY = _IDENTITY_TYPE()
 del _IDENTITY_TYPE
 
+_FLUKA_BOILERPLATE = (
+"""TITLE
+{}
+GLOBAL        5000.0       0.0       0.0       0.0       1.0
+DEFAULTS                                                              PRECISIO
+BEAM         10000.0                                                  PROTON
+GEOBEGIN                                                              COMBNAME
+    0    0                   MC-CAD
+"""
+)
+
 # Where does the meshing actually happen?  This matters because it is
 # the source of all slowdown!
 # 1. Visualisation.
@@ -73,6 +84,13 @@ class Body(object):
         self.transformation = transformation
         self._set_parameters(parameters)
         self._set_rotation_matrix(transformation)
+
+    def to_fluka_string(self):
+        body_type = type(self).__name__
+        return "{} {} {}".format(
+            body_type,
+            self.name, # / 10 because converting mm to cm.
+            " ".join(str(value / 10) for value in self.parameters))
 
     def view(self, setclip=True):
         world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
@@ -1198,6 +1216,41 @@ class Region(object):
             out[index] = (boolean, extent)
         return out
 
+    def bodies(self):
+        """Get all the unique bodies instances that make up this Region."""
+        unique_bodies = set()
+        for zone in self.zones:
+            zone_bodies = set(zone.bodies())
+            unique_bodies = unique_bodies.union(zone_bodies)
+        return unique_bodies
+
+    def to_fluka_string(self):
+        name_and_mystery_number = "{:13}5".format(self.name)
+        zone_strings = [zone.to_fluka_string() for zone in self.zones]
+        if len(zone_strings) == 1:
+            return name_and_mystery_number + " {}".format(zone_strings)
+        lines = []
+        for i, string in enumerate(zone_strings):
+            if i == 0:
+                lines.append((name_and_mystery_number
+                              + " | {}".format(zone_strings[0])))
+                continue
+            lines.append("               | {}".format(string))
+        return "\n".join(lines)
+
+    def to_fluka_inp(self, filename=None):
+        filename = "{}.inp".format(self.name) if filename is None else filename
+        with open(filename, 'w') as f:
+            f.write(_FLUKA_BOILERPLATE.format(self.name))
+            for body in self.bodies():
+                f.write(body.to_fluka_string() + "\n")
+            f.write("END\n")
+            f.write(self.to_fluka_string() + "\n")
+            f.write("END\n")
+            f.write("GEOEND\n")
+
+
+
 class Zone(object):
     """Class representing a Zone (subregion delimited by '|'), i.e. a
     tract of space to be unioned with zero or more other zones.  A
@@ -1432,7 +1485,25 @@ class Zone(object):
     def __iter__(self):
         return iter(self.contains + self.excludes)
 
+    def bodies(self):
+        """Return all the unique body instances associated with this zone"""
+        return list(set(self._flatten()))
 
+    def to_fluka_string(self):
+        """Returns this Zone as a fluka input string."""
+        bodies = []
+        zones = []
+        for part in self.contains:
+            if isinstance(part, Body):
+                bodies.append("+{}".format(part.name))
+            if isinstance(part, Zone):
+                 zones.append("+({}) ".format(part.to_fluka_string()))
+        for part in self.excludes:
+            if isinstance(part, Body):
+                bodies.append("-{}".format(part.name))
+            if isinstance(part, Zone):
+                zones.append("-({})".format(part.to_fluka_string()))
+        return " ".join(bodies + zones)
 class Boolean(Body):
     """A Body is a solid with a centre, a rotation and a name.  This
     is used to represent combinations of bodies, e.g. as a result of
