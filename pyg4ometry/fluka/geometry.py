@@ -1228,7 +1228,7 @@ class Region(object):
         name_and_mystery_number = "{:13}5".format(self.name)
         zone_strings = [zone.to_fluka_string() for zone in self.zones]
         if len(zone_strings) == 1:
-            return name_and_mystery_number + " {}".format(zone_strings)
+            return name_and_mystery_number + " {}".format(zone_strings[0])
         lines = []
         for i, string in enumerate(zone_strings):
             if i == 0:
