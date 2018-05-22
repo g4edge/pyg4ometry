@@ -11,6 +11,7 @@ import collections
 import numpy as np
 import networkx as nx
 import itertools
+import logging
 
 import pygdml
 import pygdml.transformation as trf
@@ -41,6 +42,9 @@ GEOBEGIN                                                              COMBNAME
     0    0                   MC-CAD
 """
 )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Where does the meshing actually happen?  This matters because it is
 # the source of all slowdown!
@@ -165,6 +169,8 @@ class Body(object):
                 # Redundant intersections naturally will not raise
                 # NullMeshErrors, and are dealt with in the
                 # _apply_extent methods.
+                logger.debug("Omitting redundant subtraction of %s \"%s\"",
+                             type(self).__name__, self.name)
                 self._is_omittable = True
         else:
             raise TypeError("Unknown scale type: {}".format(type(scale)))
@@ -703,6 +709,7 @@ class XYP(InfiniteHalfSpace):
         if (self.parameters.v_z - 2 * LENGTH_SAFETY > extent.upper.z
                 and not np.isclose(self.parameters.v_z, extent.upper.z)):
             self._is_omittable = True
+            logger.debug("Setting XYP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(extent.centre.x,
                                     extent.centre.y,
@@ -729,6 +736,7 @@ class XZP(InfiniteHalfSpace):
         if (self.parameters.v_y - 2 * LENGTH_SAFETY > extent.upper.y
                 and not np.isclose(self.parameters.v_y, extent.upper.y)):
             self._is_omittable = True
+            logger.debug("Setting XZP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(extent.centre.x,
                                     0.0,
@@ -754,6 +762,7 @@ class YZP(InfiniteHalfSpace):
         if (self.parameters.v_x - 2 * LENGTH_SAFETY > extent.upper.x
                 and not np.isclose(self.parameters.v_x, extent.upper.x)):
             self._is_omittable = True
+            logger.debug("Setting YZP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(0.0,
                                     extent.centre.y,
@@ -1122,6 +1131,8 @@ class Region(object):
             1, False, self.material)
 
     def evaluate(self, zones=None, optimise=False):
+        logger.debug("Evaluating Region \"%s\", optimisation=%s, zones=%s",
+                     self.name, optimise, zones)
         zones = self._select_zones(zones)
         # Get the boolean solids from the zones:
         booleans = [zone.evaluate(optimise=optimise) for zone in zones]
