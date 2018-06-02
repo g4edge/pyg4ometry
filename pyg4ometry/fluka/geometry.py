@@ -1260,6 +1260,10 @@ class Region(object):
             f.write("END\n")
             f.write("GEOEND\n")
 
+    def compare_extents(self):
+        _, optimised_extent = self.evaluate_with_extent(True)
+        _, unoptimised_extent = self.evaluate_with_extent(False)
+        return optimised_extent, unoptimised_extent
 
 
 class Zone(object):
