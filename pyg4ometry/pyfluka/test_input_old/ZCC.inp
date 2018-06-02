@@ -1,0 +1,12 @@
+TITLE
+wooo a title
+GEOBEGIN                                                              COMBNAME
+    0    0
+SPH sph  1000. 1000. 1000. 20.
+ZCC zcc1 +1000. +1000. 15.
+ZCC zcc2 +1000. +1000. 5.
+END
+min      5 +sph +zcc1 ! -zcc2
+END
+GEOEND
+ASSIGNMA        IRON   cubeinf

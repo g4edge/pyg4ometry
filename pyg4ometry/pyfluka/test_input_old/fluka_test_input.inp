@@ -1,0 +1,16 @@
+* Comments are skipped
+COMMANDS OUTSIDE GEO ARE SKIPPED ! inline comments are skipped
+#define MACRO_DEF
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+RPP outerb     -3.E8 3.E8 -3.E8 3.E8 -3.E8 3.E8
+RPP innerb     -2.E8 2.E8 -2.E8 2.E8 -2.E8 2.E8
+$start_translat 0.0 -3000.0 2000.0
+RCC TAS_BODY   0.0 0.0 -150.0 0.0 0.0 300.0 25.0
+$end_translat
+$start_expansion 2.0
+RCC TAS_BODY   0.0 0.0 -150.0 0.0 0.0 300.0 25.0
+$end_expansion
+GEOEND
+* ...
+MORE TO BE SKIPPED

@@ -1,0 +1,13 @@
+TITLE
+Infinite elliptical cylinder parallel to the x-axis test file
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+* XEC parameters: Centre_Y, Centre_Z, Semi_axes_Y, Semi_Axes_Z
+XEC myell               100.0       200.0         20.0        40.0
+END
+MahThi     5 +myell
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    MahThi

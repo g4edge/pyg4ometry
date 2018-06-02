@@ -1,0 +1,22 @@
+TITLE
+rot_defi test file
+GEOBEGIN                                                              COMBNAME
+    0    0
+$start_transform rottest
+YZP yzplanlow  -30.0
+YZP yzplanhigh 30.0
+XYP xyplanlow  -30.
+XYP xyplanhigh 30.0
+XZP xzplanlow  -30.0
+XZP xzplanhigh 30.0
+$end_transform
+END
+cubeinf      5 +yzplanhigh -yzplanlow +xyplanhigh -xyplanlow +xzplanhigh -xzplanlow
+END
+GEOEND
+ASSIGNMA        IRON   cubeinf
+* ROT-DEFI transformation: shift of (0, 100, 100) then rotation of -21 degrees
+* around the x axis
+ROT-DEFI         0.0                                    -2.0     -30.0rottest
+*                           y-rot    x-rot        xtra  ytra      ztra   name
+ROT-DEFI        100.                -21.                              rottest

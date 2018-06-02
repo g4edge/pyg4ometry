@@ -1,0 +1,17 @@
+TITLE
+Part Two:
+* First plane minus second plane, offset by 1m, creating 1m thick sheet.
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+XYP firstplane 0.0
+XYP seconplane -100.0
+ZCC firstcyl 0.0 0.0 100.0
+ZCC seconcyl 0.0 0.0 75.0
+XZP thirdplane 25.0
+END
+tunnel     5 +thirdplane
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    tunnel

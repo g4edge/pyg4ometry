@@ -1,0 +1,13 @@
+TITLE
+An attempt at showing the wonders of boolean operations in Fluka
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+RPP cuboid1  -0.5 0.5 -0.5 0.5 -0.5 0.5
+SPH asphere  1.0  0.0  0.0  1.0
+END
+MahThi 5 | +cuboid1 | +asphere
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    MahThi

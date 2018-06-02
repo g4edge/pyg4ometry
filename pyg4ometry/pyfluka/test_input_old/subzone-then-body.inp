@@ -1,0 +1,15 @@
+TITLE
+Zones and sub-zones test file
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+SPH  sph  2.5  0.0  0.0  5.0
+RPP  cuboid1  -0.5 0.5 -0.5 0.5 -0.5 0.5
+END
+MahThi     5 +( +sph )
+	        -cuboid1
+
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    MahThi

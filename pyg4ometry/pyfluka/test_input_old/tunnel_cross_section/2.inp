@@ -1,0 +1,12 @@
+TITLE
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+XYP firstplane 0.0
+XYP seconplane -100.0
+END
+tunnel     5 +firstplane -seconplane
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    tunnel

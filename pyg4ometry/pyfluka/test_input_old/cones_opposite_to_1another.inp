@@ -1,0 +1,15 @@
+TITLE
+Truncated Right-angled Cone example file
+GEOBEGIN               1.0E-04                           1.0          COMBNAME
+    0    0                   MC-CAD
+*          major_centre_x,y,z  major2minor_x,y,z major_radius minor_radius
+TRC cone1  0.0 0.0 -1000.       0.0 0.0  250.     200.       100.
+TRC cone2  0.0 0.0  1000.       0.0 0.0 -250.     200.       100.
+END
+MahThi 5 | +cone1
+         | +cone2
+END
+GEOEND
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+ASSIGNMA    GRAPHITE    MahThi

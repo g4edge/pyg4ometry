@@ -1,0 +1,14 @@
+TITLE
+wooo a title
+GEOBEGIN                                                              COMBNAME
+    0    0
+* An RCC with one face at (100, 100, 100), pointing in the +z direction,
+* length = 100.0, radius = 25.0
+RCC rcc  100.0  100.0  100.0    0.0 0.0 100.0 25.0
+XYP xyp1 +110.
+XYP xyp2 +115.
+END
+cutrcc      5 +rcc -xyp1 +xyp2
+END
+GEOEND
+ASSIGNMA        IRON   cubeinf

@@ -1,0 +1,13 @@
+TITLE
+wooo a title
+GEOBEGIN                                                              COMBNAME
+    0    0
+
+XCC xcc +100. +100. 25.
+YZP yzp1 100.0
+YZP yzp2 105.0
+END
+cutxcc      5 +xcc -yzp1 +yzp2
+END
+GEOEND
+ASSIGNMA        IRON   cubeinf

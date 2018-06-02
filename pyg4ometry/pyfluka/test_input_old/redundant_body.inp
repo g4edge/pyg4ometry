@@ -1,0 +1,31 @@
+TITLE
+wooo a title
+GEOBEGIN                                                              COMBNAME
+    0    0
+! Redundant YZP:
+YZP redunx +10000.
+YZP yzp1 +1010.
+YZP yzp2 +990.
+! Redundant XZP:
+XZP reduny +10000.
+XZP xzp1 +1010.
+XZP xzp2 +990.
+! Redundant XYP:
+XYP redunz +10000.
+XYP xyp1 +1010.
+XYP xyp2 +990.
+! Redundant RPP:
+RPP smallrpp -10.0 10.0 -10.0 10.0 -10.0 10.0
+RPP redunrpp -1000.0 1000.0 -1000.0 1000.0 -1000.0 1000.0
+END
+! Redundant YZP:
+yzp 5 +redunx +yzp1 -yzp2
+! Redundant XZP:
+xzp 5 +reduny +xzp1 -xzp2
+! Redundant XYP:
+xyp 5 +redunz +xyp1 -xyp2
+! Redundant RPP:
+rpp 5 +smallrpp +redunrpp
+END
+GEOEND
+ASSIGNMA        IRON   cubeinf
