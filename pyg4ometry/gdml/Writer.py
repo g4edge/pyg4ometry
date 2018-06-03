@@ -507,11 +507,11 @@ class Writer(object):
     def writeTrd(self, instance):
         oe = self.doc.createElement("trd")
         oe.setAttribute('name',self.prepend + '_' + instance.name)
-        oe.setAttribute('x1',str(2*instance.pX1))
-        oe.setAttribute('x2',str(2*instance.pX2))
-        oe.setAttribute('y1',str(2*instance.pY1))
-        oe.setAttribute('y2',str(2*instance.pY2))
-        oe.setAttribute('z',str(2*instance.pZ))
+        oe.setAttribute('x1','2*'+str(instance.pX1))
+        oe.setAttribute('x2','2*'+str(instance.pX2))
+        oe.setAttribute('y1','2*'+str(instance.pY1))
+        oe.setAttribute('y2','2*'+str(instance.pY2))
+        oe.setAttribute('z','2*'+str(instance.pZ))
         self.solids.appendChild(oe)
 
     def writeTubs(self, instance):
@@ -519,7 +519,7 @@ class Writer(object):
         oe.setAttribute('name',self.prepend+'_'+instance.name)
         oe.setAttribute('rmin',str(instance.pRMin))
         oe.setAttribute('rmax',str(instance.pRMax))
-        oe.setAttribute('z',   str(2*instance.pDz))
+        oe.setAttribute('z',   '2*'+str(instance.pDz))
         oe.setAttribute('startphi',str(instance.pSPhi))
         oe.setAttribute('deltaphi',str(instance.pDPhi))
         self.solids.appendChild(oe)
