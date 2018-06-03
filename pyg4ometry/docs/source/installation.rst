@@ -6,18 +6,18 @@ Installation
 Requirements
 ------------
 
- * pygeometry is developed exclusively for Python 2.7.
+ * pyg4ometry is developed exclusively for Python 2.7.
 
 
 Installation
 ------------
 
-To install pygeometry, simply run ``make install`` from the root pygeometry
+To install pyg4ometry, simply run ``make install`` from the root pygeometry
 directory.::
 
   cd /my/path/to/repositories/
-  git clone http://bitbucket.org/jairhul/pygeometry
-  cd pygeometry
+  git clone http://bitbucket.org/jairhul/pyg4ometry
+  cd pyg4ometry
   make install
 
 Alternatively, run ``make develop`` from the same directory to ensure

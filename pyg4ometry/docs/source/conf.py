@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pygeometry'
+project = u'pyg4ometry'
 copyright = u'Royal Holloway, University of London 2017'
 author = u'S Boogert, A Abramov, A Butcher, S Walker, L Nevay'
 

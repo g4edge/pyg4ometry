@@ -1,7 +1,7 @@
 pygeometry Documentation
 ========================
 
-pygeometry is a package to create, load, write and visualise constructive solid geometry.
+pyg4ometry is a package to create, load, write and visualise solid geometry for particle tracking simulations. xs
 
 .. toctree::
    :maxdepth: 2

@@ -8,3 +8,4 @@ try :
     import freecad
 except ImportError :
     pass
+import test
