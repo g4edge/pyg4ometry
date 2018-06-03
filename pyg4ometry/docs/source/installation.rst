@@ -7,7 +7,7 @@ Requirements
 ------------
 
  * pyg4ometry is developed exclusively for Python 2.7.
-
+ * VTK (Visualisation toolkit)
 
 Installation
 ------------
@@ -20,5 +20,9 @@ directory.::
   cd pyg4ometry
   make install
 
-Alternatively, run ``make develop`` from the same directory to ensure
+Or install from pypi.::
+
+  pip install pyg4ometry
+
+or alternatively, run ``make develop`` from the same directory to ensure
 that any local changes are picked up.
