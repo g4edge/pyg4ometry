@@ -1,3 +1,6 @@
+"""Geant4 classes. The classes mainly match those of Geant4
+"""
+
 from PhysicalVolume import *
 from LogicalVolume import *
 from ReplicaVolume import *

@@ -1,3 +1,8 @@
+"""Geant4 physical volume
+.. module:: PhysicalVolume
+   :synopsis: Geant4 physical volume class
+"""
+
 import copy as _copy
 
 from Registry import registry as _registry
@@ -9,6 +14,8 @@ from ParameterVector import ParameterVector as _ParameterVector
 import sys as _sys
 
 class PhysicalVolume(object):
+    '''Geant4 Physical volume class'''
+
     imeshed = 0
     def __init__(self, rotation, position, logicalVolume, name, motherVolume, scale = [1,1,1], debug= False):
         super(PhysicalVolume, self).__init__()
