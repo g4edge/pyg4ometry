@@ -1,10 +1,13 @@
-import FreeCAD as _FreeCAD
-import Mesh as _Mesh
-import MeshPart as _MeshPart
+try :
+    import FreeCAD  as _FreeCAD
+    import Mesh     as _Mesh
+    import MeshPart as _MeshPart
+except ImportError :
+    pass
 
-import pygeometry.geant4 as _g4
-import pygeometry.vtk as _vtk
-import pygeometry.gdml as _gdml
+import pyg4ometry.geant4 as _g4
+import pyg4ometry.vtk    as _vtk
+import pyg4ometry.gdml   as _gdml
 
 # Recursive mesh writing : FINISHED
 # need to make recursive groups and parts : TODO 
