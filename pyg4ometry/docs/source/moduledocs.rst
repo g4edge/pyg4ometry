@@ -8,21 +8,73 @@ may be incomplete.
 Geant4 module 
 -------------
 .. automodule:: pyg4ometry.geant4
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.PhysicalVolume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.LogicalVolume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.ReplicaVolume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.ParameterisedVolume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.Registry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.Parameter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.geant4.ParameterVector
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 VTK module 
 ----------
-.. automodule:: pyg4ometry.vtk
+.. automodule:: pyg4ometry.vtk.Viewer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.vtk.Convert
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.vtk.Writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Freecad module 
 --------------
 
 STL module
 ----------
-.. automodule:: pyg4ometry.stl
+.. automodule:: pyg4ometry.stl.Reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 GDML module 
 -----------
-.. automodule:: pyg4ometry.gdml
+.. automodule:: pyg4ometry.gdml.Reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: pyg4ometry.gdml.Writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Fluka module 
 ------------
@@ -30,4 +82,6 @@ Fluka module
 Test module 
 -----------
 .. automodule:: pyg4ometry.test
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

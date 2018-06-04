@@ -1,8 +1,3 @@
-"""Geant4 physical volume
-.. module:: PhysicalVolume
-   :synopsis: Geant4 physical volume class
-"""
-
 import copy as _copy
 
 from Registry import registry as _registry
@@ -110,7 +105,7 @@ class PhysicalVolume(object):
         return pv
                            
 def recursize_map_rottrans(nlist,trans,rot,scale = [1,1,1]):
-    '''Function to apply transformation (rot then trans) to nested list of meshes (nlist)'''
+    '''Function to apply transformation (rotation then translatoin) to nested list of meshes (nlist)'''
     for i in range(len(nlist)) :
         if isinstance(nlist[i],list) :
             recursize_map_rottrans(nlist[i],trans,rot,scale)
@@ -121,7 +116,7 @@ def recursize_map_rottrans(nlist,trans,rot,scale = [1,1,1]):
 
 def recursive_map_size(nlist) :
     '''Recursive application of .polygonCount() and .vertexCount() to meshlist
-    :argument nlist
+    :argument: nlist
     '''
     for i in range(len(nlist)) :
         if isinstance(nlist[i],list) :
