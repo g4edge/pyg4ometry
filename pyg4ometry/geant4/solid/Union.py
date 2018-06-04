@@ -10,8 +10,7 @@ class Union(_SolidBase):
     name = name
     obj1 = unrotated, untranslated solid
     obj2 = solid rotated and translated according to tra2
-    tra2 = [rot,tra]
-         = [[a,b,g],[dx,dy,dz]]
+    tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
     def __init__(self, name, obj1, obj2, tra2):
         self.type = "Union"

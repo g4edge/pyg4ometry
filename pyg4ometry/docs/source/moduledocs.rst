@@ -40,6 +40,66 @@ Geant4 module
    :undoc-members:
    :show-inheritance:
 
+Geant4 solids
+-------------
+.. automodule:: pyg4ometry.geant4.solid.Plane
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Wedge
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Box
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Tubs
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.CutTubs
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Sphere
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Cons
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Ellipsoid
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Trd
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Torus
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Polycone
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Polyhedra
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.ExtrudedSolid
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Union
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Intersection
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Subtraction
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Para
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Trap
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Orb
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.EllipticalTube
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Paraboloid
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Hype
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.Tet
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.TwistedBox
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.TwistedTrap
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.TwistedTrd
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.GenericPolycone
+   :members:
+.. automodule:: pyg4ometry.geant4.solid.TesselatedSolid
+   :members:
+
+
 VTK module 
 ----------
 .. automodule:: pyg4ometry.vtk.Viewer
