@@ -5,7 +5,20 @@ from ..Registry import registry as _registry
 import math as _math
 
 class Plane(_SolidBase) : # point on plane is on z-axis
+    """
+    Constructs a *infinite* plane. Should not be used to construct geant4 geometry.
+
+    :param name: of object in registry 
+    :type name: str
+    :param normal: normal [x,y,z] 
+    :type normal: tuple
+    :param dist: distance from origin to plane
+    :type dist: float
+    :param zlength: large transverse box size to emulate infinite plane
+    :type zlength: float
+    """
     def __init__(self, name, normal, dist, zlength=10000):
+
         self.name   = name
         self.normal = _Vector(normal).unit()
         self.dist   = float(dist)
