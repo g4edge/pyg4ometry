@@ -28,7 +28,7 @@ class Writer(object):
         self.physicalVolumeList= []
 
     def addDetector(self, registry) :
-        registry = self.extractDefinesFromTesselatedSolids(registry)
+        self.registry = self.extractDefinesFromTesselatedSolids(registry)
 
         # loop over defines 
         for define in registry.defineDict :
@@ -82,7 +82,7 @@ class Writer(object):
 
         return registry
 
-    def writeGmadTester(self, filenameGmad, writeDefaultLattice=False, zLength=100):
+    def writeGmadTester(self, filenameGmad, writeDefaultLattice=False, zLength=None):
         self.filenameGmad = filenameGmad
 
         if writeDefaultLattice:
@@ -90,7 +90,7 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(self.filename)
-        s += '", l=' + str(zLength) + '*cm;\n'
+        s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*cm;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
