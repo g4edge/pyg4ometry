@@ -24,13 +24,34 @@ class TesselatedSolid(_SolidBase) :
         self.type        = 'TesselatedSolid'
         self.name        = name
 
-        self.facet_list  = facet_list
-        self.mesh        = None
+        self.facet_list        = facet_list
+        self.hashed_facet_list = []
+        self.vertex_map        = {}
+
+        self.reduceVertices()
+
+        self.mesh              = None
         _registry.addSolid(self)
 
     def __repr__(self):
         return self.type
 
+    def reduceVertices(self):
+        count_orig=0
+        count_redu=0
+        for facet in self.facet_list:
+            normal = None #This is redundant
+            vhashes = []
+            for vertex in facet[0]:
+                count_orig += 1
+                vert_hash = hash(vertex)
+                if vert_hash not in self.vertex_map:
+                    count_redu +=1
+                    self.vertex_map[vert_hash] = vertex
+                vhashes.append(vert_hash)
+
+            self.hashed_facet_list.append([vhashes, normal])
+        print "Total vertices: ", count_orig," , Unique vertices: ", count_redu
     def pycsgmesh(self):
 
 #        if self.mesh :
@@ -46,10 +67,10 @@ class TesselatedSolid(_SolidBase) :
             return _Vertex(_Vector(xyztup), None)
 
         polygons = []
-        for facet in self.facet_list:
-            v1 = xyz2Vertex(facet[0][0], facet[1]) #Keep it simple
-            v2 = xyz2Vertex(facet[0][1], facet[1])
-            v3 = xyz2Vertex(facet[0][2], facet[1])
+        for facet in self.hashed_facet_list:
+            v1 = xyz2Vertex(self.vertex_map[facet[0][0]], facet[1]) #Keep it simple
+            v2 = xyz2Vertex(self.vertex_map[facet[0][1]], facet[1])
+            v3 = xyz2Vertex(self.vertex_map[facet[0][2]], facet[1])
             polygons.append(_Polygon([v1, v2, v3]))
 
         self.mesh  = _CSG.fromPolygons(polygons)
