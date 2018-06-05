@@ -16,19 +16,21 @@ from math import acos as _acos
 from math import asin as _asin
 
 class Para(_SolidBase):
-    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi):
-        """
-        Constructs a parallelepiped.
+    """
+    Constructs a parallelepiped.
+    
+    Inputs:
+    name:  string, name of the volume
+    pX:    float, half-length along x
+    pY:    float, half-length along y
+    pZ:    float, half-length along z
+    pAlpha: float, angle formed by the y axis and the plane joining the centres of the faces parallel tothe z-x plane at -dy and +dy
+    pTheta: float, polar angle of the line joining the centres of the faces at -dz and +dz in z
+    pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
+    """
 
-        Inputs:
-          name:  string, name of the volume
-          pX:    float, half-length along x
-          pY:    float, half-length along y
-          pZ:    float, half-length along z
-          pAlpha: float, angle formed by the y axis and the plane joining the centres of the faces parallel tothe z-x plane at -dy and +dy
-          pTheta: float, polar angle of the line joining the centres of the faces at -dz and +dz in z
-          pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
-        """
+    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi):
+
 
         self.type     = 'Para'
         self.name   = name

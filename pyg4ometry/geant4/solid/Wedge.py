@@ -8,6 +8,19 @@ import numpy as _np
 from copy import deepcopy as _dc
 
 class Wedge(_SolidBase):
+    """
+    Constructs a *infinite* wedge. Should not be used to construct geant4 geometry.
+
+    :param name: of object in registry 
+    :type name: str
+    :param normal: normal [x,y,z] 
+    :type normal: tuple
+    :param dist: distance from origin to plane
+    :type dist: float
+    :param zlength: large transverse box size to emulate infinite plane
+    :type zlength: float
+    """
+
     def __init__(self, name, pRMax = 1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
         self.name  = name
         self.pRMax = float(pRMax)
