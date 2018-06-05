@@ -11,7 +11,7 @@ class NullMeshError(Exception):
         self.vol2 = vol2
         self.combination = combination
 
-class IndenticalNameError(Exception):
+class IdenticalNameError(Exception):
     """
     Exception for trying to add the same name to the geant4 registry 
 
