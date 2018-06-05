@@ -9,6 +9,8 @@ import solid as _solid
 from Registry                          import registry as _registry
 from Parameter                         import Parameter as _Parameter
 from ParameterVector                   import ParameterVector as _ParameterVector
+from Material                          import Material as _Material
+
 
 import numpy as _np
 import sys as _sys
@@ -18,7 +20,12 @@ class LogicalVolume(object):
     def __init__(self, solid, material, name, debug= False):
         super(LogicalVolume, self).__init__()
         self.solid           = solid
-        self.material        = material
+
+        if isinstance(material, _Material):
+            self.material = material
+        elif isinstance(material, str):
+            self.material = _Material.nist(material)
+
         self.name            = name
         self.daughterVolumes = [] 
         self.mesh            = None
@@ -137,10 +144,12 @@ class LogicalVolume(object):
         we = gw.doc.createElement('volume')
         we.setAttribute('name',prepend+'_'+self.name+'_lv')
         mr = gw.doc.createElement('materialref')
-        if self.material.find("G4") != -1 :          
-            mr.setAttribute('ref',self.material)
-        else :
-            mr.setAttribute('ref',prepend+'_'+self.material)
+        #if self.material.find("G4") != -1 :          
+        #    mr.setAttribute('ref',self.material)
+        #else :
+        #    mr.setAttribute('ref',prepend+'_'+self.material)
+
+        mr.setAttribute('ref',self.material.name)
         we.appendChild(mr)
 
         sr = gw.doc.createElement('solidref')
