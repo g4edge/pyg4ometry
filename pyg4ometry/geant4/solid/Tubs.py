@@ -12,16 +12,21 @@ import numpy as _np
 class Tubs(_SolidBase) :
     """
     Constructs a cylindrical section. 
-    
-    Inputs:
-        name:   string, name of the volume
-        pRMin:  float, inner radius
-        pRMax:  float, outer radius
-        pDz:    float, half-length along z
-        pSPhi:  float, starting phi angle
-        pDPhi:  float, angle of segment in radians
+
+    :param name: of object in registry 
+    :type name: str
+    :param pRMin: inner radius 
+    :type pRMin: float
+    :param pRMax: outer radius 
+    :type pRMax: float
+    :param pDz: half-length along z
+    :type pDz: float
+    :param pSPhi: starting phi angle
+    :type pSPhi: float
+    :param pDPhi: angle of segment in phi 
+    :type pDPhi: float
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi) :
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, nslice=16) :
         self.type  = 'Tubs'
         self.name  = name
         self.pRMin = pRMin
@@ -29,6 +34,7 @@ class Tubs(_SolidBase) :
         self.pDz   = pDz
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
+        self.nslice= nslice
         self.mesh = None
         _registry.addSolid(self)
         
@@ -45,7 +51,7 @@ class Tubs(_SolidBase) :
         pDz   = float(self.pDz)
         pRMax = float(self.pRMax)
 
-        self.mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax)
+        self.mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices = self.nslice)
 
     def csgmesh(self) :
 
@@ -68,7 +74,7 @@ class Tubs(_SolidBase) :
         if not pRMin and pSPhi == 0.0 and pDPhi == 2*_np.pi:
             return self.mesh
         if(pRMin):
-            sInner = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMin)
+            sInner = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMin, slices=self.nslice)
             self.mesh = self.mesh.subtract(sInner).subtract(pWedge.inverse())
         else:
             self.mesh = self.mesh.subtract(pWedge.inverse())
