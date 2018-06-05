@@ -1,5 +1,5 @@
 from collections import OrderedDict 
-from ..exceptions import IndenticalNameError
+from ..exceptions import IdenticalNameError
 
 class Registry :
     def __init__(self) :
