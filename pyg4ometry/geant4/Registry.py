@@ -28,12 +28,12 @@ class Registry :
 
 
     def addMaterial(self, material) :
-        try : 
-            self.materialDict[material.name] 
-            print 'material replicated', material.name
-            raise IdenticalNameError 
-        except KeyError :
-            self.materialDict[material.name] = material
+        #try : 
+        #    self.materialDict[material.name] 
+        #    print 'material replicated', material.name
+        #    raise IdenticalNameError 
+        #except KeyError :
+        self.materialDict[material.name] = material
 
 
     def addSolid(self,solid) :
