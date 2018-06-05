@@ -78,13 +78,11 @@ class Writer(object):
             solid = registry.solidDict[solidId]
             if solid.type == "TesselatedSolid":
                 name = solid.name
-                for i in range(len(solid.facet_list)):
-                    facet = solid.facet_list[i][0]
-                    for j in range(len(facet)):
-                        vertex = facet[j]
-                        defname   = "{}_F{}_V{}".format(name, i, j)
-                        defvertex = _ParameterVector(defname, list(vertex))
-                        registry.defineDict[defname] = defvertex
+                for hashid in solid.vertex_map:
+                    vertex = solid.vertex_map[hashid]
+                    defname   = "V_{}".format(hashid)
+                    defvertex = _ParameterVector(defname, list(vertex))
+                    registry.defineDict[defname] = defvertex
 
         return registry
 
@@ -351,10 +349,10 @@ class Writer(object):
         name     = instance.name
         oe.setAttribute('name', self.prepend + '_' + name)
 
-        for i in range(len(instance.facet_list)):
+        for hashed_faced in instance.hashed_facet_list:
             vertices = []
-            for j in range(len(instance.facet_list[i][0])): #Always 3 elements in a facet
-                vertices.append("{}_F{}_V{}".format(name, i, j))
+            for vertex_id in hashed_faced[0]: #Always 3 elements in a facet
+                vertices.append("V_{}".format(vertex_id))
             oe.appendChild(self.createTriangularFacet(*vertices))
         self.solids.appendChild(oe)
 
