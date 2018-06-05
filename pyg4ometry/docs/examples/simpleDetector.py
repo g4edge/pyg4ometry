@@ -36,8 +36,8 @@ def simpleDetector(vtkViewer = True, gdmlWriter = True) :
     ##############################
     # world solid
     ##############################
-    world_solid    = _pyg.geant4.solid.Box("world_solid",500,500,500)
-    world_logical  = _pyg.geant4.LogicalVolume(world_solid,"G4_Galactic","world_logical")    
+    world_solid    = _pyg.geant4.solid.Box("sub_world_solid",500,500,500)
+    world_logical  = _pyg.geant4.LogicalVolume(world_solid,"G4_Galactic","sub_world_logical")    
 
     cc_solid       = _pyg.geant4.solid.Box("cc_solid",cc_xsize/2.0,cc_ysize/2.0,cc_length/2.0)
     cc_logical     = _pyg.geant4.LogicalVolume(cc_solid,cc_material,"cc_logical")
@@ -58,7 +58,7 @@ def simpleDetector(vtkViewer = True, gdmlWriter = True) :
     world_logical.setClip();
 
     # register the world volume
-    _pyg.geant4.registry.setWorld('world_logical')
+    _pyg.geant4.registry.setWorld('sub_world_logical')
 
     m = world_logical.pycsgmesh()
 
