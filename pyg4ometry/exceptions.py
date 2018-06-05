@@ -10,3 +10,12 @@ class NullMeshError(Exception):
         self.vol1 = vol1
         self.vol2 = vol2
         self.combination = combination
+
+class IdenticalNameError(Exception):
+    """
+    Exception for trying to add the same name to the geant4 registry 
+
+    """
+
+    def __init__(self) :
+        pass

@@ -10,21 +10,27 @@ import sys as _sys
 from   copy import deepcopy as _dc
 
 class Sphere(_SolidBase) :
+    """
+    Constructs a section of a spherical shell. 
+
+    :param name: of object in registry 
+    :type name: str
+    :param pRmin: inner radius of the shell
+    :type pRmin: float
+    :param pRmax: outer radius of the shell
+    :type pRmax: float
+    :param pSPhi: starting phi angle in radians
+    :type pSPhi: float
+    :param pSTheta: starting theta angle in radians
+    :type pSTheta: float
+    :param pDPhi: delta phi angle in radians
+    :type pDPhi: float
+    :param pDTheta: delta theta angle in radians
+    :type pDTheta: float
+    """
+
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta, pDTheta, nslice = 10, nstack = 10) :
-        """
-        Constructs a section of a spherical shell. 
 
-        Inputs:
-          name:    string, name of the volume
-          pRmin:   float, innner radius of the shell
-          pRmax:   float, outer radius of the shell
-          pSPhi:   float, starting phi angle in radians
-          pSTheta: float, starting theta angle in radians
-          pDPhi:   float, total phi angle in radians 0 to 2 pi
-          pDTheta: float, total theta angle in radians 0 to pi
-
-        Phi & Theta are the usual spherical coodrinates.
-        """
         self.type    = 'Sphere'
         self.name    = name
         self.pRmin   = pRmin

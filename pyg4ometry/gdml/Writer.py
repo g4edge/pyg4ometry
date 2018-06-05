@@ -2,6 +2,9 @@ from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
 from ..geant4.Parameter import Parameter as _Parameter
 from ..geant4.ParameterVector import ParameterVector as _ParameterVector
+from ..geant4.Material import Material as _Material
+from ..geant4.Material import Element as _Element
+from ..geant4.Material import Isotope as _Isotope
 
 class Writer(object):
     def __init__(self, prepend = 'PREPEND'):
@@ -20,7 +23,9 @@ class Writer(object):
         self.solids    = self.top.appendChild(self.doc.createElement('solids'))
         self.structure = self.top.appendChild(self.doc.createElement('structure'))
         self.setup     = self.top.appendChild(self.doc.createElement('setup'))
-        
+
+        self.materials_written = []
+
         self.defineList        = []
         self.materialList      = []
         self.solidList         = []
@@ -50,6 +55,7 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList  :
             logical = registry.logicalVolumeDict[logicalName]
             logical.gdmlWrite(self,self.prepend)
+            self.writeMaterial(logical.material)
 
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
@@ -142,6 +148,73 @@ class Writer(object):
             oe.setAttribute('y',str(param[1]))
             oe.setAttribute('z',str(param[2]))
             self.defines.appendChild(oe)
+
+    def writeMaterial(self, material):
+        if isinstance(material, _Material) :
+            oe = self.doc.createElement('material')
+            oe.setAttribute('name', material.name)
+            de = self.doc.createElement('D')
+            de.setAttribute('value', str(material.density))
+            oe.appendChild(de)
+
+            if material.type == 'simple':
+                oe.setAttribute('Z', material.atomic_number)
+                se  = self.doc.createElement('atom')
+                se.setAttribute('value', str(material.atomic_weight))
+                oe.appendChild(se)
+            elif material.type == 'composite':
+                for comp_info in  material.components:
+                    name = comp_info[0].name
+                    frac_type = comp_info[2]
+                    if name not in self.materials_written:
+                        self.writeMaterial(comp_info[0])
+                        self.materials_written.append(name)
+                    if frac_type == "massfraction":
+                        se = self.doc.createElement('fraction')
+                        se.setAttribute('ref', name)
+                        se.setAttribute('n', str(comp_info[1]))
+                        oe.appendChild(se)
+                    if frac_type == "natoms":
+                        se = self.doc.createElement('composite')
+                        se.setAttribute('ref', name)
+                        se.setAttribute('n', str(comp_info[1]))
+                        oe.appendChild(se)
+            elif material.type == 'nist':
+                return #No need to add defines for NIST compounds
+
+            self.materials.appendChild(oe)
+
+        elif isinstance(material, _Element):
+            oe = self.doc.createElement('element')
+            oe.setAttribute('name', material.name)
+            oe.setAttribute('formula', material.symbol)
+            if material.type == 'simple':
+                oe.setAttribute('Z', str(material.z))
+                se = self.doc.createElement('atom')
+                se.setAttribute('value', str(material.a))
+                oe.appendChild(se)
+            elif material.type == 'composite':
+                for comp_info in material.components:
+                    name = comp_info[0].name
+                    if name not in self.materials_written:
+                        self.writeMaterial(comp_info[0])
+                        self.materials_written.append(name)
+                    se = self.doc.createElement('fraction')
+                    se.setAttribute('ref', name)
+                    se.setAttribute('n', str(comp_info[1]))
+                    oe.appendChild(se)
+            self.materials.appendChild(oe)
+
+        elif isinstance(material, _Isotope) :
+            oe = self.doc.createElement('isotope')
+            oe.setAttribute('name', material.name)
+            oe.setAttribute('Z', str(material.Z))
+            oe.setAttribute('N', str(material.A))
+            se = self.doc.createElement('atom')
+            se.setAttribute('type', 'A')
+            se.setAttribute('value', str(material.a))
+            oe.appendChild(se)
+            self.materials.appendChild(oe)
 
     def writeSolid(self, solid):
         """

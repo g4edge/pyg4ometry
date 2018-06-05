@@ -3,16 +3,18 @@ from ...pycsg.core import CSG as _CSG
 from ..Registry import registry as _registry
 
 class Box(_SolidBase) :
-    '''
+    """
     Constructs a box. 
-    
-    Inputs:
-        name:   string, name of the volume
-        pX:     float, half-length along x
-        pY:     float, half-length along y
-        pZ:     float, half-length along z
-    '''
 
+    :param name: of object in registry 
+    :type name: str
+    :param pX: half-length along x 
+    :type name: float
+    :param pY: half-length along y
+    :type name: float
+    :param pZ: half-length along z
+    :type name: float
+    """
     def __init__(self, name = '', pX = 0.0, pY = 0.0, pZ = 0.0) :
         self.name = name
         self.pX = pX

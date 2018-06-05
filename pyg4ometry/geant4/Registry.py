@@ -1,4 +1,5 @@
 from collections import OrderedDict 
+from ..exceptions import IdenticalNameError
 
 class Registry :
     def __init__(self) :
@@ -18,13 +19,30 @@ class Registry :
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
 
     def addDefinition(self, definition) :    
-        self.definitionDict[definition.name] = definition
+        try : 
+            self.defintionDict[definition.name] 
+            print 'definition replicated', defintion.name
+            raise IdenticalNameError 
+        except KeyError :
+            self.definitionDict[definition.name] = definition
+
 
     def addMaterial(self, material) :
+        #try : 
+        #    self.materialDict[material.name] 
+        #    print 'material replicated', material.name
+        #    raise IdenticalNameError 
+        #except KeyError :
         self.materialDict[material.name] = material
 
+
     def addSolid(self,solid) :
-        self.solidDict[solid.name] = solid
+        try : 
+            self.solidDict[solid.name] 
+            print 'solid replicated', solid.name
+            raise IdenticalNameError 
+        except KeyError : 
+            self.solidDict[solid.name] = solid
 
         try:
             self.solidTypeCountDict[solid.type] += 1
@@ -37,7 +55,12 @@ class Registry :
             self.solidUsageCountDict[solid.name] = 1
 
     def addLogicalVolume(self,volume) :
-        self.logicalVolumeDict[volume.name] = volume       
+        try : 
+            self.logicalVolumeDict[volume.name]
+            print 'logical replicated', volume.name
+            raise IdenticalNameError 
+        except KeyError : 
+            self.logicalVolumeDict[volume.name] = volume       
 
         # total number of logical volumes
         try:
@@ -46,8 +69,13 @@ class Registry :
             self.volumeTypeCountDict["logicalVolume"] = 1
             
     def addPhysicalVolume(self,volume) : 
-        self.physicalVolumeDict[volume.name] = volume
-
+        try : 
+            self.physicalVolumeDict[volume.name]
+            print 'physical replicated', volume.name
+            raise IdenticalNameError 
+        except KeyError : 
+            self.physicalVolumeDict[volume.name] = volume
+            
         # number of physical volumes
         try:
             self.volumeTypeCountDict["physicalVolume"] += 1
@@ -70,16 +98,27 @@ class Registry :
             self.volumeTypeCountDict["replicaVolume"] = 1
 
     def addParameterisedVolume(self,volume) :
-        self.parametrisedVolumeDict[volume.name] = volume
+        
+        try :
+            self.parametrisedVolumeDict[volume.name] 
+            print 'parameterised replicated', volume.name
+            raise IdenticalNameError 
+        except KeyError :
+            self.parametrisedVolumeDict[volume.name] = volume
 
         try :
             self.volumeTypeCountDict["parametrisedVolume"] += 1
         except KeyError:
             self.volumeTypeCountDict["parametrisedVolume"] = 1
 
-
     def addParameter(self, parameter):
-        self.parameterDict[parameter.name] = parameter
+        try : 
+            self.parameterDict[parameter.name] 
+            print 'parameter replicated', parameter.name
+            raise IdenticalNameError 
+        except KeyError : 
+            self.parameterDict[parameter.name] = parameter
+
 
     def setWorld(self, worldName) :
         self.worldName = worldName
