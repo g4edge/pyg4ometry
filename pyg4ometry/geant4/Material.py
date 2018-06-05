@@ -70,21 +70,47 @@ class Material :
 
     @classmethod
     def nist(cls, name):
+        """
+        Proxy method to construct a NIST compund material - this is just a handle as nothing
+        needs to be additionaly defined for a NIST compund. A check is perfored on the name
+        to ensure it is a valid NIST specifier.
+
+        Inputs:
+          name          - string
+        """
         if name not in _makeNISTCompoundList():
             raise IOError("{} is not a NIST compound".format(name))
         return cls(**locals())
 
     @classmethod
     def simple(cls, name, atomic_number, atomic_weight, density):
+        """
+        Proxy method to construct a simple material - full description of the element contained is contained in one definition
+
+        Inputs:
+          name          - string
+          density       - float, material density in g/cm3
+          atomic_number - int, total number of nucleons, commonly known as 'A'
+          atomic_weght  - int, molar weight in g/mole, commonly known as 'a'
+        """
         return cls(**locals())
 
     @classmethod
     def composite(cls, name, density, number_of_components):
+        """
+        Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
+
+        Inputs:
+          name                 - string
+          density              - float, material density in g/cm3
+          number_of_components - int, number of components in the mixture
+        """
         return cls(**locals())
 
     def add_element_massfraction(self, element, massfraction):
         """
         Add an element as a component to a material as a fraction of the material mass.
+        Can only add elements to materials defined as composite.
 
         Inputs:
           element      - pyg4ometry.geant4.Material.Element instance
@@ -102,6 +128,7 @@ class Material :
     def add_element_natoms(self, element, natoms):
         """
         Add an element as a component to a material as a number of atoms in the material molecule.
+        Can only add elements to materials defined as composite.
 
         Inputs:
           element  - pyg4ometry.geant4.Material.Element instance
@@ -119,6 +146,7 @@ class Material :
     def add_material(self, material, fractionmass):
         """
         Add a material as a component to another material (mixture) as a fraction of the mixture mass.
+        Can only add new materials to materials defined as composite.
 
         Inputs:
           element      - pyg4ometry.geant4.Material.Material instance
@@ -138,16 +166,15 @@ class Element :
     This class provides an interface to GDML material definitions. Because of the different options for constructing a material instance the constructor is kwarg only.
     Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
 
-    Material.simple
-    Material.composite
-    Material.nist
+    Element.simple
+    Element.composite
 
     It is possible to instantiate a material directly through kwargs. The possible kwargs are (but note some are mutually exclusive):
     name                 - string
-    density              - float
-    atomic_number        - int
-    atomic_weight        - float
-    number_of_components - int
+    symbol               - string
+    Z                    - int
+    A                    - int
+    n_comp               - int
     """
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
@@ -171,7 +198,7 @@ class Element :
 
         Inputs:
           name   - string
-          symbol - chemical formula of the compound
+          symbol - string, chemical formula of the compound
           Z      - int, atomic number
           A      - int, mass number
           a      - float, atomic weigth in g/mole
@@ -181,13 +208,12 @@ class Element :
     @classmethod
     def composite(cls, name, symbol, n_comp):
         """
-        Proxy method to construct a simple element - full description of the element contained is contained in one definition
+        Proxy method to construct a composite element - a mixture of predefined isotopes
 
         Inputs:
           name - string
-          Z    - int, atomic number
-          A    - int, mass number
-          a    - float, atomic weigth in g/mole
+          symbol - string, chemical formula of the compound
+          n_comp - int, number of isotope components
         """
         return cls(**locals())
 
