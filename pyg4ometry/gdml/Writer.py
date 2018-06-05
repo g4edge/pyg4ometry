@@ -166,9 +166,9 @@ class Writer(object):
                 for comp_info in  material.components:
                     name = comp_info[0].name
                     frac_type = comp_info[2]
-                    if name not in self.materials_written:
-                        self.writeMaterial(comp_info[0])
-                        self.materials_written.append(name)
+                    #if name not in self.materials_written:
+                    self.writeMaterial(comp_info[0])
+                    #    self.materials_written.append(name)
                     if frac_type == "massfraction":
                         se = self.doc.createElement('fraction')
                         se.setAttribute('ref', name)
@@ -182,38 +182,41 @@ class Writer(object):
             elif material.type == 'nist':
                 return #No need to add defines for NIST compounds
 
-            self.materials.appendChild(oe)
+            #self.materials.appendChild(oe)
 
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
             oe.setAttribute('name', material.name)
             oe.setAttribute('formula', material.symbol)
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.z))
+                oe.setAttribute('Z', str(material.Z))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(material.a))
+                se.setAttribute('value', str(material.A))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:
                     name = comp_info[0].name
-                    if name not in self.materials_written:
-                        self.writeMaterial(comp_info[0])
-                        self.materials_written.append(name)
+                    #if name not in self.materials_written:
+                    self.writeMaterial(comp_info[0])
+                    #    self.materials_written.append(name)
                     se = self.doc.createElement('fraction')
                     se.setAttribute('ref', name)
                     se.setAttribute('n', str(comp_info[1]))
                     oe.appendChild(se)
-            self.materials.appendChild(oe)
+            #self.materials.appendChild(oe)
 
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
             oe.setAttribute('name', material.name)
             oe.setAttribute('Z', str(material.Z))
-            oe.setAttribute('N', str(material.A))
+            oe.setAttribute('N', str(material.N))
             se = self.doc.createElement('atom')
             se.setAttribute('type', 'A')
             se.setAttribute('value', str(material.a))
             oe.appendChild(se)
+
+        if material.name not in self.materials_written:
+            self.materials_written.append(material.name)
             self.materials.appendChild(oe)
 
     def writeSolid(self, solid):
