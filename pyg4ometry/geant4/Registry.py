@@ -1,5 +1,5 @@
-from collections import OrderedDict 
-from ..exceptions import IdenticalNameError
+from collections import OrderedDict
+import pyg4ometry.exceptions
 
 class Registry :
     def __init__(self) :
@@ -18,30 +18,30 @@ class Registry :
         self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
 
-    def addDefinition(self, definition) :    
-        try : 
-            self.defintionDict[definition.name] 
+    def addDefinition(self, definition) :
+        try :
+            self.defintionDict[definition.name]
             print 'definition replicated', defintion.name
-            raise IdenticalNameError 
+            raise pyg4ometry.exceptions.IdenticalNameError
         except KeyError :
             self.definitionDict[definition.name] = definition
 
 
     def addMaterial(self, material) :
-        #try : 
-        #    self.materialDict[material.name] 
+        #try :
+        #    self.materialDict[material.name]
         #    print 'material replicated', material.name
-        #    raise IdenticalNameError 
+        #    raise pyg4ometry.exceptions.IdenticalNameError
         #except KeyError :
         self.materialDict[material.name] = material
 
 
     def addSolid(self,solid) :
-        try : 
-            self.solidDict[solid.name] 
+        try :
+            self.solidDict[solid.name]
             print 'solid replicated', solid.name
-            raise IdenticalNameError 
-        except KeyError : 
+            raise pyg4ometry.exceptions.IdenticalNameError
+        except KeyError :
             self.solidDict[solid.name] = solid
 
         try:
@@ -55,27 +55,27 @@ class Registry :
             self.solidUsageCountDict[solid.name] = 1
 
     def addLogicalVolume(self,volume) :
-        try : 
+        try :
             self.logicalVolumeDict[volume.name]
             print 'logical replicated', volume.name
-            raise IdenticalNameError 
-        except KeyError : 
-            self.logicalVolumeDict[volume.name] = volume       
+            raise pyg4ometry.exceptions.IdenticalNameError
+        except KeyError :
+            self.logicalVolumeDict[volume.name] = volume
 
         # total number of logical volumes
         try:
             self.volumeTypeCountDict["logicalVolume"] += 1
         except KeyError:
             self.volumeTypeCountDict["logicalVolume"] = 1
-            
-    def addPhysicalVolume(self,volume) : 
-        try : 
+
+    def addPhysicalVolume(self,volume) :
+        try :
             self.physicalVolumeDict[volume.name]
             print 'physical replicated', volume.name
-            raise IdenticalNameError 
-        except KeyError : 
+            raise pyg4ometry.exceptions.IdenticalNameError
+        except KeyError :
             self.physicalVolumeDict[volume.name] = volume
-            
+
         # number of physical volumes
         try:
             self.volumeTypeCountDict["physicalVolume"] += 1
@@ -91,18 +91,18 @@ class Registry :
 
     def addReplicaVolume(self,volume) :
         self.replicaVolumeDict[volume.name] = volume
-        
+
         try:
             self.volumeTypeCountDict["replicaVolume"] += 1
         except KeyError:
             self.volumeTypeCountDict["replicaVolume"] = 1
 
     def addParameterisedVolume(self,volume) :
-        
+
         try :
-            self.parametrisedVolumeDict[volume.name] 
+            self.parametrisedVolumeDict[volume.name]
             print 'parameterised replicated', volume.name
-            raise IdenticalNameError 
+            raise pyg4ometry.exceptions.IdenticalNameError
         except KeyError :
             self.parametrisedVolumeDict[volume.name] = volume
 
@@ -112,11 +112,11 @@ class Registry :
             self.volumeTypeCountDict["parametrisedVolume"] = 1
 
     def addParameter(self, parameter):
-        try : 
-            self.parameterDict[parameter.name] 
+        try :
+            self.parameterDict[parameter.name]
             print 'parameter replicated', parameter.name
-            raise IdenticalNameError 
-        except KeyError : 
+            raise pyg4ometry.exceptions.IdenticalNameError
+        except KeyError :
             self.parameterDict[parameter.name] = parameter
 
 
@@ -131,12 +131,12 @@ class Registry :
         GDML. GDML needs to have the solids/booleans/volumes defined in order'''
 
         lv = self.logicalVolumeDict[lvName]
-        
-        for daughters in lv.daughterVolumes : 
+
+        for daughters in lv.daughterVolumes :
             dlvName = daughters.logicalVolume.name
-            try : 
+            try :
                 self.logicalVolumeList.index(dlvName)
-            except ValueError: 
+            except ValueError:
                 self.orderLogicalVolumes(dlvName)
                 self.logicalVolumeList.append(dlvName)
 
@@ -171,4 +171,3 @@ class Registry :
         self.logicalVolumeMeshSkip = []
 
 registry = Registry()
-
