@@ -166,9 +166,7 @@ class Writer(object):
                 for comp_info in  material.components:
                     name = comp_info[0].name
                     frac_type = comp_info[2]
-                    #if name not in self.materials_written:
                     self.writeMaterial(comp_info[0])
-                    #    self.materials_written.append(name)
                     if frac_type == "massfraction":
                         se = self.doc.createElement('fraction')
                         se.setAttribute('ref', name)
@@ -182,8 +180,6 @@ class Writer(object):
             elif material.type == 'nist':
                 return #No need to add defines for NIST compounds
 
-            #self.materials.appendChild(oe)
-
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
             oe.setAttribute('name', material.name)
@@ -196,14 +192,11 @@ class Writer(object):
             elif material.type == 'composite':
                 for comp_info in material.components:
                     name = comp_info[0].name
-                    #if name not in self.materials_written:
                     self.writeMaterial(comp_info[0])
-                    #    self.materials_written.append(name)
                     se = self.doc.createElement('fraction')
                     se.setAttribute('ref', name)
                     se.setAttribute('n', str(comp_info[1]))
                     oe.appendChild(se)
-            #self.materials.appendChild(oe)
 
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
