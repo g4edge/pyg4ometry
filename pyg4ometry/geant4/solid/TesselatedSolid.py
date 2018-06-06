@@ -25,8 +25,8 @@ class TesselatedSolid(_SolidBase) :
         self.name        = name
 
         self.facet_list        = facet_list
-        self.hashed_facet_list = []
-        self.vertex_map        = {}
+        self.indexed_facet_list = []
+        self.unique_vertices    = []
 
         self.reduceVertices()
 
@@ -39,18 +39,24 @@ class TesselatedSolid(_SolidBase) :
     def reduceVertices(self):
         count_orig=0
         count_redu=0
+
+        #Avoid continuously evaluating funciton references in loop
+        unique_index = self.unique_vertices.index
+        unique_append  = self.unique_vertices.append
         for facet in self.facet_list:
             normal = None #This is redundant
             vhashes = []
             for vertex in facet[0]:
                 count_orig += 1
-                vert_hash = hash(vertex)
-                if vert_hash not in self.vertex_map:
+                #vert_hash = hash(vertex)
+                if vertex not in self.unique_vertices:
                     count_redu +=1
-                    self.vertex_map[vert_hash] = vertex
-                vhashes.append(vert_hash)
+                    unique_append(vertex)
 
-            self.hashed_facet_list.append([vhashes, normal])
+                vert_idx = unique_index(vertex)
+                vhashes.append(vert_idx)
+            self.indexed_facet_list.append([vhashes, normal])
+
         print "Total vertices: ", count_orig," , Unique vertices: ", count_redu
     def pycsgmesh(self):
 
@@ -67,10 +73,10 @@ class TesselatedSolid(_SolidBase) :
             return _Vertex(_Vector(xyztup), None)
 
         polygons = []
-        for facet in self.hashed_facet_list:
-            v1 = xyz2Vertex(self.vertex_map[facet[0][0]], facet[1]) #Keep it simple
-            v2 = xyz2Vertex(self.vertex_map[facet[0][1]], facet[1])
-            v3 = xyz2Vertex(self.vertex_map[facet[0][2]], facet[1])
+        for facet in self.indexed_facet_list:
+            v1 = xyz2Vertex(self.unique_vertices[facet[0][0]], facet[1]) #Keep it simple
+            v2 = xyz2Vertex(self.unique_vertices[facet[0][1]], facet[1])
+            v3 = xyz2Vertex(self.unique_vertices[facet[0][2]], facet[1])
             polygons.append(_Polygon([v1, v2, v3]))
 
         self.mesh  = _CSG.fromPolygons(polygons)
