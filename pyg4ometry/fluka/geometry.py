@@ -179,8 +179,8 @@ class Body(object):
 
     def _extent(self):
         # Construct a world volume to place the solid in to be meshed.
-        world_solid = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
-        world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_solid,
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
+        world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
         self.add_to_volume(world_volume)
