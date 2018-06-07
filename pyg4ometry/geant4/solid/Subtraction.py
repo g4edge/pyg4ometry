@@ -1,6 +1,7 @@
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
-from ...exceptions import *
+
+import pyg4ometry.exceptions
 from ...transformation import *
 
 
@@ -23,7 +24,7 @@ class Subtraction(_SolidBase) :
         self.mesh = None
         _registry.addSolid(self)
 
-    def __repr__(self) : 
+    def __repr__(self) :
         return 'Subtraction : ('+str(self.obj1)+') - ('+str(self.obj2)+')'
 
     def pycsgmesh(self):
@@ -45,7 +46,7 @@ class Subtraction(_SolidBase) :
         self.mesh = m1.subtract(m2)
         if not self.mesh.toPolygons():
             #print 'Subtraction null mesh',self.name,self.obj1.name, m1, self.obj2.name, m2
-            raise NullMeshError(self.obj1, self.obj2, "Subtraction")
+            raise pyg4ometry.exceptions.NullMeshError(self)
 
         self.obj1.mesh = None
         self.obj2.mesh = None

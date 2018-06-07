@@ -1,6 +1,6 @@
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
-from ...exceptions import *
+import pyg4ometry.exceptions
 from ...transformation import *
 
 import copy as _copy
@@ -18,7 +18,7 @@ class Union(_SolidBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = tra2
-        self.mesh = None 
+        self.mesh = None
         _registry.addSolid(self)
 
     def __repr__(self):
@@ -30,7 +30,7 @@ class Union(_SolidBase):
 
 #        if self.mesh :
 #            return self.mesh
-        
+
         rot = tbxyz(self.tra2[0])
         tlate = self.tra2[1]
 
@@ -42,13 +42,10 @@ class Union(_SolidBase):
 
         self.mesh = m1.union(m2)
         if not self.mesh.toPolygons():
-            print 'Union null mesh',self.name,self.obj1.name, m1, self.obj2.name, m2
-            raise NullMeshError(self.obj1, self.obj2, "Union")
+            raise pyg4ometry.exceptions.NullMeshError(self)
 
         self.obj1.mesh = None
         self.obj2.mesh = None
 
         #print 'union mesh ', self.name
         return self.mesh
-
-   
