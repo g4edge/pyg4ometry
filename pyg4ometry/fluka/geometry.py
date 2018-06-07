@@ -460,14 +460,13 @@ class RPP(Body):
     def gdml_solid(self, length_safety=None):
         """Construct the equivalent pygdml Box from this body."""
         safety_addend = Body._get_safety_addend(length_safety)
-        x_length = self._x_max - self._x_min + safety_addend
-        y_length = self._y_max - self._y_min + safety_addend
-        z_length = self._z_max - self._z_min + safety_addend
-
+        x_half_length = 0.5 * (self._x_max - self._x_min)
+        y_half_length = 0.5 * (self._y_max - self._y_min)
+        z_half_length = 0.5 * (self._z_max - self._z_min)
         return pygdml.solid.Box(self._unique_body_name(),
-                                0.5 * x_length,
-                                0.5 * y_length,
-                                0.5 * z_length)
+                                x_half_length + safety_addend,
+                                y_half_length + safety_addend,
+                                z_half_length + safety_addend)
 
 
 class SPH(Body):
