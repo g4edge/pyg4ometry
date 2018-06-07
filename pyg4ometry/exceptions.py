@@ -34,6 +34,7 @@ class IdenticalNameError(Exception):
 
     def __init__(self, name, nametype=None):
         self.name = name
+        self.nametype = nametype
         if nametype is None:
             self.message = (
                 "Identical name detected in registry: {}".format(name))
