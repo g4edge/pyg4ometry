@@ -15,6 +15,7 @@ import logging
 
 import pygdml
 import pygdml.transformation as trf
+import pyg4ometry
 
 from pyfluka import vector
 
@@ -62,7 +63,7 @@ logger = logging.getLogger(__name__)
 
 class Body(object):
     """A class representing a body as defined in Fluka.
-    get_body_as_gdml_solid() returns the body as a pygdml.solid
+    get_body_as_gdml_solid() returns the body as a pyg4ometry.geant4.solid
 
     """
     # The _is_omittable flag is set internally for a body if the body
@@ -97,7 +98,7 @@ class Body(object):
             " ".join(str(value / 10) for value in self.parameters))
 
     def view(self, setclip=True):
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -157,9 +158,9 @@ class Body(object):
             # it does, then there's something wrong in this module.
             try:
                 scale.gdml_solid().pycsgmesh()
-            except pygdml.solid.NullMeshError:
+            except pyg4ometry.exceptions.NullMeshError:
                 msg = "Scaling body \"{}\" is not meshable!".format(scale.name)
-                raise pygdml.solid.NullMeshError(msg)
+                raise pyg4ometry.exceptions.NullMeshError(msg)
             try:
                 extent = self._get_overlap(scale)
                 self._apply_extent(extent)
@@ -178,7 +179,7 @@ class Body(object):
 
     def _extent(self):
         # Construct a world volume to place the solid in to be meshed.
-        world_solid = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_solid = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_solid,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -199,7 +200,7 @@ class Body(object):
         # Safety is the same for an intersection, either we seek to
         # shrink both solids or to extend both solids, usually the
         # desire is to shrink both.
-        return self._do_boolean_op(other, pygdml.solid.Intersection,
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Intersection,
                                    safety, safety, other_offset)
 
     def subtraction(self, other, safety=None, other_offset=None):
@@ -209,11 +210,11 @@ class Body(object):
         opposite_safety = {None: None,
                            "extend": "trim",
                            "trim": "extend"}[safety]
-        return self._do_boolean_op(other, pygdml.solid.Subtraction,
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Subtraction,
                                    opposite_safety, safety, other_offset)
 
     def union(self, other, safety=None, other_offset=None):
-        return self._do_boolean_op(other, pygdml.solid.Union,
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Union,
                                    safety, safety, other_offset)
 
     def _do_boolean_op(self, other, op, safety1, safety2, offset):
@@ -309,7 +310,7 @@ class InfiniteCylinder(Body):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
                                  0.0, self._radius + safety_addend,
                                  self._scale * 0.5,
                                  0.0, 2*math.pi)
@@ -341,7 +342,7 @@ class InfiniteHalfSpace(Body):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
                                 0.5 * self._scale_x + safety_addend,
                                 0.5 * self._scale_y + safety_addend,
                                 0.5 * self._scale_z + safety_addend)
@@ -463,7 +464,7 @@ class RPP(Body):
         x_half_length = 0.5 * (self._x_max - self._x_min)
         y_half_length = 0.5 * (self._y_max - self._y_min)
         z_half_length = 0.5 * (self._z_max - self._z_min)
-        return pygdml.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
                                 x_half_length + safety_addend,
                                 y_half_length + safety_addend,
                                 z_half_length + safety_addend)
@@ -490,7 +491,7 @@ class SPH(Body):
     def gdml_solid(self, length_safety=None):
         """Construct a solid, whole, GDML sphere from this."""
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Orb(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Orb(self._unique_body_name(),
                                 self.parameters.radius + safety_addend)
 
 
@@ -541,7 +542,7 @@ class RCC(Body):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
                                  0.0,
                                  self.radius + safety_addend,
                                  self.length * 0.5 + safety_addend,
@@ -624,7 +625,7 @@ class REC(Body):
                                  self.parameters.to_other_face_y,
                                  self.parameters.to_other_face_z])
 
-        return pygdml.solid.EllipticalTube(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.EllipticalTube(self._unique_body_name(),
                                            semi_minor + safety_addend,
                                            semi_major + safety_addend,
                                            length * 0.5 + safety_addend)
@@ -691,7 +692,7 @@ class TRC(Body):
         safety_addend = Body._get_safety_addend(length_safety)
         # The first face of pygdml.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
-        return pygdml.solid.Cons(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Cons(self._unique_body_name(),
                                  0.0, self.major_radius + safety_addend,
                                  0.0, self.minor_radius + safety_addend,
                                  0.5 * self.length + safety_addend,
@@ -859,7 +860,7 @@ class PLA(Body):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend)
@@ -992,7 +993,7 @@ class XEC(InfiniteEllipticalCylinder):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_z + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
@@ -1031,7 +1032,7 @@ class YEC(InfiniteEllipticalCylinder):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_z + safety_addend,
@@ -1066,7 +1067,7 @@ class ZEC(InfiniteEllipticalCylinder):
 
     def gdml_solid(self, length_safety=None):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
@@ -1091,7 +1092,7 @@ class Region(object):
         the view_debug method to see the problematic boolean operation.
 
         """
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1340,7 +1341,7 @@ class Zone(object):
         self.evaluate(optimise=optimise).view(setclip=setclip)
 
     def view_compare_optimisation(self, setclip=True):
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1539,7 +1540,7 @@ class Boolean(Body):
         return self._centre
 
     def view_debug(self, first=None, second=None):
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -1547,7 +1548,7 @@ class Boolean(Body):
         try:
             world_volume.pycsgmesh()
             print("Mesh was successful.")
-        except pygdml.solid.NullMeshError as error:
+        except pyg4ometry.exceptions.NullMeshError as error:
             print(error.message)
             print("Debug:  Viewing consituent solids.")
             self._view_null_mesh(error, first, second, setclip=False)
@@ -1557,7 +1558,7 @@ class Boolean(Body):
         solid2 = error.solid.obj2
         tra2 = error.solid.tra2
 
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world", 10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1596,9 +1597,9 @@ class Boolean(Body):
         # quick and dirty..  revisit this at a later date.
         primitives = []
         def primitive_iter(solid):
-            if isinstance(solid, (pygdml.solid.Intersection,
-                                  pygdml.solid.Subtraction,
-                                  pygdml.solid.Union)):
+            if isinstance(solid, (pyg4ometry.geant4.solid.Intersection,
+                                  pyg4ometry.geant4.solid.Subtraction,
+                                  pyg4ometry.geant4.solid.Union)):
                 primitives.append(primitive_iter(solid.obj1))
                 primitives.append(primitive_iter(solid.obj2))
             else:
