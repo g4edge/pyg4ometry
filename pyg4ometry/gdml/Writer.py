@@ -78,13 +78,11 @@ class Writer(object):
             solid = registry.solidDict[solidId]
             if solid.type == "TesselatedSolid":
                 name = solid.name
-                for i in range(len(solid.facet_list)):
-                    facet = solid.facet_list[i][0]
-                    for j in range(len(facet)):
-                        vertex = facet[j]
-                        defname   = "{}_F{}_V{}".format(name, i, j)
-                        defvertex = _ParameterVector(defname, list(vertex))
-                        registry.defineDict[defname] = defvertex
+                for vertid in range(len(solid.unique_vertices)):
+                    vertex = solid.unique_vertices[vertid]
+                    defname   = "V_{}".format(vertid)
+                    defvertex = _ParameterVector(defname, list(vertex))
+                    registry.defineDict[defname] = defvertex
 
         return registry
 
@@ -166,9 +164,7 @@ class Writer(object):
                 for comp_info in  material.components:
                     name = comp_info[0].name
                     frac_type = comp_info[2]
-                    if name not in self.materials_written:
-                        self.writeMaterial(comp_info[0])
-                        self.materials_written.append(name)
+                    self.writeMaterial(comp_info[0])
                     if frac_type == "massfraction":
                         se = self.doc.createElement('fraction')
                         se.setAttribute('ref', name)
@@ -182,38 +178,36 @@ class Writer(object):
             elif material.type == 'nist':
                 return #No need to add defines for NIST compounds
 
-            self.materials.appendChild(oe)
-
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
             oe.setAttribute('name', material.name)
             oe.setAttribute('formula', material.symbol)
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.z))
+                oe.setAttribute('Z', str(material.Z))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(material.a))
+                se.setAttribute('value', str(material.A))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:
                     name = comp_info[0].name
-                    if name not in self.materials_written:
-                        self.writeMaterial(comp_info[0])
-                        self.materials_written.append(name)
+                    self.writeMaterial(comp_info[0])
                     se = self.doc.createElement('fraction')
                     se.setAttribute('ref', name)
                     se.setAttribute('n', str(comp_info[1]))
                     oe.appendChild(se)
-            self.materials.appendChild(oe)
 
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
             oe.setAttribute('name', material.name)
             oe.setAttribute('Z', str(material.Z))
-            oe.setAttribute('N', str(material.A))
+            oe.setAttribute('N', str(material.N))
             se = self.doc.createElement('atom')
             se.setAttribute('type', 'A')
             se.setAttribute('value', str(material.a))
             oe.appendChild(se)
+
+        if material.name not in self.materials_written:
+            self.materials_written.append(material.name)
             self.materials.appendChild(oe)
 
     def writeSolid(self, solid):
@@ -355,10 +349,10 @@ class Writer(object):
         name     = instance.name
         oe.setAttribute('name', self.prepend + '_' + name)
 
-        for i in range(len(instance.facet_list)):
+        for indexed_faced in instance.indexed_facet_list:
             vertices = []
-            for j in range(len(instance.facet_list[i][0])): #Always 3 elements in a facet
-                vertices.append("{}_F{}_V{}".format(name, i, j))
+            for vertex_id in indexed_faced[0]: #Always 3 elements in a facet
+                vertices.append("V_{}".format(vertex_id))
             oe.appendChild(self.createTriangularFacet(*vertices))
         self.solids.appendChild(oe)
 

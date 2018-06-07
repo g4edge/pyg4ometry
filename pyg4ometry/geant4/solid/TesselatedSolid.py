@@ -24,13 +24,40 @@ class TesselatedSolid(_SolidBase) :
         self.type        = 'TesselatedSolid'
         self.name        = name
 
-        self.facet_list  = facet_list
-        self.mesh        = None
+        self.facet_list        = facet_list
+        self.indexed_facet_list = []
+        self.unique_vertices    = []
+
+        self.reduceVertices()
+
+        self.mesh              = None
         _registry.addSolid(self)
 
     def __repr__(self):
         return self.type
 
+    def reduceVertices(self):
+        count_orig=0
+        count_redu=0
+
+        #Avoid continuously evaluating funciton references in loop
+        unique_index = self.unique_vertices.index
+        unique_append  = self.unique_vertices.append
+        for facet in self.facet_list:
+            normal = None #This is redundant
+            vhashes = []
+            for vertex in facet[0]:
+                count_orig += 1
+                #vert_hash = hash(vertex)
+                if vertex not in self.unique_vertices:
+                    count_redu +=1
+                    unique_append(vertex)
+
+                vert_idx = unique_index(vertex)
+                vhashes.append(vert_idx)
+            self.indexed_facet_list.append([vhashes, normal])
+
+        print "Total vertices: ", count_orig," , Unique vertices: ", count_redu
     def pycsgmesh(self):
 
 #        if self.mesh :
@@ -46,10 +73,10 @@ class TesselatedSolid(_SolidBase) :
             return _Vertex(_Vector(xyztup), None)
 
         polygons = []
-        for facet in self.facet_list:
-            v1 = xyz2Vertex(facet[0][0], facet[1]) #Keep it simple
-            v2 = xyz2Vertex(facet[0][1], facet[1])
-            v3 = xyz2Vertex(facet[0][2], facet[1])
+        for facet in self.indexed_facet_list:
+            v1 = xyz2Vertex(self.unique_vertices[facet[0][0]], facet[1]) #Keep it simple
+            v2 = xyz2Vertex(self.unique_vertices[facet[0][1]], facet[1])
+            v3 = xyz2Vertex(self.unique_vertices[facet[0][2]], facet[1])
             polygons.append(_Polygon([v1, v2, v3]))
 
         self.mesh  = _CSG.fromPolygons(polygons)
