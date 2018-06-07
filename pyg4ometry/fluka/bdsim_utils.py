@@ -6,7 +6,7 @@ import warnings
 import textwrap
 
 
-import pygdml.transformation as trf
+import pyg4ometry.transformation as trf
 import pyfluka.vector
 
 def get_placement_string(output_name,
