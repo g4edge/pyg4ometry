@@ -24,9 +24,21 @@ class NullMeshError(Exception):
 
 class IdenticalNameError(Exception):
     """
-    Exception for trying to add the same name to the geant4 registry
+    Exception for trying to add the same name to the geant4 registry.
+
+    :param name: the name that has been duplicated
+    :param nametype: optional extra information regarding the nature of the
+       duplicate ("material", "solid", etc.)
 
     """
 
-    def __init__(self) :
-        pass
+    def __init__(self, name, nametype=None):
+        self.name = name
+        if nametype is None:
+            self.message = (
+                "Identical name detected in registry: {}".format(name))
+        else:
+            self.message = (
+                "Identical {} name detected in registry: {}".format(
+                    nametype, name))
+        super(Exception, self).__init__(self.message)

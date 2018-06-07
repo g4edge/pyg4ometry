@@ -22,17 +22,19 @@ class Registry :
         try :
             self.defintionDict[definition.name]
             print 'definition replicated', defintion.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(
+                definition.name, "definition")
         except KeyError :
             self.definitionDict[definition.name] = definition
 
 
     def addMaterial(self, material) :
-        #try :
+        # try :
         #    self.materialDict[material.name]
         #    print 'material replicated', material.name
-        #    raise pyg4ometry.exceptions.IdenticalNameError
-        #except KeyError :
+        #    raise pyg4ometry.exceptions.IdenticalNameError(
+        #        material.name, "material")
+        # except KeyError :
         self.materialDict[material.name] = material
 
 
@@ -40,7 +42,7 @@ class Registry :
         try :
             self.solidDict[solid.name]
             print 'solid replicated', solid.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(solid.name, "solid")
         except KeyError :
             self.solidDict[solid.name] = solid
 
@@ -58,7 +60,8 @@ class Registry :
         try :
             self.logicalVolumeDict[volume.name]
             print 'logical replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(volume.name,
+                                                           "logical volume")
         except KeyError :
             self.logicalVolumeDict[volume.name] = volume
 
@@ -72,7 +75,8 @@ class Registry :
         try :
             self.physicalVolumeDict[volume.name]
             print 'physical replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(volume.name,
+                                                           "physical volume")
         except KeyError :
             self.physicalVolumeDict[volume.name] = volume
 
@@ -102,7 +106,8 @@ class Registry :
         try :
             self.parametrisedVolumeDict[volume.name]
             print 'parameterised replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(
+                volume.name, "parametrised volume")
         except KeyError :
             self.parametrisedVolumeDict[volume.name] = volume
 
@@ -115,7 +120,8 @@ class Registry :
         try :
             self.parameterDict[parameter.name]
             print 'parameter replicated', parameter.name
-            raise pyg4ometry.exceptions.IdenticalNameError
+            raise pyg4ometry.exceptions.IdenticalNameError(parameter.name,
+                                                           "parameter")
         except KeyError :
             self.parameterDict[parameter.name] = parameter
 
