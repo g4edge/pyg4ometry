@@ -62,7 +62,8 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
                     material = materialMap[name]
                 except KeyError :
                     material = materialMap["default"]
-
+                    
+                print name
                 ts = _g4.solid.TesselatedSolid(name+"_solid",facetList)    
                 tl = _g4.LogicalVolume(ts,'G4_Cu',name+"_lv")
                 tp = _g4.PhysicalVolume([0,0,0],[0,0,0],tl,name+"_pv",worldLogical)
@@ -166,7 +167,7 @@ def PartToMesh(part) :
 
             mesh = BodyToMesh(obj)
             mesh.transform(placement.toMatrix())
-            meshes.append([obj.Label,mesh])
+            meshes.append([obj.Label.replace(" ","_"),mesh])
             
 
     return meshes
@@ -186,9 +187,11 @@ def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
     for rootObject in rootObjects :
         print 'DocumentToGdml> ',rootObject.TypeId,' ', rootObject.Label
 
+        rootName = rootObject.Label.replace(" ","_")
+
         # Body object
         if rootObject.TypeId == 'Part::Feature' : 
-            meshes.append([rootObject.Label,BodyToMesh(rootObject)])
+            meshes.append([rootName,BodyToMesh(rootObject)])
 
         if rootObject.TypeId == 'Part::Box' : 
             pass
@@ -205,7 +208,7 @@ def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
 
         # Part object 
         if rootObject.TypeId == 'App::Part' : 
-            meshes.append([rootObject.Label,PartToMesh(rootObject)])
+            meshes.append([rootName,PartToMesh(rootObject)])
 
     MeshListToGdml(doc.Label,meshes,materialMap)        
     
