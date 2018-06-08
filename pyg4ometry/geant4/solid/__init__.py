@@ -30,4 +30,4 @@ from Sphere              import *
 from TwistedTrd          import *
 from GenericPolycone     import *
 from TesselatedSolid     import *
-
+from SolidBase import SolidBase

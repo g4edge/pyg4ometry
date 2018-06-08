@@ -1,6 +1,6 @@
 from matplotlib.cbook                  import flatten as _flatten
 
-from ..exceptions                      import *
+import pyg4ometry.exceptions
 from ..pycsg.geom                      import Vector as _Vector
 from ..pycsg.core                      import CSG as _CSG
 
@@ -62,11 +62,8 @@ class LogicalVolume(object):
         else :
             daughterMeshes = []
             for dv in self.daughterVolumes:
-                try:
-                    dvMesh = dv.pycsgmesh() 
-                    daughterMeshes.append(dvMesh)
-                except NullMeshError as nme:
-                    print nme
+                dvMesh = dv.pycsgmesh()
+                daughterMeshes.append(dvMesh)
                 self.mesh = [self.solid.pycsgmesh(),daughterMeshes]
 
             self.mesh[0].alpha     = 0.5

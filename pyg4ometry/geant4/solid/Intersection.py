@@ -1,10 +1,10 @@
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
-from ...exceptions import *
 from ...transformation import *
 
 
 import copy as _copy
+import pyg4ometry.exceptions
 
 class Intersection(_SolidBase) :
     """
@@ -45,13 +45,10 @@ class Intersection(_SolidBase) :
 
         self.mesh = m1.intersect(m2)
         if not self.mesh.toPolygons():
-            print 'Intersection null mesh',self.name,self.obj1.name, m1, self.obj2.name, m2
-            raise NullMeshError(self.obj1, self.obj2, "Intersection")
+            raise pyg4ometry.exceptions.NullMeshError(self)
 
         self.obj1.mesh = None
         self.obj2.mesh = None
 
         #print 'intersection mesh ', self.name
         return self.mesh
-        
-
