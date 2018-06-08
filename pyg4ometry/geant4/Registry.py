@@ -114,7 +114,7 @@ class Registry :
     def addParameter(self, parameter):
         try : 
             self.parameterDict[parameter.name] 
-            print 'parameter replicated', parameter.name
+            print 'parameter replicated ', parameter.name
             raise IdenticalNameError 
         except KeyError : 
             self.parameterDict[parameter.name] = parameter
