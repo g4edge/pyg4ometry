@@ -79,9 +79,9 @@ class Writer(object):
             if solid.type == "TesselatedSolid":
                 name = solid.name
                 i = 0
-                for hashid in solid.vertex_map:
-                    vertex = solid.vertex_map[hashid]
-                    defname   = "V_{}_{}".format(solid.name,hashid)
+                for vertid in range(len(solid.unique_vertices)):
+                    vertex = solid.unique_vertices[vertid]
+                    defname   = "V_{}_{}".format(name,vertid)
                     defvertex = _ParameterVector(defname, list(vertex))
                     registry.defineDict[defname] = defvertex
                     i=i+1
@@ -221,6 +221,7 @@ class Writer(object):
             func = getattr(self, 'write'+solid.type) # get the member function
             func(solid) # call it with the solid instance as an argument            
         except AttributeError:
+            print solid.name
             raise ValueError("No such solid "+solid.type)
 
     def writeBox(self, instance):
@@ -352,9 +353,9 @@ class Writer(object):
         oe.setAttribute('name', self.prepend + '_' + name)
 
         i = 0
-        for hashed_faced in instance.hashed_facet_list:
+        for indexed_faced in instance.indexed_facet_list:
             vertices = []
-            for vertex_id in hashed_faced[0]: #Always 3 elements in a facet
+            for vertex_id in indexed_faced[0]: #Always 3 elements in a facet
                 vertices.append("V_{}_{}".format(name,vertex_id))
                 i = i+1 
             oe.appendChild(self.createTriangularFacet(*vertices))
