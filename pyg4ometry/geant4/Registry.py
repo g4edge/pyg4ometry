@@ -22,8 +22,7 @@ class Registry :
         try :
             self.defintionDict[definition.name]
             print 'definition replicated', defintion.name
-            raise pyg4ometry.exceptions.IdenticalNameError(
-                definition.name, "definition")
+            raise pyg4ometry.exceptions.IdenticalNameError(definition.name, "definition")
         except KeyError :
             self.definitionDict[definition.name] = definition
 
