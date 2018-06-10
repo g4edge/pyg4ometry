@@ -42,7 +42,7 @@ def GdmlTest(mesh) :
 def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
     _g4.registry.clear()
     
-    worldSolid      = _g4.solid.Box(fileStub+"_solid",1000,1000,1000)
+    worldSolid      = _g4.solid.Box(fileStub+"_solid",10000,10000,10000)
     worldLogical    = _g4.LogicalVolume(worldSolid,'G4_Galactic',fileStub+"_lv")
 
     def MeshListToPhysicalVolume(ml) :
@@ -70,7 +70,7 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
 
     MeshListToPhysicalVolume(meshList)
 
-    # clip the world logical volume
+   # clip the world logical volume
     worldLogical.setClip();
 
     # register the world volume
@@ -90,6 +90,18 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
 
 def MakeMaterialDict(interactive = False) :
     pass
+
+def RelabelModel(objectList) :
+
+    for obj in objectList :
+        Label = obj.Label
+        Label = Label.replace(" ","_")
+        Label = Label.replace("(","_")
+        Label = Label.replace(")","_")
+        obj.Label = Label
+        
+        RelabelModel(obj.OutList)
+
 
 def MeshToFacetList(mesh) : 
     topology = mesh.Topology
@@ -163,12 +175,18 @@ def PartToMesh(part) :
     # loop over all bodies 
     for obj in part.OutList : 
         print 'PartToMesh> ',obj.Label,' ', obj.TypeId
-        if obj.TypeId == 'Part::Feature' or obj.TypeId == 'Part::Box' or obj.TypeId == 'Part::Sphere' or obj.TypeId == 'Part::Cylinder' or obj.TypeId == 'Cone' or obj.TypeId == 'Torus' :
+        if obj.TypeId == 'Part::Feature' or obj.TypeId == 'Part::Box' or      \
+           obj.TypeId == 'Part::Sphere' or obj.TypeId == 'Part::Cylinder' or  \
+           obj.TypeId == 'Cone' or obj.TypeId == 'Torus' :
 
+            print 'PartToMesh>',obj.TypeId,obj.Label
             mesh = BodyToMesh(obj)
             mesh.transform(placement.toMatrix())
             meshes.append([obj.Label.replace(" ","_"),mesh])
-            
+        
+        elif obj.TypeId == 'App::Part' :
+            mesh = PartToMesh(obj)
+            meshes.append([obj.Label.replace(" ","_"),mesh])
 
     return meshes
 
@@ -178,7 +196,7 @@ def GroupToMesh(group) :
 def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
     doc = _FreeCAD.activeDocument()
     
-    # get root objects 
+    # Get root objects 
     rootObjects = doc.RootObjects
 
     # meshes 
