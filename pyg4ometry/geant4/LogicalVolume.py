@@ -27,15 +27,15 @@ class LogicalVolume(object):
             self.material = _Material.nist(material)
 
         self.name            = name
-        self.daughterVolumes = [] 
+        self.daughterVolumes = []
         self.mesh            = None
         self.debug           = debug
         if register:
             _registry.addLogicalVolume(self)
 
-    def __repr__(self): 
+    def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
-    
+
     def pycsgmesh(self):
         # count the logical volumes meshed
         LogicalVolume.imeshed = LogicalVolume.imeshed + 1
@@ -94,7 +94,7 @@ class LogicalVolume(object):
         if tolerance != None:
             size += 2*tolerance
         self.setSize(size)
-        if centre: 
+        if centre:
             print 'Not centering'
             self.setCentre(centre)
 
@@ -142,7 +142,7 @@ class LogicalVolume(object):
         we = gw.doc.createElement('volume')
         we.setAttribute('name',prepend+'_'+self.name+'_lv')
         mr = gw.doc.createElement('materialref')
-        #if self.material.find("G4") != -1 :          
+        #if self.material.find("G4") != -1 :
         #    mr.setAttribute('ref',self.material)
         #else :
         #    mr.setAttribute('ref',prepend+'_'+self.material)
@@ -153,8 +153,8 @@ class LogicalVolume(object):
         sr = gw.doc.createElement('solidref')
         sr.setAttribute('ref',prepend+'_'+self.solid.name)
         we.appendChild(sr)
-        
-        for dv in self.daughterVolumes: 
+
+        for dv in self.daughterVolumes:
             dve = dv.gdmlWrite(gw,prepend)
             we.appendChild(dve)
 

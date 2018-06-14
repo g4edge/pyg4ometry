@@ -18,7 +18,7 @@ class PhysicalVolume(object):
         self.rotation      = rotation
         self.position      = position
         self.logicalVolume = logicalVolume
-        self.name          = name 
+        self.name          = name
         self.motherVolume  = motherVolume
         self.motherVolume.add(self)
         self.mesh          = None
@@ -27,9 +27,9 @@ class PhysicalVolume(object):
         if register:
             _registry.addPhysicalVolume(self)
 
-    def __repr__(self): 
+    def __repr__(self):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
-        
+
     def pycsgmesh(self):
 
         PhysicalVolume.imeshed = PhysicalVolume.imeshed + 1
@@ -62,10 +62,10 @@ class PhysicalVolume(object):
         if self.debug:
             print 'physical mesh', self.name
             recursive_map_size(self.mesh)
-        
+
         return self.mesh
 
-    def gdmlWrite(self, gw, prepend): 
+    def gdmlWrite(self, gw, prepend):
         # physical volume
         pv = gw.doc.createElement('physvol')
         pv.setAttribute('name',prepend+'_'+self.name+'_pv')
@@ -102,10 +102,10 @@ class PhysicalVolume(object):
         tscae.setAttribute('x',str(self.scale[0]))
         tscae.setAttribute('y',str(self.scale[1]))
         tscae.setAttribute('z',str(self.scale[2]))
-        pv.appendChild(tscae)    
+        pv.appendChild(tscae)
 
         return pv
-                           
+
 def recursize_map_rottrans(nlist,trans,rot,scale=[1,1,1]):
     '''Function to apply transformation (rotation then translatoin) to nested list of meshes (nlist)'''
     for i in range(len(nlist)):
