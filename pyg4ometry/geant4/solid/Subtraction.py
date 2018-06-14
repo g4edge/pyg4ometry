@@ -7,7 +7,7 @@ from ...transformation import *
 
 import copy as _copy
 
-class Subtraction(_SolidBase) :
+class Subtraction(_SolidBase):
     """
     output = obj1 - obj2
     name = name
@@ -24,7 +24,7 @@ class Subtraction(_SolidBase) :
         self.mesh = None
         _registry.addSolid(self)
 
-    def __repr__(self) :
+    def __repr__(self):
         return 'Subtraction : ('+str(self.obj1)+') - ('+str(self.obj2)+')'
 
     def pycsgmesh(self):

@@ -8,8 +8,8 @@ from ..Registry import registry as _registry
 
 import numpy as _np
 
-class Ellipsoid(_SolidBase) :
-    def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, nslice = 8, nstack = 8) :
+class Ellipsoid(_SolidBase):
+    def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, nslice=8, nstack=8):
         """
         Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -41,13 +41,13 @@ class Ellipsoid(_SolidBase) :
 #        if self.mesh :
 #            return self.mesh
 
-        
+
         self.basicmesh()
         self.csgmesh()
 
         return self.mesh
 
-    def basicmesh(self) :
+    def basicmesh(self):
         def appendVertex(vertices, u, v):
             d = _Vector(
                 self.pxSemiAxis*_np.cos(u)*_np.sin(v),
@@ -55,26 +55,26 @@ class Ellipsoid(_SolidBase) :
                 self.pzSemiAxis*_np.sin(u))
 
             vertices.append(_Vertex(c.plus(d), None))
-                
+
         polygons = []
-        
+
         c      = _Vector([0,0,0])
         slices = self.nslice
         stacks = self.nstack
-        
+
         du     = _np.pi / float(slices)
         dv     = 2*_np.pi / float(stacks)
-            
+
         su     = -_np.pi/2
         sv     = -_np.pi
-        
+
         for j0 in range(0, slices):
             j1 = j0 + 0.5
             j2 = j0 + 1
             for i0 in range(0, slices):
                 i1 = i0 + 0.5
                 i2 = i0 + 1
-                
+
                 verticesN = []
                 appendVertex(verticesN, i1 * du + su, j1 * dv + sv)
                 appendVertex(verticesN, i2 * du + su, j2 * dv + sv)
@@ -104,8 +104,7 @@ class Ellipsoid(_SolidBase) :
         topNorm     = _Vector(0,0,1)                              # These are tests of booleans operations, keep here for now
         botNorm     = _Vector(0,0,-1)
         pTopCut     = _Plane("pTopCut", topNorm, self.pzTopCut).pycsgmesh()
-        pBottomCut  = _Plane("pBottomCut" , botNorm, self.pzBottomCut).pycsgmesh()
+        pBottomCut  = _Plane("pBottomCut", botNorm, self.pzBottomCut).pycsgmesh()
         self.mesh   = self.mesh.subtract(pBottomCut).subtract(pTopCut)
-        
-        return self.mesh
 
+        return self.mesh

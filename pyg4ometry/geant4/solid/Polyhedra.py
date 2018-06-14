@@ -4,10 +4,10 @@ from Polycone import Polycone as _Polycone
 import numpy as _np
 
 
-class Polyhedra(_SolidBase) :
-    def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes, zPlane, rInner, rOuter) :
+class Polyhedra(_SolidBase):
+    def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes, zPlane, rInner, rOuter):
         """
-        Constructs a polyhedra. 
+        Constructs a polyhedra.
 
         Inputs:
           name:       string, name of the volume
@@ -18,7 +18,7 @@ class Polyhedra(_SolidBase) :
           zPlane:     list, position of z planes
           rInner:     list, tangent distance to inner surface per z plane
           rOuter:     list, tangent distance to outer surface per z plane
-          
+
         """
         self.type       = 'Polyhedra'
         self.name       = name
@@ -38,8 +38,8 @@ class Polyhedra(_SolidBase) :
 
     def basicmesh(self):
         fillfrac  = self.phiTotal/(2*_np.pi)
-        slices    = (self.numSide)/fillfrac 
-        
+        slices    = (self.numSide)/fillfrac
+
         ph        = _Polycone(self.name, self.phiStart, self.phiTotal,
                               self.zPlane, self.rInner, self.rOuter,
                               nslice=int(_np.ceil(slices)), register=False)

@@ -5,10 +5,10 @@ from Plane import Plane as _Plane
 
 import numpy as _np
 
-class CutTubs(_SolidBase) :
+class CutTubs(_SolidBase):
     """
-    Constructs a cylindrical section with cuts. 
-    
+    Constructs a cylindrical section with cuts.
+
     Inputs:
         name:      string, name of the volume
         pRMin:     float, inner radius
@@ -19,7 +19,7 @@ class CutTubs(_SolidBase) :
         pLowNorm:  list,  normal vector of the cut plane at -pDz
         pHighNorm: list, normal vector of the cut plane at +pDz
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, pLowNorm, pHighNorm) :
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, pLowNorm, pHighNorm):
         self.type      = 'CutTubs'
         self.name      = name
         self.pRMin     = pRMin
@@ -40,7 +40,7 @@ class CutTubs(_SolidBase) :
 #            return self.mesh
 
         self.basicmesh()
-        if self.pLowNorm != [0,0,-1] or self.pHighNorm != [0,0,1] :
+        if self.pLowNorm != [0,0,-1] or self.pHighNorm != [0,0,1]:
             self.csgmesh()
 
         return self.mesh
@@ -50,9 +50,9 @@ class CutTubs(_SolidBase) :
 
     def csgmesh(self):
         zlength = 3 * self.pDz  # make the dimensions of the semi-infinite plane large enough
-        if self.pHighNorm != [0,0,1] :
+        if self.pHighNorm != [0,0,1]:
             pHigh = _Plane("pHigh_temp", self.pHighNorm, self.pDz, zlength).pycsgmesh()
             self.mesh = self.mesh.subtract(pHigh)
-        if self.pLowNorm != [0,0,-1] :
+        if self.pLowNorm != [0,0,-1]:
             pLow  = _Plane("pLow_temp", self.pLowNorm, -self.pDz, zlength).pycsgmesh()
             self.mesh = self.mesh.subtract(pLow)

@@ -1,7 +1,7 @@
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
 
-class OpticalSurface(_SolidBase) :
+class OpticalSurface(_SolidBase):
     def __init__(self, name, osfinish, model, type, value):
         self.name   = name
         self.type   = 'opticalsurface'
@@ -14,6 +14,3 @@ class OpticalSurface(_SolidBase) :
 
     def __repr__(self):
         return 'OpticalSurface : '+str(self.name)
-
-
-

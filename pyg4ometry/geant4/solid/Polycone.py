@@ -9,16 +9,16 @@ import numpy as _np
 from copy import deepcopy as _dc
 
 
-class Polycone(_SolidBase) :
-    def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax, nslice=16, register=True) :
+class Polycone(_SolidBase):
+    def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax, nslice=16, register=True):
         """
-        Constructs a solid of rotation using an arbitrary 2D surface. 
+        Constructs a solid of rotation using an arbitrary 2D surface.
 
         Inputs:
           name:   string, name of the volume
           pSPhi:  float, starting rotation angle in radians
           pDPhi:  float, total rotation angle in radius
-          pZPlns: list, z-positions of planes used 
+          pZPlns: list, z-positions of planes used
           pRInr : list, inner radii of surface at each z-plane
           pROut : list, outer radii of surface at each z-plane
 
@@ -44,8 +44,8 @@ class Polycone(_SolidBase) :
 
         return self.mesh
 
-    def basicmesh(self) :
-        
+    def basicmesh(self):
+
         polygons = []
 
         dPhi  = 2*_np.pi/self.nslice
@@ -56,18 +56,18 @@ class Polycone(_SolidBase) :
             c = _Vector([0,0,0])
             x = r*_np.cos(theta)
             y = r*_np.sin(theta)
-            
+
             d = _Vector(
                 x,
                 y,
                 z)
-            
+
             if not norm:
                 n = d
             else:
                 n = _Vector(norm)
             vertices.append(_Vertex(c.plus(d), None))
-            
+
         rinout    = [self.pRMin, self.pRMax]
         meshinout = []
 
@@ -88,7 +88,7 @@ class Polycone(_SolidBase) :
                     appendVertex(vertices, k1 * dPhi + self.pSPhi, self.pZpl[j0], r0)
                     appendVertex(vertices, k1 * dPhi + self.pSPhi, self.pZpl[j2], r2)
                     appendVertex(vertices, k0 * dPhi + self.pSPhi, self.pZpl[j2], r2)
-                    
+
                     polygons.append(_Polygon(_dc(vertices)))
 
         for i0 in range(slices):
@@ -101,14 +101,14 @@ class Polycone(_SolidBase) :
                 appendVertex(vertices_t, i2 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMin[-1]+offs)
                 appendVertex(vertices_t, i0 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMin[-1]+offs)
                 appendVertex(vertices_t, i0 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMax[-1]+offs)
-                appendVertex(vertices_t, i2 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMax[-1]+offs)        
+                appendVertex(vertices_t, i2 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMax[-1]+offs)
                 polygons.append(_Polygon(_dc(vertices_t)))
 
             if self.pRMin[0] or self.pRMax[0]:
                 appendVertex(vertices_b, i0 * dPhi + self.pSPhi, self.pZpl[0], self.pRMin[0]+offs)
                 appendVertex(vertices_b, i2 * dPhi + self.pSPhi, self.pZpl[0], self.pRMin[0]+offs)
                 appendVertex(vertices_b, i2 * dPhi + self.pSPhi, self.pZpl[0], self.pRMax[0]+offs)
-                appendVertex(vertices_b, i0 * dPhi + self.pSPhi, self.pZpl[0], self.pRMax[0]+offs)        
+                appendVertex(vertices_b, i0 * dPhi + self.pSPhi, self.pZpl[0], self.pRMax[0]+offs)
                 polygons.append(_Polygon(_dc(vertices_b)))
 
         self.mesh     = _CSG.fromPolygons(polygons)
@@ -116,11 +116,9 @@ class Polycone(_SolidBase) :
     def csgmesh(self):
         wrmax    = 3*max([abs(r) for r in self.pRMax]) #ensure intersection wedge is much bigger than solid
         wzlength = 3*max([abs(z) for z in self.pZpl])
-        
+
         if self.pDPhi != 2*_np.pi:
             pWedge = _Wedge("wedge_temp",wrmax, self.pSPhi, self.pDPhi+self.pSPhi, wzlength).pycsgmesh()
             self.mesh = self.mesh.intersect(pWedge)
 
         return self.mesh
-        
-

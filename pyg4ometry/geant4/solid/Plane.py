@@ -4,13 +4,13 @@ from ...pycsg.geom import Vector as _Vector
 from ..Registry import registry as _registry
 import math as _math
 
-class Plane(_SolidBase) : # point on plane is on z-axis
+class Plane(_SolidBase): # point on plane is on z-axis
     """
     Constructs a *infinite* plane. Should not be used to construct geant4 geometry.
 
-    :param name: of object in registry 
+    :param name: of object in registry
     :type name: str
-    :param normal: normal [x,y,z] 
+    :param normal: normal [x,y,z]
     :type normal: tuple
     :param dist: distance from origin to plane
     :type dist: float

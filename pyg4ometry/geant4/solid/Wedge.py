@@ -11,9 +11,9 @@ class Wedge(_SolidBase):
     """
     Constructs a *infinite* wedge. Should not be used to construct geant4 geometry.
 
-    :param name: of object in registry 
+    :param name: of object in registry
     :type name: str
-    :param normal: normal [x,y,z] 
+    :param normal: normal [x,y,z]
     :type normal: tuple
     :param dist: distance from origin to plane
     :type dist: float
@@ -21,17 +21,17 @@ class Wedge(_SolidBase):
     :type zlength: float
     """
 
-    def __init__(self, name, pRMax = 1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
+    def __init__(self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
         self.name  = name
         self.pRMax = float(pRMax)
         self.pSPhi = float(pSPhi)
         self.pDPhi = float(pDPhi)
         self.pDz   = float(halfzlength)
         self.nslice = 16
-        self.mesh = None 
+        self.mesh = None
 
     def __repr__(self):
-        return 'Wedge : '+self.name+' '+str(self.pRMax)+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pDz) 
+        return 'Wedge : '+self.name+' '+str(self.pRMax)+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pDz)
 
     def pycsgmesh(self):
 
@@ -49,12 +49,12 @@ class Wedge(_SolidBase):
         vZero1 = _Vertex(_Vector(0,0,-d),None)
         vZero2 = _Vertex(_Vector(0,0, d),None)
 
-        p1     = [ _Vertex(_Vector(x[i],y[i],-d),None)  for i in range(0,len(x))]
-        p2     = [ _Vertex(_Vector(x[i],y[i], d),None)  for i in range(0,len(x))]
+        p1     = [_Vertex(_Vector(x[i],y[i],-d),None)  for i in range(0,len(x))]
+        p2     = [_Vertex(_Vector(x[i],y[i], d),None)  for i in range(0,len(x))]
 
 
-        for i in range(0,len(x)) :
-            if i != len(x)-1 :
+        for i in range(0,len(x)):
+            if i != len(x)-1:
                 # top triangle
                 polygons.append(_Polygon([_dc(vZero2),_dc(p2[i]),_dc(p2[i+1])]))
                 # bottom triangle
@@ -71,6 +71,6 @@ class Wedge(_SolidBase):
         self.mesh = _CSG.fromPolygons(polygons)
 
         return self.mesh
- 
+
     def gdmlWrite(self, gw, prepend):
         pass

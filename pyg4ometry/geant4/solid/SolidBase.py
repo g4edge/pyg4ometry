@@ -1,3 +1,3 @@
-class SolidBase(object) :
+class SolidBase(object):
     name = ''
     type = ''

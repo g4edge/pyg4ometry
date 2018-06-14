@@ -11,8 +11,8 @@ from ...pycsg.geom import Plane as _Plane
 from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
-class TwistedBox(_SolidBase, _TwistedSolid) :
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20, refine=0) :
+class TwistedBox(_SolidBase, _TwistedSolid):
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20, refine=0):
         """
         Constructs a box that is twisted through angle 'twistedangle'.
 

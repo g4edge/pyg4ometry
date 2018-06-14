@@ -8,10 +8,10 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 
-class Torus(_SolidBase) :
-    def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi, nslice=16, nstack=16) :
+class Torus(_SolidBase):
+    def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi, nslice=16, nstack=16):
         """
-        Constructs a torus. 
+        Constructs a torus.
 
         Inputs:
           name:   string, name of the volume
@@ -43,14 +43,14 @@ class Torus(_SolidBase) :
 
         return self.mesh
 
-    def basicmesh(self) :
+    def basicmesh(self):
         polygons = []
-        
+
         dTheta  = 2*_np.pi/self.nstack
         dPhi    = 2*_np.pi/self.nslice
         sphi    = self.pSPhi
         stacks  = self.nstack
-        slices  = self.nslice 
+        slices  = self.nslice
 
         def appendVertex(vertices, theta, phi, r):
             c = _Vector([0,0,0])
@@ -59,17 +59,17 @@ class Torus(_SolidBase) :
             y = 0
             x_rot = _np.cos(phi)*x - _np.sin(phi)*y
             y_rot = _np.sin(phi)*x + _np.cos(phi)*y
-            
+
             d = _Vector(
                 x_rot,
                 y_rot,
                 z)
 
             vertices.append(_Vertex(c.plus(d), None))
-            
+
         rinout    = [self.pRmin, self.pRmax]
         self.meshinout = []
-        
+
         for r in rinout:
             for j0 in range(slices):
                 j1 = j0 + 0.5
@@ -101,26 +101,24 @@ class Torus(_SolidBase) :
             mesh      = _CSG.fromPolygons(polygons)
             self.meshinout.append(mesh)
             polygons = []
-            
-        
+
+
         self.mesh = self.meshinout[1]
         return self.mesh
 
 
-    def csgmesh(self) :
+    def csgmesh(self):
         if self.pRmin != 0:
             self.mesh  = self.meshinout[0].subtract(self.meshinout[1])
-        
+
         else:
            self.mesh = self.meshinout[1].inverse()
 
         if self.pDPhi != 2*_np.pi:
             wrmax    = 3*self.pRtor #make sure intersection wedge is much larger than solid
             wzlength = 5*self.pRmax
-            
+
             pWedge = _Wedge("wedge_temp",wrmax, self.pSPhi, self.pDPhi, wzlength).pycsgmesh()
             self.mesh = pWedge.intersect(self.mesh)
 
         return self.mesh
-
-

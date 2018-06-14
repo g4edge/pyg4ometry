@@ -9,24 +9,24 @@ import sys as _sys
 
 import numpy as _np
 
-class Tubs(_SolidBase) :
+class Tubs(_SolidBase):
     """
-    Constructs a cylindrical section. 
+    Constructs a cylindrical section.
 
-    :param name: of object in registry 
+    :param name: of object in registry
     :type name: str
-    :param pRMin: inner radius 
+    :param pRMin: inner radius
     :type pRMin: float
-    :param pRMax: outer radius 
+    :param pRMax: outer radius
     :type pRMax: float
     :param pDz: half-length along z
     :type pDz: float
     :param pSPhi: starting phi angle
     :type pSPhi: float
-    :param pDPhi: angle of segment in phi 
+    :param pDPhi: angle of segment in phi
     :type pDPhi: float
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, nslice=16) :
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, nslice=16):
         self.type  = 'Tubs'
         self.name  = name
         self.pRMin = pRMin
@@ -37,23 +37,23 @@ class Tubs(_SolidBase) :
         self.nslice= nslice
         self.mesh = None
         _registry.addSolid(self)
-        
-    def __repr__(self) : 
+
+    def __repr__(self):
         return 'Tubs : '+self.name+' '+str(self.pRMin)+' '+str(self.pRMax)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
-        
+
     def pycsgmesh(self):
         self.basicmesh()
         self.csgmesh()
 
         return self.mesh
 
-    def basicmesh(self) :
+    def basicmesh(self):
         pDz   = float(self.pDz)
         pRMax = float(self.pRMax)
 
-        self.mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices = self.nslice)
+        self.mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
-    def csgmesh(self) :
+    def csgmesh(self):
 
         pDz   = float(self.pDz)
         pRMax = float(self.pRMax)
@@ -65,9 +65,9 @@ class Tubs(_SolidBase) :
                                 # than the dimensions of the solid
         wrmax    = 3*pRMax
 
-        if pDPhi == 2*_np.pi :
+        if pDPhi == 2*_np.pi:
             pWedge = _Wedge("wedge_temp", wrmax, pSPhi, pSPhi+pDPhi-0.0001, wzlength).pycsgmesh()
-        else :
+        else:
             pWedge = _Wedge("wedge_temp", wrmax, pSPhi, pSPhi+pDPhi, wzlength).pycsgmesh()
 
         # If a solid cylinder then just return the primitive CSG solid.
@@ -80,5 +80,3 @@ class Tubs(_SolidBase) :
             self.mesh = self.mesh.subtract(pWedge.inverse())
 
         return self.mesh
-
-

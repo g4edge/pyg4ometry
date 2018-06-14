@@ -9,7 +9,7 @@ import numpy as _np
 import sys as _sys
 from   copy import deepcopy as _dc
 
-class Sphere(_SolidBase) :
+class Sphere(_SolidBase):
     """
     Constructs a section of a spherical shell.
 
@@ -29,7 +29,7 @@ class Sphere(_SolidBase) :
     :type pDTheta: float
     """
 
-    def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta, pDTheta, nslice = 10, nstack = 10) :
+    def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta, pDTheta, nslice=10, nstack=10):
 
         self.type    = 'Sphere'
         self.name    = name
@@ -64,7 +64,7 @@ class Sphere(_SolidBase) :
         return self.mesh
 
 
-    def csgmesh(self) :
+    def csgmesh(self):
 
         thetaFin = self.pSTheta + self.pDTheta
         phiFin   = self.pSPhi + self.pDPhi

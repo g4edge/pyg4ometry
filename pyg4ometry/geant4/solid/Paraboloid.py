@@ -9,16 +9,16 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class Paraboloid(_SolidBase) :
-    def __init__(self, name, pDz, pR1, pR2, nstack=8, nslice=16) :
+class Paraboloid(_SolidBase):
+    def __init__(self, name, pDz, pR1, pR2, nstack=8, nslice=16):
         """
-        Constructs a paraboloid with possible cuts along the z axis. 
+        Constructs a paraboloid with possible cuts along the z axis.
 
         Inputs:
           name: string, name of the volume
           pDz:  float, half-length along z
           pR1:  float, radius at -Dz
-          pR2:  float, radius at +Dz (R2 > R1)   
+          pR2:  float, radius at +Dz (R2 > R1)
         """
         self.type   = 'Paraboloid'
         self.name   = name
@@ -27,11 +27,11 @@ class Paraboloid(_SolidBase) :
         self.pR2    = pR2
         self.nstack = nstack
         self.nslice = nslice
-        _registry.addSolid(self)        
-    
+        _registry.addSolid(self)
+
     def pycsgmesh(self):
         polygons = []
-        
+
         sz      = -self.pDz
         dz      = 2*self.pDz/self.nstack
         dTheta  = 2*_np.pi/self.nslice
@@ -46,7 +46,7 @@ class Paraboloid(_SolidBase) :
                 rho = _np.sqrt(k1*z+k2)
             else:
                 rho = 0
-                
+
             c = _Vector([0,0,0])
             x = rho*_np.cos(theta)
             y = rho*_np.sin(theta)
@@ -55,7 +55,7 @@ class Paraboloid(_SolidBase) :
                 x,
                 y,
                 z)
-            
+
             if not norm:
                 n = d
             else:
@@ -89,25 +89,23 @@ class Paraboloid(_SolidBase) :
                 appendVertex(verticesE, i2 * dTheta, j0 * dz + sz)
                 appendVertex(verticesE, i2 * dTheta, j2 * dz + sz)
                 polygons.append(_Polygon(verticesE))
-        
+
         for i0 in range(0, slices):
             i1 = i0 + 1
-            
+
             vertices = []
-            
+
             appendVertex(vertices, i0 * dTheta, sz)
-            appendVertex(vertices, 0, sz, k1 = 0) #Setting K1=0 forces a zero vector which is used as the center
+            appendVertex(vertices, 0, sz, k1=0) #Setting K1=0 forces a zero vector which is used as the center
             appendVertex(vertices, i1 * dTheta, sz)
             polygons.append(_Polygon(vertices))
 
             vertices = []
             appendVertex(vertices, i1 * dTheta, stacks * dz + sz)
-            appendVertex(vertices, 0, stacks*dz + sz, k1 = 0)
+            appendVertex(vertices, 0, stacks*dz + sz, k1=0)
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz)
             polygons.append(_Polygon(vertices))
-         
-        self.mesh  = _CSG.fromPolygons(polygons)
-    
-        return self.mesh
 
-    
+        self.mesh  = _CSG.fromPolygons(polygons)
+
+        return self.mesh

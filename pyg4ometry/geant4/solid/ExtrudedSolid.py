@@ -27,7 +27,7 @@ class ExtrudedSolid(_SolidBase):
         self.mesh = None
         _registry.addSolid(self)
 
-    def pycsgmesh(self) :
+    def pycsgmesh(self):
 
 #        if self.mesh :
 #            return self.mesh
@@ -37,7 +37,7 @@ class ExtrudedSolid(_SolidBase):
 
         return self.mesh
 
-    def basicmesh(self) :
+    def basicmesh(self):
         polygons  = []
         polygonsT = []
         polygonsB = []
@@ -46,17 +46,17 @@ class ExtrudedSolid(_SolidBase):
         polygonsB.append(_Polygon([_Vertex(_Vector(self.scale[0]*vert[0]+self.x_offs[0], self.scale[0]*vert[1]+self.y_offs[0],self.zpos[0]),None) for vert in self.vertices]))
 
         polygons.extend(polygonsB)
-        
+
         for l in range(1, self.nslices):
             maxn = len(self.vertices)
-        
+
             for n in range(maxn):
                 n_up = (n+1)%maxn
-                polygons.append(_Polygon([_Vertex(_Vector( self.scale[l]*self.vertices[n][0]+self.x_offs[l], self.scale[l]*self.vertices[n][1]+self.y_offs[l],self.zpos[l]), None),
-                                          _Vertex(_Vector( self.scale[l]*self.vertices[n_up][0]+self.x_offs[l],self.scale[l]*self.vertices[n_up][1]+self.y_offs[l],self.zpos[l]), None),
-                                          _Vertex(_Vector( self.scale[l-1]*self.vertices[n_up][0]+self.x_offs[l-1],self.scale[l-1]*self.vertices[n_up][1]+self.y_offs[l-1],self.zpos[l-1]), None),
-                                          _Vertex(_Vector( self.scale[l-1]*self.vertices[n][0]+self.x_offs[l-1],self.scale[l-1]*self.vertices[n][1]+self.y_offs[l-1],self.zpos[l-1]), None)]))
-            
+                polygons.append(_Polygon([_Vertex(_Vector(self.scale[l]*self.vertices[n][0]+self.x_offs[l], self.scale[l]*self.vertices[n][1]+self.y_offs[l],self.zpos[l]), None),
+                                          _Vertex(_Vector(self.scale[l]*self.vertices[n_up][0]+self.x_offs[l],self.scale[l]*self.vertices[n_up][1]+self.y_offs[l],self.zpos[l]), None),
+                                          _Vertex(_Vector(self.scale[l-1]*self.vertices[n_up][0]+self.x_offs[l-1],self.scale[l-1]*self.vertices[n_up][1]+self.y_offs[l-1],self.zpos[l-1]), None),
+                                          _Vertex(_Vector(self.scale[l-1]*self.vertices[n][0]+self.x_offs[l-1],self.scale[l-1]*self.vertices[n][1]+self.y_offs[l-1],self.zpos[l-1]), None)]))
+
         polygons.extend(polygonsT)
 
         self.mesh = _CSG.fromPolygons(polygons)
@@ -65,4 +65,3 @@ class ExtrudedSolid(_SolidBase):
 
     def csgmesh(self):
         return self.mesh
-
