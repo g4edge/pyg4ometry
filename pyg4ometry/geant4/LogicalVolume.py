@@ -17,7 +17,7 @@ import sys as _sys
 
 class LogicalVolume(object):
     imeshed = 0
-    def __init__(self, solid, material, name, debug=False):
+    def __init__(self, solid, material, name, debug=False, register=True):
         super(LogicalVolume, self).__init__()
         self.solid           = solid
 
@@ -30,7 +30,8 @@ class LogicalVolume(object):
         self.daughterVolumes = [] 
         self.mesh            = None
         self.debug           = debug
-        _registry.addLogicalVolume(self)
+        if register:
+            _registry.addLogicalVolume(self)
 
     def __repr__(self): 
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)

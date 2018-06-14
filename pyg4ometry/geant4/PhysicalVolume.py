@@ -12,7 +12,8 @@ class PhysicalVolume(object):
     '''Geant4 Physical volume class'''
 
     imeshed = 0
-    def __init__(self, rotation, position, logicalVolume, name, motherVolume, scale=[1,1,1], debug=False):
+    def __init__(self, rotation, position, logicalVolume, name,
+                 motherVolume, scale=[1,1,1], debug=False, register=True):
         super(PhysicalVolume, self).__init__()
         self.rotation      = rotation
         self.position      = position
@@ -23,7 +24,8 @@ class PhysicalVolume(object):
         self.mesh          = None
         self.scale         = scale
         self.debug         = debug
-        _registry.addPhysicalVolume(self)
+        if register:
+            _registry.addPhysicalVolume(self)
 
     def __repr__(self): 
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
