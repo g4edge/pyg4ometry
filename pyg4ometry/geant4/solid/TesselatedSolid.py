@@ -9,7 +9,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class TesselatedSolid(_SolidBase):
-    def __init__(self, name, facet_list):
+    def __init__(self, name, facet_list, register=True):
         """
         Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -31,7 +31,8 @@ class TesselatedSolid(_SolidBase):
         self.reduceVertices()
 
         self.mesh              = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def __repr__(self):
         return self.type

@@ -13,7 +13,8 @@ import numpy as _np
 from copy import deepcopy as _dc
 
 class Tet(_SolidBase):
-    def __init__(self, name, anchor, p2, p3, p4, degeneracyFlag=False):
+    def __init__(self, name, anchor, p2, p3, p4,
+                 degeneracyFlag=False, register=True):
         """
         Constructs a tetrahedra.
 
@@ -32,7 +33,8 @@ class Tet(_SolidBase):
         self.p3      = p3
         self.p4      = p4
         self.degen   = degeneracyFlag
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
 
     def pycsgmesh(self):

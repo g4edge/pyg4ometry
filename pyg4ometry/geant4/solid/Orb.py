@@ -9,7 +9,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class Orb(_SolidBase):
-    def __init__(self, name, pRMax):
+    def __init__(self, name, pRMax, register=True):
 
         """
         Constructs a solid sphere.
@@ -21,7 +21,8 @@ class Orb(_SolidBase):
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
         self.mesh = _CSG.sphere(center=[0,0,0], radius=self.pRMax)

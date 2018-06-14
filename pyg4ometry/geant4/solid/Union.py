@@ -12,14 +12,15 @@ class Union(_SolidBase):
     obj2 = solid rotated and translated according to tra2
     tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
-    def __init__(self, name, obj1, obj2, tra2):
+    def __init__(self, name, obj1, obj2, tra2, register=True):
         self.type = "Union"
         self.name = name
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = tra2
         self.mesh = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def __repr__(self):
         return 'Union : ('+str(self.obj1)+') with ('+str(self.obj2)+')'

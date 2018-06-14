@@ -10,7 +10,8 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class EllipticalCone(_SolidBase):
-    def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut, nslice=16, nstack=16):
+    def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
+                 nslice=16, nstack=16, register=True):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -31,7 +32,8 @@ class EllipticalCone(_SolidBase):
         self.nslice     = nslice
         self.nstack     = nslice
         self.checkParameters()
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def checkParameters(self):
         if self.pzTopCut <= 0 or self.pzTopCut > self.zMax:

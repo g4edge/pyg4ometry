@@ -16,7 +16,8 @@ class Trap(_SolidBase):
                  pDy1, pDx1,
                  pDx2, pAlp1,
                  pDy2, pDx3,
-                 pDx4, pAlp2):
+                 pDx4, pAlp2,
+                 register=True):
         """
         Constructs a general trapezoid.
 
@@ -49,7 +50,8 @@ class Trap(_SolidBase):
         self.pDx3    = pDx3
         self.pDx4    = pDx4
         self.pAlp2   = pAlp2
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
 

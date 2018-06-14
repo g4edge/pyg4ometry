@@ -5,7 +5,8 @@ import numpy as _np
 
 
 class Polyhedra(_SolidBase):
-    def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes, zPlane, rInner, rOuter):
+    def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes,
+                 zPlane, rInner, rOuter, register=True):
         """
         Constructs a polyhedra.
 
@@ -30,7 +31,8 @@ class Polyhedra(_SolidBase):
         self.rInner     = rInner
         self.rOuter     = rOuter
         self.mesh = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
         self.basicmesh()

@@ -21,7 +21,8 @@ class Cons(_SolidBase):
         pDPhi:     float, angle of segment in radians
     """
 
-    def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz, pSPhi, pDPhi):
+    def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
+                 pSPhi, pDPhi, register=True):
         self.name = name
         self.type = 'Cons'
         self.pRmin1 = pRmin1
@@ -32,7 +33,8 @@ class Cons(_SolidBase):
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
         self.mesh = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
         self.checkParameters()
 
     def checkParameters(self):

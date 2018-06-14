@@ -10,7 +10,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class EllipticalTube(_SolidBase):
-    def __init__(self, name, pDx, pDy, pDz, nslice=16, nstack=16):
+    def __init__(self, name, pDx, pDy, pDz, nslice=16, nstack=16, register=True):
         """
         Constructs a tube of elliptical cross-section.
 
@@ -27,7 +27,8 @@ class EllipticalTube(_SolidBase):
         self.pDz    = pDz
         self.nslice = nslice
         self.nstack = nstack
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
         polygons = []
