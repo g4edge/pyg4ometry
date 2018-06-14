@@ -22,7 +22,7 @@ def _makeNISTCompoundList():
 
     return nist_compound_list
 
-class Material :
+class Material:
     """
     This class provides an interface to GDML material definitions. Material definitions are.
 
@@ -161,7 +161,7 @@ class Material :
         self.components.append((material, fractionmass, "massfraction"))
         _registry.addMaterial(self)
 
-class Element :
+class Element:
     """
     This class provides an interface to GDML material definitions. Because of the different options for constructing a material instance the constructor is kwarg only.
     Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
@@ -230,7 +230,7 @@ class Element :
 
         self.components.append((isotope, abundance, "abundance"))
 
-class Isotope :
+class Isotope:
     """
     This class that handles isotopes as components of composite materials. An element can be
     defined as a mixture of isotopes.
