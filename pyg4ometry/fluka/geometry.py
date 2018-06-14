@@ -13,9 +13,8 @@ import networkx as nx
 import itertools
 import logging
 
-import pygdml
-import pygdml.transformation as trf
 import pyg4ometry
+import pyg4ometry.transformation as trf
 
 from pyfluka import vector
 
@@ -164,7 +163,7 @@ class Body(object):
             try:
                 extent = self._get_overlap(scale)
                 self._apply_extent(extent)
-            except pygdml.NullMeshError:
+            except pyg4ometry.exceptions.NullMeshError:
                 # In this event, the subtraction is redundant one, so
                 # we can omit it.
                 # Redundant intersections naturally will not raise
@@ -1649,7 +1648,7 @@ class Extent(object):
     def from_world_volume(cls, world_volume):
         """Construct an Extent object from a pygdml (world) volume instance. """
         mesh = world_volume.pycsgmesh()
-        extent = pygdml.volume.pycsg_extent(mesh)
+        extent = pyg4ometry.geant4.mesh_extent(mesh)
         lower = vector.Three(extent[0].x, extent[0].y, extent[0].z)
         upper = vector.Three(extent[1].x, extent[1].y, extent[1].z)
         return cls(lower, upper)
@@ -1709,5 +1708,5 @@ def get_overlap(first, second):
         second = second.evaluate(optimise=True)
     try:
         return first.intersection(second, safety="trim")._extent()
-    except pygdml.NullMeshError:
+    except pyg4ometry.exceptions.NullMeshError:
         return None

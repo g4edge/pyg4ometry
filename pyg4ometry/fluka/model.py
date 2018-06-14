@@ -165,8 +165,7 @@ class Model(object):
         # box.  Either way, get that box, as it determines the extent
         # of our world.
         base_bounding_box = _get_world_volume_box(self._world_volume)
-
-        info_out = {"origin": self._world_volume.origin,
+        info_out = {"origin": self._world_volume.centre,
                     "extent":
                     pyfluka.geometry.Extent.from_gdml_box(base_bounding_box)}
         return info_out
@@ -207,8 +206,8 @@ class Model(object):
             regions, setclip=setclip, optimise=optimise,
             bounding_subtrahends=bounding_subtrahends,
             just_bounding_box=just_bounding_box)
-        viewer = pygdml.VtkViewer()
-        viewer.addSource(world_mesh)
+        viewer = pyg4ometry.vtk.Viewer()
+        viewer.addPycsgMeshList(world_mesh)
         viewer.view()
 
     def _generate_mesh(self, region_names, setclip,
