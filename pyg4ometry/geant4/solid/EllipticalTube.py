@@ -9,16 +9,16 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class EllipticalTube(_SolidBase) :
-    def __init__(self, name, pDx, pDy, pDz, nslice=16, nstack=16) :
+class EllipticalTube(_SolidBase):
+    def __init__(self, name, pDx, pDy, pDz, nslice=16, nstack=16):
         """
-        Constructs a tube of elliptical cross-section. 
+        Constructs a tube of elliptical cross-section.
 
         Inputs:
           name: string, name of the volume
           pDx:  float, half-length in x
           pDy:  float, half-length in y
-          pDz:  float, half-length in z    
+          pDz:  float, half-length in z
         """
         self.type   = 'EllipticalTube'
         self.name   = name
@@ -36,18 +36,18 @@ class EllipticalTube(_SolidBase) :
         dz      = 2*self.pDz/self.nstack
         dTheta  = 2*_np.pi/self.nslice
         stacks  = self.nstack
-        slices  = self.nslice 
+        slices  = self.nslice
 
         def appendVertex(vertices, theta, z, dx=self.pDx, dy=self.pDy, norm=[]):
             c = _Vector([0,0,0])
             x = dx*_np.cos(theta)
             y = dy*_np.sin(theta)
-            
+
             d = _Vector(
                 x,
                 y,
                 z)
-            
+
             if not norm:
                 n = d
             else:
@@ -84,21 +84,20 @@ class EllipticalTube(_SolidBase) :
 
         for i0 in range(0, slices):
             i1 = i0 + 1
-            
+
             vertices = []
-            
+
             appendVertex(vertices, i0 * dTheta, sz, norm=[0,0,1])
-            appendVertex(vertices, 0, sz, dx = 0, dy = 0, norm=[0,0,1])
+            appendVertex(vertices, 0, sz, dx=0, dy=0, norm=[0,0,1])
             appendVertex(vertices, i1 * dTheta, sz, norm=[0,0,1])
             polygons.append(_Polygon(vertices))
 
             vertices = []
             appendVertex(vertices, i1 * dTheta, stacks * dz + sz, norm=[0,0,-1])
-            appendVertex(vertices, 0, slices*dz + sz, dx = 0, dy = 0, norm=[0,0,-1])
+            appendVertex(vertices, 0, slices*dz + sz, dx=0, dy=0, norm=[0,0,-1])
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz, norm=[0,0,-1])
             polygons.append(_Polygon(vertices))
-            
+
         self.mesh  = _CSG.fromPolygons(polygons)
-    
+
         return self.mesh
-    

@@ -9,10 +9,10 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 from copy import deepcopy as _dc
 
-class GenericPolycone(_SolidBase) :
-    def __init__(self, name, pSPhi, pDPhi, pNSide, pNRZ, pR, pZ, nslice=16, register=True) :
+class GenericPolycone(_SolidBase):
+    def __init__(self, name, pSPhi, pDPhi, pNSide, pNRZ, pR, pZ, nslice=16, register=True):
         """
-        Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates. 
+        Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
 
         Inputs:
         name = name
@@ -39,7 +39,7 @@ class GenericPolycone(_SolidBase) :
         polygons = []
         polygonsT = []
         polygonsB = []
-		
+
         anglerange=self.pDPhi-self.pSPhi
         dPhi  = 2*_np.pi/self.nslice
         stacks  = self.pNRZ
@@ -49,7 +49,7 @@ class GenericPolycone(_SolidBase) :
             c = _Vector([0,0,0])
             x = r*_np.cos(theta)
             y = r*_np.sin(theta)
-            
+
             d = _Vector(
                 x,
                 y,
@@ -62,29 +62,29 @@ class GenericPolycone(_SolidBase) :
             c = _Vector([0,0,0])
             x = r*_np.cos(theta)
             y = r*_np.sin(theta)
-            
+
             d = _Vector(
                 x,
                 y,
                 z)
-            
+
             if not norm:
                 n = d
             else:
                 n = _Vector(norm)
             vertices.append(_Vertex(c.plus(d), None))
-        
+
 		#Bottom
         verticesB = []
         for i in range(self.pNRZ):
-            appendVertex(verticesB,self.pSPhi,self.pZ[i],self.pR[i])        
+            appendVertex(verticesB,self.pSPhi,self.pZ[i],self.pR[i])
         polygons.append(_Polygon(verticesB))
-        
+
 	    #Top
         verticesT = []
         for i in range(self.pNRZ):
             appendVertex(verticesT,self.pDPhi,self.pZ[i],self.pR[i])
-		
+
 		#Midsection
         for l in range(1, slices+1):
             maxn = self.pNRZ

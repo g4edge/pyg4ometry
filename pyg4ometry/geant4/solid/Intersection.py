@@ -6,7 +6,7 @@ from ...transformation import *
 import copy as _copy
 import pyg4ometry.exceptions
 
-class Intersection(_SolidBase) :
+class Intersection(_SolidBase):
     """
     name = name
     obj1 = unrotated, untranslated solid

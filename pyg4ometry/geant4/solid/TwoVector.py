@@ -30,7 +30,7 @@ class TwoVector(object):
             return TwoVector(self.x + other, self.y + other)
         else:
             raise ValueError("unsupported type " + str(type(other)))
-    
+
     def __sub__(self, other):
         if type(other) == TwoVector:
             return TwoVector(self.x - other.x, self.y - other.y)
@@ -38,7 +38,7 @@ class TwoVector(object):
             return TwoVector(self.x - other, self.y - other)
         else:
             raise ValueError("unsupported type " + str(type(other)))
-              
+
     def __mul__(self, other):
         if type(other) == float or type(other) == int:
             return TwoVector(self.x * other, self.y * other)
@@ -47,7 +47,7 @@ class TwoVector(object):
 
     def __rmul__(self, other):
         return self.__mul__(other)
-              
+
     def __div__(self, other):
         if type(other) == float or type(other) == int:
             return TwoVector(self.x / other, self.y / other)
@@ -67,6 +67,3 @@ class TwoVector(object):
         if type(other) == TwoVector:
             z = self.x * other.y - self.y * other.x
             return _np.array([0,0,z])
-
-    
-            

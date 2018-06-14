@@ -8,8 +8,8 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class TesselatedSolid(_SolidBase) :
-    def __init__(self, name, facet_list) :
+class TesselatedSolid(_SolidBase):
+    def __init__(self, name, facet_list):
         """
         Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -68,7 +68,7 @@ class TesselatedSolid(_SolidBase) :
 
         return self.mesh
 
-    def basicmesh(self) :
+    def basicmesh(self):
         def xyz2Vertex(xyztup, normal):
             return _Vertex(_Vector(xyztup), None)
 

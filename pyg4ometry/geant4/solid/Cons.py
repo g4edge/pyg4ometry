@@ -82,11 +82,11 @@ class Cons(_SolidBase):
 
     def csgmesh(self):
 
-        
+
         # ensure radius for intersection wedge is much bigger than solid
         wrmax = 3 * (self.pRmax1 + self.pRmax2)
         # ensure the plane is large enough to cut cone correctly. Extroplates the z intersect using two points.
-        wzlength = abs((self.pRmax2*((2*self.pDz)/(self.pRmax2 - self.pRmax1))) + self.pDz)   
+        wzlength = abs((self.pRmax2*((2*self.pDz)/(self.pRmax2 - self.pRmax1))) + self.pDz)
 
         if self.pDPhi != 2 * _np.pi:
             pWedge = _Wedge("wedge_temp", wrmax, self.pSPhi, self.pSPhi + self.pDPhi, wzlength).pycsgmesh()

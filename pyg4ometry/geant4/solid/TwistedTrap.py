@@ -10,8 +10,8 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class TwistedTrap(_SolidBase, _TwistedSolid) :
-    def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1, pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, nslice=20) :
+class TwistedTrap(_SolidBase, _TwistedSolid):
+    def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1, pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, nslice=20):
         """
         Constructs a general trapezoid with a twist around one axis.
 

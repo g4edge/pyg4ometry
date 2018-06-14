@@ -10,8 +10,8 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class Hype(_SolidBase) :
-    def __init__(self, name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, nslice=16, nstack=16) :
+class Hype(_SolidBase):
+    def __init__(self, name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, nslice=16, nstack=16):
         """
         Constructs a tube with hyperbolic profile.
 
@@ -111,7 +111,7 @@ class Hype(_SolidBase) :
             topNorm      = _Vector(0,0,1)
             botNorm      = _Vector(0,0,-1)
             pTopCut      = _Plane("pTopCut", topNorm, self.halfLenZ, wzlength).pycsgmesh()
-            pBottomCut   = _Plane("pBottomCut" , botNorm, -self.halfLenZ, wzlength).pycsgmesh()
+            pBottomCut   = _Plane("pBottomCut", botNorm, -self.halfLenZ, wzlength).pycsgmesh()
             meshinout[i] = meshinout[i].subtract(pTopCut).subtract(pBottomCut)
 
         if self.innerRadius:

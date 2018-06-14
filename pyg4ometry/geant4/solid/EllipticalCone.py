@@ -9,8 +9,8 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class EllipticalCone(_SolidBase) :
-    def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut, nslice=16, nstack=16) :
+class EllipticalCone(_SolidBase):
+    def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut, nslice=16, nstack=16):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -98,13 +98,13 @@ class EllipticalCone(_SolidBase) :
             vertices = []
 
             appendVertex(vertices, i0 * dTheta, sz, norm=[0,0,1])
-            appendVertex(vertices, 0, sz, dx = 0, dy = 0, norm=[0,0,1])
+            appendVertex(vertices, 0, sz, dx=0, dy=0, norm=[0,0,1])
             appendVertex(vertices, i1 * dTheta, sz, norm=[0,0,1])
             polygons.append(_Polygon(vertices))
 
             vertices = []
             appendVertex(vertices, i1 * dTheta, stacks * dz + sz, norm=[0,0,-1])
-            appendVertex(vertices, 0, slices*dz + sz, dx = 0, dy = 0, norm=[0,0,-1])
+            appendVertex(vertices, 0, slices*dz + sz, dx=0, dy=0, norm=[0,0,-1])
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz, norm=[0,0,-1])
             polygons.append(_Polygon(vertices))
 

@@ -12,12 +12,12 @@ class Orb(_SolidBase):
     def __init__(self, name, pRMax):
 
         """
-        Constructs a solid sphere. 
-    
+        Constructs a solid sphere.
+
         Inputs:
            name:     string, name of the volume
            pRMax:    float, outer radius
-        """   
+        """
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax

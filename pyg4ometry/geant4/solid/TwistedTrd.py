@@ -10,8 +10,8 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class TwistedTrd(_SolidBase, _TwistedSolid) :
-    def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2, pDz, nslice=20, refine=0) :
+class TwistedTrd(_SolidBase, _TwistedSolid):
+    def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2, pDz, nslice=20, refine=0):
         """
         Constructs a twisted general trapezoid.
 

@@ -34,12 +34,12 @@ class TwistedSolid(object):
             plr = pal + float(i+1)   * (pbl - pal) / nsl
             pul = pau + float(i)     * (pbu - pau) / nsl
             pur = pau + float(i+1)   * (pbu - pau) / nsl
-        
+
             pol1 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl), None),
                              _Vertex(_Vector(pul.x, pul.y, zu), None),
                              _Vertex(_Vector(pur.x, pur.y, zu), None)])
             pols.append(pol1)
-            
+
             pol2 = _Polygon([_Vertex(_Vector(plr.x, plr.y, zl), None),
                              _Vertex(_Vector(pll.x, pll.y, zl), None),
                              _Vertex(_Vector(pur.x, pur.y, zu), None)])
@@ -50,15 +50,15 @@ class TwistedSolid(object):
         l = layers #shortcut
         allPolygons = []
         polyTop = []
-        polyBottom = []      
+        polyBottom = []
 
         bottom = self.makeFaceFromLayer(l[-1])
         allPolygons.append(bottom)
-        
+
         for zi in range(len(l) - 1):
             ll = l[zi]
             ul = l[zi + 1]
-            
+
             pols = self.makeSide(ll.p1, ll.p2, ul.p1, ul.p2, ll.z, ul.z, nsl)
             allPolygons.extend(pols)
 
@@ -70,11 +70,11 @@ class TwistedSolid(object):
 
             pols = self.makeSide(ll.p4, ll.p1, ul.p4, ul.p1, ll.z, ul.z, nsl)
             allPolygons.extend(pols)
-        
+
         top = self.makeFaceFromLayer(l[0])
         allPolygons.append(top)
-        
+
         self.mesh = _CSG.fromPolygons(allPolygons)
-        
+
 
         return self.mesh
