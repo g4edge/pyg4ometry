@@ -14,7 +14,7 @@ import numpy as _np
 class TwistedBox(_SolidBase, _TwistedSolid) :
     def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20, refine=0) :
         """
-        Constructs a box that is twisted through angle 'twistedangle'. 
+        Constructs a box that is twisted through angle 'twistedangle'.
 
         Inputs:
           name:         string, name of the volume
@@ -33,8 +33,8 @@ class TwistedBox(_SolidBase, _TwistedSolid) :
         self.pDz          = pDz
         self.nslice       = nslice
         self.refine       = refine
-        _registry.addSolid(self)
         self.checkParameters()
+        _registry.addSolid(self)
 
     def checkParameters(self):
         if self.twistedAngle > _np.pi:
@@ -47,11 +47,11 @@ class TwistedBox(_SolidBase, _TwistedSolid) :
         z = -pDz
 
         layers = []
-        
+
         bottom = _Layer(p1,p2,p3,p4, z)
         bottom = bottom.Rotated(-theta*0.5) #overwrite
         layers.append(bottom)
-        
+
         for i in range(nslice):
             l = layers[-1].Rotated(dtheta) # returns rotated copy
             z += dz # increment z
@@ -59,7 +59,7 @@ class TwistedBox(_SolidBase, _TwistedSolid) :
             layers.append(l)
 
         return layers
-        
+
     def pycsgmesh(self):
         p1 = _TwoVector(-self.pDx, -self.pDy)#, self.pDz]
         p2 = _TwoVector(self.pDx, -self.pDy) # self.pDz]
