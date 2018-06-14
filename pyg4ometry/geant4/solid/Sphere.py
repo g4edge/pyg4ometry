@@ -11,9 +11,9 @@ from   copy import deepcopy as _dc
 
 class Sphere(_SolidBase) :
     """
-    Constructs a section of a spherical shell. 
+    Constructs a section of a spherical shell.
 
-    :param name: of object in registry 
+    :param name: of object in registry
     :type name: str
     :param pRmin: inner radius of the shell
     :type pRmin: float
@@ -42,8 +42,8 @@ class Sphere(_SolidBase) :
         self.nslice  = nslice
         self.nstack  = nstack
         self.mesh    = None
-        _registry.addSolid(self)
         self.checkParameters()
+        _registry.addSolid(self)
 
     def checkParameters(self):
         if self.pRmin > self.pRmax:
@@ -52,10 +52,10 @@ class Sphere(_SolidBase) :
             raise ValueError("pDTheta must be less than pi")
         if self.pDPhi > _np.pi*2:
             raise ValueError("pDPhi must be less than 2 pi")
-        
+
     def __repr__(self):
         return 'Sphere : '+self.name+' '+str(self.pRmin)+' '+str(self.pRmax)+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pSTheta)+' '+str(self.pDTheta)+' '+str(self.nslice)+' '+str(self.nstack)
-    
+
     def pycsgmesh(self):
 
         #Called as a csgmesh for profiling
@@ -76,7 +76,7 @@ class Sphere(_SolidBase) :
             mesh_inner = _CSG.sphere(radius=self.pRmin, slices=self.nslice, stacks=self.nstack)
             self.mesh = self.mesh.subtract(mesh_inner)
 
-            
+
         #Theta change: allows for different theta angles, using primtives: cube and cone.
         if thetaFin == _np.pi/2.:
             mesh_box = _CSG.cube(center=[0,0,1.1*self.pRmax], radius=1.1*self.pRmax)
@@ -98,10 +98,10 @@ class Sphere(_SolidBase) :
             mesh_upper2 = _CSG.cone(start=[0,0,2*self.pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(self.pSTheta))
             self.mesh = self.mesh.subtract(mesh_upper2)
 
-            
+
         #Phi change: allows for different theta angles, using the Wedge solid class
         if phiFin < 2*_np.pi:
             mesh_wedge = _Wedge("wedge_temp", 2*self.pRmax, self.pSPhi, self.pDPhi, 3*self.pRmax).pycsgmesh()
             self.mesh = self.mesh.intersect(mesh_wedge)
-        
+
         return self.mesh

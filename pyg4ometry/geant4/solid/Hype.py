@@ -13,7 +13,7 @@ import numpy as _np
 class Hype(_SolidBase) :
     def __init__(self, name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, nslice=16, nstack=16) :
         """
-        Constructs a tube with hyperbolic profile. 
+        Constructs a tube with hyperbolic profile.
 
         Inputs:
           name:        string, name of the volume
@@ -32,7 +32,8 @@ class Hype(_SolidBase) :
         self.halfLenZ    = halfLenZ
         self.nslice      = nslice
         self.nstack      = nstack
-        _registry.addSolid(self)        
+        self.checkParameters()
+        _registry.addSolid(self)
 
     def checkParameters(self):
         if self.innerRadius > self.outerRadius:
@@ -55,12 +56,12 @@ class Hype(_SolidBase) :
             y     = 0
             x_rot = _np.cos(theta)*x - _np.sin(theta)*y
             y_rot = _np.sin(theta)*x + _np.cos(theta)*y
-            
+
             d = _Vector(
                 x_rot,
                 y_rot,
                 z)
-            
+
             if norm == 0:
                 n = None
             if norm == 1:
@@ -69,7 +70,7 @@ class Hype(_SolidBase) :
                 n = d.negated()
 
             vertices.append(_Vertex(c.plus(d), n))
-            
+
         meshinout = []
         for i in range(len(rinout)):
             for j0 in range(stacks):
@@ -77,7 +78,7 @@ class Hype(_SolidBase) :
                 j2 = j0 + 1
                 for i0 in range(slices):
                     nrm = 0
-                    
+
                     i1 = i0 + 0.5
                     i2 = i0 + 1
                     verticesN = []
@@ -104,7 +105,7 @@ class Hype(_SolidBase) :
             mesh      = _CSG.fromPolygons(polygons)
             meshinout.append(mesh)
             polygons = []
-        
+
         for i in range(len(meshinout)):
             wzlength     = 3*self.halfLenZ
             topNorm      = _Vector(0,0,1)
@@ -112,10 +113,10 @@ class Hype(_SolidBase) :
             pTopCut      = _Plane("pTopCut", topNorm, self.halfLenZ, wzlength).pycsgmesh()
             pBottomCut   = _Plane("pBottomCut" , botNorm, -self.halfLenZ, wzlength).pycsgmesh()
             meshinout[i] = meshinout[i].subtract(pTopCut).subtract(pBottomCut)
-        
+
         if self.innerRadius:
             self.mesh = meshinout[1].subtract(meshinout[0])
         else:
             self.mesh = meshinout[0]
-        
+
         return self.mesh

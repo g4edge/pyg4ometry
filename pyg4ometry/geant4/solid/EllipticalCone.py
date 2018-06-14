@@ -12,7 +12,7 @@ import numpy as _np
 class EllipticalCone(_SolidBase) :
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut, nslice=16, nstack=16) :
         """
-        Constructs a cone with elliptical cross-section. 
+        Constructs a cone with elliptical cross-section.
 
         Inputs:
           name:       string, name of the volume
@@ -21,7 +21,7 @@ class EllipticalCone(_SolidBase) :
           zMax:       float, height of cone
           pzTopCut:   float, z-position of upper
         """
-        
+
         self.type       = 'EllipticalCone'
         self.name       = name
         self.pxSemiAxis = pxSemiAxis
@@ -30,13 +30,13 @@ class EllipticalCone(_SolidBase) :
         self.pzTopCut   = pzTopCut
         self.nslice     = nslice
         self.nstack     = nslice
-        _registry.addSolid(self)
         self.checkParameters()
+        _registry.addSolid(self)
 
     def checkParameters(self):
         if self.pzTopCut <= 0 or self.pzTopCut > self.zMax:
             raise ValueError("zMax must be greater than pzTopCut")
-        
+
     def pycsgmesh(self):
         polygons = []
 
@@ -94,9 +94,9 @@ class EllipticalCone(_SolidBase) :
 
         for i0 in range(0, slices):
             i1 = i0 + 1
-            
+
             vertices = []
-            
+
             appendVertex(vertices, i0 * dTheta, sz, norm=[0,0,1])
             appendVertex(vertices, 0, sz, dx = 0, dy = 0, norm=[0,0,1])
             appendVertex(vertices, i1 * dTheta, sz, norm=[0,0,1])
@@ -107,7 +107,7 @@ class EllipticalCone(_SolidBase) :
             appendVertex(vertices, 0, slices*dz + sz, dx = 0, dy = 0, norm=[0,0,-1])
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz, norm=[0,0,-1])
             polygons.append(_Polygon(vertices))
-            
+
         self.mesh  = _CSG.fromPolygons(polygons)
 
         return self.mesh
