@@ -17,7 +17,7 @@ import sys as _sys
 
 class LogicalVolume(object):
     imeshed = 0
-    def __init__(self, solid, material, name, debug= False):
+    def __init__(self, solid, material, name, debug=False):
         super(LogicalVolume, self).__init__()
         self.solid           = solid
 
@@ -32,34 +32,34 @@ class LogicalVolume(object):
         self.debug           = debug
         _registry.addLogicalVolume(self)
 
-    def __repr__(self) : 
+    def __repr__(self): 
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
     
-    def pycsgmesh(self) :
+    def pycsgmesh(self):
         # count the logical volumes meshed
         LogicalVolume.imeshed = LogicalVolume.imeshed + 1
-        if self.debug :
+        if self.debug:
             print 'LogicalVolume mesh count',LogicalVolume.imeshed
 
         #if self.mesh :
         #    return self.mesh
 
         # see if the volume should be skipped
-        try :
+        try:
             _registry.logicalVolumeMeshSkip.index(self.name)
-            if self.debug :
+            if self.debug:
                 print "Logical volume skipping ---------------------------------------- ",self.name
             return []
-        except ValueError :
+        except ValueError:
             pass
 
-        if len(self.daughterVolumes) == 0 :
+        if len(self.daughterVolumes) == 0:
             self.mesh = [self.solid.pycsgmesh()]
             self.mesh[0].alpha     = 0.5
             self.mesh[0].wireframe = False
             self.mesh[0].colour    = [1,1,1]
 
-        else :
+        else:
             daughterMeshes = []
             for dv in self.daughterVolumes:
                 dvMesh = dv.pycsgmesh()
@@ -71,11 +71,11 @@ class LogicalVolume(object):
             self.mesh[0].colour    = [1,0,0]
             self.mesh[0].logical   = True
 
-        if self.debug :
+        if self.debug:
             print 'logical mesh', self.name
         return self.mesh
 
-    def add(self, physicalVolume) :
+    def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
 
     def getSize(self):
@@ -93,7 +93,7 @@ class LogicalVolume(object):
         if tolerance != None:
             size += 2*tolerance
         self.setSize(size)
-        if centre : 
+        if centre: 
             print 'Not centering'
             self.setCentre(centre)
 
@@ -105,11 +105,11 @@ class LogicalVolume(object):
                                                       _Parameter("GDML_Size_position_z",size[2])])
 
 
-        if isinstance(self.solid,_solid.Box) :
+        if isinstance(self.solid,_solid.Box):
             self.solid.pX = sizeParameter[0] / 2.
             self.solid.pY = sizeParameter[1] / 2.
             self.solid.pZ = sizeParameter[2] / 2.
-        elif isinstance(self.solid,_solid.Subtraction) :
+        elif isinstance(self.solid,_solid.Subtraction):
             self.solid.obj1.pX = size[0] / 2.
             self.solid.obj1.pY = size[1] / 2.
             self.solid.obj1.pZ = size[2] / 2.
@@ -122,12 +122,12 @@ class LogicalVolume(object):
                                                           _Parameter("GDML_Centre_position_y",centre[1]),
                                                           _Parameter("GDML_Centre_position_z",centre[2])])
         for dv in self.daughterVolumes:
-            if isinstance(dv.position,_ParameterVector) :
+            if isinstance(dv.position,_ParameterVector):
                 dv.position = _ParameterVector(dv.name+"_position",
                                         [dv.position[0]-centreParameter[0],
                                          dv.position[1]-centreParameter[1],
                                          dv.position[2]-centreParameter[2]],True)
-            else :
+            else:
                 dv.position = _ParameterVector(dv.name+"_position",
                                         [_Parameter(dv.name+"_position_x",dv.position[0])-centreParameter[0],
                                          _Parameter(dv.name+"_position_y",dv.position[1])-centreParameter[1],
@@ -137,7 +137,7 @@ class LogicalVolume(object):
         if isinstance(self.solid, _solid.Subtraction):
             self.solid.tra2[1] = self.solid.tra2[1] - _np.array(self.centre)
 
-    def gdmlWrite(self, gw, prepend) :
+    def gdmlWrite(self, gw, prepend):
         we = gw.doc.createElement('volume')
         we.setAttribute('name',prepend+'_'+self.name+'_lv')
         mr = gw.doc.createElement('materialref')
@@ -153,39 +153,39 @@ class LogicalVolume(object):
         sr.setAttribute('ref',prepend+'_'+self.solid.name)
         we.appendChild(sr)
         
-        for dv in self.daughterVolumes : 
+        for dv in self.daughterVolumes: 
             dve = dv.gdmlWrite(gw,prepend)
             we.appendChild(dve)
 
         gw.structure.appendChild(we)
 
-def mesh_extent(nlist) :
+def mesh_extent(nlist):
     '''Function to determine extent of an tree of meshes'''
 
     vMin = _Vector([1e50,1e50,1e50])
     vMax = _Vector([-1e50,-1e50,-1e50])
 
-    for m in _flatten(nlist) :
+    for m in _flatten(nlist):
         polys = m.toPolygons()
-        for p in polys :
-            for vert in p.vertices :
+        for p in polys:
+            for vert in p.vertices:
                 v = vert.pos
-                if v[0] < vMin[0] :
+                if v[0] < vMin[0]:
                     vMin[0] = v[0]
-                if v[1] < vMin[1] :
+                if v[1] < vMin[1]:
                     vMin[1] = v[1]
-                if v[2] < vMin[2] :
+                if v[2] < vMin[2]:
                     vMin[2] = v[2]
-                if v[0] > vMax[0] :
+                if v[0] > vMax[0]:
                     vMax[0] = v[0]
-                if v[1] > vMax[1] :
+                if v[1] > vMax[1]:
                     vMax[1] = v[1]
-                if v[2] > vMax[2] :
+                if v[2] > vMax[2]:
                     vMax[2] = v[2]
 
     return [vMin,vMax]
 
-def pycsg_overlap(meshTree, worldVolumeIncluded=True) :
+def pycsg_overlap(meshTree, worldVolumeIncluded=True):
     '''Function to determine if there overlaps of meshes.
        If the mesh list is generated by recursively meshing the world volume,
        the first mesh in the list (the world box) is ignored as it overlaps with
@@ -196,15 +196,15 @@ def pycsg_overlap(meshTree, worldVolumeIncluded=True) :
     # count number of meshes and make flat list
     imesh = 0
     mfl   = [] # mesh flat list
-    for m in _flatten(meshTree) :
+    for m in _flatten(meshTree):
         print m
         mfl.append(m)
         imesh += 1
 
     startpoint = int(worldVolumeIncluded)
     # loop over meshes and determine intersection, if intersect append to intersecting mesh list
-    for i in range(startpoint, imesh) :
-        for j in range(i+1,imesh) :
+    for i in range(startpoint, imesh):
+        for j in range(i+1,imesh):
             m1 = mfl[i]
             m2 = mfl[j]
 
