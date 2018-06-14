@@ -66,22 +66,6 @@ class Body(object):
     get_body_as_gdml_solid() returns the body as a pyg4ometry.geant4.solid
 
     """
-    # The _is_omittable flag is set internally for a body if the body
-    # is found to be omittable.  An ommittable body is one which can
-    # be omitted without impacting the resulting boolean in any way.
-    # This is True in two scenarios:
-    # - Subtracting a body which doesn't overlap with what it is being
-    # subtracted from.
-    # - Intersecting a solid which completely overlaps with what it is
-    # intersecting.
-    # This flag should only be set when checking overlaps with the
-    # /known/ resulting mesh for a given zone, either at _get_overlap,
-    # when a redundant subtraction will be flagged via the
-    # NullMeshError exception, or at _apply_extent, when any redundant
-    # intersections can flagged up (in principle so could redundant
-    # subtractions, but they will surely have already been caught when
-    # _get_overlap is called).
-    _is_omittable = False
 
     def __init__(self, name, parameters, translation=None, transformation=None):
         self.name = name
@@ -89,6 +73,22 @@ class Body(object):
         self.transformation = transformation
         self._set_parameters(parameters)
         self._set_rotation_matrix(transformation)
+        # The _is_omittable flag is set internally for a body if the body
+        # is found to be omittable.  An ommittable body is one which can
+        # be omitted without impacting the resulting boolean in any way.
+        # This is True in two scenarios:
+        # - Subtracting a body which doesn't overlap with what it is being
+        # subtracted from.
+        # - Intersecting a solid which completely overlaps with what it is
+        # intersecting.
+        # This flag should only be set when checking overlaps with the
+        # /known/ resulting mesh for a given zone, either at _get_overlap,
+        # when a redundant subtraction will be flagged via the
+        # NullMeshError exception, or at _apply_extent, when any redundant
+        # intersections can flagged up (in principle so could redundant
+        # subtractions, but they will surely have already been caught when
+        # _get_overlap is called).
+        self._is_omittable = False
 
     def to_fluka_string(self):
         body_type = type(self).__name__
