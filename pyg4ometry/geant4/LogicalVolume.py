@@ -32,6 +32,7 @@ class LogicalVolume(object):
         self.debug           = debug
         if register:
             _registry.addLogicalVolume(self)
+        self._register = register
 
     def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
@@ -45,14 +46,16 @@ class LogicalVolume(object):
         #if self.mesh :
         #    return self.mesh
 
-        # see if the volume should be skipped
-        try:
-            _registry.logicalVolumeMeshSkip.index(self.name)
-            if self.debug:
-                print "Logical volume skipping ---------------------------------------- ",self.name
-            return []
-        except ValueError:
-            pass
+        # see if the volume should be skipped, but only if we registed
+        # this volume in the first place.
+        if self._register:
+            try:
+                _registry.logicalVolumeMeshSkip.index(self.name)
+                if self.debug:
+                    print "Logical volume skipping --------------", self.name
+                return []
+            except ValueError:
+                pass
 
         if len(self.daughterVolumes) == 0:
             self.mesh = [self.solid.pycsgmesh()]

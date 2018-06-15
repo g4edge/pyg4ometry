@@ -26,6 +26,7 @@ class PhysicalVolume(object):
         self.debug         = debug
         if register:
             _registry.addPhysicalVolume(self)
+        self._register = register
 
     def __repr__(self):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
@@ -39,22 +40,38 @@ class PhysicalVolume(object):
         #if self.mesh :
         #    return self.mesh
 
-        # see if the volume should be skipped
-        try:
-            _registry.logicalVolumeMeshSkip.index(self.logicalVolume.name)
-            if self.debug:
-                print "Physical volume skipping ---------------------------------------- ",self.name
-            return []
-        except ValueError:
-            if list(self.position) == [0,0,0] and list(self.rotation) == [0,0,0]:
+        if self.logicalVolume._register: # if lv has been registered.
+            # see if the volume should be skipped
+            try:
+                _registry.logicalVolumeMeshSkip.index(self.logicalVolume.name)
+                if self.debug:
+                    print "Physical volume skipping ---------------------------------------- ",self.name
+                return []
+            except ValueError:
+                if list(self.position) == [0,0,0] and list(self.rotation) == [0,0,0]:
+                    self.mesh = self.logicalVolume.pycsgmesh()
+                else:
+                    lvmesh = self.logicalVolume.pycsgmesh()
+                    self.mesh = _copy.deepcopy(lvmesh)
+
+                    # Mesh is only placed once remove the logical mesh as it will not be used again
+                    if _registry.logicalVolumeUsageCountDict[self.logicalVolume.name] == 1:
+                        self.logicalVolume.mesh = None
+        else:
+            # This means that if the pv has no position and rotation
+            # then it is by definition identical to the mesh of the
+            # corresponding logical volume.  I think this should also
+            # really check on self.scale, but not sure.
+            if (list(self.position) == [0, 0, 0]
+                and list(self.rotation) == [0, 0, 0]):
                 self.mesh = self.logicalVolume.pycsgmesh()
-            else:
+            else: # deep copy the lv mesh so that when you do rotate
+                # the pv's mesh, you don't also rotate the parent lv's
+                # mesh?  I think.
                 lvmesh = self.logicalVolume.pycsgmesh()
                 self.mesh = _copy.deepcopy(lvmesh)
 
-                # Mesh is only placed once remove the logical mesh as it will not be used again
-                if _registry.logicalVolumeUsageCountDict[self.logicalVolume.name] == 1:
-                    self.logicalVolume.mesh = None
+
 
         # loop over daughter meshes
         recursize_map_rottrans(self.mesh,list(self.position),tbxyz(list(self.rotation)),list(self.scale))
