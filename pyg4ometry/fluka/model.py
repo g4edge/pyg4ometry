@@ -14,7 +14,7 @@ import itertools
 
 import numpy as np
 import antlr4
-import pygdml
+import pyg4ometry
 
 import pyfluka.geometry
 import pyfluka.vector
@@ -84,7 +84,7 @@ class Model(object):
                 region.material = fluka_material
 
         # Initialiser the world volume:
-        self._world_volume = _gdml_world_volume()
+        self._world_volume = pyfluka.geometry._gdml_world_volume(register=True)
 
     def _regions_from_tree(self, tree):
         """Get the region definitions from the tree.  Called in the
@@ -142,7 +142,7 @@ class Model(object):
                             optimise=optimise,
                             bounding_subtrahends=bounding_subtrahends,
                             just_bounding_box=just_bounding_box,
-                            survey=survey)
+                            survey=survey, register=True)
         # If no path to write to provided, then generate one
         # automatically based on input file name.
         if out_path is None:
@@ -151,9 +151,9 @@ class Model(object):
                         + ".gdml")
         elif os.path.splitext(out_path)[1] != "gdml":
             out_path = os.path.splitext(out_path)[0] + ".gdml"
-
-        out = pygdml.Gdml()
-        out.add(self._world_volume)
+        pyg4ometry.geant4.registry.setWorld(self._world_volume.name)
+        out = pyg4ometry.gdml.Writer()
+        out.addDetector(pyg4ometry.geant4.registry)
         out.write(out_path)
         self._print_bounding_extent()
         print("Written GDML file: {}".format(out_path))
@@ -205,15 +205,14 @@ class Model(object):
         world_mesh = self._generate_mesh(
             regions, setclip=setclip, optimise=optimise,
             bounding_subtrahends=bounding_subtrahends,
-            just_bounding_box=just_bounding_box)
+            just_bounding_box=just_bounding_box, register=False)
         viewer = pyg4ometry.vtk.Viewer()
         viewer.addPycsgMeshList(world_mesh)
         viewer.view()
 
     def _generate_mesh(self, region_names, setclip,
                        optimise, bounding_subtrahends,
-                       just_bounding_box=False,
-                       survey=None):
+                       register, just_bounding_box=False, survey=None):
         """This function has the side effect of recreating the world volume if
         the region_names requested are different to the ones already
         assigned to it and returns the relevant mesh.
@@ -223,7 +222,10 @@ class Model(object):
         visualisation.
 
         """
-        self._add_regions_to_world_volume(region_names, optimise, survey)
+        self._add_regions_to_world_volume(regions=region_names,
+                                          optimise=optimise,
+                                          survey=survey,
+                                          register=register)
         # If we are subtracting from the world box
         if bounding_subtrahends:
             self._subtract_from_world_volume(bounding_subtrahends)
@@ -313,7 +315,7 @@ class Model(object):
     def _clip_world_volume(self):
         self._world_volume.setClip()
 
-    def _add_regions_to_world_volume(self, regions, optimise, survey=None):
+    def _add_regions_to_world_volume(self, regions, optimise, register, survey):
         """Add the region or regions in region_names to the current
         world volume (self._world_volume).
 
@@ -327,7 +329,9 @@ class Model(object):
         regions as separate volumes, to ensure well-formed G4 geometry.
 
         """
-        self._world_volume = _gdml_world_volume()
+        pyg4ometry.geant4.registry.clear()
+        self._world_volume = pyfluka.geometry._gdml_world_volume(
+            register=register)
         if regions is None: # add all regions by default.
             regions = self.regions.keys()
         # Else if regions is the name of a single region
@@ -345,7 +349,8 @@ class Model(object):
                 if survey is None:
                     region.add_to_volume(self._world_volume,
                                          optimise=optimise,
-                                         zones=zone_nos)
+                                         zones=zone_nos,
+                                         register=register)
                 else:
                     # If true then we should generate connected_zones
                     # on the fly for each region, otherwise we should
@@ -364,7 +369,8 @@ class Model(object):
                             continue
                         region.add_to_volume(self._world_volume,
                                              optimise=optimise,
-                                             zones=common_sets)
+                                             zones=common_sets,
+                                             register=register)
 
             return
         # Add said regions
@@ -376,7 +382,9 @@ class Model(object):
             print("Adding region: \"{}\"  ...".format(region_name))
 
             if survey is None:
-                region.add_to_volume(self._world_volume, optimise=optimise)
+                region.add_to_volume(self._world_volume,
+                                     optimise=optimise,
+                                     register=register)
             else:
                 # If true then we should generate connected_zones
                 # on the fly for each region, otherwise we should
@@ -386,7 +394,9 @@ class Model(object):
                         else survey[region_name]["connected_zones"])
                 for connected_set in sets:
                     region.add_to_volume(self._world_volume,
-                                         optimise=optimise, zones=connected_set)
+                                         optimise=optimise,
+                                         zones=connected_set,
+                                         register=register)
 
     def report_body_count(self):
         """Prints a count of all unique bodies by type which are used in
@@ -844,22 +854,15 @@ def load_pickle(path):
         unpickled = cPickle.load(file_object)
     return unpickled
 
-def _gdml_world_volume():
-    """This method returns a world volume."""
-    world_box = pygdml.solid.Box("world", 1, 1, 1)
-    name = "world_volume_{}".format(uuid.uuid4())
-    return pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
-                         name, None, 1, False, "G4_Galactic")
-
 def _get_world_volume_box(world_volume):
-    bound = world_volume.currentVolume # bounding box
-    if isinstance(bound, pygdml.solid.Subtraction):
+    bound = world_volume.solid # bounding box
+    if isinstance(bound, pyg4ometry.geant4.solid.Subtraction):
         # get left most solid of tree, which is the Box from which all
         # else is subtracted.
-        while isinstance(bound, pygdml.solid.Subtraction):
+        while isinstance(bound, pyg4ometry.geant4.solid.Subtraction):
             bound = bound.obj1
         return bound
-    elif isinstance(bound, pygdml.solid.Box):
+    elif isinstance(bound, pyg4ometry.geant4.solid.Box):
         return bound
     raise ValueError("Malformed bounding box!")
 
