@@ -5,15 +5,16 @@ Note:  All units are in millimetres, c.f. centimetres in Fluka.
 """
 
 from __future__ import (absolute_import, print_function, division)
-from math import pi
+import math
 import uuid
 import collections
 import numpy as np
 import networkx as nx
 import itertools
+import logging
 
-import pygdml
-import pygdml.transformation as trf
+import pyg4ometry
+import pyg4ometry.transformation as trf
 
 from pyfluka import vector
 
@@ -31,6 +32,20 @@ _IDENTITY_TYPE = collections.namedtuple("_IDENTITY_TYPE", [])
 _IDENTITY = _IDENTITY_TYPE()
 del _IDENTITY_TYPE
 
+_FLUKA_BOILERPLATE = (
+"""TITLE
+{}
+GLOBAL        5000.0       0.0       0.0       0.0       1.0
+DEFAULTS                                                              PRECISIO
+BEAM         10000.0                                                  PROTON
+GEOBEGIN                                                              COMBNAME
+    0    0                   MC-CAD
+"""
+)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Where does the meshing actually happen?  This matters because it is
 # the source of all slowdown!
 # 1. Visualisation.
@@ -47,25 +62,9 @@ del _IDENTITY_TYPE
 
 class Body(object):
     """A class representing a body as defined in Fluka.
-    get_body_as_gdml_solid() returns the body as a pygdml.solid
+    get_body_as_gdml_solid() returns the body as a pyg4ometry.geant4.solid
 
     """
-    # The _is_omittable flag is set internally for a body if the body
-    # is found to be omittable.  An ommittable body is one which can
-    # be omitted without impacting the resulting boolean in any way.
-    # This is True in two scenarios:
-    # - Subtracting a body which doesn't overlap with what it is being
-    # subtracted from.
-    # - Intersecting a solid which completely overlaps with what it is
-    # intersecting.
-    # This flag should only be set when checking overlaps with the
-    # /known/ resulting mesh for a given zone, either at _get_overlap,
-    # when a redundant subtraction will be flagged via the
-    # NullMeshError exception, or at _apply_extent, when any redundant
-    # intersections can flagged up (in principle so could redundant
-    # subtractions, but they will surely have already been caught when
-    # _get_overlap is called).
-    _is_omittable = False
 
     def __init__(self, name, parameters, translation=None, transformation=None):
         self.name = name
@@ -73,9 +72,33 @@ class Body(object):
         self.transformation = transformation
         self._set_parameters(parameters)
         self._set_rotation_matrix(transformation)
+        # The _is_omittable flag is set internally for a body if the body
+        # is found to be omittable.  An ommittable body is one which can
+        # be omitted without impacting the resulting boolean in any way.
+        # This is True in two scenarios:
+        # - Subtracting a body which doesn't overlap with what it is being
+        # subtracted from.
+        # - Intersecting a solid which completely overlaps with what it is
+        # intersecting.
+        # This flag should only be set when checking overlaps with the
+        # /known/ resulting mesh for a given zone, either at _get_overlap,
+        # when a redundant subtraction will be flagged via the
+        # NullMeshError exception, or at _apply_extent, when any redundant
+        # intersections can flagged up (in principle so could redundant
+        # subtractions, but they will surely have already been caught when
+        # _get_overlap is called).
+        self._is_omittable = False
+
+    def to_fluka_string(self):
+        body_type = type(self).__name__
+        return "{} {} {}".format(
+            body_type,
+            self.name, # / 10 because converting mm to cm.
+            " ".join(str(value / 10) for value in self.parameters))
 
     def view(self, setclip=True):
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
+            uuid.uuid4(), 10000, 10000, 10000))
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -104,7 +127,7 @@ class Body(object):
         # redundant intersection.
         pass
 
-    def add_to_volume(self, volume):
+    def add_to_volume(self, mother_volume, register):
         """Add this body's solid to a volume."""
         # Convert the matrix to TB xyz:
         rotation_angles = trf.matrix2tbxyz(self.rotation)
@@ -112,10 +135,16 @@ class Body(object):
         # because so are boolean rotations.  However, volume rotations
         # are passive, so reverse the rotation:
         rotation_angles = trf.reverse(rotation_angles)
-        pygdml.volume.Volume(
-            rotation_angles, self.centre(), self.gdml_solid(),
-            self.name, volume, 1, False, "G4_Galactic"
-        )
+        body_lv = pyg4ometry.geant4.LogicalVolume(self.gdml_solid(),
+                                                  "G4_Galactic",
+                                                  "{}_lv".format(self.name),
+                                                  register=register)
+        body_pv = pyg4ometry.geant4.PhysicalVolume(rotation_angles,
+                                                   self.centre(),
+                                                   body_lv,
+                                                   "{}_pv".format(self.name),
+                                                   mother_volume,
+                                                   register=register)
 
     def _resize(self, scale):
         """Return this instance bounded or extented according to the
@@ -135,18 +164,20 @@ class Body(object):
             # it does, then there's something wrong in this module.
             try:
                 scale.gdml_solid().pycsgmesh()
-            except pygdml.solid.NullMeshError:
+            except pyg4ometry.exceptions.NullMeshError:
                 msg = "Scaling body \"{}\" is not meshable!".format(scale.name)
-                raise pygdml.solid.NullMeshError(msg)
+                raise pyg4ometry.exceptions.NullMeshError(msg)
             try:
                 extent = self._get_overlap(scale)
                 self._apply_extent(extent)
-            except pygdml.NullMeshError:
+            except pyg4ometry.exceptions.NullMeshError:
                 # In this event, the subtraction is redundant one, so
                 # we can omit it.
                 # Redundant intersections naturally will not raise
                 # NullMeshErrors, and are dealt with in the
                 # _apply_extent methods.
+                logger.debug("Omitting redundant subtraction of %s \"%s\"",
+                             type(self).__name__, self.name)
                 self._is_omittable = True
         else:
             raise TypeError("Unknown scale type: {}".format(type(scale)))
@@ -154,12 +185,9 @@ class Body(object):
 
     def _extent(self):
         # Construct a world volume to place the solid in to be meshed.
-        world_solid = pygdml.solid.Box("world", 10000, 10000, 10000)
-        world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_solid,
-                                     "world-volume", None,
-                                     1, False, "G4_NITROUS_OXIDE")
-        self.add_to_volume(world_volume)
-        return Extent.from_world_volume(world_volume)
+        world_lv = _gdml_world_volume(register=False)
+        self.add_to_volume(world_lv, register=False)
+        return Extent.from_world_volume(world_lv)
 
     def _get_overlap(self, other):
         """
@@ -171,28 +199,31 @@ class Body(object):
         extent = intersection._extent()
         return extent
 
-    def intersection(self, other, safety=None, other_offset=None):
+    def intersection(self, other, safety=None, other_offset=None,
+                     register=False):
         # Safety is the same for an intersection, either we seek to
         # shrink both solids or to extend both solids, usually the
         # desire is to shrink both.
-        return self._do_boolean_op(other, pygdml.solid.Intersection,
-                                   safety, safety, other_offset)
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Intersection,
+                                   safety, safety, other_offset, register)
 
-    def subtraction(self, other, safety=None, other_offset=None):
+    def subtraction(self, other, safety=None, other_offset=None,
+                    register=False):
         # Safety is inverted for the first w.r.t the second.  When we
         # seek to extend the subtrahend, we want to trim the minuend,
         # and vice versa.t
         opposite_safety = {None: None,
                            "extend": "trim",
                            "trim": "extend"}[safety]
-        return self._do_boolean_op(other, pygdml.solid.Subtraction,
-                                   opposite_safety, safety, other_offset)
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Subtraction,
+                                   opposite_safety, safety, other_offset,
+                                   register)
 
-    def union(self, other, safety=None, other_offset=None):
-        return self._do_boolean_op(other, pygdml.solid.Union,
-                                   safety, safety, other_offset)
+    def union(self, other, safety=None, other_offset=None, register=False):
+        return self._do_boolean_op(other, pyg4ometry.geant4.solid.Union,
+                                   safety, safety, other_offset, register)
 
-    def _do_boolean_op(self, other, op, safety1, safety2, offset):
+    def _do_boolean_op(self, other, op, safety1, safety2, offset, register):
         """ Do the boolean operation of self with other.  op is the boolean
         operation of choice.  safety1 is the safety of self (either
         None, "trim", or "extend"), and offset is ???
@@ -208,8 +239,8 @@ class Body(object):
         relative_transformation = [relative_angles, relative_translation]
         out_name = self._unique_boolean_name(other)
         out_solid = op(
-            out_name, self.gdml_solid(safety1),
-            other.gdml_solid(safety2), relative_transformation
+            out_name, self.gdml_solid(safety1, register),
+            other.gdml_solid(safety2, register), relative_transformation
         )
         out_centre = self.centre()
         out_rotation = self.rotation
@@ -283,13 +314,16 @@ class InfiniteCylinder(Body):
     def crude_extent(self):
         return max(map(abs, self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
                                  0.0, self._radius + safety_addend,
                                  self._scale * 0.5,
-                                 0.0, 2*pi)
+                                 0.0, 2*math.pi)
 
+class InfiniteEllipticalCylinder(Body):
+    """Currently just for type checking XEC, YEC, and ZEC.  No functionality."""
+    pass
 
 class InfiniteHalfSpace(Body):
     def __init__(self, name, parameters, translation=None, transformation=None):
@@ -312,9 +346,9 @@ class InfiniteHalfSpace(Body):
     def crude_extent(self):
         return abs(max(self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
                                 0.5 * self._scale_x + safety_addend,
                                 0.5 * self._scale_y + safety_addend,
                                 0.5 * self._scale_z + safety_addend)
@@ -430,17 +464,16 @@ class RPP(Body):
                     self.parameters.z_max - self.parameters.z_min])
 
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         """Construct the equivalent pygdml Box from this body."""
         safety_addend = Body._get_safety_addend(length_safety)
-        x_length = self._x_max - self._x_min + safety_addend
-        y_length = self._y_max - self._y_min + safety_addend
-        z_length = self._z_max - self._z_min + safety_addend
-
-        return pygdml.solid.Box(self._unique_body_name(),
-                                0.5 * x_length,
-                                0.5 * y_length,
-                                0.5 * z_length)
+        x_half_length = 0.5 * (self._x_max - self._x_min)
+        y_half_length = 0.5 * (self._y_max - self._y_min)
+        z_half_length = 0.5 * (self._z_max - self._z_min)
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
+                                x_half_length + safety_addend,
+                                y_half_length + safety_addend,
+                                z_half_length + safety_addend)
 
 
 class SPH(Body):
@@ -461,10 +494,10 @@ class SPH(Body):
         # largest parameter.
         return 2 * max(map(abs, self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         """Construct a solid, whole, GDML sphere from this."""
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Orb(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Orb(self._unique_body_name(),
                                 self.parameters.radius + safety_addend)
 
 
@@ -513,14 +546,14 @@ class RCC(Body):
                                           self.parameters.v_z)))
         return centre_max + self.length
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
                                  0.0,
                                  self.radius + safety_addend,
                                  self.length * 0.5 + safety_addend,
                                  0.0,
-                                 2*pi)
+                                 2*math.pi)
 
 
 class REC(Body):
@@ -582,7 +615,7 @@ class REC(Body):
     def _set_rotation_matrix(self, transformation):
         pass
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
         # EllipticalTube is defined in terms of half-lengths in x, y,
         # and z.  Choose semi_major to start in the positive y direction.
@@ -598,7 +631,7 @@ class REC(Body):
                                  self.parameters.to_other_face_y,
                                  self.parameters.to_other_face_z])
 
-        return pygdml.solid.EllipticalTube(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.EllipticalTube(self._unique_body_name(),
                                            semi_minor + safety_addend,
                                            semi_major + safety_addend,
                                            length * 0.5 + safety_addend)
@@ -661,15 +694,15 @@ class TRC(Body):
                    self.parameters.minor_radius,
                    self.parameters.major_radius)
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
         # The first face of pygdml.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
-        return pygdml.solid.Cons(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Cons(self._unique_body_name(),
                                  0.0, self.major_radius + safety_addend,
                                  0.0, self.minor_radius + safety_addend,
                                  0.5 * self.length + safety_addend,
-                                 0.0, 2*pi)
+                                 0.0, 2*math.pi)
 
 
 class XYP(InfiniteHalfSpace):
@@ -682,6 +715,7 @@ class XYP(InfiniteHalfSpace):
         if (self.parameters.v_z - 2 * LENGTH_SAFETY > extent.upper.z
                 and not np.isclose(self.parameters.v_z, extent.upper.z)):
             self._is_omittable = True
+            logger.debug("Setting XYP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(extent.centre.x,
                                     extent.centre.y,
@@ -708,6 +742,7 @@ class XZP(InfiniteHalfSpace):
         if (self.parameters.v_y - 2 * LENGTH_SAFETY > extent.upper.y
                 and not np.isclose(self.parameters.v_y, extent.upper.y)):
             self._is_omittable = True
+            logger.debug("Setting XZP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(extent.centre.x,
                                     0.0,
@@ -733,6 +768,7 @@ class YZP(InfiniteHalfSpace):
         if (self.parameters.v_x - 2 * LENGTH_SAFETY > extent.upper.x
                 and not np.isclose(self.parameters.v_x, extent.upper.x)):
             self._is_omittable = True
+            logger.debug("Setting YZP \"{}\" omittable.".format(self.name))
             return
         self._offset = vector.Three(0.0,
                                     extent.centre.y,
@@ -791,10 +827,16 @@ class PLA(Body):
 
     def _apply_extent(self, extent):
         self.surface_point = self._closest_point(extent.centre)
-        self._scale = max(extent.size.x * (SCALING_TOLERANCE + 1),
-                          extent.size.y * (SCALING_TOLERANCE + 1),
-                          extent.size.z * (SCALING_TOLERANCE + 1))
-
+        root3 = math.sqrt(3) # root3 to ensure that the box is big enough to
+        # effectively act as a plane regardless of any rotations
+        # present.  This is necessary because an extent is a box
+        # without any rotation, but the PLA may in fact have rotation,
+        # so to ensure the PLA is definitely big enough, make it have
+        # the same dimensions as a sphere which completely contains
+        # any rotation of the extent.
+        self._scale = max(extent.size.x * (SCALING_TOLERANCE + 1) * root3,
+                          extent.size.y * (SCALING_TOLERANCE + 1) * root3,
+                          extent.size.z * (SCALING_TOLERANCE + 1) * root3)
 
     def _set_rotation_matrix(self, transformation):
         # Choose the face pointing in the direction of the positive
@@ -822,9 +864,9 @@ class PLA(Body):
                                "Point isn't on the plane!")
         return closest_point
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend)
@@ -924,7 +966,7 @@ class ZCC(InfiniteCylinder):
         self.rotation = np.matrix(np.identity(3))
 
 
-class XEC(Body):
+class XEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the x-axis.
 
     Parameters:
@@ -955,9 +997,9 @@ class XEC(Body):
     def crude_extent(self):
         return max(map(abs, self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_z + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
@@ -965,7 +1007,7 @@ class XEC(Body):
         )
 
 
-class YEC(Body):
+class YEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the y-axis.
 
     Parameters:
@@ -994,9 +1036,9 @@ class YEC(Body):
     def crude_extent(self):
         return max(map(abs, self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_z + safety_addend,
@@ -1004,7 +1046,7 @@ class YEC(Body):
         )
 
 
-class ZEC(Body):
+class ZEC(InfiniteEllipticalCylinder):
     """An infinite elliptical cylinder parallel to the z-axis.
 
     Parameters:
@@ -1029,9 +1071,9 @@ class ZEC(Body):
     def crude_extent(self):
         return max(map(abs, self.parameters))
 
-    def gdml_solid(self, length_safety=None):
+    def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pygdml.solid.EllipticalTube(
+        return pyg4ometry.geant4.solid.EllipticalTube(
             self._unique_body_name(),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
@@ -1056,7 +1098,8 @@ class Region(object):
         the view_debug method to see the problematic boolean operation.
 
         """
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
+            uuid.uuid4(), 10000, 10000, 10000))
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1070,7 +1113,9 @@ class Region(object):
         viewer.addSource(mesh)
         viewer.view()
 
-    def add_to_volume(self, volume, zones=None, optimise=True):
+    def add_to_volume(self, mother_volume, zones=None,
+                      optimise=True,
+                      register=False):
         """
         Basically for adding to a world volume.
 
@@ -1089,12 +1134,19 @@ class Region(object):
                 else "{}-Zones-{}".format(self.name,
                                           "-".join([str(index) for
                                                     index in zones])))
-        pygdml.volume.Volume(
-            rotation_angles, boolean.centre(),
-            boolean.gdml_solid(length_safety="trim"), name, volume,
-            1, False, self.material)
+        region_lv = pyg4ometry.geant4.LogicalVolume(
+            boolean.gdml_solid(length_safety="trim", register=register),
+            self.material, "{}_lv".format(name), register=register)
+        region_pv = pyg4ometry.geant4.PhysicalVolume(rotation_angles,
+                                                     boolean.centre(),
+                                                     region_lv,
+                                                     "{}_pv".format(name),
+                                                     mother_volume,
+                                                     register=register)
 
     def evaluate(self, zones=None, optimise=False):
+        logger.debug("Evaluating Region \"%s\", optimisation=%s, zones=%s",
+                     self.name, optimise, zones)
         zones = self._select_zones(zones)
         # Get the boolean solids from the zones:
         booleans = [zone.evaluate(optimise=optimise) for zone in zones]
@@ -1115,19 +1167,18 @@ class Region(object):
     def _select_zones(self, zones):
         if zones is None:
             return self.zones
-        else:
-            try:
-                return [self.zones[key] for key in zones]
-            except TypeError:
-                pass
-            try:
-                # if no __getitem__, or __iter__, then try using it as a
-                # key directly:
-                return [self.zones[zones]]
-            except TypeError:
-                msg = ("Unknown selection "
-                       "provided for zones {}").format(type(zones))
-                raise TypeError(msg)
+        try:
+            return [self.zones[key] for key in zones]
+        except TypeError:
+            pass
+        try:
+            # if no __getitem__, or __iter__, then try using it as a
+            # key directly:
+            return [self.zones[zones]]
+        except TypeError:
+            msg = ("Unknown selection "
+                   "provided for zones {}").format(type(zones))
+            raise TypeError(msg)
 
     def extent(self, zones=None):
         boolean = self.evaluate(zones)
@@ -1189,6 +1240,45 @@ class Region(object):
             boolean, extent = zone.evaluate_with_extent(optimise)
             out[index] = (boolean, extent)
         return out
+
+    def bodies(self):
+        """Get all the unique bodies instances that make up this Region."""
+        unique_bodies = set()
+        for zone in self.zones:
+            zone_bodies = set(zone.bodies())
+            unique_bodies = unique_bodies.union(zone_bodies)
+        return unique_bodies
+
+    def to_fluka_string(self):
+        name_and_mystery_number = "{:13}5".format(self.name)
+        zone_strings = [zone.to_fluka_string() for zone in self.zones]
+        if len(zone_strings) == 1:
+            return name_and_mystery_number + " {}".format(zone_strings[0])
+        lines = []
+        for i, string in enumerate(zone_strings):
+            if i == 0:
+                lines.append((name_and_mystery_number
+                              + " | {}".format(zone_strings[0])))
+                continue
+            lines.append("               | {}".format(string))
+        return "\n".join(lines)
+
+    def to_fluka_inp(self, filename=None):
+        filename = "{}.inp".format(self.name) if filename is None else filename
+        with open(filename, 'w') as f:
+            f.write(_FLUKA_BOILERPLATE.format(self.name))
+            for body in self.bodies():
+                f.write(body.to_fluka_string() + "\n")
+            f.write("END\n")
+            f.write(self.to_fluka_string() + "\n")
+            f.write("END\n")
+            f.write("GEOEND\n")
+
+    def compare_extents(self):
+        _, optimised_extent = self.evaluate_with_extent(True)
+        _, unoptimised_extent = self.evaluate_with_extent(False)
+        return optimised_extent, unoptimised_extent
+
 
 class Zone(object):
     """Class representing a Zone (subregion delimited by '|'), i.e. a
@@ -1263,6 +1353,26 @@ class Zone(object):
 
     def view(self, setclip=True, optimise=False):
         self.evaluate(optimise=optimise).view(setclip=setclip)
+
+    def view_compare_optimisation(self, setclip=True):
+        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
+            uuid.uuid4(), 10000, 10000, 10000))
+        world_volume = pygdml.Volume(
+            [0, 0, 0], [0, 0, 0], world_box, "world-volume",
+            None, 1, False, "G4_NITROUS_OXIDE"
+        )
+        optimised = self.evaluate(optimise=True)
+        unoptimised = self.evaluate(optimise=False)
+        optimised.add_to_volume(world_volume)
+        unoptimised.add_to_volume(world_volume)
+
+        if setclip is True:
+            world_volume.setClip()
+
+        mesh = world_volume.pycsgmesh()
+        viewer = pygdml.VtkViewer()
+        viewer.addSource(mesh)
+        viewer.view()
 
     def evaluate_with_extent(self, optimise):
         boolean = self.evaluate(optimise=optimise)
@@ -1405,7 +1515,25 @@ class Zone(object):
     def __iter__(self):
         return iter(self.contains + self.excludes)
 
+    def bodies(self):
+        """Return all the unique body instances associated with this zone"""
+        return list(set(self._flatten()))
 
+    def to_fluka_string(self):
+        """Returns this Zone as a fluka input string."""
+        bodies = []
+        zones = []
+        for part in self.contains:
+            if isinstance(part, Body):
+                bodies.append("+{}".format(part.name))
+            if isinstance(part, Zone):
+                 zones.append("+({}) ".format(part.to_fluka_string()))
+        for part in self.excludes:
+            if isinstance(part, Body):
+                bodies.append("-{}".format(part.name))
+            if isinstance(part, Zone):
+                zones.append("-({})".format(part.to_fluka_string()))
+        return " ".join(bodies + zones)
 class Boolean(Body):
     """A Body is a solid with a centre, a rotation and a name.  This
     is used to represent combinations of bodies, e.g. as a result of
@@ -1427,7 +1555,8 @@ class Boolean(Body):
         return self._centre
 
     def view_debug(self, first=None, second=None):
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
+            uuid.uuid4(), 10000, 10000, 10000))
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -1435,7 +1564,7 @@ class Boolean(Body):
         try:
             world_volume.pycsgmesh()
             print("Mesh was successful.")
-        except pygdml.solid.NullMeshError as error:
+        except pyg4ometry.exceptions.NullMeshError as error:
             print(error.message)
             print("Debug:  Viewing consituent solids.")
             self._view_null_mesh(error, first, second, setclip=False)
@@ -1445,7 +1574,8 @@ class Boolean(Body):
         solid2 = error.solid.obj2
         tra2 = error.solid.tra2
 
-        world_box = pygdml.solid.Box("world", 10000, 10000, 10000)
+        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
+            uuid.uuid4(), 10000, 10000, 10000))
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1484,9 +1614,9 @@ class Boolean(Body):
         # quick and dirty..  revisit this at a later date.
         primitives = []
         def primitive_iter(solid):
-            if isinstance(solid, (pygdml.solid.Intersection,
-                                  pygdml.solid.Subtraction,
-                                  pygdml.solid.Union)):
+            if isinstance(solid, (pyg4ometry.geant4.solid.Intersection,
+                                  pyg4ometry.geant4.solid.Subtraction,
+                                  pyg4ometry.geant4.solid.Union)):
                 primitives.append(primitive_iter(solid.obj1))
                 primitives.append(primitive_iter(solid.obj2))
             else:
@@ -1536,7 +1666,7 @@ class Extent(object):
     def from_world_volume(cls, world_volume):
         """Construct an Extent object from a pygdml (world) volume instance. """
         mesh = world_volume.pycsgmesh()
-        extent = pygdml.volume.pycsg_extent(mesh)
+        extent = pyg4ometry.geant4.mesh_extent(mesh)
         lower = vector.Three(extent[0].x, extent[0].y, extent[0].z)
         upper = vector.Three(extent[1].x, extent[1].y, extent[1].z)
         return cls(lower, upper)
@@ -1544,6 +1674,14 @@ class Extent(object):
     def is_close_to(self, other):
         return bool((np.isclose(self.lower, other.lower).all()
                      and np.isclose(self.upper, other.upper).all()))
+
+    def within_length_safety_of(self, other):
+        """Check if this extent differs from the other within a factor
+        of 10 times LENGTH_SAFETY."""
+        diff = self - other
+        lower_is_lt_safety = [x <= 10 * LENGTH_SAFETY for x in abs(diff.lower)]
+        upper_is_lt_safety = [x <= 10 * LENGTH_SAFETY for x in abs(diff.upper)]
+        return all(lower_is_lt_safety) and all(upper_is_lt_safety)
 
     def __repr__(self):
         return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
@@ -1553,6 +1691,8 @@ class Extent(object):
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
 
+    def __sub__(self, other):
+        return Extent(self.lower - other.lower, self.upper - other.upper)
 def are_extents_overlapping(first, second):
     """Check if two Extent instances are overlapping."""
     return not (first.upper.x < second.lower.x
@@ -1586,5 +1726,17 @@ def get_overlap(first, second):
         second = second.evaluate(optimise=True)
     try:
         return first.intersection(second, safety="trim")._extent()
-    except pygdml.NullMeshError:
+    except pyg4ometry.exceptions.NullMeshError:
         return None
+
+def _gdml_world_volume(register):
+    """This method returns a world logical volume."""
+    world_box = pyg4ometry.geant4.solid.Box(
+        "world_box_{}".format(uuid.uuid4()), 1, 1, 1,
+        register=register)
+    name = "the_world_lv_{}".format(uuid.uuid4())
+    world_lv = pyg4ometry.geant4.LogicalVolume(
+        world_box, "G4_Galactic", name, register=register)
+    if register:
+        pyg4ometry.geant4.registry.setWorld(name)
+    return world_lv
