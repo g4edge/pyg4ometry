@@ -16,12 +16,14 @@ import numpy as np
 import antlr4
 import pyg4ometry
 
-import pyfluka.geometry
-import pyfluka.vector
-import pyfluka.FlukaParserVisitor
-import pyfluka.FlukaParserListener
-import pyfluka.parser
-import pyfluka.materials
+import pyg4ometry.fluka.geometry
+import pyg4ometry.fluka.vector
+import pyg4ometry.fluka.parser
+import pyg4ometry.fluka.materials
+
+from . import FlukaParserVisitor
+from . import FlukaParserListener
+
 
 class Model(object):
     """Class for viewing Fluka geometry and converting to GDML.
@@ -37,11 +39,11 @@ class Model(object):
         self._filename = filename
         # get the syntax tree.
         tree, cards = (
-            pyfluka.parser.get_geometry_ast_and_other_cards(filename)
+            pyg4ometry.fluka.parser.get_geometry_ast_and_other_cards(filename)
         )
         self.bodies, self._body_freq_map = Model._bodies_from_tree(tree)
         self.regions = self._regions_from_tree(tree)
-        materials = pyfluka.materials.get_region_material_strings(
+        materials = pyg4ometry.fluka.materials.get_region_material_strings(
             self.regions.keys(),
             cards
         )
@@ -84,7 +86,7 @@ class Model(object):
                 region.material = fluka_material
 
         # Initialiser the world volume:
-        self._world_volume = pyfluka.geometry._gdml_world_volume(register=True)
+        self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(register=True)
 
     def _regions_from_tree(self, tree):
         """Get the region definitions from the tree.  Called in the
@@ -167,7 +169,7 @@ class Model(object):
         base_bounding_box = _get_world_volume_box(self._world_volume)
         info_out = {"origin": self._world_volume.centre,
                     "extent":
-                    pyfluka.geometry.Extent.from_gdml_box(base_bounding_box)}
+                    pyg4ometry.fluka.geometry.Extent.from_gdml_box(base_bounding_box)}
         return info_out
 
     def _print_bounding_extent(self):
@@ -277,7 +279,7 @@ class Model(object):
         centred on zero, this gives us the required
         offset for the subtraction from the bounding RPP."""
         # Get the "true" unclipped extent of the solids in the world volume
-        unclipped_extent = pyfluka.geometry.Extent.from_world_volume(
+        unclipped_extent = pyg4ometry.fluka.geometry.Extent.from_world_volume(
             self._world_volume)
         # The offset is -1 * the unclipped extent's centre.
         unclipped_centre = unclipped_extent.centre
@@ -292,19 +294,19 @@ class Model(object):
 
         # Deal with the trailing floating points introduced somewhere
         # in pygdml that cause the box to be marginally too big:
-        decimal_places = int((-1 * np.log10(pyfluka.geometry.LENGTH_SAFETY)))
+        decimal_places = int((-1 * np.log10(pyg4ometry.fluka.geometry.LENGTH_SAFETY)))
         box_parameters = [-1 * world_solid.pX, world_solid.pX,
                           -1 * world_solid.pY, world_solid.pY,
                           -1 * world_solid.pZ, world_solid.pZ]
         box_parameters = [round(i, decimal_places) for i in box_parameters]
-        world = pyfluka.geometry.RPP(world_name, box_parameters)
+        world = pyg4ometry.fluka.geometry.RPP(world_name, box_parameters)
         # We make the subtraction a bit smaller just to be sure we
         # don't subract from a placed solid within, so safety='trim'.
         for subtrahend in subtrahends:
             if isinstance(subtrahend,
-                          (pyfluka.geometry.InfiniteCylinder,
-                           pyfluka.geometry.InfiniteHalfSpace,
-                           pyfluka.geometry.InfiniteEllipticalCylinder)):
+                          (pyg4ometry.fluka.geometry.InfiniteCylinder,
+                           pyg4ometry.fluka.geometry.InfiniteHalfSpace,
+                           pyg4ometry.fluka.geometry.InfiniteEllipticalCylinder)):
                 raise TypeError("Subtrahends must be finite!")
 
             world = world.subtraction(subtrahend, safety="trim",
@@ -330,7 +332,7 @@ class Model(object):
 
         """
         pyg4ometry.geant4.registry.clear()
-        self._world_volume = pyfluka.geometry._gdml_world_volume(
+        self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(
             register=register)
         if regions is None: # add all regions by default.
             regions = self.regions.keys()
@@ -608,7 +610,7 @@ class Model(object):
 
             # Check if the bounding boxes are overlapping, if they aren't, then
             # the solids can't be either.
-            if not pyfluka.geometry.are_extents_overlapping(
+            if not pyg4ometry.fluka.geometry.are_extents_overlapping(
                     booleans_and_extents[first][1],
                     booleans_and_extents[second][1]):
                 output[first][second] = None
@@ -616,7 +618,7 @@ class Model(object):
 
             # If we made it this far then we must do the intersection.
             print("Intersecting.")
-            overlap = pyfluka.geometry.get_overlap(
+            overlap = pyg4ometry.fluka.geometry.get_overlap(
                 booleans_and_extents[first][0],
                 booleans_and_extents[second][0])
             output[first][second] = overlap
@@ -657,7 +659,7 @@ class Model(object):
         return out
 
 
-class FlukaBodyListener(pyfluka.FlukaParserListener.FlukaParserListener):
+class FlukaBodyListener(FlukaParserListener.FlukaParserListener):
     """
     This class is for getting simple, declarative  information about
     the geometry model.  In no particular order:
@@ -688,7 +690,7 @@ class FlukaBodyListener(pyfluka.FlukaParserListener.FlukaParserListener):
 
         # Try and construct the body, if it's not implemented then warn
         try:
-            body_constructor = getattr(pyfluka.geometry, body_type)
+            body_constructor = getattr(pyg4ometry.fluka.geometry, body_type)
             body = body_constructor(body_name,
                                     body_parameters,
                                     self.transform_stack,
@@ -712,7 +714,7 @@ class FlukaBodyListener(pyfluka.FlukaParserListener.FlukaParserListener):
 
     def enterTranslat(self, ctx):
         translation = FlukaBodyListener._get_floats(ctx)
-        self.current_translat = pyfluka.vector.Three(translation)
+        self.current_translat = pyg4ometry.fluka.vector.Three(translation)
 
     def exitTranslat(self, ctx):
         self.current_translat = None
@@ -751,12 +753,12 @@ class FlukaBodyListener(pyfluka.FlukaParserListener.FlukaParserListener):
         del self.used_bodies_by_type
 
 
-class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
+class FlukaRegionVisitor(FlukaParserVisitor.FlukaParserVisitor):
     """
     A visitor class for accumulating the region definitions.  The body
     instances are provided at instatiation, and then these are used
     when traversing the tree to build up a dictionary of region name
-    and pyfluka.geometry.Region instances.
+    and pyg4ometry.fluka.geometry.Region instances.
 
     """
     def __init__(self, bodies):
@@ -767,9 +769,9 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         # Simple in the sense that it consists of no unions of Zones.
         region_defn = self.visitChildren(ctx)
         # Build a zone from the list of bodies or single body:
-        zone = [pyfluka.geometry.Zone(region_defn)]
+        zone = [pyg4ometry.fluka.geometry.Zone(region_defn)]
         region_name = ctx.RegionName().getText()
-        self.regions[region_name] = pyfluka.geometry.Region(region_name, zone)
+        self.regions[region_name] = pyg4ometry.fluka.geometry.Region(region_name, zone)
 
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
@@ -778,9 +780,9 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         # Get the list of tuples of operators and bodies/zones
         region_defn = self.visitChildren(ctx)
         # Construct zones out of these:
-        zones = [pyfluka.geometry.Zone(defn) for defn in region_defn]
+        zones = [pyg4ometry.fluka.geometry.Zone(defn) for defn in region_defn]
         region_name = ctx.RegionName().getText()
-        region = pyfluka.geometry.Region(region_name, zones)
+        region = pyg4ometry.fluka.geometry.Region(region_name, zones)
         self.regions[region_name] = region
 
     def visitUnaryAndBoolean(self, ctx):
@@ -842,7 +844,7 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         elif ctx.Minus():
             operator = '-'
         solids = self.visit(ctx.expr())
-        zone = pyfluka.geometry.Zone(solids)
+        zone = pyg4ometry.fluka.geometry.Zone(solids)
         return (operator, zone)
 
 def load_pickle(path):
@@ -872,4 +874,4 @@ def _get_world_volume_dimensions(world_volume):
     arbitrary number of subtractions from it."""
     box = _get_world_volume_box(world_volume)
     # Double because pX, pY, pZ are half-lengths for a pygdml.solid.Box.
-    return pyfluka.vector.Three(2 * box.pX, 2 * box.pY, 2 * box.pZ)
+    return pyg4ometry.fluka.vector.Three(2 * box.pX, 2 * box.pY, 2 * box.pZ)

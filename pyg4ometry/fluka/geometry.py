@@ -15,8 +15,7 @@ import logging
 
 import pyg4ometry
 import pyg4ometry.transformation as trf
-
-from pyfluka import vector
+from pyg4ometry.fluka import vector
 
 # Fractional tolerance when minimising solids.  Here have chosen this
 # to be 5% for no particular reason.

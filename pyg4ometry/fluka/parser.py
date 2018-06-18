@@ -5,8 +5,8 @@ import warnings
 
 import antlr4
 
-import pyfluka.FlukaLexer
-import pyfluka.FlukaParser
+import pyg4ometry.fluka.FlukaLexer
+import pyg4ometry.fluka.FlukaParser
 
 
 # # FIRST I MUST UNDERSTAND HOW INCLUDES ARE DONE IN FLUPIX.  Does a
@@ -93,7 +93,7 @@ def get_geometry_ast_and_other_cards(path):
     istream = antlr4.InputStream(''.join(geometry))
 
     # Tokenise character stream
-    lexed_input = pyfluka.FlukaLexer.FlukaLexer(istream)
+    lexed_input = pyg4ometry.fluka.FlukaLexer.FlukaLexer(istream)
     lexed_input.removeErrorListeners()
     lexed_input.addErrorListener(SensitiveErrorListener())
 
@@ -101,7 +101,7 @@ def get_geometry_ast_and_other_cards(path):
     tokens = antlr4.CommonTokenStream(lexed_input)
 
     # Create a parser that reads from stream of tokens
-    parser = pyfluka.FlukaParser.FlukaParser(tokens)
+    parser = pyg4ometry.fluka.FlukaParser.FlukaParser(tokens)
     parser.removeErrorListeners()
     parser.addErrorListener(SensitiveErrorListener())
 

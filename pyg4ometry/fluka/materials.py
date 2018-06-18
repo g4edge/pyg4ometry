@@ -1,4 +1,3 @@
-import pyfluka.parser
 import warnings
 import itertools
 import subprocess
