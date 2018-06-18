@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, print_function, division)
 import numpy as _np
 
-from pygdml import transformation as _trf
+import pyg4ometry.transformation as _trf
 
 class Three(_np.ndarray):
     def __new__(cls, *coordinates):
