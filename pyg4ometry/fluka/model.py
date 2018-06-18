@@ -508,13 +508,15 @@ class Model(object):
                 self._generate_mesh(region_name,
                                     setclip=False,
                                     optimise=optimise,
-                                    bounding_subtrahends=None)
+                                    bounding_subtrahends=None
+                                    register=False)
                 output["good"].append(region_name)
-            except pygdml.solid.NullMeshError as error:
+            except pyg4ometry.exceptions.NullMeshError as error:
                 output["bad"].append(region_name)
-                if isinstance(error.solid, pygdml.solid.Subtraction):
+                if isinstance(error.solid, pyg4ometry.geant4.solid.Subtraction):
                     output["subs"].append(region_name)
-                elif isinstance(error.solid, pygdml.solid.Intersection):
+                elif isinstance(error.solid,
+                                pyg4ometry.geant4.solid.Intersection):
                     output["ints"].append(region_name)
             print("Tested {0}/{1}.".format(index + 1, number_of_regions))
             print("Succeded: {}.  Failed: {} ({:.2%}).".format(
@@ -548,7 +550,7 @@ class Model(object):
         for region in self.regions.itervalues():
             try:
                 region.gdml_solid.pycsgmesh()
-            except pygdml.solid.NullMeshError:
+            except pyg4ometry.exceptions.NullMeshError:
                 print("Failed mesh @ region: {}.".format(region.name))
                 print("Viewing region in debug mode ...")
                 region.view_debug()
