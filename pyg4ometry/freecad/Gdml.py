@@ -88,16 +88,26 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
     w.write(fileStub+".gdml")
     w.writeGmadTester(fileStub+".gmad")        
 
-def MakeMaterialDict(interactive = False) :
-    pass
+def MakeMaterialDict(objectList) :
+    for obj in objectList : 
+        Label = obj.Label
 
+        if obj.TypeId == 'Part::Feature' or obj.TypeId == 'Part::Box' or      \
+           obj.TypeId == 'Part::Sphere' or obj.TypeId == 'Part::Cylinder' or  \
+           obj.TypeId == 'Cone' or obj.TypeId == 'Torus' or                   \
+           obj.TypeId == 'App::Part' :
+            print Label
+
+        MakeMaterialDict(obj.OutList)
+        
 def RelabelModel(objectList) :
 
     for obj in objectList :
         Label = obj.Label
-        Label = Label.replace(" ","_")
-        Label = Label.replace("(","_")
-        Label = Label.replace(")","_")
+        Label = Label.replace("_","")
+        Label = Label.replace(" ","")
+        Label = Label.replace("(","")
+        Label = Label.replace(")","")
         obj.Label = Label
         
         RelabelModel(obj.OutList)
@@ -182,11 +192,11 @@ def PartToMesh(part) :
             print 'PartToMesh>',obj.TypeId,obj.Label
             mesh = BodyToMesh(obj)
             mesh.transform(placement.toMatrix())
-            meshes.append([obj.Label.replace(" ","_"),mesh])
+            meshes.append([obj.Label,mesh])
         
         elif obj.TypeId == 'App::Part' :
             mesh = PartToMesh(obj)
-            meshes.append([obj.Label.replace(" ","_"),mesh])
+            meshes.append([obj.Label,mesh])
 
     return meshes
 
@@ -194,10 +204,13 @@ def GroupToMesh(group) :
     print 'GroupToMesh'
 
 def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
-    doc = _FreeCAD.activeDocument()
+    doc = _FreeCAD.activeDocument()    
     
     # Get root objects 
     rootObjects = doc.RootObjects
+
+    # Relabel model
+    RelabelModel(rootObjects)
 
     # meshes 
     meshes = []
@@ -205,7 +218,7 @@ def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
     for rootObject in rootObjects :
         print 'DocumentToGdml> ',rootObject.TypeId,' ', rootObject.Label
 
-        rootName = rootObject.Label.replace(" ","_")
+        rootName = rootObject.Label
 
         # Body object
         if rootObject.TypeId == 'Part::Feature' : 

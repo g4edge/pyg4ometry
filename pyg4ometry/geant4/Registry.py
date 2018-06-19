@@ -136,8 +136,12 @@ class Registry:
         GDML. GDML needs to have the solids/booleans/volumes defined in order'''
 
         lv = self.logicalVolumeDict[lvName]
+        
+        print "mother> ",lv.name
 
         for daughters in lv.daughterVolumes:
+            print "daughters> ",daughters.name
+
             dlvName = daughters.logicalVolume.name
             try:
                 self.logicalVolumeList.index(dlvName)

@@ -153,9 +153,10 @@ class Model(object):
                         + ".gdml")
         elif os.path.splitext(out_path)[1] != "gdml":
             out_path = os.path.splitext(out_path)[0] + ".gdml"
-        pyg4ometry.geant4.registry.setWorld(self._world_volume.name)
         out = pyg4ometry.gdml.Writer()
+
         out.addDetector(pyg4ometry.geant4.registry)
+        pyg4ometry.geant4.registry.setWorld(self._world_volume.name)
         out.write(out_path)
         self._print_bounding_extent()
         print("Written GDML file: {}".format(out_path))
@@ -508,7 +509,7 @@ class Model(object):
                 self._generate_mesh(region_name,
                                     setclip=False,
                                     optimise=optimise,
-                                    bounding_subtrahends=None
+                                    bounding_subtrahends=None,
                                     register=False)
                 output["good"].append(region_name)
             except pyg4ometry.exceptions.NullMeshError as error:
