@@ -1736,6 +1736,4 @@ def _gdml_world_volume(register):
     name = "the_world_lv_{}".format(uuid.uuid4())
     world_lv = pyg4ometry.geant4.LogicalVolume(
         world_box, "G4_Galactic", name, register=register)
-    if register:
-        pyg4ometry.geant4.registry.setWorld(name)
     return world_lv

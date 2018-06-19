@@ -155,8 +155,8 @@ class Model(object):
             out_path = os.path.splitext(out_path)[0] + ".gdml"
         out = pyg4ometry.gdml.Writer()
 
-        out.addDetector(pyg4ometry.geant4.registry)
         pyg4ometry.geant4.registry.setWorld(self._world_volume.name)
+        out.addDetector(pyg4ometry.geant4.registry)
         out.write(out_path)
         self._print_bounding_extent()
         print("Written GDML file: {}".format(out_path))
