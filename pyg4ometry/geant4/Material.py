@@ -57,7 +57,7 @@ class Material:
             self.type = "nist"
 
         elif "arbitrary" in kwargs:
-            pass
+            self.type = "arbitrary"
 
         elif self.density:
             if self.number_of_components and not self.atomic_number:
