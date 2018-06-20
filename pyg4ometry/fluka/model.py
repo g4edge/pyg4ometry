@@ -287,11 +287,11 @@ class Model(object):
         other_offset = -1 * unclipped_centre
         self._clip_world_volume()
         # Make an RPP out of the clipped bounding box.
-        world_name = self._world_volume.currentVolume.name
+        world_name = self._world_volume.solid.name
         # solids magically start having material attributes at the top-level so
         # we must pass the material correctly to the new subtraction solid.
-        world_material = self._world_volume.currentVolume.material
-        world_solid = self._world_volume.currentVolume
+        world_material = self._world_volume.material
+        world_solid = self._world_volume.solid
 
         # Deal with the trailing floating points introduced somewhere
         # in pygdml that cause the box to be marginally too big:
