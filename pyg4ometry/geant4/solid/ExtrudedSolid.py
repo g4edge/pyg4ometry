@@ -7,7 +7,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class ExtrudedSolid(_SolidBase):
-    def __init__(self, name, pPolygon, pZslices):
+    def __init__(self, name, pPolygon, pZslices, register=True):
         """
         pPoligon: List of lists with the x-y coordinates of vertices for the polygon.
         pZslices: List of lists with z-coordinate of a slice, slice offsets in x-y and scaling
@@ -25,7 +25,8 @@ class ExtrudedSolid(_SolidBase):
         self.vertices = pPolygon
         self.nslices  = len(pZslices)
         self.mesh = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
 

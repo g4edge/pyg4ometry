@@ -11,7 +11,8 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
-    def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1, pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, nslice=20):
+    def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
+                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, nslice=20, register=True):
         """
         Constructs a general trapezoid with a twist around one axis.
 
@@ -44,7 +45,8 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.pAlp         = pAlp
         self.nslice       = nslice
         self.checkParameters()
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def checkParameters(self):
         if self.twistedangle > _np.pi:

@@ -26,7 +26,8 @@ class Tubs(_SolidBase):
     :param pDPhi: angle of segment in phi
     :type pDPhi: float
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, nslice=16):
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
+                 nslice=16, register=True):
         self.type  = 'Tubs'
         self.name  = name
         self.pRMin = pRMin
@@ -36,7 +37,8 @@ class Tubs(_SolidBase):
         self.pDPhi = pDPhi
         self.nslice= nslice
         self.mesh = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def __repr__(self):
         return 'Tubs : '+self.name+' '+str(self.pRMin)+' '+str(self.pRMax)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)

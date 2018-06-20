@@ -56,6 +56,9 @@ class Material:
         elif self.name in self.NIST_compounds:
             self.type = "nist"
 
+        elif "arbitrary" in kwargs:
+            pass
+
         elif self.density:
             if self.number_of_components and not self.atomic_number:
                 self.type = "composite"
@@ -81,6 +84,16 @@ class Material:
         if name not in _makeNISTCompoundList():
             raise IOError("{} is not a NIST compound".format(name))
         return cls(**locals())
+
+    @classmethod
+    def from_arbitrary_name(cls, name):
+        """Just a name of a material.  WARNING:  It is left to the
+        user to ensure that the name is valid.
+
+        Inputs:
+          name          - string
+        """
+        return cls(name=name, arbitrary=True)
 
     @classmethod
     def simple(cls, name, atomic_number, atomic_weight, density):

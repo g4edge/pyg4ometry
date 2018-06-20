@@ -12,7 +12,8 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class TwistedBox(_SolidBase, _TwistedSolid):
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20, refine=0):
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20,
+                 refine=0, register=True):
         """
         Constructs a box that is twisted through angle 'twistedangle'.
 
@@ -34,7 +35,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.nslice       = nslice
         self.refine       = refine
         self.checkParameters()
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def checkParameters(self):
         if self.twistedAngle > _np.pi:

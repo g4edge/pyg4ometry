@@ -9,7 +9,8 @@ from ..Registry import registry as _registry
 import numpy as _np
 
 class Ellipsoid(_SolidBase):
-    def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, nslice=8, nstack=8):
+    def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
+                 pzBottomCut, pzTopCut, nslice=8, nstack=8, register=True):
         """
         Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -31,7 +32,8 @@ class Ellipsoid(_SolidBase):
         self.nslice      = nslice
         self.nstack      = nstack
         self.mesh      = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def __repr__(selfs):
         pass

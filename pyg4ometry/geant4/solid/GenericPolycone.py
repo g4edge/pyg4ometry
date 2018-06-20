@@ -10,7 +10,8 @@ import numpy as _np
 from copy import deepcopy as _dc
 
 class GenericPolycone(_SolidBase):
-    def __init__(self, name, pSPhi, pDPhi, pNSide, pNRZ, pR, pZ, nslice=16, register=True):
+    def __init__(self, name, pSPhi, pDPhi, pNSide, pNRZ, pR, pZ,
+                 nslice=16, register=True):
         """
         Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
 
@@ -33,7 +34,8 @@ class GenericPolycone(_SolidBase):
         self.pZ   = pZ
         self.nslice  = nslice
         if register:
-            _registry.addSolid(self)
+            if register:
+                _registry.addSolid(self)
 
     def pycsgmesh(self):
         polygons = []

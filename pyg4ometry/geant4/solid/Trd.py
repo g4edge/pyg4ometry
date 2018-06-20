@@ -17,7 +17,7 @@ class Trd(_SolidBase):
         pDy2:  float, half-length along y at the surface positioned at +dz
         dz:    float, half-length along the z axis
     """
-    def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz):
+    def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, register=True):
         self.type   = 'Trd'
         self.name   = name
         self.pX1    = pDx1
@@ -26,7 +26,8 @@ class Trd(_SolidBase):
         self.pY2    = pDy2
         self.pZ     = pDz
         self.mesh   = None
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
 #        if self.mesh :

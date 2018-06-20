@@ -29,7 +29,7 @@ class Para(_SolidBase):
     pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
     """
 
-    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi):
+    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, register=True):
 
 
         self.type     = 'Para'
@@ -44,7 +44,8 @@ class Para(_SolidBase):
         self.dx_z   = +self.pZ*_sin(self.pTheta) #changes sign as the z component
         self.dy     = self.pZ*_sin(self.pPhi)
         self.dz     = self.pZ-self.pZ*_cos(pPhi)
-        _registry.addSolid(self)
+        if register:
+            _registry.addSolid(self)
 
     def pycsgmesh(self):
         self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),

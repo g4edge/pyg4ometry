@@ -53,6 +53,7 @@ class Writer(object):
 
         # loop over logical volumes 
         for logicalName in registry.logicalVolumeList  :
+            print "writer", logicalName
             logical = registry.logicalVolumeDict[logicalName]
             logical.gdmlWrite(self,self.prepend)
             self.writeMaterial(logical.material)

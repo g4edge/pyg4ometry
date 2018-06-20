@@ -15,8 +15,7 @@ import logging
 
 import pyg4ometry
 import pyg4ometry.transformation as trf
-
-from pyfluka import vector
+from pyg4ometry.fluka import vector
 
 # Fractional tolerance when minimising solids.  Here have chosen this
 # to be 5% for no particular reason.
@@ -1092,6 +1091,15 @@ class Region(object):
         self.material = material
         self.zones = zones
 
+    @property
+    def material(self):
+        return self._material.name
+
+    @material.setter
+    def material(self, material):
+        self._material = (
+            pyg4ometry.geant4.Material.from_arbitrary_name(material))
+
     def view(self, zones=None, setclip=True, optimise=False):
         """
         View this single region.  If a null mesh is encountered, try
@@ -1136,7 +1144,7 @@ class Region(object):
                                                     index in zones])))
         region_lv = pyg4ometry.geant4.LogicalVolume(
             boolean.gdml_solid(length_safety="trim", register=register),
-            self.material, "{}_lv".format(name), register=register)
+            self._material, "{}_lv".format(name), register=register)
         region_pv = pyg4ometry.geant4.PhysicalVolume(rotation_angles,
                                                      boolean.centre(),
                                                      region_lv,
@@ -1737,6 +1745,4 @@ def _gdml_world_volume(register):
     name = "the_world_lv_{}".format(uuid.uuid4())
     world_lv = pyg4ometry.geant4.LogicalVolume(
         world_box, "G4_Galactic", name, register=register)
-    if register:
-        pyg4ometry.geant4.registry.setWorld(name)
     return world_lv
