@@ -1091,6 +1091,15 @@ class Region(object):
         self.material = material
         self.zones = zones
 
+    @property
+    def material(self):
+        return self._material.name
+
+    @material.setter
+    def material(self, material):
+        self._material = (
+            pyg4ometry.geant4.Material.from_arbitrary_name(material))
+
     def view(self, zones=None, setclip=True, optimise=False):
         """
         View this single region.  If a null mesh is encountered, try
@@ -1135,7 +1144,7 @@ class Region(object):
                                                     index in zones])))
         region_lv = pyg4ometry.geant4.LogicalVolume(
             boolean.gdml_solid(length_safety="trim", register=register),
-            self.material, "{}_lv".format(name), register=register)
+            self._material, "{}_lv".format(name), register=register)
         region_pv = pyg4ometry.geant4.PhysicalVolume(rotation_angles,
                                                      boolean.centre(),
                                                      region_lv,
