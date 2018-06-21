@@ -1139,8 +1139,8 @@ class Region(object):
         # selected to be placed.
         name = (self.name
                 if zones is None
-                else "{}-Zones-{}".format(self.name,
-                                          "-".join([str(index) for
+                else "{}_Zones_{}".format(self.name,
+                                          "_".join([str(index) for
                                                     index in zones])))
         region_lv = pyg4ometry.geant4.LogicalVolume(
             boolean.gdml_solid(length_safety="trim", register=register),
