@@ -14,3 +14,4 @@ class SolidBase(object):
             if not name[0].isalpha():
                 msg = "First char of name \"{}\" must be a letter.".format(name)
                 raise ValueError(msg)
+            self._name = name
