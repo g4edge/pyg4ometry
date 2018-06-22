@@ -96,8 +96,8 @@ class Body(object):
             " ".join(str(value / 10) for value in self.parameters))
 
     def view(self, setclip=True):
-        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
-            uuid.uuid4(), 10000, 10000, 10000))
+        world_box = pyg4ometry.geant4.solid.Box("world_box",
+                                                10000, 10000, 10000)
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -236,7 +236,8 @@ class Body(object):
         relative_angles = self._get_relative_rotation(other)
         relative_translation = self._get_relative_translation(other) + offset
         relative_transformation = [relative_angles, relative_translation]
-        out_name = self._unique_boolean_name(other)
+
+        out_name = _unique_name("boolean")
         out_solid = op(
             out_name, self.gdml_solid(safety1, register),
             other.gdml_solid(safety2, register), relative_transformation
@@ -279,16 +280,6 @@ class Body(object):
         Geant4, so we simply prepend with an 'a'."""
         return "a" + str(uuid.uuid4())
 
-    def _unique_body_name(self):
-        """Generate a name for a given body.  As a single Fluka body
-        may ultimately map to an arbitrary number of GDML solids, it
-        is necessary that each name is unique.  We try here to
-        maintain the reference to the original name slightly by
-        appending to the original human-readable name.
-
-        """
-        return "{}_{}".format(self.name, uuid.uuid4())
-
     @staticmethod
     def _get_safety_addend(choice):
         # choice is either a string or None.
@@ -315,7 +306,7 @@ class InfiniteCylinder(Body):
 
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(_unique_name(self.name),
                                  0.0, self._radius + safety_addend,
                                  self._scale * 0.5,
                                  0.0, 2*math.pi)
@@ -347,7 +338,7 @@ class InfiniteHalfSpace(Body):
 
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(_unique_name(self.name),
                                 0.5 * self._scale_x + safety_addend,
                                 0.5 * self._scale_y + safety_addend,
                                 0.5 * self._scale_z + safety_addend)
@@ -469,7 +460,7 @@ class RPP(Body):
         x_half_length = 0.5 * (self._x_max - self._x_min)
         y_half_length = 0.5 * (self._y_max - self._y_min)
         z_half_length = 0.5 * (self._z_max - self._z_min)
-        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(_unique_name(self.name),
                                 x_half_length + safety_addend,
                                 y_half_length + safety_addend,
                                 z_half_length + safety_addend)
@@ -496,7 +487,7 @@ class SPH(Body):
     def gdml_solid(self, length_safety=None, register=False):
         """Construct a solid, whole, GDML sphere from this."""
         safety_addend = Body._get_safety_addend(length_safety)
-        return pyg4ometry.geant4.solid.Orb(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Orb(_unique_name(self.name),
                                 self.parameters.radius + safety_addend)
 
 
@@ -547,7 +538,7 @@ class RCC(Body):
 
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pyg4ometry.geant4.solid.Tubs(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Tubs(_unique_name(self.name),
                                  0.0,
                                  self.radius + safety_addend,
                                  self.length * 0.5 + safety_addend,
@@ -630,7 +621,7 @@ class REC(Body):
                                  self.parameters.to_other_face_y,
                                  self.parameters.to_other_face_z])
 
-        return pyg4ometry.geant4.solid.EllipticalTube(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.EllipticalTube(_unique_name(self.name),
                                            semi_minor + safety_addend,
                                            semi_major + safety_addend,
                                            length * 0.5 + safety_addend)
@@ -697,7 +688,7 @@ class TRC(Body):
         safety_addend = Body._get_safety_addend(length_safety)
         # The first face of pygdml.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
-        return pyg4ometry.geant4.solid.Cons(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Cons(_unique_name(self.name),
                                  0.0, self.major_radius + safety_addend,
                                  0.0, self.minor_radius + safety_addend,
                                  0.5 * self.length + safety_addend,
@@ -865,7 +856,7 @@ class PLA(Body):
 
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
-        return pyg4ometry.geant4.solid.Box(self._unique_body_name(),
+        return pyg4ometry.geant4.solid.Box(_unique_name(self.name),
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend,
                                 0.5 * self._scale + safety_addend)
@@ -999,7 +990,7 @@ class XEC(InfiniteEllipticalCylinder):
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
         return pyg4ometry.geant4.solid.EllipticalTube(
-            self._unique_body_name(),
+            _unique_name(self.name),
             self.parameters.semi_axis_z + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
             0.5 * self._scale
@@ -1038,7 +1029,7 @@ class YEC(InfiniteEllipticalCylinder):
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
         return pyg4ometry.geant4.solid.EllipticalTube(
-            self._unique_body_name(),
+            _unique_name(self.name),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_z + safety_addend,
             0.5 * self._scale
@@ -1073,7 +1064,7 @@ class ZEC(InfiniteEllipticalCylinder):
     def gdml_solid(self, length_safety=None, register=False):
         safety_addend = Body._get_safety_addend(length_safety)
         return pyg4ometry.geant4.solid.EllipticalTube(
-            self._unique_body_name(),
+            _unique_name(self.name),
             self.parameters.semi_axis_x + safety_addend,
             self.parameters.semi_axis_y + safety_addend,
             0.5 * self._scale
@@ -1106,8 +1097,8 @@ class Region(object):
         the view_debug method to see the problematic boolean operation.
 
         """
-        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
-            uuid.uuid4(), 10000, 10000, 10000))
+        world_box = pyg4ometry.geant4.solid.Box("world_box",
+                                                10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1363,8 +1354,8 @@ class Zone(object):
         self.evaluate(optimise=optimise).view(setclip=setclip)
 
     def view_compare_optimisation(self, setclip=True):
-        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
-            uuid.uuid4(), 10000, 10000, 10000))
+        world_box = pyg4ometry.geant4.solid.Box("world_box",
+                                                10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1563,8 +1554,8 @@ class Boolean(Body):
         return self._centre
 
     def view_debug(self, first=None, second=None):
-        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
-            uuid.uuid4(), 10000, 10000, 10000))
+        world_box = pyg4ometry.geant4.solid.Box("world_box",
+                                                10000, 10000, 10000)
         world_volume = pygdml.Volume([0, 0, 0], [0, 0, 0], world_box,
                                      "world-volume", None,
                                      1, False, "G4_NITROUS_OXIDE")
@@ -1582,8 +1573,8 @@ class Boolean(Body):
         solid2 = error.solid.obj2
         tra2 = error.solid.tra2
 
-        world_box = pyg4ometry.geant4.solid.Box("world_box_{}".format(
-            uuid.uuid4(), 10000, 10000, 10000))
+        world_box = pyg4ometry.geant4.solid.Box("world_box",
+                                                10000, 10000, 10000)
         world_volume = pygdml.Volume(
             [0, 0, 0], [0, 0, 0], world_box, "world-volume",
             None, 1, False, "G4_NITROUS_OXIDE"
@@ -1740,9 +1731,13 @@ def get_overlap(first, second):
 def _gdml_world_volume(register):
     """This method returns a world logical volume."""
     world_box = pyg4ometry.geant4.solid.Box(
-        "world_box_{}".format(uuid.uuid4()), 1, 1, 1,
+        _unique_name("world_box"), 1, 1, 1,
         register=register)
     name = "the_world_lv_{}".format(uuid.uuid4())
     world_lv = pyg4ometry.geant4.LogicalVolume(
         world_box, "G4_Galactic", name, register=register)
     return world_lv
+
+def _unique_name(name):
+    "Mangle the name by appending it with a UUID."
+    return "{}_{}".format(name, uuid.uuid4()).replace('-', '_')
