@@ -9,11 +9,6 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.vtk    as _vtk
 import pyg4ometry.gdml   as _gdml
 
-# Recursive mesh writing : FINISHED
-# need to make recursive groups and parts : TODO 
-# Groups
-# 
-
 def GdmlTest(mesh) :
     _g4.registry.clear()
     
@@ -63,9 +58,8 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
                 except KeyError :
                     material = materialMap["default"]
                     
-                print name
                 ts = _g4.solid.TesselatedSolid(name+"_solid",facetList)    
-                tl = _g4.LogicalVolume(ts,'G4_Cu',name+"_lv")
+                tl = _g4.LogicalVolume(ts,material,name+"_lv")
                 tp = _g4.PhysicalVolume([0,0,0],[0,0,0],tl,name+"_pv",worldLogical)
 
     MeshListToPhysicalVolume(meshList)
@@ -100,6 +94,19 @@ def MakeMaterialDict(objectList) :
 
         MakeMaterialDict(obj.OutList)
         
+def LoadMaterialDict(fileName, localMaterialDict = None) : 
+    file = open(fileName) 
+
+    dict = {"default":"G4_Vacuum"}
+    for line in file :
+        toks = line.split()
+        try : 
+            dict[toks[0]] = _g4.Material.nist(toks[1])
+        except IOError :
+            dict[toks[0]] = localMaterialDict[toks[1]]
+        
+    return dict
+
 def RelabelModel(objectList) :
 
     for obj in objectList :
@@ -201,7 +208,7 @@ def PartToMesh(part) :
     return meshes
 
 def GroupToMesh(group) :
-    print 'GroupToMesh'
+    print 'GroupToMesh>'
 
 def DocumentToGdml(materialMap = {"default":"G4_Cu"}) :
     doc = _FreeCAD.activeDocument()    
