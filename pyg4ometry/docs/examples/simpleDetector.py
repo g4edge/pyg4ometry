@@ -16,19 +16,19 @@ def simpleDetector(vtkViewer = True, gdmlWriter = True) :
     safety         = _pyg.geant4.Parameter("safety",1e-12)
     
     # calorimeter crystal 
-    cc_material    = "G4_Lead"
+    cc_material    = "G4_GLASS_LEAD"
     cc_length      = _pyg.geant4.Parameter("cc_length",20)
     cc_xsize       = _pyg.geant4.Parameter("cc_xsize",5)
     cc_ysize       = _pyg.geant4.Parameter("cc_ysize",5)
 
     # pmt 
-    pmt_material    = "G4_Lead"
+    pmt_material    = "G4_Al"
     pmt_length      = _pyg.geant4.Parameter("pmt_length",10)
     pmt_radius      = _pyg.geant4.Parameter("pmt_radius",4)
     pmt_position    = _pyg.geant4.ParameterVector("pmt_position",[zero,zero,cc_length/2.0+pmt_length/2.0+safety])
 
     # pmt base
-    bas_material    = "G4_Lead"
+    bas_material    = "G4_Al"
     bas_length      = _pyg.geant4.Parameter("bas_length",10)
     bas_radius      = _pyg.geant4.Parameter("bas_radius",4.5)
     bas_position    = _pyg.geant4.ParameterVector("bas_position",[zero,zero,cc_length/2.0+pmt_length+bas_length/2.0+2*safety])
