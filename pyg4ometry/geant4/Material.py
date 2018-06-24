@@ -174,6 +174,9 @@ class Material:
         self.components.append((material, fractionmass, "massfraction"))
         _registry.addMaterial(self)
 
+    def __str__(self) : 
+        return self.name
+
 class Element:
     """
     This class provides an interface to GDML material definitions. Because of the different options for constructing a material instance the constructor is kwarg only.
