@@ -5,8 +5,6 @@ import numpy             as _np
 import re as _re
 import warnings as _warnings
 
-
-
 class Reader(object):
     def __init__(self, filename, solidname="tess", visualise=True, writeGDML=False, scale=1):
         super(Reader, self).__init__()
@@ -21,7 +19,7 @@ class Reader(object):
         self.solid = self.load(solidname, visualise, writeGDML)
 
     
-    def load(self, solidname="tess", visualise=True, writeGDML=False):
+    def load(self, solidname="tess", visualise=False, writeGDML=False):
         #data  = open(self.filename, "r")
         def extractXYZ(string):
             #The scaling here is a bit cheeky, but the scale parameter in GDML seems to be ignored by Geanr4 for Tesselated Solids
