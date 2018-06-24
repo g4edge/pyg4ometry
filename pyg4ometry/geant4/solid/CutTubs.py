@@ -51,10 +51,12 @@ class CutTubs(_SolidBase):
         self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi).pycsgmesh()
 
     def csgmesh(self):
-        zlength = 3 * self.pDz  # make the dimensions of the semi-infinite plane large enough
+        pDz = float(self.pDz)
+
+        zlength = 3 * pDz  # make the dimensions of the semi-infinite plane large enough
         if self.pHighNorm != [0,0,1]:
-            pHigh = _Plane("pHigh_temp", self.pHighNorm, self.pDz, zlength).pycsgmesh()
+            pHigh = _Plane("pHigh_temp", self.pHighNorm, pDz, zlength).pycsgmesh()
             self.mesh = self.mesh.subtract(pHigh)
         if self.pLowNorm != [0,0,-1]:
-            pLow  = _Plane("pLow_temp", self.pLowNorm, -self.pDz, zlength).pycsgmesh()
+            pLow  = _Plane("pLow_temp", self.pLowNorm, -pDz, zlength).pycsgmesh()
             self.mesh = self.mesh.subtract(pLow)
