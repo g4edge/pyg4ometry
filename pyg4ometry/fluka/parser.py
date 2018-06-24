@@ -78,6 +78,75 @@ import pyg4ometry.fluka.FlukaParser
 # #                 _dispatch_preprocessor_line(line, defined_names, if_stack)
 
 
+# # FIRST I MUST UNDERSTAND HOW INCLUDES ARE DONE IN FLUPIX.  Does a
+# # define in the current file affect the file included?
+# # ALSO What does "#define x 0" do?  does it actually affect the definition?
+
+# class _Preprocessor(object):
+#     def __init__(self, path):
+#         if not os.path.exists(path):
+#             raise IOError("File not found: %s" % path)
+#         self.path = path
+#         self.defined_names = set()
+#         self.if_stack = [] # [(name, defined?), ...]
+#         self.elif_stack = [] # [(name, defined?), ...]
+
+#     def preprocess(self):
+#         with open(self.path, 'r') as f:
+#             for line in f:
+#                 if (self.skip_to_end_of_conditional
+#                     and not line.startswith(("#elif", "#endif"))):
+#                     continue
+#                 elif line.startswith("#"):
+#                     self._preprocess_line(line)
+#                 else:
+#                     yield line
+
+#     def _define(self, line):
+#         name = line.split()[1]
+#         self.defined_names.add(name)
+
+#     def _undef(self, line):
+#         name = line.split()[1]
+#         try:
+#             self.defined_names.remove(name)
+#         except KeyError: # it wasn't defined.  allow this.
+#             pass
+
+#     def _if(self, line):
+#         name = line.split()[1]
+#         self.if_stack.append((name, name in self.defined_names))
+
+#     def _elif(self, line):
+#         name = linesplit()[1]
+#         self.elif_stack.append((name, name in self.defined_names))
+
+#     def _endif(self, line):
+#         self.elif
+#         self.if_stack.pop()
+
+#     def _include(self, line):
+#         path = line.split()[1]
+#         new_pp = _PreProcessor(path)
+#         yield new_pp.preprocess()
+
+#     def _preprocess_line(self, line):
+#         try:
+#             pp_type = line.split()[0][1:] # "define", "if", etc..
+#             getattr(self, "_{}".format(pp_type)
+#         except AttributeError, IndexError:
+#             raise ValueError("Not a preprocessor line: {}".format(line))
+
+# # def preprocess(path):
+
+# #     with open(path, 'r') as f:
+# #         for line in f:
+# #             if skip_to_next_conditional is True:
+# #                 continue
+# #             elif line.startswith('#'):
+# #                 _dispatch_preprocessor_line(line, defined_names, if_stack)
+
+
 def get_geometry_ast_and_other_cards(path):
     """Return the antlr4 syntax tree for the given file."""
     if not os.path.exists(path):

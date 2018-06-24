@@ -17,7 +17,7 @@ class Writer(object):
         self.top.setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance')
         self.top.setAttribute('xsi:noNamespaceSchemaLocation',
                               'http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd')
-        
+
         self.defines   = self.top.appendChild(self.doc.createElement('define'))
         self.materials = self.top.appendChild(self.doc.createElement('materials'))
         self.solids    = self.top.appendChild(self.doc.createElement('solids'))
@@ -35,7 +35,7 @@ class Writer(object):
     def addDetector(self, registry) :
         self.registry = self.extractDefinesFromTesselatedSolids(registry)
 
-        # loop over defines 
+        # loop over defines
         for define in registry.defineDict :
             pass
 
@@ -44,14 +44,14 @@ class Writer(object):
             param = registry.parameterDict[paramId]
             self.writeParameter(param)
 
-        # loop over materials 
+        # loop over materials
 
-        # loop over solids 
+        # loop over solids
         for solidId in registry.solidDict.keys():
             solid = registry.solidDict[solidId]
             self.writeSolid(solid)
 
-        # loop over logical volumes 
+        # loop over logical volumes
         for logicalName in registry.logicalVolumeList  :
             print "writer", logicalName
             logical = registry.logicalVolumeDict[logicalName]
@@ -64,7 +64,7 @@ class Writer(object):
         we.setAttribute("ref",self.prepend+'_'+registry.worldName+"_lv")
         self.setup.appendChild(we)
 
-    def write(self, filename) : 
+    def write(self, filename) :
         self.filename = filename
 
         f = open(filename,'w')
@@ -102,7 +102,7 @@ class Writer(object):
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
         s += 'beam, particle="e-",\n'
-        s += 'energy=250.0*GeV;\n'        
+        s += 'energy=250.0*GeV;\n'
         f = open(self.filenameGmad, 'w')
         f.write(s)
         f.close()
@@ -119,10 +119,10 @@ class Writer(object):
 
     def checkDefineName(self, defineName) :
         pass
-        
-    def checkMaterialName(self, materialName) : 
+
+    def checkMaterialName(self, materialName) :
         pass
-    
+
     def checkSolidName(self, solidName) :
         pass
 
@@ -178,8 +178,10 @@ class Writer(object):
                         se.setAttribute('ref', name)
                         se.setAttribute('n', str(comp_info[1]))
                         oe.appendChild(se)
-            elif material.type == 'nist':
-                return #No need to add defines for NIST compounds
+            elif material.type == 'nist' or material.type == 'arbitrary':
+                # No need to add defines for NIST compounds or
+                # materials which are simply names.
+                return
 
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
@@ -220,7 +222,7 @@ class Writer(object):
 
         try:
             func = getattr(self, 'write'+solid.type) # get the member function
-            func(solid) # call it with the solid instance as an argument            
+            func(solid) # call it with the solid instance as an argument
         except AttributeError:
             print solid.name
             raise ValueError("No such solid "+solid.type)
@@ -243,7 +245,7 @@ class Writer(object):
         oe.setAttribute('rmax2', str(instance.pRmax2))
         oe.setAttribute('z', str(instance.pDz))
         oe.setAttribute('startphi', str(instance.pSPhi))
-        oe.setAttribute('deltaphi', str(instance.pDPhi))        
+        oe.setAttribute('deltaphi', str(instance.pDPhi))
         self.solids.appendChild(oe)
 
     def writeCutTubs(self, instance):
@@ -261,8 +263,8 @@ class Writer(object):
         oe.setAttribute('highY', str(instance.pHighNorm[1]))
         oe.setAttribute('highZ', str(instance.pHighNorm[2]))
         self.solids.appendChild(oe)
-        
-        
+
+
     def writeEllipsoid(self, instance):
         oe = self.doc.createElement('ellipsoid')
         oe.setAttribute('name', self.prepend + '_' + instance.name)
@@ -321,7 +323,7 @@ class Writer(object):
             oe.appendChild(s)
 
         self.solids.appendChild(oe)
-        
+
     def createrzPoint(self, r, z):
         rz = self.doc.createElement('rzpoint')
         rz.setAttribute('r', str(r))
@@ -358,7 +360,7 @@ class Writer(object):
             vertices = []
             for vertex_id in indexed_faced[0]: #Always 3 elements in a facet
                 vertices.append("V_{}_{}".format(name,vertex_id))
-                i = i+1 
+                i = i+1
             oe.appendChild(self.createTriangularFacet(*vertices))
         self.solids.appendChild(oe)
 
@@ -370,43 +372,43 @@ class Writer(object):
         oe.setAttribute('z', '2*'+str(instance.halfLenZ))
         oe.setAttribute('inst', str(instance.innerStereo))
         oe.setAttribute('outst', str(instance.outerStereo))
-        self.solids.appendChild(oe)         
+        self.solids.appendChild(oe)
 
     def writeIntersection(self, instance):
         oe  = self.doc.createElement('intersection')
         oe.setAttribute('name',self.prepend + '_' + instance.name)
-        
+
         cfe = self.doc.createElement('first')
         cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
         oe.appendChild(cfe)
-        
+
         cse = self.doc.createElement('second')
         cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
         oe.appendChild(cse)
-        
+
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position') 
+        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation') 
+        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
         self.defines.appendChild(r)
-        
+
 
         csce = self.doc.createElement('positionref')
         csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
         oe.appendChild(csce)
-        
+
         csce1 = self.doc.createElement('rotationref')
         csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
-        
+
 
         self.solids.appendChild(oe)
 
@@ -419,7 +421,7 @@ class Writer(object):
         oe.setAttribute('r', str(instance.pRMax))
         self.solids.appendChild(oe)
 
-    def writePara(self, instance):      
+    def writePara(self, instance):
         oe = self.doc.createElement('para')
         oe.setAttribute('name', self.prepend + '_' + instance.name)
         oe.setAttribute('x', str(instance.pX))
@@ -435,7 +437,7 @@ class Writer(object):
         oe.setAttribute('name', self.prepend + '_' + instance.name)
         oe.setAttribute('rlo', str(instance.pR1))
         oe.setAttribute('rhi', str(instance.pR2))
-        oe.setAttribute('dz', str(instance.pDz))        
+        oe.setAttribute('dz', str(instance.pDz))
         self.solids.appendChild(oe)
 
     def createzPlane(self, rInner, rOuter, zplane):
@@ -444,9 +446,9 @@ class Writer(object):
         d.setAttribute('rmax', str(rOuter))
         d.setAttribute('z', str(zplane))
         return d
-    
+
     def writePolycone(self, instance):
-        oe = self.doc.createElement('polycone')        
+        oe = self.doc.createElement('polycone')
         oe.setAttribute('name', self.prepend + '_' + instance.name)
         oe.setAttribute('startphi',str(instance.pSPhi))
         oe.setAttribute('deltaphi',str(instance.pDPhi))
@@ -457,20 +459,20 @@ class Writer(object):
             oe.appendChild(d)
 
         self.solids.appendChild(oe)
-        
+
     def writePolyhedra(self, instance):
         oe = self.doc.createElement('polyhedra')
         oe.setAttribute('name', self.prepend + '_' + instance.name)
         oe.setAttribute('startphi',str(instance.phiStart))
         oe.setAttribute('deltaphi',str(instance.phiTotal))
         oe.setAttribute('numsides',str(instance.numSide))
-        
+
         i = instance
         for w,x,y in zip(i.rInner, i.rOuter, i.zPlane):
             d = self.createzPlane(w,x,y)
             oe.appendChild(d)
 
-        self.solids.appendChild(oe)             
+        self.solids.appendChild(oe)
 
     def writeSphere(self, instance):
         oe = self.doc.createElement('sphere')
@@ -485,44 +487,44 @@ class Writer(object):
         self.solids.appendChild(oe)
 
 
-    def writeSubtraction(self, instance):    
+    def writeSubtraction(self, instance):
         oe  = self.doc.createElement('subtraction')
         oe.setAttribute('name',self.prepend + '_' + instance.name)
-        
+
         cfe = self.doc.createElement('first')
         cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
         oe.appendChild(cfe)
-        
+
         cse = self.doc.createElement('second')
         cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
         oe.appendChild(cse)
-        
+
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position') 
+        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation') 
+        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
         self.defines.appendChild(r)
-        
+
 
         csce = self.doc.createElement('positionref')
         csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
         oe.appendChild(csce)
-        
+
         csce1 = self.doc.createElement('rotationref')
         csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
-        
+
 
         self.solids.appendChild(oe)
-                
+
 
     def createPosition(self,name, x, y, z):
         p = self.doc.createElement('position')
@@ -543,14 +545,14 @@ class Writer(object):
         self.defines.appendChild(v2)
         v3 = self.createPosition(uniqueName + '_v3', j.p3[0], j.p3[1], j.p3[2])
         self.defines.appendChild(v3)
-        v4 = self.createPosition(uniqueName + '_v4', j.p4[0], j.p4[1], j.p4[2])        
-        self.defines.appendChild(v4)        
+        v4 = self.createPosition(uniqueName + '_v4', j.p4[0], j.p4[1], j.p4[2])
+        self.defines.appendChild(v4)
         oe.setAttribute('vertex1', uniqueName + '_v1')
         oe.setAttribute('vertex2', uniqueName + '_v2')
         oe.setAttribute('vertex3', uniqueName + '_v3')
         oe.setAttribute('vertex4', uniqueName + '_v4')
-        self.solids.appendChild(oe)        
-        
+        self.solids.appendChild(oe)
+
     def writeTorus(self, instance):
         oe = self.doc.createElement('torus')
         oe.setAttribute('name', self.prepend + '_' + instance.name)
@@ -575,7 +577,7 @@ class Writer(object):
         oe.setAttribute('x3','2*'+str(instance.pDx3))
         oe.setAttribute('x4','2*'+str(instance.pDx4))
         oe.setAttribute('alpha2',str(instance.pAlp2))
-        self.solids.appendChild(oe)        
+        self.solids.appendChild(oe)
 
     def writeTrd(self, instance):
         oe = self.doc.createElement("trd")
@@ -604,7 +606,7 @@ class Writer(object):
         oe.setAttribute('x','2*'+ str(instance.pDx))
         oe.setAttribute('y','2*'+ str(instance.pDy))
         oe.setAttribute('z','2*'+ str(instance.pDz))
-        self.solids.appendChild(oe)        
+        self.solids.appendChild(oe)
 
     def writeTwistedTrd(self, instance):
         oe = self.doc.createElement("twistedtrd")
@@ -624,49 +626,49 @@ class Writer(object):
         oe.setAttribute('z','2*'+ str(instance.pDz))
         oe.setAttribute('Theta',str(instance.pTheta))
         oe.setAttribute('Phi',str(instance.pDPhi))
-        oe.setAttribute('y1','2*'+ str(instance.pDy1))        
+        oe.setAttribute('y1','2*'+ str(instance.pDy1))
         oe.setAttribute('x1','2*'+ str(instance.pDx1))
         oe.setAttribute('x2','2*'+ str(instance.pDx2))
         oe.setAttribute('y2','2*'+ str(instance.pDy2))
         oe.setAttribute('x3','2*'+ str(instance.pDx3))
         oe.setAttribute('x4','2*'+ str(instance.pDx4))
         oe.setAttribute('Alph',str(instance.pAlp))
-        self.solids.appendChild(oe)       
+        self.solids.appendChild(oe)
 
     def writeUnion(self, instance):
         oe  = self.doc.createElement('union')
         oe.setAttribute('name',self.prepend + '_' + instance.name)
-        
+
         cfe = self.doc.createElement('first')
         cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
         oe.appendChild(cfe)
-        
+
         cse = self.doc.createElement('second')
         cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
         oe.appendChild(cse)
-        
+
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position') 
+        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation') 
+        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
         self.defines.appendChild(r)
-        
+
 
         csce = self.doc.createElement('positionref')
         csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
         oe.appendChild(csce)
-        
+
         csce1 = self.doc.createElement('rotationref')
         csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
-        
+
 
         self.solids.appendChild(oe)

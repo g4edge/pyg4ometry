@@ -21,7 +21,7 @@ class Wedge(_SolidBase):
     :type zlength: float
     """
 
-    def __init__(self, name, pRMax = 1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
+    def __init__(self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
         self.name  = name
         self.pRMax = float(pRMax)
         self.pSPhi = float(pSPhi)
