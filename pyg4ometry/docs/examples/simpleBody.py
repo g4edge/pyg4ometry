@@ -20,7 +20,7 @@ def simpleBody(vtkViewer = True, stlWriter = True) :
     intrLogical1    = _pyg.geant4.LogicalVolume(intrSolid1, 'G4_Cu', 'intrLogical1')
     intrPhysical1   = _pyg.geant4.PhysicalVolume([0,0,0],[0,0,0],intrLogical1, 'intrLogical1', worldLogical)
 
-    tubsSolid1      = _pyg.geant4.solid.Tubs('tubs1',0,45,60,0,2*_np.pi,slices=32)
+    tubsSolid1      = _pyg.geant4.solid.Tubs('tubs1',0,45,60,0,2*_np.pi,nslice=32)
     tubsLogical1    = _pyg.geant4.LogicalVolume(tubsSolid1,'G4_Cu','tubsLogical1')
     tubsPhysical1   = _pyg.geant4.PhysicalVolume([0,0,0],[-200,0,0],tubsLogical1,'tubsPhysical1',worldLogical)
 
