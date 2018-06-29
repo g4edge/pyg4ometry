@@ -32,13 +32,13 @@ class Parameter(object):
         return Parameter('{} - {}'.format(self, other),float(self)-float(other),False)
 
     def __mul__(self, other):
-        return Parameter('{} * {}'.format(self, other), float(self) * float(other),False)
+        return Parameter('({}) * ({})'.format(self, other), float(self) * float(other),False)
 
     def __rmul__(self, other):
-        return Parameter('{} * {}'.format(self, other), float(other)* float(self),False)
+        return Parameter('({}) * ({})'.format(self, other), float(other)* float(self),False)
     
     def __div__(self, other):
-        return Parameter('{} / {}'.format(self, other), float(self) / float(other),False)
+        return Parameter('({}) / ({})'.format(self, other), float(self) / float(other),False)
 
     def __neg__(self):
-        return Parameter('- {}'.format(self), -float(self),False)
+        return Parameter('- ({})'.format(self), -float(self),False)
