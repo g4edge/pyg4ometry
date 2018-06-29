@@ -1,6 +1,5 @@
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.vtk    as _vtk
-#import pygeometry.gdml   as _gdml
 import numpy             as _np
 import re as _re
 from xml.dom import minidom as _minidom

@@ -20,10 +20,10 @@ def simpleCollimator(vtkViewer = True, gdmlWriter = True) :
     zero          = _pyg.geant4.Parameter("zero",0.0)
     ucj_yposition = _pyg.geant4.Parameter("ucj_yposition",50)
     lcj_yposition = _pyg.geant4.Parameter("lcj_yposition",-50)
-    cj_width     = _pyg.geant4.Parameter("cj_width",20.0)
-    cj_thick     = _pyg.geant4.Parameter("cj_thick",5.0)
-    cj_length1   = _pyg.geant4.Parameter("cj_length1",50.0)
-    cj_length2   = _pyg.geant4.Parameter("cj_length2",30.0)
+    cj_width      = _pyg.geant4.Parameter("cj_width",20.0)
+    cj_thick      = _pyg.geant4.Parameter("cj_thick",5.0)
+    cj_length1    = _pyg.geant4.Parameter("cj_length1",50.0)
+    cj_length2    = _pyg.geant4.Parameter("cj_length2",30.0)
 
     # upper collimator jaw
     cj_material = "G4_Cu"
