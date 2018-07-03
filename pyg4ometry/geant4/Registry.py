@@ -11,6 +11,7 @@ class Registry:
         self.replicaVolumeDict            = OrderedDict()
         self.parameterisedVolumeDict      = OrderedDict()
         self.parameterDict                = OrderedDict()
+        self.defineDict                   = OrderedDict()
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
         self.solidTypeCountDict           = {}               # Box, Cons etc
         self.solidUsageCountDict          = {}               # solidName1, solidName2
@@ -124,6 +125,15 @@ class Registry:
         except KeyError:
             self.parameterDict[parameter.name] = parameter
 
+    def addDefine(self, define) :
+        try :
+            self.defineDict[define.name]
+            print 'define replicated', define.name
+            raise pyg4ometry.exceptions.IdenticalNameError(define.name,
+                                                           "define")            
+        except KeyError:
+            self.defineDict[define.name] = define
+        
 
     def setWorld(self, worldName):
         self.worldName = worldName
@@ -172,6 +182,7 @@ class Registry:
         self.replicaVolumeDict.clear()
         self.parameterisedVolumeDict.clear()
         self.parameterDict.clear()
+        self.defineDict.clear()
 
         self.logicalVolumeList = []
         self.solidTypeCountDict.clear()

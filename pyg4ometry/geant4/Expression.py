@@ -158,3 +158,11 @@ def expressionTest() :
     z = sin(a+b/c)
     print z.str()
     
+def expressionVectorTest() :
+
+    x = Expression("x",1)
+    y = Expression("y",2)
+    z = Expression("z",3)
+    v = ExpressionVector("v",[x,y,z])
+    
+    print v.str()
