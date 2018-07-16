@@ -1,13 +1,19 @@
-===============
-TODO (4/6/2018)
-===============
+TODO
+====
+
+2018 / 06 / 04
+--------------
 
  * start sphinx documentation (with simple examples)
+   
   * Simple boolean geometry
   * STL mesh load
-  * GDML load  
+  * GDML load
+    
  * check for name collisions in registry
-  * throw error if same name appears on add 
+   
+  * throw error if same name appears on add
+    
  * proper gmad element length
  * integrate pyfluka
  * materials 
