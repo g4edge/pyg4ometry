@@ -44,17 +44,20 @@ class TesselatedSolid(_SolidBase):
         #Avoid continuously evaluating funciton references in loop
         unique_index = self.unique_vertices.index
         unique_append  = self.unique_vertices.append
+
+        print "Compressing Tesselated solid vertices..."
         for facet in self.facet_list:
             normal = None #This is redundant
             vhashes = []
             for vertex in facet[0]:
                 count_orig += 1
-                #vert_hash = hash(vertex)
-                if vertex not in self.unique_vertices:
+                try: #Avoid multiple O(n) 'x in y' operations with a try block
+                    vert_idx = unique_index(vertex)
+                except ValueError:
                     count_redu +=1
                     unique_append(vertex)
+                    vert_idx = len(self.unique_vertices) - 1
 
-                vert_idx = unique_index(vertex)
                 vhashes.append(vert_idx)
             self.indexed_facet_list.append([vhashes, normal])
 
