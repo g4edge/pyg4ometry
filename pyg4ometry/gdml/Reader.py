@@ -632,7 +632,8 @@ class Reader(object):
         return var
 
     def stringAlgebraicSplit(self, string):
-        return _re.split("([+-/*])", string.replace(" ", ""))
+        result = [val for val in _re.split(r"([\(\[\+\-\*/\]\)])", string.replace(" ", "")) if val]
+        return result
 
     def _getCoordinateList(self, kwargs):
         x = self._get_var("x", float, "atr", **kwargs)
