@@ -594,28 +594,25 @@ class Reader(object):
                         var = var_type(self.variables[kwargs.get(varname, default)]) #if not in constants, look in variables
                     except(KeyError):
                         #Here it gets tricky. If not found until now, the value could be an expression with any mix of numbers and defines
-                        try:
-                            expression = self.stringAlgebraicSplit(kwargs.get(varname, default))
-                            expanded = []
-                            for item in expression:
-                                toappend = ""
-                                if item  in "([+-/*]).":
-                                    toappend = item
-                                else:
-                                    try:
-                                        toappend = str(int(item)) #If its a number add it as is.
-                                                                  #Note, the . in a decimal number is split off, all numbers here are ints
-                                    except(ValueError):
-                                        toappend = str(self._get_var("dummy", float, "atr", **{"dummy" : item})) #Recursion using a dummy call
-                                        if not toappend:
-                                            raise KeyError
-                                expanded.append(toappend)
-                            var = eval("".join(expanded))
+                        expression = self.stringAlgebraicSplit(kwargs.get(varname, default))
+                        expanded = []
 
-                        except(KeyError):
-                            #Alas, no value was found for the variable
-                            _warnings.warn("Variable "+varname+" not found")
-                            var = None
+                        if len(expression) < 2:
+                            raise SystemExit("Variable "+kwargs.get(varname)+" not found") # No algebraic equations - nothing else to do
+
+                        for item in expression:
+                            toappend = ""
+                            if item  in "([+-/*]).":
+                                toappend = item
+                            else:
+                                try:
+                                    toappend = str(int(item)) #If its a number add it as is.
+                                                              #Note, the . in a decimal number is split off, all numbers here are ints
+                                except(ValueError):
+                                    toappend = str(self._get_var("dummy", float, "atr", **{"dummy" : item})) #Recursion using a dummy call
+
+                            expanded.append(toappend)
+                        var = eval("".join(expanded))
 
         #convert units where neccessary
         if var is not default:
