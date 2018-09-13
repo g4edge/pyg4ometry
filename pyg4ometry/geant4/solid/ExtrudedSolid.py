@@ -40,9 +40,21 @@ class ExtrudedSolid(_SolidBase):
 
     def basicmesh(self):
         polygons  = []
+        polygonsT = []
+        polygonsB = []
+
+        polygonsT.append(_Polygon([_Vertex(_Vector(self.scale[-1]*vert[0]+self.x_offs[-1],
+                                                   self.scale[-1]*vert[1]+self.y_offs[-1],
+                                                   self.zpos[-1]),None) for vert in self.vertices]))
+
+        polygonsB.append(_Polygon([_Vertex(_Vector(self.scale[0]*vert[0]+self.x_offs[0],
+                                                   self.scale[0]*vert[1]+self.y_offs[0],
+                                                   self.zpos[0]),None) for vert in  list(reversed(self.vertices))]))
+
+        polygons.extend(polygonsB)
 
         maxn = len(self.vertices)
-        
+
         for l in range(0, self.nslices):
             for n in range(maxn):
                 n_next = (n+1) % maxn
@@ -70,6 +82,8 @@ class ExtrudedSolid(_SolidBase):
                                                  self.scale[l-1]*vert[1]+self.y_offs[l-1],
                                                  self.zpos[l-1]), None)])
                 polygons.append(poly)
+
+        polygons.extend(polygonsT)
 
         self.mesh = _CSG.fromPolygons(polygons)
 
