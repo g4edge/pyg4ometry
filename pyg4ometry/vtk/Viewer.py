@@ -8,12 +8,13 @@ def mkVtkIdList(it):
     return vil
 
 class Viewer :
-    def __init__(self, axes=True):
+    def __init__(self, axes=True, size=(1024, 768)):
         self.axes = axes
 
         self.count = 0
         # create a rendering window and renderer
         self.ren = _vtk.vtkRenderer()
+
         self.renWin = _vtk.vtkRenderWindow()
         self.renWin.AddRenderer(self.ren)
 
