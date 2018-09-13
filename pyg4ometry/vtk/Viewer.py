@@ -8,7 +8,9 @@ def mkVtkIdList(it):
     return vil
 
 class Viewer :
-    def __init__(self):
+    def __init__(self, axes=True):
+        self.axes = axes
+
         self.count = 0
         # create a rendering window and renderer
         self.ren = _vtk.vtkRenderer()
@@ -121,7 +123,8 @@ class Viewer :
 
     def view(self):
         # enable user interface interactor
-        self.setAxes()
+        if self.axes:
+            self.setAxes()
         self.iren.Initialize()
         self.renWin.Render()
         self.iren.Start()
