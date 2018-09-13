@@ -30,6 +30,11 @@ class Viewer :
         self.yrange = 0
         self.zrange = 0
 
+        # camera_parameters
+        self.camera_pos = (0,0,0)
+        self.camera_foc = (0,0,0)
+
+
     def addPycsgMeshList(self, meshes, refine=True): #, stlname):
         # print 'VtkViewer.addPycsgMeshList>', meshes
         for m in meshes :
@@ -118,7 +123,13 @@ class Viewer :
         meshActor.SetMapper(meshMapper)
         self.ren.AddActor(meshActor)
 
-    def setAxes(self) : 
+    def setViewPoint(self, position, focal_point=(0,0,0)):
+        camera =_vtk.vtkCamera();
+        self.camera_pos = position
+        self.camera_foc = focal_point
+        self.ren.SetActiveCamera(camera);
+
+    def setAxes(self) :
         axes = _vtk.vtkAxesActor()
         axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
         self.ren.AddActor(axes)
@@ -128,5 +139,14 @@ class Viewer :
         if self.axes:
             self.setAxes()
         self.iren.Initialize()
+
+        # The setting of position and focal point doesn't always work
+        # not sure why
+        self.ren.ResetCamera()
+        if any(self.camera_pos):
+            self.ren.GetActiveCamera().SetPosition(*self.camera_pos)
+        if any(self.camera_foc):
+            self.ren.GetActiveCamera().SetFocalPoint(*self.camera_foc)
+        self.ren.ResetCamera()
         self.renWin.Render()
         self.iren.Start()
