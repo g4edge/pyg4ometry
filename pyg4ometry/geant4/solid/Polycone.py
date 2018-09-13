@@ -39,6 +39,9 @@ class Polycone(_SolidBase):
             if register:
                 _registry.addSolid(self)
 
+    def __repr__(self):
+        return 'Polycone : '+self.name+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pZpl)+' '+str(self.pRMin)+' '+str(self.pRMax)
+
     def pycsgmesh(self):
 
         self.basicmesh()

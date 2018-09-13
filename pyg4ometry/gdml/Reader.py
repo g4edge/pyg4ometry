@@ -23,7 +23,6 @@ class Reader(object):
         # load file
         self.load()
 
-
     def load(self):
         data  = open(self.filename)
         #remove all newline charecters and whitespaces outside tags
@@ -61,18 +60,51 @@ class Reader(object):
             vals       = [attr.value for attr in attrs.values()]
             def_attrs  = {key: val for (key,val) in zip(keys, vals)}
 
+            def getXYZ(def_attrs) :
+                try :
+                    x = def_attrs['x']
+                except KeyError :
+                    x = '0.0'
+                try :
+                    y = def_attrs['y']
+                except KeyError :
+                    y = '0.0'
+                try :
+                    z = def_attrs['z']
+                except KeyError :
+                    z = '0.0'
+                    
+                return (x,y,z)
+            
+            def getMatrix(def_attrs) :
+                pass
+
             if(define_type == "constant"):
-                self.constants[name]=df.attributes["value"].value
-            elif(define_type == "position"):
-                self.positions[name]=self._getCoordinateList(def_attrs)
+                value = def_attrs['value']
+                _g4.GdmlDefines.Constant(name,value)
             elif(define_type == "quantity"):
-                self.quantities[name] =self._get_var("value", float, "atr", **def_attrs)
+                value = def_attrs['value']
+                unit  = def_attrs['unit']
+                type  = def_attrs['type']
+                _g4.GdmlDefines.Quantity(name,value,unit,type)
+            elif(define_type == "variable"):
+                value = def_attrs['value']
+                _g4.GdmlDefines.Variable(name,value)
+            elif(define_type == 'expression'):
+                continue
+                value = def_attrs['value']
+                _g4.GdmlDefines.Expression(name,value)                 
+            elif(define_type == "position"):                
+                (x,y,z) = getXYZ(def_attrs)
+                _g4.GdmlDefines.Position(name,x,y,z)
             elif(define_type == "rotation"):
-                self.rotations[name] = self._getCoordinateList(def_attrs)
+                (x,y,z) = getXYZ(def_attrs)
+                _g4.GdmlDefines.Rotation(name,x,y,z)
+            elif(define_type == "scale"):
+                (x,y,z) = getXYZ(def_attrs)
+                _g4.GdmlDefines.Scale(name,x,y,z)                
             elif(define_type == "matrix"):
                 self.matrices[name] = self._getMatrix(def_attrs)
-            elif(define_type == "variable"):
-                self.variables[name] = self._getVariable(def_attrs)
             else:
                 print "Urecognised define: ", define_type
 
@@ -94,43 +126,32 @@ class Reader(object):
                 # node is a comment so continue
                 continue
 
-            
+            solid_name = sd.attributes['name'].value
+
             if (solid_type in csg_solid_types): #need to inspect child nodes to get all parameters for csg solids
                 keys = sd.attributes.keys()
                 vals = [attr.value for attr in sd.attributes.values()]
 
+                gdml_attributes = {}
+                gdml_attributes['name'] = solid_name
+                gdml_attributes['type'] = solid_type
+
                 for csgsd in sd.childNodes:
-                    prm = csgsd.tagName
-                    if(prm == "first" or prm == "second"):
-                        keys.append(prm)
-                        vals.append(csgsd.attributes["ref"].value)
-                    elif(prm == "position" or prm == "rotation"):
-                        pos_keys = csgsd.attributes.keys()
-                        pos_vals = [attr.value for attr in csgsd.attributes.values()]
-                        pos = {key: val for (key,val) in zip(pos_keys, pos_vals)}
-                        keys.append(prm)
-                        vals.append(pos)
 
-                    elif(prm == "positionref"):
-                        ref_name = [attr.value for attr in csgsd.attributes.values()][0] #only one parameter - the ref name
-                        pos_keys = ["x", "y", "z"]          #this preserves the dict structure understood by solid building methods
-                        ref_vals  = self.positions[ref_name] #this is already an [x,y,z] list with the correct units
-                        pos = {key: val for (key,val) in zip(pos_keys, ref_vals)}
-                        keys.append("position")
-                        vals.append(pos)
+                    try :
+                        prm = csgsd.tagName
+                    except AttributeError :
+                        # _warnings.warn("CSG solid parameter '"+prm+"' unknown")
+                        continue
+                        
+                    try :
+                        ref = csgsd.attributes['ref'].value
+                    except KeyError :
+                        ref = csgsd.attributes['name'].value
 
-                    elif(prm == "rotationref"):
-                        ref_name = [attr.value for attr in csgsd.attributes.values()][0] #only one parameter - the ref name
-                        rot_keys = ["x", "y", "z"]           #this preserves the dict structure understood by solid building methods
-                        ref_vals  = self.rotations[ref_name] #this is already an [x,y,z] list with the correct units
-                        rot = {key: val for (key,val) in zip(rot_keys, ref_vals)}
-                        keys.append("rotation")
-                        vals.append(rot)
+                    gdml_attributes[prm] = ref
 
-                    else:
-                        _warnings.warn("CSG solid parameter '"+prm+"' unknown")
-
-                gdml_attributes = {key: val for (key,val) in zip(keys, vals)}
+                print gdml_attributes 
 
             elif (solid_type in ply_solid_types): #need to inspect child nodes to get zplane info for poly solids
                 keys = sd.attributes.keys()
@@ -197,6 +218,9 @@ class Reader(object):
                 keys = sd.attributes.keys()
                 vals = [attr.value for attr in sd.attributes.values()]
 
+                print keys 
+                print vals
+
                 count_vrt = 0
                 count_pln = 0
                 faces_list = []
@@ -246,10 +270,10 @@ class Reader(object):
         _g4.registry.setWorld(worldLvName)
 
     def _box(self,**kwargs):
-        name = self._get_var("name", str, "atr", **kwargs)
-        x    = self._get_var("x", float, "lgt", **kwargs)/2
-        y    = self._get_var("y", float, "lgt", **kwargs)/2
-        z    = self._get_var("z", float, "lgt", **kwargs)/2
+        name = kwargs['name']
+        x    = '('+kwargs['x']+')/2'
+        y    = '('+kwargs['y']+')/2'
+        z    = 'C'+kwargs['z']+')/2'
 
         csgsolid = _g4.solid.Box(name, x, y, z)
         return csgsolid
@@ -268,13 +292,24 @@ class Reader(object):
         return csgsolid
 
     def _sphere(self,**kwargs):
-        name       = self._get_var("name", str, "atr", **kwargs)
-        rmin       = self._get_var("rmin", float, "lgt", **kwargs)
-        rmax       = self._get_var("rmax", float, "lgt",**kwargs)
-        startphi   = self._get_var("startphi", float, "ang",**kwargs)
-        deltaphi   = self._get_var("deltaphi", float, "ang",**kwargs)
-        starttheta = self._get_var("starttheta", float, "ang",**kwargs)
-        deltatheta = self._get_var("rmin", float, "ang", **kwargs)
+        name       = kwargs['name']
+        try : 
+            rmin   = kwargs['rmin']
+        except KeyError : 
+            rmin   = '0.0'
+        rmax       = kwargs['rmax']
+        
+        try : 
+            startphi = kwargs['startphi']
+        except KeyError :
+            startphi = '0.0'
+        deltaphi   = kwargs['deltaphi']
+        try : 
+            starttheta = kwargs['starttheta']
+        except KeyError : 
+            starttheta = '0.0';
+
+        deltatheta = kwargs['deltatheta']
 
         csgsolid = _g4.solid.Sphere(name, rmin, rmax, startphi, deltaphi, starttheta, deltatheta)
         return csgsolid
@@ -287,15 +322,26 @@ class Reader(object):
         return csgsolid
 
     def _cone(self,**kwargs):
-        name  = self._get_var("name", str, "atr", **kwargs)
-        rmin1 = self._get_var("rmin1", float, "lgt",**kwargs)
-        rmax1 = self._get_var("rmax1", float, "lgt",**kwargs)
-        rmin2 = self._get_var("rmin2", float, "lgt",**kwargs)
-        rmax2 = self._get_var("rmax2", float, "lgt",**kwargs)
-        dz    = self._get_var("z", float, "lgt",**kwargs)/2
-        sphi  = self._get_var("startphi", float, "ang",**kwargs)
-        dphi  = self._get_var("deltaphi", float, "ang", **kwargs)
-        
+        name  = kwargs['name']
+        try : 
+            rmin1 = kwargs['rmin1']
+        except KeyError :
+            rmin1 = '0.0'
+        rmax1 = kwargs['rmax1']
+        try : 
+            rmin2 = kwargs['rmin2']
+        except KeyError : 
+            rmin2 = '0.0'
+        rmax2 = kwargs['rmax2']
+        dz    = '('+kwargs['z']+')/2'
+        try : 
+            sphi  = kwargs['startphi']
+        except KeyError :
+            sphi  = '0.0'
+
+        dphi  = kwargs['deltaphi']
+
+
         csgsolid = _g4.solid.Cons(name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi)
         return csgsolid
 
@@ -445,12 +491,18 @@ class Reader(object):
         return solid
 
     def _tube(self,**kwargs):
-        name  = self._get_var("name", str, "atr", **kwargs)
-        rmin  = self._get_var("rmin", float, "lgt",**kwargs)
-        rmax  = self._get_var("rmax", float, "lgt",**kwargs)
-        sphi  = self._get_var("startphi",float, "ang", **kwargs)
-        dphi  = self._get_var("deltaphi", float, "ang", **kwargs)
-        z     = self._get_var("z", float, "lgt", **kwargs)/2
+        name  = kwargs['name']
+        try : 
+            rmin  = kwargs['rmin']
+        except KeyError :
+            rmin  = '0.0'
+        rmax  = kwargs['rmax']
+        try : 
+            sphi  = kwargs['startphi']
+        except KeyError :
+            sphi  = '0.0'
+        dphi  = kwargs['deltaphi']
+        z     = '('+kwargs['z']+')/2'
 
         csgsolid = _g4.solid.Tubs(name, rmin, rmax, z, sphi, dphi)
         return csgsolid

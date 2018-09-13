@@ -35,7 +35,7 @@ class Cons(_SolidBase):
         self.mesh = None
         if register:
             _registry.addSolid(self)
-        self.checkParameters()
+        # self.checkParameters()
 
     def checkParameters(self):
         if self.pRmin1 > self.pRmax1:

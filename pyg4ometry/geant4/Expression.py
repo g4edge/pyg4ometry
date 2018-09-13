@@ -18,16 +18,18 @@ def log(expression) :
 def log10(expression) :
     return Expression('log10('+expression.name + ')',_math.log10(expression.value))
 
-
 class ExpressionRegistry(dict) : 
     def __init__(self) : 
         pass
     
 expressionRegistry = ExpressionRegistry() 
 
+def isExpression(value) : 
+    pass
+
 class Expression(object) :
     def __init__(self,name, value = 0.0) :
-        self.name  = name 
+        self.name  = name
         self.value = value
 
     def eval(self) : 

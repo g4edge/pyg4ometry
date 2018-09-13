@@ -43,7 +43,7 @@ class Sphere(_SolidBase):
         self.nslice  = nslice
         self.nstack  = nstack
         self.mesh    = None
-        self.checkParameters()
+        # self.checkParameters()
         if register:
             _registry.addSolid(self)
 
