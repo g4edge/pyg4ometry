@@ -23,6 +23,7 @@ class Viewer :
         self.iren.SetRenderWindow(self.renWin)
 
         self.ren.SetBackground(1.0, 1.0, 1.0)
+        self.renWin.SetSize(*size)
 
         # axis range
         self.xrange = 0
