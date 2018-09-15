@@ -8,10 +8,13 @@ def mkVtkIdList(it):
     return vil
 
 class Viewer :
-    def __init__(self):
+    def __init__(self, axes=True, size=(1024, 768)):
+        self.axes = axes
+
         self.count = 0
         # create a rendering window and renderer
         self.ren = _vtk.vtkRenderer()
+
         self.renWin = _vtk.vtkRenderWindow()
         self.renWin.AddRenderer(self.ren)
 
@@ -20,11 +23,17 @@ class Viewer :
         self.iren.SetRenderWindow(self.renWin)
 
         self.ren.SetBackground(1.0, 1.0, 1.0)
+        self.renWin.SetSize(*size)
 
         # axis range
         self.xrange = 0
         self.yrange = 0
         self.zrange = 0
+
+        # camera_parameters
+        self.camera_pos = (0,0,0)
+        self.camera_foc = (0,0,0)
+
 
     def addPycsgMeshList(self, meshes, refine=True): #, stlname):
         # print 'VtkViewer.addPycsgMeshList>', meshes
@@ -114,14 +123,30 @@ class Viewer :
         meshActor.SetMapper(meshMapper)
         self.ren.AddActor(meshActor)
 
-    def setAxes(self) : 
+    def setViewPoint(self, position, focal_point=(0,0,0)):
+        camera =_vtk.vtkCamera();
+        self.camera_pos = position
+        self.camera_foc = focal_point
+        self.ren.SetActiveCamera(camera);
+
+    def setAxes(self) :
         axes = _vtk.vtkAxesActor()
         axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
         self.ren.AddActor(axes)
 
     def view(self):
         # enable user interface interactor
-        self.setAxes()
+        if self.axes:
+            self.setAxes()
         self.iren.Initialize()
+
+        # The setting of position and focal point doesn't always work
+        # not sure why
+        self.ren.ResetCamera()
+        if any(self.camera_pos):
+            self.ren.GetActiveCamera().SetPosition(*self.camera_pos)
+        if any(self.camera_foc):
+            self.ren.GetActiveCamera().SetFocalPoint(*self.camera_foc)
+        self.ren.ResetCamera()
         self.renWin.Render()
         self.iren.Start()

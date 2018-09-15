@@ -17,7 +17,7 @@ import sys as _sys
 
 class LogicalVolume(object):
     imeshed = 0
-    def __init__(self, solid, material, name, debug=False, register=True):
+    def __init__(self, solid, material, name, debug=False, register=True, **kwargs):
         super(LogicalVolume, self).__init__()
         self.solid           = solid
 
@@ -30,6 +30,8 @@ class LogicalVolume(object):
         self.daughterVolumes = []
         self.mesh            = None
         self.debug           = debug
+        self.alpha           = kwargs.get("alpha", 0.5)
+        self.color           = kwargs.get("color", (1,1,1))
         if register:
             _registry.addLogicalVolume(self)
         self._register = register
@@ -59,9 +61,9 @@ class LogicalVolume(object):
 
         if len(self.daughterVolumes) == 0:
             self.mesh = [self.solid.pycsgmesh()]
-            self.mesh[0].alpha     = 0.5
+            self.mesh[0].alpha     = self.alpha
             self.mesh[0].wireframe = False
-            self.mesh[0].colour    = [1,1,1]
+            self.mesh[0].colour    = self.color
 
         else:
             daughterMeshes = []
@@ -70,9 +72,9 @@ class LogicalVolume(object):
                 daughterMeshes.append(dvMesh)
                 self.mesh = [self.solid.pycsgmesh(),daughterMeshes]
 
-            self.mesh[0].alpha     = 0.5
+            self.mesh[0].alpha     = self.alpha
             self.mesh[0].wireframe = False
-            self.mesh[0].colour    = [1,0,0]
+            self.mesh[0].colour    = self.color
             self.mesh[0].logical   = True
 
         if self.debug:

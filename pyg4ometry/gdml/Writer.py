@@ -89,7 +89,7 @@ class Writer(object):
 
         return registry
 
-    def writeGmadTester(self, filenameGmad, writeDefaultLattice=False, zLength=None):
+    def writeGmadTester(self, filenameGmad, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         self.filenameGmad = filenameGmad
 
         if writeDefaultLattice:
@@ -97,12 +97,14 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(self.filename)
-        s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*cm;\n'
+        s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
         s += 'beam, particle="e-",\n'
         s += 'energy=250.0*GeV;\n'
+        if not preprocessGDML:
+            s += "option, preprocessGDML=0;"
         f = open(self.filenameGmad, 'w')
         f.write(s)
         f.close()
