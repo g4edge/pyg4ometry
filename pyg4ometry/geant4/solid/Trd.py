@@ -41,10 +41,10 @@ class Trd(_SolidBase):
     def basicmesh(self):
         pX1 = float(self.pX1)
         pX2 = float(self.pX2)
-        pY1 = float(self.pX1)
+        pY1 = float(self.pY1)
         pY2 = float(self.pY2)
         pZ  = float(self.pZ)
-        
+
         self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX1,-pY1,pZ), None),
                                                   _Vertex(_Vector(-pX1, pY1,pZ), None),
                                                   _Vertex(_Vector(pX1, pY1,pZ), None),
