@@ -45,30 +45,35 @@ class Trd(_SolidBase):
         pY2 = float(self.pY2)
         pZ  = float(self.pZ)
 
-        self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX1,-pY1,pZ), None),
-                                                  _Vertex(_Vector(-pX1, pY1,pZ), None),
-                                                  _Vertex(_Vector(pX1, pY1,pZ), None),
-                                                  _Vertex(_Vector(pX1,-pY1,pZ), None)]),
-                                        _Polygon([_Vertex(_Vector(-pX2,-pY2,-pZ), None),
-                                                  _Vertex(_Vector(pX2,-pY2, -pZ), None),
-                                                  _Vertex(_Vector(pX2, pY2, -pZ), None),
-                                                  _Vertex(_Vector(-pX2, pY2, -pZ), None)]),
-                                        _Polygon([_Vertex(_Vector(-pX1,-pY1,pZ), None),
-                                                  _Vertex(_Vector(pX1,-pY1,pZ), None),
-                                                  _Vertex(_Vector(pX2,-pY2, -pZ), None),
-                                                  _Vertex(_Vector(-pX2,-pY2,-pZ), None)]),
-                                        _Polygon([_Vertex(_Vector(-pX1, pY1,pZ), None),
-                                                  _Vertex(_Vector(-pX2, pY2,-pZ), None),
-                                                  _Vertex(_Vector(pX2, pY2,-pZ), None),
-                                                  _Vertex(_Vector(pX1, pY1,pZ), None)]),
-                                        _Polygon([_Vertex(_Vector(-pX1,-pY1, pZ), None),
-                                                  _Vertex(_Vector(-pX2,-pY2, -pZ), None),
-                                                  _Vertex(_Vector(-pX2, pY2,-pZ), None),
-                                                  _Vertex(_Vector(-pX1, pY1, pZ), None)]),
-                                        _Polygon([_Vertex(_Vector(pX1,-pY1,  pZ), None),
-                                                  _Vertex(_Vector(pX1, pY1,  pZ), None),
-                                                  _Vertex(_Vector(pX2, pY2, -pZ), None),
-                                                  _Vertex(_Vector(pX2,-pY2, -pZ), None)])])
+        self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX2,  pY2, pZ), None),
+                                                  _Vertex(_Vector(-pX2, -pY2, pZ), None),
+                                                  _Vertex(_Vector(pX2,  -pY2, pZ), None),
+                                                  _Vertex(_Vector(pX2,  pY2,  pZ), None)]),
+
+                                        _Polygon([ _Vertex(_Vector(-pX1, -pY1, -pZ), None),
+                                                   _Vertex(_Vector(-pX1,  pY1, -pZ), None),
+                                                   _Vertex(_Vector(pX1,   pY1, -pZ), None),
+                                                   _Vertex(_Vector(pX1,  -pY1, -pZ), None)]),
+
+                                        _Polygon([_Vertex(_Vector(pX1,  -pY2,  pZ), None),
+                                                  _Vertex(_Vector(-pX1, -pY2,  pZ), None),
+                                                  _Vertex(_Vector(-pX2, -pY1, -pZ), None),
+                                                  _Vertex(_Vector(pX2,  -pY1, -pZ), None)]),
+
+                                        _Polygon([_Vertex(_Vector(pX1,  pY2,  pZ), None),
+                                                  _Vertex(_Vector(pX2,  pY1, -pZ), None),
+                                                  _Vertex(_Vector(-pX2, pY1, -pZ), None),
+                                                  _Vertex(_Vector(-pX1, pY2,  pZ), None)]),
+
+                                        _Polygon([_Vertex(_Vector(-pX1,  pY2,  pZ), None),
+                                                  _Vertex(_Vector(-pX2,  pY1, -pZ), None),
+                                                  _Vertex(_Vector(-pX2, -pY1, -pZ), None),
+                                                  _Vertex(_Vector(-pX1, -pY2,  pZ), None)]),
+
+                                        _Polygon([_Vertex(_Vector(pX1, -pY2,  pZ), None),
+                                                  _Vertex(_Vector(pX2, -pY1, -pZ), None),
+                                                  _Vertex(_Vector(pX2,  pY1, -pZ), None),
+                                                  _Vertex(_Vector(pX1,  pY2,  pZ), None)])])
 
         return self.mesh
 
