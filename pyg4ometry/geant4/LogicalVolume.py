@@ -25,6 +25,8 @@ class LogicalVolume(object):
             self.material = material
         elif isinstance(material, str):
             self.material = _Material.nist(material)
+        else:
+            raise SystemExit("Unsupported type for material: {}".format(type(material)))
 
         self.name            = name
         self.daughterVolumes = []
