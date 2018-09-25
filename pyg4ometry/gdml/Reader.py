@@ -4,7 +4,6 @@ import numpy             as _np
 import re as _re
 from xml.dom import minidom as _minidom
 import warnings as _warnings
-from math import pi as _pi
 
 class Reader(object):
     def __init__(self, filename):
@@ -19,6 +18,15 @@ class Reader(object):
         self.variables        = {}
         self.worldVolumeName  = str()
         self.exclude          = [] #parametrized volumes not converted
+
+        self.system_defines={
+            "pi" : _np.pi,
+            "e"  : _np.e,
+            }
+
+        self.system_functions = {}
+        for d in ["sin", "cos", "tan", "cot"]:
+            self.system_functions[d] = "_np.{}".format(d)
 
         # load file
         self.load()
@@ -580,39 +588,58 @@ class Reader(object):
             default = ""
 
         #search for the absolute value
+
+        value = kwargs.get(varname, default)
+
         try:
-            var = var_type(kwargs.get(varname, default))    #get attribute value if attribute is present
+            var = var_type(value)    #get attribute value if attribute is present
 
-        except(ValueError):                                 #if attribute found, but typecasting fails, search defines to check if its referenced
+        except(ValueError):          #if attribute found, but typecasting fails, search defines to check if its referenced
+
+            if value in self.quantities:
+                var = self.quantities[value]
+            elif value in self.variables:
+                var = self.variables[value]
+            elif value in self.constants:
+                var = self.constants[value]
+            elif value in self.system_defines:
+                var = self.system_defines[value]
+            elif value in self.system_functions:
+                var = self.system_functions[value]
+                return var # Functions are always evaluated by the expression bloc - pass as a string
+
+            elif set(value) & set("(+-*/)"):  # Variable may be an arithmetic expression
+                expression = self.stringAlgebraicSplit(value)
+                expanded = []
+                for item in expression:
+                    toappend = ""
+                    if item  in "([+-/*]).":
+                        toappend = item
+                    else:
+                        try:
+                            toappend = str(float(item)) #If its a number add it as is.
+                        except(ValueError):
+                            # Recursion using a dummy call
+                            ## Keep the count to truncate infinite recursion if parameter cannot be found
+                            rcount = kwargs.get("recursion_count", 0)
+                            toappend = str(self._get_var("dummy", float, "atr",
+                                                         **{"dummy" : item, "recursion_count" : rcount+1}))
+                    expanded.append(toappend)
+                var = eval("".join(expanded))
+            else:
+                raise SystemExit("Variable {} not found".format(value))
+
+            # Ok, something is found, try to cast to the required type
             try:
-                var = var_type(self.quantities[kwargs.get(varname, default)])
-            except(KeyError):                               #if attribute value is not found in defined quantities, look in constants
-                try:
-                    var = var_type(eval(self.constants[kwargs.get(varname, default)]))
-                except(KeyError):
-                    try:
-                        var = var_type(self.variables[kwargs.get(varname, default)]) #if not in constants, look in variables
-                    except(KeyError):
-                        #Here it gets tricky. If not found until now, the value could be an expression with any mix of numbers and defines
-                        expression = self.stringAlgebraicSplit(kwargs.get(varname, default))
-                        expanded = []
+                var = var_type(var)
+            except ValueError:
 
-                        if len(expression) < 2:
-                            raise SystemExit("Variable "+kwargs.get(varname)+" not found") # No algebraic equations - nothing else to do
+                # Not valid, see if it references another define
+                rcount = kwargs.get("recursion_count", 0)
+                if rcount > 100: # Truncate recursion
+                    raise SystemExit("Variable {} not found".format(var))
 
-                        for item in expression:
-                            toappend = ""
-                            if item  in "([+-/*]).":
-                                toappend = item
-                            else:
-                                try:
-                                    toappend = str(int(item)) #If its a number add it as is.
-                                                              #Note, the . in a decimal number is split off, all numbers here are ints
-                                except(ValueError):
-                                    toappend = str(self._get_var("dummy", float, "atr", **{"dummy" : item})) #Recursion using a dummy call
-
-                            expanded.append(toappend)
-                        var = eval("".join(expanded))
+                var = self._get_var("dummy", float, "atr", **{"dummy" : var, "recursion_count" : rcount+1})
 
         #convert units where neccessary
         if var is not default:
@@ -749,7 +776,7 @@ class Reader(object):
 
     def _toStandUnits(self, value, unit):
         #standard units are mm for length and rad for angle
-        multf = {"default":1, "pm":1.e-6, "nm":1.e-3, "mum":1.e-3, "mm":1, "cm":10, "m":1.e3, "deg":2*_pi/360, "rad":1}
+        multf = {"default":1, "pm":1.e-6, "nm":1.e-3, "mum":1.e-3, "mm":1, "cm":10, "m":1.e3, "deg":2*_np.pi/360, "rad":1}
         try:
             val = multf[unit]*value #if this fails the value is of unknown unit type
         except:
