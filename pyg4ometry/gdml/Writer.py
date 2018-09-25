@@ -6,6 +6,8 @@ from ..geant4.Material import Material as _Material
 from ..geant4.Material import Element as _Element
 from ..geant4.Material import Isotope as _Isotope
 
+import pyg4ometry.geant4 as _g4
+
 class Writer(object):
     def __init__(self, prepend = 'PREPEND'):
         super(Writer, self).__init__()
@@ -97,7 +99,12 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(self.filename)
-        s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
+        if self.registry.parameterDict.has_key("GDML_Size_position_z"):
+            s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
+        else:
+            ext = _g4.mesh_extent(_g4.registry.worldVolume.mesh)
+            dz = ext[1][2] - ext[0][2]
+            s += '", l=' + str(dz) + '*mm;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
