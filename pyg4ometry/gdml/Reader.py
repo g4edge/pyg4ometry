@@ -86,7 +86,87 @@ class Reader(object):
 
 
     def parseMaterials(self, xmldoc):
-        pass
+        materials = []
+        elements  = []
+        isotopes  = []
+
+        self.materialdef = xmldoc.getElementsByTagName("materials")[0]
+
+        for node in self.materialdef.childNodes :
+            if node.nodeType != node.ELEMENT_NODE:
+                # probably a comment node, skip
+                continue
+
+            mat_type  = node.tagName
+
+            name   = node.attributes["name"].value
+            attrs  = node.attributes
+
+            keys       = attrs.keys()
+            vals       = [attr.value for attr in attrs.values()]
+            def_attrs  = {key: val for (key,val) in zip(keys, vals)}
+
+            if mat_type == "isotope":
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName=="atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                isotopes.append(def_attrs)
+
+            elif mat_type == "element":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                elements.append(def_attrs)
+
+            elif mat_type == "material":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "D":
+                        def_attrs["density"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "composite":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "composite"
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                materials.append(def_attrs)
+
+            else:
+                print "Urecognised define: ", mat_type
+
+        self._makeMaterials(materials, elements, isotopes)
 
     def parseSolids(self, xmldoc):
         solids_list = []
@@ -577,8 +657,74 @@ class Reader(object):
         else:
             print "Solid "+st+" not supported, abort construction"
 
+    def _makeMaterials(self, materials, elements, isotopes):
+        isotope_dict = {}
+        element_dict = {} # No material dict as materials go into the registry
 
-    def _get_var(self, varname, var_type, param_type, **kwargs): #TODO: Over time this method turned messy. Consider rewriting from scratch
+        # Build the objects in order
+        for isotope in isotopes:
+            name = self._get_var("name", str, "atr", **isotope)
+            Z    = self._get_var("Z", int, "atr", **isotope)
+            N    = self._get_var("N", int, "atr", **isotope)
+            a    = self._get_var("a", float, "atr", **isotope)
+
+            isotope_dict[name] = _g4.Isotope(name, Z, N, a)
+
+        for element in elements:
+            name = self._get_var("name", str, "atr", **element)
+            symbol = self._get_var("formula", str, "atr", **element)
+
+            if not element["components"]:
+                Z    = self._get_var("Z", int, "atr", **element)
+                a    = self._get_var("a", float, "atr", **element)
+                element_dict[name] = _g4.Element.simple(name, symbol, Z, a)
+
+            else:
+                n_comp = len(element["components"])
+                ele = _g4.Element.composite(name, symbol, n_comp)
+
+                for comp in element["components"]:
+                    ref = self._get_var("ref", str, "atr", **comp)
+                    abundance = self._get_var("n", float, "atr", **comp)
+                    ele.add_isotope(isotope_dict[ref], abundance)
+                element_dict[name] = ele
+
+        for material in materials:
+            name = self._get_var("name", str, "atr", **material)
+            density = self._get_var("density", str, "atr", **material)
+
+            if not material["components"]:
+                Z    = self._get_var("Z", int, "atr", **material)
+                a    = self._get_var("a", float, "atr", **material)
+                mat = _g4.Material.simple(name, Z, a, density)
+
+            else:
+                n_comp = len(material["components"])
+                comp_type = material["components"][0]["comp_type"]
+                mat = _g4.Material.composite(name, density, n_comp)
+
+                for comp in material["components"]:
+                    if comp_type == "fraction":
+                        ref = self._get_var("ref", str, "atr", **comp)
+                        abundance = self._get_var("n", float, "atr", **comp)
+
+                        if ref in _g4.registry.materialDict:
+                            target = _g4.registry.materialDict[ref]
+                        else:
+                            target = element_dict[ref]
+
+                        mat.add_element_massfraction(target, abundance)
+
+                    elif comp_type == "composite":
+                        ref = self._get_var("ref", str, "atr", **comp)
+                        natoms = self._get_var("n", int, "atr", **comp)
+                        mat.add_element_natoms(element_dict[ref], abundance)
+
+                    else:
+                        raise SystemExit("Unrecognised material component type: {}".format(comp_type))
+
+
+    def _get_var(self, varname, var_type, param_type, **kwargs):
 
         if(var_type == int):   #inputs are all stings so set defaults to proper type
             default = 0
@@ -685,19 +831,24 @@ class Reader(object):
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
                 solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
                 daughters = [] #done elsewhere
-                vol       = _g4.LogicalVolume(_g4.registry.solidDict[solid], material, name)
-                
+
+                if material in _g4.registry.materialDict:
+                    mat = _g4.registry.materialDict[material]
+                else:
+                    mat = str(material)
+
+                vol = _g4.LogicalVolume(_g4.registry.solidDict[solid], mat, name)
+
                 for chNode in node.childNodes :
-                    if chNode.tagName == "physvol" : 
+                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" : 
                         volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
                         position  = self._evalCoordRef(chNode, "position")
                         rotation  = self._evalCoordRef(chNode, "rotation")
                         scale     = self._evalCoordRef(chNode, "scale")
                         physvol   = _g4.PhysicalVolume(rotation, position, _g4.registry.logicalVolumeDict[volref],
                                                        chNode.attributes["name"].value,vol,scale)
-                        
                 
-                    elif(node_name == "paramvol"):
+                    elif chNode.nodeType == node.ELEMENT_NODE and node_name == "paramvol":
                         print "Volume ", node.parentNode.attributes["name"].value, "excluded - parametrised volume" #debug
                         volref  = node.getElementsByTagName("volumeref")[0].attributes["ref"].value
                         self.exclude.append(volref)                                                 #TODO: include parametrised solids
