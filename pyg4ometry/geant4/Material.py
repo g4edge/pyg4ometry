@@ -103,7 +103,7 @@ class Material:
         Inputs:
           name          - string
           density       - float, material density in g/cm3
-          atomic_number - int, total number of nucleons, commonly known as 'A'
+          atomic_number - int, total number of nucleons, commonly known as 'Z'
           atomic_weght  - int, molar weight in g/mole, commonly known as 'a'
         """
         return cls(**locals())
