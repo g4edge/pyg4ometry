@@ -48,7 +48,7 @@ class CutTubs(_SolidBase):
         return self.mesh
 
     def basicmesh(self):
-        self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi).pycsgmesh()
+        self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, register=False).pycsgmesh()
 
     def csgmesh(self):
         pDz = float(self.pDz)
