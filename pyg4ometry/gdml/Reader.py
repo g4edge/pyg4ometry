@@ -504,7 +504,7 @@ class Reader(object):
             vert = [x,y]
             verts.append(vert)
 
-        for i in range(1, nzpl+1):
+        for i in range(0, nzpl):
             zpos      = self._get_var("zPosition_"+str(i), float, "lgt",**kwargs)
             xoffs     = self._get_var("xOffset_"+str(i), float, "lgt",**kwargs)
             yoffs     = self._get_var("yOffset_"+str(i), float, "lgt",**kwargs)
