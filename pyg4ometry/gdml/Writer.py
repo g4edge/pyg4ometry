@@ -102,9 +102,13 @@ class Writer(object):
         if self.registry.parameterDict.has_key("GDML_Size_position_z"):
             s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
-            ext = _g4.mesh_extent(_g4.registry.worldVolume.mesh)
-            dz = ext[1][2] - ext[0][2]
-            s += '", l=' + str(dz) + '*mm;\n'
+            # be super tolerant incase the meshing fails - still write out
+            try:
+                ext = _g4.mesh_extent(_g4.registry.worldVolume.mesh)
+                dz = ext[1][2] - ext[0][2]
+                s += '", l=' + str(dz) + '*mm;\n'
+            except TypeError:
+                s += '", l=20*m;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
