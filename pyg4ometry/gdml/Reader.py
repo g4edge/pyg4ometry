@@ -738,6 +738,9 @@ class Reader(object):
         value = kwargs.get(varname, default)
 
         try:
+            if var_type == int:      # Anooyingly, 1. etc won't convert to int
+                value = float(value) # convert to float first instead
+
             var = var_type(value)    #get attribute value if attribute is present
 
         except(ValueError):          #if attribute found, but typecasting fails, search defines to check if its referenced
