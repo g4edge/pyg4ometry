@@ -34,8 +34,8 @@ class CutTubs(_SolidBase):
         if register:
             _registry.addSolid(self)
 
-    def __repr__(selfs):
-        pass
+    def __repr__(self):
+        return 'Cut tubs :{}'.format(self.name)
 
     def pycsgmesh(self):
 #        if self.mesh :
