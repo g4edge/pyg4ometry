@@ -6,9 +6,10 @@ from xml.dom import minidom as _minidom
 import warnings as _warnings
 
 class Reader(object):
-    def __init__(self, filename):
+    def __init__(self, filename, prepend=""):
         super(Reader, self).__init__()
         self.filename = filename
+        self.prepend = prepend
 
         self.constants        = {}
         self.positions        = {}
@@ -31,6 +32,8 @@ class Reader(object):
         # load file
         self.load()
 
+    def mangleName(self, name):
+        return "{}{}".format(self.prepend, name)
 
     def load(self):
         data  = open(self.filename)
@@ -329,7 +332,7 @@ class Reader(object):
 
         # find world logical volume
         self.setup  = xmldoc.getElementsByTagName("setup")[0]
-        worldLvName = self.setup.childNodes[0].attributes["ref"].value
+        worldLvName = self.mangleName(self.setup.childNodes[0].attributes["ref"].value)
         _g4.registry.orderLogicalVolumes(worldLvName)
         _g4.registry.setWorld(worldLvName)
 
@@ -647,6 +650,10 @@ class Reader(object):
                              "intersection": self._intersection, "union": self._union, "opticalsurface":self._opticalsurface, "tessellated":self._tessellated}
 
         st = solid_type
+
+        # Mangle the solid name with a prepend string - allows multiple gdml file loading
+        attributes["name"] = self.mangleName(attributes["name"])
+
         if st in supported_solids.keys():
             solid = supported_solids[st](**attributes)
             if(solid is not None):
@@ -830,9 +837,9 @@ class Reader(object):
         
         if node.nodeType == node.ELEMENT_NODE:
             if(node_name == "volume"):
-                name      = node.attributes["name"].value
+                name      = self.mangleName(node.attributes["name"].value)
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
-                solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
+                solid     = self.mangleName(node.getElementsByTagName("solidref")[0].attributes["ref"].value)
                 daughters = [] #done elsewhere
 
                 if material in _g4.registry.materialDict:
@@ -843,13 +850,14 @@ class Reader(object):
                 vol = _g4.LogicalVolume(_g4.registry.solidDict[solid], mat, name)
 
                 for chNode in node.childNodes :
-                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" : 
-                        volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
+                        pvol_name = self.mangleName(chNode.attributes["name"].value)
+                        volref    = self.mangleName(chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value)
                         position  = self._evalCoordRef(chNode, "position")
                         rotation  = self._evalCoordRef(chNode, "rotation")
                         scale     = self._evalCoordRef(chNode, "scale")
                         physvol   = _g4.PhysicalVolume(rotation, position, _g4.registry.logicalVolumeDict[volref],
-                                                       chNode.attributes["name"].value,vol,scale)
+                                                       pvol_name, vol, scale)
                 
                     elif chNode.nodeType == node.ELEMENT_NODE and node_name == "paramvol":
                         print "Volume ", node.parentNode.attributes["name"].value, "excluded - parametrised volume" #debug
