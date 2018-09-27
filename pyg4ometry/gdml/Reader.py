@@ -710,10 +710,10 @@ class Reader(object):
 
                         if ref in _g4.registry.materialDict:
                             target = _g4.registry.materialDict[ref]
+                            mat.add_material(target, abundance)
                         else:
                             target = element_dict[ref]
-
-                        mat.add_element_massfraction(target, abundance)
+                            mat.add_element_massfraction(target, abundance)
 
                     elif comp_type == "composite":
                         ref = self._get_var("ref", str, "atr", **comp)
