@@ -206,7 +206,7 @@ class LogicalVolume(object):
 
     def gdmlWrite(self, gw, prepend):
         we = gw.doc.createElement('volume')
-        we.setAttribute('name',prepend+'_'+self.name+'_lv')
+        we.setAttribute('name',prepend + self.name+'_lv')
         mr = gw.doc.createElement('materialref')
         #if self.material.find("G4") != -1 :
         #    mr.setAttribute('ref',self.material)
@@ -217,7 +217,7 @@ class LogicalVolume(object):
         we.appendChild(mr)
 
         sr = gw.doc.createElement('solidref')
-        sr.setAttribute('ref',prepend+'_'+self.solid.name)
+        sr.setAttribute('ref',prepend + self.solid.name)
         we.appendChild(sr)
 
         for dv in self.daughterVolumes:

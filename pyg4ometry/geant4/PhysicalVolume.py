@@ -85,9 +85,9 @@ class PhysicalVolume(object):
     def gdmlWrite(self, gw, prepend):
         # physical volume
         pv = gw.doc.createElement('physvol')
-        pv.setAttribute('name',prepend+'_'+self.name+'_pv')
+        pv.setAttribute('name',prepend + self.name+'_pv')
         vr = gw.doc.createElement('volumeref')
-        vr.setAttribute('ref',prepend+'_'+self.logicalVolume.name+'_lv')
+        vr.setAttribute('ref',prepend + self.logicalVolume.name+'_lv')
         pv.appendChild(vr)
 
         # phys vol translation
@@ -97,7 +97,7 @@ class PhysicalVolume(object):
             pv.appendChild(tlatee)
         else:
             tlatee = gw.doc.createElement('position')
-            tlatee.setAttribute('name',prepend+'_'+self.name+'_pos')
+            tlatee.setAttribute('name',prepend + self.name+'_pos')
             tlatee.setAttribute('x',str(self.position[0]))
             tlatee.setAttribute('y',str(self.position[1]))
             tlatee.setAttribute('z',str(self.position[2]))
@@ -107,7 +107,7 @@ class PhysicalVolume(object):
 
         # phys vol rotation
         rote   = gw.doc.createElement('rotation')
-        rote.setAttribute('name',prepend+'_'+self.name+'_rot')
+        rote.setAttribute('name',prepend + self.name+'_rot')
         rote.setAttribute('x',str(self.rotation[0]))
         rote.setAttribute('y',str(self.rotation[1]))
         rote.setAttribute('z',str(self.rotation[2]))
@@ -115,7 +115,7 @@ class PhysicalVolume(object):
 
         # phys vol scale
         tscae = gw.doc.createElement('scale')
-        tscae.setAttribute('name',prepend+'_'+self.name+'_sca')
+        tscae.setAttribute('name',prepend + self.name+'_sca')
         tscae.setAttribute('x',str(self.scale[0]))
         tscae.setAttribute('y',str(self.scale[1]))
         tscae.setAttribute('z',str(self.scale[2]))
