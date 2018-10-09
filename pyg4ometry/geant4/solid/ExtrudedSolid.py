@@ -41,10 +41,21 @@ class ExtrudedSolid(_SolidBase):
 
         return self.mesh
 
+    def polygon_area(self):
+        # Using the shoelace formula
+        xy = _np.array(self.vertices).T
+        x = xy[0]
+        y = xy[1]
+        signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
+        return signed_area
+
     def basicmesh(self):
         polygons  = []
         polygonsT = []
         polygonsB = []
+
+        if self.polygon_area() < 0:
+            self.vertices = list(reversed(self.vertices))
 
 
         poly_top = [_Vertex(_Vector(self.scale[-1]*vert[0]+self.x_offs[-1],
