@@ -1,5 +1,5 @@
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.vtk    as _vtkv
+import pyg4ometry.visualisation as _vis
 import pyg4ometry.gdml   as _gdml
 import numpy             as _np
 import re as _re
@@ -62,12 +62,7 @@ class Reader(object):
 
             if visualise:
                 # mesh the geometry
-                m = worldLogical.pycsgmesh()
-
-                # view the geometry
-                v = _vtkv.Viewer()
-                v.addPycsgMeshList(m, refine=False)
-                v.view();
+                _vis.viewWorld()
 
             if writeGDML:
                 # write gdml
