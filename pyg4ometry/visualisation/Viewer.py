@@ -1,4 +1,5 @@
 import vtk as _vtk
+import pyg4ometry.geant4 as _g4
 
 # python iterable to vtkIdList
 def mkVtkIdList(it):
@@ -33,7 +34,6 @@ class Viewer :
         # camera_parameters
         self.camera_pos = (0,0,0)
         self.camera_foc = (0,0,0)
-
 
     def addPycsgMeshList(self, meshes, refine=True): #, stlname):
         # print 'VtkViewer.addPycsgMeshList>', meshes
@@ -150,3 +150,29 @@ class Viewer :
         self.ren.ResetCamera()
         self.renWin.Render()
         self.iren.Start()
+
+def viewLogicalVolume(logical_volume, checkOverlaps=False):
+    if isinstance(logical_volume, str):
+        if logical_volume in _g4.registry.logicalVolumeDict:
+            lvol = _g4.registry.logicalVolumeDict[logical_volume]
+        else:
+            raise SystemExit("Volume name {} not found".format(logical_volume))
+    elif isinstance(logical_volume, _g4.LogicalVolume):
+        lvol = logical_volume
+
+    if checkOverlaps:
+        m = lvol.checkOverlaps()
+    else:
+        m = lvol.pycsgmesh()
+
+    viewer = Viewer()
+    viewer.addPycsgMeshList(m)
+    viewer.view();
+
+    return viewer
+
+def viewWorld(checkOverlaps=False):
+    world_volume = _g4.registry.worldVolume
+    viewer = viewLogicalVolume(world_volume, checkOverlaps=checkOverlaps)
+
+    return viewer
