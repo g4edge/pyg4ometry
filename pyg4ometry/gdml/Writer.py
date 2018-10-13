@@ -329,7 +329,7 @@ class Writer(object):
             oe.appendChild(v)
 
         i = instance
-        n = 1
+        n = 0
         for z,x,y,s in zip(i.zpos,i.x_offs, i.y_offs, i.scale):
             s = self.createSection(n, z, x, y, s)
             n += 1
