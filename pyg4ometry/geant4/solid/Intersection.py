@@ -24,7 +24,7 @@ class Intersection(_SolidBase):
             _registry.addSolid(self)
 
     def __repr__(self):
-        return 'Intersection : ('+str(self.obj1)+') with ('+str(self.obj2)+')'
+        return 'Intersection '+self.name+': ('+str(self.obj1)+') with ('+str(self.obj2)+')'
 
     def pycsgmesh(self):
 

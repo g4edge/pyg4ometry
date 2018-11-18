@@ -3,7 +3,7 @@ import transformation
 import exceptions
 import stl
 import gdml
-import vtk
+import visualisation
 import geant4
 import freecad
 try :

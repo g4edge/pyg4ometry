@@ -28,6 +28,9 @@ class ExtrudedSolid(_SolidBase):
         if register:
             _registry.addSolid(self)
 
+    def __repr__(self):
+        return "Extruded solid:" + str(self.name)
+
     def pycsgmesh(self):
 
 #        if self.mesh :
@@ -38,52 +41,69 @@ class ExtrudedSolid(_SolidBase):
 
         return self.mesh
 
+    def polygon_area(self):
+        # Using the shoelace formula
+        xy = _np.array(self.vertices).T
+        x = xy[0]
+        y = xy[1]
+        signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
+        return signed_area
+
     def basicmesh(self):
         polygons  = []
         polygonsT = []
         polygonsB = []
 
-        polygonsT.append(_Polygon([_Vertex(_Vector(self.scale[-1]*vert[0]+self.x_offs[-1],
-                                                   self.scale[-1]*vert[1]+self.y_offs[-1],
-                                                   self.zpos[-1]),None) for vert in self.vertices]))
+        if self.polygon_area() < 0:
+            self.vertices = list(reversed(self.vertices))
 
-        polygonsB.append(_Polygon([_Vertex(_Vector(self.scale[0]*vert[0]+self.x_offs[0],
-                                                   self.scale[0]*vert[1]+self.y_offs[0],
-                                                   self.zpos[0]),None) for vert in  list(reversed(self.vertices))]))
 
+        poly_top = [_Vertex(_Vector(self.scale[-1]*vert[0]+self.x_offs[-1],
+                                  self.scale[-1]*vert[1]+self.y_offs[-1],
+                                  self.zpos[-1]),None) for vert in list(reversed(self.vertices))]
+
+
+        poly_bot = [_Vertex(_Vector(self.scale[0]*vert[0]+self.x_offs[0],
+                                  self.scale[0]*vert[1]+self.y_offs[0],
+                                  self.zpos[0]),None) for vert in self.vertices]
+
+        polygonsT.append(_Polygon(poly_top))
+        polygonsB.append(_Polygon(poly_bot))
+
+        # It appears we must append the top and bottom faces and then tile the sides
+        polygons.extend(polygonsT)
         polygons.extend(polygonsB)
 
         maxn = len(self.vertices)
 
-        for l in range(0, self.nslices):
+        for l in range(0, self.nslices-1):
+            l_curr = l
+            l_next = l + 1
+
             for n in range(maxn):
                 n_next = (n+1) % maxn
 
-                if l < self.nslices - 1:
-                    vert = self.vertices[n]
-                    vert_next = self.vertices[n_next]
-                else:
-                    vert = self.vertices[self.nslices - n]
-                    vert_next = self.vertices[self.nslices - n - 1]
+                vert = self.vertices[self.nslices - n]
+                vert_next = self.vertices[self.nslices - n - 1]
 
-                poly = _Polygon([_Vertex(_Vector(self.scale[l]*vert[0]+self.x_offs[l],
-                                                 self.scale[l]*vert[1]+self.y_offs[l],
-                                                 self.zpos[l]), None),
+                poly = _Polygon([_Vertex(_Vector(self.scale[l_curr]*vert[0]+self.x_offs[l_curr],
+                                                 self.scale[l_curr]*vert[1]+self.y_offs[l_curr],
+                                                 self.zpos[l_curr]), None),
 
-                                 _Vertex(_Vector(self.scale[l]*vert_next[0]+self.x_offs[l],
-                                                 self.scale[l]*vert_next[1]+self.y_offs[l],
-                                                 self.zpos[l]), None),
+                                 _Vertex(_Vector(self.scale[l_curr]*vert_next[0]+self.x_offs[l_curr],
+                                                 self.scale[l_curr]*vert_next[1]+self.y_offs[l_curr],
+                                                 self.zpos[l_curr]), None),
 
-                                 _Vertex(_Vector(self.scale[l-1]*vert_next[0]+self.x_offs[l-1],
-                                                 self.scale[l-1]*vert_next[1]+self.y_offs[l-1],
-                                                 self.zpos[l-1]), None),
+                                 _Vertex(_Vector(self.scale[l_next]*vert_next[0]+self.x_offs[l_next],
+                                                 self.scale[l_next]*vert_next[1]+self.y_offs[l_next],
+                                                 self.zpos[l_next]), None),
 
-                                 _Vertex(_Vector(self.scale[l-1]*vert[0]+self.x_offs[l-1],
-                                                 self.scale[l-1]*vert[1]+self.y_offs[l-1],
-                                                 self.zpos[l-1]), None)])
+                                 _Vertex(_Vector(self.scale[l_next]*vert[0]+self.x_offs[l_next],
+                                                 self.scale[l_next]*vert[1]+self.y_offs[l_next],
+                                                 self.zpos[l_next]), None)])
+
                 polygons.append(poly)
 
-        polygons.extend(polygonsT)
 
         self.mesh = _CSG.fromPolygons(polygons)
 

@@ -6,6 +6,8 @@ from ..geant4.Material import Material as _Material
 from ..geant4.Material import Element as _Element
 from ..geant4.Material import Isotope as _Isotope
 
+import pyg4ometry.geant4 as _g4
+
 class Writer(object):
     def __init__(self, prepend = 'PREPEND'):
         super(Writer, self).__init__()
@@ -61,7 +63,7 @@ class Writer(object):
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
         we = self.doc.createElement("world")
-        we.setAttribute("ref",self.prepend+'_'+registry.worldName+"_lv")
+        we.setAttribute("ref",self.prepend + registry.worldName+"_lv")
         self.setup.appendChild(we)
 
     def write(self, filename) :
@@ -97,7 +99,16 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(self.filename)
-        s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
+        if self.registry.parameterDict.has_key("GDML_Size_position_z"):
+            s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
+        else:
+            # be super tolerant incase the meshing fails - still write out
+            try:
+                ext = _g4.mesh_extent(_g4.registry.worldVolume.mesh)
+                dz = ext[1][2] - ext[0][2]
+                s += '", l=' + str(dz) + '*mm;\n'
+            except TypeError:
+                s += '", l=20*m;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
         s += 'sample,all;\n'
@@ -231,7 +242,7 @@ class Writer(object):
 
     def writeBox(self, instance):
         oe = self.doc.createElement('box')
-        oe.setAttribute('name', self.prepend+'_'+instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('lunit','mm')
         oe.setAttribute('x','2*'+str(instance.pX))
         oe.setAttribute('y','2*'+str(instance.pY))
@@ -240,7 +251,7 @@ class Writer(object):
 
     def writeCons(self, instance):
         oe = self.doc.createElement('cone')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('rmin1', str(instance.pRmin1))
         oe.setAttribute('rmax1', str(instance.pRmax1))
         oe.setAttribute('rmin2', str(instance.pRmin2))
@@ -252,7 +263,7 @@ class Writer(object):
 
     def writeCutTubs(self, instance):
         oe = self.doc.createElement('cutTube')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('z', '2*'+str(instance.pDz))
         oe.setAttribute('rmin', str(instance.pRMin))
         oe.setAttribute('rmax', str(instance.pRMax))
@@ -269,7 +280,7 @@ class Writer(object):
 
     def writeEllipsoid(self, instance):
         oe = self.doc.createElement('ellipsoid')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('ax', str(instance.pxSemiAxis))
         oe.setAttribute('by', str(instance.pySemiAxis))
         oe.setAttribute('cz', str(instance.pzSemiAxis))
@@ -279,7 +290,7 @@ class Writer(object):
 
     def writeEllipticalCone(self, instance):
         oe = self.doc.createElement('elcone')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('dx', str(instance.pxSemiAxis))
         oe.setAttribute('dy', str(instance.pySemiAxis))
         oe.setAttribute('zmax', str(instance.zMax))
@@ -288,7 +299,7 @@ class Writer(object):
 
     def writeEllipticalTube(self, instance):
         oe = self.doc.createElement('eltube')
-        oe.setAttribute('name', self.prepend+'_'+instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('dx', '2*'+str(instance.pDx))
         oe.setAttribute('dy', '2*'+str(instance.pDy))
         oe.setAttribute('dz', '2*'+str(instance.pDz))
@@ -311,14 +322,14 @@ class Writer(object):
 
     def writeExtrudedSolid(self, instance):
         oe = self.doc.createElement('xtru')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
 
         for vertex in instance.vertices:
             v = self.createTwoDimVertex(vertex[0], vertex[1])
             oe.appendChild(v)
 
         i = instance
-        n = 1
+        n = 0
         for z,x,y,s in zip(i.zpos,i.x_offs, i.y_offs, i.scale):
             s = self.createSection(n, z, x, y, s)
             n += 1
@@ -334,7 +345,7 @@ class Writer(object):
 
     def writeGenericPolycone(self, instance):
         oe = self.doc.createElement('genericPolycone')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('startphi', str(instance.pSPhi))
         oe.setAttribute('deltaphi', str(instance.pDPhi))
 
@@ -355,7 +366,7 @@ class Writer(object):
     def writeTesselatedSolid(self, instance):
         oe = self.doc.createElement('tessellated')
         name     = instance.name
-        oe.setAttribute('name', self.prepend + '_' + name)
+        oe.setAttribute('name', self.prepend + name)
 
         i = 0
         for indexed_faced in instance.indexed_facet_list:
@@ -368,7 +379,7 @@ class Writer(object):
 
     def writeHype(self, instance):
         oe = self.doc.createElement('hype')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('rmin', str(instance.innerRadius))
         oe.setAttribute('rmax', str(instance.outerRadius))
         oe.setAttribute('z', '2*'+str(instance.halfLenZ))
@@ -378,25 +389,25 @@ class Writer(object):
 
     def writeIntersection(self, instance):
         oe  = self.doc.createElement('intersection')
-        oe.setAttribute('name',self.prepend + '_' + instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
 
         cfe = self.doc.createElement('first')
-        cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
         oe.appendChild(cfe)
 
         cse = self.doc.createElement('second')
-        cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
+        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
+        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
@@ -404,11 +415,11 @@ class Writer(object):
 
 
         csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
+        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
         oe.appendChild(csce)
 
         csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
+        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
 
 
@@ -419,13 +430,13 @@ class Writer(object):
 
     def writeOrb(self, instance):
         oe = self.doc.createElement('orb')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('r', str(instance.pRMax))
         self.solids.appendChild(oe)
 
     def writePara(self, instance):
         oe = self.doc.createElement('para')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('x', str(instance.pX))
         oe.setAttribute('y', str(instance.pY))
         oe.setAttribute('z', str(instance.pZ))
@@ -436,7 +447,7 @@ class Writer(object):
 
     def writeParaboloid(self, instance):
         oe = self.doc.createElement('paraboloid')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('rlo', str(instance.pR1))
         oe.setAttribute('rhi', str(instance.pR2))
         oe.setAttribute('dz', str(instance.pDz))
@@ -451,7 +462,7 @@ class Writer(object):
 
     def writePolycone(self, instance):
         oe = self.doc.createElement('polycone')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('startphi',str(instance.pSPhi))
         oe.setAttribute('deltaphi',str(instance.pDPhi))
 
@@ -464,7 +475,7 @@ class Writer(object):
 
     def writePolyhedra(self, instance):
         oe = self.doc.createElement('polyhedra')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('startphi',str(instance.phiStart))
         oe.setAttribute('deltaphi',str(instance.phiTotal))
         oe.setAttribute('numsides',str(instance.numSide))
@@ -478,7 +489,7 @@ class Writer(object):
 
     def writeSphere(self, instance):
         oe = self.doc.createElement('sphere')
-        oe.setAttribute('name',self.prepend+'_'+instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('rmin',str(instance.pRmin))
         oe.setAttribute('rmax',str(instance.pRmax))
         oe.setAttribute('deltaphi',str(instance.pDPhi))
@@ -491,25 +502,25 @@ class Writer(object):
 
     def writeSubtraction(self, instance):
         oe  = self.doc.createElement('subtraction')
-        oe.setAttribute('name',self.prepend + '_' + instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
 
         cfe = self.doc.createElement('first')
-        cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
         oe.appendChild(cfe)
 
         cse = self.doc.createElement('second')
-        cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
+        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
+        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
@@ -517,11 +528,11 @@ class Writer(object):
 
 
         csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
+        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
         oe.appendChild(csce)
 
         csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
+        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
 
 
@@ -539,7 +550,7 @@ class Writer(object):
     def writeTet(self, instance):
         j = instance
         oe = self.doc.createElement('tet')
-        uniqueName = self.prepend+'_'+instance.name
+        uniqueName = self.prepend + instance.name
         oe.setAttribute('name', uniqueName)
         v1 = self.createPosition(uniqueName + '_v1', j.anchor[0], j.anchor[1], j.anchor[2])
         self.defines.appendChild(v1)
@@ -557,7 +568,7 @@ class Writer(object):
 
     def writeTorus(self, instance):
         oe = self.doc.createElement('torus')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('rmin',str(instance.pRmin))
         oe.setAttribute('rmax',str(instance.pRmax))
         oe.setAttribute('rtor',str(instance.pRtor))
@@ -567,7 +578,7 @@ class Writer(object):
 
     def writeTrap(self, instance):
         oe = self.doc.createElement('trap')
-        oe.setAttribute('name', self.prepend + '_' + instance.name)
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('z','2*'+str(instance.pDz))
         oe.setAttribute('theta',str(instance.pTheta))
         oe.setAttribute('phi',str(instance.pDPhi))
@@ -583,7 +594,7 @@ class Writer(object):
 
     def writeTrd(self, instance):
         oe = self.doc.createElement("trd")
-        oe.setAttribute('name',self.prepend + '_' + instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('x1','2*'+str(instance.pX1))
         oe.setAttribute('x2','2*'+str(instance.pX2))
         oe.setAttribute('y1','2*'+str(instance.pY1))
@@ -593,7 +604,7 @@ class Writer(object):
 
     def writeTubs(self, instance):
         oe = self.doc.createElement("tube")
-        oe.setAttribute('name',self.prepend+'_'+instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('rmin',str(instance.pRMin))
         oe.setAttribute('rmax',str(instance.pRMax))
         oe.setAttribute('z',   '2*'+str(instance.pDz))
@@ -603,7 +614,7 @@ class Writer(object):
 
     def writeTwistedBox(self, instance):
         oe = self.doc.createElement("twistedbox")
-        oe.setAttribute('name',self.prepend+'_'+instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('PhiTwist',str(instance.twistedAngle))
         oe.setAttribute('x','2*'+ str(instance.pDx))
         oe.setAttribute('y','2*'+ str(instance.pDy))
@@ -612,7 +623,7 @@ class Writer(object):
 
     def writeTwistedTrd(self, instance):
         oe = self.doc.createElement("twistedtrd")
-        oe.setAttribute('name',self.prepend+'_'+instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('PhiTwist',str(instance.twistedAngle))
         oe.setAttribute('x1','2*'+ str(instance.pDx1))
         oe.setAttribute('x2','2*'+ str(instance.pDx2))
@@ -623,7 +634,7 @@ class Writer(object):
 
     def writeTwistedTrap(self, instance):
         oe = self.doc.createElement("twistedtrap")
-        oe.setAttribute('name',self.prepend+'_'+instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('PhiTwist',str(instance.twistedangle))
         oe.setAttribute('z','2*'+ str(instance.pDz))
         oe.setAttribute('Theta',str(instance.pTheta))
@@ -639,25 +650,25 @@ class Writer(object):
 
     def writeUnion(self, instance):
         oe  = self.doc.createElement('union')
-        oe.setAttribute('name',self.prepend + '_' + instance.name)
+        oe.setAttribute('name',self.prepend + instance.name)
 
         cfe = self.doc.createElement('first')
-        cfe.setAttribute('ref',self.prepend + '_' + instance.obj1.name)
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
         oe.appendChild(cfe)
 
         cse = self.doc.createElement('second')
-        cse.setAttribute('ref',self.prepend + '_' + instance.obj2.name)
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
         p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + '_' + instance.name+'_'+'position')
+        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
         p.setAttribute('x',str(instance.tra2[1][0]))
         p.setAttribute('y',str(instance.tra2[1][1]))
         p.setAttribute('z',str(instance.tra2[1][2]))
         self.defines.appendChild(p)
 
         r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + '_' + instance.name+'_'+'rotation')
+        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
         r.setAttribute('x', str(instance.tra2[0][0]))
         r.setAttribute('y', str(instance.tra2[0][1]))
         r.setAttribute('z', str(instance.tra2[0][2]))
@@ -665,11 +676,11 @@ class Writer(object):
 
 
         csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'position')
+        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
         oe.appendChild(csce)
 
         csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + '_' + instance.name+'_'+'rotation')
+        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
 
 

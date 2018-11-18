@@ -1,15 +1,15 @@
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.vtk    as _vtk
+import pyg4ometry.visualisation as _vis
 import numpy             as _np
 import re as _re
 from xml.dom import minidom as _minidom
 import warnings as _warnings
-from math import pi as _pi
 
 class Reader(object):
-    def __init__(self, filename):
+    def __init__(self, filename, prepend=""):
         super(Reader, self).__init__()
         self.filename = filename
+        self.prepend = prepend
 
         self.constants        = {}
         self.positions        = {}
@@ -20,8 +20,21 @@ class Reader(object):
         self.worldVolumeName  = str()
         self.exclude          = [] #parametrized volumes not converted
 
+        self.system_defines={
+            "pi" : _np.pi,
+            "e"  : _np.e,
+            }
+
+        self.system_functions = {}
+        for d in ["sin", "cos", "tan", "cot"]:
+            self.system_functions[d] = "_np.{}".format(d)
+
         # load file
         self.load()
+
+
+    def mangleName(self, name):
+        return "{}{}".format(self.prepend, name)
 
     def load(self):
         data  = open(self.filename)
@@ -110,7 +123,87 @@ class Reader(object):
 
 
     def parseMaterials(self, xmldoc):
-        pass
+        materials = []
+        elements  = []
+        isotopes  = []
+
+        self.materialdef = xmldoc.getElementsByTagName("materials")[0]
+
+        for node in self.materialdef.childNodes :
+            if node.nodeType != node.ELEMENT_NODE:
+                # probably a comment node, skip
+                continue
+
+            mat_type  = node.tagName
+
+            name   = node.attributes["name"].value
+            attrs  = node.attributes
+
+            keys       = attrs.keys()
+            vals       = [attr.value for attr in attrs.values()]
+            def_attrs  = {key: val for (key,val) in zip(keys, vals)}
+
+            if mat_type == "isotope":
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName=="atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                isotopes.append(def_attrs)
+
+            elif mat_type == "element":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                elements.append(def_attrs)
+
+            elif mat_type == "material":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "D":
+                        def_attrs["density"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "composite":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "composite"
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                materials.append(def_attrs)
+
+            else:
+                print "Urecognised define: ", mat_type
+
+        self._makeMaterials(materials, elements, isotopes)
 
     def parseSolids(self, xmldoc):
         solids_list = []
@@ -265,7 +358,7 @@ class Reader(object):
 
         # find world logical volume
         self.setup  = xmldoc.getElementsByTagName("setup")[0]
-        worldLvName = self.setup.childNodes[0].attributes["ref"].value
+        worldLvName = self.mangleName(self.setup.childNodes[0].attributes["ref"].value)
         _g4.registry.orderLogicalVolumes(worldLvName)
         _g4.registry.setWorld(worldLvName)
 
@@ -462,7 +555,7 @@ class Reader(object):
             vert = [x,y]
             verts.append(vert)
 
-        for i in range(1, nzpl+1):
+        for i in range(0, nzpl):
             zpos      = self._get_var("zPosition_"+str(i), float, "lgt",**kwargs)
             xoffs     = self._get_var("xOffset_"+str(i), float, "lgt",**kwargs)
             yoffs     = self._get_var("yOffset_"+str(i), float, "lgt",**kwargs)
@@ -611,6 +704,10 @@ class Reader(object):
                              "intersection": self._intersection, "union": self._union, "opticalsurface":self._opticalsurface, "tessellated":self._tessellated}
 
         st = solid_type
+
+        # Mangle the solid name with a prepend string - allows multiple gdml file loading
+        attributes["name"] = self.mangleName(attributes["name"])
+
         if st in supported_solids.keys():
             solid = supported_solids[st](**attributes)
             if(solid is not None):
@@ -621,8 +718,74 @@ class Reader(object):
         else:
             print "Solid "+st+" not supported, abort construction"
 
+    def _makeMaterials(self, materials, elements, isotopes):
+        isotope_dict = {}
+        element_dict = {} # No material dict as materials go into the registry
 
-    def _get_var(self, varname, var_type, param_type, **kwargs): #TODO: Over time this method turned messy. Consider rewriting from scratch
+        # Build the objects in order
+        for isotope in isotopes:
+            name = self._get_var("name", str, "atr", **isotope)
+            Z    = self._get_var("Z", int, "atr", **isotope)
+            N    = self._get_var("N", int, "atr", **isotope)
+            a    = self._get_var("a", float, "atr", **isotope)
+
+            isotope_dict[name] = _g4.Isotope(name, Z, N, a)
+
+        for element in elements:
+            name = self._get_var("name", str, "atr", **element)
+            symbol = self._get_var("formula", str, "atr", **element)
+
+            if not element["components"]:
+                Z    = self._get_var("Z", int, "atr", **element)
+                a    = self._get_var("a", float, "atr", **element)
+                element_dict[name] = _g4.Element.simple(name, symbol, Z, a)
+
+            else:
+                n_comp = len(element["components"])
+                ele = _g4.Element.composite(name, symbol, n_comp)
+
+                for comp in element["components"]:
+                    ref = self._get_var("ref", str, "atr", **comp)
+                    abundance = self._get_var("n", float, "atr", **comp)
+                    ele.add_isotope(isotope_dict[ref], abundance)
+                element_dict[name] = ele
+
+        for material in materials:
+            name = self._get_var("name", str, "atr", **material)
+            density = self._get_var("density", str, "atr", **material)
+
+            if not material["components"]:
+                Z    = self._get_var("Z", int, "atr", **material)
+                a    = self._get_var("a", float, "atr", **material)
+                mat = _g4.Material.simple(name, Z, a, density)
+
+            else:
+                n_comp = len(material["components"])
+                comp_type = material["components"][0]["comp_type"]
+                mat = _g4.Material.composite(name, density, n_comp)
+
+                for comp in material["components"]:
+                    if comp_type == "fraction":
+                        ref = self._get_var("ref", str, "atr", **comp)
+                        abundance = self._get_var("n", float, "atr", **comp)
+
+                        if ref in _g4.registry.materialDict:
+                            target = _g4.registry.materialDict[ref]
+                            mat.add_material(target, abundance)
+                        else:
+                            target = element_dict[ref]
+                            mat.add_element_massfraction(target, abundance)
+
+                    elif comp_type == "composite":
+                        ref = self._get_var("ref", str, "atr", **comp)
+                        natoms = self._get_var("n", int, "atr", **comp)
+                        mat.add_element_natoms(element_dict[ref], abundance)
+
+                    else:
+                        raise SystemExit("Unrecognised material component type: {}".format(comp_type))
+
+
+    def _get_var(self, varname, var_type, param_type, **kwargs):
 
         if(var_type == int):   #inputs are all stings so set defaults to proper type
             default = 0
@@ -632,39 +795,61 @@ class Reader(object):
             default = ""
 
         #search for the absolute value
+
+        value = kwargs.get(varname, default)
+
         try:
-            var = var_type(kwargs.get(varname, default))    #get attribute value if attribute is present
+            if var_type == int:      # Anooyingly, 1. etc won't convert to int
+                value = float(value) # convert to float first instead
 
-        except(ValueError):                                 #if attribute found, but typecasting fails, search defines to check if its referenced
+            var = var_type(value)    #get attribute value if attribute is present
+
+        except(ValueError):          #if attribute found, but typecasting fails, search defines to check if its referenced
+
+            if value in self.quantities:
+                var = self.quantities[value]
+            elif value in self.variables:
+                var = self.variables[value]
+            elif value in self.constants:
+                var = self.constants[value]
+            elif value in self.system_defines:
+                var = self.system_defines[value]
+            elif value in self.system_functions:
+                var = self.system_functions[value]
+                return var # Functions are always evaluated by the expression bloc - pass as a string
+
+            elif set(value) & set("(+-*/)"):  # Variable may be an arithmetic expression
+                expression = self.stringAlgebraicSplit(value)
+                expanded = []
+                for item in expression:
+                    toappend = ""
+                    if item  in "([+-/*]).":
+                        toappend = item
+                    else:
+                        try:
+                            toappend = str(float(item)) #If its a number add it as is.
+                        except(ValueError):
+                            # Recursion using a dummy call
+                            ## Keep the count to truncate infinite recursion if parameter cannot be found
+                            rcount = kwargs.get("recursion_count", 0)
+                            toappend = str(self._get_var("dummy", float, "atr",
+                                                         **{"dummy" : item, "recursion_count" : rcount+1}))
+                    expanded.append(toappend)
+                var = eval("".join(expanded))
+            else:
+                raise SystemExit("Variable {} not found".format(value))
+
+            # Ok, something is found, try to cast to the required type
             try:
-                var = var_type(self.quantities[kwargs.get(varname, default)])
-            except(KeyError):                               #if attribute value is not found in defined quantities, look in constants
-                try:
-                    var = var_type(eval(self.constants[kwargs.get(varname, default)]))
-                except(KeyError):
-                    try:
-                        var = var_type(self.variables[kwargs.get(varname, default)]) #if not in constants, look in variables
-                    except(KeyError):
-                        #Here it gets tricky. If not found until now, the value could be an expression with any mix of numbers and defines
-                        expression = self.stringAlgebraicSplit(kwargs.get(varname, default))
-                        expanded = []
+                var = var_type(var)
+            except ValueError:
 
-                        if len(expression) < 2:
-                            raise SystemExit("Variable "+kwargs.get(varname)+" not found") # No algebraic equations - nothing else to do
+                # Not valid, see if it references another define
+                rcount = kwargs.get("recursion_count", 0)
+                if rcount > 100: # Truncate recursion
+                    raise SystemExit("Variable {} not found".format(var))
 
-                        for item in expression:
-                            toappend = ""
-                            if item  in "([+-/*]).":
-                                toappend = item
-                            else:
-                                try:
-                                    toappend = str(int(item)) #If its a number add it as is.
-                                                              #Note, the . in a decimal number is split off, all numbers here are ints
-                                except(ValueError):
-                                    toappend = str(self._get_var("dummy", float, "atr", **{"dummy" : item})) #Recursion using a dummy call
-
-                            expanded.append(toappend)
-                        var = eval("".join(expanded))
+                var = self._get_var("dummy", float, "atr", **{"dummy" : var, "recursion_count" : rcount+1})
 
         #convert units where neccessary
         if var is not default:
@@ -706,23 +891,29 @@ class Reader(object):
         
         if node.nodeType == node.ELEMENT_NODE:
             if(node_name == "volume"):
-                name      = node.attributes["name"].value
+                name      = self.mangleName(node.attributes["name"].value)
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
-                solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
+                solid     = self.mangleName(node.getElementsByTagName("solidref")[0].attributes["ref"].value)
                 daughters = [] #done elsewhere
-                vol       = _g4.LogicalVolume(_g4.registry.solidDict[solid], material, name)
-                
+
+                if material in _g4.registry.materialDict:
+                    mat = _g4.registry.materialDict[material]
+                else:
+                    mat = str(material)
+
+                vol = _g4.LogicalVolume(_g4.registry.solidDict[solid], mat, name)
+
                 for chNode in node.childNodes :
-                    if chNode.tagName == "physvol" : 
-                        volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
+                        pvol_name = self.mangleName(chNode.attributes["name"].value)
+                        volref    = self.mangleName(chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value)
                         position  = self._evalCoordRef(chNode, "position")
                         rotation  = self._evalCoordRef(chNode, "rotation")
                         scale     = self._evalCoordRef(chNode, "scale")
                         physvol   = _g4.PhysicalVolume(rotation, position, _g4.registry.logicalVolumeDict[volref],
-                                                       chNode.attributes["name"].value,vol,scale)
-                        
+                                                       pvol_name, vol, scale)
                 
-                    elif(node_name == "paramvol"):
+                    elif chNode.nodeType == node.ELEMENT_NODE and node_name == "paramvol":
                         print "Volume ", node.parentNode.attributes["name"].value, "excluded - parametrised volume" #debug
                         volref  = node.getElementsByTagName("volumeref")[0].attributes["ref"].value
                         self.exclude.append(volref)                                                 #TODO: include parametrised solids
@@ -801,7 +992,7 @@ class Reader(object):
 
     def _toStandUnits(self, value, unit):
         #standard units are mm for length and rad for angle
-        multf = {"default":1, "pm":1.e-6, "nm":1.e-3, "mum":1.e-3, "mm":1, "cm":10, "m":1.e3, "deg":2*_pi/360, "rad":1}
+        multf = {"default":1, "pm":1.e-6, "nm":1.e-3, "mum":1.e-3, "mm":1, "cm":10, "m":1.e3, "deg":2*_np.pi/360, "rad":1}
         try:
             val = multf[unit]*value #if this fails the value is of unknown unit type
         except:
@@ -809,47 +1000,4 @@ class Reader(object):
         #print val," ",unit," ",val #DEBUG
         
         return val
-
-    def _buildPycsgStructure(self, name, mother, startstring="|", verbose=False):
-        solidname  = self.gdmlvols[name][0]
-        solid      = self.solids.get(solidname, None)
-        material   = self.gdmlvols[name][1]
-        daughters  = self.gdmlvols[name][2]
-        
-        phvol_prms = self.gdmlphvols.get(name, [[None,[0.0,0.0,0.0],[0.0,0.0,0.0],[1.,1.,1.], False]]) #the default is the world voume
-        for i in range(len(phvol_prms)):
-
-            mother_name = phvol_prms[i][0]
-            position    = phvol_prms[i][1]
-            rotation    = phvol_prms[i][2]
-            scale       = phvol_prms[i][3]
-            copyNr      = 0
-            checkSurf   = False
-
-                     
-            if(solid is not None):                    # TODO: fix the logic here                                                            
-                if (mother_name is None):             # world volume special case, no mother
-                    volume  = Volume(rotation, position, solid, name,  mother, copyNr, checkSurf, material, scale)
-                    self.volumes.append(volume)
-
-                    if(verbose):
-                        print "\n==>VOLUME HIREACHY<=="
-                        print '{:>4}'.format(str(len(self.volumes))), startstring+name #, " ROT=>",rotation," POS=>",position, " SCL=>",scale
-                        startstring = startstring+"    |"                                                                                
-                    
-                    for daughter in daughters:
-                        self._buildPycsgStructure(daughter, volume, startstring=startstring, verbose=verbose)
-
-                    
-                elif(mother_name == mother.name): #only place physical volumes if they belong to that logical volume
-                    volume  = Volume(rotation, position, solid, name,  mother, copyNr, checkSurf, material, scale)
-                    self.volumes.append(volume)
-
-                    if(verbose):
-                        print '{:>4}'.format(str(len(self.volumes))), startstring+name #, " ROT=>",rotation," POS=>",position, " SCL=>",scale
-                        startstring = startstring+"    |"                                                                                           
-                
-                    for daughter in daughters:
-                        self._buildPycsgStructure(daughter, volume, startstring=startstring, verbose=verbose)
-        
 

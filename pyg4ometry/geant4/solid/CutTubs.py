@@ -34,8 +34,8 @@ class CutTubs(_SolidBase):
         if register:
             _registry.addSolid(self)
 
-    def __repr__(selfs):
-        pass
+    def __repr__(self):
+        return 'Cut tubs :{}'.format(self.name)
 
     def pycsgmesh(self):
 #        if self.mesh :
@@ -48,7 +48,7 @@ class CutTubs(_SolidBase):
         return self.mesh
 
     def basicmesh(self):
-        self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi).pycsgmesh()
+        self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, register=False).pycsgmesh()
 
     def csgmesh(self):
         pDz = float(self.pDz)

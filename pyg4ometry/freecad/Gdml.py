@@ -6,7 +6,7 @@ except ImportError :
     pass
 
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.vtk    as _vtk
+import pyg4ometry.visualisation as _vis
 import pyg4ometry.gdml   as _gdml
 
 def GdmlTest(mesh) :
@@ -30,7 +30,7 @@ def GdmlTest(mesh) :
     # mesh the geometry
     m = worldLogical.pycsgmesh()
 
-    v = _vtk.Viewer()
+    v = _vis.Viewer()
     v.addPycsgMeshList(m)
     v.view();
 
@@ -73,9 +73,9 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
     # mesh the geometry
     m = worldLogical.pycsgmesh()
 
-    v = _vtk.Viewer()
+    v = _vis.Viewer()
     v.addPycsgMeshList(m)
-    v.view();    
+    v.view();
 
     w = _gdml.Writer()
     w.addDetector(_g4.registry)
