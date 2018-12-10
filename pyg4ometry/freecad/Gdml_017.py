@@ -1,7 +1,9 @@
 try :
     import FreeCAD  as _FreeCAD
+    import Import   as _Import
     import Mesh     as _Mesh
     import MeshPart as _MeshPart
+
 except ImportError :
     pass
 
@@ -265,8 +267,8 @@ def DocumentStructure() :
     for rootObject in rootObjects : 
         ObjectRecursion(rootObject, nameDict, labelDict)
         
-    print nameDict 
-    print labelDict
+#    print nameDict 
+#    print labelDict
 
     return [nameDict, labelDict]
       
@@ -288,3 +290,11 @@ def ObjectRecursion(obj, nameDict, labelDict) :
 
     for out in obj.OutList : 
             ObjectRecursion(out, nameDict, labelDict)
+
+def Test(fileName = u"/Users/sboogert/Dropbox (Royal Holloway)/Shared/Geometry-For-Stewart/CERN/CLIC/12SMV18026-CSWFCC_assembly.stp") : 
+    _Import.open(fileName)
+    App.setActiveDocument("Unnamed")
+    App.ActiveDocument=App.getDocument("Unnamed")
+    DocumentStructure()
+    
+    
