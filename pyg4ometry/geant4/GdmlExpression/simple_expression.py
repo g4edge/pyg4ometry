@@ -13,7 +13,7 @@ from IPython import embed
 
 class EvalVisitor(GdmlExpressionVisitor):
     def __init__(self):
-        self.memory = {}
+        self.defines = {}
 
     def visitAssign(self, ctx):
         name = ctx.ID().getText();
@@ -35,27 +35,53 @@ class EvalVisitor(GdmlExpressionVisitor):
     def visitInt(self, ctx):
         return int(ctx.INT().getText())
 
-    def visitMulDiv(self, ctx):
-        left = int(self.visit(ctx.expr(0)))
-        right = int(self.visit(ctx.expr(1)))
-        if ctx.op.type == GdmlExpressionParser.MUL:
+    def visitMultiplyingExpression(self, ctx):
+        left = float(self.visit(ctx.powExpression(0)))
+        right = float(self.visit(ctx.powExpression(1)))
+        if ctx.op.type == GdmlExpressionParser.TIMES:
             return left * right
         return left / right
 
-    def visitAddSub(self, ctx):
-        left = int(self.visit(ctx.expr(0)))
-        right = int(self.visit(ctx.expr(1)))
-        if ctx.op.type == GdmlExpressionParser.ADD:
+    def visitExpression(self, ctx):
+        left = float(self.visit(ctx.multiplyingExpression(0)))
+        right = float(self.visit(ctx.multiplyingExpression(1)))
+        if ctx.op.type == GdmlExpressionParser.PLUS:
             return left + right
         return left - right
 
-    def visitPow(self, ctx):
-        left = int(self.visit(ctx.expr(0)))
-        right = int(self.visit(ctx.expr(1)))
+    def visitPowExpression(self, ctx):
+        left = float(self.visit(ctx.signedAtom(0)))
+        right = float(self.visit(ctx.signedAtom(1)))
         return left ** right
 
     def visitParens(self, ctx):
-        return self.visit(ctx.expr())
+        return self.visit(ctx.expression())
+
+    def visitSignedAtom(self, ctx):
+        sign = -1 if ctx.MINUS() else 1
+        if ctx.func():
+            value = self.visit(ctx.func())
+        elif ctx.atom():
+            value = self.visit(ctx.atom())
+        elif self.signedAtom():
+            value = self.visit(ctx.signedAtom())
+        else:
+            raise SystemExit("Signed atom done fucked up.")
+
+        return sign*float(value)
+
+    def visitAtom(self, ctx):
+        sign = -1 if ctx.MINUS() else 1
+        if ctx.func():
+            value = self.visit(ctx.func())
+        elif ctx.atom():
+            value = self.visit(ctx.atom())
+        elif self.signedAtom():
+            value = self.visit(ctx.signedAtom())
+        else:
+            raise SystemExit("Signed atom done fucked up.")
+
+        return sign*float(value)
 
     def visitFunCall(self, ctx):
         function_name = ctx.ID().getText()
@@ -81,7 +107,7 @@ def main(argv):
     parser = GdmlExpressionParser(tokens)
 
     # Create parsing tree.
-    tree = parser.prog()
+    tree = parser.equation()
     # print tree.toStringTree(recog=parser) # print LISP-style tree.
     # embed()
 
