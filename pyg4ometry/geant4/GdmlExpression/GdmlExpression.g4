@@ -37,12 +37,16 @@ equation
    ;
 
 expression
-   : multiplyingExpression ((PLUS | MINUS) multiplyingExpression)*
+   : multiplyingExpression (operatorAddSub multiplyingExpression)*
    ;
 
 multiplyingExpression
-   : powExpression ((TIMES | DIV) powExpression)*
+   : powExpression (operatorMulDiv powExpression)*
    ;
+
+operatorAddSub : PLUS | MINUS;
+
+operatorMulDiv : TIMES | DIV;
 
 powExpression
    : signedAtom (POW signedAtom)*
