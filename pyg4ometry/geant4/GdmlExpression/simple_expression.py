@@ -16,26 +16,14 @@ class EvalVisitor(GdmlExpressionVisitor):
     def __init__(self):
         self.defines = {}
 
-    def visitAssign(self, ctx):
-        name = ctx.ID().getText();
-        value = self.visit(ctx.expr())
-        self.memory[name] = value
-        return value
-
     def visitVariable(self, ctx):
         name = ctx.VARIABLE().getText();
-        value = self.defines.get(name, "1.5")
+        value = self.defines[name]
         return value
 
     def visitPrintExpr(self, ctx):
         value = self.visit(ctx.expr())
         print value
-        return 0
-
-    def visitId(self, ctx):
-        name = ctx.ID().getText()
-        if name in self.memory:
-            return self.memory[name]
         return 0
 
     def visitInt(self, ctx):
@@ -46,13 +34,10 @@ class EvalVisitor(GdmlExpressionVisitor):
 
     def visitMultiplyingExpression(self, ctx):
         left = float(self.visit(ctx.powExpression(0)))
-        # Perform all defined multiplications/divisions
-        # TODO: Super dumb and slow way of getting the order, rewrite
-        ops = [char for char in ctx.getText() if char=="*" or char=="/"]
-        for i in range(len(ctx.powExpression())-1):
-            print i
+
+        for i in range(len(ctx.operatorMulDiv())):
             right = float(self.visit(ctx.powExpression(i+1)))
-            if ops[i] == "*":
+            if ctx.operatorMulDiv(i).TIMES():
                 left  *= right
             else:
                 left  /= right
@@ -61,16 +46,12 @@ class EvalVisitor(GdmlExpressionVisitor):
     def visitExpression(self, ctx):
         left = float(self.visit(ctx.multiplyingExpression(0)))
 
-        # Perform all defined addtions/subtractions
-        # TODO: Super dumb and slow way of getting the order, rewrite
-        ops = [char for char in ctx.getText() if char=="+" or char=="-"]
-        for i in range(len(ctx.multiplyingExpression())-1):
+        for i in range(len(ctx.operatorAddSub())):
             right = float(self.visit(ctx.multiplyingExpression(i+1)))
-            if ops[i] == "+":
+            if ctx.operatorAddSub(i).PLUS():
                 left += right
             else:
                 left -= right
-        print left
         return left
 
     def visitPowExpression(self, ctx):
@@ -100,7 +81,7 @@ class EvalVisitor(GdmlExpressionVisitor):
 
     def visitAtom(self, ctx):
         if ctx.constant():
-            value =  getattr(math, ctx.constant())
+            value = self.visit(ctx.constant())
         elif ctx.variable():
             value = self.visit(ctx.variable())
         elif ctx.expression(): # This handles expr with and without parens
@@ -119,36 +100,66 @@ class EvalVisitor(GdmlExpressionVisitor):
         return function(*arguments)
 
     def visitFuncname(self, ctx):
-        #TODO: fix this
-        return "cos"
+        funcs = ["SIN", "COS", "TAN", "ACOS",
+                 "ASIN", "ATAN", "LOG", "LN", "SQRT"]
+        for f in funcs:
+            function = getattr(ctx, f)
+            if function():
+                return function().getText()
+
+    def visitConstant(self, ctx):
+        constants = ["PI", "EULER", "I"]
+        for c in constants:
+            constant = getattr(ctx, c)
+            if constant():
+                return getattr(math, constant().getText())
+
+
+class DynamicParameter:
+    def __init__(self, expression, define_dict={}):
+        self.expression = str(expression)
+        self.define_dict = define_dict
+        self.parse_tree = None
+        self.visitor = EvalVisitor()
+
+        self.parse()
+
+    def parse(self):
+        # Make a char stream out of the expression
+        istream = InputStream(self.expression) # Can do directly as a string?
+        # tokenise character stream
+        lexer = GdmlExpressionLexer(istream)
+        # Create a buffer of tokens from lexer
+        tokens= CommonTokenStream(lexer)
+        # create a parser that reads from stream of tokens
+        parser = GdmlExpressionParser(tokens)
+
+        self.parse_tree = parser.expression()
+
+    def evaluate(self):
+        self.visitor.defines = self.define_dict
+        result = self.visitor.visit(self.parse_tree)
+
+        print "Input expression: ", self.expression
+        print "Result: ", result
+
+        return result
+
+    def update_define_dict(self, new_define_dict):
+        self.define_dict = mew_define_dict
 
 def main(argv):
-    # create a CharStream that reads from standard input
+
     if len(sys.argv) > 1:
-        istream = FileStream(argv[1])
+        with open(argv[1]) as filein:
+            string_input = filein.read()
     else:
-        input_str = sys.stdin.read()
-        istream = InputStream(input_str)
+        string_input = sys.stdin.read()
 
-    print "Input expression: ", str(istream)
+    mydict = {"foo" : 45, "bar" : 3}
 
-    # tokenise character stream
-    lexer = GdmlExpressionLexer(istream)
-    # embed()
-    # Create a buffer of tokens from lexer
-    tokens= CommonTokenStream(lexer)
-    # embed()
-    # create a parser that reads from stream of tokens
-    parser = GdmlExpressionParser(tokens)
-
-    # Create parsing tree.
-    tree = parser.equation()
-    # print tree.toStringTree(recog=parser) # print LISP-style tree.
-    # embed()
-
-    visitor = EvalVisitor()
-    visitor.visit(tree)
-
+    myvar = DynamicParameter(string_input, define_dict=mydict)
+    myvar.evaluate()
 
 if __name__ == '__main__':
     main(sys.argv)
