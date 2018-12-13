@@ -20,6 +20,16 @@ class GdmlExpressionVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GdmlExpressionParser#operatorAddSub.
+    def visitOperatorAddSub(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GdmlExpressionParser#operatorMulDiv.
+    def visitOperatorMulDiv(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GdmlExpressionParser#powExpression.
     def visitPowExpression(self, ctx):
         return self.visitChildren(ctx)

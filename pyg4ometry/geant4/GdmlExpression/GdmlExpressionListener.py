@@ -31,6 +31,24 @@ class GdmlExpressionListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GdmlExpressionParser#operatorAddSub.
+    def enterOperatorAddSub(self, ctx):
+        pass
+
+    # Exit a parse tree produced by GdmlExpressionParser#operatorAddSub.
+    def exitOperatorAddSub(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by GdmlExpressionParser#operatorMulDiv.
+    def enterOperatorMulDiv(self, ctx):
+        pass
+
+    # Exit a parse tree produced by GdmlExpressionParser#operatorMulDiv.
+    def exitOperatorMulDiv(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by GdmlExpressionParser#powExpression.
     def enterPowExpression(self, ctx):
         pass
