@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from GdmlExpression import ExpressionParser
 import pyg4ometry.exceptions
 
 class Registry:
@@ -18,6 +19,8 @@ class Registry:
         self.volumeTypeCountDict          = {}               # logical, physical
         self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
+
+        self.expressionParser = ExpressionParser()
 
     def addDefinition(self, definition):
         try:
