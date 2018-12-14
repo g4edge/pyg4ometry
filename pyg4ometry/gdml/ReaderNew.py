@@ -68,21 +68,11 @@ class ReaderNew(object) :
 
             # parse positions and rotations
             def getXYZ(def_attrs) :
-                try :
-                    x = def_attrs['x']
-                except KeyError :
-                    x = '0.0'
-                try :
-                    y = def_attrs['y']
-                except KeyError :
-                    y = '0.0'
-                try :
-                    z = def_attrs['z']
-                except KeyError :
-                    z = '0.0'
-                    
+                x = def_attrs.get("x", "0.0")
+                y = def_attrs.get("y", "0.0")
+                z = def_attrs.get("z", "0.0")
                 return (x,y,z)
-            
+
             # parse matricies
             def getMatrix(def_attrs) :
                 try : 
