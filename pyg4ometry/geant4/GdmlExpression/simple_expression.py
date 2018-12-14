@@ -7,7 +7,9 @@ from antlr4 import *
 from GdmlExpressionLexer import GdmlExpressionLexer
 from GdmlExpressionParser import GdmlExpressionParser
 from GdmlExpressionVisitor import GdmlExpressionVisitor
+
 import math
+
 
 from IPython import embed
 import traceback
@@ -25,9 +27,6 @@ class EvalVisitor(GdmlExpressionVisitor):
         value = self.visit(ctx.expr())
         print value
         return 0
-
-    def visitInt(self, ctx):
-        return int(ctx.INT().getText())
 
     def visitScientific(self, ctx):
         return float(ctx.SCIENTIFIC_NUMBER().getText())
@@ -114,7 +113,6 @@ class EvalVisitor(GdmlExpressionVisitor):
             if constant():
                 return getattr(math, constant().getText())
 
-
 class DynamicParameter:
     def __init__(self, expression, define_dict={}):
         self.expression = str(expression)
@@ -146,17 +144,42 @@ class DynamicParameter:
         return result
 
     def update_define_dict(self, new_define_dict):
-        self.define_dict = mew_define_dict
+        self.define_dict = new_define_dict
+
+class ExpressionParser(object):
+    def __init__(self):
+        self.visitor = EvalVisitor()
+        self.defines_dict = {}
+
+    def parse(self, expression):
+        # Make a char stream out of the expression
+        istream = InputStream(expression) # Can do directly as a string?
+        # tokenise character stream
+        lexer = GdmlExpressionLexer(istream)
+        # Create a buffer of tokens from lexer
+        tokens= CommonTokenStream(lexer)
+        # create a parser that reads from stream of tokens
+        parser = GdmlExpressionParser(tokens)
+
+        parse_tree = parser.expression()
+
+        return parse_tree
+
+    def evaluate(self, parse_tree, define_dict={}):
+        # Update the defines dict for every evaluation
+        self.visitor.defines = define_dict
+        result = self.visitor.visit(parse_tree)
+
+        return result
 
 def main(argv):
-
     if len(sys.argv) > 1:
         with open(argv[1]) as filein:
             string_input = filein.read()
     else:
         string_input = sys.stdin.read()
 
-    mydict = {"foo" : 45, "bar" : 3}
+    mydict = {"foo" : 1.5, "bar" : 10}
 
     myvar = DynamicParameter(string_input, define_dict=mydict)
     myvar.evaluate()
