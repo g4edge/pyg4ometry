@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from GdmlExpression import ExpressionParser
+from pyg4ometry.gdml.GdmlExpression import *
 import pyg4ometry.exceptions
 
 class Registry:

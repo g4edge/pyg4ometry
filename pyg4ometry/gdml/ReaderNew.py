@@ -2,10 +2,10 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation   as _vtk
 import numpy             as _np
 import re as _re
-from xml.dom import minidom as _minidom
+from   xml.dom import minidom as _minidom
 import warnings as _warnings
-from math import pi as _pi
-from ..geant4.Registry import registry as _registry
+from   math import pi as _pi
+from   ..geant4.Registry import registry as _registry
 
 class ReaderNew(object) :
 

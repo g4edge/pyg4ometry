@@ -43,18 +43,18 @@ class Variable :
     def __repr__(self) :
         return "Variable: {} = {}".format(self.name, str(self.expr))
 
-class Expression : 
-    def __init__(self, name, value, registry = None) : 
-        self.name = name
-        self.expr = _Expression(value, registry=registry)
-
-        _registry.addDefine(self)
-
-    def __float__(self) :
-        return self.expr.eval()
-
-    def __repr__(self) :
-        return "Expression : {} = {}".format(self.expr, self.value)
+#class Expression : 
+#    def __init__(self, name, value, registry = None) : 
+#        self.name = name
+#       self.expr = _Expression(value, registry=registry)
+#
+#        _registry.addDefine(self)
+#
+#    def __float__(self) :
+#        return self.expr.eval()
+#
+#    def __repr__(self) :
+#        return "Expression : {} = {}".format(self.expr, self.value)
 
 class Position :
     def __init__(self,name,x,y,z, registry = None) :

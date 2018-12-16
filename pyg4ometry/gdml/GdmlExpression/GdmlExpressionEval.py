@@ -14,7 +14,7 @@ import math
 from IPython import embed
 import traceback
 
-class EvalVisitor(GdmlExpressionVisitor):
+class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
     def __init__(self):
         self.defines = {}
 
@@ -113,42 +113,9 @@ class EvalVisitor(GdmlExpressionVisitor):
             if constant():
                 return getattr(math, constant().getText())
 
-class DynamicParameter:
-    def __init__(self, expression, define_dict={}):
-        self.expression = str(expression)
-        self.define_dict = define_dict
-        self.parse_tree = None
-        self.visitor = EvalVisitor()
-
-        self.parse()
-
-    def parse(self):
-        # Make a char stream out of the expression
-        istream = InputStream(self.expression) # Can do directly as a string?
-        # tokenise character stream
-        lexer = GdmlExpressionLexer(istream)
-        # Create a buffer of tokens from lexer
-        tokens= CommonTokenStream(lexer)
-        # create a parser that reads from stream of tokens
-        parser = GdmlExpressionParser(tokens)
-
-        self.parse_tree = parser.expression()
-
-    def evaluate(self):
-        self.visitor.defines = self.define_dict
-        result = self.visitor.visit(self.parse_tree)
-
-        print "Input expression: ", self.expression
-        print "Result: ", result
-
-        return result
-
-    def update_define_dict(self, new_define_dict):
-        self.define_dict = new_define_dict
-
 class ExpressionParser(object):
     def __init__(self):
-        self.visitor = EvalVisitor()
+        self.visitor = GdmlExpressionEvalVisitor()
         self.defines_dict = {}
 
     def parse(self, expression):

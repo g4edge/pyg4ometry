@@ -10,5 +10,4 @@ from Material import *
 from Expression import *
 from Parameter import *
 from ParameterVector import *
-from GdmlDefines import *
 import solid
