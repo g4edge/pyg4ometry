@@ -1,5 +1,5 @@
 import math as _math
-from pyg4ometry.geant4 import registry as _registry
+from pyg4ometry.geant4 import Registry
 
 def sin(expression) : 
     return Expression('sin('+expression.name + ')',_math.sin(expression.value))
@@ -29,47 +29,48 @@ def isExpression(value) :
     pass
 
 class Expression(object) :
-    def __init__(self,name, value = 0.0, registry=None) :
+    def __init__(self, name, expression, registry=Registry()) :
         # TODO: make the registry required
         self.name  = name
+        self.expression = expression
         self.parse_tree = None
-        self.value = None
         self.registry = registry
 
     def eval(self) :
-        self.parse_tree = _registry.expressionParser.parse(self.name)
-        self.value = self.registry.expressionParser.evaluate(self.parse_tree,
-                                                             self.registry.defineDict)
+        expressionParser = self.registry.getExpressionParser()
+        self.parse_tree = expressionParser.parse(self.expression)
+        value = expressionParser.evaluate(self.parse_tree,
+                                          self.registry.defineDict)
 
-        return self.value
+        return value
 
     def __repr__(self) :
-        return self.name
+        return "{} : {}".format(self.name, self.expression)
 
     def __float__(self) :
         return self.eval()
 
     def str(self):
-        return 'Expression : '+self.name+' : '+str(self.value)
+        return 'Expression : '+self.name+' : '+str(float(self))
 
     # TODO: implement int and pow operation
     def __add__(self, other):
-        return Expression('{} + {}'.format(self, other),float(self)+float(other),registry=self.registry)
+        return Expression('{}_add_{}'.format(self.name, other.name),'{} + {}'.format(self.expression, other.expression),registry=self.registry)
 
     def __sub__(self, other):
-        return Expression('({}) - ({})'.format(self, other),float(self)-float(other),registry=self.registry)
+        return Expression('{}_sub_{}'.format(self.name, other.name),'({}) - ({})'.format(self.expression, other.expression),registry=self.registry)
 
     def __mul__(self, other):
-        return Expression('({}) * ({})'.format(self, other), float(self) * float(other),registry=self.registry)
+        return Expression('{}_mul_{}'.format(self.name, other.name),'({}) * ({})'.format(self.expression, other.expression),registry=self.registry)
 
     def __rmul__(self, other):
-        return Expression('({}) * ({})'.format(self, other), float(other)* float(self),registry=self.registry)
+        return Expression('{}_mul_{}'.format(self.name, other.name),'({}) * ({})'.format(self.expression, other.expression),registry=self.registry)
     
     def __div__(self, other):
-        return Expression('({}) / ({})'.format(self, other), float(self) / float(other),registry=self.registry)
+        return Expression('{}_div_{}'.format(self.name, other.name),'({}) / ({})'.format(self.expression, other.expression),registry=self.registry)
 
     def __neg__(self):
-        return Expression('- ({})'.format(self), -float(self), registry=self.registry)
+        return Expression('neg_{}'.format(self.name),'- ({})'.format(self.expression), registry=self.registry)
 
 class ExpressionVector(list) : 
     def __init__(self, name, value, registry=None) :
