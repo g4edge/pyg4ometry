@@ -6,6 +6,7 @@ from   xml.dom import minidom as _minidom
 import warnings as _warnings
 from   math import pi as _pi
 from   ..geant4.Registry import registry as _registry
+import GdmlDefines as _defines
 
 class ReaderNew(object) :
 
@@ -89,30 +90,27 @@ class ReaderNew(object) :
 
             if(define_type == "constant"):
                 value = def_attrs['value']
-                _g4.GdmlDefines.Constant(name,value,self.registry)
+                _defines.Constant(name,value,self.registry)
             elif(define_type == "quantity"):
                 value = def_attrs['value']
                 unit  = def_attrs['unit']
                 type  = def_attrs['type']
-                _g4.GdmlDefines.Quantity(name,value,unit,type, self.registry)
+                _defines.Quantity(name,value,unit,type, self.registry)
             elif(define_type == "variable"):
                 value = def_attrs['value']
-                _g4.GdmlDefines.Variable(name,value, self.registry)
-            elif(define_type == 'expression'):
-                value = def_attrs['value']
-                _g4.GdmlDefines.Expression(name,value, self.registry)                 
+                _defines.Variable(name,value, self.registry)
             elif(define_type == "position"):                
                 (x,y,z) = getXYZ(def_attrs)
-                _g4.GdmlDefines.Position(name,x,y,z,self.registry)
+                _defines.Position(name,x,y,z,self.registry)
             elif(define_type == "rotation"):
                 (x,y,z) = getXYZ(def_attrs)
-                _g4.GdmlDefines.Rotation(name,x,y,z,self.registry)
+                _defines.Rotation(name,x,y,z,self.registry)
             elif(define_type == "scale"):
                 (x,y,z) = getXYZ(def_attrs)
-                _g4.GdmlDefines.Scale(name,x,y,z, self.registry)                
+                _defines.Scale(name,x,y,z, self.registry)                
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
-                _g4.GdmlDefines.Matrix(name,coldim,values, self.registry)
+                _defines.Matrix(name,coldim,values, self.registry)
             else:
                 print "Urecognised define: ", define_type
         pass
