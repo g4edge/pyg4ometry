@@ -3,9 +3,9 @@ from matplotlib.cbook import is_numlike
 
 
 def expressionString(obj1,obj2) : 
+    # nubmer/
     if is_numlike(obj2) :
         return str(obj2)
-
     try :
         obj1.registry.defineDict[obj2.name]
         return obj2.name
@@ -178,7 +178,7 @@ class Position :
         self.z = _Expression("expr_{}_pos_z".format(name), str(z), registry=registry)
         
         if registry != None: 
-            self.registry = self.registry
+            self.registry = registry
             registry.addDefine(self)
 
     def eval(self) :
