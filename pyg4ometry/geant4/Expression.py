@@ -22,10 +22,10 @@ def log10(arg) :
 class Expression(object) :
     def __init__(self, name, expression, registry=Registry()) :
         # TODO: make the registry required
-        self.name  = name
+        self.name       = name
         self.expression = expression
         self.parse_tree = None
-        self.registry = registry
+        self.registry   = registry
 
     def eval(self) :
         expressionParser = self.registry.getExpressionParser()
@@ -46,7 +46,7 @@ class Expression(object) :
 
     # TODO: implement int and pow operation
     def __add__(self, other):
-        return Expression('{}_add_{}'.format(self.name, other.name),'{} + {}'.format(self.expression, other.expression),registry=self.registry)
+        return Expression('{}_add_{}'.format(self.name, other.name),'({}) + ({})'.format(self.expression, other.expression),registry=self.registry)
 
     def __sub__(self, other):
         return Expression('{}_sub_{}'.format(self.name, other.name),'({}) - ({})'.format(self.expression, other.expression),registry=self.registry)
