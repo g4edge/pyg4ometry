@@ -1,23 +1,23 @@
 import math as _math
 from pyg4ometry.geant4 import Registry
 
-def sin(expression) : 
-    return Expression('sin('+expression.name + ')',_math.sin(expression.value))
+def sin(arg) : 
+    return Expression('sin_{}_'.format(arg.name),'sin({})'.format(arg.expression),arg.registry)
 
-def cos(expression) : 
-    return Expression('cos('+expression.name + ')',_math.cos(expression.value))
+def cos(arg) : 
+    return Expression('cos_{}_'.format(arg.name),'cos({})'.format(arg.expression),arg.registry)
 
-def tan(expression) : 
-    return Expression('tan('+expression.name + ')',_math.tan(expression.value))
+def tan(arg) : 
+    return Expression('tan_{}_'.format(arg.name),'tan({})'.format(arg.expression),arg.registry)
 
 def exp(expression) : 
-    return Expression('exp('+expression.name + ')',_math.exp(expression.value))
+    return Expression('exp_{}_'.format(arg.name),'exp({})'.format(arg.expression),arg.registry)
 
-def log(expression) :
-    return Expression('log('+expression.name + ')',_math.log(expression.value))
+def log(arg) :
+    return Expression('log_{}_'.format(arg.name),'log({})'.format(arg.expression),arg.registry)
 
-def log10(expression) :
-    return Expression('log10('+expression.name + ')',_math.log10(expression.value))
+def log10(arg) :
+    return Expression('log10_{}_'.format(arg.name),'log10({})'.format(arg.expression),arg.registry)
 
 class Expression(object) :
     def __init__(self, name, expression, registry=Registry()) :

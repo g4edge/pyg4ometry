@@ -1,4 +1,4 @@
 # from Reader import *
 from ReaderNew import *
 from Writer import *
-from GdmlDefines import *
+from Defines import *

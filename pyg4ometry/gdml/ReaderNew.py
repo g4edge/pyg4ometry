@@ -6,7 +6,7 @@ from   xml.dom import minidom as _minidom
 import warnings as _warnings
 from   math import pi as _pi
 from   ..geant4.Registry import registry as _registry
-import GdmlDefines as _defines
+import Defines as _defines
 
 class ReaderNew(object) :
 

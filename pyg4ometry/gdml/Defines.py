@@ -3,7 +3,7 @@ from ..geant4 import Expression as _Expression
 class Constant :
     def __init__(self, name, value, registry = None) :
         self.name  = name
-        self.expr = _Expression("expr_{}".format(name), value, registry=registry)
+        self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         registry.addDefine(self)
 
@@ -19,7 +19,7 @@ class Constant :
 class Quantity :
     def __init__(self, name, value, unit, type, registry = None) :
         self.name  = name
-        self.expr  = _Expression("expr_{}".format(name), value, registry=registry)
+        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
         self.unit  = unit
         self.type  = type
 
@@ -37,7 +37,7 @@ class Quantity :
 class Variable :
     def __init__(self, name, value, registry = None) :
         self.name  = name
-        self.expr  = _Expression("expr_{}".format(name), value, registry=registry)
+        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         registry.addDefine(self)
 
@@ -54,9 +54,9 @@ class Variable :
 class Position :
     def __init__(self,name,x,y,z, registry = None) :
         self.name = name
-        self.x = _Expression("expr_{}_pos_x".format(name), x, registry=registry)
-        self.y = _Expression("expr_{}_pos_y".format(name), y, registry=registry)
-        self.z = _Expression("expr_{}_pos_z".format(name), z, registry=registry)
+        self.x = _Expression("expr_{}_pos_x".format(name), str(x), registry=registry)
+        self.y = _Expression("expr_{}_pos_y".format(name), str(y), registry=registry)
+        self.z = _Expression("expr_{}_pos_z".format(name), str(z), registry=registry)
         
         registry.addDefine(self)
 
@@ -79,9 +79,9 @@ class Position :
 class Rotation : 
     def __init__(self,name,rx,ry,rz, registry = None) :
         self.name = name
-        self.rx = _Expression("expr_{}_rot_x".format(name), rx, registry=registry)
-        self.ry = _Expression("expr_{}_rot_y".format(name), ry, registry=registry)
-        self.rz = _Expression("expr_{}_rot_z".format(name), rz, registry=registry)
+        self.rx = _Expression("expr_{}_rot_x".format(name), str(rx), registry=registry)
+        self.ry = _Expression("expr_{}_rot_y".format(name), str(ry), registry=registry)
+        self.rz = _Expression("expr_{}_rot_z".format(name), str(rz), registry=registry)
 
         registry.addDefine(self)
 
@@ -104,9 +104,9 @@ class Rotation :
 class Scale : 
     def __init__(self,name,sx,sy,sz, registry = None) :
         self.name = name
-        self.sx = _Expression("expr_{}_scl_x".format(name), sx, registry=registry)
-        self.sy = _Expression("expr_{}_scl_x".format(name), sy, registry=registry)
-        self.sz = _Expression("expr_{}_scl_x".format(name), sz, registry=registry)
+        self.sx = _Expression("expr_{}_scl_x".format(name), str(sx), registry=registry)
+        self.sy = _Expression("expr_{}_scl_x".format(name), str(sy), registry=registry)
+        self.sz = _Expression("expr_{}_scl_x".format(name), str(sz), registry=registry)
 
         registry.addDefine(self)        
 

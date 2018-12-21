@@ -23,7 +23,7 @@ class Registry:
 
     def getExpressionParser(self):
         if not self.expressionParser:
-            from pyg4ometry.gdml.GdmlExpression import ExpressionParser
+            from pyg4ometry.gdml.Expression import ExpressionParser
             self.expressionParser = ExpressionParser()
 
         return self.expressionParser
