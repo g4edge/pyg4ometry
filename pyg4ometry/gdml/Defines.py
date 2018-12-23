@@ -37,6 +37,11 @@ class ScalarBase(object) :
         return v
 
     def __mul__(self, other):
+        
+        # check to see if other is a vector 
+        if isinstance(other,VectorBase) : 
+            return other*self
+
         v1 = expressionStringScalar(self,self)
         v2 = expressionStringScalar(self,other)
 
@@ -199,16 +204,47 @@ class VectorBase(object) :
         return p
 
     def __mul__(self,other) : 
-        pass
+        print type(self),type(other)
+        v1 = expressionStringScalar(self,self)
+        v2 = expressionStringScalar(self,other)
+        
+        p = Position("vec_{}_mul_{}".format(self.name,v2),
+                     '({})*({})'.format(self.x.expression,v2),
+                     '({})*({})'.format(self.y.expression,v2),
+                     '({})*({})'.format(self.z.expression,v2),
+                     None)
+        p.registry      = self.registry
+        p.x.registry    = self.registry
+        p.y.registry    = self.registry
+        p.z.registry    = self.registry
+        return p                     
+
+    __rmul__ = __mul__
 
     def __div__(self,other) : 
-        pass
+        v1 = expressionStringScalar(self,self)
+        v2 = expressionStringScalar(self,other)
+        
+        p = Position("vec_{}_div_{}".format(self.name,v2),
+                     '({})/({})'.format(self.x.expression,v2),
+                     '({})/({})'.format(self.y.expression,v2),
+                     '({})/({})'.format(self.z.expression,v2),
+                     None)
+        p.registry      = self.registry
+        p.x.registry    = self.registry
+        p.y.registry    = self.registry
+        p.z.registry    = self.registry
+        return p                     
     
     def setName(self, name) : 
         self.name          = name
-#        self.expr.name     = 'expr_{}'.format(name)
-#        self.expr.registry = self.registry
-#        self.registry.addDefine(self)
+        self.x.registry    = self.registry 
+        self.y.registry    = self.registry 
+        self.z.registry    = self.registry 
+        self.x.name        = 'expr_{}_vec_x'.format(name)
+        self.y.name        = 'expr_{}_vec_y'.format(name)
+        self.z.name        = 'expr_{}_vec_z'.format(name)
+        self.registry.addDefine(self)
 
     def eval(self) :
         return [self.x.eval(), self.y.eval(), self.z.eval()]
@@ -224,6 +260,7 @@ class VectorBase(object) :
             raise IndexError
 
 def expressionStringVector(var) : 
+
     if isinstance(var,ScalarBase) :                
         try :                
             var.registry.defineDict[var.name]
@@ -232,8 +269,7 @@ def expressionStringVector(var) :
             return var.expr.expression
     else :
         return var
-
-        
+    
 class Position(VectorBase) :
     def __init__(self,name,x,y,z, registry = None) :
         self.name = name
