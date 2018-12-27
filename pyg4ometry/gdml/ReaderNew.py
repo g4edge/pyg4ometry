@@ -6,6 +6,7 @@ from   xml.dom import minidom as _minidom
 import warnings as _warnings
 from   math import pi as _pi
 from   ..geant4.Registry import registry as _registry
+from   ..geant4 import Expression as _Expression
 import Defines as _defines
 
 class ReaderNew(object) :
@@ -51,9 +52,9 @@ class ReaderNew(object) :
         data.close()
 
     def parseDefines(self, xmldoc) : 
-        self.structure = xmldoc.getElementsByTagName("define")[0]
+        self.xmldefines = xmldoc.getElementsByTagName("define")[0]
 
-        for df in self.structure.childNodes :
+        for df in self.xmldefines.childNodes :
             try :
                 define_type  = df.tagName
             except AttributeError :
@@ -99,6 +100,9 @@ class ReaderNew(object) :
             elif(define_type == "variable"):
                 value = def_attrs['value']
                 _defines.Variable(name,value, self.registry)
+            elif(define_type == "expression"):
+                value = df.childNodes[0].nodeValue
+                _defines.Expression(name,value, self.registry)
             elif(define_type == "position"):                
                 (x,y,z) = getXYZ(def_attrs)
                 _defines.Position(name,x,y,z,self.registry)
@@ -115,12 +119,512 @@ class ReaderNew(object) :
                 print "Urecognised define: ", define_type
         pass
 
+    def parseVector(self, node, type = "position", addRegistry=True) : 
+        try : 
+             name = node.attributes['name'] 
+        except KeyError : 
+            name = '' 
+        try :
+            x    = node.attributes['x']
+        except KeyError :
+            x    = '0'
+        try :
+            y    = node.attributes['y']
+        except KeyError :
+            y    = '0'
+        try :
+            z    = node.attributes['z']
+        except KeyError :
+            z    = '0'        
+        
+        if type == 'position' : 
+            return _defines.position(name,x,y,z,self.registry,addRegistry) 
+        elif type == 'rotation' : 
+            return _defines.rotation(name,x,y,z,self.registry,addRegistry)
+        elif type == 'scale' : 
+            return _defines.scale(name,x,y,z,self.registry,addRegistry)
+        
+    def parseMatrix(self, node) : 
+        pass
+
     def parseMaterials(self, xmldoc) : 
         pass
 
     def parseSolids(self,xmldoc) :
-        pass
+
+        self.xmlsolids = xmldoc.getElementsByTagName("solids")[0]
+        
+        for node in self.xmlsolids.childNodes : 
+            try : 
+                solid_type = node.tagName 
+            except AttributeError : 
+                continue # node is probably a comment so continue 
+
+            if solid_type == 'box' :
+                self.parseBox(node)
+            elif solid_type == 'tube' : 
+                self.parseTube(node)
+            elif solid_type == 'cuttube' : 
+                self.parseCutTube(node)                 
+            elif solid_type == 'cone' : 
+                self.parseCone(node)
+            elif solid_type == 'para' : 
+                self.parsePara(node) 
+            elif solid_type == 'trd' : 
+                self.parseTrd(node) 
+            elif solid_type == 'trap' :
+                self.parseTrap(node)
+            elif solid_type == 'sphere' : 
+                self.parseSphere(node)
+            elif solid_type == 'orb' : 
+                self.parseOrb(node)
+            elif solid_type == 'torus' : 
+                self.parseTorus(node)
+            elif solid_type == 'polycone' :
+                self.parsePolycone(node)
+            elif solid_type == 'genericPolycone' :
+                self.parseGenericPolycone(node)
+            elif solid_type == 'polyhedra' : 
+                self.parsePolyhedra(node)
+            elif solid_type == 'genericPolyhedra' : 
+                self.parseGenericPolyhedra(node)
+            elif solid_type == 'eltube' :
+                self.parseEllipticalTube(node)
+            elif solid_type == 'ellipsoid' :
+                self.parseEllipsoid(node)
+            elif solid_type == 'elcone' :
+                self.parseEllipticalCone(node)
+            elif solid_type == 'paraboloid' :
+                self.parseParaboloid(node)
+            elif solid_type == 'hype' :
+                self.parseHype(node)
+            elif solid_type == 'tet' :
+                self.parseTet(node)
+            elif solid_type == 'xtru' :
+                self.parseExtrudedSolid(node)
+            elif solid_type == 'twistedbox' : 
+                self.parseTwistedBox(node)
+            elif solid_type == 'twistedtrap' :
+                self.parseTwistedTrap(node) 
+            elif solid_type == 'twistedtrd' :
+                self.parseTwistedTrd(node) 
+            elif solid_type == 'twistedtubs' : 
+                self.parseTwistedTubs(node)
+            elif solid_type == 'arb8' :
+                self.parseGenericTrap(node) 
+            elif solid_type == 'tessellated' :
+                self.parseTesselatedSolid(node)
+            elif solid_type == 'union' : 
+                self.parseUnion(node) 
+            elif solid_type == 'subtraction' : 
+                self.parseSubtraction(node)
+            elif solid_type == 'intersection' : 
+                self.parseIntersection(node) 
+            elif solid_type == 'multiUnion' : 
+                self.parseMultiUnion(node)
+            else : 
+                print solid_type, node.attributes['name'].value
+
+    def parseBox(self, node) : 
+        solid_name = node.attributes['name'].value 
+        x = _defines.Expression(solid_name+'_pX',node.attributes['x'].value,self.registry)
+        y = _defines.Expression(solid_name+'_pY',node.attributes['y'].value,self.registry)
+        z = _defines.Expression(solid_name+'_pZ',node.attributes['z'].value,self.registry)
+                
+        solid = _g4.solid.Box(solid_name,x,y,z,self.registry)
+
+    def parseTube(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        try : 
+            rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self.registry)
+        except KeyError :
+            rmin = _defines.Expression(solid_name+'_pRMin',"0",self.registry)
+        try : 
+            sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self.registry)
+        except KeyError : 
+            sphi = _defines.Expression(solid_name+'_pSPhi',"0",self.registry)
+
+        rmax = _defines.Expression(solid_name+'_pRMax',node.attributes['rmax'].value,self.registry)
+        z    = _defines.Expression(solid_name+'_pDz','({})/2'.format(node.attributes['z'].value),self.registry)
+        dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self.registry)
+
+        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, self.registry)
+
+
+    def parseCutTube(self, node) : 
+        solid_name = node.attributes['name'].value 
+        
+        rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self.registry)
+        rmax = _defines.Expression(solid_name+'_pRMax',node.attributes['rmax'].value,self.registry)
+        dz   = _defines.Expression(solid_name+'_pDz',node.attributes['z'].value,self.registry)
+        sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self.registry)
+        dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self.registry)
+        lx   = _defines.Expression(solid_name+'_plNorm_x',node.attributes['lowX'].value,self.registry)
+        ly   = _defines.Expression(solid_name+'_plNorm_y',node.attributes['lowY'].value,self.registry)
+        lz   = _defines.Expression(solid_name+'_plNorm_z',node.attributes['lowZ'].value,self.registry)
+        hx   = _defines.Expression(solid_name+'_phNorm_x',node.attributes['highX'].value,self.registry)
+        hy   = _defines.Expression(solid_name+'_phNorm_y',node.attributes['highY'].value,self.registry)
+        hz   = _defines.Expression(solid_name+'_phNorm_z',node.attributes['highZ'].value,self.registry)
+
+        lNorm = [lx, ly, lz] 
+        hNorm = [hx, hy, hz]
+        
+        _g4.solid.CutTubs(name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self.registry) 
+        
+
+    def parseCone(self,node) : 
+        solid_name = node.attributes['name'].value         
+
+        try : 
+            rmin1 = _defines.Expression(solid_name+"_pRMin1",node.attributes['rmin1'].value,self.registry) 
+        except KeyError : 
+            rmin1 = _defines.Expression(solid_name+"_pRMin1","0",self.registry) 
+        try :
+            rmin2 = _defines.Expression(solid_name+"_pRMin2",node.attributes['rmin2'].value,self.registry) 
+        except KeyError : 
+            rmin2 = _defines.Expression(solid_name+"_pRMin2","0",self.registry) 
+        try :
+            sphi  = _defines.Expression(solid_name+"_pSPhi",node.attributes['startphi'].value,self.registry) 
+        except KeyError : 
+            sphi  = _defines.Expression(solid_name+"_pSPhi","0",self.registry) 
+
+        rmax1 = _defines.Expression(solid_name+"_pRMax1",node.attributes['rmax1'].value,self.registry) 
+        rmax2 = _defines.Expression(solid_name+"_pRMax2",node.attributes['rmax2'].value,self.registry) 
+        dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['rmax2'].value),self.registry)
+        dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self.registry) 
+
+        _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self.registry)        
+
+    def parsePara(self,node) : 
+        solid_name = node.attributes['name'].value         
+
+        x     = _defines.Expression(solid_name+'_pX',node.attributes['x'].value,self.registry) 
+        y     = _defines.Expression(solid_name+'_pY',node.attributes['y'].value,self.registry) 
+        z     = _defines.Expression(solid_name+'_pZ',node.attributes['z'].value,self.registry) 
+        phi   = _defines.Expression(solid_name+'_pPhi',node.attributes['phi'].value,self.registry) 
+        alpha = _defines.Expression(solid_name+'_pAlpha',node.attributes['alpha'].value,self.registry) 
+        theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self.registry) 
+
+        solid = _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self.registry)
+
+    def parseTrd(self, node) : 
+        solid_name = node.attributes['name'].value
+        
+        x1 = _defines.Expression(solid_name+"_px1",node.attributes['x1'].value,self.registry)
+        x2 = _defines.Expression(solid_name+"_px2",node.attributes['x2'].value,self.registry)
+        y1 = _defines.Expression(solid_name+"_py1",node.attributes['y1'].value,self.registry)
+        y2 = _defines.Expression(solid_name+"_py2",node.attributes['y2'].value,self.registry)
+        z  = _defines.Expression(solid_name+"_z",node.attributes['z'].value,self.registry) 
+        
+        _g4.solid.Trd(solid_name, x1, x2, y1, y2, z, self.registry)
+
+    def parseTrap(self, node) : 
+        solid_name = node.attributes['name'].value
+        
+        dz    = _defines.Expression(solid_name+"_pDz",node.attributes['z'].value,self.registry)
+        theta = _defines.Expression(solid_name+"_pTheta",node.attributes['theta'].value,self.registry) 
+        dphi  = _defines.Expression(solid_name+"_pDphi",node.attributes['phi'].value,self.registry)
+        dx1   = _defines.Expression(solid_name+"_pDx1",node.attributes['x1'].value,self.registry)
+        dx2   = _defines.Expression(solid_name+"_pDx2",node.attributes['x2'].value,self.registry)
+        dx3   = _defines.Expression(solid_name+"_pDx3",node.attributes['x3'].value,self.registry)
+        dx4   = _defines.Expression(solid_name+"_pDx4",node.attributes['x4'].value,self.registry)
+        dy1   = _defines.Expression(solid_name+"_pDy1",node.attributes['y1'].value,self.registry)
+        dy2   = _defines.Expression(solid_name+"_pDy2",node.attributes['y2'].value,self.registry)
+        alp1  = _defines.Expression(solid_name+"_pAlp1",node.attributes['alpha1'].value,self.registry)
+        alp2  = _defines.Expression(solid_name+"_pAlp2",node.attributes['alpha2'].value,self.registry)
+
+        _g4.solid.Trap(solid_name,dz,theta,dphi,dy1,dx1,dx2,alp1,dy2,dx3,dx4,alp2,self.registry)
+
+    def parseSphere(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        try : 
+            rmin = _defines.Expression(solid_name+"_pRMin",node.attributes['rmin'].value,self.registry) 
+        except KeyError : 
+            rmin = _defines.Expression(solid_name+"_pRMin","0",self.registry)
+        try : 
+            startphi = _defines.Expression(solid_name+"_pSPhi",node.attributes['startphi'].value,self.registry) 
+        except KeyError : 
+            startphi = _defines.Expression(solid_name+"_pSPhi","0",self.registry) 
+        try : 
+            starttheta = _defines.Expression(solid_name+"_pSTheta",node.attributes['starttheta'].value,self.registry)
+        except KeyError : 
+            starttheta = _defines.Expression(solid_name+"_pSTheta","0",self.registry)
+            
+        rmax       = _defines.Expression(solid_name+"_pRMax",node.attributes['rmax'].value,self.registry)
+        deltaphi   = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self.registry)
+        deltatheta = _defines.Expression(solid_name+"_pDTheta",node.attributes['deltatheta'].value,self.registry)
+
+        _g4.solid.Sphere(solid_name, rmin, rmax, startphi, deltaphi, starttheta, deltatheta, self.registry)
+
+    def parseOrb(self, node) : 
+        solid_name = node.attributes['name'].value 
+        
+        r = _defines.Expression(solid_name+"_pRMax",node.attributes['r'].value,self.registry)
+        
+        _g4.solid.Orb(solid_name,r,self.registry)
+
+    def parseTorus(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        rmin = _defines.Expression(solid_name+"_pRmin",node.attributes['rmin'].value,self.registry)
+        rmax = _defines.Expression(solid_name+"_pRmax",node.attributes['rmax'].value,self.registry)
+        rtor = _defines.Expression(solid_name+"_pRtor",node.attributes['rtor'].value,self.registry)
+        sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self.registry) 
+        dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self.registry)
+
+        _g4.solid.Torus(solid_name,rmin,rmax,rtor, sphi, dphi, self.registry) 
+
+
+    def parsePolycone(self, node) : 
+        solid_name = node.attributes['name'].value         
+
+        sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self.registry)
+        dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self.registry)
+        try : 
+            nzpl = _defines.Expression(solid_name+"_pZpl",node.attributes['nzplanes'].value,self.registry)
+        except KeyError :
+            nzpl = _defines.Expression(solid_name+"_pZpl","0",self.registry)            
+
+        Rmin = [] 
+        Rmax = []
+        Z    = [] 
+        
+        i = 0
+        for chNode in node.childNodes : 
+            rmin  = _defines.Expression(solid_name+"_zplane_rmin"+str(i),chNode.attributes['rmin'].value,self.registry)
+            rmax  = _defines.Expression(solid_name+"_zplane_rmax"+str(i),chNode.attributes['rmax'].value,self.registry)
+            z     = _defines.Expression(solid_name+"_zplane_z"+str(i),chNode.attributes['z'].value,self.registry)
+            Rmin.append(rmin)
+            Rmax.append(rmax)
+            Z.append(z)
+            i=i+1
+
+        _g4.solid.Polycone(solid_name, sphi,dphi,Z, Rmin, Rmax, self.registry)
+
+    def parseGenericPolycone(self, node) : 
+        solid_name = node.attributes['name'].value
+        
+        sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self.registry)
+        dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self.registry)
+
+        R = []
+        Z = []
+        
+        i = 0
+        for chNode in node.childNodes : 
+            r     = _defines.Expression(solid_name+"_rzpoint_r"+str(i),chNode.attributes['r'].value,self.registry)
+            z     = _defines.Expression(solid_name+"_rzpoint_z"+str(i),chNode.attributes['z'].value,self.registry)
+            R.append(r)
+            Z.append(z)
+            i=i+1
+        
+        print 'generic polycone NOT IMPLEMENTED'
+
+    def parsePolyhedra(self, node) :
+        solid_name = node.attributes['name'].value        
+
+        print 'polyhedra NOT IMPLEMENTED'        
+
+    def parseGenericPolyhedra(self, node) :
+        solid_name = node.attributes['name'].value        
+
+        print 'generic polyhedra NOT IMPLEMENTED'        
+
+    def parseEllipticalTube(self, node) : 
+        solid_name = node.attributes['name'].value
+        
+        dx = _defines.Expression(solid_name+"_dx",node.attributes['dx'].value,self.registry) 
+        dy = _defines.Expression(solid_name+"_dy",node.attributes['dy'].value,self.registry) 
+        dz = _defines.Expression(solid_name+"_dz",node.attributes['dz'].value,self.registry) 
+    
+        _g4.solid.EllipticalTube(solid_name,dx,dy,dz, self.registry)
+
+    def parseEllipsoid(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        try : 
+            bcut = _defines.Expression(solid_name+"_zcut1",node.attributes['zcut1'].value,self.registry)
+        except KeyError :
+            bcut = _defines.Expression(solid_name+"_zcut1","0",self.registry)            
+
+        ax   = _defines.Expression(solid_name+"_ax",node.attributes['ax'].value,self.registry)
+        by   = _defines.Expression(solid_name+"_by",node.attributes['by'].value,self.registry)
+        cz   = _defines.Expression(solid_name+"_cz",node.attributes['cz'].value,self.registry)
+        tcut = _defines.Expression(solid_name+"_zcut2",node.attributes['zcut2'].value,self.registry) 
+        
+        _g4.solid.Ellipsoid(solid_name, ax, by, cz, bcut, tcut, self.registry)
+
+    def parseEllipticalCone(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        pxSemiAxis = _defines.Expression(solid_name+"_pxSemiAxis",node.attributes['dx'].value,self.registry)
+        pySemiAxis = _defines.Expression(solid_name+"_pySemiAxis",node.attributes['dy'].value,self.registry)
+        zMax       = _defines.Expression(solid_name+"_zMax",node.attributes['zmax'].value,self.registry)
+        pzTopCut   = _defines.Expression(solid_name+"_pzTopCut",node.attributes['zcut'].value,self.registry)
+
+        _g4.solid.EllipticalCone(solid_name,pxSemiAxis,pySemiAxis,zMax,pzTopCut,self.registry)
+
+    def parseParaboloid(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        Dz         = _defines.Expression(solid_name+"_Dz",'({})/2'.format(node.attributes['dz'].value),self.registry)
+        R1         = _defines.Expression(solid_name+"_R1",node.attributes['rlo'].value,self.registry)
+        R2         = _defines.Expression(solid_name+"_R2",node.attributes['rhi'].value,self.registry)
+        
+        _g4.solid.Paraboloid(solid_name, Dz, R1, R2, self.registry)
+        
+    def parseHype(self, node) : 
+        solid_name = node.attributes['name'].value         
+        
+        try : 
+            innerStereo = _defines.Expression(solid_name+'_innerStereo',node.attributes['ihst'].value,self.registry) 
+        except KeyError : 
+            innerStereo = _defines.Expression(solid_name+'_innerStereo',"0",self.registry)             
+
+        innerRadius = _defines.Expression(solid_name+'_innerRadius',node.attributes['rmin'].value,self.registry) 
+        outerRadius = _defines.Expression(solid_name+'_outerRadius',node.attributes['rmax'].value,self.registry)
+        outerStereo = _defines.Expression(solid_name+'_outerStereo',node.attributes['outst'].value,self.registry) 
+        halfLenZ    = _defines.Expression(solid_name+'_halfLenZ','({})/2'.format(node.attributes['z'].value),self.registry)
+
+        _g4.solid.Hype(solid_name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, self.registry) 
+
+    def parseTet(self, node) : 
+        solid_name = node.attributes['name'].value         
+        
+        anchor = _defines.Expression(solid_name+'_anchor',node.attributes['vertex1'],self.registry)
+        p2     = _defines.Expression(solid_name+'_p2',node.attributes['vertex2'],self.registry)
+        p3     = _defines.Expression(solid_name+'_p3',node.attributes['vertex3'],self.registry)
+        p4     = _defines.Expression(solid_name+'_p4',node.attributes['vertex4'],self.registry)
+
+        _g4.solid.Tet(solid_name, anchor, p2, p3, p4, False, self.registry)
+        
+    def parseExtrudedSolid(self, node) : 
+        solid_name = node.attributes['name'].value
+                               
+        print 'extruded solid NOT IMPLEMENTED'
+
+    def parseTwistedBox(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        print 'twisted box NOT IMPLEMENTED'        
+
+    def parseTwistedTrap(self, node) : 
+        solid_name = node.attributes['name'].value 
+
+        print 'twisted trap NOT IMPLEMENTED'        
+
+    def parseTwistedTrd(self, node) : 
+        solid_name = node.attributes['name'].value 
+    
+        print 'twisted trd NOT IMPLEMENTED'        
+
+    def parseTwistedTubs(self,node) : 
+        solid_name = node.attributes['name'].value         
+
+        print 'twisted tubs NOT IMPLEMENTED'        
+
+    def parseGenericTrap(self,node) : 
+        solid_name = node.attributes['name'].value         
+
+        print 'generic trap NOT IMPLEMENTED'        
+
+    def parseTesselatedSolid(self,node) : 
+        solid_name = node.attributes['name'].value
+
+        print 'tesselated solid NOT IMPLEMENTED'        
+
+    def parseUnion(self, node) : 
+        print 'union NOT IMPLEMENTED' 
+
+    def parseSubtraction(self, node) : 
+        print 'subtraction NOT IMPLEMENTED' 
+
+    def parseIntersection(self, node) :
+        print 'intersection NOT IMPLEMENTED' 
+
+    def parseMultiUnion(self, node) :
+        print 'multiunion NOT IMPLEMENTED'
 
     def parseStructure(self,xmldoc) :
-        pass
-    
+        
+        self.xmlstructure = xmldoc.getElementsByTagName("structure")[0]
+        
+        # loop over child nodes 
+        for node in self.xmlstructure.childNodes : 
+            self.extractStructureNodeData(node)
+
+        # find world logical volume 
+        self.xmlsetup = xmldoc.getElementsByTagName("setup")[0]
+        worldLvName = self.xmlsetup.childNodes[0].attributes["ref"].value
+        self.registry.orderLogicalVolumes(worldLvName)
+        self.registry.setWorld(worldLvName)
+
+    def extractStructureNodeData(self, node) : 
+        node_name = node.tagName 
+        
+        if node.nodeType == node.ELEMENT_NODE : 
+            if node_name == "volume" :
+                name      = node.attributes["name"].value
+                material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
+                solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
+
+#               determine material                               
+#                if material in _g4.registry.materialDict:
+#                    mat = _g4.registry.materialDict[material]
+#                else:
+#                    mat = str(material)
+
+                vol = _g4.LogicalVolume(self.registry.solidDict[solid], 'G4_Galactic', name, registry=self.registry)
+
+                for chNode in node.childNodes :
+                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
+                        volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                        # Name 
+                        try : 
+                            pvol_name = chNode.attributes["name"].value
+                        except KeyError : 
+                            pvol_name = volref+"_PV"
+
+                        # Position 
+                        try : 
+                            position = self.registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
+                        except IndexError : 
+                            position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
+
+                        # Rotation 
+                        try : 
+                            rotation = self.registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
+                        except IndexError : 
+                            rotation  = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)                            
+
+                        # Scale 
+                        try :                             
+                            scale = self.registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]                            
+                        except IndexError : 
+                            try : 
+                                scale = self.parseVector(chNode.getElementsByTagName("scale")[0],"scale",False)
+                            except IndexError : 
+                                scale = _defines.Scale("","1","1","1",self.registry,False)    
+
+                        # Create physical volume
+                        physvol   = _g4.PhysicalVolume(rotation, position, self.registry.logicalVolumeDict[volref],
+                                                       pvol_name, vol, scale, registry=self.registry)
+
+                    elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
+                        print 'ReaderNew> replica not implemented'                                        
+                    elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
+                        print 'ReaderNew> param not implemented'                                        
+            elif node_name == "loop" : 
+                print 'ReaderNew> loop not implemented'                
+            elif node_name == "assembly" :
+                print 'ReaderNew> assembly not implemented'
+            elif node_name == "bordersurface":
+                print 'ReaderNew> bordersurface not implemented'
+            elif node_name == "skinsurface" : 
+                print 'ReaderNew> skinsurface not implemented'
+
+            else:
+                print "Unrecognised node: ", node_name

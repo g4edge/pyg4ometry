@@ -12,7 +12,7 @@ import numpy as _np
 
 class Hype(_SolidBase):
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
-                 outerStereo, halfLenZ, nslice=16, nstack=16, register=True):
+                 outerStereo, halfLenZ, registry = None, nslice=16, nstack=16):
         """
         Constructs a tube with hyperbolic profile.
 
@@ -33,9 +33,9 @@ class Hype(_SolidBase):
         self.halfLenZ    = halfLenZ
         self.nslice      = nslice
         self.nstack      = nstack
-        self.checkParameters()
-        if register:
-            _registry.addSolid(self)
+        # self.checkParameters()
+        if registry:
+            registry.addSolid(self)
 
     def checkParameters(self):
         if self.innerRadius > self.outerRadius:

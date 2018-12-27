@@ -4,7 +4,6 @@ import pyg4ometry.exceptions
 from ..pycsg.geom                      import Vector as _Vector
 from ..pycsg.core                      import CSG as _CSG
 
-
 import solid as _solid
 from Registry                          import registry as _registry
 from Parameter                         import Parameter as _Parameter
@@ -17,7 +16,7 @@ import sys as _sys
 
 class LogicalVolume(object):
     imeshed = 0
-    def __init__(self, solid, material, name, debug=False, register=True, **kwargs):
+    def __init__(self, solid, material, name, debug=False, registry=None, **kwargs):
         super(LogicalVolume, self).__init__()
         self.solid           = solid
 
@@ -35,9 +34,9 @@ class LogicalVolume(object):
         self.alpha           = kwargs.get("alpha", 0.5)
         self.color           = kwargs.get("color", None)
 
-        if register:
-            _registry.addLogicalVolume(self)
-        self._register = register
+        if registry:
+            registry.addLogicalVolume(self)
+        self.registry = registry
 
     def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
@@ -170,8 +169,6 @@ class LogicalVolume(object):
         sizeParameter = _ParameterVector("GDML_Size",[_Parameter("GDML_Size_position_x",size[0]),
                                                       _Parameter("GDML_Size_position_y",size[1]),
                                                       _Parameter("GDML_Size_position_z",size[2])])
-
-
         if isinstance(self.solid,_solid.Box):
             self.solid.pX = sizeParameter[0] / 2.
             self.solid.pY = sizeParameter[1] / 2.

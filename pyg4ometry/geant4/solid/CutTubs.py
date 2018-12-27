@@ -20,7 +20,7 @@ class CutTubs(_SolidBase):
         pHighNorm: list, normal vector of the cut plane at +pDz
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
-                 pLowNorm, pHighNorm, register=True):
+                 pLowNorm, pHighNorm, registry=None):
         self.type      = 'CutTubs'
         self.name      = name
         self.pRMin     = pRMin
@@ -31,8 +31,8 @@ class CutTubs(_SolidBase):
         self.pLowNorm  = pLowNorm
         self.pHighNorm = pHighNorm
         self.mesh      = None
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def __repr__(self):
         return 'Cut tubs :{}'.format(self.name)

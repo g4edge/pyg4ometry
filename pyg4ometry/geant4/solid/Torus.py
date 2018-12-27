@@ -10,7 +10,7 @@ import numpy as _np
 
 class Torus(_SolidBase):
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
-                 nslice=16, nstack=16, register=True):
+                 registry = None, nslice=16, nstack=16):
         """
         Constructs a torus.
 
@@ -32,8 +32,8 @@ class Torus(_SolidBase):
         self.nslice = nslice
         self.nstack = nstack
         self.mesh = None
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
 
     def pycsgmesh(self):

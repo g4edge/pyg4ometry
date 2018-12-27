@@ -10,6 +10,8 @@ class Registry:
         self.physicalVolumeDict           = OrderedDict()
         self.replicaVolumeDict            = OrderedDict()
         self.parameterisedVolumeDict      = OrderedDict()
+        self.opticalSufaceDict            = OrderedDict()
+        self.loopDict                     = OrderedDict()
         self.parameterDict                = OrderedDict()
         self.defineDict                   = OrderedDict()
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
@@ -45,7 +47,6 @@ class Registry:
         #        material.name, "material")
         # except KeyError :
         self.materialDict[material.name] = material
-
 
     def addSolid(self,solid):
         try:
@@ -156,10 +157,9 @@ class Registry:
 
         lv = self.logicalVolumeDict[lvName]
         
-        print "mother> ",lv.name
-
+        # print "mother> ",lv.name
         for daughters in lv.daughterVolumes:
-            print "daughters> ",daughters.name
+            # print "daughters> ",daughters.name
 
             dlvName = daughters.logicalVolume.name
             try:

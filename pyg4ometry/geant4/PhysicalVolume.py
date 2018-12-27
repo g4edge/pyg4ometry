@@ -13,7 +13,7 @@ class PhysicalVolume(object):
 
     imeshed = 0
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, scale=[1,1,1], debug=False, register=True):
+                 motherVolume, scale=[1,1,1], debug=False, registry=None):
         super(PhysicalVolume, self).__init__()
         self.rotation      = rotation
         self.position      = position
@@ -24,9 +24,9 @@ class PhysicalVolume(object):
         self.mesh          = None
         self.scale         = scale
         self.debug         = debug
-        if register:
-            _registry.addPhysicalVolume(self)
-        self._register = register
+        if registry:
+            registry.addPhysicalVolume(self)
+        self.registry = registry
 
     def __repr__(self):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)

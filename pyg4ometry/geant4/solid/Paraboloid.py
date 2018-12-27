@@ -6,11 +6,10 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
-
 import numpy as _np
 
 class Paraboloid(_SolidBase):
-    def __init__(self, name, pDz, pR1, pR2, nstack=8, nslice=16, register=True):
+    def __init__(self, name, pDz, pR1, pR2, registry=None, nstack=8, nslice=16) :
         """
         Constructs a paraboloid with possible cuts along the z axis.
 
@@ -27,8 +26,8 @@ class Paraboloid(_SolidBase):
         self.pR2    = pR2
         self.nstack = nstack
         self.nslice = nslice
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def pycsgmesh(self):
         polygons = []

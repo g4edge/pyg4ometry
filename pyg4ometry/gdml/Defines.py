@@ -1,16 +1,15 @@
 from ..geant4 import Expression as _Expression
 from matplotlib.cbook import is_numlike
 
-
 def expressionStringScalar(obj1,obj2) : 
     # nubmer/varible/expression
-    if is_numlike(obj2) :
+    if is_numlike(obj2) :                       # number
         return str(obj2)
     try :
-        obj1.registry.defineDict[obj2.name]
+        obj1.registry.defineDict[obj2.name]     # variable already defined in registry
         return obj2.name
     except KeyError : 
-        return obj2.expr.expression
+        return obj2.expr.expression             # just an object as an expression
 
 class ScalarBase(object) :
     def __init__(self) : 
@@ -120,13 +119,14 @@ def log10(arg) :
     return v
 
 class Constant(ScalarBase) :
-    def __init__(self, name, value, registry = None) :
+    def __init__(self, name, value, registry = None, addRegistry = True) :
         self.name  = name
         self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
-            registry.addDefine(self)
+            if addRegistry :
+                registry.addDefine(self)
 
     def eval(self) :
         return self.expr.eval()
@@ -138,7 +138,7 @@ class Constant(ScalarBase) :
         return "Constant : {} = {}".format(self.name, str(self.expr))
 
 class Quantity(ScalarBase) :
-    def __init__(self, name, value, unit, type, registry = None) :
+    def __init__(self, name, value, unit, type, registry = None, addRegistry = True) :
         self.name  = name
         self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
         self.unit  = unit
@@ -146,7 +146,8 @@ class Quantity(ScalarBase) :
 
         if registry != None: 
             self.registry = registry
-            registry.addDefine(self)
+            if addRegistry :
+                registry.addDefine(self)
 
     def eval(self) :
         return self.expr.eval()
@@ -158,6 +159,25 @@ class Quantity(ScalarBase) :
         return "Quantity: {} = {} [{}] {}".format(self.name, str(self.expr), self.unit, self.type)
 
 class Variable(ScalarBase) :
+    def __init__(self, name, value, registry = None, addRegistry = True) :
+        self.name  = name
+        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+
+        if registry != None: 
+            self.registry = registry
+            if addRegistry : 
+                registry.addDefine(self)
+
+    def eval(self) :
+        return self.expr.eval()
+
+    def __float__(self) :
+        return self.expr.eval()
+
+    def __repr__(self) :
+        return "Variable: {} = {}".format(self.name, str(self.expr))
+
+class Expression(ScalarBase) : 
     def __init__(self, name, value, registry = None) :
         self.name  = name
         self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
@@ -173,7 +193,7 @@ class Variable(ScalarBase) :
         return self.expr.eval()
 
     def __repr__(self) :
-        return "Variable: {} = {}".format(self.name, str(self.expr))
+        return "Expression: {} = {}".format(self.name, str(self.expr))    
 
 class VectorBase(object) :
     def __init__() :
@@ -271,7 +291,7 @@ def expressionStringVector(var) :
         return var
     
 class Position(VectorBase) :
-    def __init__(self,name,x,y,z, registry = None) :
+    def __init__(self,name,x,y,z, registry = None, addRegistry = True) :
         self.name = name
 
         self.x = _Expression("expr_{}_pos_x".format(name), expressionStringVector(x), registry=registry)
@@ -280,13 +300,14 @@ class Position(VectorBase) :
                
         if registry != None: 
             self.registry = registry
-            registry.addDefine(self)
+            if addRegistry : 
+                registry.addDefine(self)
 
     def __repr__(self) :
         return "Position : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Rotation(VectorBase) : 
-    def __init__(self,name,rx,ry,rz, registry = None) :
+    def __init__(self,name,rx,ry,rz, registry = None, addRegistry = True) :
         self.name = name
         self.x = _Expression("expr_{}_rot_x".format(name), expressionStringVector(rx), registry=registry)
         self.y = _Expression("expr_{}_rot_y".format(name), expressionStringVector(ry), registry=registry)
@@ -294,27 +315,29 @@ class Rotation(VectorBase) :
 
         if registry != None : 
             self.registry = registry
-            registry.addDefine(self)
+            if addRegistry :
+                registry.addDefine(self)
 
     def __repr__(self) :
         return "Rotation : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Scale(VectorBase) : 
-    def __init__(self,name,sx,sy,sz, registry = None) :
+    def __init__(self,name,sx,sy,sz, registry = None, addRegistry = True) :
         self.name = name
-        self.x = _Expression("expr_{}_scl_x".format(name), expressionStringVector(x), registry=registry)
-        self.y = _Expression("expr_{}_scl_y".format(name), expressionStringVector(y), registry=registry)
-        self.z = _Expression("expr_{}_scl_z".format(name), expressionStringVector(z), registry=registry)
+        self.x = _Expression("expr_{}_scl_x".format(name), expressionStringVector(sx), registry=registry)
+        self.y = _Expression("expr_{}_scl_y".format(name), expressionStringVector(sy), registry=registry)
+        self.z = _Expression("expr_{}_scl_z".format(name), expressionStringVector(sz), registry=registry)
 
         if registry != None: 
             self.registry = registry
-            registry.addDefine(self)        
+            if addRegistry : 
+                registry.addDefine(self)        
 
     def __repr__(self) :
         return "Scale : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Matrix :
-    def __init__(self,name, coldim, values, registry = None) :
+    def __init__(self,name, coldim, values, registry = None, addRegistry = True) :
         self.name = name
         self.coldim = coldim
 
@@ -324,8 +347,9 @@ class Matrix :
 
         if registry != None:
             self.registry = registry
-            registry.addDefine(self)
-
+            if addRegistry :
+                registry.addDefine(self)
+            
     def eval(self) :
         return [ e.eval() for e in self.values ]
 

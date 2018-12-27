@@ -15,15 +15,15 @@ class Box(_SolidBase):
     :param pZ: half-length along z
     :type name: float
     """
-    def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, register=True):
+    def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, registry=None):
         self.name = name
         self.pX = pX
         self.pY = pY
         self.pZ = pZ
         self.type = 'Box'
         self.mesh = None
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def __repr__(self):
         return 'Box : '+self.name+' '+str(self.pX)+' '+str(self.pY)+' '+str(self.pZ)

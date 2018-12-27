@@ -30,7 +30,7 @@ class Sphere(_SolidBase):
     """
 
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
-                 pDTheta, nslice=10, nstack=10, register=True):
+                 pDTheta, registry=None, nslice=10, nstack=10):
 
         self.type    = 'Sphere'
         self.name    = name
@@ -43,9 +43,10 @@ class Sphere(_SolidBase):
         self.nslice  = nslice
         self.nstack  = nstack
         self.mesh    = None
+
         # self.checkParameters()
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def checkParameters(self):
         if self.pRmin > self.pRmax:

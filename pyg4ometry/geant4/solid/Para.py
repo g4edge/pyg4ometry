@@ -6,14 +6,7 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
-
 import numpy as _np
-
-import math as _math
-from math import cos as _cos
-from math import sin as _sin
-from math import acos as _acos
-from math import asin as _asin
 
 class Para(_SolidBase):
     """
@@ -29,8 +22,8 @@ class Para(_SolidBase):
     pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
     """
 
-    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, register=True):
-
+    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry=None):
+        import pyg4ometry.gdml.Defines as _Defines
 
         self.type     = 'Para'
         self.name   = name
@@ -40,12 +33,12 @@ class Para(_SolidBase):
         self.pAlpha = pAlpha
         self.pTheta = pTheta
         self.pPhi   = pPhi
-        self.dx_y   = self.pY*_sin(self.pAlpha)  #changes sign as the y component
-        self.dx_z   = +self.pZ*_sin(self.pTheta) #changes sign as the z component
-        self.dy     = self.pZ*_sin(self.pPhi)
-        self.dz     = self.pZ-self.pZ*_cos(pPhi)
-        if register:
-            _registry.addSolid(self)
+        self.dx_y   = self.pY*_Defines.sin(self.pAlpha)  #changes sign as the y component
+        self.dx_z   = self.pZ*_Defines.sin(self.pTheta) #changes sign as the z component
+        self.dy     = self.pZ*_Defines.sin(self.pPhi)
+        self.dz     = self.pZ-self.pZ*_Defines.cos(pPhi)
+        if registry:
+            registry.addSolid(self)
 
     def pycsgmesh(self):
         self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),

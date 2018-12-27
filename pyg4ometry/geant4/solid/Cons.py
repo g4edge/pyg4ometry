@@ -22,7 +22,7 @@ class Cons(_SolidBase):
     """
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
-                 pSPhi, pDPhi, register=True):
+                 pSPhi, pDPhi, registry=None):
         self.name = name
         self.type = 'Cons'
         self.pRmin1 = pRmin1
@@ -33,8 +33,8 @@ class Cons(_SolidBase):
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
         self.mesh = None
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
         # self.checkParameters()
 
     def checkParameters(self):
@@ -44,6 +44,9 @@ class Cons(_SolidBase):
             raise ValueError("Inner radius must be less than outer radius.")
         if self.pDPhi > _np.pi*2:
             raise ValueError("pDTheta must be less than 2 pi")
+
+    def __repr__(self):
+        return 'Cons : '+self.name+' '+str(self.pRmin1)+' '+str(self.pRmax1)+' '+str(self.pRmin2)+' '+str(self.pRmax2)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
 
     def pycsgmesh(self):
         self.basicmesh()

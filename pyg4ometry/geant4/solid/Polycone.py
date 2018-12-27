@@ -11,7 +11,7 @@ from copy import deepcopy as _dc
 
 class Polycone(_SolidBase):
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
-                 nslice=16, register=True):
+                 registry=None, nslice=16):
         """
         Constructs a solid of rotation using an arbitrary 2D surface.
 
@@ -35,9 +35,8 @@ class Polycone(_SolidBase):
         self.pRMax   = pRMax
         self.nslice  = nslice
         self.mesh = None
-        if register:
-            if register:
-                _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def __repr__(self):
         return 'Polycone : '+self.name+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pZpl)+' '+str(self.pRMin)+' '+str(self.pRMax)

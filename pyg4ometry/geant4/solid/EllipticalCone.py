@@ -11,7 +11,7 @@ import numpy as _np
 
 class EllipticalCone(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
-                 nslice=16, nstack=16, register=True):
+                 registry = None, nslice=16, nstack=16):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -31,9 +31,9 @@ class EllipticalCone(_SolidBase):
         self.pzTopCut   = pzTopCut
         self.nslice     = nslice
         self.nstack     = nslice
-        self.checkParameters()
-        if register:
-            _registry.addSolid(self)
+        # self.checkParameters()
+        if registry:
+            registry.addSolid(self)
 
     def checkParameters(self):
         if self.pzTopCut <= 0 or self.pzTopCut > self.zMax:
