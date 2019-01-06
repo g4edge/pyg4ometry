@@ -1,7 +1,7 @@
 from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
-from ..geant4.Parameter import Parameter as _Parameter
-from ..geant4.ParameterVector import ParameterVector as _ParameterVector
+#from ..geant4.Parameter import Parameter as _Parameter
+#from ..geant4.ParameterVector import ParameterVector as _ParameterVector
 from ..geant4.Material import Material as _Material
 from ..geant4.Material import Element as _Element
 from ..geant4.Material import Isotope as _Isotope

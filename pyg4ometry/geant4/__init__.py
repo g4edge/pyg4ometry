@@ -9,6 +9,4 @@ from AssemblyVolume import *
 from Registry import *
 from Material import *
 from Expression import *
-from Parameter import *
-from ParameterVector import *
 import solid

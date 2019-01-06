@@ -1,5 +1,4 @@
 import vtk as _vtk
-import pyg4ometry.geant4 as _g4
 
 # python iterable to vtkIdList
 def mkVtkIdList(it):
@@ -150,7 +149,7 @@ class Viewer :
         self.ren.ResetCamera()
         self.renWin.Render()
         self.iren.Start()
-
+'''
 def viewLogicalVolume(logical_volume, checkOverlaps=False):
     if isinstance(logical_volume, str):
         if logical_volume in _g4.registry.logicalVolumeDict:
@@ -176,3 +175,4 @@ def viewWorld(checkOverlaps=False):
     viewer = viewLogicalVolume(world_volume, checkOverlaps=checkOverlaps)
 
     return viewer
+'''
