@@ -16,20 +16,26 @@ class Mesh(object) :
         self.wireframe = False
 
         # mesh in global coordinates 
-        self.localmesh = self.solid.pycsgmesh()
-        self.mesh      = _copy.deepcopy(self.localmesh)
+        self.localmesh  = self.solid.pycsgmesh()
 
 
-    def transformLocalMesh(self, rot, tra) : 
+    def getBoundingBox(self) : 
+        pass
+
+    def getGlobalBoundingBox(self) :
+        pass
+
+    def getGlobaalMesh(self, rot, tra) : 
         self.rot = rot 
         self.tra = tra
         self.rotva = matrix2axisangle(self.rot) # vector angle (va)
 
-        self.localmesh.rotate(self.rotva[0],rad2deg(self.rotva[1]))
-        self.localmesh.translate(_Vector(tra))
+        self.globalmesh = _copy.deepcopy(self.localmesh)
+        self.globalmesh.rotate(self.rotva[0],rad2deg(self.rotva[1]))
+        self.globalmesh.translate(_Vector(tra))
 
-    def pygcsgmesh(self) :
-        return self.mesh 
+    def getLocalMesh(self) :
+        return self.localmesh 
 
     def getSize(self) :
         pass

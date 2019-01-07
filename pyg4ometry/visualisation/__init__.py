@@ -1,5 +1,6 @@
 # from Viewer import viewLogicalVolume, viewWorld, Viewer
-from Viewer import Viewer
 from Mesh import Mesh
+from VtkViewer import *
+#from Viewer import Viewer
 #from Convert import *
 #from Writer import *
