@@ -61,6 +61,15 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
         return base
 
+    def visitMatrixElement(self, ctx):
+        matrix = self.visit(ctx.variable())
+        indices = [int(self.visit(ctx.scientific(0)))] # at least one index
+        for i in range(len(ctx.COMMA())):
+            index = int(self.visit(ctx.scientific(i+1)))  #only integer access
+            indices.append(index)
+
+        return matrix[tuple(indices)[0]] # The Matrix define class only supports one index for now so get the first one
+
     def visitParens(self, ctx):
         return self.visit(ctx.expression())
 
@@ -87,6 +96,8 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
             value = self.visit(ctx.expression())
         elif ctx.scientific():
             value = self.visit(ctx.scientific())
+        elif ctx.matrixElement():
+            value = self.visit(ctx.matrixElement())
         else:
             raise SystemExit("Invalid atom.") ##DEBUG####
 
