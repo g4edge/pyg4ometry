@@ -61,13 +61,19 @@ signedAtom
 
 atom
    : scientific
+   | matrixElement
    | variable
    | constant
    | LPAREN expression RPAREN
    ;
 
+
 scientific
    : SCIENTIFIC_NUMBER
+   ;
+
+matrixElement
+   : variable LBRACKET scientific (COMMA scientific)* RBRACKET
    ;
 
 constant
@@ -155,6 +161,15 @@ LPAREN
 
 RPAREN
    : ')'
+   ;
+
+LBRACKET
+   : '['
+   ;
+
+
+RBRACKET
+   : ']'
    ;
 
 
