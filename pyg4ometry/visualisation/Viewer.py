@@ -76,7 +76,7 @@ class Viewer :
         meshPD.SetPolys(polys)
         meshPD.GetPointData().SetScalars(scalars)
 
-        del points
+        del points 
         del polys
         del scalars
 
