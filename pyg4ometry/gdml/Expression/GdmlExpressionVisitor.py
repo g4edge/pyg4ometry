@@ -50,6 +50,11 @@ class GdmlExpressionVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GdmlExpressionParser#matrixElement.
+    def visitMatrixElement(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GdmlExpressionParser#constant.
     def visitConstant(self, ctx):
         return self.visitChildren(ctx)

@@ -85,6 +85,15 @@ class GdmlExpressionListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GdmlExpressionParser#matrixElement.
+    def enterMatrixElement(self, ctx):
+        pass
+
+    # Exit a parse tree produced by GdmlExpressionParser#matrixElement.
+    def exitMatrixElement(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by GdmlExpressionParser#constant.
     def enterConstant(self, ctx):
         pass
