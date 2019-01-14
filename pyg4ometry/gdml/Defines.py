@@ -1,5 +1,6 @@
 from ..geant4 import Expression as _Expression
 from matplotlib.cbook import is_numlike
+import numpy as _np
 
 def expressionStringScalar(obj1,obj2) : 
     # nubmer/varible/expression
@@ -342,8 +343,12 @@ class Matrix :
         self.coldim = coldim
 
         self.values = [] 
-        for v in values :            
-            self.values.append(_Expression("expr_{}_idx{}_val".format(name,values.index(v)), expressionStringVector(v),registry=registry))
+        for i, v in enumerate(values) :
+            self.values.append(Expression("expr_{}_idx{}_val".format(name,i), expressionStringVector(v),registry=registry))
+
+        self.values_asarray = _np.array(self.values, dtype=_np.object)
+        if self.coldim > 1:
+            self.values_asarray = self.values_asarray.reshape(coldim, len(values)/coldim)
 
         if registry != None:
             self.registry = registry
@@ -357,8 +362,4 @@ class Matrix :
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
 
     def __getitem__(self, key):
-        if key < len(self.values) :
-            return self.values[key]
-        else :
-            raise IndexError
-
+        return self.values_asarray[key]

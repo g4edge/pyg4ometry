@@ -68,7 +68,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
             index = int(self.visit(ctx.scientific(i+1)))  #only integer access
             indices.append(index)
 
-        return matrix[tuple(indices)[0]] # The Matrix define class only supports one index for now so get the first one
+        return matrix[tuple(indices)]
 
     def visitParens(self, ctx):
         return self.visit(ctx.expression())
