@@ -39,6 +39,45 @@ class VtkViewer :
         
         pass
 
+    def addLogicalVolume(self, logical) :
+        for pv in logical.daughterVolumes : 
+            print pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name
+            print pv.mesh.localmesh
+            
+            # get the local vtkPolyData 
+            solidname = pv.logicalVolume.solid.name
+            try : 
+                vtkPD = self.localmeshes[solidname]
+            except KeyError : 
+                localmesh = pv.logicalVolume.solid.pycsgmesh()
+                vtkPD    = pycsgMeshToVtkPolyData(localmesh)                
+                self.localmeshes[solidname] = vtkPD
+
+            # triangle filter    
+            filtername = solidname+"_filter"
+            try : 
+                vtkFLT = self.filters[filtername] 
+            except KeyError :  
+                vtkFLT = _vtk.vtkTriangleFilter()
+                vtkFLT.SetInputData(vtkPD)
+                vtkFLT.Update()
+                self.filters[filtername] = vtkFLT
+
+            # mapper 
+            mappername = solidname+"_mapper" 
+            try : 
+                vtkMAP = self.mappers[mappername] 
+            except KeyError : 
+                vtkMAP = _vtk.vtkPolyDataMapper() 
+                vtkMAP.SetIntputData(vtkMAP.GetOutput())
+                self.mappers[mappername] = vtkMAP
+
+            # actor
+            
+                
+            self.addLogicalVolume(pv.logicalVolume)
+
+            
     def view(self):
         # enable user interface interactor
         self.iren.Initialize()
@@ -56,9 +95,10 @@ def mkVtkIdList(it):
     return vil
 
 # convert pycsh mesh to vtkPolyData
-def pycsgMeshToVtkPolyData(self, mesh, vtkPolyData) : 
+def pycsgMeshToVtkPolyData(mesh) : 
 
     mesh.refine()
+    verts, cells, count = mesh.toVerticesAndPolygons()
     meshPolyData = _vtk.vtkPolyData() 
     points       = _vtk.vtkPoints()
     polys        = _vtk.vtkCellArray()
@@ -68,12 +108,12 @@ def pycsgMeshToVtkPolyData(self, mesh, vtkPolyData) :
         points.InsertNextPoint(v)
 
         # determine axis ranges (should probably replace)
-        if(abs(v[0]) > self.xrange) :
-            self.xrange = abs(v[0])
-        if(abs(v[1]) > self.yrange) :
-            self.yrange = abs(v[1])
-        if(abs(v[2]) > self.zrange) :
-            self.zrange = abs(v[2])
+        #if(abs(v[0]) > self.xrange) :
+        #    self.xrange = abs(v[0])
+        #if(abs(v[1]) > self.yrange) :
+        #    self.yrange = abs(v[1])
+        #if(abs(v[2]) > self.zrange) :
+        #    self.zrange = abs(v[2])
 
         #print 'VtkViewer.addMesh> size determined'
         for p in cells :

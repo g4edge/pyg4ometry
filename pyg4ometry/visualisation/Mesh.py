@@ -19,6 +19,10 @@ class Mesh(object) :
         self.localmesh  = self.solid.pycsgmesh()
 
 
+    def setTransformToWorld(self, rot, tra) : 
+        self.rot = rot 
+        self.tra = tra
+
     def getBoundingBox(self) : 
         pass
 
