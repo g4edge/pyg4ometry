@@ -51,7 +51,7 @@ class PhysicalVolume(object):
         tra = new_tra
 
         self.logicalVolume.updateSceneTree(rot,tra)
-        self.mesh.transformLocalMesh(rot,tra)
+        self.mesh.setTransformToWorld(rot,tra)
 
         # if logical volume has daughers set to wireframe or transparent  
         if len(self.logicalVolume.daughterVolumes) != 0 :
