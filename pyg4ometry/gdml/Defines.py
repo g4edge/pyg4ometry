@@ -344,7 +344,7 @@ class Matrix :
 
         self.values = [] 
         for i, v in enumerate(values) :
-            self.values.append(Expression("expr_{}_idx{}_val".format(name,i), expressionStringVector(v),registry=registry))
+            self.values.append(Expression("matrix_expr_{}_idx{}_val".format(name,i), expressionStringVector(v),registry=registry))
 
         self.values_asarray = _np.array(self.values, dtype=_np.object)
         if self.coldim > 1:
