@@ -50,7 +50,7 @@ class VtkViewer :
                 vtkPD = self.localmeshes[solidname]
             except KeyError : 
                 localmesh = pv.logicalVolume.solid.pycsgmesh()
-                vtkPD    = pycsgMeshToVtkPolyData(localmesh)                
+                vtkPD     = pycsgMeshToVtkPolyData(localmesh)
                 self.localmeshes[solidname] = vtkPD
 
             # triangle filter    
@@ -59,7 +59,7 @@ class VtkViewer :
                 vtkFLT = self.filters[filtername] 
             except KeyError :  
                 vtkFLT = _vtk.vtkTriangleFilter()
-                vtkFLT.SetInputData(vtkPD)
+                vtkFLT.AddInputData(vtkPD)
                 vtkFLT.Update()
                 self.filters[filtername] = vtkFLT
 
@@ -68,22 +68,31 @@ class VtkViewer :
             try : 
                 vtkMAP = self.mappers[mappername] 
             except KeyError : 
-                vtkMAP = _vtk.vtkPolyDataMapper() 
-                vtkMAP.SetIntputData(vtkMAP.GetOutput())
+                vtkMAP = _vtk.vtkPolyDataMapper()             
+                vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
                 self.mappers[mappername] = vtkMAP
 
             # actor
-            
-                
+            actorname = pv.name+"_actor"             
+            vtkActor = _vtk.vtkActor() 
+
+            # store actor 
+            self.actors[actorname] = vtkActor
+
+            vtkActor.SetMapper(vtkMAP)        
+            self.ren.AddActor(vtkActor)
+    
             self.addLogicalVolume(pv.logicalVolume)
 
-            
+        
     def view(self):
         # enable user interface interactor
         self.iren.Initialize()
 
         # Render and set start interactor
-        self.ren.ResetCamera()
+        camera =_vtk.vtkCamera();
+        self.ren.SetActiveCamera(camera);
+#        self.ren.ResetCamera()
         self.renWin.Render()
         self.iren.Start()    
 
@@ -97,7 +106,7 @@ def mkVtkIdList(it):
 # convert pycsh mesh to vtkPolyData
 def pycsgMeshToVtkPolyData(mesh) : 
 
-    mesh.refine()
+    # mesh.refine()
     verts, cells, count = mesh.toVerticesAndPolygons()
     meshPolyData = _vtk.vtkPolyData() 
     points       = _vtk.vtkPoints()
@@ -116,21 +125,21 @@ def pycsgMeshToVtkPolyData(mesh) :
         #    self.zrange = abs(v[2])
 
         #print 'VtkViewer.addMesh> size determined'
-        for p in cells :
-            polys.InsertNextCell(mkVtkIdList(p))
+    for p in cells :
+        polys.InsertNextCell(mkVtkIdList(p))
 
-        for i in range(0,count) :
-            scalars.InsertTuple1(i,1)
+    for i in range(0,count) :
+        scalars.InsertTuple1(i,1)
 
-        meshPolyData.SetPoints(points)
-        meshPolyData.SetPolys(polys)
-        meshPolyData.GetPointData().SetScalars(scalars)
+    meshPolyData.SetPoints(points)
+    meshPolyData.SetPolys(polys)
+    meshPolyData.GetPointData().SetScalars(scalars)
 
-        del points
-        del polys
-        del scalars
+    del points
+    del polys
+    del scalars
         
-        return meshPolyData
+    return meshPolyData
 
 def writeVtkPolyDataAsSTLFile(fileName, meshes) :
 # Convert vtkPolyData to STL mesh
