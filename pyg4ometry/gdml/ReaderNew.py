@@ -227,9 +227,9 @@ class ReaderNew(object) :
 
     def parseBox(self, node) : 
         solid_name = node.attributes['name'].value 
-        x = _defines.Expression(solid_name+'_pX',node.attributes['x'].value,self.registry)
-        y = _defines.Expression(solid_name+'_pY',node.attributes['y'].value,self.registry)
-        z = _defines.Expression(solid_name+'_pZ',node.attributes['z'].value,self.registry)
+        x = _defines.Expression(solid_name+'_pX','({})/2'.format(node.attributes['x'].value),self.registry)
+        y = _defines.Expression(solid_name+'_pY','({})/2'.format(node.attributes['y'].value),self.registry)
+        z = _defines.Expression(solid_name+'_pZ','({})/2'.format(node.attributes['z'].value),self.registry)
                 
         solid = _g4.solid.Box(solid_name,x,y,z,self.registry)
 
@@ -552,7 +552,7 @@ class ReaderNew(object) :
         self.xmlstructure = xmldoc.getElementsByTagName("structure")[0]
         
         # loop over child nodes 
-        for node in self.xmlstructure.childNodes : 
+        for node in self.xmlstructure.childNodes :
             self.extractStructureNodeData(node)
 
         # find world logical volume 

@@ -1,5 +1,7 @@
+import numpy as _np
 import vtk as _vtk
 import copy as _copy 
+import pyg4ometry.transformation as _transformation
 
 class VtkViewer : 
     def __init__(self,size=(1024,768)) : 
@@ -28,7 +30,7 @@ class VtkViewer :
         self.mappers = {}
 
         # actors (per placement) 
-        self.actors = {}
+        self.actors = []
 
     def addLocalMesh(self, meshName, mesh) : 
         pass
@@ -39,11 +41,24 @@ class VtkViewer :
         
         pass
 
-    def addLogicalVolume(self, logical) :
+    def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) :
+        #print 'addLogicalVolume',logical.name
+        #print mrot,_np.shape(mrot),type(mrot)
+        #print tra,_np.shape(tra),type(tra)
+
         for pv in logical.daughterVolumes : 
-            print pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name
-            print pv.mesh.localmesh
+            # print pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name, pv.mesh.localmesh
             
+            pvmrot  = _transformation.tbxyz2matrix(pv.rotation.eval())
+            pvtra   = _np.array(pv.position.eval())
+
+            # print 'local pvtransform'
+            # print pvmrot,_np.shape(pvmrot),type(pvmrot)
+            # print pvtra,_np.shape(pvtra),type(pvtra)
+             
+            new_mrot = mrot*pvmrot
+            new_tra  = (_np.array(mrot.dot(pvtra)) + tra)[0]
+  
             # get the local vtkPolyData 
             solidname = pv.logicalVolume.solid.name
             try : 
@@ -69,6 +84,7 @@ class VtkViewer :
                 vtkMAP = self.mappers[mappername] 
             except KeyError : 
                 vtkMAP = _vtk.vtkPolyDataMapper()             
+                vtkMAP.ScalarVisibilityOff()
                 vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
                 self.mappers[mappername] = vtkMAP
 
@@ -76,24 +92,40 @@ class VtkViewer :
             actorname = pv.name+"_actor"             
             vtkActor = _vtk.vtkActor() 
 
-            # store actor 
-            self.actors[actorname] = vtkActor
+            # store actor (need to increment count if exists)
+            self.actors.append(vtkActor)
 
             vtkActor.SetMapper(vtkMAP)        
+
+            #tra = pv.mesh.tra
+            #rot = pv.mesh.rot
+            
+            rotaa = _transformation.matrix2axisangle(new_mrot)
+
+            vtkActor.SetPosition(new_tra[0],new_tra[1],new_tra[2])
+            vtkActor.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
+            vtkActor.GetProperty().SetColor(1,0,0)
+
             self.ren.AddActor(vtkActor)
-    
-            self.addLogicalVolume(pv.logicalVolume)
+
+            # print 'recursion'
+            # print mrot,_np.shape(mrot),type(mrot)
+            # print tra,_np.shape(tra),type(tra)
+            self.addLogicalVolume(pv.logicalVolume,new_mrot,new_tra)
 
         
     def view(self):
         # enable user interface interactor
-        self.iren.Initialize()
+        # self.iren.Initialize()
 
-        # Render and set start interactor
+        # Camera setup
         camera =_vtk.vtkCamera();
         self.ren.SetActiveCamera(camera);
-#        self.ren.ResetCamera()
+        self.ren.ResetCamera()
+
+        # Render 
         self.renWin.Render()
+
         self.iren.Start()    
 
 # python iterable to vtkIdList
@@ -106,7 +138,9 @@ def mkVtkIdList(it):
 # convert pycsh mesh to vtkPolyData
 def pycsgMeshToVtkPolyData(mesh) : 
 
-    # mesh.refine()
+    # refine mesh 
+    mesh.refine()
+
     verts, cells, count = mesh.toVerticesAndPolygons()
     meshPolyData = _vtk.vtkPolyData() 
     points       = _vtk.vtkPoints()

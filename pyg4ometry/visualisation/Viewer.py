@@ -1,5 +1,7 @@
 import vtk as _vtk
 
+# actor.GetPropery().SetRepresentationToWireframe()
+
 # python iterable to vtkIdList
 def mkVtkIdList(it):
     vil = _vtk.vtkIdList()

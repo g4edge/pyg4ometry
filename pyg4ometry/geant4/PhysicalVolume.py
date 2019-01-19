@@ -35,7 +35,7 @@ class PhysicalVolume(object):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
 
     def updateSceneTree(self, rot, tra) :
-        print 'PhysicalVolume.updateSceneTree>',self.name+'\n', rot, tra
+        # print 'PhysicalVolume.updateSceneTree>',self.name+'\n', rot, tra
 
         # compute the updated transformation for this physical volume to the world
         # rot*(self.rot*v+self.tra) + tra

@@ -35,7 +35,7 @@ class LogicalVolume(object):
         self.daughterVolumes.append(physicalVolume)
 
     def updateSceneTree(self, rot = _np.array([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
-        print 'LogicalVolume.updateSceneTree>', self.name+'\n', rot, tra
+        # print 'LogicalVolume.updateSceneTree>', self.name+'\n', rot, tra
                 
         for dv in self.daughterVolumes : 
             dv.updateSceneTree(rot,tra)
