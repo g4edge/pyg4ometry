@@ -8,6 +8,7 @@ class Registry:
         self.solidDict                    = OrderedDict()
         self.logicalVolumeDict            = OrderedDict()
         self.physicalVolumeDict           = OrderedDict()
+        self.physicalVolumeCountDict      = OrderedDict()
         self.replicaVolumeDict            = OrderedDict()
         self.parameterisedVolumeDict      = OrderedDict()
         self.opticalSufaceDict            = OrderedDict()
@@ -82,13 +83,17 @@ class Registry:
             self.volumeTypeCountDict["logicalVolume"] = 1
 
     def addPhysicalVolume(self,volume):
-        try:
-            self.physicalVolumeDict[volume.name]
-            print 'physical replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError(volume.name,
-                                                           "physical volume")
-        except KeyError:
-            self.physicalVolumeDict[volume.name] = volume
+
+        # keep count of identical physical volumes 
+        try : 
+            self.physicalVolumeCountDict[volume.name] += 1 
+        except KeyError : 
+            self.physicalVolumeCountDict[volume.name]  = 1 
+            
+        volume.name = volume.name+"_"+str(self.physicalVolumeCountDict[volume.name])
+
+        # add to physical volume dictionary 
+        self.physicalVolumeDict[volume.name] = volume
 
         # number of physical volumes
         try:
