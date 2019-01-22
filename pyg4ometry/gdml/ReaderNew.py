@@ -117,32 +117,33 @@ class ReaderNew(object) :
                 _defines.Matrix(name,coldim,values, self.registry)
             else:
                 print "Urecognised define: ", define_type
+
         pass
 
     def parseVector(self, node, type = "position", addRegistry=True) : 
         try : 
-             name = node.attributes['name'] 
+             name = node.attributes['name'].value 
         except KeyError : 
             name = '' 
         try :
-            x    = node.attributes['x']
+            x    = node.attributes['x'].value
         except KeyError :
             x    = '0'
         try :
-            y    = node.attributes['y']
+            y    = node.attributes['y'].value
         except KeyError :
             y    = '0'
         try :
-            z    = node.attributes['z']
+            z    = node.attributes['z'].value
         except KeyError :
             z    = '0'        
         
         if type == 'position' : 
-            return _defines.position(name,x,y,z,self.registry,addRegistry) 
+            return _defines.Position(name,x,y,z,self.registry,addRegistry) 
         elif type == 'rotation' : 
-            return _defines.rotation(name,x,y,z,self.registry,addRegistry)
+            return _defines.Rotation(name,x,y,z,self.registry,addRegistry)
         elif type == 'scale' : 
-            return _defines.scale(name,x,y,z,self.registry,addRegistry)
+            return _defines.Scale(name,x,y,z,self.registry,addRegistry)
         
     def parseMatrix(self, node) : 
         pass
