@@ -27,10 +27,12 @@ class VtkViewer :
         self.filters = {}
         
         # mappers (per mesh) 
-        self.mappers = {}
+        self.mappers = []
+        self.physicalMapperMap = {}
 
         # actors (per placement) 
         self.actors = []
+        self.physicalActorMap = {}
 
     def addLocalMesh(self, meshName, mesh) : 
         pass
@@ -80,13 +82,26 @@ class VtkViewer :
 
             # mapper 
             mappername = solidname+"_mapper" 
+
+            vtkMAP = _vtk.vtkPolyDataMapper()
+            vtkMAP.ScalarVisibilityOff()
+            vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+
+            self.mappers.append(vtkMAP)
+            
+            # mapper look up dictionary 
             try : 
-                vtkMAP = self.mappers[mappername] 
+                self.physicalMapperMap[pv.name].append(vtkMAP)
             except KeyError : 
-                vtkMAP = _vtk.vtkPolyDataMapper()             
-                vtkMAP.ScalarVisibilityOff()
-                vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
-                self.mappers[mappername] = vtkMAP
+                self.physicalMapperMap[pv.name] = [vtkMAP]
+            
+#            try : 
+#                vtkMAP = self.mappers[mappername] 
+#            except KeyError : 
+#                vtkMAP = _vtk.vtkPolyDataMapper()             
+#                vtkMAP.ScalarVisibilityOff()
+#                vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+#                self.mappers[mappername] = vtkMAP
 
             # actor
             actorname = pv.name+"_actor"             
@@ -94,6 +109,12 @@ class VtkViewer :
 
             # store actor (need to increment count if exists)
             self.actors.append(vtkActor)
+            
+            # actor look up dictionary
+            try : 
+                self.physicalActorMap[pv.name].append(vtkActor)
+            except KeyError : 
+                self.physicalActorMap[pv.name] = [vtkActor]
 
             vtkActor.SetMapper(vtkMAP)        
 
