@@ -47,7 +47,9 @@ class ReaderNew(object) :
         self.parseDefines(xmldoc)
         self.parseMaterials(xmldoc)
         self.parseSolids(xmldoc)
-        self.parseStructure(xmldoc)        
+        self.parseStructure(xmldoc)
+        self.parseUserAuxInformation(xmldoc)
+        
         
         data.close()
 
@@ -570,13 +572,14 @@ class ReaderNew(object) :
                 name      = node.attributes["name"].value
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
                 solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
+                
 
 #               determine material                               
 #                if material in _g4.registry.materialDict:
 #                    mat = _g4.registry.materialDict[material]
 #                else:
 #                    mat = str(material)
-
+        
                 vol = _g4.LogicalVolume(self.registry.solidDict[solid], 'G4_Galactic', name, registry=self.registry)
 
                 for chNode in node.childNodes :
@@ -629,3 +632,10 @@ class ReaderNew(object) :
 
             else:
                 print "Unrecognised node: ", node_name
+
+    def parseUserAuxInformation(self,xmldoc) :
+        pass
+
+    
+    def extractUserAuxInformationNodeData(self,xmldoc) : 
+        pass
