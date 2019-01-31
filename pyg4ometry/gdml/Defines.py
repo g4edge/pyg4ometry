@@ -340,7 +340,7 @@ class Scale(VectorBase) :
 class Matrix :
     def __init__(self,name, coldim, values, registry = None, addRegistry = True) :
         self.name = name
-        self.coldim = coldim
+        self.coldim = int(coldim)
 
         self.values = [] 
         for i, v in enumerate(values) :
@@ -348,7 +348,7 @@ class Matrix :
 
         self.values_asarray = _np.array(self.values, dtype=_np.object)
         if self.coldim > 1:
-            self.values_asarray = self.values_asarray.reshape(coldim, len(values)/coldim)
+            self.values_asarray = self.values_asarray.reshape(self.coldim, len(values)/self.coldim)
 
         if registry != None:
             self.registry = registry
