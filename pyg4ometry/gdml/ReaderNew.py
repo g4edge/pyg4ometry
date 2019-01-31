@@ -43,7 +43,11 @@ class ReaderNew(object) :
 
         # parse xml
         print 'Reader.load> minidom parse'
+#        try : 
         xmldoc = _minidom.parseString(fs)
+#        except : 
+#            print fs[1000:1200]
+            
 
         print 'Reader.load> parse'
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
@@ -633,10 +637,10 @@ class ReaderNew(object) :
                         except KeyError : 
                             pvol_name = volref+"_PV"
                             
-                        print pvol_name
+                        print 'Reader.extractStructureNodeData>',pvol_name
                             
                         # Position 
-                        print pvol_name,"position"
+                        print 'Reader.extractStructureNodeData> pv position',pvol_name,"position"
 
                         try : 
                             position = self.registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
@@ -647,7 +651,7 @@ class ReaderNew(object) :
                                 position = _defines.Position(pvol_name,"0","0","0",self.registry,False)
 
                         # Rotation
-                        print pvol_name,"rotation"
+                        print 'Reader.extractStructureNodeData> pv rotation',pvol_name,"rotation"
                         try : 
                             rotation = self.registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
                         except IndexError : 
@@ -657,7 +661,7 @@ class ReaderNew(object) :
                                 rotation = _defines.Rotation(pvol_name,"0","0","0",self.registry,False)
 
                         # Scale 
-                        print pvol_name,"scale"
+                        print 'Reader.extractStructureNodeData> pv scale',pvol_name,"scale"
                         try :                             
                             scale = self.registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]                            
                         except IndexError : 
@@ -667,7 +671,7 @@ class ReaderNew(object) :
                                 scale = _defines.Scale("","1","1","1",self.registry,False)    
 
                         # Create physical volume
-                        print pvol_name,"construct"
+                        print 'Reader.extractStructureNodeData> construct',pvol_name
                         physvol   = _g4.PhysicalVolume(rotation, position, self.registry.logicalVolumeDict[volref],
                                                        pvol_name, vol, scale, registry=self.registry)
 

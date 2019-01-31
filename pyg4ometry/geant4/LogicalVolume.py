@@ -2,6 +2,7 @@ import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
 from   pyg4ometry.pycsg.core import CSG as _CSG
 
+from   pyg4ometry.visualisation import Mesh as _Mesh
 import solid as _solid
 from   Material              import Material as _Material
 
@@ -24,6 +25,8 @@ class LogicalVolume(object):
         self.daughterVolumes = []
         self.debug           = debug
 
+        self.mesh          = _Mesh(self.solid)
+
         if registry:
             registry.addLogicalVolume(self)
         self.registry = registry
@@ -33,12 +36,6 @@ class LogicalVolume(object):
 
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
-
-    def updateSceneTree(self, rot = _np.array([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
-        # print 'LogicalVolume.updateSceneTree>', self.name+'\n', rot, tra
-                
-        for dv in self.daughterVolumes : 
-            dv.updateSceneTree(rot,tra)
 
     def extent(self) : 
         print 'LogicalVolume.extent> ', self.name

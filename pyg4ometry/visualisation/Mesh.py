@@ -18,7 +18,6 @@ class Mesh(object) :
         # mesh in global coordinates 
         self.localmesh  = self.solid.pycsgmesh()
 
-
     def setTransformToWorld(self, rot, tra) : 
         self.rot = rot 
         self.tra = tra

@@ -30,9 +30,11 @@ class Box(_SolidBase):
 
     def pycsgmesh(self):
 
+        print 'box.pycsgmesh> antlr'
         pX = float(self.pX)
         pY = float(self.pY)
         pZ = float(self.pZ)
 
+        print 'box.pycsgmesh> mesh'
         self.mesh = _CSG.cube(center=[0,0,0], radius=[self.pX,self.pY,self.pZ])
         return self.mesh
