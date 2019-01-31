@@ -1,13 +1,13 @@
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.visualisation   as _vtk
-import numpy             as _np
-import re as _re
-from   xml.dom import minidom as _minidom
-import warnings as _warnings
-from   math import pi as _pi
+import pyg4ometry.geant4                 as _g4
+import pyg4ometry.visualisation          as _vtk
+import numpy                             as _np
+import re                                as _re
+from   xml.dom import minidom            as _minidom
+import warnings                          as _warnings
+from   math import pi                    as _pi
 from   ..geant4.Registry import registry as _registry
-from   ..geant4 import Expression as _Expression
-import Defines as _defines
+from   ..geant4 import Expression        as _Expression
+import Defines                           as _defines
 
 class ReaderNew(object) :
 
@@ -25,7 +25,8 @@ class ReaderNew(object) :
         self.load()
 
     def load(self) : 
-        
+
+        print 'Reader.load>'
         # open file 
         data  = open(self.filename)
 
@@ -41,8 +42,10 @@ class ReaderNew(object) :
                 fs += (l+end)
 
         # parse xml
+        print 'Reader.load> minidom parse'
         xmldoc = _minidom.parseString(fs)
 
+        print 'Reader.load> parse'
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
         self.parseMaterials(xmldoc)
@@ -163,67 +166,67 @@ class ReaderNew(object) :
             except AttributeError : 
                 continue # node is probably a comment so continue 
 
-            if solid_type == 'box' :
+            if solid_type == 'box' :               # solid test 01
                 self.parseBox(node)
-            elif solid_type == 'tube' : 
+            elif solid_type == 'tube' :            # solid test 02 
                 self.parseTube(node)
-            elif solid_type == 'cuttube' : 
+            elif solid_type == 'cutTube' :         # solid test 03
                 self.parseCutTube(node)                 
-            elif solid_type == 'cone' : 
+            elif solid_type == 'cone' :            # solid test 04 
                 self.parseCone(node)
-            elif solid_type == 'para' : 
+            elif solid_type == 'para' :            # solid test 05
                 self.parsePara(node) 
-            elif solid_type == 'trd' : 
+            elif solid_type == 'trd' :             # solid test 06 
                 self.parseTrd(node) 
-            elif solid_type == 'trap' :
+            elif solid_type == 'trap' :            # solid test 07 
                 self.parseTrap(node)
-            elif solid_type == 'sphere' : 
+            elif solid_type == 'sphere' :          # solid test 08 
                 self.parseSphere(node)
-            elif solid_type == 'orb' : 
+            elif solid_type == 'orb' :             # solid test 09 
                 self.parseOrb(node)
-            elif solid_type == 'torus' : 
+            elif solid_type == 'torus' :           # solid test 10 
                 self.parseTorus(node)
-            elif solid_type == 'polycone' :
+            elif solid_type == 'polycone' :        # solid test 11 
                 self.parsePolycone(node)
-            elif solid_type == 'genericPolycone' :
-                self.parseGenericPolycone(node)
-            elif solid_type == 'polyhedra' : 
+            elif solid_type == 'genericPolycone' : # solid test 12 
+                self.parseGenericPolycone(node) 
+            elif solid_type == 'polyhedra' :       # solid test 13 
                 self.parsePolyhedra(node)
-            elif solid_type == 'genericPolyhedra' : 
-                self.parseGenericPolyhedra(node)
-            elif solid_type == 'eltube' :
+            elif solid_type == 'genericPolyhedra' :# solid test 14  
+                self.parseGenericPolyhedra(node) 
+            elif solid_type == 'eltube' :          # solid test 15 
                 self.parseEllipticalTube(node)
-            elif solid_type == 'ellipsoid' :
+            elif solid_type == 'ellipsoid' :       # solid test 16 
                 self.parseEllipsoid(node)
-            elif solid_type == 'elcone' :
-                self.parseEllipticalCone(node)
-            elif solid_type == 'paraboloid' :
+            elif solid_type == 'elcone' :          # solid test 17 
+                self.parseEllipticalCone(node) 
+            elif solid_type == 'paraboloid' :      # solid test 18 
                 self.parseParaboloid(node)
-            elif solid_type == 'hype' :
+            elif solid_type == 'hype' :            # solid test 19 
                 self.parseHype(node)
-            elif solid_type == 'tet' :
+            elif solid_type == 'tet' :             # solid test 20 
                 self.parseTet(node)
-            elif solid_type == 'xtru' :
+            elif solid_type == 'xtru' :            # solid test 21 
                 self.parseExtrudedSolid(node)
-            elif solid_type == 'twistedbox' : 
+            elif solid_type == 'twistedbox' :      # solid test 22 
                 self.parseTwistedBox(node)
-            elif solid_type == 'twistedtrap' :
-                self.parseTwistedTrap(node) 
-            elif solid_type == 'twistedtrd' :
+            elif solid_type == 'twistedtrap' :     # solid test 23 
+                self.parseTwistedTrap(node)  
+            elif solid_type == 'twistedtrd' :      # solid test 24 
                 self.parseTwistedTrd(node) 
-            elif solid_type == 'twistedtubs' : 
+            elif solid_type == 'twistedtubs' :     # solid test 25 
                 self.parseTwistedTubs(node)
-            elif solid_type == 'arb8' :
+            elif solid_type == 'arb8' :            # solid test 26 
                 self.parseGenericTrap(node) 
-            elif solid_type == 'tessellated' :
+            elif solid_type == 'tessellated' :     # solid test 27 
                 self.parseTesselatedSolid(node)
-            elif solid_type == 'union' : 
+            elif solid_type == 'union' :           # solid test 28 
                 self.parseUnion(node) 
-            elif solid_type == 'subtraction' : 
-                self.parseSubtraction(node)
-            elif solid_type == 'intersection' : 
+            elif solid_type == 'subtraction' :     # solid test 29 
+                self.parseSubtraction(node) 
+            elif solid_type == 'intersection' :    # solid test 30 
                 self.parseIntersection(node) 
-            elif solid_type == 'multiUnion' : 
+            elif solid_type == 'multiUnion' :      # solid test 31 
                 self.parseMultiUnion(node)
             else : 
                 print solid_type, node.attributes['name'].value
@@ -273,7 +276,7 @@ class ReaderNew(object) :
         lNorm = [lx, ly, lz] 
         hNorm = [hx, hy, hz]
         
-        _g4.solid.CutTubs(name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self.registry) 
+        _g4.solid.CutTubs(solid_name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self.registry) 
         
 
     def parseCone(self,node) : 
@@ -539,15 +542,53 @@ class ReaderNew(object) :
         print 'tesselated solid NOT IMPLEMENTED'        
 
     def parseUnion(self, node) : 
-        print 'union NOT IMPLEMENTED' 
+        solid_name = node.attributes['name'].value
+        first      = node.getElementsByTagName("first")[0].attributes['ref'].value
+        second     = node.getElementsByTagName("second")[0].attributes['ref'].value
+        try : 
+            position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
+        except IndexError : 
+            position   = _defines.Position("zero","0","0","0",self.registry,False)            
+        try : 
+            rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
+        except IndexError : 
+            rotation   = _defines.Rotation("indentity","0","0","0",self.registry,False)
+        
+        _g4.solid.Union(solid_name, first, second,[rotation,position],self.registry)  
 
     def parseSubtraction(self, node) : 
-        print 'subtraction NOT IMPLEMENTED' 
+        solid_name = node.attributes['name'].value
+        first      = node.getElementsByTagName("first")[0].attributes['ref'].value
+        second     = node.getElementsByTagName("second")[0].attributes['ref'].value
+        try : 
+            position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
+        except IndexError : 
+            position   = _defines.Position("zero","0","0","0",self.registry,False)            
+        try : 
+            rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
+        except IndexError : 
+            rotation   = _defines.Rotation("indentity","0","0","0",self.registry,False)
+
+        _g4.solid.Subtraction(solid_name, first, second,[rotation,position],self.registry)
 
     def parseIntersection(self, node) :
-        print 'intersection NOT IMPLEMENTED' 
+        solid_name = node.attributes['name'].value
+        first      = node.getElementsByTagName("first")[0].attributes['ref'].value
+        second     = node.getElementsByTagName("second")[0].attributes['ref'].value
+        try : 
+            position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
+        except IndexError : 
+            position   = _defines.Position("zero","0","0","0",self.registry,False)            
+        try : 
+            rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
+        except IndexError : 
+            rotation   = _defines.Rotation("indentity","0","0","0",self.registry,False)
+
+        _g4.solid.Intersection(solid_name, first, second,[rotation,position],self.registry)
 
     def parseMultiUnion(self, node) :
+        solid_name = node.attributes['name'].value
+
         print 'multiunion NOT IMPLEMENTED'
 
     def parseStructure(self,xmldoc) :
@@ -591,20 +632,32 @@ class ReaderNew(object) :
                             pvol_name = chNode.attributes["name"].value
                         except KeyError : 
                             pvol_name = volref+"_PV"
-
+                            
+                        print pvol_name
+                            
                         # Position 
+                        print pvol_name,"position"
+
                         try : 
                             position = self.registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
                         except IndexError : 
-                            position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
+                            try : 
+                                position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
+                            except IndexError : 
+                                position = _defines.Position(pvol_name,"0","0","0",self.registry,False)
 
-                        # Rotation 
+                        # Rotation
+                        print pvol_name,"rotation"
                         try : 
                             rotation = self.registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
                         except IndexError : 
-                            rotation  = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)                            
+                            try : 
+                                rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
+                            except IndexError : 
+                                rotation = _defines.Rotation(pvol_name,"0","0","0",self.registry,False)
 
                         # Scale 
+                        print pvol_name,"scale"
                         try :                             
                             scale = self.registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]                            
                         except IndexError : 
@@ -614,6 +667,7 @@ class ReaderNew(object) :
                                 scale = _defines.Scale("","1","1","1",self.registry,False)    
 
                         # Create physical volume
+                        print pvol_name,"construct"
                         physvol   = _g4.PhysicalVolume(rotation, position, self.registry.logicalVolumeDict[volref],
                                                        pvol_name, vol, scale, registry=self.registry)
 
