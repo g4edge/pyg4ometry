@@ -13,43 +13,46 @@ class Intersection(_SolidBase):
     obj2 = solid rotated and translated according to tra2
     tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
-    def __init__(self, name, obj1, obj2, tra2, register=True):
+    def __init__(self, name, obj1name, obj2name, tra2, registry=None):
         self.type = "Intersection"
         self.name = name
-        self.obj1 = obj1
-        self.obj2 = obj2
+        self.obj1name = obj1name
+        self.obj2name = obj2name
         self.tra2 = tra2
         self.mesh = None
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
+            self.registry = registry
 
     def __repr__(self):
         return 'Intersection '+self.name+': ('+str(self.obj1)+') with ('+str(self.obj2)+')'
 
     def pycsgmesh(self):
 
-        #print 'Intersection' \
-        #     '' \
-        #     ' ',self.name, self.obj1.name, self.obj2.name
+        print 'intersection.pycshmesh>' 
 
-#        if self.mesh :
-#            return self.mesh
+        # look up solids in registry 
+        obj1 = self.registry.solidDict[self.obj1name]
+        obj2 = self.registry.solidDict[self.obj2name]
 
-        rot   = tbxyz(self.tra2[0])
-        tlate = self.tra2[1]
+        # transformation 
+        rot   = tbxyz(self.tra2[0].eval())
+        tlate = self.tra2[1].eval()
 
-        m1 = self.obj1.pycsgmesh()
-        m2 = _copy.deepcopy(self.obj2.pycsgmesh()) # need top copy this mesh as it is transformed
+        # get meshes 
+        print 'intersection.pycshmesh> mesh1' 
+        m1 = obj1.pycsgmesh()
+        print 'intersection.pycshmesh> mesh2' 
+        m2 = obj2.pycsgmesh()
+        
+        # apply transform to second mesh
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)
-        self.obj2mesh = m2
 
-        self.mesh = m1.intersect(m2)
-        if not self.mesh.toPolygons():
+        print 'intersection.pycshmesh> intersect' 
+        mesh = m1.intersect(m2)
+        if not mesh.toPolygons():
             raise pyg4ometry.exceptions.NullMeshError(self)
 
-        self.obj1.mesh = None
-        self.obj2.mesh = None
-
         #print 'intersection mesh ', self.name
-        return self.mesh
+        return mesh

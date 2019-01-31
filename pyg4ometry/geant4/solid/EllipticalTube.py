@@ -10,7 +10,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class EllipticalTube(_SolidBase):
-    def __init__(self, name, pDx, pDy, pDz, registry = None, nslice=16, nstack=16):
+    def __init__(self, name, pDx, pDy, pDz, registry = None, nslice=6, nstack=6):
         """
         Constructs a tube of elliptical cross-section.
 
@@ -31,15 +31,19 @@ class EllipticalTube(_SolidBase):
             registry.addSolid(self)
 
     def pycsgmesh(self):
-        polygons = []
-
-        sz      = -self.pDz
-        dz      = 2*self.pDz/self.nstack
+        pDx = float(self.pDz)
+        pDy = float(self.pDy)
+        pDz = float(self.pDz)
+        
+        sz      = -pDz
+        dz      = 2*pDz/self.nstack
         dTheta  = 2*_np.pi/self.nslice
         stacks  = self.nstack
         slices  = self.nslice
 
-        def appendVertex(vertices, theta, z, dx=self.pDx, dy=self.pDy, norm=[]):
+        polygons = []
+
+        def appendVertex(vertices, theta, z, dx=pDx, dy=pDy, norm=[]):
             c = _Vector([0,0,0])
             x = dx*_np.cos(theta)
             y = dy*_np.sin(theta)
