@@ -18,6 +18,17 @@ class Mesh(object) :
         # mesh in global coordinates 
         self.localmesh  = self.solid.pycsgmesh()
 
+        # overlap meshes 
+        self.overlapmeshes = []
+        
+        # coplanar meshes 
+        self.coplanarmeshes = []
+
+        # extents 
+        self.extent = []
+        
+        
+
     def setTransformToWorld(self, rot, tra) : 
         self.rot = rot 
         self.tra = tra

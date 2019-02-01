@@ -46,15 +46,11 @@ class CutTubs(_SolidBase):
         return self.mesh
 
     def basicmesh(self):
-        pRMin = float(self.pRMin)
-        pRMax = float(self.pRMax)
-        pDz   = float(self.pDz)
-        pSPhi = float(self.pSPhi)
-        pDPhi = float(self.pDPhi)
-
         self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
 
     def csgmesh(self):
+
+        pDz   = float(self.pDz)
 
         pHighNorm = [self.pHighNorm[0].eval(), self.pHighNorm[1].eval(), self.pHighNorm[2].eval()]
         pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]

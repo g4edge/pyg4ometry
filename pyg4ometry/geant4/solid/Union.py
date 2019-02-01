@@ -37,7 +37,7 @@ class Union(_SolidBase):
         # tranformation
         rot = tbxyz(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        print rot, tlate
+        print 'Union.pycsgmesh> rot,tlate=',rot, tlate
 
         # get meshes 
         print 'union.pycshmesh> mesh1'

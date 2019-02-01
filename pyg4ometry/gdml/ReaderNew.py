@@ -3,6 +3,7 @@ import pyg4ometry.visualisation          as _vtk
 import numpy                             as _np
 import re                                as _re
 from   xml.dom import minidom            as _minidom
+import xml.parsers.expat                 as _expat
 import warnings                          as _warnings
 from   math import pi                    as _pi
 from   ..geant4.Registry import registry as _registry
@@ -43,12 +44,14 @@ class ReaderNew(object) :
 
         # parse xml
         print 'Reader.load> minidom parse'
-#        try : 
-        xmldoc = _minidom.parseString(fs)
-#        except : 
-#            print fs[1000:1200]
-            
-
+        try :
+            xmldoc = _minidom.parseString(fs)
+        except _expat.ExpatError as ee : 
+            print ee.args[0]
+            line   = int(ee.args[0].split()[5][0:-1])
+            column = int(ee.args[0].split()[7])
+            print line,column,fs[column-10:column+100]
+            print "        ^^^^ "
         print 'Reader.load> parse'
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
@@ -170,67 +173,67 @@ class ReaderNew(object) :
             except AttributeError : 
                 continue # node is probably a comment so continue 
 
-            if solid_type == 'box' :               # solid test 01
+            if solid_type == 'box' :               # solid test 001
                 self.parseBox(node)
-            elif solid_type == 'tube' :            # solid test 02 
+            elif solid_type == 'tube' :            # solid test 002 
                 self.parseTube(node)
-            elif solid_type == 'cutTube' :         # solid test 03
+            elif solid_type == 'cutTube' :         # solid test 003
                 self.parseCutTube(node)                 
-            elif solid_type == 'cone' :            # solid test 04 
+            elif solid_type == 'cone' :            # solid test 004 
                 self.parseCone(node)
-            elif solid_type == 'para' :            # solid test 05
+            elif solid_type == 'para' :            # solid test 005
                 self.parsePara(node) 
-            elif solid_type == 'trd' :             # solid test 06 
+            elif solid_type == 'trd' :             # solid test 006 
                 self.parseTrd(node) 
-            elif solid_type == 'trap' :            # solid test 07 
+            elif solid_type == 'trap' :            # solid test 007 
                 self.parseTrap(node)
-            elif solid_type == 'sphere' :          # solid test 08 
+            elif solid_type == 'sphere' :          # solid test 008 
                 self.parseSphere(node)
-            elif solid_type == 'orb' :             # solid test 09 
+            elif solid_type == 'orb' :             # solid test 009 
                 self.parseOrb(node)
-            elif solid_type == 'torus' :           # solid test 10 
+            elif solid_type == 'torus' :           # solid test 010 
                 self.parseTorus(node)
-            elif solid_type == 'polycone' :        # solid test 11 
+            elif solid_type == 'polycone' :        # solid test 011 
                 self.parsePolycone(node)
-            elif solid_type == 'genericPolycone' : # solid test 12 
+            elif solid_type == 'genericPolycone' : # solid test 012 
                 self.parseGenericPolycone(node) 
-            elif solid_type == 'polyhedra' :       # solid test 13 
+            elif solid_type == 'polyhedra' :       # solid test 013 
                 self.parsePolyhedra(node)
-            elif solid_type == 'genericPolyhedra' :# solid test 14  
+            elif solid_type == 'genericPolyhedra' :# solid test 014  
                 self.parseGenericPolyhedra(node) 
-            elif solid_type == 'eltube' :          # solid test 15 
+            elif solid_type == 'eltube' :          # solid test 015 
                 self.parseEllipticalTube(node)
-            elif solid_type == 'ellipsoid' :       # solid test 16 
+            elif solid_type == 'ellipsoid' :       # solid test 016 
                 self.parseEllipsoid(node)
-            elif solid_type == 'elcone' :          # solid test 17 
+            elif solid_type == 'elcone' :          # solid test 017 
                 self.parseEllipticalCone(node) 
-            elif solid_type == 'paraboloid' :      # solid test 18 
+            elif solid_type == 'paraboloid' :      # solid test 018 
                 self.parseParaboloid(node)
-            elif solid_type == 'hype' :            # solid test 19 
+            elif solid_type == 'hype' :            # solid test 019 
                 self.parseHype(node)
-            elif solid_type == 'tet' :             # solid test 20 
+            elif solid_type == 'tet' :             # solid test 020 
                 self.parseTet(node)
-            elif solid_type == 'xtru' :            # solid test 21 
+            elif solid_type == 'xtru' :            # solid test 021 
                 self.parseExtrudedSolid(node)
-            elif solid_type == 'twistedbox' :      # solid test 22 
+            elif solid_type == 'twistedbox' :      # solid test 022 
                 self.parseTwistedBox(node)
-            elif solid_type == 'twistedtrap' :     # solid test 23 
+            elif solid_type == 'twistedtrap' :     # solid test 023 
                 self.parseTwistedTrap(node)  
-            elif solid_type == 'twistedtrd' :      # solid test 24 
+            elif solid_type == 'twistedtrd' :      # solid test 024 
                 self.parseTwistedTrd(node) 
-            elif solid_type == 'twistedtubs' :     # solid test 25 
+            elif solid_type == 'twistedtubs' :     # solid test 025 
                 self.parseTwistedTubs(node)
-            elif solid_type == 'arb8' :            # solid test 26 
+            elif solid_type == 'arb8' :            # solid test 026 
                 self.parseGenericTrap(node) 
-            elif solid_type == 'tessellated' :     # solid test 27 
+            elif solid_type == 'tessellated' :     # solid test 027 
                 self.parseTesselatedSolid(node)
-            elif solid_type == 'union' :           # solid test 28 
+            elif solid_type == 'union' :           # solid test 028 
                 self.parseUnion(node) 
-            elif solid_type == 'subtraction' :     # solid test 29 
+            elif solid_type == 'subtraction' :     # solid test 029 
                 self.parseSubtraction(node) 
-            elif solid_type == 'intersection' :    # solid test 30 
+            elif solid_type == 'intersection' :    # solid test 030 
                 self.parseIntersection(node) 
-            elif solid_type == 'multiUnion' :      # solid test 31 
+            elif solid_type == 'multiUnion' :      # solid test 031 
                 self.parseMultiUnion(node)
             else : 
                 print solid_type, node.attributes['name'].value

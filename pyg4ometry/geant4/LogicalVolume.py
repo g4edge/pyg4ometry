@@ -37,6 +37,11 @@ class LogicalVolume(object):
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
 
+
+    def checkOverlaps() :
+        pass
+
+
     def extent(self) : 
         print 'LogicalVolume.extent> ', self.name
 
