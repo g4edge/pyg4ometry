@@ -45,7 +45,7 @@ class Subtraction(_SolidBase):
         print 'subtraction.pycsgmesh> mesh1'
         m1 = obj1.pycsgmesh()
         print 'subtraction.pycsgmesh> mesh2'
-        m2 = obj2.pycsgmesh()
+        m2 = obj2.pycsgmesh().clone()
 
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)

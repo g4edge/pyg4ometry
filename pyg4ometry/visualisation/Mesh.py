@@ -16,7 +16,7 @@ class Mesh(object) :
         self.wireframe = False
 
         # mesh in global coordinates 
-        self.localmesh  = self.solid.pycsgmesh()
+        self.localmesh  = self.solid.pycsgmesh().clone()
 
         # overlap meshes 
         self.overlapmeshes = []

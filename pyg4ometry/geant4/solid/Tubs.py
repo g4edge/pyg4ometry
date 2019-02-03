@@ -44,24 +44,16 @@ class Tubs(_SolidBase):
         return 'Tubs : '+self.name+' '+str(self.pRMin)+' '+str(self.pRMax)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
 
     def pycsgmesh(self):
-        self.basicmesh()
-        self.csgmesh()
-
-        return self.mesh
-
-    def basicmesh(self):
-        pDz   = float(self.pDz)
-        pRMax = float(self.pRMax)
-
-        return _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
-
-    def csgmesh(self):
 
         pDz   = float(self.pDz)
         pRMax = float(self.pRMax)
         pRMin = float(self.pRMin)
         pSPhi = float(self.pSPhi)
         pDPhi = float(self.pDPhi)
+        pDz   = float(self.pDz)
+        pRMax = float(self.pRMax)
+
+        mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
         wzlength = 3*pDz   # set dimensions of wedge to intersect with that are much larger
                                 # than the dimensions of the solid
@@ -77,8 +69,8 @@ class Tubs(_SolidBase):
             return self.mesh
         if(pRMin):
             sInner = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMin, slices=self.nslice)
-            self.mesh = self.mesh.subtract(sInner).subtract(pWedge.inverse())
+            mesh = mesh.subtract(sInner).subtract(pWedge.inverse())
         else:
-            self.mesh = self.mesh.subtract(pWedge.inverse())
+            mesh = mesh.subtract(pWedge.inverse())
 
-        return self.mesh
+        return mesh
