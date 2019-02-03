@@ -61,50 +61,49 @@ class Sphere(_SolidBase):
 
     def pycsgmesh(self):
 
-        #Called as a csgmesh for profiling
-        self.csgmesh()
+        pRmin   = float(self.pRmin)
+        pRmax   = float(self.pRmax)
+        pSPhi   = float(self.pSPhi)
+        pDPhi   = float(self.pDPhi)
+        pSTheta = float(self.pSTheta)
+        pDTheta = float(self.pDTheta)
+        
 
-        return self.mesh
+        thetaFin = pSTheta + pDTheta
+        phiFin   = pSPhi + pDPhi
 
-
-    def csgmesh(self):
-
-        thetaFin = self.pSTheta + self.pDTheta
-        phiFin   = self.pSPhi + self.pDPhi
-
-        self.mesh = _CSG.sphere(radius=self.pRmax, slices=self.nslice, stacks=self.nstack)
+        mesh = _CSG.sphere(radius=pRmax, slices=self.nslice, stacks=self.nstack)
 
         #makes shell by removing a sphere of radius pRmin from the inside of sphere
-        if self.pRmin:
-            mesh_inner = _CSG.sphere(radius=self.pRmin, slices=self.nslice, stacks=self.nstack)
-            self.mesh = self.mesh.subtract(mesh_inner)
-
+        if pRmin:
+            mesh_inner = _CSG.sphere(radius=pRmin, slices=self.nslice, stacks=self.nstack)
+            mesh = mesh.subtract(mesh_inner)
 
         #Theta change: allows for different theta angles, using primtives: cube and cone.
         if thetaFin == _np.pi/2.:
-            mesh_box = _CSG.cube(center=[0,0,1.1*self.pRmax], radius=1.1*self.pRmax)
-            self.mesh = self.mesh.subtract(mesh_box)
+            mesh_box = _CSG.cube(center=[0,0,1.1*pRmax], radius=1.1*pRmax)
+            mesh = mesh.subtract(mesh_box)
 
         if thetaFin > _np.pi/2. and thetaFin < _np.pi:
-            mesh_lower = _CSG.cone(start=[0,0,-2*self.pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(_np.pi - thetaFin))
-            self.mesh = self.mesh.subtract(mesh_lower)
+            mesh_lower = _CSG.cone(start=[0,0,-2*pRmax], end=[0,0,0], radius=2*pRmax*_np.tan(_np.pi - thetaFin))
+            mesh = mesh.subtract(mesh_lower)
 
         if self.pSTheta > _np.pi/2. and self.pSTheta < _np.pi:
-            mesh_lower2 = _CSG.cone(start=[0,0,-2*self.pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(_np.pi - self.pSTheta))
-            self.mesh = self.mesh.intersect(mesh_lower2)
+            mesh_lower2 = _CSG.cone(start=[0,0,-2*pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(_np.pi - pSTheta))
+            mesh = mesh.intersect(mesh_lower2)
 
         if thetaFin < _np.pi/2.:
-            mesh_upper = _CSG.cone(start=[0,0,2*self.pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(thetaFin))
-            self.mesh = self.mesh.intersect(mesh_upper)
+            mesh_upper = _CSG.cone(start=[0,0,2*pRmax], end=[0,0,0], radius=2*pRmax*_np.tan(thetaFin))
+            mesh = mesh.intersect(mesh_upper)
 
-        if self.pSTheta < _np.pi/2. and self.pSTheta > 0:
-            mesh_upper2 = _CSG.cone(start=[0,0,2*self.pRmax], end=[0,0,0], radius=2*self.pRmax*_np.tan(self.pSTheta))
-            self.mesh = self.mesh.subtract(mesh_upper2)
+        if pSTheta < _np.pi/2. and pSTheta > 0:
+            mesh_upper2 = _CSG.cone(start=[0,0,2*pRmax], end=[0,0,0], radius=2*pRmax*_np.tan(self.pSTheta))
+            mesh = mesh.subtract(mesh_upper2)
 
 
         #Phi change: allows for different theta angles, using the Wedge solid class
         if phiFin < 2*_np.pi:
-            mesh_wedge = _Wedge("wedge_temp", 2*self.pRmax, self.pSPhi, self.pDPhi, 3*self.pRmax).pycsgmesh()
-            self.mesh = self.mesh.intersect(mesh_wedge)
+            mesh_wedge = _Wedge("wedge_temp", 2*pRmax, pSPhi, pDPhi, 3*pRmax).pycsgmesh()
+            mesh = mesh.intersect(mesh_wedge)
 
-        return self.mesh
+        return mesh
