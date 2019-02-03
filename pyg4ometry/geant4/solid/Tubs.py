@@ -55,8 +55,8 @@ class Tubs(_SolidBase):
 
         mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
-        wzlength = 3*pDz   # set dimensions of wedge to intersect with that are much larger
-                                # than the dimensions of the solid
+        wzlength = 3*pDz    # set dimensions of wedge to intersect with that are much larger
+                            # than the dimensions of the solid
         wrmax    = 3*pRMax
 
         if pDPhi == 2*_np.pi:
@@ -66,7 +66,7 @@ class Tubs(_SolidBase):
 
         # If a solid cylinder then just return the primitive CSG solid.
         if not pRMin and pSPhi == 0.0 and pDPhi == 2*_np.pi:
-            return self.mesh
+            return mesh
         if(pRMin):
             sInner = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMin, slices=self.nslice)
             mesh = mesh.subtract(sInner).subtract(pWedge.inverse())

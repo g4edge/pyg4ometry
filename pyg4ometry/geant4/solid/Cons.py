@@ -54,7 +54,6 @@ class Cons(_SolidBase):
 
         return self.mesh
 
-
     def basicmesh(self):
         if self.pRmax1 < self.pRmax2:
             self.R1 = self.pRmax2  # Cone with tip pointing towards -z

@@ -35,9 +35,6 @@ class Wedge(_SolidBase):
 
     def pycsgmesh(self):
 
-#        if self.mesh :
-#            return self.mesh
-
         d = self.pDz
 
         phi = _np.linspace(self.pSPhi, self.pDPhi, self.nslice)
@@ -68,9 +65,9 @@ class Wedge(_SolidBase):
         # last end face
         polygons.append(_Polygon([_dc(vZero1),_dc(vZero2),_dc(p2[-1]),_dc(p1[-1])]))
 
-        self.mesh = _CSG.fromPolygons(polygons)
+        mesh = _CSG.fromPolygons(polygons)
 
-        return self.mesh
+        return mesh
 
     def gdmlWrite(self, gw, prepend):
         pass

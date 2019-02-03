@@ -269,10 +269,18 @@ class ReaderNew(object) :
     def parseCutTube(self, node) : 
         solid_name = node.attributes['name'].value 
         
-        rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self.registry)
+        try : 
+            rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self.registry)
+        except KeyError : 
+            rmin = _defines.Expression(solid_name+'_pRMin',"0",self.registry)
+            
         rmax = _defines.Expression(solid_name+'_pRMax',node.attributes['rmax'].value,self.registry)
-        dz   = _defines.Expression(solid_name+'_pDz',node.attributes['z'].value,self.registry)
-        sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self.registry)
+        dz   = _defines.Expression(solid_name+'_pDz','({})/2'.format(node.attributes['z'].value),self.registry)
+        try : 
+            sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self.registry)
+        except KeyError :
+            sphi = _defines.Expression(solid_name+'_pSPhi',"0",self.registry)
+        
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self.registry)
         lx   = _defines.Expression(solid_name+'_plNorm_x',node.attributes['lowX'].value,self.registry)
         ly   = _defines.Expression(solid_name+'_plNorm_y',node.attributes['lowY'].value,self.registry)
@@ -622,7 +630,6 @@ class ReaderNew(object) :
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
                 solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
                 
-
 #               determine material                               
 #                if material in _g4.registry.materialDict:
 #                    mat = _g4.registry.materialDict[material]

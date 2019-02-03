@@ -39,27 +39,28 @@ class CutTubs(_SolidBase):
         return 'Cut tubs :{}'.format(self.name)
 
     def pycsgmesh(self):
-        self.basicmesh()
-        if self.pLowNorm != [0,0,-1] or self.pHighNorm != [0,0,1]:
-            self.csgmesh()
 
-        return self.mesh
-
-    def basicmesh(self):
-        self.mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
-
-    def csgmesh(self):
-
-        pDz   = float(self.pDz)
-
+        pRMin     = float(self.pRMin)
+        pRMax     = float(self.pRMax)
+        pDz       = float(self.pDz)
+        pSPhi     = float(self.pSPhi)
+        pDPhi     = float(self.pDPhi)
         pHighNorm = [self.pHighNorm[0].eval(), self.pHighNorm[1].eval(), self.pHighNorm[2].eval()]
         pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]
-                
-        zlength = 3 * pDz  # make the dimensions of the semi-infinite plane large enough
 
-        if self.pHighNorm != [0,0,1]:
-            pHigh = _Plane("pHigh_temp", pHighNorm, pDz, zlength).pycsgmesh()
-            self.mesh = self.mesh.subtract(pHigh)
-        if self.pLowNorm != [0,0,-1]:
-            pLow  = _Plane("pLow_temp", pLowNorm, -pDz, zlength).pycsgmesh()
-            self.mesh = self.mesh.subtract(pLow)
+        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
+
+        if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
+                
+            zlength = 3 * pDz  # make the dimensions of the semi-infinite plane large enough
+            
+            if pHighNorm != [0,0,1]:
+                pHigh = _Plane("pHigh_temp", pHighNorm, pDz, zlength).pycsgmesh()
+                mesh = mesh.subtract(pHigh)
+            if pLowNorm != [0,0,-1]:
+                pLow  = _Plane("pLow_temp", pLowNorm, -pDz, zlength).pycsgmesh()
+                mesh = mesh.subtract(pLow)
+                
+            return mesh
+        else : 
+            return mesh
