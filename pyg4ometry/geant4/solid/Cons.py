@@ -49,62 +49,62 @@ class Cons(_SolidBase):
         return 'Cons : '+self.name+' '+str(self.pRmin1)+' '+str(self.pRmax1)+' '+str(self.pRmin2)+' '+str(self.pRmax2)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
 
     def pycsgmesh(self):
-        self.basicmesh()
-        self.csgmesh()
+        
+        pRmin1 = float(self.pRmin1)
+        pRmax1 = float(self.pRmax1)
+        pRmin2 = float(self.pRmin2)
+        pRmax2 = float(self.pRmax2)
+        pDz    = float(self.pDz)
+        pSPhi  = float(self.pSPhi)
+        pDPhi  = float(self.pDPhi)
 
-        return self.mesh
-
-    def basicmesh(self):
-        if self.pRmax1 < self.pRmax2:
-            self.R1 = self.pRmax2  # Cone with tip pointing towards -z
-            self.r1 = self.pRmin2
-            self.R2 = self.pRmax1
-            self.r2 = self.pRmin1
-            self.factor = -1
+        if pRmax1 < pRmax2:
+            R1 = pRmax2  # Cone with tip pointing towards -z
+            r1 = pRmin2
+            R2 = pRmax1
+            r2 = pRmin1
+            factor = -1
 
         else:
-            self.R1 = self.pRmax1  # Cone with tip pointing towards +z
-            self.r1 = self.pRmin1
-            self.R2 = self.pRmax2
-            self.r2 = self.pRmin2
-            self.factor = 1
+            R1 = pRmax1  # Cone with tip pointing towards +z
+            r1 = pRmin1
+            R2 = pRmax2
+            r2 = pRmin2
+            factor = 1
 
-        h = 2 * self.pDz
-        self.H1 = float(self.R2 * h) / float(self.R1 - self.R2)
+        h = 2 * pDz
+        H1 = float(R2 * h) / float(R1 - R2)
 
         try:  # Avoid crash when both inner radii are 0
-            self.H2 = float(self.r2 * h) / float(self.r1 - self.r2)
+            H2 = float(r2 * h) / float(r1 - r2)
         except ZeroDivisionError:
-            self.H2 = 0
+            H2 = 0
+        
+        h1 = factor * (h + H1)
+        h2 = factor * (h + H2)
 
-        self.h1 = self.factor * (h + self.H1)
-        self.h2 = self.factor * (h + self.H2)
-
-        self.mesh = _CSG.cone(start=[0, 0, -self.factor * self.pDz], end=[0, 0, self.h1 - self.factor * self.pDz], radius=self.R1)
-
-        return self.mesh
-
-    def csgmesh(self):
-
+        # basic cone mesh
+        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz], radius=R1)
 
         # ensure radius for intersection wedge is much bigger than solid
-        wrmax = 3 * (self.pRmax1 + self.pRmax2)
+        wrmax = 3 * (pRmax1 + pRmax2)
+
         # ensure the plane is large enough to cut cone correctly. Extroplates the z intersect using two points.
-        wzlength = abs((self.pRmax2*((2*self.pDz)/(self.pRmax2 - self.pRmax1))) + self.pDz)
+        wzlength = abs((pRmax2*((2*pDz)/(pRmax2 - pRmax1))) + pDz)
 
-        if self.pDPhi != 2 * _np.pi:
-            pWedge = _Wedge("wedge_temp", wrmax, self.pSPhi, self.pSPhi + self.pDPhi, wzlength).pycsgmesh()
+        if pDPhi != 2 * _np.pi:
+            pWedge = _Wedge("wedge_temp", wrmax, pSPhi, pSPhi + pDPhi, wzlength).pycsgmesh()
         else:
-            pWedge = _CSG.cylinder(start=[0, 0, -self.pDz * 5], end=[0, 0, self.pDz * 5],
-                                   radius=self.R1 * 5)  # factor 5 is just to ensure wedge mesh is much bigger than cone solid
+            pWedge = _CSG.cylinder(start=[0, 0, -pDz * 5], end=[0, 0, pDz * 5],
+                                   radius=R1 * 5)  # factor 5 is just to ensure wedge mesh is much bigger than cone solid
 
-        pTopCut = _Plane("pTopCut_temp", _Vector(0, 0, 1), self.pDz, wzlength).pycsgmesh()
-        pBotCut = _Plane("pBotCut_temp", _Vector(0, 0, -1), -self.pDz, wzlength).pycsgmesh()
+        pTopCut = _Plane("pTopCut_temp", _Vector(0, 0, 1), pDz, wzlength).pycsgmesh()
+        pBotCut = _Plane("pBotCut_temp", _Vector(0, 0, -1), -pDz, wzlength).pycsgmesh()
 
-        if self.H2:
-            sInner = _CSG.cone(start=[0, 0, -self.factor * self.pDz], end=[0, 0, self.h2 - self.factor * self.pDz], radius=self.r1)
-            self.mesh = self.mesh.subtract(sInner).intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
+        if H2:
+            sInner = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h2 - factor * pDz], radius=r1)
+            mesh = mesh.subtract(sInner).intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
         else:
-            self.mesh = self.mesh.intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
+            mesh = mesh.intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
 
-        return self.mesh
+        return mesh

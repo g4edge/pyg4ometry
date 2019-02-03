@@ -180,7 +180,7 @@ class ReaderNew(object) :
                 self.parseTube(node)
             elif solid_type == 'cutTube' :         # solid test 003
                 self.parseCutTube(node)                 
-            elif solid_type == 'cone' :            # solid test 004 
+            elif solid_type == 'cone' :            # solid test 004 (problem when rmin1 == rmin2 != 0)
                 self.parseCone(node)
             elif solid_type == 'para' :            # solid test 005
                 self.parsePara(node) 
@@ -313,7 +313,7 @@ class ReaderNew(object) :
 
         rmax1 = _defines.Expression(solid_name+"_pRMax1",node.attributes['rmax1'].value,self.registry) 
         rmax2 = _defines.Expression(solid_name+"_pRMax2",node.attributes['rmax2'].value,self.registry) 
-        dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['rmax2'].value),self.registry)
+        dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['z'].value),self.registry)
         dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self.registry) 
 
         _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self.registry)        
