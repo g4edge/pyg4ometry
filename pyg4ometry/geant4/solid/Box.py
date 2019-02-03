@@ -17,6 +17,7 @@ class Box(_SolidBase):
     :param pZ: half-length along z
     :type name: float
     """
+
     def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, registry=None):
         self.name = name
         self.pX = pX

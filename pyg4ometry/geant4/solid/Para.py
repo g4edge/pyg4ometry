@@ -1,12 +1,13 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
-from ..Registry import registry as _registry
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+from pyg4ometry.geant4.Registry import registry as _registry
+from pyg4ometry.pycsg.core import CSG as _CSG
+from pyg4ometry.pycsg.geom import Vector as _Vector
+from pyg4ometry.pycsg.geom import Vertex as _Vertex
+from pyg4ometry.pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
+import math as _math
 
 class Para(_SolidBase):
     """
@@ -33,38 +34,47 @@ class Para(_SolidBase):
         self.pAlpha = pAlpha
         self.pTheta = pTheta
         self.pPhi   = pPhi
-        self.dx_y   = self.pY*_Defines.sin(self.pAlpha)  #changes sign as the y component
-        self.dx_z   = self.pZ*_Defines.sin(self.pTheta) #changes sign as the z component
-        self.dy     = self.pZ*_Defines.sin(self.pPhi)
-        self.dz     = self.pZ-self.pZ*_Defines.cos(pPhi)
         if registry:
             registry.addSolid(self)
 
     def pycsgmesh(self):
-        self.mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(-self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None)]),
-                                        _Polygon([_Vertex(_Vector(-self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(-self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None)]),
-                                        _Polygon([_Vertex(_Vector(-self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(-self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None)]),
-                                        _Polygon([_Vertex(_Vector(-self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(-self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None)]),
-                                        _Polygon([_Vertex(_Vector(-self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(-self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(-self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(-self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None)]),
-                                        _Polygon([_Vertex(_Vector(self.pX-self.dx_y-self.dx_z,-self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y-self.dx_z, self.pY-self.dy,-self.pZ+self.dz), None),
-                                                  _Vertex(_Vector(self.pX+self.dx_y+self.dx_z, self.pY+self.dy, self.pZ-self.dz), None),
-                                                  _Vertex(_Vector(self.pX-self.dx_y+self.dx_z,-self.pY+self.dy, self.pZ-self.dz), None)])])
+
+        pX     = float(self.pX) 
+        pY     = float(self.pY)
+        pZ     = float(self.pZ)
+        pAlpha = float(self.pAlpha)
+        pTheta = float(self.pTheta)
+        pPhi   = float(self.pPhi)
+        
+        dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component
+        dx_z   = pZ*_math.sin(pTheta)  #changes sign as the z component
+        dy     = pZ*_math.sin(pPhi)
+        dz     = pZ-pZ*_math.cos(pPhi)        
+                        
+        mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz), None)]),
+                                        _Polygon([_Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz), None)]),
+                                        _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz), None)]),
+                                        _Polygon([_Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz), None)]),
+                                        _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz), None)]),
+                                        _Polygon([_Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz), None),
+                                                  _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz), None),
+                                                  _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz), None)])])
 
 
-        return self.mesh
+        return mesh

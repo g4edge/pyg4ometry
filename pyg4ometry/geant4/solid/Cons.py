@@ -1,9 +1,9 @@
 from SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ..Registry import registry as _registry
+from pyg4ometry.pycsg.core import CSG as _CSG
+from pyg4ometry.geant4.Registry import registry as _registry
 from Plane import Plane as _Plane
 from Wedge import Wedge as _Wedge
-from ...pycsg.geom import Vector as _Vector
+from pyg4ometry.pycsg.geom import Vector as _Vector
 import numpy as _np
 
 class Cons(_SolidBase):

@@ -1,5 +1,6 @@
 from SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
+from pyg4ometry.geant4.Registry import registry as _registry
+
 from Tubs import Tubs as _Tubs
 from Plane import Plane as _Plane
 
