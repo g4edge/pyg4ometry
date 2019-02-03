@@ -9,6 +9,7 @@ from   math import pi                    as _pi
 from   ..geant4.Registry import registry as _registry
 from   ..geant4 import Expression        as _Expression
 import Defines                           as _defines
+import logging                           as _log
 
 class ReaderNew(object) :
 
@@ -27,7 +28,7 @@ class ReaderNew(object) :
 
     def load(self) : 
 
-        print 'Reader.load>'
+        _log.info('Reader.load>')
         # open file 
         data  = open(self.filename)
 
@@ -43,16 +44,16 @@ class ReaderNew(object) :
                 fs += (l+end)
 
         # parse xml
-        print 'Reader.load> minidom parse'
+        _log.info('Reader.load> minidom parse')
         try :
             xmldoc = _minidom.parseString(fs)
         except _expat.ExpatError as ee : 
+            print ee.args
             print ee.args[0]
-            line   = int(ee.args[0].split()[5][0:-1])
-            column = int(ee.args[0].split()[7])
-            print line,column,fs[column-10:column+100]
+            column = int(ee.args[0].split()[-1])
+            print column,fs[column-10:min(len(fs),column+100)]
             print "        ^^^^ "
-        print 'Reader.load> parse'
+        _log.info('Reader.load> parse')
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
         self.parseMaterials(xmldoc)
@@ -640,10 +641,10 @@ class ReaderNew(object) :
                         except KeyError : 
                             pvol_name = volref+"_PV"
                             
-                        print 'Reader.extractStructureNodeData>',pvol_name
+                        _log.info('Reader.extractStructureNodeData> %s' % (pvol_name))
                             
                         # Position 
-                        print 'Reader.extractStructureNodeData> pv position',pvol_name,"position"
+                        _log.info('Reader.extractStructureNodeData> pv position %s' % (pvol_name))
 
                         try : 
                             position = self.registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
@@ -654,7 +655,7 @@ class ReaderNew(object) :
                                 position = _defines.Position(pvol_name,"0","0","0",self.registry,False)
 
                         # Rotation
-                        print 'Reader.extractStructureNodeData> pv rotation',pvol_name,"rotation"
+                        _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
                         try : 
                             rotation = self.registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
                         except IndexError : 
@@ -664,7 +665,7 @@ class ReaderNew(object) :
                                 rotation = _defines.Rotation(pvol_name,"0","0","0",self.registry,False)
 
                         # Scale 
-                        print 'Reader.extractStructureNodeData> pv scale',pvol_name,"scale"
+                        _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))
                         try :                             
                             scale = self.registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]                            
                         except IndexError : 
@@ -674,7 +675,7 @@ class ReaderNew(object) :
                                 scale = _defines.Scale("","1","1","1",self.registry,False)    
 
                         # Create physical volume
-                        print 'Reader.extractStructureNodeData> construct',pvol_name
+                        _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
                         physvol   = _g4.PhysicalVolume(rotation, position, self.registry.logicalVolumeDict[volref],
                                                        pvol_name, vol, scale, registry=self.registry)
 

@@ -4,6 +4,7 @@ import pyg4ometry.exceptions
 from ...transformation import *
 
 import copy as _copy
+import logging as _log
 
 class Union(_SolidBase):
     """
@@ -24,7 +25,7 @@ class Union(_SolidBase):
             self.registry = registry
 
     def __repr__(self):
-        return 'Union : ('+str(self.obj1)+') with ('+str(self.obj2)+')'
+        return 'Union %s(%s %s)' % (self.name, self.obj1name, self.obj2name)
 
     def pycsgmesh(self):
 
@@ -37,19 +38,19 @@ class Union(_SolidBase):
         # tranformation
         rot = tbxyz(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        print 'Union.pycsgmesh> rot,tlate=',rot, tlate
+        _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
 
         # get meshes 
-        print 'union.pycshmesh> mesh1'
+        _log.info('union.pycshmesh> mesh1')
         m1 = obj1.pycsgmesh()
-        print 'union.pycsgmesh> mesh2'
-        m2 = obj2.pycsgmesh()
+        _log.info('union.pycsgmesh> mesh2')
+        m2 = obj2.pycsgmesh().clone()
 
         # apply transform to second mesh 
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)
 
-        print 'union.pycsgmesh> union'
+        _log.info('union.pycsgmesh> union')
         mesh = m1.union(m2)
         if not mesh.toPolygons():
             raise pyg4ometry.exceptions.NullMeshError(self)

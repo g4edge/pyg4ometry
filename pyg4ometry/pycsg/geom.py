@@ -218,6 +218,8 @@ class Plane(object):
                 loc = BACK
             elif t > Plane.EPSILON: 
                 loc = FRONT
+#            elif t == 0 :
+#                loc = FRONT
             else: 
                 loc = COPLANAR
             polygonType |= loc

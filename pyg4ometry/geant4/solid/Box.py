@@ -1,6 +1,8 @@
 from SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ..Registry import registry as _registry
+from pyg4ometry.pycsg.core import CSG as _CSG
+from pyg4ometry.geant4.Registry import registry as _registry
+
+import logging as _log
 
 class Box(_SolidBase):
     """
@@ -21,7 +23,7 @@ class Box(_SolidBase):
         self.pY = pY
         self.pZ = pZ
         self.type = 'Box'
-        self.mesh = None
+
         if registry:
             registry.addSolid(self)
 
@@ -29,12 +31,13 @@ class Box(_SolidBase):
         return 'Box : '+self.name+' '+str(self.pX)+' '+str(self.pY)+' '+str(self.pZ)
 
     def pycsgmesh(self):
+        _log.info('box.pycsgmesh> antlr')
 
-        print 'box.pycsgmesh> antlr'
         pX = float(self.pX)
         pY = float(self.pY)
         pZ = float(self.pZ)
 
-        print 'box.pycsgmesh> mesh'
-        self.mesh = _CSG.cube(center=[0,0,0], radius=[self.pX,self.pY,self.pZ])
-        return self.mesh
+        _log.info('box.pycsgmesh> mesh')
+        mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])
+        return mesh
+

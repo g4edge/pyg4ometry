@@ -1,9 +1,9 @@
 from SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
-from ...transformation import *
+from pyg4ometry.geant4.Registry import registry as _registry
+from pyg4ometry.transformation import *
 
+import logging as _log
 
-import copy as _copy
 import pyg4ometry.exceptions
 
 class Intersection(_SolidBase):
@@ -29,7 +29,7 @@ class Intersection(_SolidBase):
 
     def pycsgmesh(self):
 
-        print 'intersection.pycshmesh>' 
+        _log.info('Intersection.pycshmesh>')
 
         # look up solids in registry 
         obj1 = self.registry.solidDict[self.obj1name]
@@ -40,16 +40,16 @@ class Intersection(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes 
-        print 'intersection.pycshmesh> mesh1' 
+        _log.info('Intersection.pycshmesh> mesh1')
         m1 = obj1.pycsgmesh()
-        print 'intersection.pycshmesh> mesh2' 
-        m2 = obj2.pycsgmesh()
+        _log.info('Intersection.pycshmesh> mesh2')
+        m2 = obj2.pycsgmesh().clone()
         
         # apply transform to second mesh
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)
 
-        print 'intersection.pycshmesh> intersect' 
+        _log.info('Intersection.pycshmesh> intersect')
         mesh = m1.intersect(m2)
         if not mesh.toPolygons():
             raise pyg4ometry.exceptions.NullMeshError(self)

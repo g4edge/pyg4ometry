@@ -2,6 +2,7 @@ import numpy as _np
 import vtk as _vtk
 import copy as _copy 
 import pyg4ometry.transformation as _transformation
+import logging as _log
 
 class VtkViewer : 
     def __init__(self,size=(1024,768)) : 
@@ -22,17 +23,23 @@ class VtkViewer :
 
         # local meshes 
         self.localmeshes = {}
+        self.localmeshesOverlap = {}
 
         # filters (per mesh)
         self.filters = {}
+        self.filtersOverlap = {}
         
         # mappers (per mesh) 
         self.mappers = []
         self.physicalMapperMap = {}
+        self.mappersOverlap = []
+        self.physicalMapperMapOverlap = {}
 
         # actors (per placement) 
         self.actors = []
         self.physicalActorMap = {}
+        self.actorsOverlap = [] 
+        self.physicalActorMapOverlap = {}
 
     def addLocalMesh(self, meshName, mesh) : 
         pass
@@ -44,25 +51,21 @@ class VtkViewer :
         pass
 
     def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) :
-        #print 'addLogicalVolume',logical.name
-        #print mrot,_np.shape(mrot),type(mrot)
-        #print tra,_np.shape(tra),type(tra)
+        _log.info('VtkViewer.addLogicalVolume> %s' % (logical.name))
 
         for pv in logical.daughterVolumes : 
-            print 'VtkViewerAddLogicalVolume>',pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name
+            _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
             
+            # pv transform 
             pvmrot  = _transformation.tbxyz2matrix(pv.rotation.eval())
             pvtra   = _np.array(pv.position.eval())
 
-            # print 'local pvtransform'
-            # print pvmrot,_np.shape(pvmrot),type(pvmrot)
-            # print pvtra,_np.shape(pvtra),type(pvtra)
-             
+            # pv compound transform 
             new_mrot = mrot*pvmrot
             new_tra  = (_np.array(mrot.dot(pvtra)) + tra)[0]
   
             # get the local vtkPolyData 
-            print 'VtkViewerAddLogicalVolume> vtkPD'
+            _log.info('VtkViewer.addLogicalVolume> vtkPD')
             solidname = pv.logicalVolume.solid.name
             try : 
                 vtkPD = self.localmeshes[solidname]
@@ -71,8 +74,18 @@ class VtkViewer :
                 vtkPD     = pycsgMeshToVtkPolyData(localmesh)
                 self.localmeshes[solidname] = vtkPD
 
+            # get the local overlap vtkPolyData
+            try : 
+                vtkPDOverlap = self.localmeshesOverlap[solidname] 
+            except KeyError : 
+                localmeshOverlap = pv.logicalVolume.mesh.overlapmeshes
+                vtkPDOverlap = [] 
+                for mol in localmeshOverlap : 
+                    vtkPDOverlap.append(pycsgMeshToVtkPolyData(mol))
+                    self.localmeshesOverlap[solidname] = vtkPDOverlap
+
             # triangle filter    
-            print 'VtkViewerAddLogicalVolume> vtkFLT'
+            _log.info('VtkViewer.addLogicalVolume> vtkFLT')
             filtername = solidname+"_filter"
             try : 
                 vtkFLT = self.filters[filtername] 
@@ -82,16 +95,33 @@ class VtkViewer :
                 # vtkFLT.Update()
                 self.filters[filtername] = vtkFLT
 
+            # triangle filters for overlaps 
+            try : 
+                vtkFLTOverlap = self.filtersOverlap[filtername] 
+            except KeyError : 
+                self.filtersOverlap[filtername] = []
+                for pdo in vtkPDOverlap : 
+                    vtkFLTOverlap = _vtk.vtkTriangleFilter()
+                    vtkFLTOverlap.AddInputData(pdo)
+                    self.filtersOverlap[filtername].append(vtkFLTOverlap)
+            
             # mapper 
-            print 'VtkVieweraddLogicalVolume> vtkMAP'
+            _log.info('VtkViewer.addLogicalVolume> vtkMAP')
 
             mappername = solidname+"_mapper" 
-
             vtkMAP = _vtk.vtkPolyDataMapper()
             vtkMAP.ScalarVisibilityOff()
             vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
-
             self.mappers.append(vtkMAP)
+
+            # mapper for overlaps 
+            vtkMAPOverlaps = [] 
+            for flt in self.filtersOverlap[filtername] :                 
+                vtkMAPOverlap = _vtk.vtkPolyDataMapper() 
+                vtkMAPOverlap.ScalarVisibilityOff()
+                vtkMAPOverlap.SetInputConnection(flt.GetOutputPort())
+                self.mappersOverlap.append(vtkMAPOverlap)
+                vtkMAPOverlaps.append(vtkMAPOverlap)
             
             # mapper look up dictionary 
             try : 
@@ -99,16 +129,8 @@ class VtkViewer :
             except KeyError : 
                 self.physicalMapperMap[pv.name] = [vtkMAP]
             
-#            try : 
-#                vtkMAP = self.mappers[mappername] 
-#            except KeyError : 
-#                vtkMAP = _vtk.vtkPolyDataMapper()             
-#                vtkMAP.ScalarVisibilityOff()
-#                vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
-#                self.mappers[mappername] = vtkMAP
-
             # actor
-            print 'VtkVieweraddLogicalVolume> vtkActor'
+            _log.info('VtkViewer.addLogicalVolume> vtkActor')
 
             actorname = pv.name+"_actor"             
             vtkActor = _vtk.vtkActor() 
@@ -124,22 +146,25 @@ class VtkViewer :
 
             vtkActor.SetMapper(vtkMAP)        
 
-            #tra = pv.mesh.tra
-            #rot = pv.mesh.rot
-            
             rotaa = _transformation.matrix2axisangle(new_mrot)
 
             vtkActor.SetPosition(new_tra[0],new_tra[1],new_tra[2])
             vtkActor.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
             vtkActor.GetProperty().SetColor(1,0,0)
-
-
-            print 'VtkVieweraddLogicalVolume> Add actor'
+            
+            _log.info('VtkViewer.addLogicalVolume> Add actor')
             self.ren.AddActor(vtkActor)
 
-            # print 'recursion'
-            # print mrot,_np.shape(mrot),type(mrot)
-            # print tra,_np.shape(tra),type(tra)
+            # actors for overlaps 
+            for m in vtkMAPOverlaps : 
+                vtkActorOverlap = _vtk.vtkActor() 
+                self.actorsOverlap.append(vtkActorOverlap)
+                vtkActorOverlap.SetMapper(m)
+                vtkActorOverlap.SetPosition(new_tra[0],new_tra[1],new_tra[2])
+                vtkActorOverlap.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
+                vtkActorOverlap.GetProperty().SetColor(1,0,0)
+                self.ren.AddActor(vtkActorOverlap)
+
             self.addLogicalVolume(pv.logicalVolume,new_mrot,new_tra)
 
         
@@ -156,7 +181,7 @@ class VtkViewer :
         self.renWin.Render()
 
         self.iren.Start()    
-
+        
 # python iterable to vtkIdList
 def mkVtkIdList(it):
     vil = _vtk.vtkIdList()
@@ -179,15 +204,6 @@ def pycsgMeshToVtkPolyData(mesh) :
     for v in verts :
         points.InsertNextPoint(v)
 
-        # determine axis ranges (should probably replace)
-        #if(abs(v[0]) > self.xrange) :
-        #    self.xrange = abs(v[0])
-        #if(abs(v[1]) > self.yrange) :
-        #    self.yrange = abs(v[1])
-        #if(abs(v[2]) > self.zrange) :
-        #    self.zrange = abs(v[2])
-
-        #print 'VtkViewer.addMesh> size determined'
     for p in cells :
         polys.InsertNextCell(mkVtkIdList(p))
 

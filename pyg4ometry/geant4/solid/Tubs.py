@@ -53,7 +53,7 @@ class Tubs(_SolidBase):
         pDz   = float(self.pDz)
         pRMax = float(self.pRMax)
 
-        self.mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
+        return _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
     def csgmesh(self):
 

@@ -27,29 +27,14 @@ class Mesh(object) :
         # extents 
         self.extent = []
         
-        
-
-    def setTransformToWorld(self, rot, tra) : 
-        self.rot = rot 
-        self.tra = tra
-
-    def getBoundingBox(self) : 
-        pass
-
-    def getGlobalBoundingBox(self) :
-        pass
-
-    def getGlobaalMesh(self, rot, tra) : 
-        self.rot = rot 
-        self.tra = tra
-        self.rotva = matrix2axisangle(self.rot) # vector angle (va)
-
-        self.globalmesh = _copy.deepcopy(self.localmesh)
-        self.globalmesh.rotate(self.rotva[0],rad2deg(self.rotva[1]))
-        self.globalmesh.translate(_Vector(tra))
+    def addOverlapMesh(self, mesh) : 
+        self.overlapmeshes.append(mesh)
 
     def getLocalMesh(self) :
         return self.localmesh 
+
+    def getBoundingBox(self) : 
+        pass
 
     def getSize(self) :
         pass
