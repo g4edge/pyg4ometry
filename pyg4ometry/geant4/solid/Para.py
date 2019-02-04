@@ -34,6 +34,8 @@ class Para(_SolidBase):
         self.pAlpha = pAlpha
         self.pTheta = pTheta
         self.pPhi   = pPhi
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
 

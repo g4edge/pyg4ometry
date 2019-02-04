@@ -26,6 +26,7 @@ class Trd(_SolidBase):
         self.pY2    = pDy2
         self.pZ     = pDz
         self.mesh   = None
+        self.dependents = []
         if registry:
             registry.addSolid(self)
 

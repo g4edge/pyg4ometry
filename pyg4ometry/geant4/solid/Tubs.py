@@ -37,6 +37,7 @@ class Tubs(_SolidBase):
         self.pDPhi  = pDPhi
         self.nslice = nslice
         self.mesh   = None
+        self.dependents = []
         if registry :
             registry.addSolid(self)
 

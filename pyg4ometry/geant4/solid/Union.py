@@ -20,6 +20,14 @@ class Union(_SolidBase):
         self.obj2name = obj2name
         self.tra2 = tra2
         self.mesh = None
+
+        self.dependents = []
+        obj1 = self.registry.solidDict[self.obj1name]
+        obj2 = self.registry.solidDict[self.obj2name]
+        obj1.dependents.append(self) 
+        obj2.dependents.append(self)
+        
+
         if registry:
             registry.addSolid(self)
             self.registry = registry

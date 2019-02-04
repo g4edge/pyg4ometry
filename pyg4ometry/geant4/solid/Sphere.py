@@ -44,6 +44,8 @@ class Sphere(_SolidBase):
         self.nstack  = nstack
         self.mesh    = None
 
+        self.dependents = []
+        
         # self.checkParameters()
         if registry:
             registry.addSolid(self)

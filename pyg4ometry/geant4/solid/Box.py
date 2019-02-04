@@ -24,6 +24,7 @@ class Box(_SolidBase):
         self.pY = pY
         self.pZ = pZ
         self.type = 'Box'
+        self.dependents = []
 
         if registry:
             registry.addSolid(self)

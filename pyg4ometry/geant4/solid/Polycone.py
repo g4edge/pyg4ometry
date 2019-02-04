@@ -1,10 +1,11 @@
-from SolidBase     import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
-from ..Registry    import registry as _registry
-from Wedge         import Wedge as _Wedge
+from SolidBase             import SolidBase     as _SolidBase
+from pyg4ometry.pycsg.core import CSG           as _CSG
+from pyg4ometry.pycsg.geom import Vector        as _Vector
+from pyg4ometry.pycsg.geom import Vertex        as _Vertex
+from pyg4ometry.pycsg.geom import Polygon       as _Polygon
+from pyg4ometry.geant4.Registry import registry as _registry
+from Wedge                 import Wedge         as _Wedge
+
 import numpy as _np
 from copy import deepcopy as _dc
 
@@ -35,6 +36,9 @@ class Polycone(_SolidBase):
         self.pRMax   = pRMax
         self.nslice  = nslice
         self.mesh = None
+
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
 
@@ -61,10 +65,7 @@ class Polycone(_SolidBase):
             x = r*_np.cos(theta)
             y = r*_np.sin(theta)
 
-            d = _Vector(
-                x,
-                y,
-                z)
+            d = _Vector(x,y,z)
 
             if not norm:
                 n = d

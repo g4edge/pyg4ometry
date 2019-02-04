@@ -1,10 +1,10 @@
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
 from Wedge import Wedge as _Wedge
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+from pyg4ometry.pycsg.core import CSG as _CSG
+from pyg4ometry.pycsg.geom import Vector as _Vector
+from pyg4ometry.pycsg.geom import Vertex as _Vertex
+from pyg4ometry.pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 
@@ -32,6 +32,9 @@ class Torus(_SolidBase):
         self.nslice = nslice
         self.nstack = nstack
         self.mesh = None
+
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
 

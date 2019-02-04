@@ -21,6 +21,9 @@ class Orb(_SolidBase):
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
+
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
 
