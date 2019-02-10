@@ -228,7 +228,7 @@ class ReaderNew(object) :
             elif solid_type == 'arb8' :            # solid test 026 
                 self.parseGenericTrap(node) 
             elif solid_type == 'tessellated' :     # solid test 027 
-                self.parseTesselatedSolid(node)
+                self.parseTessellatedSolid(node)
             elif solid_type == 'union' :           # solid test 028 
                 self.parseUnion(node) 
             elif solid_type == 'subtraction' :     # solid test 029 
@@ -553,11 +553,26 @@ class ReaderNew(object) :
 
         print 'generic trap NOT IMPLEMENTED'        
 
-    def parseTesselatedSolid(self,node) : 
+    def parseTessellatedSolid(self,node) : 
         solid_name = node.attributes['name'].value
 
-        print 'tesselated solid NOT IMPLEMENTED'        
-
+        facet_list = [] 
+            
+        for chNode in node.childNodes : 
+            if chNode.tagName == "triangular" : 
+                v1 = chNode.attributes['vertex1'].value
+                v2 = chNode.attributes['vertex2'].value
+                v3 = chNode.attributes['vertex3'].value
+                facet_list.append([v1,v2,v3])
+            elif chNode.tagName == 'quadrangular' : 
+                v1 = chNode.attributes['vertex1'].value
+                v2 = chNode.attributes['vertex2'].value
+                v3 = chNode.attributes['vertex3'].value
+                v4 = chNode.attributes['vertex4'].value
+                facet_list.append([v1,v2,v3,v4])
+        
+        _g4.solid.TessellatedSolid(solid_name, facet_list, self.registry)        
+        
     def parseUnion(self, node) : 
         solid_name = node.attributes['name'].value
         first      = node.getElementsByTagName("first")[0].attributes['ref'].value
