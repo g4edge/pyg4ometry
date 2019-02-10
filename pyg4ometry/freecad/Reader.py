@@ -14,14 +14,21 @@ class Reader(object) :
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
+        self.loopRootObjects()
 
-    def parseModel(self) : 
-        for o in self.doc.RootObjects :
-            print 'freecad.reader>',o.Label, len(o.Group)
+    def loopRootObjects(self) : 
+        for obj in self.doc.RootObjects :
+            print 'freecad.reader.loopRootObjects> typeid=%s label=%s grouplen=%d' % (obj.TypeId, obj.Label, len(obj.Group))
 
-            if o.TypeId == 'App::Part' :
-                print 'freecad.reader> App::Part' 
-            elif o.TypeId == 'Part::Feature' : 
-                print 'freecad.reader> Part::Feature'
-                            
-    
+            self.recurseObjectTree(obj)
+
+    def recurseObjectTree(self, obj) : 
+        if obj.TypeId == 'App::Part' :         # --> logical volume (what shape?)
+            print 'freecad.reader> App::Part label=%s grouplen=%d' %(obj.Label, len(obj.Group))
+            for gobj in obj.Group :
+                 self.recurseObjectTree(gobj)
+        elif obj.TypeId == 'Part::Feature' :   # --> solid, logical volume, physical volume
+            print 'freecad.reader> Part::Feature label=%s' % (obj.Label)
+        else : 
+            print 'freecad.reader> unprocessed %s' %(obj.TypeId)
+
