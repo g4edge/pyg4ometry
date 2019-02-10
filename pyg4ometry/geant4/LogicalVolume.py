@@ -5,7 +5,7 @@ from   pyg4ometry.pycsg.core import CSG as _CSG
 from   pyg4ometry.visualisation import Mesh as _Mesh
 import solid as _solid
 from   Material              import Material as _Material
-import transformation as _trans
+import pyg4ometry.transformation as _trans
 
 import copy as _copy
 import numpy as _np
