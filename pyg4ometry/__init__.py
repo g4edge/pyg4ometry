@@ -5,7 +5,6 @@ import stl
 import gdml
 import visualisation
 import geant4
-import freecad
 try :
     import freecad
 except ImportError :
