@@ -6,6 +6,7 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
+import logging as _log
 import numpy as _np
 
 class Orb(_SolidBase):
@@ -28,5 +29,9 @@ class Orb(_SolidBase):
             registry.addSolid(self)
 
     def pycsgmesh(self):
-        mesh = _CSG.sphere(center=[0,0,0], radius=self.pRMax)
+        _log.info("orb.antlr>")
+        pRMax = float(self.pRMax)
+
+        _log.info("orb.pycsgmesh>")
+        mesh = _CSG.sphere(center=[0,0,0], radius=pRMax)
         return mesh

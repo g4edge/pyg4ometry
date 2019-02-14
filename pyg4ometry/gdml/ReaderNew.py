@@ -470,7 +470,7 @@ class ReaderNew(object) :
         try : 
             bcut = _defines.Expression(solid_name+"_zcut1",node.attributes['zcut1'].value,self.registry)
         except KeyError :
-            bcut = _defines.Expression(solid_name+"_zcut1","0",self.registry)            
+            bcut = _defines.Expression(solid_name+"_zcut1","-1E20",self.registry)
 
         ax   = _defines.Expression(solid_name+"_ax",node.attributes['ax'].value,self.registry)
         by   = _defines.Expression(solid_name+"_by",node.attributes['by'].value,self.registry)

@@ -5,7 +5,7 @@ from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
-
+import logging as _log
 
 import numpy as _np
 
@@ -27,14 +27,21 @@ class EllipticalTube(_SolidBase):
         self.pDz    = pDz
         self.nslice = nslice
         self.nstack = nstack
+
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
 
     def pycsgmesh(self):
-        pDx = float(self.pDz)
+
+        _log.info('ellipticaltube.antlr>')
+
+        pDx = float(self.pDx)
         pDy = float(self.pDy)
         pDz = float(self.pDz)
-        
+
+        _log.info('ellipticaltube.pycsgmesh>')
         sz      = -pDz
         dz      = 2*pDz/self.nstack
         dTheta  = 2*_np.pi/self.nslice
@@ -103,6 +110,6 @@ class EllipticalTube(_SolidBase):
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz, norm=[0,0,-1])
             polygons.append(_Polygon(vertices))
 
-        self.mesh  = _CSG.fromPolygons(polygons)
+        mesh  = _CSG.fromPolygons(polygons)
 
-        return self.mesh
+        return mesh
