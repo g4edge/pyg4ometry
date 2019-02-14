@@ -48,7 +48,7 @@ class TessellatedSolid(_SolidBase):
         
         # loop over facet list and make vectors of verticies 
         if isinstance(self.facet_list[0][0],str) :       
-            print 'positions'
+            # print 'positions'
             polygon_list = [] 
             for facet in self.facet_list :  
                 vertex_list = []
@@ -60,7 +60,7 @@ class TessellatedSolid(_SolidBase):
 
             return _CSG.fromPolygons(polygon_list)
         elif isinstance(self.facet_list[0][0][0][0],float) :
-            print 'floats'
+            # print 'floats'
             polygon_list = [] 
             for facet in self.facet_list : 
                 vertex_list = [] 
