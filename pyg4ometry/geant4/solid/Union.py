@@ -13,7 +13,7 @@ class Union(_SolidBase):
     obj2 = solid rotated and translated according to tra2
     tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
-    def __init__(self, name, obj1name, obj2name, tra2, registry=None):
+    def __init__(self, name, obj1name, obj2name, tra2, registry):
         self.type = "Union"
         self.name = name
         self.obj1name = obj1name
@@ -22,22 +22,21 @@ class Union(_SolidBase):
         self.mesh = None
 
         self.dependents = []
+
+        registry.addSolid(self)
+        self.registry = registry
+
         obj1 = self.registry.solidDict[self.obj1name]
         obj2 = self.registry.solidDict[self.obj2name]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
-        
-
-        if registry:
-            registry.addSolid(self)
-            self.registry = registry
 
     def __repr__(self):
         return 'Union %s(%s %s)' % (self.name, self.obj1name, self.obj2name)
 
     def pycsgmesh(self):
 
-        print 'union.pycshmesh>' 
+        _log.info('union.pycshmesh>')
 
         # look up solids in registry 
         obj1 = self.registry.solidDict[self.obj1name]

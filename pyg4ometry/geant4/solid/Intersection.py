@@ -13,7 +13,7 @@ class Intersection(_SolidBase):
     obj2 = solid rotated and translated according to tra2
     tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
-    def __init__(self, name, obj1name, obj2name, tra2, registry=None):
+    def __init__(self, name, obj1name, obj2name, tra2, registry):
         self.type = "Intersection"
         self.name = name
         self.obj1name = obj1name
@@ -22,14 +22,14 @@ class Intersection(_SolidBase):
         self.mesh = None
 
         self.dependents = []
+
+        registry.addSolid(self)
+        self.registry = registry
+
         obj1 = self.registry.solidDict[self.obj1name]
         obj2 = self.registry.solidDict[self.obj2name]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
-
-        if registry:
-            registry.addSolid(self)
-            self.registry = registry
 
     def __repr__(self):
         return 'Intersection '+self.name+': ('+str(self.obj1)+') with ('+str(self.obj2)+')'
