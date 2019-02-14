@@ -6,6 +6,8 @@ from Wedge import Wedge as _Wedge
 from pyg4ometry.pycsg.geom import Vector as _Vector
 import numpy as _np
 
+import logging as _log
+
 class Cons(_SolidBase):
     """
     Constructs a conical section.
@@ -32,7 +34,9 @@ class Cons(_SolidBase):
         self.pDz = pDz
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
-        self.mesh = None
+
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
         # self.checkParameters()
@@ -49,7 +53,8 @@ class Cons(_SolidBase):
         return 'Cons : '+self.name+' '+str(self.pRmin1)+' '+str(self.pRmax1)+' '+str(self.pRmin2)+' '+str(self.pRmax2)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
 
     def pycsgmesh(self):
-        
+
+        _log.info('cons.antlr>')
         pRmin1 = float(self.pRmin1)
         pRmax1 = float(self.pRmax1)
         pRmin2 = float(self.pRmin2)
@@ -58,6 +63,7 @@ class Cons(_SolidBase):
         pSPhi  = float(self.pSPhi)
         pDPhi  = float(self.pDPhi)
 
+        _log.info('cons.pycsgmesh>')
         if pRmax1 < pRmax2:
             R1 = pRmax2  # Cone with tip pointing towards -z
             r1 = pRmin2
