@@ -1,9 +1,20 @@
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.visualisation as _vis
-import pyg4ometry.gdml   as _gdml
 import numpy             as _np
 import re as _re
 import warnings as _warnings
+
+import pyg4ometry.geant4.LogicalVolume          as _LogicalVolume
+import pyg4ometry.geant4.solid.TessellatedSolid as _TessellatedSolid 
+
+class _Facet():
+    def __init__(self, normal=(0,0,0)):
+        self.vertices = []
+        self.normal   = normal
+
+    def add_vertex(self, xyztup):
+        self.vertices.append(xyztup)
+
+    def dump(self):
+        return (tuple(self.vertices), self.normal)
 
 class Reader(object):
     def __init__(self, filename, solidname="tess", visualise=True, writeGDML=False, scale=1):
@@ -15,8 +26,9 @@ class Reader(object):
         self.num_re = _re.compile(r"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$") #Compile re to match numbers
 
         self.scale = float(scale)
+
         # load file
-        self.solid = self.load(solidname, visualise, writeGDML)
+        self.load(solidname, visualise, writeGDML)
 
     
     def load(self, solidname="tess", visualise=False, writeGDML=False):
@@ -45,6 +57,14 @@ class Reader(object):
                 line = f.readline()
                 cnt += 1
 
+    def logicalVolume(self,name, reg) : 
+        
+        s = _TessellatedSolid(name+"_solid",self.facet_list)
+        l = _LogicalVolume(s,"G4_Cu", name+"_pv",reg)
+
+        return l
+
+        '''
         tessSolid = _g4.solid.TesselatedSolid(str(solidname), self.facet_list)
 
         if visualise or writeGDML:
@@ -72,15 +92,5 @@ class Reader(object):
                 w.writeGmadTester('Tessellated.gmad')
 
         return tessSolid
-
-class _Facet():
-    def __init__(self, normal=(0,0,0)):
-        self.vertices = []
-        self.normal   = normal
-
-    def add_vertex(self, xyztup):
-        self.vertices.append(xyztup)
-
-    def dump(self):
-        return (tuple(self.vertices), self.normal)
+        '''
 

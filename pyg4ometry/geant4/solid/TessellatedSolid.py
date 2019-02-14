@@ -26,6 +26,10 @@ class TessellatedSolid(_SolidBase):
 
         self.facet_list  = facet_list
 
+        # if self.facet_list is strings then don't do anything, if floats then need to add to defines 
+        
+
+
         '''
         self.indexed_facet_list = []
         self.unique_vertices    = []
@@ -43,17 +47,30 @@ class TessellatedSolid(_SolidBase):
     def pycsgmesh(self) :
         
         # loop over facet list and make vectors of verticies 
+        if isinstance(self.facet_list[0][0],str) :       
+            print 'positions'
+            polygon_list = [] 
+            for facet in self.facet_list :  
+                vertex_list = []
+                for vertex in facet :
+                    v = self.registry.defineDict[vertex].eval()
+                    vertex_list.append(_Vertex(v))
+                polygon = _Polygon(vertex_list)
+                polygon_list.append(polygon)
 
-        polygon_list = [] 
-        for facet in self.facet_list :  
-            vertex_list = []
-            for vertex in facet :
-                v = self.registry.defineDict[vertex].eval()
-                vertex_list.append(_Vertex(v))
-            polygon = _Polygon(vertex_list)
-            polygon_list.append(polygon)
-
-        return _CSG.fromPolygons(polygon_list)
+            return _CSG.fromPolygons(polygon_list)
+        elif isinstance(self.facet_list[0][0][0][0],float) :
+            print 'floats'
+            polygon_list = [] 
+            for facet in self.facet_list : 
+                vertex_list = [] 
+                v1 = _Vertex(facet[0][0])
+                v2 = _Vertex(facet[0][1])
+                v3 = _Vertex(facet[0][2])
+                polygon = _Polygon([v1,v2,v3])
+                polygon_list.append(polygon)
+                
+            return _CSG.fromPolygons(polygon_list)            
 
     '''
     def reduceVertices(self):
