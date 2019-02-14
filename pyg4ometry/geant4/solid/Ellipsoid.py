@@ -5,6 +5,7 @@ from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 from Plane import Plane as _Plane
 from ..Registry import registry as _registry
+import logging as _log
 
 import numpy as _np
 
@@ -32,6 +33,7 @@ class Ellipsoid(_SolidBase):
         self.nslice      = nslice
         self.nstack      = nstack
         self.mesh      = None
+        self.dependents = []
         if registry:
             registry.addSolid(self)
 
@@ -43,18 +45,25 @@ class Ellipsoid(_SolidBase):
 #        if self.mesh :
 #            return self.mesh
 
+        _log.info('ellipsoid.pycsgmesh>')
+        basicmesh = self.basicmesh()
+        mesh = self.csgmesh(basicmesh)
 
-        self.basicmesh()
-        self.csgmesh()
-
-        return self.mesh
+        return mesh
 
     def basicmesh(self):
+
+        _log.info('ellipsoid.antlr>')
+        pxSemiAxis = float(self.pxSemiAxis)
+        pySemiAxis = float(self.pySemiAxis)
+        pzSemiAxis = float(self.pzSemiAxis)
+
+        _log.info('ellipsoid.basicmesh>')
         def appendVertex(vertices, u, v):
             d = _Vector(
-                self.pxSemiAxis*_np.cos(u)*_np.sin(v),
-                self.pySemiAxis*_np.cos(u)*_np.cos(v),
-                self.pzSemiAxis*_np.sin(u))
+                pxSemiAxis*_np.cos(u)*_np.sin(v),
+                pySemiAxis*_np.cos(u)*_np.cos(v),
+                pzSemiAxis*_np.sin(u))
 
             vertices.append(_Vertex(c.plus(d), None))
 
@@ -102,11 +111,16 @@ class Ellipsoid(_SolidBase):
 
         return self.mesh
 
-    def csgmesh(self):
+    def csgmesh(self, basicmesh):
+        _log.info('ellipsoid.antlr>')
+        pzBottomCut = float(self.pzBottomCut)
+        pzTopCut = float(self.pzTopCut)
+
+        _log.info('ellipsoid.csgmesh>')
         topNorm     = _Vector(0,0,1)                              # These are tests of booleans operations, keep here for now
         botNorm     = _Vector(0,0,-1)
-        pTopCut     = _Plane("pTopCut", topNorm, self.pzTopCut).pycsgmesh()
-        pBottomCut  = _Plane("pBottomCut", botNorm, self.pzBottomCut).pycsgmesh()
-        self.mesh   = self.mesh.subtract(pBottomCut).subtract(pTopCut)
+        pTopCut     = _Plane("pTopCut", topNorm, pzTopCut).pycsgmesh()
+        pBottomCut  = _Plane("pBottomCut", botNorm, pzBottomCut).pycsgmesh()
+        mesh   = basicmesh.subtract(pBottomCut).subtract(pTopCut)
 
-        return self.mesh
+        return mesh
