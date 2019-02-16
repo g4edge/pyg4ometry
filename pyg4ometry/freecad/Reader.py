@@ -52,8 +52,8 @@ class Reader(object) :
                 globalPlacement = PartFeatureGlobalPlacement(obj,_fc.Placement())
 
                 # info log output
-                print obj.Label,obj.TypeId,globalPlacement
-                
+                _log.info('freecad.reader.convertFlat> Part::Feature label=%s typeid=%s placement=%s' %(obj.Label, obj.TypeId, obj.Placement))
+                            
                 # remove placement 
                 placement = obj.Placement.inverse()
                 
@@ -209,9 +209,6 @@ def MeshToFacetList(mesh) :
     return facet_list
 
 def PartFeatureGlobalPlacement(obj,placement) : 
-
-    print obj.Placement,placement
-
     if len(obj.InList) != 0 : 
         return PartFeatureGlobalPlacement(obj.InList[0], obj.Placement.multiply(placement))
     else :
