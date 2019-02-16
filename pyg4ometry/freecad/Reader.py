@@ -4,13 +4,20 @@ import FreeCAD     as _fc
 import FreeCADGui  as _fcg
 _fcg.setupWithoutGUI()
 
+import logging            as _log
+
+import pyg4ometry.geant4  as _g4
+
 class Reader(object) : 
-    def __init__(self, fileName) : 
+    def __init__(self, fileName, registryOn = True) : 
         self.fileName = fileName
 
         # load file
         self.load(fileName) 
-
+        
+        if registryOn  : 
+            self.registry = _g4.Registry()
+        
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
@@ -19,9 +26,22 @@ class Reader(object) :
         self.rootLogicals = []
 
         for obj in self.doc.RootObjects :
-            print 'freecad.reader.loopRootObjects> typeid=%s label=%s grouplen=%d' % (obj.TypeId, obj.Label, len(obj.Group))
+            # print 'freecad.reader.loopRootObjects> typeid=%s label=%s grouplen=%d' % (obj.TypeId, obj.Label, len(obj.Group))
 
             self.rootLogicals.append(self.recurseObjectTree(obj,reg))
+
+    def printStructure(self) :
+        for obj in self.doc.RootObjects : 
+            self.recursePrintObjectTree(obj)
+
+    def recursePrintObjectTree(self, obj) :
+        
+        if obj.TypeId == 'App::Part' : 
+            print 'App::Part',obj.TypeId,obj.Label,obj.Placement            
+            for gobj in obj.Group : 
+                self.recursePrintObjectTree(gobj)
+        elif obj.TypeId == 'Part::Feature' : 
+            print 'Part::Feature',obj.TypeId,obj.Label,obj.Placement
 
     def recurseObjectTree(self, obj,reg) : 
 
@@ -40,16 +60,17 @@ class Reader(object) :
 
             for gobj in obj.Group :
                 [lv, placement] = self.recurseObjectTree(gobj, reg)
+
                 x = placement.Base[0] 
                 y = placement.Base[1] 
                 z = placement.Base[2] 
                 p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1","0","0","0",reg,False),
                                                      pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),reg,False),
                                                      lv,                                                    
-                                                     obj.Label,
+                                                     gobj.Label+"_pv",
                                                      bLogical,
                                                      registry=reg)
-                bLogical.add(p)
+                # bLogical.add(p)
             return [bLogical,obj.Placement]
 
                 
@@ -59,6 +80,13 @@ class Reader(object) :
             
             # tesellate         
             m = obj.Shape.tessellate(0.1)
+
+            # centre of mass 
+            com = obj.Shape.CenterOfMass 
+
+            # mesh includes some placement placement
+            for i in range(0,len(m[0])) : 
+                m[0][i] = m[0][i]-com
             
             # facet list 
             f =  MeshToFacetList(m)
