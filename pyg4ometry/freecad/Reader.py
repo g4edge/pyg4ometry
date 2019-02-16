@@ -70,12 +70,14 @@ class Reader(object) :
             for gobj in obj.Group :
                 [lv, placement] = self.recurseObjectTree(gobj)
 
+                # position for placement
                 x = placement.Base[0] 
                 y = placement.Base[1] 
                 z = placement.Base[2]
 
+                # rotation for placement
                 m44 = placement.toMatrix()
-                m33       = _np.zeros((3,3))
+                m33 = _np.zeros((3,3))
                 m33[0][0] = m44.A11
                 m33[0][1] = m44.A12
                 m33[0][2] = m44.A13
@@ -84,11 +86,10 @@ class Reader(object) :
                 m33[1][2] = m44.A23
                 m33[2][0] = m44.A31
                 m33[2][1] = m44.A32
-                m33[2][2] = m44.A33
-                
+                m33[2][2] = m44.A33                
                 tba = _trans.matrix2tbxyz(m33)
-                print tba
 
+                # logical volume
                 p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(tba[0]),str(tba[1]),str(tba[2]),self._registry,False),
                                                      pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
                                                      lv,                                                    
@@ -109,7 +110,7 @@ class Reader(object) :
             # remove placement 
             placement = obj.Placement.inverse()
 
-            # mesh includes placement and rotation
+            # mesh includes placement and rotation (so it needs to be removed)
             for i in range(0,len(m[0])) : 
                 m[0][i] = placement.multVec(m[0][i])
             
