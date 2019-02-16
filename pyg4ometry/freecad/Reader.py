@@ -21,21 +21,84 @@ class Reader(object) :
         if registryOn  : 
             self._registry = _g4.Registry()
 
-        # loop over the root objects 
-        self.loopRootObjects()
-        
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
 
-    def loopRootObjects(self) : 
-        self.rootLogicals = []
+    def convertStructure(self) : 
+        '''Convert file with structure''' 
+        self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
+        self._registry.setWorld(self.rootLogical.name)
 
-        for obj in self.doc.RootObjects :
-            # print 'freecad.reader.loopRootObjects> typeid=%s label=%s grouplen=%d' % (obj.TypeId, obj.Label, len(obj.Group))
+    def convertFlat(self) :
+        '''Convert file without structure'''
 
-            self.rootLogicals.append(self.recurseObjectTree(obj))
+        import pyg4ometry.geant4.solid.Box
+        import pyg4ometry.geant4.solid.TessellatedSolid
+        import pyg4ometry.geant4.LogicalVolume 
+        import pyg4ometry.geant4.PhysicalVolume
+        import pyg4ometry.gdml.Defines
 
+        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",1,1,1,registry=self._registry)
+        bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldVolume",registry=self._registry)
+
+        for obj in self.doc.Objects :
+            if obj.TypeId == "Part::Feature" : 
+
+                # tesellate         
+                m = obj.Shape.tessellate(0.1)
+
+                # global placement
+                globalPlacement = PartFeatureGlobalPlacement(obj,_fc.Placement())
+
+                # info log output
+                print obj.Label,obj.TypeId,globalPlacement
+                
+                # remove placement 
+                placement = obj.Placement.inverse()
+                
+                # mesh includes placement and rotation (so it needs to be removed)
+                for i in range(0,len(m[0])) : 
+                    m[0][i] = placement.multVec(m[0][i])
+            
+                # facet list 
+                f =  MeshToFacetList(m)
+            
+                # solid 
+                s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
+
+                # logical
+                l = pyg4ometry.geant4.LogicalVolume(s,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
+                
+                # physical 
+                x = globalPlacement.Base[0] 
+                y = globalPlacement.Base[1] 
+                z = globalPlacement.Base[2]
+
+                # rotation for placement
+                m44 = globalPlacement.toMatrix()
+                m33 = _np.zeros((3,3))
+                m33[0][0] = m44.A11
+                m33[0][1] = m44.A12
+                m33[0][2] = m44.A13
+                m33[1][0] = m44.A21
+                m33[1][1] = m44.A22
+                m33[1][2] = m44.A23
+                m33[2][0] = m44.A31
+                m33[2][1] = m44.A32
+                m33[2][2] = m44.A33                
+                tba = _trans.matrix2tbxyz(m33)
+
+                # logical volume
+                p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(tba[0]),str(tba[1]),str(tba[2]),self._registry,False),
+                                                     pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
+                                                     l,                                                    
+                                                     obj.Label+"_pv",
+                                                     bLogical,
+                                                     registry=self._registry)                
+        self.rootLogical = bLogical
+        self._registry.setWorld("worldVolume")
+        
     def getRegistry(self) : 
         return self._registry
 
@@ -60,13 +123,12 @@ class Reader(object) :
         import pyg4ometry.geant4.PhysicalVolume
         import pyg4ometry.gdml.Defines
         
-        if obj.TypeId == 'App::Part' :         # --> logical volume (what shape?)
+        if obj.TypeId == 'App::Part' :         # mapped to logical volume, group objects mapped to physical
             _log.info('freecad.reader.recurseObjectTree> App::Part label=%s grouplen=%d placement=%s' %(obj.Label, len(obj.Group), obj.Placement))
 
             bSolid   = pyg4ometry.geant4.solid.Box(obj.Label+"_solid",100,100,100,registry=self._registry)
             bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
             
-
             for gobj in obj.Group :
                 [lv, placement] = self.recurseObjectTree(gobj)
 
@@ -101,7 +163,7 @@ class Reader(object) :
 
                 
             return objects
-        elif obj.TypeId == 'Part::Feature' :   # --> solid, logical volume, physical volume
+        elif obj.TypeId == 'Part::Feature' :   # mapped to logical volumes
             _log.info('freecad.reader.recurseObjectTree> Part::Feature label=%s placement=%s' % (obj.Label, obj.Placement))
             
             # tesellate         
@@ -145,3 +207,13 @@ def MeshToFacetList(mesh) :
                              (verts[i2][0],verts[i2][1],verts[i2][2]),
                              (verts[i3][0],verts[i3][1],verts[i3][2])),(0,1,2)) )
     return facet_list
+
+def PartFeatureGlobalPlacement(obj,placement) : 
+
+    print obj.Placement,placement
+
+    if len(obj.InList) != 0 : 
+        return PartFeatureGlobalPlacement(obj.InList[0], obj.Placement.multiply(placement))
+    else :
+        return obj.Placement.multiply(placement)
+
