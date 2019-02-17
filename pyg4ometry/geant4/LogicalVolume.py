@@ -1,20 +1,22 @@
 import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
-from   pyg4ometry.pycsg.core import CSG as _CSG
+from   pyg4ometry.pycsg.core import CSG    as _CSG
 
-from   pyg4ometry.visualisation import Mesh as _Mesh
-import solid as _solid
-from   Material              import Material as _Material
-import pyg4ometry.transformation as _trans
+from   pyg4ometry.visualisation  import Mesh     as _Mesh
+import solid                     as                 _solid
+from   Material                  import Material as _Material
+import pyg4ometry.transformation as                 _trans
 
-import copy as _copy
-import numpy as _np
-import sys as _sys
-import logging as _log
+import copy    as   _copy
+import numpy   as   _np
+import sys     as   _sys
+import logging as   _log
 
 class LogicalVolume(object):
     def __init__(self, solid, material, name, debug=False, registry=None, **kwargs):
         super(LogicalVolume, self).__init__()
+
+        # geant4 required objects 
         self.solid           = solid
 
         if isinstance(material, _Material):
@@ -28,8 +30,10 @@ class LogicalVolume(object):
         self.daughterVolumes = []
         self.debug           = debug
 
-        self.mesh          = _Mesh(self.solid)
+        # geometry mesh
+        self.mesh            = _Mesh(self.solid)
 
+        # registry logic
         if registry:
             registry.addLogicalVolume(self)
         self.registry = registry
