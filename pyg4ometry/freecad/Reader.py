@@ -11,12 +11,16 @@ import pyg4ometry.geant4  as _g4
 import pyg4ometry.transformation as _trans
 
 class Reader(object) : 
-    def __init__(self, fileName, registryOn = True) : 
+    def __init__(self, fileName, registryOn = True, fileNameAux = None) : 
         self.fileName = fileName
 
         # load file
         self.load(fileName) 
 
+        # if auxilary data available 
+        if fileNameAux != None : 
+            self.loadAuxData(fileNameAux)
+            
         # assign registry 
         if registryOn  : 
             self._registry = _g4.Registry()
@@ -24,6 +28,19 @@ class Reader(object) :
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
+
+    def loadAuxData(self, fileName) : 
+        f = open(fileName,"r") 
+
+        self.solidAux = {}
+        
+        for l in f : 
+            sl = l.split()
+            solidName      = sl[0]
+            color          = map(float,sl[1].split(','))
+            representation = sl[2]
+            material       = sl[3]
+            self.solidAux[solidName] = {'color':color, 'representation':representation, 'material':material}
 
     def convertStructure(self) : 
         '''Convert file with structure''' 
@@ -42,6 +59,7 @@ class Reader(object) :
         tmin = _fc.Vector(1e99,1e99,1e99)
         tmax = _fc.Vector(-1e99,-1e99,-1e99)
 
+        names      = [] 
         logicals   = [] 
         placements = [] 
         
@@ -112,6 +130,7 @@ class Reader(object) :
                 m33[2][2] = m44.A33                
                 tba = _trans.matrix2tbxyz(m33)
 
+                names.append(obj.Label)
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
@@ -131,15 +150,35 @@ class Reader(object) :
             p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),self._registry,False),
                                                  pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
                                                  logicals[i],                                                    
-                                                 obj.Label+"_pv",
+                                                 names[i]+"_pv",
                                                  bLogical,
-                                                 registry=self._registry)                
-        print tmin, tmax, tmax-tmin
+                                                 registry=self._registry)
+
+            # set attributes 
+            if len(self.solidAux) != 0 : 
+                p.visOptions.representation = self.solidAux[names[i]]['representation']
+                p.visOptions.color          = self.solidAux[names[i]]['color'][0:3]
+                p.visOptions.alpha          = self.solidAux[names[i]]['color'][3]
+                
         self.rootLogical = bLogical
         self._registry.setWorld("worldLogical")
         
     def getRegistry(self) : 
         return self._registry
+
+    def printPartFeatures(self, fileName = None) : 
+        ''' Print to screen or write to file Part::Features with color and material''' 
+
+        if fileName != None : 
+            f = open(fileName,"w")
+        for obj in self.doc.Objects : 
+            if obj.TypeId == "Part::Feature" : 
+                if fileName == None :
+                    print obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic'
+                else : 
+                    f.write(obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n')
+        if fileName != None : 
+            f.close()
 
     def printStructure(self) :
         for obj in self.doc.RootObjects : 
