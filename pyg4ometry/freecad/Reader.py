@@ -39,9 +39,12 @@ class Reader(object) :
         import pyg4ometry.geant4.PhysicalVolume
         import pyg4ometry.gdml.Defines
 
-        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",1,1,1,registry=self._registry)
-        bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldVolume",registry=self._registry)
+        tmin = _fc.Vector(1e99,1e99,1e99)
+        tmax = _fc.Vector(-1e99,-1e99,-1e99)
 
+        logicals   = [] 
+        placements = [] 
+        
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" : 
 
@@ -60,10 +63,30 @@ class Reader(object) :
                 # mesh includes placement and rotation (so it needs to be removed)
                 for i in range(0,len(m[0])) : 
                     m[0][i] = placement.multVec(m[0][i])
-            
+                                
                 # facet list 
                 f =  MeshToFacetList(m)
-            
+
+                # mesh extent
+                [mmin, mmax] = FacetListAxisAlignedExtent(f)
+                gmin = globalPlacement.multVec(mmin)
+                gmax = globalPlacement.multVec(mmax)
+
+                if gmin.x < tmin.x :
+                    tmin.x = gmin.x
+                if gmin.y < tmin.y :
+                    tmin.y = gmin.y
+                if gmin.z < tmin.z :
+                    tmin.z = gmin.z
+
+                if gmax.x > tmax.x :
+                    tmax.x = gmax.x
+                if gmax.y > tmax.y :
+                    tmax.y = gmax.y
+                if gmax.z > tmax.z :
+                    tmax.z = gmax.z
+                    
+                
                 # solid 
                 s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
 
@@ -89,15 +112,31 @@ class Reader(object) :
                 m33[2][2] = m44.A33                
                 tba = _trans.matrix2tbxyz(m33)
 
-                # logical volume
-                p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(tba[0]),str(tba[1]),str(tba[2]),self._registry,False),
-                                                     pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
-                                                     l,                                                    
-                                                     obj.Label+"_pv",
-                                                     bLogical,
-                                                     registry=self._registry)                
+                logicals.append(l)
+                placements.append([tba,[x,y,z]])
+
+        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",1,1,1,registry=self._registry)
+        bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
+        
+        for i in range(0,len(logicals)) : 
+            # logical volume
+            a1 = placements[i][0][0]
+            a2 = placements[i][0][1]
+            a3 = placements[i][0][2]            
+        
+            x = placements[i][1][0]
+            y = placements[i][1][1]
+            z = placements[i][1][2]
+
+            p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),self._registry,False),
+                                                 pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
+                                                 logicals[i],                                                    
+                                                 obj.Label+"_pv",
+                                                 bLogical,
+                                                 registry=self._registry)                
+        print tmin, tmax, tmax-tmin
         self.rootLogical = bLogical
-        self._registry.setWorld("worldVolume")
+        self._registry.setWorld("worldLogical")
         
     def getRegistry(self) : 
         return self._registry
@@ -207,6 +246,44 @@ def MeshToFacetList(mesh) :
                              (verts[i2][0],verts[i2][1],verts[i2][2]),
                              (verts[i3][0],verts[i3][1],verts[i3][2])),(0,1,2)) )
     return facet_list
+
+def FacetListAxisAlignedExtent(facetList) : 
+    xMin = 1e99
+    yMin = 1e99
+    zMin = 1e99
+    xMax = -1e99
+    yMax = -1e99
+    zMax = -1e99
+    
+    for f in facetList : 
+        for v in f[0] : 
+            if v[0] > xMax :
+                xMax = v[0]
+            if v[0] < xMin :
+                xMin = v[0]
+
+            if v[1] > yMax :
+                yMax = v[1]
+            if v[0] < yMin :
+                yMin = v[1]
+
+            if v[2] > zMax :
+                zMax = v[2]
+            if v[2] < zMin :
+                zMin = v[2]
+
+    min = _fc.Vector() 
+    max = _fc.Vector() 
+
+    min.x = xMin
+    min.y = yMin
+    min.z = zMin
+
+    max.x = xMax
+    max.y = yMax
+    max.z = zMax
+
+    return [min,max]
 
 def PartFeatureGlobalPlacement(obj,placement) : 
     if len(obj.InList) != 0 : 
