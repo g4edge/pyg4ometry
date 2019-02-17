@@ -1,9 +1,8 @@
-import copy as _copy
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+
+import copy  as _copy
 import numpy as _np
-
-from pyg4ometry.transformation import *
-
-import sys as _sys
+import sys   as _sys
 
 class PhysicalVolume(object):
     '''Geant4 Physical volume class'''
@@ -14,6 +13,7 @@ class PhysicalVolume(object):
 
         # need to determine type or rotation and position, as should be Position or Rotation type
 
+        # geant4 required objects
         self.rotation      = rotation
         self.position      = position
         self.logicalVolume = logicalVolume
@@ -22,7 +22,11 @@ class PhysicalVolume(object):
         self.motherVolume.add(self)
         self.scale         = scale
         self.debug         = debug
+        
+        # physical visualisation options 
+        self.visOptions    = _VisOptions()
 
+        # registry logic
         if registry:
             registry.addPhysicalVolume(self)
         self.registry = registry
