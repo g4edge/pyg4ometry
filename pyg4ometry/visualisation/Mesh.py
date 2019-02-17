@@ -12,9 +12,6 @@ class Mesh(object) :
         # Solid which contains the mesh
         self.solid = solid 
 
-        # Visualisation attributes 
-        self.wireframe = False
-
         # mesh in global coordinates 
         self.localmesh  = self.solid.pycsgmesh().clone()
 
