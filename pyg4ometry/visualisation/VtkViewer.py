@@ -150,7 +150,18 @@ class VtkViewer :
 
             vtkActor.SetPosition(new_tra[0],new_tra[1],new_tra[2])
             vtkActor.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
-            vtkActor.GetProperty().SetColor(1,0,0)
+
+            # set visualisation properties
+            print pv.visOptions.representation, pv.visOptions.color, pv.visOptions.alpha
+
+            vtkActor.GetProperty().SetColor(pv.visOptions.color[0],
+                                            pv.visOptions.color[1],
+                                            pv.visOptions.color[2])
+            vtkActor.GetProperty().SetOpacity(pv.visOptions.alpha)
+            if pv.visOptions.representation == "surface" :
+                vtkActor.GetProperty().SetRepresentationToSurface()
+            elif pv.visOptions.representation == "wireframe" :
+                vtkActor.GetProperty().SetRepresentationToWireframe()
             
             _log.info('VtkViewer.addLogicalVolume> Add actor')
             self.ren.AddActor(vtkActor)
