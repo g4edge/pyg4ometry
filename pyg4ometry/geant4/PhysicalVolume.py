@@ -8,7 +8,7 @@ class PhysicalVolume(object):
     '''Geant4 Physical volume class'''
 
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, scale=[1,1,1], registry=None):
+                 motherVolume, registry=None):
         super(PhysicalVolume, self).__init__()
 
         # need to determine type or rotation and position, as should be Position or Rotation type
@@ -30,7 +30,6 @@ class PhysicalVolume(object):
         self.name          = name
         self.motherVolume  = motherVolume
         self.motherVolume.add(self)
-        self.scale         = scale
         
         # physical visualisation options 
         self.visOptions    = _VisOptions()
