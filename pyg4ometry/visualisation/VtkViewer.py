@@ -152,8 +152,6 @@ class VtkViewer :
             vtkActor.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
 
             # set visualisation properties
-            print pv.visOptions.representation, pv.visOptions.color, pv.visOptions.alpha
-
             vtkActor.GetProperty().SetColor(pv.visOptions.color[0],
                                             pv.visOptions.color[1],
                                             pv.visOptions.color[2])

@@ -6,6 +6,7 @@ _fcg.setupWithoutGUI()
 
 import numpy              as _np
 import logging            as _log
+import random             as _random
 
 import pyg4ometry.geant4  as _g4
 import pyg4ometry.transformation as _trans
@@ -19,7 +20,7 @@ class Reader(object) :
 
         # if auxilary data available 
         if fileNameAux != None : 
-            self.loadAuxData(fileNameAux)
+            self.loadAuxilaryData(fileNameAux)
             
         # assign registry 
         if registryOn  : 
@@ -29,10 +30,11 @@ class Reader(object) :
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
 
-    def loadAuxData(self, fileName) : 
+    def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
 
-        self.solidAux = {}
+        self.solidAux = {}         # TODO rename self.auxVolumeData
+        self.materialSet = set()   # TODO rename self.auxMaterialSet
         
         for l in f : 
             sl = l.split()
@@ -40,8 +42,23 @@ class Reader(object) :
             color          = map(float,sl[1].split(','))
             representation = sl[2]
             material       = sl[3]
+
+            # add auxilary information to dictionary
             self.solidAux[solidName] = {'color':color, 'representation':representation, 'material':material}
 
+            # material list 
+            self.materialSet.add(material) 
+            
+        # unique materials
+        if colorByMaterial : 
+            for m in self.materialSet : 
+                rc = _random.uniform(0,1)
+                gc = _random.uniform(0,1)
+                bc = _random.uniform(0,1)            
+                for sn in self.solidAux.keys() :
+                    if self.solidAux[sn]['material'] == m : 
+                        self.solidAux[sn]['color'] = [rc,gc,bc,1]
+            
     def convertStructure(self) : 
         '''Convert file with structure''' 
         self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
@@ -155,18 +172,21 @@ class Reader(object) :
                                                  registry=self._registry)
 
             # set attributes 
-            if len(self.solidAux) != 0 : 
-                p.visOptions.representation = self.solidAux[names[i]]['representation']
-                p.visOptions.color          = self.solidAux[names[i]]['color'][0:3]
-                p.visOptions.alpha          = self.solidAux[names[i]]['color'][3]
-                
+            try : 
+                if len(self.solidAux.keys()) != 0 : 
+                    p.visOptions.representation = self.solidAux[names[i]]['representation']
+                    p.visOptions.color          = self.solidAux[names[i]]['color'][0:3]
+                    p.visOptions.alpha          = self.solidAux[names[i]]['color'][3]
+            except AttributeError : 
+                pass
+
         self.rootLogical = bLogical
-        self._registry.setWorld("worldLogical")
+        self._registry.setWorld(bLogical.name)
         
     def getRegistry(self) : 
         return self._registry
 
-    def printPartFeatures(self, fileName = None) : 
+    def printPartFeatures(self, fileName = None, randomColors = False) : 
         ''' Print to screen or write to file Part::Features with color and material''' 
 
         if fileName != None : 
@@ -174,9 +194,17 @@ class Reader(object) :
         for obj in self.doc.Objects : 
             if obj.TypeId == "Part::Feature" : 
                 if fileName == None :
+                    # label r,g,b,a surface/wireframe material
                     print obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic'
                 else : 
-                    f.write(obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n')
+                    if not randomColors :
+                        f.write(obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n')
+                    else : 
+                        r = _random.uniform(0,1)
+                        g = _random.uniform(0,1)
+                        b = _random.uniform(0,1)
+                        a = _random.uniform(0,1)
+                        f.write(obj.Label+'\t\t %f,%f,%f,%f\t surface \t G4_Galactic\n' % (r,g,b,a))
         if fileName != None : 
             f.close()
 
