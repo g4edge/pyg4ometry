@@ -13,7 +13,7 @@ import sys     as   _sys
 import logging as   _log
 
 class LogicalVolume(object):
-    def __init__(self, solid, material, name, debug=False, registry=None, **kwargs):
+    def __init__(self, solid, material, name, registry=None, **kwargs):
         super(LogicalVolume, self).__init__()
 
         # geant4 required objects 
@@ -28,7 +28,6 @@ class LogicalVolume(object):
 
         self.name            = name
         self.daughterVolumes = []
-        self.debug           = debug
 
         # geometry mesh
         self.mesh            = _Mesh(self.solid)
