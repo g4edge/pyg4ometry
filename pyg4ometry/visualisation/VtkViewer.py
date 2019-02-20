@@ -50,6 +50,12 @@ class VtkViewer :
         
         pass
 
+    def addAxes(self, length = 20.0) : 
+        self.axes = _vtk.vtkAxesActor()
+        # axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
+        self.axes.SetTotalLength(length,length,length)
+        self.ren.AddActor(self.axes)
+        
     def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) :
         _log.info('VtkViewer.addLogicalVolume> %s' % (logical.name))
 
