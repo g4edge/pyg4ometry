@@ -64,7 +64,7 @@ class Reader(object) :
         self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
         self._registry.setWorld(self.rootLogical.name)
 
-    def convertFlat(self) :
+    def convertFlat(self, meshDeviation = 0.05, centreName = '') :
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -79,15 +79,33 @@ class Reader(object) :
         names      = [] 
         logicals   = [] 
         placements = [] 
-        
+
+        if centreName != '' : 
+            centreObject = self.doc.getObjectsByLabel(centreName)[0]
+            centrePlacement = centreObject.getGlobalPlacement()
+        else : 
+            centrePlacement = _fc.Placement()
+        '''
+        for obj in self.doc.Objects : 
+            if obj.TypeId == "Part::Feature" : 
+                com = obj.Shape.CenterOfMass 
+                lp  = obj.Placement
+                gp  = obj.getGlobalPlacement()
+                gp2 = PartFeatureGlobalPlacement(obj,_fc.Placement())
+                print com[0],com[1],com[2],lp.Base[0], lp.Base[1], lp.Base[2], gp.Base[0], gp.Base[1], gp.Base[2]
+        '''
+
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" : 
 
+                # object centre of mass 
+                com = obj.Shape.CenterOfMass
+
                 # tesellate         
-                m = obj.Shape.tessellate(0.1)
+                m = obj.Shape.tessellate(meshDeviation)
 
                 # global placement
-                globalPlacement = PartFeatureGlobalPlacement(obj,_fc.Placement())
+                globalPlacement = obj.getGlobalPlacement()
 
                 # info log output
                 _log.info('freecad.reader.convertFlat> Part::Feature label=%s typeid=%s placement=%s' %(obj.Label, obj.TypeId, obj.Placement))
@@ -96,42 +114,40 @@ class Reader(object) :
                 placement = obj.Placement.inverse()
                 
                 # mesh includes placement and rotation (so it needs to be removed)
-                for i in range(0,len(m[0])) : 
-                    m[0][i] = placement.multVec(m[0][i])
-                                
+                for i in range(0,len(m[0])) :
+                    m[0][i] = placement.multVec(m[0][i]) 
+
+                    # global mesh vector 
+                    mGlobal = globalPlacement.multVec(m[0][i])
+
+                    # find minimum and maximum
+                    if mGlobal.x < tmin.x :
+                        tmin.x = mGlobal.x
+                    if mGlobal.y < tmin.y :
+                        tmin.y = mGlobal.y
+                    if mGlobal.z < tmin.z :
+                        tmin.z = mGlobal.z
+
+                    if mGlobal.x > tmax.x :
+                        tmax.x = mGlobal.x
+                    if mGlobal.y > tmax.y :
+                        tmax.y = mGlobal.y
+                    if mGlobal.z > tmax.z :
+                        tmax.z = mGlobal.z
+                                                    
                 # facet list 
                 f =  MeshToFacetList(m)
 
-                # mesh extent
-                [mmin, mmax] = FacetListAxisAlignedExtent(f)
-                gmin = globalPlacement.multVec(mmin)
-                gmax = globalPlacement.multVec(mmax)
-
-                if gmin.x < tmin.x :
-                    tmin.x = gmin.x
-                if gmin.y < tmin.y :
-                    tmin.y = gmin.y
-                if gmin.z < tmin.z :
-                    tmin.z = gmin.z
-
-                if gmax.x > tmax.x :
-                    tmax.x = gmax.x
-                if gmax.y > tmax.y :
-                    tmax.y = gmax.y
-                if gmax.z > tmax.z :
-                    tmax.z = gmax.z
-                    
-                
                 # solid 
                 s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
 
                 # logical
                 l = pyg4ometry.geant4.LogicalVolume(s,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
                 
-                # physical 
-                x = globalPlacement.Base[0] 
-                y = globalPlacement.Base[1] 
-                z = globalPlacement.Base[2]
+                # physical
+                x = globalPlacement.Base[0] - centrePlacement.Base[0] 
+                y = globalPlacement.Base[1] - centrePlacement.Base[1]
+                z = globalPlacement.Base[2] - centrePlacement.Base[2]
 
                 # rotation for placement
                 m44 = globalPlacement.toMatrix()
@@ -151,18 +167,21 @@ class Reader(object) :
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",1,1,1,registry=self._registry)
+        print tmin, tmax, tmax-tmin
+        tsize   = tmax-tmin 
+        tcentre = (tmax-tmin)/2.0+tmin
+        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x/2,tsize.y/2,tsize.z/2,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
         
         for i in range(0,len(logicals)) : 
             # logical volume
             a1 = placements[i][0][0]
             a2 = placements[i][0][1]
-            a3 = placements[i][0][2]            
+            a3 = placements[i][0][2]
         
-            x = placements[i][1][0]
-            y = placements[i][1][1]
-            z = placements[i][1][2]
+            x = placements[i][1][0]-tcentre.x
+            y = placements[i][1][1]-tcentre.y
+            z = placements[i][1][2]-tcentre.z
 
             p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),self._registry,False),
                                                  pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
