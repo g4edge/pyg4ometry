@@ -55,8 +55,26 @@ class VtkViewer :
         # axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
         self.axes.SetTotalLength(length,length,length)
         self.ren.AddActor(self.axes)
+
+    def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
+        self.addLogicalVolumeBounding(logical)
+        self.addLogicalVolumeRecursive(logical, mrot, tra)
+    
+    def addLogicalVolumeBounding(self, logical) : 
+        # add logical solid as wireframe 
+        lvm    = logical.mesh.localmesh
+        lvmPD  = pycsgMeshToVtkPolyData(lvm)
+        lvmFLT = _vtk.vtkTriangleFilter()
+        lvmFLT.AddInputData(lvmPD)        
+        lvmMAP = _vtk.vtkPolyDataMapper()
+        lvmMAP.ScalarVisibilityOff()
+        lvmMAP.SetInputConnection(lvmFLT.GetOutputPort())        
+        lvmActor = _vtk.vtkActor()
+        lvmActor.SetMapper(lvmMAP)         
+        lvmActor.GetProperty().SetRepresentationToWireframe()
+        self.ren.AddActor(lvmActor)
         
-    def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) :
+    def addLogicalVolumeRecursive(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) :
         _log.info('VtkViewer.addLogicalVolume> %s' % (logical.name))
 
         for pv in logical.daughterVolumes : 
@@ -180,7 +198,7 @@ class VtkViewer :
                 vtkActorOverlap.GetProperty().SetColor(1,0,0)
                 self.ren.AddActor(vtkActorOverlap)
 
-            self.addLogicalVolume(pv.logicalVolume,new_mrot,new_tra)
+            self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
 
         
     def view(self):
