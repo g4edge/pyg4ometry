@@ -1,8 +1,10 @@
 from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
-import copy  as _copy
-import numpy as _np
-import sys   as _sys
+import copy    as _copy
+import numpy   as _np
+import sys     as _sys
+import logging as _log
+
 
 class PhysicalVolume(object):
     '''Geant4 Physical volume class'''
@@ -39,6 +41,6 @@ class PhysicalVolume(object):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
 
     def extent(self) : 
-        print 'PhysicalVolume.extent> ', self.name
-        self.logicalVolume.extent()
+        _log.info('PhysicalVolume.extent> %s' % (self.name))
+        return self.logicalVolume.extent()
         
