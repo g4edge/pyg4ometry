@@ -701,12 +701,16 @@ class Reader(object) :
                         # Create physical volume
                         _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
                         physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
-                                                       pvol_name, vol, scale, registry=self._registry)
+                                                       pvol_name, vol, registry=self._registry)
 
                     elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
                         print 'Reader> replica not implemented'                                        
                     elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
                         print 'Reader> param not implemented'                                        
+
+                # now logical is complete, check for overlaps
+                vol.checkOverlaps()
+
             elif node_name == "loop" : 
                 print 'Reader> loop not implemented'                
             elif node_name == "assembly" :
