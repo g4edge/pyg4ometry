@@ -52,10 +52,6 @@ class LogicalVolume(object):
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
             mesh = pv.logicalVolume.mesh.localmesh.clone()
 
-            # scale 
-            _log.info('LogicalVolume.checkOverlaps> scale %s' % (pv.name))
-            mesh.scale(pv.scale.eval())
-
             # rotate 
             _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
             aa = _trans.tbxyz(pv.rotation.eval())
@@ -81,8 +77,35 @@ class LogicalVolume(object):
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
                 
     def extent(self) : 
-        print 'LogicalVolume.extent> ', self.name
+        _log.info('LogicalVolume.extent> %s ' % (self.name))
+        
+        [vMin, vMax] = self.mesh.getBoundingBox()
 
+        # transform logical solid BB
+                
         for dv in self.daughterVolumes : 
-            dv.extent()
+            [vMinDaughter, vMaxDaughter] = dv.extent()
 
+            # transform daughter meshes to parent coordinates 
+            dvmrot  = _trans.tbxyz2matrix(dv.rotation.eval())
+            dvtra   = _np.array(dv.position.eval())            
+            
+            vMinDaughterParentCoords = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0,:])[0]
+            vMaxDaughterParentCoords = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0,:])[0]
+
+            if vMaxDaughterParentCoords[0] > vMax[0] : 
+                vMax[0] = vMaxDaughterParentCoords[0]
+            if vMaxDaughterParentCoords[1] > vMax[1] : 
+                vMax[1] = vMaxDaughterParentCoords[1] 
+            if vMaxDaughterParentCoords[2] > vMax[2] : 
+                vMax[2] = vMaxDaughterParentCoords[2] 
+
+            if vMinDaughterParentCoords[0] < vMin[0] : 
+                vMin[0] = vMinDaughterParentCoords[0]
+            if vMinDaughterParentCoords[1] < vMin[1] : 
+                vMin[1] = vMinDaughterParentCoords[1]
+            if vMinDaughterParentCoords[2] < vMin[2] : 
+                vMin[2] = vMinDaughterParentCoords[2] 
+
+
+        return [vMin, vMax]
