@@ -12,6 +12,7 @@ import pyg4ometry.geant4  as _g4
 import pyg4ometry.transformation as _trans
 
 class Reader(object) : 
+
     def __init__(self, fileName, registryOn = True, fileNameAux = None) : 
         self.fileName = fileName
 
@@ -29,6 +30,12 @@ class Reader(object) :
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
+
+    def relabelModel(self) : 
+        for obj in self.doc.Objects : 
+            obj.Label = obj.Label.replace("(","_")
+            obj.Label = obj.Label.replace(")","_")
+            obj.Label = obj.Label.replace("-","_")
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
