@@ -9,7 +9,7 @@ from ..geant4.Material import Isotope as _Isotope
 import pyg4ometry.geant4 as _g4
 
 class Writer(object):
-    def __init__(self, prepend = 'PREPEND'):
+    def __init__(self, prepend = ''):
         super(Writer, self).__init__()
         self.prepend = prepend
 
