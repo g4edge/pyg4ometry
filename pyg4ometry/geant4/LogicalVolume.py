@@ -1,20 +1,22 @@
 import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
-from   pyg4ometry.pycsg.core import CSG as _CSG
+from   pyg4ometry.pycsg.core import CSG    as _CSG
 
-from   pyg4ometry.visualisation import Mesh as _Mesh
-import solid as _solid
-from   Material              import Material as _Material
-import pyg4ometry.transformation as _trans
+from   pyg4ometry.visualisation  import Mesh     as _Mesh
+import solid                     as                 _solid
+from   Material                  import Material as _Material
+import pyg4ometry.transformation as                 _trans
 
-import copy as _copy
-import numpy as _np
-import sys as _sys
-import logging as _log
+import copy    as   _copy
+import numpy   as   _np
+import sys     as   _sys
+import logging as   _log
 
 class LogicalVolume(object):
-    def __init__(self, solid, material, name, debug=False, registry=None, **kwargs):
+    def __init__(self, solid, material, name, registry=None, **kwargs):
         super(LogicalVolume, self).__init__()
+
+        # geant4 required objects 
         self.solid           = solid
 
         if isinstance(material, _Material):
@@ -26,10 +28,11 @@ class LogicalVolume(object):
 
         self.name            = name
         self.daughterVolumes = []
-        self.debug           = debug
 
-        self.mesh          = _Mesh(self.solid)
+        # geometry mesh
+        self.mesh            = _Mesh(self.solid)
 
+        # registry logic
         if registry:
             registry.addLogicalVolume(self)
         self.registry = registry
@@ -48,10 +51,6 @@ class LogicalVolume(object):
         for pv in self.daughterVolumes : 
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
             mesh = pv.logicalVolume.mesh.localmesh.clone()
-
-            # scale 
-            _log.info('LogicalVolume.checkOverlaps> scale %s' % (pv.name))
-            mesh.scale(pv.scale.eval())
 
             # rotate 
             _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
@@ -78,8 +77,35 @@ class LogicalVolume(object):
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
                 
     def extent(self) : 
-        print 'LogicalVolume.extent> ', self.name
+        _log.info('LogicalVolume.extent> %s ' % (self.name))
+        
+        [vMin, vMax] = self.mesh.getBoundingBox()
 
+        # transform logical solid BB
+                
         for dv in self.daughterVolumes : 
-            dv.extent()
+            [vMinDaughter, vMaxDaughter] = dv.extent()
 
+            # transform daughter meshes to parent coordinates 
+            dvmrot  = _trans.tbxyz2matrix(dv.rotation.eval())
+            dvtra   = _np.array(dv.position.eval())            
+            
+            vMinDaughterParentCoords = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0,:])[0]
+            vMaxDaughterParentCoords = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0,:])[0]
+
+            if vMaxDaughterParentCoords[0] > vMax[0] : 
+                vMax[0] = vMaxDaughterParentCoords[0]
+            if vMaxDaughterParentCoords[1] > vMax[1] : 
+                vMax[1] = vMaxDaughterParentCoords[1] 
+            if vMaxDaughterParentCoords[2] > vMax[2] : 
+                vMax[2] = vMaxDaughterParentCoords[2] 
+
+            if vMinDaughterParentCoords[0] < vMin[0] : 
+                vMin[0] = vMinDaughterParentCoords[0]
+            if vMinDaughterParentCoords[1] < vMin[1] : 
+                vMin[1] = vMinDaughterParentCoords[1]
+            if vMinDaughterParentCoords[2] < vMin[2] : 
+                vMin[2] = vMinDaughterParentCoords[2] 
+
+
+        return [vMin, vMax]

@@ -66,7 +66,9 @@ class Writer(object):
         we.setAttribute("ref",self.prepend + registry.worldName+"_lv")
         self.setup.appendChild(we)
 
-    def write(self, filename) :
+    def write(self, registry, filename) :
+        return 
+
         self.filename = filename
 
         f = open(filename,'w')

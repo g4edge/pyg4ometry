@@ -204,4 +204,7 @@ class Registry:
         self.logicalVolumeUsageCountDict.clear()
         self.logicalVolumeMeshSkip = []
 
+    def getWorldVolume(self) :         
+        return self.worldVolume
+
 registry = Registry()

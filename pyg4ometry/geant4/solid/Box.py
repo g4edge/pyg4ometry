@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from pyg4ometry.pycsg.core import CSG as _CSG
-from pyg4ometry.geant4.Registry import registry as _registry
 
 import logging as _log
 
