@@ -6,6 +6,7 @@ from pyg4ometry.pycsg.geom import Vector as _Vector
 from pyg4ometry.pycsg.geom import Vertex as _Vertex
 from pyg4ometry.pycsg.geom import Polygon as _Polygon
 
+import logging as _log
 import numpy as _np
 import math as _math
 
@@ -34,6 +35,7 @@ class Para(_SolidBase):
         self.pAlpha = pAlpha
         self.pTheta = pTheta
         self.pPhi   = pPhi
+
         self.dependents = []
 
         if registry:
@@ -41,13 +43,15 @@ class Para(_SolidBase):
 
     def pycsgmesh(self):
 
+        _log.info("para.antlr>")
         pX     = float(self.pX) 
         pY     = float(self.pY)
         pZ     = float(self.pZ)
         pAlpha = float(self.pAlpha)
         pTheta = float(self.pTheta)
         pPhi   = float(self.pPhi)
-        
+
+        _log.info("para.pycsgmesh>")
         dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component
         dx_z   = pZ*_math.sin(pTheta)  #changes sign as the z component
         dy     = pZ*_math.sin(pPhi)
