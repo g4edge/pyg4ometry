@@ -6,6 +6,7 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
+import logging as _log
 import numpy as _np
 
 class Paraboloid(_SolidBase):
@@ -26,20 +27,29 @@ class Paraboloid(_SolidBase):
         self.pR2    = pR2
         self.nstack = nstack
         self.nslice = nslice
+
+        dependents = []
+
         if registry:
             registry.addSolid(self)
 
     def pycsgmesh(self):
+        _log.info("paraboloid.antlr>")
+        pDz    = float(self.pDz)
+        pR1    = float(self.pR1)
+        pR2    = float(self.pR2)
+
+        _log.info("paraboloid.pycsgmesh>")
         polygons = []
 
-        sz      = -self.pDz
-        dz      = 2*self.pDz/self.nstack
+        sz      = -pDz
+        dz      = 2*pDz/self.nstack
         dTheta  = 2*_np.pi/self.nslice
         stacks  = self.nstack
         slices  = self.nslice
 
-        K1 = (self.pR2**2-self.pR1**2)/(2*self.pDz)
-        K2 = (self.pR2**2+self.pR1**2)/2
+        K1 = (pR2**2-pR1**2)/(2*pDz)
+        K2 = (pR2**2+pR1**2)/2
 
         def appendVertex(vertices, theta, z, k1=K1, k2=K2, norm=[]):
             if k1 and k2:
@@ -106,6 +116,6 @@ class Paraboloid(_SolidBase):
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz)
             polygons.append(_Polygon(vertices))
 
-        self.mesh  = _CSG.fromPolygons(polygons)
+        mesh  = _CSG.fromPolygons(polygons)
 
-        return self.mesh
+        return mesh
