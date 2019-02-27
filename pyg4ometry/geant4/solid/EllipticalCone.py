@@ -5,7 +5,7 @@ from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
-
+import logging as _log
 
 import numpy as _np
 
@@ -31,6 +31,9 @@ class EllipticalCone(_SolidBase):
         self.pzTopCut   = pzTopCut
         self.nslice     = nslice
         self.nstack     = nslice
+
+        self.dependents = []
+
         # self.checkParameters()
         if registry:
             registry.addSolid(self)
@@ -40,22 +43,30 @@ class EllipticalCone(_SolidBase):
             raise ValueError("zMax must be greater than pzTopCut")
 
     def pycsgmesh(self):
+
+        _log.info("ellipticalcone.antlr>")
+        pxSemiAxis = float(self.pxSemiAxis)
+        pySemiAxis = float(self.pySemiAxis)
+        zMax = float(self.zMax)
+        pzTopCut = float(self.pzTopCut)
+
+        _log.info("ellipticalcone.pycsgmesh>")
         polygons = []
 
-        sz      = -self.zMax/2.
-        dz      = self.zMax/self.nstack
+        sz      = -zMax/2.
+        dz      = zMax/self.nstack
         dTheta  = 2*_np.pi/self.nslice
         stacks  = self.nstack
         slices  = self.nslice
 
         # semix and semiy are fractions of zmax - calculate absolute numbers
-        dxabs = self.pxSemiAxis * self.zMax
-        dyabs = self.pySemiAxis * self.zMax
+        dxabs = pxSemiAxis * zMax
+        dyabs = pySemiAxis * zMax
 
         def appendVertex(vertices, theta, z, dx=dxabs, dy=dyabs, norm=[]):
             c = _Vector([0,0,0])
-            x = dx*(((self.zMax - z)/self.zMax)*_np.cos(theta)) #generate points on an ellipse
-            y = dy*(((self.zMax - z)/self.zMax)*_np.sin(theta))
+            x = dx*(((zMax - z)/zMax)*_np.cos(theta)) #generate points on an ellipse
+            y = dy*(((zMax - z)/zMax)*_np.sin(theta))
             d = _Vector(
                 x,
                 y,
@@ -110,6 +121,6 @@ class EllipticalCone(_SolidBase):
             appendVertex(vertices, i0 * dTheta, stacks * dz + sz, norm=[0,0,-1])
             polygons.append(_Polygon(vertices))
 
-        self.mesh  = _CSG.fromPolygons(polygons)
+        mesh  = _CSG.fromPolygons(polygons)
 
-        return self.mesh
+        return mesh
