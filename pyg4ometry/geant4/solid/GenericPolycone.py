@@ -6,6 +6,7 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
+import logging as _log
 import numpy as _np
 from copy import deepcopy as _dc
 
@@ -33,6 +34,9 @@ class GenericPolycone(_SolidBase):
         self.pR   = pR
         self.pZ   = pZ
         self.nslice  = nslice
+
+        self.dependents = []
+
         if register:
             if register:
                 _registry.addSolid(self)
