@@ -6,6 +6,7 @@ from pyg4ometry.pycsg.geom import Polygon       as _Polygon
 from pyg4ometry.geant4.Registry import registry as _registry
 from Wedge                 import Wedge         as _Wedge
 
+import logging as _log
 import numpy as _np
 from copy import deepcopy as _dc
 
@@ -35,7 +36,6 @@ class Polycone(_SolidBase):
         self.pRMin   = pRMin
         self.pRMax   = pRMax
         self.nslice  = nslice
-        self.mesh = None
 
         self.dependents = []
 
@@ -47,17 +47,26 @@ class Polycone(_SolidBase):
 
     def pycsgmesh(self):
 
-        self.basicmesh()
-        self.csgmesh()
+        _log.info("polycone.pycsgmesh>")
+        basicmesh = self.basicmesh()
+        mesh = self.csgmesh(basicmesh)
 
-        return self.mesh
+        return mesh
 
     def basicmesh(self):
+        _log.info("polycone.antlr>")
+        pSPhi = float(self.pSPhi)
+        pDPhi = float(self.pDPhi)
 
+        pZpl = [float(val) for val in self.pZpl]
+        pRMin = [float(val) for val in self.pRMin]
+        pRMax = [float(val) for val in self.pRMax]
+
+        _log.info("polycone.basicmesh>")
         polygons = []
 
         dPhi  = 2*_np.pi/self.nslice
-        stacks  = len(self.pZpl)
+        stacks  = len(pZpl)
         slices  = self.nslice
 
         def appendVertex(vertices, theta, z, r, norm=[]):
@@ -73,7 +82,7 @@ class Polycone(_SolidBase):
                 n = _Vector(norm)
             vertices.append(_Vertex(c.plus(d), None))
 
-        rinout    = [self.pRMin, self.pRMax]
+        rinout    = [pRMin, pRMax]
         meshinout = []
 
         offs = 1.e-25 #Small offset to avoid point degenracy when the radius is zero. TODO: make more robust
@@ -86,13 +95,13 @@ class Polycone(_SolidBase):
                 for i0 in range(slices):
                     i1 = i0 + 0.5
                     i2 = i0 + 1
-                    k0 = i0 if R == self.pRMax else i2  #needed to ensure the surface normals on the inner and outer surface are obeyed
-                    k1 = i2 if R == self.pRMax else i0
+                    k0 = i0 if R == pRMax else i2  #needed to ensure the surface normals on the inner and outer surface are obeyed
+                    k1 = i2 if R == pRMax else i0
                     vertices = []
-                    appendVertex(vertices, k0 * dPhi + self.pSPhi, self.pZpl[j0], r0)
-                    appendVertex(vertices, k1 * dPhi + self.pSPhi, self.pZpl[j0], r0)
-                    appendVertex(vertices, k1 * dPhi + self.pSPhi, self.pZpl[j2], r2)
-                    appendVertex(vertices, k0 * dPhi + self.pSPhi, self.pZpl[j2], r2)
+                    appendVertex(vertices, k0 * dPhi + pSPhi, pZpl[j0], r0)
+                    appendVertex(vertices, k1 * dPhi + pSPhi, pZpl[j0], r0)
+                    appendVertex(vertices, k1 * dPhi + pSPhi, pZpl[j2], r2)
+                    appendVertex(vertices, k0 * dPhi + pSPhi, pZpl[j2], r2)
 
                     polygons.append(_Polygon(_dc(vertices)))
 
@@ -102,28 +111,36 @@ class Polycone(_SolidBase):
             vertices_t = []
             vertices_b = []
 
-            if self.pRMin[-1] or self.pRMax[-1]:
-                appendVertex(vertices_t, i2 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMin[-1]+offs)
-                appendVertex(vertices_t, i0 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMin[-1]+offs)
-                appendVertex(vertices_t, i0 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMax[-1]+offs)
-                appendVertex(vertices_t, i2 * dPhi + self.pSPhi, self.pZpl[-1], self.pRMax[-1]+offs)
+            if pRMin[-1] or pRMax[-1]:
+                appendVertex(vertices_t, i2 * dPhi + pSPhi, pZpl[-1], pRMin[-1]+offs)
+                appendVertex(vertices_t, i0 * dPhi + pSPhi, pZpl[-1], pRMin[-1]+offs)
+                appendVertex(vertices_t, i0 * dPhi + pSPhi, pZpl[-1], pRMax[-1]+offs)
+                appendVertex(vertices_t, i2 * dPhi + pSPhi, pZpl[-1], pRMax[-1]+offs)
                 polygons.append(_Polygon(_dc(vertices_t)))
 
-            if self.pRMin[0] or self.pRMax[0]:
-                appendVertex(vertices_b, i0 * dPhi + self.pSPhi, self.pZpl[0], self.pRMin[0]+offs)
-                appendVertex(vertices_b, i2 * dPhi + self.pSPhi, self.pZpl[0], self.pRMin[0]+offs)
-                appendVertex(vertices_b, i2 * dPhi + self.pSPhi, self.pZpl[0], self.pRMax[0]+offs)
-                appendVertex(vertices_b, i0 * dPhi + self.pSPhi, self.pZpl[0], self.pRMax[0]+offs)
+            if pRMin[0] or pRMax[0]:
+                appendVertex(vertices_b, i0 * dPhi + pSPhi, pZpl[0], pRMin[0]+offs)
+                appendVertex(vertices_b, i2 * dPhi + pSPhi, pZpl[0], pRMin[0]+offs)
+                appendVertex(vertices_b, i2 * dPhi + pSPhi, pZpl[0], pRMax[0]+offs)
+                appendVertex(vertices_b, i0 * dPhi + pSPhi, pZpl[0], pRMax[0]+offs)
                 polygons.append(_Polygon(_dc(vertices_b)))
 
-        self.mesh     = _CSG.fromPolygons(polygons)
+        basicmesh     = _CSG.fromPolygons(polygons)
+        return basicmesh
 
-    def csgmesh(self):
-        wrmax    = 3*max([abs(r) for r in self.pRMax]) #ensure intersection wedge is much bigger than solid
-        wzlength = 3*max([abs(z) for z in self.pZpl])
+    def csgmesh(self, basicmesh):
+        _log.info("polycone.antlr>")
+        pSPhi = float(self.pSPhi)
+        pDPhi = float(self.pDPhi)
+        pZpl = [float(val) for val in self.pZpl]
+        pRMax = [float(val) for val in self.pRMax]
 
-        if self.pDPhi != 2*_np.pi:
-            pWedge = _Wedge("wedge_temp",wrmax, self.pSPhi, self.pDPhi+self.pSPhi, wzlength).pycsgmesh()
-            self.mesh = self.mesh.intersect(pWedge)
+        _log.info("polycone.csgmesh>")
+        wrmax    = 3*max([abs(r) for r in pRMax]) #ensure intersection wedge is much bigger than solid
+        wzlength = 3*max([abs(z) for z in pZpl])
 
-        return self.mesh
+        if pDPhi != 2*_np.pi:
+            pWedge = _Wedge("wedge_temp",wrmax, pSPhi, pDPhi+pSPhi, wzlength).pycsgmesh()
+            mesh = basicmesh.intersect(pWedge)
+
+        return mesh
