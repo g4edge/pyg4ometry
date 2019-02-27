@@ -467,16 +467,20 @@ class ReaderNew(object) :
     def parseEllipsoid(self, node) : 
         solid_name = node.attributes['name'].value 
 
-        try : 
+        try :
             bcut = _defines.Expression(solid_name+"_zcut1",node.attributes['zcut1'].value,self.registry)
         except KeyError :
             bcut = _defines.Expression(solid_name+"_zcut1","-1E20",self.registry)
 
+        try :
+            tcut = _defines.Expression(solid_name+"_zcut2",node.attributes['zcut2'].value,self.registry)
+        except KeyError :
+            tcut = _defines.Expression(solid_name+"_zcut2","1E20",self.registry)
+
         ax   = _defines.Expression(solid_name+"_ax",node.attributes['ax'].value,self.registry)
         by   = _defines.Expression(solid_name+"_by",node.attributes['by'].value,self.registry)
         cz   = _defines.Expression(solid_name+"_cz",node.attributes['cz'].value,self.registry)
-        tcut = _defines.Expression(solid_name+"_zcut2",node.attributes['zcut2'].value,self.registry) 
-        
+
         _g4.solid.Ellipsoid(solid_name, ax, by, cz, bcut, tcut, self.registry)
 
     def parseEllipticalCone(self, node) : 
