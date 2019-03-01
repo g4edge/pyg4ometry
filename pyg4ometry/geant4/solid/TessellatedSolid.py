@@ -28,7 +28,7 @@ class TessellatedSolid(_SolidBase):
 
         # if self.facet_list is strings then don't do anything, if floats then need to add to defines 
         
-
+        self.dependents = []
 
         '''
         self.indexed_facet_list = []

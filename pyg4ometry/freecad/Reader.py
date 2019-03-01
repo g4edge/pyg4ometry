@@ -92,21 +92,12 @@ class Reader(object) :
             centrePlacement = centreObject.getGlobalPlacement()
         else : 
             centrePlacement = _fc.Placement()
-        '''
-        for obj in self.doc.Objects : 
-            if obj.TypeId == "Part::Feature" : 
-                com = obj.Shape.CenterOfMass 
-                lp  = obj.Placement
-                gp  = obj.getGlobalPlacement()
-                gp2 = PartFeatureGlobalPlacement(obj,_fc.Placement())
-                print com[0],com[1],com[2],lp.Base[0], lp.Base[1], lp.Base[2], gp.Base[0], gp.Base[1], gp.Base[2]
-        '''
 
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" : 
 
-                # object centre of mass 
-                com = obj.Shape.CenterOfMass
+                # object centre of mass
+                # com = obj.Shape.CenterOfMass
 
                 # tesellate         
                 m = obj.Shape.tessellate(meshDeviation)

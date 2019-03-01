@@ -109,3 +109,17 @@ class LogicalVolume(object):
 
 
         return [vMin, vMax]
+
+    def findLogicalByName(self,name) : 
+        lv = [] 
+
+        if self.name.find(name) != -1 : 
+            lv.append(self)
+
+        
+        for d in self.daughterVolumes : 
+            l = d.logicalVolume.findLogicalByName(name)
+            if len(l) != 0 :
+                lv.append(l)
+        
+        return lv

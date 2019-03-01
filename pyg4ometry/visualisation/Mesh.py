@@ -57,12 +57,3 @@ class Mesh(object) :
         _log.info('visualisation.Mesh.getBoundingBox> %s %s' % (str(vMin), str(vMax)))
 
         return [vMin, vMax]
-
-    def getSize(self) :
-        pass
-
-    def getCentre(self) : 
-        pass
-
-    def setCentre(self) : 
-        pass
