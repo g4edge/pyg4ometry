@@ -75,6 +75,10 @@ class LogicalVolume(object):
             interMesh = transformedMeshes[i].intersect(self.mesh.localmesh.inverse())
             self.mesh.addOverlapMesh(interMesh)
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
+
+    def setSolid(self, solid) : 
+        self.solid = solid 
+        self.mesh  = _Mesh(self.solid)        
                 
     def extent(self) : 
         _log.info('LogicalVolume.extent> %s ' % (self.name))
