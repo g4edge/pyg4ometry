@@ -4,6 +4,8 @@ import copy as _copy
 import pyg4ometry.transformation as _transformation
 import logging as _log
 
+# 2076.40698    -0.16620  2182.18262
+
 class VtkViewer : 
     def __init__(self,size=(1024,768)) : 
         
@@ -50,11 +52,13 @@ class VtkViewer :
         
         pass
 
-    def addAxes(self, length = 20.0) : 
+    def addAxes(self, length = 20.0, origin = (0,0,0)) : 
         self.axes = _vtk.vtkAxesActor()
         # axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
         self.axes.SetTotalLength(length,length,length)
+        self.axes.SetOrigin(origin[0], origin[1], origin[2])
         self.ren.AddActor(self.axes)
+        
 
     def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
         self.addLogicalVolumeBounding(logical)
