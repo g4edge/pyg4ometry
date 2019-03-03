@@ -168,6 +168,9 @@ class Reader(object) :
         print tmin, tmax, tmax-tmin
         tsize   = tmax-tmin 
         tcentre = (tmax-tmin)/2.0+tmin
+
+        print tcentre
+
         bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x/2,tsize.y/2,tsize.z/2,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
         
