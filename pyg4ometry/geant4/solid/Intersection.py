@@ -32,7 +32,7 @@ class Intersection(_SolidBase):
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return 'Intersection '+self.name+': ('+str(self.obj1)+') with ('+str(self.obj2)+')'
+        return 'Intersection '+self.name+': ('+str(self.obj1name)+') with ('+str(self.obj2name)+')'
 
     def pycsgmesh(self):
 
