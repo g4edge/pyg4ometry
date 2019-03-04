@@ -75,7 +75,7 @@ class Writer(object):
         f.close()
 
     def extractDefinesFromTesselatedSolids(self, registry):
-        #Tesselated solids require their veritces to be declared in the defines.
+        #Tesselated solids require their vertices to be declared in the defines.
         #Loop over all tesselated solids and populate the defines dictionary.
         for solidId in registry.solidDict.keys():
             solid = registry.solidDict[solidId]
@@ -91,23 +91,21 @@ class Writer(object):
 
         return registry
 
-    def writeGmadTester(self, filenameGmad, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
-        self.filenameGmad = filenameGmad
-
+    def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()
 
         s = 'e1: element, geometry="gdml:'
-        s += str(self.filename)
+        s += str(filenameGDML)
         if self.registry.parameterDict.has_key("GDML_Size_position_z"):
             s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
             # be super tolerant incase the meshing fails - still write out
             try:
-                ext = _g4.mesh_extent(_g4.registry.worldVolume.mesh)
+                ext = self.registry.worldVolume.mesh.extent
                 dz = ext[1][2] - ext[0][2]
                 s += '", l=' + str(dz) + '*mm;\n'
-            except TypeError:
+            except IndexError:
                 s += '", l=20*m;\n'
         s += 'l1: line = (e1);\n'
         s += 'use,period=l1;\n'
@@ -116,7 +114,7 @@ class Writer(object):
         s += 'energy=250.0*GeV;\n'
         if not preprocessGDML:
             s += "option, preprocessGDML=0;"
-        f = open(self.filenameGmad, 'w')
+        f = open(filenameGmad, 'w')
         f.write(s)
         f.close()
 
@@ -195,7 +193,7 @@ class Writer(object):
         elif isinstance(define, _Defines.Expression):
             return # Only write out named defines
         else:
-            raise Exception("Urecognised define type: {}".format(type(define)))
+            raise Exception("Unrecognised define type: {}".format(type(define)))
 
     def writeMaterial(self, material):
         if isinstance(material, _Material) :
