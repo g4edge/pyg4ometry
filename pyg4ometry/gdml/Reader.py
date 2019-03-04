@@ -334,7 +334,7 @@ class Reader(object) :
         alpha = _defines.Expression(solid_name+'_pAlpha',node.attributes['alpha'].value,self._registry) 
         theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry) 
 
-        solid = _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
+        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
 
     def parseTrd(self, node) : 
         solid_name = node.attributes['name'].value
