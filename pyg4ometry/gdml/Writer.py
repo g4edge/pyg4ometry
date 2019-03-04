@@ -42,6 +42,9 @@ class Writer(object):
             self.writeDefine(define)
 
         # loop over materials
+        for mat in registry.materialDict:
+            material = self.registry.materialDict[mat]
+            self.writeMaterial(material)
 
         # loop over solids
         for solidId in registry.solidDict.keys():
@@ -207,6 +210,7 @@ class Writer(object):
                 se  = self.doc.createElement('atom')
                 se.setAttribute('value', str(material.atomic_weight))
                 oe.appendChild(se)
+                self.materials.appendChild(oe)
             elif material.type == 'composite':
                 for comp_info in  material.components:
                     name = comp_info[0].name
@@ -222,10 +226,11 @@ class Writer(object):
                         se.setAttribute('ref', name)
                         se.setAttribute('n', str(comp_info[1]))
                         oe.appendChild(se)
+                self.materials.appendChild(oe)
             elif material.type == 'nist' or material.type == 'arbitrary':
                 # No need to add defines for NIST compounds or
-                # materials which are simply names.
-                return
+                # materials which are simply names, so do not append child.
+                pass
 
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
@@ -244,6 +249,7 @@ class Writer(object):
                     se.setAttribute('ref', name)
                     se.setAttribute('n', str(comp_info[1]))
                     oe.appendChild(se)
+            self.materials.appendChild(oe)
 
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
@@ -254,10 +260,10 @@ class Writer(object):
             se.setAttribute('type', 'A')
             se.setAttribute('value', str(material.a))
             oe.appendChild(se)
+            self.materials.appendChild(oe)
 
         if material.name not in self.materials_written:
             self.materials_written.append(material.name)
-            self.materials.appendChild(oe)
 
     def writeSolid(self, solid):
         """
