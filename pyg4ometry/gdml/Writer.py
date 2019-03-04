@@ -55,7 +55,7 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList  :
             print "writer", logicalName
             logical = registry.logicalVolumeDict[logicalName]
-            logical.gdmlWrite(self,self.prepend)
+            self.writeLogicalVolume(logical)
             self.writeMaterial(logical.material)
 
         self.setup.setAttribute("name","Default")
@@ -264,6 +264,51 @@ class Writer(object):
 
         if material.name not in self.materials_written:
             self.materials_written.append(material.name)
+
+    def writeLogicalVolume(self, lv):
+        we = self.doc.createElement('volume')
+        we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
+        mr = self.doc.createElement('materialref')
+        if lv.material.name.find("G4") != -1 :
+            mr.setAttribute('ref', lv.material.name)
+        else :
+            mr.setAttribute('ref', "{}{}".format(self.prepend, lv.material.name))
+        we.appendChild(mr)
+
+        sr = self.doc.createElement('solidref')
+        sr.setAttribute('ref', "{}{}".format(self.prepend, lv.solid.name))
+        we.appendChild(sr)
+
+        for dv in lv.daughterVolumes :
+            dve = self.writePhysicalVolume(dv)
+            we.appendChild(dve)
+
+        self.structure.appendChild(we)
+
+    def writePhysicalVolume(self, pv):
+        pvol = self.doc.createElement('physvol')
+        pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
+        pvol.appendChild(vr)
+
+        # phys vol translation
+        tlatee = self.doc.createElement('positionref')
+        tlatee.setAttribute('ref', str(pv.position.name))
+        pvol.appendChild(tlatee)
+
+        # phys vol rotation
+        rote = self.doc.createElement('rotationref')
+        rote.setAttribute('ref', str(pv.rotation.name))
+        pvol.appendChild(rote)
+
+        # phys vol scale
+        # TODO: Scale information
+        #tscae = self.doc.createElement('scaleref')
+        #tscae.setAttribute('ref', str(pv.rotation.name))
+        #pvol.appendChild(tscae)
+
+        return pvol
 
     def writeSolid(self, solid):
         """
