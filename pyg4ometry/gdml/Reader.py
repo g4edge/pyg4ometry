@@ -131,7 +131,7 @@ class Reader(object) :
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
             else:
-                print "Urecognised define: ", define_type
+                print "Unrecognised define: ", define_type
 
         pass
 
