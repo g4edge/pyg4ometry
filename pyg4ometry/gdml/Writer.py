@@ -1,15 +1,14 @@
 from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
-#from ..geant4.Parameter import Parameter as _Parameter
-#from ..geant4.ParameterVector import ParameterVector as _ParameterVector
 from ..geant4.Material import Material as _Material
 from ..geant4.Material import Element as _Element
 from ..geant4.Material import Isotope as _Isotope
-
+from ..gdml import Defines as _Defines
+import Expression as _Expression
 import pyg4ometry.geant4 as _g4
 
 class Writer(object):
-    def __init__(self, prepend = 'PREPEND'):
+    def __init__(self, prepend = ''):
         super(Writer, self).__init__()
         self.prepend = prepend
 
@@ -38,13 +37,9 @@ class Writer(object):
         self.registry = self.extractDefinesFromTesselatedSolids(registry)
 
         # loop over defines
-        for define in registry.defineDict :
-            pass
-
-        # loop over parameters
-        for paramId in registry.parameterDict.keys() :
-            param = registry.parameterDict[paramId]
-            self.writeParameter(param)
+        for definition in registry.defineDict:
+            define = self.registry.defineDict[definition]
+            self.writeDefine(define)
 
         # loop over materials
 
@@ -147,23 +142,57 @@ class Writer(object):
     def checkPhysicalVolumeName(self, physicalVolumeName):
         pass
 
-    def writeParameter(self, param):
-        if isinstance(param,_Parameter) :
+    def writeDefine(self, define):
+        if isinstance(define, _Defines.Constant):
+            oe = self.doc.createElement('constant')
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('value',str(define.expr.expression))
+            self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Quantity):
+            oe = self.doc.createElement('quantity')
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('value',str(define.expr.expression))
+            oe.setAttribute('unit',define.unit)
+            oe.setAttribute('type',define.type)
+            self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Variable):
             oe = self.doc.createElement('variable')
-            oe.setAttribute('name', param.name)
-            if param.name != param.expr :
-                oe.setAttribute('value',param.expr)
-            else :
-                oe.setAttribute('value',str(float(param)))
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('value',str(define.expr.expression))
             self.defines.appendChild(oe)
-        elif isinstance(param,_ParameterVector) :
+        elif isinstance(define, _Defines.Position):
             oe = self.doc.createElement('position')
-            oe.setAttribute('name', param.name)
-            oe.setAttribute('unit','mm')
-            oe.setAttribute('x',str(param[0]))
-            oe.setAttribute('y',str(param[1]))
-            oe.setAttribute('z',str(param[2]))
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('x',str(define.x.expression))
+            oe.setAttribute('y',str(define.y.expression))
+            oe.setAttribute('z',str(define.z.expression))
+            #oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
             self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Rotation):
+            oe = self.doc.createElement('rotation')
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('x',str(define.x.expression))
+            oe.setAttribute('y',str(define.y.expression))
+            oe.setAttribute('z',str(define.z.expression))
+            #oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
+            self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Scale):
+            oe = self.doc.createElement('scale')
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('x',str(define.x.expression))
+            oe.setAttribute('y',str(define.y.expression))
+            oe.setAttribute('z',str(define.z.expression))
+            self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Matrix):
+            oe = self.doc.createElement('matrix')
+            oe.setAttribute('name',define.name)
+            oe.setAttribute('coldim',str(define.coldim))
+            oe.setAttribute('values', " ".join([val.expression for val in define.values]))
+            self.defines.appendChild(oe)
+        elif isinstance(define, _Defines.Expression):
+            return # Only write out named defines
+        else:
+            raise Exception("Urecognised define type: {}".format(type(define)))
 
     def writeMaterial(self, material):
         if isinstance(material, _Material) :
