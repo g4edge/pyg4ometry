@@ -267,6 +267,19 @@ class Writer(object):
 
         self.structure.appendChild(we)
 
+    def GetDefinesFromPV(self, instance, variable):
+        if not hasattr(instance, variable):
+            raise AttributeError("") #TODO: Add error message
+        name = instance.name + "_" + getattr(instance,variable).name
+        try:
+            self.registry.defineDict[name]
+            # will have been written before if already in define dict
+        except KeyError:
+            # otherwise write define
+            getattr(instance, variable).name = name
+            self.writeDefine(getattr(instance, variable))
+        return name
+
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement('physvol')
         pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
@@ -274,14 +287,18 @@ class Writer(object):
         vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
+        # check if variable are in defines registry, else write define.
+        posName = self.GetDefinesFromPV(pv,'position')
+        rotName = self.GetDefinesFromPV(pv,'rotation')
+
         # phys vol translation
         tlatee = self.doc.createElement('positionref')
-        tlatee.setAttribute('ref', str(pv.position.name))
+        tlatee.setAttribute('ref', str(posName))
         pvol.appendChild(tlatee)
 
         # phys vol rotation
         rote = self.doc.createElement('rotationref')
-        rote.setAttribute('ref', str(pv.rotation.name))
+        rote.setAttribute('ref', str(rotName))
         pvol.appendChild(rote)
 
         # phys vol scale
