@@ -34,7 +34,7 @@ class Writer(object):
         self.physicalVolumeList= []
 
     def addDetector(self, registry) :
-        self.registry = self.extractDefinesFromTesselatedSolids(registry)
+        self.registry = registry
 
         # loop over defines
         for definition in registry.defineDict:
@@ -74,22 +74,6 @@ class Writer(object):
         f.write(xmlString)
         f.close()
 
-    def extractDefinesFromTesselatedSolids(self, registry):
-        #Tesselated solids require their vertices to be declared in the defines.
-        #Loop over all tesselated solids and populate the defines dictionary.
-        for solidId in registry.solidDict.keys():
-            solid = registry.solidDict[solidId]
-            if solid.type == "TesselatedSolid":
-                name = solid.name
-                i = 0
-                for vertid in range(len(solid.unique_vertices)):
-                    vertex = solid.unique_vertices[vertid]
-                    defname   = "V_{}_{}".format(name,vertid)
-                    defvertex = _ParameterVector(defname, list(vertex))
-                    registry.defineDict[defname] = defvertex
-                    i=i+1
-
-        return registry
 
     def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         if writeDefaultLattice:
