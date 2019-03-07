@@ -33,7 +33,7 @@ class Subtraction(_SolidBase):
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return 'Subtraction : ('+str(self.obj1)+') - ('+str(self.obj2)+')'
+        return 'Subtraction : ('+str(self.obj1name)+') - ('+str(self.obj2name)+')'
 
     def pycsgmesh(self):
 

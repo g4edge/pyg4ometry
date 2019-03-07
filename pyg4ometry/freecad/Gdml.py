@@ -17,7 +17,7 @@ def GdmlTest(mesh) :
 
     facetList = MeshToFacetList(mesh)
 
-    ts = _g4.solid.TesselatedSolid('test',facetList)
+    ts = _g4.solid.TessellatedSolid('test',facetList)
     tl = _g4.LogicalVolume(ts,'G4_Cu','tl')
     tp = _g4.PhysicalVolume([0,0,0],[0,0,0],tl,'tp',worldLogical)
 
@@ -58,7 +58,7 @@ def MeshListToGdml(fileStub, meshList, materialMap = {"default":"G4_Cu"}) :
                 except KeyError :
                     material = materialMap["default"]
                     
-                ts = _g4.solid.TesselatedSolid(name+"_solid",facetList)    
+                ts = _g4.solid.TessellatedSolid(name+"_solid",facetList)
                 tl = _g4.LogicalVolume(ts,material,name+"_lv")
                 tp = _g4.PhysicalVolume([0,0,0],[0,0,0],tl,name+"_pv",worldLogical)
 
@@ -145,7 +145,7 @@ def ShapeToMesh(shape, scale=None):
     points = mesh_data[0]
     if scale != None:
         points = map(lambda p: p*scale, points)
-        return [points,meshdata[1]]
+        return [points,mesh_data[1]]
     else :
         return mesh_data
 

@@ -131,7 +131,7 @@ class Reader(object) :
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
             else:
-                print "Urecognised define: ", define_type
+                print "Unrecognised define: ", define_type
 
         pass
 
@@ -155,8 +155,12 @@ class Reader(object) :
         
         if type == 'position' : 
             return _defines.Position(name,x,y,z,self._registry,addRegistry) 
-        elif type == 'rotation' : 
+        elif type == 'positionref' :
+            return self._registry.defineDict[node.attributes['ref'].value]
+        elif type == 'rotation' :
             return _defines.Rotation(name,x,y,z,self._registry,addRegistry)
+        elif type == 'rotationref' :
+            return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'scale' : 
             return _defines.Scale(name,x,y,z,self._registry,addRegistry)
         
@@ -330,7 +334,7 @@ class Reader(object) :
         alpha = _defines.Expression(solid_name+'_pAlpha',node.attributes['alpha'].value,self._registry) 
         theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry) 
 
-        solid = _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
+        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
 
     def parseTrd(self, node) : 
         solid_name = node.attributes['name'].value
@@ -595,12 +599,18 @@ class Reader(object) :
         second     = node.getElementsByTagName("second")[0].attributes['ref'].value
         try : 
             position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
-        except IndexError : 
-            position   = _defines.Position("zero","0","0","0",self._registry,False)            
-        try : 
+        except IndexError :
+            try:
+                position = self.parseVector(node.getElementsByTagName("positionref")[0], "positionref", False)
+            except IndexError:
+                position   = _defines.Position("zero","0","0","0",self._registry,False)
+        try :
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
-        except IndexError : 
-            rotation   = _defines.Rotation("indentity","0","0","0",self._registry,False)
+        except IndexError :
+            try:
+                rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
+            except IndexError:
+                rotation   = _defines.Rotation("identity","0","0","0",self._registry,False)
 
         _g4.solid.Subtraction(solid_name, first, second,[rotation,position],self._registry)
 
