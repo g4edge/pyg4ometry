@@ -430,13 +430,24 @@ class Writer(object):
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
 
-        i = 0
-        for indexed_faced in instance.indexed_facet_list:
-            vertices = []
-            for vertex_id in indexed_faced[0]: #Always 3 elements in a facet
-                vertices.append("V_{}_{}".format(name,vertex_id))
-                i = i+1
-            oe.appendChild(self.createTriangularFacet(*vertices))
+        for vertex_id in range(len(instance.facet_list)):
+            vertexRefs = []
+            vertices = instance.facet_list[vertex_id]
+            # assume facet has the same structure, a tuple containing
+            # 1 3-tuple of 3-tuples (xyz vertices) and a 3-tuple normal
+            for vertex in range(len(vertices[0])):
+                defname = "{}_{}_{}".format(name, vertex_id, vertex)
+                vertexRefs.append(defname)
+                defvertex = vertices[0][vertex]
+                #write vertex define here, so sense looping over vertices twice.
+                self.writeDefine(_Defines.Position(defname, defvertex[0], defvertex[1], defvertex[2]))
+            oe.appendChild(self.createTriangularFacet(*vertexRefs))
+
+            # TODO: do we need to write out the 3-tuple normal if its never used?
+            #defname = "{}_{}_normal".format(name, vertex_id)
+            #vertexNormal = vertices[1]
+            #self.writeDefine(_Defines.Position(defname, vertexNormal[0], vertexNormal[1], vertexNormal[2]))
+
         self.solids.appendChild(oe)
 
     def writeHype(self, instance):
