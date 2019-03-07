@@ -321,67 +321,82 @@ class Writer(object):
             print solid.name
             raise ValueError("No such solid "+solid.type)
 
+    def getValueOrExprFromInstance(self, instance, variable, index=None):
+        if not hasattr(instance, variable):
+            raise AttributeError("") #TODO: Add error message
+        indexedVariable = variable
+        if index is not None:
+            try:
+                indexedVariable = variable[index]
+            except IndexError:
+                raise IndexError("") #TODO: Add error message
+        var = getattr(instance, indexedVariable)
+        if isinstance(var, _Defines.Expression):
+            return str(var.expr.expression)
+        else:
+            return str(var)
+
     def writeBox(self, instance):
         oe = self.doc.createElement('box')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('x','2*'+str(instance.pX.expr.expression))
-        oe.setAttribute('y','2*'+str(instance.pY.expr.expression))
-        oe.setAttribute('z','2*'+str(instance.pZ.expr.expression))
+        oe.setAttribute('x','2*'+self.getValueOrExprFromInstance(instance,'pX'))
+        oe.setAttribute('y','2*'+self.getValueOrExprFromInstance(instance,'pY'))
+        oe.setAttribute('z','2*'+self.getValueOrExprFromInstance(instance,'pZ'))
         self.solids.appendChild(oe)
 
     def writeCons(self, instance):
         oe = self.doc.createElement('cone')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('rmin1', str(instance.pRmin1.expr.expression))
-        oe.setAttribute('rmax1', str(instance.pRmax1.expr.expression))
-        oe.setAttribute('rmin2', str(instance.pRmin2.expr.expression))
-        oe.setAttribute('rmax2', str(instance.pRmax2.expr.expression))
-        oe.setAttribute('z', '2*'+str(instance.pDz.expr.expression))
-        oe.setAttribute('startphi', str(instance.pSPhi.expr.expression))
-        oe.setAttribute('deltaphi', str(instance.pDPhi.expr.expression))
+        oe.setAttribute('rmin1', self.getValueOrExprFromInstance(instance,'pRmin1'))
+        oe.setAttribute('rmax1', self.getValueOrExprFromInstance(instance,'pRmax1'))
+        oe.setAttribute('rmin2', self.getValueOrExprFromInstance(instance,'pRmin2'))
+        oe.setAttribute('rmax2', self.getValueOrExprFromInstance(instance,'pRmax2'))
+        oe.setAttribute('z', '2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
         self.solids.appendChild(oe)
 
     def writeCutTubs(self, instance):
         oe = self.doc.createElement('cutTube')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('z', '2*'+str(instance.pDz.expr.expression))
-        oe.setAttribute('rmin', str(instance.pRMin.expr.expression))
-        oe.setAttribute('rmax', str(instance.pRMax.expr.expression))
-        oe.setAttribute('startphi', str(instance.pSPhi.expr.expression))
-        oe.setAttribute('deltaphi', str(instance.pDPhi.expr.expression))
-        oe.setAttribute('lowX', str(instance.pLowNorm[0].expr.expression))
-        oe.setAttribute('lowY', str(instance.pLowNorm[1].expr.expression))
-        oe.setAttribute('lowZ', str(instance.pLowNorm[2].expr.expression))
-        oe.setAttribute('highX', str(instance.pHighNorm[0].expr.expression))
-        oe.setAttribute('highY', str(instance.pHighNorm[1].expr.expression))
-        oe.setAttribute('highZ', str(instance.pHighNorm[2].expr.expression))
+        oe.setAttribute('z', '2*'+self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('rmin', self.getValueOrExprFromInstance(instance,'pRMin'))
+        oe.setAttribute('rmax', self.getValueOrExprFromInstance(instance,'pRMax'))
+        oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('lowX', self.getValueOrExprFromInstance(instance,'pLowNorm',0))
+        oe.setAttribute('lowY', self.getValueOrExprFromInstance(instance,'pLowNorm',1))
+        oe.setAttribute('lowZ', self.getValueOrExprFromInstance(instance,'pLowNorm',2))
+        oe.setAttribute('highX', self.getValueOrExprFromInstance(instance,'pHighNorm',0))
+        oe.setAttribute('highY', self.getValueOrExprFromInstance(instance,'pHighNorm',1))
+        oe.setAttribute('highZ', self.getValueOrExprFromInstance(instance,'pHighNorm',2))
         self.solids.appendChild(oe)
 
     def writeEllipsoid(self, instance):
         oe = self.doc.createElement('ellipsoid')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('ax', str(instance.pxSemiAxis.expr.expression))
-        oe.setAttribute('by', str(instance.pySemiAxis.expr.expression))
-        oe.setAttribute('cz', str(instance.pzSemiAxis.expr.expression))
-        oe.setAttribute('zcut1', str(instance.pzBottomCut.expr.expression))
-        oe.setAttribute('zcut2', str(instance.pzTopCut.expr.expression))
+        oe.setAttribute('ax', self.getValueOrExprFromInstance(instance,'pxSemiAxis'))
+        oe.setAttribute('by', self.getValueOrExprFromInstance(instance,'pySemiAxis'))
+        oe.setAttribute('cz', self.getValueOrExprFromInstance(instance,'pzSemiAxis'))
+        oe.setAttribute('zcut1', self.getValueOrExprFromInstance(instance,'pzBottomCut'))
+        oe.setAttribute('zcut2', self.getValueOrExprFromInstance(instance,'pzTopCut'))
         self.solids.appendChild(oe)
 
     def writeEllipticalCone(self, instance):
         oe = self.doc.createElement('elcone')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('dx', str(instance.pxSemiAxis.expr.expression))
-        oe.setAttribute('dy', str(instance.pySemiAxis.expr.expression))
-        oe.setAttribute('zmax', str(instance.zMax.expr.expression))
-        oe.setAttribute('zcut', str(instance.pzTopCut.expr.expression))
+        oe.setAttribute('dx', self.getValueOrExprFromInstance(instance,'pxSemiAxis'))
+        oe.setAttribute('dy', self.getValueOrExprFromInstance(instance,'pySemiAxis'))
+        oe.setAttribute('zmax', self.getValueOrExprFromInstance(instance,'zMax'))
+        oe.setAttribute('zcut', self.getValueOrExprFromInstance(instance,'pzTopCut'))
         self.solids.appendChild(oe)
 
     def writeEllipticalTube(self, instance):
         oe = self.doc.createElement('eltube')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('dx', str(instance.pDx.expr.expression))
-        oe.setAttribute('dy', str(instance.pDy.expr.expression))
-        oe.setAttribute('dz', str(instance.pDz.expr.expression))
+        oe.setAttribute('dx', self.getValueOrExprFromInstance(instance,'pDx'))
+        oe.setAttribute('dy', self.getValueOrExprFromInstance(instance,'pDy'))
+        oe.setAttribute('dz', self.getValueOrExprFromInstance(instance,'pDz'))
         self.solids.appendChild(oe)
 
     def createTwoDimVertex(self, x, y):
@@ -425,8 +440,8 @@ class Writer(object):
     def writeGenericPolycone(self, instance):
         oe = self.doc.createElement('genericPolycone')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('startphi', str(instance.pSPhi.expr.expression))
-        oe.setAttribute('deltaphi', str(instance.pDPhi.expr.expression))
+        oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi')) 
 
         for r,z in zip(instance.pR, instance.pZ):
             p = self.createrzPoint(r, z)
@@ -470,11 +485,11 @@ class Writer(object):
     def writeHype(self, instance):
         oe = self.doc.createElement('hype')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('rmin', str(instance.innerRadius.expr.expression))
-        oe.setAttribute('rmax', str(instance.outerRadius.expr.expression))
-        oe.setAttribute('z', '2*'+str(instance.halfLenZ.expr.expression))
-        oe.setAttribute('inst', str(instance.innerStereo.expr.expression))
-        oe.setAttribute('outst', str(instance.outerStereo.expr.expression))
+        oe.setAttribute('rmin', self.getValueOrExprFromInstance(instance,'innerRadius'))
+        oe.setAttribute('rmax', self.getValueOrExprFromInstance(instance,'outerRadius'))
+        oe.setAttribute('z', '2*'+ self.getValueOrExprFromInstance(instance,'halfLenZ'))
+        oe.setAttribute('inst', self.getValueOrExprFromInstance(instance,'innerStereo'))
+        oe.setAttribute('outst', self.getValueOrExprFromInstance(instance,'outerStereo'))
         self.solids.appendChild(oe)
 
     def writeIntersection(self, instance):
@@ -521,26 +536,26 @@ class Writer(object):
     def writeOrb(self, instance):
         oe = self.doc.createElement('orb')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('r', str(instance.pRMax.expr.expression))
+        oe.setAttribute('r', self.getValueOrExprFromInstance(instance,'pRMax'))
         self.solids.appendChild(oe)
 
     def writePara(self, instance):
         oe = self.doc.createElement('para')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('x', str(instance.pX.expr.expression))
-        oe.setAttribute('y', str(instance.pY.expr.expression))
-        oe.setAttribute('z', str(instance.pZ.expr.expression))
-        oe.setAttribute('alpha', str(instance.pAlpha.expr.expression))
-        oe.setAttribute('theta', str(instance.pTheta.expr.expression))
-        oe.setAttribute('phi', str(instance.pPhi.expr.expression))
+        oe.setAttribute('x', self.getValueOrExprFromInstance(instance,'pX'))
+        oe.setAttribute('y', self.getValueOrExprFromInstance(instance,'pY'))
+        oe.setAttribute('z', self.getValueOrExprFromInstance(instance,'pZ'))
+        oe.setAttribute('alpha', self.getValueOrExprFromInstance(instance,'pAlpha'))
+        oe.setAttribute('theta', self.getValueOrExprFromInstance(instance,'pTheta'))
+        oe.setAttribute('phi', self.getValueOrExprFromInstance(instance,'pPhi'))
         self.solids.appendChild(oe)
 
     def writeParaboloid(self, instance):
         oe = self.doc.createElement('paraboloid')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('rlo', str(instance.pR1.expr.expression))
-        oe.setAttribute('rhi', str(instance.pR2.expr.expression))
-        oe.setAttribute('dz', str(instance.pDz.expr.expression))
+        oe.setAttribute('rlo', self.getValueOrExprFromInstance(instance,'pR1'))
+        oe.setAttribute('rhi', self.getValueOrExprFromInstance(instance,'pR2'))
+        oe.setAttribute('dz', self.getValueOrExprFromInstance(instance,'pDz'))
         self.solids.appendChild(oe)
 
     def createzPlane(self, rInner, rOuter, zplane):
@@ -553,8 +568,8 @@ class Writer(object):
     def writePolycone(self, instance):
         oe = self.doc.createElement('polycone')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('startphi',str(instance.pSPhi.expr.expression))
-        oe.setAttribute('deltaphi',str(instance.pDPhi.expr.expression))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
 
         i = instance
         for w,x,y in zip(i.pRMin, i.pRMax, i.pZpl):
@@ -566,9 +581,9 @@ class Writer(object):
     def writePolyhedra(self, instance):
         oe = self.doc.createElement('polyhedra')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('startphi',str(instance.phiStart.expr.expression))
-        oe.setAttribute('deltaphi',str(instance.phiTotal.expr.expression))
-        oe.setAttribute('numsides',str(instance.numSide.expr.expression))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'phiStart'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'phiTotal'))
+        oe.setAttribute('numsides',self.getValueOrExprFromInstance(instance,'numSide'))
 
         i = instance
         for w,x,y in zip(i.rInner, i.rOuter, i.zPlane):
@@ -579,13 +594,13 @@ class Writer(object):
 
     def writeSphere(self, instance):
         oe = self.doc.createElement('sphere')
-        oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('rmin',str(instance.pRmin.expr.expression))
-        oe.setAttribute('rmax',str(instance.pRmax.expr.expression))
-        oe.setAttribute('deltaphi',str(instance.pDPhi.expr.expression))
-        oe.setAttribute('startphi',str(instance.pSPhi.expr.expression))
-        oe.setAttribute('starttheta',str(instance.pSTheta.expr.expression))
-        oe.setAttribute('deltatheta',str(instance.pDTheta.expr.expression))
+        oe.setAttribute('name', self.prepend + instance.name)
+        oe.setAttribute('rmin',self.getValueOrExprFromInstance(instance,'pRmin'))
+        oe.setAttribute('rmax',self.getValueOrExprFromInstance(instance,'pRmax'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('starttheta',self.getValueOrExprFromInstance(instance,'pSTheta'))
+        oe.setAttribute('deltatheta',self.getValueOrExprFromInstance(instance,'pDTheta'))
         self.solids.appendChild(oe)
 
     def writeSubtraction(self, instance):
@@ -655,83 +670,83 @@ class Writer(object):
     def writeTorus(self, instance):
         oe = self.doc.createElement('torus')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('rmin',str(instance.pRmin.expr.expression))
-        oe.setAttribute('rmax',str(instance.pRmax.expr.expression))
-        oe.setAttribute('rtor',str(instance.pRtor.expr.expression))
-        oe.setAttribute('deltaphi',str(instance.pDPhi.expr.expression))
-        oe.setAttribute('startphi',str(instance.pSPhi.expr.expression))
+        oe.setAttribute('rmin',self.getValueOrExprFromInstance(instance,'pRmin'))
+        oe.setAttribute('rmax',self.getValueOrExprFromInstance(instance,'pRmax'))
+        oe.setAttribute('rtor',self.getValueOrExprFromInstance(instance,'pRtor'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
         self.solids.appendChild(oe)
 
     def writeTrap(self, instance):
         oe = self.doc.createElement('trap')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('z',str(instance.pDz.expr.expression))
-        oe.setAttribute('theta',str(instance.pTheta.expr.expression))
-        oe.setAttribute('phi',str(instance.pDPhi.expr.expression))
-        oe.setAttribute('y1',str(instance.pDy1.expr.expression))
-        oe.setAttribute('x1',str(instance.pDx1.expr.expression))
-        oe.setAttribute('x2',str(instance.pDx2.expr.expression))
-        oe.setAttribute('alpha1',str(instance.pAlp1.expr.expression))
-        oe.setAttribute('y2',str(instance.pDy2.expr.expression))
-        oe.setAttribute('x3',str(instance.pDx3.expr.expression))
-        oe.setAttribute('x4',str(instance.pDx4.expr.expression))
-        oe.setAttribute('alpha2',str(instance.pAlp2.expr.expression))
+        oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('theta',self.getValueOrExprFromInstance(instance,'pTheta'))
+        oe.setAttribute('phi',self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('y1',self.getValueOrExprFromInstance(instance,'pDy1'))
+        oe.setAttribute('x1',self.getValueOrExprFromInstance(instance,'pDx1'))
+        oe.setAttribute('x2',self.getValueOrExprFromInstance(instance,'pDx2'))
+        oe.setAttribute('alpha1',self.getValueOrExprFromInstance(instance,'pAlp1'))
+        oe.setAttribute('y2',self.getValueOrExprFromInstance(instance,'pDy2'))
+        oe.setAttribute('x3',self.getValueOrExprFromInstance(instance,'pDx3'))
+        oe.setAttribute('x4',self.getValueOrExprFromInstance(instance,'pDx4'))
+        oe.setAttribute('alpha2',self.getValueOrExprFromInstance(instance,'pAlp2'))
         self.solids.appendChild(oe)
 
     def writeTrd(self, instance):
         oe = self.doc.createElement("trd")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('x1',str(instance.pX1.expr.expression))
-        oe.setAttribute('x2',str(instance.pX2.expr.expression))
-        oe.setAttribute('y1',str(instance.pY1.expr.expression))
-        oe.setAttribute('y2',str(instance.pY2.expr.expression))
-        oe.setAttribute('z',str(instance.pZ.expr.expression))
+        oe.setAttribute('x1',self.getValueOrExprFromInstance(instance,'pX1'))
+        oe.setAttribute('x2',self.getValueOrExprFromInstance(instance,'pX2'))
+        oe.setAttribute('y1',self.getValueOrExprFromInstance(instance,'pY1'))
+        oe.setAttribute('y2',self.getValueOrExprFromInstance(instance,'pY2'))
+        oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pZ'))
         self.solids.appendChild(oe)
 
     def writeTubs(self, instance):
         oe = self.doc.createElement("tube")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('rmin',str(instance.pRMin.expr.expression))
-        oe.setAttribute('rmax',str(instance.pRMax.expr.expression))
-        oe.setAttribute('z',   '2*'+str(instance.pDz.expr.expression))
-        oe.setAttribute('startphi',str(instance.pSPhi.expr.expression))
-        oe.setAttribute('deltaphi',str(instance.pDPhi.expr.expression))
+        oe.setAttribute('rmin',self.getValueOrExprFromInstance(instance,'pRMin'))
+        oe.setAttribute('rmax',self.getValueOrExprFromInstance(instance,'pRMax'))
+        oe.setAttribute('z',   '2*'+self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
         self.solids.appendChild(oe)
 
     def writeTwistedBox(self, instance):
         oe = self.doc.createElement("twistedbox")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('PhiTwist',str(instance.twistedAngle.expr.expression))
-        oe.setAttribute('x','2*'+ str(instance.pDx.expr.expression))
-        oe.setAttribute('y','2*'+ str(instance.pDy.expr.expression))
-        oe.setAttribute('z','2*'+ str(instance.pDz.expr.expression))
+        oe.setAttribute('PhiTwist', self.getValueOrExprFromInstance(instance,'twistedAngle'))
+        oe.setAttribute('x','2*'+ self.getValueOrExprFromInstance(instance,'pDx'))
+        oe.setAttribute('y','2*'+ self.getValueOrExprFromInstance(instance,'pDy'))
+        oe.setAttribute('z','2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
         self.solids.appendChild(oe)
 
     def writeTwistedTrd(self, instance):
         oe = self.doc.createElement("twistedtrd")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('PhiTwist',str(instance.twistedAngle.expr.expression))
-        oe.setAttribute('x1','2*'+ str(instance.pDx1.expr.expression))
-        oe.setAttribute('x2','2*'+ str(instance.pDx2.expr.expression))
-        oe.setAttribute('y1','2*'+ str(instance.pDy1.expr.expression))
-        oe.setAttribute('y2','2*'+ str(instance.pDy2.expr.expression))
-        oe.setAttribute('z','2*'+ str(instance.pDz.expr.expression))
+        oe.setAttribute('PhiTwist',self.getValueOrExprFromInstance(instance,'twistedAngle'))
+        oe.setAttribute('x1','2*'+ self.getValueOrExprFromInstance(instance,'pDx1'))
+        oe.setAttribute('x2','2*'+ self.getValueOrExprFromInstance(instance,'pDx2'))
+        oe.setAttribute('y1','2*'+ self.getValueOrExprFromInstance(instance,'pDy1'))
+        oe.setAttribute('y2','2*'+ self.getValueOrExprFromInstance(instance,'pDy2'))
+        oe.setAttribute('z','2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
         self.solids.appendChild(oe)
 
     def writeTwistedTrap(self, instance):
         oe = self.doc.createElement("twistedtrap")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('PhiTwist',str(instance.twistedangle.expr.expression))
-        oe.setAttribute('z','2*'+ str(instance.pDz.expr.expression))
-        oe.setAttribute('Theta',str(instance.pTheta.expr.expression))
-        oe.setAttribute('Phi',str(instance.pDPhi.expr.expression))
-        oe.setAttribute('y1','2*'+ str(instance.pDy1.expr.expression))
-        oe.setAttribute('x1','2*'+ str(instance.pDx1.expr.expression))
-        oe.setAttribute('x2','2*'+ str(instance.pDx2.expr.expression))
-        oe.setAttribute('y2','2*'+ str(instance.pDy2.expr.expression))
-        oe.setAttribute('x3','2*'+ str(instance.pDx3.expr.expression))
-        oe.setAttribute('x4','2*'+ str(instance.pDx4.expr.expression))
-        oe.setAttribute('Alph',str(instance.pAlp.expr.expression))
+        oe.setAttribute('PhiTwist',self.getValueOrExprFromInstance(instance,'twistedangle'))
+        oe.setAttribute('z','2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('Theta',self.getValueOrExprFromInstance(instance,'pTheta'))
+        oe.setAttribute('Phi',self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('y1','2*'+ self.getValueOrExprFromInstance(instance,'pDy1'))
+        oe.setAttribute('x1','2*'+ self.getValueOrExprFromInstance(instance,'pDx1'))
+        oe.setAttribute('x2','2*'+ self.getValueOrExprFromInstance(instance,'pDx2'))
+        oe.setAttribute('y2','2*'+ self.getValueOrExprFromInstance(instance,'pDy2'))
+        oe.setAttribute('x3','2*'+ self.getValueOrExprFromInstance(instance,'pDx3'))
+        oe.setAttribute('x4','2*'+ self.getValueOrExprFromInstance(instance,'pDx4'))
+        oe.setAttribute('Alph',self.getValueOrExprFromInstance(instance,'pAlp'))
         self.solids.appendChild(oe)
 
     def writeUnion(self, instance):
