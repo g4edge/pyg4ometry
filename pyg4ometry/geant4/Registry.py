@@ -34,7 +34,7 @@ class Registry:
     def addDefinition(self, definition):
         try:
             self.defintionDict[definition.name]
-            print 'definition replicated', defintion.name
+            print 'definition replicated', definition.name
             raise pyg4ometry.exceptions.IdenticalNameError(definition.name, "definition")
         except KeyError:
             self.definitionDict[definition.name] = definition
@@ -124,7 +124,7 @@ class Registry:
             raise pyg4ometry.exceptions.IdenticalNameError(
                 volume.name, "parametrised volume")
         except KeyError:
-            self.parametrisedVolumeDict[volume.name] = volume
+            self.parameterisedVolumeDict[volume.name] = volume
 
         try:
             self.volumeTypeCountDict["parametrisedVolume"] += 1
