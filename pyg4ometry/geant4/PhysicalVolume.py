@@ -7,12 +7,23 @@ import logging as _log
 
 
 class PhysicalVolume(object):
-    '''Geant4 Physical volume class'''
 
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, registry=None):
+                 motherVolume, registry=None, addRegistry = True):
+        '''PhysicalVolume : G4PVPlacement 
+        rotation      - 
+        position      - 
+        logicalVolume - pyg4ometry.geant4.LogicalVolume 
+        name          - string 
+        motherVolume  - pyg4ometry.geant4.LogicalVolume
+        registry      - pyg4ometry.geant4.Registry
+        addRegistry   - bool'''
+        
+
         super(PhysicalVolume, self).__init__()
 
+    
+    
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
@@ -33,7 +44,7 @@ class PhysicalVolume(object):
         self.visOptions    = _VisOptions()
 
         # registry logic
-        if registry:
+        if registry and addRegistry :
             registry.addPhysicalVolume(self)
         self.registry = registry
 

@@ -13,7 +13,7 @@ import sys     as   _sys
 import logging as   _log
 
 class LogicalVolume(object):
-    def __init__(self, solid, material, name, registry=None, **kwargs):
+    def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super(LogicalVolume, self).__init__()
 
         # geant4 required objects 
@@ -33,7 +33,7 @@ class LogicalVolume(object):
         self.mesh            = _Mesh(self.solid)
 
         # registry logic
-        if registry:
+        if registry and addRegistry:
             registry.addLogicalVolume(self)
         self.registry = registry
 

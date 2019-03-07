@@ -3,9 +3,10 @@
 
 from LogicalVolume import *
 from PhysicalVolume import *
+from AssemblyVolume import *
 from ReplicaVolume import *
 from ParameterisedVolume import *
-from AssemblyVolume import *
+from DivisionVolume import *
 from Registry import *
 from Material import *
 from Expression import *
