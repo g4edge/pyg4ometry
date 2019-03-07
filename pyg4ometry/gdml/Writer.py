@@ -64,11 +64,7 @@ class Writer(object):
         we.setAttribute("ref",self.prepend + registry.worldName+"_lv")
         self.setup.appendChild(we)
 
-    def write(self, registry, filename) :
-        return 
-
-        self.filename = filename
-
+    def write(self, filename) :
         f = open(filename,'w')
         xmlString = self.doc.toprettyxml()
         f.write(xmlString)
