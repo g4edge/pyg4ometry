@@ -9,6 +9,7 @@ class Registry:
         self.logicalVolumeDict            = OrderedDict()
         self.physicalVolumeDict           = OrderedDict()
         self.physicalVolumeCountDict      = OrderedDict()
+        self.assemblyVolumeDict           = OrderedDict()
         self.replicaVolumeDict            = OrderedDict()
         self.parameterisedVolumeDict      = OrderedDict()
         self.opticalSufaceDict            = OrderedDict()
@@ -107,6 +108,9 @@ class Registry:
         except KeyError:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
 
+
+    def addAssemblyVolume(self, volume) : 
+        self.assemblyVolumeDict[volume.name] = volume 
 
     def addReplicaVolume(self,volume):
         self.replicaVolumeDict[volume.name] = volume
