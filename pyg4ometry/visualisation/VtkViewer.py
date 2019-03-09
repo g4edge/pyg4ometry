@@ -177,7 +177,7 @@ class VtkViewer :
             rotaa = _transformation.matrix2axisangle(new_mrot)
 
             vtkActor.SetPosition(new_tra[0],new_tra[1],new_tra[2])
-            vtkActor.RotateWXYZ(rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
+            vtkActor.RotateWXYZ(-rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
 
             # set visualisation properties
             vtkActor.GetProperty().SetColor(pv.visOptions.color[0],

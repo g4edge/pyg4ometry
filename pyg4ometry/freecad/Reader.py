@@ -30,7 +30,7 @@ class Reader(object) :
     def load(self, fileName) :         
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
-
+        
     def relabelModel(self) : 
         for obj in self.doc.Objects : 
             obj.Label = obj.Label.replace("(","_")
@@ -148,7 +148,7 @@ class Reader(object) :
                 z = globalPlacement.Base[2] - centrePlacement.Base[2]
 
                 # rotation for placement
-                m44 = globalPlacement.toMatrix()
+                m44 = globalPlacement.toMatrix().inverse()
                 m33 = _np.zeros((3,3))
                 m33[0][0] = m44.A11
                 m33[0][1] = m44.A12

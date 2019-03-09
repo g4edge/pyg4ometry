@@ -25,6 +25,7 @@ class Cons(_SolidBase):
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
                  pSPhi, pDPhi, registry=None):
+
         self.name = name
         self.type = 'Cons'
         self.pRmin1 = pRmin1

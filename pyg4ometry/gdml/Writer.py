@@ -155,6 +155,7 @@ class Writer(object):
             oe.setAttribute('x',str(define.x.expression))
             oe.setAttribute('y',str(define.y.expression))
             oe.setAttribute('z',str(define.z.expression))
+            # oe.setAttribute('unit','rad')
             #oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Scale):
@@ -624,7 +625,6 @@ class Writer(object):
         r.setAttribute('y', str(instance.tra2[0].y.expression))
         r.setAttribute('z', str(instance.tra2[0].z.expression))
         self.defines.appendChild(r)
-
 
         csce = self.doc.createElement('positionref')
         csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')

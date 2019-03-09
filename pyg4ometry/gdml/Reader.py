@@ -274,7 +274,7 @@ class Reader(object) :
 
     def parseCutTube(self, node) : 
         solid_name = node.attributes['name'].value 
-        
+
         try : 
             rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self._registry)
         except KeyError : 
