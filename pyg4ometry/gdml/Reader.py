@@ -497,7 +497,7 @@ class Reader(object) :
     def parseParaboloid(self, node) : 
         solid_name = node.attributes['name'].value 
 
-        Dz         = _defines.Expression(solid_name+"_Dz",'({})/2'.format(node.attributes['dz'].value),self._registry)
+        Dz         = _defines.Expression(solid_name+"_Dz",node.attributes['dz'].value,self._registry)
         R1         = _defines.Expression(solid_name+"_R1",node.attributes['rlo'].value,self._registry)
         R2         = _defines.Expression(solid_name+"_R2",node.attributes['rhi'].value,self._registry)
         
