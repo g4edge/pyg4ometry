@@ -451,9 +451,41 @@ class Reader(object) :
         print 'generic polycone NOT IMPLEMENTED'
 
     def parsePolyhedra(self, node) :
-        solid_name = node.attributes['name'].value        
+        solid_name = node.attributes['name'].value
 
-        print 'polyhedra NOT IMPLEMENTED'        
+        sphi = _defines.Expression("{}_pSphi".format(solid_name),
+                                   node.attributes['startphi'].value, self._registry)
+        dphi = _defines.Expression("{}_pDphi".format(solid_name),
+                                   node.attributes['deltaphi'].value, self._registry)
+        nside = _defines.Expression("{}_numSide".format(solid_name),
+                                    node.attributes['numsides'].value,self._registry)
+
+        Rmin = []
+        Rmax = []
+        Z    = []
+
+        i = 0
+        for chNode in node.childNodes :
+            rmin = _defines.Expression("{}_zplaine_rmin_{}".format(solid_name, i),
+                                       chNode.attributes['rmin'].value,
+                                       self._registry)
+
+            rmax = _defines.Expression("{}_zplaine_rmax_{}".format(solid_name, i),
+                                       chNode.attributes['rmax'].value,
+                                       self._registry)
+
+            z = _defines.Expression("{}_zplaine_z_{}".format(solid_name, i),
+                                        chNode.attributes['z'].value,
+                                        self._registry)
+
+            Rmin.append(rmin)
+            Rmax.append(rmax)
+            Z.append(z)
+            i += 1
+
+        nzplane = _defines.Expression("{}_numZplanes".format(solid_name), len(Z), self._registry)
+
+        _g4.solid.Polyhedra(solid_name, sphi, dphi, nside, nzplane, Z, Rmin, Rmax, registry=self._registry)
 
     def parseGenericPolyhedra(self, node) :
         solid_name = node.attributes['name'].value        
