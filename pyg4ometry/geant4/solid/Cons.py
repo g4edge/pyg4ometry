@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from pyg4ometry.pycsg.core import CSG as _CSG
-from pyg4ometry.geant4.Registry import registry as _registry
 from Plane import Plane as _Plane
 from Wedge import Wedge as _Wedge
 from pyg4ometry.pycsg.geom import Vector as _Vector
@@ -51,8 +50,9 @@ class Cons(_SolidBase):
             raise ValueError("pDTheta must be less than 2 pi")
 
     def __repr__(self):
-        return 'Cons : '+self.name+' '+str(self.pRmin1)+' '+str(self.pRmax1)+' '+str(self.pRmin2)+' '+str(self.pRmax2)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
-
+        return "Cons : {} {} {} {} {} {} {} {}".format(self.name, self.pRmin1, self.pRmax1,
+                                                       self.pRmin2, self.pRmax2, self.pDz,
+                                                       self.pSPhi, self.pDPhi)
     def pycsgmesh(self):
 
         _log.info('cons.antlr>')

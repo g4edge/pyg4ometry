@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
@@ -10,7 +9,7 @@ import logging as _log
 import numpy as _np
 
 class EllipticalTube(_SolidBase):
-    def __init__(self, name, pDx, pDy, pDz, registry = None, nslice=6, nstack=6):
+    def __init__(self, name, pDx, pDy, pDz, registry=None, nslice=6, nstack=6):
         """
         Constructs a tube of elliptical cross-section.
 
@@ -32,6 +31,10 @@ class EllipticalTube(_SolidBase):
 
         if registry:
             registry.addSolid(self)
+
+    def __repr__(self):
+        return "EllipticalTube : {} {} {} {}".format(self.name, self.pDx,
+                                                     self.pDy, self.pDz)
 
     def pycsgmesh(self):
 
