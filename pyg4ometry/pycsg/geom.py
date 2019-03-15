@@ -170,6 +170,7 @@ class Plane(object):
     `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a
     point is on the plane.
     """
+    # EPSILON = 1.e-12
     EPSILON = 1.e-5
 
     def __init__(self, normal, w):
