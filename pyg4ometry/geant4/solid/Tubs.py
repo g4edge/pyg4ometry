@@ -26,7 +26,7 @@ class Tubs(_SolidBase):
     :param pDPhi: angle of segment in phi
     :type pDPhi: float
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, unit="mm", aunit="rad",
                  registry=None, nslice=16):
         self.type   = 'Tubs'
         self.name   = name
@@ -35,6 +35,8 @@ class Tubs(_SolidBase):
         self.pDz    = pDz
         self.pSPhi  = pSPhi
         self.pDPhi  = pDPhi
+        self.unit   = unit
+        self.aunit  = aunit
         self.nslice = nslice
         self.mesh   = None
         self.dependents = []
@@ -46,13 +48,19 @@ class Tubs(_SolidBase):
 
     def pycsgmesh(self):
 
-        pDz   = float(self.pDz)
-        pRMax = float(self.pRMax)
-        pRMin = float(self.pRMin)
-        pSPhi = float(self.pSPhi)
-        pDPhi = float(self.pDPhi)
-        pDz   = float(self.pDz)
-        pRMax = float(self.pRMax)
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        uval = _Units.lunit(self.unit)
+        auval = _Units.aunit(self.aunit)
+
+        print self.unit, self.aunit, uval, auval
+
+        pDz   = float(self.pDz)*uval
+        pRMax = float(self.pRMax)*uval
+        pRMin = float(self.pRMin)*uval
+        pSPhi = float(self.pSPhi)*auval
+        pDPhi = float(self.pDPhi)*auval
+        pDz   = float(self.pDz)*uval
+        pRMax = float(self.pRMax)*uval
 
         mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 

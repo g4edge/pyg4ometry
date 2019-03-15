@@ -36,6 +36,8 @@ class Reader(object) :
             obj.Label = obj.Label.replace("(","_")
             obj.Label = obj.Label.replace(")","_")
             obj.Label = obj.Label.replace("-","_")
+            obj.Label = obj.Label.replace(u' ','_')
+            obj.Label = obj.Label.replace(u'.','dot')
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
@@ -184,8 +186,8 @@ class Reader(object) :
             y = placements[i][1][1]-tcentre.y
             z = placements[i][1][2]-tcentre.z
 
-            p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),self._registry,False),
-                                                 pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),self._registry,False),
+            p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),registry=self._registry,addRegistry=False),
+                                                 pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),registry=self._registry,addRegistry=False),
                                                  logicals[i],                                                    
                                                  names[i]+"_pv",
                                                  bLogical,
@@ -333,6 +335,37 @@ def MeshToFacetList(mesh) :
                              (verts[i2][0],verts[i2][1],verts[i2][2]),
                              (verts[i3][0],verts[i3][1],verts[i3][2])),(0,1,2)) )
     return facet_list
+
+def WriteSMeshFile(mesh,filename) : 
+    f = open(filename,"w")
+    
+    verts    = mesh[0]
+    wind     = mesh[1]
+
+    f.write("# part 1 - node list\n")
+    f.write("%i  3  0  0 \n" % (len(verts)))
+    iv  = 0
+    for v in verts : 
+        f.write("%i %f %f %f\n" % (iv,v[0],v[1],v[2]))
+        iv=iv+1
+    
+    f.write("# part 2 - facet list\n") 
+    f.write("%i 0\n" % (len(wind)))
+
+    iw = 0    
+    for w in wind : 
+        f.write("3 %i %i %i\n" % (w[0], w[1], w[2]))
+
+    f.write("# part 3 - hole list\n") 
+    f.write("0\n")
+
+    f.write("# part 4 - region list\n") 
+    f.write("0\n")
+
+        
+
+    f.close()
+
 
 def FacetListAxisAlignedExtent(facetList) : 
     xMin = 1e99

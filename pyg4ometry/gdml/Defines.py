@@ -1,4 +1,6 @@
-from ..geant4 import Expression as _Expression
+from pyg4ometry.geant4 import Expression as _Expression
+from pyg4ometry.gdml import Units as _Units
+
 from matplotlib.cbook import is_numlike
 import numpy as _np
 
@@ -179,12 +181,14 @@ class Variable(ScalarBase) :
         return "Variable: {} = {}".format(self.name, str(self.expr))
 
 class Expression(ScalarBase) : 
-    def __init__(self, name, value, registry = None) :
+    def __init__(self, name, value, registry = None, addRegistry = False) :
         self.name  = name
         self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
+
+        if addRegistry and registry != None:
             registry.addDefine(self)
 
     def eval(self) :
@@ -205,6 +209,7 @@ class VectorBase(object) :
                       '({})+({})'.format(self.x.expression,other.x.expression),
                       '({})+({})'.format(self.y.expression,other.y.expression),
                       '({})+({})'.format(self.z.expression,other.z.expression),
+                      self.unit,
                       None)
         p.registry      = self.registry
         p.x.registry    = self.registry
@@ -217,6 +222,7 @@ class VectorBase(object) :
                       '({})-({})'.format(self.x.expression,other.x.expression),
                       '({})-({})'.format(self.y.expression,other.y.expression),
                       '({})-({})'.format(self.z.expression,other.z.expression),
+                      self.unit,
                       None)
         p.registry      = self.registry
         p.x.registry    = self.registry
@@ -233,6 +239,7 @@ class VectorBase(object) :
                      '({})*({})'.format(self.x.expression,v2),
                      '({})*({})'.format(self.y.expression,v2),
                      '({})*({})'.format(self.z.expression,v2),
+                     self.unit,
                      None)
         p.registry      = self.registry
         p.x.registry    = self.registry
@@ -250,6 +257,7 @@ class VectorBase(object) :
                      '({})/({})'.format(self.x.expression,v2),
                      '({})/({})'.format(self.y.expression,v2),
                      '({})/({})'.format(self.z.expression,v2),
+                     self.unit,
                      None)
         p.registry      = self.registry
         p.x.registry    = self.registry
@@ -268,7 +276,8 @@ class VectorBase(object) :
         self.registry.addDefine(self)
 
     def eval(self) :
-        return [self.x.eval(), self.y.eval(), self.z.eval()]
+        u = _Units.unit(self.unit)
+        return [self.x.eval()*u, self.y.eval()*u, self.z.eval()*u]
 
     def __getitem__(self, key):
         if key == 0 : 
@@ -292,8 +301,12 @@ def expressionStringVector(var) :
         return var
     
 class Position(VectorBase) :
-    def __init__(self,name,x,y,z, registry = None, addRegistry = True) :
+    def __init__(self,name,x,y,z, unit="mm", registry = None, addRegistry = True) :
         self.name = name
+        if unit != None :
+            self.unit = unit
+        else :
+            self.unit = "mm"
 
         self.x = _Expression("expr_{}_pos_x".format(name), expressionStringVector(x), registry=registry)
         self.y = _Expression("expr_{}_pos_y".format(name), expressionStringVector(y), registry=registry)
@@ -308,8 +321,13 @@ class Position(VectorBase) :
         return "Position : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Rotation(VectorBase) : 
-    def __init__(self,name,rx,ry,rz, registry = None, addRegistry = True) :
+    def __init__(self,name,rx,ry,rz, unit="rad", registry = None, addRegistry = True) :
         self.name = name
+        if unit != None : 
+            self.unit = unit
+        else :
+            self.unit = "rad"
+
         self.x = _Expression("expr_{}_rot_x".format(name), expressionStringVector(rx), registry=registry)
         self.y = _Expression("expr_{}_rot_y".format(name), expressionStringVector(ry), registry=registry)
         self.z = _Expression("expr_{}_rot_z".format(name), expressionStringVector(rz), registry=registry)
@@ -323,8 +341,13 @@ class Rotation(VectorBase) :
         return "Rotation : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Scale(VectorBase) : 
-    def __init__(self,name,sx,sy,sz, registry = None, addRegistry = True) :
+    def __init__(self,name,sx,sy,sz, unit="none", registry = None, addRegistry = True) :
         self.name = name
+        if unit != None : 
+            self.unit = unit 
+        else :
+            self.unit = "none"
+
         self.x = _Expression("expr_{}_scl_x".format(name), expressionStringVector(sx), registry=registry)
         self.y = _Expression("expr_{}_scl_y".format(name), expressionStringVector(sy), registry=registry)
         self.z = _Expression("expr_{}_scl_z".format(name), expressionStringVector(sz), registry=registry)
