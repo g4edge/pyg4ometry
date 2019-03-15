@@ -1,11 +1,11 @@
 from SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
 from Wedge import Wedge as _Wedge
 from pyg4ometry.pycsg.core import CSG as _CSG
 from pyg4ometry.pycsg.geom import Vector as _Vector
 from pyg4ometry.pycsg.geom import Vertex as _Vertex
 from pyg4ometry.pycsg.geom import Polygon as _Polygon
 import numpy as _np
+import logging as _log
 
 
 class Torus(_SolidBase):
@@ -39,14 +39,21 @@ class Torus(_SolidBase):
             registry.addSolid(self)
 
 
+    def __repr__(self):
+        return "Torus : {} {} {} {} {} {}".format(self.name, self.pRmin,
+                                                  self.pRmax, self.pRtor,
+                                                  self.pSPhi, self.pDPhi)
+
     def pycsgmesh(self):
 
+        _log.info("torus.antlr>")
         pRmin = float(self.pRmin)
         pRmax = float(self.pRmax)
         pRtor = float(self.pRtor)
         pSPhi = float(self.pSPhi)
         pDPhi = float(self.pDPhi)
 
+        _log.info("torus.pycsgmesh>")
         polygons = []
 
         nstack  = self.nstack
