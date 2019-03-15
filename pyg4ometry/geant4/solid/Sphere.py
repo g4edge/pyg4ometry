@@ -3,11 +3,11 @@ from   ...pycsg.core import CSG as _CSG
 from   ...pycsg.geom import Vertex as _Vertex
 from   ...pycsg.geom import Vector as _Vector
 from   ...pycsg.geom import Polygon as _Polygon
-from   ..Registry import registry as _registry
 from   Wedge import Wedge as _Wedge
 import numpy as _np
 import sys as _sys
 from   copy import deepcopy as _dc
+import logging as _log
 
 class Sphere(_SolidBase):
     """
@@ -59,10 +59,13 @@ class Sphere(_SolidBase):
             raise ValueError("pDPhi must be less than 2 pi")
 
     def __repr__(self):
-        return 'Sphere : '+self.name+' '+str(self.pRmin)+' '+str(self.pRmax)+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pSTheta)+' '+str(self.pDTheta)+' '+str(self.nslice)+' '+str(self.nstack)
+        return "Sphere : {} {} {} {} {} {} {}".format(self.name, self.pRmin,
+                                                      self.pRmax, self.pSPhi,
+                                                      self.pDPhi, self.pSTheta,
+                                                      self.pDTheta)
 
     def pycsgmesh(self):
-
+        _log.info("sphere.antlr>")
         pRmin   = float(self.pRmin)
         pRmax   = float(self.pRmax)
         pSPhi   = float(self.pSPhi)
@@ -70,7 +73,7 @@ class Sphere(_SolidBase):
         pSTheta = float(self.pSTheta)
         pDTheta = float(self.pDTheta)
         
-
+        _log.info("sphere.pycsgmesh>")
         thetaFin = pSTheta + pDTheta
         phiFin   = pSPhi + pDPhi
 

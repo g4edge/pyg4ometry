@@ -4,7 +4,6 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 from Plane import Plane as _Plane
-from ..Registry import registry as _registry
 import logging as _log
 
 import numpy as _np
@@ -37,13 +36,12 @@ class Ellipsoid(_SolidBase):
         if registry:
             registry.addSolid(self)
 
-    def __repr__(selfs):
-        pass
+    def __repr__(self):
+        return "Ellipsoid : {} {} {} {} {} {}".format(self.name, self.pxSemiAxis,
+                                                      self.pySemiAxis, self.pzSemiAxis,
+                                                      self.pzBottomCut, self.pzTopCut)
 
     def pycsgmesh(self):
-
-#        if self.mesh :
-#            return self.mesh
 
         _log.info('ellipsoid.pycsgmesh>')
         basicmesh = self.basicmesh()

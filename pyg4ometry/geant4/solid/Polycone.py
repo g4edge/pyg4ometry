@@ -3,7 +3,6 @@ from pyg4ometry.pycsg.core import CSG           as _CSG
 from pyg4ometry.pycsg.geom import Vector        as _Vector
 from pyg4ometry.pycsg.geom import Vertex        as _Vertex
 from pyg4ometry.pycsg.geom import Polygon       as _Polygon
-from pyg4ometry.geant4.Registry import registry as _registry
 from Wedge                 import Wedge         as _Wedge
 
 import logging as _log
@@ -43,7 +42,7 @@ class Polycone(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return 'Polycone : '+self.name+' '+str(self.pSPhi)+' '+str(self.pDPhi)+' '+str(self.pZpl)+' '+str(self.pRMin)+' '+str(self.pRMax)
+        return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
 
     def pycsgmesh(self):
 

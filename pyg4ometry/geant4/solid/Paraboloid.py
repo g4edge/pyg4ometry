@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
@@ -33,8 +32,13 @@ class Paraboloid(_SolidBase):
         if registry:
             registry.addSolid(self)
 
+    def __repr__(self):
+        return "Paraboloid : {} {} {} {}".format(self.name, self.pDz,
+                                                 self.pR1, self.pR2)
+
     def pycsgmesh(self):
         _log.info("paraboloid.antlr>")
+
         pDz    = float(self.pDz)
         pR1    = float(self.pR1)
         pR2    = float(self.pR2)

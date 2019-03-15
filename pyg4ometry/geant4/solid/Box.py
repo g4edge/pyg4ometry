@@ -30,7 +30,7 @@ class Box(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return 'Box : '+self.name+' '+str(self.pX)+' '+str(self.pY)+' '+str(self.pZ)
+        return "Box : {} {} {} {}",format(self.name, self.pX, self.pY, self.pZ)
 
     def pycsgmesh(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 

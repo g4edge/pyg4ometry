@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
@@ -11,7 +10,7 @@ import numpy as _np
 
 class EllipticalCone(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
-                 registry = None, nslice=16, nstack=16):
+                 registry=None, nslice=16, nstack=16):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -37,6 +36,11 @@ class EllipticalCone(_SolidBase):
         # self.checkParameters()
         if registry:
             registry.addSolid(self)
+
+    def __repr__(self):
+        return "EllipticalCone : {} {} {} {} {}".format(self.name, self.pxSemiAxis,
+                                                        self.pySemiAxis, self.zMax,
+                                                        self.pzTopCut)
 
     def checkParameters(self):
         if self.pzTopCut <= 0 or self.pzTopCut > self.zMax:

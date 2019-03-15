@@ -197,6 +197,9 @@ class Expression(ScalarBase) :
     def __float__(self) :
         return self.expr.eval()
 
+    def __int__(self) :
+        return int(self.expr.eval())
+
     def __repr__(self) :
         return "Expression: {} = {}".format(self.name, str(self.expr))    
 
