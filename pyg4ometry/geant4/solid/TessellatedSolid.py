@@ -24,10 +24,9 @@ class TessellatedSolid(_SolidBase):
         self.type        = 'TesselatedSolid'
         self.name        = name
 
+        # self.mesh        = mesh
         self.facet_list  = facet_list
 
-        # if self.facet_list is strings then don't do anything, if floats then need to add to defines 
-        
         self.dependents = []
 
         '''
@@ -36,7 +35,6 @@ class TessellatedSolid(_SolidBase):
         self.reduceVertices()
         '''
 
-        self.mesh              = None
         if registry:
             registry.addSolid(self)
             self.registry = registry

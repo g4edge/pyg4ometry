@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
-from pyg4ometry.geant4.Registry import registry as _registry
 from pyg4ometry.pycsg.core import CSG as _CSG
 from pyg4ometry.pycsg.geom import Vector as _Vector
 from pyg4ometry.pycsg.geom import Vertex as _Vertex
@@ -41,6 +40,10 @@ class Para(_SolidBase):
         if registry:
             registry.addSolid(self)
 
+    def __repr__(self):
+        return "Para : {} {} {} {} {} {}".format(self.pX, self.pY, self.pZ,
+                                                 self.pAlpha, self.pTheta, self.pPhi)
+
     def pycsgmesh(self):
 
         _log.info("para.antlr>")
@@ -55,8 +58,8 @@ class Para(_SolidBase):
         dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component
         dx_z   = pZ*_math.sin(pTheta)  #changes sign as the z component
         dy     = pZ*_math.sin(pPhi)
-        dz     = pZ-pZ*_math.cos(pPhi)        
-                        
+        dz     = pZ-pZ*_math.cos(pPhi)
+
         mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz), None),
                                                   _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz), None),
                                                   _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz), None),

@@ -88,7 +88,8 @@ class Reader(object) :
                 x = def_attrs.get("x", "0.0")
                 y = def_attrs.get("y", "0.0")
                 z = def_attrs.get("z", "0.0")
-                return (x,y,z)
+                u = def_attrs.get("unit","none")
+                return (x,y,z,u)
 
             # parse matricies
             def getMatrix(def_attrs) :
@@ -119,14 +120,14 @@ class Reader(object) :
                 value = df.childNodes[0].nodeValue
                 _defines.Expression(name,value, self._registry)
             elif(define_type == "position"):                
-                (x,y,z) = getXYZ(def_attrs)
-                _defines.Position(name,x,y,z,self._registry)
+                (x,y,z,u) = getXYZ(def_attrs)
+                _defines.Position(name,x,y,z,u,self._registry)
             elif(define_type == "rotation"):
-                (x,y,z) = getXYZ(def_attrs)
-                _defines.Rotation(name,x,y,z,self._registry)
+                (x,y,z,u) = getXYZ(def_attrs)
+                _defines.Rotation(name,x,y,z,u,self._registry)
             elif(define_type == "scale"):
-                (x,y,z) = getXYZ(def_attrs)
-                _defines.Scale(name,x,y,z, self._registry)                
+                (x,y,z,u) = getXYZ(def_attrs)
+                _defines.Scale(name,x,y,z,u,self._registry)                
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
@@ -151,14 +152,18 @@ class Reader(object) :
         try :
             z    = node.attributes['z'].value
         except KeyError :
-            z    = '0'        
+            z    = '0'
+        try : 
+            unit = node.attributes['unit'].value
+        except KeyError : 
+            unit = None
         
         if type == 'position' : 
-            return _defines.Position(name,x,y,z,self._registry,addRegistry) 
+            return _defines.Position(name,x,y,z,unit,self._registry,addRegistry) 
         elif type == 'positionref' :
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'rotation' :
-            return _defines.Rotation(name,x,y,z,self._registry,addRegistry)
+            return _defines.Rotation(name,x,y,z,unit,self._registry,addRegistry)
         elif type == 'rotationref' :
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'scale' : 
@@ -250,8 +255,12 @@ class Reader(object) :
         x = _defines.Expression(solid_name+'_pX','({})/2'.format(node.attributes['x'].value),self._registry)
         y = _defines.Expression(solid_name+'_pY','({})/2'.format(node.attributes['y'].value),self._registry)
         z = _defines.Expression(solid_name+'_pZ','({})/2'.format(node.attributes['z'].value),self._registry)
-                
-        solid = _g4.solid.Box(solid_name,x,y,z,self._registry)
+        try : 
+            unit = node.attributes['unit'].value
+        except KeyError : 
+            unit = "mm"
+              
+        solid = _g4.solid.Box(solid_name,x,y,z,unit,self._registry)
 
     def parseTube(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -269,7 +278,17 @@ class Reader(object) :
         z    = _defines.Expression(solid_name+'_pDz','({})/2'.format(node.attributes['z'].value),self._registry)
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self._registry)
 
-        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, self._registry)
+        try : 
+            unit = node.attributes['unit'] .value
+        except KeyError : 
+            unit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, unit, aunit, self._registry)
 
 
     def parseCutTube(self, node) : 
@@ -303,6 +322,7 @@ class Reader(object) :
 
     def parseCone(self,node) : 
         solid_name = node.attributes['name'].value         
+
 
         try : 
             rmin1 = _defines.Expression(solid_name+"_pRMin1",node.attributes['rmin1'].value,self._registry) 
@@ -451,9 +471,41 @@ class Reader(object) :
         print 'generic polycone NOT IMPLEMENTED'
 
     def parsePolyhedra(self, node) :
-        solid_name = node.attributes['name'].value        
+        solid_name = node.attributes['name'].value
 
-        print 'polyhedra NOT IMPLEMENTED'        
+        sphi = _defines.Expression("{}_pSphi".format(solid_name),
+                                   node.attributes['startphi'].value, self._registry)
+        dphi = _defines.Expression("{}_pDphi".format(solid_name),
+                                   node.attributes['deltaphi'].value, self._registry)
+        nside = _defines.Expression("{}_numSide".format(solid_name),
+                                    node.attributes['numsides'].value,self._registry)
+
+        Rmin = []
+        Rmax = []
+        Z    = []
+
+        i = 0
+        for chNode in node.childNodes :
+            rmin = _defines.Expression("{}_zplaine_rmin_{}".format(solid_name, i),
+                                       chNode.attributes['rmin'].value,
+                                       self._registry)
+
+            rmax = _defines.Expression("{}_zplaine_rmax_{}".format(solid_name, i),
+                                       chNode.attributes['rmax'].value,
+                                       self._registry)
+
+            z = _defines.Expression("{}_zplaine_z_{}".format(solid_name, i),
+                                        chNode.attributes['z'].value,
+                                        self._registry)
+
+            Rmin.append(rmin)
+            Rmax.append(rmax)
+            Z.append(z)
+            i += 1
+
+        nzplane = _defines.Expression("{}_numZplanes".format(solid_name), len(Z), self._registry)
+
+        _g4.solid.Polyhedra(solid_name, sphi, dphi, nside, nzplane, Z, Rmin, Rmax, registry=self._registry)
 
     def parseGenericPolyhedra(self, node) :
         solid_name = node.attributes['name'].value        
@@ -530,8 +582,28 @@ class Reader(object) :
         
     def parseExtrudedSolid(self, node) : 
         solid_name = node.attributes['name'].value
-                               
-        print 'extruded solid NOT IMPLEMENTED'
+
+        pPolygon = []
+        zSection = []
+        
+        ivec = 1
+        isec = 1 
+        for chNode in node.childNodes : 
+            if chNode.tagName == "twoDimVertex" : 
+                x = _defines.Expression(solid_name+'_'+str(ivec)+'_x',chNode.attributes['x'].value,self._registry)
+                y = _defines.Expression(solid_name+'_'+str(ivec)+'_y',chNode.attributes['y'].value,self._registry)
+                pPolygon.append([x,y])
+                ivec = ivec+1
+            if chNode.tagName == "section" : 
+                scale = _defines.Expression(solid_name+"_"+str(isec)+"_scale",chNode.attributes['scalingFactor'].value,self._registry)
+                xoff  = _defines.Expression(solid_name+"_"+str(isec)+"_xoff",chNode.attributes['xOffset'].value,self._registry)
+                yoff  = _defines.Expression(solid_name+"_"+str(isec)+"_yoff",chNode.attributes['yOffset'].value,self._registry)
+                zpos  = _defines.Expression(solid_name+"_"+str(isec)+"_zpos",chNode.attributes['zPosition'].value,self._registry)
+                zSection.append([zpos,[xoff,yoff],scale])
+                isec = isec+1
+
+        _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection,self._registry)
+        # print 'extruded solid NOT IMPLEMENTED'
 
     def parseTwistedBox(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -603,14 +675,14 @@ class Reader(object) :
             try:
                 position = self.parseVector(node.getElementsByTagName("positionref")[0], "positionref", False)
             except IndexError:
-                position   = _defines.Position("zero","0","0","0",self._registry,False)
+                position   = _defines.Position("zero","0","0","0","mm",self._registry,False)
         try :
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError :
             try:
                 rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
             except IndexError:
-                rotation   = _defines.Rotation("identity","0","0","0",self._registry,False)
+                rotation   = _defines.Rotation("identity","0","0","0","rad",self._registry,False)
 
         _g4.solid.Subtraction(solid_name, first, second,[rotation,position],self._registry)
 
@@ -621,11 +693,11 @@ class Reader(object) :
         try : 
             position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
         except IndexError : 
-            position   = _defines.Position("zero","0","0","0",self._registry,False)            
+            position   = _defines.Position("zero","0","0","0","mm",self._registry,False)            
         try : 
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError : 
-            rotation   = _defines.Rotation("indentity","0","0","0",self._registry,False)
+            rotation   = _defines.Rotation("indentity","0","0","0","rad",self._registry,False)
 
         _g4.solid.Intersection(solid_name, first, second,[rotation,position],self._registry)
 
@@ -686,7 +758,7 @@ class Reader(object) :
                             try : 
                                 position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
                             except IndexError : 
-                                position = _defines.Position(pvol_name,"0","0","0",self._registry,False)
+                                position = _defines.Position(pvol_name,"0","0","0","mm",self._registry,False)
 
                         # Rotation
                         _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
@@ -696,7 +768,7 @@ class Reader(object) :
                             try : 
                                 rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
                             except IndexError : 
-                                rotation = _defines.Rotation(pvol_name,"0","0","0",self._registry,False)
+                                rotation = _defines.Rotation(pvol_name,"0","0","0","rad",self._registry,False)
 
                         # Scale 
                         _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))
@@ -706,7 +778,7 @@ class Reader(object) :
                             try : 
                                 scale = self.parseVector(chNode.getElementsByTagName("scale")[0],"scale",False)
                             except IndexError : 
-                                scale = _defines.Scale("","1","1","1",self._registry,False)    
+                                scale = _defines.Scale("","1","1","1","none",self._registry,False)    
 
                         # Create physical volume
                         _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))

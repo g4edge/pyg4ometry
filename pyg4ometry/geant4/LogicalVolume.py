@@ -53,7 +53,7 @@ class LogicalVolume(object):
             mesh = pv.logicalVolume.mesh.localmesh.clone()
 
             # rotate 
-            _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
+            # _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
             aa = _trans.tbxyz(pv.rotation.eval())
             mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
 
@@ -66,15 +66,21 @@ class LogicalVolume(object):
         # overlap daughter pv checks 
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
+                print self.daughterVolumes[i].name, self.daughterVolumes[j].name
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
                 self.mesh.addOverlapMesh(interMesh)
                 _log.info('LogicalVolume.checkOverlaps> inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
+                if interMesh.vertexCount() != 0  :
+                    print "hello", self.daughterVolumes[i].name , self.daughterVolumes[j].name
 
         # overlap with solid 
         for i in range(0,len(transformedMeshes)) : 
             interMesh = transformedMeshes[i].intersect(self.mesh.localmesh.inverse())
             self.mesh.addOverlapMesh(interMesh)
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
+
+            if interMesh.vertexCount() != 0 :
+                print "hello", self.daughterVolumes[i].name, self.name
 
     def setSolid(self, solid) : 
         self.solid = solid 

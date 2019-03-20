@@ -17,11 +17,12 @@ class Box(_SolidBase):
     :type name: float
     """
 
-    def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, registry=None):
+    def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, unit="mm", registry=None):
         self.name = name
-        self.pX = pX
-        self.pY = pY
-        self.pZ = pZ
+        self.pX   = pX
+        self.pY   = pY
+        self.pZ   = pZ
+        self.unit = unit
         self.type = 'Box'
         self.dependents = []
 
@@ -29,14 +30,17 @@ class Box(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return 'Box : '+self.name+' '+str(self.pX)+' '+str(self.pY)+' '+str(self.pZ)
+        return "Box : {} {} {} {}",format(self.name, self.pX, self.pY, self.pZ)
 
     def pycsgmesh(self):
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+
         _log.info('box.pycsgmesh> antlr')
 
-        pX = float(self.pX)
-        pY = float(self.pY)
-        pZ = float(self.pZ)
+        uval = _Units.lunit(self.unit)
+        pX = float(self.pX)*uval
+        pY = float(self.pY)*uval
+        pZ = float(self.pZ)*uval
 
         _log.info('box.pycsgmesh> mesh')
         mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])

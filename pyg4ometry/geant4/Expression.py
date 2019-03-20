@@ -13,12 +13,13 @@ class Expression(object) :
         self.expression = expression
         self.parse_tree = None
         self.registry   = registry
-
+        
     def eval(self) :
         expressionParser = self.registry.getExpressionParser()
         self.parse_tree = expressionParser.parse(self.expression)
         value = expressionParser.evaluate(self.parse_tree,
                                           self.registry.defineDict)
+
 
         return value
 
