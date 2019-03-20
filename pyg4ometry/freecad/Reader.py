@@ -73,7 +73,7 @@ class Reader(object) :
         self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
         self._registry.setWorld(self.rootLogical.name)
 
-    def convertFlat(self, meshDeviation = 0.05, centreName = '',offsetX=0, offsetY=0, offsetZ=0, rotX=0, rotY=0, rotZ=0, extentScale=1.0):
+    def convertFlat(self, meshDeviation = 0.05, centreName = '',globalOffset=_fc.Vector(), globalRotation=_fc.Rotation(), extentScale=1.0):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -96,9 +96,9 @@ class Reader(object) :
             centrePlacement = _fc.Placement()
 
         # global translation
-        centreTranslation = _fc.Vector(offsetX,offsetY,offsetZ)
-        if centreTranslation.Length != 0:
-            centrePlacement.move(centreTranslation)
+        if isinstance(globalOffset,_fc.Vector):
+            if globalOffset.Length != 0:
+                centrePlacement.move(globalOffset)
 
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" : 
@@ -112,9 +112,11 @@ class Reader(object) :
                 # global placement
                 globalPlacement = obj.getGlobalPlacement()
 
-                rotIn = _fc.Rotation(rotX,rotY,rotZ)
-                globalPlacement.Base     = rotIn.multVec(globalPlacement.Base)
-                globalPlacement.Rotation = rotIn.multiply(globalPlacement.Rotation)
+                # global rotation
+                if isinstance(globalRotation, _fc.Rotation):
+                    if globalRotation.Angle != 0:
+                        globalPlacement.Base     = globalRotation.multVec(globalPlacement.Base)
+                        globalPlacement.Rotation = globalRotation.multiply(globalPlacement.Rotation)
 
                 # info log output
                 _log.info('freecad.reader.convertFlat> Part::Feature label=%s typeid=%s placement=%s' %(obj.Label, obj.TypeId, obj.Placement))
