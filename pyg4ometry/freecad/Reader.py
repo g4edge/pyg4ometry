@@ -73,7 +73,7 @@ class Reader(object) :
         self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
         self._registry.setWorld(self.rootLogical.name)
 
-    def convertFlat(self, meshDeviation = 0.05, centreName = '') :
+    def convertFlat(self, meshDeviation = 0.05, centreName = '',offsetX=0, offsetY=0, offsetZ=0, rotX=0, rotY=0, rotZ=0, extentScale=1.0):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -95,6 +95,11 @@ class Reader(object) :
         else : 
             centrePlacement = _fc.Placement()
 
+        # global translation
+        centreTranslation = _fc.Vector(offsetX,offsetY,offsetZ)
+        if centreTranslation.Length != 0:
+            centrePlacement.move(centreTranslation)
+
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" : 
 
@@ -106,6 +111,10 @@ class Reader(object) :
 
                 # global placement
                 globalPlacement = obj.getGlobalPlacement()
+
+                rotIn = _fc.Rotation(rotX,rotY,rotZ)
+                globalPlacement.Base     = rotIn.multVec(globalPlacement.Base)
+                globalPlacement.Rotation = rotIn.multiply(globalPlacement.Rotation)
 
                 # info log output
                 _log.info('freecad.reader.convertFlat> Part::Feature label=%s typeid=%s placement=%s' %(obj.Label, obj.TypeId, obj.Placement))
@@ -170,6 +179,10 @@ class Reader(object) :
         print tmin, tmax, tmax-tmin
         tsize   = tmax-tmin 
         tcentre = (tmax-tmin)/2.0+tmin
+
+        # scale world volume extents
+        if extentScale != 1.0:
+            tsize.scale(extentScale,extentScale,extentScale)
 
         print tcentre
 
