@@ -6,7 +6,7 @@ def rad2deg(rad) :
 def deg2rad(deg) :
     return deg/180*_np.pi
 
-def tbxyz(rv) :
+def tbxyz2axisangle(rv) :
     """
     Tait-Bryan x-y-z rotation to axis-angle representation
     Algorithm from http://www.sedris.org/wg8home/Documents/WG80485.pdf

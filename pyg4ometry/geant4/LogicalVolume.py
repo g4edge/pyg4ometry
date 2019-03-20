@@ -54,7 +54,7 @@ class LogicalVolume(object):
 
             # rotate 
             # _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
-            aa = _trans.tbxyz(pv.rotation.eval())
+            aa = _trans.tbxyz2axisangle(pv.rotation.eval())
             mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
 
             # translate 
