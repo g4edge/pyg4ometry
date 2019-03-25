@@ -85,7 +85,12 @@ class Reader(object) :
             else:
                 raise SystemExit("Unsupported type for material: {}".format(type(material)))
 
-    def convertFlat(self, meshDeviation = 0.05, centreName = '',globalOffset=_fc.Vector(), globalRotation=_fc.Rotation(), extentScale=1.0):
+    def convertFlat(self, meshDeviation = 0.05,
+                    centreName          = '',
+                    globalOffset        = _fc.Vector(),
+                    globalRotation      = _fc.Rotation(),
+                    extentScale         = 1.0,
+                    daughterMaterial    = "G4_Galactic"):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -165,7 +170,7 @@ class Reader(object) :
                 s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
 
                 # logical
-                l = pyg4ometry.geant4.LogicalVolume(s,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
+                l = pyg4ometry.geant4.LogicalVolume(s,daughterMaterial,obj.Label+"_lv",registry=self._registry)
                 
                 # physical
                 x = globalPlacement.Base[0] - centrePlacement.Base[0] 
