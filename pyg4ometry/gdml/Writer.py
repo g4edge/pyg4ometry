@@ -61,7 +61,8 @@ class Writer(object):
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
         we = self.doc.createElement("world")
-        we.setAttribute("ref",self.prepend + registry.worldName+"_lv")
+        # we.setAttribute("ref",self.prepend + registry.worldName+"_lv")
+        we.setAttribute("ref",self.prepend + registry.worldName)
         self.setup.appendChild(we)
 
     def write(self, filename) :
@@ -246,7 +247,8 @@ class Writer(object):
 
     def writeLogicalVolume(self, lv):
         we = self.doc.createElement('volume')
-        we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
+        # we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
+        we.setAttribute('name',"{}{}".format(self.prepend,lv.name))
         mr = self.doc.createElement('materialref')
         if lv.material.name.find("G4") != -1 :
             mr.setAttribute('ref', lv.material.name)
@@ -267,7 +269,8 @@ class Writer(object):
     def GetDefinesFromPV(self, instance, variable):
         if not hasattr(instance, variable):
             raise AttributeError("") #TODO: Add error message
-        name = instance.name + "_" + getattr(instance,variable).name
+        # name = instance.name + "_" + getattr(instance,variable).name
+        name = instance.name+"_"+variable
         try:
             self.registry.defineDict[name]
             # will have been written before if already in define dict
@@ -279,9 +282,11 @@ class Writer(object):
 
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement('physvol')
-        pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
+        # pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
+        pvol.setAttribute('name',"{}{}".format(self.prepend, pv.name))
         vr = self.doc.createElement('volumeref')
-        vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
+        # vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
+        vr.setAttribute('ref',"{}{}".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
         # check if variable are in defines registry, else write define.
@@ -328,7 +333,7 @@ class Writer(object):
             except IndexError:
                 raise IndexError("") #TODO: Add error message
         var = getattr(instance, indexedVariable)
-        if isinstance(var, _Defines.Expression):
+        if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
             return str(var.expr.expression)
         else:
             return str(var)

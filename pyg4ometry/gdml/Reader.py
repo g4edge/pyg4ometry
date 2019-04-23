@@ -735,8 +735,9 @@ class Reader(object) :
 #                else:
 #                    mat = str(material)
         
-                vol = _g4.LogicalVolume(self._registry.solidDict[solid], 'G4_Galactic', name, registry=self._registry)
 
+                vol = _g4.LogicalVolume(self._registry.solidDict[solid], str(material), name, registry=self._registry)
+                
                 for chNode in node.childNodes :
                     if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
                         volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
@@ -782,6 +783,7 @@ class Reader(object) :
 
                         # Create physical volume
                         _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
+
                         physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
                                                        pvol_name, vol, registry=self._registry)
 

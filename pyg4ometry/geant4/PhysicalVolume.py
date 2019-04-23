@@ -21,16 +21,14 @@ class PhysicalVolume(object):
         
 
         super(PhysicalVolume, self).__init__()
-
-    
     
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
         if isinstance(position,list) :             
-            position = _Defines.Position(name+"_pos",position[0],position[1],position[2],registry,False)
+            position = _Defines.Position(name+"_pos",position[0],position[1],position[2],"mm",registry,False)
         if isinstance(rotation,list) :
-            rotation = _Defines.Rotation(name+"_rot",rotation[1],rotation[1],rotation[2],registry,False)
+            rotation = _Defines.Rotation(name+"_rot",rotation[1],rotation[1],rotation[2],"rad",registry,False)
 
         # geant4 required objects
         self.rotation      = rotation

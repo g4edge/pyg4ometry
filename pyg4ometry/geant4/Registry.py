@@ -91,7 +91,7 @@ class Registry:
         except KeyError : 
             self.physicalVolumeCountDict[volume.name]  = 1 
             
-        volume.name = volume.name+"_"+str(self.physicalVolumeCountDict[volume.name])
+        # volume.name = volume.name+"_"+str(self.physicalVolumeCountDict[volume.name])
 
         # add to physical volume dictionary 
         self.physicalVolumeDict[volume.name] = volume
