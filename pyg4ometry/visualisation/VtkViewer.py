@@ -82,8 +82,7 @@ class VtkViewer :
         _log.info('VtkViewer.addLogicalVolume> %s' % (logical.name))
 
         for pv in logical.daughterVolumes : 
-            _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
-            
+            _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))            
             # pv transform 
             pvmrot  = _transformation.tbxyz2matrix(pv.rotation.eval())
             pvtra   = _np.array(pv.position.eval())

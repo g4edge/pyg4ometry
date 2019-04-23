@@ -9,13 +9,13 @@ from pyg4ometry.pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class TessellatedSolid(_SolidBase):
-    def __init__(self, name, facet_list, registry=None):
+    def __init__(self, name, mesh, registry=None):
         """
         Constructs a tessellated solid
 
         Inputs:
           name:       string, name of the volume
-          facet_list: lsit of 2-tuples (triangular facets) made up
+          facet_list: list of 2-tuples (triangular facets) made up
                       of 1 3-tuple of 3-tuples (xyz vertices) and a 3-tuple normal
 
         Note: the normal is currently ingored as the vertex ordering is sufficient
@@ -24,8 +24,7 @@ class TessellatedSolid(_SolidBase):
         self.type        = 'TesselatedSolid'
         self.name        = name
 
-        # self.mesh        = mesh
-        self.facet_list  = facet_list
+        self.mesh        = mesh
 
         self.dependents = []
 
@@ -41,9 +40,25 @@ class TessellatedSolid(_SolidBase):
 
     def __repr__(self):
         return self.type
-
+    
     def pycsgmesh(self) :
+
+        verts = self.mesh[0]
+        facet = self.mesh[1]
         
+        polygon_list = []
+
+        for f in facet : 
+            v1 = _Vertex(verts[f[0]])
+            v2 = _Vertex(verts[f[1]])
+            v3 = _Vertex(verts[f[2]])
+            
+            polygon = _Polygon([v1,v2,v3])
+            polygon_list.append(polygon)            
+
+        return _CSG.fromPolygons(polygon_list)        
+
+    '''        
         # loop over facet list and make vectors of verticies 
         if isinstance(self.facet_list[0][0],str) :       
             # print 'positions'
@@ -69,6 +84,7 @@ class TessellatedSolid(_SolidBase):
                 polygon_list.append(polygon)
                 
             return _CSG.fromPolygons(polygon_list)            
+    '''
 
     '''
     def reduceVertices(self):

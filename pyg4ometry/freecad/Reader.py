@@ -27,10 +27,21 @@ class Reader(object) :
         if registryOn  : 
             self._registry = _g4.Registry()
 
-    def load(self, fileName) :         
+    def load(self, fileName) :
         _fc.loadFile(fileName) 
         self.doc = _fc.activeDocument()
+
+    def simplifyModel(self, volumeCut = 5e5) : 
+
+        for o in self.doc.Objects : 
+            if o.TypeId == "Part::Feature" : 
+                v = o.Shape.Volume 
+                print o.Label, v
+                if v < volumeCut : 
+                    o.Document.removeObject(o.Name)
         
+        self.doc.saveAs(self.fileName.replace(".step","_Simplified.FCStd"))
+
     def relabelModel(self) : 
         for obj in self.doc.Objects : 
             obj.Label = obj.Label.replace("(","_")
@@ -38,6 +49,10 @@ class Reader(object) :
             obj.Label = obj.Label.replace("-","_")
             obj.Label = obj.Label.replace(u' ','_')
             obj.Label = obj.Label.replace(u'.','dot')
+            obj.Label = obj.Label.replace(u',','comma')
+            obj.Label = obj.Label.replace(u'\\','fs')
+            obj.Label = obj.Label.replace(u'3','three')
+            
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
@@ -73,7 +88,7 @@ class Reader(object) :
         self.rootLogical = self.recurseObjectTree(self.doc.RootObjects[0])[0]
         self._registry.setWorld(self.rootLogical.name)
 
-    def convertFlat(self, meshDeviation = 0.05, centreName = '',globalOffset=_fc.Vector(), globalRotation=_fc.Rotation(), extentScale=1.0):
+    def convertFlat(self, meshDeviation = 0.1, centreName = '',globalOffset=_fc.Vector(), globalRotation=_fc.Rotation(), extentScale=1.0):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -107,7 +122,7 @@ class Reader(object) :
                 # com = obj.Shape.CenterOfMass
 
                 # tesellate         
-                m = obj.Shape.tessellate(meshDeviation)
+                m = list(obj.Shape.tessellate(meshDeviation))
 
                 # global placement
                 globalPlacement = obj.getGlobalPlacement()
@@ -145,12 +160,22 @@ class Reader(object) :
                         tmax.y = mGlobal.y
                     if mGlobal.z > tmax.z :
                         tmax.z = mGlobal.z
-                                                    
+
+                # Mesh tidying
+                mc = MeshCleaning(m)                
+                print 'Removed triangles',mc
+
+                # Mesh shrinking 
+                vn = MeshShrink(m)
+                
+                # Mesh analysis
+                ma = MeshAnalysis(m) 
+              
                 # facet list 
-                f =  MeshToFacetList(m)
+                # f =  MeshToFacetList(m)
 
                 # solid 
-                s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
+                s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, m, registry=self._registry) 
 
                 # logical
                 l = pyg4ometry.geant4.LogicalVolume(s,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
@@ -320,10 +345,10 @@ class Reader(object) :
                 m[0][i] = placement.multVec(m[0][i])
             
             # facet list 
-            f =  MeshToFacetList(m)
+            # f =  MeshToFacetList(m)
             
             # solid 
-            s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, f, registry=self._registry) 
+            s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, m, registry=self._registry) 
 
             # logical
             l = pyg4ometry.geant4.LogicalVolume(s,"G4_Galactic",obj.Label+"_lv",registry=self._registry)
@@ -426,3 +451,159 @@ def PartFeatureGlobalPlacement(obj,placement) :
     else :
         return obj.Placement.multiply(placement)
 
+
+def MeshAnalysis(m) : 
+    verts = m[0]
+    facet = m[1]
+
+    area_array = []
+    l01_array  = []
+    l02_array  = []
+    l12_array  = [] 
+    hmin_array = []
+    
+    for tri in facet : 
+        i1 = tri[0]
+        i2 = tri[1]
+        i3 = tri[2]
+
+        v1 = _np.array(verts[i1])
+        v2 = _np.array(verts[i2])
+        v3 = _np.array(verts[i3])
+        
+        e1 = v1-v1
+        e2 = v2-v1
+        e3 = v3-v1
+
+        e2xe3  = _np.cross(e2,e3)
+        a      = 0.5*_np.linalg.norm(e2xe3)
+        l01 = _np.linalg.norm(e1)
+        l02 = _np.linalg.norm(e2)
+        l12 = _np.linalg.norm(e2-e1)
+        
+        l01_array.append(l01)
+        l02_array.append(l02)
+        l12_array.append(l12)
+
+        area_array.append(a)
+        hmin_array.append(2*a/_np.array([l01,l02,l12]).max())
+
+    l01_array  = _np.array(l01_array)
+    l02_array  = _np.array(l02_array)
+    l12_array  = _np.array(l12_array)
+    area_array = _np.array(area_array)
+    hmin_array = _np.array(hmin_array)
+
+    #h = _np.histogram(area_array,100,(area_array.min(), area_array.max()))
+    #print 'l01  ',l01_array.min(), l01_array.max()
+    #print 'l02  ',l02_array.min(), l02_array.max()
+    #print 'l12  ',l12_array.min(), l12_array.max()
+    #print 'area ', area_array.min(), area_array.max(), hmin_array.min(), (1.0*(hmin_array<1e-9)).sum()
+
+    return {'l01min': l01_array.min(), 'l01max': l01_array.max(),
+            'l02min': l02_array.min(), 'l02max': l02_array.max(),
+            'l12min': l12_array.min(), 'l12max': l12_array.max(),
+            'areamin':area_array.min(), 'areamax':area_array.max()}
+    
+def MeshCleaning(m) : 
+    verts = m[0]
+    facet = m[1]
+
+    idx = 0 
+    iremoved = 0
+
+    for tri in facet : 
+        i1 = tri[0]
+        i2 = tri[1]
+        i3 = tri[2]
+
+        v1 = _np.array(verts[i1])
+        v2 = _np.array(verts[i2])
+        v3 = _np.array(verts[i3])
+        
+        e1 = v1-v1
+        e2 = v2-v1
+        e3 = v3-v1
+
+        l01 = _np.linalg.norm(e1)
+        l02 = _np.linalg.norm(e2)
+        l12 = _np.linalg.norm(e2-e1)
+
+        e2xe3  = _np.cross(e2,e3)
+        a      = 0.5*_np.linalg.norm(e2xe3)        
+        hmin   = 2*a/_np.array([l01,l02,l12]).max()
+
+        # remove zero area facets 
+        if a == 0 :
+            del facet[idx]
+            iremoved = iremoved+1 
+
+        # remove facets which would fail geant4 cuts 
+        if hmin < 1e-9 :
+            del facet[idx]
+            iremoved = iremoved+1 
+        
+        idx = idx+1
+
+        return iremoved
+
+def MeshShrink(m) : 
+    verts = m[0]
+    facet = m[1]
+
+    vertnormals = []
+    nvertnormals = []
+
+    for i in range(0,len(verts)) : 
+        vertnormals.append([0,0,0])
+        nvertnormals.append(0)
+
+    for tri in facet : 
+        
+        i1 = tri[0]
+        i2 = tri[1]
+        i3 = tri[2]
+
+        v1 = _np.array(verts[i1])
+        v2 = _np.array(verts[i2])
+        v3 = _np.array(verts[i3])
+        
+        e1 = v1-v1
+        e2 = v2-v1
+        e3 = v3-v1
+
+        normal = _np.cross(e2,e3)
+        normal = normal/_np.linalg.norm(normal)
+
+        vertnormals[i1][0] = vertnormals[i1][0] + normal[0]
+        vertnormals[i1][1] = vertnormals[i1][1] + normal[1]
+        vertnormals[i1][2] = vertnormals[i1][2] + normal[2]
+
+        vertnormals[i2][0] = vertnormals[i2][0] + normal[0]
+        vertnormals[i2][1] = vertnormals[i2][1] + normal[1]
+        vertnormals[i2][2] = vertnormals[i2][2] + normal[2]
+
+        vertnormals[i3][0] = vertnormals[i3][0] + normal[0]
+        vertnormals[i3][1] = vertnormals[i3][1] + normal[1]
+        vertnormals[i3][2] = vertnormals[i3][2] + normal[2]
+        
+        nvertnormals[i1] = nvertnormals[i1] + 1
+        nvertnormals[i2] = nvertnormals[i2] + 1
+        nvertnormals[i3] = nvertnormals[i3] + 1
+
+    
+    for i in range(0,len(vertnormals)) : 
+        vertnormalmag     = _np.sqrt(vertnormals[i][0]**2 + vertnormals[i][1]**2 + vertnormals[i][2]**2)
+        vertnormals[i][0] = vertnormals[i][0]/nvertnormals[i]/vertnormalmag
+        vertnormals[i][1] = vertnormals[i][1]/nvertnormals[i]/vertnormalmag
+        vertnormals[i][2] = vertnormals[i][2]/nvertnormals[i]/vertnormalmag
+         # print vertnormalmag, vertnormals[i]
+        
+    for i in range(0,len(verts)) :
+        verts[i][0] = verts[i][0] - 1e-1*vertnormals[i][0]
+        verts[i][1] = verts[i][1] - 1e-1*vertnormals[i][1]
+        verts[i][2] = verts[i][2] - 1e-1*vertnormals[i][2]
+
+    m.append(vertnormals)
+        
+    return vertnormals
