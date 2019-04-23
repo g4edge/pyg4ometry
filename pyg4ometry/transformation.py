@@ -19,8 +19,6 @@ def tbxyz2axisangle(rv) :
     matrix = tbxyz2matrix(rv)
     return matrix2axisangle(matrix)
 
-def tbxyz2axisangle(rv):
-    return tbxyz(rv)
 
 def matrix2axisangle(matrix):
     m = matrix
