@@ -3,11 +3,11 @@ from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Polygon as _Polygon
-from ..Registry import registry as _registry
 from Wedge import Wedge as _Wedge
 import sys as _sys
 
 import numpy as _np
+import logging as _log
 
 class Tubs(_SolidBase):
     """
@@ -44,9 +44,11 @@ class Tubs(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return 'Tubs : '+self.name+' '+str(self.pRMin)+' '+str(self.pRMax)+' '+str(self.pDz)+' '+str(self.pSPhi)+' '+str(self.pDPhi)
+        return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
+                                                 self.pDz, self.pSPhi, self.pDPhi)
 
     def pycsgmesh(self):
+        _log.info('tubs.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         uval = _Units.lunit(self.unit)
@@ -62,6 +64,7 @@ class Tubs(_SolidBase):
         pDz   = float(self.pDz)*uval
         pRMax = float(self.pRMax)*uval
 
+        _log.info('tubs.pycsgmesh> pycsgmesh')
         mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
         wzlength = 3*pDz    # set dimensions of wedge to intersect with that are much larger
