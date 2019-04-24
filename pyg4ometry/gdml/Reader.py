@@ -559,7 +559,7 @@ class Reader(object) :
         solid_name = node.attributes['name'].value         
         
         try : 
-            innerStereo = _defines.Expression(solid_name+'_innerStereo',node.attributes['ihst'].value,self._registry) 
+            innerStereo = _defines.Expression(solid_name+'_innerStereo',node.attributes['inst'].value,self._registry) 
         except KeyError : 
             innerStereo = _defines.Expression(solid_name+'_innerStereo',"0",self._registry)             
 
