@@ -64,7 +64,7 @@ class Tubs(_SolidBase):
         pDz   = float(self.pDz)*uval
         pRMax = float(self.pRMax)*uval
 
-        _log.info('tubs.pycsgmesh> pycsgmesh')
+        _log.info('tubs.pycsgmesh> mesh')
         mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)
 
         wzlength = 3*pDz    # set dimensions of wedge to intersect with that are much larger
