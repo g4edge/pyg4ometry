@@ -573,12 +573,12 @@ class Reader(object) :
     def parseTet(self, node) : 
         solid_name = node.attributes['name'].value         
         
-        anchor = _defines.Expression(solid_name+'_anchor',node.attributes['vertex1'],self._registry)
-        p2     = _defines.Expression(solid_name+'_p2',node.attributes['vertex2'],self._registry)
-        p3     = _defines.Expression(solid_name+'_p3',node.attributes['vertex3'],self._registry)
-        p4     = _defines.Expression(solid_name+'_p4',node.attributes['vertex4'],self._registry)
+        anchor = _defines.Expression(solid_name+'_anchor',node.attributes['vertex1'].value,self._registry)
+        p2     = _defines.Expression(solid_name+'_p2',node.attributes['vertex2'].value,self._registry)
+        p3     = _defines.Expression(solid_name+'_p3',node.attributes['vertex3'].value,self._registry)
+        p4     = _defines.Expression(solid_name+'_p4',node.attributes['vertex4'].value,self._registry)
 
-        _g4.solid.Tet(solid_name, anchor, p2, p3, p4, False, self._registry)
+        _g4.solid.Tet(solid_name, anchor, p2, p3, p4, self._registry, False)
         
     def parseExtrudedSolid(self, node) : 
         solid_name = node.attributes['name'].value
