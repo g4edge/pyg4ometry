@@ -605,10 +605,15 @@ class Reader(object) :
         _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection,self._registry)
         # print 'extruded solid NOT IMPLEMENTED'
 
-    def parseTwistedBox(self, node) : 
-        solid_name = node.attributes['name'].value 
+    def parseTwistedBox(self, node) :
+        solid_name = node.attributes['name'].value
 
-        print 'twisted box NOT IMPLEMENTED'        
+        twistedAngle = _defines.Expression(solid_name+'_PhiTwist',node.attributes['PhiTwist'].value,self._registry)
+        x = _defines.Expression(solid_name+'_x',node.attributes['x'].value,self._registry)
+        y = _defines.Expression(solid_name+'_y',node.attributes['y'].value,self._registry)
+        z    = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
+
+        _g4.solid.TwistedBox(solid_name, twistedAngle, x, y, z, self._registry)
 
     def parseTwistedTrap(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -736,7 +741,7 @@ class Reader(object) :
 #                    mat = str(material)
         
 
-                vol = _g4.LogicalVolume(self._registry.solidDict[solid], str(material), name, registry=self._registry)
+                vol = _g4.LogicalVolume(self._registry.solidDict[solid], 'G4_Galactic', name, registry=self._registry)
                 
                 for chNode in node.childNodes :
                     if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
