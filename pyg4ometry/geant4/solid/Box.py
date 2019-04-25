@@ -38,9 +38,9 @@ class Box(_SolidBase):
         _log.info('box.pycsgmesh> antlr')
 
         uval = _Units.lunit(self.unit)
-        pX = float(self.pX)*uval
-        pY = float(self.pY)*uval
-        pZ = float(self.pZ)*uval
+        pX = float(self.pX)*uval/2.0
+        pY = float(self.pY)*uval/2.0
+        pZ = float(self.pZ)*uval/2.0
 
         _log.info('box.pycsgmesh> mesh')
         mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])

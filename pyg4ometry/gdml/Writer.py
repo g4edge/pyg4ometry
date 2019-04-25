@@ -341,9 +341,9 @@ class Writer(object):
     def writeBox(self, instance):
         oe = self.doc.createElement('box')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('x','2*'+self.getValueOrExprFromInstance(instance,'pX'))
-        oe.setAttribute('y','2*'+self.getValueOrExprFromInstance(instance,'pY'))
-        oe.setAttribute('z','2*'+self.getValueOrExprFromInstance(instance,'pZ'))
+        oe.setAttribute('x',self.getValueOrExprFromInstance(instance,'pX'))
+        oe.setAttribute('y',self.getValueOrExprFromInstance(instance,'pY'))
+        oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pZ'))
         self.solids.appendChild(oe)
 
     def writeCons(self, instance):
