@@ -38,6 +38,16 @@ class ScalarBase(object) :
         v.expr.registry = self.registry
         return v
 
+    def __rsub__(self,other) :
+        v1 = expressionStringScalar(self,self)
+        v2 = expressionStringScalar(self,other)        
+        
+        v = Constant("var_{}_sub_{}".format(v2,v1), '({}) - ({})'.format(v2, v1),registry=None)
+        v.registry      = self.registry
+        v.expr.registry = self.registry
+        return v        
+
+
     def __mul__(self, other):
         
         # check to see if other is a vector 
@@ -61,6 +71,15 @@ class ScalarBase(object) :
         v.expr.registry = self.registry
         return v
 
+    def __rdiv__(self, other):
+        v1 = expressionStringScalar(self,self)
+        v2 = expressionStringScalar(self,other)
+
+        v = Constant("var_{}_div_{}".format(v2,v1), '({}) / ({})'.format(v2, v1),registry=None)
+        v.registry      = self.registry
+        v.expr.registry = self.registry
+        return v
+
     def __neg__(self):
         v1 = expressionStringScalar(self,self)
 
@@ -70,7 +89,6 @@ class ScalarBase(object) :
         return v
 
     __radd__ = __add__
-    __rsub__ = __sub__
     __rmul__ = __mul__
 
     def setName(self, name) : 
@@ -100,6 +118,27 @@ def tan(arg) :
     v.expr.registry = arg.registry    
     return v
 
+def asin(arg) : 
+    v1 = expressionStringScalar(arg,arg)
+    v = Constant("sin_{}".format(v1), 'asin({})'.format(v1),registry=None)
+    v.registry      = arg.registry
+    v.expr.registry = arg.registry    
+    return v
+
+def acos(arg) : 
+    v1 = expressionStringScalar(arg,arg)
+    v = Constant("cos_{}".format(v1), 'acos({})'.format(v1),registry=None)
+    v.registry      = arg.registry
+    v.expr.registry = arg.registry    
+    return v
+
+def atan(arg) : 
+    v1 = expressionStringScalar(arg,arg)
+    v = Constant("tan_{}".format(v1), 'atan({})'.format(v1),registry=None)
+    v.registry      = arg.registry
+    v.expr.registry = arg.registry    
+    return v
+
 def exp(arg) : 
     v1 = expressionStringScalar(arg,arg)
     v = Constant("exp_{}".format(v1), 'exp({})'.format(v1),registry=None)
@@ -120,6 +159,13 @@ def log10(arg) :
     v.registry      = arg.registry
     v.expr.registry = arg.registry    
     return v
+
+def sqrt(arg) : 
+    v1 = expressionStringScalar(arg,arg)
+    v = Constant("sqrt_{}".format(v1), 'sqrt({})'.format(v1),registry=None)
+    v.registry      = arg.registry
+    v.expr.registry = arg.registry    
+    return v    
 
 class Constant(ScalarBase) :
     def __init__(self, name, value, registry = None, addRegistry = True) :
