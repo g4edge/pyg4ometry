@@ -3,7 +3,6 @@ from TwistedSolid import TwistedSolid as _TwistedSolid
 from Wedge import Wedge as _Wedge
 from TwoVector import TwoVector as _TwoVector
 from Layer import Layer as _Layer
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
@@ -11,9 +10,11 @@ from ...pycsg.geom import Plane as _Plane
 from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
+import logging as _log
+
 class TwistedBox(_SolidBase, _TwistedSolid):
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, nslice=20,
-                 refine=0, register=True):
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, nslice=20,
+                 refine=0):
         """
         Constructs a box that is twisted through angle 'twistedangle'.
 
@@ -34,12 +35,17 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.pDz          = pDz
         self.nslice       = nslice
         self.refine       = refine
-        self.checkParameters()
-        if register:
-            _registry.addSolid(self)
 
+        self.dependents = []
+        self.checkParameters()
+        if registry:
+            registry.addSolid(self)
+
+    def __repr__(self):
+        return "Twisted Box : {} {} {} {} {} {}".format(self.name, self.twistedAngle,
+                                                        self.pDx, self.pDy, self.pDz)
     def checkParameters(self):
-        if self.twistedAngle > _np.pi:
+        if float(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 
@@ -63,11 +69,19 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         return layers
 
     def pycsgmesh(self):
-        p1 = _TwoVector(-self.pDx, -self.pDy)#, self.pDz]
-        p2 = _TwoVector(self.pDx, -self.pDy) # self.pDz]
-        p3 = _TwoVector(self.pDx, self.pDy) #self.pDz]
-        p4 = _TwoVector(-self.pDx, self.pDy) # self.pDz]
+        _log.info('twistedbox.pycsgmesh> antlr')
+        twistedAngle = float(self.twistedAngle)
+        pDx = float(self.pDx)/2
+        pDy = float(self.pDy)/2
+        pDz = float(self.pDz)/2
+        refine  = float(self.refine)
 
-        m = self.makeLayers(p1, p2, p3, p4, self.pDz, self.twistedAngle, self.nslice)
+        _log.info('twistedbox.pycsgmesh> mesh')
+        p1 = _TwoVector(-pDx, -pDy)#, pDz]
+        p2 = _TwoVector(pDx, -pDy) # pDz]
+        p3 = _TwoVector(pDx, pDy) #pDz]
+        p4 = _TwoVector(-pDx, pDy) # pDz]
+
+        m = self.makeLayers(p1, p2, p3, p4, pDz, -twistedAngle, self.nslice)
 
         return self.meshFromLayers(m, self.nslice)
