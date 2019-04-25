@@ -6,6 +6,7 @@ from ..geant4.Material import Isotope as _Isotope
 from ..gdml import Defines as _Defines
 import Expression as _Expression
 import pyg4ometry.geant4 as _g4
+import logging as _log
 
 class Writer(object):
     def __init__(self, prepend = ''):
@@ -38,22 +39,25 @@ class Writer(object):
 
         # loop over defines
         for definition in registry.defineDict:
+            _log.info('gdml.Writer.addDetector> define '+definition)
             define = self.registry.defineDict[definition]
             self.writeDefine(define)
 
         # loop over materials
         for mat in registry.materialDict:
+            _log.info('gdml.Writer.addDetector> material '+mat)
             material = self.registry.materialDict[mat]
             self.writeMaterial(material)
 
         # loop over solids
         for solidId in registry.solidDict.keys():
+            _log.info('gdml.Writer.addDetector> solid '+solidId)
             solid = registry.solidDict[solidId]
             self.writeSolid(solid)
 
         # loop over logical volumes
         for logicalName in registry.logicalVolumeList  :
-            print "writer", logicalName
+            _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
             self.writeLogicalVolume(logical)
             self.writeMaterial(logical.material)
