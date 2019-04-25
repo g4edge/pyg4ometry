@@ -8,43 +8,43 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write(u"\37w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
-        buf.write(u"\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4")
-        buf.write(u"\16\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3")
-        buf.write(u"\3\3\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4")
-        buf.write(u"\62\n\4\f\4\16\4\65\13\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7")
-        buf.write(u"\7\7>\n\7\f\7\16\7A\13\7\3\b\3\b\3\b\3\b\3\b\3\b\5\b")
-        buf.write(u"I\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tS\n\t\3\n\3")
-        buf.write(u"\n\3\13\3\13\3\13\3\13\3\13\7\13\\\n\13\f\13\16\13_\13")
-        buf.write(u"\13\3\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16")
-        buf.write(u"\7\16l\n\16\f\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20")
-        buf.write(u"\3\20\3\20\2\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
-        buf.write(u"\36\2\7\3\2\20\21\3\2\22\23\3\2\32\34\3\2\3\13\3\2\24")
-        buf.write(u"\26\2s\2 \3\2\2\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2")
-        buf.write(u"\n8\3\2\2\2\f:\3\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3")
-        buf.write(u"\2\2\2\24V\3\2\2\2\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2")
-        buf.write(u"\2\34r\3\2\2\2\36t\3\2\2\2 !\5\4\3\2!\"\5\36\20\2\"#")
-        buf.write(u"\5\4\3\2#\3\3\2\2\2$*\5\6\4\2%&\5\b\5\2&\'\5\6\4\2\'")
-        buf.write(u")\3\2\2\2(%\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2+\5")
-        buf.write(u"\3\2\2\2,*\3\2\2\2-\63\5\f\7\2./\5\n\6\2/\60\5\f\7\2")
-        buf.write(u"\60\62\3\2\2\2\61.\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2")
-        buf.write(u"\2\63\64\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\t\2")
-        buf.write(u"\2\2\67\t\3\2\2\289\t\3\2\29\13\3\2\2\2:?\5\16\b\2;<")
-        buf.write(u"\7\31\2\2<>\5\16\b\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@")
-        buf.write(u"\3\2\2\2@\r\3\2\2\2A?\3\2\2\2BC\7\20\2\2CI\5\16\b\2D")
-        buf.write(u"E\7\21\2\2EI\5\16\b\2FI\5\32\16\2GI\5\20\t\2HB\3\2\2")
-        buf.write(u"\2HD\3\2\2\2HF\3\2\2\2HG\3\2\2\2I\17\3\2\2\2JS\5\22\n")
-        buf.write(u"\2KS\5\24\13\2LS\5\30\r\2MS\5\26\f\2NO\7\f\2\2OP\5\4")
-        buf.write(u"\3\2PQ\7\r\2\2QS\3\2\2\2RJ\3\2\2\2RK\3\2\2\2RL\3\2\2")
-        buf.write(u"\2RM\3\2\2\2RN\3\2\2\2S\21\3\2\2\2TU\7\36\2\2U\23\3\2")
-        buf.write(u"\2\2VW\5\30\r\2WX\7\16\2\2X]\5\22\n\2YZ\7\27\2\2Z\\\5")
-        buf.write(u"\22\n\2[Y\3\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3")
-        buf.write(u"\2\2\2_]\3\2\2\2`a\7\17\2\2a\25\3\2\2\2bc\t\4\2\2c\27")
-        buf.write(u"\3\2\2\2de\7\35\2\2e\31\3\2\2\2fg\5\34\17\2gh\7\f\2\2")
-        buf.write(u"hm\5\4\3\2ij\7\27\2\2jl\5\4\3\2ki\3\2\2\2lo\3\2\2\2m")
-        buf.write(u"k\3\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\r\2\2q\33")
-        buf.write(u"\3\2\2\2rs\t\5\2\2s\35\3\2\2\2tu\t\6\2\2u\37\3\2\2\2")
-        buf.write(u"\t*\63?HR]m")
+        buf.write(u" w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4")
+        buf.write(u"\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
+        buf.write(u"\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3\3\3")
+        buf.write(u"\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4\62\n")
+        buf.write(u"\4\f\4\16\4\65\13\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\7\7>")
+        buf.write(u"\n\7\f\7\16\7A\13\7\3\b\3\b\3\b\3\b\3\b\3\b\5\bI\n\b")
+        buf.write(u"\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tS\n\t\3\n\3\n\3\13")
+        buf.write(u"\3\13\3\13\3\13\3\13\7\13\\\n\13\f\13\16\13_\13\13\3")
+        buf.write(u"\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\7\16")
+        buf.write(u"l\n\16\f\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20\3\20")
+        buf.write(u"\3\20\2\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2")
+        buf.write(u"\7\3\2\21\22\3\2\23\24\3\2\33\35\3\2\3\f\3\2\25\27\2")
+        buf.write(u"s\2 \3\2\2\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2\n8\3")
+        buf.write(u"\2\2\2\f:\3\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2")
+        buf.write(u"\24V\3\2\2\2\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34r")
+        buf.write(u"\3\2\2\2\36t\3\2\2\2 !\5\4\3\2!\"\5\36\20\2\"#\5\4\3")
+        buf.write(u"\2#\3\3\2\2\2$*\5\6\4\2%&\5\b\5\2&\'\5\6\4\2\')\3\2\2")
+        buf.write(u"\2(%\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2")
+        buf.write(u",*\3\2\2\2-\63\5\f\7\2./\5\n\6\2/\60\5\f\7\2\60\62\3")
+        buf.write(u"\2\2\2\61.\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2\2\63\64")
+        buf.write(u"\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\t\2\2\2\67")
+        buf.write(u"\t\3\2\2\289\t\3\2\29\13\3\2\2\2:?\5\16\b\2;<\7\32\2")
+        buf.write(u"\2<>\5\16\b\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2")
+        buf.write(u"@\r\3\2\2\2A?\3\2\2\2BC\7\21\2\2CI\5\16\b\2DE\7\22\2")
+        buf.write(u"\2EI\5\16\b\2FI\5\32\16\2GI\5\20\t\2HB\3\2\2\2HD\3\2")
+        buf.write(u"\2\2HF\3\2\2\2HG\3\2\2\2I\17\3\2\2\2JS\5\22\n\2KS\5\24")
+        buf.write(u"\13\2LS\5\30\r\2MS\5\26\f\2NO\7\r\2\2OP\5\4\3\2PQ\7\16")
+        buf.write(u"\2\2QS\3\2\2\2RJ\3\2\2\2RK\3\2\2\2RL\3\2\2\2RM\3\2\2")
+        buf.write(u"\2RN\3\2\2\2S\21\3\2\2\2TU\7\37\2\2U\23\3\2\2\2VW\5\30")
+        buf.write(u"\r\2WX\7\17\2\2X]\5\22\n\2YZ\7\30\2\2Z\\\5\22\n\2[Y\3")
+        buf.write(u"\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3\2\2\2_]\3\2")
+        buf.write(u"\2\2`a\7\20\2\2a\25\3\2\2\2bc\t\4\2\2c\27\3\2\2\2de\7")
+        buf.write(u"\36\2\2e\31\3\2\2\2fg\5\34\17\2gh\7\r\2\2hm\5\4\3\2i")
+        buf.write(u"j\7\30\2\2jl\5\4\3\2ki\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn")
+        buf.write(u"\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\16\2\2q\33\3\2\2\2r")
+        buf.write(u"s\t\5\2\2s\35\3\2\2\2tu\t\6\2\2u\37\3\2\2\2\t*\63?HR")
+        buf.write(u"]m")
         return buf.getvalue()
 
 
@@ -59,16 +59,16 @@ class GdmlExpressionParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ u"<INVALID>", u"'cos'", u"'sin'", u"'tan'", u"'acos'", 
-                     u"'asin'", u"'atan'", u"'ln'", u"'log'", u"'sqrt'", 
-                     u"'('", u"')'", u"'['", u"']'", u"'+'", u"'-'", u"'*'", 
-                     u"'/'", u"'>'", u"'<'", u"'='", u"','", u"'.'", u"'^'", 
-                     u"'pi'", u"<INVALID>", u"'i'" ]
+                     u"'asin'", u"'atan'", u"'log'", u"'log10'", u"'sqrt'", 
+                     u"'exp'", u"'('", u"')'", u"'['", u"']'", u"'+'", u"'-'", 
+                     u"'*'", u"'/'", u"'>'", u"'<'", u"'='", u"','", u"'.'", 
+                     u"'^'", u"'pi'", u"<INVALID>", u"'i'" ]
 
     symbolicNames = [ u"<INVALID>", u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", 
-                      u"ATAN", u"LN", u"LOG", u"SQRT", u"LPAREN", u"RPAREN", 
-                      u"LBRACKET", u"RBRACKET", u"PLUS", u"MINUS", u"TIMES", 
-                      u"DIV", u"GT", u"LT", u"EQ", u"COMMA", u"POINT", u"POW", 
-                      u"PI", u"EULER", u"I", u"VARIABLE", u"SCIENTIFIC_NUMBER", 
+                      u"ATAN", u"LN", u"LOG", u"SQRT", u"EXP", u"LPAREN", 
+                      u"RPAREN", u"LBRACKET", u"RBRACKET", u"PLUS", u"MINUS", 
+                      u"TIMES", u"DIV", u"GT", u"LT", u"EQ", u"COMMA", u"POINT", 
+                      u"POW", u"PI", u"EULER", u"I", u"VARIABLE", u"SCIENTIFIC_NUMBER", 
                       u"WS" ]
 
     RULE_equation = 0
@@ -102,26 +102,27 @@ class GdmlExpressionParser ( Parser ):
     LN=7
     LOG=8
     SQRT=9
-    LPAREN=10
-    RPAREN=11
-    LBRACKET=12
-    RBRACKET=13
-    PLUS=14
-    MINUS=15
-    TIMES=16
-    DIV=17
-    GT=18
-    LT=19
-    EQ=20
-    COMMA=21
-    POINT=22
-    POW=23
-    PI=24
-    EULER=25
-    I=26
-    VARIABLE=27
-    SCIENTIFIC_NUMBER=28
-    WS=29
+    EXP=10
+    LPAREN=11
+    RPAREN=12
+    LBRACKET=13
+    RBRACKET=14
+    PLUS=15
+    MINUS=16
+    TIMES=17
+    DIV=18
+    GT=19
+    LT=20
+    EQ=21
+    COMMA=22
+    POINT=23
+    POW=24
+    PI=25
+    EULER=26
+    I=27
+    VARIABLE=28
+    SCIENTIFIC_NUMBER=29
+    WS=30
 
     def __init__(self, input, output=sys.stdout):
         super(GdmlExpressionParser, self).__init__(input, output=output)
@@ -568,7 +569,7 @@ class GdmlExpressionParser ( Parser ):
                 self.state = 67
                 self.signedAtom()
                 pass
-            elif token in [GdmlExpressionParser.COS, GdmlExpressionParser.SIN, GdmlExpressionParser.TAN, GdmlExpressionParser.ACOS, GdmlExpressionParser.ASIN, GdmlExpressionParser.ATAN, GdmlExpressionParser.LN, GdmlExpressionParser.LOG, GdmlExpressionParser.SQRT]:
+            elif token in [GdmlExpressionParser.COS, GdmlExpressionParser.SIN, GdmlExpressionParser.TAN, GdmlExpressionParser.ACOS, GdmlExpressionParser.ASIN, GdmlExpressionParser.ATAN, GdmlExpressionParser.LN, GdmlExpressionParser.LOG, GdmlExpressionParser.SQRT, GdmlExpressionParser.EXP]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 68
                 self.func()
@@ -1037,6 +1038,9 @@ class GdmlExpressionParser ( Parser ):
         def LN(self):
             return self.getToken(GdmlExpressionParser.LN, 0)
 
+        def EXP(self):
+            return self.getToken(GdmlExpressionParser.EXP, 0)
+
         def SQRT(self):
             return self.getToken(GdmlExpressionParser.SQRT, 0)
 
@@ -1069,7 +1073,7 @@ class GdmlExpressionParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 112
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << GdmlExpressionParser.COS) | (1 << GdmlExpressionParser.SIN) | (1 << GdmlExpressionParser.TAN) | (1 << GdmlExpressionParser.ACOS) | (1 << GdmlExpressionParser.ASIN) | (1 << GdmlExpressionParser.ATAN) | (1 << GdmlExpressionParser.LN) | (1 << GdmlExpressionParser.LOG) | (1 << GdmlExpressionParser.SQRT))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << GdmlExpressionParser.COS) | (1 << GdmlExpressionParser.SIN) | (1 << GdmlExpressionParser.TAN) | (1 << GdmlExpressionParser.ACOS) | (1 << GdmlExpressionParser.ASIN) | (1 << GdmlExpressionParser.ATAN) | (1 << GdmlExpressionParser.LN) | (1 << GdmlExpressionParser.LOG) | (1 << GdmlExpressionParser.SQRT) | (1 << GdmlExpressionParser.EXP))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
