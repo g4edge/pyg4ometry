@@ -71,9 +71,9 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     def pycsgmesh(self):
         _log.info('twistedbox.pycsgmesh> antlr')
         twistedAngle = float(self.twistedAngle)
-        pDx = float(self.pDx)/2
-        pDy = float(self.pDy)/2
-        pDz = float(self.pDz)/2
+        pDx = float(self.pDx)/2.
+        pDy = float(self.pDy)/2.
+        pDz = float(self.pDz)/2.
         refine  = float(self.refine)
 
         _log.info('twistedbox.pycsgmesh> mesh')
