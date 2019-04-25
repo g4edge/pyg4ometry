@@ -252,9 +252,9 @@ class Reader(object) :
 
     def parseBox(self, node) : 
         solid_name = node.attributes['name'].value 
-        x = _defines.Expression(solid_name+'_pX','({})/2'.format(node.attributes['x'].value),self._registry)
-        y = _defines.Expression(solid_name+'_pY','({})/2'.format(node.attributes['y'].value),self._registry)
-        z = _defines.Expression(solid_name+'_pZ','({})/2'.format(node.attributes['z'].value),self._registry)
+        x = _defines.Expression(solid_name+'_pX','{}'.format(node.attributes['x'].value),self._registry)
+        y = _defines.Expression(solid_name+'_pY','{}'.format(node.attributes['y'].value),self._registry)
+        z = _defines.Expression(solid_name+'_pZ','{}'.format(node.attributes['z'].value),self._registry)
         try : 
             unit = node.attributes['unit'].value
         except KeyError : 
