@@ -99,6 +99,7 @@ funcname
    | ASIN
    | LOG
    | LN
+   | EXP
    | SQRT
    ;
 
@@ -140,12 +141,12 @@ ATAN
 
 
 LN
-   : 'ln'
+   : 'log'
    ;
 
 
 LOG
-   : 'log'
+   : 'log10'
    ;
 
 
@@ -153,6 +154,9 @@ SQRT
    : 'sqrt'
    ;
 
+EXP
+   : 'exp'
+   ;
 
 LPAREN
    : '('
@@ -259,7 +263,7 @@ SCIENTIFIC_NUMBER
 
 
 fragment NUMBER
-   : ('0' .. '9') + ('.' ('0' .. '9') +)?
+   : ('0' .. '9') + POINT? (('0' .. '9') +)?
    ;
 
 
