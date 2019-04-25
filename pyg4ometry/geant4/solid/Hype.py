@@ -1,12 +1,13 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge import Wedge as _Wedge
 from Plane import Plane as _Plane
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
+from copy import deepcopy as _dc
+import logging as _log
 
 import numpy as _np
 
@@ -33,26 +34,42 @@ class Hype(_SolidBase):
         self.halfLenZ    = halfLenZ
         self.nslice      = nslice
         self.nstack      = nstack
+
+        self.dependents = []
         # self.checkParameters()
         if registry:
             registry.addSolid(self)
 
+    def __repr__(self):
+        return "Hype : {} {} {} {} {} {}".format(self.name, self.innerRadius, self.outerRadius,
+                                                 self.innerStereo, self.outerStereo, self.halfLenZ)
+
     def checkParameters(self):
-        if self.innerRadius > self.outerRadius:
+        if float(self.innerRadius) > float(self.outerRadius):
             raise ValueError("Inner radius must be less than outer radius.")
 
     def pycsgmesh(self):
-        dz     = 2*(self.halfLenZ+1.e-6)/self.nstack #make a little bigger as safety for subtractions
-        sz     = -self.halfLenZ-1.e-6
+        _log.info('hype.pycsgmesh> antlr')
+        innerRadius = float(self.innerRadius)
+        outerRadius = float(self.outerRadius)
+        innerStereo = float(self.innerStereo)
+        outerStereo = float(self.outerStereo)
+        halfLenZ = float(self.halfLenZ)
+
+        _log.info('hype.pycsgmesh> mesh')
+
+        safety = 1.e-6
+        dz     = 2*(halfLenZ+safety)/self.nstack #make a little bigger as safety for subtractions
+        sz     = -halfLenZ-safety
         dTheta = 2*_np.pi/self.nslice
         stacks = self.nstack
         slices = self.nslice
-        rinout  = [self.innerRadius, self.outerRadius] if self.innerRadius else [self.outerRadius]
-        stinout = [self.innerStereo, self.outerStereo]
+        rinout  = [innerRadius, outerRadius] if innerRadius else [outerRadius]
+        stinout = [innerStereo, outerStereo] if innerRadius else [outerStereo]
 
         polygons = []
 
-        def appendVertex(vertices, theta, z, r, stereo, norm=1):
+        def appendVertex(vertices, theta, z, r, stereo):
             c     = _Vector([0,0,0])
             x     = _np.sqrt(r**2+(_np.tan(stereo)*z)**2)
             y     = 0
@@ -64,14 +81,7 @@ class Hype(_SolidBase):
                 y_rot,
                 z)
 
-            if norm == 0:
-                n = None
-            if norm == 1:
-                n = d
-            else:
-                n = d.negated()
-
-            vertices.append(_Vertex(c.plus(d), n))
+            vertices.append(_Vertex(c.plus(d), None))
 
         meshinout = []
         for i in range(len(rinout)):
@@ -79,46 +89,64 @@ class Hype(_SolidBase):
                 j1 = j0 + 0.5
                 j2 = j0 + 1
                 for i0 in range(slices):
-                    nrm = 0
 
                     i1 = i0 + 0.5
                     i2 = i0 + 1
+
                     verticesN = []
-                    appendVertex(verticesN, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesN, i2 * dTheta, j2 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesN, i0 * dTheta, j2 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    polygons.append(_Polygon(verticesN))
-                    verticesS = []
-                    appendVertex(verticesS, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesS, i0 * dTheta, j0 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesS, i2 * dTheta, j0 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    polygons.append(_Polygon(verticesS))
+                    appendVertex(verticesN, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesN, i2 * dTheta, j2 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesN, i0 * dTheta, j2 * dz + sz, rinout[i], stinout[i])
+                    polygons.append(_Polygon(_dc(verticesN)))
                     verticesW = []
-                    appendVertex(verticesW, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesW, i0 * dTheta, j2 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesW, i0 * dTheta, j0 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    polygons.append(_Polygon(verticesW))
+                    appendVertex(verticesW, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesW, i0 * dTheta, j2 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesW, i0 * dTheta, j0 * dz + sz, rinout[i], stinout[i])
+                    polygons.append(_Polygon(_dc(verticesW)))
+                    verticesS = []
+                    appendVertex(verticesS, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesS, i0 * dTheta, j0 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesS, i2 * dTheta, j0 * dz + sz, rinout[i], stinout[i])
+                    polygons.append(_Polygon(_dc(verticesS)))
                     verticesE = []
-                    appendVertex(verticesE, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesE, i2 * dTheta, j0 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    appendVertex(verticesE, i2 * dTheta, j2 * dz + sz, rinout[i], stinout[i], norm=nrm)
-                    polygons.append(_Polygon(verticesE))
+                    appendVertex(verticesE, i1 * dTheta, j1 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesE, i2 * dTheta, j0 * dz + sz, rinout[i], stinout[i])
+                    appendVertex(verticesE, i2 * dTheta, j2 * dz + sz, rinout[i], stinout[i])
+                    polygons.append(_Polygon(_dc(verticesE)))
+
+            for i0 in range(slices):
+                i1 = i0 + 0.5
+                i2 = i0 + 1
+                vertices_t = []
+                vertices_b = []
+
+                # top face
+                vertices_t.append(_Vertex(_Vector([0,0, stacks * dz + sz]), None))
+                appendVertex(vertices_t, i0 * dTheta, stacks * dz + sz, rinout[i], stinout[i])
+                appendVertex(vertices_t, i2 * dTheta, stacks * dz + sz, rinout[i], stinout[i])
+                polygons.append(_Polygon(_dc(vertices_t)))
+
+                # bottom face
+                vertices_b.append(_Vertex(_Vector([0,0, -halfLenZ]), None))
+                appendVertex(vertices_b, i2 * dTheta, sz, rinout[i], stinout[i])
+                appendVertex(vertices_b, i0 * dTheta, sz, rinout[i], stinout[i])
+                polygons.append(_Polygon(_dc(vertices_b)))
 
             mesh      = _CSG.fromPolygons(polygons)
             meshinout.append(mesh)
             polygons = []
 
         for i in range(len(meshinout)):
-            wzlength     = 3*self.halfLenZ
+            wzlength     = 3*halfLenZ
             topNorm      = _Vector(0,0,1)
             botNorm      = _Vector(0,0,-1)
-            pTopCut      = _Plane("pTopCut", topNorm, self.halfLenZ, wzlength).pycsgmesh()
-            pBottomCut   = _Plane("pBottomCut", botNorm, -self.halfLenZ, wzlength).pycsgmesh()
-            meshinout[i] = meshinout[i].subtract(pTopCut).subtract(pBottomCut)
+            pTopCut      = _Plane("pTopCut", topNorm, halfLenZ, wzlength).pycsgmesh()
+            pBottomCut   = _Plane("pBottomCut", botNorm, -halfLenZ, wzlength).pycsgmesh()
+            meshinout[i] = meshinout[i].subtract(pBottomCut).subtract(pTopCut)
 
-        if self.innerRadius:
-            self.mesh = meshinout[1].subtract(meshinout[0])
+        if innerRadius:
+            mesh = meshinout[1].subtract(meshinout[0])
         else:
-            self.mesh = meshinout[0]
+            mesh = meshinout[0]
 
-        return self.mesh
+        return mesh

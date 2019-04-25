@@ -1,10 +1,10 @@
 from SolidBase import SolidBase as _SolidBase
-from pyg4ometry.geant4.Registry import registry as _registry
 
 from Tubs import Tubs as _Tubs
 from Plane import Plane as _Plane
 
 import numpy as _np
+import logging as _log
 
 class CutTubs(_SolidBase):
     """
@@ -31,16 +31,18 @@ class CutTubs(_SolidBase):
         self.pDPhi     = pDPhi
         self.pLowNorm  = pLowNorm
         self.pHighNorm = pHighNorm
-        self.mesh      = None
+        self.dependents = []
+
         if registry:
             registry.addSolid(self)
-            self.registry = registry
 
     def __repr__(self):
-        return 'Cut tubs :{}'.format(self.name)
-
+        # Low norm and high norm exlcluded as they are lists
+        return "Cut tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
+                                                        self.pDz, self.pSPhi, self.pDPhi)
     def pycsgmesh(self):
 
+        _log.info('cuttubs.pycsgmesh> antlr')
         pRMin     = float(self.pRMin)
         pRMax     = float(self.pRMax)
         pDz       = float(self.pDz)
@@ -49,6 +51,7 @@ class CutTubs(_SolidBase):
         pHighNorm = [self.pHighNorm[0].eval(), self.pHighNorm[1].eval(), self.pHighNorm[2].eval()]
         pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]
 
+        _log.info('cuttubs.pycsgmesh> mesh')
         mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
 
         if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
