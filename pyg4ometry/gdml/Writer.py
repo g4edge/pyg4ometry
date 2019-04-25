@@ -324,15 +324,25 @@ class Writer(object):
             raise ValueError("No such solid "+solid.type)
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
+
         if not hasattr(instance, variable):
             raise AttributeError("") #TODO: Add error message
         indexedVariable = variable
+
+        # Indexed variable 
         if index is not None:
             try:
                 indexedVariable = variable[index]
             except IndexError:
                 raise IndexError("") #TODO: Add error message
+
         var = getattr(instance, indexedVariable)
+
+        # check if variable is in registry #TODO indexed variables
+        if self.registry.defineDict.has_key(var.name) :
+            return var.name
+
+        # Expression, Constant, Quantity or Variable
         if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
             return str(var.expr.expression)
         else:
