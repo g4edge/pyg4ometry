@@ -73,7 +73,7 @@ scientific
    ;
 
 matrixElement
-   : variable LBRACKET scientific (COMMA scientific)* RBRACKET
+   : variable LBRACKET expression (COMMA expression)* RBRACKET
    ;
 
 constant
@@ -101,6 +101,7 @@ funcname
    | LN
    | EXP
    | SQRT
+   | POWER
    ;
 
 relop
@@ -156,6 +157,10 @@ SQRT
 
 EXP
    : 'exp'
+   ;
+
+POWER
+   : 'pow'
    ;
 
 LPAREN

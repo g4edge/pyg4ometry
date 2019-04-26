@@ -113,7 +113,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
     def visitFuncname(self, ctx):
         funcs = ["SIN", "COS", "TAN", "ACOS",
                  "ASIN", "ATAN", "LOG", "LN",
-                 "EXP","SQRT"]
+                 "EXP", "SQRT", "POWER"]
         for f in funcs:
             function = getattr(ctx, f)
             if function():
