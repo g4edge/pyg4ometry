@@ -57,7 +57,14 @@ class CSG(object):
     """
     def __init__(self):
         self.polygons = []
-    
+
+    def __hash__(self):
+        hashable_mesh = []
+        for poly in self.polygons:
+            for vertex in poly.vertices:
+                hashable_mesh.append(tuple(vertex.pos))
+        return hash(tuple(hashable_mesh))
+
     @classmethod
     def fromPolygons(cls, polygons):
         csg = CSG()
