@@ -63,10 +63,10 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitMatrixElement(self, ctx):
         matrix = self.visit(ctx.variable())
-        indices = [int(self.visit(ctx.scientific(0)))-1] # at least one index
+        indices = [int(self.visit(ctx.expression(0)))-1] # at least one index
         for i in range(len(ctx.COMMA())):
-            index = int(self.visit(ctx.scientific(i+1)))  #only integer access
-            indices.append(index-1) # decrement indices to match python indexing
+            index = int(self.visit(ctx.expression(i+1)))  #only integer access
+            indices.append(index-1) # decrement indices to match python 0-indexing
         print matrix
         print indices
         return matrix[tuple(indices)]
