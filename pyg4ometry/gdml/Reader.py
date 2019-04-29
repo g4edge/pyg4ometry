@@ -426,30 +426,33 @@ class Reader(object) :
 
 
     def parsePolycone(self, node) : 
-        solid_name = node.attributes['name'].value         
+        solid_name = node.attributes['name'].value
 
-        sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self._registry)
-        dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self._registry)
-        try : 
-            nzpl = _defines.Expression(solid_name+"_pZpl",node.attributes['nzplanes'].value,self._registry)
-        except KeyError :
-            nzpl = _defines.Expression(solid_name+"_pZpl","0",self._registry)            
+        try :
+            sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self._registry)
+        except KeyError:
+            sphi = _defines.Expression(solid_name+"_pSphi", "0",self._registry)
 
-        Rmin = [] 
+        try:
+            dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self._registry)
+        except KeyError:
+            dphi = _defines.Expression(solid_name+"_pDphi", "2*pi" ,self._registry)
+
+        Rmin = []
         Rmax = []
-        Z    = [] 
-        
+        Z    = []
+
         i = 0
-        for chNode in node.childNodes : 
+        for chNode in node.childNodes :
             rmin  = _defines.Expression(solid_name+"_zplane_rmin"+str(i),chNode.attributes['rmin'].value,self._registry)
             rmax  = _defines.Expression(solid_name+"_zplane_rmax"+str(i),chNode.attributes['rmax'].value,self._registry)
             z     = _defines.Expression(solid_name+"_zplane_z"+str(i),chNode.attributes['z'].value,self._registry)
             Rmin.append(rmin)
             Rmax.append(rmax)
             Z.append(z)
-            i=i+1
+            i+=1
 
-        _g4.solid.Polycone(solid_name, sphi,dphi,Z, Rmin, Rmax, self._registry)
+        _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry)
 
     def parseGenericPolycone(self, node) : 
         solid_name = node.attributes['name'].value
