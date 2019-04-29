@@ -1,11 +1,10 @@
 from SolidBase import SolidBase as _SolidBase
 from Wedge     import Wedge     as _Wedge
-from pyg4ometry.geant4.Registry import registry as _registry
 from pyg4ometry.pycsg.core import CSG     as _CSG
 from pyg4ometry.pycsg.geom import Vector  as _Vector
 from pyg4ometry.pycsg.geom import Vertex  as _Vertex
 from pyg4ometry.pycsg.geom import Polygon as _Polygon
-
+import logging as _log
 
 import numpy as _np
 
@@ -56,7 +55,12 @@ class Trap(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return 'Trap: '+self.name+' '+str(self.pDz)+' '+str(self.pTheta)+' '+str(self.pDPhi)+' '+str(self.pDy1)+' '+str(self.pDx1)+' '+str(self.pDx2)+' '+str(self.pAlp1)+' '+str(self.pDy2)+' '+str(self.pDx3)+' '+str(self.pDx4)+' '+str(self.pAlp2)
+        return "Trap : {} {} {} {} {} {} {} {} {} {} {} {}".format(self.name, self.pDz,
+                                                                   self.pTheta, self.pDPhi,
+                                                                   self.pDy1, self.pDx1,
+                                                                   self.pDx2, self.pAlp1,
+                                                                   self.pDy2, self.pDx3,
+                                                                   self.pDx4, self.pAlp2)
 
     def pycsgmesh(self):
 
@@ -68,15 +72,16 @@ class Trap(_SolidBase):
             result = [a_i + b_i for a_i, b_i in zip(lista, listb)]
             return result
 
-        pDz  = float(self.pDz)
+        _log.info("trap.antlr>")
+        pDz  = float(self.pDz)/2.
 
-        pDx1   = float(self.pDx1) #at -pDz
-        pDx2   = float(self.pDx2)
-        pDy1   = float(self.pDy1) #at -pDz
+        pDx1   = float(self.pDx1)/2. #at -pDz
+        pDx2   = float(self.pDx2)/2.
+        pDy1   = float(self.pDy1)/2. #at -pDz
 
-        pDy2   = float(self.pDy2)
-        pDx3   = float(self.pDx3)
-        pDx4   = float(self.pDx4)
+        pDy2   = float(self.pDy2)/2.
+        pDx3   = float(self.pDx3)/2.
+        pDx4   = float(self.pDx4)/2.
 
         pTheta = float(self.pTheta)
         pDPhi  = float(self.pDPhi)
@@ -84,6 +89,7 @@ class Trap(_SolidBase):
         pAlp1  = float(self.pAlp1)
         pAlp2  = float(self.pAlp2)
 
+        _log.info("trap.pycsgmesh>")
         dX  = 2*_np.sin(pTheta)*pDz
         dY  = 2*_np.sin(pDPhi)*pDz
 
