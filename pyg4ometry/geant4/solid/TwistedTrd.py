@@ -2,17 +2,17 @@ from SolidBase import SolidBase as _SolidBase
 from TwoVector import TwoVector as _TwoVector
 from Layer import Layer as _Layer
 from TwistedSolid import TwistedSolid as _TwistedSolid
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
+import logging as _log
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
-                 pDz, nslice=20, refine=0, register=True):
+                 pDz, registry=None, nslice=20, refine=0):
         """
         Constructs a twisted general trapezoid.
 
@@ -37,12 +37,20 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.pDz              = pDz
         self.nslice           = nslice
         self.refine           = refine
+
+        dependents = []
         self.checkParameters()
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
+
+    def __repr__(self):
+        return "TwistedTrd : {} {} {} {} {} {}".format(self.name, self.twistedAngle,
+                                                       self.pDx1, self.pDx2,
+                                                       self.pDy1, self.pDy2,
+                                                       self.pDz)
 
     def checkParameters(self):
-        if self.twistedAngle > _np.pi:
+        if float(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 
@@ -72,16 +80,25 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         return layers
 
     def pycsgmesh(self):
-        pl1 = _TwoVector(-self.pDx1, -self.pDy1)#, self.pDz]
-        pl2 = _TwoVector(self.pDx1, -self.pDy1) # self.pDz]
-        pl3 = _TwoVector(self.pDx1, self.pDy1) #self.pDz]
-        pl4 = _TwoVector(-self.pDx1, self.pDy1) # self.pDz]
+        _log.info('twistedtrd.pycsgmesh> antlr')
+        twistedAngle = float(self.twistedAngle)
+        pDx1 = float(self.pDx1)/2.
+        pDx2 = float(self.pDx2)/2.
+        pDy1 = float(self.pDy1)/2.
+        pDy2 = float(self.pDy2)/2.
+        pDz = float(self.pDz)/2.
 
-        pu1 = _TwoVector(-self.pDx2, -self.pDy2)#, self.pDz]
-        pu2 = _TwoVector(self.pDx2, -self.pDy2) # self.pDz]
-        pu3 = _TwoVector(self.pDx2, self.pDy2) #self.pDz]
-        pu4 = _TwoVector(-self.pDx2, self.pDy2) # self.pDz]pu1 = _TwoVector(-self.pDx2, -self.pDy2)
+        _log.info('hype.pycsgmesh> mesh')
+        pl1 = _TwoVector(-pDx1, -pDy1)#, pDz]
+        pl2 = _TwoVector(pDx1, -pDy1) # pDz]
+        pl3 = _TwoVector(pDx1, pDy1) #pDz]
+        pl4 = _TwoVector(-pDx1, pDy1) # pDz]
 
-        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, self.pDz, self.twistedAngle, self.nslice)
+        pu1 = _TwoVector(-pDx2, -pDy2)#, pDz]
+        pu2 = _TwoVector(pDx2, -pDy2) # pDz]
+        pu3 = _TwoVector(pDx2, pDy2) #pDz]
+        pu4 = _TwoVector(-pDx2, pDy2) # pDz]pu1 = _TwoVector(-pDx2, -pDy2)
+
+        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nslice)
 
         return self.meshFromLayers(m, self.nslice)
