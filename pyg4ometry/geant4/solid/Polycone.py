@@ -110,14 +110,14 @@ class Polycone(_SolidBase):
             vertices_t = []
             vertices_b = []
 
-            if pRMin[-1] or pRMax[-1]:
+            if (pRMin[-1] or pRMax[-1]) and pRMin[-1] != pRMax[-1]:
                 appendVertex(vertices_t, i2 * dPhi + pSPhi, pZpl[-1], pRMin[-1]+offs)
                 appendVertex(vertices_t, i0 * dPhi + pSPhi, pZpl[-1], pRMin[-1]+offs)
                 appendVertex(vertices_t, i0 * dPhi + pSPhi, pZpl[-1], pRMax[-1]+offs)
                 appendVertex(vertices_t, i2 * dPhi + pSPhi, pZpl[-1], pRMax[-1]+offs)
                 polygons.append(_Polygon(_dc(vertices_t)))
 
-            if pRMin[0] or pRMax[0]:
+            if (pRMin[0] or pRMax[0]) and pRMin[0] != pRMax[0]:
                 appendVertex(vertices_b, i0 * dPhi + pSPhi, pZpl[0], pRMin[0]+offs)
                 appendVertex(vertices_b, i2 * dPhi + pSPhi, pZpl[0], pRMin[0]+offs)
                 appendVertex(vertices_b, i2 * dPhi + pSPhi, pZpl[0], pRMax[0]+offs)
