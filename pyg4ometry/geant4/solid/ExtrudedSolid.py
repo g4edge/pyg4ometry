@@ -1,10 +1,11 @@
 from SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
+
+import logging as _log
 
 class ExtrudedSolid(_SolidBase):
     def __init__(self, name, pPolygon, pZslices, registry=None):
@@ -26,7 +27,7 @@ class ExtrudedSolid(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Extruded solid:" + str(self.name)
+        return "Extruded solid: {}".format(self.name)
 
     def polygon_area(self,vertices):
         # Using the shoelace formula
@@ -37,6 +38,7 @@ class ExtrudedSolid(_SolidBase):
         return signed_area
 
     def pycsgmesh(self):
+        _log.info('xtru.pycsgmesh> antlr')
         zpos     = [zslice[0].eval() for zslice in self.pZslices]
         x_offs   = [zslice[1][0].eval() for zslice in self.pZslices]
         y_offs   = [zslice[1][1].eval() for zslice in self.pZslices]
@@ -44,6 +46,7 @@ class ExtrudedSolid(_SolidBase):
         vertices = [[pPolygon[0].eval(), pPolygon[1].eval()] for pPolygon in self.pPolygon]
         nslices  = len(self.pZslices)
 
+        _log.info('xtru.pycsgmesh> mesh')
         polygons  = []
         polygonsT = []
         polygonsB = []
