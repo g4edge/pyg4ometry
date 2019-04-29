@@ -662,11 +662,11 @@ class Reader(object) :
         try : 
             position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
         except IndexError : 
-            position   = _defines.Position("zero","0","0","0",self._registry,False)            
+            position   = _defines.Position("zero","0","0","0","mm",self._registry,False)            
         try : 
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError : 
-            rotation   = _defines.Rotation("indentity","0","0","0",self._registry,False)
+            rotation   = _defines.Rotation("indentity","0","0","0","rad",self._registry,False)
         
         _g4.solid.Union(solid_name, first, second,[rotation,position],self._registry)  
 
