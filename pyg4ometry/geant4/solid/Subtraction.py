@@ -44,7 +44,7 @@ class Subtraction(_SolidBase):
         obj2 = self.registry.solidDict[self.obj2name]
 
         # transformation 
-        rot = tbxyz(self.tra2[0].eval())
+        rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
         # get meshes 

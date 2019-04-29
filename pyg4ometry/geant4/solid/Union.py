@@ -43,7 +43,7 @@ class Union(_SolidBase):
         obj2 = self.registry.solidDict[self.obj2name]
 
         # tranformation
-        rot = tbxyz(self.tra2[0].eval())
+        rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
         _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
 
