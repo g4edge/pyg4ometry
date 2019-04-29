@@ -620,10 +620,17 @@ class Reader(object) :
 
         print 'twisted trap NOT IMPLEMENTED'        
 
-    def parseTwistedTrd(self, node) : 
-        solid_name = node.attributes['name'].value 
-    
-        print 'twisted trd NOT IMPLEMENTED'        
+    def parseTwistedTrd(self, node) :
+        solid_name = node.attributes['name'].value
+
+        twistedAngle = _defines.Expression(solid_name+'_PhiTwist',node.attributes['PhiTwist'].value,self._registry)
+        x1 = _defines.Expression(solid_name+'_x1',node.attributes['x1'].value,self._registry)
+        x2 = _defines.Expression(solid_name+'_x2',node.attributes['x2'].value,self._registry)
+        y1 = _defines.Expression(solid_name+'_y1',node.attributes['y1'].value,self._registry)
+        y2 = _defines.Expression(solid_name+'_y2',node.attributes['y2'].value,self._registry)
+        z    = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
+
+        _g4.solid.TwistedTrd(solid_name, twistedAngle, x1, x2, y1, y2, z, self._registry)
 
     def parseTwistedTubs(self,node) : 
         solid_name = node.attributes['name'].value         
