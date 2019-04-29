@@ -1,9 +1,10 @@
 from SolidBase import SolidBase as _SolidBase
-from pyg4ometry.geant4.Registry import registry as _registry
 from pyg4ometry.pycsg.core import CSG as _CSG
 from pyg4ometry.pycsg.geom import Polygon as _Polygon
 from pyg4ometry.pycsg.geom import Vertex as _Vertex
 from pyg4ometry.pycsg.geom import Vector as _Vector
+
+import logging as _log
 
 class Trd(_SolidBase):
     """
@@ -31,12 +32,14 @@ class Trd(_SolidBase):
             registry.addSolid(self)
 
     def pycsgmesh(self):
+        _log.info('trd.pycsgmesh> antlr')
         pX1 = float(self.pX1)
         pX2 = float(self.pX2)
         pY1 = float(self.pY1)
         pY2 = float(self.pY2)
         pZ  = float(self.pZ)
 
+        _log.info('trd.pycsgmesh> mesh')
         mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX2,  pY2, pZ), None),
                                              _Vertex(_Vector(-pX2, -pY2, pZ), None),
                                              _Vertex(_Vector(pX2,  -pY2, pZ), None),
