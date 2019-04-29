@@ -609,6 +609,7 @@ class Reader(object) :
                 xoff  = _defines.Expression(solid_name+"_"+str(isec)+"_xoff",chNode.attributes['xOffset'].value,self._registry)
                 yoff  = _defines.Expression(solid_name+"_"+str(isec)+"_yoff",chNode.attributes['yOffset'].value,self._registry)
                 zpos  = _defines.Expression(solid_name+"_"+str(isec)+"_zpos",chNode.attributes['zPosition'].value,self._registry)
+                                            chNode.attributes['yOffset'].value,self._registry)
                 zSection.append([zpos,[xoff,yoff],scale])
                 isec = isec+1
 
