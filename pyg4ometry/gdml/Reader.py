@@ -279,7 +279,7 @@ class Reader(object) :
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self._registry)
 
         try : 
-            unit = node.attributes['unit'] .value
+            unit = node.attributes['unit'].value
         except KeyError : 
             unit = "mm"
 
