@@ -33,11 +33,11 @@ class Trd(_SolidBase):
 
     def pycsgmesh(self):
         _log.info('trd.pycsgmesh> antlr')
-        pX1 = float(self.pX1)
-        pX2 = float(self.pX2)
-        pY1 = float(self.pY1)
-        pY2 = float(self.pY2)
-        pZ  = float(self.pZ)
+        pX1 = float(self.pX1)/2.
+        pX2 = float(self.pX2)/2.
+        pY1 = float(self.pY1)/2.
+        pY2 = float(self.pY2)/2.
+        pZ  = float(self.pZ)/2.
 
         _log.info('trd.pycsgmesh> mesh')
         mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX2,  pY2, pZ), None),
