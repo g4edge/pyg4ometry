@@ -454,24 +454,31 @@ class Reader(object) :
 
         _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry)
 
-    def parseGenericPolycone(self, node) : 
+    def parseGenericPolycone(self, node) :
         solid_name = node.attributes['name'].value
-        
-        sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self._registry)
-        dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self._registry)
+        try :
+            sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self._registry)
+        except KeyError:
+            sphi = _defines.Expression(solid_name+"_pSphi", "0",self._registry)
+
+        try:
+            dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self._registry)
+        except KeyError:
+            dphi = _defines.Expression(solid_name+"_pDphi", "2*pi" ,self._registry)
 
         R = []
         Z = []
-        
+
         i = 0
-        for chNode in node.childNodes : 
+        for chNode in node.childNodes :
             r     = _defines.Expression(solid_name+"_rzpoint_r"+str(i),chNode.attributes['r'].value,self._registry)
             z     = _defines.Expression(solid_name+"_rzpoint_z"+str(i),chNode.attributes['z'].value,self._registry)
             R.append(r)
             Z.append(z)
-            i=i+1
-        
-        print 'generic polycone NOT IMPLEMENTED'
+            i+=1
+
+        _g4.solid.GenericPolycone(solid_name, sphi, dphi, R, Z, self._registry)
+
 
     def parsePolyhedra(self, node) :
         solid_name = node.attributes['name'].value
