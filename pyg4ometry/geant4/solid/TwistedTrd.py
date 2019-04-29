@@ -44,10 +44,10 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "TwistedTrd : {} {} {} {} {} {}".format(self.name, self.twistedAngle,
-                                                       self.pDx1, self.pDx2,
-                                                       self.pDy1, self.pDy2,
-                                                       self.pDz)
+        return "TwistedTrd : {} {} {} {} {} {} {}".format(self.name, self.twistedAngle,
+                                                          self.pDx1, self.pDx2,
+                                                          self.pDy1, self.pDy2,
+                                                          self.pDz)
 
     def checkParameters(self):
         if float(self.twistedAngle) > _np.pi:
