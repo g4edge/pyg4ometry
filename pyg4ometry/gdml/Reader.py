@@ -674,14 +674,27 @@ class Reader(object) :
         _g4.solid.TwistedTrd(solid_name, twistedAngle, x1, x2, y1, y2, z, self._registry)
 
     def parseTwistedTubs(self,node) : 
-        solid_name = node.attributes['name'].value         
+        solid_name = node.attributes['name'].value
 
-        print 'twisted tubs NOT IMPLEMENTED'        
+        print 'twisted tubs NOT IMPLEMENTED' 
 
-    def parseGenericTrap(self,node) : 
-        solid_name = node.attributes['name'].value         
+    def parseGenericTrap(self,node) :
+        solid_name = node.attributes['name'].value
 
-        print 'generic trap NOT IMPLEMENTED'        
+        args = [solid_name]
+        for i in range(1,9):
+            vx = _defines.Expression("{}_v{}x".format(solid_name, i),
+                                     node.attributes["v{}x".format(i)].value,
+                                     self._registry)
+            vy = _defines.Expression("{}_v{}y".format(solid_name, i),
+                                     node.attributes["v{}y".format(i)].value,
+                                     self._registry)
+            args.extend([vx, vy])
+
+        dz = _defines.Expression(solid_name+"_dz",node.attributes["dz"].value,self._registry)
+        args.extend([dz, self._registry])
+
+        _g4.solid.GenericTrap(*args)
 
     def parseTessellatedSolid(self,node) : 
         solid_name = node.attributes['name'].value
