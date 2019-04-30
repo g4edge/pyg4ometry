@@ -96,6 +96,10 @@ class Polycone(_SolidBase):
                     i2 = i0 + 1
                     k0 = i0 if R == pRMax else i2  #needed to ensure the surface normals on the inner and outer surface are obeyed
                     k1 = i2 if R == pRMax else i0
+
+                    if r0 == r2 and pZpl[j0] == pZpl[j2]:
+                        continue # don't mesh between degenrate planes
+
                     vertices = []
                     appendVertex(vertices, k0 * dPhi + pSPhi, pZpl[j0], r0)
                     appendVertex(vertices, k1 * dPhi + pSPhi, pZpl[j0], r0)
