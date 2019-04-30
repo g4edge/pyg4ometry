@@ -14,7 +14,6 @@ class GenericPolycone(_SolidBase):
         name = name
         pSPhi = Angle Phi at start of rotation
         pDPhi = Angle Phi at end of rotation
-        pNRZ = number of (r,z) coordinate points given
         pR = r coordinate list
 		pZ = z coordinate list
         """
