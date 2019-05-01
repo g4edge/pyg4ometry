@@ -38,7 +38,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.nslice           = nslice
         self.refine           = refine
 
-        dependents = []
+        self.dependents = []
+        
         self.checkParameters()
         if registry:
             registry.addSolid(self)
