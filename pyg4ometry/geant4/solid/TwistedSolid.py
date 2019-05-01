@@ -13,10 +13,13 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 class TwistedSolid(object):
-    def makeFaceFromLayer(self, layer):
+    def makeFaceFromLayer(self, layer, reverse=False):
         pols = []
         l = layer
-        for p in [l.p1, l.p2, l.p3, l.p4]:
+        vertices = [l.p1, l.p2, l.p3, l.p4]
+        if reverse:
+            vertices.reverse()
+        for p in vertices:
             pols.append(_Vertex(_Vector(p.x, p.y, l.z), None))
         return _Polygon(pols)
 
@@ -36,12 +39,12 @@ class TwistedSolid(object):
             pur = pau + float(i+1)   * (pbu - pau) / nsl
 
             pol1 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl), None),
-                             _Vertex(_Vector(pul.x, pul.y, zu), None),
-                             _Vertex(_Vector(pur.x, pur.y, zu), None)])
+                             _Vertex(_Vector(pur.x, pur.y, zu), None),
+                             _Vertex(_Vector(pul.x, pul.y, zu), None)])
             pols.append(pol1)
 
-            pol2 = _Polygon([_Vertex(_Vector(plr.x, plr.y, zl), None),
-                             _Vertex(_Vector(pll.x, pll.y, zl), None),
+            pol2 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl), None),
+                             _Vertex(_Vector(plr.x, plr.y, zl), None),
                              _Vertex(_Vector(pur.x, pur.y, zu), None)])
             pols.append(pol2)
         return pols
@@ -71,7 +74,7 @@ class TwistedSolid(object):
             pols = self.makeSide(ll.p4, ll.p1, ul.p4, ul.p1, ll.z, ul.z, nsl)
             allPolygons.extend(pols)
 
-        top = self.makeFaceFromLayer(l[0])
+        top = self.makeFaceFromLayer(l[0], reverse=True)
         allPolygons.append(top)
 
         mesh = _CSG.fromPolygons(allPolygons)
