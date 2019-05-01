@@ -657,9 +657,23 @@ class Reader(object) :
         _g4.solid.TwistedBox(solid_name, twistedAngle, x, y, z, self._registry)
 
     def parseTwistedTrap(self, node) : 
-        solid_name = node.attributes['name'].value 
+        solid_name = node.attributes['name'].value
 
-        print 'twisted trap NOT IMPLEMENTED'        
+        twistedAngle = _defines.Expression(solid_name+'_PhiTwist',node.attributes['PhiTwist'].value,self._registry)
+        Theta = _defines.Expression(solid_name+'_Theta',node.attributes['Theta'].value,self._registry)
+        Phi = _defines.Expression(solid_name+'_Phi',node.attributes['Phi'].value,self._registry)
+        Alph = _defines.Expression(solid_name+'_Alph',node.attributes['Alph'].value,self._registry)
+        x1 = _defines.Expression(solid_name+'_x1',node.attributes['x1'].value,self._registry)
+        x2 = _defines.Expression(solid_name+'_x2',node.attributes['x2'].value,self._registry)
+        x3 = _defines.Expression(solid_name+'_x3',node.attributes['x3'].value,self._registry)
+        x4 = _defines.Expression(solid_name+'_x4',node.attributes['x4'].value,self._registry)
+        y1 = _defines.Expression(solid_name+'_y1',node.attributes['y1'].value,self._registry)
+        y2 = _defines.Expression(solid_name+'_y2',node.attributes['y2'].value,self._registry)
+        z  = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
+
+        _g4.solid.TwistedTrap(solid_name, twistedAngle, z, Theta, Phi, y1,
+                              x1, x2, y2, x3, x4, Alph, self._registry)
+
 
     def parseTwistedTrd(self, node) :
         solid_name = node.attributes['name'].value
