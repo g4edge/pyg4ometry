@@ -2,17 +2,17 @@ from SolidBase import SolidBase as _SolidBase
 from TwistedSolid import TwistedSolid as _TwistedSolid
 from TwoVector import TwoVector as _TwoVector
 from Layer import Layer as _Layer
-from ..Registry import registry as _registry
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
+import logging as _log
 import numpy as _np
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
     def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
-                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, nslice=20, register=True):
+                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry=None, nslice=20):
         """
         Constructs a general trapezoid with a twist around one axis.
 
@@ -44,15 +44,19 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.pDx4         = pDx4
         self.pAlp         = pAlp
         self.nslice       = nslice
+
+        self.dependents = []
+
         self.checkParameters()
-        if register:
-            _registry.addSolid(self)
+        if registry:
+            registry.addSolid(self)
 
     def checkParameters(self):
-        if self.twistedangle > _np.pi:
+        if float(self.twistedangle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
-
+    def __repr__(self):
+        return "Twisted Trap : {} {} {}".format(self.name, self.twistedangle, self.pDz)
 
     def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twist, theta, nsl):
         dz      = 2*pDz/float(nsl)
@@ -95,23 +99,34 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
 
     def pycsgmesh(self):
-        #TBC: Meshing not yet completed!
+        _log.info('twistedtrap.pycsgmesh> antlr')
+        twistedangle = float(self.twistedangle)
+        pDz = float(self.pDz)/2.
+        pTheta = float(self.pTheta)
+        pDPhi = float(self.pDPhi)
+        pDy1 = float(self.pDy1)/2.
+        pDx1 = float(self.pDx1)/2.
+        pDx2 = float(self.pDx2)/2.
+        pDy2 = float(self.pDy2)/2.
+        pDx3 = float(self.pDx3)/2.
+        pDx4 = float(self.pDx4)/2.
+        pAlp = float(self.pAlp)
 
+        _log.info('twistedtrap.pycsgmesh> mesh')
         #Bottom plane coordinates:
-        pl1 = _TwoVector(-self.pDx1, -self.pDy1)
-        pl2 = _TwoVector(self.pDx1, -self.pDy1)
-        pl3 = _TwoVector(self.pDx2, self.pDy1)
-        pl4 = _TwoVector(-self.pDx2, self.pDy1)
+        pl1 = _TwoVector(-pDx1, -pDy1)
+        pl2 = _TwoVector(pDx1, -pDy1)
+        pl3 = _TwoVector(pDx2, pDy1)
+        pl4 = _TwoVector(-pDx2, pDy1)
 
         #Top plane coordinates:
-        pu1 = _TwoVector(-self.pDx3, -self.pDy2)
-        pu2 = _TwoVector(self.pDx3, -self.pDy2)
-        pu3 = _TwoVector(self.pDx4, self.pDy2)
-        pu4 = _TwoVector(-self.pDx4, self.pDy2)
+        pu1 = _TwoVector(-pDx3, -pDy2)
+        pu2 = _TwoVector(pDx3, -pDy2)
+        pu3 = _TwoVector(pDx4, pDy2)
+        pu4 = _TwoVector(-pDx4, pDy2)
 
         #making the layers:
-        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, self.pDz, self.twistedangle, self.pTheta,  self.nslice)
-
-        print 'Meshing not completed'
+        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz,
+                            twistedangle, pTheta,  self.nslice)
 
         return self.meshFromLayers(m, self.nslice)
