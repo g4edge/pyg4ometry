@@ -690,7 +690,22 @@ class Reader(object) :
     def parseTwistedTubs(self,node) : 
         solid_name = node.attributes['name'].value
 
-        print 'twisted tubs NOT IMPLEMENTED' 
+        twist = _defines.Expression(solid_name+'_twistedangle',
+                                    node.attributes['twistedangle'].value,
+                                    self._registry)
+
+        inner_rad = _defines.Expression(solid_name+'_endinnerrad',
+                                        node.attributes['endinnerrad'].value,
+                                        self._registry)
+
+        outer_rad = _defines.Expression(solid_name+'_endouterrad',
+                                        node.attributes['endouterrad'].value,
+                                        self._registry)
+
+        zlen = _defines.Expression(solid_name+'_zlen',node.attributes['zlen'].value,self._registry)
+        phi = _defines.Expression(solid_name+'_phi',node.attributes['phi'].value,self._registry)
+
+        _g4.solid.TwistedTubs(solid_name, inner_rad, outer_rad, zlen, phi, twist, self._registry)
 
     def parseGenericTrap(self,node) :
         solid_name = node.attributes['name'].value
