@@ -28,6 +28,7 @@ from TwistedBox          import *
 from TwistedTrap         import *
 from Sphere              import *
 from TwistedTrd          import *
+from TwistedTubs         import *
 from GenericPolycone     import *
 from GenericPolyhedra    import *
 from GenericTrap         import *
