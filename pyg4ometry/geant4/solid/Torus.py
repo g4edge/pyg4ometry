@@ -38,7 +38,6 @@ class Torus(_SolidBase):
         if registry:
             registry.addSolid(self)
 
-
     def __repr__(self):
         return "Torus : {} {} {} {} {} {}".format(self.name, self.pRmin,
                                                   self.pRmax, self.pRtor,
@@ -81,6 +80,8 @@ class Torus(_SolidBase):
         meshinout = []
 
         for r in rinout:
+            if not r:
+                continue
             for j0 in range(nslice):
                 j1 = j0 + 0.5
                 j2 = j0 + 1
@@ -116,7 +117,7 @@ class Torus(_SolidBase):
             mesh  = meshinout[0].subtract(meshinout[1])
 
         else:
-           mesh = meshinout[1].inverse()
+           mesh = meshinout[0].inverse()
 
         if pDPhi != 2*_np.pi:
             wrmax    = 3*pRtor #make sure intersection wedge is much larger than solid
