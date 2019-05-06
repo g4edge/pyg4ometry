@@ -190,7 +190,7 @@ class Writer(object):
             oe.appendChild(de)
 
             if material.type == 'simple':
-                oe.setAttribute('Z', material.atomic_number)
+                oe.setAttribute('Z', str(material.atomic_number))
                 se  = self.doc.createElement('atom')
                 se.setAttribute('value', str(material.atomic_weight))
                 oe.appendChild(se)
