@@ -1,4 +1,3 @@
-from Registry import registry as _registry
 import sys as _sys
 import os as _os
 
@@ -42,6 +41,7 @@ class Material:
     """
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
+        self.registry = kwargs.get("registry", None)
         self.density = kwargs.get("density", None)
         self.atomic_number = kwargs.get("atomic_number", None)
         self.atomic_weight = kwargs.get("atomic_weight", None)
@@ -69,10 +69,11 @@ class Material:
         else:
             raise IOError("Density must be specified for custom materials.")
 
-        _registry.addMaterial(self)
+        if self.registry is not None:
+            self.registry.addMaterial(self)
 
     @classmethod
-    def nist(cls, name):
+    def nist(cls, name, registry=None):
         """
         Proxy method to construct a NIST compund material - this is just a handle as nothing
         needs to be additionaly defined for a NIST compund. A check is perfored on the name
@@ -86,17 +87,17 @@ class Material:
         return cls(**locals())
 
     @classmethod
-    def from_arbitrary_name(cls, name):
+    def from_arbitrary_name(cls, name, registry=None):
         """Just a name of a material.  WARNING:  It is left to the
         user to ensure that the name is valid.
 
         Inputs:
           name          - string
         """
-        return cls(name=name, arbitrary=True)
+        return cls(name=name, arbitrary=True, registry=registry)
 
     @classmethod
-    def simple(cls, name, atomic_number, atomic_weight, density):
+    def simple(cls, name, atomic_number, atomic_weight, density, registry=None):
         """
         Proxy method to construct a simple material - full description of the element contained is contained in one definition
 
@@ -109,7 +110,7 @@ class Material:
         return cls(**locals())
 
     @classmethod
-    def composite(cls, name, density, number_of_components):
+    def composite(cls, name, density, number_of_components, registry=None):
         """
         Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
 
@@ -136,7 +137,8 @@ class Material:
             raise IOError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, massfraction, "massfraction"))
-        _registry.addMaterial(self) #Refresh the registry representation
+        if self.registry is not None:
+            self.registry.addMaterial(self) #Refresh the registry representation
 
     def add_element_natoms(self, element, natoms):
         """
@@ -154,7 +156,8 @@ class Material:
             raise IOError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, natoms, "natoms"))
-        _registry.addMaterial(self)
+        if self.registry is not None:
+            self.registry.addMaterial(self)
 
     def add_material(self, material, fractionmass):
         """
@@ -172,9 +175,10 @@ class Material:
             raise IOError("This material is not specified as composite, cannot add materials.")
 
         self.components.append((material, fractionmass, "massfraction"))
-        _registry.addMaterial(self)
+        if self.registry is not None:
+            self.registry.addMaterial(self)
 
-    def __str__(self) : 
+    def __str__(self) :
         return self.name
 
 class Element:
