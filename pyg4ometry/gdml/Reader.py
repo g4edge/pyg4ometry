@@ -319,7 +319,7 @@ class Reader(object) :
                         mat.add_element_natoms(element_dict[ref], abundance)
 
                     else:
-                        raise SystemExit("Unrecognised material component type: {}".format(comp_type))
+                        raise ValueError("Unrecognised material component type: {}".format(comp_type))
 
     def parseSolids(self,xmldoc) :
 
