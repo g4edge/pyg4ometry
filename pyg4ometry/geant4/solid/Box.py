@@ -22,7 +22,7 @@ class Box(_SolidBase):
         self.pX   = pX
         self.pY   = pY
         self.pZ   = pZ
-        self.unit = unit
+        self.lunit = lunit
         self.type = 'Box'
         self.dependents = []
 
@@ -33,11 +33,11 @@ class Box(_SolidBase):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
 
     def pycsgmesh(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
 
         _log.info('box.pycsgmesh> antlr')
 
-        uval = _Units.lunit(self.unit)
+        uval = _Units.unit(self.lunit)
         pX = float(self.pX)*uval/2.0
         pY = float(self.pY)*uval/2.0
         pZ = float(self.pZ)*uval/2.0
