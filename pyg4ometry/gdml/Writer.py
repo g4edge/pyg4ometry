@@ -331,16 +331,15 @@ class Writer(object):
 
         if not hasattr(instance, variable):
             raise AttributeError("") #TODO: Add error message
-        indexedVariable = variable
+        var = getattr(instance, variable)
+        
 
         # Indexed variable 
         if index is not None:
             try:
-                indexedVariable = variable[index]
+                var = getattr(instance,variable)[index]
             except IndexError:
                 raise IndexError("") #TODO: Add error message
-
-        var = getattr(instance, indexedVariable)
 
         # check if variable is in registry #TODO indexed variables
         if self.registry.defineDict.has_key(var.name) :
@@ -375,7 +374,7 @@ class Writer(object):
     def writeCutTubs(self, instance):
         oe = self.doc.createElement('cutTube')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('z', '2*'+self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('z', self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('rmin', self.getValueOrExprFromInstance(instance,'pRMin'))
         oe.setAttribute('rmax', self.getValueOrExprFromInstance(instance,'pRMax'))
         oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
@@ -720,7 +719,7 @@ class Writer(object):
         oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('rmin',self.getValueOrExprFromInstance(instance,'pRMin'))
         oe.setAttribute('rmax',self.getValueOrExprFromInstance(instance,'pRMax'))
-        oe.setAttribute('z',   '2*'+self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('z',   self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
         oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
         self.solids.appendChild(oe)

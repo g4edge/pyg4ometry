@@ -275,7 +275,7 @@ class Reader(object) :
             sphi = _defines.Expression(solid_name+'_pSPhi',"0",self._registry)
 
         rmax = _defines.Expression(solid_name+'_pRMax',node.attributes['rmax'].value,self._registry)
-        z    = _defines.Expression(solid_name+'_pDz','({})/2'.format(node.attributes['z'].value),self._registry)
+        z    = _defines.Expression(solid_name+'_pDz',node.attributes['z'].value,self._registry)
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self._registry)
 
         try : 
@@ -300,7 +300,7 @@ class Reader(object) :
             rmin = _defines.Expression(solid_name+'_pRMin',"0",self._registry)
             
         rmax = _defines.Expression(solid_name+'_pRMax',node.attributes['rmax'].value,self._registry)
-        dz   = _defines.Expression(solid_name+'_pDz','({})/2'.format(node.attributes['z'].value),self._registry)
+        dz   = _defines.Expression(solid_name+'_pDz',node.attributes['z'].value,self._registry)
         try : 
             sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self._registry)
         except KeyError :

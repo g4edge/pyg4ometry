@@ -45,14 +45,14 @@ class CutTubs(_SolidBase):
         _log.info('cuttubs.pycsgmesh> antlr')
         pRMin     = float(self.pRMin)
         pRMax     = float(self.pRMax)
-        pDz       = float(self.pDz)
+        pDz       = float(self.pDz)/2.0
         pSPhi     = float(self.pSPhi)
         pDPhi     = float(self.pDPhi)
         pHighNorm = [self.pHighNorm[0].eval(), self.pHighNorm[1].eval(), self.pHighNorm[2].eval()]
         pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]
 
         _log.info('cuttubs.pycsgmesh> mesh')
-        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
+        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 *self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
 
         if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
                 
