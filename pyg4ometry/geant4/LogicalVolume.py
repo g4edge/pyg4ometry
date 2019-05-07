@@ -25,7 +25,7 @@ class LogicalVolume(object):
             # This will work out if it is a valid NIST and set the type appropriately
             self.material = _Material(name=material)
         else:
-            raise SystemExit("Unsupported type for material: {}".format(type(material)))
+            raise ValueError("Unsupported type for material: {}".format(type(material)))
 
         self.name            = name
         self.daughterVolumes = []
