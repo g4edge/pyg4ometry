@@ -12,7 +12,7 @@ import numpy as _np
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
     def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
-                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry=None, nslice=20):
+                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry=None, nstack=20):
         """
         Constructs a general trapezoid with a twist around one axis.
 
@@ -43,7 +43,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.pDx3         = pDx3
         self.pDx4         = pDx4
         self.pAlp         = pAlp
-        self.nslice       = nslice
+        self.nstack       = nstack
 
         self.dependents = []
 
@@ -127,6 +127,6 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         #making the layers:
         m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz,
-                            twistedangle, pTheta,  self.nslice)
+                            twistedangle, pTheta,  self.nstack)
 
-        return self.meshFromLayers(m, self.nslice)
+        return self.meshFromLayers(m, self.nstack)

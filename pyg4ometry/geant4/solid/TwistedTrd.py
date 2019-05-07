@@ -12,7 +12,7 @@ import logging as _log
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
-                 pDz, registry=None, nslice=20, refine=0):
+                 pDz, registry=None, nstack=20, refine=0):
         """
         Constructs a twisted general trapezoid.
 
@@ -35,7 +35,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.pDy1             = pDy1
         self.pDy2             = pDy2
         self.pDz              = pDz
-        self.nslice           = nslice
+        self.nstack           = nstack
         self.refine           = refine
 
         self.dependents = []
@@ -100,6 +100,6 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         pu3 = _TwoVector(pDx2, pDy2) #pDz]
         pu4 = _TwoVector(-pDx2, pDy2) # pDz]pu1 = _TwoVector(-pDx2, -pDy2)
 
-        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nslice)
+        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nstack)
 
-        return self.meshFromLayers(m, self.nslice)
+        return self.meshFromLayers(m, self.nstack)

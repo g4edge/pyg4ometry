@@ -13,7 +13,7 @@ import numpy as _np
 import logging as _log
 
 class TwistedBox(_SolidBase, _TwistedSolid):
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, nslice=20,
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, nstack=20,
                  refine=0):
         """
         Constructs a box that is twisted through angle 'twistedangle'.
@@ -33,7 +33,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.pDx          = pDx
         self.pDy          = pDy
         self.pDz          = pDz
-        self.nslice       = nslice
+        self.nstack       = nstack
         self.refine       = refine
 
         self.dependents = []
@@ -49,9 +49,9 @@ class TwistedBox(_SolidBase, _TwistedSolid):
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 
-    def makeLayers(self, p1, p2, p3, p4, pDz, theta, nslice):
-        dz = 2*pDz/nslice
-        dtheta = theta/nslice
+    def makeLayers(self, p1, p2, p3, p4, pDz, theta, nstack):
+        dz = 2*pDz/nstack
+        dtheta = theta/nstack
         z = -pDz
 
         layers = []
@@ -60,7 +60,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         bottom = bottom.Rotated(-theta*0.5) #overwrite
         layers.append(bottom)
 
-        for i in range(nslice):
+        for i in range(nstack):
             l = layers[-1].Rotated(dtheta) # returns rotated copy
             z += dz # increment z
             l.z = z # fix z
@@ -82,6 +82,6 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         p3 = _TwoVector(pDx, pDy) #pDz]
         p4 = _TwoVector(-pDx, pDy) # pDz]
 
-        m = self.makeLayers(p1, p2, p3, p4, pDz, -twistedAngle, self.nslice)
+        m = self.makeLayers(p1, p2, p3, p4, pDz, -twistedAngle, self.nstack)
 
-        return self.meshFromLayers(m, self.nslice)
+        return self.meshFromLayers(m, self.nstack)
