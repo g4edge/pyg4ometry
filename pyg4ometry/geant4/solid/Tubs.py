@@ -51,9 +51,8 @@ class Tubs(_SolidBase):
         _log.info('tubs.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
-        uval = _Units.lunit(self.unit)
-        auval = _Units.aunit(self.aunit)
-
+        uval = _Units.unit(self.unit)
+        auval = _Units.unit(self.aunit)
 
         pDz   = float(self.pDz)*uval
         pRMax = float(self.pRMax)*uval
