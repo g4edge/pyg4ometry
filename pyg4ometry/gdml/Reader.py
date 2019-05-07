@@ -239,6 +239,7 @@ class Reader(object) :
                         vals = [attr.value for attr in chNode.attributes.values()]
                         comp = {key: val for (key,val) in zip(keys, vals)}
                         comp["comp_type"] = "composite"
+                        components.append(comp)
 
                     elif chNode.tagName == "fraction":
                         keys = chNode.attributes.keys()
@@ -315,8 +316,8 @@ class Reader(object) :
 
                     elif comp_type == "composite":
                         ref = comp.get("ref", "")
-                        natoms = float(comp.get("n", 0))
-                        mat.add_element_natoms(element_dict[ref], abundance)
+                        natoms = int(comp.get("n", 0))
+                        mat.add_element_natoms(element_dict[ref], natoms)
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
