@@ -172,8 +172,154 @@ class Reader(object) :
     def parseMatrix(self, node) : 
         pass
 
-    def parseMaterials(self, xmldoc) : 
-        pass
+    def parseMaterials(self, xmldoc):
+        materials = []
+        elements  = []
+        isotopes  = []
+
+        self.materialdef = xmldoc.getElementsByTagName("materials")[0]
+
+        for node in self.materialdef.childNodes :
+            if node.nodeType != node.ELEMENT_NODE:
+                # probably a comment node, skip
+                continue
+
+            mat_type  = node.tagName
+
+            name   = node.attributes["name"].value
+            attrs  = node.attributes
+
+            keys       = attrs.keys()
+            vals       = [attr.value for attr in attrs.values()]
+            def_attrs  = {key: val for (key,val) in zip(keys, vals)}
+
+            if mat_type == "isotope":
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName=="atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                isotopes.append(def_attrs)
+
+            elif mat_type == "element":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                elements.append(def_attrs)
+
+            elif mat_type == "material":
+                components = []
+                for chNode in node.childNodes:
+                    if chNode.nodeType != chNode.ELEMENT_NODE:
+                        continue # comment
+
+                    if chNode.tagName == "D":
+                        def_attrs["density"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "atom":
+                        def_attrs["a"] = chNode.attributes["value"].value
+
+                    elif chNode.tagName == "composite":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "composite"
+
+                    elif chNode.tagName == "fraction":
+                        keys = chNode.attributes.keys()
+                        vals = [attr.value for attr in chNode.attributes.values()]
+                        comp = {key: val for (key,val) in zip(keys, vals)}
+                        comp["comp_type"] = "fraction"
+                        components.append(comp)
+
+                def_attrs["components"] = components
+                materials.append(def_attrs)
+
+            else:
+                print "Urecognised define: ", mat_type
+
+        self._makeMaterials(materials, elements, isotopes)
+
+    def _makeMaterials(self, materials, elements, isotopes):
+        isotope_dict = {}
+        element_dict = {} # No material dict as materials go into the registry
+
+        # Build the objects in order
+        for isotope in isotopes:
+            name = str(isotope.get("name", ""))
+            Z    = float(isotope.get("Z", 0))
+            N    = float(isotope.get("N", ""))
+            a    = float(isotope.get("a", 0.0))
+
+            isotope_dict[name] = _g4.Isotope(name, Z, N, a)
+
+        for element in elements:
+            name = str(element.get("name", ""))
+            symbol = str(element.get("formula", ""))
+
+            if not element["components"]:
+                Z    = float(element.get("Z", 0))
+                a    = float(element.get("a", 0.0))
+                element_dict[name] = _g4.Element.simple(name, symbol, Z, a)
+
+            else:
+                n_comp = len(element["components"])
+                ele = _g4.Element.composite(name, symbol, n_comp)
+
+                for comp in element["components"]:
+                    ref = str(comp.get("ref", ""))
+                    abundance = float(comp.get("n", 0.0))
+                    ele.add_isotope(isotope_dict[ref], abundance)
+                element_dict[name] = ele
+
+        for material in materials:
+            name = str(material.get("name", ""))
+            density = float(material.get("density", 0.0))
+
+            if not material["components"]:
+                Z    = float(material.get("Z", 0))
+                a    = float(material.get("a", 0.0))
+                mat = _g4.Material.simple(name, Z, a, density, registry = self._registry)
+
+            else:
+                n_comp = len(material["components"])
+                comp_type = str(material["components"][0]["comp_type"])
+                mat = _g4.Material.composite(name, density, n_comp, registry = self._registry)
+
+                for comp in material["components"]:
+                    if comp_type == "fraction":
+                        ref = str(comp.get("ref", ""))
+                        abundance = float(comp.get("n", 0.0))
+
+                        if ref in _g4.registry.materialDict:
+                            target = self._registry.materialDict[ref]
+                            mat.add_material(target, abundance)
+                        else:
+                            target = element_dict[ref]
+                            mat.add_element_massfraction(target, abundance)
+
+                    elif comp_type == "composite":
+                        ref = comp.get("ref", "")
+                        natoms = float(comp.get("n", 0))
+                        mat.add_element_natoms(element_dict[ref], abundance)
+
+                    else:
+                        raise SystemExit("Unrecognised material component type: {}".format(comp_type))
 
     def parseSolids(self,xmldoc) :
 
