@@ -17,7 +17,7 @@ class Box(_SolidBase):
     :type name: float
     """
 
-    def __init__(self, name='', pX=0.0, pY=0.0, pZ=0.0, unit="mm", registry=None):
+    def __init__(self, name, pX, pY, pZ, registry=None, lunit="mm",):
         self.name = name
         self.pX   = pX
         self.pY   = pY
