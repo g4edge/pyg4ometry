@@ -54,7 +54,6 @@ class Tubs(_SolidBase):
         uval = _Units.lunit(self.unit)
         auval = _Units.aunit(self.aunit)
 
-        print self.unit, self.aunit, uval, auval
 
         pDz   = float(self.pDz)*uval
         pRMax = float(self.pRMax)*uval
