@@ -403,11 +403,11 @@ class Reader(object) :
         y = _defines.Expression(solid_name+'_pY','{}'.format(node.attributes['y'].value),self._registry)
         z = _defines.Expression(solid_name+'_pZ','{}'.format(node.attributes['z'].value),self._registry)
         try : 
-            unit = node.attributes['unit'].value
+            unit = node.attributes['lunit'].value
         except KeyError : 
             unit = "mm"
               
-        solid = _g4.solid.Box(solid_name,x,y,z,unit,self._registry)
+        solid = _g4.solid.Box(solid_name,x,y,z,self._registry,unit)
 
     def parseTube(self, node) : 
         solid_name = node.attributes['name'].value 
