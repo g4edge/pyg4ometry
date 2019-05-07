@@ -23,7 +23,7 @@ class Cons(_SolidBase):
     """
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
-                 pSPhi, pDPhi, registry=None):
+                 pSPhi, pDPhi, registry=None, nslice=16):
 
         self.name = name
         self.type = 'Cons'
@@ -34,6 +34,7 @@ class Cons(_SolidBase):
         self.pDz = pDz
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
+        self.nslice = nslice
 
         self.dependents = []
 
@@ -91,7 +92,8 @@ class Cons(_SolidBase):
         h2 = factor * (h + H2)
 
         # basic cone mesh
-        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz], radius=R1)
+        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz],
+                         radius=R1, slices=self.nslice)
 
         # ensure radius for intersection wedge is much bigger than solid
         wrmax = 3 * (pRmax1 + pRmax2)

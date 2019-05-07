@@ -21,7 +21,7 @@ class CutTubs(_SolidBase):
         pHighNorm: list, normal vector of the cut plane at +pDz
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
-                 pLowNorm, pHighNorm, registry=None):
+                 pLowNorm, pHighNorm, registry=None, nslice=16):
         self.type      = 'CutTubs'
         self.name      = name
         self.pRMin     = pRMin
@@ -31,6 +31,7 @@ class CutTubs(_SolidBase):
         self.pDPhi     = pDPhi
         self.pLowNorm  = pLowNorm
         self.pHighNorm = pHighNorm
+        self.nslice     = nslice
         self.dependents = []
 
         if registry:
@@ -52,7 +53,7 @@ class CutTubs(_SolidBase):
         pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]
 
         _log.info('cuttubs.pycsgmesh> mesh')
-        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None).pycsgmesh()
+        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None, nslice=self.nslice).pycsgmesh()
 
         if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
                 
