@@ -275,11 +275,11 @@ class Reader(object) :
             if not element["components"]:
                 Z    = float(element.get("Z", 0))
                 a    = float(element.get("a", 0.0))
-                element_dict[name] = _g4.Element.simple(name, symbol, Z, a)
+                element_dict[name] = _g4.ElementSimple(name, symbol, Z, a)
 
             else:
                 n_comp = len(element["components"])
-                ele = _g4.Element.composite(name, symbol, n_comp)
+                ele = _g4.ElementIsotopeMixture(name, symbol, n_comp)
 
                 for comp in element["components"]:
                     ref = str(comp.get("ref", ""))
@@ -294,19 +294,19 @@ class Reader(object) :
             if not material["components"]:
                 Z    = float(material.get("Z", 0))
                 a    = float(material.get("a", 0.0))
-                mat = _g4.Material.simple(name, Z, a, density, registry = self._registry)
+                mat = _g4.MaterialSingleElement(name, Z, a, density, registry=self._registry)
 
             else:
                 n_comp = len(material["components"])
                 comp_type = str(material["components"][0]["comp_type"])
-                mat = _g4.Material.composite(name, density, n_comp, registry = self._registry)
+                mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry)
 
                 for comp in material["components"]:
                     if comp_type == "fraction":
                         ref = str(comp.get("ref", ""))
                         abundance = float(comp.get("n", 0.0))
 
-                        if ref in _g4.registry.materialDict:
+                        if ref in self._registry.materialDict:
                             target = self._registry.materialDict[ref]
                             mat.add_material(target, abundance)
                         else:
