@@ -519,9 +519,19 @@ class Reader(object) :
         z     = _defines.Expression(solid_name+'_pZ',node.attributes['z'].value,self._registry) 
         phi   = _defines.Expression(solid_name+'_pPhi',node.attributes['phi'].value,self._registry) 
         alpha = _defines.Expression(solid_name+'_pAlpha',node.attributes['alpha'].value,self._registry) 
-        theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry) 
+        theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry)
 
-        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry, lunit, aunit)
 
     def parseTrd(self, node) : 
         solid_name = node.attributes['name'].value
