@@ -426,16 +426,16 @@ class Reader(object) :
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self._registry)
 
         try : 
-            unit = node.attributes['unit'].value
+            lunit = node.attributes['lunit'].value
         except KeyError : 
-            unit = "mm"
+            lunit = "mm"
 
         try : 
             aunit = node.attributes['aunit'].value
         except KeyError : 
             aunit = "rad"
 
-        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, unit, aunit, self._registry)
+        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, self._registry, lunit, aunit)
 
 
     def parseCutTube(self, node) : 
@@ -463,8 +463,18 @@ class Reader(object) :
 
         lNorm = [lx, ly, lz] 
         hNorm = [hx, hy, hz]
+
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
         
-        _g4.solid.CutTubs(solid_name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self._registry) 
+        _g4.solid.CutTubs(solid_name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self._registry, lunit, aunit)
         
 
     def parseCone(self,node) : 
@@ -487,9 +497,19 @@ class Reader(object) :
         rmax1 = _defines.Expression(solid_name+"_pRMax1",node.attributes['rmax1'].value,self._registry) 
         rmax2 = _defines.Expression(solid_name+"_pRMax2",node.attributes['rmax2'].value,self._registry) 
         dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['z'].value),self._registry)
-        dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry) 
+        dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry)
 
-        _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self._registry)        
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self._registry, lunit, aunit)        
 
     def parsePara(self,node) : 
         solid_name = node.attributes['name'].value         
