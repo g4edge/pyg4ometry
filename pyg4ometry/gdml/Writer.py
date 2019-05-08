@@ -182,6 +182,9 @@ class Writer(object):
             raise Exception("Unrecognised define type: {}".format(type(define)))
 
     def writeMaterial(self, material):
+        if material.name in self.materials_written:
+            return
+
         if isinstance(material, _Material) :
             oe = self.doc.createElement('material')
             oe.setAttribute('name', material.name)

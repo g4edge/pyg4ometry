@@ -23,8 +23,8 @@ class Para(_SolidBase):
     pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
     """
 
-    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry=None):
-        import pyg4ometry.gdml.Defines as _Defines
+    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry=None, lunit="mm", aunit="rad"):
+        import pyg4ometry.gdml.Defines as _Defines # TODO: Why is this here?
 
         self.type     = 'Para'
         self.name   = name
@@ -34,6 +34,8 @@ class Para(_SolidBase):
         self.pAlpha = pAlpha
         self.pTheta = pTheta
         self.pPhi   = pPhi
+        self.lunit  = lunit
+        self.aunit  = aunit
 
         self.dependents = []
 
@@ -47,12 +49,16 @@ class Para(_SolidBase):
     def pycsgmesh(self):
 
         _log.info("para.antlr>")
-        pX     = float(self.pX) 
-        pY     = float(self.pY)
-        pZ     = float(self.pZ)
-        pAlpha = float(self.pAlpha)
-        pTheta = float(self.pTheta)
-        pPhi   = float(self.pPhi)
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pX     = float(self.pX)*luval
+        pY     = float(self.pY)*luval
+        pZ     = float(self.pZ)*luval
+        pAlpha = float(self.pAlpha)*auval
+        pTheta = float(self.pTheta)*auval
+        pPhi   = float(self.pPhi)*auval
 
         _log.info("para.pycsgmesh>")
         dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component

@@ -9,7 +9,7 @@ import logging as _log
 import numpy as _np
 
 class Paraboloid(_SolidBase):
-    def __init__(self, name, pDz, pR1, pR2, registry=None, nstack=8, nslice=16) :
+    def __init__(self, name, pDz, pR1, pR2, registry=None, nslice=16, nstack=8) :
         """
         Constructs a paraboloid with possible cuts along the z axis.
 

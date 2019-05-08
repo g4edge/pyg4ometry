@@ -23,7 +23,8 @@ class Cons(_SolidBase):
     """
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
-                 pSPhi, pDPhi, registry=None):
+                 pSPhi, pDPhi, registry=None, lunit="mm", aunit="rad",
+                 nslice=16):
 
         self.name = name
         self.type = 'Cons'
@@ -34,6 +35,9 @@ class Cons(_SolidBase):
         self.pDz = pDz
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
+        self.nslice = nslice
+        self.lunit = lunit
+        self.aunit = aunit
 
         self.dependents = []
 
@@ -56,13 +60,18 @@ class Cons(_SolidBase):
     def pycsgmesh(self):
 
         _log.info('cons.antlr>')
-        pRmin1 = float(self.pRmin1)
-        pRmax1 = float(self.pRmax1)
-        pRmin2 = float(self.pRmin2)
-        pRmax2 = float(self.pRmax2)
-        pDz    = float(self.pDz)
-        pSPhi  = float(self.pSPhi)
-        pDPhi  = float(self.pDPhi)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pRmin1 = float(self.pRmin1)*luval
+        pRmax1 = float(self.pRmax1)*luval
+        pRmin2 = float(self.pRmin2)*luval
+        pRmax2 = float(self.pRmax2)*luval
+        pDz    = float(self.pDz)*luval
+        pSPhi  = float(self.pSPhi)*auval
+        pDPhi  = float(self.pDPhi)*auval
 
         _log.info('cons.pycsgmesh>')
         if pRmax1 < pRmax2:
@@ -91,7 +100,8 @@ class Cons(_SolidBase):
         h2 = factor * (h + H2)
 
         # basic cone mesh
-        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz], radius=R1)
+        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz],
+                         radius=R1, slices=self.nslice)
 
         # ensure radius for intersection wedge is much bigger than solid
         wrmax = 3 * (pRmax1 + pRmax2)

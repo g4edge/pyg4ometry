@@ -239,6 +239,7 @@ class Reader(object) :
                         vals = [attr.value for attr in chNode.attributes.values()]
                         comp = {key: val for (key,val) in zip(keys, vals)}
                         comp["comp_type"] = "composite"
+                        components.append(comp)
 
                     elif chNode.tagName == "fraction":
                         keys = chNode.attributes.keys()
@@ -275,11 +276,11 @@ class Reader(object) :
             if not element["components"]:
                 Z    = float(element.get("Z", 0))
                 a    = float(element.get("a", 0.0))
-                element_dict[name] = _g4.Element.simple(name, symbol, Z, a)
+                element_dict[name] = _g4.ElementSimple(name, symbol, Z, a)
 
             else:
                 n_comp = len(element["components"])
-                ele = _g4.Element.composite(name, symbol, n_comp)
+                ele = _g4.ElementIsotopeMixture(name, symbol, n_comp)
 
                 for comp in element["components"]:
                     ref = str(comp.get("ref", ""))
@@ -294,19 +295,19 @@ class Reader(object) :
             if not material["components"]:
                 Z    = float(material.get("Z", 0))
                 a    = float(material.get("a", 0.0))
-                mat = _g4.Material.simple(name, Z, a, density, registry = self._registry)
+                mat = _g4.MaterialSingleElement(name, Z, a, density, registry=self._registry)
 
             else:
                 n_comp = len(material["components"])
                 comp_type = str(material["components"][0]["comp_type"])
-                mat = _g4.Material.composite(name, density, n_comp, registry = self._registry)
+                mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry)
 
                 for comp in material["components"]:
                     if comp_type == "fraction":
                         ref = str(comp.get("ref", ""))
                         abundance = float(comp.get("n", 0.0))
 
-                        if ref in _g4.registry.materialDict:
+                        if ref in self._registry.materialDict:
                             target = self._registry.materialDict[ref]
                             mat.add_material(target, abundance)
                         else:
@@ -315,11 +316,11 @@ class Reader(object) :
 
                     elif comp_type == "composite":
                         ref = comp.get("ref", "")
-                        natoms = float(comp.get("n", 0))
-                        mat.add_element_natoms(element_dict[ref], abundance)
+                        natoms = int(comp.get("n", 0))
+                        mat.add_element_natoms(element_dict[ref], natoms)
 
                     else:
-                        raise SystemExit("Unrecognised material component type: {}".format(comp_type))
+                        raise ValueError("Unrecognised material component type: {}".format(comp_type))
 
     def parseSolids(self,xmldoc) :
 
@@ -402,11 +403,11 @@ class Reader(object) :
         y = _defines.Expression(solid_name+'_pY','{}'.format(node.attributes['y'].value),self._registry)
         z = _defines.Expression(solid_name+'_pZ','{}'.format(node.attributes['z'].value),self._registry)
         try : 
-            unit = node.attributes['unit'].value
+            unit = node.attributes['lunit'].value
         except KeyError : 
             unit = "mm"
               
-        solid = _g4.solid.Box(solid_name,x,y,z,unit,self._registry)
+        solid = _g4.solid.Box(solid_name,x,y,z,self._registry,unit)
 
     def parseTube(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -425,16 +426,16 @@ class Reader(object) :
         dphi = _defines.Expression(solid_name+'_pDPhi',node.attributes['deltaphi'].value,self._registry)
 
         try : 
-            unit = node.attributes['unit'].value
+            lunit = node.attributes['lunit'].value
         except KeyError : 
-            unit = "mm"
+            lunit = "mm"
 
         try : 
             aunit = node.attributes['aunit'].value
         except KeyError : 
             aunit = "rad"
 
-        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, unit, aunit, self._registry)
+        _g4.solid.Tubs(solid_name,rmin,rmax,z, sphi, dphi, self._registry, lunit, aunit)
 
 
     def parseCutTube(self, node) : 
@@ -462,8 +463,18 @@ class Reader(object) :
 
         lNorm = [lx, ly, lz] 
         hNorm = [hx, hy, hz]
+
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
         
-        _g4.solid.CutTubs(solid_name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self._registry) 
+        _g4.solid.CutTubs(solid_name, rmin, rmax, dz, sphi, dphi, lNorm, hNorm, self._registry, lunit, aunit)
         
 
     def parseCone(self,node) : 
@@ -486,9 +497,19 @@ class Reader(object) :
         rmax1 = _defines.Expression(solid_name+"_pRMax1",node.attributes['rmax1'].value,self._registry) 
         rmax2 = _defines.Expression(solid_name+"_pRMax2",node.attributes['rmax2'].value,self._registry) 
         dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['z'].value),self._registry)
-        dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry) 
+        dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry)
 
-        _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self._registry)        
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Cons(solid_name, rmin1, rmax1, rmin2, rmax2, dz, sphi, dphi, self._registry, lunit, aunit)        
 
     def parsePara(self,node) : 
         solid_name = node.attributes['name'].value         
@@ -498,9 +519,19 @@ class Reader(object) :
         z     = _defines.Expression(solid_name+'_pZ',node.attributes['z'].value,self._registry) 
         phi   = _defines.Expression(solid_name+'_pPhi',node.attributes['phi'].value,self._registry) 
         alpha = _defines.Expression(solid_name+'_pAlpha',node.attributes['alpha'].value,self._registry) 
-        theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry) 
+        theta = _defines.Expression(solid_name+'_pTheta',node.attributes['theta'].value,self._registry)
 
-        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry, lunit, aunit)
 
     def parseTrd(self, node) : 
         solid_name = node.attributes['name'].value
@@ -510,8 +541,13 @@ class Reader(object) :
         y1 = _defines.Expression(solid_name+"_py1",node.attributes['y1'].value,self._registry)
         y2 = _defines.Expression(solid_name+"_py2",node.attributes['y2'].value,self._registry)
         z  = _defines.Expression(solid_name+"_z",node.attributes['z'].value,self._registry) 
-        
-        _g4.solid.Trd(solid_name, x1, x2, y1, y2, z, self._registry)
+
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.Trd(solid_name, x1, x2, y1, y2, z, self._registry, lunit)
 
     def parseTrap(self, node) : 
         solid_name = node.attributes['name'].value

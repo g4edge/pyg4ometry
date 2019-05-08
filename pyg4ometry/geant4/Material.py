@@ -21,6 +21,81 @@ def _makeNISTCompoundList():
 
     return nist_compound_list
 
+
+def MaterialPredefined(name, registry=None):
+    """
+    Proxy method to construct a NIST compund material - this is just a handle as nothing
+    needs to be additionaly defined for a NIST compund. A check is perfored on the name
+    to ensure it is a valid NIST specifier.
+
+    Inputs:
+        name          - string
+    """
+    if name not in _makeNISTCompoundList():
+        raise ValueError("{} is not a NIST compound".format(name))
+    return Material(**locals())
+
+
+def MaterialArbitraty(name, registry=None):
+    """Just a name of a material.  WARNING:  It is left to the
+    user to ensure that the name is valid.
+
+    Inputs:
+        name          - string
+    """
+    return Material(name=name, arbitrary=True, registry=registry)
+
+
+def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=None):
+    """
+    Proxy method to construct a simple material - full description of the element contained is contained in one definition
+
+    Inputs:
+        name          - string
+        density       - float, material density in g/cm3
+        atomic_number - int, total number of nucleons, commonly known as 'Z'
+        atomic_weght  - int, molar weight in g/mole, commonly known as 'a'
+    """
+    return Material(**locals())
+
+
+def MaterialCompound(name, density, number_of_components, registry=None):
+    """
+    Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
+
+    Inputs:
+        name                 - string
+        density              - float, material density in g/cm3
+        number_of_components - int, number of components in the mixture
+    """
+    return Material(**locals())
+
+
+def ElementSimple(name, symbol, Z, A):
+    """
+    Proxy method to construct a simple element - full description of the element contained is contained in one definition
+
+    Inputs:
+        name   - string
+        symbol - string, chemical formula of the compound
+        Z      - int, atomic number
+        A      - int, mass number
+        a      - float, atomic weigth in g/mole
+    """
+    return Element(**locals())
+
+
+def ElementIsotopeMixture(name, symbol, n_comp):
+    """
+    Proxy method to construct a composite element - a mixture of predefined isotopes
+
+    Inputs:
+        name - string
+        symbol - string, chemical formula of the compound
+        n_comp - int, number of isotope components
+    """
+    return Element(**locals())
+
 class Material:
     """
     This class provides an interface to GDML material definitions. Material definitions are.
@@ -28,9 +103,9 @@ class Material:
     Because of the different options for constructing a material instance the constructor is kwarg only.
     Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
 
-    Material.simple
-    Material.composite
-    Material.nist
+    MaterialSingleElement
+    MaterialCompound
+    MaterialPredefined
 
     It is possible to instantiate a material directly through kwargs. The possible kwargs are (but note some are mutually exclusive):
     name                 - string
@@ -50,6 +125,7 @@ class Material:
 
         self.NIST_compounds =  _makeNISTCompoundList()
 
+
         if not any(_getClassVariables(self)):
             self.type = "none"
 
@@ -65,61 +141,15 @@ class Material:
             elif self.atomic_number and self.atomic_weight and not self.number_of_components:
                     self.type = "simple"
             else:
-                raise IOError("Cannot use both atomic number/weight and number_of_components.")
+                raise ValueError("Cannot use both atomic number/weight and number_of_components.")
         else:
-            raise IOError("Density must be specified for custom materials.")
+            raise ValueError("Density must be specified for custom materials.")
 
+        self.update_registry()
+
+    def update_registry(self): # user can call this if a registry is assigned post-construction
         if self.registry is not None:
             self.registry.addMaterial(self)
-
-    @classmethod
-    def nist(cls, name, registry=None):
-        """
-        Proxy method to construct a NIST compund material - this is just a handle as nothing
-        needs to be additionaly defined for a NIST compund. A check is perfored on the name
-        to ensure it is a valid NIST specifier.
-
-        Inputs:
-          name          - string
-        """
-        if name not in _makeNISTCompoundList():
-            raise IOError("{} is not a NIST compound".format(name))
-        return cls(**locals())
-
-    @classmethod
-    def from_arbitrary_name(cls, name, registry=None):
-        """Just a name of a material.  WARNING:  It is left to the
-        user to ensure that the name is valid.
-
-        Inputs:
-          name          - string
-        """
-        return cls(name=name, arbitrary=True, registry=registry)
-
-    @classmethod
-    def simple(cls, name, atomic_number, atomic_weight, density, registry=None):
-        """
-        Proxy method to construct a simple material - full description of the element contained is contained in one definition
-
-        Inputs:
-          name          - string
-          density       - float, material density in g/cm3
-          atomic_number - int, total number of nucleons, commonly known as 'Z'
-          atomic_weght  - int, molar weight in g/mole, commonly known as 'a'
-        """
-        return cls(**locals())
-
-    @classmethod
-    def composite(cls, name, density, number_of_components, registry=None):
-        """
-        Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
-
-        Inputs:
-          name                 - string
-          density              - float, material density in g/cm3
-          number_of_components - int, number of components in the mixture
-        """
-        return cls(**locals())
 
     def add_element_massfraction(self, element, massfraction):
         """
@@ -131,14 +161,13 @@ class Material:
           massfraction - float, 0.0 < massfraction <= 1.0
         """
         if not isinstance(element, Element):
-            raise IOError("Can only add Element instanes, recieved type {}".format(type(element)))
+            raise ValueError("Can only add Element instanes, recieved type {}".format(type(element)))
 
         if not self.number_of_components:
-            raise IOError("This material is not specified as composite, cannot add elements.")
+            raise ValueError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, massfraction, "massfraction"))
-        if self.registry is not None:
-            self.registry.addMaterial(self) #Refresh the registry representation
+        self.update_registry()
 
     def add_element_natoms(self, element, natoms):
         """
@@ -150,14 +179,13 @@ class Material:
           natoms   - int, number of atoms in the compound molecule
         """
         if not isinstance(element, Element):
-            raise IOError("Can only add Element instanes, recieved type {}".format(type(element)))
+            raise ValueError("Can only add Element instanes, recieved type {}".format(type(element)))
 
         if not self.number_of_components:
-            raise IOError("This material is not specified as composite, cannot add elements.")
+            raise ValueError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, natoms, "natoms"))
-        if self.registry is not None:
-            self.registry.addMaterial(self)
+        self.update_registry()
 
     def add_material(self, material, fractionmass):
         """
@@ -169,14 +197,13 @@ class Material:
           massfraction - float, 0.0 < massfraction <= 1.0
         """
         if not isinstance(material, Material):
-            raise IOError("Can only add Material instanes, recieved type {}".format(type(material)))
+            raise ValueError("Can only add Material instanes, recieved type {}".format(type(material)))
 
         if not self.number_of_components:
-            raise IOError("This material is not specified as composite, cannot add materials.")
+            raise ValueError("This material is not specified as composite, cannot add materials.")
 
         self.components.append((material, fractionmass, "massfraction"))
-        if self.registry is not None:
-            self.registry.addMaterial(self)
+        self.update_registry()
 
     def __str__(self) :
         return self.name
@@ -209,33 +236,7 @@ class Element:
         elif self.Z and self.A and not self.n_comp:
             self.type = "simple"
         else:
-            raise IOError("Cannot use both atomic number/weight and number_of_components.")
-
-    @classmethod
-    def simple(cls, name, symbol, Z, A):
-        """
-        Proxy method to construct a simple element - full description of the element contained is contained in one definition
-
-        Inputs:
-          name   - string
-          symbol - string, chemical formula of the compound
-          Z      - int, atomic number
-          A      - int, mass number
-          a      - float, atomic weigth in g/mole
-        """
-        return cls(**locals())
-
-    @classmethod
-    def composite(cls, name, symbol, n_comp):
-        """
-        Proxy method to construct a composite element - a mixture of predefined isotopes
-
-        Inputs:
-          name - string
-          symbol - string, chemical formula of the compound
-          n_comp - int, number of isotope components
-        """
-        return cls(**locals())
+            raise ValueError("Cannot use both atomic number/weight and number_of_components.")
 
     def add_isotope(self, isotope, abundance):
         """
@@ -246,7 +247,7 @@ class Element:
           abundance - float, 0.0 < abundance <= 1.0
         """
         if not isinstance(isotope, Isotope):
-            raise IOError("Can only add Isotope instanes, recieved type {}".format(type(isotope)))
+            raise ValueError("Can only add Isotope instanes, recieved type {}".format(type(isotope)))
 
         self.components.append((isotope, abundance, "abundance"))
 

@@ -9,7 +9,7 @@ import logging as _log
 import numpy as _np
 
 class Orb(_SolidBase):
-    def __init__(self, name, pRMax, registry=None):
+    def __init__(self, name, pRMax, registry=None, nslice=16, nstack=16):
 
         """
         Constructs a solid sphere.
@@ -21,6 +21,8 @@ class Orb(_SolidBase):
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
+        self.nslice = nslice
+        self.nstack = nstack
 
         self.dependents = []
 
@@ -35,5 +37,6 @@ class Orb(_SolidBase):
         pRMax = float(self.pRMax)
 
         _log.info("orb.pycsgmesh>")
-        mesh = _CSG.sphere(center=[0,0,0], radius=pRMax)
+        mesh = _CSG.sphere(center=[0,0,0], radius=pRMax,
+                           slices=self.nslice, stacks=self.nstack)
         return mesh
