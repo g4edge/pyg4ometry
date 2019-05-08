@@ -16,7 +16,8 @@ class Trap(_SolidBase):
                  pDx2, pAlp1,
                  pDy2, pDx3,
                  pDx4, pAlp2,
-                 registry=None):
+                 registry=None,
+                 lunit="mm", aunit="rad"):
         """
         Constructs a general trapezoid.
 
@@ -49,6 +50,8 @@ class Trap(_SolidBase):
         self.pDx3    = pDx3
         self.pDx4    = pDx4
         self.pAlp2   = pAlp2
+        self.lunit   = lunit
+        self.aunit   = aunit
 
         self.dependents = []
         if registry:
@@ -73,21 +76,25 @@ class Trap(_SolidBase):
             return result
 
         _log.info("trap.antlr>")
-        pDz  = float(self.pDz)/2.
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
 
-        pDx1   = float(self.pDx1)/2. #at -pDz
-        pDx2   = float(self.pDx2)/2.
-        pDy1   = float(self.pDy1)/2. #at -pDz
+        pDz  = float(self.pDz)*luval/2.
 
-        pDy2   = float(self.pDy2)/2.
-        pDx3   = float(self.pDx3)/2.
-        pDx4   = float(self.pDx4)/2.
+        pDx1   = float(self.pDx1)*luval/2. #at -pDz
+        pDx2   = float(self.pDx2)*luval/2.
+        pDy1   = float(self.pDy1)*luval/2. #at -pDz
 
-        pTheta = float(self.pTheta)
-        pDPhi  = float(self.pDPhi)
-        
-        pAlp1  = float(self.pAlp1)
-        pAlp2  = float(self.pAlp2)
+        pDy2   = float(self.pDy2)*luval/2.
+        pDx3   = float(self.pDx3)*luval/2.
+        pDx4   = float(self.pDx4)*luval/2.
+
+        pTheta = float(self.pTheta)*auval
+        pDPhi  = float(self.pDPhi)*auval
+
+        pAlp1  = float(self.pAlp1)*auval
+        pAlp2  = float(self.pAlp2)*auval
 
         _log.info("trap.pycsgmesh>")
         dX  = 2*_np.sin(pTheta)*pDz
