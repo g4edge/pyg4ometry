@@ -18,7 +18,7 @@ class Trd(_SolidBase):
         pDy2:  float, half-length along y at the surface positioned at +dz
         dz:    float, half-length along the z axis
     """
-    def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry=None):
+    def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry=None, lunit="mm"):
         self.type   = 'Trd'
         self.name   = name
         self.pX1    = pDx1
@@ -26,18 +26,22 @@ class Trd(_SolidBase):
         self.pY1    = pDy1
         self.pY2    = pDy2
         self.pZ     = pDz
-        self.mesh   = None
+        self.lunit  = lunit
+
         self.dependents = []
         if registry:
             registry.addSolid(self)
 
     def pycsgmesh(self):
         _log.info('trd.pycsgmesh> antlr')
-        pX1 = float(self.pX1)/2.
-        pX2 = float(self.pX2)/2.
-        pY1 = float(self.pY1)/2.
-        pY2 = float(self.pY2)/2.
-        pZ  = float(self.pZ)/2.
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pX1 = float(self.pX1)*luval/2.
+        pX2 = float(self.pX2)*luval/2.
+        pY1 = float(self.pY1)*luval/2.
+        pY2 = float(self.pY2)*luval/2.
+        pZ  = float(self.pZ)*luval/2.
 
         _log.info('trd.pycsgmesh> mesh')
         mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX2,  pY2, pZ), None),
