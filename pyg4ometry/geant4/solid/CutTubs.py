@@ -21,7 +21,8 @@ class CutTubs(_SolidBase):
         pHighNorm: list, normal vector of the cut plane at +pDz
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
-                 pLowNorm, pHighNorm, registry=None, nslice=16):
+                 pLowNorm, pHighNorm, registry=None, lunit="mm",
+                 aunit="rad", nslice=16):
         self.type      = 'CutTubs'
         self.name      = name
         self.pRMin     = pRMin
@@ -31,7 +32,9 @@ class CutTubs(_SolidBase):
         self.pDPhi     = pDPhi
         self.pLowNorm  = pLowNorm
         self.pHighNorm = pHighNorm
-        self.nslice     = nslice
+        self.nslice    = nslice
+        self.lunit     = lunit
+        self.aunit     = aunit
         self.dependents = []
 
         if registry:
@@ -44,21 +47,30 @@ class CutTubs(_SolidBase):
     def pycsgmesh(self):
 
         _log.info('cuttubs.pycsgmesh> antlr')
-        pRMin     = float(self.pRMin)
-        pRMax     = float(self.pRMax)
-        pDz       = float(self.pDz)
-        pSPhi     = float(self.pSPhi)
-        pDPhi     = float(self.pDPhi)
-        pHighNorm = [self.pHighNorm[0].eval(), self.pHighNorm[1].eval(), self.pHighNorm[2].eval()]
-        pLowNorm  = [self.pLowNorm[0].eval() , self.pLowNorm[1].eval(),  self.pLowNorm[2].eval()]
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pRMin     = float(self.pRMin)*luval
+        pRMax     = float(self.pRMax)*luval
+        pDz       = float(self.pDz)*luval
+        pSPhi     = float(self.pSPhi)*auval
+        pDPhi     = float(self.pDPhi)*auval
+        pHighNorm = [float(self.pHighNorm[0])*luval,
+                     float(self.pHighNorm[1])*luval,
+                     float(self.pHighNorm[2])*luval]
+
+        pLowNorm  = [float(self.pLowNorm[0])*luval,
+                     float(self.pLowNorm[1])*luval,
+                     float(self.pLowNorm[2])*luval]
 
         _log.info('cuttubs.pycsgmesh> mesh')
-        mesh = _Tubs("tubs_temp", self.pRMin, self.pRMax, 2 * self.pDz, self.pSPhi, self.pDPhi, registry=None, nslice=self.nslice).pycsgmesh()
+        mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz, pSPhi, pDPhi, registry=None, nslice=self.nslice).pycsgmesh() # Units are already rendered
 
         if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
                 
             zlength = 3 * pDz  # make the dimensions of the semi-infinite plane large enough
-            
             if pHighNorm != [0,0,1]:
                 pHigh = _Plane("pHigh_temp", pHighNorm, pDz, zlength).pycsgmesh()
                 mesh = mesh.subtract(pHigh)
