@@ -541,8 +541,13 @@ class Reader(object) :
         y1 = _defines.Expression(solid_name+"_py1",node.attributes['y1'].value,self._registry)
         y2 = _defines.Expression(solid_name+"_py2",node.attributes['y2'].value,self._registry)
         z  = _defines.Expression(solid_name+"_z",node.attributes['z'].value,self._registry) 
-        
-        _g4.solid.Trd(solid_name, x1, x2, y1, y2, z, self._registry)
+
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.Trd(solid_name, x1, x2, y1, y2, z, self._registry, lunit)
 
     def parseTrap(self, node) : 
         solid_name = node.attributes['name'].value
