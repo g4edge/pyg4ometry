@@ -10,7 +10,7 @@ import logging as _log
 
 class Torus(_SolidBase):
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
-                 registry = None, nslice=16, nstack=16):
+                 registry = None, lunit="mm",aunit="rad",nslice=16, nstack=16):
         """
         Constructs a torus.
 
@@ -29,8 +29,10 @@ class Torus(_SolidBase):
         self.pRtor   = pRtor
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
-        self.nslice = nslice
-        self.nstack = nstack
+        self.nslice  = nslice
+        self.nstack  = nstack
+        self.lunit   = lunit
+        self.aunit   = aunit
         self.mesh = None
 
         self.dependents = []
@@ -46,11 +48,16 @@ class Torus(_SolidBase):
     def pycsgmesh(self):
 
         _log.info("torus.antlr>")
-        pRmin = float(self.pRmin)
-        pRmax = float(self.pRmax)
-        pRtor = float(self.pRtor)
-        pSPhi = float(self.pSPhi)
-        pDPhi = float(self.pDPhi)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pRmin = float(self.pRmin)*luval
+        pRmax = float(self.pRmax)*luval
+        pRtor = float(self.pRtor)*luval
+        pSPhi = float(self.pSPhi)*auval
+        pDPhi = float(self.pDPhi)*auval
 
         _log.info("torus.pycsgmesh>")
         polygons = []

@@ -12,6 +12,7 @@ from copy import deepcopy as _dc
 
 class Polycone(_SolidBase):
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
+                 lunit = "mm", aunit = "rad",
                  registry=None, nslice=16):
         """
         Constructs a solid of rotation using an arbitrary 2D surface.
@@ -34,6 +35,8 @@ class Polycone(_SolidBase):
         self.pZpl    = pZpl
         self.pRMin   = pRMin
         self.pRMax   = pRMax
+        self.lunit   = lunit
+        self.aunit   = aunit
         self.nslice  = nslice
 
         self.dependents = []
@@ -54,12 +57,17 @@ class Polycone(_SolidBase):
 
     def basicmesh(self):
         _log.info("polycone.antlr>")
-        pSPhi = float(self.pSPhi)
-        pDPhi = float(self.pDPhi)
 
-        pZpl = [float(val) for val in self.pZpl]
-        pRMin = [float(val) for val in self.pRMin]
-        pRMax = [float(val) for val in self.pRMax]
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
+        pSPhi = float(self.pSPhi)*auval
+        pDPhi = float(self.pDPhi)*auval
+
+        pZpl = [float(val)*luval for val in self.pZpl]
+        pRMin = [float(val)*luval for val in self.pRMin]
+        pRMax = [float(val)*luval for val in self.pRMax]
 
         _log.info("polycone.basicmesh>")
         polygons = []
