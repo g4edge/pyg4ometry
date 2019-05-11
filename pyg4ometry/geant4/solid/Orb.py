@@ -9,7 +9,7 @@ import logging as _log
 import numpy as _np
 
 class Orb(_SolidBase):
-    def __init__(self, name, pRMax, registry=None, nslice=16, nstack=16):
+    def __init__(self, name, pRMax, registry=None, lunit = "mm", nslice=16, nstack=16):
 
         """
         Constructs a solid sphere.
@@ -21,6 +21,7 @@ class Orb(_SolidBase):
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
+        self.lunit = lunit
         self.nslice = nslice
         self.nstack = nstack
 
@@ -34,7 +35,11 @@ class Orb(_SolidBase):
 
     def pycsgmesh(self):
         _log.info("orb.antlr>")
-        pRMax = float(self.pRMax)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pRMax = float(self.pRMax)*luval
 
         _log.info("orb.pycsgmesh>")
         mesh = _CSG.sphere(center=[0,0,0], radius=pRMax,
