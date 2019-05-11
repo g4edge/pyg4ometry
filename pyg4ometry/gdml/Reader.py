@@ -480,7 +480,6 @@ class Reader(object) :
     def parseCone(self,node) : 
         solid_name = node.attributes['name'].value         
 
-
         try : 
             rmin1 = _defines.Expression(solid_name+"_pRMin1",node.attributes['rmin1'].value,self._registry) 
         except KeyError : 
@@ -496,7 +495,7 @@ class Reader(object) :
 
         rmax1 = _defines.Expression(solid_name+"_pRMax1",node.attributes['rmax1'].value,self._registry) 
         rmax2 = _defines.Expression(solid_name+"_pRMax2",node.attributes['rmax2'].value,self._registry) 
-        dz    = _defines.Expression(solid_name+"_pDz","({})/2.0".format(node.attributes['z'].value),self._registry)
+        dz    = _defines.Expression(solid_name+"_pDz",node.attributes['z'].value,self._registry)
         dphi  = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry)
 
         try : 

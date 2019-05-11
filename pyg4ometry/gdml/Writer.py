@@ -327,7 +327,6 @@ class Writer(object):
             func = getattr(self, 'write'+solid.type) # get the member function
             func(solid) # call it with the solid instance as an argument
         except AttributeError:
-            print solid.name
             raise ValueError("No such solid "+solid.type)
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
@@ -369,7 +368,7 @@ class Writer(object):
         oe.setAttribute('rmax1', self.getValueOrExprFromInstance(instance,'pRmax1'))
         oe.setAttribute('rmin2', self.getValueOrExprFromInstance(instance,'pRmin2'))
         oe.setAttribute('rmax2', self.getValueOrExprFromInstance(instance,'pRmax2'))
-        oe.setAttribute('z', '2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('z', self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
         oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
         self.solids.appendChild(oe)

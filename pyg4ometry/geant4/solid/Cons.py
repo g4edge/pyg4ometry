@@ -26,18 +26,18 @@ class Cons(_SolidBase):
                  pSPhi, pDPhi, registry=None, lunit="mm", aunit="rad",
                  nslice=16):
 
-        self.name = name
-        self.type = 'Cons'
+        self.name   = name
+        self.type   = 'Cons'
         self.pRmin1 = pRmin1
         self.pRmax1 = pRmax1
         self.pRmin2 = pRmin2
         self.pRmax2 = pRmax2
-        self.pDz = pDz
-        self.pSPhi = pSPhi
-        self.pDPhi = pDPhi
+        self.pDz    = pDz
+        self.pSPhi  = pSPhi
+        self.pDPhi  = pDPhi
         self.nslice = nslice
-        self.lunit = lunit
-        self.aunit = aunit
+        self.lunit  = lunit
+        self.aunit  = aunit
 
         self.dependents = []
 
@@ -69,7 +69,7 @@ class Cons(_SolidBase):
         pRmax1 = float(self.pRmax1)*luval
         pRmin2 = float(self.pRmin2)*luval
         pRmax2 = float(self.pRmax2)*luval
-        pDz    = float(self.pDz)*luval
+        pDz    = float(self.pDz)*luval/2.0
         pSPhi  = float(self.pSPhi)*auval
         pDPhi  = float(self.pDPhi)*auval
 
