@@ -30,7 +30,7 @@ class Sphere(_SolidBase):
     """
 
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
-                 pDTheta, registry=None, nslice=10, nstack=10):
+                 pDTheta, registry=None, lunit="mm", aunit="rad", nslice=10, nstack=10):
 
         self.type    = 'Sphere'
         self.name    = name
@@ -39,9 +39,11 @@ class Sphere(_SolidBase):
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.pSTheta = pSTheta
-        self.pDTheta = pDTheta
+        self.pDTheta = pDTheta    
         self.nslice  = nslice
         self.nstack  = nstack
+        self.lunit   = lunit
+        self.aunit   = aunit
         self.mesh    = None
 
         self.dependents = []
@@ -66,12 +68,17 @@ class Sphere(_SolidBase):
 
     def pycsgmesh(self):
         _log.info("sphere.antlr>")
-        pRmin   = float(self.pRmin)
-        pRmax   = float(self.pRmax)
-        pSPhi   = float(self.pSPhi)
-        pDPhi   = float(self.pDPhi)
-        pSTheta = float(self.pSTheta)
-        pDTheta = float(self.pDTheta)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pRmin   = float(self.pRmin)*luval
+        pRmax   = float(self.pRmax)*luval
+        pSPhi   = float(self.pSPhi)*auval
+        pDPhi   = float(self.pDPhi)*auval
+        pSTheta = float(self.pSTheta)*auval
+        pDTheta = float(self.pDTheta)*auval
         
         _log.info("sphere.pycsgmesh>")
         thetaFin = pSTheta + pDTheta
