@@ -23,7 +23,7 @@ class LogicalVolume(object):
             self.material = material
         elif isinstance(material, str):
             # This will work out if it is a valid NIST and set the type appropriately
-            self.material = _Material(name=material)
+            self.material = _MaterialPredefined(name=material)
         else:
             raise ValueError("Unsupported type for material: {}".format(type(material)))
 

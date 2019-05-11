@@ -1005,14 +1005,12 @@ class Reader(object) :
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
                 solid     = node.getElementsByTagName("solidref")[0].attributes["ref"].value
                 
-#               determine material                               
-#                if material in _g4.registry.materialDict:
-#                    mat = _g4.registry.materialDict[material]
-#                else:
-#                    mat = str(material)
+                if material in self._registry.materialDict:
+                    mat = self._registry.materialDict[material]
+                else:
+                    mat = _g4.MaterialPredefined(material)
         
-
-                vol = _g4.LogicalVolume(self._registry.solidDict[solid], 'G4_Galactic', name, registry=self._registry)
+                vol = _g4.LogicalVolume(self._registry.solidDict[solid], mat, name, registry=self._registry)
                 
                 for chNode in node.childNodes :
                     if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
