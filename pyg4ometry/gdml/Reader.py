@@ -619,6 +619,16 @@ class Reader(object) :
         except KeyError:
             dphi = _defines.Expression(solid_name+"_pDphi", "2*pi" ,self._registry)
 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
         Rmin = []
         Rmax = []
         Z    = []
@@ -633,7 +643,7 @@ class Reader(object) :
             Z.append(z)
             i+=1
 
-        _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry)
+        _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry, lunit, aunit)
 
     def parseGenericPolycone(self, node) :
         solid_name = node.attributes['name'].value
@@ -647,6 +657,16 @@ class Reader(object) :
         except KeyError:
             dphi = _defines.Expression(solid_name+"_pDphi", "2*pi" ,self._registry)
 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
         R = []
         Z = []
 
@@ -658,7 +678,7 @@ class Reader(object) :
             Z.append(z)
             i+=1
 
-        _g4.solid.GenericPolycone(solid_name, sphi, dphi, R, Z, self._registry)
+        _g4.solid.GenericPolycone(solid_name, sphi, dphi, R, Z, self._registry,lunit,aunit)
 
 
     def parsePolyhedra(self, node) :
