@@ -329,6 +329,13 @@ class Writer(object):
         except AttributeError:
             raise ValueError("No such solid "+solid.type)
 
+    def getValueOrExpr(self, expr) : 
+        if self.registry.defineDict.has_key(expr.name) :
+            return expr.name
+        else :
+            return expr.expr.expression
+
+
     def getValueOrExprFromInstance(self, instance, variable, index=None):
 
         if not hasattr(instance, variable):
@@ -573,10 +580,16 @@ class Writer(object):
         self.solids.appendChild(oe)
 
     def createzPlane(self, rInner, rOuter, zplane):
-        d = self.doc.createElement('zplane')
-        d.setAttribute('rmin',str(rInner.expr.expression))
-        d.setAttribute('rmax', str(rOuter.expr.expression))
-        d.setAttribute('z', str(zplane.expr.expression))
+        d = self.doc.createElement('zplane')               
+        
+        d.setAttribute('rmin',self.getValueOrExpr(rInner))
+        d.setAttribute('rmax',self.getValueOrExpr(rOuter))
+        d.setAttribute('z', self.getValueOrExpr(zplane)) 
+
+        # d.setAttribute('rmin',str(rInner.expr.expression))
+        # d.setAttribute('rmax', str(rOuter.expr.expression))
+        # d.setAttribute('z', str(zplane.expr.expression))
+        
         return d
 
     def writePolycone(self, instance):
