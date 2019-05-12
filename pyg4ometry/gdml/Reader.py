@@ -750,6 +750,16 @@ class Reader(object) :
         nside = _defines.Expression("{}_numSide".format(solid_name),
                                     node.attributes['numsides'].value,self._registry)
 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
         R = []
         Z = []
         
@@ -761,7 +771,7 @@ class Reader(object) :
             Z.append(z)
             i+=1
 
-        _g4.solid.GenericPolyhedra(solid_name, sphi, dphi, nside, R, Z, self._registry)
+        _g4.solid.GenericPolyhedra(solid_name, sphi, dphi, nside, R, Z, self._registry, lunit, aunit)
 
     def parseEllipticalTube(self, node) : 
         solid_name = node.attributes['name'].value
