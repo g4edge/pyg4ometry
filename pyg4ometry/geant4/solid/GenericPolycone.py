@@ -60,7 +60,7 @@ class GenericPolycone(_SolidBase):
         for i, r in enumerate(pR):
             #linear interpolation
             r = (r_first*(z_last-pZ[i]) + r_last*(pZ[i]-z_first))/(z_last - z_first)
-            pRMin.append(0)
+            pRMin.append(r)
 
         # Use a proxy polycone to get the mesh
         _poly = Polycone("temp", pSPhi, pDPhi, pZ, pRMin, pR,
