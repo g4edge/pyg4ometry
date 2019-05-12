@@ -4,7 +4,7 @@ from   pyg4ometry.pycsg.core import CSG    as _CSG
 
 from   pyg4ometry.visualisation  import Mesh     as _Mesh
 import solid                     as                 _solid
-from   Material                  import Material as _Material
+import Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 
 import copy    as   _copy
@@ -19,11 +19,11 @@ class LogicalVolume(object):
         # geant4 required objects 
         self.solid           = solid
 
-        if isinstance(material, _Material):
+        if isinstance(material, _mat.Material):
             self.material = material
         elif isinstance(material, str):
             # This will work out if it is a valid NIST and set the type appropriately
-            self.material = _MaterialPredefined(name=material)
+            self.material = _mat.MaterialPredefined(name=material)
         else:
             raise ValueError("Unsupported type for material: {}".format(type(material)))
 

@@ -43,12 +43,39 @@ class TessellatedSolid(_SolidBase):
     
     def pycsgmesh(self) :
 
-        verts = self.mesh[0]
-        facet = self.mesh[1]
+        # render GDML mesh
+        if isinstance(self.mesh[0][0],unicode) : 
+
+            # vertex name - integer dict 
+            vdict = {}
+
+            i = 0
+            for f in self.mesh :                 
+                for j in range(0,3,1) :
+                    try :
+                        vdict[f[j]] 
+                    except KeyError :
+                        vdict[f[j]] = i 
+                        i += 1
+                        
+            verts = [] 
+            facet = []
+            for k in vdict.keys() : 
+                p = self.registry.defineDict[k]
+                verts.append(p.eval())
+
+            for f in self.mesh : 
+                facet.append([vdict[f[0]],vdict[f[1]],vdict[f[2]]])
+
+
+        # Mesh from CAD
+        else : 
+            verts = self.mesh[0]
+            facet = self.mesh[1]
         
         polygon_list = []
 
-        for f in facet : 
+        for f in facet :             
             v1 = _Vertex(verts[f[0]])
             v2 = _Vertex(verts[f[1]])
             v3 = _Vertex(verts[f[2]])
@@ -58,84 +85,3 @@ class TessellatedSolid(_SolidBase):
 
         return _CSG.fromPolygons(polygon_list)        
 
-    '''        
-        # loop over facet list and make vectors of verticies 
-        if isinstance(self.facet_list[0][0],str) :       
-            # print 'positions'
-            polygon_list = [] 
-            for facet in self.facet_list :  
-                vertex_list = []
-                for vertex in facet :
-                    v = self.registry.defineDict[vertex].eval()
-                    vertex_list.append(_Vertex(v))
-                polygon = _Polygon(vertex_list)
-                polygon_list.append(polygon)
-
-            return _CSG.fromPolygons(polygon_list)
-        elif isinstance(self.facet_list[0][0][0][0],float) :
-            # print 'floats'
-            polygon_list = [] 
-            for facet in self.facet_list : 
-                vertex_list = [] 
-                v1 = _Vertex(facet[0][0])
-                v2 = _Vertex(facet[0][1])
-                v3 = _Vertex(facet[0][2])
-                polygon = _Polygon([v1,v2,v3])
-                polygon_list.append(polygon)
-                
-            return _CSG.fromPolygons(polygon_list)            
-    '''
-
-    '''
-    def reduceVertices(self):
-        count_orig=0
-        count_redu=0
-
-        #Avoid continuously evaluating funciton references in loop
-        unique_index = self.unique_vertices.index
-        unique_append  = self.unique_vertices.append
-
-        print "Compressing Tesselated solid vertices..."
-        for facet in self.facet_list:
-            normal = None #This is redundant
-            vhashes = []
-            for vertex in facet[0]:
-                count_orig += 1
-                try: #Avoid multiple O(n) 'x in y' operations with a try block
-                    vert_idx = unique_index(vertex)
-                except ValueError:
-                    count_redu +=1
-                    unique_append(vertex)
-                    vert_idx = len(self.unique_vertices) - 1
-
-                vhashes.append(vert_idx)
-            self.indexed_facet_list.append([vhashes, normal])
-
-        print "Total vertices: ", count_orig," , Unique vertices: ", count_redu
-    def pycsgmesh(self):
-
-#        if self.mesh :
-#            return self.mesh
-
-        self.basicmesh()
-        self.csgmesh()
-
-        return self.mesh
-
-    def basicmesh(self):
-        def xyz2Vertex(xyztup, normal):
-            return _Vertex(_Vector(xyztup), None)
-
-        polygons = []
-        for facet in self.indexed_facet_list:
-            v1 = xyz2Vertex(self.unique_vertices[facet[0][0]], facet[1]) #Keep it simple
-            v2 = xyz2Vertex(self.unique_vertices[facet[0][1]], facet[1])
-            v3 = xyz2Vertex(self.unique_vertices[facet[0][2]], facet[1])
-            polygons.append(_Polygon([v1, v2, v3]))
-
-        self.mesh  = _CSG.fromPolygons(polygons)
-        return self.mesh
-
-    def csgmesh(self):
-        pass
-        '''
