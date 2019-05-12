@@ -13,7 +13,7 @@ import numpy as _np
 
 class Hype(_SolidBase):
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
-                 outerStereo, halfLenZ, registry = None, nslice=16, nstack=16):
+                 outerStereo, halfLenZ, registry = None, lunit="mm", aunit="rad",nslice=16, nstack=16):
         """
         Constructs a tube with hyperbolic profile.
 
@@ -32,6 +32,8 @@ class Hype(_SolidBase):
         self.innerStereo = innerStereo
         self.outerStereo = outerStereo
         self.halfLenZ    = halfLenZ
+        self.lunit       = lunit
+        self.aunit       = aunit
         self.nslice      = nslice
         self.nstack      = nstack
 
@@ -50,11 +52,17 @@ class Hype(_SolidBase):
 
     def pycsgmesh(self):
         _log.info('hype.pycsgmesh> antlr')
-        innerRadius = float(self.innerRadius)
-        outerRadius = float(self.outerRadius)
-        innerStereo = float(self.innerStereo)
-        outerStereo = float(self.outerStereo)
-        halfLenZ = float(self.halfLenZ)
+
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        innerRadius = float(self.innerRadius)*luval
+        outerRadius = float(self.outerRadius)*luval
+        innerStereo = float(self.innerStereo)*auval
+        outerStereo = float(self.outerStereo)*auval
+        halfLenZ = float(self.halfLenZ)/2.0*luval
 
         _log.info('hype.pycsgmesh> mesh')
 

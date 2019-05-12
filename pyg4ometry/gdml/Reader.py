@@ -842,9 +842,19 @@ class Reader(object) :
         innerRadius = _defines.Expression(solid_name+'_innerRadius',node.attributes['rmin'].value,self._registry) 
         outerRadius = _defines.Expression(solid_name+'_outerRadius',node.attributes['rmax'].value,self._registry)
         outerStereo = _defines.Expression(solid_name+'_outerStereo',node.attributes['outst'].value,self._registry) 
-        halfLenZ    = _defines.Expression(solid_name+'_halfLenZ','({})/2'.format(node.attributes['z'].value),self._registry)
+        halfLenZ    = _defines.Expression(solid_name+'_halfLenZ',node.attributes['z'].value,self._registry)
 
-        _g4.solid.Hype(solid_name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, self._registry) 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.Hype(solid_name, innerRadius, outerRadius, innerStereo, outerStereo, halfLenZ, self._registry, lunit, aunit) 
 
     def parseTet(self, node) : 
         solid_name = node.attributes['name'].value         
