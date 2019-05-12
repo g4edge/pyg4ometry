@@ -6,7 +6,9 @@ import numpy as _np
 
 class GenericPolyhedra(_SolidBase):
     def __init__(self, name, pSPhi, pDPhi, numSide, pR, pZ,
-                 registry=None):
+                 registry=None,
+                 lunit="mm",
+                 aunit="rad"):
         """
         Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
 
@@ -18,13 +20,16 @@ class GenericPolyhedra(_SolidBase):
         pR = r coordinate list
 		pZ = z coordinate list
         """
-        self.type    = 'GenericPoyhedra'
+        self.type    = 'GenericPolyhedra'
         self.name    = name
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.numSide = numSide
-        self.pR   = pR
-        self.pZ   = pZ
+        self.pR      = pR
+        self.pZ      = pZ
+
+        self.lunit   = lunit
+        self.aunit   = aunit
 
         self.dependents = []
 
@@ -42,11 +47,16 @@ class GenericPolyhedra(_SolidBase):
 
     def pycsgmesh(self):
         _log.info("genericpolyhedra.antlr>")
-        pSPhi = float(self.pSPhi)
-        pDPhi = float(self.pDPhi)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
+        pSPhi = float(self.pSPhi)*auval
+        pDPhi = float(self.pDPhi)*auval
         numSide = float(self.numSide)
-        pR = [float(val) for val in self.pR]
-        pZ = [float(val) for val in self.pZ]
+        pR = [float(val)*luval for val in self.pR]
+        pZ = [float(val)*luval for val in self.pZ]
 
         _log.info("genericpolyhedra.pycsgmesh>")
         r_first = pR[0]
@@ -61,6 +71,6 @@ class GenericPolyhedra(_SolidBase):
 
         # Use a proxy polycone to get the mesh
         _poly = Polyhedra("temp", pSPhi, pDPhi, numSide, len(pZ), pZ, pRMin, pR,
-                         registry=None)
+                         registry=None,lunit="mm",aunit="rad")
 
         return _poly.pycsgmesh()

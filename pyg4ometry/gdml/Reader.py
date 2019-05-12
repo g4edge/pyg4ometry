@@ -697,6 +697,16 @@ class Reader(object) :
         nside = _defines.Expression("{}_numSide".format(solid_name),
                                     node.attributes['numsides'].value,self._registry)
 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
         Rmin = []
         Rmax = []
         Z    = []
@@ -722,7 +732,7 @@ class Reader(object) :
 
         nzplane = _defines.Expression("{}_numZplanes".format(solid_name), len(Z), self._registry)
 
-        _g4.solid.Polyhedra(solid_name, sphi, dphi, nside, nzplane, Z, Rmin, Rmax, registry=self._registry)
+        _g4.solid.Polyhedra(solid_name, sphi, dphi, nside, nzplane, Z, Rmin, Rmax, registry=self._registry,lunit=lunit,aunit=aunit)
 
     def parseGenericPolyhedra(self, node) :
         solid_name = node.attributes['name'].value

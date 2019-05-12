@@ -6,7 +6,7 @@ import logging as _log
 
 class Polyhedra(_SolidBase):
     def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes,
-                 zPlane, rInner, rOuter, registry=True):
+                 zPlane, rInner, rOuter, registry=True, lunit = "mm", aunit ="rad"):
         """
         Constructs a polyhedra.
 
@@ -30,7 +30,9 @@ class Polyhedra(_SolidBase):
         self.zPlane     = zPlane
         self.rInner     = rInner
         self.rOuter     = rOuter
-
+        self.lunit      = lunit
+        self.aunit      = aunit
+        
         self.dependents = []
 
         if registry:
@@ -48,13 +50,17 @@ class Polyhedra(_SolidBase):
     def basicmesh(self):
         _log.info("polyhedra.antlr>")
 
-        phiStart = float(self.phiStart)
-        phiTotal = float(self.phiTotal)
-        numSide = int(self.numSide)
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
+        phiStart = float(self.phiStart)*auval
+        phiTotal = float(self.phiTotal)*auval
+        numSide = int(float(self.numSide))
         numZPlanes = int(self.numZPlanes)
-        zPlane = [float(val) for val in self.zPlane]
-        rInner = [float(val) for val in self.rInner]
-        rOuter = [float(val) for val in self.rOuter]
+        zPlane = [float(val)*luval for val in self.zPlane]
+        rInner = [float(val)*luval for val in self.rInner]
+        rOuter = [float(val)*luval for val in self.rOuter]
 
         _log.info("polyhedra.pycsgmesh>")
         fillfrac  = phiTotal/(2*_np.pi)
@@ -62,7 +68,10 @@ class Polyhedra(_SolidBase):
 
         ph        = _Polycone(self.name, phiStart, phiTotal,
                               zPlane, rInner, rOuter,
-                              nslice=int(_np.ceil(slices)), registry=None)
+                              registry=None,
+                              lunit="mm",
+                              aunit="rad",
+                              nslice=int(_np.ceil(slices)))
         mesh = ph.pycsgmesh()
 
         return mesh

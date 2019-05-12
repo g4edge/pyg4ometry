@@ -457,8 +457,12 @@ class Writer(object):
 
     def createrzPoint(self, r, z):
         rz = self.doc.createElement('rzpoint')
-        rz.setAttribute('r', str(r.expr.expression))
-        rz.setAttribute('z', str(z.expr.expression))
+
+        rz.setAttribute('r',self.getValueOrExpr(r))
+        rz.setAttribute('z', self.getValueOrExpr(z)) 
+
+        # rz.setAttribute('r', str(r.expr.expression))
+        # rz.setAttribute('z', str(z.expr.expression))
         return rz
 
     def writeGenericPolycone(self, instance):
@@ -472,6 +476,20 @@ class Writer(object):
             oe.appendChild(p)
 
         self.solids.appendChild(oe)
+
+    def writeGenericPolyhedra(self, instance) : 
+        oe = self.doc.createElement('genericPolyhedra')
+        oe.setAttribute('name', self.prepend + instance.name)
+        oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi')) 
+        oe.setAttribute('numsides', self.getValueOrExprFromInstance(instance,'numSide')) 
+
+        for r,z in zip(instance.pR, instance.pZ):
+            p = self.createrzPoint(r, z)
+            oe.appendChild(p)
+
+        self.solids.appendChild(oe)
+
 
     def createTriangularFacet(self, vertex1, vertex2, vertex3):
         tf = self.doc.createElement('triangular')
