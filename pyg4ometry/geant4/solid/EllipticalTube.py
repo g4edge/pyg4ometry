@@ -9,7 +9,7 @@ import logging as _log
 import numpy as _np
 
 class EllipticalTube(_SolidBase):
-    def __init__(self, name, pDx, pDy, pDz, registry=None, nslice=6, nstack=6):
+    def __init__(self, name, pDx, pDy, pDz, registry=None, lunit="mm", nslice=6, nstack=6):
         """
         Constructs a tube of elliptical cross-section.
 
@@ -24,6 +24,7 @@ class EllipticalTube(_SolidBase):
         self.pDx    = pDx
         self.pDy    = pDy
         self.pDz    = pDz
+        self.lunit  = lunit
         self.nslice = nslice
         self.nstack = nstack
 
@@ -40,9 +41,12 @@ class EllipticalTube(_SolidBase):
 
         _log.info('ellipticaltube.antlr>')
 
-        pDx = float(self.pDx)
-        pDy = float(self.pDy)
-        pDz = float(self.pDz)
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pDx = float(self.pDx)*luval
+        pDy = float(self.pDy)*luval
+        pDz = float(self.pDz)*luval
 
         _log.info('ellipticaltube.pycsgmesh>')
         sz      = -pDz

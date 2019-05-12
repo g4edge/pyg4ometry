@@ -780,7 +780,12 @@ class Reader(object) :
         dy = _defines.Expression(solid_name+"_dy",node.attributes['dy'].value,self._registry) 
         dz = _defines.Expression(solid_name+"_dz",node.attributes['dz'].value,self._registry) 
     
-        _g4.solid.EllipticalTube(solid_name,dx,dy,dz, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.EllipticalTube(solid_name,dx,dy,dz, self._registry,lunit)
 
     def parseEllipsoid(self, node) : 
         solid_name = node.attributes['name'].value 
