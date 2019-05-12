@@ -12,7 +12,7 @@ import logging as _log
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
-                 pDz, registry=None, nstack=20, refine=0):
+                 pDz, registry=None, lunit = "mm", aunit = "rad", nstack=20, refine=0):
         """
         Constructs a twisted general trapezoid.
 
@@ -35,6 +35,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.pDy1             = pDy1
         self.pDy2             = pDy2
         self.pDz              = pDz
+        self.lunit            = lunit
+        self.aunit            = aunit 
         self.nstack           = nstack
         self.refine           = refine
 
@@ -82,6 +84,11 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
     def pycsgmesh(self):
         _log.info('twistedtrd.pycsgmesh> antlr')
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
         twistedAngle = float(self.twistedAngle)
         pDx1 = float(self.pDx1)/2.
         pDx2 = float(self.pDx2)/2.

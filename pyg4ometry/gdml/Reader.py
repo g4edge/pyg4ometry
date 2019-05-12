@@ -936,8 +936,18 @@ class Reader(object) :
         y2 = _defines.Expression(solid_name+'_y2',node.attributes['y2'].value,self._registry)
         z  = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
 
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
         _g4.solid.TwistedTrap(solid_name, twistedAngle, z, Theta, Phi, y1,
-                              x1, x2, y2, x3, x4, Alph, self._registry)
+                              x1, x2, y2, x3, x4, Alph, self._registry, lunit, aunit)
 
 
     def parseTwistedTrd(self, node) :
@@ -950,7 +960,17 @@ class Reader(object) :
         y2 = _defines.Expression(solid_name+'_y2',node.attributes['y2'].value,self._registry)
         z    = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
 
-        _g4.solid.TwistedTrd(solid_name, twistedAngle, x1, x2, y1, y2, z, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.TwistedTrd(solid_name, twistedAngle, x1, x2, y1, y2, z, self._registry, lunit, aunit)
 
     def parseTwistedTubs(self,node) : 
         solid_name = node.attributes['name'].value
