@@ -8,7 +8,7 @@ import numpy as _np
 import logging as _log
 
 class ExtrudedSolid(_SolidBase):
-    def __init__(self, name, pPolygon, pZslices, registry=None):
+    def __init__(self, name, pPolygon, pZslices, registry=None, lunit="mm"):
         """
         pPolygon: List of lists with the x-y coordinates of vertices for the polygon.
         pZslices: List of lists with z-coordinate of a slice, slice offsets in x-y and scaling
@@ -22,6 +22,7 @@ class ExtrudedSolid(_SolidBase):
 
         self.pPolygon = pPolygon
         self.pZslices = pZslices 
+        self.lunit    = lunit
 
         if registry :
             registry.addSolid(self)
@@ -39,11 +40,15 @@ class ExtrudedSolid(_SolidBase):
 
     def pycsgmesh(self):
         _log.info('xtru.pycsgmesh> antlr')
-        zpos     = [zslice[0].eval() for zslice in self.pZslices]
-        x_offs   = [zslice[1][0].eval() for zslice in self.pZslices]
-        y_offs   = [zslice[1][1].eval() for zslice in self.pZslices]
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        zpos     = [zslice[0].eval()*luval for zslice in self.pZslices]
+        x_offs   = [zslice[1][0].eval()*luval for zslice in self.pZslices]
+        y_offs   = [zslice[1][1].eval()*luval for zslice in self.pZslices]
         scale    = [zslice[2].eval() for zslice in self.pZslices]
-        vertices = [[pPolygon[0].eval(), pPolygon[1].eval()] for pPolygon in self.pPolygon]
+        vertices = [[pPolygon[0].eval()*luval, pPolygon[1].eval()*luval] for pPolygon in self.pPolygon]
         nslices  = len(self.pZslices)
 
         _log.info('xtru.pycsgmesh> mesh')

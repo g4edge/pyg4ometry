@@ -893,7 +893,12 @@ class Reader(object) :
                 zSection.append([zpos,[xoff,yoff],scale])
                 isec = isec+1
 
-        _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection,self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection,self._registry,lunit=lunit)
         # print 'extruded solid NOT IMPLEMENTED'
 
     def parseTwistedBox(self, node) :

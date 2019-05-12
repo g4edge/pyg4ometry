@@ -431,28 +431,33 @@ class Writer(object):
 
     def createSection(self, zOrder, zPosition, xOffset, yOffset, scalingFactor):
         s = self.doc.createElement('section')
-        s.setAttribute('zOrder', str(zOrder.expr.expression))
-        s.setAttribute('zPosition', str(zPosition.expr.expression))
-        s.setAttribute('xOffset', str(xOffset.expr.expression))
-        s.setAttribute('yOffset', str(yOffset.expr.expression))
-        s.setAttribute('scalingFactor', str(scalingFactor.expr.expression))
+
+        s.setAttribute('zOrder', str(zOrder))
+        s.setAttribute('zPosition', self.getValueOrExpr(zPosition))
+        s.setAttribute('xOffset', self.getValueOrExpr(xOffset))
+        s.setAttribute('yOffset', self.getValueOrExpr(yOffset))
+        s.setAttribute('scalingFactor', self.getValueOrExpr(scalingFactor))
+
         return s
 
     def writeExtrudedSolid(self, instance):
         oe = self.doc.createElement('xtru')
         oe.setAttribute('name', self.prepend + instance.name)
 
-        for vertex in instance.vertices:
+        for vertex in instance.pPolygon:
             v = self.createTwoDimVertex(vertex[0], vertex[1])
             oe.appendChild(v)
 
-        i = instance
         n = 0
-        for z,x,y,s in zip(i.zpos,i.x_offs, i.y_offs, i.scale):
-            s = self.createSection(n, z, x, y, s)
+        for zs in instance.pZslices : 
+            z = zs[0]
+            x = zs[1][0]
+            y = zs[1][1]
+            s = zs[2]
+            sec = self.createSection(n, z, x, y, s)
+            oe.appendChild(sec)            
             n += 1
-            oe.appendChild(s)
-
+            
         self.solids.appendChild(oe)
 
     def createrzPoint(self, r, z):
@@ -461,8 +466,6 @@ class Writer(object):
         rz.setAttribute('r',self.getValueOrExpr(r))
         rz.setAttribute('z', self.getValueOrExpr(z)) 
 
-        # rz.setAttribute('r', str(r.expr.expression))
-        # rz.setAttribute('z', str(z.expr.expression))
         return rz
 
     def writeGenericPolycone(self, instance):
