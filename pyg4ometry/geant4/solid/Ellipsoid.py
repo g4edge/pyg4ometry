@@ -10,7 +10,7 @@ import numpy as _np
 
 class Ellipsoid(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
-                 pzBottomCut, pzTopCut, registry=None, nslice=8, nstack=8):
+                 pzBottomCut, pzTopCut, registry=None, lunit = "mm", nslice=8, nstack=8):
         """
         Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -29,6 +29,7 @@ class Ellipsoid(_SolidBase):
         self.pzSemiAxis  = pzSemiAxis
         self.pzBottomCut = pzBottomCut
         self.pzTopCut    = pzTopCut
+        self.lunit       = lunit
         self.nslice      = nslice
         self.nstack      = nstack
         self.mesh      = None
@@ -52,9 +53,13 @@ class Ellipsoid(_SolidBase):
     def basicmesh(self):
 
         _log.info('ellipsoid.antlr>')
-        pxSemiAxis = float(self.pxSemiAxis)
-        pySemiAxis = float(self.pySemiAxis)
-        pzSemiAxis = float(self.pzSemiAxis)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pxSemiAxis = float(self.pxSemiAxis)*luval
+        pySemiAxis = float(self.pySemiAxis)*luval
+        pzSemiAxis = float(self.pzSemiAxis)*luval
 
         _log.info('ellipsoid.basicmesh>')
         def appendVertex(vertices, u, v):
@@ -111,8 +116,12 @@ class Ellipsoid(_SolidBase):
 
     def csgmesh(self, basicmesh):
         _log.info('ellipsoid.antlr>')
-        pzBottomCut = float(self.pzBottomCut)
-        pzTopCut = float(self.pzTopCut)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pzBottomCut = float(self.pzBottomCut)*luval
+        pzTopCut    = float(self.pzTopCut)*luval
 
         _log.info('ellipsoid.csgmesh>')
         topNorm     = _Vector(0,0,1)                              # These are tests of booleans operations, keep here for now

@@ -800,7 +800,12 @@ class Reader(object) :
         cz   = _defines.Expression(solid_name+"_cz",node.attributes['cz'].value,self._registry)
         tcut = _defines.Expression(solid_name+"_zcut2",node.attributes['zcut2'].value,self._registry) 
         
-        _g4.solid.Ellipsoid(solid_name, ax, by, cz, bcut, tcut, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.Ellipsoid(solid_name, ax, by, cz, bcut, tcut, self._registry, lunit)
 
     def parseEllipticalCone(self, node) : 
         solid_name = node.attributes['name'].value 
