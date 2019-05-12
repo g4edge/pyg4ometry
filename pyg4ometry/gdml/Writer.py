@@ -651,6 +651,28 @@ class Writer(object):
         oe.setAttribute('deltatheta',self.getValueOrExprFromInstance(instance,'pDTheta'))
         self.solids.appendChild(oe)
 
+    def writeGenericTrap(self, instance):
+        oe = self.doc.createElement('arb8')
+        oe.setAttribute('v1x',self.getValueOrExprFromInstance(instance,'v1x'))
+        oe.setAttribute('v1y',self.getValueOrExprFromInstance(instance,'v1y'))
+        oe.setAttribute('v2x',self.getValueOrExprFromInstance(instance,'v2x'))
+        oe.setAttribute('v2y',self.getValueOrExprFromInstance(instance,'v2y'))
+        oe.setAttribute('v3x',self.getValueOrExprFromInstance(instance,'v3x'))
+        oe.setAttribute('v3y',self.getValueOrExprFromInstance(instance,'v3y'))
+        oe.setAttribute('v4x',self.getValueOrExprFromInstance(instance,'v4x'))
+        oe.setAttribute('v4y',self.getValueOrExprFromInstance(instance,'v4y'))
+        oe.setAttribute('v5x',self.getValueOrExprFromInstance(instance,'v5x'))
+        oe.setAttribute('v5y',self.getValueOrExprFromInstance(instance,'v5y'))
+        oe.setAttribute('v6x',self.getValueOrExprFromInstance(instance,'v6x'))
+        oe.setAttribute('v6y',self.getValueOrExprFromInstance(instance,'v6y'))
+        oe.setAttribute('v7x',self.getValueOrExprFromInstance(instance,'v7x'))
+        oe.setAttribute('v7y',self.getValueOrExprFromInstance(instance,'v7y'))
+        oe.setAttribute('v8x',self.getValueOrExprFromInstance(instance,'v8x'))
+        oe.setAttribute('v8y',self.getValueOrExprFromInstance(instance,'v8y'))
+        oe.setAttribute('dz',self.getValueOrExprFromInstance(instance,'dz'))
+        self.solids.appendChild(oe)
+        
+
     def writeSubtraction(self, instance):
         oe  = self.doc.createElement('subtraction')
         oe.setAttribute('name',self.prepend + instance.name)
