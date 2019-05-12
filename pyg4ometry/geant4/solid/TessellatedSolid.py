@@ -58,11 +58,11 @@ class TessellatedSolid(_SolidBase):
                         vdict[f[j]] = i 
                         i += 1
                         
-            verts = [] 
+            verts = [0 for dummy in range(0,len(vdict.keys()),1)] 
             facet = []
-            for k in vdict.keys() : 
-                p = self.registry.defineDict[k]
-                verts.append(p.eval())
+            for vdi in vdict.items(): 
+                p = self.registry.defineDict[vdi[0]]
+                verts[vdi[1]] =p.eval() 
 
             for f in self.mesh : 
                 facet.append([vdict[f[0]],vdict[f[1]],vdict[f[2]]])
