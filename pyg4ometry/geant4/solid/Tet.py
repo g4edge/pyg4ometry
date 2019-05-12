@@ -6,13 +6,13 @@ from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon
 
-
 import numpy as _np
 import logging as _log
 from copy import deepcopy as _dc
 
 class Tet(_SolidBase):
     def __init__(self, name, anchor, p2, p3, p4, registry,
+                 lunit = "mm",
                  degeneracyFlag=False):
         """
         Constructs a tetrahedra.
@@ -31,10 +31,12 @@ class Tet(_SolidBase):
         self.p2      = p2
         self.p3      = p3
         self.p4      = p4
+        self.lunit   = lunit
         self.degen   = degeneracyFlag
         self.dependents = []
 
         registry.addSolid(self) # Always need the registry
+
         self.registry = registry
 
 
@@ -45,15 +47,13 @@ class Tet(_SolidBase):
     def pycsgmesh(self):
         _log.info('tet.pycsgmesh> antlr')
 
-        anchor_pos = self.registry.defineDict[self.anchor.expr.expression]
-        p2_pos = self.registry.defineDict[self.p2.expr.expression]
-        p3_pos = self.registry.defineDict[self.p3.expr.expression]
-        p4_pos = self.registry.defineDict[self.p4.expr.expression]
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(self.lunit)
 
-        anchor = [anchor_pos.x.eval(), anchor_pos.y.eval(), anchor_pos.z.eval()]
-        p2 = [p2_pos.x.eval(), p2_pos.y.eval(), p2_pos.z.eval()]
-        p3 = [p3_pos.x.eval(), p3_pos.y.eval(), p3_pos.z.eval()]
-        p4 = [p4_pos.x.eval(), p4_pos.y.eval(), p4_pos.z.eval()]
+        anchor = _np.array([self.anchor.x.eval(), self.anchor.y.eval(), self.anchor.z.eval()])*luval
+        p2     = _np.array([self.p2.x.eval(), self.p2.y.eval(), self.p2.z.eval()])*luval
+        p3     = _np.array([self.p3.x.eval(), self.p3.y.eval(), self.p3.z.eval()])*luval
+        p4     = _np.array([self.p4.x.eval(), self.p4.y.eval(), self.p4.z.eval()])*luval
 
         _log.info('tet.pycsgmesh> mesh')
         vert_ancr = _Vertex(_Vector(p4[0], p4[1], p4[2]), None)
