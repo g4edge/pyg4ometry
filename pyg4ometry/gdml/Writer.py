@@ -342,6 +342,7 @@ class Writer(object):
             raise AttributeError("") #TODO: Add error message
         var = getattr(instance, variable)
         
+
         # Indexed variable 
         if index is not None:
             try:
@@ -350,11 +351,8 @@ class Writer(object):
                 raise IndexError("") #TODO: Add error message
 
         # check if variable is in registry #TODO indexed variables
-        try : 
-            if self.registry.defineDict.has_key(var.name) :
-                return var.name
-        except AttributeError : 
-            return str(var)
+        if self.registry.defineDict.has_key(var.name) :
+            return var.name
 
         # Expression, Constant, Quantity or Variable
         if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):

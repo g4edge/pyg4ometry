@@ -1038,7 +1038,7 @@ class Reader(object) :
                 v4 = chNode.attributes['vertex4'].value
                 facet_list.append([v1,v2,v3,v4])
         
-        _g4.solid.TessellatedSolid(solid_name, facet_list, self._registry)
+        _g4.solid.TessellatedSolid(solid_name, facet_list, self._registry)        
         
     def parseUnion(self, node) : 
         solid_name = node.attributes['name'].value
