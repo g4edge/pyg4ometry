@@ -815,7 +815,12 @@ class Reader(object) :
         zMax       = _defines.Expression(solid_name+"_zMax",node.attributes['zmax'].value,self._registry)
         pzTopCut   = _defines.Expression(solid_name+"_pzTopCut",node.attributes['zcut'].value,self._registry)
 
-        _g4.solid.EllipticalCone(solid_name,pxSemiAxis,pySemiAxis,zMax,pzTopCut,self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        _g4.solid.EllipticalCone(solid_name,pxSemiAxis,pySemiAxis,zMax,pzTopCut,self._registry,lunit=lunit)
 
     def parseParaboloid(self, node) : 
         solid_name = node.attributes['name'].value 

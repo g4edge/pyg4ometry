@@ -10,7 +10,7 @@ import numpy as _np
 
 class EllipticalCone(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
-                 registry=None, nslice=16, nstack=16):
+                 registry=None, lunit="mm",nslice=16, nstack=16):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -28,6 +28,7 @@ class EllipticalCone(_SolidBase):
         self.pySemiAxis = pySemiAxis
         self.zMax       = zMax
         self.pzTopCut   = pzTopCut
+        self.lunit      = lunit
         self.nslice     = nslice
         self.nstack     = nslice
 
@@ -49,10 +50,14 @@ class EllipticalCone(_SolidBase):
     def pycsgmesh(self):
 
         _log.info("ellipticalcone.antlr>")
-        pxSemiAxis = float(self.pxSemiAxis)
-        pySemiAxis = float(self.pySemiAxis)
-        zMax = float(self.zMax)
-        pzTopCut = float(self.pzTopCut)
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pxSemiAxis = float(self.pxSemiAxis)*luval
+        pySemiAxis = float(self.pySemiAxis)*luval
+        zMax       = float(self.zMax)*luval
+        pzTopCut   = float(self.pzTopCut)*luval
 
         _log.info("ellipticalcone.pycsgmesh>")
         polygons = []
