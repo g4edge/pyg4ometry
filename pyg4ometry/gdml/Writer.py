@@ -764,9 +764,9 @@ class Writer(object):
         oe = self.doc.createElement("twistedbox")
         oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('PhiTwist', self.getValueOrExprFromInstance(instance,'twistedAngle'))
-        oe.setAttribute('x','2*'+ self.getValueOrExprFromInstance(instance,'pDx'))
-        oe.setAttribute('y','2*'+ self.getValueOrExprFromInstance(instance,'pDy'))
-        oe.setAttribute('z','2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute('x',self.getValueOrExprFromInstance(instance,'pDx'))
+        oe.setAttribute('y',self.getValueOrExprFromInstance(instance,'pDy'))
+        oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pDz'))
         self.solids.appendChild(oe)
 
     def writeTwistedTrd(self, instance):

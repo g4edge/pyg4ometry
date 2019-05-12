@@ -907,9 +907,19 @@ class Reader(object) :
         twistedAngle = _defines.Expression(solid_name+'_PhiTwist',node.attributes['PhiTwist'].value,self._registry)
         x = _defines.Expression(solid_name+'_x',node.attributes['x'].value,self._registry)
         y = _defines.Expression(solid_name+'_y',node.attributes['y'].value,self._registry)
-        z    = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
+        z = _defines.Expression(solid_name+'_z',node.attributes['z'].value,self._registry)
 
-        _g4.solid.TwistedBox(solid_name, twistedAngle, x, y, z, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.TwistedBox(solid_name, twistedAngle, x, y, z, self._registry, lunit, aunit)
 
     def parseTwistedTrap(self, node) : 
         solid_name = node.attributes['name'].value

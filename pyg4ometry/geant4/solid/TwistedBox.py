@@ -13,8 +13,9 @@ import numpy as _np
 import logging as _log
 
 class TwistedBox(_SolidBase, _TwistedSolid):
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, nstack=20,
-                 refine=0):
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, 
+                 lunit = "mm", aunit = "rad",
+                 nstack=20, refine=0):
         """
         Constructs a box that is twisted through angle 'twistedangle'.
 
@@ -33,6 +34,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.pDx          = pDx
         self.pDy          = pDy
         self.pDz          = pDz
+        self.lunit        = lunit
+        self.aunit        = aunit
         self.nstack       = nstack
         self.refine       = refine
 
@@ -70,10 +73,15 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
     def pycsgmesh(self):
         _log.info('twistedbox.pycsgmesh> antlr')
-        twistedAngle = float(self.twistedAngle)
-        pDx = float(self.pDx)/2.
-        pDy = float(self.pDy)/2.
-        pDz = float(self.pDz)/2.
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
+        twistedAngle = float(self.twistedAngle)*auval
+        pDx = float(self.pDx)/2.*luval
+        pDy = float(self.pDy)/2.*luval
+        pDz = float(self.pDz)/2.*luval
         refine  = float(self.refine)
 
         _log.info('twistedbox.pycsgmesh> mesh')
