@@ -970,7 +970,17 @@ class Reader(object) :
         zlen = _defines.Expression(solid_name+'_zlen',node.attributes['zlen'].value,self._registry)
         phi = _defines.Expression(solid_name+'_phi',node.attributes['phi'].value,self._registry)
 
-        _g4.solid.TwistedTubs(solid_name, inner_rad, outer_rad, zlen, phi, twist, self._registry)
+        try : 
+            lunit = node.attributes['lunit'].value
+        except KeyError : 
+            lunit = "mm"
+
+        try : 
+            aunit = node.attributes['aunit'].value
+        except KeyError : 
+            aunit = "rad"
+
+        _g4.solid.TwistedTubs(solid_name, inner_rad, outer_rad, zlen, phi, twist, self._registry, lunit, aunit)
 
     def parseGenericTrap(self,node) :
         solid_name = node.attributes['name'].value

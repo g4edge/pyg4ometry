@@ -11,7 +11,7 @@ from copy import deepcopy as _dc
 
 class TwistedTubs(_SolidBase):
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
-                 registry=None, nslice=16, nstack=16):
+                 registry=None, lunit = "mm", aunit = "rad", nslice=16, nstack=16):
         """
         Creates a twisted tube segement. Note that only 1 constructor is supprted.
 
@@ -30,6 +30,8 @@ class TwistedTubs(_SolidBase):
         self.zlen         = zlen
         self.phi          = phi
         self.twistedangle = twistedangle
+        self.lunit        = lunit
+        self.aunit        = aunit
         self.nslice       = nslice
         self.nstack       = nstack
 
@@ -74,11 +76,16 @@ class TwistedTubs(_SolidBase):
 
     def pycsgmesh(self):
         _log.info("polycone.antlr>")
-        endinnerrad = float(self.endinnerrad)
-        endouterrad = float(self.endouterrad)
-        zlen = float(self.zlen)
-        phi  = float(self.phi)
-        twistedangle = float(self.twistedangle)
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit) 
+
+        endinnerrad = float(self.endinnerrad)*luval
+        endouterrad = float(self.endouterrad)*luval
+
+        zlen         = float(self.zlen)*luval
+        phi          = float(self.phi)*auval 
+        twistedangle = float(self.twistedangle)*auval
 
         _log.info("polycone.basicmesh>")
         polygons = []
