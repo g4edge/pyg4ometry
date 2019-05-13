@@ -230,7 +230,7 @@ class Reader(object) :
 
         print tcentre
 
-        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x/2,tsize.y/2,tsize.z/2,registry=self._registry)
+        bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x,tsize.y,tsize.z,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
         
         for i in range(0,len(logicals)) : 
