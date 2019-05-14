@@ -674,43 +674,6 @@ class Writer(object):
         oe.setAttribute('dz',self.getValueOrExprFromInstance(instance,'dz'))
         self.solids.appendChild(oe)
         
-
-    def writeSubtraction(self, instance):
-        oe  = self.doc.createElement('subtraction')
-        oe.setAttribute('name',self.prepend + instance.name)
-
-        cfe = self.doc.createElement('first')
-        cfe.setAttribute('ref',self.prepend + instance.obj1name)
-        oe.appendChild(cfe)
-
-        cse = self.doc.createElement('second')
-        cse.setAttribute('ref',self.prepend + instance.obj2name)
-        oe.appendChild(cse)
-
-        p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
-        p.setAttribute('x',str(instance.tra2[1].x.expression))
-        p.setAttribute('y',str(instance.tra2[1].y.expression))
-        p.setAttribute('z',str(instance.tra2[1].z.expression))
-        self.defines.appendChild(p)
-
-        r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
-        r.setAttribute('x', str(instance.tra2[0].x.expression))
-        r.setAttribute('y', str(instance.tra2[0].y.expression))
-        r.setAttribute('z', str(instance.tra2[0].z.expression))
-        self.defines.appendChild(r)
-
-        csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
-        oe.appendChild(csce)
-
-        csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
-        oe.appendChild(csce1)
-
-        self.solids.appendChild(oe)
-
     def createPosition(self,name, x, y, z):
         p = self.doc.createElement('position')
         p.setAttribute('name',str(name))
@@ -835,11 +798,11 @@ class Writer(object):
         oe.setAttribute('name',self.prepend + instance.name)
 
         cfe = self.doc.createElement('first')
-        cfe.setAttribute('ref',self.prepend + instance.obj1name)
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
         oe.appendChild(cfe)
 
         cse = self.doc.createElement('second')
-        cse.setAttribute('ref',self.prepend + instance.obj2name)
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
         p = self.doc.createElement('position')
@@ -867,3 +830,76 @@ class Writer(object):
 
 
         self.solids.appendChild(oe)
+
+    def writeSubtraction(self, instance):
+        oe  = self.doc.createElement('subtraction')
+        oe.setAttribute('name',self.prepend + instance.name)
+
+        cfe = self.doc.createElement('first')
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
+        oe.appendChild(cfe)
+
+        cse = self.doc.createElement('second')
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
+        oe.appendChild(cse)
+
+        p = self.doc.createElement('position')
+        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
+        p.setAttribute('x',str(instance.tra2[1].x.expression))
+        p.setAttribute('y',str(instance.tra2[1].y.expression))
+        p.setAttribute('z',str(instance.tra2[1].z.expression))
+        self.defines.appendChild(p)
+
+        r = self.doc.createElement('rotation')
+        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
+        r.setAttribute('x', str(instance.tra2[0].x.expression))
+        r.setAttribute('y', str(instance.tra2[0].y.expression))
+        r.setAttribute('z', str(instance.tra2[0].z.expression))
+        self.defines.appendChild(r)
+
+        csce = self.doc.createElement('positionref')
+        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
+        oe.appendChild(csce)
+
+        csce1 = self.doc.createElement('rotationref')
+        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
+        oe.appendChild(csce1)
+
+        self.solids.appendChild(oe)
+
+    def writeIntersection(self, instance):
+        oe  = self.doc.createElement('intersection')
+        oe.setAttribute('name',self.prepend + instance.name)
+
+        cfe = self.doc.createElement('first')
+        cfe.setAttribute('ref',self.prepend + instance.obj1.name)
+        oe.appendChild(cfe)
+
+        cse = self.doc.createElement('second')
+        cse.setAttribute('ref',self.prepend + instance.obj2.name)
+        oe.appendChild(cse)
+
+        p = self.doc.createElement('position')
+        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
+        p.setAttribute('x',str(instance.tra2[1].x.expression))
+        p.setAttribute('y',str(instance.tra2[1].y.expression))
+        p.setAttribute('z',str(instance.tra2[1].z.expression))
+        self.defines.appendChild(p)
+
+        r = self.doc.createElement('rotation')
+        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
+        r.setAttribute('x', str(instance.tra2[0].x.expression))
+        r.setAttribute('y', str(instance.tra2[0].y.expression))
+        r.setAttribute('z', str(instance.tra2[0].z.expression))
+        self.defines.appendChild(r)
+
+        csce = self.doc.createElement('positionref')
+        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
+        oe.appendChild(csce)
+
+        csce1 = self.doc.createElement('rotationref')
+        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
+        oe.appendChild(csce1)
+
+        self.solids.appendChild(oe)
+
