@@ -28,7 +28,7 @@ class PhysicalVolume(object):
         if isinstance(position,list) :             
             position = _Defines.Position(name+"_pos",position[0],position[1],position[2],"mm",registry,False)
         if isinstance(rotation,list) :
-            rotation = _Defines.Rotation(name+"_rot",rotation[1],rotation[1],rotation[2],"rad",registry,False)
+            rotation = _Defines.Rotation(name+"_rot",rotation[0],rotation[1],rotation[2],"rad",registry,False)
 
         # geant4 required objects
         self.rotation      = rotation
