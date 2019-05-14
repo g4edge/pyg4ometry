@@ -59,6 +59,11 @@ class VtkViewer :
         self.axes.SetOrigin(origin[0], origin[1], origin[2])
         self.ren.AddActor(self.axes)
         
+    def setOpacity(self,v) : 
+        for a in self.actors : 
+            p = a.GetProperty().SetOpacity(v)
+
+
 
     def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
         self.addLogicalVolumeBounding(logical)
@@ -203,7 +208,6 @@ class VtkViewer :
 
             self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
 
-        
     def view(self):
         # enable user interface interactor
         # self.iren.Initialize()
