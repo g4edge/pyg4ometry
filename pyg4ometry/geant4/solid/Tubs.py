@@ -59,7 +59,7 @@ class Tubs(_SolidBase):
         pRMin = float(self.pRMin)*luval
         pSPhi = float(self.pSPhi)*auval
         pDPhi = float(self.pDPhi)*auval
-        pDz   = float(self.pDz)*luval
+        pDz   = float(self.pDz)*luval/2
         pRMax = float(self.pRMax)*luval
 
         _log.info('tubs.pycsgmesh> mesh')
