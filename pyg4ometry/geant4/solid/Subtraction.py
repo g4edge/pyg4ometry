@@ -1,6 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
 from pyg4ometry.geant4.Registry import registry as _registry
-
 import pyg4ometry.exceptions
 from pyg4ometry.transformation import *
 
@@ -15,33 +14,38 @@ class Subtraction(_SolidBase):
     obj2 = solid rotated and translated according to tra2
     tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
     """
-    def __init__(self,name, obj1name, obj2name, tra2, registry):
+    def __init__(self,name, obj1, obj2, tra2, registry):
+        # circular import 
+        import pyg4ometry.gdml.Defines as _defines
+        import pyg4ometry.geant4 as _g4
+
         self.type = "Subtraction"
         self.name = name
-        self.obj1name = obj1name
-        self.obj2name = obj2name
-        self.tra2 = tra2
+        self.obj1 = obj1
+        self.obj2 = obj2
+        self.tra2 = _defines.upgradeToTransformation(tra2,registry)
         self.mesh = None
 
         registry.addSolid(self)
         self.registry = registry 
 
         self.dependents = []
-        obj1 = self.registry.solidDict[self.obj1name]
-        obj2 = self.registry.solidDict[self.obj2name]
+        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
+        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return 'Subtraction : ('+str(self.obj1name)+') - ('+str(self.obj2name)+')'
+        return 'Subtraction : ('+self.obj1.name+') - ('+str(self.obj2.name)+')'
 
     def pycsgmesh(self):
 
         _log.info('subtraction.pycshmesh>')
 
         # look up solids in registry 
-        obj1 = self.registry.solidDict[self.obj1name]
-        obj2 = self.registry.solidDict[self.obj2name]
+        import pyg4ometry.geant4 as _g4
+        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
+        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
 
         # transformation 
         rot = tbxyz2axisangle(self.tra2[0].eval())

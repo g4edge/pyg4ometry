@@ -14,6 +14,38 @@ def expressionStringScalar(obj1,obj2) :
     except KeyError : 
         return obj2.expr.expression             # just an object as an expression
 
+def upgradeToVector(var, reg, type = "position", addRegistry = False) : 
+
+    # check if already a vector type 
+    if isinstance(var,VectorBase) : 
+        return var 
+
+    # create appropriate vector type
+    if isinstance(var,list) :
+        if type == "position" :
+            return Position("temp",var[0],var[1],var[2],"mm",reg, addRegistry)
+        elif type == "rotation" : 
+            return Rotation("temp",var[0],var[1],var[2],"rad",reg, addRegistry)
+        elif type == "scale" : 
+            return Scale("temp",var[0],var[1],var[2],"none",reg, addRegistry)
+        else : 
+            print 'type not defined'
+
+def upgradeToTransformation(var, reg, addRegistry = False) : 
+
+
+    if isinstance(var[0],VectorBase) :
+        rot = var[0]
+    elif isinstance(var[0],list) :
+        rot = upgradeToVector(var[0],reg,"rotation",addRegistry) 
+
+    if isinstance(var[1],VectorBase) :
+        tra = var[1] 
+    elif isinstance(var[1],list) : 
+        tra = upgradeToVector(var[1],reg,"position",addRegistry) 
+
+    return [rot,tra]
+
 class ScalarBase(object) :
     def __init__(self) : 
         pass
@@ -170,7 +202,11 @@ def sqrt(arg) :
 class Constant(ScalarBase) :
     def __init__(self, name, value, registry = None, addRegistry = True) :
         self.name  = name
-        self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
+
+        if isinstance(value,ScalarBase) : 
+            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
+        else :
+            self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -189,9 +225,14 @@ class Constant(ScalarBase) :
 class Quantity(ScalarBase) :
     def __init__(self, name, value, unit, type, registry = None, addRegistry = True) :
         self.name  = name
-        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
         self.unit  = unit
         self.type  = type
+
+        if isinstance(value,ScalarBase) : 
+            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                    
+        else : 
+            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+
 
         if registry != None: 
             self.registry = registry
@@ -210,7 +251,11 @@ class Quantity(ScalarBase) :
 class Variable(ScalarBase) :
     def __init__(self, name, value, registry = None, addRegistry = True) :
         self.name  = name
-        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+
+        if isinstance(value,ScalarBase) : 
+            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
+        else : 
+            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -229,8 +274,12 @@ class Variable(ScalarBase) :
 class Expression(ScalarBase) : 
     def __init__(self, name, value, registry = None, addRegistry = False) :
         self.name  = name
-        self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
+        if isinstance(value,ScalarBase) : 
+            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                        
+        else : 
+            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+            
         if registry != None: 
             self.registry = registry
 
@@ -347,7 +396,7 @@ def expressionStringVector(var) :
         except KeyError : 
             return var.expr.expression
     else :
-        return var
+        return str(var)
     
 class Position(VectorBase) :
     def __init__(self,name,x,y,z, unit="mm", registry = None, addRegistry = True) :

@@ -1,5 +1,12 @@
 from collections import OrderedDict
 import pyg4ometry.exceptions
+import solid.SolidBase
+
+def solidName(var) : 
+    if isinstance(var,solid.SolidBase) :
+        return var.name
+    elif isinstance(var,str) :
+        return var
 
 class Registry:
     def __init__(self):
