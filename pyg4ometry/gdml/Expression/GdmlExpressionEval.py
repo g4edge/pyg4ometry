@@ -67,9 +67,8 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
         for i in range(len(ctx.COMMA())):
             index = int(self.visit(ctx.expression(i+1)))  #only integer access
             indices.append(index-1) # decrement indices to match python 0-indexing
-        # TODO Andrey Abramov         
-        return matrix.values[indices[0]]
-#        return matrix[tuple(indices)]
+        return matrix.values_asarray[tuple(indices)]
+
 
     def visitParens(self, ctx):
         return self.visit(ctx.expression())
