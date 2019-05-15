@@ -75,7 +75,6 @@ class Writer(object):
         f.write(xmlString)
         f.close()
 
-
     def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()
