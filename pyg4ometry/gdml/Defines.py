@@ -485,6 +485,6 @@ class Matrix :
     def __getitem__(self, key):
         if self.registry.defineDict.has_key(self.name) :  
             stridx = ','.join([str(v+1) for v in key])
-            return Constant("something",self.name+"["+stridx+"]",self.registry,False)
+            return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
         else :
             return self.values_asarray[key]
