@@ -483,4 +483,8 @@ class Matrix :
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
 
     def __getitem__(self, key):
-        return self.values_asarray[key]
+        if self.registry.defineDict.has_key(self.name) : 
+            print key
+            return Constant("something",self.name+"["+str(key+1)+"]",self.registry,False)
+        else :
+            return self.values_asarray[key]
