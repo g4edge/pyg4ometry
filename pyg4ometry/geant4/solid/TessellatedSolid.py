@@ -8,8 +8,15 @@ from pyg4ometry.pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
+
+    
 class TessellatedSolid(_SolidBase):
-    def __init__(self, name, mesh, registry=None):
+    class MeshType : 
+        Freecad = 1
+        Gdml    = 2
+        Stl     = 3
+
+    def __init__(self, name, mesh, registry=None, meshtype = MeshType.Freecad):
         """
         Constructs a tessellated solid
 
@@ -25,6 +32,7 @@ class TessellatedSolid(_SolidBase):
         self.name        = name
 
         self.mesh        = mesh
+        self.meshtype    = meshtype
 
         self.dependents = []
 
@@ -43,9 +51,10 @@ class TessellatedSolid(_SolidBase):
     
     def pycsgmesh(self) :
 
+        #############################################
         # render GDML mesh
-        if isinstance(self.mesh[0][0],unicode) : 
-
+        #############################################
+        if self.meshtype == self.MeshType.Gdml :
             # vertex name - integer dict 
             vdict = {}
  
@@ -62,17 +71,41 @@ class TessellatedSolid(_SolidBase):
             facet = []
             for vdi in vdict.items(): 
                 p = self.registry.defineDict[vdi[0]]
-                verts[vdi[1]] =p.eval() 
+                verts[vdi[1]] = p.eval() 
 
             for f in self.mesh : 
                 facet.append([vdict[f[0]],vdict[f[1]],vdict[f[2]]])
 
-
+        #############################################
         # Mesh from CAD
-        else : 
+        #############################################
+        elif self.meshtype == self.MeshType.Freecad : 
             verts = self.mesh[0]
             facet = self.mesh[1]
-        
+
+        #############################################
+        # Mesh from STL
+        #############################################
+        elif self.meshtype == self.MeshType.Stl : 
+            verts = []
+            facet = []
+            
+            i = 0 
+            for f in self.mesh : 
+                v1 = f[0][0]
+                v2 = f[0][1]
+                v3 = f[0][2]
+                
+                verts.append(v1)
+                verts.append(v2)
+                verts.append(v3)
+                
+                facet.append((3*i+0,3*i+1,3*i+2))
+                i += 1
+                
+        #############################################
+        # Convert verts and facets to polygons 
+        #############################################
         polygon_list = []
 
         for f in facet :             
@@ -82,6 +115,6 @@ class TessellatedSolid(_SolidBase):
             
             polygon = _Polygon([v1,v2,v3])
             polygon_list.append(polygon)            
-
+        
         return _CSG.fromPolygons(polygon_list)        
 

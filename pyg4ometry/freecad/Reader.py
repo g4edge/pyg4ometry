@@ -192,7 +192,7 @@ class Reader(object) :
                 # f =  MeshToFacetList(m)
 
                 # solid 
-                s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, m, registry=self._registry) 
+                s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, m, self._registry, pyg4ometry.geant4.solid.TessellatedSolid.MeshType.Freecad) 
 
                 # logical
                 l = pyg4ometry.geant4.LogicalVolume(s,daughterMaterial,obj.Label+"_lv",registry=self._registry)

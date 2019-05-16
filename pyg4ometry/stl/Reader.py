@@ -59,7 +59,7 @@ class Reader(object):
 
     def logicalVolume(self,name, reg) : 
         
-        s = _TessellatedSolid(name+"_solid",self.facet_list)
+        s = _TessellatedSolid(name+"_solid",self.facet_list,reg,_TessellatedSolid.MeshType.Stl)
         l = _LogicalVolume(s,"G4_Cu", name+"_pv",reg)
 
         return l
