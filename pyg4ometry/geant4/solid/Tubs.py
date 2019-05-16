@@ -58,7 +58,7 @@ class Tubs(_SolidBase):
         pRMax = float(self.pRMax)*luval
         pRMin = float(self.pRMin)*luval
         pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval
+        pDPhi = float(self.pDPhi)*auval-0.001 # issue with 2*pi
         pDz   = float(self.pDz)*luval/2
         pRMax = float(self.pRMax)*luval
 

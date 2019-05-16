@@ -26,6 +26,9 @@ class Mesh(object) :
         # extents 
         self.extent = []
         
+    def remesh(self) : 
+        self.localmesh = self.solid.pycsgmesh().clone()
+
     def addOverlapMesh(self, mesh) : 
         self.overlapmeshes.append(mesh)
 
