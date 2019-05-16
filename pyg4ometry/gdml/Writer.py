@@ -804,29 +804,27 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
-        p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
-        p.setAttribute('x',str(instance.tra2[1].x.expression))
-        p.setAttribute('y',str(instance.tra2[1].y.expression))
-        p.setAttribute('z',str(instance.tra2[1].z.expression))
-        self.defines.appendChild(p)
+        if self.registry.defineDict.has_key(instance.tra2[1].name) :
+            csce = self.doc.createElement('positionref')
+            csce.setAttribute('ref',instance.tra2[1].name)
+            oe.appendChild(csce)      
+        else : 
+            p = self.doc.createElement('position')
+            p.setAttribute('x',str(instance.tra2[1].x.expression))
+            p.setAttribute('y',str(instance.tra2[1].y.expression))
+            p.setAttribute('z',str(instance.tra2[1].z.expression))
+            oe.appendChild(p)
 
-        r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
-        r.setAttribute('x', str(instance.tra2[0].x.expression))
-        r.setAttribute('y', str(instance.tra2[0].y.expression))
-        r.setAttribute('z', str(instance.tra2[0].z.expression))
-        self.defines.appendChild(r)
-
-
-        csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
-        oe.appendChild(csce)
-
-        csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
-        oe.appendChild(csce1)
-
+        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
+            csce1 = self.doc.createElement('rotationref')
+            csce1.setAttribute(instance.tra2[0].name)
+            oe.appendChild(csce1)
+        else : 
+            r = self.doc.createElement('rotation')
+            r.setAttribute('x', str(instance.tra2[0].x.expression))
+            r.setAttribute('y', str(instance.tra2[0].y.expression))
+            r.setAttribute('z', str(instance.tra2[0].z.expression))
+            oe.appendChild(r)
 
         self.solids.appendChild(oe)
 
@@ -841,28 +839,28 @@ class Writer(object):
         cse = self.doc.createElement('second')
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
+    
+        if self.registry.defineDict.has_key(instance.tra2[1].name) :
+            csce = self.doc.createElement('positionref')        
+            csce.setAttribute('ref',instance.tra2[1].name)
+            oe.appendChild(csce)
+        else :
+            p = self.doc.createElement('position')
+            p.setAttribute('x',str(instance.tra2[1].x.expression))
+            p.setAttribute('y',str(instance.tra2[1].y.expression))
+            p.setAttribute('z',str(instance.tra2[1].z.expression))
+            oe.appendChild(p)
 
-        p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
-        p.setAttribute('x',str(instance.tra2[1].x.expression))
-        p.setAttribute('y',str(instance.tra2[1].y.expression))
-        p.setAttribute('z',str(instance.tra2[1].z.expression))
-        self.defines.appendChild(p)
-
-        r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
-        r.setAttribute('x', str(instance.tra2[0].x.expression))
-        r.setAttribute('y', str(instance.tra2[0].y.expression))
-        r.setAttribute('z', str(instance.tra2[0].z.expression))
-        self.defines.appendChild(r)
-
-        csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
-        oe.appendChild(csce)
-
-        csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
-        oe.appendChild(csce1)
+        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
+            csce1 = self.doc.createElement('rotationref')
+            csce1.setAttribute('ref',instance.tra2[0].name)
+            oe.appendChild(csce1)
+        else : 
+            r = self.doc.createElement('rotation')
+            r.setAttribute('x', str(instance.tra2[0].x.expression))
+            r.setAttribute('y', str(instance.tra2[0].y.expression))
+            r.setAttribute('z', str(instance.tra2[0].z.expression))
+            oe.appendChild(r)
 
         self.solids.appendChild(oe)
 
@@ -878,27 +876,27 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
-        p = self.doc.createElement('position')
-        p.setAttribute('name',self.prepend + instance.name+'_'+'position')
-        p.setAttribute('x',str(instance.tra2[1].x.expression))
-        p.setAttribute('y',str(instance.tra2[1].y.expression))
-        p.setAttribute('z',str(instance.tra2[1].z.expression))
-        self.defines.appendChild(p)
+        if self.registry.defineDict.has_key(instance.tra2[1].name) :
+            csce = self.doc.createElement('positionref')
+            csce.setAttribute('ref',instance.tra2[1].name)
+            oe.appendChild(csce)
+        else :
+            p = self.doc.createElement('position')
+            p.setAttribute('x',str(instance.tra2[1].x.expression))
+            p.setAttribute('y',str(instance.tra2[1].y.expression))
+            p.setAttribute('z',str(instance.tra2[1].z.expression))
+            oe.appendChild(p)
 
-        r = self.doc.createElement('rotation')
-        r.setAttribute('name',self.prepend + instance.name+'_'+'rotation')
-        r.setAttribute('x', str(instance.tra2[0].x.expression))
-        r.setAttribute('y', str(instance.tra2[0].y.expression))
-        r.setAttribute('z', str(instance.tra2[0].z.expression))
-        self.defines.appendChild(r)
-
-        csce = self.doc.createElement('positionref')
-        csce.setAttribute('ref',self.prepend + instance.name+'_'+'position')
-        oe.appendChild(csce)
-
-        csce1 = self.doc.createElement('rotationref')
-        csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
-        oe.appendChild(csce1)
+        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
+            csce1 = self.doc.createElement('rotationref')
+            csce1.setAttribute('ref',instance.tra2[0].name)
+            oe.appendChild(csce1)
+        else : 
+            r = self.doc.createElement('rotation')
+            r.setAttribute('x', str(instance.tra2[0].x.expression))
+            r.setAttribute('y', str(instance.tra2[0].y.expression))
+            r.setAttribute('z', str(instance.tra2[0].z.expression))
+            oe.appendChild(r)
 
         self.solids.appendChild(oe)
 

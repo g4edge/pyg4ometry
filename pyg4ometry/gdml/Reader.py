@@ -1046,14 +1046,20 @@ class Reader(object) :
         second     = node.getElementsByTagName("second")[0].attributes['ref'].value
         try : 
             position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
-        except IndexError : 
-            position   = _defines.Position("zero","0","0","0","mm",self._registry,False)            
+        except IndexError :
+            try:
+                position = self.parseVector(node.getElementsByTagName("positionref")[0], "positionref", False)
+            except IndexError:
+                position   = _defines.Position("zero","0","0","0","mm",self._registry,False)
         try : 
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError : 
-            rotation   = _defines.Rotation("indentity","0","0","0","rad",self._registry,False)
+            try:
+                rotation = self.parseVector(node.getElementsByTagName("rotationref")[0], "rotationref", False)
+            except IndexError:
+                rotation   = _defines.Rotation("identity","0","0","0","rad",self._registry,False)
         
-        _g4.solid.Union(solid_name, first, second,[rotation,position],self._registry)  
+        _g4.solid.Union(solid_name, self._registry.solidDict[first], self._registry.solidDict[second],[rotation,position],self._registry)  
 
     def parseSubtraction(self, node) : 
         solid_name = node.attributes['name'].value
@@ -1070,11 +1076,11 @@ class Reader(object) :
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError :
             try:
-                rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
+                rotation = self.parseVector(node.getElementsByTagName("rotationref")[0], "rotationref", False)
             except IndexError:
                 rotation   = _defines.Rotation("identity","0","0","0","rad",self._registry,False)
 
-        _g4.solid.Subtraction(solid_name, first, second,[rotation,position],self._registry)
+        _g4.solid.Subtraction(solid_name, self._registry.solidDict[first], self._registry.solidDict[second],[rotation,position],self._registry)
 
     def parseIntersection(self, node) :
         solid_name = node.attributes['name'].value
@@ -1083,13 +1089,19 @@ class Reader(object) :
         try : 
             position   = self.parseVector(node.getElementsByTagName("position")[0],"position",False)
         except IndexError : 
-            position   = _defines.Position("zero","0","0","0","mm",self._registry,False)            
+            try:
+                position = self.parseVector(node.getElementsByTagName("positionref")[0], "positionref", False)
+            except IndexError:
+                position   = _defines.Position("zero","0","0","0","mm",self._registry,False)
         try : 
             rotation   = self.parseVector(node.getElementsByTagName("rotation")[0],"rotation",False)
         except IndexError : 
-            rotation   = _defines.Rotation("indentity","0","0","0","rad",self._registry,False)
+            try:
+                rotation = self.parseVector(node.getElementsByTagName("rotationref")[0], "rotationref", False)
+            except IndexError:
+                rotation   = _defines.Rotation("identity","0","0","0","rad",self._registry,False)
 
-        _g4.solid.Intersection(solid_name, first, second,[rotation,position],self._registry)
+        _g4.solid.Intersection(solid_name, self._registry.solidDict[first], self._registry.solidDict[second],[rotation,position],self._registry)
 
     def parseMultiUnion(self, node) :
         solid_name = node.attributes['name'].value
