@@ -47,6 +47,10 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
     return [rot,tra]
 
 class ScalarBase(object) :
+    """
+    Base class for all scalars (Constants, Quantity, Variable and Expression)
+    """
+
     def __init__(self) : 
         pass
 
@@ -124,12 +128,26 @@ class ScalarBase(object) :
     __rmul__ = __mul__
 
     def setName(self, name) : 
+        """
+        Set name of scalar
+
+        :param name: name of object
+        :type name: str
+        """
+
         self.name          = name
         self.expr.name     = 'expr_{}'.format(name)
         self.expr.registry = self.registry
         self.registry.addDefine(self)
 
 def sin(arg) : 
+    """
+    Sin of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of sin
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
+
     v1 = expressionStringScalar(arg,arg)
     v = Constant("sin_{}".format(v1), 'sin({})'.format(v1),registry=None)
     v.registry      = arg.registry

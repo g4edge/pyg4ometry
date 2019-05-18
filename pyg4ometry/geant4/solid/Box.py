@@ -9,11 +9,11 @@ class Box(_SolidBase):
 
     :param name: of object in registry
     :type name: str
-    :param pX: half-length along x
+    :param pX: Length along x
     :type name: float
-    :param pY: half-length along y
+    :param pY: Length along y
     :type name: float
-    :param pZ: half-length along z
+    :param pZ: Length along z
     :type name: float
     """
 

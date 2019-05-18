@@ -10,15 +10,15 @@ class CutTubs(_SolidBase):
     """
     Constructs a cylindrical section with cuts.
 
-    Inputs:
-        name:      string, name of the volume
-        pRMin:     float, inner radius
-        pRMax:     float, outer radius
-        pDz:       float, half-length along z
-        pSPhi:     float, starting phi angle
-        pDPhi:     float, angle of segment in radians
-        pLowNorm:  list,  normal vector of the cut plane at -pDz
-        pHighNorm: list, normal vector of the cut plane at +pDz
+    :param name:  string, name of the solid
+    :type name: str
+    :param pRMin: float, inner radius
+    pRMax:     float, outer radius
+    pDz:       float, half-length along z
+    pSPhi:     float, starting phi angle
+    pDPhi:     float, angle of segment in radians
+    pLowNorm:  list,  normal vector of the cut plane at -pDz
+    pHighNorm: list, normal vector of the cut plane at +pDz
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry=None, lunit="mm",
