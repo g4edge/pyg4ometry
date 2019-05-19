@@ -9,6 +9,11 @@ def solidName(var) :
         return var
 
 class Registry:
+    '''
+    Object to store geometry for IO 
+    '''
+    
+
     def __init__(self):
         self.defineDict                   = OrderedDict()
         self.materialDict                 = OrderedDict()

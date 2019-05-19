@@ -15,10 +15,11 @@ import logging as _log
 class TwistedBox(_SolidBase, _TwistedSolid):
 
     """
-    Constructs a box that is twisted through angle 'twistedangle'.
-    
+    Constructs a box that is twisted though angle twisted angle
+
     :param name:         of the solid
-    :param twistedangle: float, twist angle, must be less than 0.5*pi
+    :type name:          str
+    :param twistedangle: twist angle, must be less than pi/2
     :type twistedangle:  float, Constant, Quantity, Variable, Expression
     :param pDx:          length in x
     :type pDx:           float, Constant, Quantity, Variable, Expression
@@ -34,8 +35,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     :type lunit:         str    
     :param aunit:        angle unit (rad,deg) for solid
     :type aunit:         str
-    :param nstack:       ....
-    :param nstack:       int
+    :param nstack:       Not written
+    :type nstack:        int
     """
 
 
