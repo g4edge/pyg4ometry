@@ -9,19 +9,37 @@ import logging as _log
 
 
 class Torus(_SolidBase):
+    """
+    Constructs a torus.
+    
+    :param name:   string, name of the volume
+    :type name:    str
+    :param pRmin:  innder radius
+    :type pRmin:   float, Constant, Quantity, Variable, Expression
+    :param pRmax:  outer radius
+    :type pRMax:   float, Constant, Quantity, Variable, Expression
+    :param pRtor:  swept radius of torus
+    :type pRtor:   float, Constant, Quantity, Variable, Expression
+    :param pSphi:  start phi angle
+    :type pSphi:   float, Constant, Quantity, Variable, Expression
+    :param pDPhi:  delta phi angle
+    :type pDPhi:   float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str    
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    :param nstack: number of theta elements for meshing
+    :type nstack: int         
+
+    """
+
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
                  registry = None, lunit="mm",aunit="rad",nslice=16, nstack=16):
-        """
-        Constructs a torus.
 
-        Inputs:
-          name:   string, name of the volume
-          pRmin:  float, innder radius
-          pRmax:  float, outer radius
-          pRtor:  float, swept radius of torus
-          pSphi:  float, start phi angle
-          pDPhi:  float, delta angle
-        """
         self.type    = 'Torus'
         self.name    = name
         self.pRmin   = pRmin

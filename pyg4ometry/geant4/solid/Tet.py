@@ -11,20 +11,30 @@ import logging as _log
 from copy import deepcopy as _dc
 
 class Tet(_SolidBase):
+    """
+    Constructs a tetrahedra.
+    
+    :param name:           of the solid
+    :param anchor:         point 1 (anchor point)
+    :type anchor:          list
+    :param p2:             point 2
+    :type p2:              list
+    :param p3:             point 3
+    :type p3:              list
+    :param p4:             point 4
+    :type p4:              list
+    :param registry:       for storing solid
+    :type registry:        Registry
+    :param lunit:          length unit (nm,um,mm,m,km) for solid
+    :type lunit:           str
+    
+    :param degeneracyFlag: bool, indicates degeneracy of points
+    """
+
+
     def __init__(self, name, anchor, p2, p3, p4, registry,
                  lunit = "mm",
                  degeneracyFlag=False):
-        """
-        Constructs a tetrahedra.
-
-        Inputs:
-          name:           string, name of the volume
-          anchor:         list, anchor point
-          p2:             list, point 2
-          p3:             list, point 3
-          p4:             list, point 4
-          degeneracyFlag: bool, indicates degeneracy of points
-        """
         self.type    = 'Tet'
         self.name    = name
         self.anchor  = anchor

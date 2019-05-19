@@ -12,26 +12,42 @@ import logging as _log
 import numpy as _np
 
 class Hype(_SolidBase):
-    def __init__(self, name, innerRadius, outerRadius, innerStereo,
-                 outerStereo, halfLenZ, registry = None, lunit="mm", aunit="rad",nslice=16, nstack=16):
-        """
-        Constructs a tube with hyperbolic profile.
+    """
+    Constructs a tube with hyperbolic profile.
+    
+    :param name:        of solid
+    :type name:         str
+    :param innerRadius: inner radius
+    :type innerRadius:  float, Constant, Quantity, Variable, Expression
+    :param outerRadius: outer radius
+    :type outerRadius:  float, Constant, Quantity, Variable, Expression
+    :param innerStereo: inner stereo angle
+    :type innerStereo:  float, Constant, Quantity, Variable, Expression
+    :param outerStereo: outer stereo angle
+    :type outerStereo:  float, Constant, Quantity, Variable, Expression
+    :param lenZ:        length along z
+    :param registry:    for storing solid
+    :type registry:     Registry
+    :param lunit:       length unit (nm,um,mm,m,km) for solid
+    :type lunit:        str
+    :param aunit:       angle unit (rad,deg) for solid
+    :type aunit:        str    
+    :param nslice:      number of phi elements for meshing
+    :type nslice:       int  
+    :param nstack:      number of theta elements for meshing
+    :type nstack:       int             
+    """
 
-        Inputs:
-          name:        string, name of the volume
-          innerRadius: float, inner radius
-          outerRadius: float, outer radius
-          innerStereo: float, inner stereo angle
-          outerStereo: float, outer stereo angle
-          halfLenZ:    float, half length along z
-        """
+
+    def __init__(self, name, innerRadius, outerRadius, innerStereo,
+                 outerStereo, lenZ, registry = None, lunit="mm", aunit="rad",nslice=16, nstack=16):
         self.type        = 'Hype'
         self.name        = name
         self.innerRadius = innerRadius
         self.outerRadius = outerRadius
         self.innerStereo = innerStereo
         self.outerStereo = outerStereo
-        self.halfLenZ    = halfLenZ
+        self.lenZ        = lenZ
         self.lunit       = lunit
         self.aunit       = aunit
         self.nslice      = nslice
@@ -44,7 +60,7 @@ class Hype(_SolidBase):
 
     def __repr__(self):
         return "Hype : {} {} {} {} {} {}".format(self.name, self.innerRadius, self.outerRadius,
-                                                 self.innerStereo, self.outerStereo, self.halfLenZ)
+                                                 self.innerStereo, self.outerStereo, self.lenZ)
 
     def checkParameters(self):
         if float(self.innerRadius) > float(self.outerRadius):
@@ -62,7 +78,7 @@ class Hype(_SolidBase):
         outerRadius = float(self.outerRadius)*luval
         innerStereo = float(self.innerStereo)*auval
         outerStereo = float(self.outerStereo)*auval
-        halfLenZ = float(self.halfLenZ)/2.0*luval
+        halfLenZ    = float(self.lenZ)/2.0*luval
 
         _log.info('hype.pycsgmesh> mesh')
 

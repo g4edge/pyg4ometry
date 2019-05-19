@@ -11,25 +11,44 @@ import logging as _log
 import numpy as _np
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
+
+    """
+    Constructs a general trapezoid with a twist around one axis.
+    
+    :param name:          of the solid
+    :type name:           str
+    :param twistedangle:  angle of twist (<90 deg)
+    :type twistedangle:   float, Constant, Quantity, Variable, Expression
+    :param pDz:           length along z
+    :type pDz:            float, Constant, Quantity, Variable, Expression
+    :param pDx1:          length along x of the side at y=-pDy1/2
+    :type pDx1:           float, Constant, Quantity, Variable, Expression
+    :param pDx2:          length along x of the side at y=+pDy1/2
+    :type pDx2:           float, Constant, Quantity, Variable, Expression
+    :param pTheta:        polar angle of the line joining the centres of the faces at -/+pDz/2
+    :type pTheta:         float, Constant, Quantity, Variable, Expression
+    :param pPhi:          azimuthal angle of the line joining the centres of the faces at -/+pDz/2
+    :type pPhi:           float, Constant, Quantity, Variable, Expression
+    :param pDy1:          length at -pDz/2
+    :type pDy1:           float, Constant, Quantity, Variable, Expression
+    :param pDy2:          length at +pDz/2
+    :type pDy2:           float, Constant, Quantity, Variable, Expression
+    :param pDx3:          length of the side at y=-pDy2 of the face at +pDz/2
+    :type pDx3:           float, Constant, Quantity, Variable, Expression
+    :param pDx4:          length of the side at y=+pDy2 of the face at +pDz/2
+    :type pDx4:           float, Constant, Quantity, Variable, Expression
+    :param pAlp:          angle wrt the y axi from the centre of the side
+    :type pAlp:           float, Constant, Quantity, Variable, Expression
+    :param registry:     for storing solid
+    :type registry:      Registry
+    :param lunit:        length unit (nm,um,mm,m,km) for solid
+    :type lunit:         str    
+    :param aunit:        angle unit (rad,deg) for solid
+    :type aunit:         str
+    """
+
     def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
                  pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry=None, lunit = "mm", aunit = "rad", nstack=20):
-        """
-        Constructs a general trapezoid with a twist around one axis.
-
-        Inputs:
-          name:          string, name of the volume
-          twisted angle: float, angle of twist (<90 deg)
-          pDz:           float, half length along z
-          pDx1:          float, half length along x of the side at y=-pDy1
-          pDx2:          float, half length along x of the side at y=+pDy1
-          pTheta:        float, polar angle of the line joining the centres of the faces at -/+pDz
-          pPhi:          float, azimuthal angle of the line joining the centres of the faces at -/+pDz
-          pDy1:          float, half-length at -pDz
-          pDy2:          float, half-length at +pDz
-          pDx3:          float, halg-length of the side at y=-pDy2 of the face at +pDz
-          pDx4:          float, halg-length of the side at y=+pDy2 of the face at +pDz
-          pAlp:          float, angle wrt the y axi from the centre of the side
-        """
         self.type         = 'TwistedTrap'
         self.name         = name
         self.twistedangle = twistedangle

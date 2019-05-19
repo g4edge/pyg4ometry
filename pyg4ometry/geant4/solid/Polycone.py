@@ -11,22 +11,38 @@ from copy import deepcopy as _dc
 
 
 class Polycone(_SolidBase):
+    
+    """
+    Constructs a solid of rotation using an arbitrary 2D surface.
+    
+    :param name:   of the solid
+    :type name:    str
+    :param pSPhi:  starting rotation angle in radians
+    :type pSPhi:   float, Constant, Quantity, Variable, Expression
+    :param pDPhi:  total rotation angle in radius
+    :type pDPhi:   float, Constant, Quantity, Variable, Expression
+    :param pZPlns: z-positions of planes used
+    :type pZPlns:  list of float, Constant, Quantity, Variable, Expression
+    :param pRInr:  inner radii of surface at each z-plane
+    :type pRInr:   list of float, Constant, Quantity, Variable, Expression 
+    :param pROut:  outer radii of surface at each z-plane
+    :type pROut:   list of float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str    
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    
+    Optional registration as this solid is used as a temporary solid
+    in Polyhedra and needn't be always registered.
+    """
+
+
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
                  registry=None, lunit = "mm", aunit = "rad", nslice=16):
-        """
-        Constructs a solid of rotation using an arbitrary 2D surface.
-
-        Inputs:
-          name:   string, name of the volume
-          pSPhi:  float, starting rotation angle in radians
-          pDPhi:  float, total rotation angle in radius
-          pZPlns: list, z-positions of planes used
-          pRInr : list, inner radii of surface at each z-plane
-          pROut : list, outer radii of surface at each z-plane
-
-          Optional registration as this solid is used as a temporary solid
-          in Polyhedra and needn't be always registered.
-        """
         self.type    = 'Polycone'
         self.name    = name
         self.pSPhi   = pSPhi

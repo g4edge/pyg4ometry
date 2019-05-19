@@ -11,22 +11,38 @@ import numpy as _np
 import logging as _log
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
+
+    """
+    Constructs a twisted general trapezoid.
+    
+    :param name:            of solid
+    :type name:             str
+    :param twistedangle:    twist angle, must be less than 0.5*pi
+    :type twistedangle:     float, Constant, Quantity, Variable, Expression
+    :param pDx1:            length in x at surface positioned at -pDz/2
+    :type pDx1:             float, Constant, Quantity, Variable, Expression
+    :param pDx2:            length in x at surface positioned at +pDz/2
+    :type pDx2:             float, Constant, Quantity, Variable, Expression
+    :param pDy1:            length in y at surface positioned at -pDz/2
+    :type pDy1:             float, Constant, Quantity, Variable, Expression
+    :param pDy2:            length in y at surface positioned at +pDz/2
+    :type pDy2:             float, Constant, Quantity, Variable, Expression
+    :param pDz:             length in z
+    :type pDz:              float, Constant, Quantity, Variable, Expression
+    :param refine:          number of steps to iteratively smoothen the mesh by doubling the number of vertices at every step
+    :type refine:           int
+    :param registry:        for storing solid
+    :type registry:         Registry
+    :param lunit:           length unit (nm,um,mm,m,km) for solid
+    :type lunit:            str
+    :param aunit:           angle unit (rad,deg) for solid
+    :type aunit:            str    
+    :param nstack:          number of theta elements for meshing
+    :type nstack:           int       
+    """
+
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
                  pDz, registry=None, lunit = "mm", aunit = "rad", nstack=20, refine=0):
-        """
-        Constructs a twisted general trapezoid.
-
-        Inputs:
-          name:            string, name of the volume
-          twistedangle:    float, twist angle, must be less than 0.5*pi
-          pDx1:            float, half-length in x at surface positioned at -pDz
-          pDx2:            float, half-length in x at surface positioned at +pDz
-          pDy1:            float, half-length in y at surface positioned at -pDz
-          pDy2:            float, half-length in y at surface positioned at +pDz
-          pDz:             float, half-length in z
-          refine:          int, number of steps to iteratively smoothen the mesh
-                                by doubling the number of vertices at every step
-        """
         self.type             = 'TwistedTrd'
         self.name             = name
         self.twistedAngle     = twistedangle

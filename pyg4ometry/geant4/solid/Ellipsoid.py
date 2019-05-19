@@ -9,19 +9,35 @@ import logging as _log
 import numpy as _np
 
 class Ellipsoid(_SolidBase):
+
+    """
+    Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
+    
+    :param name:        of the solid
+    :type name:         str
+    :param pxSemiAxis:  length of x semi axis
+    :type pxSemiAxis:   float, Constant, Quantity, Variable, Expression
+    :param pySemiAxis:  length of y semi axis
+    :type pySemiAxis:   float, Constant, Quantity, Variable, Expression
+    :param pzSemiAxis:  length of z semi axis
+    :type pzSemiAxis:   float, Constant, Quantity, Variable, Expression
+    :param pzBottomCut: z-position of bottom cut plane
+    :type pzBottomCut:  float, Constant, Quantity, Variable, Expression
+    :param pzTopCut:    z-position of top cut plane
+    :type pzTopCut:     float, Constant, Quantity, Variable, Expression
+    :param registry:    for storing solid
+    :type registry:     Registry
+    :param lunit:       length unit (nm,um,mm,m,km) for solid
+    :type lunit:        str
+    :param nslice:      number of phi elements for meshing
+    :type nslice:       int  
+    :param nstack:      number of theta elements for meshing
+    :type nstack:       int         
+    """
+
+
     def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
                  pzBottomCut, pzTopCut, registry=None, lunit = "mm", nslice=8, nstack=8):
-        """
-        Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
-
-        Inputs:
-          name:    string, name of the volume
-          pxSemiAxis:  float, length of x semi axis
-          pySemiAxis:  float, length of y semi axis
-          pzSemiAxis:  float, length of z semi axis
-          pzBottomCut: float, z-position of bottom cut plane
-          pzTopCut:    float, z-position of top cut plane
-        """
         self.type        = 'Ellipsoid'
         self.name        = name
         self.pxSemiAxis  = pxSemiAxis

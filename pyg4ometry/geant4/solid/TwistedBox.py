@@ -13,21 +13,35 @@ import numpy as _np
 import logging as _log
 
 class TwistedBox(_SolidBase, _TwistedSolid):
+
+    """
+    Constructs a box that is twisted through angle 'twistedangle'.
+    
+    :param name:         of the solid
+    :param twistedangle: float, twist angle, must be less than 0.5*pi
+    :type twistedangle:  float, Constant, Quantity, Variable, Expression
+    :param pDx:          length in x
+    :type pDx:           float, Constant, Quantity, Variable, Expression
+    :param pDy:          length in y
+    :type pDy:           float, Constant, Quantity, Variable, Expression
+    :param pDz:          length in z
+    :type pDz:           float, Constant, Quantity, Variable, Expression
+    :param refine:       number of steps to iteratively smoothen the mesh by doubling the number of vertices at every step
+    :type refine:        int
+    :param registry:     for storing solid
+    :type registry:      Registry
+    :param lunit:        length unit (nm,um,mm,m,km) for solid
+    :type lunit:         str    
+    :param aunit:        angle unit (rad,deg) for solid
+    :type aunit:         str
+    :param nstack:       ....
+    :param nstack:       int
+    """
+
+
     def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, 
                  lunit = "mm", aunit = "rad",
                  nstack=20, refine=0):
-        """
-        Constructs a box that is twisted through angle 'twistedangle'.
-
-        Inputs:
-          name:         string, name of the volume
-          twistedangle: float, twist angle, must be less than 0.5*pi
-          pDx:          float, half-length in x
-          pDy:          float, half-length in y
-          pDz:          float, half-length in z
-          refine:       int, number of steps to iteratively smoothen the mesh
-                             by doubling the number of vertices at every step
-        """
         self.type         = 'TwistedBox'
         self.name         = name
         self.twistedAngle = twistedangle

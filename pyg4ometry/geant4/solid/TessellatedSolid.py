@@ -11,23 +11,27 @@ import numpy as _np
 
     
 class TessellatedSolid(_SolidBase):
+    """
+    Constructs a tessellated solid
+    
+    :param name:     of solid
+    :type name:      str
+    :param mesh:     mesh 
+    :type mesh:      Freecad, Gdml or Stl
+    :param registry: for storing solid
+    :type registry:  Registry
+    :param meshtype: type of mesh
+    :type meshtype:  MeshType.Freecad
+    
+    """
+
+
     class MeshType : 
         Freecad = 1
         Gdml    = 2
         Stl     = 3
 
     def __init__(self, name, mesh, registry=None, meshtype = MeshType.Freecad):
-        """
-        Constructs a tessellated solid
-
-        Inputs:
-          name:       string, name of the volume
-          facet_list: list of 2-tuples (triangular facets) made up
-                      of 1 3-tuple of 3-tuples (xyz vertices) and a 3-tuple normal
-
-        Note: the normal is currently ingored as the vertex ordering is sufficient
-        Example facet_list = [(((1,1,2),(2,1,3),(3,2,1)), (1,1,1)), ......]
-        """
         self.type        = 'TesselatedSolid'
         self.name        = name
 
@@ -36,11 +40,10 @@ class TessellatedSolid(_SolidBase):
 
         self.dependents = []
 
-        '''
-        self.indexed_facet_list = []
-        self.unique_vertices    = []
-        self.reduceVertices()
-        '''
+
+        #self.indexed_facet_list = []
+        #self.unique_vertices    = []
+        #self.reduceVertices()
 
         if registry:
             registry.addSolid(self)

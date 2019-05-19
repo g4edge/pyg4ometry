@@ -9,34 +9,36 @@ import logging as _log
 import numpy as _np
 
 class GenericTrap(_SolidBase):
+    """
+    Constructs an arbitrary trapezoid using two quadrilaterals sitting
+    on two parallel planes. Vertices 1-4 define the quadrilateral at -dz and
+    vertices 5-8 define the quadrilateral at +dz. This solid is called Arb8
+    in GDML notation.
+    
+    :param name:     string, name of the volume
+    :param v1x:      vertex 1 x position
+    :param v1y:      vertex 1 y position
+    :param v2x:      vertex 2 x position
+    :param v2y:      vertex 2 y position
+    :param v3x:      vertex 3 x position
+    :param v3y:      vertex 3 y position
+    :param v4x:      vertex 4 x position
+    :param v4y:      vertex 4 y position
+    :param v5x:      vertex 5 x position
+    :param v5y:      vertex 5 y position
+    :param v6x:      vertex 6 x position
+    :param v6y:      vertex 6 y position
+    :param v7x:      vertex 7 x position
+    :param v7y:      vertex 7 y position
+    :param v8x:      vertex 8 x position
+    :param v8y:      vertex 8 y position
+    :param dz:       half length along z
+    :param registry: for storing solid
+    :type registry:  Registry
+    """
+
     def __init__(self, name, v1x, v1y, v2x, v2y, v3x, v3y, v4x, v4y,
                  v5x, v5y, v6x, v6y, v7x, v7y, v8x, v8y, dz, registry=None, nstack=20):
-        """
-        Constructs an arbitrary trapezoid using two quadrilaterals sitting
-        on two parallel planes. Vertices 1-4 define the quadrilateral at -dz and
-        vertices 5-8 define the quadrilateral at +dz. This solid is called Arb8
-        in GDML notation.
-
-        Inputs:
-          name:  string, name of the volume
-          v1x:   float, vertex 1 x position
-          v1y:   float, vertex 1 y position
-          v2x:   float, vertex 2 x position
-          v2y:   float, vertex 2 y position
-          v3x:   float, vertex 3 x position
-          v3y:   float, vertex 3 y position
-          v4x:   float, vertex 4 x position
-          v4y:   float, vertex 4 y position
-          v5x:   float, vertex 5 x position
-          v5y:   float, vertex 5 y position
-          v6x:   float, vertex 6 x position
-          v6y:   float, vertex 6 y position
-          v7x:   float, vertex 7 x position
-          v7y:   float, vertex 7 y position
-          v8x:   float, vertex 8 x position
-          v8y:   float, vertex 8 y position
-          dz:    float, half length along z
-        """
         self.type = 'GenericTrap'
         self.name = name
         self.dz = dz

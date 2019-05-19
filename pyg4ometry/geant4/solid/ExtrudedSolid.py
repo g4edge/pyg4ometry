@@ -8,15 +8,27 @@ import numpy as _np
 import logging as _log
 
 class ExtrudedSolid(_SolidBase):
-    def __init__(self, name, pPolygon, pZslices, registry=None, lunit="mm"):
-        """
-        pPolygon: List of lists with the x-y coordinates of vertices for the polygon.
-        pZslices: List of lists with z-coordinate of a slice, slice offsets in x-y and scaling
+    """
+    Construct an extruded solid
 
-        Example: Triangular prism with 2 slices
-        pPoligon = [[x1,y1],[x2,y2],[x3,v3]] - vertices of polygon in clockwise order
-        zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
-        """
+    :param name: of solid
+    :type name: str
+    :param pPolygon: x-y coordinates of vertices for the polygon.
+    :type pPolygon: list of lists
+    :param pZslices: z-coordinates of a slice, slice offsets in x-y and scaling
+    :type pZslices: list of lists
+    :param registry:       for storing solid
+    :type registry:        Registry
+    :param lunit:          length unit (nm,um,mm,m,km) for solid
+    :type lunit:           str
+    
+    Example: Triangular prism with 2 slices
+    pPoligon = [[x1,y1],[x2,y2],[x3,v3]] - vertices of polygon in clockwise order
+    zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
+    """
+
+    def __init__(self, name, pPolygon, pZslices, registry=None, lunit="mm"):
+
         self.type     = 'ExtrudedSolid'
         self.name     = name
 

@@ -9,21 +9,36 @@ import logging as _log
 import numpy as _np
 
 class Paraboloid(_SolidBase):
-    def __init__(self, name, pDz, pR1, pR2, registry=None, nslice=16, nstack=8) :
-        """
-        Constructs a paraboloid with possible cuts along the z axis.
+    """
+    Constructs a paraboloid with possible cuts along the z axis.
+    
+    :param name:     of solid 
+    :type name:      str
+    :param pDz:      length along z
+    :type pDz:       float, Constant, Quantity, Variable, Expression
+    :param pR1:      radius at -Dz
+    :type pR1:       float, Constant, Quantity, Variable, Expression
+    :param pR2:      radius at +Dz (R2 > R1)
+    :type pR2:       float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry:  Registry
+    :param lunit:    length unit (nm,um,mm,m,km) for solid
+    :type lunit:     str    
+    :param nslice:   number of phi elements for meshing
+    :type nslice:    int  
+    :param nstack:   number of theta elements for meshing
+    :type nstack:    int       
+    
+    """
+    
+    def __init__(self, name, pDz, pR1, pR2, registry=None, lunit="mm", nslice=16, nstack=8) :
 
-        Inputs:
-          name: string, name of the volume
-          pDz:  float, half-length along z
-          pR1:  float, radius at -Dz
-          pR2:  float, radius at +Dz (R2 > R1)
-        """
         self.type   = 'Paraboloid'
         self.name   = name
         self.pDz    = pDz
         self.pR1    = pR1
         self.pR2    = pR2
+        self.lunit  = lunit
         self.nstack = nstack
         self.nslice = nslice
 
@@ -37,11 +52,14 @@ class Paraboloid(_SolidBase):
                                                  self.pR1, self.pR2)
 
     def pycsgmesh(self):
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+
         _log.info("paraboloid.antlr>")
 
-        pDz    = float(self.pDz)
-        pR1    = float(self.pR1)
-        pR2    = float(self.pR2)
+        uval = _Units.unit(self.lunit)
+        pDz    = float(self.pDz)/2.0*uval
+        pR1    = float(self.pR1)*uval
+        pR2    = float(self.pR2)*uval
 
         _log.info("paraboloid.pycsgmesh>")
         polygons = []

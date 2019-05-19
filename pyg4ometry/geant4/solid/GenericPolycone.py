@@ -5,20 +5,36 @@ import logging as _log
 import numpy as _np
 
 class GenericPolycone(_SolidBase):
+
+    """
+    Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
+    
+    :param name: of solid 
+    :type name: str
+    :param pSPhi: angle phi at start of rotation
+    :type pSPhi: float, Constant, Quantity, Variable, Expression
+    :param pDPhi: angle Phi at end of rotation
+    :type pDPhi: float, Constant, Quantity, Variable, Expression
+    :param pR: r coordinate
+    :type pR: list of float, Constant, Quantity, Variable, Expression
+    :param pZ: z coordinate
+    :type pZ: list of float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str 
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    
+    """
+
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
                  registry=None, 
                  lunit = "mm", aunit = "rad",
                  nslice=16):
-        """
-        Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
 
-        Inputs:
-        name = name
-        pSPhi = Angle Phi at start of rotation
-        pDPhi = Angle Phi at end of rotation
-        pR = r coordinate list
-		pZ = z coordinate list
-        """
         self.type    = 'GenericPolycone'
         self.name    = name
         self.pSPhi   = pSPhi

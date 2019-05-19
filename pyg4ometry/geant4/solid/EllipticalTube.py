@@ -9,16 +9,31 @@ import logging as _log
 import numpy as _np
 
 class EllipticalTube(_SolidBase):
-    def __init__(self, name, pDx, pDy, pDz, registry=None, lunit="mm", nslice=6, nstack=6):
-        """
-        Constructs a tube of elliptical cross-section.
+    """
+    Constructs a tube of elliptical cross-section.
+    
+    :param name: name of the solid
+    :type name:  str
+    :param pDx:  length in x
+    :type pDx:   float, Constant, Quantity, Variable, Expression
+    :param pDy:  length in y
+    :type pDy:   float, Constant, Quantity, Variable, Expression
+    :param pDz:  length in z
+    :type pDz:   float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    :param nstack: number of theta elements for meshing
+    :type nstack: int     
+    
+    """
+    
 
-        Inputs:
-          name: string, name of the volume
-          pDx:  float, half-length in x
-          pDy:  float, half-length in y
-          pDz:  float, half-length in z
-        """
+    def __init__(self, name, pDx, pDy, pDz, registry=None, lunit="mm", nslice=6, nstack=6):
+
         self.type   = 'EllipticalTube'
         self.name   = name
         self.pDx    = pDx
@@ -44,9 +59,9 @@ class EllipticalTube(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
 
-        pDx = float(self.pDx)*luval
-        pDy = float(self.pDy)*luval
-        pDz = float(self.pDz)*luval
+        pDx = float(self.pDx)*luval/2.0
+        pDy = float(self.pDy)*luval/2.0
+        pDz = float(self.pDz)*luval/2.0
 
         _log.info('ellipticaltube.pycsgmesh>')
         sz      = -pDz

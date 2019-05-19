@@ -9,15 +9,24 @@ import logging as _log
 import numpy as _np
 
 class Orb(_SolidBase):
+    """
+    Constructs a solid sphere.
+    
+    :param name: of the sold
+    :type name: str
+    :param pRMax: outer radius
+    :type pRMax: float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    :param nstack: number of theta elements for meshing
+    :type nstack: int     
+    """
+
     def __init__(self, name, pRMax, registry=None, lunit = "mm", nslice=16, nstack=16):
-
-        """
-        Constructs a solid sphere.
-
-        Inputs:
-           name:     string, name of the volume
-           pRMax:    float, outer radius
-        """
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax

@@ -10,19 +10,34 @@ import numpy as _np
 from copy import deepcopy as _dc
 
 class TwistedTubs(_SolidBase):
+    """
+    Creates a twisted tube segement. Note that only 1 constructor is supprted.
+    
+    :param name:         of solid
+    :type name:          str
+    :param endinnerrad:  inner radius at the end of the segment
+    :type endinnerrad:   float, Constant, Quantity, Variable, Expression
+    :param endinnerrad:  outer radius at the end of the segment
+    :type endinnerrad:   float, Constant, Quantity, Variable, Expression
+    :param zlen:         length of the tube segement
+    :type zlen:          float, Constant, Quantity, Variable, Expression
+    :param twistedangle: twist angle
+    :type twistedangle:  float, Constant, Quantity, Variable, Expression
+    :param registry:     for storing solid
+    :type registry:      Registry
+    :param lunit:        length unit (nm,um,mm,m,km) for solid
+    :type lunit:         str
+    :param aunit:        angle unit (rad,deg) for solid
+    :type aunit:         str    
+    :param nslice:       number of phi elements for meshing
+    :type nstack:        int    
+    :param nstack:       number of theta elements for meshing
+    :type nstack:        int    
+
+    """
+
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
                  registry=None, lunit = "mm", aunit = "rad", nslice=16, nstack=16):
-        """
-        Creates a twisted tube segement. Note that only 1 constructor is supprted.
-
-        Inputs:
-          name:         string, name of the volume
-          endinnerrad:  float, inner radius at the end of the segment
-          endinnerrad:  float, outer radius at the end of the segment
-          zlen:         float, length of the tube segement
-          twsitedandhe: float, twist angle
-        """
-
         self.type         = 'TwistedTubs'
         self.name         = name
         self.endinnerrad  = endinnerrad

@@ -67,7 +67,7 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
 
 def upgradeToTransformation(var, reg, addRegistry = False) : 
     """
-    Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation
+    Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation [Rotation,Position]
 
     :param var: input list to create a transformation
     :type var: list of str, flaot, Constant, Quantity, Variable
@@ -639,12 +639,12 @@ class Rotation(VectorBase) :
     '''
     GDML rotation define wrapper object
  
-    :param x: rotation around x axis
-    :type x: float, Constant, Quantity, Variable
-    :param y: rotation around y axis 
-    :type y: float, Constant, Quantity, Variable
-    :param z: rotation around z axis
-    :type z: float, Constant, Quantity, Variable
+    :param rx: rotation around x axis
+    :type rx: float, Constant, Quantity, Variable
+    :param ry: rotation around y axis 
+    :type ry: float, Constant, Quantity, Variable
+    :param rz: rotation around z axis
+    :type rz: float, Constant, Quantity, Variable
 
     '''
 
@@ -671,12 +671,12 @@ class Scale(VectorBase) :
     '''
     GDML scale define wrapper object
  
-    :param x: x component of scale 
-    :type x: float, Constant, Quantity, Variable
-    :param y: y component of scale
-    :type y: float, Constant, Quantity, Variable
-    :param z: z component of scale
-    :type z: float, Constant, Quantity, Variable
+    :param sx: x component of scale 
+    :type sx: float, Constant, Quantity, Variable
+    :param sy: y component of scale
+    :type sy: float, Constant, Quantity, Variable
+    :param sz: z component of scale
+    :type sz: float, Constant, Quantity, Variable
 
     '''
 

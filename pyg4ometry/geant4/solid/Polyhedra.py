@@ -5,22 +5,37 @@ import numpy as _np
 import logging as _log
 
 class Polyhedra(_SolidBase):
+    """
+    Constructs a polyhedra.
+    
+    :param name:       of solid
+    :type name:        str
+    :param phiStart:   start phi angle
+    :type phiStart:    float, Constant, Quantity, Variable, Expression
+    :param phiTotal:   delta phi angle
+    :type phiTotal:    float, Constant, Quantity, Variable, Expression
+    :param numSide:    number of sides
+    :type numSide:     int
+    :param numZPlanes: number of planes along z
+    :type numZPlanes:  int 
+    :param zPlane:     position of z planes
+    :type zPlane:      list of float, Constant, Quantity, Variable, Expression
+    :param rInner:     tangent distance to inner surface per z plane
+    :type rInner:      list of float, Constant, Quantity, Variable, Expression
+    :param rOuter:     tangent distance to outer surface per z plane
+    :type rOuter:      list of float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str 
+    
+    """
+
     def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes,
                  zPlane, rInner, rOuter, registry=True, lunit = "mm", aunit ="rad"):
-        """
-        Constructs a polyhedra.
 
-        Inputs:
-          name:       string, name of the volume
-          phiStart:   float, start phi angle
-          phiTotal:   float, delta phi angle
-          numSide:    int, number of sides
-          numZPlanes: int, number of planes along z
-          zPlane:     list, position of z planes
-          rInner:     list, tangent distance to inner surface per z plane
-          rOuter:     list, tangent distance to outer surface per z plane
-
-        """
         self.type       = 'Polyhedra'
         self.name       = name
         self.phiStart   = phiStart
