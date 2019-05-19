@@ -13,14 +13,27 @@ class Para(_SolidBase):
     """
     Constructs a parallelepiped.
 
-    Inputs:
-    name:  string, name of the volume
-    pX:    float, half-length along x
-    pY:    float, half-length along y
-    pZ:    float, half-length along z
-    pAlpha: float, angle formed by the y axis and the plane joining the centres of the faces parallel tothe z-x plane at -dy and +dy
-    pTheta: float, polar angle of the line joining the centres of the faces at -dz and +dz in z
-    pPhi:   float, azimuthal angle of the line joining the centres of the faces at -dx and +dz in z
+    :param name: of the volume
+    :type name: str
+    :param pX: length along x
+    :type pX: float, Constant, Quantity, Variable
+    :param pY: length along y
+    :type pY: float, Constant, Quantity, Variable
+    :param pZ: length along z
+    :type pZ: float, Constant, Quantity, Variable
+    :param pAlpha: angle formed by the y axis and the plane joining the centres of the faces parallel tothe z-x plane at -dy/2 and +dy/2
+    :type pAlpha: float, Constant, Quantity, Variable
+    :param pTheta: polar angle of the line joining the centres of the faces at -dz/2 and +dz/2 in z
+    :type pTheta: float, Constant, Quantity, Variable
+    :param pPhi: azimuthal angle of the line joining the centres of the faces at -dx/2 and +dz/2 in z
+    :type pPhi: float, Constant, Quantity, Variable
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str
+
     """
 
     def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry=None, lunit="mm", aunit="rad"):

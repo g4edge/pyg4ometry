@@ -8,11 +8,19 @@ import copy as _copy
 
 class Subtraction(_SolidBase):
     """
-    output = obj1 - obj2
-    name = name
-    obj1 = unrotated, untranslated solid
-    obj2 = solid rotated and translated according to tra2
-    tra2 = [rot,tra] = [[a,b,g],[dx,dy,dz]]
+    Subtraction between two solids     
+
+    :param name: of solid
+    :type name: str
+    :param obj1: unrotated, untranslated solid
+    :type obj1: pyg4ometry.geant4.solid
+    :param obj2: solid rotated and translated according to tra2
+    :type obj2: pyg4ometry.geant4.solid
+    :param tra2: [rot,tra] = [[a,b,g],[dx,dy,dz]]
+    :type tra2: list
+    :param registry: for storing solid
+    :type registry: Registry
+
     """
     def __init__(self,name, obj1, obj2, tra2, registry):
         # circular import 

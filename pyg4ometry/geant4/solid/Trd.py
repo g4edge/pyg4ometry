@@ -10,13 +10,23 @@ class Trd(_SolidBase):
     """
     Constructs a trapezoid.
 
-    Inputs:
-        name:  string, name of the volume
-        pDx1:  float, half-length along x at the surface positioned at -dz
-        pDx2:  float, half-length along x at the surface postitioned at +dz
-        pDy1:  float, half-length along y at the surface positioned at -dz
-        pDy2:  float, half-length along y at the surface positioned at +dz
-        dz:    float, half-length along the z axis
+    :param name:  of the solid
+    :type name:   str
+    :param pDx1:  length along x at the surface positioned at -dz/2
+    :type pDx1:   float, Constant, Quantity, Variable
+    :param pDx2:  length along x at the surface postitioned at +dz/2
+    :type pDx2:   float, Constant, Quantity, Variable
+    :param pDy1:  length along y at the surface positioned at -dz/2
+    :type pDy1:   float, Constant, Quantity, Variable
+    :param pDy2:  length along y at the surface positioned at +dz/2
+    :type pDy2:   float, Constant, Quantity, Variable
+    :param dz:    length along the z axis
+    :type dz:     float, Constant, Quantity, Variable
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+
     """
     def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry=None, lunit="mm"):
         self.type   = 'Trd'

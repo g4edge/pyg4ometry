@@ -11,15 +11,31 @@ class Cons(_SolidBase):
     """
     Constructs a conical section.
 
-    Inputs:
-        name:      string, name of the volume
-        pRMin1:    float, inner radius at -pDz
-        pRMax1:    float, outer radius at -pDz
-        pRMin2:    float, inner radius at +pDZ
-        pRMax2:    float, outer radius at +pDz
-        pDz:       float, half-length along z
-        pSPhi:     float, starting phi angle
-        pDPhi:     float, angle of segment in radians
+    :param name: of the solid
+    :type name: str
+    :param pRMin1: inner radius at -pDz/2
+    :type pRMin1: float, Constant, Quantity, Variable
+    :param pRMax1: outer radius at -pDz/2
+    :type pRMax1: float, Constant, Quantity, Variable
+    :param pRMin2: inner radius at +pDZ/2
+    :type pRMin2: float, Constant, Quantity, Variable
+    :param pRMax2: outer radius at +pDz/2
+    :type pRMax2: float, Constant, Quantity, Variable
+    :param pDz: length along z
+    :type pDz: float, Constant, Quantity, Variable
+    :param pSPhi: starting phi angle
+    :type pSPhi: float, Constant, Quantity, Variable
+    :param pDPhi: angle of segment in radians
+    :type pDPhi: float, Constant, Quantity, Variable
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str
+    :param nslice: number of phi elements for meshing
+    :type nslice: int 
+
     """
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
