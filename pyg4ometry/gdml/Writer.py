@@ -530,7 +530,7 @@ class Writer(object):
         oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('rmin', self.getValueOrExprFromInstance(instance,'innerRadius'))
         oe.setAttribute('rmax', self.getValueOrExprFromInstance(instance,'outerRadius'))
-        oe.setAttribute('z', self.getValueOrExprFromInstance(instance,'halfLenZ'))
+        oe.setAttribute('z',    self.getValueOrExprFromInstance(instance,'lenZ'))
         oe.setAttribute('inst', self.getValueOrExprFromInstance(instance,'innerStereo'))
         oe.setAttribute('outst', self.getValueOrExprFromInstance(instance,'outerStereo'))
         self.solids.appendChild(oe)
