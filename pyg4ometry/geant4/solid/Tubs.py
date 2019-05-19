@@ -13,18 +13,26 @@ class Tubs(_SolidBase):
     """
     Constructs a cylindrical section.
 
-    :param name: of object in registry
+    :param name: of solid for registry
     :type name: str
     :param pRMin: inner radius
-    :type pRMin: float
+    :type pRMin: float, Constant, Quantity, Variable
     :param pRMax: outer radius
-    :type pRMax: float
-    :param pDz: half-length along z
-    :type pDz: float
+    :type pRMax: float, Constant, Quantity, Variable
+    :param pDz: length along z
+    :type pDz: float, Constant, Quantity, Variable
     :param pSPhi: starting phi angle
-    :type pSPhi: float
+    :type pSPhi: float, Constant, Quantity, Variable
     :param pDPhi: angle of segment in phi
-    :type pDPhi: float
+    :type pDPhi: float, Constant, Quantity, Variable
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str
+    :param nslice: number of phi elements for meshing
+    :type nslice: int 
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry=None,
                  lunit="mm", aunit="rad", nslice=16):

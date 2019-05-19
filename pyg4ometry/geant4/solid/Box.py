@@ -5,16 +5,20 @@ import logging as _log
 
 class Box(_SolidBase):
     """
-    Constructs a box.
+    Constructs a box. Note the lengths are full lengths and not half lengths as in Geant4
 
-    :param name: of object in registry
+    :param name: of solid for registry
     :type name: str
-    :param pX: Length along x
-    :type name: float
-    :param pY: Length along y
-    :type name: float
-    :param pZ: Length along z
-    :type name: float
+    :param pX: length along x
+    :type pX: float, Constant, Quantity, Variable, Expression
+    :param pY: length along y
+    :type pY: float, Constant, Quantity, Variable, Expression
+    :param pZ: length along z
+    :type pZ: float, Constant, Quantity, Variable, Expression
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
     """
 
     def __init__(self, name, pX, pY, pZ, registry=None, lunit="mm",):

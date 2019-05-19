@@ -16,17 +16,27 @@ class Sphere(_SolidBase):
     :param name: of object in registry
     :type name: str
     :param pRmin: inner radius of the shell
-    :type pRmin: float
+    :type pRmin: float, Constant, Quantity, Variable
     :param pRmax: outer radius of the shell
-    :type pRmax: float
+    :type pRmax: float, Constant, Quantity, Variable
     :param pSPhi: starting phi angle in radians
-    :type pSPhi: float
+    :type pSPhi: float, Constant, Quantity, Variable
     :param pSTheta: starting theta angle in radians
-    :type pSTheta: float
+    :type pSTheta: float, Constant, Quantity, Variable
     :param pDPhi: delta phi angle in radians
-    :type pDPhi: float
+    :type pDPhi: float, Constant, Quantity, Variable
     :param pDTheta: delta theta angle in radians
-    :type pDTheta: float
+    :type pDTheta: float, Constant, Quantity, Variable
+    :param registry: for storing solid
+    :type registry: Registry
+    :param lunit: length unit (nm,um,mm,m,km) for solid
+    :type lunit: str
+    :param aunit: angle unit (rad,deg) for solid
+    :type aunit: str
+    :param nslice: number of phi elements for meshing
+    :type nslice: int  
+    :param nstack: number of theta elements for meshing
+    :type nstack: int 
     """
 
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,

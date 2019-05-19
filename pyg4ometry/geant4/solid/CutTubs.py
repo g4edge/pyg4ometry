@@ -8,17 +8,24 @@ import logging as _log
 
 class CutTubs(_SolidBase):
     """
-    Constructs a cylindrical section with cuts.
+    Constructs a cylindrical section with end face cuts. Note pLowNorm and pHighNorm can be lists of floats, Constants, Quantities or Variables.
 
-    :param name:  string, name of the solid
+    :param name: of solid for registry
     :type name: str
-    :param pRMin: float, inner radius
-    pRMax:     float, outer radius
-    pDz:       float, half-length along z
-    pSPhi:     float, starting phi angle
-    pDPhi:     float, angle of segment in radians
-    pLowNorm:  list,  normal vector of the cut plane at -pDz
-    pHighNorm: list, normal vector of the cut plane at +pDz
+    :param pRMin: Inner radius
+    :type pRMin: float, Constant, Quantity, Variable
+    :param pRMax: Outer radius
+    :type pRMax: float, Constant, Quantity, Variable
+    :param pDz: length along z
+    :type pDz: float, Constant, Quantity, Variable
+    :param pSPhi: starting phi angle
+    :type pSPhi: float, Constant, Quantity, Variable
+    :param pDPhi: angle of segment
+    :type pDPhi: float, Constant, Quantity, Variable
+    :param pLowNorm: normal vector of the cut plane at -pDz/2
+    :type pLowNorm: list 
+    :param pHighNorm: normal vector of the cut plane at +pDz/2
+    :type pHighNorm: list 
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry=None, lunit="mm",

@@ -14,7 +14,49 @@ def expressionStringScalar(obj1,obj2) :
     except KeyError : 
         return obj2.expr.expression             # just an object as an expression
 
+def expressionStringVector(var) : 
+
+    if isinstance(var,ScalarBase) :                
+        try :                
+            var.registry.defineDict[var.name]
+            return var.name
+        except KeyError : 
+            return var.expr.expression
+    else :
+        return str(var)
+    
+def upgradeToStringExpression(reg, obj) : 
+    if is_numlike(obj) :             
+        return str(obj)                 # number like so return string
+    if isinstance(obj,str) : 
+        if reg.defineDict.has_key(obj) :   
+            return obj
+        else :
+            e = Expression("",obj,reg,False)
+            try : 
+                e.eval()
+                return obj
+            except : 
+                print "Cannot evaluate expression" 
+
+    if isinstance(obj,ScalarBase) : 
+        return obj.name             # so a scalar expression in registry
+    else : 
+        return obj.expr.expression  # so a scalar expression not in registry
+        
 def upgradeToVector(var, reg, type = "position", addRegistry = False) : 
+    """
+    Take a list [x,y,z] and create a vector 
+
+    :param var: input list to create a position, rotation or scale
+    :type var: list of str, flaot, Constant, Quantity, Variable
+    :param reg: registry
+    :type reg: Registry
+    :param type: class type of vector (position, rotation, scale)
+    :type type: str
+    :param addRegistry: flag to add to registry
+    :type addRegistry: bool
+    """
 
     # check if already a vector type 
     if isinstance(var,VectorBase) : 
@@ -32,6 +74,18 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
             print 'type not defined'
 
 def upgradeToTransformation(var, reg, addRegistry = False) : 
+    """
+    Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation
+
+    :param var: input list to create a transformation
+    :type var: list of str, flaot, Constant, Quantity, Variable
+    :param reg: registry
+    :type reg: Registry
+    :param type: class type of vector (position, rotation, scale)
+    :type type: str
+    :param addRegistry: flag to add to registry
+    :type addRegistry: bool
+    """
 
 
     if isinstance(var[0],VectorBase) :
@@ -155,6 +209,12 @@ def sin(arg) :
     return v
 
 def cos(arg) : 
+    """
+    Cosine of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of cos
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("cos_{}".format(v1), 'cos({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -162,6 +222,12 @@ def cos(arg) :
     return v
 
 def tan(arg) : 
+    """
+    Tangent of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of tan
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("tan_{}".format(v1), 'tan({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -169,6 +235,12 @@ def tan(arg) :
     return v
 
 def asin(arg) : 
+    """
+    ArcSin of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of asin
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("sin_{}".format(v1), 'asin({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -176,6 +248,12 @@ def asin(arg) :
     return v
 
 def acos(arg) : 
+    """
+    ArcCos of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of acos
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("cos_{}".format(v1), 'acos({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -183,6 +261,12 @@ def acos(arg) :
     return v
 
 def atan(arg) : 
+    """
+    ArcTan of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of tan
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("tan_{}".format(v1), 'atan({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -190,6 +274,12 @@ def atan(arg) :
     return v
 
 def exp(arg) : 
+    """
+    Exponential of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of exp
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("exp_{}".format(v1), 'exp({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -197,6 +287,12 @@ def exp(arg) :
     return v
 
 def log(arg) : 
+    """
+    Natural logarithm of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of log
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("log_{}".format(v1), 'log({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -204,6 +300,12 @@ def log(arg) :
     return v
 
 def log10(arg) : 
+    """
+    Base 10 logarithm of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of log10
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("log10_{}".format(v1), 'log10({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -211,6 +313,12 @@ def log10(arg) :
     return v
 
 def sqrt(arg) : 
+    """
+    Square root of a ScalarBase object, returns a Constant
+    
+    :param arg: Argument of sin
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
     v1 = expressionStringScalar(arg,arg)
     v = Constant("sqrt_{}".format(v1), 'sqrt({})'.format(v1),registry=None)
     v.registry      = arg.registry
@@ -218,6 +326,19 @@ def sqrt(arg) :
     return v    
 
 class Constant(ScalarBase) :
+    """
+    GDML constant define wrapper object
+    
+    :param name: of constant for registry
+    :type name: str
+    :param value: expression for constant
+    :type value: float,str,Constant,Quantity,Variable
+    :param registry: for storing define
+    :type registry: Registry
+    :param addRegistry: add constant to registry
+    :type addRegistry: bool
+    """
+
     def __init__(self, name, value, registry = None, addRegistry = True) :
         self.name  = name
 
@@ -231,7 +352,14 @@ class Constant(ScalarBase) :
             if addRegistry :
                 registry.addDefine(self)
 
-    def eval(self) :
+    def eval(self) : 
+        """ 
+        Evaluate constant 
+
+        :return: numerical evaluation of Constant
+        :rtype: float
+
+        """
         return self.expr.eval()
 
     def __float__(self) :
@@ -241,6 +369,21 @@ class Constant(ScalarBase) :
         return "Constant : {} = {}".format(self.name, str(self.expr))
 
 class Quantity(ScalarBase) :
+    """
+    GDML quantity define wrapper object
+    
+    :param name: of constant for registry
+    :type name: str
+    :param value: expression for constant
+    :type value: float,str,Constant,Quantity,Variable
+    :param unit: unit of the quantity 
+    :type unit: str
+    :param registry: for storing define
+    :type registry: Registry
+    :param addRegistry: add constant to registry
+    :type addRegistry: bool
+    """
+
     def __init__(self, name, value, unit, type, registry = None, addRegistry = True) :
         self.name  = name
         self.unit  = unit
@@ -258,6 +401,14 @@ class Quantity(ScalarBase) :
                 registry.addDefine(self)
 
     def eval(self) :
+        """ 
+        Evaluate quantity
+
+        :return: numerical evaluation of Quantity
+        :rtype: float
+
+        """
+
         return self.expr.eval()
 
     def __float__(self) :
@@ -267,6 +418,17 @@ class Quantity(ScalarBase) :
         return "Quantity: {} = {} [{}] {}".format(self.name, str(self.expr), self.unit, self.type)
 
 class Variable(ScalarBase) :
+    """
+    GDML variable define wrapper object
+    
+    :param name: of constant for registry
+    :type name: str
+    :param value: expression for constant
+    :type value: float,str,Constant,Quantity,Variable
+    :param registry: for storing define
+    :type registry: Registry
+    """
+
     def __init__(self, name, value, registry = None, addRegistry = True) :
         self.name  = name
 
@@ -281,6 +443,13 @@ class Variable(ScalarBase) :
                 registry.addDefine(self)
 
     def eval(self) :
+        """ 
+        Evaluate variable
+
+        :return: numerical evaluation of Constant
+        :rtype: float
+
+        """
         return self.expr.eval()
 
     def __float__(self) :
@@ -290,6 +459,18 @@ class Variable(ScalarBase) :
         return "Variable: {} = {}".format(self.name, str(self.expr))
 
 class Expression(ScalarBase) : 
+    """
+    General expression, does not have an analogue in GDML
+    
+    :param name: of constant for registry
+    :type name: str
+    :param value: expression for constant
+    :type value: float,str,Constant,Quantity,Variable
+    :param registry: for storing define
+    :type registry: Registry
+    :param addRegistry: add constant to registry
+    :type addRegistry: bool
+    """
     def __init__(self, name, value, registry = None, addRegistry = False) :
         self.name  = name
 
@@ -305,6 +486,13 @@ class Expression(ScalarBase) :
             registry.addDefine(self)
 
     def eval(self) :
+        """ 
+        Evaluate expression
+
+        :return: numerical evaluation of Constant
+        :rtype: float
+
+        """
         return self.expr.eval()
 
     def __float__(self) :
@@ -382,6 +570,12 @@ class VectorBase(object) :
         return p                     
     
     def setName(self, name) : 
+        """
+        Set name of vector
+
+        :param name: name of object
+        :type name: str
+        """
         self.name          = name
         self.x.registry    = self.registry 
         self.y.registry    = self.registry 
@@ -392,6 +586,14 @@ class VectorBase(object) :
         self.registry.addDefine(self)
 
     def eval(self) :
+        """ 
+        Evaluate vector 
+
+        :return: numerical evaluation of vector
+        :rtype: list of floats
+
+        """
+
         u = _Units.unit(self.unit)
         return [self.x.eval()*u, self.y.eval()*u, self.z.eval()*u]
 
@@ -405,18 +607,19 @@ class VectorBase(object) :
         else :
             raise IndexError
 
-def expressionStringVector(var) : 
-
-    if isinstance(var,ScalarBase) :                
-        try :                
-            var.registry.defineDict[var.name]
-            return var.name
-        except KeyError : 
-            return var.expr.expression
-    else :
-        return str(var)
-    
 class Position(VectorBase) :
+    '''
+    GDML position define wrapper object
+ 
+    :param x: x component of position 
+    :type x: float, Constant, Quantity, Variable
+    :param y: y component of position 
+    :type y: float, Constant, Quantity, Variable
+    :param z: z component of position 
+    :type z: float, Constant, Quantity, Variable
+
+    '''
+
     def __init__(self,name,x,y,z, unit="mm", registry = None, addRegistry = True) :
         self.name = name
         if unit != None :
@@ -437,6 +640,18 @@ class Position(VectorBase) :
         return "Position : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Rotation(VectorBase) : 
+    '''
+    GDML rotation define wrapper object
+ 
+    :param x: rotation around x axis
+    :type x: float, Constant, Quantity, Variable
+    :param y: rotation around y axis 
+    :type y: float, Constant, Quantity, Variable
+    :param z: rotation around z axis
+    :type z: float, Constant, Quantity, Variable
+
+    '''
+
     def __init__(self,name,rx,ry,rz, unit="rad", registry = None, addRegistry = True) :
         self.name = name
         if unit != None : 
@@ -457,6 +672,18 @@ class Rotation(VectorBase) :
         return "Rotation : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Scale(VectorBase) : 
+    '''
+    GDML scale define wrapper object
+ 
+    :param x: x component of scale 
+    :type x: float, Constant, Quantity, Variable
+    :param y: y component of scale
+    :type y: float, Constant, Quantity, Variable
+    :param z: z component of scale
+    :type z: float, Constant, Quantity, Variable
+
+    '''
+
     def __init__(self,name,sx,sy,sz, unit="none", registry = None, addRegistry = True) :
         self.name = name
         if unit != None : 
@@ -477,6 +704,21 @@ class Scale(VectorBase) :
         return "Scale : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Matrix :
+    """
+    GDML matrix define wrapper object
+    
+    :param name: of constant for registry
+    :type name: str
+    :param coldim: is number of columns
+    :param coldim: int
+    :param values: list of values for matrix
+    :type values: list of float, str, Constant, Quantity, Variable
+    :param registry: for storing define
+    :type registry: Registry
+    :param addRegistry: add constant to registry
+    :type addRegistry: bool
+    """
+
     def __init__(self,name, coldim, values, registry = None, addRegistry = True) :
         self.name = name
         self.coldim = int(coldim)
@@ -495,7 +737,17 @@ class Matrix :
                 registry.addDefine(self)
             
     def eval(self) :
-        return [ e.eval() for e in self.values ]
+        """ 
+        Evaluate matrix
+
+        :return: numerical evaluation of matrix
+        :rtype: numpy.array
+
+        """
+        a  = _np.array([ e.eval() for e in self.values ])
+        a  = a.reshape(self.coldim,int(len(a)/self.coldim))
+        
+        return a
 
     def __repr__(self) :
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
