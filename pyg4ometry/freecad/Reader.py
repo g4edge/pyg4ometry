@@ -10,7 +10,7 @@ import random             as _random
 
 import pyg4ometry.geant4  as _g4
 import pyg4ometry.transformation as _trans
-from pyg4ometry.geant4.Material import Material as _Material
+from   pyg4ometry.geant4.Material import Material as _Material
 
 class Reader(object) : 
 
@@ -37,7 +37,7 @@ class Reader(object) :
         for o in self.doc.Objects : 
             if o.TypeId == "Part::Feature" : 
                 v = o.Shape.Volume 
-                print o.Label, v
+                # print o.Label, v
                 if v < volumeCut : 
                     o.Document.removeObject(o.Name)
         
@@ -180,7 +180,7 @@ class Reader(object) :
 
                 # Mesh tidying
                 mc = MeshCleaning(m)                
-                print 'Removed triangles',mc
+                # print 'Removed triangles',mc
 
                 # Mesh shrinking 
                 vn = MeshShrink(m)
@@ -220,7 +220,7 @@ class Reader(object) :
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        print tmin, tmax, tmax-tmin
+        # print tmin, tmax, tmax-tmin
         tsize   = tmax-tmin 
         tcentre = (tmax-tmin)/2.0+tmin
 
@@ -228,7 +228,7 @@ class Reader(object) :
         if extentScale != 1.0:
             tsize.scale(extentScale,extentScale,extentScale)
 
-        print tcentre
+        # print tcentre
 
         bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x,tsize.y,tsize.z,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
