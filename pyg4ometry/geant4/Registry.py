@@ -10,10 +10,9 @@ def solidName(var) :
 
 class Registry:
     '''
-    Object to store geometry for IO 
+    Object to store geometry for input and output. All of the pyg4ometry classes can be used without storing them in the Registry. The registry is used to write the GDML output file. A registry needs to be used in conjunction with gdml Define objects for evalation of expressions. 
     '''
     
-
     def __init__(self):
         self.defineDict                   = OrderedDict()
         self.materialDict                 = OrderedDict()
@@ -54,6 +53,11 @@ class Registry:
 
 
     def addMaterial(self, material):
+        """
+        :param material: Material object for starage 
+        :type material: Material
+        """        
+
         # try :
         #    self.materialDict[material.name]
         #    print 'material replicated', material.name
@@ -63,6 +67,11 @@ class Registry:
         self.materialDict[material.name] = material
 
     def addSolid(self,solid):
+        """
+        :param solid: Solid object for starage 
+        :type solid: One of the geant4 solids
+        """
+
         try:
             self.solidDict[solid.name]
             print 'solid replicated', solid.name
@@ -81,6 +90,11 @@ class Registry:
             self.solidUsageCountDict[solid.name] = 1
 
     def addLogicalVolume(self,volume):
+        """
+        :param volume: LogicalVolume object for starage 
+        :type volume: LogicalVolume
+        """
+
         try:
             self.logicalVolumeDict[volume.name]
             print 'logical replicated', volume.name
@@ -96,6 +110,10 @@ class Registry:
             self.volumeTypeCountDict["logicalVolume"] = 1
 
     def addPhysicalVolume(self,volume):
+        """
+        :param volume: PhysicalVolume object for starage 
+        :type volume: PhysicalVolume
+        """
 
         # keep count of identical physical volumes 
         try : 
@@ -157,6 +175,10 @@ class Registry:
             self.parameterDict[parameter.name] = parameter
 
     def addDefine(self, define) :
+        """
+        :param define: Defintion object for starage 
+        :type define: Constant, Quantity, Variable, Matrix
+        """
         try :
             self.defineDict[define.name]
             print 'define replicated', define.name
