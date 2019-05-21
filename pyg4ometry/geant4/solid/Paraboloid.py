@@ -16,9 +16,9 @@ class Paraboloid(_SolidBase):
     :type name:      str
     :param pDz:      length along z
     :type pDz:       float, Constant, Quantity, Variable, Expression
-    :param pR1:      radius at -Dz
+    :param pR1:      radius at -Dz/2
     :type pR1:       float, Constant, Quantity, Variable, Expression
-    :param pR2:      radius at +Dz (R2 > R1)
+    :param pR2:      radius at +Dz/2 (pR2 > pR1)
     :type pR2:       float, Constant, Quantity, Variable, Expression
     :param registry: for storing solid
     :type registry:  Registry
