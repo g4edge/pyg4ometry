@@ -21,7 +21,7 @@ class Box(_SolidBase):
     :type lunit: str
     """
 
-    def __init__(self, name, pX, pY, pZ, registry=None, lunit="mm",):
+    def __init__(self, name, pX, pY, pZ, registry=None, lunit="mm"):
         self.name = name
         self.pX   = pX
         self.pY   = pY
