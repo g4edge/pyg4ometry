@@ -1,10 +1,10 @@
-import pyg4ometry.geant4
-
 class NullMeshError(Exception):
     """Null Mesh exception.  Should be raised when the output of
     mesh.toPolygons evaluates to the empty list.  arg can be a
     user-provided message (string), or a SolidBase-derived instance."""
     def __init__(self, arg):
+        import pyg4ometry.geant4
+
         if isinstance(arg, pyg4ometry.geant4.solid.SolidBase):
             self.solid = arg
             if isinstance(self.solid,
