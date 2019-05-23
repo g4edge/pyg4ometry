@@ -32,5 +32,6 @@ from TwistedTubs         import *
 from GenericPolycone     import *
 from GenericPolyhedra    import *
 from GenericTrap         import *
-from TessellatedSolid     import *
+from TessellatedSolid    import *
+from MultiUnion          import *
 from SolidBase import SolidBase
