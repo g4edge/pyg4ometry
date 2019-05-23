@@ -1,5 +1,5 @@
 import math as _math
-from pyg4ometry.geant4 import Registry
+from pyg4ometry.geant4.Registry import Registry as _Registry
 
 try :
     import sympy as _sympy
@@ -7,7 +7,7 @@ except ImportError :
     noSymPy = True
 
 class Expression(object) :
-    def __init__(self, name, expression, registry=Registry()) :
+    def __init__(self, name, expression, registry=_Registry()) :
         # TODO: make the registry required
         self.name       = name
         self.expression = expression

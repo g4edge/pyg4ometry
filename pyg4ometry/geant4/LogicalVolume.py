@@ -13,6 +13,15 @@ import sys     as   _sys
 import logging as   _log
 
 class LogicalVolume(object):
+    '''
+    LogicalVolume : G4LogicalVolume
+    :param solid:  
+    :param material:
+    :param name: 
+    :param registry:      
+    :param addRegistry: 
+    '''
+
     def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super(LogicalVolume, self).__init__()
 

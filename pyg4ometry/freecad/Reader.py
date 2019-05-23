@@ -8,8 +8,8 @@ import numpy              as _np
 import logging            as _log
 import random             as _random
 
-import pyg4ometry.geant4  as _g4
-import pyg4ometry.transformation as _trans
+import pyg4ometry.geant4                          as _g4
+import pyg4ometry.transformation                  as _trans
 from   pyg4ometry.geant4.Material import Material as _Material
 
 class Reader(object) : 
@@ -243,12 +243,12 @@ class Reader(object) :
             y = placements[i][1][1]-tcentre.y
             z = placements[i][1][2]-tcentre.z
 
-            p = pyg4ometry.geant4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),registry=self._registry,addRegistry=False),
-                                                 pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),registry=self._registry,addRegistry=False),
-                                                 logicals[i],                                                    
-                                                 names[i]+"_pv",
-                                                 bLogical,
-                                                 registry=self._registry)
+            p = _g4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),registry=self._registry,addRegistry=False),
+                                   pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),registry=self._registry,addRegistry=False),
+                                   logicals[i],                                                    
+                                   names[i]+"_pv",
+                                   bLogical,
+                                   registry=self._registry)
 
             # set attributes 
             try : 

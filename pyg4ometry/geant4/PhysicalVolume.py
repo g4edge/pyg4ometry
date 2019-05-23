@@ -5,21 +5,21 @@ import numpy   as _np
 import sys     as _sys
 import logging as _log
 
-
 class PhysicalVolume(object):
 
     def __init__(self, rotation, position, logicalVolume, name,
                  motherVolume, registry=None, addRegistry = True):
-        '''PhysicalVolume : G4PVPlacement 
-        rotation      - 
-        position      - 
-        logicalVolume - pyg4ometry.geant4.LogicalVolume 
-        name          - string 
-        motherVolume  - pyg4ometry.geant4.LogicalVolume
-        registry      - pyg4ometry.geant4.Registry
-        addRegistry   - bool'''
+        '''
+        PhysicalVolume : G4VPhysicalVolue, G4PVPlacement 
+        :param rotation:  
+        :param position:
+        :param logicalVolume: pyg4ometry.geant4.LogicalVolume 
+        :param name:      
+        :param motherVolume: pyg4ometry.geant4.LogicalVolume
+        :param registry: pyg4ometry.geant4.Registry
+        :param addRegistry:
+        '''
         
-
         super(PhysicalVolume, self).__init__()
     
         # need to determine type or rotation and position, as should be Position or Rotation type
