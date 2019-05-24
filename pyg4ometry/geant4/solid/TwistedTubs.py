@@ -57,9 +57,9 @@ class TwistedTubs(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "TwistedTubs : {} {} {} {} {}".format(self.name, self.name,
+        return "TwistedTubs : {} {} {} {} {} {} {}".format(self.name,
                                                      self.endinnerrad, self.endouterrad,
-                                                     self.zlen, self.twsitedangle,
+                                                     self.zlen, self.twistedangle,
                                                      self.nslice, self.nstack)
 
     def makeLayers(self, verts_bot, verts_top):

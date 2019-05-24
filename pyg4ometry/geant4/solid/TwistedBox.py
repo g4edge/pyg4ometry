@@ -60,8 +60,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Twisted Box : {} {} {} {} {} {}".format(self.name, self.twistedAngle,
-                                                        self.pDx, self.pDy, self.pDz)
+        return "Twisted Box : {} {} {} {} {}".format(self.name, self.twistedAngle,
+                                                     self.pDx, self.pDy, self.pDz)
     def checkParameters(self):
         if float(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
