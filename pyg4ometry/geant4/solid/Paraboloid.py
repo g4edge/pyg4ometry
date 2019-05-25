@@ -83,10 +83,7 @@ class Paraboloid(_SolidBase):
             x = rho*_np.cos(theta)
             y = rho*_np.sin(theta)
 
-            d = _Vector(
-                x,
-                y,
-                z)
+            d = _Vector(x,y,z)
 
             if not norm:
                 n = d

@@ -51,8 +51,11 @@ class Tet(_SolidBase):
 
 
     def __repr__(self):
-        return "Tet : {} Vertexes: {}, {}, {}, {}".format(self.name, self.anchor.expr.expression, self.p2.expr.expression,
-                                                          self.p3.expr.expression, self.p4.expr.expression)
+        return "Tet : {} Vertexes: {}, {}, {}, {}".format(self.name, 
+                                                          str(self.anchor), 
+                                                          str(self.p2),
+                                                          str(self.p3), 
+                                                          str(self.p4))
 
     def pycsgmesh(self):
         _log.info('tet.pycsgmesh> antlr')
