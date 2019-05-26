@@ -17,9 +17,10 @@ def upgradeToStringExpression(reg, obj) :
     """
 
     if is_numlike(obj) :             
-        return str(obj)                 # number like so return string
+        return str(obj)                  # number like so return string
+
     if isinstance(obj,str) or isinstance(obj,unicode) : 
-        if reg.defineDict.has_key(obj) :   
+        if reg.defineDict.has_key(obj) : # not sure if this is needed   
             return obj
         else :
             e = _Expression("",obj,reg)
@@ -303,10 +304,6 @@ class Constant(ScalarBase) :
         self.name  = name
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
-        #if isinstance(value,ScalarBase) : 
-        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
-        #else :
-        #    self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -353,11 +350,6 @@ class Quantity(ScalarBase) :
         self.type  = type
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
-        #if isinstance(value,ScalarBase) : 
-        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                    
-        #else : 
-        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
-
 
         if registry != None: 
             self.registry = registry
@@ -399,10 +391,6 @@ class Variable(ScalarBase) :
         self.name  = name
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
-        #if isinstance(value,ScalarBase) : 
-        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
-        #else : 
-        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -443,12 +431,8 @@ class Expression(ScalarBase) :
 
         self.name  = name
 
-        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value))
-        #if isinstance(value,ScalarBase) : 
-        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                        
-        #else : 
-        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
-            
+        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
+
         if registry != None: 
             self.registry = registry
 
