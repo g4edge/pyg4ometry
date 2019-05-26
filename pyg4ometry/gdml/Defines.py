@@ -336,6 +336,8 @@ class Quantity(ScalarBase) :
     :type value: float,str,Constant,Quantity,Variable
     :param unit: unit of the quantity 
     :type unit: str
+    :param type: type of quantity
+    :type type: not sure
     :param registry: for storing define
     :type registry: Registry
     :param addRegistry: add constant to registry
