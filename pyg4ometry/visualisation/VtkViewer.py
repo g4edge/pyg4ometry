@@ -4,8 +4,6 @@ import copy as _copy
 import pyg4ometry.transformation as _transformation
 import logging as _log
 
-# 2076.40698    -0.16620  2182.18262
-
 class VtkViewer : 
     def __init__(self,size=(1024,768)) : 
         
@@ -208,7 +206,7 @@ class VtkViewer :
 
             self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
 
-    def view(self):
+    def view(self, interactive = True):
         # enable user interface interactor
         # self.iren.Initialize()
 
@@ -220,7 +218,8 @@ class VtkViewer :
         # Render 
         self.renWin.Render()
 
-        self.iren.Start()    
+        if interactive : 
+            self.iren.Start()    
         
 # python iterable to vtkIdList
 def mkVtkIdList(it):

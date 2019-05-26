@@ -52,6 +52,7 @@ class Reader(object) :
             column = int(ee.args[0].split()[-1])
             print column,fs[column-10:min(len(fs),column+100)]
             print "        ^^^^ "
+            exit()
         _log.info('Reader.load> parse')
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)

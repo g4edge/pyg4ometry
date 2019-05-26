@@ -59,14 +59,15 @@ class Cons(_SolidBase):
 
         if registry:
             registry.addSolid(self)
-        # self.checkParameters()
+
+        self.checkParameters()
 
     def checkParameters(self):
-        if self.pRmin1 > self.pRmax1:
+        if self.pRmin1.eval() > self.pRmax1.eval() :
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.pRmin2 > self.pRmax2:
+        if self.pRmin2.eval() > self.pRmax2.eval() :
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.pDPhi > _np.pi*2:
+        if self.pDPhi.eval() > _np.pi*2:
             raise ValueError("pDTheta must be less than 2 pi")
 
     def __repr__(self):
@@ -90,13 +91,13 @@ class Cons(_SolidBase):
         pDPhi  = float(self.pDPhi)*auval
 
         _log.info('cons.pycsgmesh>')
+
         if pRmax1 < pRmax2:
             R1 = pRmax2  # Cone with tip pointing towards -z
             r1 = pRmin2
             R2 = pRmax1
             r2 = pRmin1
             factor = -1
-
         else:
             R1 = pRmax1  # Cone with tip pointing towards +z
             r1 = pRmin1

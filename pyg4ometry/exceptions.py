@@ -7,16 +7,14 @@ class NullMeshError(Exception):
 
         if isinstance(arg, pyg4ometry.geant4.solid.SolidBase):
             self.solid = arg
-            if isinstance(self.solid,
-                          pyg4ometry.geant4.solid.Intersection):
+            if isinstance(self.solid,pyg4ometry.geant4.solid.Intersection):
                 self.message = ("Null mesh in intersection between solids:"
-                                " {}, {}.".format(self.solid.obj1name,
-                                                  self.solid.obj2name))
-            elif isinstance(self.solid,
-                            pyg4ometry.geant4.solid.Subtraction):
+                                " {}, {}.".format(self.solid.obj1.name,
+                                                  self.solid.obj2.name))
+            elif isinstance(self.solid,pyg4ometry.geant4.solid.Subtraction):
                 self.message = ("Null mesh in subtraction between solids:"
-                                " {}, {}.".format(self.solid.obj1name,
-                                                  self.solid.obj2name))
+                                " {}, {}.".format(self.solid.obj1.name,
+                                                  self.solid.obj2.name))
             else:
                 self.message == "Null mesh in {}.".format(type(self.solid))
             super(Exception, self).__init__(self.message)
@@ -29,9 +27,9 @@ class IdenticalNameError(Exception):
     Exception for trying to add the same name to the geant4 registry.
 
     :param name: the name that has been duplicated
-    :param nametype: optional extra information regarding the nature of the
-       duplicate ("material", "solid", etc.)
-
+    :type name: str
+    :param nametype: optional extra information regarding the nature of thecduplicate ("material", "solid", etc.)
+    :type nametype: str
     """
 
     def __init__(self, name, nametype=None):

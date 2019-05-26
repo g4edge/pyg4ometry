@@ -22,7 +22,7 @@ def upgradeToStringExpression(reg, obj) :
         if reg.defineDict.has_key(obj) :   
             return obj
         else :
-            e = Expression("",obj,reg,False)
+            e = _Expression("",obj,reg)
             try : 
                 e.eval()
                 return obj                  
@@ -105,9 +105,7 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_add_{}".format(v1,v2), '({}) + ({})'.format(v1, v2),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_add_{}".format(v1,v2), '({}) + ({})'.format(v1, v2),registry=self.registry)
         return v
 
 
@@ -115,18 +113,14 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_sub_{}".format(v1,v2), '({}) - ({})'.format(v1, v2),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_sub_{}".format(v1,v2), '({}) - ({})'.format(v1, v2),registry=self.registry)
         return v
 
     def __rsub__(self,other) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)        
         
-        v = Constant("var_{}_sub_{}".format(v2,v1), '({}) - ({})'.format(v2, v1),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_sub_{}".format(v2,v1), '({}) - ({})'.format(v2, v1),registry=self.registry)
         return v        
 
 
@@ -139,35 +133,27 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_mul_{}".format(v1,v2), '({}) * ({})'.format(v1, v2),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_mul_{}".format(v1,v2), '({}) * ({})'.format(v1, v2),registry=self.registry)
         return v
 
     def __div__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_div_{}".format(v1,v2), '({}) / ({})'.format(v1, v2),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_div_{}".format(v1,v2), '({}) / ({})'.format(v1, v2),registry=self.registry)
         return v
 
     def __rdiv__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_div_{}".format(v2,v1), '({}) / ({})'.format(v2, v1),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_{}_div_{}".format(v2,v1), '({}) / ({})'.format(v2, v1),registry=self.registry)
         return v
 
     def __neg__(self):
         v1 = upgradeToStringExpression(self.registry,self)
 
-        v = Constant("var_neg_{}".format(v1), '(-{})'.format(v1),registry=None)
-        v.registry      = self.registry
-        v.expr.registry = self.registry
+        v = Constant("var_neg_{}".format(v1), '(-{})'.format(v1),registry=self.registry)
         return v
 
     __radd__ = __add__
@@ -195,9 +181,7 @@ def sin(arg) :
     """
 
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("sin_{}".format(v1), 'sin({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("sin_{}".format(v1), 'sin({})'.format(v1),registry=arg.registry)
     return v
 
 def cos(arg) : 
@@ -208,9 +192,7 @@ def cos(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("cos_{}".format(v1), 'cos({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("cos_{}".format(v1), 'cos({})'.format(v1),registry=arg.registry)
     return v
 
 def tan(arg) : 
@@ -221,9 +203,7 @@ def tan(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("tan_{}".format(v1), 'tan({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("tan_{}".format(v1), 'tan({})'.format(v1),registry=arg.registry)
     return v
 
 def asin(arg) : 
@@ -234,9 +214,7 @@ def asin(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("sin_{}".format(v1), 'asin({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("sin_{}".format(v1), 'asin({})'.format(v1),registry=arg.registry)
     return v
 
 def acos(arg) : 
@@ -247,9 +225,7 @@ def acos(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("cos_{}".format(v1), 'acos({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("cos_{}".format(v1), 'acos({})'.format(v1),registry=arg.registry)
     return v
 
 def atan(arg) : 
@@ -260,9 +236,7 @@ def atan(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("tan_{}".format(v1), 'atan({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("tan_{}".format(v1), 'atan({})'.format(v1),registry=arg.registry)
     return v
 
 def exp(arg) : 
@@ -273,9 +247,7 @@ def exp(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("exp_{}".format(v1), 'exp({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("exp_{}".format(v1), 'exp({})'.format(v1),registry=arg.registry)
     return v
 
 def log(arg) : 
@@ -286,9 +258,7 @@ def log(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("log_{}".format(v1), 'log({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("log_{}".format(v1), 'log({})'.format(v1),registry=arg.registry)
     return v
 
 def log10(arg) : 
@@ -299,9 +269,7 @@ def log10(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("log10_{}".format(v1), 'log10({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("log10_{}".format(v1), 'log10({})'.format(v1),registry=arg.registry)
     return v
 
 def sqrt(arg) : 
@@ -312,9 +280,7 @@ def sqrt(arg) :
     :type  arg: Constant, Quantity, Variable or Expression
     """
     v1 = upgradeToStringExpression(arg.registry,arg)
-    v = Constant("sqrt_{}".format(v1), 'sqrt({})'.format(v1),registry=None)
-    v.registry      = arg.registry
-    v.expr.registry = arg.registry    
+    v = Constant("sqrt_{}".format(v1), 'sqrt({})'.format(v1),registry=arg.registry)
     return v    
 
 class Constant(ScalarBase) :
@@ -332,12 +298,15 @@ class Constant(ScalarBase) :
     """
 
     def __init__(self, name, value, registry = None, addRegistry = True) :
+        super(Constant, self).__init__()
+
         self.name  = name
 
-        if isinstance(value,ScalarBase) : 
-            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
-        else :
-            self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
+        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
+        #if isinstance(value,ScalarBase) : 
+        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
+        #else :
+        #    self.expr = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -377,14 +346,17 @@ class Quantity(ScalarBase) :
     """
 
     def __init__(self, name, value, unit, type, registry = None, addRegistry = True) :
+        super(Quantity, self).__init__()
+        
         self.name  = name
         self.unit  = unit
         self.type  = type
 
-        if isinstance(value,ScalarBase) : 
-            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                    
-        else : 
-            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
+        #if isinstance(value,ScalarBase) : 
+        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                    
+        #else : 
+        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
 
         if registry != None: 
@@ -422,12 +394,15 @@ class Variable(ScalarBase) :
     """
 
     def __init__(self, name, value, registry = None, addRegistry = True) :
+        super(Variable, self).__init__()
+ 
         self.name  = name
 
-        if isinstance(value,ScalarBase) : 
-            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
-        else : 
-            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
+        #if isinstance(value,ScalarBase) : 
+        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)            
+        #else : 
+        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -464,12 +439,15 @@ class Expression(ScalarBase) :
     :type addRegistry: bool
     """
     def __init__(self, name, value, registry = None, addRegistry = False) :
+        super(Expression, self).__init__()
+
         self.name  = name
 
-        if isinstance(value,ScalarBase) : 
-            self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                        
-        else : 
-            self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
+        self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value))
+        #if isinstance(value,ScalarBase) : 
+        #    self.expr = _Expression("expr_{}".format(name), value.expr.expression, registry=registry)                        
+        #else : 
+        #    self.expr  = _Expression("expr_{}".format(name), str(value), registry=registry)
             
         if registry != None: 
             self.registry = registry

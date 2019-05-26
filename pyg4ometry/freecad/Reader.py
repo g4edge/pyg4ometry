@@ -1,5 +1,3 @@
-import sys
-sys.path.append("/opt/local/libexec/freecad/lib/")
 import FreeCAD     as _fc
 import FreeCADGui  as _fcg
 _fcg.setupWithoutGUI()
