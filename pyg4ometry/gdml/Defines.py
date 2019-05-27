@@ -461,7 +461,7 @@ class Expression(ScalarBase) :
         return "Expression: {} = {}".format(self.name, str(self.expr))    
 
 class VectorBase(object) :
-    def __init__() :
+    def __init__(self) :
         pass
     
     def __add__(self,other) :
@@ -581,7 +581,10 @@ class Position(VectorBase) :
     '''
 
     def __init__(self,name,x,y,z, unit="mm", registry = None, addRegistry = True) :
+        super(Position, self).__init__()
+
         self.name = name
+
         if unit != None :
             self.unit = unit
         else :
@@ -613,6 +616,8 @@ class Rotation(VectorBase) :
     '''
 
     def __init__(self,name,rx,ry,rz, unit="rad", registry = None, addRegistry = True) :
+        super(Rotation, self).__init__()
+
         self.name = name
         if unit != None : 
             self.unit = unit
@@ -645,6 +650,8 @@ class Scale(VectorBase) :
     '''
 
     def __init__(self,name,sx,sy,sz, unit="none", registry = None, addRegistry = True) :
+        super(Scale, self).__init__()
+
         self.name = name
         if unit != None : 
             self.unit = unit 
