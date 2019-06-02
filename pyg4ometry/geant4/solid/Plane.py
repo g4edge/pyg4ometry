@@ -26,11 +26,11 @@ class Plane(_SolidBase): # point on plane is on z-axis
         self.mesh   = None
 
     def __repr__(self):
-        pass
+        return "Pane : {} [{},{},{}] {}".format(self.name, str(self.normal), 
+                                                str(self.dist[0]), str(self.dist[1]), str(self.dist[2]),
+                                                str(self.pDz))
 
     def pycsgmesh(self):
-#        if self.mesh :
-#            return self.mesh
 
         d = self.pDz
         c = _CSG.cube(radius=[10*d,10*d,d])
@@ -45,5 +45,5 @@ class Plane(_SolidBase): # point on plane is on z-axis
 
         c.translate(_Vector([0, 0, self.dist+d/dp]))
 
-        self.mesh = c
-        return self.mesh
+        mesh = c
+        return  mesh

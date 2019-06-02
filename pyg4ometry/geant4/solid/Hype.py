@@ -54,7 +54,7 @@ class Hype(_SolidBase):
         self.nstack      = nstack
 
         self.dependents = []
-        # self.checkParameters()
+        self.checkParameters()
         if registry:
             registry.addSolid(self)
 

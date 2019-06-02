@@ -68,7 +68,7 @@ class Cons(_SolidBase):
         if self.pRmin2.eval() > self.pRmax2.eval() :
             raise ValueError("Inner radius must be less than outer radius.")
         if self.pDPhi.eval() > _np.pi*2:
-            raise ValueError("pDTheta must be less than 2 pi")
+            raise ValueError("pDPhi must be less than 2 pi")
 
     def __repr__(self):
         return "Cons : {} {} {} {} {} {} {} {}".format(self.name, self.pRmin1, self.pRmax1,

@@ -17,7 +17,8 @@ def upgradeToStringExpression(reg, obj) :
     """
 
     if is_numlike(obj) :             
-        return str(obj)                  # number like so return string
+        # return str(obj)                  # number like so return string
+        return "%.15f" % obj
 
     if isinstance(obj,str) or isinstance(obj,unicode) : 
         if reg.defineDict.has_key(obj) : # not sure if this is needed   
@@ -106,7 +107,9 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_add_{}".format(v1,v2), '({}) + ({})'.format(v1, v2),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_add_{}".format(v1,v2), '({}) + ({})'.format(v1, v2),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
 
@@ -114,14 +117,18 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_sub_{}".format(v1,v2), '({}) - ({})'.format(v1, v2),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_sub_{}".format(v1,v2), '({}) - ({})'.format(v1, v2),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
     def __rsub__(self,other) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)        
         
-        v = Constant("var_{}_sub_{}".format(v2,v1), '({}) - ({})'.format(v2, v1),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_sub_{}".format(v2,v1), '({}) - ({})'.format(v2, v1),
+                     registry=self.registry,
+                     addRegistry=False)
         return v        
 
 
@@ -134,27 +141,35 @@ class ScalarBase(object) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_mul_{}".format(v1,v2), '({}) * ({})'.format(v1, v2),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_mul_{}".format(v1,v2), '({}) * ({})'.format(v1, v2),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
     def __div__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_div_{}".format(v1,v2), '({}) / ({})'.format(v1, v2),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_div_{}".format(v1,v2), '({}) / ({})'.format(v1, v2),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
     def __rdiv__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
-        v = Constant("var_{}_div_{}".format(v2,v1), '({}) / ({})'.format(v2, v1),registry=self.registry,addRegistry=False)
+        v = Constant("var_{}_div_{}".format(v2,v1), '({}) / ({})'.format(v2, v1),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
     def __neg__(self):
         v1 = upgradeToStringExpression(self.registry,self)
 
-        v = Constant("var_neg_{}".format(v1), '(-{})'.format(v1),registry=self.registry,addRegistry=False)
+        v = Constant("var_neg_{}".format(v1), '(-{})'.format(v1),
+                     registry=self.registry,
+                     addRegistry=False)
         return v
 
     __radd__ = __add__
@@ -172,6 +187,9 @@ class ScalarBase(object) :
         self.expr.name     = 'expr_{}'.format(name)
         self.expr.registry = self.registry
         self.registry.addDefine(self)
+
+    def setExpression(self, expr) : 
+        self.expr.expression = upgradeToStringExpression(self.registry,expr)
 
 def sin(arg) : 
     """

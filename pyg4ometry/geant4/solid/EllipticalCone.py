@@ -34,7 +34,8 @@ class EllipticalCone(_SolidBase):
 
         self.dependents = []
 
-        # self.checkParameters()
+        self.checkParameters()
+
         if registry:
             registry.addSolid(self)
 
@@ -44,7 +45,7 @@ class EllipticalCone(_SolidBase):
                                                         self.pzTopCut)
 
     def checkParameters(self):
-        if self.pzTopCut <= 0 or self.pzTopCut > self.zMax:
+        if self.pzTopCut.eval() <= -self.zMax.eval()/2.0 or self.pzTopCut.eval() > self.zMax.eval()/2.0:
             raise ValueError("zMax must be greater than pzTopCut")
 
     def pycsgmesh(self):
@@ -58,7 +59,7 @@ class EllipticalCone(_SolidBase):
         pySemiAxis = float(self.pySemiAxis)*luval
         zMax       = float(self.zMax)*luval
         pzTopCut   = float(self.pzTopCut)*luval
-
+        
         _log.info("ellipticalcone.pycsgmesh>")
         polygons = []
 

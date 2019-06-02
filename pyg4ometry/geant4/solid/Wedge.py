@@ -69,5 +69,3 @@ class Wedge(_SolidBase):
 
         return mesh
 
-    def gdmlWrite(self, gw, prepend):
-        pass
