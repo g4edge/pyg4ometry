@@ -10,7 +10,7 @@ units = {
     "km" : 1.0e6,
 
     # Angle units
-    "deg" : _np.pi/180.0,
+    "degree" : _np.pi/180.0,
     "rad" : 1.0,
 
     # Other

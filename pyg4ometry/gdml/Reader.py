@@ -52,7 +52,7 @@ class Reader(object) :
             column = int(ee.args[0].split()[-1])
             print column,fs[column-10:min(len(fs),column+100)]
             print "        ^^^^ "
-            exit()
+            raise _expat.ExpatError()
         _log.info('Reader.load> parse')
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
@@ -99,10 +99,10 @@ class Reader(object) :
                 except KeyError : 
                     coldim = 0
 
-                try : 
-                    values = def_attrs['values'].split()
-                except KeyError : 
-                    values = []
+                #                try : 
+                values = def_attrs['values'].split()
+                #               except KeyError : 
+                #                   values = []
                 
                 return (coldim, values)
 
@@ -117,9 +117,9 @@ class Reader(object) :
             elif(define_type == "variable"):
                 value = def_attrs['value']
                 _defines.Variable(name,value, self._registry)
-            elif(define_type == "expression"):
-                value = df.childNodes[0].nodeValue
-                _defines.Expression(name,value, self._registry)
+                #            elif(define_type == "expression"):
+                #                value = df.childNodes[0].nodeValue
+                #                _defines.Expression(name,value, self._registry)
             elif(define_type == "position"):                
                 (x,y,z,u) = getXYZ(def_attrs)
                 _defines.Position(name,x,y,z,u,self._registry)
@@ -128,14 +128,12 @@ class Reader(object) :
                 _defines.Rotation(name,x,y,z,u,self._registry)
             elif(define_type == "scale"):
                 (x,y,z,u) = getXYZ(def_attrs)
-                _defines.Scale(name,x,y,z,u,self._registry)                
+                _defines.Scale(name,x,y,z,u,self._registry)
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
             else:
-                print "Unrecognised define: ", define_type
-
-        pass
+                print "Warning : unrecognised define: ", define_type
 
     def parseVector(self, node, type = "position", addRegistry=True) : 
         try : 
@@ -170,8 +168,8 @@ class Reader(object) :
         elif type == 'scale' : 
             return _defines.Scale(name,x,y,z,self._registry,addRegistry)
         
-    def parseMatrix(self, node) : 
-        pass
+        #    def parseMatrix(self, node) : 
+        #        pass
 
     def parseMaterials(self, xmldoc):
         materials = []
