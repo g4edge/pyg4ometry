@@ -1,17 +1,25 @@
 from SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
 
 class OpticalSurface(_SolidBase):
-    def __init__(self, name, osfinish, model, type, value, register=True):
+
+    allowed_models    = []
+    allowed_types     = []
+    allowed_finishes  = []
+
+    def __init__(self, name, finish, model, type, value, registry, addRegistry=True):
         self.name   = name
-        self.type   = 'opticalsurface'
-        self.finish = osfinish
+        self.type   = 'OpticalSurface'
+        self.finish = finish
         self.model  = model
         self.osType = type
         self.value  = value
-        if register:
-            _registry.addSolid(self)
+        if addRegistery:
+            registry.addSolid(self)
 
+        self.property = {}
 
     def __repr__(self):
         return 'OpticalSurface : '+str(self.name)
+
+    def addProperty(self, name, property) : 
+        self.property[name] = property

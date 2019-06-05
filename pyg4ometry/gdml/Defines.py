@@ -460,7 +460,7 @@ class Expression(ScalarBase) :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-    def __init__(self, name, value, registry = None, addRegistry = False) :
+    def __init__(self, name, value, registry = None, addRegistry = True) :
         super(Expression, self).__init__()
 
         self.name  = name

@@ -85,10 +85,10 @@ class Paraboloid(_SolidBase):
 
             d = _Vector(x,y,z)
 
-            if not norm:
-                n = d
-            else:
-                n = _Vector(norm)
+#            if not norm:
+#                n = d
+#            else:
+#                n = _Vector(norm)
             vertices.append(_Vertex(c.plus(d), d))
 
 

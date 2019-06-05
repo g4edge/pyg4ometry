@@ -48,7 +48,7 @@ class MultiUnion(_SolidBase):
 
         
         # untransformed first solid
-        m1 = obj.pycsgmesh()
+        m1 = self.objects[0].pycsgmesh()
 
         for obj,tra2,idx in zip(self.objects[1:],self.transformations[1:],range(1,len(self.objects))) : 
             

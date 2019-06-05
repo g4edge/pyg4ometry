@@ -34,7 +34,7 @@ class EllipticalCone(_SolidBase):
 
         self.dependents = []
 
-        self.checkParameters()
+        # self.checkParameters()
 
         if registry:
             registry.addSolid(self)

@@ -1,4 +1,5 @@
 import PhysicalVolume as _PhysicalVolume
+import numpy as _np
 
 class ReplicaVolume(_PhysicalVolume.PhysicalVolume) : 
     '''
@@ -13,22 +14,38 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     :param offset: of grid
     '''
 
+    kXAxis = 1
+    kYAxis = 2
+    kZAxis = 3
+    kRho   = 4
+    kPhi   = 5
+
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
                  width, offset = 0, registry = None, addRegistry=True) : 
-        super(ReplicaVolume, self).__init__([0,0,0],[0,0,0],logicalVolime,name,motherVolume, registry, addRegistry)
+        # super(ReplicaVolume, self).__init__([0,0,0],[0,0,0],logicalVolume,name,motherVolume, registry, addRegistry)
 
-        self.logicalVolume       = logical
-        self.mother              = mother
+        self.logicalVolume       = logicalVolume
+        self.motherVolume        = motherVolume
+        self.motherVolume.add(self)
         self.axis                = axis
-        self.ncopies             = ncopies
+        self.nreplicas           = nreplicas
         self.width               = width
         self.offset              = offset
         
-        if registry  : 
-            pass
+        if addRegistry : 
+            registry.addPhysicalVolume(self)
+        
+        # Only the replica transforms are required
+        self.replicaTransforms = self.createReplicaTransforms()
 
-    def add(self) :
-        pass
+    def createReplicaTransforms(self) : 
+
+        transforms = []
+        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) : 
+            print v 
 
     def checkOverlap(self) :
         pass
+
+    def __repr__(self) :
+        return ""

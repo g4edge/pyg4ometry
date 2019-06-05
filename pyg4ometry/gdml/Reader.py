@@ -54,6 +54,7 @@ class Reader(object) :
             print "        ^^^^ "
             raise _expat.ExpatError()
         _log.info('Reader.load> parse')
+
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
         self.parseMaterials(xmldoc)
@@ -117,9 +118,9 @@ class Reader(object) :
             elif(define_type == "variable"):
                 value = def_attrs['value']
                 _defines.Variable(name,value, self._registry)
-                #            elif(define_type == "expression"):
-                #                value = df.childNodes[0].nodeValue
-                #                _defines.Expression(name,value, self._registry)
+            elif(define_type == "expression"):
+                value = df.childNodes[0].nodeValue
+                _defines.Expression(name,value, self._registry)
             elif(define_type == "position"):                
                 (x,y,z,u) = getXYZ(def_attrs)
                 _defines.Position(name,x,y,z,u,self._registry)
@@ -393,6 +394,11 @@ class Reader(object) :
                 self.parseIntersection(node) 
             elif solid_type == 'multiUnion' :      # solid test 031 
                 self.parseMultiUnion(node)
+            elif solid_type == 'opticalsurface' : 
+                self.parseOpticalSufrace(node) 
+            elif solid_type == 'loop' :           
+                pass
+                # self.parseSolidLoop(node)
             else : 
                 print solid_type, node.attributes['name'].value
 
@@ -1037,7 +1043,7 @@ class Reader(object) :
                 v4 = chNode.attributes['vertex4'].value
                 facet_list.append([v1,v2,v3,v4])
         
-        _g4.solid.TessellatedSolid(solid_name, facet_list, self._registry, _g4.solid.TessellatedSolid.Gdml)
+        _g4.solid.TessellatedSolid(solid_name, facet_list, self._registry, _g4.solid.TessellatedSolid.MeshType.Gdml)
         
     def parseUnion(self, node) : 
         solid_name = node.attributes['name'].value
@@ -1105,8 +1111,42 @@ class Reader(object) :
     def parseMultiUnion(self, node) :
         solid_name = node.attributes['name'].value
 
-        print 'multiunion NOT IMPLEMENTED'
+        muSolids        = [] 
+        transformations = []
 
+        for n in node.getElementsByTagName("multiUnionNode") :
+            if n.tagName == "multiUnionNode" : 
+                mu_node_name = n.attributes['name']
+
+                position = _defines.Position(mu_node_name.value+"_pos","0","0","0","mm",self._registry,False)
+                rotation = _defines.Rotation(mu_node_name.value+"_rot","0","0","0","mm",self._registry,False)     
+                # loop over child nodes 
+                for cn in n.childNodes :
+                    if cn.tagName == "solid" : 
+                        muNodeName = cn.attributes['ref'].value 
+                        muNodeSolid = self._registry.solidDict[muNodeName]
+                    elif cn.tagName == "positionref" :
+                        positionName = cn.attributes['ref'].value
+                        position     = self._registry.defineDict[positionName]
+                        print position
+                    elif cn.tagName == "rotationref" : 
+                        rotationName = cn.attributes['ref'].value
+                        rotation     = self._registry.defineDict[rotationName]
+                        print rotation
+                                                                
+                muSolids.append(muNodeSolid)
+                transformations.append([rotation,position])
+        
+        print transformations
+        _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry)
+        
+
+    def parseOpticalSurface(self, node) : 
+        pass
+
+    def parseSolidLoop(self, node) : 
+        pass
+        
     def parseStructure(self,xmldoc) :
         
         self.xmlstructure = xmldoc.getElementsByTagName("structure")[0]
@@ -1192,7 +1232,7 @@ class Reader(object) :
                         print 'Reader> param not implemented'                                        
 
                 # now logical is complete, check for overlaps
-                vol.checkOverlaps()
+                # vol.checkOverlaps()
 
             elif node_name == "loop" : 
                 print 'Reader> loop not implemented'                

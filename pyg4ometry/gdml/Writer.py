@@ -787,7 +787,7 @@ class Writer(object):
         oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('endinnerrad',self.getValueOrExprFromInstance(instance,'endinnerrad'))
         oe.setAttribute('endouterrad',self.getValueOrExprFromInstance(instance,'endouterrad'))
-        oe.setAttribute('zlen',   self.getValueOrExprFromInstance(instance,'zlen'))
+        oe.setAttribute('zlen',self.getValueOrExprFromInstance(instance,'zlen'))
         oe.setAttribute('phi',self.getValueOrExprFromInstance(instance,'phi'))
         oe.setAttribute('twistedangle',self.getValueOrExprFromInstance(instance,'twistedangle'))
         self.solids.appendChild(oe)    
