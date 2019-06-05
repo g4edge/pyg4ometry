@@ -1128,16 +1128,13 @@ class Reader(object) :
                     elif cn.tagName == "positionref" :
                         positionName = cn.attributes['ref'].value
                         position     = self._registry.defineDict[positionName]
-                        print position
                     elif cn.tagName == "rotationref" : 
                         rotationName = cn.attributes['ref'].value
                         rotation     = self._registry.defineDict[rotationName]
-                        print rotation
                                                                 
                 muSolids.append(muNodeSolid)
                 transformations.append([rotation,position])
         
-        print transformations
         _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry)
         
 
