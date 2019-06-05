@@ -349,11 +349,10 @@ class Writer(object):
                 raise IndexError("") #TODO: Add error message
 
         # check if variable is in registry #TODO indexed variables
-        try : 
             if self.registry.defineDict.has_key(var.name) :
                 return var.name
-        except AttributeError : 
-            return str(var)
+            else :
+                return var.expr.expression
 
         # Expression, Constant, Quantity or Variable
         if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
@@ -900,3 +899,27 @@ class Writer(object):
 
         self.solids.appendChild(oe)
 
+    def writeMultiUnion(self, instance) : 
+        oe  = self.doc.createElement('multiUnion')
+        oe.setAttribute('name',self.prepend + instance.name)        
+        
+        # loop over objects
+        for solid, trans, i in zip(instance.objects, instance.transformations , range(0,len(instance.objects))) : 
+            ce = self.doc.createElement('multiUnionNode')
+            ce.setAttribute('name',self.prepend + 'node-' +str(i)) 
+            cse = self.doc.createElement('solid')
+            cse.setAttribute('ref',solid.name)
+            cpe = self.doc.createElement('positionref')
+            cpe.setAttribute('ref',trans[1].name)
+            cre = self.doc.createElement('rotationref')
+            cre.setAttribute('ref',trans[0].name)
+            ce.appendChild(cse)
+        
+            if self.registry.defineDict.has_key(trans[1].name) :
+                ce.appendChild(cpe)
+            if self.registry.defineDict.has_key(trans[0].name) : 
+                ce.appendChild(cre)
+                
+            oe.appendChild(ce)
+
+        self.solids.appendChild(oe)
