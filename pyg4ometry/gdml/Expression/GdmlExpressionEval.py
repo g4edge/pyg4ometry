@@ -10,7 +10,6 @@ from GdmlExpressionVisitor import GdmlExpressionVisitor
 
 import math
 
-
 from IPython import embed
 import traceback
 
@@ -150,18 +149,3 @@ class ExpressionParser(object):
         result = self.visitor.visit(parse_tree)
 
         return result
-
-def main(argv):
-    if len(sys.argv) > 1:
-        with open(argv[1]) as filein:
-            string_input = filein.read()
-    else:
-        string_input = sys.stdin.read()
-
-    mydict = {"foo" : 1.5, "bar" : 10}
-
-    myvar = DynamicParameter(string_input, define_dict=mydict)
-    myvar.evaluate()
-
-if __name__ == '__main__':
-    main(sys.argv)
