@@ -1137,7 +1137,7 @@ class Reader(object) :
                 muSolids.append(muNodeSolid)
                 transformations.append([rotation,position])
         
-        _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry)
+        _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry, True)
         
     def parseOpticalSurface(self, node) : 
         pass
