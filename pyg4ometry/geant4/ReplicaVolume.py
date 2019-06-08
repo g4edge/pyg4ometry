@@ -22,7 +22,6 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
 
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
                  width, offset = 0, registry = None, addRegistry=True) : 
-        # super(ReplicaVolume, self).__init__([0,0,0],[0,0,0],logicalVolume,name,motherVolume, registry, addRegistry)
 
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume

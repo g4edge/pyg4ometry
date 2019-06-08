@@ -8,10 +8,10 @@ class ParametrisedVolume(_ReplicaVolume) :
     :param mother: volume logical volume 
     :param ncopies: number of parametrised volumes
     '''
-    def __init__(self, name, logical, mother, ncopies, registry=None,addRegistry=True) : 
-        # super(ParametrisedVolume, self).__init__([0,0,0],[0,0,0],logicalVolume,name,motherVolume, registry, addRegistry)       
-        self.logicalVolume       = logical
-        self.mother              = mother
+    def __init__(self, name, logicalVolume, mother, ncopies, registry=None,addRegistry=True) : 
+
+        self.logicalVolume       = logicalVolume
+        self.motherVolume        = motherVolume
         self.ncopies             = ncopies
         
         self.paramData           = [] 

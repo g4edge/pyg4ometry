@@ -1174,79 +1174,83 @@ class Reader(object) :
                     mat = _g4.MaterialPredefined(material)
         
                 vol = _g4.LogicalVolume(self._registry.solidDict[solid], mat, name, registry=self._registry)
-                
-                for chNode in node.childNodes :
-                    if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
-                        volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-
-                        # Name 
-                        try : 
-                            pvol_name = chNode.attributes["name"].value
-                        except KeyError : 
-                            pvol_name = volref+"_PV"
-                            
-                        _log.info('Reader.extractStructureNodeData> %s' % (pvol_name))
-                            
-                        # Position 
-                        _log.info('Reader.extractStructureNodeData> pv position %s' % (pvol_name))
-
-                        try : 
-                            position = self._registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
-                        except IndexError : 
-                            try : 
-                                position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
-                            except IndexError : 
-                                position = _defines.Position(pvol_name,"0","0","0","mm",self._registry,False)
-
-                        # Rotation
-                        _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
-                        try : 
-                            rotation = self._registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
-                        except IndexError : 
-                            try : 
-                                rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
-                            except IndexError : 
-                                rotation = _defines.Rotation(pvol_name,"0","0","0","rad",self._registry,False)
-
-                        # Scale 
-                        _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))
-                        try :                             
-                            scale = self._registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]
-                        except IndexError : 
-                            try : 
-                                scale = self.parseVector(chNode.getElementsByTagName("scale")[0],"scale",False)
-                            except IndexError : 
-                                scale = _defines.Scale("","1","1","1","none",self._registry,False)    
-
-                        # Create physical volume
-                        _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
-
-                        physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
-                                                       pvol_name, vol, registry=self._registry)
-
-                    elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
-                        print 'Reader> replica not implemented'                                        
-                    elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
-                        print 'Reader> param not implemented'                                        
-
-                # now logical is complete, check for overlaps
+                self.parsePhysicalVolumeChildren(node,vol)
                 # vol.checkOverlaps()
-
-            elif node_name == "loop" : 
-                print 'Reader> loop not implemented'                
+                
             elif node_name == "assembly" :
-                print 'Reader> assembly not implemented'
+                name = node.attributes["name"].value
+                vol  = _g4.AssemblyVolume(name,self._registry, True)
+                self.parsePhysicalVolumeChildren(node,vol)
+                # vol.checkOverlaps()
+                                         
             elif node_name == "bordersurface":
-                print 'Reader> bordersurface not implemented'
+                print "Reader> bordersurface not implemented"
             elif node_name == "skinsurface" : 
-                print 'Reader> skinsurface not implemented'
-
+                print "Reader> skinsurface not implemented"
+            elif node_name == "loop" : 
+                print "Reader> loop not implemented"
             else:
                 print "Unrecognised node: ", node_name
+        
+    def parsePhysicalVolumeChildren(self, node, vol) :
+        for chNode in node.childNodes :
+            if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
+                volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                # Name 
+                try : 
+                    pvol_name = chNode.attributes["name"].value
+                except KeyError : 
+                    pvol_name = volref+"_PV"
+                            
+                _log.info('Reader.extractStructureNodeData> %s' % (pvol_name))
+                            
+                # Position 
+                _log.info('Reader.extractStructureNodeData> pv position %s' % (pvol_name))
+
+                try : 
+                    position = self._registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
+                except IndexError : 
+                    try : 
+                        position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
+                    except IndexError : 
+                        position = _defines.Position(pvol_name,"0","0","0","mm",self._registry,False)
+
+                # Rotation
+                _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
+                try : 
+                    rotation = self._registry.defineDict[chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value]
+                except IndexError : 
+                    try : 
+                        rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
+                    except IndexError : 
+                        rotation = _defines.Rotation(pvol_name,"0","0","0","rad",self._registry,False)
+
+                # Scale 
+                _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))
+                try :                             
+                    scale = self._registry.defineDict[chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value]
+                except IndexError : 
+                    try : 
+                        scale = self.parseVector(chNode.getElementsByTagName("scale")[0],"scale",False)
+                    except IndexError : 
+                        scale = _defines.Scale("","1","1","1","none",self._registry,False)    
+
+                # Create physical volume
+                _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
+
+                physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
+                                               pvol_name, vol, registry=self._registry)
+                
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
+                print 'Reader> replicavol not implemented'                                        
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
+                print 'Reader> paramvol not implemented'                                        
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 
+                print 'Reader> divisionvol not implemented'
 
     def parseUserAuxInformation(self,xmldoc) :
         pass
-
     
     def extractUserAuxInformationNodeData(self,xmldoc) : 
         pass
