@@ -59,8 +59,12 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList  :
             _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
-            self.writeLogicalVolume(logical)
-            self.writeMaterial(logical.material)
+            if logical.type == "placement" : 
+                self.writeLogicalVolume(logical)
+                self.writeMaterial(logical.material)
+            elif logical.type == "assembly" : 
+                self.writeAssemblyVolume(logical)
+
 
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
@@ -265,6 +269,17 @@ class Writer(object):
         sr = self.doc.createElement('solidref')
         sr.setAttribute('ref', "{}{}".format(self.prepend, lv.solid.name))
         we.appendChild(sr)
+
+        for dv in lv.daughterVolumes :
+            dve = self.writePhysicalVolume(dv)
+            we.appendChild(dve)
+
+        self.structure.appendChild(we)
+
+    def writeAssemblyVolume(self, lv) :
+        we = self.doc.createElement('assembly')
+        # we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
+        we.setAttribute('name',"{}{}".format(self.prepend,lv.name))
 
         for dv in lv.daughterVolumes :
             dve = self.writePhysicalVolume(dv)
