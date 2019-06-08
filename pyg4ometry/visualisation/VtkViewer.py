@@ -64,7 +64,8 @@ class VtkViewer :
 
 
     def addLogicalVolume(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])) : 
-        self.addLogicalVolumeBounding(logical)
+        if logical.type == "placement" : 
+            self.addLogicalVolumeBounding(logical)
         self.addLogicalVolumeRecursive(logical, mrot, tra)
     
     def addLogicalVolumeBounding(self, logical) : 
@@ -85,7 +86,7 @@ class VtkViewer :
         _log.info('VtkViewer.addLogicalVolume> %s' % (logical.name))
 
         for pv in logical.daughterVolumes : 
-            _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))            
+
             # pv transform 
             pvmrot  = _transformation.tbxyz2matrix(pv.rotation.eval())
             pvtra   = _np.array(pv.position.eval())
@@ -94,6 +95,13 @@ class VtkViewer :
             new_mrot = mrot*pvmrot
             new_tra  = (_np.array(mrot.dot(pvtra)) + tra)[0]
   
+            if pv.logicalVolume.type == "placement" : 
+                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
+            elif pv.logicalVolume.type == "assembly" : 
+                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s' % (pv.name, pv.logicalVolume.name))
+                self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
+                continue
+
             # get the local vtkPolyData 
             _log.info('VtkViewer.addLogicalVolume> vtkPD')
             solidname = pv.logicalVolume.solid.name

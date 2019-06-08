@@ -13,8 +13,11 @@ class AssemblyVolume(object) :
 
     def __init__(self, name, registry=None, addRegistry=True) :
         super(AssemblyVolume, self).__init__()
+
+        # type 
+        self.type            = "assembly"
         
-        self.name = name 
+        self.name            = name 
         self.daughterVolumes = []
 
         if registry :
