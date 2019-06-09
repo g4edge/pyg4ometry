@@ -26,7 +26,7 @@ class LogicalVolume(object):
         super(LogicalVolume, self).__init__()
 
         # type 
-        self.type            = "placement"
+        self.type            = "logical"
         
         # geant4 required objects 
         self.solid           = solid
