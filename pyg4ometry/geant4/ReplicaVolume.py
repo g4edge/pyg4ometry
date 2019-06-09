@@ -24,13 +24,13 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
                  width, offset = 0, registry = None, addRegistry=True, wunit = "", ounit= "") : 
 
-        self.type = "replica"
-        
+        self.type = "replica"        
         self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
         self.motherVolume.add(self)
         self.axis                = axis
+
         self.nreplicas           = nreplicas
         self.width               = width
         self.offset              = offset
@@ -40,15 +40,16 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         if addRegistry : 
             registry.addPhysicalVolume(self)
         
-        # Only the replica transforms are required
-        self.replicaTransforms = self.createReplicaTransforms()
+        # Create replica meshes
+        self.replicaMeshes = self.createReplicaMeshes()
 
-    def createReplicaTransforms(self) : 
+    def createReplicaMeshes(self) : 
 
         transforms = []
         for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) :
             pass
-            #print v 
+
+        return None
 
     def checkOverlap(self) :
         pass
