@@ -24,7 +24,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
                  width, offset = 0, registry = None, addRegistry=True, wunit = "", ounit= "") : 
 
-        self.type = "replica"        
+        self.type                = "replica"        
         self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
@@ -41,18 +41,19 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
             registry.addPhysicalVolume(self)
         
         # Create replica meshes
-        self.replicaMeshes = self.createReplicaMeshes()
+        self.meshes = self.createReplicaMeshes()
 
     def createReplicaMeshes(self) : 
-
+        
+        nreplicas = int(self.nreplicas.eval())
+        offset    = self.offset.eval()
+        width     = self.width.eval()
+        
         transforms = []
-        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) :
+        for v in _np.arange(offset, offset+nreplicas*width,width) :
             pass
 
         return None
-
-    def checkOverlap(self) :
-        pass
 
     def __repr__(self) :
         return 'Replica volume : '+self.name+' '+str(self.axis)+' '+str(self.nreplicas)+' '+str(self.offset)+' '+str(self.width)

@@ -14,6 +14,7 @@ class ParametrisedVolume(_ReplicaVolume) :
         self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
+        self.motherVolume.add(self)
         self.ncopies             = ncopies
         
         self.paramData           = [] 
@@ -22,14 +23,11 @@ class ParametrisedVolume(_ReplicaVolume) :
             registry.addPhysicalVolume(self)
 
         # Create parameterised meshes
-        self.parametrisedMeshes = self.createParameterisedMeshes()
+        self.meshes = self.createParameterisedMeshes()
                     
     def createParametrisedMeshes(self) : 
         return None
             
-    def checkOverlap(self) :
-        pass
-
     def __repr__(self) :
         return ""
     
