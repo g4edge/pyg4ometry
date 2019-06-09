@@ -1,5 +1,8 @@
 import PhysicalVolume as _PhysicalVolume
 import numpy as _np
+import copy as _copy
+from   pyg4ometry.visualisation  import Mesh     as _Mesh
+
 
 class ReplicaVolume(_PhysicalVolume.PhysicalVolume) : 
     '''
@@ -41,7 +44,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
             registry.addPhysicalVolume(self)
         
         # Create replica meshes
-        self.meshes = self.createReplicaMeshes()
+        [self.meshes,self.transforms] = self.createReplicaMeshes()
 
     def createReplicaMeshes(self) : 
         
@@ -50,10 +53,36 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         width     = self.width.eval()
         
         transforms = []
-        for v in _np.arange(offset, offset+nreplicas*width,width) :
-            pass
+        meshes     = [] 
 
-        return None
+        for v in _np.arange(offset, offset+nreplicas*width,width) :
+            if self.axis == self.Axis.kXAxis :                 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[v,0,0]])
+
+            elif self.axis == self.Axis.kYAxis : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[0,v,0]])
+
+            elif self.axis == self.Axis.kYAxis : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[0,0,v]])
+
+            elif self.axis == self.Axis.kRho :
+
+                solid  = _copy.deepcopy(self.logicalVolume.solid)
+                solid.pRMin.expr.expression = str(v)
+                solid.pRMax.expr.expression = str(v+width)            
+                mesh   = _Mesh(solid)                                
+
+                meshes.append(mesh)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            elif self.axis == self.Axis.kPhi : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,v],[0,0,0]])                
+            
+        return [meshes,transforms]
 
     def __repr__(self) :
         return 'Replica volume : '+self.name+' '+str(self.axis)+' '+str(self.nreplicas)+' '+str(self.offset)+' '+str(self.width)

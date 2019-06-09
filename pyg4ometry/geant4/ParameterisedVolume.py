@@ -23,10 +23,10 @@ class ParametrisedVolume(_ReplicaVolume) :
             registry.addPhysicalVolume(self)
 
         # Create parameterised meshes
-        self.meshes = self.createParameterisedMeshes()
+        [self.meshes,self.transforms] = self.createParameterisedMeshes()
                     
     def createParametrisedMeshes(self) : 
-        return None
+        return None,None
             
     def __repr__(self) :
         return ""
