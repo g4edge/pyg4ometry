@@ -1259,24 +1259,33 @@ class Reader(object) :
                 elif dirNode.attributes.has_key('y') :
                     axis = _g4.ReplicaVolume.Axis.kYAxis
                 elif dirNode.attributes.has_key('z') :
-                    axis = _g4.ReplicaVolume.Axis.kXZxis 
+                    axis = _g4.ReplicaVolume.Axis.kZAxis 
                 elif dirNode.attributes.has_key('rho') :
                     axis = _g4.ReplicaVolume.Axis.kRho 
                 elif dirNode.attributes.has_key('phi') :
                     axis = _g4.ReplicaVolume.Axis.kPhi 
 
-                width     = repNode.getElementsByTagName("width")[0].attributes['value'].value
+                nreplicas  = _defines.Expression(pvol_name+"_nreplica",
+                                                 chNode.attributes['number'].value,
+                                                 self._registry)
+
                 width_u   = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
-                offset    = repNode.getElementsByTagName("offset")[0].attributes['value'].value
+                width     =  _defines.Expression(pvol_name+"_width",
+                                                 repNode.getElementsByTagName("width")[0].attributes['value'].value,
+                                                 self._registry)
+                
                 offset_u  = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
+                offset    = _defines.Expression(pvol_name+"offset",
+                                                repNode.getElementsByTagName("offset")[0].attributes['value'].value,
+                                                self._registry)
                 
                 rv = _g4.ReplicaVolume(pvol_name,
                                        self._registry.logicalVolumeDict[volref],
                                        vol,
                                        axis,
-                                       int(nreplica), 
-                                       float(width),
-                                       float(offset),
+                                       nreplicas, 
+                                       width,
+                                       offset,
                                        self._registry,
                                        True,
                                        width_u,
