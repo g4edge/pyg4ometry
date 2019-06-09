@@ -1160,9 +1160,10 @@ class Reader(object) :
         self._registry.setWorld(worldLvName)
 
     def extractStructureNodeData(self, node) : 
-        node_name = node.tagName 
         
         if node.nodeType == node.ELEMENT_NODE : 
+            node_name = node.tagName 
+
             if node_name == "volume" :
                 name      = node.attributes["name"].value
                 material  = node.getElementsByTagName("materialref")[0].attributes["ref"].value
