@@ -10,6 +10,8 @@ class ParametrisedVolume(_ReplicaVolume) :
     '''
     def __init__(self, name, logicalVolume, mother, ncopies, registry=None,addRegistry=True) : 
 
+        self.type                = "parametrised" 
+
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
         self.ncopies             = ncopies

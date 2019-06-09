@@ -65,7 +65,6 @@ class Writer(object):
             elif logical.type == "assembly" : 
                 self.writeAssemblyVolume(logical)
 
-
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
         we = self.doc.createElement("world")

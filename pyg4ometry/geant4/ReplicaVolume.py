@@ -14,15 +14,19 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     :param offset: of grid
     '''
 
-    kXAxis = 1
-    kYAxis = 2
-    kZAxis = 3
-    kRho   = 4
-    kPhi   = 5
+    class Axis :
+        kXAxis = 1
+        kYAxis = 2
+        kZAxis = 3
+        kRho   = 4
+        kPhi   = 5
 
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
-                 width, offset = 0, registry = None, addRegistry=True) : 
+                 width, offset = 0, registry = None, addRegistry=True, wunit = "", ounit= "") : 
 
+        self.type = "replica"
+        
+        self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
         self.motherVolume.add(self)
@@ -30,7 +34,9 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         self.nreplicas           = nreplicas
         self.width               = width
         self.offset              = offset
-        
+        self.wunit               = wunit
+        self.ounit               = ounit
+
         if addRegistry : 
             registry.addPhysicalVolume(self)
         
@@ -40,11 +46,12 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     def createReplicaTransforms(self) : 
 
         transforms = []
-        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) : 
-            print v 
+        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) :
+            pass
+            #print v 
 
     def checkOverlap(self) :
         pass
 
     def __repr__(self) :
-        return ""
+        return 'Replica volume : '+self.name+' '+str(self.axis)+' '+str(self.nreplicas)+' '+str(self.offset)+' '+str(self.width)

@@ -1243,7 +1243,45 @@ class Reader(object) :
                                                pvol_name, vol, registry=self._registry)
                 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
-                print 'Reader> replicavol not implemented'                                        
+                nreplica  = chNode.attributes['number'].value
+                volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                # Name 
+                try : 
+                    pvol_name = chNode.attributes["name"].value
+                except KeyError : 
+                    pvol_name = volref+"_ReplicaPV"
+                                
+                repNode   = chNode.getElementsByTagName("replicate_along_axis")[0]
+                dirNode   = repNode.getElementsByTagName("direction")[0]
+                if dirNode.attributes.has_key('x') : 
+                    axis = _g4.ReplicaVolume.Axis.kXAxis 
+                elif dirNode.attributes.has_key('y') :
+                    axis = _g4.ReplicaVolume.Axis.kYAxis
+                elif dirNode.attributes.has_key('z') :
+                    axis = _g4.ReplicaVolume.Axis.kXZxis 
+                elif dirNode.attributes.has_key('rho') :
+                    axis = _g4.ReplicaVolume.Axis.kRho 
+                elif dirNode.attributes.has_key('phi') :
+                    axis = _g4.ReplicaVolume.Axis.kPhi 
+
+                width     = repNode.getElementsByTagName("width")[0].attributes['value'].value
+                width_u   = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
+                offset    = repNode.getElementsByTagName("offset")[0].attributes['value'].value
+                offset_u  = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
+                
+                rv = _g4.ReplicaVolume(pvol_name,
+                                       self._registry.logicalVolumeDict[volref],
+                                       vol,
+                                       axis,
+                                       int(nreplica), 
+                                       float(width),
+                                       float(offset),
+                                       self._registry,
+                                       True,
+                                       width_u,
+                                       offset_u)
+                                                       
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
                 print 'Reader> paramvol not implemented'                                        
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 
