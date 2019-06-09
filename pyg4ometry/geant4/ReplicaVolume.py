@@ -55,7 +55,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         transforms = []
         meshes     = [] 
 
-        for v in _np.arange(offset, offset+nreplicas*width,width) :
+        for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
             if self.axis == self.Axis.kXAxis :                 
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[v,0,0]])
@@ -70,7 +70,11 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
 
             elif self.axis == self.Axis.kRho :
 
-                solid  = _copy.deepcopy(self.logicalVolume.solid)
+                # Copy solid so we don't change the original
+                solid       = _copy.deepcopy(self.logicalVolume.solid)
+                # Needs to a good solid name for optimisiation in VtkViewer
+                solid.name  = self.name+"_"+solid.name+"_"+str(i)
+                # Must be a tubs 
                 solid.pRMin.expr.expression = str(v)
                 solid.pRMax.expr.expression = str(v+width)            
                 mesh   = _Mesh(solid)                                
