@@ -59,7 +59,7 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList  :
             _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
-            if logical.type == "placement" : 
+            if logical.type == "logical" : 
                 self.writeLogicalVolume(logical)
                 self.writeMaterial(logical.material)
             elif logical.type == "assembly" : 
