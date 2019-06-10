@@ -33,6 +33,7 @@ class Registry:
         self.volumeTypeCountDict          = {}               # logical, physical
         self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
+        self.userInfo                     = []               # Ordered list for the user info, which is not processed
 
         self.expressionParser = None
 
@@ -173,6 +174,9 @@ class Registry:
                                                            "parameter")
         except KeyError:
             self.parameterDict[parameter.name] = parameter
+
+    def addAuxiliary(self, auxiliary):
+            self.userInfo.append(auxiliary)
 
     def addDefine(self, define) :
         """
