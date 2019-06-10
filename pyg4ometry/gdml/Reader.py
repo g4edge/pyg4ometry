@@ -60,6 +60,7 @@ class Reader(object) :
         self.parseMaterials(xmldoc)
         self.parseSolids(xmldoc)
         self.parseStructure(xmldoc)
+        self.parseUserInfo(xmldoc)
         self.parseUserAuxInformation(xmldoc)
         
         
@@ -321,6 +322,38 @@ class Reader(object) :
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
+
+    def parseUserInfo(self,xmldoc):
+        self.userinfo = xmldoc.getElementsByTagName("userinfo")[0]
+        for chnode in self.userinfo.childNodes:
+            if chnode.nodeType != chnode.ELEMENT_NODE:
+                # probably a comment node, skip
+                continue
+            self._parseAuxiliary(chnode)
+
+    def _parseAuxiliary(self, xmlnode, register=True):
+
+        aux_list = []
+        for chnode in xmlnode.childNodes:
+            if chnode.nodeType != chnode.ELEMENT_NODE:
+                # probably a comment node, skip
+                continue
+            aux_list.append(self._parseAuxiliary(chnode, register=False))
+
+        if xmlnode.tagName == "auxiliary":
+            aux_type = xmlnode.attributes['auxtype'].value
+            aux_value = xmlnode.attributes['auxvalue'].value
+
+            try :
+                aux_unit = xmlnode.attributes['auxunit'].value
+            except KeyError :
+                aux_unit = ""
+
+            registry = self._registry if register else None
+            aux = _defines.Auxiliary(aux_type, aux_value ,registry, aux_unit)
+            for ax in aux_list:
+                aux.addSubAuxiliary(ax)
+            return aux
 
     def parseSolids(self,xmldoc) :
 
@@ -1172,8 +1205,19 @@ class Reader(object) :
                     mat = self._registry.materialDict[material]
                 else:
                     mat = _g4.MaterialPredefined(material)
-        
-                vol = _g4.LogicalVolume(self._registry.solidDict[solid], mat, name, registry=self._registry)
+
+                aux_list = []
+                try:
+                    for aux_node in node.childNodes:
+                        if aux_node.tagName == "auxiliary":
+                            print name, " AYE"
+                            aux = self._parseAuxiliary(aux_node, register=False)
+                            aux_list.append(aux)
+                except IndexError:
+                    pass
+
+                vol = _g4.LogicalVolume(self._registry.solidDict[solid], mat, name, registry=self._registry,
+                                        auxiliary=aux_list)
                 
                 for chNode in node.childNodes :
                     if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol" :
