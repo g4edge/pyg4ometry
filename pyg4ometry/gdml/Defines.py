@@ -757,3 +757,35 @@ class Matrix :
             return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
         else :
             return self.values_asarray[key]
+
+
+class Auxiliary(object) :
+    """
+    Auxiliary information container object
+
+    :param value: string expression
+    :type value: float,str,Constant,Quantity,Variable
+    :param registry: for storing define
+    :type registry: Registry
+    """
+
+    # Note that no interpreting or processing is done for auxiliary information
+    def __init__(self, auxtype, auxvalue, registry=None, unit="") :
+        self.auxtype = str(auxtype)
+        self.auxvalue = str(auxvalue)
+        self.auxunit = str(unit)
+        self.subaux = []
+        if registry != None:
+            registry.addAuxiliary(self)
+
+    def addSubAuxiliary(self, aux):
+        """
+        Add a sub-auxiliary inside the scope of the current auxiliary
+
+        :param aux: auxiliry definition
+        :type aux: object, gdml.Defines.Auxiliary
+        """
+        if not isinstance(aux, Auxiliary):
+            raise ValueError("Added object must be a gdml.Defines.Auxiliary instance.")
+        self.subaux.append(aux)
+
