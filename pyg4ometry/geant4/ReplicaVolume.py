@@ -1,5 +1,8 @@
 import PhysicalVolume as _PhysicalVolume
 import numpy as _np
+import copy as _copy
+from   pyg4ometry.visualisation  import Mesh     as _Mesh
+
 
 class ReplicaVolume(_PhysicalVolume.PhysicalVolume) : 
     '''
@@ -14,38 +17,76 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     :param offset: of grid
     '''
 
-    kXAxis = 1
-    kYAxis = 2
-    kZAxis = 3
-    kRho   = 4
-    kPhi   = 5
+    class Axis :
+        kXAxis = 1
+        kYAxis = 2
+        kZAxis = 3
+        kRho   = 4
+        kPhi   = 5
 
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
-                 width, offset = 0, registry = None, addRegistry=True) : 
-        # super(ReplicaVolume, self).__init__([0,0,0],[0,0,0],logicalVolume,name,motherVolume, registry, addRegistry)
+                 width, offset = 0, registry = None, addRegistry=True, wunit = "", ounit= "") : 
 
+        self.type                = "replica"        
+        self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
         self.motherVolume.add(self)
         self.axis                = axis
+
         self.nreplicas           = nreplicas
         self.width               = width
         self.offset              = offset
-        
+        self.wunit               = wunit
+        self.ounit               = ounit
+
         if addRegistry : 
             registry.addPhysicalVolume(self)
         
-        # Only the replica transforms are required
-        self.replicaTransforms = self.createReplicaTransforms()
+        # Create replica meshes
+        [self.meshes,self.transforms] = self.createReplicaMeshes()
 
-    def createReplicaTransforms(self) : 
-
+    def createReplicaMeshes(self) : 
+        
+        nreplicas = int(self.nreplicas.eval())
+        offset    = self.offset.eval()
+        width     = self.width.eval()
+        
         transforms = []
-        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) : 
-            print v 
+        meshes     = [] 
 
-    def checkOverlap(self) :
-        pass
+        for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
+            if self.axis == self.Axis.kXAxis :                 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[v,0,0]])
+
+            elif self.axis == self.Axis.kYAxis : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[0,v,0]])
+
+            elif self.axis == self.Axis.kYAxis : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,0],[0,0,v]])
+
+            elif self.axis == self.Axis.kRho :
+
+                # Copy solid so we don't change the original
+                solid       = _copy.deepcopy(self.logicalVolume.solid)
+                # Needs to a good solid name for optimisiation in VtkViewer
+                solid.name  = self.name+"_"+solid.name+"_"+str(i)
+                # Must be a tubs 
+                solid.pRMin.expr.expression = str(v)
+                solid.pRMax.expr.expression = str(v+width)            
+                mesh   = _Mesh(solid)                                
+
+                meshes.append(mesh)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            elif self.axis == self.Axis.kPhi : 
+                meshes.append(self.logicalVolume.mesh)
+                transforms.append([[0,0,v],[0,0,0]])                
+            
+        return [meshes,transforms]
 
     def __repr__(self) :
-        return ""
+        return 'Replica volume : '+self.name+' '+str(self.axis)+' '+str(self.nreplicas)+' '+str(self.offset)+' '+str(self.width)

@@ -60,8 +60,11 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList  :
             _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
-            self.writeLogicalVolume(logical)
-            self.writeMaterial(logical.material)
+            if logical.type == "placement" : 
+                self.writeLogicalVolume(logical)
+                self.writeMaterial(logical.material)
+            elif logical.type == "assembly" : 
+                self.writeAssemblyVolume(logical)
 
         for auxiliary in registry.userInfo:
             self.writeAuxiliary(auxiliary)
@@ -297,6 +300,16 @@ class Writer(object):
         else:
             self.userinfo.appendChild(ax)
 
+    def writeAssemblyVolume(self, lv) :
+        we = self.doc.createElement('assembly')
+        # we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
+        we.setAttribute('name',"{}{}".format(self.prepend,lv.name))
+
+        for dv in lv.daughterVolumes :
+            dve = self.writePhysicalVolume(dv)
+            we.appendChild(dve)
+
+        self.structure.appendChild(we)
 
     def GetDefinesFromPV(self, instance, variable):
         if not hasattr(instance, variable):

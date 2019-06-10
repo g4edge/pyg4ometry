@@ -21,6 +21,9 @@ class PhysicalVolume(object):
         '''
         
         super(PhysicalVolume, self).__init__()
+
+        # type 
+        self.type         = "placement"
     
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines

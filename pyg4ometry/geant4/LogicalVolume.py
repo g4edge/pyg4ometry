@@ -26,6 +26,9 @@ class LogicalVolume(object):
     def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super(LogicalVolume, self).__init__()
 
+        # type 
+        self.type            = "logical"
+        
         # geant4 required objects 
         self.solid           = solid
  

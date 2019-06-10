@@ -140,7 +140,7 @@ class Registry:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
 
 
-    def addAssemblyVolume(self, volume) : 
+    def addAssemblyVolume(self, volume) :         
         self.assemblyVolumeDict[volume.name] = volume 
 
     def addReplicaVolume(self,volume):
