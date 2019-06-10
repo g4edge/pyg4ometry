@@ -1207,7 +1207,7 @@ class Reader(object) :
                 else:
                     mat = _g4.MaterialPredefined(material)
 
-               aux_list = []
+                aux_list = []
                 try:
                     for aux_node in node.childNodes:
                         if aux_node.tagName == "auxiliary":
