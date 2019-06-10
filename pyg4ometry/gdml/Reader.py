@@ -324,7 +324,12 @@ class Reader(object) :
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
 
     def parseUserInfo(self,xmldoc):
-        self.userinfo = xmldoc.getElementsByTagName("userinfo")[0]
+        try:
+            self.userinfo = xmldoc.getElementsByTagName("userinfo")[0]
+        except IndexError:
+            self.userinfo = None
+            return
+
         for chnode in self.userinfo.childNodes:
             if chnode.nodeType != chnode.ELEMENT_NODE:
                 # probably a comment node, skip
