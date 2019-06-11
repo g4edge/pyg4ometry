@@ -111,7 +111,8 @@ class LogicalVolume(object):
             for aux in auxiliary:
                 self.addAuxiliaryInfo(aux)
         else:
-            self.auxiliary.append(auxiliary)
+            if auxiliary:
+                self.auxiliary.append(auxiliary)
 
     def extent(self) : 
         _log.info('LogicalVolume.extent> %s ' % (self.name))
