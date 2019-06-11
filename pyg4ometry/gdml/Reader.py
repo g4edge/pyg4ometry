@@ -1293,7 +1293,14 @@ class Reader(object) :
                                        offset_u)
                                                        
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
-                print 'Reader> paramvol not implemented'                                        
+                ncopies = chNode.attributes['ncopies'].value
+                volref  = chNode.getElementsByTagName('volumeref')[0].attributes['ref'].value
+                pps     = chNode.getElementsByTagName('parameterised_position_size')
+
+                for ppsChNode in pps : 
+                    pass
+
+
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 
                 print 'Reader> divisionvol not implemented'
 
