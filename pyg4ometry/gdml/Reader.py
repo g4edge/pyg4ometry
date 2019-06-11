@@ -102,9 +102,7 @@ class Reader(object) :
         self.parseSolids(xmldoc)
         self.parseStructure(xmldoc)
         self.parseUserInfo(xmldoc)
-        self.parseUserAuxInformation(xmldoc)
-        
-        
+
         data.close()
 
     def getRegistry(self) : 
@@ -1386,9 +1384,3 @@ class Reader(object) :
                 print 'Reader> paramvol not implemented'                                        
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 
                 print 'Reader> divisionvol not implemented'
-
-    def parseUserAuxInformation(self,xmldoc) :
-        pass
-    
-    def extractUserAuxInformationNodeData(self,xmldoc) : 
-        pass
