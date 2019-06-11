@@ -1,6 +1,7 @@
 import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
 from   pyg4ometry.pycsg.core import CSG    as _CSG
+#from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
 from   pyg4ometry.visualisation  import Mesh     as _Mesh
 import solid                     as                 _solid
@@ -44,6 +45,9 @@ class LogicalVolume(object):
 
         # geometry mesh
         self.mesh            = _Mesh(self.solid)
+
+        self.auxiliary = []
+        self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 
         # registry logic
         if registry and addRegistry:
@@ -98,7 +102,17 @@ class LogicalVolume(object):
     def setSolid(self, solid) : 
         self.solid = solid 
         self.mesh  = _Mesh(self.solid)        
-                
+
+
+    def addAuxiliaryInfo(self, auxiliary):
+        #if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):
+        #    raise ValueError("Auxiliary infromation must be a gdml.Defines.Auxiliary instance.")
+        if isinstance(auxiliary, list) or isinstance(auxiliary, tuple):
+            for aux in auxiliary:
+                self.addAuxiliaryInfo(aux)
+        else:
+            self.auxiliary.append(auxiliary)
+
     def extent(self) : 
         _log.info('LogicalVolume.extent> %s ' % (self.name))
         

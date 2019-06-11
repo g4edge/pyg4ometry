@@ -24,6 +24,7 @@ class Writer(object):
         self.materials = self.top.appendChild(self.doc.createElement('materials'))
         self.solids    = self.top.appendChild(self.doc.createElement('solids'))
         self.structure = self.top.appendChild(self.doc.createElement('structure'))
+        self.userinfo  = self.top.appendChild(self.doc.createElement('userinfo'))
         self.setup     = self.top.appendChild(self.doc.createElement('setup'))
 
         self.materials_written = []
@@ -64,6 +65,10 @@ class Writer(object):
                 self.writeMaterial(logical.material)
             elif logical.type == "assembly" : 
                 self.writeAssemblyVolume(logical)
+
+        for auxiliary in registry.userInfo:
+            self.writeAuxiliary(auxiliary)
+
 
         self.setup.setAttribute("name","Default")
         self.setup.setAttribute("version","1.0")
@@ -269,11 +274,31 @@ class Writer(object):
         sr.setAttribute('ref', "{}{}".format(self.prepend, lv.solid.name))
         we.appendChild(sr)
 
+        if lv.auxiliary:
+            for aux in lv.auxiliary:
+                self.writeAuxiliary(aux, parent=we)
+
         for dv in lv.daughterVolumes :
             dve = self.writePhysicalVolume(dv)
             we.appendChild(dve)
 
         self.structure.appendChild(we)
+
+    def writeAuxiliary(self, aux, parent=None):
+
+        ax = self.doc.createElement('auxiliary')
+        ax.setAttribute('auxtype', aux.auxtype)
+        ax.setAttribute('auxvalue', aux.auxvalue)
+        if aux.auxunit:
+            ax.setAttribute('auxunit', aux.auxunit)
+
+        for sx in aux.subaux:
+            self.writeAuxiliary(sx, ax)
+
+        if parent is not None:
+            parent.appendChild(ax)
+        else:
+            self.userinfo.appendChild(ax)
 
     def writeAssemblyVolume(self, lv) :
         we = self.doc.createElement('assembly')
