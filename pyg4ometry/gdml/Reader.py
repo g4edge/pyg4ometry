@@ -31,10 +31,51 @@ class Reader(object) :
         # open file 
         data  = open(self.filename)
 
+        # Render out the ENTITY includes
+        # Only look at the starting block - no need to iterate over the whole file
+        start_block = ""
+        for line in data:
+            if line.startswith("<gdml"):
+                break
+            start_block += line
+        data.seek(0) # Reset the file iterator
+
+        # Extract the information from entities and store in a dict
+        entities = {}
+        en_block = _re.search('<!DOCTYPE(\s+)gdml([\s\S]*)>', start_block)
+
+        try:
+            ents = en_block.group(0).split("<")
+        except AttributeError: # No entities
+            ents = []
+
+        for en in ents:
+            if "ENTITY" in en:
+                name =  en.split()[1]
+                filename = _re.search(r'[^\"]+', en.split()[3]).group(0)
+                with open(filename, 'r') as content_file:
+                    #ensure the contents are properly prepared for parsing
+                    contents = str()
+                    for l in content_file:
+                        l = l.strip()
+                        if(l.endswith(">")):
+                            end=""
+                        else:
+                            end=" "
+                        if(len(l) != 0):
+                            contents += (l+end)
+                entities[name] = (filename, contents)
+
         #remove all newline charecters and whitespaces outside tags
         fs = str()
         for l in data:
             l = l.strip()
+            # Render out entities in those lines
+            if l.startswith("&"):
+                name =  _re.search(r'&([\s\S]+)\;', l).group(1)
+                fs += entities[name][1]
+                continue
+
             if(l.endswith(">")):
                 end=""
             else:
