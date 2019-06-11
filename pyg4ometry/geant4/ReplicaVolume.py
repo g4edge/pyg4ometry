@@ -55,7 +55,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         transforms = []
         meshes     = [] 
 
-        for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
+        for v,i in zip(_np.arange(-width*(nreplicas-1)*0.5,  width*(nreplicas+1)*0.5, width),range(0,nreplicas,1)) :
             if self.axis == self.Axis.kXAxis :                 
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[v,0,0]])
@@ -68,7 +68,8 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,0,v]])
 
-            elif self.axis == self.Axis.kRho :
+        for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
+            if self.axis == self.Axis.kRho :
 
                 # Copy solid so we don't change the original
                 solid       = _copy.deepcopy(self.logicalVolume.solid)
