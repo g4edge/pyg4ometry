@@ -83,7 +83,7 @@ class VtkViewer:
             solid_name = pv.logicalVolume.solid.name
             pv_name = pv.name
 
-            if pv.type == "placement" :
+            if pv.type == "placement":
                 # pv transform
                 pvmrot = _transformation.tbxyz2matrix(pv.rotation.eval())
                 pvtra = _np.array(pv.position.eval())
@@ -96,8 +96,8 @@ class VtkViewer:
                 self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, self.filters, 
                              self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
-            elif pv.type == "replica" :
-                for mesh,trans in zip(pv.meshes,pv.transforms)  : 
+            elif pv.type == "replica":
+                for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0])
                     pvtra = _np.array(trans[1])
@@ -108,9 +108,20 @@ class VtkViewer:
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes, self.filters, 
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)                    
-            elif pv.type == "parametrised" :
-                pass
-            elif pv.type == "division" : 
+            elif pv.type == "parametrised":
+                for mesh, trans in zip(pv.meshes, pv.transforms):
+                    # pv transform
+                    pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
+                    pvtra = _np.array(trans[1].eval())
+
+                    # pv compound transform
+                    new_mrot = mrot * pvmrot
+                    new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
+
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
+                                 self.filters,
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
+            elif pv.type == "division":
                 pass
 
 

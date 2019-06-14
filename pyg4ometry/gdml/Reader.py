@@ -12,9 +12,9 @@ import pyg4ometry.visualisation                   as _vtk
 from   pyg4ometry.geant4.Registry import registry as _registry
 from   pyg4ometry.geant4 import Expression        as _Expression
 
-class Reader(object) :
+class Reader(object):
 
-    def __init__(self, fileName, registryOn = True) :
+    def __init__(self, fileName, registryOn = True):
         super(Reader, self).__init__()
         self.filename   = fileName    
         self.registryOn = registryOn    
@@ -25,7 +25,7 @@ class Reader(object) :
         # load file
         self.load()
 
-    def load(self) : 
+    def load(self):
 
         _log.info('Reader.load>')
         # open file 
@@ -1331,42 +1331,42 @@ class Reader(object) :
                 physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
                                                pvol_name, vol, registry=self._registry)
                 
-            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol" : 
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol":
                 nreplica  = chNode.attributes['number'].value
                 volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name 
-                try : 
+                try:
                     pvol_name = chNode.attributes["name"].value
-                except KeyError : 
+                except KeyError:
                     pvol_name = volref+"_ReplicaPV"
                                 
                 repNode   = chNode.getElementsByTagName("replicate_along_axis")[0]
                 dirNode   = repNode.getElementsByTagName("direction")[0]
-                if dirNode.attributes.has_key('x') : 
+                if dirNode.attributes.has_key('x'):
                     axis = _g4.ReplicaVolume.Axis.kXAxis 
-                elif dirNode.attributes.has_key('y') :
+                elif dirNode.attributes.has_key('y'):
                     axis = _g4.ReplicaVolume.Axis.kYAxis
-                elif dirNode.attributes.has_key('z') :
+                elif dirNode.attributes.has_key('z'):
                     axis = _g4.ReplicaVolume.Axis.kZAxis 
-                elif dirNode.attributes.has_key('rho') :
+                elif dirNode.attributes.has_key('rho'):
                     axis = _g4.ReplicaVolume.Axis.kRho 
-                elif dirNode.attributes.has_key('phi') :
+                elif dirNode.attributes.has_key('phi'):
                     axis = _g4.ReplicaVolume.Axis.kPhi 
 
                 nreplicas  = _defines.Expression(pvol_name+"_nreplica",
                                                  chNode.attributes['number'].value,
-                                                 self._registry)
+                                                 self._registry, False)
 
                 width_u   = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
                 width     =  _defines.Expression(pvol_name+"_width",
                                                  repNode.getElementsByTagName("width")[0].attributes['value'].value,
-                                                 self._registry)
+                                                 self._registry, False)
                 
                 offset_u  = repNode.getElementsByTagName("offset")[0].attributes['unit'].value
                 offset    = _defines.Expression(pvol_name+"offset",
                                                 repNode.getElementsByTagName("offset")[0].attributes['value'].value,
-                                                self._registry)
+                                                self._registry, False)
                 
                 rv = _g4.ReplicaVolume(pvol_name,
                                        self._registry.logicalVolumeDict[volref],
@@ -1381,12 +1381,72 @@ class Reader(object) :
                                        offset_u)
                                                        
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
-                ncopies = chNode.attributes['ncopies'].value
-                volref  = chNode.getElementsByTagName('volumeref')[0].attributes['ref'].value
-                pps     = chNode.getElementsByTagName('parameterised_position_size')
 
-                for ppsChNode in pps : 
-                    pass
+
+                volref  = chNode.getElementsByTagName('volumeref')[0].attributes['ref'].value
+
+                # Name
+                try:
+                    pvol_name = chNode.attributes["name"].value
+                except KeyError:
+                    pvol_name = volref+"_ParamPV"
+
+
+                ncopies= _defines.Expression(pvol_name+"_ncopies",
+                                             chNode.attributes['ncopies'].value,
+                                             self._registry, False)
+
+                pps     = chNode.getElementsByTagName('parameterised_position_size')[0]
+
+
+                # transformations
+                transforms = []
+
+                # dimensions
+                paramData = []
+
+                for ppsChNode in pps.childNodes:
+
+                    # default position
+                    position = _defines.Position(pvol_name, "0", "0", "0", "mm", self._registry, False)
+
+                    # default rotation
+                    rotation = _defines.Rotation(pvol_name, "0", "0", "0", "rad", self._registry, False)
+
+
+                    for ppsChNodeTag in ppsChNode.childNodes:
+                        if ppsChNodeTag.tagName == "position":
+                            position = self.parseVector(ppsChNodeTag, "position", False)
+                        elif ppsChNodeTag.tagName == "positionref":
+                            position = self._registry.defineDict[ppsChNodeTag.attributes["ref"].value]
+                        elif ppsChNodeTag.tagName == "rotation":
+                            rotation = self.parseVector(ppsChNodeTag, "rotation", False)
+                        elif ppsChNodeTag.tagName == "rotationref":
+                            rotation = self._registry.defineDict[ppsChNodeTag.attributes["ref"].value]
+                        elif ppsChNodeTag.tagName == "box_dimensions":
+                            x = _defines.Expression(pvol_name + '_Box_pX', '{}'.format(ppsChNodeTag.attributes['x'].value),self._registry, False)
+                            y = _defines.Expression(pvol_name + '_Box_pY', '{}'.format(ppsChNodeTag.attributes['y'].value),self._registry, False)
+                            z = _defines.Expression(pvol_name + '_Box_pZ', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                unit = node.attributes['lunit'].value
+                            else :
+                                unit = "mm"
+
+                            dim = _g4.ParameterisedVolume.BoxDimensions(x,y,z)
+
+
+                    transforms.append([rotation,position])
+                    paramData.append(dim)
+
+                # create parameterised volume
+                _g4.ParameterisedVolume(pvol_name,
+                                        self._registry.logicalVolumeDict[volref],
+                                        vol,
+                                        ncopies,
+                                        paramData,
+                                        transforms,
+                                        self._registry,
+                                        addRegistry=True)
 
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 

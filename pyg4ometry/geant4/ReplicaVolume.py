@@ -1,8 +1,8 @@
 import PhysicalVolume as _PhysicalVolume
-import numpy as _np
-import copy as _copy
 from   pyg4ometry.visualisation  import Mesh     as _Mesh
 
+import numpy as _np
+import copy as _copy
 
 class ReplicaVolume(_PhysicalVolume.PhysicalVolume) : 
     '''
