@@ -1433,7 +1433,198 @@ class Reader(object):
                                 unit = "mm"
 
                             dim = _g4.ParameterisedVolume.BoxDimensions(x,y,z)
+                        elif ppsChNodeTag.tagName == "tube_dimensions":
+                            try :
+                                pRMin = _defines.Expression(pvol_name + '_Tubs_rMin', '{}'.format(ppsChNodeTag.attributes['rmin'].value),self._registry, False)
+                            except KeyError :
+                                pRMin = _defines.Expression(pvol_name + '_Tubs_rMin', "0", self._registry, False)
 
+                            pRMax = _defines.Expression(pvol_name + '_Tubs_rMax', '{}'.format(ppsChNodeTag.attributes['rmax'].value),self._registry, False)
+                            pDz   = _defines.Expression(pvol_name + '_Tubs_Dz', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
+                            try:
+                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', '{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
+                            except KeyError:
+                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', "0", self._registry, False)
+
+                            pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value), self._registry,False)
+
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else :
+                                lunit = "mm"
+
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else :
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.TubeDimensions(pRMin, pRMax, pDz, pSPhi, pDPhi, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "cone_dimensions":
+                            try :
+                                pRMin1 = _defines.Expression(pvol_name + '_Cone_rMin1', '{}'.format(ppsChNodeTag.attributes['rmin1'].value),self._registry, False)
+                            except KeyError :
+                                pRMin1 = _defines.Expression(pvol_name + '_Cone_rMin1', "0", self._registry, False)
+                            pRMax1 = _defines.Expression(pvol_name + '_Cone_rMax1','{}'.format(ppsChNodeTag.attributes['rmax1'].value),self._registry, False)
+
+                            try :
+                                pRMin2 = _defines.Expression(pvol_name + '_Cone_rMin2', '{}'.format(ppsChNodeTag.attributes['rmin2'].value),self._registry, False)
+                            except KeyError :
+                                pRMin2 = _defines.Expression(pvol_name + '_Cone_rMin2', "0", self._registry, False)
+                            pRMax2 = _defines.Expression(pvol_name + '_Cone_rMax2','{}'.format(ppsChNodeTag.attributes['rmax2'].value),self._registry, False)
+                            pDz   = _defines.Expression(pvol_name + '_Tubs_Dz', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
+
+                            try :
+                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', '{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
+                            except KeyError :
+                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', "0", self._registry, False)
+                            pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value), self._registry,False)
+
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else :
+                                lunit = "mm"
+
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else :
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.ConeDimensions(pRMin1,pRMax1, pRMin2, pRMax2, pDz, pSPhi, pDPhi, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "orb_dimensions":
+                            pRMax = _defines.Expression(pvol_name + '_Orb_rMax','{}'.format(ppsChNodeTag.attributes['rmin1'].value),self._registry, False)
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else :
+                                lunit = "mm"
+
+                            dim = _g4.ParameterisedVolume.OrbDimensions(pRmax,lunit)
+                        elif ppsChNodeTag.tagName == "sphere_dimensions":
+                            try :
+                                pRMin = _defines.Expression(pvol_name + '_Sphere_rMin','{}'.format(ppsChNodeTag.attributes['rmin'].value),self._registry, False)
+                            except KeyError :
+                                pRMin = _defines.Expression(pvol_name + '_Sphere_rMin', "0", self._registry, False)
+                            pRMax = _defines.Expression(pvol_name + '_Sphere_rMax','{}'.format(ppsChNodeTag.attributes['rmax'].value),self._registry, False)
+                            try :
+                                pSPhi = _defines.Expression(pvol_name + '_Sphere_sPhi','{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
+                            except KeyError :
+                                pSPhi = _defines.Expression(pvol_name + '_Sphere_sPhi', "0", self._registry, False)
+                            pDPhi = _defines.Expression(pvol_name + '_Sphere_dPhi','{}'.format(ppsChNodeTag.attributes['deltaphi'].value),self._registry, False)
+                            try :
+                                pSTheta = _defines.Expression(pvol_name + '_Sphere_sTheta','{}'.format(ppsChNodeTag.attributes['starttheta'].value),self._registry, False)
+                            except KeyError :
+                                pSTheta = _defines.Expression(pvol_name + '_Sphere_sTheta', "0", self._registry, False)
+                            pDTheta = _defines.Expression(pvol_name + '_Sphere_sTheta','{}'.format(ppsChNodeTag.attributes['deltatheta'].value),self._registry, False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.SphereDimensions(pRMin, pRMax,pSPhi,pDPhi, pSTheta, pDTheta, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "torus_dimensions":
+                            pRMin = _defines.Expression(pvol_name + '_Torus_rMin','{}'.format(ppsChNodeTag.attributes['rmin'].value), self._registry,False)
+                            pRMax = _defines.Expression(pvol_name + '_Torus_rMax', '{}'.format(ppsChNodeTag.attributes['rmax'].value),self._registry, False)
+                            pRTor = _defines.Expression(pvol_name + '_Torus_rTor', '{}'.format(ppsChNodeTag.attributes['rtor'].value),self._registry, False)
+                            try:
+                                pSPhi = _defines.Expression(pvol_name + '_Torus_sPhi', '{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
+                            except KeyError:
+                                pSPhi = _defines.Expression(pvol_name + '_Torus_sPhi', "0", self._registry, False)
+                            pDPhi = _defines.Expression(pvol_name + '_Torus_dPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value),self._registry, False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.TorusDimensions(pRMin,pRMax,pRTor,pSPhi, pDPhi, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "hype_dimensions":
+                            innerRadius = _defines.Expression(pvol_name + '_Hype_rMin','{}'.format(ppsChNodeTag.attributes['rmin'].value), self._registry,False)
+                            outerRadius = _defines.Expression(pvol_name + '_Hype_rMax','{}'.format(ppsChNodeTag.attributes['rmax'].value), self._registry,False)
+                            innerStereo = _defines.Expression(pvol_name + '_Hype_iHst','{}'.format(ppsChNodeTag.attributes['inst'].value), self._registry,False)
+                            outerStereo = _defines.Expression(pvol_name + '_Hype_ouSt','{}'.format(ppsChNodeTag.attributes['outst'].value), self._registry,False)
+                            lenZ        = _defines.Expression(pvol_name + '_Hype_z','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.HypeDimensions(innerRadius, outerRadius, innerStereo, outerStereo, lenZ, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "para_dimensions":
+                            pX = _defines.Expression(pvol_name + '_Para_x','{}'.format(ppsChNodeTag.attributes['x'].value), self._registry,False)
+                            pY = _defines.Expression(pvol_name + '_Para_y','{}'.format(ppsChNodeTag.attributes['y'].value), self._registry,False)
+                            pZ = _defines.Expression(pvol_name + '_Para_z','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
+                            pAlpha = _defines.Expression(pvol_name + '_Para_alpha','{}'.format(ppsChNodeTag.attributes['alpha'].value), self._registry,False)
+                            pTheta = _defines.Expression(pvol_name + '_Para_theta', '{}'.format(ppsChNodeTag.attributes['theta'].value),self._registry, False)
+                            pPhi = _defines.Expression(pvol_name + '_Para_phi', '{}'.format(ppsChNodeTag.attributes['phi'].value),self._registry, False)
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.ParaDimensions(pX, pY, pZ, pAlpha, pTheta, pPhi, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "trd_dimensions":
+                            pX1 = _defines.Expression(pvol_name + '_Trd_x1','{}'.format(ppsChNodeTag.attributes['x1'].value), self._registry,False)
+                            pX2 = _defines.Expression(pvol_name + '_Trd_x2','{}'.format(ppsChNodeTag.attributes['x2'].value), self._registry,False)
+                            pY1 = _defines.Expression(pvol_name + '_Trd_y1','{}'.format(ppsChNodeTag.attributes['y1'].value), self._registry,False)
+                            pY2 = _defines.Expression(pvol_name + '_Trd_y2','{}'.format(ppsChNodeTag.attributes['y2'].value), self._registry,False)
+                            pZ = _defines.Expression(pvol_name + '_Trd_z','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+
+                            dim = _g4.ParameterisedVolume.TrdDimensions(pX1,pX2,pY1,pY2,pZ,lunit)
+                        elif ppsChNodeTag.tagName == "trap_dimensions":
+                            pDz = _defines.Expression(pvol_name + '_Trap_dz','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
+                            pTheta = _defines.Expression(pvol_name + '_Trap_dTheta','{}'.format(ppsChNodeTag.attributes['theta'].value), self._registry,False)
+                            pDPhi = _defines.Expression(pvol_name + '_Trap_dPhi','{}'.format(ppsChNodeTag.attributes['phi'].value), self._registry,False)
+                            pDy1 = _defines.Expression(pvol_name + '_Trap_dy1','{}'.format(ppsChNodeTag.attributes['y1'].value), self._registry,False)
+                            pDx1 = _defines.Expression(pvol_name + '_Trap_dx1','{}'.format(ppsChNodeTag.attributes['x1'].value), self._registry,False)
+                            pDx2 = _defines.Expression(pvol_name + '_Trap_dx2','{}'.format(ppsChNodeTag.attributes['x2'].value), self._registry,False)
+                            pAlp1 = _defines.Expression(pvol_name + '_Trap_dAlp1','{}'.format(ppsChNodeTag.attributes['alpha1'].value), self._registry,False)
+                            pDy2 = _defines.Expression(pvol_name + '_Trap_dy2','{}'.format(ppsChNodeTag.attributes['y2'].value), self._registry,False)
+                            pDx3 = _defines.Expression(pvol_name + '_Trap_dy3','{}'.format(ppsChNodeTag.attributes['y3'].value), self._registry,False)
+                            pDx4 = _defines.Expression(pvol_name + '_Trap_dx4','{}'.format(ppsChNodeTag.attributes['x4'].value), self._registry,False)
+                            pAlp2 = _defines.Expression(pvol_name + '_Trap_dAlp2','{}'.format(ppsChNodeTag.attributes['alpha2'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            dim = _g4.ParameterisedVolume.TrapDimensions(pDz, pTheta, pDPhi, pDy1, pDx1, pDx2, pAlp1, pDy2, pDx3, pDx4, pAlp2, lunit, aunit)
+                        elif ppsChNodeTag.tagName == "polycone_dimensions":
+                            pass
+                        elif ppsChNodeTag.tagName == "poyhedron_dimensions":
+                            pass
+                        elif ppsChNodeTag.tagName == "ellipsoid_dimensions":
+                            pass
 
                     transforms.append([rotation,position])
                     paramData.append(dim)
