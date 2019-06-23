@@ -71,6 +71,7 @@ class Polyhedra(_SolidBase):
 
         phiStart = float(self.phiStart)*auval
         phiTotal = float(self.phiTotal)*auval
+
         numSide = int(float(self.numSide))
         numZPlanes = int(self.numZPlanes)
         zPlane = [float(val)*luval for val in self.zPlane]

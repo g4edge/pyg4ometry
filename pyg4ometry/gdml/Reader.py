@@ -1620,11 +1620,76 @@ class Reader(object):
 
                             dim = _g4.ParameterisedVolume.TrapDimensions(pDz, pTheta, pDPhi, pDy1, pDx1, pDx2, pAlp1, pDy2, pDx3, pDx4, pAlp2, lunit, aunit)
                         elif ppsChNodeTag.tagName == "polycone_dimensions":
-                            pass
-                        elif ppsChNodeTag.tagName == "poyhedron_dimensions":
-                            pass
+                            startphi = _defines.Expression(pvol_name + '_Polycone_startphi','{}'.format(ppsChNodeTag.attributes['startPhi'].value), self._registry,False)
+                            deltaphi = _defines.Expression(pvol_name + '_Polycone_deltaphi','{}'.format(ppsChNodeTag.attributes['openPhi'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            # read layers
+                            Rmin = []
+                            Rmax = []
+                            Z = []
+
+                            i = 0
+                            for ppsChNodeChildren in ppsChNodeTag.childNodes:
+                                rmin = _defines.Expression(pvol_name + "_PolyconeZPlane"+str(i)+"_rmin",ppsChNodeChildren.attributes['rmin'].value, self._registry,False)
+                                rmax = _defines.Expression(pvol_name + "_PolyconeZPlane"+str(i)+"_rmax",ppsChNodeChildren.attributes['rmax'].value, self._registry,False)
+                                z = _defines.Expression(pvol_name + "_PolyconeZPlane"+str(i)+"_z", ppsChNodeChildren.attributes['z'].value,self._registry,False)
+                                Rmin.append(rmin)
+                                Rmax.append(rmax)
+                                Z.append(z)
+                            dim = _g4.ParameterisedVolume.PolyconeDimensions(startphi,deltaphi,Z,Rmin,Rmax,lunit,aunit)
+
+                        elif ppsChNodeTag.tagName == "polyhedra_dimensions":
+                            startphi = _defines.Expression(pvol_name + '_Polyhedra_startphi','{}'.format(ppsChNodeTag.attributes['startPhi'].value), self._registry,False)
+                            deltaphi = _defines.Expression(pvol_name + '_Polyhedra_deltaphi','{}'.format(ppsChNodeTag.attributes['openPhi'].value), self._registry,False)
+                            numsides = _defines.Expression(pvol_name + '_Polyhedra_numsides','{}'.format(ppsChNodeTag.attributes['numSide'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+                            if ppsChNodeTag.attributes.has_key('aunit'):
+                                aunit = ppsChNodeTag.attributes['aunit'].value
+                            else:
+                                aunit = "rad"
+
+                            # read layers
+                            Rmin = []
+                            Rmax = []
+                            Z = []
+
+                            i = 0
+                            for ppsChNodeChildren in ppsChNodeTag.childNodes:
+                                rmin = _defines.Expression(pvol_name + "_PolyhedraZPlane"+str(i)+"_rmin",ppsChNodeChildren.attributes['rmin'].value, self._registry,False)
+                                rmax = _defines.Expression(pvol_name + "_PolyhedraZPlane"+str(i)+"_rmax",ppsChNodeChildren.attributes['rmax'].value, self._registry,False)
+                                z = _defines.Expression(pvol_name + "_PolyhedraZPlane"+str(i)+"_z", ppsChNodeChildren.attributes['z'].value,self._registry,False)
+                                Rmin.append(rmin)
+                                Rmax.append(rmax)
+                                Z.append(z)
+
+                            dim = _g4.ParameterisedVolume.PolyhedraDimensions(startphi,deltaphi,numsides,Z,Rmin,Rmax,lunit,aunit)
+
                         elif ppsChNodeTag.tagName == "ellipsoid_dimensions":
-                            pass
+                            pxSemiAxis = _defines.Expression(pvol_name + '_Ellipsoid_ax','{}'.format(ppsChNodeTag.attributes['ax'].value), self._registry,False)
+                            pySemiAxis = _defines.Expression(pvol_name + '_Ellipsoid_by','{}'.format(ppsChNodeTag.attributes['by'].value), self._registry,False)
+                            pzSemiAxis = _defines.Expression(pvol_name + '_Ellipsoid_cz','{}'.format(ppsChNodeTag.attributes['cz'].value), self._registry,False)
+                            pzBottomCut = _defines.Expression(pvol_name + '_Ellipsoid_zcut1','{}'.format(ppsChNodeTag.attributes['zcut1'].value), self._registry,False)
+                            pzTopCut = _defines.Expression(pvol_name + '_Ellipsoid_zcut2','{}'.format(ppsChNodeTag.attributes['zcut2'].value), self._registry,False)
+
+                            if ppsChNodeTag.attributes.has_key('lunit'):
+                                lunit = ppsChNodeTag.attributes['lunit'].value
+                            else:
+                                lunit = "mm"
+
+                            dim = _g4.ParameterisedVolume.EllipsoidDimensions(pxSemiAxis,pySemiAxis,pzSemiAxis,pzBottomCut,pzTopCut,lunit)
 
                     transforms.append([rotation,position])
                     paramData.append(dim)

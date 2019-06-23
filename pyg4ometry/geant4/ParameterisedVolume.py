@@ -128,19 +128,24 @@ class ParameterisedVolume(_ReplicaVolume):
             self.aunit = aunit
 
     class PolyhedraDimensions:
-        def __init__(self):
-            pass
+        def __init__(self, pSPhi, pDPhi, numSide, pZpl, pRMin, pRMax, lunit="mm", aunit="rad"):
+            self.pSPhi = pSPhi
+            self.pDPhi = pDPhi
+            self.numSide = numSide
+            self.pZpl = pZpl
+            self.pRMin = pRMin
+            self.pRMax = pRMax
+            self.lunit = lunit
+            self.aunit = aunit
 
     class EllipsoidDimensions:
-        def __init__(self, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut,
-                     lunit="mm", aunit="rad"):
+        def __init__(self, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, lunit="mm"):
             self.pxSemiAxis = pxSemiAxis
             self.pySemiAxis = pySemiAxis
             self.pzSemiAxis = pzSemiAxis
             self.pzBottomCut = pzBottomCut
             self.pzTopCut = pzTopCut
             self.lunit = lunit
-            self.aunit = aunit
 
     def __init__(self, name, logicalVolume, motherVolume, ncopies, paramData, transforms, registry=None, addRegistry=True) :
 
@@ -323,6 +328,55 @@ class ParameterisedVolume(_ReplicaVolume):
                 solid.pAlp2 = paramData.pAlp2
                 solid.lunit = paramData.lunit
                 solid.aunit = paramData.aunit
+
+                mesh = _Mesh(solid)
+                meshes.append(mesh)
+            elif self.logicalVolume.solid.type == "Polycone" and isinstance(paramData,self.PolyconeDimensions):
+                solid = _copy.deepcopy(self.logicalVolume.solid)
+
+                # Needs to a good solid name for optimisiation in VtkViewer
+                solid.name  = self.name+"_"+solid.name+"_"+str(i)
+
+                solid.pSPhi = paramData.pSPhi
+                solid.pDPhi = paramData.pDPhi
+                solid.pZpl = paramData.pZpl
+                solid.pRMin = paramData.pRMin
+                solid.pRMax = paramData.pRMax
+                solid.lunit = paramData.lunit
+                solid.aunit = paramData.aunit
+
+                mesh = _Mesh(solid)
+                meshes.append(mesh)
+            elif self.logicalVolume.solid.type == "Polyhedra" and isinstance(paramData,self.PolyhedraDimensions):
+                solid = _copy.deepcopy(self.logicalVolume.solid)
+
+                # Needs to a good solid name for optimisiation in VtkViewer
+                solid.name  = self.name+"_"+solid.name+"_"+str(i)
+
+                solid.phiStart = paramData.pSPhi
+                solid.phiTotal = paramData.pDPhi
+                solid.numSide = paramData.numSide
+                solid.numZplanes = len(paramData.pZpl)
+                solid.zPlane = paramData.pZpl
+                solid.rInner = paramData.pRMin
+                solid.rOuter = paramData.pRMax
+                solid.lunit = paramData.lunit
+                solid.aunit = paramData.aunit
+
+                mesh = _Mesh(solid)
+                meshes.append(mesh)
+            elif self.logicalVolume.solid.type == "Ellipsoid" and isinstance(paramData,self.EllipsoidDimensions):
+                solid = _copy.deepcopy(self.logicalVolume.solid)
+
+                # Needs to a good solid name for optimisiation in VtkViewer
+                solid.name  = self.name+"_"+solid.name+"_"+str(i)
+
+                solid.pxSemiAxis = paramData.pxSemiAxis
+                solid.pySemiAxis = paramData.pySemiAxis
+                solid.pzSemiAxis = paramData.pzSemiAxis
+                solid.pzBottomCut = paramData.pzBottomCut
+                solid.pzTopCut = paramData.pzTopCut
+                solid.lunit = paramData.lunit
 
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
