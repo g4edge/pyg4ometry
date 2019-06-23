@@ -489,7 +489,7 @@ class Reader(object):
         except KeyError : 
             unit = "mm"
               
-        solid = _g4.solid.Box(solid_name,x,y,z,self._registry,unit)
+        _g4.solid.Box(solid_name,x,y,z,self._registry,unit)
 
     def parseTube(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -1605,7 +1605,7 @@ class Reader(object):
                             pDx2 = _defines.Expression(pvol_name + '_Trap_dx2','{}'.format(ppsChNodeTag.attributes['x2'].value), self._registry,False)
                             pAlp1 = _defines.Expression(pvol_name + '_Trap_dAlp1','{}'.format(ppsChNodeTag.attributes['alpha1'].value), self._registry,False)
                             pDy2 = _defines.Expression(pvol_name + '_Trap_dy2','{}'.format(ppsChNodeTag.attributes['y2'].value), self._registry,False)
-                            pDx3 = _defines.Expression(pvol_name + '_Trap_dy3','{}'.format(ppsChNodeTag.attributes['y3'].value), self._registry,False)
+                            pDx3 = _defines.Expression(pvol_name + '_Trap_dy3','{}'.format(ppsChNodeTag.attributes['x3'].value), self._registry,False)
                             pDx4 = _defines.Expression(pvol_name + '_Trap_dx4','{}'.format(ppsChNodeTag.attributes['x4'].value), self._registry,False)
                             pAlp2 = _defines.Expression(pvol_name + '_Trap_dAlp2','{}'.format(ppsChNodeTag.attributes['alpha2'].value), self._registry,False)
 
