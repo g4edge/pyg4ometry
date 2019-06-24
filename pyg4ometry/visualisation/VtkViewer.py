@@ -72,39 +72,57 @@ class VtkViewer:
         
     def addLogicalVolumeRecursive(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
-
-            # pv transform
-            pvmrot = _transformation.tbxyz2matrix(pv.rotation.eval())
-            pvtra = _np.array(pv.position.eval())
-
-            # pv compound transform
-            new_mrot = mrot * pvmrot
-            new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
-
             if pv.logicalVolume.type == "logical":
-                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (
-                pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
+                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
             elif pv.logicalVolume.type == "assembly":
                 _log.info('VtkViewer.addLogicalVolume> Daughter %s %s' % (pv.name, pv.logicalVolume.name))
-                self.addLogicalVolumeRecursive(pv.logicalVolume, new_mrot, new_tra)
+                self.addLogicalVolumeRecursive(pv.logicalVolume, mrot, tra)
                 continue
 
             # get the local vtkPolyData
             solid_name = pv.logicalVolume.solid.name
             pv_name = pv.name
 
-            if pv.type == "placement" :
+            if pv.type == "placement":
+                # pv transform
+                pvmrot = _transformation.tbxyz2matrix(pv.rotation.eval())
+                pvtra = _np.array(pv.position.eval())
+                
+                # pv compound transform
+                new_mrot = mrot * pvmrot
+                new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
+
                 mesh = pv.logicalVolume.mesh.localmesh
-                self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, 
-                             self.filters, self.mappers,
-                             self.physicalMapperMap, self.actors, self.physicalActorMap)
-            elif pv.type == "replica" :
-                pass
-            elif pv.type == "parametrised" :
-                pass
+                self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, self.filters, 
+                             self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
+                self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
+            elif pv.type == "replica":
+                for mesh, trans in zip(pv.meshes, pv.transforms):
+                    # pv transform
+                    pvmrot = _transformation.tbxyz2matrix(trans[0])
+                    pvtra = _np.array(trans[1])
+                    
+                    # pv compound transform
+                    new_mrot = mrot * pvmrot
+                    new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]                    
 
-            self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes, self.filters, 
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)                    
+            elif pv.type == "parametrised":
+                for mesh, trans in zip(pv.meshes, pv.transforms):
+                    # pv transform
+                    pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
+                    pvtra = _np.array(trans[1].eval())
 
+                    # pv compound transform
+                    new_mrot = mrot * pvmrot
+                    new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
+
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
+                                 self.filters,
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
+            elif pv.type == "division":
+                pass
 
 
     def addMesh(self, pv_name, solid_name, mesh, mrot, tra, localmeshes, filters, 

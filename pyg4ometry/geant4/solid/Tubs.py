@@ -43,7 +43,7 @@ class Tubs(_SolidBase):
         self.pDz    = pDz
         self.pSPhi  = pSPhi
         self.pDPhi  = pDPhi
-        self.lunit   = lunit
+        self.lunit  = lunit
         self.aunit  = aunit
         self.nslice = nslice
         self.mesh   = None
