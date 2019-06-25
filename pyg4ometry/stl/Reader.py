@@ -34,7 +34,7 @@ class Reader(object):
     def load(self, solidname="tess", visualise=False, writeGDML=False):
         #data  = open(self.filename, "r")
         def extractXYZ(string):
-            #The scaling here is a bit cheeky, but the scale parameter in GDML seems to be ignored by Geanr4 for Tesselated Solids
+            #The scaling here is a bit cheeky, but the scale parameter in GDML seems to be ignored by Geanr4 for Tessellated Solids
             return tuple([self.scale*float(v) for v in string.split() if self.num_re.match(v)])
 
         with open(self.filename) as f:
@@ -65,7 +65,7 @@ class Reader(object):
         return l
 
         '''
-        tessSolid = _g4.solid.TesselatedSolid(str(solidname), self.facet_list)
+        tessSolid = _g4.solid.TessellatedSolid(str(solidname), self.facet_list)
 
         if visualise or writeGDML:
             worldSolid   = _g4.solid.Box('worldBox',10,10,10)

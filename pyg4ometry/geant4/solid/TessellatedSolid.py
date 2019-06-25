@@ -32,7 +32,7 @@ class TessellatedSolid(_SolidBase):
         Stl     = 3
 
     def __init__(self, name, mesh, registry=None, meshtype = MeshType.Freecad):
-        self.type        = 'TesselatedSolid'
+        self.type        = 'TessellatedSolid'
         self.name        = name
 
         self.mesh        = mesh
