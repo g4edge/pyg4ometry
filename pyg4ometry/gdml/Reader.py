@@ -52,7 +52,7 @@ class Reader(object):
         for en in ents:
             if "ENTITY" in en:
                 name =  en.split()[1]
-                filename = _re.search(r'[^\"]+', en.split()[3]).group(0)
+                filename = _re.search(r'[^\"]+', " ".join(en.split()[3:])).group(0)
                 with open(filename, 'r') as content_file:
                     #ensure the contents are properly prepared for parsing
                     contents = str()
