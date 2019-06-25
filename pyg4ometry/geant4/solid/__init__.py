@@ -35,4 +35,5 @@ from GenericTrap         import *
 from TessellatedSolid    import *
 from MultiUnion          import *
 from OpticalSurface      import *
+from Scaled              import *
 from SolidBase import SolidBase

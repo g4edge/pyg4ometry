@@ -198,17 +198,19 @@ class Reader(object):
         except KeyError : 
             unit = None
         
-        if type == 'position' : 
+        if type == 'position':
             return _defines.Position(name,x,y,z,unit,self._registry,addRegistry) 
-        elif type == 'positionref' :
+        elif type == 'positionref':
             return self._registry.defineDict[node.attributes['ref'].value]
-        elif type == 'rotation' :
+        elif type == 'rotation':
             return _defines.Rotation(name,x,y,z,unit,self._registry,addRegistry)
-        elif type == 'rotationref' :
+        elif type == 'rotationref':
             return self._registry.defineDict[node.attributes['ref'].value]
-        elif type == 'scale' : 
-            return _defines.Scale(name,x,y,z,self._registry,addRegistry)
-        
+        elif type == 'scale':
+            return _defines.Scale(name,x,y,z,unit,self._registry,addRegistry)
+        elif type == 'scaleref':
+            return self._registry.defineDict[node.attributes['ref'].value]
+
         #    def parseMatrix(self, node) : 
         #        pass
 
@@ -472,7 +474,9 @@ class Reader(object):
             elif solid_type == 'multiUnion' :      # solid test 031 
                 self.parseMultiUnion(node)
             elif solid_type == 'opticalsurface' : 
-                self.parseOpticalSufrace(node) 
+                self.parseOpticalSufrace(node)
+            elif solid_type == "scaledSolid":
+                self.parseScaledSolid(node)
             elif solid_type == 'loop' :           
                 pass
                 # self.parseSolidLoop(node)
@@ -1219,10 +1223,27 @@ class Reader(object):
     def parseOpticalSurface(self, node) : 
         pass
 
-    def parseSolidLoop(self, node) : 
+    def parseScaledSolid(self,node):
+        scaledSolid_name = node.attributes['name'].value
+
+        solid_name = node.getElementsByTagName("solidref")[0].attributes['ref'].value
+
+        try:
+            scale = self.parseVector(node.getElementsByTagName("scale")[0], "scale", False)
+        except IndexError:
+            try:
+                scale = self.parseVector(node.getElementsByTagName("scaleref")[0], "scaleref", False)
+            except IndexError:
+                scale = _defines.Scale("zero", "0", "0", "0", "mm", self._registry, False)
+
+        solid = self._registry.solidDict[solid_name]
+
+        _g4.solid.Scaled(scaledSolid_name, solid, scale.x, scale.y, scale.z, self._registry)
+
+    def parseSolidLoop(self, node):
         pass
         
-    def parseStructure(self,xmldoc) :
+    def parseStructure(self,xmldoc):
         
         self.xmlstructure = xmldoc.getElementsByTagName("structure")[0]
         
