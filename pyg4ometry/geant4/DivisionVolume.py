@@ -14,17 +14,18 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
     :param offset: of grid
     '''
 
-    kXAxis = 1
-    kYAxis = 2
-    kZAxis = 3
-    kRho   = 4
-    kPhi   = 5
+    class Axis:
+        kXAxis = 1
+        kYAxis = 2
+        kZAxis = 3
+        kRho   = 4
+        kPhi   = 5
 
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
                  width, offset = 0, registry = None, addRegistry=True) : 
 
         self.type = "division"
-        
+        self.name = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
         self.motherVolume.add(self)
@@ -36,17 +37,18 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         if addRegistry : 
             registry.addPhysicalVolume(self)
         
-        # Only the replica transforms are required
-        self.replicaTransforms = self.createReplicaTransforms()
+        # Create replica meshes
+        [self.meshes, self.transforms] = self.createDivisionMeshes()
 
-    def createReplicaTransforms(self) : 
+    def createDivisionMeshes(self) :
 
         transforms = []
-        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) : 
-            print v 
+        meshes     = []
 
-    def checkOverlap(self) :
-        pass
+        for v in _np.arange(self.offset, self.offset+self.nreplicas*self.width,self.width) : 
+            print v
+
+        return [meshes, transforms]
 
     def __repr__(self) :
         return ""
