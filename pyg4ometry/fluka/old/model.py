@@ -89,6 +89,14 @@ class Model(object):
         self._world_volume = pyfluka.geometry.make_world_volume(self._model_name,
                                                                 "G4_AIR")
 
+    @classmethod
+    def from_regions(cls, name, regions):
+        model = cls.__new__(cls)
+        model._filename = name
+        model._model_name = name
+        model.regions = {region.name: region for region in regions}
+        return model
+
     def _regions_from_tree(self, tree):
         """Get the region definitions from the tree.  Called in the
         initialiser and then never called again.
@@ -101,7 +109,7 @@ class Model(object):
     def write_to_gdml(self, regions=None, out_path=None,
                       make_gmad=True, bounding_subtrahends=None,
                       just_bounding_box=False, survey=None,
-                      optimise=True, bb_addend=0.0):
+                      optimise=True, bb_addend=0.0, gmad_append=""):
         """Convert the region to GDML.  Returns the centre (in mm) of the GDML
                       bounding box in the original FLUKA coordinate
                       system, which can be useful for placing the
@@ -170,7 +178,7 @@ class Model(object):
         print("Written GDML file: {}".format(out_path))
 
         if make_gmad is True:
-            self._write_test_gmad(out_path)
+            self._write_test_gmad(out_path, gmad_append)
 
         # world solid is perhaps a subtraction from a box, or a simple
         # box.  Either way, get that box, as it determines the extent
@@ -419,7 +427,7 @@ class Model(object):
         bodies = body_listener.bodies
         return bodies, body_freq_map
 
-    def _write_test_gmad(self, gdml_path):
+    def _write_test_gmad(self, gdml_path, append=""):
         """Write a simple gmad file corresponding corresponding to the input
         file's geometry with the correct GDML component length.
 
@@ -448,7 +456,8 @@ use, period=component_line;
 option, physicsList="g4FTFP_BERT",
                     preprocessGDML=0,
                     checkOverlaps=1;
-""")
+{}
+""".format(append))
             print("Written GMAD file: {}".format(gmad_path))
 
     def test_regions(self, pickle=None, regions=None, optimise=True):
@@ -616,7 +625,7 @@ option, physicsList="g4FTFP_BERT",
         return output
 
     def __repr__(self):
-        return "<Model: \"{}\">".format(self._filename)
+        return "<Model: \"{}\">".format(self._model_name)
 
     def __iter__(self):
         return self.regions.itervalues()

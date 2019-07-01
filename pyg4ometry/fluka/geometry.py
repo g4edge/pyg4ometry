@@ -916,6 +916,7 @@ class Region(object):
                      "UPS16H2A-Zones-1",
                      "UPS16H2S-Zones-1",
                      "UPS16H2C-Zones-1",
+                     "R35-Zones-3",
                      "UJ16AIR1-Zones-0", # Highest priority to fix.
                      "UJPLUGR0-Zones-1", #zones
                      "UJPLUGR4-Zones-1"]): # second priority
@@ -1242,8 +1243,9 @@ class Zone(object):
             if isinstance(body, Body):
                 if accumulated is None: # If nothing to intersect with yet.
                     accumulated = body
-                accumulated = body.intersection(
-                    accumulated, safety_map['intersection'])
+                else:
+                    accumulated = body.intersection(
+                        accumulated, safety_map['intersection'])
             elif isinstance(body, Zone): # If nothing to intersect with yet.
                 if accumulated is None:
                     evaluated_zone = body._accumulate(subzone_order=subzone_order)
