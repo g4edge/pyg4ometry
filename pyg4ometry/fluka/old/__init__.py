@@ -11,4 +11,14 @@ format.
 
 """
 from .model import Model
-from . import geometry, materials, model
+from .geometry import (PLA, RCC, RPP, SPH, TRC, XCC, XEC,
+                       XYP, XZP, YCC, YEC, YZP, ZCC, ZEC,
+                       Region, Zone)
+from . import materials
+from . import examples
+from . import utils
+
+__all__ = ['Model',
+           "PLA", "RCC", "RPP", "SPH", "TRC", "XCC", "XEC",
+           "XYP", "XZP", "YCC", "YEC", "YZP", "ZCC", "ZEC",
+           "Region", "Zone"]

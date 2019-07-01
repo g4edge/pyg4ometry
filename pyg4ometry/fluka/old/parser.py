@@ -293,3 +293,7 @@ class SensitiveErrorListener(antlr4.error.ErrorListener.ErrorListener):
         msg = ("At ({}, {}), Error: {}.  Warning:  The provided line and"
                " column numbers may be deceptive.").format(line, column, msg)
         raise antlr4.error.Errors.ParseCancellationException(msg)
+
+class FLUKAInputError(Exception):
+    def __init__(self, message):
+        super(Exception, self).__init__(self.message)

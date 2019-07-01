@@ -1,5 +1,5 @@
-""" Collection of classes for representing, viewing and viewing a
-Fluka model, and converting it GDML. """
+""" Collection of classes for representing a FLUKA model.  You can
+then check for overlaps, view it, and convert it to GDML."""
 
 from __future__ import (absolute_import, print_function, division)
 
@@ -9,10 +9,9 @@ import time
 import cPickle
 import warnings
 import textwrap
-import uuid
 import itertools
+from datetime import datetime
 
-import numpy as np
 import antlr4
 import pyg4ometry
 
@@ -23,6 +22,7 @@ import pyg4ometry.fluka.materials
 
 from . import FlukaParserVisitor
 from . import FlukaParserListener
+
 
 
 class Model(object):
@@ -37,6 +37,7 @@ class Model(object):
     """
     def __init__(self, filename, fluka_g4_material_map=None):
         self._filename = filename
+        self._model_name = os.path.basename(self._filename).rstrip(".inp")
         # get the syntax tree.
         tree, cards = (
             pyg4ometry.fluka.parser.get_geometry_ast_and_other_cards(filename)
@@ -48,7 +49,7 @@ class Model(object):
             cards
         )
 
-        # Assign the materials if provided with a fluka->G4 material map.
+        # Assign the materials if provided with a FLUKA->G4 material map.
         # Circular dependencies means we can't do this until after the regions
         # are defined: Material assignments depend on the order in which the
         # regions are defined, which we get from the region definitions, which
@@ -66,13 +67,13 @@ class Model(object):
                     region.material = g4_material
                 except KeyError:
                     msg = ("Missing material \"{}\"from"
-                           " Fluka->G4 material map!").format(fluka_material)
+                           " FLUKA->G4 material map!").format(fluka_material)
                     warnings.warn(msg)
 
         else: # If no material map, we still want to omit BLCKHOLE
             # regions from viewing/conversion.
             msg = '\n'.join(textwrap.wrap(
-                "No Fluka->G4 material map provided.  All converted regions"
+                "No FLUKA->G4 material map provided.  All converted regions"
                 " will be \"G4_Galactic\" by default, but BLCKHOLE regions"
                 " will still be omitted from both conversion and viewing."))
             print(msg, '\n')
@@ -85,8 +86,8 @@ class Model(object):
                     fluka_material = "G4_Galactic"
                 region.material = fluka_material
 
-        # Initialiser the world volume:
-        self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(register=True)
+        self._world_volume = pyfluka.geometry.make_world_volume(self._model_name,
+                                                                "G4_AIR")
 
     def _regions_from_tree(self, tree):
         """Get the region definitions from the tree.  Called in the
@@ -99,9 +100,10 @@ class Model(object):
 
     def write_to_gdml(self, regions=None, out_path=None,
                       make_gmad=True, bounding_subtrahends=None,
-                      just_bounding_box=False, survey=None, optimise=True):
+                      just_bounding_box=False, survey=None,
+                      optimise=True, bb_addend=0.0):
         """Convert the region to GDML.  Returns the centre (in mm) of the GDML
-                      bounding box in the original Fluka coordinate
+                      bounding box in the original FLUKA coordinate
                       system, which can be useful for placing the
                       geometry.
 
@@ -138,13 +140,19 @@ class Model(object):
           preferable to compute the survey separately once using the
           survey method, for the sake of speed.
 
+        - bb_addend: Additional length safety to add to the
+          bounding box (bb) dimensions.  This may be necessary in
+          circumstances where the SetClip method fails to perfectly
+          wrap the solid within, typically this is the case when the
+          solids are curved.
+
         """
         # Make the mesh for the given regions.
         self._generate_mesh(regions, setclip=True,
                             optimise=optimise,
                             bounding_subtrahends=bounding_subtrahends,
                             just_bounding_box=just_bounding_box,
-                            survey=survey, register=True)
+                            survey=survey, bb_addend=bb_addend)
         # If no path to write to provided, then generate one
         # automatically based on input file name.
         if out_path is None:
@@ -215,7 +223,9 @@ class Model(object):
 
     def _generate_mesh(self, region_names, setclip,
                        optimise, bounding_subtrahends,
-                       register, just_bounding_box=False, survey=None):
+                       just_bounding_box=False,
+                       survey=None,
+                       bb_addend=0.0):
         """This function has the side effect of recreating the world volume if
         the region_names requested are different to the ones already
         assigned to it and returns the relevant mesh.
@@ -231,9 +241,12 @@ class Model(object):
                                           register=register)
         # If we are subtracting from the world box
         if bounding_subtrahends:
-            self._subtract_from_world_volume(bounding_subtrahends)
+            pyfluka.geometry.subtract_from_world_volume(self._world_volume,
+                                                        bounding_subtrahends,
+                                                        bb_addend)
         elif setclip:
-            self._clip_world_volume()
+            pyfluka.geometry.clip_world_volume_with_safety(self._world_volume,
+                                                           bb_addend)
 
         # Do we want to construct it with the full geometry within or
         # should be leave some volumes out?
@@ -268,57 +281,7 @@ class Model(object):
                 msg = ("unusable argument for just_bounding_box!")
                 raise TypeError(msg)
 
-    def _subtract_from_world_volume(self, subtrahends):
-        """Nice pyfluka interface for subtracting from bounding boxes
-        in pygdml.  We create an RPP out of the clipped bounding box
-        and then subtract from it the subtrahends, which is defined in
-        the unclipped geometry's coordinate system.
-
-        This works by first getting the "true" centre of
-        the geometry, from the unclipped extent.  As the clipped
-        extent is always centred on zero, and the subtractee is always
-        centred on zero, this gives us the required
-        offset for the subtraction from the bounding RPP."""
-        # Get the "true" unclipped extent of the solids in the world volume
-        unclipped_extent = pyg4ometry.fluka.geometry.Extent.from_world_volume(
-            self._world_volume)
-        # The offset is -1 * the unclipped extent's centre.
-        unclipped_centre = unclipped_extent.centre
-        other_offset = -1 * unclipped_centre
-        self._clip_world_volume()
-        # Make an RPP out of the clipped bounding box.
-        world_name = self._world_volume.solid.name
-        # solids magically start having material attributes at the top-level so
-        # we must pass the material correctly to the new subtraction solid.
-        world_material = self._world_volume.material
-        world_solid = self._world_volume.solid
-
-        # Deal with the trailing floating points introduced somewhere
-        # in pygdml that cause the box to be marginally too big:
-        decimal_places = int((-1 * np.log10(pyg4ometry.fluka.geometry.LENGTH_SAFETY)))
-        box_parameters = [-1 * world_solid.pX, world_solid.pX,
-                          -1 * world_solid.pY, world_solid.pY,
-                          -1 * world_solid.pZ, world_solid.pZ]
-        box_parameters = [round(i, decimal_places) for i in box_parameters]
-        world = pyg4ometry.fluka.geometry.RPP(world_name, box_parameters)
-        # We make the subtraction a bit smaller just to be sure we
-        # don't subract from a placed solid within, so safety='trim'.
-        for subtrahend in subtrahends:
-            if isinstance(subtrahend,
-                          (pyg4ometry.fluka.geometry.InfiniteCylinder,
-                           pyg4ometry.fluka.geometry.InfiniteHalfSpace,
-                           pyg4ometry.fluka.geometry.InfiniteEllipticalCylinder)):
-                raise TypeError("Subtrahends must be finite!")
-
-            world = world.subtraction(subtrahend, safety="trim",
-                                      other_offset=other_offset)
-        self._world_volume.currentVolume = world.gdml_solid()
-        self._world_volume.currentVolume.material = world_material
-
-    def _clip_world_volume(self):
-        self._world_volume.setClip()
-
-    def _add_regions_to_world_volume(self, regions, optimise, register, survey):
+    def _add_regions_to_world_volume(self, regions, optimise, survey=None):
         """Add the region or regions in region_names to the current
         world volume (self._world_volume).
 
@@ -332,9 +295,8 @@ class Model(object):
         regions as separate volumes, to ensure well-formed G4 geometry.
 
         """
-        pyg4ometry.geant4.registry.clear()
-        self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(
-            register=register)
+        self._world_volume = pyfluka.geometry.make_world_volume(self._model_name,
+                                                                "G4_AIR")
         if regions is None: # add all regions by default.
             regions = self.regions.keys()
         # Else if regions is the name of a single region
@@ -361,7 +323,9 @@ class Model(object):
                     sets = (region.connected_zones
                             if survey is True
                             else survey[region_name]["connected_zones"])
+                    print("Adding {}".format(region_name))
                     for connected_set in sets:
+                        print("Adding separately as... {}".format(connected_set))
                         # Place them as individual regions, but only
                         # those zones which have also been selected in
                         # the dictionary
@@ -473,17 +437,18 @@ class Model(object):
                        " outerDiameter={}*m;\n".format(lengths.z / 1000.0,
                                                        gdml_name,
                                                        diameter / 1000.0))
-            gmad.write('\n')
-            gmad.write("component : line = (test_component);\n")
-            gmad.write('\n')
-            gmad.write("beam,  particle=\"e-\",\n"
-                       "energy=1.5 * GeV,\n"
-                       "X0=0.1*um;\n")
-            gmad.write('\n')
-            gmad.write("use, period=component;\n")
-            gmad.write('\n')
-            gmad.write("option, physicsList=\"em FTFP_BERT muon\",\n"
-                       "checkOverlaps=1;\n")
+            gmad.write("""
+component_line: line = (test_component);
+
+beam, particle="e-",
+energy=1.5*GeV;
+
+use, period=component_line;
+
+option, physicsList="g4FTFP_BERT",
+                    preprocessGDML=0,
+                    checkOverlaps=1;
+""")
             print("Written GMAD file: {}".format(gmad_path))
 
     def test_regions(self, pickle=None, regions=None, optimise=True):
@@ -577,7 +542,11 @@ class Model(object):
         regions["survey_options"] = {"connected_zones": connected_zones,
                                      "outpath": outpath,
                                      "extents": extents,
-                                     "optimised_extents": optimised_extents}
+                                     "optimised_extents": optimised_extents,
+                                     "input_filename": self._filename,
+                                     "git_version": "not implemented",
+                                     "date": str(datetime.now())}
+
 
         if outpath is None:
             outpath = "./{}_survey.pickle".format(
@@ -678,7 +647,6 @@ class FlukaBodyListener(FlukaParserListener.FlukaParserListener):
         self.unique_body_names = set()
         self.used_bodies_by_type = list()
 
-        self.transform_stack = []
         self.current_translat = None
         self.current_expansion = None
 
@@ -691,20 +659,17 @@ class FlukaBodyListener(FlukaParserListener.FlukaParserListener):
         # Apply any expansions:
         body_parameters = self.apply_expansions(body_parameters)
 
-        # Try and construct the body, if it's not implemented then warn
+        # Try and construct the body, if it's not implemented then
+        # warn and continue.
         try:
-            body_constructor = getattr(pyg4ometry.fluka.geometry, body_type)
-            body = body_constructor(body_name,
-                                    body_parameters,
-                                    self.transform_stack,
-                                    self.current_translat)
-            self.bodies[body_name] = body
-        except (AttributeError, NotImplementedError):
+            self.bodies[body_name] = _make_body(body_type, body_name,
+                                                body_parameters,
+                                                self.current_translat)
+        except ValueError:
             warnings.simplefilter('once', UserWarning)
-            msg = ("\nBody type \"{}\" not supported.  All bodies"
-                   " of this type will be omitted.  If bodies"
-                   " of this type are used in regions, the"
-                   " conversion will fail.").format(body_type)
+            msg = ("""Body type "{}" not supported.  All bodies of
+this type will be omitted.  If bodies of this type are used in
+regions, viewing and conversion will most likely fail.""".format(body_type))
             warnings.warn(msg)
 
     def enterUnaryExpression(self, ctx):
@@ -717,7 +682,10 @@ class FlukaBodyListener(FlukaParserListener.FlukaParserListener):
 
     def enterTranslat(self, ctx):
         translation = FlukaBodyListener._get_floats(ctx)
-        self.current_translat = pyg4ometry.fluka.vector.Three(translation)
+        if self.current_translat is not None:
+            # Nested translations are not supported.
+            raise pyfluka.parser.FLUKAInputError("Nested translation.")
+        self.current_translat = pyfluka.vector.Three(translation)
 
     def exitTranslat(self, ctx):
         self.current_translat = None
@@ -774,7 +742,9 @@ class FlukaRegionVisitor(FlukaParserVisitor.FlukaParserVisitor):
         # Build a zone from the list of bodies or single body:
         zone = [pyg4ometry.fluka.geometry.Zone(region_defn)]
         region_name = ctx.RegionName().getText()
-        self.regions[region_name] = pyg4ometry.fluka.geometry.Region(region_name, zone)
+        # temporarily G4_Galactic
+        self.regions[region_name] = pyfluka.geometry.Region(region_name, zone,
+                                                            "G4_Galactic")
 
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
@@ -785,7 +755,7 @@ class FlukaRegionVisitor(FlukaParserVisitor.FlukaParserVisitor):
         # Construct zones out of these:
         zones = [pyg4ometry.fluka.geometry.Zone(defn) for defn in region_defn]
         region_name = ctx.RegionName().getText()
-        region = pyg4ometry.fluka.geometry.Region(region_name, zones)
+        region = pyfluka.geometry.Region(region_name, zones, "G4_Galactic")
         self.regions[region_name] = region
 
     def visitUnaryAndBoolean(self, ctx):
@@ -877,4 +847,38 @@ def _get_world_volume_dimensions(world_volume):
     arbitrary number of subtractions from it."""
     box = _get_world_volume_box(world_volume)
     # Double because pX, pY, pZ are half-lengths for a pygdml.solid.Box.
-    return pyg4ometry.fluka.vector.Three(2 * box.pX, 2 * box.pY, 2 * box.pZ)
+    return pyfluka.vector.Three(2 * box.pX, 2 * box.pY, 2 * box.pZ)
+
+def _make_body(body_type, name, parameters, translation):
+    """Given a body type, "REC", "XYP", etc, and a list of the parameters
+    in the correct order as written in an input file, return the
+    correct Body instance.
+
+    """
+
+    try:
+        ctor = getattr(pyfluka.geometry, body_type)
+    except AttributeError:
+        raise ValueError("Body type not supported")
+
+    if body_type in {"XZP", "XYP", "YZP",
+                     "XCC", "YCC", "ZCC",
+                     "XEC", "YEC", "ZEC"}:
+        return ctor(name, *parameters, translation=translation)
+    elif body_type == "PLA":
+        return ctor(name, parameters[0:3], parameters[3:6],
+                    translation=translation)
+    elif body_type == "RCC":
+        return ctor(name, parameters[0:3], parameters[3:6], parameters[6],
+                    translation=translation)
+    elif body_type == "RPP":
+        return ctor(name,
+                    [parameters[0], parameters[2], parameters[4]],
+                    [parameters[1], parameters[3], parameters[5]],
+                    translation=translation)
+    elif body_type == "TRC":
+        return ctor(name, parameters[0:3], parameters[3:6],
+                    parameters[6], parameters[7], translation=translation)
+    elif body_type == "SPH":
+        return ctor(name, parameters[0:3], parameters[3],
+                    translation=translation)
