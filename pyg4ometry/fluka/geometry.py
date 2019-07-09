@@ -16,8 +16,9 @@ import numpy as np
 import networkx as nx
 import pygdml
 import pygdml.transformation as trf
+import pyg4ometry
 
-from pyfluka import vector
+from . import vector
 
 # Fractional tolerance when minimising solids.  Here have chosen this
 # to be 50% for no reason other than that it works!  Smaller values
@@ -880,7 +881,7 @@ class Region(object):
     @material.setter
     def material(self, material):
         self._material = (
-            pyg4ometry.geant4.Material.from_arbitrary_name(material))
+            pyg4ometry.geant4.MaterialArbitrary(material))
 
     def view(self, zones=None, setclip=True, optimise=False):
         """

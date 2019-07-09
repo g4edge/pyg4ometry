@@ -7,19 +7,13 @@ import collections
 import os.path
 import time
 import cPickle
-import warnings
-import textwrap
-import uuid
 import itertools
 
 import numpy as np
-import antlr4
 import pyg4ometry
 
 import pyg4ometry.fluka.geometry
 import pyg4ometry.fluka.vector
-import pyg4ometry.fluka.parser
-import pyg4ometry.fluka.materials
 
 
 class Model(object):
@@ -36,51 +30,7 @@ class Model(object):
         self.bodies = {}
         self.regions = {}
         # get the syntax tree.
-
-        materials = pyg4ometry.fluka.materials.get_region_material_strings(
-            self.regions.keys(),
-            cards
-        )
-
-        # Assign the materials if provided with a fluka->G4 material map.
-        # Circular dependencies means we can't do this until after the regions
-        # are defined: Material assignments depend on the order in which the
-        # regions are defined, which we get from the region definitions, which
-        # in turn nominally depend on the material assignments.  To get around
-        # this we set the material to G4_Galactic at region initialisation and
-        # then reassign immediately afterwards here.
-        if fluka_g4_material_map:
-            # Always set BLCKHOLE to None.  We always omit regions with material
-            # BLCKHOLE.
-            fluka_g4_material_map["BLCKHOLE"] = None
-            for region_name, region in self.regions.iteritems():
-                fluka_material = materials[region_name]
-                try:
-                    g4_material = fluka_g4_material_map[fluka_material]
-                    region.material = g4_material
-                except KeyError:
-                    msg = ("Missing material \"{}\"from"
-                           " Fluka->G4 material map!").format(fluka_material)
-                    warnings.warn(msg)
-
-        else: # If no material map, we still want to omit BLCKHOLE
-            # regions from viewing/conversion.
-            msg = '\n'.join(textwrap.wrap(
-                "No Fluka->G4 material map provided.  All converted regions"
-                " will be \"G4_Galactic\" by default, but BLCKHOLE regions"
-                " will still be omitted from both conversion and viewing."))
-            print(msg, '\n')
-
-            for region_name, region in self.regions.iteritems():
-                fluka_material = materials.get(region_name)
-                if fluka_material == "BLCKHOLE":
-                    fluka_material = None
-                else:
-                    fluka_material = "G4_Galactic"
-                region.material = fluka_material
-
         # Initialiser the world volume:
-        self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(register=True)
 
 
     def write_to_gdml(self, regions=None, out_path=None,
@@ -133,11 +83,7 @@ class Model(object):
                             survey=survey, register=True)
         # If no path to write to provided, then generate one
         # automatically based on input file name.
-        if out_path is None:
-            out_path = ("./"
-                        + os.path.basename(os.path.splitext(self._filename)[0])
-                        + ".gdml")
-        elif os.path.splitext(out_path)[1] != "gdml":
+        if os.path.splitext(out_path)[1] != "gdml":
             out_path = os.path.splitext(out_path)[0] + ".gdml"
         out = pyg4ometry.gdml.Writer()
 
@@ -459,7 +405,7 @@ class Model(object):
                        "checkOverlaps=1;\n")
             print("Written GMAD file: {}".format(gmad_path))
 
-    def test_regions(self, pickle=None, regions=None, optimise=True):
+    def test_regions(self, pickke_name, pickle=None, regions=None, optimise=True):
         """Individually mesh each region and return dictionary of lists of
         good regions, bad regions, bad intersections, and bad
         subtractions.
@@ -503,10 +449,8 @@ class Model(object):
         print(duration, "minutes since test begun.")
         output['time'] = duration
 
-        if pickle:
-            pickle_name = "./{}_diag.pickle".format(self._filename)
-            with open(pickle_name, 'w') as pickle_file:
-                cPickle.dump(output, pickle_file)
+        with open(pickle_name, 'w') as pickle_file:
+            cPickle.dump(output, pickle_file)
         return output
 
     def view_debug(self, region_name=None, do_all=False):
@@ -531,7 +475,7 @@ class Model(object):
                 if do_all is False:
                     break
 
-    def survey(self, outpath=None, extents=True, connected_zones=True,
+    def survey(self, pickle_name, outpath=None, extents=True, connected_zones=True,
                optimised_extents=True):
         """Extents of every zone and the connected_zones of every region."""
         regions = {region_name: {"extents": {},
@@ -552,10 +496,8 @@ class Model(object):
                                      "extents": extents,
                                      "optimised_extents": optimised_extents}
 
-        if outpath is None:
-            outpath = "./{}_survey.pickle".format(
-                os.path.basename(os.path.splitext(self._filename)[0]))
-        with open(outpath, 'w') as pickle_file:
+
+        with open(pickle_name, 'w') as pickle_file:
             cPickle.dump(regions, pickle_file)
         return regions
 
@@ -619,9 +561,6 @@ class Model(object):
 
         return output
 
-    def __repr__(self):
-        return "<Model: \"{}\">".format(self._filename)
-
     def __iter__(self):
         return self.regions.itervalues()
 
@@ -635,99 +574,6 @@ class Model(object):
         return out
 
 
-class FlukaRegionVisitor(FlukaParserVisitor.FlukaParserVisitor):
-    """
-    A visitor class for accumulating the region definitions.  The body
-    instances are provided at instatiation, and then these are used
-    when traversing the tree to build up a dictionary of region name
-    and pyg4ometry.fluka.geometry.Region instances.
-
-    """
-    def __init__(self, bodies):
-        self.bodies = bodies
-        self.regions = collections.OrderedDict()
-
-    def visitSimpleRegion(self, ctx):
-        # Simple in the sense that it consists of no unions of Zones.
-        region_defn = self.visitChildren(ctx)
-        # Build a zone from the list of bodies or single body:
-        zone = [pyg4ometry.fluka.geometry.Zone(region_defn)]
-        region_name = ctx.RegionName().getText()
-        self.regions[region_name] = pyg4ometry.fluka.geometry.Region(region_name, zone)
-
-    def visitComplexRegion(self, ctx):
-        # Complex in the sense that it consists of the union of
-        # multiple zones.
-
-        # Get the list of tuples of operators and bodies/zones
-        region_defn = self.visitChildren(ctx)
-        # Construct zones out of these:
-        zones = [pyg4ometry.fluka.geometry.Zone(defn) for defn in region_defn]
-        region_name = ctx.RegionName().getText()
-        region = pyg4ometry.fluka.geometry.Region(region_name, zones)
-        self.regions[region_name] = region
-
-    def visitUnaryAndBoolean(self, ctx):
-        left_solid = self.visit(ctx.unaryExpression())
-        right_solid = self.visit(ctx.expr())
-
-        # If both are tuples (i.e. operator, body/zone pairs):
-        if (isinstance(left_solid, tuple)
-                and isinstance(right_solid, tuple)):
-            return [left_solid, right_solid]
-        elif (isinstance(left_solid, tuple)
-              and isinstance(right_solid, list)):
-            right_solid.append(left_solid)
-            return right_solid
-        else:
-            raise RuntimeError("dunno what's going on here")
-
-    def visitUnaryExpression(self, ctx):
-        body_name = ctx.ID().getText()
-        body = self.bodies[body_name]
-        if ctx.Plus():
-            return  ('+', body)
-        elif ctx.Minus():
-            return ('-', body)
-        return None
-
-    def visitUnaryAndSubZone(self, ctx):
-        sub_zone = self.visit(ctx.subZone())
-        expr = self.visit(ctx.expr())
-        # If expr is already a list, append to it rather than building
-        # up a series of nested lists.  This is to keep it flat, with
-        # the only nesting occuring in Zones.
-        if isinstance(expr, list):
-            return [sub_zone] + expr
-        return [sub_zone, expr]
-
-    def visitSingleUnion(self, ctx):
-        zone = [(self.visit(ctx.zone()))]
-        return zone
-
-    def visitMultipleUnion(self, ctx):
-        # Get the zones:
-        zones = [self.visit(zone) for zone in ctx.zone()]
-        return zones
-
-    def visitMultipleUnion2(self, ctx):
-        # This rule exists because of the three ways of expressing a
-        # union:
-        # - | +x +y (union with nothing)
-        # -   +x | +y (infix union operator)
-        # - | +x | +y (infix union operator with leading union op)
-        # The latter two are identical, hence this method simply calling
-        # the other.
-        return self.visitMultipleUnion(ctx)
-
-    def visitSubZone(self, ctx):
-        if ctx.Plus():
-            operator = '+'
-        elif ctx.Minus():
-            operator = '-'
-        solids = self.visit(ctx.expr())
-        zone = pyg4ometry.fluka.geometry.Zone(solids)
-        return (operator, zone)
 
 def load_pickle(path):
     """
