@@ -8,7 +8,7 @@ import re
 def map_materials_to_bdsim(materials):
     pass
 
-def get_region_material_strings(ordered_regions, cards):
+def get_region_material_pairs(ordered_regions, cards):
     """Given an ordered list of region names and a series of cards, map
     the region names to the material names.  Does not support
     index-based assignment.

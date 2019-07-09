@@ -21,9 +21,6 @@ import pyg4ometry.fluka.vector
 import pyg4ometry.fluka.parser
 import pyg4ometry.fluka.materials
 
-from . import FlukaParserVisitor
-from . import FlukaParserListener
-
 
 class Model(object):
     """Class for viewing Fluka geometry and converting to GDML.
@@ -35,14 +32,11 @@ class Model(object):
     and the volumes will be written out with those materialrefs.
 
     """
-    def __init__(self, filename, fluka_g4_material_map=None):
-        self._filename = filename
+    def __init__(self): # , filename, fluka_g4_material_map=None):
+        self.bodies = {}
+        self.regions = {}
         # get the syntax tree.
-        tree, cards = (
-            pyg4ometry.fluka.parser.get_geometry_ast_and_other_cards(filename)
-        )
-        self.bodies, self._body_freq_map = Model._bodies_from_tree(tree)
-        self.regions = self._regions_from_tree(tree)
+
         materials = pyg4ometry.fluka.materials.get_region_material_strings(
             self.regions.keys(),
             cards
@@ -88,14 +82,6 @@ class Model(object):
         # Initialiser the world volume:
         self._world_volume = pyg4ometry.fluka.geometry._gdml_world_volume(register=True)
 
-    def _regions_from_tree(self, tree):
-        """Get the region definitions from the tree.  Called in the
-        initialiser and then never called again.
-
-        """
-        visitor = FlukaRegionVisitor(self.bodies)
-        visitor.visit(tree)
-        return visitor.regions
 
     def write_to_gdml(self, regions=None, out_path=None,
                       make_gmad=True, bounding_subtrahends=None,
@@ -442,19 +428,6 @@ class Model(object):
                 + body_code_definitions[body]).ljust(60, '.')
             print(body_description + str(count))
 
-    @staticmethod
-    def _bodies_from_tree(tree):
-        """Return a tuple of bodies, region scale, and a count of bodies by
-        type.
-
-        """
-        body_listener = FlukaBodyListener()
-        walker = antlr4.ParseTreeWalker()
-        walker.walk(body_listener, tree)
-        body_freq_map = body_listener.body_freq_map
-        bodies = body_listener.bodies
-        return bodies, body_freq_map
-
     def _write_test_gmad(self, gdml_path):
         """Write a simple gmad file corresponding corresponding to the input
         file's geometry with the correct GDML component length.
@@ -660,100 +633,6 @@ class Model(object):
             boolean, extent = region.evaluate_with_extent(optimise)
             out[name] = (boolean, extent)
         return out
-
-
-class FlukaBodyListener(FlukaParserListener.FlukaParserListener):
-    """
-    This class is for getting simple, declarative  information about
-    the geometry model.  In no particular order:
-
-    - Body definitions, including surrounding geometry directives
-    - Stats like names and frequencies for body types and regions.
-
-    """
-    def __init__(self):
-        self.bodies = dict()
-
-        self.body_freq_map = dict()
-        self.unique_body_names = set()
-        self.used_bodies_by_type = list()
-
-        self.transform_stack = []
-        self.current_translat = None
-        self.current_expansion = None
-
-    def enterBodyDefSpaceDelim(self, ctx):
-        # This is where we get the body definitions and instantiate
-        # them with the relevant pyfuka.bodies classes.
-        body_name = ctx.ID().getText()
-        body_type = ctx.BodyCode().getText()
-        body_parameters = FlukaBodyListener._get_floats(ctx)
-        # Apply any expansions:
-        body_parameters = self.apply_expansions(body_parameters)
-
-        # Try and construct the body, if it's not implemented then warn
-        try:
-            body_constructor = getattr(pyg4ometry.fluka.geometry, body_type)
-            body = body_constructor(body_name,
-                                    body_parameters,
-                                    self.transform_stack,
-                                    self.current_translat)
-            self.bodies[body_name] = body
-        except (AttributeError, NotImplementedError):
-            warnings.simplefilter('once', UserWarning)
-            msg = ("\nBody type \"{}\" not supported.  All bodies"
-                   " of this type will be omitted.  If bodies"
-                   " of this type are used in regions, the"
-                   " conversion will fail.").format(body_type)
-            warnings.warn(msg)
-
-    def enterUnaryExpression(self, ctx):
-        body_name = ctx.ID().getText()
-        # used, then record its name and type.
-        if body_name not in self.unique_body_names:
-            self.unique_body_names.add(body_name)
-            body_type = type(self.bodies[body_name]).__name__
-            self.used_bodies_by_type.append(body_type)
-
-    def enterTranslat(self, ctx):
-        translation = FlukaBodyListener._get_floats(ctx)
-        self.current_translat = pyg4ometry.fluka.vector.Three(translation)
-
-    def exitTranslat(self, ctx):
-        self.current_translat = None
-
-    def enterExpansion(self, ctx):
-        self.current_expansion = float(ctx.Float().getText())
-
-    def exitExpansion(self, ctx):
-        self.current_expansion = None
-
-    def apply_expansions(self, parameters):
-        """
-        Method for applying the current expansion to the parameters.
-
-        """
-        factor = self.current_expansion
-        if factor is not None:
-            return [factor * x for x in parameters]
-        return parameters
-
-    @staticmethod
-    def _get_floats(ctx):
-        '''
-        Gets the Float tokens associated with the rule and returns
-        them as an array of python floats.
-        '''
-        float_strings = [i.getText() for i in ctx.Float()]
-        floats = map(float, float_strings)
-        # Converting centimetres to millimetres!!!
-        floats = [10 * x for x in floats]
-        return floats
-
-    def exitGeocards(self, ctx):
-        # When we've finished walking the geometry, count the bodies.
-        self.body_freq_map = collections.Counter(self.used_bodies_by_type)
-        del self.used_bodies_by_type
 
 
 class FlukaRegionVisitor(FlukaParserVisitor.FlukaParserVisitor):
