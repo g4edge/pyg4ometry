@@ -10,6 +10,8 @@ import antlr4
 from . import FlukaLexer
 from . import FlukaParser
 from . import materials
+from . import geometry
+from . import vector
 from .model import Model
 from .FlukaParserVisitor import FlukaParserVisitor
 from .FlukaParserListener import FlukaParserListener
@@ -23,17 +25,6 @@ class Reader(object):
 
         self._readBodies(ast)
         self._readRegions(ast)
-
-
-
-    def _read_before_geometry(self):
-        pass
-
-    def _read_after_geometry(self):
-        pass
-
-    def _read_not_geometry(self):
-        pass
 
     def _readBodies(self, ast):
         """Return a tuple of bodies, region scale, and a count of bodies by
@@ -454,7 +445,7 @@ regions, viewing and conversion will most likely fail.""".format(body_type))
         if self.current_translat is not None:
             # Nested translations are not supported.
             raise FLUKAInputError("Nested translations are forbidden.")
-        self.current_translat = pyfluka.vector.Three(translation)
+        self.current_translat = vector.Three(translation)
 
     def exitTranslat(self, ctx):
         self.current_translat = None
@@ -493,12 +484,12 @@ regions, viewing and conversion will most likely fail.""".format(body_type))
         del self.used_bodies_by_type
 
 
-class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
+class FlukaRegionVisitor(FlukaParserVisitor):
     """
     A visitor class for accumulating the region definitions.  The body
     instances are provided at instatiation, and then these are used
     when traversing the tree to build up a dictionary of region name
-    and pyfluka.geometry.Region instances.
+    and geometry.Region instances.
 
     """
     def __init__(self, bodies):
@@ -509,11 +500,12 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         # Simple in the sense that it consists of no unions of Zones.
         region_defn = self.visitChildren(ctx)
         # Build a zone from the list of bodies or single body:
-        zone = [pyfluka.geometry.Zone(region_defn)]
+        zone = [geometry.Zone(region_defn)]
         region_name = ctx.RegionName().getText()
         # temporarily G4_Galactic
-        self.regions[region_name] = pyfluka.geometry.Region(region_name, zone,
-                                                            "G4_Galactic")
+        self.regions[region_name] = geometry.Region(region_name,
+                                                    zone,
+                                                    "G4_Galactic")
 
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
@@ -522,9 +514,9 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         # Get the list of tuples of operators and bodies/zones
         region_defn = self.visitChildren(ctx)
         # Construct zones out of these:
-        zones = [pyfluka.geometry.Zone(defn) for defn in region_defn]
+        zones = [geometry.Zone(defn) for defn in region_defn]
         region_name = ctx.RegionName().getText()
-        region = pyfluka.geometry.Region(region_name, zones, "G4_Galactic")
+        region = geometry.Region(region_name, zones, "G4_Galactic")
         self.regions[region_name] = region
 
     def visitUnaryAndBoolean(self, ctx):
@@ -586,13 +578,14 @@ class FlukaRegionVisitor(pyfluka.FlukaParserVisitor.FlukaParserVisitor):
         elif ctx.Minus():
             operator = '-'
         solids = self.visit(ctx.expr())
-        zone = pyfluka.geometry.Zone(solids)
+        zone = geometry.Zone(solids)
         return (operator, zone)
 
 
 class FLUKAInputError(RuntimeError):
     def __init__(self, message):
-        super(RuntimeError, self).__init__(self.message)
+        super(FLUKAInputError, self).__init__(message)
+        self.message = message
 
 def _make_body(body_type, name, parameters, translation):
     """Given a body type, "REC", "XYP", etc, and a list of the parameters
@@ -602,7 +595,7 @@ def _make_body(body_type, name, parameters, translation):
     """
 
     try:
-        ctor = getattr(pyfluka.geometry, body_type)
+        ctor = getattr(geometry, body_type)
     except AttributeError:
         raise ValueError("Body type not supported")
 
