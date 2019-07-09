@@ -36,7 +36,7 @@ def MaterialPredefined(name, registry=None):
     return Material(**locals())
 
 
-def MaterialArbitraty(name, registry=None):
+def MaterialArbitrary(name, registry=None):
     """Just a name of a material.  WARNING:  It is left to the
     user to ensure that the name is valid.
 
