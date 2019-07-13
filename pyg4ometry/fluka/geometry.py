@@ -14,8 +14,8 @@ import logging
 
 import numpy as np
 import networkx as nx
-import pygdml
-import pygdml.transformation as trf
+#import pygdml
+#import pygdml.transformation as trf
 import pyg4ometry
 
 from . import vector
