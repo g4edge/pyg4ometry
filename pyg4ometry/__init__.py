@@ -1,4 +1,4 @@
-import fluka
+import flukaNew
 import transformation
 import exceptions
 import stl
