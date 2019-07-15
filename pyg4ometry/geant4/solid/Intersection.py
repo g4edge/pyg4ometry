@@ -36,8 +36,8 @@ class Intersection(_SolidBase):
 
         self.dependents = []
 
-        registry.addSolid(self)
         self.registry = registry
+        registry.addSolid(self)
 
         obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
         obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]

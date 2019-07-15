@@ -34,12 +34,13 @@ class Subtraction(_SolidBase):
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
         self.mesh = None
 
-        registry.addSolid(self)
-        self.registry = registry 
+        self.registry = registry
+        if registry :
+            registry.addSolid(self)
 
         self.dependents = []
-        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
+        # obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
+        # obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
 
@@ -52,8 +53,12 @@ class Subtraction(_SolidBase):
 
         # look up solids in registry 
         import pyg4ometry.geant4 as _g4
-        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
+        if self.registry:
+            obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
+            obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
+        else:
+            obj1 = self.obj1
+            obj2 = self.obj2
 
         # transformation 
         rot = tbxyz2axisangle(self.tra2[0].eval())
