@@ -1,18 +1,22 @@
-from collections import OrderedDict
+from collections import OrderedDict as _OrderedDict
 
 class FlukaRegistry:
     def __init__(self) :
-        self.bodyDict     = OrderedDict()
-        self.regionDict   = OrderedDict()
-        self.materialDict = OrderedDict()
-        self.cardDict     = OrderedDict()
+        self.bodyDict     = _OrderedDict()
+        self.regionDict   = _OrderedDict()
+        self.materialDict = _OrderedDict()
+        self.latticeDict  = _OrderedDict()
+        self.cardDict     = _OrderedDict()
 
-    def addBody(self, body) :
-        pass
+    def addBody(self, body):
+        self.bodyDict.add(body)
 
-    def addRegion(self, region) :
-        pass
+    def addRegion(self, region):
+        self.regionDict.add(region)
 
-    def addMaterial(self, material) :
-        pass
+    def addMaterial(self, material):
+        self.materialDict.add(material)
+
+    def addLattice(self, lattice):
+        self.latticeDict.add(lattice)
 

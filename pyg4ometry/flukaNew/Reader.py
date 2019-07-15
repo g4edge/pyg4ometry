@@ -58,7 +58,7 @@ class Reader(object):
     def parseBodies(self) :
         pass
 
-    def parseRPP(self, lstart) :        
+    def parseRpp(self, lstart) :
         pass
 
     def parseBox(self, lstart) : 
