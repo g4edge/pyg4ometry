@@ -56,6 +56,12 @@ class Three(_np.ndarray):
         """
         return _np.linalg.norm(self)
 
+    def dot(self, other):
+        return _np.dot(self,other)
+
+    def cross(self, other):
+        return _np.cross(self,other)
+
     def __eq__(self, other):
         try:
             return (self.x == other.x

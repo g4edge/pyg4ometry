@@ -29,7 +29,9 @@ class Region :
 
     def geant4_solid(self, reg):
 
-        b = self.boolean[0].body.geant4_solid(reg)
+        b  = self.boolean[0].body.geant4_solid(reg)
+        bt = self.boolean[0].body.centre()
+        br = self.boolean[0].body.rotation()
 
         for s,i in zip(self.boolean[1:],range(0,len(self.boolean[1:])+1)):
 
