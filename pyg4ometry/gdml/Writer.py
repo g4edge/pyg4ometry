@@ -279,7 +279,12 @@ class Writer(object):
                 self.writeAuxiliary(aux, parent=we)
 
         for dv in lv.daughterVolumes :
-            dve = self.writePhysicalVolume(dv)
+            if dv.type is "placement":
+                dve = self.writePhysicalVolume(dv)
+            elif dv.type is "parametrised":
+                dve = self.writeParametrisedVolume(dv)
+            else:
+                raise ValueError("Unknown daughter volume type: {}".format(dv.type))
             we.appendChild(dve)
 
         self.structure.appendChild(we)
@@ -355,6 +360,82 @@ class Writer(object):
         #pvol.appendChild(tscae)
 
         return pvol
+
+    def writeParametrisedVolume(self, instance):
+        pvol = self.doc.createElement('paramvol')
+        pvol.setAttribute('ncopies', str(int(float(instance.ncopies))))
+
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.logicalVolume.name))
+        pvol.appendChild(vr)
+
+        pos_size = self.doc.createElement('parameterised_position_size')
+        for i in range(instance.ncopies):
+            param_node = self.doc.createElement('parameters')
+            param_node.setAttribute('number', str(i+1)) # As zero-indexed in python
+
+            tr = instance.transforms[i]
+            # param vol translation
+            tlatee = self.doc.createElement('position')
+            tlatee.setAttribute('x', str(float(tr[1].x)))
+            tlatee.setAttribute('y', str(float(tr[1].y)))
+            tlatee.setAttribute('z', str(float(tr[1].z)))
+            param_node.appendChild(tlatee)
+
+            # param vol rotation
+            rote = self.doc.createElement('rotation')
+            rote.setAttribute('x', str(float(tr[0].x)))
+            rote.setAttribute('y', str(float(tr[0].y)))
+            rote.setAttribute('z', str(float(tr[0].z)))
+            param_node.appendChild(rote)
+
+            params = instance.paramData[i]
+
+            # Map the internal member names to variable names in the output
+            if isinstance(params, _g4.ParameterisedVolume.BoxDimensions):
+                dim_name = "box"
+                dim_names = { "pX" : "x",
+                              "pY" : "y",
+                              "pZ" : "z"}
+
+            elif isinstance(params, _g4.ParameterisedVolume.TubeDimensions):
+                dim_name = "tube"
+                dim_names = { "pRMin" : "InR",
+                              "pRMax" : "OutR",
+                              "pDz"   : "hz",
+                              "pSPhi" : "StartPhi",
+                              "pDPhi" : "DeltaPhi"}
+
+            elif isinstance(params, _g4.ParameterisedVolume.ConeDimensions):
+                dim_name = "cone"
+                dim_names = { "pRMin1" : "rmin1",
+                              "pRMax1" : "rmax1",
+                              "pRMin2" : "rmin2",
+                              "pRMax2" : "rmax2",
+                              "pDz"    : "z",
+                              "pSPhi"  : "startphi",
+                              "pDPhi"  : "deltaphi"}
+
+            elif isinstance(params, _g4.ParameterisedVolume.ConeDimensions):
+                dim_name = "cone"
+                dim_names = { "pRMax" : "r" }
+
+
+            dim = self.doc.createElement('{}_dimensions'.format(dim_name))
+            for name in dim_names:
+                dim.setAttribute(dim_names[name], str(float(getattr(params, name))))
+            for unit in ["lunit", "aunit"]:
+                if hasattr(params, unit):
+                    dim.setAttribute(unit, getattr(params, unit))
+
+            param_node.appendChild(dim)
+            pos_size.appendChild(param_node)
+
+        pvol.appendChild(pos_size)
+
+        return pvol
+
+
 
     def writeSolid(self, solid):
         """
