@@ -1449,7 +1449,7 @@ class Reader(object):
                             y = _defines.Expression(pvol_name + '_Box_pY', '{}'.format(ppsChNodeTag.attributes['y'].value),self._registry, False)
                             z = _defines.Expression(pvol_name + '_Box_pZ', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
                             if ppsChNodeTag.attributes.has_key('lunit'):
-                                unit = node.attributes['lunit'].value
+                                unit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 unit = "mm"
 
