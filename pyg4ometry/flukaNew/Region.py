@@ -55,7 +55,7 @@ class Zone :
                     fs=fs+" +"+s.body.name
             elif isinstance(s,Subtraction) :
                 if isinstance(s.body,Zone) :
-                    fs = fs+" -("+s.body.fluka__free_string()+")"
+                    fs = fs+" -("+s.body.fluka_free_string()+")"
                 else :
                     fs=fs+" -"+s.body.name
         return fs
