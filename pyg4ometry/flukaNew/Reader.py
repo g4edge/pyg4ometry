@@ -17,8 +17,13 @@ class Reader(object):
         
         # strip comments 
         fileLinesStripped = []
-        for l in self.fileLines : 
+        for l in self.fileLines :
             fileLineStripped = l.lstrip()
+
+            # if there is nothing on  the line
+            if len(fileLineStripped) == 0 :
+                continue
+            # skip comment
             if fileLineStripped[0] != '*' : 
                 fileLinesStripped.append(l.rstrip())
         self.fileLines = fileLinesStripped
@@ -104,6 +109,9 @@ class Reader(object):
         pass
 
     def parseCards(self) :
+        pass
+
+    def parseLattice(self) :
         pass
 
     
