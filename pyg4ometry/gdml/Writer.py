@@ -569,7 +569,7 @@ class Writer(object):
         if self.registry.defineDict.has_key(expr.name) :
             return expr.name
         else :
-            return expr.expr.expression
+            return str(expr.eval())
 
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
