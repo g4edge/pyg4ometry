@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+
+# If you don't have /usr/local/lib/antlr-4.7-complete.jar then you
+# should get it via http://www.antlr.org.
+ANTLR4=/usr/local/lib/antlr-4.7-complete.jar
+
+# lexers must come before the grammars
+declare -a grammars=("FlukaLexer.g4"
+		     "FlukaParser.g4"
+		     "RegionLexer.g4"
+		     "RegionParser.g4")
+
+function generate_parsers { # do all
+    for name in "${grammars[@]}"
+    do
+	# local file="${grammars[$name]}"
+	local file=$name
+	echo "Generating: ${name}"
+	generate_parser "${file}"
+    done
+}
+
+function generate_parser { # do 1
+    local g4file=$1
+    grep -q 'language=Python2' *.g4
+    if [ "$?" -eq 0 ]
+    then
+	local language=Python2
+    else
+	local language=Java
+	echo "Compiling parser with Java as target."
+    fi
+    java -jar "${ANTLR4}" "${g4file}" -Dlanguage="${language}" -visitor
+}
+
+generate_parsers
