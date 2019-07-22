@@ -499,6 +499,15 @@ class Writer(object):
                              "pDx4": "x4",
                              "pAlp2": "alpha2",}
 
+            elif isinstance(params, _g4.ParameterisedVolume.ParaDimensions):
+                dim_solid = "para"
+                dim_names = {"pX": "x",
+                             "pY": "y",
+                             "pZ": "z",
+                            "pAlpha": "alpha",
+                             "pTheta": "theta",
+                             "pPhi": "phi",}
+
             elif isinstance(params, _g4.ParameterisedVolume.EllipsoidDimensions):
                 dim_solid = "ellipsoid"
                 dim_names = {"pxSemiAxis": "ax",
