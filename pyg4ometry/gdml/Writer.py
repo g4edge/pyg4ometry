@@ -393,13 +393,13 @@ class Writer(object):
 
             # Map the internal member names to variable names in the output
             if isinstance(params, _g4.ParameterisedVolume.BoxDimensions):
-                dim_name = "box"
+                dim_solid = "box"
                 dim_names = { "pX" : "x",
                               "pY" : "y",
                               "pZ" : "z"}
 
             elif isinstance(params, _g4.ParameterisedVolume.TubeDimensions):
-                dim_name = "tube"
+                dim_solid = "tube"
                 dim_names = { "pRMin" : "InR",
                               "pRMax" : "OutR",
                               "pDz"   : "hz",
@@ -407,7 +407,7 @@ class Writer(object):
                               "pDPhi" : "DeltaPhi"}
 
             elif isinstance(params, _g4.ParameterisedVolume.ConeDimensions):
-                dim_name = "cone"
+                dim_solid = "cone"
                 dim_names = { "pRMin1" : "rmin1",
                               "pRMax1" : "rmax1",
                               "pRMin2" : "rmin2",
@@ -416,17 +416,93 @@ class Writer(object):
                               "pSPhi"  : "startphi",
                               "pDPhi"  : "deltaphi"}
 
-            elif isinstance(params, _g4.ParameterisedVolume.ConeDimensions):
-                dim_name = "cone"
+            elif isinstance(params, _g4.ParameterisedVolume.OrbDimensions):
+                dim_solid = "orb"
                 dim_names = { "pRMax" : "r" }
 
+            elif isinstance(params, _g4.ParameterisedVolume.SphereDimensions):
+                dim_solid = "sphere"
+                dim_names = { "pRMin": "rmin",
+                              "pRMax": "rmax",
+                              "pSPhi": "startphi",
+                              "pDPhi": "deltaphi",
+                              "pSTheta": "starttheta",
+                              "pDTheta": "deltatheta",}
 
-            dim = self.doc.createElement('{}_dimensions'.format(dim_name))
+            elif isinstance(params, _g4.ParameterisedVolume.TorusDimensions):
+                dim_solid = "torus"
+                dim_names = { "pRMin": "rmin",
+                              "pRMax": "rmax",
+                              "pRTor": "rtot",
+                              "pSPhi": "startphi",
+                              "pDPhi": "deltaphi",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.HypeDimensions):
+                dim_solid = "hype"
+                dim_names = {"innerRadius": "rmin",
+                             "outerRadius": "rmax",
+                             "innerStereo": "inst",
+                             "outerStereo": "outst",
+                             "lenZ": "z",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.TrdDimensions):
+                dim_solid = "trd"
+                dim_names = {"pX1": "x1",
+                             "pX2": "x2",
+                             "pY1": "y1",
+                             "pY2": "y2",
+                             "pZ": "z",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.TrapDimensions):
+                dim_solid = "trap"
+                dim_names = {"pDz": "z",
+                             "pTheta": "theta",
+                             "pDPhi": "phi",
+                             "pDy1": "y1",
+                             "pDx1": "x1",
+                             "pDx2": "x2",
+                             "pAlp1": "alpha1",
+                             "pDy2": "y2",
+                             "pDx3": "x3",
+                             "pDx4": "x4",
+                             "pAlp2": "alpha2",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.EllipsoidDimensions):
+                dim_solid = "ellipsoid"
+                dim_names = {"pxSemiAxis": "ax",
+                             "pySemiAxis": "by",
+                             "pzSemiAxis": "cz",
+                             "pzBottomCut": "zcut1",
+                             "pzTopCut": "zcut2",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.PolyconeDimensions):
+                dim_solid = "polycone"
+                dim_names = {"pSPhi": "startPhi",
+                             "pDPhi": "openPhi",}
+
+            elif isinstance(params, _g4.ParameterisedVolume.PolyhedraDimensions):
+                dim_solid = "polyhedra"
+                dim_names = {"pSPhi": "startPhi",
+                             "pDPhi": "openPhi",
+                             "numSide" : "numSide",}
+
+            dim = self.doc.createElement('{}_dimensions'.format(dim_solid))
             for name in dim_names:
                 dim.setAttribute(dim_names[name], str(float(getattr(params, name))))
             for unit in ["lunit", "aunit"]:
                 if hasattr(params, unit):
                     dim.setAttribute(unit, getattr(params, unit))
+
+            # Special handling of polysolids
+            if dim_solid in ["polycone", "polyhedra"]:
+                z_planes = zip(params.pZpl, params.pRMin, params.pRMax)
+                dim.setAttribute("numRZ", str(len(z_planes)))
+                for pl in z_planes:
+                    zpl = self.doc.createElement('zplane')
+                    zpl.setAttribute("rmin", str(float(pl[1])))
+                    zpl.setAttribute("rmax",  str(float(pl[2])))
+                    zpl.setAttribute("z",  str(float(pl[0])))
+                    dim.appendChild(zpl)
 
             param_node.appendChild(dim)
             pos_size.appendChild(param_node)
