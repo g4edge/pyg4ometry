@@ -283,6 +283,8 @@ class Writer(object):
                 dve = self.writePhysicalVolume(dv)
             elif dv.type is "parametrised":
                 dve = self.writeParametrisedVolume(dv)
+            elif dv.type is "replica":
+                dve = self.writeReplicaVolume(dv)
             else:
                 raise ValueError("Unknown daughter volume type: {}".format(dv.type))
             we.appendChild(dve)
@@ -360,6 +362,36 @@ class Writer(object):
         #pvol.appendChild(tscae)
 
         return pvol
+
+    def writeReplicaVolume(self, instance):
+        rvol = self.doc.createElement('replicavol')
+        rvol.setAttribute('number', str(int(float(instance.nreplicas))))
+
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.logicalVolume.name))
+        rvol.appendChild(vr)
+
+        ra = self.doc.createElement('replicate_along_axis')
+        ax = self.doc.createElement('direction')
+        axes = {1 : "x", 2 : "y",  3 : "z", 4 : "rho", 5 : "phi"}
+        ax.setAttribute(axes[instance.axis], "1")
+        ra.appendChild(ax)
+
+        wd = self.doc.createElement('width')
+        wd.setAttribute("value", str(float(instance.width)))
+        if instance.wunit:
+            wd.setAttribute("unit", instance.wunit)
+        ra.appendChild(wd)
+
+        of = self.doc.createElement('offset')
+        of.setAttribute("value", str(float(instance.offset)))
+        if instance.ounit:
+            of.setAttribute("unit", instance.ounit)
+        ra.appendChild(of)
+
+        rvol.appendChild(ra)
+
+        return rvol
 
     def writeParametrisedVolume(self, instance):
         pvol = self.doc.createElement('paramvol')
