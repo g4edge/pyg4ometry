@@ -1726,5 +1726,53 @@ class Reader(object):
                                         addRegistry=True)
 
 
-            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol": 
-                print 'Reader> divisionvol not implemented'
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol":
+                nreplica  = chNode.attributes['number'].value
+                volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                # Name
+                try:
+                    pvol_name = chNode.attributes["name"].value
+                except KeyError:
+                    pvol_name = volref+"_DivisionPV"
+
+                ax = chNode.attributes['axis'].value
+                axes = {"kXAxis" : 1, "kYAxis" : 2,  "kZAxis" : 3, "kRho" : 4, "kPhi" : 5}
+                axis = axes[ax]
+
+                try:
+                    offs = chNode.attributes["offset"].value
+                except KeyError:
+                    offs = 0
+                offset = _defines.Expression(pvol_name+"_offset",
+                                                offs, self._registry, False)
+
+                try:
+                    wdt = chNode.attributes["width"].value
+                except KeyError:
+                    wdt = -1
+                width = _defines.Expression(pvol_name+"_width",
+                                                wdt, self._registry, False)
+
+                try:
+                    num = chNode.attributes["number"].value
+                except KeyError:
+                    num = -1
+                ndivisions = _defines.Expression(pvol_name+"_ndivisions",
+                                                 num, self._registry, False)
+
+                try:
+                    unit = chNode.attributes["unit"].value
+                except KeyError:
+                    unit = "mm"
+
+                rv = _g4.DivisionVolume(pvol_name,
+                                       self._registry.logicalVolumeDict[volref],
+                                       vol,
+                                       axis,
+                                       ndivisions,
+                                       width,
+                                       offset,
+                                       self._registry,
+                                       True,
+                                       unit)
