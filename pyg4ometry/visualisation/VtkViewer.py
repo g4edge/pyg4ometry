@@ -96,7 +96,7 @@ class VtkViewer:
                 self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, self.filters, 
                              self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
-            elif pv.type == "replica":
+            elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0])
@@ -121,9 +121,6 @@ class VtkViewer:
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
                                  self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
-            elif pv.type == "division":
-                pass
-
 
     def addMesh(self, pv_name, solid_name, mesh, mrot, tra, localmeshes, filters, 
                 mappers, mapperMap, actors, actorMap, visOptions = None):
