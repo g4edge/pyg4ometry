@@ -161,6 +161,73 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         return meshes, transforms
 
+    def divideCons(self, offset, width, ndiv):
+        allowed_axes = [self.Axis.kRho, self.Axis.kPhi, self.Axis.kZAxis]
+        self.checkAxis(allowed_axes)
+
+        meshes = []
+        transforms = []
+
+        msize =  self.getMotherSize()
+        if self.axis ==  self.Axis.kPhi:
+            # Always take into account the inner sizes of the solids
+            placements =_np.arange(float(self.motherVolume.solid.pSPhi) + offset,
+                                   float(self.motherVolume.solid.pSPhi) + offset+ndiv*width, width)
+        elif self.axis == self.Axis.kRho:
+            placements =_np.arange(float(self.motherVolume.solid.pRmin1) + offset,
+                                   float(self.motherVolume.solid.pRmin1) + offset+ndiv*width, width)
+        else: # Position axes
+            placements = _np.arange(-msize/2. + offset + width/2.,
+                                    -msize/2. + offset + width*ndiv,
+                                    width)
+
+        r1 = float(self.motherVolume.solid.pRmin1)
+        r2 = float(self.motherVolume.solid.pRmin2)
+        R1 = float(self.motherVolume.solid.pRmax1)
+        R2 = float(self.motherVolume.solid.pRmax2)
+        dr = r2 - r1
+        dR = R2 - R1
+        if r1 and r2:
+            r_ratio = r2/r1
+        else:
+            r_ratio = 0.
+        w_ratio = (R2-r2)/msize
+
+        h_i = 0.
+        r_i = r1
+        R_i = R1
+
+        for i, v in enumerate(placements):
+            solid       = _copy.deepcopy(self.motherVolume.solid)
+            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            if self.axis == self.Axis.kZAxis :
+                solid.pRmin1.expr.expression = str(r_i) # Set the radii
+                solid.pRmax1.expr.expression = str(R_i)
+                h_i += width
+                r_i = r1 + h_i*dr/msize
+                R_i = R1 + h_i*dR/msize
+                solid.pRmin2.expr.expression = str(r_i)
+                solid.pRmax2.expr.expression = str(R_i)
+                solid.pDz.expr.expression = str(width) # Set the slice size
+                transforms.append([[0,0,0],[0,0,v]])
+
+            elif self.axis == self.Axis.kRho:
+                solid.pRmin1.expr.expression = str(v)
+                solid.pRmax1.expr.expression = str(v + width)
+                v_2 = v - (r1+offset) + (r2+w_ratio*offset)
+                solid.pRmin2.expr.expression = str(v_2)
+                solid.pRmax2.expr.expression = str(v_2 + w_ratio*width)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            elif self.axis == self.Axis.kPhi :
+                solid.pSPhi.expr.expression = str(v)
+                solid.pDPhi.expr.expression = str(width)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            meshes.append(_Mesh(solid))
+
+        return meshes, transforms
+
     def createDivisionMeshes(self) :
         ndivisions = int(float(self.ndivisions)) # Do float() instead of .eval() because .eval() doesnt
         offset    = float(self.offset)           # work with the default numerical values
