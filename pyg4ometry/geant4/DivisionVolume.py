@@ -39,8 +39,9 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         if motherVolume.solid.type != logicalVolume.solid.type:
             raise ValueError("Can not have divisions with a different solid type than"
-                             " the mother volume. Mother : {}, Division : {}".format(motherVolume.solid.type,
-                                                                                     logicalVolume.solid.type))
+                             " the mother volume. Mother"
+                             " : {}, Division : {}".format(motherVolume.solid.type,
+                                                           logicalVolume.solid.type))
         if addRegistry :
             registry.addPhysicalVolume(self)
 
@@ -77,7 +78,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
     def checkAxis(self, allowed_axes):
         if self.axis not in allowed_axes:
             raise ValueError("Division along axis {}"
-                             " not supported for solid {}".format(self.axis, self.logicalVolume.solid.name))
+                             " not supported for solid {}".format(self.axis,
+                                                                  self.logicalVolume.solid.name))
 
     def divideBox(self, offset, width, ndiv):
         allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
@@ -87,7 +89,10 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         transforms = []
 
         msize = self.getMotherSize()
-        for i, v in enumerate(_np.arange(-msize/2. + offset + width/2.,  -msize/2. + offset + width*ndiv, width)):
+        for i, v in enumerate(_np.arange(-msize/2. + offset + width/2.,
+                                         -msize/2. + offset + width*ndiv,
+                                         width)):
+
             solid = _copy.deepcopy(self.motherVolume.solid)
             solid.name  = self.name+"_"+solid.name+"_"+str(i)
 
@@ -115,7 +120,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         meshes = []
         transforms = []
 
-        for i, v in enumerate(_np.arange(offset-width*(ndiv-1)*0.5,  offset+width*(ndiv+1)*0.5, width)):
+        for i, v in enumerate(_np.arange(offset-width*(ndiv-1)*0.5,
+                                         offset+width*(ndiv+1)*0.5, width)):
             if self.axis == self.Axis.kZAxis :
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,0,v]])
@@ -161,11 +167,14 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
             pass # Can work with this directly
 
         if hasattr(self, "divide{}".format(self.logicalVolume.solid.type)):
-            meshes, transforms = getattr(self, "divide{}".format(self.logicalVolume.solid.type))(offset,width,ndivisions)
+            stype = self.logicalVolume.solid.type
+            meshes, transforms = getattr(self, "divide{}".format(stype))(offset,width,ndivisions)
         else:
-            raise ValueError("Division with solid {} not supported yet.".format(self.logicalVolume.solid.type))
+            raise ValueError("Division with solid {}"
+                             " is not supported yet.".format(self.logicalVolume.solid.type))
 
         return [meshes, transforms]
 
     def __repr__(self) :
-        return 'Division volume : '+self.name+' '+str(self.axis)+' '+str(self.ndivisions)+' '+str(self.offset)+' '+str(self.width)
+        return 'Division volume : {} {} {} {} {}'.format(self.name, self.axis, self.ndivisions,
+                                                         self.offset, self.width)
