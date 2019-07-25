@@ -55,23 +55,31 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         # The sizes along the 5 axis for all supported solids
         if stype == "Box":
             sizes = [float(sd.pX), float(sd.pY), float(sd.pZ), None, None]
+
         elif stype == "Tubs":
              # TODO: What about the starting angles (aka intial offset)?
-            sizes = [None, None, float(sd.pDz), float(sd.pRMax), float(sd.pDPhi)]
+            sizes = [None, None, float(sd.pDz), float(sd.pRMax) - float(sd.pRMin), float(sd.pDPhi)]
+
         elif stype == "Cons":
              # The radius is the outer radius at the -Z face
-            sizes = [None, None, float(sd.pDz), float(sd.pRmax1), float(sd.pDPhi)]
+            sizes = [None, None, float(sd.pDz), float(sd.pRmax1)-float(sd.pRmin1), float(sd.pDPhi)]
+
         elif stype == "Trd":
             # Can not divide up the sloping sides of the trapezoid
             sizes = [min(float(sd.pDx1),float(sd.pDx2)), # TODO: Check the sizes here
                      min(float(sd.pDy1),float(sd.pDy2)), None, None]
+
         elif stype == "Para":
             sizes = [float(sd.pDx), float(sd.pDy), float(sd.pDz), None, None]
+
         elif stype == "Polycone":
             # Z is in increasing order
-            sizes = [None, None, float(sd.Zpl[-1]), float(sd.pRMax[0]), float(sd.pDPhi)]
+            sizes = [None, None, float(sd.Zpl[-1]), float(sd.pRMax[0])-float(sd.pRMin[0]),
+                     float(sd.pDPhi)]
+
         elif stype == "Polyhedra":
-            sizes = [None, None, float(sd.zPlane[-1]), float(sd.rOuter[0]), float(sd.phiTotal)]
+            sizes = [None, None, float(sd.zPlane[-1]), float(sd.rOuter[0])-float(sd.rInner[0]),
+                     float(sd.phiTotal)]
 
         return sizes[self.axis - 1]
 
