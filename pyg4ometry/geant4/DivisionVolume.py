@@ -97,63 +97,69 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         transforms = []
 
         msize = self.getMotherSize()
-        for i, v in enumerate(_np.arange(-msize/2. + offset + width/2.,
-                                         -msize/2. + offset + width*ndiv,
-                                         width)):
+        placements = _np.arange(-msize/2. + offset + width/2.,
+                                -msize/2. + offset + width*ndiv,
+                                width)
 
+        for i, v in enumerate(placements):
             solid = _copy.deepcopy(self.motherVolume.solid)
             solid.name  = self.name+"_"+solid.name+"_"+str(i)
 
             if self.axis == self.Axis.kXAxis :
-                solid.pX = width
+                solid.pX.expr.expression = str(width)
                 transforms.append([[0,0,0],[v,0,0]])
 
             elif self.axis == self.Axis.kYAxis :
-                solid.pY = width
+                solid.pY.expr.expression = str(width)
                 transforms.append([[0,0,0],[0,v,0]])
 
             elif self.axis == self.Axis.kZAxis :
-                solid.pZ = width
+                solid.pZ.expr.expression = str(width)
                 transforms.append([[0,0,0],[0,0,v]])
 
             meshes.append(_Mesh(solid))
         return meshes, transforms
 
     def divideTubs(self, offset, width, ndiv):
-        raise ValueError("Tubs division not fully implemented!")
-
         allowed_axes = [self.Axis.kRho, self.Axis.kPhi, self.Axis.kZAxis]
         self.checkAxis(allowed_axes)
 
         meshes = []
         transforms = []
 
-        for i, v in enumerate(_np.arange(offset-width*(ndiv-1)*0.5,
-                                         offset+width*(ndiv+1)*0.5, width)):
+        if self.axis ==  self.Axis.kPhi:
+            # Always take into account the inner sizes of the solids
+            placements =_np.arange(float(self.motherVolume.solid.pSPhi) + offset,
+                                   float(self.motherVolume.solid.pSPhi) + offset+ndiv*width, width)
+        elif self.axis == self.Axis.kRho:
+            placements =_np.arange(float(self.motherVolume.solid.pRMin) + offset,
+                                   float(self.motherVolume.solid.pRMin) + offset+ndiv*width, width)
+        else: # Position axes
+            msize =  self.getMotherSize()
+            placements = _np.arange(-msize/2. + offset + width/2.,
+                                    -msize/2. + offset + width*ndiv,
+                                    width)
+
+        for i, v in enumerate(placements):
+            solid       = _copy.deepcopy(self.motherVolume.solid)
+            solid.name  = self.name+"_"+solid.name+"_"+str(i)
             if self.axis == self.Axis.kZAxis :
-                meshes.append(self.logicalVolume.mesh)
+                solid.pDz.expr.expression = str(width)
                 transforms.append([[0,0,0],[0,0,v]])
 
-        for i, v in enumerate(_np.arange(offset, offset+ndivisions*width,width)):
-            if self.axis == self.Axis.kRho :
-                # Copy solid so we don't change the original
-                solid       = _copy.deepcopy(self.logicalVolume.solid)
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-                # Must be a tubs
+            elif self.axis == self.Axis.kRho:
                 solid.pRMin.expr.expression = str(v)
                 solid.pRMax.expr.expression = str(v+width)
-                mesh   = _Mesh(solid)
-
-                meshes.append(mesh)
                 transforms.append([[0,0,0],[0,0,0]])
 
             elif self.axis == self.Axis.kPhi :
-                meshes.append(self.logicalVolume.mesh)
-                transforms.append([[0,0,v],[0,0,0]])
+                solid.pSPhi.expr.expression = str(v)
+                solid.pDPhi.expr.expression = str(width)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            meshes.append(_Mesh(solid))
 
         return meshes, transforms
-
 
     def createDivisionMeshes(self) :
         ndivisions = int(float(self.ndivisions)) # Do float() instead of .eval() because .eval() doesnt
