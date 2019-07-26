@@ -257,6 +257,57 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         return meshes, transforms
 
+    def divideTrd(self, offset, width, ndiv):
+        allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
+        self.checkAxis(allowed_axes)
+
+        meshes = []
+        transforms = []
+
+        msize =  self.getMotherSize()
+        placements = _np.arange(-msize/2. + offset + width/2.,
+                                -msize/2. + offset + width*ndiv,
+                                width)
+
+        x1 = float(self.motherVolume.solid.pX1)
+        x2 = float(self.motherVolume.solid.pX2)
+        y1 = float(self.motherVolume.solid.pY1)
+        y2 = float(self.motherVolume.solid.pY2)
+
+        dX = x2 - x1
+        dY = y2 - y1
+        x_i = x1  # For linear interpolation in Z
+        y_i = y1
+        h_i  = 0.
+
+        for i, v in enumerate(placements):
+            solid       = _copy.deepcopy(self.motherVolume.solid)
+            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            if self.axis == self.Axis.kXAxis :
+                solid.pX1.expr.expression = str(width)
+                solid.pX2.expr.expression = str(width)
+                transforms.append([[0,0,0],[v,0,0]])
+
+            elif self.axis == self.Axis.kYAxis:
+                solid.pY1.expr.expression = str(width)
+                solid.pY2.expr.expression = str(width)
+                transforms.append([[0,0,0],[0,v,0]])
+
+            elif self.axis == self.Axis.kZAxis :
+                solid.pX1.expr.expression = str(x_i)
+                solid.pY1.expr.expression = str(y_i)
+                h_i += width
+                x_i = x1 + h_i*dX/msize
+                y_i = y1 + h_i*dY/msize
+                solid.pX2.expr.expression = str(x_i)
+                solid.pY2.expr.expression = str(y_i)
+                solid.pZ.expr.expression = str(width)
+                transforms.append([[0,0,0], [0,0,v]])
+
+            meshes.append(_Mesh(solid))
+
+        return meshes, transforms
+
     def createDivisionMeshes(self) :
         ndivisions = int(float(self.ndivisions)) # Do float() instead of .eval() because .eval() doesnt
         offset    = float(self.offset)           # work with the default numerical values
