@@ -230,7 +230,6 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         transforms = []
 
         msize =  self.getMotherSize()
-
         placements = _np.arange(-msize/2. + offset + width/2.,
                                 -msize/2. + offset + width*ndiv,
                                 width)
@@ -315,7 +314,6 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         transforms = []
         meshes     = []
-
 
         # Poor man's overloading of the 3 possible constructors.
         if width <= 0  and ndivisions > 0:
