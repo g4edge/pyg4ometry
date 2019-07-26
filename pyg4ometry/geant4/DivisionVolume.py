@@ -57,7 +57,6 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
             sizes = [float(sd.pX), float(sd.pY), float(sd.pZ), None, None]
 
         elif stype == "Tubs":
-             # TODO: What about the starting angles (aka intial offset)?
             sizes = [None, None, float(sd.pDz), float(sd.pRMax) - float(sd.pRMin), float(sd.pDPhi)]
 
         elif stype == "Cons":
