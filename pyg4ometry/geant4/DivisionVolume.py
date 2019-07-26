@@ -187,16 +187,11 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         R2 = float(self.motherVolume.solid.pRmax2)
         dr = r2 - r1
         dR = R2 - R1
-        if r1 and r2:
-            r_ratio = r2/r1
-        else:
-            r_ratio = 0.
-        w_ratio = (R2-r2)/msize
+        w_ratio = (R2-r2)/msize # Ratio of the bottom and top thickness
 
-        h_i = 0.
+        h_i = 0. # For linear interpolation of the Z-divisions
         r_i = r1
         R_i = R1
-
         for i, v in enumerate(placements):
             solid       = _copy.deepcopy(self.motherVolume.solid)
             solid.name  = self.name+"_"+solid.name+"_"+str(i)
@@ -214,7 +209,7 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
             elif self.axis == self.Axis.kRho:
                 solid.pRmin1.expr.expression = str(v)
                 solid.pRmax1.expr.expression = str(v + width)
-                v_2 = v - (r1+offset) + (r2+w_ratio*offset)
+                v_2 = v - (r1+offset) + (r2+w_ratio*offset) # Transfrom to top starting offset
                 solid.pRmin2.expr.expression = str(v_2)
                 solid.pRmax2.expr.expression = str(v_2 + w_ratio*width)
                 transforms.append([[0,0,0],[0,0,0]])
