@@ -65,8 +65,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         elif stype == "Trd":
             # Can not divide up the sloping sides of the trapezoid
-            sizes = [min(float(sd.pDx1),float(sd.pDx2)), # TODO: Check the sizes here
-                     min(float(sd.pDy1),float(sd.pDy2)), None, None]
+            sizes = [min(float(sd.pX1),float(sd.pX2)),
+                     min(float(sd.pY1),float(sd.pY2)), float(sd.pZ), None, None]
 
         elif stype == "Para":
             sizes = [2*float(sd.pX), 2*float(sd.pY), 2*float(sd.pZ), None, None]
