@@ -223,6 +223,41 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         return meshes, transforms
 
+    def dividePara(self, offset, width, ndiv):
+        allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
+        self.checkAxis(allowed_axes)
+
+        meshes = []
+        transforms = []
+
+        msize =  self.getMotherSize()
+
+        placements = _np.arange(-msize/2. + offset + width/2.,
+                                -msize/2. + offset + width*ndiv,
+                                width)
+
+        for i, v in enumerate(placements):
+            solid       = _copy.deepcopy(self.motherVolume.solid)
+            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            if self.axis == self.Axis.kXAxis :
+                solid.pX.expr.expression = str(width/2.)
+                transforms.append([[0,0,0],[v,0,0]])
+
+            elif self.axis == self.Axis.kYAxis:
+                solid.pY.expr.expression = str(width/2.)
+                transforms.append([[0,0,0],[v*_np.sin(float(solid.pAlpha)),v,0]])
+
+            elif self.axis == self.Axis.kZAxis :
+                theta = float(solid.pTheta)
+                phi = float(solid.pPhi)
+                solid.pZ.expr.expression = str(width/2.)
+                transforms.append([[0,0,0],
+                                   [v*_np.sin(theta), v*_np.sin(phi), v*_np.cos(phi)]])
+
+            meshes.append(_Mesh(solid))
+
+        return meshes, transforms
+
     def createDivisionMeshes(self) :
         ndivisions = int(float(self.ndivisions)) # Do float() instead of .eval() because .eval() doesnt
         offset    = float(self.offset)           # work with the default numerical values
