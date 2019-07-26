@@ -70,7 +70,7 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
                      min(float(sd.pDy1),float(sd.pDy2)), None, None]
 
         elif stype == "Para":
-            sizes = [float(sd.pDx), float(sd.pDy), float(sd.pDz), None, None]
+            sizes = [2*float(sd.pX), 2*float(sd.pY), 2*float(sd.pZ), None, None]
 
         elif stype == "Polycone":
             # Z is in increasing order
