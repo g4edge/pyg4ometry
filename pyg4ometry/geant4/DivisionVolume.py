@@ -73,8 +73,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         elif stype == "Polycone":
             # Z is in increasing order
-            sizes = [None, None, float(sd.Zpl[-1]), float(sd.pRMax[0])-float(sd.pRMin[0]),
-                     float(sd.pDPhi)]
+            sizes = [None, None, float(sd.pZpl[-1])-float(sd.pZpl[0]),
+                     float(sd.pRMax[0])-float(sd.pRMin[0]), float(sd.pDPhi)]
 
         elif stype == "Polyhedra":
             sizes = [None, None, float(sd.zPlane[-1]), float(sd.rOuter[0])-float(sd.rInner[0]),
