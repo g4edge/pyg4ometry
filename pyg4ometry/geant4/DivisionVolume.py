@@ -36,6 +36,7 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         self.ndivisions          = ndivisions
         self.width               = width
         self.offset              = offset
+        self.unit                = unit
 
         if motherVolume.solid.type != logicalVolume.solid.type:
             raise ValueError("Can not have divisions with a different solid type than"
