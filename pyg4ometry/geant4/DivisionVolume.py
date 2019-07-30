@@ -407,6 +407,110 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
         return meshes, transforms
 
+    def dividePolyhedra(self, offset, width, ndiv):
+        allowed_axes = [self.Axis.kRho, self.Axis.kPhi, self.Axis.kZAxis]
+        self.checkAxis(allowed_axes)
+
+        meshes = []
+        transforms = []
+
+        msize =  self.getMotherSize()
+        if not msize: # Possible if inner and outer radii at -Z are the same
+            raise ValueError("Cannot construct polyhedra division with degenerate radii at -Z")
+
+        if self.axis ==  self.Axis.kPhi:
+            # Always take into account the inner sizes of the solids
+            sphi = float(self.motherVolume.solid.phiStart)
+            dphi = float(self.motherVolume.solid.phiTotal)
+            nsides = int(float(self.motherVolume.solid.numSide))
+            placements =_np.arange(sphi, sphi+dphi, dphi/nsides)
+
+        elif self.axis == self.Axis.kRho:
+            placements =_np.arange(float(self.motherVolume.solid.rInner[0]) + offset,
+                                   float(self.motherVolume.solid.rInner[0]) + offset+ndiv*width, width)
+        else:
+            # If width is not specified, divide along the Z planes
+            # If the width is specified, can only divide between 2 Z planes
+            if ndiv*width == msize: # this means default width
+                placements = _np.array([float(t) for t in self.motherVolume.solid.zPlane])
+            else:
+                zpl_sizes = _np.diff([float(t) for t in self.motherVolume.solid.zPlane])
+                zsl_index = 0
+                zsl_size  = 0
+                offs = offset
+                for i, zs in enumerate(zpl_sizes):
+                    offs -= zs
+                    if offs < 0:
+                        if ndiv*width > abs(offs):
+                            raise ValueError("Division with user-specified width is only possible"
+                                             " between 2 z-planes.")
+                        zsl_index = i
+                        zsl_size = zs
+                        break
+
+                placements = _np.arange(float(self.motherVolume.solid.zPlane[0]) + offset,
+                                        float(self.motherVolume.solid.zPlane[0]) + offset + width*ndiv,
+                                        width)
+
+                z_1 = float(self.motherVolume.solid.zPlane[zsl_index])
+                z_2 = float(self.motherVolume.solid.zPlane[zsl_index+1])
+                r_1 = float(self.motherVolume.solid.rInner[zsl_index])
+                r_2 = float(self.motherVolume.solid.rInner[zsl_index+1])
+                R_1 = float(self.motherVolume.solid.rOuter[zsl_index])
+                R_2 = float(self.motherVolume.solid.rOuter[zsl_index+1])
+
+                dr = r_2 - r_1
+                dR = R_2 - R_1
+                dz = z_2 - z_1
+                h_i = offset - sum(zpl_sizes[:zsl_index])
+
+        for i, v in enumerate(placements):
+            solid       = _copy.deepcopy(self.motherVolume.solid)
+            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            if self.axis == self.Axis.kRho :
+                r_0 = float(self.motherVolume.solid.rInner[0])
+                w_0 = float(self.motherVolume.solid.rOuter[0]) - r_0
+                for i in range(len(solid.rInner)):
+                    r_i = float(self.motherVolume.solid.rInner[i])
+                    w_i = float(self.motherVolume.solid.rOuter[i]) - r_i
+                    w_ratio_i = w_i / w_0
+                    v_2 = w_ratio_i*(v - (r_0+offset)) + (r_i+w_ratio_i*offset) # Proprtional increase
+                    solid.rInner[i].expr.expression = str(v_2)
+                    solid.rOuter[i].expr.expression = str(v_2 + w_ratio_i*width)
+                transforms.append([[0,0,0],[0,0,0]])
+
+            elif self.axis == self.Axis.kPhi:
+                solid.phiStart.expr.expression = str(v)
+                solid.phiTotal.expr.expression = str(dphi/nsides)
+                solid.numSide.expr.expression = "1"
+                transforms.append([[0,0,0],[0,0,0]])
+
+            elif self.axis == self.Axis.kZAxis :
+                if ndiv*width == msize:
+                    # This is the default case and we don't actually need the calculated
+                    # placements, only the indices
+                    if i == len(solid.rInner) -1:
+                        continue # As we split into (nzplanes - 1) polycones
+                    solid.rInner = solid.rInner[i:i+2]
+                    solid.rOuter = solid.rOuter[i:i+2]
+                    solid.zPlane  = solid.zPlane[i:i+2]
+                else:
+                    r_min = []
+                    r_max = []
+                    r_min.append(r_1 + h_i*dr/dz)
+                    r_max.append(R_1 + h_i*dR/dz)
+                    h_i += width
+                    r_min.append(r_1 + h_i*dr/dz)
+                    r_max.append(R_1 + h_i*dR/dz)
+                    solid.rInner = r_min
+                    solid.rOuter = r_max
+                    solid.zPlane  = [v, v + width]
+                    transforms.append([[0,0,0], [0,0,0]])
+
+            meshes.append(_Mesh(solid))
+
+        return meshes, transforms
+
     def createDivisionMeshes(self) :
         ndivisions = int(float(self.ndivisions)) # Do float() instead of .eval() because .eval() doesnt
         offset    = float(self.offset)           # work with the default numerical values
