@@ -86,7 +86,7 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         if self.axis not in allowed_axes:
             raise ValueError("Division along axis {}"
                              " not supported for solid {}".format(self.axis,
-                                                                  self.logicalVolume.solid.name))
+                                                                  self.logicalVolume.solid.type))
 
     def divideBox(self, offset, width, ndiv):
         allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
