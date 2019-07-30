@@ -1,0 +1,33 @@
+
+Before starting, make sure you have the ANTLR aliases:
+alias antlr4='java -jar /usr/local/lib/antlr-4.7.2-complete.jar'
+alias grun='java org.antlr.v4.gui.TestRig'
+
+
+JAVA:
+
+To use the Region grammar for testing in java use:
+
+antlr4 Region.g4 -o Region_javatest
+
+The -o is optional output directory (default is cwd), which can help keep the grammar directory clean.
+
+Inside the output directory the java files can be compiled:
+
+cd Region_javatest
+javac *.java
+
+And then the default test can be launched:
+
+grun Region region ../10_bigup.inp -gui
+
+The syntax is:
+
+grun [GRAMMAR_NAME] [RULE] [TESTFILE] -gui 
+
+
+PYTHON:
+
+To generate or refresh the grammar files for python use:
+
+antlr4 -Dlanguage=Python2 -visitor -no-listener Region.g4
