@@ -285,6 +285,8 @@ class Writer(object):
                 dve = self.writeParametrisedVolume(dv)
             elif dv.type is "replica":
                 dve = self.writeReplicaVolume(dv)
+            elif dv.type is "division":
+                dve = self.writeDivisionVolume(dv)
             else:
                 raise ValueError("Unknown daughter volume type: {}".format(dv.type))
             we.appendChild(dve)
@@ -392,6 +394,22 @@ class Writer(object):
         rvol.appendChild(ra)
 
         return rvol
+
+    def writeDivisionVolume(self, instance):
+        dvol = self.doc.createElement('divisionvol')
+        dvol.setAttribute('number', str(int(float(instance.ndivisions))))
+        axes = {1 : "kXAxis", 2 : "kYAxis",  3 : "kZAxis", 4 : "kRho", 5 : "kPhi"}
+        dvol.setAttribute('axis', axes[instance.axis])
+        dvol.setAttribute('width', str(float(instance.width)))
+        dvol.setAttribute('offset',  str(float(instance.width)))
+        if instance.unit:
+            dvol.setAttribute('unit', instance.unit)
+
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.logicalVolume.name))
+        dvol.appendChild(vr)
+
+        return dvol
 
     def writeParametrisedVolume(self, instance):
         pvol = self.doc.createElement('paramvol')
