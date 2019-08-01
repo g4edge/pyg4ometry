@@ -65,3 +65,37 @@ class RegionEvaluator(object):
         result = self.visitor.visit(parse_tree)
 
         return result
+
+def main():
+    ev = RegionEvaluator()
+
+    defines = {
+        "a" : "A",
+        "b" : "B",
+        "c" : "C",
+        "d" : "D",
+        "e" : "E",
+        "h" : "H",
+        "f" : "F",
+        "g" : "G",
+        "i" : "I",
+        "j" : "J",
+        "x" : "X",
+        "y" : "Y",
+        "z" : "Z",
+        "jj" : "JJ",
+        "zz" : "ZZ",
+    }
+
+    #test = "+a +b +c -d -e" # 01_body_only_exp
+    #test = "+a -(+b +c +d -e -f)" # 02_paran_only_expression.inp
+    #test = "+a -(+b +c +d -e -f) -g" # 03_body_paran_expression.inp
+    test = "+(+a +b) -(+c +d +e) -(+f +g -h) | +zz +(+i +j) -jj | +x +y +z" # 10_bigup.inp
+
+    parse_tree = ev.parse(test)
+    output = ev.evaluate(parse_tree, defines)
+
+    print output
+
+if __name__ == "__main__":
+    main()
