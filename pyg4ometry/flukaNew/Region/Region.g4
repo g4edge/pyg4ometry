@@ -17,7 +17,7 @@ region : expression (BAR expression+)*;
 
 /* zone : expression+; */
 
-expression : signbody+ | subzone+ | signbody+ subzone+ | subzone+ signbody+ | signbody+ subzone+ signbody+ ;
+expression :  signbody+ subzone+ signbody+ | signbody+ subzone+ | subzone+ signbody+ | subzone+ | signbody+  ;
 
 subzone : (MINUS | PLUS) LPAREN expression RPAREN;
 
