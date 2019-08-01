@@ -4,9 +4,9 @@ import sys
 
 from antlr4 import *
 
-from RegionLexer import GdmlExpressionLexer
-from RegionParser import GdmlExpressionParser
-from RegionVisitor import GdmlExpressionVisitor
+from RegionLexer import RegionLexer
+from RegionParser import RegionParser
+from RegionVisitor import RegionVisitor
 
 import math
 
