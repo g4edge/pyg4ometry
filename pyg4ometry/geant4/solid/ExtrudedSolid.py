@@ -35,7 +35,7 @@ class ExtrudedSolid(_SolidBase):
         self.pPolygon = pPolygon
         self.pZslices = pZslices 
         self.lunit    = lunit
-
+        self.dependents = []
         if registry :
             registry.addSolid(self)
 

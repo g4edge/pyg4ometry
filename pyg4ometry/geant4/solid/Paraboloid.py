@@ -42,7 +42,7 @@ class Paraboloid(_SolidBase):
         self.nstack = nstack
         self.nslice = nslice
 
-        dependents = []
+        self.dependents = []
 
         if registry:
             registry.addSolid(self)
