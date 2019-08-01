@@ -19,25 +19,31 @@ class RegionEvalVisitor(RegionVisitor):
 
     def visitSignbody(self, ctx):
         name = ctx.BODYNAME().getText();
-        sign = -1 if ctx.MINUS() else 1
-
-        return self.defines[name]
+        sign = "-" if ctx.MINUS() else "+"
+        value = self.defines[name]
+        return "{}{}".format(sign, value)
 
     def visitSubzone(self, ctx):
-        value = self.visit(ctx.expression)
-        sign = -1 if ctx.MINUS() else 1
-        # Maybe something like:
-        # if sign < 0:
-        # return Invert(value)
+        value = self.visit(ctx.expression())
+        sign = "-" if ctx.MINUS() else "+"
 
-        return sign*value
+        return "{}({})".format(sign, value)
 
     def visitExpression(self, ctx):
-        pass
 
+        result = ""
+        for ch in ctx.children:
+            result += self.visit(ch)
+        return result
 
     def visitRegion(self, ctx):
-        pass
+        left = self.visit(ctx.expression(0))
+
+        for i in range(len(ctx.BAR())):
+            right = self.visit(ctx.expression(i+1))
+            left += " | {}".format(right)
+
+        return left
 
 
 class RegionEvaluator(object):
