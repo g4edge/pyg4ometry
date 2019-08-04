@@ -94,7 +94,7 @@ class VtkViewer:
 
                 mesh = pv.logicalVolume.mesh.localmesh
                 self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, self.filters, 
-                             self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
+                             self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
@@ -107,7 +107,7 @@ class VtkViewer:
                     new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]                    
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes, self.filters, 
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)                    
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
             elif pv.type == "parametrised":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -120,7 +120,7 @@ class VtkViewer:
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
                                  self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap)
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.VisOptions)
 
     def addMesh(self, pv_name, solid_name, mesh, mrot, tra, localmeshes, filters, 
                 mappers, mapperMap, actors, actorMap, visOptions = None):
@@ -166,7 +166,7 @@ class VtkViewer:
             actorMap[actorname] = vtkActor
     
         # set visualisation properties
-        if visOptions :             
+        if visOptions :
             vtkActor.GetProperty().SetColor(visOptions.color[0],
                                             visOptions.color[1],
                                             visOptions.color[2])
