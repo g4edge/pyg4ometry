@@ -1178,3 +1178,19 @@ class Writer(object):
             oe.appendChild(ce)
 
         self.solids.appendChild(oe)
+
+    def writeScaled(self, instance) :
+        oe  = self.doc.createElement('scaledSolid')
+        oe.setAttribute('name',self.prepend + instance.name)
+
+        srf = self.doc.createElement('solidref')
+        srf.setAttribute('ref', instance.solid.name)
+        oe.appendChild(srf)
+
+        scl = self.doc.createElement('scale')
+        scl.setAttribute('x',str(instance.pX.expression))
+        scl.setAttribute('y',str(instance.pY.expression))
+        scl.setAttribute('z',str(instance.pZ.expression))
+        oe.appendChild(scl)
+
+        self.solids.appendChild(oe)
