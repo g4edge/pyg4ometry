@@ -1,5 +1,6 @@
 import PhysicalVolume as _PhysicalVolume
 from   pyg4ometry.visualisation  import Mesh     as _Mesh
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
 import numpy as _np
 import copy as _copy
@@ -37,6 +38,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
         self.width               = width
         self.offset              = offset
         self.unit                = unit
+
+        self.visOptions          = _VisOptions()
 
         if motherVolume.solid.type != logicalVolume.solid.type:
             raise ValueError("Can not have divisions with a different solid type than"
