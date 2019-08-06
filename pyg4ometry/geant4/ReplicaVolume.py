@@ -67,7 +67,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,v,0]])
 
-            elif self.axis == self.Axis.kYAxis : 
+            elif self.axis == self.Axis.kZAxis : 
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,0,v]])
 
