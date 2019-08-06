@@ -1,5 +1,6 @@
 import PhysicalVolume as _PhysicalVolume
 from   pyg4ometry.visualisation  import Mesh     as _Mesh
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
 import numpy as _np
 import copy as _copy
@@ -39,6 +40,8 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         self.offset              = offset
         self.wunit               = wunit
         self.ounit               = ounit
+
+        self.visOptions          = _VisOptions()
 
         if addRegistry : 
             registry.addPhysicalVolume(self)
