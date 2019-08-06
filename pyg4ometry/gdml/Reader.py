@@ -1727,7 +1727,6 @@ class Reader(object):
 
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol":
-                nreplica  = chNode.attributes['number'].value
                 volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name
