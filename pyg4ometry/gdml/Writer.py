@@ -181,7 +181,7 @@ class Writer(object):
             oe = self.doc.createElement('matrix')
             oe.setAttribute('name',define.name)
             oe.setAttribute('coldim',str(define.coldim))
-            oe.setAttribute('values', " ".join([val.expression for val in define.values]))
+            oe.setAttribute('values', " ".join([val.expr.expression for val in define.values]))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Expression):
             return # Only write out named defines
