@@ -1,8 +1,12 @@
 import PhysicalVolume as _PhysicalVolume
-from   pyg4ometry.visualisation  import Mesh     as _Mesh
+from   pyg4ometry.visualisation  import Mesh as _Mesh
+from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+import pyg4ometry.transformation as _trans
 
 import numpy as _np
 import copy as _copy
+import logging as _log
+
 
 class DivisionVolume(_PhysicalVolume.PhysicalVolume) : 
     '''
@@ -45,6 +49,9 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
                                                            logicalVolume.solid.type))
         if addRegistry :
             registry.addPhysicalVolume(self)
+
+        # physical visualisation options
+        self.visOptions    = _VisOptions()
 
         # Create division meshes
         [self.meshes, self.transforms] = self.createDivisionMeshes()
@@ -542,3 +549,37 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
     def __repr__(self) :
         return 'Division volume : {} {} {} {} {}'.format(self.name, self.axis, self.ndivisions,
                                                          self.offset, self.width)
+
+    def extent(self, includeBoundingSolid = True) :
+        _log.info('ReplicaVolume.extent> %s' %(self.name))
+
+        vMin = [1e99, 1e99, 1e99]
+        vMax = [-1e99, -1e99, -1e99]
+
+        for trans, mesh in zip(self.transforms, self.meshes) :
+            # transform daughter meshes to parent coordinates
+            dvmrot = _trans.tbxyz2matrix(trans[0])
+            dvtra = _np.array(trans[1])
+
+            [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
+
+            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0, :])[0]
+            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0, :])[0]
+
+
+            if vMaxDaughter[0] > vMax[0] :
+                vMax[0] = vMaxDaughter[0]
+            if vMaxDaughter[1] > vMax[1] :
+                vMax[1] = vMaxDaughter[1]
+            if vMaxDaughter[2] > vMax[2] :
+                vMax[2] = vMaxDaughter[2]
+
+            if vMinDaughter[0] < vMin[0] :
+                vMin[0] = vMinDaughter[0]
+            if vMinDaughter[1] < vMin[1] :
+                vMin[1] = vMinDaughter[1]
+            if vMinDaughter[2] < vMin[2] :
+                vMin[2] = vMinDaughter[2]
+
+        return [vMin,vMax]
+

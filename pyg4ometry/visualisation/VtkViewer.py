@@ -120,7 +120,7 @@ class VtkViewer:
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
                                  self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.VisOptions)
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
     def addMesh(self, pv_name, solid_name, mesh, mrot, tra, localmeshes, filters, 
                 mappers, mapperMap, actors, actorMap, visOptions = None):

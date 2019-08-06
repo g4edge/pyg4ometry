@@ -8,9 +8,7 @@ import solid                     as                 _solid
 import Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 
-import copy    as   _copy
 import numpy   as   _np
-import sys     as   _sys
 import logging as   _log
 
 class LogicalVolume(object):
@@ -114,37 +112,34 @@ class LogicalVolume(object):
             if auxiliary:
                 self.auxiliary.append(auxiliary)
 
-    def extent(self) : 
+    def extent(self,includeBoundingSolid = False) :
         _log.info('LogicalVolume.extent> %s ' % (self.name))
-        
-        [vMin, vMax] = self.mesh.getBoundingBox()
+
+        if includeBoundingSolid :
+            [vMin, vMax] = self.mesh.getBoundingBox()
+            return [vMin, vMax]
+        else :
+            vMin = [1e99,1e99,1e99]
+            vMax = [-1e99,-1e99,-1e99]
 
         # transform logical solid BB
                 
-        for dv in self.daughterVolumes : 
-            [vMinDaughter, vMaxDaughter] = dv.extent()
+        for dv in self.daughterVolumes :
+            [vMinDaughter, vMaxDaughter] = dv.extent(True)
 
-            # transform daughter meshes to parent coordinates 
-            dvmrot  = _trans.tbxyz2matrix(dv.rotation.eval())
-            dvtra   = _np.array(dv.position.eval())            
-            
-            vMinDaughterParentCoords = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0,:])[0]
-            vMaxDaughterParentCoords = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0,:])[0]
+            if vMaxDaughter[0] > vMax[0] :
+                vMax[0] = vMaxDaughter[0]
+            if vMaxDaughter[1] > vMax[1] :
+                vMax[1] = vMaxDaughter[1]
+            if vMaxDaughter[2] > vMax[2] :
+                vMax[2] = vMaxDaughter[2]
 
-            if vMaxDaughterParentCoords[0] > vMax[0] : 
-                vMax[0] = vMaxDaughterParentCoords[0]
-            if vMaxDaughterParentCoords[1] > vMax[1] : 
-                vMax[1] = vMaxDaughterParentCoords[1] 
-            if vMaxDaughterParentCoords[2] > vMax[2] : 
-                vMax[2] = vMaxDaughterParentCoords[2] 
-
-            if vMinDaughterParentCoords[0] < vMin[0] : 
-                vMin[0] = vMinDaughterParentCoords[0]
-            if vMinDaughterParentCoords[1] < vMin[1] : 
-                vMin[1] = vMinDaughterParentCoords[1]
-            if vMinDaughterParentCoords[2] < vMin[2] : 
-                vMin[2] = vMinDaughterParentCoords[2] 
-
+            if vMinDaughter[0] < vMin[0] :
+                vMin[0] = vMinDaughter[0]
+            if vMinDaughter[1] < vMin[1] :
+                vMin[1] = vMinDaughter[1]
+            if vMinDaughter[2] < vMin[2] :
+                vMin[2] = vMinDaughter[2]
 
         return [vMin, vMax]
 

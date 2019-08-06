@@ -1,8 +1,8 @@
+import pyg4ometry.transformation as _trans
+
 from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
-import copy    as _copy
-import numpy   as _np
-import sys     as _sys
+import numpy as _np
 import logging as _log
 
 class PhysicalVolume(object):
@@ -52,7 +52,17 @@ class PhysicalVolume(object):
     def __repr__(self):
         return 'Physical Volume : '+self.name+' '+str(self.rotation)+' '+str(self.position)
 
-    def extent(self) : 
+    def extent(self, includeBoundingSolid = True) :
         _log.info('PhysicalVolume.extent> %s' % (self.name))
-        return self.logicalVolume.extent()
+
+        # transform daughter meshes to parent coordinates
+        dvmrot = _trans.tbxyz2matrix(self.rotation.eval())
+        dvtra = _np.array(self.position.eval())
+
+        [vMin,vMax] = self.logicalVolume.extent(includeBoundingSolid)
+
+        vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)[0, :])[0]
+        vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)[0, :])[0]
+
+        return [vMinPrime, vMaxPrime]
         
