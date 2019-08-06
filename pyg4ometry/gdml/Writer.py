@@ -757,7 +757,7 @@ class Writer(object):
         tf.setAttribute('type', 'ABSOLUTE')
         return tf
 
-    def writeTesselatedSolid(self, instance):
+    def writeTessellatedSolid(self, instance):
         oe = self.doc.createElement('tessellated')
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
