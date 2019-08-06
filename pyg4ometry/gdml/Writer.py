@@ -1071,7 +1071,7 @@ class Writer(object):
 
         if self.registry.defineDict.has_key(instance.tra2[0].name) : 
             csce1 = self.doc.createElement('rotationref')
-            csce1.setAttribute(instance.tra2[0].name)
+            csce1.setAttribute('ref', instance.tra2[0].name)
             oe.appendChild(csce1)
         else : 
             r = self.doc.createElement('rotation')
