@@ -1,5 +1,6 @@
 from ReplicaVolume import ReplicaVolume as _ReplicaVolume
 from pyg4ometry.visualisation import Mesh as _Mesh
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
 import copy as _copy
 
@@ -162,9 +163,11 @@ class ParameterisedVolume(_ReplicaVolume):
         if addRegistry:
             registry.addPhysicalVolume(self)
 
+        self.visOptions          = _VisOptions()
+
         # Create parameterised meshes
         self.meshes = self.createParameterisedMeshes()
-                    
+
     def createParameterisedMeshes(self):
 
         meshes = []
