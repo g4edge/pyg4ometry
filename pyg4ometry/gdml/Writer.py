@@ -181,7 +181,7 @@ class Writer(object):
             oe = self.doc.createElement('matrix')
             oe.setAttribute('name',define.name)
             oe.setAttribute('coldim',str(define.coldim))
-            oe.setAttribute('values', " ".join([val.expression for val in define.values]))
+            oe.setAttribute('values', " ".join([val.expr.expression for val in define.values]))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Expression):
             return # Only write out named defines
@@ -757,7 +757,7 @@ class Writer(object):
         tf.setAttribute('type', 'ABSOLUTE')
         return tf
 
-    def writeTesselatedSolid(self, instance):
+    def writeTessellatedSolid(self, instance):
         oe = self.doc.createElement('tessellated')
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
@@ -1071,7 +1071,7 @@ class Writer(object):
 
         if self.registry.defineDict.has_key(instance.tra2[0].name) : 
             csce1 = self.doc.createElement('rotationref')
-            csce1.setAttribute(instance.tra2[0].name)
+            csce1.setAttribute('ref', instance.tra2[0].name)
             oe.appendChild(csce1)
         else : 
             r = self.doc.createElement('rotation')

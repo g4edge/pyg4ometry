@@ -1514,13 +1514,13 @@ class Reader(object):
 
                             dim = _g4.ParameterisedVolume.ConeDimensions(pRMin1,pRMax1, pRMin2, pRMax2, pDz, pSPhi, pDPhi, lunit, aunit)
                         elif ppsChNodeTag.tagName == "orb_dimensions":
-                            pRMax = _defines.Expression(pvol_name + '_Orb_rMax','{}'.format(ppsChNodeTag.attributes['rmin1'].value),self._registry, False)
+                            pRMax = _defines.Expression(pvol_name + '_Orb_r','{}'.format(ppsChNodeTag.attributes['r'].value),self._registry, False)
                             if ppsChNodeTag.attributes.has_key('lunit'):
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 lunit = "mm"
 
-                            dim = _g4.ParameterisedVolume.OrbDimensions(pRmax,lunit)
+                            dim = _g4.ParameterisedVolume.OrbDimensions(pRMax,lunit)
                         elif ppsChNodeTag.tagName == "sphere_dimensions":
                             try :
                                 pRMin = _defines.Expression(pvol_name + '_Sphere_rMin','{}'.format(ppsChNodeTag.attributes['rmin'].value),self._registry, False)
@@ -1727,7 +1727,6 @@ class Reader(object):
 
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol":
-                nreplica  = chNode.attributes['number'].value
                 volref    = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name

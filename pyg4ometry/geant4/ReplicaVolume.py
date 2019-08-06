@@ -3,7 +3,6 @@ from   pyg4ometry.visualisation  import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
 
-
 import numpy as _np
 import copy as _copy
 import logging as _log
@@ -44,6 +43,8 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         self.wunit               = wunit
         self.ounit               = ounit
 
+        self.visOptions          = _VisOptions()
+
         if addRegistry : 
             registry.addPhysicalVolume(self)
 
@@ -71,7 +72,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,v,0]])
 
-            elif self.axis == self.Axis.kYAxis : 
+            elif self.axis == self.Axis.kZAxis : 
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[0,0,v]])
 

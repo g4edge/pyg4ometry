@@ -1,6 +1,8 @@
 import math
 import operator
 from geom import *
+import numpy as _np
+from hashlib import md5 as _md5
 from functools import reduce
 
 class CSG(object):
@@ -59,11 +61,11 @@ class CSG(object):
         self.polygons = []
 
     def __hash__(self):
-        hashable_mesh = []
-        for poly in self.polygons:
-            for vertex in poly.vertices:
-                hashable_mesh.append(tuple(vertex.pos))
-        return hash(tuple(hashable_mesh))
+        verts = _np.array(self.toVerticesAndPolygons()[0])
+        as_string = _np.array2string(verts)
+        checksum = int(_md5(as_string.encode()).hexdigest(), 16)
+
+        return checksum
 
     @classmethod
     def fromPolygons(cls, polygons):
