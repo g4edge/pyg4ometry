@@ -1,5 +1,5 @@
-from collections import OrderedDict
-import pyg4ometry.exceptions
+from collections import OrderedDict as _OrderedDict
+import pyg4ometry.exceptions as _exceptions
 import solid.SolidBase
 
 def solidName(var) : 
@@ -14,26 +14,31 @@ class Registry:
     '''
     
     def __init__(self):
-        self.defineDict                   = OrderedDict()
-        self.materialDict                 = OrderedDict()
-        self.solidDict                    = OrderedDict()
-        self.logicalVolumeDict            = OrderedDict()
-        self.physicalVolumeDict           = OrderedDict()
-        self.physicalVolumeCountDict      = OrderedDict()
-        self.assemblyVolumeDict           = OrderedDict()
-        self.replicaVolumeDict            = OrderedDict()
-        self.parameterisedVolumeDict      = OrderedDict()
-        self.opticalSufaceDict            = OrderedDict()
-        self.loopDict                     = OrderedDict()
-        self.parameterDict                = OrderedDict()
-        self.defineDict                   = OrderedDict()
+        self.defineDict                   = _OrderedDict()
+        self.materialDict                 = _OrderedDict()
+        self.solidDict                    = _OrderedDict()
+        self.logicalVolumeDict            = _OrderedDict()
+        self.physicalVolumeDict           = _OrderedDict()
+        self.physicalVolumeCountDict      = _OrderedDict()
+        self.opticalSurfaceDict           = _OrderedDict()
+        self.loopDict                     = _OrderedDict()
+
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
-        self.solidTypeCountDict           = {}               # Box, Cons etc
+
         self.solidUsageCountDict          = {}               # solidName1, solidName2
         self.volumeTypeCountDict          = {}               # logical, physical
-        self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
         self.userInfo                     = []               # Ordered list for the user info, which is not processed
+
+        self.solidNameCount               = {}
+        self.materialNameCount            = {}
+        self.logicalVolumeNameCount       = {}
+        self.physicalVolumeNameCount      = {}
+        self.defineNameCount              = {}
+
+        self.solidTypeCountDict           = {}               # Box, Cons etc
+        self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
+
 
         self.expressionParser = None
 
@@ -44,65 +49,72 @@ class Registry:
 
         return self.expressionParser
 
-    def addDefinition(self, definition):
-        try:
-            self.defintionDict[definition.name]
-            print 'definition replicated', definition.name
-            raise pyg4ometry.exceptions.IdenticalNameError(definition.name, "definition")
-        except KeyError:
-            self.definitionDict[definition.name] = definition
-
-
-    def addMaterial(self, material):
+    def addMaterial(self, material, namePolicy = "none"):
         """
         :param material: Material object for starage 
         :type material: Material
         """        
 
-        # try :
-        #    self.materialDict[material.name]
-        #    print 'material replicated', material.name
-        #    raise pyg4ometry.exceptions.IdenticalNameError(
-        #        material.name, "material")
-        # except KeyError :
-        self.materialDict[material.name] = material
+        if self.materialDict.has_key(material.name) :
+            if namePolicy == "none":
+                if material.name.find("G4") != -1 :
+                    return
+                raise _exceptions.IdenticalNameError(material.name, "material")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.materialNameCount[material.name] += 1
+                material.name = material.name + "_" + str(self.materialNameCount[material.name])
+                self.materialDict[material.name] = material
+        else :
+            self.materialDict[material.name] = material
+            self.materialNameCount[material.name] = 0
 
-    def addSolid(self,solid):
+    def addSolid(self,solid, namePolicy = "none"):
         """
         :param solid: Solid object for starage 
         :type solid: One of the geant4 solids
         """
 
-        try:
-            self.solidDict[solid.name]
-            print 'solid replicated', solid.name
-            raise pyg4ometry.exceptions.IdenticalNameError(solid.name, "solid")
-        except KeyError:
+        if self.solidDict.has_key(solid.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(solid.name, "solid")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.solidNameCount[solid.name] += 1
+                solid.name = solid.name + "_"+str(self.solidNameCount[solid.name])
+                self.solidDict[solid.name] = solid
+
+        else :
             self.solidDict[solid.name] = solid
+            self.solidNameCount[solid.name] = 0
+
 
         try:
             self.solidTypeCountDict[solid.type] += 1
         except KeyError:
-            self.solidTypeCountDict[solid.type] = 1
+            self.solidTypeCountDict[solid.type] = 0
 
-        try:
-            self.solidUsageCountDict[solid.name] += 1
-        except KeyError:
-            self.solidUsageCountDict[solid.name] = 1
-
-    def addLogicalVolume(self,volume):
+    def addLogicalVolume(self,volume, namePolicy = "none"):
         """
         :param volume: LogicalVolume object for starage 
         :type volume: LogicalVolume
         """
 
-        try:
-            self.logicalVolumeDict[volume.name]
-            print 'logical replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError(volume.name,
-                                                           "logical volume")
-        except KeyError:
+        if self.logicalVolumeDict.has_key(volume.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(volume.name,"logical volume")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.logicalVolumeNameCount[volume.name] += 1
+                volume.name = volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
+                self.logicalVolumeDict[volume.name] = volume
+        else :
             self.logicalVolumeDict[volume.name] = volume
+            self.logicalVolumeNameCount[volume.name] = 0
+
 
         # total number of logical volumes
         try:
@@ -110,22 +122,24 @@ class Registry:
         except KeyError:
             self.volumeTypeCountDict["logicalVolume"] = 1
 
-    def addPhysicalVolume(self,volume):
+    def addPhysicalVolume(self,volume, namePolicy = "increment"):
         """
         :param volume: PhysicalVolume object for starage 
         :type volume: PhysicalVolume
         """
 
-        # keep count of identical physical volumes 
-        try : 
-            self.physicalVolumeCountDict[volume.name] += 1 
-        except KeyError : 
-            self.physicalVolumeCountDict[volume.name]  = 1 
-            
-        # volume.name = volume.name+"_"+str(self.physicalVolumeCountDict[volume.name])
-
-        # add to physical volume dictionary 
-        self.physicalVolumeDict[volume.name] = volume
+        if self.physicalVolumeDict.has_key(volume.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(volume.name,"physical volume")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.physicalVolumeNameCount[volume.name] += 1
+                volume.name = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
+                self.physicalVolumeDict[volume.name] = volume
+        else :
+            self.physicalVolumeDict[volume.name] = volume
+            self.physicalVolumeNameCount[volume.name] = 0
 
         # number of physical volumes
         try:
@@ -139,38 +153,11 @@ class Registry:
         except KeyError:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
 
-
-    def addAssemblyVolume(self, volume) :         
-        self.assemblyVolumeDict[volume.name] = volume 
-
-    def addReplicaVolume(self,volume):
-        self.replicaVolumeDict[volume.name] = volume
-
-        try:
-            self.volumeTypeCountDict["replicaVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["replicaVolume"] = 1
-
-    def addParameterisedVolume(self,volume):
-
-        try:
-            self.parametrisedVolumeDict[volume.name]
-            print 'parameterised replicated', volume.name
-            raise pyg4ometry.exceptions.IdenticalNameError(
-                volume.name, "parametrised volume")
-        except KeyError:
-            self.parameterisedVolumeDict[volume.name] = volume
-
-        try:
-            self.volumeTypeCountDict["parametrisedVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["parametrisedVolume"] = 1
-
     def addParameter(self, parameter):
         try:
             self.parameterDict[parameter.name]
             print 'parameter replicated', parameter.name
-            raise pyg4ometry.exceptions.IdenticalNameError(parameter.name,
+            raise _exceptions.IdenticalNameError(parameter.name,
                                                            "parameter")
         except KeyError:
             self.parameterDict[parameter.name] = parameter
@@ -178,19 +165,24 @@ class Registry:
     def addAuxiliary(self, auxiliary):
             self.userInfo.append(auxiliary)
 
-    def addDefine(self, define) :
+    def addDefine(self, define, namePolicy = "none") :
         """
         :param define: Defintion object for starage 
         :type define: Constant, Quantity, Variable, Matrix
         """
-        try :
-            self.defineDict[define.name]
-            print 'define replicated', define.name
-            raise pyg4ometry.exceptions.IdenticalNameError(define.name,
-                                                           "define")            
-        except KeyError:
+
+        if self.defineDict.has_key(define.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(define.name,"define")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.defineNameCount[define.name] += 1
+                define.name = define.name + "_" + str(self.defineNameCount[define.name])
+                self.defineDict[define.name] = define
+        else :
             self.defineDict[define.name] = define
-        
+            self.defineNameCount[define.name] = 0
 
     def setWorld(self, worldName):
         self.worldName = worldName
@@ -198,9 +190,12 @@ class Registry:
         self.orderLogicalVolumes(worldName)
         self.logicalVolumeList.append(worldName)
 
-    def orderLogicalVolumes(self, lvName):
+    def orderLogicalVolumes(self, lvName, first = True):
         '''Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
         GDML. GDML needs to have the solids/booleans/volumes defined in order'''
+
+        if first :
+            self.logicalVolumeList = []
 
         lv = self.logicalVolumeDict[lvName]
         
@@ -212,8 +207,34 @@ class Registry:
             try:
                 self.logicalVolumeList.index(dlvName)
             except ValueError:
-                self.orderLogicalVolumes(dlvName)
+                self.orderLogicalVolumes(dlvName,False)
                 self.logicalVolumeList.append(dlvName)
+
+    def addVolumeRecursive(self, volume, namePolicy = "none"):
+
+        import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
+        import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
+
+        if isinstance(volume, _PhysicalVolume) :
+
+            # add its logical volume
+            self.addVolumeRecursive(volume.logicalVolume)
+
+            # add members from physical volume
+            self.addDefine(volume.position,"increment")
+            self.addDefine(volume.rotation,"increment")
+            self.addPhysicalVolume(volume,"increment")
+
+        elif isinstance(volume, _LogicalVolume) :
+
+            # loop over all daughters
+            for dv in volume.daughterVolumes :
+                self.addVolumeRecursive(dv, namePolicy)
+
+            # add members from logical volume
+            self.addSolid(volume.solid,"increment")
+            self.addMaterial(volume.material,"increment")
+            self.addLogicalVolume(volume,"increment")
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
@@ -235,10 +256,6 @@ class Registry:
         self.volumeTypeCountDict.clear()
         self.logicalVolumeDict.clear()
         self.physicalVolumeDict.clear()
-        self.replicaVolumeDict.clear()
-        self.parameterisedVolumeDict.clear()
-        self.parameterDict.clear()
-        self.defineDict.clear()
 
         self.logicalVolumeList = []
         self.solidTypeCountDict.clear()
@@ -248,5 +265,10 @@ class Registry:
 
     def getWorldVolume(self) :         
         return self.worldVolume
+
+    def printStats(self):
+        print self.solidTypeCountDict
+        print self.logicalVolumeUsageCountDict
+
 
 registry = Registry()
