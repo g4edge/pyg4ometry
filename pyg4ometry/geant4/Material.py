@@ -167,7 +167,6 @@ class Material:
             raise ValueError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, massfraction, "massfraction"))
-        self.update_registry()
 
     def add_element_natoms(self, element, natoms):
         """
@@ -185,7 +184,6 @@ class Material:
             raise ValueError("This material is not specified as composite, cannot add elements.")
 
         self.components.append((element, natoms, "natoms"))
-        self.update_registry()
 
     def add_material(self, material, fractionmass):
         """
@@ -203,7 +201,6 @@ class Material:
             raise ValueError("This material is not specified as composite, cannot add materials.")
 
         self.components.append((material, fractionmass, "massfraction"))
-        self.update_registry()
 
     def __str__(self) :
         return self.name
