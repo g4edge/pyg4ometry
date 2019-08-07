@@ -13,6 +13,7 @@ units = {
     "deg" : _np.pi/180.0,
     "degree" : _np.pi/180.0,
     "rad" : 1.0,
+    "radian" : 1.0,
 
     # Other
     "none" : 1.0,
