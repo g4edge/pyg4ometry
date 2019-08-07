@@ -757,26 +757,54 @@ class Writer(object):
         tf.setAttribute('type', 'ABSOLUTE')
         return tf
 
+    def createQuadrangularFacet(self, vertex1, vertex2, vertex3, vertex4):
+        qf = self.doc.createElement('quadrangular')
+        qf.setAttribute('vertex1', str(vertex1))
+        qf.setAttribute('vertex2', str(vertex2))
+        qf.setAttribute('vertex3', str(vertex3))
+        qf.setAttribute('vertex4', str(vertex4))
+        qf.setAttribute('type', 'ABSOLUTE')
+        return qf
+
     def writeTessellatedSolid(self, instance):
         oe = self.doc.createElement('tessellated')
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
 
-        verts = instance.mesh[0]
-        facet = instance.mesh[1]
+        if instance.meshtype == instance.MeshType.Gdml:
+            facet_makers = { 3 : self.createTriangularFacet,
+                             4 : self.createQuadrangularFacet}
+            for f in instance.mesh:
+                oe.appendChild(facet_makers[len(f)](*f))
 
-        vert_names = [] 
-        
-        vertex_id = 0 
-        for v in verts : 
-            defname = "{}_{}".format(name, vertex_id)
-            vert_names.append(defname)
-            vertex_id = vertex_id + 1
-            self.writeDefine(_Defines.Position(defname, v[0],v[1],v[2]))
-            
-        for f in facet :
-            oe.appendChild(self.createTriangularFacet(vert_names[f[0]], vert_names[f[1]], vert_names[f[2]]))
-        
+        elif instance.meshtype == instance.MeshType.Freecad:
+            verts = instance.mesh[0]
+            facet = instance.mesh[1]
+
+            vert_names = []
+            for vertex_id, v in enumerate(verts) :
+                defname = "{}_{}".format(name, vertex_id)
+                vert_names.append(defname)
+                self.writeDefine(_Defines.Position(defname, v[0],v[1],v[2]))
+
+            for f in facet :
+                oe.appendChild(self.createTriangularFacet(vert_names[f[0]],
+                                                          vert_names[f[1]],
+                                                          vert_names[f[2]]))
+        else:
+            facet = instance.mesh
+
+            for facet_id, f in enumerate(facet) :
+                vertex_names = []
+                for vertex_id, v in enumerate(f[0]):
+                    defname = "{}_f{}_v{}".format(name, facet_id, vertex_id)
+                    vertex_names.append(defname)
+                    self.writeDefine(_Defines.Position(defname, v[0],v[1],v[2]))
+
+                oe.appendChild(self.createTriangularFacet(vertex_names[0],
+                                                          vertex_names[1],
+                                                          vertex_names[2]))
+
         self.solids.appendChild(oe)
 
     def writeHype(self, instance):
