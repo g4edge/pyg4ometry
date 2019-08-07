@@ -54,17 +54,19 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         # Create replica meshes
         [self.meshes,self.transforms] = self.createReplicaMeshes()
 
-    def createReplicaMeshes(self) : 
-        
+    def createReplicaMeshes(self) :
+
+        import pyg4ometry.gdml.Units as _Units
+
         nreplicas = int(self.nreplicas.eval())
-        offset    = self.offset.eval()
-        width     = self.width.eval()
+        offset    = self.offset.eval()*_Units.unit(self.ounit)
+        width     = self.width.eval()*_Units.unit(self.wunit)
         
         transforms = []
         meshes     = [] 
 
         for v,i in zip(_np.arange(-width*(nreplicas-1)*0.5,  width*(nreplicas+1)*0.5, width),range(0,nreplicas,1)) :
-            if self.axis == self.Axis.kXAxis :                 
+            if self.axis == self.Axis.kXAxis :
                 meshes.append(self.logicalVolume.mesh)
                 transforms.append([[0,0,0],[v,0,0]])
 
