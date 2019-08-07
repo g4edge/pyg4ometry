@@ -210,7 +210,7 @@ class Registry:
                 self.orderLogicalVolumes(dlvName,False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, namePolicy = "none"):
+    def addVolumeRecursive(self, volume, namePolicy = "increment"):
 
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
@@ -221,9 +221,9 @@ class Registry:
             self.addVolumeRecursive(volume.logicalVolume)
 
             # add members from physical volume
-            self.addDefine(volume.position,"increment")
-            self.addDefine(volume.rotation,"increment")
-            self.addPhysicalVolume(volume,"increment")
+            self.addDefine(volume.position,namePolicy)
+            self.addDefine(volume.rotation,namePolicy)
+            self.addPhysicalVolume(volume,namePolicy)
 
         elif isinstance(volume, _LogicalVolume) :
 
@@ -232,9 +232,9 @@ class Registry:
                 self.addVolumeRecursive(dv, namePolicy)
 
             # add members from logical volume
-            self.addSolid(volume.solid,"increment")
-            self.addMaterial(volume.material,"increment")
-            self.addLogicalVolume(volume,"increment")
+            self.addSolid(volume.solid,namePolicy)
+            self.addMaterial(volume.material,namePolicy)
+            self.addLogicalVolume(volume,namePolicy)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
