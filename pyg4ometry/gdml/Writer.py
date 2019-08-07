@@ -38,6 +38,10 @@ class Writer(object):
     def addDetector(self, registry) :
         self.registry = registry
 
+        # Set the world again to force a refresh on the
+        # ordering of logical volumes
+        self.registry.setWorld(self.registry.worldName)
+
         # loop over defines
         for definition in registry.defineDict:
             _log.info('gdml.Writer.addDetector> define '+definition)
