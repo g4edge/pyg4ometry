@@ -1275,9 +1275,12 @@ class Reader(object):
                 aux_list = []
                 try:
                     for aux_node in node.childNodes:
-                        if aux_node.tagName == "auxiliary":
-                            aux = self._parseAuxiliary(aux_node, register=False)
-                            aux_list.append(aux)
+                        try :
+                            if aux_node.tagName == "auxiliary":
+                                aux = self._parseAuxiliary(aux_node, register=False)
+                                aux_list.append(aux)
+                        except AttributeError :
+                            pass # probably a comment
                 except IndexError:
                     pass
 
