@@ -149,3 +149,14 @@ class ExpressionParser(object):
         result = self.visitor.visit(parse_tree)
 
         return result
+
+    def get_variables(self, parse_tree):
+        variables = []
+        if hasattr(parse_tree, "children"):
+            for ch in parse_tree.children:
+                if isinstance(ch, GdmlExpressionParser.VariableContext):
+                    variables.append(ch.getText())
+                else:
+                    variables.extend(self.get_variables(ch))
+
+        return variables
