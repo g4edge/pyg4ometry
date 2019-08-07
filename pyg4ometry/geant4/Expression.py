@@ -23,6 +23,13 @@ class Expression(object) :
 
         return value
 
+    def variables(self) :
+        expressionParser = self.registry.getExpressionParser()
+        self.parse_tree = expressionParser.parse(self.expression)
+        variables = expressionParser.get_variables(self.parse_tree)
+
+        return variables
+
     def simp(self) : 
         # find all variables of the expression and create
         
