@@ -498,11 +498,11 @@ class Reader(object):
     def parseTube(self, node) : 
         solid_name = node.attributes['name'].value 
 
-        try : 
+        try :
             rmin = _defines.Expression(solid_name+'_pRMin',node.attributes['rmin'].value,self._registry)
         except KeyError :
             rmin = _defines.Expression(solid_name+'_pRMin',"0",self._registry)
-        try : 
+        try :
             sphi = _defines.Expression(solid_name+'_pSPhi',node.attributes['startphi'].value,self._registry)
         except KeyError : 
             sphi = _defines.Expression(solid_name+'_pSPhi',"0",self._registry)
@@ -1459,18 +1459,18 @@ class Reader(object):
                             dim = _g4.ParameterisedVolume.BoxDimensions(x,y,z)
                         elif ppsChNodeTag.tagName == "tube_dimensions":
                             try :
-                                pRMin = _defines.Expression(pvol_name + '_Tubs_rMin', '{}'.format(ppsChNodeTag.attributes['rmin'].value),self._registry, False)
+                                pRMin = _defines.Expression(pvol_name + '_Tubs_rMin', '{}'.format(ppsChNodeTag.attributes['InR'].value),self._registry, False)
                             except KeyError :
                                 pRMin = _defines.Expression(pvol_name + '_Tubs_rMin', "0", self._registry, False)
 
-                            pRMax = _defines.Expression(pvol_name + '_Tubs_rMax', '{}'.format(ppsChNodeTag.attributes['rmax'].value),self._registry, False)
-                            pDz   = _defines.Expression(pvol_name + '_Tubs_Dz', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
+                            pRMax = _defines.Expression(pvol_name + '_Tubs_rMax', '{}'.format(ppsChNodeTag.attributes['OutR'].value),self._registry, False)
+                            pDz   = _defines.Expression(pvol_name + '_Tubs_Dz', '{}'.format(ppsChNodeTag.attributes['hz'].value),self._registry, False)
                             try:
-                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', '{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
+                                pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', '{}'.format(ppsChNodeTag.attributes['StartPhi'].value),self._registry, False)
                             except KeyError:
                                 pSPhi = _defines.Expression(pvol_name + '_Tubs_SPhi', "0", self._registry, False)
 
-                            pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value), self._registry,False)
+                            pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['DeltaPhi'].value), self._registry,False)
 
 
                             if ppsChNodeTag.attributes.has_key('lunit'):
