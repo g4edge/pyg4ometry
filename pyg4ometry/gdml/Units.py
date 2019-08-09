@@ -15,6 +15,9 @@ units = {
     "rad" : 1.0,
     "radian" : 1.0,
 
+    # Energy units
+    "eV" : 1.e-3,
+    
     # Other
     "none" : 1.0,
     }
