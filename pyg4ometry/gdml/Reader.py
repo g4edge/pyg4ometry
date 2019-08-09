@@ -484,7 +484,7 @@ class Reader(object):
             elif solid_type == 'multiUnion' :      # solid test 031 
                 self.parseMultiUnion(node)
             elif solid_type == 'opticalsurface' : 
-                self.parseOpticalSufrace(node)
+                self.parseOpticalSurface(node)
             elif solid_type == "scaledSolid":
                 self.parseScaledSolid(node)
             elif solid_type == 'loop' :           
