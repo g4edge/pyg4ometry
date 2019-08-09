@@ -1231,7 +1231,14 @@ class Reader(object):
         _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry, True)
         
     def parseOpticalSurface(self, node) : 
-        pass
+        solid_name = node.attributes['name'].value
+
+        finish = node.attributes['finish'].value
+        model = node.attributes['model'].value
+        surf_type = node.attributes['type'].value
+        value = _defines.Expression(solid_name+'_value',node.attributes['value'].value,self._registry)
+
+        _g4.solid.OpticalSurface(solid_name, finish, model, surf_type, value, self._registry, True)
 
     def parseScaledSolid(self,node):
         scaledSolid_name = node.attributes['name'].value
