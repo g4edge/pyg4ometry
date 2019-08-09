@@ -20,13 +20,14 @@ class Registry:
         self.logicalVolumeDict            = _OrderedDict()
         self.physicalVolumeDict           = _OrderedDict()
         self.physicalVolumeCountDict      = _OrderedDict()
-        self.opticalSurfaceDict           = _OrderedDict()
+        self.surfaceDict                  = _OrderedDict()
         self.loopDict                     = _OrderedDict()
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
         self.solidUsageCountDict          = {}               # solidName1, solidName2
         self.volumeTypeCountDict          = {}               # logical, physical
+        self.surfaceTypeCountDict          = {}              # border, skin
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
         self.userInfo                     = []               # Ordered list for the user info, which is not processed
 
@@ -34,6 +35,7 @@ class Registry:
         self.materialNameCount            = {}
         self.logicalVolumeNameCount       = {}
         self.physicalVolumeNameCount      = {}
+        self.surfaceNameCount             = {}
         self.defineNameCount              = {}
 
         self.solidTypeCountDict           = {}               # Box, Cons etc
