@@ -160,7 +160,7 @@ class Reader(object):
                 _defines.Variable(name,value, self._registry)
             elif(define_type == "expression"):
                 value = df.childNodes[0].nodeValue
-                _defines.Expression(name,value, self._registry)
+                _defines.Expression(name,value, self._registry, True)
             elif(define_type == "position"):                
                 (x,y,z,u) = getXYZ(def_attrs)
                 _defines.Position(name,x,y,z,u,self._registry)
