@@ -155,6 +155,32 @@ class Registry:
         except KeyError:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
 
+    def addSurface(self, surface, namePolicy = "none"):
+        """
+        :param surface: Surface
+        :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
+        """
+
+        if self.surfaceDict.has_key(surface.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(surface.name, "surface")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.surfaceNameCount[surface.name] += 1
+                surface.name = "{}_{}".format(surface.name, self.surfaceNameCount[surface.name])
+                self.surfaceDict[surface.name] = surface
+
+        else :
+            self.surfaceDict[surface.name] = surface
+            self.surfaceNameCount[surface.name] = 0
+
+
+        try:
+            self.surfaceTypeCountDict[surface.type] += 1
+        except KeyError:
+            self.surfaceTypeCountDict[surface.type] = 0
+
     def addParameter(self, parameter):
         try:
             self.parameterDict[parameter.name]
