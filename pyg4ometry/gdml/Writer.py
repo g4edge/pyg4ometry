@@ -230,6 +230,12 @@ class Writer(object):
                 # materials which are simply names, so do not append child.
                 pass
 
+            for pname, pref in material.properties.iteritems():
+                prop = self.doc.createElement('property')
+                prop.setAttribute('name', str(pname))
+                prop.setAttribute('value', str(pref))
+                oe.appendChild(prop)
+
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
             oe.setAttribute('name', material.name)
