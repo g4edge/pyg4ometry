@@ -266,6 +266,7 @@ class Reader(object):
 
             elif mat_type == "material":
                 components = []
+                properties = {}
                 for chNode in node.childNodes:
                     if chNode.nodeType != chNode.ELEMENT_NODE:
                         continue # comment
@@ -290,7 +291,11 @@ class Reader(object):
                         comp["comp_type"] = "fraction"
                         components.append(comp)
 
+                    elif chNode.tagName=="property":
+                        properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
+
                 def_attrs["components"] = components
+                def_attrs["properties"] = properties
                 materials.append(def_attrs)
 
             else:
@@ -363,6 +368,11 @@ class Reader(object):
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
+
+            # Set the optional properties
+            properties = material.get("properties")
+            for pname, pref in properties.iteritems():
+                mat.add_property(pname, pref)
 
     def parseUserInfo(self,xmldoc):
         try:
