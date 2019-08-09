@@ -70,6 +70,15 @@ class Writer(object):
             elif logical.type == "assembly" : 
                 self.writeAssemblyVolume(logical)
 
+        # loop over surfaces
+        for surfaceName in registry.surfaceDict :
+            _log.info('gdml.Writer.addDetector> surface '+surfaceName)
+            surface = registry.surfaceDict[surfaceName]
+            if surface.type == "bordersurface" :
+                self.writeBorderSurface(surface)
+            elif surface.type == "skinsurface" :
+                self.writeSkinSurface(surface)
+
         for auxiliary in registry.userInfo:
             self.writeAuxiliary(auxiliary)
 
