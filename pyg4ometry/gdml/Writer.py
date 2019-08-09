@@ -197,7 +197,11 @@ class Writer(object):
             oe.setAttribute('values', " ".join([val.expr.expression for val in define.values]))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Expression):
-            return # Only write out named defines
+            oe = self.doc.createElement('expression')
+            oe.setAttribute('name',define.name)
+            tn = self.doc.createTextNode(define.expr.expression)
+            oe.appendChild(tn)
+            self.defines.appendChild(oe)
         else:
             raise Exception("Unrecognised define type: {}".format(type(define)))
 
