@@ -1306,18 +1306,29 @@ class Reader(object):
                 self.parsePhysicalVolumeChildren(node,vol)
 
                 # vol.checkOverlaps()
-                
+
             elif node_name == "assembly" :
                 name = node.attributes["name"].value
                 vol  = _g4.AssemblyVolume(name,self._registry, True)
                 self.parsePhysicalVolumeChildren(node,vol)
                 # vol.checkOverlaps()
-                                         
+
             elif node_name == "bordersurface":
-                print "Reader> bordersurface not implemented"
-            elif node_name == "skinsurface" : 
-                print "Reader> skinsurface not implemented"
-            elif node_name == "loop" : 
+                name  = node.attributes["name"].value
+                surf_property  = node.attributes["surfaceproperty"].value
+                pvol1 = node.getElementsByTagName("physvolref")[0].attributes["ref"].value
+                pvol2 = node.getElementsByTagName("physvolref")[1].attributes["ref"].value
+
+                surf  = _g4.BorderSurface(name, pvol1, pvol2, surf_property, self._registry)
+
+            elif node_name == "skinsurface" :
+                name  = node.attributes["name"].value
+                surf_property  = node.attributes["surfaceproperty"].value
+                volref = node.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                surf  = _g4.SkinSurface(name, volref, surf_property, self._registry)
+
+            elif node_name == "loop" :
                 print "Reader> loop not implemented"
             else:
                 print "Unrecognised node: ", node_name
