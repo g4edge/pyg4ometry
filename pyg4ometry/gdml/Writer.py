@@ -589,6 +589,36 @@ class Writer(object):
 
         return pvol
 
+    def writeSkinSurface(self, instance):
+        surf = self.doc.createElement('skinsurface')
+        surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute('surfaceproperty', instance.surface_property)
+
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.volumeref))
+        surf.appendChild(vr)
+
+        self.structure.appendChild(surf)
+
+    def writeBorderSurface(self, instance):
+        surf = self.doc.createElement('bordersurface')
+        surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute('surfaceproperty', instance.surface_property)
+
+        pvr1 = self.doc.createElement('physvolref')
+        pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        surf.appendChild(pvr1)
+        pvr2 = self.doc.createElement('physvolref')
+        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        surf.appendChild(pvr2)
+
+        self.structure.appendChild(surf)
+
+    def getValueOrExpr(self, expr) : 
+        if self.registry.defineDict.has_key(expr.name) :
+            return expr.name
+        else :
+            return str(expr.eval())
 
 
     def writeSolid(self, solid):
