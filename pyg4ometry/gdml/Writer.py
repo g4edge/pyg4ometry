@@ -866,7 +866,13 @@ class Writer(object):
         self.solids.appendChild(oe)
 
     def writeOpticalSurface(self, instance):
-        pass
+        oe = self.doc.createElement('opticalsurface')
+        oe.setAttribute('name', self.prepend + instance.name)
+        oe.setAttribute('model', instance.model)
+        oe.setAttribute('finish', instance.finish)
+        oe.setAttribute('type', instance.osType)
+        oe.setAttribute('value', str(float(instance.value)))
+        self.solids.appendChild(oe)
 
     def writeOrb(self, instance):
         oe = self.doc.createElement('orb')
