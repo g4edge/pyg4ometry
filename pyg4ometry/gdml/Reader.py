@@ -160,7 +160,7 @@ class Reader(object):
                 _defines.Variable(name,value, self._registry)
             elif(define_type == "expression"):
                 value = df.childNodes[0].nodeValue
-                _defines.Expression(name,value, self._registry)
+                _defines.Expression(name,value, self._registry, True)
             elif(define_type == "position"):                
                 (x,y,z,u) = getXYZ(def_attrs)
                 _defines.Position(name,x,y,z,u,self._registry)
@@ -266,6 +266,7 @@ class Reader(object):
 
             elif mat_type == "material":
                 components = []
+                properties = {}
                 for chNode in node.childNodes:
                     if chNode.nodeType != chNode.ELEMENT_NODE:
                         continue # comment
@@ -290,7 +291,11 @@ class Reader(object):
                         comp["comp_type"] = "fraction"
                         components.append(comp)
 
+                    elif chNode.tagName=="property":
+                        properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
+
                 def_attrs["components"] = components
+                def_attrs["properties"] = properties
                 materials.append(def_attrs)
 
             else:
@@ -363,6 +368,11 @@ class Reader(object):
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
+
+            # Set the optional properties
+            properties = material.get("properties")
+            for pname, pref in properties.iteritems():
+                mat.add_property(pname, pref)
 
     def parseUserInfo(self,xmldoc):
         try:
@@ -474,7 +484,7 @@ class Reader(object):
             elif solid_type == 'multiUnion' :      # solid test 031 
                 self.parseMultiUnion(node)
             elif solid_type == 'opticalsurface' : 
-                self.parseOpticalSufrace(node)
+                self.parseOpticalSurface(node)
             elif solid_type == "scaledSolid":
                 self.parseScaledSolid(node)
             elif solid_type == 'loop' :           
@@ -1221,7 +1231,14 @@ class Reader(object):
         _g4.solid.MultiUnion(solid_name, muSolids, transformations,self._registry, True)
         
     def parseOpticalSurface(self, node) : 
-        pass
+        solid_name = node.attributes['name'].value
+
+        finish = node.attributes['finish'].value
+        model = node.attributes['model'].value
+        surf_type = node.attributes['type'].value
+        value = _defines.Expression(solid_name+'_value',node.attributes['value'].value,self._registry)
+
+        _g4.solid.OpticalSurface(solid_name, finish, model, surf_type, value, self._registry, True)
 
     def parseScaledSolid(self,node):
         scaledSolid_name = node.attributes['name'].value
@@ -1289,18 +1306,29 @@ class Reader(object):
                 self.parsePhysicalVolumeChildren(node,vol)
 
                 # vol.checkOverlaps()
-                
+
             elif node_name == "assembly" :
                 name = node.attributes["name"].value
                 vol  = _g4.AssemblyVolume(name,self._registry, True)
                 self.parsePhysicalVolumeChildren(node,vol)
                 # vol.checkOverlaps()
-                                         
+
             elif node_name == "bordersurface":
-                print "Reader> bordersurface not implemented"
-            elif node_name == "skinsurface" : 
-                print "Reader> skinsurface not implemented"
-            elif node_name == "loop" : 
+                name  = node.attributes["name"].value
+                surf_property  = node.attributes["surfaceproperty"].value
+                pvol1 = node.getElementsByTagName("physvolref")[0].attributes["ref"].value
+                pvol2 = node.getElementsByTagName("physvolref")[1].attributes["ref"].value
+
+                surf  = _g4.BorderSurface(name, pvol1, pvol2, surf_property, self._registry)
+
+            elif node_name == "skinsurface" :
+                name  = node.attributes["name"].value
+                surf_property  = node.attributes["surfaceproperty"].value
+                volref = node.getElementsByTagName("volumeref")[0].attributes["ref"].value
+
+                surf  = _g4.SkinSurface(name, volref, surf_property, self._registry)
+
+            elif node_name == "loop" :
                 print "Reader> loop not implemented"
             else:
                 print "Unrecognised node: ", node_name

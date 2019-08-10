@@ -70,6 +70,15 @@ class Writer(object):
             elif logical.type == "assembly" : 
                 self.writeAssemblyVolume(logical)
 
+        # loop over surfaces
+        for surfaceName in registry.surfaceDict :
+            _log.info('gdml.Writer.addDetector> surface '+surfaceName)
+            surface = registry.surfaceDict[surfaceName]
+            if surface.type == "bordersurface" :
+                self.writeBorderSurface(surface)
+            elif surface.type == "skinsurface" :
+                self.writeSkinSurface(surface)
+
         for auxiliary in registry.userInfo:
             self.writeAuxiliary(auxiliary)
 
@@ -187,7 +196,11 @@ class Writer(object):
             oe.setAttribute('values', " ".join([val.expr.expression for val in define.values]))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Expression):
-            return # Only write out named defines
+            oe = self.doc.createElement('expression')
+            oe.setAttribute('name',define.name)
+            tn = self.doc.createTextNode(define.expr.expression)
+            oe.appendChild(tn)
+            self.defines.appendChild(oe)
         else:
             raise Exception("Unrecognised define type: {}".format(type(define)))
 
@@ -228,6 +241,12 @@ class Writer(object):
                 # No need to add defines for NIST compounds or
                 # materials which are simply names, so do not append child.
                 pass
+
+            for pname, pref in material.properties.iteritems():
+                prop = self.doc.createElement('property')
+                prop.setAttribute('name', str(pname))
+                prop.setAttribute('value', str(pref))
+                oe.appendChild(prop)
 
         elif isinstance(material, _Element):
             oe = self.doc.createElement('element')
@@ -575,6 +594,36 @@ class Writer(object):
 
         return pvol
 
+    def writeSkinSurface(self, instance):
+        surf = self.doc.createElement('skinsurface')
+        surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute('surfaceproperty', instance.surface_property)
+
+        vr = self.doc.createElement('volumeref')
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.volumeref))
+        surf.appendChild(vr)
+
+        self.structure.appendChild(surf)
+
+    def writeBorderSurface(self, instance):
+        surf = self.doc.createElement('bordersurface')
+        surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute('surfaceproperty', instance.surface_property)
+
+        pvr1 = self.doc.createElement('physvolref')
+        pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        surf.appendChild(pvr1)
+        pvr2 = self.doc.createElement('physvolref')
+        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        surf.appendChild(pvr2)
+
+        self.structure.appendChild(surf)
+
+    def getValueOrExpr(self, expr) : 
+        if self.registry.defineDict.has_key(expr.name) :
+            return expr.name
+        else :
+            return str(expr.eval())
 
 
     def writeSolid(self, solid):
@@ -876,7 +925,13 @@ class Writer(object):
         self.solids.appendChild(oe)
 
     def writeOpticalSurface(self, instance):
-        pass
+        oe = self.doc.createElement('opticalsurface')
+        oe.setAttribute('name', self.prepend + instance.name)
+        oe.setAttribute('model', instance.model)
+        oe.setAttribute('finish', instance.finish)
+        oe.setAttribute('type', instance.osType)
+        oe.setAttribute('value', str(float(instance.value)))
+        self.solids.appendChild(oe)
 
     def writeOrb(self, instance):
         oe = self.doc.createElement('orb')

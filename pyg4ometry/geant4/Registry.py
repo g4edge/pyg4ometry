@@ -20,13 +20,14 @@ class Registry:
         self.logicalVolumeDict            = _OrderedDict()
         self.physicalVolumeDict           = _OrderedDict()
         self.physicalVolumeCountDict      = _OrderedDict()
-        self.opticalSurfaceDict           = _OrderedDict()
+        self.surfaceDict                  = _OrderedDict()
         self.loopDict                     = _OrderedDict()
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
         self.solidUsageCountDict          = {}               # solidName1, solidName2
         self.volumeTypeCountDict          = {}               # logical, physical
+        self.surfaceTypeCountDict          = {}              # border, skin
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
         self.userInfo                     = []               # Ordered list for the user info, which is not processed
 
@@ -34,6 +35,7 @@ class Registry:
         self.materialNameCount            = {}
         self.logicalVolumeNameCount       = {}
         self.physicalVolumeNameCount      = {}
+        self.surfaceNameCount             = {}
         self.defineNameCount              = {}
 
         self.solidTypeCountDict           = {}               # Box, Cons etc
@@ -152,6 +154,32 @@ class Registry:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
         except KeyError:
             self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
+
+    def addSurface(self, surface, namePolicy = "none"):
+        """
+        :param surface: Surface
+        :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
+        """
+
+        if self.surfaceDict.has_key(surface.name) :
+            if namePolicy == "none" :
+                raise _exceptions.IdenticalNameError(surface.name, "surface")
+            elif namePolicy == "reuse" :
+                return
+            elif namePolicy == "increment" :
+                self.surfaceNameCount[surface.name] += 1
+                surface.name = "{}_{}".format(surface.name, self.surfaceNameCount[surface.name])
+                self.surfaceDict[surface.name] = surface
+
+        else :
+            self.surfaceDict[surface.name] = surface
+            self.surfaceNameCount[surface.name] = 0
+
+
+        try:
+            self.surfaceTypeCountDict[surface.type] += 1
+        except KeyError:
+            self.surfaceTypeCountDict[surface.type] = 0
 
     def addParameter(self, parameter):
         try:

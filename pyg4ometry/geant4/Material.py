@@ -122,6 +122,7 @@ class Material:
         self.atomic_weight = kwargs.get("atomic_weight", None)
         self.number_of_components = kwargs.get("number_of_components", None)
         self.components = []
+        self.properties = {}
 
         self.NIST_compounds =  _makeNISTCompoundList()
 
@@ -150,6 +151,12 @@ class Material:
     def update_registry(self): # user can call this if a registry is assigned post-construction
         if self.registry is not None:
             self.registry.addMaterial(self)
+
+    def add_property(self, name, value):
+        if self.type == 'nist' or self.type == 'arbitraty':
+            raise ValueError("Properties cannot be set of "
+                             "predefined or arbitrary materials")
+        self.properties[name] = value
 
     def add_element_massfraction(self, element, massfraction):
         """
