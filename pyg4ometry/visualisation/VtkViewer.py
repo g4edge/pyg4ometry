@@ -85,7 +85,7 @@ class VtkViewer:
 
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _transformation.tbxyz2matrix(pv.rotation.eval())
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
                 if pv.scale :
                     pvmsca = _np.diag(pv.scale.eval())
                 else :
@@ -162,8 +162,6 @@ class VtkViewer:
         actorname = pv_name+"_actor"             
         vtkActor = _vtk.vtkActor() 
         vtkActor.SetMapper(vtkMAP)        
-
-        mtra = _np.linalg.inv(mtra)
 
         vtkTransform = _vtk.vtkMatrix4x4()
         vtkTransform.SetElement(0,0,mtra[0,0])
