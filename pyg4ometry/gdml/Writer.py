@@ -358,10 +358,8 @@ class Writer(object):
 
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement('physvol')
-        # pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
         pvol.setAttribute('name',"{}{}".format(self.prepend, pv.name))
         vr = self.doc.createElement('volumeref')
-        # vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
         vr.setAttribute('ref',"{}{}".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
