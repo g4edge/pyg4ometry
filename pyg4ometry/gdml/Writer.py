@@ -342,20 +342,6 @@ class Writer(object):
 
         self.structure.appendChild(we)
 
-    def GetDefinesFromPV(self, instance, variable):
-        if not hasattr(instance, variable):
-            raise AttributeError("") #TODO: Add error message
-        # name = instance.name + "_" + getattr(instance,variable).name
-        name = instance.name+"_"+variable
-        try:
-            self.registry.defineDict[name]
-            # will have been written before if already in define dict
-        except KeyError:
-            # otherwise write define
-            getattr(instance, variable).name = name
-            self.writeDefine(getattr(instance, variable))
-        return name
-
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement('physvol')
         pvol.setAttribute('name',"{}{}".format(self.prepend, pv.name))
@@ -363,27 +349,42 @@ class Writer(object):
         vr.setAttribute('ref',"{}{}".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
-        # check if variable are in defines registry, else write define.
-        posName = self.GetDefinesFromPV(pv,'position')
-        rotName = self.GetDefinesFromPV(pv,'rotation')
-        if pv.scale != None :
-            scaName = self.GetDefinesFromPV(pv,'scale')
-
         # phys vol translation
-        tlatee = self.doc.createElement('positionref')
-        tlatee.setAttribute('ref', str(posName))
-        pvol.appendChild(tlatee)
+        if self.registry.defineDict.has_key(pv.position.name) :
+            tlatee = self.doc.createElement('positionref')
+            tlatee.setAttribute('ref', str(pv.position.name))
+            pvol.appendChild(tlatee)
+        else :
+            tlatee = self.doc.createElement('position')
+            tlatee.setAttribute('x', str(pv.position.x.expression))
+            tlatee.setAttribute('y', str(pv.position.y.expression))
+            tlatee.setAttribute('z', str(pv.position.z.expression))
+            pvol.appendChild(tlatee)
 
         # phys vol rotation
-        rote = self.doc.createElement('rotationref')
-        rote.setAttribute('ref', str(rotName))
-        pvol.appendChild(rote)
+        if self.registry.defineDict.has_key(pv.rotation.name) :
+            rote = self.doc.createElement('rotationref')
+            rote.setAttribute('ref', str(pv.rotation.name))
+            pvol.appendChild(rote)
+        else :
+            rote = self.doc.createElement('rotation')
+            rote.setAttribute('x', str(pv.rotation.x.expression))
+            rote.setAttribute('y', str(pv.rotation.y.expression))
+            rote.setAttribute('z', str(pv.rotation.z.expression))
+            pvol.appendChild(rote)
 
         # phys vol scale (little different as do not need to define as defaults to [1,1,1]
         if pv.scale != None :
-            tscae = self.doc.createElement('scaleref')
-            tscae.setAttribute('ref', str(scaName))
-            pvol.appendChild(tscae)
+            if  self.registry.defineDict.has_key(pv.scale.name) :
+                scae = self.doc.createElement('scaleref')
+                scae.setAttribute('ref', str(scaName))
+                pvol.appendChild(scae)
+            else :
+                scae = self.doc.createElement('rotation')
+                scae.setAttribute('x', str(pv.scale.x.expression))
+                scae.setAttribute('y', str(pv.scale.y.expression))
+                scae.setAttribute('z', str(pv.scale.z.expression))
+                pvol.appendChild(scae)
 
         return pvol
 
