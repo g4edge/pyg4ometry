@@ -39,6 +39,9 @@ class Trd(_SolidBase):
         self.lunit  = lunit
 
         self.dependents = []
+
+        self.varNames = ["pX1", "pX2", "pY1","pY2","pZ"]
+
         if registry:
             registry.addSolid(self)
 

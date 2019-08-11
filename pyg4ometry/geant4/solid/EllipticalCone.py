@@ -34,6 +34,8 @@ class EllipticalCone(_SolidBase):
 
         self.dependents = []
 
+        self.varNames = ["pxSemiAxis", "pySemiAxis", "zMax","pzTopCut"]
+
         # self.checkParameters()
 
         if registry:

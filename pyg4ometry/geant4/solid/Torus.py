@@ -55,6 +55,8 @@ class Torus(_SolidBase):
 
         self.dependents = []
 
+        self.varNames = ["pRmin", "pRmax", "pStor","pSPhi","pDPhi"]
+
         if registry:
             registry.addSolid(self)
 

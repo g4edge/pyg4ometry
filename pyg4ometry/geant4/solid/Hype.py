@@ -54,6 +54,9 @@ class Hype(_SolidBase):
         self.nstack      = nstack
 
         self.dependents = []
+
+        self.varNames = ["innerRadius", "outerRadius", "innerStereo","outerStereo","lenZ"]
+
         self.checkParameters()
         if registry:
             registry.addSolid(self)

@@ -30,6 +30,8 @@ class Box(_SolidBase):
         self.type = 'Box'
         self.dependents = []
 
+        self.varNames = ["pX", "pY", "pZ"]
+
         if registry:
             registry.addSolid(self)
 

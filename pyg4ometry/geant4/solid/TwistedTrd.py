@@ -57,7 +57,9 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.refine           = refine
 
         self.dependents = []
-        
+
+        self.varNames = ["twistedAngle", "pDx1", "pDx2","pDy1","pDy2","pDz"]
+
         self.checkParameters()
         if registry:
             registry.addSolid(self)

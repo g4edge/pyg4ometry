@@ -212,6 +212,8 @@ class Registry:
             self.defineDict[define.name] = define
             self.defineNameCount[define.name] = 0
 
+        return define.name
+
     def setWorld(self, worldName):
         self.worldName = worldName
         self.worldVolume = self.logicalVolumeDict[self.worldName]
@@ -251,6 +253,8 @@ class Registry:
             # add members from physical volume
             self.addDefine(volume.position,namePolicy)
             self.addDefine(volume.rotation,namePolicy)
+            if volume.scale :
+                self.addDefine(volume.scale,namePolicy)
             self.addPhysicalVolume(volume,namePolicy)
 
         elif isinstance(volume, _LogicalVolume) :
@@ -260,9 +264,16 @@ class Registry:
                 self.addVolumeRecursive(dv, namePolicy)
 
             # add members from logical volume
+            self.transferSolidDefines(volume.solid, namePolicy)
             self.addSolid(volume.solid,namePolicy)
             self.addMaterial(volume.material,namePolicy)
             self.addLogicalVolume(volume,namePolicy)
+
+    def transferSolidDefines(self, solid, namePolicy):
+        for varName in solid.varNames :
+            var = getattr(solid, varName)
+            var.name = self.addDefine(var,namePolicy)
+            var.setRegistry(self)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''

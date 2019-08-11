@@ -44,6 +44,8 @@ class CutTubs(_SolidBase):
         self.aunit     = aunit
         self.dependents = []
 
+        self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi","pLowNorm","pHighNorm"]
+
         if registry:
             registry.addSolid(self)
 

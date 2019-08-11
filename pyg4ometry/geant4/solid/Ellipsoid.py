@@ -49,7 +49,11 @@ class Ellipsoid(_SolidBase):
         self.nslice      = nslice
         self.nstack      = nstack
         self.mesh      = None
+
         self.dependents = []
+
+        self.varNames = ["pxSemiAxis", "pySemiAxis", "pzSemiAxis","pzBottomCut","pzTopCut"]
+
         if registry:
             registry.addSolid(self)
 

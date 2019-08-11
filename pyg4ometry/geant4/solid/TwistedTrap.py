@@ -68,6 +68,8 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         self.dependents = []
 
+        self.varNames = ["twistedAngle", "pDz", "pThetae","pDPhi","pDy1","pDx1","pDx2","pDy2","pDx3","pDx4","pAlp"]
+
         self.checkParameters()
         if registry:
             registry.addSolid(self)
