@@ -27,7 +27,7 @@ class Registry:
 
         self.solidUsageCountDict          = {}               # solidName1, solidName2
         self.volumeTypeCountDict          = {}               # logical, physical
-        self.surfaceTypeCountDict          = {}              # border, skin
+        self.surfaceTypeCountDict         = {}              # border, skin
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
         self.userInfo                     = []               # Ordered list for the user info, which is not processed
 
