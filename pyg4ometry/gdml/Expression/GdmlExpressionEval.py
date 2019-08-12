@@ -8,6 +8,8 @@ from GdmlExpressionLexer import GdmlExpressionLexer
 from GdmlExpressionParser import GdmlExpressionParser
 from GdmlExpressionVisitor import GdmlExpressionVisitor
 
+from ..Units import units as _units
+
 import math
 
 from IPython import embed
@@ -19,7 +21,19 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitVariable(self, ctx):
         name = ctx.VARIABLE().getText();
-        value = self.defines[name]
+
+        try:
+            value = self.defines[name]
+        except KeyError:
+            try:
+                value = _units[name]
+            except KeyError as err:
+                msg = "<= Undefined variable : {}".format(name)
+                if not err.args:
+                    err.args=('',)
+                err.args = err.args + (msg,)
+                raise
+
         return value
 
     def visitPrintExpr(self, ctx):

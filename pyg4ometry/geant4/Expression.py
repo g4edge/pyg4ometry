@@ -6,11 +6,6 @@ try :
 except ImportError :
     noSymPy = True
 
-def _merge_dicts(d1, d2):
-    dm = d1.copy()
-    dm.update(d2)
-    return dm
-
 class Expression(object) :
     def __init__(self, name, expression, registry=_Registry()) :
         # TODO: make the registry required
@@ -18,13 +13,11 @@ class Expression(object) :
         self.expression = expression
         self.parse_tree = None
         self.registry   = registry
-        
+
     def eval(self) :
         expressionParser = self.registry.getExpressionParser()
         self.parse_tree = expressionParser.parse(self.expression)
-        import pyg4ometry.gdml.Units as _units #TODO: fix circular import
-        defines = _merge_dicts(self.registry.defineDict, _units.units)
-        value = expressionParser.evaluate(self.parse_tree, defines)
+        value = expressionParser.evaluate(self.parse_tree, self.registry.defineDict)
 
         return value
 
