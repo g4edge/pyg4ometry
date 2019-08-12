@@ -194,6 +194,10 @@ class ScalarBase(object) :
     def setExpression(self, expr) : 
         self.expr.expression = upgradeToStringExpression(self.registry,expr)
 
+    def setRegistry(self, registry) :
+        self.registry = registry
+        self.expr.registry = registry
+
 def sin(arg) : 
     """
     Sin of a ScalarBase object, returns a Constant

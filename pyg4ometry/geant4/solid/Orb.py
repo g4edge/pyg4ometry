@@ -36,6 +36,8 @@ class Orb(_SolidBase):
 
         self.dependents = []
 
+        self.varNames = ["pRMax"]
+
         if registry:
             registry.addSolid(self)
 

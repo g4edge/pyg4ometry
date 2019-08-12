@@ -57,7 +57,9 @@ class Sphere(_SolidBase):
         self.mesh    = None
 
         self.dependents = []
-        
+
+        self.varNames = ["pRmin", "pRmax", "pSPhi","pDPhi","pSTheta","pDTheta"]
+
         # self.checkParameters()
         if registry:
             registry.addSolid(self)

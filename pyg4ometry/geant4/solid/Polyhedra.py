@@ -47,7 +47,9 @@ class Polyhedra(_SolidBase):
         self.rOuter     = rOuter
         self.lunit      = lunit
         self.aunit      = aunit
-        
+
+        self.varNames = ["phiStart", "phiTotal", "numSide", "numZPlanes","zPlane","rInner","rOuter"]
+
         self.dependents = []
 
         if registry:

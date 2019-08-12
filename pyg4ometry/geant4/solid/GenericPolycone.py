@@ -45,6 +45,8 @@ class GenericPolycone(_SolidBase):
         self.aunit   = aunit
         self.nslice  = nslice
 
+        self.varNames = ["pSPhi", "pDPhi", "pR", "pZ"]
+
         self.dependents = []
 
         self.checkParameters()

@@ -1348,7 +1348,6 @@ class Reader(object):
                             
                 # Position 
                 _log.info('Reader.extractStructureNodeData> pv position %s' % (pvol_name))
-
                 try : 
                     position = self._registry.defineDict[chNode.getElementsByTagName("positionref")[0].attributes["ref"].value]
                 except IndexError : 
@@ -1375,13 +1374,13 @@ class Reader(object):
                     try : 
                         scale = self.parseVector(chNode.getElementsByTagName("scale")[0],"scale",False)
                     except IndexError : 
-                        scale = _defines.Scale("","1","1","1","none",self._registry,False)    
+                        scale = None
 
                 # Create physical volume
                 _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
 
                 physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
-                                               pvol_name, vol, registry=self._registry)
+                                               pvol_name, vol, registry=self._registry,scale=scale)
                 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol":
                 nreplica  = chNode.attributes['number'].value

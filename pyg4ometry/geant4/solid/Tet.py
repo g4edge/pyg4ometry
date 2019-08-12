@@ -43,7 +43,10 @@ class Tet(_SolidBase):
         self.p4      = p4
         self.lunit   = lunit
         self.degen   = degeneracyFlag
+
         self.dependents = []
+
+        self.varNames = ["anchor", "p2", "p3","p4"]
 
         registry.addSolid(self) # Always need the registry
 

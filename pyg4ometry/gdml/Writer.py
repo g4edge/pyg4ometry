@@ -172,7 +172,7 @@ class Writer(object):
             oe.setAttribute('x',str(define.x.expression))
             oe.setAttribute('y',str(define.y.expression))
             oe.setAttribute('z',str(define.z.expression))
-            #oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
+            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Rotation):
             oe = self.doc.createElement('rotation')
@@ -180,8 +180,7 @@ class Writer(object):
             oe.setAttribute('x',str(define.x.expression))
             oe.setAttribute('y',str(define.y.expression))
             oe.setAttribute('z',str(define.z.expression))
-            # oe.setAttribute('unit','rad')
-            #oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
+            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Scale):
             oe = self.doc.createElement('scale')
@@ -343,48 +342,49 @@ class Writer(object):
 
         self.structure.appendChild(we)
 
-    def GetDefinesFromPV(self, instance, variable):
-        if not hasattr(instance, variable):
-            raise AttributeError("") #TODO: Add error message
-        # name = instance.name + "_" + getattr(instance,variable).name
-        name = instance.name+"_"+variable
-        try:
-            self.registry.defineDict[name]
-            # will have been written before if already in define dict
-        except KeyError:
-            # otherwise write define
-            getattr(instance, variable).name = name
-            self.writeDefine(getattr(instance, variable))
-        return name
-
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement('physvol')
-        # pvol.setAttribute('name',"{}{}_pv".format(self.prepend, pv.name))
         pvol.setAttribute('name',"{}{}".format(self.prepend, pv.name))
         vr = self.doc.createElement('volumeref')
-        # vr.setAttribute('ref',"{}{}_lv".format(self.prepend, pv.logicalVolume.name))
         vr.setAttribute('ref',"{}{}".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
-        # check if variable are in defines registry, else write define.
-        posName = self.GetDefinesFromPV(pv,'position')
-        rotName = self.GetDefinesFromPV(pv,'rotation')
-
         # phys vol translation
-        tlatee = self.doc.createElement('positionref')
-        tlatee.setAttribute('ref', str(posName))
-        pvol.appendChild(tlatee)
+        if self.registry.defineDict.has_key(pv.position.name) :
+            tlatee = self.doc.createElement('positionref')
+            tlatee.setAttribute('ref', str(pv.position.name))
+            pvol.appendChild(tlatee)
+        else :
+            tlatee = self.doc.createElement('position')
+            tlatee.setAttribute('x', str(pv.position.x.expression))
+            tlatee.setAttribute('y', str(pv.position.y.expression))
+            tlatee.setAttribute('z', str(pv.position.z.expression))
+            pvol.appendChild(tlatee)
 
         # phys vol rotation
-        rote = self.doc.createElement('rotationref')
-        rote.setAttribute('ref', str(rotName))
-        pvol.appendChild(rote)
+        if self.registry.defineDict.has_key(pv.rotation.name) :
+            rote = self.doc.createElement('rotationref')
+            rote.setAttribute('ref', str(pv.rotation.name))
+            pvol.appendChild(rote)
+        else :
+            rote = self.doc.createElement('rotation')
+            rote.setAttribute('x', str(pv.rotation.x.expression))
+            rote.setAttribute('y', str(pv.rotation.y.expression))
+            rote.setAttribute('z', str(pv.rotation.z.expression))
+            pvol.appendChild(rote)
 
-        # phys vol scale
-        # TODO: Scale information
-        #tscae = self.doc.createElement('scaleref')
-        #tscae.setAttribute('ref', str(pv.rotation.name))
-        #pvol.appendChild(tscae)
+        # phys vol scale (little different as do not need to define as defaults to [1,1,1]
+        if pv.scale != None :
+            if  self.registry.defineDict.has_key(pv.scale.name) :
+                scae = self.doc.createElement('scaleref')
+                scae.setAttribute('ref', str(scaName))
+                pvol.appendChild(scae)
+            else :
+                scae = self.doc.createElement('rotation')
+                scae.setAttribute('x', str(pv.scale.x.expression))
+                scae.setAttribute('y', str(pv.scale.y.expression))
+                scae.setAttribute('z', str(pv.scale.z.expression))
+                pvol.appendChild(scae)
 
         return pvol
 
@@ -648,7 +648,7 @@ class Writer(object):
         if not hasattr(instance, variable):
             raise AttributeError("") #TODO: Add error message
         var = getattr(instance, variable)
-        
+
         # Indexed variable 
         if index is not None:
             try:
@@ -664,7 +664,10 @@ class Writer(object):
 
         # Expression, Constant, Quantity or Variable
         if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
-            return str(var.expr.expression)
+            if self.registry.defineDict.has_key(var.name):
+                return var.name
+            else :
+                return str(var.expr.expression)
         else:
             return str(var)
 
@@ -674,6 +677,7 @@ class Writer(object):
         oe.setAttribute('x',self.getValueOrExprFromInstance(instance,'pX'))
         oe.setAttribute('y',self.getValueOrExprFromInstance(instance,'pY'))
         oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pZ'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def writeCons(self, instance):
@@ -686,6 +690,8 @@ class Writer(object):
         oe.setAttribute('z', self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
         oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
     def writeCutTubs(self, instance):
@@ -702,6 +708,8 @@ class Writer(object):
         oe.setAttribute('highX', self.getValueOrExprFromInstance(instance,'pHighNorm',0))
         oe.setAttribute('highY', self.getValueOrExprFromInstance(instance,'pHighNorm',1))
         oe.setAttribute('highZ', self.getValueOrExprFromInstance(instance,'pHighNorm',2))
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
     def writeEllipsoid(self, instance):
@@ -712,6 +720,7 @@ class Writer(object):
         oe.setAttribute('cz', self.getValueOrExprFromInstance(instance,'pzSemiAxis'))
         oe.setAttribute('zcut1', self.getValueOrExprFromInstance(instance,'pzBottomCut'))
         oe.setAttribute('zcut2', self.getValueOrExprFromInstance(instance,'pzTopCut'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def writeEllipticalCone(self, instance):
@@ -721,6 +730,7 @@ class Writer(object):
         oe.setAttribute('dy', self.getValueOrExprFromInstance(instance,'pySemiAxis'))
         oe.setAttribute('zmax', self.getValueOrExprFromInstance(instance,'zMax'))
         oe.setAttribute('zcut', self.getValueOrExprFromInstance(instance,'pzTopCut'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def writeEllipticalTube(self, instance):
@@ -729,6 +739,7 @@ class Writer(object):
         oe.setAttribute('dx', self.getValueOrExprFromInstance(instance,'pDx'))
         oe.setAttribute('dy', self.getValueOrExprFromInstance(instance,'pDy'))
         oe.setAttribute('dz', self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def createTwoDimVertex(self, x, y):
@@ -765,7 +776,8 @@ class Writer(object):
             sec = self.createSection(n, z, x, y, s)
             oe.appendChild(sec)            
             n += 1
-            
+
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def createrzPoint(self, r, z):
@@ -786,6 +798,8 @@ class Writer(object):
             p = self.createrzPoint(r, z)
             oe.appendChild(p)
 
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
     def writeGenericPolyhedra(self, instance) : 
@@ -799,6 +813,8 @@ class Writer(object):
             p = self.createrzPoint(r, z)
             oe.appendChild(p)
 
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
 
@@ -868,6 +884,8 @@ class Writer(object):
         oe.setAttribute('z',    self.getValueOrExprFromInstance(instance,'lenZ'))
         oe.setAttribute('inst', self.getValueOrExprFromInstance(instance,'innerStereo'))
         oe.setAttribute('outst', self.getValueOrExprFromInstance(instance,'outerStereo'))
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
     def writeIntersection(self, instance):
@@ -921,6 +939,7 @@ class Writer(object):
         oe = self.doc.createElement('orb')
         oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('r', self.getValueOrExprFromInstance(instance,'pRMax'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def writePara(self, instance):
@@ -932,6 +951,8 @@ class Writer(object):
         oe.setAttribute('alpha', self.getValueOrExprFromInstance(instance,'pAlpha'))
         oe.setAttribute('theta', self.getValueOrExprFromInstance(instance,'pTheta'))
         oe.setAttribute('phi', self.getValueOrExprFromInstance(instance,'pPhi'))
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
     def writeParaboloid(self, instance):
@@ -940,6 +961,7 @@ class Writer(object):
         oe.setAttribute('rlo', self.getValueOrExprFromInstance(instance,'pR1'))
         oe.setAttribute('rhi', self.getValueOrExprFromInstance(instance,'pR2'))
         oe.setAttribute('dz', self.getValueOrExprFromInstance(instance,'pDz'))
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def createzPlane(self, rInner, rOuter, zplane):
@@ -966,6 +988,9 @@ class Writer(object):
             d = self.createzPlane(w,x,y)
             oe.appendChild(d)
 
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writePolyhedra(self, instance):
@@ -980,6 +1005,9 @@ class Writer(object):
             d = self.createzPlane(w,x,y)
             oe.appendChild(d)
 
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeSphere(self, instance):
@@ -991,6 +1019,10 @@ class Writer(object):
         oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
         oe.setAttribute('starttheta',self.getValueOrExprFromInstance(instance,'pSTheta'))
         oe.setAttribute('deltatheta',self.getValueOrExprFromInstance(instance,'pDTheta'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeGenericTrap(self, instance):
@@ -1039,6 +1071,8 @@ class Writer(object):
         oe.setAttribute('vertex2', uniqueName + '_v2')
         oe.setAttribute('vertex3', uniqueName + '_v3')
         oe.setAttribute('vertex4', uniqueName + '_v4')
+
+        oe.setAttribute("lunit",instance.lunit)
         self.solids.appendChild(oe)
 
     def writeTorus(self, instance):
@@ -1049,6 +1083,10 @@ class Writer(object):
         oe.setAttribute('rtor',self.getValueOrExprFromInstance(instance,'pRtor'))
         oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
         oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeTrap(self, instance):
@@ -1065,6 +1103,10 @@ class Writer(object):
         oe.setAttribute('x3',self.getValueOrExprFromInstance(instance,'pDx3'))
         oe.setAttribute('x4',self.getValueOrExprFromInstance(instance,'pDx4'))
         oe.setAttribute('alpha2',self.getValueOrExprFromInstance(instance,'pAlp2'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeTrd(self, instance):
@@ -1075,6 +1117,9 @@ class Writer(object):
         oe.setAttribute('y1',self.getValueOrExprFromInstance(instance,'pY1'))
         oe.setAttribute('y2',self.getValueOrExprFromInstance(instance,'pY2'))
         oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pZ'))
+
+        oe.setAttribute("lunit",instance.lunit)
+
         self.solids.appendChild(oe)
 
     def writeTubs(self, instance):
@@ -1085,6 +1130,10 @@ class Writer(object):
         oe.setAttribute('z',   self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
         oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeTwistedBox(self, instance):
@@ -1094,6 +1143,10 @@ class Writer(object):
         oe.setAttribute('x',self.getValueOrExprFromInstance(instance,'pDx'))
         oe.setAttribute('y',self.getValueOrExprFromInstance(instance,'pDy'))
         oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pDz'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeTwistedTrd(self, instance):
@@ -1105,6 +1158,10 @@ class Writer(object):
         oe.setAttribute('y1','2*'+ self.getValueOrExprFromInstance(instance,'pDy1'))
         oe.setAttribute('y2','2*'+ self.getValueOrExprFromInstance(instance,'pDy2'))
         oe.setAttribute('z','2*'+ self.getValueOrExprFromInstance(instance,'pDz'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
 
     def writeTwistedTrap(self, instance):
@@ -1121,6 +1178,10 @@ class Writer(object):
         oe.setAttribute('x3',self.getValueOrExprFromInstance(instance,'pDx3'))
         oe.setAttribute('x4',self.getValueOrExprFromInstance(instance,'pDx4'))
         oe.setAttribute('Alph',self.getValueOrExprFromInstance(instance,'pAlp'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)
         
     def writeTwistedTubs(self, instance):
@@ -1131,6 +1192,10 @@ class Writer(object):
         oe.setAttribute('zlen',self.getValueOrExprFromInstance(instance,'zlen'))
         oe.setAttribute('phi',self.getValueOrExprFromInstance(instance,'phi'))
         oe.setAttribute('twistedangle',self.getValueOrExprFromInstance(instance,'twistedangle'))
+
+        oe.setAttribute("lunit",instance.lunit)
+        oe.setAttribute("aunit",instance.aunit)
+
         self.solids.appendChild(oe)    
 
     def writeUnion(self, instance):

@@ -67,16 +67,46 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
 
         for v,i in zip(_np.arange(-width*(nreplicas-1)*0.5,  width*(nreplicas+1)*0.5, width),range(0,nreplicas,1)) :
             if self.axis == self.Axis.kXAxis :
+                rot = [0,0,0]
+                trans = [v,0,0]
+                transforms.append([rot,trans])
                 meshes.append(self.logicalVolume.mesh)
-                transforms.append([[0,0,0],[v,0,0]])
 
-            elif self.axis == self.Axis.kYAxis : 
+                # if daughter contains a replica
+                if len(self.logicalVolume.daughterVolumes) == 1 :
+                    if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume) :
+                        [daughter_meshes,daughter_transforms] = self.logicalVolume.daughterVolumes[0].createReplicaMeshes()
+                        for m,t in zip(daughter_meshes,daughter_transforms) :
+                            meshes.append(m)
+                            transforms.append([rot,_np.array(trans)+_np.array(t[1])])
+
+            elif self.axis == self.Axis.kYAxis :
+                rot = [0,0,0]
+                trans = [0,v,0]
+                transforms.append([rot,trans])
                 meshes.append(self.logicalVolume.mesh)
-                transforms.append([[0,0,0],[0,v,0]])
+
+                # if daughter contains a replica
+                if len(self.logicalVolume.daughterVolumes) == 1 :
+                    if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume) :
+                        [daughter_meshes,daughter_transforms] = self.logicalVolume.daughterVolumes[0].createReplicaMeshes()
+                        for m,t in zip(daughter_meshes,daughter_transforms) :
+                            meshes.append(m)
+                            transforms.append([rot,_np.array(trans)+_np.array(t[1])])
 
             elif self.axis == self.Axis.kZAxis : 
+                rot = [0,0,0]
+                trans = [v,0,0]
+                transforms.append([rot,trans])
                 meshes.append(self.logicalVolume.mesh)
-                transforms.append([[0,0,0],[0,0,v]])
+
+                # if daughter contains a replica
+                if len(self.logicalVolume.daughterVolumes) == 1 :
+                    if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume) :
+                        [daughter_meshes,daughter_transforms] = self.logicalVolume.daughterVolumes[0].createReplicaMeshes()
+                        for m,t in zip(daughter_meshes,daughter_transforms) :
+                            meshes.append(m)
+                            transforms.append([rot,_np.array(trans)+_np.array(t[1])])
 
         for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
             if self.axis == self.Axis.kRho :

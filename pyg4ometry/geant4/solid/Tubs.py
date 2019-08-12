@@ -48,6 +48,9 @@ class Tubs(_SolidBase):
         self.nslice = nslice
         self.mesh   = None
         self.dependents = []
+
+        self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi"]
+
         if registry :
             registry.addSolid(self)
 

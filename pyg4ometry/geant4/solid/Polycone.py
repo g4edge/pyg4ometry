@@ -56,6 +56,8 @@ class Polycone(_SolidBase):
 
         self.dependents = []
 
+        self.varNames = ["pSPhi", "pDPhi", "pZpl","pRMin","pRMax"]
+
         if registry:
             registry.addSolid(self)
 

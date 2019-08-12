@@ -51,10 +51,10 @@ class VtkViewer:
         for a in self.actors:
             p = a.GetProperty().SetOpacity(v)
     
-    def addLogicalVolume(self, logical, mrot=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
+    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
             self.addLogicalVolumeBounding(logical)
-        self.addLogicalVolumeRecursive(logical, mrot, tra)
+        self.addLogicalVolumeRecursive(logical, mtra, tra)
 
     def addLogicalVolumeBounding(self, logical):
         # add logical solid as wireframe 
@@ -70,13 +70,13 @@ class VtkViewer:
         lvmActor.GetProperty().SetRepresentationToWireframe()
         self.ren.AddActor(lvmActor)
         
-    def addLogicalVolumeRecursive(self, logical, mrot = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
+    def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
             if pv.logicalVolume.type == "logical":
                 _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
             elif pv.logicalVolume.type == "assembly":
                 _log.info('VtkViewer.addLogicalVolume> Daughter %s %s' % (pv.name, pv.logicalVolume.name))
-                self.addLogicalVolumeRecursive(pv.logicalVolume, mrot, tra)
+                self.addLogicalVolumeRecursive(pv.logicalVolume, mtra, tra)
                 continue
 
             # get the local vtkPolyData
@@ -85,17 +85,21 @@ class VtkViewer:
 
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _transformation.tbxyz2matrix(pv.rotation.eval())
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
+                if pv.scale :
+                    pvmsca = _np.diag(pv.scale.eval())
+                else :
+                    pvmsca = _np.diag([1,1,1])
                 pvtra = _np.array(pv.position.eval())
                 
                 # pv compound transform
-                new_mrot = mrot * pvmrot
-                new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
+                new_mtra = mtra * pvmsca * pvmrot
+                new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                 mesh = pv.logicalVolume.mesh.localmesh
-                self.addMesh(pv_name, solid_name, mesh, new_mrot, new_tra, self.localmeshes, self.filters, 
+                self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                              self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
-                self.addLogicalVolumeRecursive(pv.logicalVolume,new_mrot,new_tra)
+                self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -103,10 +107,10 @@ class VtkViewer:
                     pvtra = _np.array(trans[1])
                     
                     # pv compound transform
-                    new_mrot = mrot * pvmrot
-                    new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]                    
+                    new_mtra = mtra * pvmrot
+                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes, self.filters, 
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
             elif pv.type == "parametrised":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
@@ -115,14 +119,14 @@ class VtkViewer:
                     pvtra = _np.array(trans[1].eval())
 
                     # pv compound transform
-                    new_mrot = mrot * pvmrot
-                    new_tra = (_np.array(mrot.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra * pvmrot
+                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mrot, new_tra, self.localmeshes,
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes,
                                  self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
-    def addMesh(self, pv_name, solid_name, mesh, mrot, tra, localmeshes, filters, 
+    def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
                 mappers, mapperMap, actors, actorMap, visOptions = None):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
@@ -158,9 +162,23 @@ class VtkViewer:
         actorname = pv_name+"_actor"             
         vtkActor = _vtk.vtkActor() 
         vtkActor.SetMapper(vtkMAP)        
-        rotaa = _transformation.matrix2axisangle(mrot)  
-        vtkActor.SetPosition(tra[0],tra[1],tra[2])
-        vtkActor.RotateWXYZ(-rotaa[1]/_np.pi*180.0,rotaa[0][0],rotaa[0][1],rotaa[0][2])
+
+        vtkTransform = _vtk.vtkMatrix4x4()
+        vtkTransform.SetElement(0,0,mtra[0,0])
+        vtkTransform.SetElement(0,1,mtra[0,1])
+        vtkTransform.SetElement(0,2,mtra[0,2])
+        vtkTransform.SetElement(1,0,mtra[1,0])
+        vtkTransform.SetElement(1,1,mtra[1,1])
+        vtkTransform.SetElement(1,2,mtra[1,2])
+        vtkTransform.SetElement(2,0,mtra[2,0])
+        vtkTransform.SetElement(2,1,mtra[2,1])
+        vtkTransform.SetElement(2,2,mtra[2,2])
+        vtkTransform.SetElement(0,3,tra[0])
+        vtkTransform.SetElement(1,3,tra[1])
+        vtkTransform.SetElement(2,3,tra[2])
+        vtkTransform.SetElement(3,3,1)
+
+        vtkActor.SetUserMatrix(vtkTransform)
 
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor

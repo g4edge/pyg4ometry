@@ -55,6 +55,9 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.refine       = refine
 
         self.dependents = []
+
+        self.varNames = ["twistedAngle", "pDx", "pDy","pDz"]
+
         self.checkParameters()
         if registry:
             registry.addSolid(self)

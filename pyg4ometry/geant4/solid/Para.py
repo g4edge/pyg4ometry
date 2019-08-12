@@ -52,6 +52,8 @@ class Para(_SolidBase):
 
         self.dependents = []
 
+        self.varNames = ["pX", "pY", "pZ","pAlpha","pPhi"]
+
         if registry:
             registry.addSolid(self)
 
