@@ -199,7 +199,11 @@ class Registry:
         :type define: Constant, Quantity, Variable, Matrix
         """
 
-        if self.defineDict.has_key(define.name) :
+        from pyg4ometry.gdml.Units import units as _units
+        if _units.has_key(define.name):
+            raise ValueError("Redefinition of a constant unit : {}".format(define.name))
+
+        if self.defineDict.has_key(define.name):
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(define.name,"define")
             elif namePolicy == "reuse" :
