@@ -27,9 +27,13 @@ def upgradeToStringExpression(reg, obj) :
             e = _Expression("",obj,reg)
             try :
                 e.eval()
-                return obj                  
-            except :
-                raise AttributeError("Cannot evaluate expression")
+                return obj
+            except Exception as err:
+                msg = "<= Cannot evaluate expression : {}".format(obj)
+                if not err.args:
+                    err.args=('',)
+                err.args = err.args + (msg,)
+                raise
 
     if isinstance(obj,ScalarBase) :   
         if reg.defineDict.has_key(obj.name) :
