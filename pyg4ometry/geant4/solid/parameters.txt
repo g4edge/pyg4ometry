@@ -1,0 +1,7 @@
+        self.name         = name
+        self.endinnerrad  = endinnerrad
+        self.endouterrad  = endouterrad
+        self.zlen         = zlen
+        self.twsitedangle = twsitedangle
+        self.nslice       = nslice
+        self.nstack       = nslice
