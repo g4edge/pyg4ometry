@@ -692,10 +692,7 @@ class Scale(VectorBase) :
         super(Scale, self).__init__()
 
         self.name = name
-        if unit != None : 
-            self.unit = unit 
-        else :
-            self.unit = "none"
+        self.unit = unit
 
         self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
         self.y = _Expression("expr_{}_scl_y".format(name), upgradeToStringExpression(registry,sy), registry=registry)
