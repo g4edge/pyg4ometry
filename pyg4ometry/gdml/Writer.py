@@ -1187,7 +1187,7 @@ class Writer(object):
         self.solids.appendChild(oe)
         
     def writeTwistedTubs(self, instance):
-        oe = self.doc.createElement("twistedtube")
+        oe = self.doc.createElement("twistedtubs")
         oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('endinnerrad',self.getValueOrExprFromInstance(instance,'endinnerrad'))
         oe.setAttribute('endouterrad',self.getValueOrExprFromInstance(instance,'endouterrad'))
