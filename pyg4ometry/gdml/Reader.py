@@ -1360,7 +1360,7 @@ class Reader(object):
                     try : 
                         position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
                     except IndexError : 
-                        position = _defines.Position(pvol_name,"0","0","0","mm",self._registry,False)
+                        position = _defines.Position(pvol_name+"_pos","0","0","0","mm",self._registry,False)
 
                 # Rotation
                 _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
@@ -1370,7 +1370,7 @@ class Reader(object):
                     try : 
                         rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
                     except IndexError : 
-                        rotation = _defines.Rotation(pvol_name,"0","0","0","rad",self._registry,False)
+                        rotation = _defines.Rotation(pvol_name+"_rot","0","0","0","rad",self._registry,False)
 
                 # Scale 
                 _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))
