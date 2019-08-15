@@ -173,7 +173,7 @@ class Writer(object):
             oe.setAttribute('x',str(define.x.expression))
             oe.setAttribute('y',str(define.y.expression))
             oe.setAttribute('z',str(define.z.expression))
-            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
+            oe.setAttribute('unit', str(define.unit))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Rotation):
             oe = self.doc.createElement('rotation')
@@ -181,7 +181,7 @@ class Writer(object):
             oe.setAttribute('x',str(define.x.expression))
             oe.setAttribute('y',str(define.y.expression))
             oe.setAttribute('z',str(define.z.expression))
-            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
+            oe.setAttribute('unit', str(define.unit))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Scale):
             oe = self.doc.createElement('scale')
