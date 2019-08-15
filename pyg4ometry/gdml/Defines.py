@@ -596,6 +596,16 @@ class VectorBase(object) :
         u = _Units.unit(self.unit)
         return [self.x.eval()*u, self.y.eval()*u, self.z.eval()*u]
 
+    def nonzero(self) :
+        """ 
+        Evaluate vector 
+
+        :return: Check if the vector is trivial (all elements zero)
+        :rtype: bool
+
+        """
+        return any(self.eval())
+
     def __getitem__(self, key):
         if key == 0 : 
             return self.x
