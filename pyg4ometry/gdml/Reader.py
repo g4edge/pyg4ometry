@@ -171,7 +171,8 @@ class Reader(object):
                 _defines.Rotation(name, x, y, z, unit, self._registry)
             elif(define_type == "scale"):
                 (x,y,z,u) = getXYZ(def_attrs)
-                _defines.Scale(name, x, y, z, u, self._registry)
+                unit = u if u else "none"
+                _defines.Scale(name, x, y, z, unit, self._registry)
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
