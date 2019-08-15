@@ -202,15 +202,18 @@ class Reader(object):
             unit = None
         
         if type == 'position':
-            return _defines.Position(name,x,y,z,unit,self._registry,addRegistry) 
+            u = unit if unit else "mm"
+            return _defines.Position(name,x,y,z,u,self._registry,addRegistry) 
         elif type == 'positionref':
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'rotation':
-            return _defines.Rotation(name,x,y,z,unit,self._registry,addRegistry)
+            u = unit if unit else "rad"
+            return _defines.Rotation(name,x,y,z,u,self._registry,addRegistry)
         elif type == 'rotationref':
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'scale':
-            return _defines.Scale(name,x,y,z,unit,self._registry,addRegistry)
+            u = unit if unit else "none"
+            return _defines.Scale(name,x,y,z,u,self._registry,addRegistry)
         elif type == 'scaleref':
             return self._registry.defineDict[node.attributes['ref'].value]
 
