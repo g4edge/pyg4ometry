@@ -1028,6 +1028,7 @@ class Writer(object):
 
     def writeGenericTrap(self, instance):
         oe = self.doc.createElement('arb8')
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('v1x',self.getValueOrExprFromInstance(instance,'v1x'))
         oe.setAttribute('v1y',self.getValueOrExprFromInstance(instance,'v1y'))
         oe.setAttribute('v2x',self.getValueOrExprFromInstance(instance,'v2x'))
