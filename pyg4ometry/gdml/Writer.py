@@ -148,6 +148,36 @@ class Writer(object):
     def checkPhysicalVolumeName(self, physicalVolumeName):
         pass
 
+    def writeVectorVariable(self, node, vector_var, allow_ref=True, suppress_trivial=True):
+        """
+        Writes an XML child node for a vector variable - position, roration, scale.
+        If allow_ref is enabled, it will write a ref to a registry define where possible.
+        If suppress_trivial is enabled it won't write vectors with all elements zero.
+        """
+        if vector_var is None: # If not defined, skip
+            return
+
+        vv = vector_var
+        vtype = vv.__class__.__name__.lower()
+        if allow_ref and vv.name in self.registry.defineDict:
+            # If possible and allowed, write the variable as a reference to a define
+            vn = self.doc.createElement("{}ref".format(vtype))
+            vn.setAttribute("ref", vv.name)
+        else:
+            if suppress_trivial and not vv.nonzero():
+                return # If allowed, do not write trivial positions
+
+            vn = self.doc.createElement(vtype)
+            if vv.name: # Write the name where possible
+                vn.setAttribute('name', vv.name)
+            vn.setAttribute('x', vv.x.expression)
+            vn.setAttribute('y', vv.y.expression)
+            vn.setAttribute('z', vv.z.expression)
+            if vv.unit != "none": # Write the unit if it is valid
+                vn.setAttribute('unit', vv.unit)
+
+        node.appendChild(vn)
+
     def writeDefine(self, define):
         if isinstance(define, _Defines.Constant):
             oe = self.doc.createElement('constant')
