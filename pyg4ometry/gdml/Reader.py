@@ -130,7 +130,7 @@ class Reader(object):
                 x = def_attrs.get("x", "0.0")
                 y = def_attrs.get("y", "0.0")
                 z = def_attrs.get("z", "0.0")
-                u = def_attrs.get("unit","none")
+                u = def_attrs.get("unit", None)
                 return (x,y,z,u)
 
             # parse matricies
