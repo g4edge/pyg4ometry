@@ -3,13 +3,15 @@ from   pyg4ometry.pycsg.geom import Vector as _Vector
 from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
-from   pyg4ometry.visualisation  import Mesh     as _Mesh
+from   pyg4ometry.visualisation  import Mesh            as _Mesh
+from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 import solid                     as                 _solid
 import Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 
 import numpy   as   _np
 import logging as   _log
+
 
 class LogicalVolume(object):
     '''
@@ -58,22 +60,24 @@ class LogicalVolume(object):
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
 
-    def checkOverlaps(self) :
+    def checkOverlaps(self, recursive = False) :
         # local meshes 
         transformedMeshes = []
 
         # transform meshes into logical volume frame 
-        for pv in self.daughterVolumes : 
+        for pv in self.daughterVolumes :
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
             mesh = pv.logicalVolume.mesh.localmesh.clone()
 
             # rotate 
-            # _log.info('LogicalVolume.checkOverlaps> rotate %s' % (pv.name))
             aa = _trans.tbxyz2axisangle(pv.rotation.eval())
             mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
 
+            # scale
+            if pv.scale :
+                mesh.scale(pv.scale.eval())
+
             # translate 
-            _log.info('LogicalVolume.checkOverlaps> translate %s'  % (pv.name))
             mesh.translate(pv.position.eval())
             
             transformedMeshes.append(mesh)
@@ -83,19 +87,33 @@ class LogicalVolume(object):
             for j in range(i+1,len(transformedMeshes)) :
                 print self.daughterVolumes[i].name, self.daughterVolumes[j].name
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
-                self.mesh.addOverlapMesh(interMesh)
                 _log.info('LogicalVolume.checkOverlaps> inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0  :
                     print "hello", self.daughterVolumes[i].name , self.daughterVolumes[j].name
+                    self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
-        # overlap with solid 
+        # coplanar daughter pv checks
+        for i in range(0,len(transformedMeshes)) :
+            for j in range(i+1,len(transformedMeshes)) :
+                print self.daughterVolumes[i].name, self.daughterVolumes[j].name
+                coplanarMesh = transformedMeshes[i].coplanar(transformedMeshes[j])
+                if coplanarMesh.vertexCount() != 0:
+                    self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
+
+        # overlap with solid
         for i in range(0,len(transformedMeshes)) : 
             interMesh = transformedMeshes[i].intersect(self.mesh.localmesh.inverse())
-            self.mesh.addOverlapMesh(interMesh)
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
 
             if interMesh.vertexCount() != 0 :
                 print "hello", self.daughterVolumes[i].name, self.name
+                self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
+
+        # coplanar with solid
+        for i in range(0,len(transformedMeshes)) :
+            coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh)
+            if coplanarMesh.vertexCount() != 0 :
+                self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
     def setSolid(self, solid) : 
         self.solid = solid 

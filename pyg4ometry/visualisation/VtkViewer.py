@@ -1,6 +1,8 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
+from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
+from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import logging as _log
 
 class VtkViewer:
@@ -99,6 +101,24 @@ class VtkViewer:
                 mesh = pv.logicalVolume.mesh.localmesh
                 self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                              self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
+
+                # overlap meshes
+                for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
+                    print overlapmesh,overlaptype
+                    visOptions = _VisOptions()
+                    if overlaptype == _OverlapType.protrusion :
+                        visOptions.color = [1,0,0]
+                        visOptions.alpha = 1.0
+                    elif overlaptype == _OverlapType.overlap :
+                        visOptions.color = [0,1,0]
+                        visOptions.alpha = 1.0
+                    elif overlaptype == _OverlapType.coplanar :
+                        visOptions.color = [0,0,1]
+                        visOptions.alpha = 1.0
+                    self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
+                                 self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
+                                 visOptions)
+
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):

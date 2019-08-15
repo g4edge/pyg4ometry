@@ -5,6 +5,11 @@ from pyg4ometry.pycsg.geom import Vector as _Vector
 
 import logging as _log
 
+class OverlapType:
+    protrusion = 1
+    overlap    = 2
+    coplanar   = 3
+
 class Mesh(object) : 
 
     def __init__(self, solid) : 
