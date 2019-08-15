@@ -347,15 +347,10 @@ class CSG(object):
         COPLANAR = 0 # all the vertices are within EPSILON distance from plane
         FRONT    = 1 # all the vertices are in front of the plane
         BACK     = 2 # all the vertices are at the back of the plane
-        SPANNING = 3 # some vertices are in front, some in the back
 
         a = []
 
-        # loop over all polygons
-
-        print 'n apolys',len(apolygons)
-        print 'n bpolys',len(bpolygons)
-
+        # loop over all A polygons
         for apoly in apolygons :
             for bpoly in bpolygons :
                 aplane = apoly.plane
@@ -376,18 +371,8 @@ class CSG(object):
 
 
                 if polygonType == COPLANAR :
-
-                    #print 'coplanar',apoly.plane.normal.unit(), apoly.plane.w
-                    #print 'coplanar',bpoly.plane.normal.unit(), bpoly.plane.w
-
                     ploc = 0
-                    #print 'n apoly verts', len(apoly.vertices)
-                    #print 'n bpoly verts', len(bpoly.vertices)
 
-                    a.append(bpoly)
-                    a.append(apoly)
-
-                    '''
                     aAdd = False
                     for i in range(len(bpoly.vertices)) :
                         for j in range(len(apoly.vertices)) :
@@ -398,21 +383,17 @@ class CSG(object):
                             av = av.unit()
                             anormal = av.cross(bplane.normal)
 
-                            t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
+                            t  = anormal.dot(bpoly.vertices[i].pos) - bpoly.vertices[i].pos.dot(anormal)
 
                             # print t
-                            if t > 1e-3 :
+                            if t > 1e-8 :
                                 aAdd = True
 
 
                     if aAdd :
                         a.append(bpoly)
-                    '''
+                        a.append(apoly)
 
-        #print 'length of coplanar array', len(a)
-        #print len(a)
-        #for aa in a :
-        #    print aa
         return CSG.fromPolygons(a)
 
     def __mul__(self, csg):

@@ -104,7 +104,6 @@ class VtkViewer:
 
                 # overlap meshes
                 for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
-                    print overlapmesh,overlaptype
                     visOptions = _VisOptions()
                     if overlaptype == _OverlapType.protrusion :
                         visOptions.color = [1,0,0]

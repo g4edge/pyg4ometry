@@ -85,17 +85,14 @@ class LogicalVolume(object):
         # overlap daughter pv checks 
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
-                print self.daughterVolumes[i].name, self.daughterVolumes[j].name
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
                 _log.info('LogicalVolume.checkOverlaps> inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0  :
-                    print "hello", self.daughterVolumes[i].name , self.daughterVolumes[j].name
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
         # coplanar daughter pv checks
         for i in range(0,len(transformedMeshes)) :
             for j in range(i+1,len(transformedMeshes)) :
-                print self.daughterVolumes[i].name, self.daughterVolumes[j].name
                 coplanarMesh = transformedMeshes[i].coplanar(transformedMeshes[j])
                 if coplanarMesh.vertexCount() != 0:
                     self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
@@ -106,12 +103,11 @@ class LogicalVolume(object):
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
 
             if interMesh.vertexCount() != 0 :
-                print "hello", self.daughterVolumes[i].name, self.name
                 self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
 
         # coplanar with solid
         for i in range(0,len(transformedMeshes)) :
-            coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh)
+            coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh.inverse())
             if coplanarMesh.vertexCount() != 0 :
                 self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
