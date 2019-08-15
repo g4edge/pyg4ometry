@@ -158,8 +158,9 @@ class Writer(object):
             oe = self.doc.createElement('quantity')
             oe.setAttribute('name',define.name)
             oe.setAttribute('value',str(define.expr.expression))
-            oe.setAttribute('unit',define.unit)
             oe.setAttribute('type',define.type)
+            if define.unit is not None:
+                oe.setAttribute('unit',define.unit)
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Variable):
             oe = self.doc.createElement('variable')
