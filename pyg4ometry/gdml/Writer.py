@@ -148,6 +148,36 @@ class Writer(object):
     def checkPhysicalVolumeName(self, physicalVolumeName):
         pass
 
+    def writeVectorVariable(self, node, vector_var, allow_ref=True, suppress_trivial=True):
+        """
+        Writes an XML child node for a vector variable - position, roration, scale.
+        If allow_ref is enabled, it will write a ref to a registry define where possible.
+        If suppress_trivial is enabled it won't write vectors with all elements zero.
+        """
+        if vector_var is None: # If not defined, skip
+            return
+
+        vv = vector_var
+        vtype = vv.__class__.__name__.lower()
+        if allow_ref and vv.name in self.registry.defineDict:
+            # If possible and allowed, write the variable as a reference to a define
+            vn = self.doc.createElement("{}ref".format(vtype))
+            vn.setAttribute("ref", vv.name)
+        else:
+            if suppress_trivial and not vv.nonzero():
+                return # If allowed, do not write trivial positions
+
+            vn = self.doc.createElement(vtype)
+            if vv.name: # Write the name where possible
+                vn.setAttribute('name', vv.name)
+            vn.setAttribute('x', vv.x.expression)
+            vn.setAttribute('y', vv.y.expression)
+            vn.setAttribute('z', vv.z.expression)
+            if vv.unit != "none": # Write the unit if it is valid
+                vn.setAttribute('unit', vv.unit)
+
+        node.appendChild(vn)
+
     def writeDefine(self, define):
         if isinstance(define, _Defines.Constant):
             oe = self.doc.createElement('constant')
@@ -158,36 +188,14 @@ class Writer(object):
             oe = self.doc.createElement('quantity')
             oe.setAttribute('name',define.name)
             oe.setAttribute('value',str(define.expr.expression))
-            oe.setAttribute('unit',define.unit)
             oe.setAttribute('type',define.type)
+            if define.unit is not None:
+                oe.setAttribute('unit',define.unit)
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Variable):
             oe = self.doc.createElement('variable')
             oe.setAttribute('name',define.name)
             oe.setAttribute('value',str(define.expr.expression))
-            self.defines.appendChild(oe)
-        elif isinstance(define, _Defines.Position):
-            oe = self.doc.createElement('position')
-            oe.setAttribute('name',define.name)
-            oe.setAttribute('x',str(define.x.expression))
-            oe.setAttribute('y',str(define.y.expression))
-            oe.setAttribute('z',str(define.z.expression))
-            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
-            self.defines.appendChild(oe)
-        elif isinstance(define, _Defines.Rotation):
-            oe = self.doc.createElement('rotation')
-            oe.setAttribute('name',define.name)
-            oe.setAttribute('x',str(define.x.expression))
-            oe.setAttribute('y',str(define.y.expression))
-            oe.setAttribute('z',str(define.z.expression))
-            oe.setAttribute('unit', str(define.unit)) #TODO: Units not handled by position right now
-            self.defines.appendChild(oe)
-        elif isinstance(define, _Defines.Scale):
-            oe = self.doc.createElement('scale')
-            oe.setAttribute('name',define.name)
-            oe.setAttribute('x',str(define.x.expression))
-            oe.setAttribute('y',str(define.y.expression))
-            oe.setAttribute('z',str(define.z.expression))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Matrix):
             oe = self.doc.createElement('matrix')
@@ -201,6 +209,8 @@ class Writer(object):
             tn = self.doc.createTextNode(define.expr.expression)
             oe.appendChild(tn)
             self.defines.appendChild(oe)
+        elif any([isinstance(define, d) for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]]):
+            self.writeVectorVariable(self.defines, define, allow_ref=False, suppress_trivial=False)
         else:
             raise Exception("Unrecognised define type: {}".format(type(define)))
 
@@ -216,7 +226,7 @@ class Writer(object):
             oe.appendChild(de)
 
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.atomic_number))
+                oe.setAttribute('Z', str(int(material.atomic_number)))
                 se  = self.doc.createElement('atom')
                 se.setAttribute('value', str(material.atomic_weight))
                 oe.appendChild(se)
@@ -234,7 +244,7 @@ class Writer(object):
                     if frac_type == "natoms":
                         se = self.doc.createElement('composite')
                         se.setAttribute('ref', name)
-                        se.setAttribute('n', str(comp_info[1]))
+                        se.setAttribute('n', str(int(comp_info[1])))
                         oe.appendChild(se)
                 self.materials.appendChild(oe)
             elif material.type == 'nist' or material.type == 'arbitrary':
@@ -253,9 +263,9 @@ class Writer(object):
             oe.setAttribute('name', material.name)
             oe.setAttribute('formula', material.symbol)
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.Z))
+                oe.setAttribute('Z', str(int(material.Z)))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(material.A))
+                se.setAttribute('value', str(int(material.A)))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:
@@ -270,10 +280,10 @@ class Writer(object):
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
             oe.setAttribute('name', material.name)
-            oe.setAttribute('Z', str(material.Z))
-            oe.setAttribute('N', str(material.N))
+            oe.setAttribute('Z', str(int(material.Z)))
+            oe.setAttribute('N', str(int(material.N)))
             se = self.doc.createElement('atom')
-            se.setAttribute('type', 'A')
+            #se.setAttribute('type', 'A')
             se.setAttribute('value', str(material.a))
             oe.appendChild(se)
             self.materials.appendChild(oe)
@@ -349,42 +359,9 @@ class Writer(object):
         vr.setAttribute('ref',"{}{}".format(self.prepend, pv.logicalVolume.name))
         pvol.appendChild(vr)
 
-        # phys vol translation
-        if self.registry.defineDict.has_key(pv.position.name) :
-            tlatee = self.doc.createElement('positionref')
-            tlatee.setAttribute('ref', str(pv.position.name))
-            pvol.appendChild(tlatee)
-        else :
-            tlatee = self.doc.createElement('position')
-            tlatee.setAttribute('x', str(pv.position.x.expression))
-            tlatee.setAttribute('y', str(pv.position.y.expression))
-            tlatee.setAttribute('z', str(pv.position.z.expression))
-            pvol.appendChild(tlatee)
-
-        # phys vol rotation
-        if self.registry.defineDict.has_key(pv.rotation.name) :
-            rote = self.doc.createElement('rotationref')
-            rote.setAttribute('ref', str(pv.rotation.name))
-            pvol.appendChild(rote)
-        else :
-            rote = self.doc.createElement('rotation')
-            rote.setAttribute('x', str(pv.rotation.x.expression))
-            rote.setAttribute('y', str(pv.rotation.y.expression))
-            rote.setAttribute('z', str(pv.rotation.z.expression))
-            pvol.appendChild(rote)
-
-        # phys vol scale (little different as do not need to define as defaults to [1,1,1]
-        if pv.scale != None :
-            if  self.registry.defineDict.has_key(pv.scale.name) :
-                scae = self.doc.createElement('scaleref')
-                scae.setAttribute('ref', str(scaName))
-                pvol.appendChild(scae)
-            else :
-                scae = self.doc.createElement('rotation')
-                scae.setAttribute('x', str(pv.scale.x.expression))
-                scae.setAttribute('y', str(pv.scale.y.expression))
-                scae.setAttribute('z', str(pv.scale.z.expression))
-                pvol.appendChild(scae)
+        self.writeVectorVariable(pvol, pv.position)
+        self.writeVectorVariable(pvol, pv.rotation)
+        self.writeVectorVariable(pvol, pv.scale)
 
         return pvol
 
@@ -448,19 +425,8 @@ class Writer(object):
             param_node.setAttribute('number', str(i+1)) # As zero-indexed in python
 
             tr = instance.transforms[i]
-            # param vol translation
-            tlatee = self.doc.createElement('position')
-            tlatee.setAttribute('x', str(float(tr[1].x)))
-            tlatee.setAttribute('y', str(float(tr[1].y)))
-            tlatee.setAttribute('z', str(float(tr[1].z)))
-            param_node.appendChild(tlatee)
-
-            # param vol rotation
-            rote = self.doc.createElement('rotation')
-            rote.setAttribute('x', str(float(tr[0].x)))
-            rote.setAttribute('y', str(float(tr[0].y)))
-            rote.setAttribute('z', str(float(tr[0].z)))
-            param_node.appendChild(rote)
+            self.writeVectorVariable(param_node, tr[1]) # Position
+            self.writeVectorVariable(param_node, tr[1]) # Rotation
 
             params = instance.paramData[i]
 
@@ -1027,6 +993,7 @@ class Writer(object):
 
     def writeGenericTrap(self, instance):
         oe = self.doc.createElement('arb8')
+        oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('v1x',self.getValueOrExprFromInstance(instance,'v1x'))
         oe.setAttribute('v1y',self.getValueOrExprFromInstance(instance,'v1y'))
         oe.setAttribute('v2x',self.getValueOrExprFromInstance(instance,'v2x'))
@@ -1049,9 +1016,9 @@ class Writer(object):
     def createPosition(self,name, x, y, z):
         p = self.doc.createElement('position')
         p.setAttribute('name',str(name))
-        p.setAttribute('x', str(x))
-        p.setAttribute('y', str(y))
-        p.setAttribute('z', str(z))
+        p.setAttribute('x', x.expression)
+        p.setAttribute('y', y.expression)
+        p.setAttribute('z', z.expression)
         return p
 
     def writeTet(self, instance):
@@ -1185,7 +1152,7 @@ class Writer(object):
         self.solids.appendChild(oe)
         
     def writeTwistedTubs(self, instance):
-        oe = self.doc.createElement("twistedtube")
+        oe = self.doc.createElement("twistedtubs")
         oe.setAttribute('name',self.prepend + instance.name)
         oe.setAttribute('endinnerrad',self.getValueOrExprFromInstance(instance,'endinnerrad'))
         oe.setAttribute('endouterrad',self.getValueOrExprFromInstance(instance,'endouterrad'))
@@ -1210,27 +1177,8 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
-        if self.registry.defineDict.has_key(instance.tra2[1].name) :
-            csce = self.doc.createElement('positionref')
-            csce.setAttribute('ref',instance.tra2[1].name)
-            oe.appendChild(csce)      
-        else : 
-            p = self.doc.createElement('position')
-            p.setAttribute('x',str(instance.tra2[1].x.expression))
-            p.setAttribute('y',str(instance.tra2[1].y.expression))
-            p.setAttribute('z',str(instance.tra2[1].z.expression))
-            oe.appendChild(p)
-
-        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
-            csce1 = self.doc.createElement('rotationref')
-            csce1.setAttribute('ref', instance.tra2[0].name)
-            oe.appendChild(csce1)
-        else : 
-            r = self.doc.createElement('rotation')
-            r.setAttribute('x', str(instance.tra2[0].x.expression))
-            r.setAttribute('y', str(instance.tra2[0].y.expression))
-            r.setAttribute('z', str(instance.tra2[0].z.expression))
-            oe.appendChild(r)
+        self.writeVectorVariable(oe, instance.tra2[1]) #position
+        self.writeVectorVariable(oe, instance.tra2[0]) #rotation
 
         self.solids.appendChild(oe)
 
@@ -1245,28 +1193,9 @@ class Writer(object):
         cse = self.doc.createElement('second')
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
-    
-        if self.registry.defineDict.has_key(instance.tra2[1].name) :
-            csce = self.doc.createElement('positionref')        
-            csce.setAttribute('ref',instance.tra2[1].name)
-            oe.appendChild(csce)
-        else :
-            p = self.doc.createElement('position')
-            p.setAttribute('x',str(instance.tra2[1].x.expression))
-            p.setAttribute('y',str(instance.tra2[1].y.expression))
-            p.setAttribute('z',str(instance.tra2[1].z.expression))
-            oe.appendChild(p)
 
-        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
-            csce1 = self.doc.createElement('rotationref')
-            csce1.setAttribute('ref',instance.tra2[0].name)
-            oe.appendChild(csce1)
-        else : 
-            r = self.doc.createElement('rotation')
-            r.setAttribute('x', str(instance.tra2[0].x.expression))
-            r.setAttribute('y', str(instance.tra2[0].y.expression))
-            r.setAttribute('z', str(instance.tra2[0].z.expression))
-            oe.appendChild(r)
+        self.writeVectorVariable(oe, instance.tra2[1]) # Position
+        self.writeVectorVariable(oe, instance.tra2[0]) # Rotation
 
         self.solids.appendChild(oe)
 
@@ -1282,51 +1211,26 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
-        if self.registry.defineDict.has_key(instance.tra2[1].name) :
-            csce = self.doc.createElement('positionref')
-            csce.setAttribute('ref',instance.tra2[1].name)
-            oe.appendChild(csce)
-        else :
-            p = self.doc.createElement('position')
-            p.setAttribute('x',str(instance.tra2[1].x.expression))
-            p.setAttribute('y',str(instance.tra2[1].y.expression))
-            p.setAttribute('z',str(instance.tra2[1].z.expression))
-            oe.appendChild(p)
-
-        if self.registry.defineDict.has_key(instance.tra2[0].name) : 
-            csce1 = self.doc.createElement('rotationref')
-            csce1.setAttribute('ref',instance.tra2[0].name)
-            oe.appendChild(csce1)
-        else : 
-            r = self.doc.createElement('rotation')
-            r.setAttribute('x', str(instance.tra2[0].x.expression))
-            r.setAttribute('y', str(instance.tra2[0].y.expression))
-            r.setAttribute('z', str(instance.tra2[0].z.expression))
-            oe.appendChild(r)
+        self.writeVectorVariable(oe, instance.tra2[1]) # Position
+        self.writeVectorVariable(oe, instance.tra2[0]) # Rotation
 
         self.solids.appendChild(oe)
 
     def writeMultiUnion(self, instance) : 
         oe  = self.doc.createElement('multiUnion')
         oe.setAttribute('name',self.prepend + instance.name)        
-        
+
         # loop over objects
         for solid, trans, i in zip(instance.objects, instance.transformations , range(0,len(instance.objects))) : 
             ce = self.doc.createElement('multiUnionNode')
-            ce.setAttribute('name',self.prepend + 'node-' +str(i)) 
+            ce.setAttribute('name',self.prepend + 'node-' +str(i+1)) # One-counted
             cse = self.doc.createElement('solid')
             cse.setAttribute('ref',solid.name)
-            cpe = self.doc.createElement('positionref')
-            cpe.setAttribute('ref',trans[1].name)
-            cre = self.doc.createElement('rotationref')
-            cre.setAttribute('ref',trans[0].name)
             ce.appendChild(cse)
-        
-            if self.registry.defineDict.has_key(trans[1].name) :
-                ce.appendChild(cpe)
-            if self.registry.defineDict.has_key(trans[0].name) : 
-                ce.appendChild(cre)
-                
+
+            self.writeVectorVariable(ce, trans[1]) # postion
+            self.writeVectorVariable(ce, trans[1]) # rotation
+
             oe.appendChild(ce)
 
         self.solids.appendChild(oe)

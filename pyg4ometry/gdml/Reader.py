@@ -130,7 +130,7 @@ class Reader(object):
                 x = def_attrs.get("x", "0.0")
                 y = def_attrs.get("y", "0.0")
                 z = def_attrs.get("z", "0.0")
-                u = def_attrs.get("unit","none")
+                u = def_attrs.get("unit", None)
                 return (x,y,z,u)
 
             # parse matricies
@@ -149,27 +149,30 @@ class Reader(object):
 
             if(define_type == "constant"):
                 value = def_attrs['value']
-                _defines.Constant(name,value,self._registry)
+                _defines.Constant(name, value, self._registry)
             elif(define_type == "quantity"):
                 value = def_attrs['value']
                 unit  = def_attrs['unit']
-                type  = def_attrs['type']
-                _defines.Quantity(name,value,unit,type, self._registry)
+                qtype  = def_attrs['type']
+                _defines.Quantity(name, value, unit, qtype, self._registry)
             elif(define_type == "variable"):
                 value = def_attrs['value']
-                _defines.Variable(name,value, self._registry)
+                _defines.Variable(name, value, self._registry)
             elif(define_type == "expression"):
                 value = df.childNodes[0].nodeValue
-                _defines.Expression(name,value, self._registry, True)
-            elif(define_type == "position"):                
+                _defines.Expression(name, value, self._registry, True)
+            elif(define_type == "position"):
                 (x,y,z,u) = getXYZ(def_attrs)
-                _defines.Position(name,x,y,z,u,self._registry)
+                unit = u if u else "mm"
+                _defines.Position(name, x, y, z, unit, self._registry)
             elif(define_type == "rotation"):
                 (x,y,z,u) = getXYZ(def_attrs)
-                _defines.Rotation(name,x,y,z,u,self._registry)
+                unit = u if u else "rad"
+                _defines.Rotation(name, x, y, z, unit, self._registry)
             elif(define_type == "scale"):
                 (x,y,z,u) = getXYZ(def_attrs)
-                _defines.Scale(name,x,y,z,u,self._registry)
+                unit = u if u else "none"
+                _defines.Scale(name, x, y, z, unit, self._registry)
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
@@ -199,15 +202,18 @@ class Reader(object):
             unit = None
         
         if type == 'position':
-            return _defines.Position(name,x,y,z,unit,self._registry,addRegistry) 
+            u = unit if unit else "mm"
+            return _defines.Position(name,x,y,z,u,self._registry,addRegistry) 
         elif type == 'positionref':
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'rotation':
-            return _defines.Rotation(name,x,y,z,unit,self._registry,addRegistry)
+            u = unit if unit else "rad"
+            return _defines.Rotation(name,x,y,z,u,self._registry,addRegistry)
         elif type == 'rotationref':
             return self._registry.defineDict[node.attributes['ref'].value]
         elif type == 'scale':
-            return _defines.Scale(name,x,y,z,unit,self._registry,addRegistry)
+            u = unit if unit else "none"
+            return _defines.Scale(name,x,y,z,u,self._registry,addRegistry)
         elif type == 'scaleref':
             return self._registry.defineDict[node.attributes['ref'].value]
 
@@ -1354,7 +1360,7 @@ class Reader(object):
                     try : 
                         position = self.parseVector(chNode.getElementsByTagName("position")[0],"position",False)
                     except IndexError : 
-                        position = _defines.Position(pvol_name,"0","0","0","mm",self._registry,False)
+                        position = _defines.Position(pvol_name+"_pos","0","0","0","mm",self._registry,False)
 
                 # Rotation
                 _log.info('Reader.extractStructureNodeData> pv rotation %s',pvol_name)
@@ -1364,7 +1370,7 @@ class Reader(object):
                     try : 
                         rotation = self.parseVector(chNode.getElementsByTagName("rotation")[0],"rotation",False)  
                     except IndexError : 
-                        rotation = _defines.Rotation(pvol_name,"0","0","0","rad",self._registry,False)
+                        rotation = _defines.Rotation(pvol_name+"_rot","0","0","0","rad",self._registry,False)
 
                 # Scale 
                 _log.info('Reader.extractStructureNodeData> pv scale %s ' % (pvol_name))

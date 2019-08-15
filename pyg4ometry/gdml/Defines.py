@@ -596,6 +596,16 @@ class VectorBase(object) :
         u = _Units.unit(self.unit)
         return [self.x.eval()*u, self.y.eval()*u, self.z.eval()*u]
 
+    def nonzero(self) :
+        """ 
+        Evaluate vector 
+
+        :return: Check if the vector is trivial (all elements zero)
+        :rtype: bool
+
+        """
+        return any(self.eval())
+
     def __getitem__(self, key):
         if key == 0 : 
             return self.x
@@ -692,10 +702,7 @@ class Scale(VectorBase) :
         super(Scale, self).__init__()
 
         self.name = name
-        if unit != None : 
-            self.unit = unit 
-        else :
-            self.unit = "none"
+        self.unit = unit
 
         self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
         self.y = _Expression("expr_{}_scl_y".format(name), upgradeToStringExpression(registry,sy), registry=registry)
