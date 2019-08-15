@@ -217,7 +217,7 @@ class Writer(object):
             oe.appendChild(de)
 
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.atomic_number))
+                oe.setAttribute('Z', str(int(material.atomic_number)))
                 se  = self.doc.createElement('atom')
                 se.setAttribute('value', str(material.atomic_weight))
                 oe.appendChild(se)
@@ -235,7 +235,7 @@ class Writer(object):
                     if frac_type == "natoms":
                         se = self.doc.createElement('composite')
                         se.setAttribute('ref', name)
-                        se.setAttribute('n', str(comp_info[1]))
+                        se.setAttribute('n', str(int(comp_info[1])))
                         oe.appendChild(se)
                 self.materials.appendChild(oe)
             elif material.type == 'nist' or material.type == 'arbitrary':
@@ -254,9 +254,9 @@ class Writer(object):
             oe.setAttribute('name', material.name)
             oe.setAttribute('formula', material.symbol)
             if material.type == 'simple':
-                oe.setAttribute('Z', str(material.Z))
+                oe.setAttribute('Z', str(int(material.Z)))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(material.A))
+                se.setAttribute('value', str(int(material.A)))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:
@@ -271,10 +271,10 @@ class Writer(object):
         elif isinstance(material, _Isotope) :
             oe = self.doc.createElement('isotope')
             oe.setAttribute('name', material.name)
-            oe.setAttribute('Z', str(material.Z))
-            oe.setAttribute('N', str(material.N))
+            oe.setAttribute('Z', str(int(material.Z)))
+            oe.setAttribute('N', str(int(material.N)))
             se = self.doc.createElement('atom')
-            se.setAttribute('type', 'A')
+            #se.setAttribute('type', 'A')
             se.setAttribute('value', str(material.a))
             oe.appendChild(se)
             self.materials.appendChild(oe)
