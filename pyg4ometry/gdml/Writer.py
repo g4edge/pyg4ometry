@@ -472,7 +472,7 @@ class Writer(object):
                 dim_solid = "torus"
                 dim_names = { "pRMin": "rmin",
                               "pRMax": "rmax",
-                              "pRTor": "rtot",
+                              "pRTor": "rtor",
                               "pSPhi": "startphi",
                               "pDPhi": "deltaphi",}
 
