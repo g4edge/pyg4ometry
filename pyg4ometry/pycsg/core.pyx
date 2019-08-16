@@ -344,6 +344,7 @@ class CSG(object):
         apolygons = absp.allPolygons()
         bpolygons = bbsp.allPolygons()
 
+
         COPLANAR = 0 # all the vertices are within EPSILON distance from plane
         FRONT    = 1 # all the vertices are in front of the plane
         BACK     = 2 # all the vertices are at the back of the plane
@@ -356,6 +357,7 @@ class CSG(object):
                 aplane = apoly.plane
                 bplane = bpoly.plane
 
+                # check if B polygon is coplanar
                 polygonType = 0
                 for i in range(len(bpoly.vertices)) :
                     t = aplane.normal.dot(bpoly.vertices[i].pos) - aplane.w
@@ -369,7 +371,7 @@ class CSG(object):
                         loc = COPLANAR
                     polygonType |= loc
 
-
+                # if coplanar do a interior/exterior check
                 if polygonType == COPLANAR :
                     ploc = 0
 
@@ -383,17 +385,17 @@ class CSG(object):
                             av = av.unit()
                             anormal = av.cross(bplane.normal)
 
-                            t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
+                            t  = anormal.dot(bpoly.vertices[j].pos) - bpoly.vertices[j].pos.dot(anormal)
 
+                            # print t
                             if t > 1e-3 :
-                                ploc += 1
-                            else t < 1e-3 :
-                                ploc -= 1
+                                aAdd = True
 
-                    if ploc == len:
+                    if aAdd:
                         a.append(bpoly)
                         a.append(apoly)
-
+                    '''
+                    
         return CSG.fromPolygons(a)
 
     def __mul__(self, csg):
