@@ -383,14 +383,14 @@ class CSG(object):
                             av = av.unit()
                             anormal = av.cross(bplane.normal)
 
-                            t  = anormal.dot(bpoly.vertices[i].pos) - bpoly.vertices[i].pos.dot(anormal)
+                            t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
 
-                            # print t
-                            if t > 1e-8 :
-                                aAdd = True
+                            if t > 1e-3 :
+                                ploc += 1
+                            else t < 1e-3 :
+                                ploc -= 1
 
-
-                    if aAdd :
+                    if ploc == len:
                         a.append(bpoly)
                         a.append(apoly)
 
