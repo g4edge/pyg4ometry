@@ -426,7 +426,7 @@ class Writer(object):
 
             tr = instance.transforms[i]
             self.writeVectorVariable(param_node, tr[1]) # Position
-            self.writeVectorVariable(param_node, tr[1]) # Rotation
+            self.writeVectorVariable(param_node, tr[0]) # Rotation
 
             params = instance.paramData[i]
 
