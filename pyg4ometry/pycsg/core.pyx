@@ -389,7 +389,10 @@ class CSG(object):
 
                             # print t
                             if t > 1e-3 :
-                                aAdd = True
+                                ploc += 1
+                        if ploc == len(apoly.vertices) :
+                            aAdd = True
+                            break
 
                     if aAdd:
                         a.append(bpoly)
