@@ -426,7 +426,7 @@ class Writer(object):
 
             tr = instance.transforms[i]
             self.writeVectorVariable(param_node, tr[1]) # Position
-            self.writeVectorVariable(param_node, tr[1]) # Rotation
+            self.writeVectorVariable(param_node, tr[0]) # Rotation
 
             params = instance.paramData[i]
 
@@ -472,7 +472,7 @@ class Writer(object):
                 dim_solid = "torus"
                 dim_names = { "pRMin": "rmin",
                               "pRMax": "rmax",
-                              "pRTor": "rtot",
+                              "pRTor": "rtor",
                               "pSPhi": "startphi",
                               "pDPhi": "deltaphi",}
 
