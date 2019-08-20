@@ -6,6 +6,23 @@ from BodyTransform import *
 from copy import deepcopy as _dc
 from pyg4ometry.flukaNew.Region import RegionEvaluator as _RegionEval
 
+
+def _freeform_split(string):
+    """Method to split a string in FLUKA FREE format into its components"""
+    # Split the string along non-black separators [,;:/\]
+    partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
+
+    # Populate zeros between consequtive non-blank separators as per the FLUKA manual
+    is_blank  = lambda s : not set(s) or set(s) == {" "}
+    noblanks_split = [chunk if not is_blank(chunk) else '0.0' for chunk in partial_split]
+
+    # Split along whitespaces now for complete result
+    components = []
+    for chunk in noblanks_split:
+        components += chunk.split()
+
+    return components
+
 class Reader(object):
     def __init__(self, filename) : 
         self.fileName = filename
