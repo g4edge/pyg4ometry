@@ -23,6 +23,9 @@ class RPP(Body):
         self.lower = _Three([xmin, ymin, zmin])
         self.upper = _Three([xmax, ymax, zmax])
 
+        if flukaregistry is not None:
+            flukaregistry.addBody(self)
+
     def centre(self):
         return [self.lower[0] + 0.5*(self.upper[0]-self.lower[0]),
                 self.lower[1] + 0.5*(self.upper[1]-self.lower[1]),
