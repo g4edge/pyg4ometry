@@ -59,27 +59,24 @@ class Reader(object):
         self.parseLattice()
         self.parseCards()
 
-    def findLines(self) : 
-        # find geo(begin/end) lines 
-        for l,i in zip(self.fileLines,range(0,len(self.fileLines))) : 
-            if l.find("GEOBEGIN") != -1 : 
-                self.geobegin = i 
-            if l.find("GEOEND") != -1 : 
+    def findLines(self) :
+        # find geo(begin/end) lines and bodies/region ends
+        firstEND = True
+        for i, line in enumerate(self.fileLines) :
+            if "GEOBEGIN" in line:
+                self.geobegin = i
+            elif "GEOEND" in line:
                 self.geoend = i
-     
-        # find the line numbers for geometry
-        first = True
-        for l,i in zip(self.fileLines[self.geobegin:self.geoend+1],
-                       range(self.geobegin,self.geoend+1)) :
-            if l.find("END") != -1 and first : 
-                self.bodiesend = i
-                first = False
-            elif l.find("END") != -1 and l.find("GEOEND") == -1: 
-                self.regionsend = i
-        
-        print self.geobegin, self.fileLines[self.geobegin] 
+            elif "END" in line:
+                if firstEND:
+                    self.bodiesend = i
+                    firstEND = False
+                else:
+                    self.regionsend = i
+
+        print self.geobegin, self.fileLines[self.geobegin]
         print self.bodiesend, self.fileLines[self.bodiesend]
-        print self.regionsend, self.fileLines[self.regionsend] 
+        print self.regionsend, self.fileLines[self.regionsend]
         print self.geoend,self.fileLines[self.geoend]
         
     def parseBodies(self) :
