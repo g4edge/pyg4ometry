@@ -80,11 +80,11 @@ class Reader(object):
         print self.geoend,self.fileLines[self.geoend]
 
     def parseBodyTransform(self, line):
-        sline = line.split()
+        sline = _freeform_split(line)
         trans_type = sline[0].split("_")[1]
         transcount = len(self.flukaRegistry.bodyTransformDict)
         name = "bodytransform_{}".format(transcount+1)
-        value = _freeform_split(line)[1:]
+        value = sline[1:]
         trans = BodyTransform(name, trans_type, value, self.flukaRegistry)
 
         return trans
