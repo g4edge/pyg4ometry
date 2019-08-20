@@ -78,12 +78,68 @@ class Reader(object):
         print self.bodiesend, self.fileLines[self.bodiesend]
         print self.regionsend, self.fileLines[self.regionsend]
         print self.geoend,self.fileLines[self.geoend]
-        
-    def parseBodies(self) :
-        pass
 
-    def parseRpp(self, lstart) :
-        pass
+    def parseBodyTransform(self, line):
+        sline = line.split()
+        trans_type = sline[0].split("_")[1]
+        transcount = len(self.flukaRegistry.bodyTransformDict)
+        name = "bodytransform_{}".format(transcount+1)
+        value = _freeform_split(line)[1:]
+        trans = BodyTransform(name, trans_type, value, self.flukaRegistry)
+
+        return trans
+
+    def parseBodies(self) :
+        bodies_block = self.fileLines[self.geobegin+2:self.bodiesend]
+
+        # keep a dict of acitve transforms
+        transforms = {"expansion" : 1,
+                      "translat" : [0,0,0],
+                      "transform" : None} # rot-defi
+
+        description = "" # for accumulating multi-line information
+        for i, line in enumerate(bodies_block):
+            sline = _freeform_split(line)
+            print line
+
+            previous_transforms  = _dc(transforms)
+            previous_description = _dc(description)
+            terminate_body = True
+
+            if sline[0].startswith("$"): # Transfrom manipulation
+                description = ""         # No body info here
+                if "start" in sline[0].lower():
+                    trans_type = sline[0].split("_")[1]
+                    trans = self.parseBodyTransform(line)
+                    transforms[trans_type] = trans
+                elif "end" in sline[0].lower():
+                    trans_type = sline[0].split("_")[1]
+                    transforms[trans_type] = None
+            elif hasattr(self, sline[0]): # New body defintion
+                description = line
+            else:
+                description += line
+                terminate_body = False
+
+            if previous_description and terminate_body:
+                name = _freeform_split(previous_description)[0]
+                body_parser = getattr(self, "parse{}".format(name.capitalize()))
+                body = body_parser(previous_description, previous_transforms)
+                body.geant4_solid(self.registry)
+
+
+    def parseRpp(self, description, transforms) :
+        par = _freeform_split(description) # parameters
+        body = _body.RPP(par[1],
+                         float(par[2]), float(par[3]),
+                         float(par[4]), float(par[5]),
+                         float(par[6]), float(par[7]),
+                         expansion = transforms["expansion"],
+                         translation = transforms["translat"],
+                         rotdefi = transforms["transform"],
+                         flukaregistry = self.flukaRegistry)
+
+        return body
 
     def parseBox(self, lstart) : 
         pass
