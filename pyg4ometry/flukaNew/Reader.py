@@ -175,7 +175,28 @@ class Reader(object):
         pass
         
     def parseRegions(self) :
-        pass
+        region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
+
+        description = "" # for accumulating multi-line information
+        for i, line in enumerate(region_block):
+            sline = _freeform_split(line)
+
+            previous_description = _dc(description)
+            terminate_region = True
+
+            # The opening declaration has an int as the second argument
+            if sline[0] == "END" or sline[1].isdigit():
+                description = line
+            else:
+                description += line
+                terminate_region = False
+
+            if previous_description and terminate_region:
+                parser = _RegionEval()
+                boolean_only = "".join(_freeform_split(previous_description)[2:])
+                parsed =  parser.parse(boolean_only)
+                print "Parsed: ", "".join([p.getText() for p in parsed.children])
+                #result = parser.evaluate(parsed, self.flukaRegistry.bodyDict)
 
     def parseMaterials(self) :
         pass
