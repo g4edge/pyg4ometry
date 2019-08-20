@@ -106,7 +106,9 @@ class Reader(object):
             previous_description = _dc(description)
             terminate_body = True
 
-            if sline[0].startswith("$"): # Transfrom manipulation
+            if sline[0] == "END":
+                descripion = ""
+            elif sline[0].startswith("$"): # Transfrom manipulation
                 description = ""         # No body info here
                 if "start" in sline[0].lower():
                     trans_type = sline[0].split("_")[1]
