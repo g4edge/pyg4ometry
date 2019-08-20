@@ -12,6 +12,9 @@ class FlukaRegistry:
     def addBody(self, body):
         self.bodyDict[body.name] = body
 
+    def addBodyTransform(self, trans):
+        self.bodyTransformDict[trans.name] = trans
+
     def addRegion(self, region):
         self.regionDict.add(region)
 
