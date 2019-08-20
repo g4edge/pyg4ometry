@@ -10,7 +10,7 @@ class FlukaRegistry:
         self.cardDict          = _OrderedDict()
 
     def addBody(self, body):
-        self.bodyDict.add(body)
+        self.bodyDict[body.name] = body
 
     def addRegion(self, region):
         self.regionDict.add(region)
