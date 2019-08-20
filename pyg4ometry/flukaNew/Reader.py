@@ -90,7 +90,7 @@ class Reader(object):
         return trans
 
     def parseBodies(self) :
-        bodies_block = self.fileLines[self.geobegin+2:self.bodiesend]
+        bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
 
         # keep a dict of acitve transforms
         transforms = {"expansion" : 1,
