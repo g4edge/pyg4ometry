@@ -117,7 +117,7 @@ class Reader(object):
                 elif "end" in sline[0].lower():
                     trans_type = sline[0].split("_")[1]
                     transforms[trans_type] = None
-            elif hasattr(self, sline[0]): # New body defintion
+            elif hasattr(self, "parse{}".format(sline[0].capitalize())): # New body defintion
                 description = line
             else:
                 description += line # Continuing body definition
