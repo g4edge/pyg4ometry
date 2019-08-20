@@ -118,7 +118,7 @@ class Reader(object):
             elif hasattr(self, sline[0]): # New body defintion
                 description = line
             else:
-                description += line
+                description += line # Continuing body definition
                 terminate_body = False
 
             if previous_description and terminate_body:
