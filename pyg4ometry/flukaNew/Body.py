@@ -18,10 +18,10 @@ class Body(object):
 class RPP(Body):
     """An RPP is a rectangular parallelpiped (a cuboid). """
 
-    def __init__(self,name, lower, upper, expansion = 1.0, translation = [0,0,0], rotation = [0,0,0], rotdefi = None):
+    def __init__(self,name, xmin, xmax, ymin, ymax, zmin, zmax, expansion = 1.0, translation = [0,0,0], rotdefi = None, flukaregistry=None):
         self.name  = name
-        self.lower = _Three(lower)
-        self.upper = _Three(upper)
+        self.lower = _Three([xmin, ymin, zmin])
+        self.upper = _Three([xmax, ymax, zmax])
 
     def centre(self):
         return [self.lower[0] + 0.5*(self.upper[0]-self.lower[0]),
