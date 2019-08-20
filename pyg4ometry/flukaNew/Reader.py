@@ -1,5 +1,10 @@
-from FlukaRegistry import *
+import re as _re
 import pyg4ometry.geant4
+import Body as _body
+from FlukaRegistry import *
+from BodyTransform import *
+from copy import deepcopy as _dc
+from pyg4ometry.flukaNew.Region import RegionEvaluator as _RegionEval
 
 class Reader(object):
     def __init__(self, filename) : 
