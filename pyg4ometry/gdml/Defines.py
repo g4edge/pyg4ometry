@@ -62,11 +62,11 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
     # create appropriate vector type
     if isinstance(var,list) :
         if type == "position" :
-            return Position("temp",var[0],var[1],var[2],"mm",reg, addRegistry)
+            return Position("",var[0],var[1],var[2],"mm",reg, addRegistry)
         elif type == "rotation" : 
-            return Rotation("temp",var[0],var[1],var[2],"rad",reg, addRegistry)
+            return Rotation("",var[0],var[1],var[2],"rad",reg, addRegistry)
         elif type == "scale" : 
-            return Scale("temp",var[0],var[1],var[2],"none",reg, addRegistry)
+            return Scale("",var[0],var[1],var[2],"none",reg, addRegistry)
         else : 
             print 'type not defined'
 
