@@ -351,10 +351,26 @@ class CSG(object):
 
         a = []
 
+        for apoly in apolygons :
+            aplane = apoly.plane
+            print 'aplane ', aplane.normal, aplane.w
+
+            for i in  range(0,len(apoly.vertices)) :
+                print 'apoly ', apoly.vertices[i]
+
+
+
+        for bpoly in bpolygons :
+            bplane = bpoly.plane
+            print 'bplane ', bplane.normal, bplane.w
+
+            for i in  range(0,len(bpoly.vertices)) :
+                print 'bpoly ', bpoly.vertices[i]
+
         # loop over all A polygons
         for apoly in apolygons :
+            aplane = apoly.plane
             for bpoly in bpolygons :
-                aplane = apoly.plane
                 bplane = bpoly.plane
 
                 # check if B polygon is coplanar
@@ -373,31 +389,37 @@ class CSG(object):
 
                 # if coplanar do a interior/exterior check
                 if polygonType == COPLANAR :
-                    ploc = 0
 
                     aAdd = False
+
                     for i in range(len(bpoly.vertices)) :
+
+                        ploc = 0
                         for j in range(len(apoly.vertices)) :
                             if j == len(apoly.vertices)-1 :
-                                av = apoly.vertices[0].pos - apoly.vertices[j].pos
+                                av = apoly.vertices[0].pos   - apoly.vertices[j].pos
                             else :
-                                av = apoly.vertices[j+1].pos-apoly.vertices[j].pos
-                            av = av.unit()
-                            anormal = av.cross(bplane.normal)
+                                av = apoly.vertices[j+1].pos - apoly.vertices[j].pos
+                            avunit = av.unit()
+                            anormal = avunit.cross(aplane.normal)
 
-                            t  = anormal.dot(bpoly.vertices[j].pos) - bpoly.vertices[j].pos.dot(anormal)
+                            t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
 
-                            # print t
-                            if t > 1e-3 :
+                            if t < -1e-8 :
                                 ploc += 1
+
+                            print 'apoly verticies t',i,j,t, aplane.normal, aplane.w, avunit, anormal, apoly.vertices[j].pos.dot(anormal), apoly.vertices[j], bpoly.vertices[i].pos, ploc
+
+                        print 'ploc, len',ploc,len(apoly.vertices)
+
                         if ploc == len(apoly.vertices) :
                             aAdd = True
                             break
 
                     if aAdd:
+                        print 'adding'
                         a.append(bpoly)
                         a.append(apoly)
-                    '''
                     
         return CSG.fromPolygons(a)
 

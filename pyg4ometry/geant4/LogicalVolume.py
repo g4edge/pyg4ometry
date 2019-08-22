@@ -91,6 +91,7 @@ class LogicalVolume(object):
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
         # coplanar daughter pv checks
+        print 'coplanar with pvs'
         for i in range(0,len(transformedMeshes)) :
             for j in range(i+1,len(transformedMeshes)) :
                 coplanarMesh = transformedMeshes[i].coplanar(transformedMeshes[j])
@@ -106,8 +107,10 @@ class LogicalVolume(object):
                 self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
 
         # coplanar with solid
+        print 'coplanar with solid'
         for i in range(0,len(transformedMeshes)) :
-            coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh.inverse())
+            # coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh)
+            coplanarMesh = self.mesh.localmesh.coplanar(transformedMeshes[i])
             if coplanarMesh.vertexCount() != 0 :
                 self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
