@@ -391,8 +391,8 @@ class CSG(object):
                     aAdd = False
 
                     for i in range(len(bpoly.vertices)) :
-
                         ploc = 0
+
                         for j in range(len(apoly.vertices)) :
                             if j == len(apoly.vertices)-1 :
                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
@@ -414,11 +414,13 @@ class CSG(object):
                             aAdd = True
                             break
 
+
+
                     if aAdd:
                         # print 'adding'
                         a.append(bpoly)
-                        a.append(apoly)
-                    
+
+
         return CSG.fromPolygons(a)
 
     def __mul__(self, csg):

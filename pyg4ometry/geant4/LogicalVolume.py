@@ -93,7 +93,9 @@ class LogicalVolume(object):
         # coplanar daughter pv checks
         # print 'coplanar with pvs'
         for i in range(0,len(transformedMeshes)) :
-            for j in range(i+1,len(transformedMeshes)) :
+            for j in range(0,len(transformedMeshes)) :
+                if j != i :
+                    continue # Need to avoid checking daughter with itself but need both daughter1.coplanar(daughter2) as well as daughter2.coplaner(daughter1)
                 coplanarMesh = transformedMeshes[i].coplanar(transformedMeshes[j])
                 if coplanarMesh.vertexCount() != 0:
                     self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
@@ -110,7 +112,7 @@ class LogicalVolume(object):
         # print 'coplanar with solid'
         for i in range(0,len(transformedMeshes)) :
             # coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh)
-            coplanarMesh = self.mesh.localmesh.coplanar(transformedMeshes[i])
+            coplanarMesh = self.mesh.localmesh.coplanar(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
             if coplanarMesh.vertexCount() != 0 :
                 self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
