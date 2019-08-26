@@ -20,7 +20,7 @@ def upgradeToStringExpression(reg, obj) :
         # return str(obj)                  # number like so return string
         return "%.15f" % obj
 
-    if isinstance(obj,str) or isinstance(obj,unicode) : 
+    elif isinstance(obj,str) or isinstance(obj,unicode) : 
         if reg.defineDict.has_key(obj) : # not sure if this is needed   
             return obj
         else :
@@ -35,7 +35,7 @@ def upgradeToStringExpression(reg, obj) :
                 err.args = err.args + (msg,)
                 raise
 
-    if isinstance(obj,ScalarBase) :   
+    elif isinstance(obj,ScalarBase) :   
         if reg.defineDict.has_key(obj.name) :
             return obj.name             # so a scalar expression in registry
         else : 
