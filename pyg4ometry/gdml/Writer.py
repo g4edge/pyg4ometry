@@ -8,6 +8,8 @@ import Expression as _Expression
 import pyg4ometry.geant4 as _g4
 import logging as _log
 
+from pyg4ometry.geant4 import Expression as _Expression
+
 class Writer(object):
     def __init__(self, prepend = ''):
         super(Writer, self).__init__()
@@ -623,13 +625,23 @@ class Writer(object):
                 raise IndexError("") #TODO: Add error message
 
         # check if variable is in registry #TODO indexed variables
-            if self.registry.defineDict.has_key(var.name) :
-                return var.name
-            else :
-                return var.expr.expression
+            if hasattr(var, "name"):
+                if self.registry.defineDict.has_key(var.name) :
+                    return var.name
+
+                elif hasattr(var, "expr"):
+                    return var.expr.expression
+                else:
+                    return var.expression
+            else:
+                return str(var)
+
+        # pyg4ometry expression (evaluatable string)
+        elif isinstance(var, _Expression):
+            return str(var.expression)
 
         # Expression, Constant, Quantity or Variable
-        if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
+        elif isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
             if self.registry.defineDict.has_key(var.name):
                 return var.name
             else :
