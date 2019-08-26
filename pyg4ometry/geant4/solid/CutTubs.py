@@ -30,15 +30,18 @@ class CutTubs(_SolidBase):
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry=None, lunit="mm",
                  aunit="rad", nslice=16):
+
+        from pyg4ometry.gdml.Defines import upgradeToExpression as _ute
         self.type      = 'CutTubs'
         self.name      = name
-        self.pRMin     = pRMin
-        self.pRMax     = pRMax
-        self.pDz       = pDz
-        self.pSPhi     = pSPhi
-        self.pDPhi     = pDPhi
-        self.pLowNorm  = pLowNorm
-        self.pHighNorm = pHighNorm
+        self.pRMin     = _ute(registry, pRMin)
+        self.pRMax     = _ute(registry, pRMax)
+        self.pDz       = _ute(registry, pDz)
+        self.pSPhi     = _ute(registry, pSPhi)
+        self.pDPhi     = _ute(registry, pDPhi)
+        self.pLowNorm  = [_ute(registry, v) for v in pLowNorm]
+        self.pHighNorm = [_ute(registry, v) for v in pHighNorm]
+
         self.nslice    = nslice
         self.lunit     = lunit
         self.aunit     = aunit
