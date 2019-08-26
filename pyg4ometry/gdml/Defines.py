@@ -40,7 +40,22 @@ def upgradeToStringExpression(reg, obj) :
             return obj.name             # so a scalar expression in registry
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
-        
+
+def upgradeToExpression(reg, obj):
+    """
+    Helper functions that takes a string and returns an expression object or a string
+    """
+
+    # TODO: consider merging into/reusing the upgradeToStringExpression
+    as_string  = upgradeToStringExpression(reg, obj)
+    expression = _Expression("",as_string,reg)
+
+    try:
+        float(expression)
+        return expression
+    except ValueError:
+        return as_string
+
 def upgradeToVector(var, reg, type = "position", addRegistry = False) : 
     """
     Take a list [x,y,z] and create a vector 
