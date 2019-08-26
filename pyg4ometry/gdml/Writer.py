@@ -596,10 +596,10 @@ class Writer(object):
         Dispatch to correct member function based on type string in SolidBase.
         """
 
-        try:
+        if hasattr(self, 'write'+solid.type):
             func = getattr(self, 'write'+solid.type) # get the member function
             func(solid) # call it with the solid instance as an argument
-        except AttributeError:
+        else:
             raise ValueError("No such solid "+solid.type)
 
     def getValueOrExpr(self, expr) : 
