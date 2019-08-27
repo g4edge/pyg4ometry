@@ -20,7 +20,7 @@ def upgradeToStringExpression(reg, obj) :
         # return str(obj)                  # number like so return string
         return "%.15f" % obj
 
-    if isinstance(obj,str) or isinstance(obj,unicode) : 
+    elif isinstance(obj,str) or isinstance(obj,unicode) : 
         if reg.defineDict.has_key(obj) : # not sure if this is needed   
             return obj
         else :
@@ -35,12 +35,27 @@ def upgradeToStringExpression(reg, obj) :
                 err.args = err.args + (msg,)
                 raise
 
-    if isinstance(obj,ScalarBase) :   
+    elif isinstance(obj,ScalarBase) :   
         if reg.defineDict.has_key(obj.name) :
             return obj.name             # so a scalar expression in registry
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
-        
+
+def upgradeToExpression(reg, obj):
+    """
+    Helper functions that takes a string and returns an expression object or a string
+    """
+
+    # TODO: consider merging into/reusing the upgradeToStringExpression
+    as_string  = upgradeToStringExpression(reg, obj)
+    expression = _Expression("",as_string,reg)
+
+    try:
+        float(expression)
+        return expression
+    except ValueError:
+        return as_string
+
 def upgradeToVector(var, reg, type = "position", addRegistry = False) : 
     """
     Take a list [x,y,z] and create a vector 

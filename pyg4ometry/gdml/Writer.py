@@ -8,6 +8,8 @@ import Expression as _Expression
 import pyg4ometry.geant4 as _g4
 import logging as _log
 
+from pyg4ometry.geant4 import Expression as _Expression
+
 class Writer(object):
     def __init__(self, prepend = ''):
         super(Writer, self).__init__()
@@ -102,8 +104,8 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(filenameGDML)
-        if self.registry.parameterDict.has_key("GDML_Size_position_z"):
-            s += '", l=' + str(self.registry.parameterDict['GDML_Size_position_z'].value) + '*mm;\n'
+        if self.registry.defineDict.has_key("GDML_Size_position_z"):
+            s += '", l=' + str(self.registry.defineDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
             # be super tolerant incase the meshing fails - still write out
             try:
@@ -596,10 +598,10 @@ class Writer(object):
         Dispatch to correct member function based on type string in SolidBase.
         """
 
-        try:
+        if hasattr(self, 'write'+solid.type):
             func = getattr(self, 'write'+solid.type) # get the member function
             func(solid) # call it with the solid instance as an argument
-        except AttributeError:
+        else:
             raise ValueError("No such solid "+solid.type)
 
     def getValueOrExpr(self, expr) : 
@@ -623,13 +625,23 @@ class Writer(object):
                 raise IndexError("") #TODO: Add error message
 
         # check if variable is in registry #TODO indexed variables
-            if self.registry.defineDict.has_key(var.name) :
-                return var.name
-            else :
-                return var.expr.expression
+            if hasattr(var, "name"):
+                if self.registry.defineDict.has_key(var.name) :
+                    return var.name
+
+                elif hasattr(var, "expr"):
+                    return var.expr.expression
+                else:
+                    return var.expression
+            else:
+                return str(var)
+
+        # pyg4ometry expression (evaluatable string)
+        elif isinstance(var, _Expression):
+            return str(var.expression)
 
         # Expression, Constant, Quantity or Variable
-        if isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
+        elif isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
             if self.registry.defineDict.has_key(var.name):
                 return var.name
             else :
