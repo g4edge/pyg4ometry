@@ -66,7 +66,7 @@ class CutTubs(_SolidBase):
 
         pRMin     = float(self.pRMin)*luval
         pRMax     = float(self.pRMax)*luval
-        pDz       = float(self.pDz)*luval
+        pDz       = float(self.pDz)*luval/2.0
         pSPhi     = float(self.pSPhi)*auval
         pDPhi     = float(self.pDPhi)*auval
         pHighNorm = [float(self.pHighNorm[0])*luval,
