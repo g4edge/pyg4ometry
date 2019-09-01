@@ -586,12 +586,6 @@ class Writer(object):
 
         self.structure.appendChild(surf)
 
-    def getValueOrExpr(self, expr) : 
-        if self.registry.defineDict.has_key(expr.name) :
-            return expr.name
-        else :
-            return str(expr.eval())
-
 
     def writeSolid(self, solid):
         """
@@ -604,12 +598,12 @@ class Writer(object):
         else:
             raise ValueError("No such solid "+solid.type)
 
-    def getValueOrExpr(self, expr) : 
+    # TODO got to be removed
+    def getValueOrExpr(self, expr) :
         if self.registry.defineDict.has_key(expr.name) :
             return expr.name
         else :
             return str(expr.eval())
-
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
 
