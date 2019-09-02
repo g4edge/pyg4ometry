@@ -599,39 +599,9 @@ class Writer(object):
             raise ValueError("No such solid "+solid.type)
 
     # TODO got to be removed
-    def getValueOrExpr(self, expr) :
-        if self.registry.defineDict.has_key(expr.name) :
-            return expr.name
-        else :
-            return str(expr.eval())
-
-    def getValueOrExprFromInstance(self, instance, variable, index=None):
-
-        if not hasattr(instance, variable):
-            raise AttributeError("") #TODO: Add error message
-        var = getattr(instance, variable)
-
-        # Indexed variable 
-        if index is not None:
-            try:
-                var = getattr(instance,variable)[index]
-            except IndexError:
-                raise IndexError("") #TODO: Add error message
-
-        # check if variable is in registry #TODO indexed variables
-            if hasattr(var, "name"):
-                if self.registry.defineDict.has_key(var.name) :
-                    return var.name
-
-                elif hasattr(var, "expr"):
-                    return var.expr.expression
-                else:
-                    return var.expression
-            else:
-                return str(var)
-
+    def getValueOrExpr(self, var) :
         # pyg4ometry expression (evaluatable string)
-        elif isinstance(var, _Expression):
+        if isinstance(var, _Expression):
             return str(var.expression)
 
         # Expression, Constant, Quantity or Variable
@@ -642,6 +612,23 @@ class Writer(object):
                 return str(var.expr.expression)
         else:
             return str(var)
+
+    def getValueOrExprFromInstance(self, instance, variable, index=None):
+
+        if not hasattr(instance, variable):
+            raise AttributeError("") #TODO: Add error message
+
+        # Indexed variable 
+        if index is not None:
+            try:
+                var = getattr(instance,variable)[index]
+            except IndexError:
+                raise IndexError("") #TODO: Add error message
+
+        else:
+            var = getattr(instance, variable)
+
+        return self.getValueOrExpr(var)
 
     def writeBox(self, instance):
         oe = self.doc.createElement('box')
