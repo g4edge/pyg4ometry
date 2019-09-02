@@ -703,8 +703,8 @@ class Writer(object):
 
     def createTwoDimVertex(self, x, y):
         td = self.doc.createElement('twoDimVertex')
-        td.setAttribute('x', str(x.expr.expression))
-        td.setAttribute('y', str(y.expr.expression))
+        td.setAttribute('x', self.getValueOrExpr(x))
+        td.setAttribute('y', self.getValueOrExpr(y))
         return td
 
     def createSection(self, zOrder, zPosition, xOffset, yOffset, scalingFactor):
