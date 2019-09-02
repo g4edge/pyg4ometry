@@ -41,6 +41,15 @@ def upgradeToStringExpression(reg, obj) :
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
 
+def evaluateToFloat(reg, obj):
+    if is_numlike(obj) or isinstance(obj,ScalarBase):
+        evaluatable = obj
+    else:
+        evaluatable = _Expression("",obj,reg)
+
+    return float(evaluatable)
+
+
 def upgradeToExpression(reg, obj):
     """
     Helper functions that takes a string and returns an expression object or a string
