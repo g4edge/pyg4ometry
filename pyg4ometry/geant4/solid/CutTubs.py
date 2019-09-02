@@ -31,16 +31,15 @@ class CutTubs(_SolidBase):
                  pLowNorm, pHighNorm, registry=None, lunit="mm",
                  aunit="rad", nslice=16):
 
-        from pyg4ometry.gdml.Defines import upgradeToExpression as _ute
         self.type      = 'CutTubs'
         self.name      = name
-        self.pRMin     = _ute(registry, pRMin)
-        self.pRMax     = _ute(registry, pRMax)
-        self.pDz       = _ute(registry, pDz)
-        self.pSPhi     = _ute(registry, pSPhi)
-        self.pDPhi     = _ute(registry, pDPhi)
-        self.pLowNorm  = [_ute(registry, v) for v in pLowNorm]
-        self.pHighNorm = [_ute(registry, v) for v in pHighNorm]
+        self.pRMin     = pRMin
+        self.pRMax     = pRMax
+        self.pDz       = pDz
+        self.pSPhi     = pSPhi
+        self.pDPhi     = pDPhi
+        self.pLowNorm  = pLowNorm
+        self.pHighNorm = pHighNorm
 
         self.nslice    = nslice
         self.lunit     = lunit
@@ -51,6 +50,8 @@ class CutTubs(_SolidBase):
 
         if registry:
             registry.addSolid(self)
+
+        self._registry = registry
 
     def __repr__(self):
         # Low norm and high norm exlcluded as they are lists
@@ -64,18 +65,20 @@ class CutTubs(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pRMin     = float(self.pRMin)*luval
-        pRMax     = float(self.pRMax)*luval
-        pDz       = float(self.pDz)*luval/2.0
-        pSPhi     = float(self.pSPhi)*auval
-        pDPhi     = float(self.pDPhi)*auval
-        pHighNorm = [float(self.pHighNorm[0])*luval,
-                     float(self.pHighNorm[1])*luval,
-                     float(self.pHighNorm[2])*luval]
+        from pyg4ometry.gdml.Defines import evaluateToFloat as _evf
 
-        pLowNorm  = [float(self.pLowNorm[0])*luval,
-                     float(self.pLowNorm[1])*luval,
-                     float(self.pLowNorm[2])*luval]
+        pRMin     = _evf(self._registry, self.pRMin)*luval
+        pRMax     = _evf(self._registry, self.pRMax)*luval
+        pDz       = _evf(self._registry, self.pDz)*luval/2.
+        pSPhi     = _evf(self._registry, self.pSPhi)*auval
+        pDPhi     = _evf(self._registry, self.pDPhi)*auval
+        pHighNorm = [_evf(self._registry, self.pHighNorm[0])*luval,
+                     _evf(self._registry, self.pHighNorm[1])*luval,
+                     _evf(self._registry, self.pHighNorm[2])*luval]
+
+        pLowNorm  = [_evf(self._registry, self.pLowNorm[0])*luval,
+                     _evf(self._registry, self.pLowNorm[1])*luval,
+                     _evf(self._registry, self.pLowNorm[2])*luval]
 
         _log.info('cuttubs.pycsgmesh> mesh')
         mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz, pSPhi, pDPhi, registry=None, nslice=self.nslice).pycsgmesh() # Units are already rendered
