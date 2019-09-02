@@ -43,6 +43,8 @@ class ExtrudedSolid(_SolidBase):
         if registry :
             registry.addSolid(self)
 
+        self._registry = registry
+
     def __repr__(self):
         return "Extruded solid: {}".format(self.name)
 
@@ -57,14 +59,17 @@ class ExtrudedSolid(_SolidBase):
     def pycsgmesh(self):
         _log.info('xtru.pycsgmesh> antlr')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        from pyg4ometry.gdml.Defines import evaluateToFloat as _evf
+
         luval = _Units.unit(self.lunit)
 
-        zpos     = [zslice[0].eval()*luval for zslice in self.pZslices]
-        x_offs   = [zslice[1][0].eval()*luval for zslice in self.pZslices]
-        y_offs   = [zslice[1][1].eval()*luval for zslice in self.pZslices]
-        scale    = [zslice[2].eval() for zslice in self.pZslices]
-        vertices = [[pPolygon[0].eval()*luval, pPolygon[1].eval()*luval] for pPolygon in self.pPolygon]
+        zpos     = [_evf(self._registry, zslice[0])*luval for zslice in self.pZslices]
+        x_offs   = [_evf(self._registry, zslice[1][0])*luval for zslice in self.pZslices]
+        y_offs   = [_evf(self._registry, zslice[1][1])*luval for zslice in self.pZslices]
+        scale    = [_evf(self._registry, zslice[2]) for zslice in self.pZslices]
+        vertices = [[_evf(self._registry, pPolygon[0])*luval,
+                     _evf(self._registry, pPolygon[1])*luval] for pPolygon in self.pPolygon]
         nslices  = len(self.pZslices)
 
         _log.info('xtru.pycsgmesh> mesh')
