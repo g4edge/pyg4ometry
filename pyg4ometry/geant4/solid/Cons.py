@@ -102,46 +102,43 @@ class Cons(_SolidBase):
             r1 = pRmin2
             R2 = pRmax1
             r2 = pRmin1
-            factor = -1
+            sign = -1
         else:
             R1 = pRmax1  # Cone with tip pointing towards +z
             r1 = pRmin1
             R2 = pRmax2
             r2 = pRmin2
-            factor = 1
+            sign = 1
 
         h = 2 * pDz
-        H1 = float(R2 * h) / float(R1 - R2)
 
-        try:  # Avoid crash when both inner radii are 0
-            H2 = float(r2 * h) / float(r1 - r2)
-        except ZeroDivisionError:
-            H2 = 0
-        
-        h1 = factor * (h + H1)
-        h2 = factor * (h + H2)
+        H1 = float(R2 * h) / float(R1 - R2) if R1 != R2 else 0
+        H2 = float(r2 * h) / float(r1 - r2) if r1 != r2 else 0
+
+        h1 = sign * (h + H1)
+        h2 = sign * (h + H2)
 
         # basic cone mesh
-        mesh = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h1 - factor * pDz],
-                         radius=R1, slices=self.nslice)
+        outer_solid = _CSG.cylinder if R1 == R2 else _CSG.cone
+        mesh = outer_solid(start=[0, 0, -sign * pDz], end=[0, 0, h1 - sign * pDz],
+                           radius=R1, slices=self.nslice)
 
         # ensure radius for intersection wedge is much bigger than solid
         wrmax = 3 * (pRmax1 + pRmax2)
-
-        # ensure the plane is large enough to cut cone correctly. Extroplates the z intersect using two points.
-        wzlength = abs((pRmax2*((2*pDz)/(pRmax2 - pRmax1))) + pDz)
+        wzlength = h*5
 
         if pDPhi != 2 * _np.pi:
             pWedge = _Wedge("wedge_temp", wrmax, pSPhi, pSPhi + pDPhi, wzlength).pycsgmesh()
         else:
-            pWedge = _CSG.cylinder(start=[0, 0, -pDz * 5], end=[0, 0, pDz * 5],
-                                   radius=R1 * 5)  # factor 5 is just to ensure wedge mesh is much bigger than cone solid
+            pWedge = _CSG.cylinder(start=[0, 0, -wzlength/2.], end=[0, 0, wzlength/2.],
+                                   radius=wrmax)
 
         pTopCut = _Plane("pTopCut_temp", _Vector(0, 0, 1), pDz, wzlength).pycsgmesh()
         pBotCut = _Plane("pBotCut_temp", _Vector(0, 0, -1), -pDz, wzlength).pycsgmesh()
 
-        if H2:
-            sInner = _CSG.cone(start=[0, 0, -factor * pDz], end=[0, 0, h2 - factor * pDz], radius=r1)
+        if r1 or r2:
+            inner_solid = _CSG.cylinder if r1 == r2 else _CSG.cone
+            sInner = inner_solid(start=[0, 0, -sign * pDz], end=[0, 0, h2 - sign * pDz], radius=r1)
             mesh = mesh.subtract(sInner).intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
         else:
             mesh = mesh.intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
