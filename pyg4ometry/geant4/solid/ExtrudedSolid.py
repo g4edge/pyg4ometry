@@ -27,7 +27,7 @@ class ExtrudedSolid(_SolidBase):
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
     """
 
-    def __init__(self, name, pPolygon, pZslices, registry=None, lunit="mm"):
+    def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry):
 
         self.type     = 'ExtrudedSolid'
         self.name     = name
@@ -40,10 +40,10 @@ class ExtrudedSolid(_SolidBase):
 
         self.varNames = ["pPolygon", "pZslices"]
 
-        if registry :
+        if addRegistry :
             registry.addSolid(self)
 
-        self._registry = registry
+        self.registry = registry
 
     def __repr__(self):
         return "Extruded solid: {}".format(self.name)
@@ -60,16 +60,16 @@ class ExtrudedSolid(_SolidBase):
         _log.info('xtru.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        from pyg4ometry.gdml.Defines import evaluateToFloat as _evf
+        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
 
         luval = _Units.unit(self.lunit)
 
-        zpos     = [_evf(self._registry, zslice[0])*luval for zslice in self.pZslices]
-        x_offs   = [_evf(self._registry, zslice[1][0])*luval for zslice in self.pZslices]
-        y_offs   = [_evf(self._registry, zslice[1][1])*luval for zslice in self.pZslices]
-        scale    = [_evf(self._registry, zslice[2]) for zslice in self.pZslices]
-        vertices = [[_evf(self._registry, pPolygon[0])*luval,
-                     _evf(self._registry, pPolygon[1])*luval] for pPolygon in self.pPolygon]
+        zpos     = [evaluateToFloat(self._registry, zslice[0])*luval for zslice in self.pZslices]
+        x_offs   = [evaluateToFloat(self._registry, zslice[1][0])*luval for zslice in self.pZslices]
+        y_offs   = [evaluateToFloat(self._registry, zslice[1][1])*luval for zslice in self.pZslices]
+        scale    = [evaluateToFloat(self._registry, zslice[2]) for zslice in self.pZslices]
+        vertices = [[evaluateToFloat(self._registry, pPolygon[0])*luval,
+                     evaluateToFloat(self._registry, pPolygon[1])*luval] for pPolygon in self.pPolygon]
         nslices  = len(self.pZslices)
 
         _log.info('xtru.pycsgmesh> mesh')

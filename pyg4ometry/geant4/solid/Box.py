@@ -21,7 +21,7 @@ class Box(_SolidBase):
     :type lunit: str
     """
 
-    def __init__(self, name, pX, pY, pZ, registry=None, lunit="mm"):
+    def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry = True):
         self.name = name
         self.pX   = pX
         self.pY   = pY
@@ -32,8 +32,10 @@ class Box(_SolidBase):
 
         self.varNames = ["pX", "pY", "pZ"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
@@ -43,10 +45,12 @@ class Box(_SolidBase):
 
         _log.info('box.pycsgmesh> antlr')
 
+        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
         uval = _Units.unit(self.lunit)
-        pX = float(self.pX)*uval/2.0
-        pY = float(self.pY)*uval/2.0
-        pZ = float(self.pZ)*uval/2.0
+
+        pX = evaluateToFloat(self.registry,self.pX)*uval/2.0
+        pY = evaluateToFloat(self.registry,self.pY)*uval/2.0
+        pZ = evaluateToFloat(self.registry,self.pZ)*uval/2.0
 
         _log.info('box.pycsgmesh> mesh')
         mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])

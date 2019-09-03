@@ -28,8 +28,8 @@ class CutTubs(_SolidBase):
     :type pHighNorm: list 
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
-                 pLowNorm, pHighNorm, registry=None, lunit="mm",
-                 aunit="rad", nslice=16):
+                 pLowNorm, pHighNorm, registry, lunit="mm",
+                 aunit="rad", nslice=16, addRegistry = True):
 
         self.type      = 'CutTubs'
         self.name      = name
@@ -48,10 +48,10 @@ class CutTubs(_SolidBase):
 
         self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi","pLowNorm","pHighNorm"]
 
-        if registry:
-            registry.addSolid(self)
+        self.registry = registry
 
-        self._registry = registry
+        if addRegistry :
+            registry.addSolid(self)
 
     def __repr__(self):
         # Low norm and high norm exlcluded as they are lists
@@ -65,20 +65,20 @@ class CutTubs(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        from pyg4ometry.gdml.Defines import evaluateToFloat as _evf
+        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
 
-        pRMin     = _evf(self._registry, self.pRMin)*luval
-        pRMax     = _evf(self._registry, self.pRMax)*luval
-        pDz       = _evf(self._registry, self.pDz)*luval/2.
-        pSPhi     = _evf(self._registry, self.pSPhi)*auval
-        pDPhi     = _evf(self._registry, self.pDPhi)*auval
-        pHighNorm = [_evf(self._registry, self.pHighNorm[0])*luval,
-                     _evf(self._registry, self.pHighNorm[1])*luval,
-                     _evf(self._registry, self.pHighNorm[2])*luval]
+        pRMin     = evaluateToFloat(self.registry, self.pRMin)*luval
+        pRMax     = evaluateToFloat(self.registry, self.pRMax)*luval
+        pDz       = evaluateToFloat(self.registry, self.pDz)*luval/2.
+        pSPhi     = evaluateToFloat(self.registry, self.pSPhi)*auval
+        pDPhi     = evaluateToFloat(self.registry, self.pDPhi)*auval
+        pHighNorm = [evaluateToFloat(self.registry, self.pHighNorm[0])*luval,
+                     evaluateToFloat(self.registry, self.pHighNorm[1])*luval,
+                     evaluateToFloat(self.registry, self.pHighNorm[2])*luval]
 
-        pLowNorm  = [_evf(self._registry, self.pLowNorm[0])*luval,
-                     _evf(self._registry, self.pLowNorm[1])*luval,
-                     _evf(self._registry, self.pLowNorm[2])*luval]
+        pLowNorm  = [evaluateToFloat(self.registry, self.pLowNorm[0])*luval,
+                     evaluateToFloat(self.registry, self.pLowNorm[1])*luval,
+                     evaluateToFloat(self.registry, self.pLowNorm[2])*luval]
 
         _log.info('cuttubs.pycsgmesh> mesh')
         mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz, pSPhi, pDPhi, registry=None, nslice=self.nslice).pycsgmesh() # Units are already rendered
