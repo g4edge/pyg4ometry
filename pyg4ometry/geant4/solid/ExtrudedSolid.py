@@ -64,13 +64,15 @@ class ExtrudedSolid(_SolidBase):
 
         luval = _Units.unit(self.lunit)
 
-        zpos     = [evaluateToFloat(self.registry, zslice[0])*luval for zslice in self.pZslices]
-        x_offs   = [evaluateToFloat(self.registry, zslice[1][0])*luval for zslice in self.pZslices]
-        y_offs   = [evaluateToFloat(self.registry, zslice[1][1])*luval for zslice in self.pZslices]
-        scale    = [evaluateToFloat(self.registry, zslice[2]) for zslice in self.pZslices]
-        vertices = [[evaluateToFloat(self.registry, pPolygon[0])*luval,
-                     evaluateToFloat(self.registry, pPolygon[1])*luval] for pPolygon in self.pPolygon]
-        nslices  = len(self.pZslices)
+        pZslices = evaluateToFloat(self.registry, self.pZslices)
+        pPolygon = evaluateToFloat(self.registry, self.pPolygon)
+
+        zpos     = [zslice[0]*luval for zslice in pZslices]
+        x_offs   = [zslice[1][0]*luval for zslice in pZslices]
+        y_offs   = [zslice[1][1]*luval for zslice in pZslices]
+        scale    = [zslice[2] for zslice in pZslices]
+        vertices = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygon]
+        nslices  = len(pZslices)
 
         _log.info('xtru.pycsgmesh> mesh')
         polygons  = []
