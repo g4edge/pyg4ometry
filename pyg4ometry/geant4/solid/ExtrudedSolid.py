@@ -27,7 +27,7 @@ class ExtrudedSolid(_SolidBase):
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
     """
 
-    def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry):
+    def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True):
 
         self.type     = 'ExtrudedSolid'
         self.name     = name
