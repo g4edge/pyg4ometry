@@ -60,12 +60,11 @@ class ExtrudedSolid(_SolidBase):
         _log.info('xtru.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
 
         luval = _Units.unit(self.lunit)
 
-        pZslices = evaluateToFloat(self.registry, self.pZslices)
-        pPolygon = evaluateToFloat(self.registry, self.pPolygon)
+        pZslices = self.evaluateParameter(self.pZslices)
+        pPolygon = self.evaluateParameter(self.pPolygon)
 
         zpos     = [zslice[0]*luval for zslice in pZslices]
         x_offs   = [zslice[1][0]*luval for zslice in pZslices]
