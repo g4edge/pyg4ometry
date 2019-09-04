@@ -71,6 +71,6 @@ class GenericPolyhedra(_SolidBase):
 
         # Use a proxy polycone to get the mesh
         _poly = Polyhedra("temp", pSPhi, pDPhi, numSide, len(pZ), pZ, pRMin, pR,
-                         registry=None,lunit="mm",aunit="rad")
+                          registry=self.registry, lunit="mm", aunit="rad", addRegistry=False)
 
         return _poly.pycsgmesh()
