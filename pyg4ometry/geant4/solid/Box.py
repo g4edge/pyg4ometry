@@ -41,16 +41,13 @@ class Box(_SolidBase):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
 
     def pycsgmesh(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-
         _log.info('box.pycsgmesh> antlr')
-
-        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         uval = _Units.unit(self.lunit)
 
-        pX = evaluateToFloat(self.registry,self.pX)*uval/2.0
-        pY = evaluateToFloat(self.registry,self.pY)*uval/2.0
-        pZ = evaluateToFloat(self.registry,self.pZ)*uval/2.0
+        pX = self.evaluateParameter(self.pX)*uval/2.0
+        pY = self.evaluateParameter(self.pY)*uval/2.0
+        pZ = self.evaluateParameter(self.pZ)*uval/2.0
 
         _log.info('box.pycsgmesh> mesh')
         mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])
