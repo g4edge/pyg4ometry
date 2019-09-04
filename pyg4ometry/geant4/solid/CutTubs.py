@@ -71,8 +71,8 @@ class CutTubs(_SolidBase):
         pSPhi     = self.evaluateParameter(self.pSPhi)*auval
         pDPhi     = self.evaluateParameter(self.pDPhi)*auval
 
-        pHighNorm = [val*uval for val in self.evaluateParameter(self.pHighNorm)]
-        pLowNorm = [val*uval for val in self.evaluateParameter(self.pLowNorm)]
+        pHighNorm = [val*luval for val in self.evaluateParameter(self.pHighNorm)]
+        pLowNorm = [val*luval for val in self.evaluateParameter(self.pLowNorm)]
 
         _log.info('cuttubs.pycsgmesh> mesh')
         mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz, pSPhi, pDPhi, registry=None, nslice=self.nslice).pycsgmesh() # Units are already rendered
