@@ -39,8 +39,8 @@ class Cons(_SolidBase):
     """
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
-                 pSPhi, pDPhi, registry=None, lunit="mm", aunit="rad",
-                 nslice=16):
+                 pSPhi, pDPhi, registry, lunit="mm", aunit="rad",
+                 nslice=16, addRegistry=True):
 
         self.name   = name
         self.type   = 'Cons'
@@ -59,20 +59,23 @@ class Cons(_SolidBase):
 
         self.varNames = ["pRMin", "pRmin1", "pRmax1","pRmin2","pRmax2","pDz","pSPhi","pDPhi"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
         self.checkParameters()
 
     def checkParameters(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+
         auval = _Units.unit(self.aunit)
 
-        if self.pRmin1.eval() > self.pRmax1.eval() :
+        if self.evaluateParameter(self.pRmin1) > self.evaluateParameter(self.pRmax1) :
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.pRmin2.eval() > self.pRmax2.eval() :
+        if self.evaluateParameter(self.pRmin2) > self.evaluateParameter(self.pRmax2) :
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.pDPhi.eval()*auval > _np.pi*2:
+        if self.evaluateParameter(self.pDPhi)*auval > _np.pi*2:
             raise ValueError("pDPhi must be less than 2 pi")
 
     def __repr__(self):
@@ -87,13 +90,13 @@ class Cons(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pRmin1 = float(self.pRmin1)*luval
-        pRmax1 = float(self.pRmax1)*luval
-        pRmin2 = float(self.pRmin2)*luval
-        pRmax2 = float(self.pRmax2)*luval
-        pDz    = float(self.pDz)*luval/2.0
-        pSPhi  = float(self.pSPhi)*auval
-        pDPhi  = float(self.pDPhi)*auval
+        pRmin1 = self.evaluateParameter(self.pRmin1)*luval
+        pRmax1 = self.evaluateParameter(self.pRmax1)*luval
+        pRmin2 = self.evaluateParameter(self.pRmin2)*luval
+        pRmax2 = self.evaluateParameter(self.pRmax2)*luval
+        pDz    = self.evaluateParameter(self.pDz)*luval/2.0
+        pSPhi  = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi  = self.evaluateParameter(self.pDPhi)*auval
 
         _log.info('cons.pycsgmesh>')
 
