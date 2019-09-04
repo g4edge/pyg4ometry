@@ -26,7 +26,7 @@ class Orb(_SolidBase):
     :type nstack: int     
     """
 
-    def __init__(self, name, pRMax, registry=None, lunit = "mm", nslice=16, nstack=16):
+    def __init__(self, name, pRMax, registry, lunit="mm", nslice=16, nstack=16, addRegistry=True):
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
@@ -38,8 +38,10 @@ class Orb(_SolidBase):
 
         self.varNames = ["pRMax"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Orb : {} {}".format(self.name, self.pRMax)
@@ -50,7 +52,7 @@ class Orb(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
 
-        pRMax = float(self.pRMax)*luval
+        pRMax = self.evaluateParameter(self.pRMax)*luval
 
         _log.info("orb.pycsgmesh>")
         mesh = _CSG.sphere(center=[0,0,0], radius=pRMax,

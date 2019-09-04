@@ -31,9 +31,8 @@ class GenericPolycone(_SolidBase):
     """
 
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
-                 registry=None, 
-                 lunit = "mm", aunit = "rad",
-                 nslice=16):
+                 registry, lunit="mm", aunit="rad", nslice=16,
+                 addRegistry=True):
 
         self.type    = 'GenericPolycone'
         self.name    = name
@@ -50,8 +49,11 @@ class GenericPolycone(_SolidBase):
         self.dependents = []
 
         self.checkParameters()
-        if registry:
+
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def checkParameters(self):
         if len(self.pR) < 3:
@@ -64,10 +66,10 @@ class GenericPolycone(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
         
-        pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval
-        pR = [float(val)*luval for val in self.pR]
-        pZ = [float(val)*luval for val in self.pZ]
+        pSPhi = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval
+        pR = [val*luval for val in self.evaluateParameter(self.pR)]
+        pZ = [val*luval for val in self.evaluateParameter(self.pZ)]
 
         _log.info("genericpolycone.pycsgmesh>")
         r_first = pR[0]

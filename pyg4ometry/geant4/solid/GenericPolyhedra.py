@@ -6,9 +6,7 @@ import numpy as _np
 
 class GenericPolyhedra(_SolidBase):
     def __init__(self, name, pSPhi, pDPhi, numSide, pR, pZ,
-                 registry=None,
-                 lunit="mm",
-                 aunit="rad"):
+                 registry, lunit="mm", aunit="rad", addRegistry=True):
         """
         Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
 
@@ -34,8 +32,11 @@ class GenericPolyhedra(_SolidBase):
         self.dependents = []
 
         self.checkParameters()
-        if registry:
+
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Generic Polyhedra : {} {} {} {}".format(self.name, self.pSPhi,
@@ -52,11 +53,11 @@ class GenericPolyhedra(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval
-        numSide = float(self.numSide)
-        pR = [float(val)*luval for val in self.pR]
-        pZ = [float(val)*luval for val in self.pZ]
+        pSPhi = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval
+        numSide = self.evaluateParameter(self.numSide)
+        pR = [val*luval for val in self.evaluateParameter(self.pR)]
+        pZ = [val*luval for val in self.evaluateParameter(self.pZ)]
 
         _log.info("genericpolyhedra.pycsgmesh>")
         r_first = pR[0]

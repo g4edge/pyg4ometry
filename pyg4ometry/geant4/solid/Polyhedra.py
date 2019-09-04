@@ -34,7 +34,8 @@ class Polyhedra(_SolidBase):
     """
 
     def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes,
-                 zPlane, rInner, rOuter, registry=True, lunit = "mm", aunit ="rad"):
+                 zPlane, rInner, rOuter, registry, lunit="mm", aunit="rad",
+                 addRegistry=True):
 
         self.type       = 'Polyhedra'
         self.name       = name
@@ -52,13 +53,15 @@ class Polyhedra(_SolidBase):
 
         self.dependents = []
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Polyhedra : {} {} {} {} {}".format(self.name, self.phiStart,
-                                                  self.phiTotal, self.numSide,
-                                                  self.numZPlanes)
+                                                   self.phiTotal, self.numSide,
+                                                   self.numZPlanes)
 
     def pycsgmesh(self):
         mesh = self.basicmesh()
@@ -71,14 +74,14 @@ class Polyhedra(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        phiStart = float(self.phiStart)*auval
-        phiTotal = float(self.phiTotal)*auval
+        phiStart = self.evaluateParameter(self.phiStart)*auval
+        phiTotal = self.evaluateParameter(self.phiTotal)*auval
 
-        numSide = int(float(self.numSide))
+        numSide = int(self.evaluateParameter(self.numSide))
         numZPlanes = int(self.numZPlanes)
-        zPlane = [float(val)*luval for val in self.zPlane]
-        rInner = [float(val)*luval for val in self.rInner]
-        rOuter = [float(val)*luval for val in self.rOuter]
+        zPlane = [val*luval for val in self.evaluateParameter(self.zPlane)]
+        rInner = [val*luval for val in self.evaluateParameter(self.rInner)]
+        rOuter = [val*luval for val in self.evaluateParameter(self.rOuter)]
 
         _log.info("polyhedra.pycsgmesh>")
         fillfrac  = phiTotal/(2*_np.pi)
@@ -86,10 +89,9 @@ class Polyhedra(_SolidBase):
 
         ph        = _Polycone(self.name, phiStart, phiTotal,
                               zPlane, rInner, rOuter,
-                              registry=None,
-                              lunit="mm",
-                              aunit="rad",
-                              nslice=int(_np.ceil(slices)))
+                              registry=self.registry,
+                              lunit="mm", aunit="rad",
+                              nslice=int(_np.ceil(slices)), addRegistry=False)
         mesh = ph.pycsgmesh()
 
         return mesh

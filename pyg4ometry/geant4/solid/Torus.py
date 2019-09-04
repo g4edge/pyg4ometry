@@ -38,7 +38,8 @@ class Torus(_SolidBase):
     """
 
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
-                 registry = None, lunit="mm",aunit="rad",nslice=16, nstack=16):
+                 registry, lunit="mm", aunit="rad", nslice=16, nstack=16,
+                 addRegistry=True):
 
         self.type    = 'Torus'
         self.name    = name
@@ -57,8 +58,10 @@ class Torus(_SolidBase):
 
         self.varNames = ["pRmin", "pRmax", "pStor","pSPhi","pDPhi"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Torus : {} {} {} {} {} {}".format(self.name, self.pRmin,
@@ -73,11 +76,11 @@ class Torus(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pRmin = float(self.pRmin)*luval
-        pRmax = float(self.pRmax)*luval
-        pRtor = float(self.pRtor)*luval
-        pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval
+        pRmin = self.evaluateParameter(self.pRmin)*luval
+        pRmax = self.evaluateParameter(self.pRmax)*luval
+        pRtor = self.evaluateParameter(self.pRtor)*luval
+        pSPhi = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval
 
         _log.info("torus.pycsgmesh>")
         polygons = []

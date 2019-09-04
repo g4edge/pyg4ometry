@@ -16,8 +16,9 @@ class Trap(_SolidBase):
                  pDx2, pAlp1,
                  pDy2, pDx3,
                  pDx4, pAlp2,
-                 registry=None,
-                 lunit="mm", aunit="rad"):
+                 registry,
+                 lunit="mm", aunit="rad",
+                 addRegistry=True):
         """
         Constructs a general trapezoid.
 
@@ -57,8 +58,10 @@ class Trap(_SolidBase):
 
         self.varNames = ["pDz", "pTheta", "pDphi","pDy1","pDx1","pDx2","pAlp1","pDy2","pDx3","pDx4","pAlp2"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Trap : {} {} {} {} {} {} {} {} {} {} {} {}".format(self.name, self.pDz,
@@ -83,21 +86,21 @@ class Trap(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pDz  = float(self.pDz)*luval/2.
+        pDz  = self.evaluateParameter(self.pDz)*luval/2.
 
-        pDx1   = float(self.pDx1)*luval/2. #at -pDz
-        pDx2   = float(self.pDx2)*luval/2.
-        pDy1   = float(self.pDy1)*luval/2. #at -pDz
+        pDx1   = self.evaluateParameter(self.pDx1)*luval/2. #at -pDz
+        pDx2   = self.evaluateParameter(self.pDx2)*luval/2.
+        pDy1   = self.evaluateParameter(self.pDy1)*luval/2. #at -pDz
 
-        pDy2   = float(self.pDy2)*luval/2.
-        pDx3   = float(self.pDx3)*luval/2.
-        pDx4   = float(self.pDx4)*luval/2.
+        pDy2   = self.evaluateParameter(self.pDy2)*luval/2.
+        pDx3   = self.evaluateParameter(self.pDx3)*luval/2.
+        pDx4   = self.evaluateParameter(self.pDx4)*luval/2.
 
-        pTheta = float(self.pTheta)*auval
-        pDPhi  = float(self.pDPhi)*auval
+        pTheta = self.evaluateParameter(self.pTheta)*auval
+        pDPhi  = self.evaluateParameter(self.pDPhi)*auval
 
-        pAlp1  = float(self.pAlp1)*auval
-        pAlp2  = float(self.pAlp2)*auval
+        pAlp1  = self.evaluateParameter(self.pAlp1)*auval
+        pAlp2  = self.evaluateParameter(self.pAlp2)*auval
 
         _log.info("trap.pycsgmesh>")
         dX  = 2*_np.sin(pTheta)*pDz

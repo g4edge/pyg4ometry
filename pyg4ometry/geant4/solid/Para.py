@@ -36,9 +36,8 @@ class Para(_SolidBase):
 
     """
 
-    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry=None, lunit="mm", aunit="rad"):
-        import pyg4ometry.gdml.Defines as _Defines # TODO: Why is this here?
-
+    def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry,
+                 lunit="mm", aunit="rad", addRegistry=True):
         self.type     = 'Para'
         self.name   = name
         self.pX     = pDx
@@ -54,8 +53,10 @@ class Para(_SolidBase):
 
         self.varNames = ["pX", "pY", "pZ","pAlpha","pPhi"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry=registry
 
     def __repr__(self):
         return "Para : {} {} {} {} {} {}".format(self.pX, self.pY, self.pZ,
@@ -68,12 +69,12 @@ class Para(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pX     = float(self.pX)*luval
-        pY     = float(self.pY)*luval
-        pZ     = float(self.pZ)*luval
-        pAlpha = float(self.pAlpha)*auval
-        pTheta = float(self.pTheta)*auval
-        pPhi   = float(self.pPhi)*auval
+        pX     = self.evaluateParameter(self.pX)*luval
+        pY     = self.evaluateParameter(self.pY)*luval
+        pZ     = self.evaluateParameter(self.pZ)*luval
+        pAlpha = self.evaluateParameter(self.pAlpha)*auval
+        pTheta = self.evaluateParameter(self.pTheta)*auval
+        pPhi   = self.evaluateParameter(self.pPhi)*auval
 
         _log.info("para.pycsgmesh>")
         dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component

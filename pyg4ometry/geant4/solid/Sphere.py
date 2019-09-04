@@ -40,7 +40,8 @@ class Sphere(_SolidBase):
     """
 
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
-                 pDTheta, registry=None, lunit="mm", aunit="rad", nslice=10, nstack=10):
+                 pDTheta, registry, lunit="mm", aunit="rad",
+                 nslice=10, nstack=10, addRegistry=True):
 
         self.type    = 'Sphere'
         self.name    = name
@@ -60,16 +61,21 @@ class Sphere(_SolidBase):
 
         self.varNames = ["pRmin", "pRmax", "pSPhi","pDPhi","pSTheta","pDTheta"]
 
-        # self.checkParameters()
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
 
+        self.registry = registry
+
+        self.checkParameters()
+
     def checkParameters(self):
-        if self.pRmin > self.pRmax:
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        auval = _Units.unit(self.aunit)
+        if self.evaluateParameter(self.pRmin) > self.evaluateParameter(self.pRmax):
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.pDTheta > _np.pi:
+        if self.evaluateParameter(self.pDTheta)*auval > _np.pi:
             raise ValueError("pDTheta must be less than pi")
-        if self.pDPhi > _np.pi*2:
+        if self.evaluateParameter(self.pDPhi)*auval > _np.pi*2:
             raise ValueError("pDPhi must be less than 2 pi")
 
     def __repr__(self):
@@ -85,12 +91,12 @@ class Sphere(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pRmin   = float(self.pRmin)*luval
-        pRmax   = float(self.pRmax)*luval
-        pSPhi   = float(self.pSPhi)*auval
-        pDPhi   = float(self.pDPhi)*auval
-        pSTheta = float(self.pSTheta)*auval
-        pDTheta = float(self.pDTheta)*auval
+        pRmin   = self.evaluateParameter(self.pRmin)*luval
+        pRmax   = self.evaluateParameter(self.pRmax)*luval
+        pSPhi   = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi   = self.evaluateParameter(self.pDPhi)*auval
+        pSTheta = self.evaluateParameter(self.pSTheta)*auval
+        pDTheta = self.evaluateParameter(self.pDTheta)*auval
         
         _log.info("sphere.pycsgmesh>")
         thetaFin = pSTheta + pDTheta

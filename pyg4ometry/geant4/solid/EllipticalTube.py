@@ -32,7 +32,8 @@ class EllipticalTube(_SolidBase):
     """
     
 
-    def __init__(self, name, pDx, pDy, pDz, registry=None, lunit="mm", nslice=6, nstack=6):
+    def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
+                 nslice=6, nstack=6, addRegistry=True):
 
         self.type   = 'EllipticalTube'
         self.name   = name
@@ -47,8 +48,10 @@ class EllipticalTube(_SolidBase):
 
         self.varNames = ["pDx", "pDy", "pDz"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "EllipticalTube : {} {} {} {}".format(self.name, self.pDx,
@@ -61,9 +64,9 @@ class EllipticalTube(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
 
-        pDx = float(self.pDx)*luval/2.0
-        pDy = float(self.pDy)*luval/2.0
-        pDz = float(self.pDz)*luval/2.0
+        pDx = self.evaluateParameter(self.pDx)*luval/2.0
+        pDy = self.evaluateParameter(self.pDy)*luval/2.0
+        pDz = self.evaluateParameter(self.pDz)*luval/2.0
 
         _log.info('ellipticaltube.pycsgmesh>')
         sz      = -pDz

@@ -35,7 +35,7 @@ class Tubs(_SolidBase):
     :type nslice: int 
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry=None,
-                 lunit="mm", aunit="rad", nslice=16):
+                 lunit="mm", aunit="rad", nslice=16, addRegistry=True):
         self.type   = 'Tubs'
         self.name   = name
         self.pRMin  = pRMin
@@ -51,8 +51,10 @@ class Tubs(_SolidBase):
 
         self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi"]
 
-        if registry :
+        if addRegistry :
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
@@ -65,13 +67,13 @@ class Tubs(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pDz   = float(self.pDz)*luval
-        pRMax = float(self.pRMax)*luval
-        pRMin = float(self.pRMin)*luval
-        pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval-0.001 # issue with 2*pi
-        pDz   = float(self.pDz)*luval/2
-        pRMax = float(self.pRMax)*luval
+        pDz   = self.evaluateParameter(self.pDz)*luval
+        pRMax = self.evaluateParameter(self.pRMax)*luval
+        pRMin = self.evaluateParameter(self.pRMin)*luval
+        pSPhi = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval-0.001 # issue with 2*pi
+        pDz   = self.evaluateParameter(self.pDz)*luval/2
+        pRMax = self.evaluateParameter(self.pRMax)*luval
 
         _log.info('tubs.pycsgmesh> mesh')
         mesh = _CSG.cylinder(start=[0,0,-pDz], end=[0,0,pDz],radius=pRMax, slices=self.nslice)

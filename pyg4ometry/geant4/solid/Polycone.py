@@ -42,7 +42,9 @@ class Polycone(_SolidBase):
 
 
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
-                 registry=None, lunit = "mm", aunit = "rad", nslice=16):
+                 registry, lunit="mm", aunit="rad", nslice=16,
+                 addRegistry=True):
+
         self.type    = 'Polycone'
         self.name    = name
         self.pSPhi   = pSPhi
@@ -58,8 +60,10 @@ class Polycone(_SolidBase):
 
         self.varNames = ["pSPhi", "pDPhi", "pZpl","pRMin","pRMax"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
@@ -79,12 +83,12 @@ class Polycone(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        pSPhi = float(self.pSPhi)*auval
-        pDPhi = float(self.pDPhi)*auval
+        pSPhi = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval
 
-        pZpl = [float(val)*luval for val in self.pZpl]
-        pRMin = [float(val)*luval for val in self.pRMin]
-        pRMax = [float(val)*luval for val in self.pRMax]
+        pZpl = [val*luval for val in self.evaluateParameter(self.pZpl)]
+        pRMin = [val*luval for val in self.evaluateParameter(self.pRMin)]
+        pRMax = [val*luval for val in self.evaluateParameter(self.pRMax)]
 
         _log.info("polycone.basicmesh>")
         polygons = []
