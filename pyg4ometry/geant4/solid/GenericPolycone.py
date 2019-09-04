@@ -82,9 +82,8 @@ class GenericPolycone(_SolidBase):
 
         # Use a proxy polycone to get the mesh
         _poly = Polycone("temp", pSPhi, pDPhi, pZ, pRMin, pR,
-                         registry=None, 
-                         lunit="mm",
-                         aunit="rad",
-                         nslice=self.nslice)
+                         registry=self.registry,
+                         lunit="mm", aunit="rad",
+                         nslice=self.nslice, addRegistry=False)
 
         return _poly.pycsgmesh()
