@@ -48,10 +48,10 @@ class CutTubs(_SolidBase):
 
         self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi","pLowNorm","pHighNorm"]
 
-        self.registry = registry
-
         if addRegistry :
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         # Low norm and high norm exlcluded as they are lists
@@ -61,24 +61,18 @@ class CutTubs(_SolidBase):
 
         _log.info('cuttubs.pycsgmesh> antlr')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        from pyg4ometry.gdml.Defines import evaluateToFloat as evaluateToFloat
+        pRMin     = self.evaluateParameter(self.pRMin)*luval
+        pRMax     = self.evaluateParameter(self.pRMax)*luval
+        pDz       = self.evaluateParameter(self.pDz)*luval/2.
+        pSPhi     = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi     = self.evaluateParameter(self.pDPhi)*auval
 
-        pRMin     = evaluateToFloat(self.registry, self.pRMin)*luval
-        pRMax     = evaluateToFloat(self.registry, self.pRMax)*luval
-        pDz       = evaluateToFloat(self.registry, self.pDz)*luval/2.
-        pSPhi     = evaluateToFloat(self.registry, self.pSPhi)*auval
-        pDPhi     = evaluateToFloat(self.registry, self.pDPhi)*auval
-        pHighNorm = [evaluateToFloat(self.registry, self.pHighNorm[0])*luval,
-                     evaluateToFloat(self.registry, self.pHighNorm[1])*luval,
-                     evaluateToFloat(self.registry, self.pHighNorm[2])*luval]
-
-        pLowNorm  = [evaluateToFloat(self.registry, self.pLowNorm[0])*luval,
-                     evaluateToFloat(self.registry, self.pLowNorm[1])*luval,
-                     evaluateToFloat(self.registry, self.pLowNorm[2])*luval]
+        pHighNorm = [val*uval for val in self.evaluateParameter(self.pHighNorm)]
+        pLowNorm = [val*uval for val in self.evaluateParameter(self.pLowNorm)]
 
         _log.info('cuttubs.pycsgmesh> mesh')
         mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz, pSPhi, pDPhi, registry=None, nslice=self.nslice).pycsgmesh() # Units are already rendered
