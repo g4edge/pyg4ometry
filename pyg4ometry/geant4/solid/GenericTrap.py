@@ -38,10 +38,12 @@ class GenericTrap(_SolidBase):
     """
 
     def __init__(self, name, v1x, v1y, v2x, v2y, v3x, v3y, v4x, v4y,
-                 v5x, v5y, v6x, v6y, v7x, v7y, v8x, v8y, dz, registry=None, nstack=20):
+                 v5x, v5y, v6x, v6y, v7x, v7y, v8x, v8y, dz,
+                 registry, nstack=20, lunit="mm", addRegistry=True):
         self.type = 'GenericTrap'
         self.name = name
         self.dz = dz
+        self.lunit = lunit
         self.nstack = nstack
 
         vars_in = locals()
@@ -51,10 +53,13 @@ class GenericTrap(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["v1x", "v1y", "v2x","v2y","v3x","v3y","v4x","v4y","v5x","v5y","v6x","v6y","v7x","v7y","v8x","v8y","dz"]
+        self.varNames = ["v1x", "v1y", "v2x","v2y","v3x","v3y","v4x","v4y",
+                         "v5x","v5y","v6x","v6y","v7x","v7y","v8x","v8y","dz"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry=registry
 
     def __repr__(self):
         return "Generic Trapezoid : {}".format(self.name)
@@ -70,9 +75,12 @@ class GenericTrap(_SolidBase):
         return signed_area
 
     def get_vertex(self, index):
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        uval = _Units.unit(self.lunit)
+
         sign_z = -1 if index <= 4 else 1
-        vertex = (float(getattr(self, "v{}x".format(index))),
-                  float(getattr(self, "v{}y".format(index))),
+        vertex = (self.evaluateParameter(getattr(self, "v{}x".format(index))*uval),
+                  self.evaluateParameter(getattr(self, "v{}y".format(index))*uval),
                   sign_z*float(self.dz))
         return vertex
 

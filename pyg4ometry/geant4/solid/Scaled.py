@@ -21,7 +21,7 @@ class Scaled(_SolidBase):
     :type registry: Registry
     """
 
-    def __init__(self, name, solid, pX, pY, pZ, registry):
+    def __init__(self, name, solid, pX, pY, pZ, registry, addRegistry=True):
         self.name = name
         self.solid = solid
         self.pX   = pX
@@ -33,6 +33,8 @@ class Scaled(_SolidBase):
         if registry:
             registry.addSolid(self)
 
+        self.registry = registry
+
     def __repr__(self):
         return "Scaled : {} {} {} {} {}".format(self.name, self.solid, self.pX, self.pY, self.pZ)
 
@@ -41,9 +43,9 @@ class Scaled(_SolidBase):
 
         _log.info('scaled.pycsgmesh> antlr')
 
-        pX = float(self.pX)
-        pY = float(self.pY)
-        pZ = float(self.pZ)
+        pX = self.evaluateParameter(self.pX.expression)
+        pY = self.evaluateParameter(self.pY.expression)
+        pZ = self.evaluateParameter(self.pZ.expression)
 
         mesh = self.solid.pycsgmesh()
         mesh.scale([pX,pY,pZ])

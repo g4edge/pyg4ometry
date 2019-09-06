@@ -37,7 +37,8 @@ class Ellipsoid(_SolidBase):
 
 
     def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
-                 pzBottomCut, pzTopCut, registry=None, lunit = "mm", nslice=8, nstack=8):
+                 pzBottomCut, pzTopCut, registry, lunit = "mm",
+                 nslice=8, nstack=8, addRegistry=True):
         self.type        = 'Ellipsoid'
         self.name        = name
         self.pxSemiAxis  = pxSemiAxis
@@ -54,8 +55,10 @@ class Ellipsoid(_SolidBase):
 
         self.varNames = ["pxSemiAxis", "pySemiAxis", "pzSemiAxis","pzBottomCut","pzTopCut"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Ellipsoid : {} {} {} {} {} {}".format(self.name, self.pxSemiAxis,
@@ -77,9 +80,9 @@ class Ellipsoid(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
 
-        pxSemiAxis = float(self.pxSemiAxis)*luval
-        pySemiAxis = float(self.pySemiAxis)*luval
-        pzSemiAxis = float(self.pzSemiAxis)*luval
+        pxSemiAxis = self.evaluateParameter(self.pxSemiAxis)*luval
+        pySemiAxis = self.evaluateParameter(self.pySemiAxis)*luval
+        pzSemiAxis = self.evaluateParameter(self.pzSemiAxis)*luval
 
         _log.info('ellipsoid.basicmesh>')
         def appendVertex(vertices, u, v):

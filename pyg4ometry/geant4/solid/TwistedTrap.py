@@ -48,7 +48,8 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     """
 
     def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
-                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry=None, lunit = "mm", aunit = "rad", nstack=20):
+                 pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry,
+                 lunit = "mm", aunit = "rad", nstack=20, addRegistry=True):
         self.type         = 'TwistedTrap'
         self.name         = name
         self.twistedangle = twistedangle
@@ -70,12 +71,15 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDz", "pThetae","pDPhi","pDy1","pDx1","pDx2","pDy2","pDx3","pDx4","pAlp"]
 
-        self.checkParameters()
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
 
+        self.registry = registry
+
+        self.checkParameters()
+
     def checkParameters(self):
-        if float(self.twistedangle) > _np.pi:
+        if self.evaluateParameter(self.twistedangle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
     def __repr__(self):
@@ -128,17 +132,17 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        twistedangle = float(self.twistedangle)
-        pDz = float(self.pDz)/2.
-        pTheta = float(self.pTheta)
-        pDPhi = float(self.pDPhi)
-        pDy1 = float(self.pDy1)/2.
-        pDx1 = float(self.pDx1)/2.
-        pDx2 = float(self.pDx2)/2.
-        pDy2 = float(self.pDy2)/2.
-        pDx3 = float(self.pDx3)/2.
-        pDx4 = float(self.pDx4)/2.
-        pAlp = float(self.pAlp)
+        twistedangle = self.evaluateParameter(self.twistedangle)
+        pDz = self.evaluateParameter(self.pDz)/2.
+        pTheta = self.evaluateParameter(self.pTheta)
+        pDPhi = self.evaluateParameter(self.pDPhi)
+        pDy1 = self.evaluateParameter(self.pDy1)/2.
+        pDx1 = self.evaluateParameter(self.pDx1)/2.
+        pDx2 = self.evaluateParameter(self.pDx2)/2.
+        pDy2 = self.evaluateParameter(self.pDy2)/2.
+        pDx3 = self.evaluateParameter(self.pDx3)/2.
+        pDx4 = self.evaluateParameter(self.pDx4)/2.
+        pAlp = self.evaluateParameter(self.pAlp)
 
         _log.info('twistedtrap.pycsgmesh> mesh')
         #Bottom plane coordinates:

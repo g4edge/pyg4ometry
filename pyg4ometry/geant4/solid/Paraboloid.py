@@ -31,7 +31,8 @@ class Paraboloid(_SolidBase):
     
     """
     
-    def __init__(self, name, pDz, pR1, pR2, registry=None, lunit="mm", nslice=16, nstack=8) :
+    def __init__(self, name, pDz, pR1, pR2, registry, lunit="mm",
+                 nslice=16, nstack=8, addRegistry=True) :
 
         self.type   = 'Paraboloid'
         self.name   = name
@@ -46,8 +47,10 @@ class Paraboloid(_SolidBase):
 
         self.varNames = ["pDz", "pR1", "pR2"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
 
     def __repr__(self):
         return "Paraboloid : {} {} {} {}".format(self.name, self.pDz,
@@ -59,9 +62,9 @@ class Paraboloid(_SolidBase):
         _log.info("paraboloid.antlr>")
 
         uval = _Units.unit(self.lunit)
-        pDz    = float(self.pDz)/2.0*uval
-        pR1    = float(self.pR1)*uval
-        pR2    = float(self.pR2)*uval
+        pDz    = self.evaluateParameter(self.pDz)/2.0*uval
+        pR1    = self.evaluateParameter(self.pR1)*uval
+        pR2    = self.evaluateParameter(self.pR2)*uval
 
         _log.info("paraboloid.pycsgmesh>")
         polygons = []

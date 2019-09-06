@@ -40,7 +40,8 @@ class Hype(_SolidBase):
 
 
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
-                 outerStereo, lenZ, registry = None, lunit="mm", aunit="rad",nslice=16, nstack=16):
+                 outerStereo, lenZ, registry, lunit="mm",
+                 aunit="rad",nslice=16, nstack=16, addRegistry=True):
         self.type        = 'Hype'
         self.name        = name
         self.innerRadius = innerRadius
@@ -57,9 +58,12 @@ class Hype(_SolidBase):
 
         self.varNames = ["innerRadius", "outerRadius", "innerStereo","outerStereo","lenZ"]
 
-        self.checkParameters()
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
+
+        self.checkParameters()
 
     def __repr__(self):
         return "Hype : {} {} {} {} {} {}".format(self.name, self.innerRadius, self.outerRadius,
@@ -77,11 +81,11 @@ class Hype(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        innerRadius = float(self.innerRadius)*luval
-        outerRadius = float(self.outerRadius)*luval
-        innerStereo = float(self.innerStereo)*auval
-        outerStereo = float(self.outerStereo)*auval
-        halfLenZ    = float(self.lenZ)/2.0*luval
+        innerRadius = self.evaluateParameter(self.innerRadius)*luval
+        outerRadius = self.evaluateParameter(self.outerRadius)*luval
+        innerStereo = self.evaluateParameter(self.innerStereo)*auval
+        outerStereo = self.evaluateParameter(self.outerStereo)*auval
+        halfLenZ    = self.evaluateParameter(self.lenZ)/2.0*luval
 
         _log.info('hype.pycsgmesh> mesh')
 

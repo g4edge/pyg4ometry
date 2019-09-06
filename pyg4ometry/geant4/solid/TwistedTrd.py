@@ -42,7 +42,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
     """
 
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
-                 pDz, registry=None, lunit = "mm", aunit = "rad", nstack=20, refine=0):
+                 pDz, registry, lunit="mm", aunit="rad",
+                 nstack=20, refine=0, addRegistry=True):
         self.type             = 'TwistedTrd'
         self.name             = name
         self.twistedAngle     = twistedangle
@@ -52,7 +53,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.pDy2             = pDy2
         self.pDz              = pDz
         self.lunit            = lunit
-        self.aunit            = aunit 
+        self.aunit            = aunit
         self.nstack           = nstack
         self.refine           = refine
 
@@ -60,9 +61,11 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDx1", "pDx2","pDy1","pDy2","pDz"]
 
-        self.checkParameters()
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
+        self.checkParameters()
 
     def __repr__(self):
         return "TwistedTrd : {} {} {} {} {} {} {}".format(self.name, self.twistedAngle,
@@ -71,7 +74,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
                                                           self.pDz)
 
     def checkParameters(self):
-        if float(self.twistedAngle) > _np.pi:
+        if self.evaluateParameter(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 
@@ -107,12 +110,12 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        twistedAngle = float(self.twistedAngle)
-        pDx1 = float(self.pDx1)/2.
-        pDx2 = float(self.pDx2)/2.
-        pDy1 = float(self.pDy1)/2.
-        pDy2 = float(self.pDy2)/2.
-        pDz = float(self.pDz)/2.
+        twistedAngle = self.evaluateParameter(self.twistedAngle)
+        pDx1 = self.evaluateParameter(self.pDx1)/2.
+        pDx2 = self.evaluateParameter(self.pDx2)/2.
+        pDy1 = self.evaluateParameter(self.pDy1)/2.
+        pDy2 = self.evaluateParameter(self.pDy2)/2.
+        pDz = self.evaluateParameter(self.pDz)/2.
 
         _log.info('hype.pycsgmesh> mesh')
         pl1 = _TwoVector(-pDx1, -pDy1)#, pDz]

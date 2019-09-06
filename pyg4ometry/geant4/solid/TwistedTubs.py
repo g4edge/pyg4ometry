@@ -37,7 +37,8 @@ class TwistedTubs(_SolidBase):
     """
 
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
-                 registry=None, lunit = "mm", aunit = "rad", nslice=16, nstack=16):
+                 registry, lunit="mm", aunit="rad", nslice=16, nstack=16,
+                 addRegistry=True):
         self.type         = 'TwistedTubs'
         self.name         = name
         self.endinnerrad  = endinnerrad
@@ -54,9 +55,10 @@ class TwistedTubs(_SolidBase):
 
         self.varNames = ["endinnerrad", "endouterrad", "zlen","phi","twistedangle"]
 
-        # self.checkParameters()
         if registry:
             registry.addSolid(self)
+        self.registry = registry
+        # self.checkParameters()
 
     def __repr__(self):
         return "TwistedTubs : {} {} {} {} {} {} {}".format(self.name,
@@ -97,12 +99,12 @@ class TwistedTubs(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        endinnerrad = float(self.endinnerrad)*luval
-        endouterrad = float(self.endouterrad)*luval
+        endinnerrad = self.evaluateParameter(self.endinnerrad)*luval
+        endouterrad = self.evaluateParameter(self.endouterrad)*luval
 
-        zlen         = float(self.zlen)*luval
-        phi          = float(self.phi)*auval 
-        twistedangle = float(self.twistedangle)*auval
+        zlen         = self.evaluateParameter(self.zlen)*luval
+        phi          = self.evaluateParameter(self.phi)*auval 
+        twistedangle = self.evaluateParameter(self.twistedangle)*auval
 
         _log.info("polycone.basicmesh>")
         polygons = []

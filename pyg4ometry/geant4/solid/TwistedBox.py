@@ -40,9 +40,9 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     """
 
 
-    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry=None, 
+    def __init__(self, name, twistedangle, pDx, pDy, pDz, registry,
                  lunit = "mm", aunit = "rad",
-                 nstack=20, refine=0):
+                 nstack=20, refine=0, addRegistry=True):
         self.type         = 'TwistedBox'
         self.name         = name
         self.twistedAngle = twistedangle
@@ -58,15 +58,17 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDx", "pDy","pDz"]
 
-        self.checkParameters()
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
+        self.checkParameters()
 
     def __repr__(self):
         return "Twisted Box : {} {} {} {} {}".format(self.name, self.twistedAngle,
                                                      self.pDx, self.pDy, self.pDz)
     def checkParameters(self):
-        if float(self.twistedAngle) > _np.pi:
+        if self.evaluateParameter(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 
@@ -96,11 +98,11 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        twistedAngle = float(self.twistedAngle)*auval
-        pDx = float(self.pDx)/2.*luval
-        pDy = float(self.pDy)/2.*luval
-        pDz = float(self.pDz)/2.*luval
-        refine  = float(self.refine)
+        twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
+        pDx = self.evaluateParameter(self.pDx)/2.*luval
+        pDy = self.evaluateParameter(self.pDy)/2.*luval
+        pDz = self.evaluateParameter(self.pDz)/2.*luval
+        refine  = self.evaluateParameter(self.refine)
 
         _log.info('twistedbox.pycsgmesh> mesh')
         p1 = _TwoVector(-pDx, -pDy)#, pDz]

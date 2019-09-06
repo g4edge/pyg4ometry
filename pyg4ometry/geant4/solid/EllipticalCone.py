@@ -10,7 +10,7 @@ import numpy as _np
 
 class EllipticalCone(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
-                 registry=None, lunit="mm",nslice=16, nstack=16):
+                 registry, lunit="mm",nslice=16, nstack=16, addRegistry=True):
         """
         Constructs a cone with elliptical cross-section.
 
@@ -36,10 +36,12 @@ class EllipticalCone(_SolidBase):
 
         self.varNames = ["pxSemiAxis", "pySemiAxis", "zMax","pzTopCut"]
 
-        # self.checkParameters()
-
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
+
+        self.registry = registry
+
+        self.checkParameters()
 
     def __repr__(self):
         return "EllipticalCone : {} {} {} {} {}".format(self.name, self.pxSemiAxis,
@@ -47,7 +49,9 @@ class EllipticalCone(_SolidBase):
                                                         self.pzTopCut)
 
     def checkParameters(self):
-        if self.pzTopCut.eval() <= -self.zMax.eval()/2.0 or self.pzTopCut.eval() > self.zMax.eval()/2.0:
+        pzTopCut = self.evaluateParameter(self.pzTopCut)
+        zMax = self.evaluateParameter(self.zMax)
+        if pzTopCut <= -zMax/2.0 or pzTopCut > zMax/2.0:
             raise ValueError("zMax must be greater than pzTopCut")
 
     def pycsgmesh(self):
@@ -57,10 +61,10 @@ class EllipticalCone(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
 
-        pxSemiAxis = float(self.pxSemiAxis)*luval
-        pySemiAxis = float(self.pySemiAxis)*luval
-        zMax       = float(self.zMax)*luval
-        pzTopCut   = float(self.pzTopCut)*luval
+        pxSemiAxis = self.evaluateParameter(self.pxSemiAxis)*luval
+        pySemiAxis = self.evaluateParameter(self.pySemiAxis)*luval
+        zMax       = self.evaluateParameter(self.zMax)*luval
+        pzTopCut   = self.evaluateParameter(self.pzTopCut)*luval
         
         _log.info("ellipticalcone.pycsgmesh>")
         polygons = []
