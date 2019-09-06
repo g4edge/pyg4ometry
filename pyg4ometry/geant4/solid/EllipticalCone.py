@@ -41,7 +41,7 @@ class EllipticalCone(_SolidBase):
 
         self.registry = registry
 
-        self.checkParameters()
+        #self.checkParameters()
 
     def __repr__(self):
         return "EllipticalCone : {} {} {} {} {}".format(self.name, self.pxSemiAxis,
