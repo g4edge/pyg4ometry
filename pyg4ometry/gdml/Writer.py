@@ -30,6 +30,7 @@ class Writer(object):
         self.setup     = self.top.appendChild(self.doc.createElement('setup'))
 
         self.materials_written = []
+        self.solids_written    = []
 
         self.defineList        = []
         self.materialList      = []
@@ -591,6 +592,8 @@ class Writer(object):
         """
         Dispatch to correct member function based on type string in SolidBase.
         """
+        if solid.name in self.solids_written:
+            return # Do nothing if written already
 
         if hasattr(self, 'write'+solid.type):
             func = getattr(self, 'write'+solid.type) # get the member function
