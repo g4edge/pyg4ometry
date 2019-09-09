@@ -598,6 +598,7 @@ class Writer(object):
         if hasattr(self, 'write'+solid.type):
             func = getattr(self, 'write'+solid.type) # get the member function
             func(solid) # call it with the solid instance as an argument
+            self.solids_written.append(solid.name)
         else:
             raise ValueError("No such solid "+solid.type)
 
