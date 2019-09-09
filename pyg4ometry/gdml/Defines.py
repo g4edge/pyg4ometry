@@ -45,8 +45,10 @@ def evaluateToFloat(reg, obj):
     try:
         ans = [evaluateToFloat(reg, item) for item in obj.__iter__()]
     except AttributeError:
-        if is_numlike(obj) or isinstance(obj,ScalarBase):
+        if is_numlike(obj) or isinstance(obj, ScalarBase):
             evaluatable = obj
+        elif isinstance(obj, VectorBase):
+            return obj.eval()
         else:
             evaluatable = _Expression("",obj,reg)
 
