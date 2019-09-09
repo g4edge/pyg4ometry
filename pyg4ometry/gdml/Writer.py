@@ -1163,6 +1163,9 @@ class Writer(object):
         self.solids.appendChild(oe)    
 
     def writeUnion(self, instance):
+        self.writeSolid(instance.obj1) # Make sure the solids are written first
+        self.writeSolid(instance.obj2)
+
         oe  = self.doc.createElement('union')
         oe.setAttribute('name',self.prepend + instance.name)
 
@@ -1180,6 +1183,9 @@ class Writer(object):
         self.solids.appendChild(oe)
 
     def writeSubtraction(self, instance):
+        self.writeSolid(instance.obj1) # Make sure the solids are written first
+        self.writeSolid(instance.obj2)
+
         oe  = self.doc.createElement('subtraction')
         oe.setAttribute('name',self.prepend + instance.name)
 
@@ -1197,6 +1203,9 @@ class Writer(object):
         self.solids.appendChild(oe)
 
     def writeIntersection(self, instance):
+        self.writeSolid(instance.obj1) # Make sure the solids are written first
+        self.writeSolid(instance.obj2)
+
         oe  = self.doc.createElement('intersection')
         oe.setAttribute('name',self.prepend + instance.name)
 
@@ -1213,7 +1222,10 @@ class Writer(object):
 
         self.solids.appendChild(oe)
 
-    def writeMultiUnion(self, instance) : 
+    def writeMultiUnion(self, instance) :
+        for obj in instance.objects:
+            self.writeSolid(obj) # Make sure the solids are written first
+
         oe  = self.doc.createElement('multiUnion')
         oe.setAttribute('name',self.prepend + instance.name)        
 
