@@ -3,6 +3,7 @@ import vtk as _vtk
 import pyg4ometry.transformation as _transformation
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from   pyg4ometry.visualisation import Mesh as _Mesh
 import logging as _log
 
 class VtkViewer:
@@ -98,7 +99,9 @@ class VtkViewer:
                 new_mtra = mtra * pvmsca * pvmrot
                 new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                mesh = pv.logicalVolume.mesh.localmesh
+                #mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
+                mesh = _Mesh(pv.logicalVolume.solid).localmesh
+
                 self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                              self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
