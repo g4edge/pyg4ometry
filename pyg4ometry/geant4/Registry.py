@@ -41,6 +41,7 @@ class Registry:
         self.solidTypeCountDict           = {}               # Box, Cons etc
         self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
 
+        self.editedSolids                 = []               # Solids changed post-initialisation
 
         self.expressionParser = None
 
@@ -50,6 +51,10 @@ class Registry:
             self.expressionParser = ExpressionParser()
 
         return self.expressionParser
+
+    def registerSolidEdit(self, solid):
+        if solid.name in self.solidDict:
+            self.editedSolids.append(solid.name)
 
     def addMaterial(self, material, namePolicy = "none"):
         """
