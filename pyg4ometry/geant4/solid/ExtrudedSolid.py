@@ -28,22 +28,19 @@ class ExtrudedSolid(_SolidBase):
     """
 
     def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True):
-
         self.type     = 'ExtrudedSolid'
         self.name     = name
 
-        self.pPolygon = pPolygon
-        self.pZslices = pZslices 
-        self.lunit    = lunit
-
-        self.dependents = []
-
-        self.varNames = ["pPolygon", "pZslices"]
-
         if addRegistry :
             registry.addSolid(self)
-
         self.registry = registry
+
+        self.dependents = []
+        self.varNames = ["pPolygon", "pZslices", "lunit"]
+
+        for name in self.varNames:
+            self._addProperty(name)
+            setattr(self, name, locals()[name])
 
     def __repr__(self):
         return "Extruded solid: {}".format(self.name)

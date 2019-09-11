@@ -36,25 +36,21 @@ class Tubs(_SolidBase):
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry=None,
                  lunit="mm", aunit="rad", nslice=16, addRegistry=True):
-        self.type   = 'Tubs'
         self.name   = name
-        self.pRMin  = pRMin
-        self.pRMax  = pRMax
-        self.pDz    = pDz
-        self.pSPhi  = pSPhi
-        self.pDPhi  = pDPhi
-        self.lunit  = lunit
-        self.aunit  = aunit
-        self.nslice = nslice
-        self.mesh   = None
-        self.dependents = []
-
-        self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi"]
+        self.type   = 'Tubs'
 
         if addRegistry :
             registry.addSolid(self)
-
         self.registry = registry
+
+        self.dependents = []
+        self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi",
+                         "pDPhi", "aunit", "lunit", "nslice"]
+
+        for name in self.varNames:
+            self._addProperty(name)
+            setattr(self, name, locals()[name])
+
 
     def __repr__(self):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,

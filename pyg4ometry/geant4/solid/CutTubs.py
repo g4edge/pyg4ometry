@@ -33,25 +33,22 @@ class CutTubs(_SolidBase):
 
         self.type      = 'CutTubs'
         self.name      = name
-        self.pRMin     = pRMin
-        self.pRMax     = pRMax
-        self.pDz       = pDz
-        self.pSPhi     = pSPhi
-        self.pDPhi     = pDPhi
-        self.pLowNorm  = pLowNorm
-        self.pHighNorm = pHighNorm
+
+        if addRegistry :
+            registry.addSolid(self)
+        self.registry = registry
 
         self.nslice    = nslice
         self.lunit     = lunit
         self.aunit     = aunit
         self.dependents = []
+        self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi", "pDPhi",
+                         "pLowNorm", "pHighNorm", "lunit", "aunit", "nslice"]
 
-        self.varNames = ["pRMin", "pRMax", "pDz","pSPhi","pDPhi","pLowNorm","pHighNorm"]
+        for name in self.varNames:
+            self._addProperty(name)
+            setattr(self, name, locals()[name])
 
-        if addRegistry :
-            registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         # Low norm and high norm exlcluded as they are lists

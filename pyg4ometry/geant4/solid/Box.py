@@ -21,21 +21,20 @@ class Box(_SolidBase):
     :type lunit: str
     """
 
-    def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry = True):
-        self.name = name
-        self.pX   = pX
-        self.pY   = pY
-        self.pZ   = pZ
-        self.lunit = lunit
+    def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry=True):
         self.type = 'Box'
-        self.dependents = []
-
-        self.varNames = ["pX", "pY", "pZ"]
+        self.name = name
 
         if addRegistry:
             registry.addSolid(self)
-
         self.registry = registry
+
+        self.dependents = []
+        self.varNames = ["pX", "pY", "pZ", "lunit"]
+
+        for name in self.varNames:
+            self._addProperty(name)
+            setattr(self, name, locals()[name])
 
     def __repr__(self):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
