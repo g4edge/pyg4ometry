@@ -31,7 +31,7 @@ class TessellatedSolid(_SolidBase):
         Gdml    = 2
         Stl     = 3
 
-    def __init__(self, name, mesh, registry=None, meshtype = MeshType.Freecad):
+    def __init__(self, name, mesh, registry, meshtype=MeshType.Freecad, addRegistry=True):
         self.type        = 'TessellatedSolid'
         self.name        = name
 
@@ -40,14 +40,13 @@ class TessellatedSolid(_SolidBase):
 
         self.dependents = []
 
-
         #self.indexed_facet_list = []
         #self.unique_vertices    = []
         #self.reduceVertices()
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
-            self.registry = registry
+        self.registry = registry
 
     def __repr__(self):
         return self.type
