@@ -32,9 +32,8 @@ class Tet(_SolidBase):
     """
 
 
-    def __init__(self, name, anchor, p2, p3, p4, registry,
-                 lunit = "mm",
-                 degeneracyFlag=False):
+    def __init__(self, name, anchor, p2, p3, p4, registry, lunit = "mm",
+                 degeneracyFlag=False, addRegistry=True):
         self.type    = 'Tet'
         self.name    = name
         self.anchor  = anchor
@@ -48,7 +47,8 @@ class Tet(_SolidBase):
 
         self.varNames = ["anchor", "p2", "p3","p4"]
 
-        registry.addSolid(self) # Always need the registry
+        if addRegistry:
+            registry.addSolid(self) # Always need the registry
 
         self.registry = registry
 
@@ -66,10 +66,10 @@ class Tet(_SolidBase):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
 
-        anchor = _np.array([self.anchor.x.eval(), self.anchor.y.eval(), self.anchor.z.eval()])*luval
-        p2     = _np.array([self.p2.x.eval(), self.p2.y.eval(), self.p2.z.eval()])*luval
-        p3     = _np.array([self.p3.x.eval(), self.p3.y.eval(), self.p3.z.eval()])*luval
-        p4     = _np.array([self.p4.x.eval(), self.p4.y.eval(), self.p4.z.eval()])*luval
+        anchor = [val*luval for val in self.evaluateParameter(self.anchor)]
+        p2 = [val*luval for val in self.evaluateParameter(self.p2)]
+        p3 = [val*luval for val in self.evaluateParameter(self.p3)]
+        p4 = [val*luval for val in self.evaluateParameter(self.p4)]
 
         _log.info('tet.pycsgmesh> mesh')
         vert_ancr = _Vertex(_Vector(p4[0], p4[1], p4[2]), None)
