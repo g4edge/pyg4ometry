@@ -393,18 +393,33 @@ class CSG(object):
                     for i in range(len(bpoly.vertices)) :
                         ploc = 0
 
+                        if i == len(bpoly.vertices)-1 :
+                            bv = bpoly.vertices[0].pos   - bpoly.vertices[i].pos
+                        else :
+                            bv = bpoly.vertices[i+1].pos - bpoly.vertices[i].pos
+
+
+                        # project b edge (bv) onto apoly plane
+                        bvOnA = bv-aplane.normal*aplane.normal.dot(bv)
+                        bpOnA = aplane.normal.dot(bpoly.vertices[i].pos)
+
                         for j in range(len(apoly.vertices)) :
                             if j == len(apoly.vertices)-1 :
                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
                             else :
                                 av = apoly.vertices[j+1].pos - apoly.vertices[j].pos
-                            avunit = av.unit()
+                            avunit  = av.unit()
                             anormal = aplane.normal.cross(avunit)
 
+                            # distance inside place
                             t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
 
-                            if t > 1e-8 :
+                            # check if inside
+                            if t >= 0 :
                                 ploc += 1
+
+                            # test for intersection between bvOnA and av
+
 
                             # print 'apoly verticies t',i,j,t, aplane.normal, aplane.w, avunit, anormal, apoly.vertices[j].pos.dot(anormal), apoly.vertices[j], bpoly.vertices[i].pos, ploc
 

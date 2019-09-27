@@ -3,6 +3,8 @@ import copy as _copy
 from pyg4ometry.transformation import *
 from pyg4ometry.pycsg.geom import Vector as _Vector
 
+from pyg4ometry.pycsg.core import CSG as _CSG
+
 import logging as _log
 
 class OverlapType:
@@ -19,20 +21,24 @@ class Mesh(object) :
         # Solid which contains the mesh
         self.solid = solid 
 
-        # mesh in global coordinates 
+        # mesh in local coordinates
         self.localmesh  = self.solid.pycsgmesh().clone()
 
-        # overlap meshes 
+        # bounding mesh in local coordinates
+        self.localboundingmesh = self.getBoundingBoxMesh()
+
+        # overlap meshes (protusion, overlap, coplanar)
         self.overlapmeshes = []
         
-        # coplanar meshes 
-        self.coplanarmeshes = []
+    def remesh(self) :
+        # existing overlaps become invalid
+        self.overlapmeshes = []
 
-        # extents 
-        self.extent = []
-        
-    def remesh(self) : 
+        # recreate mesh
         self.localmesh = self.solid.pycsgmesh().clone()
+
+        # recreate bounding mesh
+        self.localboundingmesh = self.getBoundingBoxMesh()
 
     def addOverlapMesh(self, mesh) : 
         self.overlapmeshes.append(mesh)
@@ -40,7 +46,7 @@ class Mesh(object) :
     def getLocalMesh(self) :
         return self.localmesh 
 
-    def getBoundingBox(self) : 
+    def getBoundingBox(self) :
         '''Axes aligned bounding box'''
 
         vAndP = self.localmesh.toVerticesAndPolygons()
@@ -65,3 +71,22 @@ class Mesh(object) :
         _log.info('visualisation.Mesh.getBoundingBox> %s %s' % (str(vMin), str(vMax)))
 
         return [vMin, vMax]
+
+    def getBoundingBoxMesh(self):
+        bb = self.getBoundingBox()
+        x0 = (bb[1][0]+bb[0][0])/2.0
+        y0 = (bb[1][1]+bb[0][1])/2.0
+        z0 = (bb[1][2]+bb[0][2])/2.0
+
+        dx = bb[1][0]-bb[0][0]
+        dy = bb[1][1]-bb[0][1]
+        dz = bb[1][2]-bb[0][2]
+
+        pX = dx/2.0
+        pY = dy/2.0
+        pZ = dz/2.0
+
+        _log.info('box.pycsgmesh> getBoundingBoxMesh')
+
+        mesh = _CSG.cube(center=[x0,y0,z0], radius=[pX,pY,pZ])
+        return mesh
