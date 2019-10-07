@@ -135,8 +135,6 @@ class Reader(object) :
 
         for obj in self.doc.Objects :
             if obj.TypeId == "Part::Feature" :
-                if obj.Label == "B3Gpart26":
-                    dummy = 1
                 # object centre of mass
                 # com = obj.Shape.CenterOfMass
 
