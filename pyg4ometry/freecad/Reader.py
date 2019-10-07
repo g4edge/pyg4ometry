@@ -103,7 +103,8 @@ class Reader(object) :
                     globalOffset        = _fc.Vector(),
                     globalRotation      = _fc.Rotation(),
                     extentScale         = 1.0,
-                    daughterMaterial    = "G4_Galactic"):
+                    daughterMaterial    = "G4_Galactic",
+                    storePartCentrePos  = False):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -118,6 +119,8 @@ class Reader(object) :
         names      = [] 
         logicals   = [] 
         placements = [] 
+        extents    = []  # mesh extents (min, max) for each part feature
+        centres    = []  # geometric mesh centre for each part feature
 
         if centreName != '' : 
             centreObject = self.doc.getObjectsByLabel(centreName)[0]
@@ -131,10 +134,17 @@ class Reader(object) :
                 centrePlacement.move(globalOffset)
 
         for obj in self.doc.Objects :
-            if obj.TypeId == "Part::Feature" : 
-
+            if obj.TypeId == "Part::Feature" :
+                if obj.Label == "B3Gpart26":
+                    dummy = 1
                 # object centre of mass
                 # com = obj.Shape.CenterOfMass
+
+                # object extents in freecad world
+                objMin = _fc.Vector(1e99, 1e99, 1e99)
+                objMax = _fc.Vector(-1e99, -1e99, -1e99)
+
+                name = obj.Label
 
                 # tesellate         
                 m = list(obj.Shape.tessellate(meshDeviation))
@@ -162,19 +172,38 @@ class Reader(object) :
                     mGlobal = globalPlacement.multVec(m[0][i])
 
                     # find minimum and maximum
-                    if mGlobal.x < tmin.x :
-                        tmin.x = mGlobal.x
-                    if mGlobal.y < tmin.y :
-                        tmin.y = mGlobal.y
-                    if mGlobal.z < tmin.z :
-                        tmin.z = mGlobal.z
+                    if mGlobal.x < objMin.x :
+                        objMin.x = mGlobal.x
+                    if mGlobal.y < objMin.y :
+                        objMin.y = mGlobal.y
+                    if mGlobal.z < objMin.z :
+                        objMin.z = mGlobal.z
 
-                    if mGlobal.x > tmax.x :
-                        tmax.x = mGlobal.x
-                    if mGlobal.y > tmax.y :
-                        tmax.y = mGlobal.y
-                    if mGlobal.z > tmax.z :
-                        tmax.z = mGlobal.z
+                    if mGlobal.x > objMax.x :
+                        objMax.x = mGlobal.x
+                    if mGlobal.y > objMax.y :
+                        objMax.y = mGlobal.y
+                    if mGlobal.z > objMax.z :
+                        objMax.z = mGlobal.z
+
+                # find minimum and maximum of whole part feature
+                if objMin.x < tmin.x :
+                    tmin.x = objMin.x
+                if objMin.y < tmin.y :
+                    tmin.y = objMin.y
+                if objMin.z < tmin.z :
+                    tmin.z = objMin.z
+
+                if objMax.x > tmax.x :
+                    tmax.x = objMax.x
+                if objMax.y > tmax.y :
+                    tmax.y = objMax.y
+                if objMax.z > tmax.z :
+                    tmax.z = objMax.z
+
+                objCentre = (objMax - objMin) / 2.0 + objMin
+                extents.append([objMin,objMax])
+                centres.append(objCentre)
 
                 # Mesh tidying
                 mc = MeshCleaning(m)                
@@ -241,8 +270,16 @@ class Reader(object) :
             y = placements[i][1][1]-tcentre.y
             z = placements[i][1][2]-tcentre.z
 
-            p = _g4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation("z1",str(a1),str(a2),str(a3),registry=self._registry,addRegistry=False),
-                                   pyg4ometry.gdml.Defines.Position("p2",str(x),str(y),str(z),registry=self._registry,addRegistry=False),
+            # local geometric centres of each part's mesh - note this is NOT synonymous with the part's position
+            localCentreX = centres[i][0] - tcentre.x
+            localCentreY = centres[i][1] - tcentre.y
+            localCentreZ = centres[i][2] - tcentre.z
+
+            if storePartCentrePos:
+                localPos = pyg4ometry.gdml.Defines.Position(names[i] + "_centre", str(localCentreX),str(localCentreY),str(localCentreZ), registry=self._registry, addRegistry=True)
+
+            p = _g4.PhysicalVolume(pyg4ometry.gdml.Defines.Rotation(names[i]+"_z1",str(a1),str(a2),str(a3),registry=self._registry,addRegistry=False),
+                                   pyg4ometry.gdml.Defines.Position(names[i]+"_p2",str(x),str(y),str(z),registry=self._registry,addRegistry=False),
                                    logicals[i],                                                    
                                    names[i]+"_pv",
                                    bLogical,
