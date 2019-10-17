@@ -38,8 +38,8 @@ class LogicalVolume(object):
             # If the material is registered already, use it
             if registry and material in registry.materialDict:
                 self.material = registry.materialDict[material]
-            # This will work out if it is a valid NIST and set the type appropriately
-            self.material = _mat.MaterialPredefined(name=material)
+            else:  # This will work out if it is a valid NIST and set the type appropriately
+                self.material = _mat.MaterialPredefined(name=material)
         else:
             raise ValueError("Unsupported type for material: {}".format(type(material)))
 
