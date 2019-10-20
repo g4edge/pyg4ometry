@@ -29,6 +29,8 @@ class GenericPolyhedra(_SolidBase):
         self.lunit   = lunit
         self.aunit   = aunit
 
+        self.varNames = ["pSPhi", "pDPhi", "numSide", "pR","pZ","lunit","aunit"]
+
         self.dependents = []
 
         self.checkParameters()

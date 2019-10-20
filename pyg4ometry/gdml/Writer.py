@@ -1131,7 +1131,7 @@ class Writer(object):
     def writeTwistedTrap(self, instance):
         oe = self.doc.createElement("twistedtrap")
         oe.setAttribute('name',self.prepend + instance.name)
-        oe.setAttribute('PhiTwist',self.getValueOrExprFromInstance(instance,'twistedangle'))
+        oe.setAttribute('PhiTwist',self.getValueOrExprFromInstance(instance,'twistedAngle'))
         oe.setAttribute('z',self.getValueOrExprFromInstance(instance,'pDz'))
         oe.setAttribute('Theta',self.getValueOrExprFromInstance(instance,'pTheta'))
         oe.setAttribute('Phi',self.getValueOrExprFromInstance(instance,'pDPhi'))

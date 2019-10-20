@@ -647,6 +647,14 @@ class VectorBase(object) :
         else :
             raise IndexError
 
+
+    def setRegistry(self, registry):
+        self.registry = registry
+        self.x.registry    = self.registry
+        self.y.registry    = self.registry
+        self.z.registry    = self.registry
+
+
 class Position(VectorBase) :
     '''
     GDML position define wrapper object

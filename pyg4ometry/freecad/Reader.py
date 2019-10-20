@@ -1,3 +1,4 @@
+import sys
 import FreeCAD     as _fc
 import FreeCADGui  as _fcg
 _fcg.setupWithoutGUI()

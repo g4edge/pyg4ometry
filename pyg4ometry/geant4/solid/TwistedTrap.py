@@ -17,8 +17,8 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     
     :param name:          of the solid
     :type name:           str
-    :param twistedangle:  angle of twist (<90 deg)
-    :type twistedangle:   float, Constant, Quantity, Variable, Expression
+    :param twistedAngle:  angle of twist (<90 deg)
+    :type twistedSngle:   float, Constant, Quantity, Variable, Expression
     :param pDz:           length along z
     :type pDz:            float, Constant, Quantity, Variable, Expression
     :param pDx1:          length along x of the side at y=-pDy1/2
@@ -47,12 +47,12 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     :type aunit:         str
     """
 
-    def __init__(self, name, twistedangle, pDz, pTheta, pDPhi, pDy1,
+    def __init__(self, name, twistedAngle, pDz, pTheta, pDPhi, pDy1,
                  pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry,
                  lunit = "mm", aunit = "rad", nstack=20, addRegistry=True):
         self.type         = 'TwistedTrap'
         self.name         = name
-        self.twistedangle = twistedangle
+        self.twistedAngle = twistedAngle
         self.pDz          = pDz
         self.pTheta       = pTheta
         self.pDPhi        = pDPhi
@@ -69,7 +69,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         self.dependents = []
 
-        self.varNames = ["twistedAngle", "pDz", "pThetae","pDPhi","pDy1","pDx1","pDx2","pDy2","pDx3","pDx4","pAlp"]
+        self.varNames = ["twistedAngle", "pDz", "pTheta","pDPhi","pDy1","pDx1","pDx2","pDy2","pDx3","pDx4","pAlp"]
 
         if addRegistry:
             registry.addSolid(self)
@@ -79,11 +79,11 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.checkParameters()
 
     def checkParameters(self):
-        if self.evaluateParameter(self.twistedangle) > _np.pi:
+        if self.evaluateParameter(self.twistedAngle) > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
     def __repr__(self):
-        return "Twisted Trap : {} {} {}".format(self.name, self.twistedangle, self.pDz)
+        return "Twisted Trap : {} {} {}".format(self.name, self.twistedAngle, self.pDz)
 
     def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twist, theta, nsl):
         dz      = 2*pDz/float(nsl)
@@ -132,7 +132,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        twistedangle = self.evaluateParameter(self.twistedangle)
+        twistedAngle = self.evaluateParameter(self.twistedAngle)
         pDz = self.evaluateParameter(self.pDz)/2.
         pTheta = self.evaluateParameter(self.pTheta)
         pDPhi = self.evaluateParameter(self.pDPhi)
@@ -159,6 +159,6 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         #making the layers:
         m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz,
-                            twistedangle, pTheta,  self.nstack)
+                            twistedAngle, pTheta,  self.nstack)
 
         return self.meshFromLayers(m, self.nstack)

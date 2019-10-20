@@ -31,6 +31,7 @@ class MultiUnion(_SolidBase):
         self.transformations = [_defines.upgradeToTransformation(t,registry) for t in transformations]
         self.mesh = None
 
+        self.varNames = []
         self.dependents = []
 
         registry.addSolid(self)

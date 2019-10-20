@@ -34,6 +34,7 @@ class Intersection(_SolidBase):
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
         self.mesh = None
 
+        self.varNames = []
         self.dependents = []
 
         self.registry = registry

@@ -52,11 +52,10 @@ class Torus(_SolidBase):
         self.nstack  = nstack
         self.lunit   = lunit
         self.aunit   = aunit
-        self.mesh = None
 
         self.dependents = []
 
-        self.varNames = ["pRmin", "pRmax", "pStor","pSPhi","pDPhi"]
+        self.varNames = ["pRmin", "pRmax", "pRtor","pSPhi","pDPhi","nslice","nstack","lunit","aunit"]
 
         if addRegistry:
             registry.addSolid(self)

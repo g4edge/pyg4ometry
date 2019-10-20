@@ -27,7 +27,7 @@ class Registry:
 
         self.solidUsageCountDict          = {}               # solidName1, solidName2
         self.volumeTypeCountDict          = {}               # logical, physical
-        self.surfaceTypeCountDict         = {}              # border, skin
+        self.surfaceTypeCountDict         = {}               # border, skin
         self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
         self.userInfo                     = []               # Ordered list for the user info, which is not processed
 
@@ -259,7 +259,7 @@ class Registry:
             # add its logical volume
             self.addVolumeRecursive(volume.logicalVolume)
 
-            # add members from physical volume
+            # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
             self.addDefine(volume.position,namePolicy)
             self.addDefine(volume.rotation,namePolicy)
             if volume.scale :
@@ -275,14 +275,47 @@ class Registry:
             # add members from logical volume
             self.transferSolidDefines(volume.solid, namePolicy)
             self.addSolid(volume.solid,namePolicy)
-            self.addMaterial(volume.material,namePolicy)
+            self.addMaterial(volume.material,"reuse")
             self.addLogicalVolume(volume,namePolicy)
 
     def transferSolidDefines(self, solid, namePolicy):
         for varName in solid.varNames :
-            var = getattr(solid, varName)
-            var.name = self.addDefine(var,namePolicy)
-            var.setRegistry(self)
+
+            # skip unit variables
+            if varName.find("unit") != -1:
+                continue
+            # skip slicing variables
+            if varName.find("slice") != -1:
+                continue
+            # skip stack variables
+            if varName.find("stack") != -1:
+                continue
+
+
+            def flatten(S):
+                if S == []:
+                    return S
+                if isinstance(S[0], list):
+                    return flatten(S[0]) + flatten(S[1:])
+                return S[:1] + flatten(S[1:])
+
+            var = getattr(solid,varName)
+
+            if isinstance(var,int) :                          # int could not be in registry
+                continue
+            if isinstance(var,float) :                        # float  could not be in registry
+                continue
+            if isinstance(var,str) :                          # could be an expression
+                pass
+            if isinstance(var,list) :                         # list of variables
+                var = flatten(var)
+            else :
+                var = [var]                                   # single variable upgraded to list
+
+            for v in var :                                    # loop over variables
+                if solid.registry.defineDict.has_key(v.name): # check if variable is stored in registry, if so need to be transferred
+                    v.name = self.addDefine(v,namePolicy)
+                v.setRegistry(self)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''

@@ -34,6 +34,7 @@ class Union(_SolidBase):
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
         self.mesh = None
 
+        self.varNames = ["tra2"]
         self.dependents = []
 
         self.registry = registry

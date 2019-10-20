@@ -34,11 +34,13 @@ class Subtraction(_SolidBase):
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
         self.mesh = None
 
+        self.varNames = []
+        self.dependents = []
+
         self.registry = registry
         if registry :
             registry.addSolid(self)
 
-        self.dependents = []
         # obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
         # obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
         obj1.dependents.append(self) 
