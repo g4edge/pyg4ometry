@@ -28,6 +28,8 @@ class Scaled(_SolidBase):
         self.pY   = pY
         self.pZ   = pZ
         self.type = 'Scaled'
+
+        self.varNames = ["pX", "pY", "pZ"]
         self.dependents = []
 
         if registry:
@@ -43,9 +45,9 @@ class Scaled(_SolidBase):
 
         _log.info('scaled.pycsgmesh> antlr')
 
-        pX = self.evaluateParameter(self.pX.expression)
-        pY = self.evaluateParameter(self.pY.expression)
-        pZ = self.evaluateParameter(self.pZ.expression)
+        pX = self.evaluateParameter(self.pX)
+        pY = self.evaluateParameter(self.pY)
+        pZ = self.evaluateParameter(self.pZ)
 
         mesh = self.solid.pycsgmesh()
         mesh.scale([pX,pY,pZ])

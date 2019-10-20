@@ -1253,9 +1253,11 @@ class Writer(object):
         oe.appendChild(srf)
 
         scl = self.doc.createElement('scale')
-        scl.setAttribute('x',str(instance.pX.expression))
-        scl.setAttribute('y',str(instance.pY.expression))
-        scl.setAttribute('z',str(instance.pZ.expression))
+
+        scl.setAttribute('x',self.getValueOrExprFromInstance(instance,'pX'))
+        scl.setAttribute('y',self.getValueOrExprFromInstance(instance,'pY'))
+        scl.setAttribute('z',self.getValueOrExprFromInstance(instance,'pZ'))
+
         oe.appendChild(scl)
 
         self.solids.appendChild(oe)
