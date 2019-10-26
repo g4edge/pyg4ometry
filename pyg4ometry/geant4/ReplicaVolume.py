@@ -28,7 +28,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
         kPhi   = 5
 
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
-                 width, offset = 0, registry = None, addRegistry=True, wunit = "", ounit= "") : 
+                 width, offset = 0, registry = None, addRegistry=True, wunit = "mm", ounit= "mm") :
 
         self.type                = "replica"        
         self.name                = name
@@ -47,6 +47,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
 
         if addRegistry : 
             registry.addPhysicalVolume(self)
+        self.registry = registry
 
         # physical visualisation options
         self.visOptions    = _VisOptions()
@@ -57,11 +58,12 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
     def createReplicaMeshes(self) :
 
         import pyg4ometry.gdml.Units as _Units
+        from pyg4ometry.gdml.Defines import evaluateToFloat
 
-        nreplicas = int(self.nreplicas.eval())
-        offset    = self.offset.eval()*_Units.unit(self.ounit)
-        width     = self.width.eval()*_Units.unit(self.wunit)
-        
+        nreplicas = int(evaluateToFloat(self.registry,self.nreplicas))
+        offset    = evaluateToFloat(self.registry,self.offset)*_Units.unit(self.ounit)
+        width     = evaluateToFloat(self.registry,self.width)*_Units.unit(self.wunit)
+
         transforms = []
         meshes     = [] 
 
@@ -96,7 +98,7 @@ class ReplicaVolume(_PhysicalVolume.PhysicalVolume) :
 
             elif self.axis == self.Axis.kZAxis : 
                 rot = [0,0,0]
-                trans = [v,0,0]
+                trans = [0,0,v]
                 transforms.append([rot,trans])
                 meshes.append(self.logicalVolume.mesh)
 
