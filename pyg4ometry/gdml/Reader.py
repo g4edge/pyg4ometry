@@ -715,7 +715,17 @@ class Reader(object):
         sphi = _defines.Expression(solid_name+"_pSphi",node.attributes['startphi'].value,self._registry) 
         dphi = _defines.Expression(solid_name+"_pDphi",node.attributes['deltaphi'].value,self._registry)
 
-        _g4.solid.Torus(solid_name,rmin,rmax,rtor, sphi, dphi, self._registry) 
+        try :
+            lunit = node.attributes['lunit'].value
+        except KeyError :
+            lunit = "mm"
+
+        try :
+            aunit = node.attributes['aunit'].value
+        except KeyError :
+            aunit = "rad"
+
+        _g4.solid.Torus(solid_name,rmin,rmax,rtor, sphi, dphi, self._registry, lunit, aunit)
 
 
     def parsePolycone(self, node) : 
