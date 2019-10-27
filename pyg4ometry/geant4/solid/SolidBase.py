@@ -1,3 +1,5 @@
+import time as _time
+
 class SolidBase(object):
     """
     Base class for all solis
@@ -54,3 +56,10 @@ class SolidBase(object):
                 'First char of name "{}" must be a letter.'.format(name)
             raise ValueError(msg)
         self._name = name
+
+    def mesh(self):
+        start = _time.time()
+        m = self.pycsgmesh()
+        elapsed_time_fl = (_time.time() - start)
+        print elapsed_time_fl
+        return m
