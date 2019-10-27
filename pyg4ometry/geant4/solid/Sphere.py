@@ -4,9 +4,10 @@ from   ...pycsg.geom import Vertex as _Vertex
 from   ...pycsg.geom import Vector as _Vector
 from   ...pycsg.geom import Polygon as _Polygon
 from   Wedge import Wedge as _Wedge
-import numpy as _np
 import sys as _sys
 from   copy import deepcopy as _dc
+
+import numpy as _np
 import logging as _log
 
 class Sphere(_SolidBase):
@@ -55,7 +56,6 @@ class Sphere(_SolidBase):
         self.nstack  = nstack
         self.lunit   = lunit
         self.aunit   = aunit
-        self.mesh    = None
 
         self.dependents = []
 
