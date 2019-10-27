@@ -682,12 +682,22 @@ class Reader(object):
             starttheta = _defines.Expression(solid_name+"_pSTheta",node.attributes['starttheta'].value,self._registry)
         except KeyError : 
             starttheta = _defines.Expression(solid_name+"_pSTheta","0",self._registry)
-            
+
+        try :
+            lunit = node.attributes['lunit'].value
+        except KeyError :
+            lunit = "mm"
+
+        try :
+            aunit = node.attributes['aunit'].value
+        except KeyError :
+            aunit = "rad"
+
         rmax       = _defines.Expression(solid_name+"_pRMax",node.attributes['rmax'].value,self._registry)
         deltaphi   = _defines.Expression(solid_name+"_pDPhi",node.attributes['deltaphi'].value,self._registry)
         deltatheta = _defines.Expression(solid_name+"_pDTheta",node.attributes['deltatheta'].value,self._registry)
 
-        _g4.solid.Sphere(solid_name, rmin, rmax, startphi, deltaphi, starttheta, deltatheta, self._registry)
+        _g4.solid.Sphere(solid_name, rmin, rmax, startphi, deltaphi, starttheta, deltatheta, self._registry, lunit, aunit)
 
     def parseOrb(self, node) : 
         solid_name = node.attributes['name'].value 
