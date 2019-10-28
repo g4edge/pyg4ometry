@@ -164,9 +164,9 @@ class VtkViewer:
         filtername = solid_name+"_filter"
         if filters.has_key(filtername) :
             vtkFLT = filters[filtername]
-        else : 
+        else :
             vtkFLT = _vtk.vtkTriangleFilter()
-            vtkFLT.AddInputData(vtkPD)                    
+            vtkFLT.AddInputData(vtkPD)
             filters[filtername]  = vtkFLT
 
         # Mapper 
@@ -174,7 +174,10 @@ class VtkViewer:
         mappername = pv_name+"_mapper" 
         vtkMAP = _vtk.vtkPolyDataMapper()
         vtkMAP.ScalarVisibilityOff()
-        vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+        # TRIANGLE/NON-TRIANGLE FILTER
+        #vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+        vtkMAP.SetInputData(vtkPD)
+
         mappers.append(vtkMAP)
 
         if not mapperMap.has_key(mappername) :
@@ -204,7 +207,42 @@ class VtkViewer:
 
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
-    
+
+
+        '''
+        # Surface normals
+        vtkNormals = _vtk.vtkPolyDataNormals()
+        vtkNormals.SetInputData(vtkPD)
+
+        #vtkNormals.ComputePointNormalsOff()
+        #vtkNormals.ComputeCellNormalsOn()
+        #vtkNormals.SplittingOff()
+        vtkNormals.FlipNormalsOn()
+        #vtkNormals.ConsistencyOn()
+        #vtkNormals.AutoOrientNormalsOn()
+        vtkNormals.Update()
+
+        glyph = _vtk.vtkGlyph3D()
+        arrow = _vtk.vtkArrowSource()
+        arrow.Update()
+
+        glyph.SetInputData(vtkNormals.GetOutput())
+        glyph.SetSourceData(arrow.GetOutput())
+        glyph.SetVectorModeToUseNormal()
+        glyph.SetScaleModeToScaleByVector()
+        glyph.SetScaleFactor(3)
+        glyph.OrientOn()
+        glyph.Update()
+
+        glyph_mapper = _vtk.vtkPolyDataMapper()
+        glyph_mapper.SetInputData(glyph.GetOutput())
+        # glyph_mapper.ImmediateModeRenderingOn()
+        glyph_actor = _vtk.vtkActor()
+        glyph_actor.SetMapper(glyph_mapper)
+        glyph_actor.GetProperty().SetColor(1, 0.4, 1)
+
+        self.ren.AddActor(glyph_actor)
+        '''
         # set visualisation properties
         if visOptions :
             vtkActor.GetProperty().SetColor(visOptions.color[0],
