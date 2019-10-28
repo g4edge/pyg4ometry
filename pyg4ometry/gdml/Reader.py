@@ -1280,8 +1280,8 @@ class Reader(object):
                 scale = _defines.Scale("zero", "0", "0", "0", "mm", self._registry, False)
 
         solid = self._registry.solidDict[solid_name]
-
-        _g4.solid.Scaled(scaledSolid_name, solid, scale.x, scale.y, scale.z, self._registry)
+        
+        _g4.solid.Scaled(scaledSolid_name, solid, scale.x.expression, scale.y.expression, scale.z.expression, self._registry)
 
     def parseSolidLoop(self, node):
         pass
