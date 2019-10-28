@@ -32,7 +32,7 @@ class Scaled(_SolidBase):
         self.varNames = ["pX", "pY", "pZ"]
         self.dependents = []
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
 
         self.registry = registry
