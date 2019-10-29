@@ -85,6 +85,7 @@ class Sphere(_SolidBase):
                                                       self.pDTheta)
 
     def pycsgmesh(self):
+        # 2.78316307068 1612
         _log.info("sphere.antlr>")
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
