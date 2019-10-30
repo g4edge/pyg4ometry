@@ -216,3 +216,14 @@ class LogicalVolume(object):
                 lv.append(l)
         
         return lv
+
+
+    def assemblyVolume(self):
+        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
+
+        av = _AssemblyVolume(self.name, self.registry, False)
+
+        for dv in self.daughterVolumes :
+            av.add(dv)
+
+        return av

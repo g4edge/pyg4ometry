@@ -23,7 +23,8 @@ class AssemblyVolume(object) :
         self.name            = name 
         self.daughterVolumes = []
 
-        if registry :
+        self.registry = registry
+        if addRegistry :
             registry.addLogicalVolume(self)                    
             
     def __repr__(self):

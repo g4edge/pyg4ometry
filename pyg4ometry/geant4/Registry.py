@@ -253,6 +253,7 @@ class Registry:
 
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
+        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
         if isinstance(volume, _PhysicalVolume) :
 
@@ -277,6 +278,15 @@ class Registry:
             self.addSolid(volume.solid,namePolicy)
             self.addMaterial(volume.material,"reuse")
             self.addLogicalVolume(volume,namePolicy)
+
+        elif isinstance(volume, _AssemblyVolume) :
+            # loop over all daughters
+            for dv in volume.daughterVolumes :
+                self.addVolumeRecursive(dv, namePolicy)
+
+            # add members from logical volume
+            self.addLogicalVolume(volume,namePolicy)
+
 
     def transferSolidDefines(self, solid, namePolicy):
         for varName in solid.varNames :
