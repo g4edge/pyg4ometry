@@ -59,7 +59,7 @@ class CutTubs(_SolidBase):
         # Low norm and high norm exlcluded as they are lists
         return "Cut tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                         self.pDz, self.pSPhi, self.pDPhi)
-    def pycsgmeshOld(self):
+    def pycsgmesh(self):
         # 0.0381021499634 80
         _log.info('cuttubs.pycsgmesh> antlr')
 
@@ -95,7 +95,7 @@ class CutTubs(_SolidBase):
             return mesh
 
 
-    def pycsgmesh(self):
+    def pycsgmeshNew(self):
         # 0.00943803787231 66
         _log.info('tubs.pycsgmesh> antlr')
 
