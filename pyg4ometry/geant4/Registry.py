@@ -212,7 +212,7 @@ class Registry:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(define.name,"define")
             elif namePolicy == "reuse" :
-                return
+                return define.name
             elif namePolicy == "increment" :
                 self.defineNameCount[define.name] += 1
                 define.name = define.name + "_" + str(self.defineNameCount[define.name])
@@ -328,16 +328,10 @@ class Registry:
             for v in var :                                    # loop over variables
                 self.transferDefines(v,namePolicy)
 
-                #if solid.registry.defineDict.has_key(v.name):# check if variable is stored in registry, if so need to be transferred
-                #    v.name = self.addDefine(v,namePolicy)
-                #v.setRegistry(self)
-
     def transferDefines(self, var, namePolicy):
         '''Transfer defines from one registry to another recursively'''
 
         import pyg4ometry.gdml.Defines as _Defines
-
-        print var.name
 
         # If the variable is a position, rotation or scale
         if isinstance(var,_Defines.VectorBase) :
@@ -346,8 +340,6 @@ class Registry:
             var.setRegistry(self)
         # If a normal expression
         else :
-            print var.expr.variables()
-
             for v in var.expr.variables() :                       # loop over all variables needed for an express
                 if self._registryOld.defineDict.has_key(v) :      # it in the other registry
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
