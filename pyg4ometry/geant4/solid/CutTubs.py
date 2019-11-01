@@ -77,7 +77,7 @@ class CutTubs(_SolidBase):
         pLowNorm = [val*luval for val in self.evaluateParameter(self.pLowNorm)]
 
         _log.info('cuttubs.pycsgmesh> mesh')
-        mesh = _Tubs("tubs_temp", pRMin, pRMax, 2 * pDz * 10, pSPhi, pDPhi, # Units are already rendered
+        mesh = _Tubs("tubs_temp", pRMin, pRMax, 2.5 * pDz, pSPhi, pDPhi, # Units are already rendered
                      registry=self.registry, nslice=self.nslice, addRegistry=False).pycsgmesh()
 
         if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
