@@ -113,12 +113,15 @@ class TessellatedSolid(_SolidBase):
         #############################################
         polygon_list = []
 
-        for f in facet :             
-            v1 = _Vertex(verts[f[0]])
-            v2 = _Vertex(verts[f[1]])
-            v3 = _Vertex(verts[f[2]])
-            
-            polygon = _Polygon([v1,v2,v3])
+        for f in facet:
+            #v1 = _Vertex(verts[f[0]])
+            #v2 = _Vertex(verts[f[1]])
+            #v3 = _Vertex(verts[f[2]])
+
+            #polygon = _Polygon([v1,v2,v3])
+
+            # This allows for both triangular and quadrilateral facets
+            polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygon_list.append(polygon)            
         
         return _CSG.fromPolygons(polygon_list)        
