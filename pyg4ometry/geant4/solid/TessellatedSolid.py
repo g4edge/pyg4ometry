@@ -104,7 +104,10 @@ class TessellatedSolid(_SolidBase):
                 
                 facet.append((3*i+0,3*i+1,3*i+2))
                 i += 1
-                
+
+        else:
+            raise ValueError("Urecognised mesh type: {}".format(self.meshtype))
+
         #############################################
         # Convert verts and facets to polygons 
         #############################################
