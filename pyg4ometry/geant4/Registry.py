@@ -212,7 +212,7 @@ class Registry:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(define.name,"define")
             elif namePolicy == "reuse" :
-                return
+                return define.name
             elif namePolicy == "increment" :
                 self.defineNameCount[define.name] += 1
                 define.name = define.name + "_" + str(self.defineNameCount[define.name])
@@ -255,6 +255,9 @@ class Registry:
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
+
+        self._registryOld = volume.registry
+
         if isinstance(volume, _PhysicalVolume) :
 
             # add its logical volume
@@ -288,7 +291,7 @@ class Registry:
             self.addLogicalVolume(volume,namePolicy)
 
 
-    def transferSolidDefines(self, solid, namePolicy):
+    def transferSolidDefines(self, solid, namePolicy):       # TODO make this work for all classes (using update variables method)
         for varName in solid.varNames :
 
             # skip unit variables
@@ -323,9 +326,27 @@ class Registry:
                 var = [var]                                   # single variable upgraded to list
 
             for v in var :                                    # loop over variables
-                if solid.registry.defineDict.has_key(v.name): # check if variable is stored in registry, if so need to be transferred
-                    v.name = self.addDefine(v,namePolicy)
-                v.setRegistry(self)
+                self.transferDefines(v,namePolicy)
+
+    def transferDefines(self, var, namePolicy):
+        '''Transfer defines from one registry to another recursively'''
+
+        import pyg4ometry.gdml.Defines as _Defines
+
+        # If the variable is a position, rotation or scale
+        if isinstance(var,_Defines.VectorBase) :
+            if self._registryOld.defineDict.has_key(var.name):
+                var.name = self.addDefine(var,"reuse")
+            var.setRegistry(self)
+        # If a normal expression
+        else :
+            for v in var.expr.variables() :                       # loop over all variables needed for an express
+                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy)
+
+            if self._registryOld.defineDict.has_key(var.name):    # check if variable is stored in registry, if so need to be transferred
+                var.name = self.addDefine(var, "reuse")           # probabably best to reuse here
+            var.setRegistry(self)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''

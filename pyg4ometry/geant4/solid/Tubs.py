@@ -56,7 +56,7 @@ class Tubs(_SolidBase):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                  self.pDz, self.pSPhi, self.pDPhi)
 
-    def pycsgmeshOld(self):
+    def pycsgmesh(self):
         # 0.0621500015259 124
         _log.info('tubs.pycsgmesh> antlr')
 
@@ -93,7 +93,7 @@ class Tubs(_SolidBase):
 
         return mesh
 
-    def pycsgmesh(self):
+    def pycsgmeshNew(self):
         # 0.00688886642456 66
         _log.info('tubs.pycsgmesh> antlr')
 
