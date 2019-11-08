@@ -8,8 +8,8 @@ from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 import solid                     as                 _solid
 import Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
-import pyg4ometry.visualisation as _vi
-import vtk as _vtk
+import pyg4ometry.visualisation  as                 _vi
+import vtk                       as                 _vtk
 
 import numpy   as   _np
 import logging as   _log
