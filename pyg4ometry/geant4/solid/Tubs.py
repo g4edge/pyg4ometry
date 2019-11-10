@@ -56,7 +56,7 @@ class Tubs(_SolidBase):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                  self.pDz, self.pSPhi, self.pDPhi)
 
-    def pycsgmesh(self):
+    def pycsgmeshOld(self):
         # 0.0621500015259 124
         _log.info('tubs.pycsgmesh> antlr')
 
@@ -93,8 +93,8 @@ class Tubs(_SolidBase):
 
         return mesh
 
-    def pycsgmeshNew(self):
-        # 0.00688886642456 66
+    def pycsgmesh(self):
+        # 0.00476694107056 66
         _log.info('tubs.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
@@ -103,7 +103,7 @@ class Tubs(_SolidBase):
 
         pRMin = self.evaluateParameter(self.pRMin)*luval
         pSPhi = self.evaluateParameter(self.pSPhi)*auval
-        pDPhi = self.evaluateParameter(self.pDPhi)*auval # issue with 2*pi
+        pDPhi = self.evaluateParameter(self.pDPhi)*auval
         pDz   = self.evaluateParameter(self.pDz)*luval/2
         pRMax = self.evaluateParameter(self.pRMax)*luval
 
@@ -121,23 +121,35 @@ class Tubs(_SolidBase):
             p1 = dPhi*i1 + pSPhi
             p2 = dPhi*i2 + pSPhi
 
+            xRMinP1 = pRMin*_np.cos(p1)
+            yRMinP1 = pRMin*_np.sin(p1)
+            xRMinP2 = pRMin*_np.cos(p2)
+            yRMinP2 = pRMin*_np.sin(p2)
+
+            xRMaxP1 = pRMax*_np.cos(p1)
+            yRMaxP1 = pRMax*_np.sin(p1)
+            xRMaxP2 = pRMax*_np.cos(p2)
+            yRMaxP2 = pRMax*_np.sin(p2)
+
             ###########################
             # wedge ends
             ###########################
             if pDPhi != 2*_np.pi and i == 0:
+                pass
                 vWedg = []
-                vWedg.append(_Vertex([-pDz, pRMin*_np.cos(p1), pRMin*_np.sin(p1)],None))
-                vWedg.append(_Vertex([-pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
-                vWedg.append(_Vertex([ pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
-                vWedg.append(_Vertex([ pDz, pRMin*_np.cos(p1), pRMin*_np.sin(p1)],None))
+                vWedg.append(_Vertex([xRMinP1, yRMinP1, -pDz],None))
+                vWedg.append(_Vertex([xRMinP1, yRMinP1,  pDz],None))
+                vWedg.append(_Vertex([xRMaxP1, yRMaxP1,  pDz],None))
+                vWedg.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
+                pass
                 vWedg = []
-                vWedg.append(_Vertex([-pDz, pRMin*_np.cos(p2), pRMin*_np.sin(p2)],None))
-                vWedg.append(_Vertex([ pDz, pRMin*_np.cos(p2), pRMin*_np.sin(p2)],None))
-                vWedg.append(_Vertex([ pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
-                vWedg.append(_Vertex([-pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
+                vWedg.append(_Vertex([xRMinP1, yRMinP1, -pDz],None))
+                vWedg.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
+                vWedg.append(_Vertex([xRMaxP1, yRMaxP1,  pDz],None))
+                vWedg.append(_Vertex([xRMinP1, yRMinP1,  pDz],None))
                 polygons.append(_Polygon(vWedg))
 
             ###########################
@@ -145,50 +157,52 @@ class Tubs(_SolidBase):
             ###########################
             if pRMin == 0 :
                 vEnd = []
-                vEnd.append(_Vertex([pDz,0,0],None))
-                vEnd.append(_Vertex([pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
-                vEnd.append(_Vertex([pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
+                vEnd.append(_Vertex([0,0, -pDz],None))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, -pDz],None))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
-                vEnd.append(_Vertex([-pDz,0,0],None))
-                vEnd.append(_Vertex([-pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
-                vEnd.append(_Vertex([-pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
+                vEnd.append(_Vertex([0,0,pDz],None))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1,pDz],None))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2,pDz],None))
                 polygons.append(_Polygon(vEnd))
 
             else :
+
                 vEnd = []
-                vEnd.append(_Vertex([pDz, pRMin*_np.cos(p1), pRMin*_np.sin(p1)],None))
-                vEnd.append(_Vertex([pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
-                vEnd.append(_Vertex([pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
-                vEnd.append(_Vertex([pDz, pRMin*_np.cos(p2), pRMin*_np.sin(p2)],None))
+                vEnd.append(_Vertex([xRMinP1, yRMinP1,-pDz],None))
+                vEnd.append(_Vertex([xRMinP2, yRMinP2,-pDz],None))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2,-pDz],None))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1,-pDz],None))
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
-                vEnd.append(_Vertex([-pDz, pRMin*_np.cos(p1), pRMin*_np.sin(p1)],None))
-                vEnd.append(_Vertex([-pDz, pRMin*_np.cos(p2), pRMin*_np.sin(p2)],None))
-                vEnd.append(_Vertex([-pDz, pRMax*_np.cos(p2), pRMax*_np.sin(p2)],None))
-                vEnd.append(_Vertex([-pDz, pRMax*_np.cos(p1), pRMax*_np.sin(p1)],None))
+                vEnd.append(_Vertex([xRMinP1, yRMinP1,pDz],None))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1,pDz],None))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2,pDz],None))
+                vEnd.append(_Vertex([xRMinP2, yRMinP2,pDz],None))
                 polygons.append(_Polygon(vEnd))
+
+
 
             ###########################
             # Curved cylinder faces
             ###########################
             vCurv = []
-            vCurv.append(_Vertex([-pDz, pRMax * _np.cos(p1), pRMax * _np.sin(p1)],None))
-            vCurv.append(_Vertex([-pDz, pRMax * _np.cos(p2), pRMax * _np.sin(p2)],None))
-            vCurv.append(_Vertex([ pDz, pRMax * _np.cos(p2), pRMax * _np.sin(p2)],None))
-            vCurv.append(_Vertex([ pDz, pRMax * _np.cos(p1), pRMax * _np.sin(p1)],None))
+            vCurv.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
+            vCurv.append(_Vertex([xRMaxP2, yRMaxP2, -pDz],None))
+            vCurv.append(_Vertex([xRMaxP2, yRMaxP2,  pDz],None))
+            vCurv.append(_Vertex([xRMaxP1, yRMaxP1,  pDz],None))
             polygons.append(_Polygon(vCurv))
 
             if pRMin != 0 :
                 vCurv = []
-                vCurv.append(_Vertex([-pDz, pRMin * _np.cos(p1), pRMin * _np.sin(p1)],None))
-                vCurv.append(_Vertex([ pDz, pRMin * _np.cos(p1), pRMin * _np.sin(p1)],None))
-                vCurv.append(_Vertex([ pDz, pRMin * _np.cos(p2), pRMin * _np.sin(p2)],None))
-                vCurv.append(_Vertex([-pDz, pRMin * _np.cos(p2), pRMin * _np.sin(p2)],None))
+                vCurv.append(_Vertex([xRMinP1, yRMinP1, -pDz],None))
+                vCurv.append(_Vertex([xRMinP1, yRMinP1,  pDz],None))
+                vCurv.append(_Vertex([xRMinP2, yRMinP2,  pDz],None))
+                vCurv.append(_Vertex([xRMinP2, yRMinP2, -pDz],None))
                 polygons.append(_Polygon(vCurv))
-
 
         mesh = _CSG.fromPolygons(polygons)
 
