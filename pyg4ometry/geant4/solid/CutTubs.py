@@ -187,7 +187,6 @@ class CutTubs(_SolidBase):
                 vEnd.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2],None))
                 vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2],None))
                 vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1],None))
-
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
@@ -195,7 +194,6 @@ class CutTubs(_SolidBase):
                 vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1],None))
                 vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2],None))
                 vEnd.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2],None))
-
                 polygons.append(_Polygon(vEnd))
 
             ###########################
@@ -206,7 +204,6 @@ class CutTubs(_SolidBase):
             vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2],None))
             vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2],None))
             vCurv.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1],None))
-
             polygons.append(_Polygon(vCurv))
 
             if pRMin != 0 :
@@ -215,7 +212,6 @@ class CutTubs(_SolidBase):
                 vCurv.append(_Vertex([xRMinP1, yRMinP1, zHighRMinP1], None))
                 vCurv.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2],None))
                 vCurv.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2],None))
-
                 polygons.append(_Polygon(vCurv))
 
         mesh = _CSG.fromPolygons(polygons)
