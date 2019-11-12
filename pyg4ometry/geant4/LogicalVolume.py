@@ -250,7 +250,6 @@ class LogicalVolume(object):
         
         return lv
 
-
     def assemblyVolume(self):
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
