@@ -33,7 +33,7 @@ class EllipticalTube(_SolidBase):
     
 
     def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
-                 nslice=6, nstack=6, addRegistry=True):
+                 nslice=20, addRegistry=True):
 
         self.type   = 'EllipticalTube'
         self.name   = name
@@ -42,7 +42,6 @@ class EllipticalTube(_SolidBase):
         self.pDz    = pDz
         self.lunit  = lunit
         self.nslice = nslice
-        self.nstack = nstack
 
         self.dependents = []
 
@@ -57,7 +56,7 @@ class EllipticalTube(_SolidBase):
         return "EllipticalTube : {} {} {} {}".format(self.name, self.pDx,
                                                      self.pDy, self.pDz)
 
-    def pycsgmesh(self):
+    def pycsgmeshOld(self):
 
         _log.info('ellipticaltube.antlr>')
 
@@ -138,5 +137,65 @@ class EllipticalTube(_SolidBase):
             polygons.append(_Polygon(vertices))
 
         mesh  = _CSG.fromPolygons(polygons)
+
+        return mesh
+
+    def pycsgmesh(self):
+        """new meshing based of Tubs meshing"""
+
+        _log.info('ellipticaltube.antlr>')
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        luval = _Units.unit(self.lunit)
+
+        pDx = self.evaluateParameter(self.pDx)*luval/2.0
+        pDy = self.evaluateParameter(self.pDy)*luval/2.0
+        pDz = self.evaluateParameter(self.pDz)*luval/2.0
+
+        _log.info('ellipticaltube.pycsgmesh>')
+
+        polygons = []
+
+        sz      = -pDz
+        dTheta  = 2*_np.pi/self.nslice
+        slices  = self.nslice
+
+        pRMin = 0
+        
+        for i in range(0,self.nslice,1) :
+
+            i1 = i
+            i2 = i+1
+
+            p1 = dTheta*i1 # + pSPhi
+            p2 = dTheta*i2 #+ pSPhi
+
+            ###########################
+            # tube ends
+            ##########################s
+            vEnd = []
+            vEnd.append(_Vertex([0, 0,pDz],None))
+            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),pDz],None))
+            vEnd.append(_Vertex([pDx*_np.cos(p2), pDy*_np.sin(p2),pDz], None))
+            polygons.append(_Polygon(vEnd))
+
+            vEnd = []
+            vEnd.append(_Vertex([0, 0,-pDz],None))
+            vEnd.append(_Vertex([pDx*_np.cos(p2), pDy*_np.sin(p2),-pDz],None))
+            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),-pDz],None))
+            polygons.append(_Polygon(vEnd))
+
+            ###########################
+            # Curved cylinder faces
+            ###########################
+            vCurv = []
+            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), -pDz],None))
+            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), -pDz],None))
+            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), pDz],None))
+            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), pDz],None))
+            polygons.append(_Polygon(vCurv))
+
+
+        mesh = _CSG.fromPolygons(polygons)
 
         return mesh
