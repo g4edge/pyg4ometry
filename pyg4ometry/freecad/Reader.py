@@ -210,7 +210,11 @@ class Reader(object) :
 
                 # Mesh shrinking 
                 vn = MeshShrink(m)
-                
+
+#                print obj.Label, obj.TypeId, len(m[0])
+                if len(m[0]) == 0 :                      # skip empty meshes (can happen with compound objects)
+                    continue
+
                 # Mesh analysis
                 ma = MeshAnalysis(m) 
               

@@ -298,7 +298,17 @@ class Reader(object):
                         components.append(comp)
 
                     elif chNode.tagName=="property":
-                        properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
+                        try :
+                            properties[chNode.attributes["name"].value] = chNode.attributes["value"].value
+                        except KeyError :
+                            pass
+
+                        try :
+                            properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
+                        except KeyError :
+                            pass
+
+
 
                 def_attrs["components"] = components
                 def_attrs["properties"] = properties

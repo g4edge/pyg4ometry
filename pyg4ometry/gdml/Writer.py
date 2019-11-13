@@ -1177,6 +1177,8 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
+        instance.tra2[0].name = self.prepend + instance.name + "_rotation"
+        instance.tra2[1].name = self.prepend + instance.name + "_translation"
         self.writeVectorVariable(oe, instance.tra2[1]) #position
         self.writeVectorVariable(oe, instance.tra2[0]) #rotation
 
@@ -1197,6 +1199,8 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
+        instance.tra2[0].name = self.prepend + instance.name + "_rotation"
+        instance.tra2[1].name = self.prepend + instance.name + "_translation"
         self.writeVectorVariable(oe, instance.tra2[1]) # Position
         self.writeVectorVariable(oe, instance.tra2[0]) # Rotation
 
@@ -1217,6 +1221,8 @@ class Writer(object):
         cse.setAttribute('ref',self.prepend + instance.obj2.name)
         oe.appendChild(cse)
 
+        instance.tra2[0].name = self.prepend + instance.name + "_rotation"
+        instance.tra2[1].name = self.prepend + instance.name + "_translation"
         self.writeVectorVariable(oe, instance.tra2[1]) # Position
         self.writeVectorVariable(oe, instance.tra2[0]) # Rotation
 

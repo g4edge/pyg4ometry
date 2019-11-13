@@ -22,7 +22,7 @@ class Mesh(object) :
         self.solid = solid 
 
         # mesh in local coordinates
-        self.localmesh  = self.solid.pycsgmesh().clone()
+        self.localmesh  = self.solid.pycsgmesh()
 
         # bounding mesh in local coordinates
         self.localboundingmesh = self.getBoundingBoxMesh()

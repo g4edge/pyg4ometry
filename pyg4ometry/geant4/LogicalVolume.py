@@ -8,9 +8,38 @@ from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 import solid                     as                 _solid
 import Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
+import pyg4ometry.visualisation  as                 _vi
+import vtk                       as                 _vtk
 
 import numpy   as   _np
 import logging as   _log
+
+
+def _solid2tessellated(solid):
+    pycsg_mesh = solid.pycsgmesh()
+
+    # Use VTK to reduce all polygons to triangles
+    # as CSG operations can produce arbitrary polygons
+    # which cannot be used in Tessellated Solid
+    meshVTKPD = _vi.pycsgMeshToVtkPolyData(pycsg_mesh)
+    vtkFLT = _vtk.vtkTriangleFilter()
+    vtkFLT.AddInputData(meshVTKPD)
+    vtkFLT.Update()
+    triangular = vtkFLT.GetOutput()
+
+    meshTriangular = []
+    for i in range(triangular.GetNumberOfCells()):
+        pts = triangular.GetCell(i).GetPoints()
+        vertices = [pts.GetPoint(i) for i in range(pts.GetNumberOfPoints())]
+        # The last 3-tuple is a dummy normal to make it look like STL data
+        meshTriangular.append((vertices, (None, None, None)))
+
+    name = solid.name + "_asTesselated"
+    reg = solid.registry
+    mesh_type = _solid.TessellatedSolid.MeshType.Stl
+    tesselated_solid = _solid.TessellatedSolid(name, meshTriangular, reg, meshtype=mesh_type)
+
+    return tesselated_solid
 
 
 class LogicalVolume(object):
@@ -161,6 +190,10 @@ class LogicalVolume(object):
         self.solid = solid 
         self.mesh  = _Mesh(self.solid)        
 
+
+    def makeSolidTessellated(self):
+        tesselated_lv_solid = _solid2tessellated(self.solid)
+        self.setSolid(tesselated_lv_solid)
 
     def addAuxiliaryInfo(self, auxiliary):
         #if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):

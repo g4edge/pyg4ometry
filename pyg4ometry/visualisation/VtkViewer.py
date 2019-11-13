@@ -75,16 +75,16 @@ class VtkViewer:
         
     def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
-            if pv.logicalVolume.type == "logical":
-                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
-            elif pv.logicalVolume.type == "assembly":
-                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s' % (pv.name, pv.logicalVolume.name))
-                self.addLogicalVolumeRecursive(pv.logicalVolume, mtra, tra)
-                continue
 
             # get the local vtkPolyData
-            solid_name = pv.logicalVolume.solid.name
+            if pv.logicalVolume.type != "assembly" :
+                solid_name = pv.logicalVolume.solid.name
+            else :
+                solid_name = "none"
             pv_name = pv.name
+
+            if pv.logicalVolume.type == "logical":
+                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
 
             if pv.type == "placement":
                 # pv transform
@@ -99,29 +99,31 @@ class VtkViewer:
                 new_mtra = mtra * pvmsca * pvmrot
                 new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                #mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
-                mesh = _Mesh(pv.logicalVolume.solid).localmesh
+                if pv.logicalVolume.type != "assembly" :
+                    mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
+                    #mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
-                self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                             self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
+                    self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
-                # overlap meshes
-                for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
-                    visOptions = _VisOptions()
-                    if overlaptype == _OverlapType.protrusion :
-                        visOptions.color = [1,0,0]
-                        visOptions.alpha = 1.0
-                    elif overlaptype == _OverlapType.overlap :
-                        visOptions.color = [0,1,0]
-                        visOptions.alpha = 1.0
-                    elif overlaptype == _OverlapType.coplanar :
-                        visOptions.color = [0,0,1]
-                        visOptions.alpha = 1.0
-                    self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
-                                 self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
-                                 visOptions)
+                    # overlap meshes
+                    for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
+                        visOptions = _VisOptions()
+                        if overlaptype == _OverlapType.protrusion :
+                            visOptions.color = [1,0,0]
+                            visOptions.alpha = 1.0
+                        elif overlaptype == _OverlapType.overlap :
+                            visOptions.color = [0,1,0]
+                            visOptions.alpha = 1.0
+                        elif overlaptype == _OverlapType.coplanar :
+                            visOptions.color = [0,0,1]
+                            visOptions.alpha = 1.0
+                        self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
+                                     self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
+                                     visOptions)
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
+
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform

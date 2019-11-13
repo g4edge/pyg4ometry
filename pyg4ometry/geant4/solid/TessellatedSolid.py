@@ -104,18 +104,24 @@ class TessellatedSolid(_SolidBase):
                 
                 facet.append((3*i+0,3*i+1,3*i+2))
                 i += 1
-                
+
+        else:
+            raise ValueError("Urecognised mesh type: {}".format(self.meshtype))
+
         #############################################
         # Convert verts and facets to polygons 
         #############################################
         polygon_list = []
 
-        for f in facet :             
-            v1 = _Vertex(verts[f[0]])
-            v2 = _Vertex(verts[f[1]])
-            v3 = _Vertex(verts[f[2]])
-            
-            polygon = _Polygon([v1,v2,v3])
+        for f in facet:
+            #v1 = _Vertex(verts[f[0]])
+            #v2 = _Vertex(verts[f[1]])
+            #v3 = _Vertex(verts[f[2]])
+
+            #polygon = _Polygon([v1,v2,v3])
+
+            # This allows for both triangular and quadrilateral facets
+            polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygon_list.append(polygon)            
         
         return _CSG.fromPolygons(polygon_list)        
