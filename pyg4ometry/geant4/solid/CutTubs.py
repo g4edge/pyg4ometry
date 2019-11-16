@@ -155,6 +155,7 @@ class CutTubs(_SolidBase):
                 vWedg.append(_Vertex([xRMinP1,yRMinP1, zHighRMinP1],None))
                 vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zHighRMaxP1],None))
                 vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zLowRMaxP1],None))
+                vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
@@ -163,6 +164,7 @@ class CutTubs(_SolidBase):
                 vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zLowRMaxP2],None))
                 vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zHighRMaxP2],None))
                 vWedg.append(_Vertex([xRMinP2,yRMinP2, zHighRMinP2],None))
+                vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
             ###########################
