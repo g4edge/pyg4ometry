@@ -138,3 +138,171 @@ class Sphere(_SolidBase):
             mesh = mesh.intersect(mesh_wedge)
 
         return mesh
+
+    def pycsgmeshNew(self):
+        # 0.00972580909729 80
+        _log.info("sphere.antlr>")
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pRmin   = self.evaluateParameter(self.pRmin)*luval
+        pRmax   = self.evaluateParameter(self.pRmax)*luval
+        pSPhi   = self.evaluateParameter(self.pSPhi)*auval
+        pDPhi   = self.evaluateParameter(self.pDPhi)*auval
+        pSTheta = self.evaluateParameter(self.pSTheta)*auval
+        pDTheta = self.evaluateParameter(self.pDTheta)*auval
+
+        _log.info('Sphere.pycsgmesh>')
+
+        polygons = []
+
+        dPhi   = pDPhi/self.nslice
+        dTheta = pDTheta/self.nstack
+
+        for i in range(0,self.nslice,1) :
+
+            i1 = i
+            i2 = i+1
+
+            p1 = dPhi*i1 + pSPhi
+            p2 = dPhi*i2 + pSPhi
+
+            for j in range(0,self.nstack,1) :
+                j1 = j
+                j2 = j+1
+
+                t1 = dTheta * j1 + pSTheta
+                t2 = dTheta * j2 + pSTheta
+
+                if pRmin != 0 :
+                    xRMinP1T1 = pRmin * _np.sin(t1) * _np.cos(p1)
+                    yRMinP1T1 = pRmin * _np.sin(t1) * _np.sin(p1)
+                    zRMinP1T1 = pRmin * _np.cos(t1)
+
+                    xRMinP2T1 = pRmin * _np.sin(t1) * _np.cos(p2)
+                    yRMinP2T1 = pRmin * _np.sin(t1) * _np.sin(p2)
+                    zRMinP2T1 = pRmin * _np.cos(t1)
+
+                    xRMinP1T2 = pRmin * _np.sin(t2) * _np.cos(p1)
+                    yRMinP1T2 = pRmin * _np.sin(t2) * _np.sin(p1)
+                    zRMinP1T2 = pRmin * _np.cos(t2)
+
+                    xRMinP2T2 = pRmin * _np.sin(t2) * _np.cos(p2)
+                    yRMinP2T2 = pRmin * _np.sin(t2) * _np.sin(p2)
+                    zRMinP2T2 = pRmin * _np.cos(t2)
+                else :
+                    xRMinP1T1 = 0.0
+                    yRMinP1T1 = 0.0
+                    zRMinP1T1 = 0.0
+
+                    xRMinP2T1 = 0.0
+                    yRMinP2T1 = 0.0
+                    zRMinP2T1 = 0.0
+
+                    xRMinP1T2 = 0.0
+                    yRMinP1T2 = 0.0
+                    zRMinP1T2 = 0.0
+
+                    xRMinP2T2 = 0.0
+                    yRMinP2T2 = 0.0
+                    zRMinP2T2 = 0.0
+
+                xRMaxP1T1 = pRmax * _np.sin(t1) * _np.cos(p1)
+                yRMaxP1T1 = pRmax * _np.sin(t1) * _np.sin(p1)
+                zRMaxP1T1 = pRmax * _np.cos(t1)
+
+                xRMaxP2T1 = pRmax * _np.sin(t1) * _np.cos(p2)
+                yRMaxP2T1 = pRmax * _np.sin(t1) * _np.sin(p2)
+                zRMaxP2T1 = pRmax * _np.cos(t1)
+
+                xRMaxP1T2 = pRmax * _np.sin(t2) * _np.cos(p1)
+                yRMaxP1T2 = pRmax * _np.sin(t2) * _np.sin(p1)
+                zRMaxP1T2 = pRmax * _np.cos(t2)
+
+                xRMaxP2T2 = pRmax * _np.sin(t2) * _np.cos(p2)
+                yRMaxP2T2 = pRmax * _np.sin(t2) * _np.sin(p2)
+                zRMaxP2T2 = pRmax * _np.cos(t2)
+
+                ###########################
+                # Curved sphere faces
+                ###########################
+                if t1 == 0 :                 # if north pole (triangles)
+                    vCurv = []
+                    vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
+                    vCurv.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
+                    vCurv.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
+                    polygons.append(_Polygon(vCurv))
+                elif t2 == _np.pi :   # if south pole (triangleS)
+                    vCurv = []
+                    vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
+                    vCurv.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
+                    vCurv.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1], None))
+                    polygons.append(_Polygon(vCurv))
+                else :                      # normal curved quad
+                    vCurv = []
+                    vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
+                    vCurv.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
+                    vCurv.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
+                    vCurv.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1], None))
+                    polygons.append(_Polygon(vCurv))
+
+                if pRmin != 0 :
+                    if t1 == 0 :  # if north pole (triangles)
+                        vCurv = []
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
+                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        polygons.append(_Polygon(vCurv))
+                    elif t2 == _np.pi :  # if south pole (triangleS)
+                        vCurv = []
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
+                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                        polygons.append(_Polygon(vCurv))
+                    else:  # normal curved quad
+                        vCurv = []
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
+                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                        polygons.append(_Polygon(vCurv))
+
+                if dPhi != 2*_np.pi :
+                    if i == 0 :
+                        if t1 == 0 :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+                        elif t2 == _np.pi :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+                        else :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+
+                    if i == self.nslice-1 :
+                        if t1 == 0 :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+                        elif t2 == _np.pi :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+                        else :
+                            if pRmin == 0 :
+                                pass
+                            else :
+                                pass
+
+        mesh = _CSG.fromPolygons(polygons)
+        return mesh
