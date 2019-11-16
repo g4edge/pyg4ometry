@@ -130,16 +130,14 @@ class LogicalVolume(object):
         # overlap daughter pv checks 
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
-                print i,j
                 # first check if bounding mesh intersects
-                #cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
-                #if cullIntersection.vertexCount() == 0 :
-                #    #print 'passing daughter intersect',i,j
-                #    continue
+                # cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
+                # if cullIntersection.vertexCount() == 0 :
+                #     #print 'passing daughter intersect',i,j
+                #     continue
 
-                print "full intersect test",i,j
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
-                _log.info('LogicalVolume.checkOverlaps> inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
+                _log.info('LogicalVolume.checkOverlaps> full inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0  :
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
@@ -151,11 +149,11 @@ class LogicalVolume(object):
                     continue # Need to avoid checking daughter with itself but need both daughter1.coplanar(daughter2) as well as daughter2.coplaner(daughter1)
 
                 # first check if bounding mesh intersects
-                #cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
-                #cullCoplanar     = transformedBoundingMeshes[i].coplanar(transformedBoundingMeshes[j])
-                #if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
-                    #print 'passing daughter intersect',i,j
-                #    continue
+                # cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
+                # cullCoplanar     = transformedBoundingMeshes[i].coplanar(transformedBoundingMeshes[j])
+                # if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
+                #     print 'passing daughter intersect',i,j
+                #     continue
 
                 print "full coplanar test",i,j
                 coplanarMesh = transformedMeshes[i].coplanar(transformedMeshes[j])
