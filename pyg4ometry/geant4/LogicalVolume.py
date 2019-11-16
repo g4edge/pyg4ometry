@@ -93,7 +93,7 @@ class LogicalVolume(object):
         self.daughterVolumes.append(physicalVolume)
 
     def checkOverlaps(self, recursive = False) :
-        # local meshes 
+        # local meshes
         transformedMeshes = []
         transformedBoundingMeshes = []
 
@@ -168,7 +168,6 @@ class LogicalVolume(object):
 
             if interMesh.vertexCount() != 0 :
                 print "overlap with mother",interMesh.vertexCount()
-                interMesh.scale([1e6,1e6,1e6])
                 self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
 
         # coplanar with solid
