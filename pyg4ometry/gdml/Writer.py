@@ -110,7 +110,7 @@ class Writer(object):
         else:
             # be super tolerant incase the meshing fails - still write out
             try:
-                ext = self.registry.worldVolume.mesh.extent
+                ext = self.registry.worldVolume.mesh.getBoundingBox()
                 dz = ext[1][2] - ext[0][2]
                 s += '", l=' + str(dz) + '*mm;\n'
             except IndexError:
@@ -120,6 +120,7 @@ class Writer(object):
         s += 'sample,all;\n'
         s += 'beam, particle="e-",\n'
         s += 'energy=250.0*GeV;\n'
+        s += 'option,physicsList="em";'
         if not preprocessGDML:
             s += "option, preprocessGDML=0;"
         f = open(filenameGmad, 'w')
