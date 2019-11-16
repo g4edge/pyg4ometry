@@ -4,7 +4,7 @@ import Body as _body
 from FlukaRegistry import *
 from BodyTransform import *
 from copy import deepcopy as _dc
-from pyg4ometry.flukaNew.RegionExpression import RegionEvaluator as _RegionEval
+from pyg4ometry.fluka.RegionExpression import RegionEvaluator as _RegionEval
 
 
 def _freeform_split(string):
