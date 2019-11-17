@@ -177,7 +177,7 @@ class LogicalVolume(object):
         for i in range(0,len(transformedMeshes)) :
             print "LogicalVolume.checkOverlaps> full daughter-mother coplanar test",i
             # coplanarMesh = transformedMeshes[i].coplanar(self.mesh.localmesh)
-            coplanarMesh = self.mesh.localmesh.coplanar(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
+            coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
             if coplanarMesh.vertexCount() != 0 :
                 print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", interMesh.vertexCount()
                 self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
