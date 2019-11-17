@@ -5,6 +5,8 @@ import numpy as _np
 from hashlib import md5 as _md5
 from functools import reduce
 
+from geom import Vertex as _Vertex
+
 class CSG(object):
     """
     Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
@@ -335,6 +337,145 @@ class CSG(object):
         a.invert()
         return CSG.fromPolygons(a.allPolygons())
 
+    def coplanarIntersection(self, csg):
+        # print 'pycsg.core.coplanarIntersection>'
+
+        absp = BSPNode(self.clone().polygons)
+        bbsp = BSPNode(csg.clone().polygons)
+
+        apolygons = absp.allPolygons()
+        bpolygons = bbsp.allPolygons()
+
+        polygons = []
+
+        def coplanarPolys(apoly,bpoly) :
+            COPLANAR = 0  # all the vertices are within EPSILON distance from plane
+            FRONT = 1  # all the vertices are in front of the plane
+            BACK = 2  # all the vertices are at the back of the plane
+
+
+            aplane = apoly.plane
+            polygonType = 0
+            for i in range(len(bpoly.vertices)):
+                t = aplane.normal.dot(bpoly.vertices[i].pos) - aplane.w
+                loc = -1
+
+                if t < -1e-8:
+                    loc = BACK
+                elif t > 1e-8:
+                    loc = FRONT
+                else:
+                    loc = COPLANAR
+                polygonType |= loc
+
+            if polygonType == COPLANAR :
+                return True
+            else:
+                return False
+
+        def polyVertsInside(apoly, bpoly):
+
+            aplane = apoly.plane
+
+            vertsInside = []
+            for i in range(len(bpoly.vertices)):
+                ploc = 0
+
+                for j in range(len(apoly.vertices)):
+                    if j == len(apoly.vertices) - 1:
+                        av = apoly.vertices[0].pos - apoly.vertices[j].pos
+                    else:
+                        av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
+                    avunit = av.unit()
+                    anormal = aplane.normal.cross(avunit)
+
+                    # distance inside place
+                    t = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)
+
+                    # check if inside
+                    if t >= 0:
+                        ploc += 1
+
+                if ploc == len(apoly.vertices):
+                    vertsInside.append(bpoly.vertices[i].pos)
+
+            return vertsInside
+
+        def polyEdgeIntersection(apoly, bpoly) :
+
+            vertsInter = []
+
+            for i in range(len(bpoly.vertices)) :
+                if i == len(bpoly.vertices) - 1:
+                    bv = bpoly.vertices[0].pos - bpoly.vertices[i].pos
+                else:
+                    bv = bpoly.vertices[i + 1].pos - bpoly.vertices[i].pos
+                bvunit = bv.unit()
+                b0 = bpoly.vertices[i].pos
+
+                for j in range(len(apoly.vertices)) :
+                    if j == len(apoly.vertices) - 1:
+                        av = apoly.vertices[0].pos - apoly.vertices[j].pos
+                    else:
+                        av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
+                    avunit = av.unit()
+                    a0 = apoly.vertices[j].pos
+
+                    aPlaneNormal   = avunit.cross(apoly.plane.normal)
+
+                    denom = bvunit.dot(aPlaneNormal)
+                    if denom != 0 :
+                        soln  = -(b0 - a0).dot(aPlaneNormal)/denom
+                        inter =  soln*bvunit+b0
+                        adist  = (inter-a0).dot(avunit)
+                        bdist  = (inter-b0).dot(bvunit)
+                        andist = (inter-a0).dot(apoly.plane.normal)
+
+                        if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:
+                            vertsInter.append(inter)
+
+            return vertsInter
+
+        def convexHull(positions) :
+            v = []
+
+            if len(positions) >= 3 :
+                for p in positions :
+                    v.append(_Vertex(p))
+
+                return Polygon(v)
+            else :
+                return None
+
+        for i in range(0,len(apolygons),1):                     # loop over all A polygons
+            apoly  = apolygons[i]
+            for j in range(i,len(bpolygons),1):                 # loop over all B polygons
+                bpoly = bpolygons[j]
+
+                copl  = coplanarPolys(apoly,bpoly)
+
+                if not copl :
+                    continue
+
+                aInsideB = polyVertsInside(apoly,bpoly)
+                bInsideA = polyVertsInside(bpoly,apoly)
+                aInterB  = polyEdgeIntersection(apoly,bpoly)
+
+                #if len(aInsideB)+len(bInsideA)+len(aInterB) != 0 :
+                #    print len(aInsideB)
+                #    print len(bInsideA)
+                #    print len(aInterB)
+
+                points = []
+                points.extend(aInsideB)
+                points.extend(bInsideA)
+                points.extend(aInterB)
+
+                polygon  = convexHull(points)
+                if polygon :
+                    polygons.append(polygon)
+
+        return CSG.fromPolygons(polygons)
 
     def coplanar(self, csg):
 
