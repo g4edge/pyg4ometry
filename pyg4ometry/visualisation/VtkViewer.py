@@ -52,11 +52,35 @@ class VtkViewer:
         
     def setOpacity(self,v):
         for a in self.actors:
-            p = a.GetProperty().SetOpacity(v)
-    
+            a.GetProperty().SetOpacity(v)
+
+    def setOpacityOverlap(self,v):
+        for a in self.actorsOverlap:
+            a.GetProperty().SetOpacity(v)
+
+
     def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
             self.addLogicalVolumeBounding(logical)
+            for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
+                                                     range(0, len(logical.mesh.overlapmeshes))):
+                visOptions = _VisOptions()
+                if overlaptype == _OverlapType.protrusion:
+                    visOptions.color = [1, 0, 0]
+                    visOptions.alpha = 1.0
+                elif overlaptype == _OverlapType.overlap:
+                    visOptions.color = [0, 1, 0]
+                    visOptions.alpha = 1.0
+                elif overlaptype == _OverlapType.coplanar:
+                    visOptions.color = [0, 0, 1]
+                    visOptions.alpha = 1.0
+                self.addMesh(logical.name, logical.solid.name + "_overlap" + str(i), overlapmesh, mtra, tra,
+                             self.localmeshesOverlap, self.filtersOverlap,
+                             self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
+                             self.physicalActorMapOverlap,
+                             visOptions)
+
+        # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
 
     def addLogicalVolumeBounding(self, logical):
@@ -72,7 +96,7 @@ class VtkViewer:
         lvmActor.SetMapper(lvmMAP)         
         lvmActor.GetProperty().SetRepresentationToWireframe()
         self.ren.AddActor(lvmActor)
-        
+
     def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
 
