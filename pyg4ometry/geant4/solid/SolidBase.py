@@ -4,7 +4,7 @@ class SolidBase(object):
     """
     Base class for all solis
     """
-    def __init__(self, name="noname", registry):
+    def __init__(self, name="noname", registry=None):
         self.name = name
         self.registry = registry
 
