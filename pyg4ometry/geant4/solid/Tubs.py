@@ -34,7 +34,7 @@ class Tubs(_SolidBase):
     :param nslice: number of phi elements for meshing
     :type nslice: int 
     """
-    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry=None,
+    def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry,
                  lunit="mm", aunit="rad", nslice=16, addRegistry=True):
         self.name   = name
         self.type   = 'Tubs'
