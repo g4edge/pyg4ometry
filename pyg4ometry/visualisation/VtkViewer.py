@@ -54,10 +54,17 @@ class VtkViewer:
         for a in self.actors:
             a.GetProperty().SetOpacity(v)
 
+    def setWireframe(self) :
+        for a in self.actors :
+            a.GetProperty().SetRepresentationToWireframe()
+
     def setOpacityOverlap(self,v):
         for a in self.actorsOverlap:
             a.GetProperty().SetOpacity(v)
 
+    def setWireframeOverlap(self) :
+        for a in self.actorsOverlap :
+            a.GetProperty().SetRepresentationToWireframe()
 
     def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
