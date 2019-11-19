@@ -47,7 +47,7 @@ class FlukaRegistry(object):
             bm = _g4.MaterialPredefined("G4_Fe")
             rlv = _g4.LogicalVolume(s, bm, "bl", greg)
 
-            rpv = _g4.PhysicalVolume(list(region.rotation()),
+            rpv = _g4.PhysicalVolume(list(region.tbxyz()),
                                      list(region.centre()),
                                      rlv, "b_pv1", wlv, greg)
 

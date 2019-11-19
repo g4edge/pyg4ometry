@@ -26,37 +26,38 @@ class Zone(object):
     def addIntersection(self,body):
         self.boolean.append(Intersection(body))
 
-
     def centre(self):
         return self.boolean[0].body.centre()
 
     def rotation(self):
         return self.boolean[0].body.rotation()
 
+    def tbxyz(self):
+        return matrix2tbxyz(self.rotation())
+
     def geant4_solid(self, reg):
 
-        b             = self.boolean[0].body.geant4_solid(reg)
-        rotation = self.rotation()
-        centre   = self.centre()
-        tra1 = [rotation, centre]
+        body0 = self.boolean[0].body
+        result = body0.geant4_solid(reg)
 
-        for s,i in zip(self.boolean[1:],range(0,len(self.boolean[1:])+2)):
+        for boolean,i in zip(self.boolean[1:],range(0,len(self.boolean[1:])+2)):
             bName = "s"+str(i)
             print i,bName
-            tra2 = [list(s.body.rotation()), list(s.body.centre())]
-            relative_tra = _get_relative_tra(tra1, tra2)
-            b2 = s.body.geant4_solid(reg)
-            if isinstance(s, Subtraction):
-                b  =_g4.solid.Subtraction(bName,
-                                          b, b2,
-                                          relative_tra, reg)
+            tra2 = _get_tra2(body0, boolean.body)
+            tra2 = [list(tra2[0]), list(tra2[1])]
 
-            elif isinstance(s, Intersection):
-                b  =_g4.solid.Intersection(bName,
-                                           b, b2,
-                                           relative_tra, reg)
+            other_solid = boolean.body.geant4_solid(reg)
+            if isinstance(boolean, Subtraction):
+                result  =_g4.solid.Subtraction(bName,
+                                               result, other_solid,
+                                               tra2, reg)
 
-        return b
+            elif isinstance(boolean, Intersection):
+                result  =_g4.solid.Intersection(bName,
+                                                result, other_solid,
+                                                tra2, reg)
+
+        return result
 
     def fluka_free_string(self):
         fs = ""
@@ -86,27 +87,29 @@ class Region(object):
     def centre(self):
         return self.zones[0].centre()
 
+    def tbxyz(self):
+        return self.zones[0].tbxyz()
+
     def rotation(self):
         return self.zones[0].rotation()
 
     def geant4_solid(self, reg):
 
-        z = self.zones[0].geant4_solid(reg)
-        centre   = self.centre()
-        rotation = self.rotation()
-        tra1 = [rotation, centre]
+        zone0 = self.zones[0]
+        result = zone0.geant4_solid(reg)
 
-        for z_other,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
-            zName = "z"+str(i)
-            print i, zName
-            tra2 = [list(z_other.rotation()), list(z_other.centre())]
-            relative_tra = _get_relative_tra(tra1, tra2)
-            z  =_g4.solid.Union(zName, z,
-                                z_other.geant4_solid(reg),
-                                relative_tra,
-                                reg)
+        for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
+            zone_name = "z"+str(i)
+            print i, zone_name
+            tra2 = _get_tra2(zone0, zone)
+            tra2 = [list(tra2[0]), list(tra2[1])]
 
-        return z
+            result  = _g4.solid.Union(zone_name, result,
+                                      zone.geant4_solid(reg),
+                                      tra2,
+                                      reg)
+
+        return result
 
     def geant4_test(self):
         reg = _g4.Registry()
@@ -127,29 +130,28 @@ class Region(object):
 
         return fs
 
-def _get_relative_tra(tra1, tra2):
-    # rotations
-    rot1 = tra1[0]
-    rot2 = tra2[0]
-    # translations
-    trl1 = Three(tra1[1])
-    trl2 = Three(tra2[1])
+def _get_relative_rot_matrix(first, second):
+    return first.rotation().T.dot(second.rotation())
 
-    # The first solid is unrotated in a boolean operation, so it
-    # is in effect rotated by its inverse.  We apply this same
-    # rotation to the /second/ solid to get the correct relative
-    # rotation.  (recall inverse of a rotation matrix = its transpose)
-    rot1 = tbxyz2matrix(rot1)
-    rot2 = tbxyz2matrix(rot2)
-    relative_rot_matrix = rot1.T.dot(rot2)
-
+def _get_relative_translation(first, second):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    relative_trl = trl2 - trl1
-    relative_trl = rot1.T.dot(relative_trl).view(Three)
+    offset_vector = second.centre() - first.centre()
+    mat = first.rotation() # don't invert this  don't know why.  something
+    # changed internally in pyg4ometry i think.  this works.
+    offset_vector = mat.dot(offset_vector).view(Three)
+    return offset_vector
 
-    rel_rot = matrix2tbxyz(relative_rot_matrix)
+def _get_relative_rotation(first, second):
+    # The first solid is unrotated in a boolean operation, so it
+    # is in effect rotated by its inverse.  We apply this same
+    # rotation to the second solid to get the correct relative
+    # rotation.
+    return matrix2tbxyz(_get_relative_rot_matrix(first, second))
 
-    # convert to Three to list to make code in Defines.py happy.
-    return [rel_rot, list(relative_trl)]
+def _get_tra2(first, second):
+    relative_angles = _get_relative_rotation(first, second)
+    relative_translation = _get_relative_translation(first, second)
+    relative_transformation = [relative_angles, relative_translation]
+    return relative_transformation

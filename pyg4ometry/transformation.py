@@ -279,6 +279,6 @@ def two_fold_orientation(v1, v2, e1, e2):
     e2 end v
     """
     m1 = matrix_from(v1, v2)
-    m2 = matrix_from(m1.dot(e1).A1, e2)
+    m2 = matrix_from(m1.dot(e1), e2)
+    return m2.dot(m1)
 
-    return matrix2tbxyz(m2 * m1)
