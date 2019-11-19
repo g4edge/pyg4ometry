@@ -65,12 +65,8 @@ class PhysicalVolume(object):
 
         [vMin,vMax] = self.logicalVolume.extent(includeBoundingSolid)
 
-
         vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)).flatten()
         vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)).flatten()
-
-        print vMinPrime
-        print vMaxPrime
 
         return [vMinPrime, vMaxPrime]
         
