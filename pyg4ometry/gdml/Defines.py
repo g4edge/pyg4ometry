@@ -116,15 +116,20 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
     """
 
 
-    if isinstance(var[0],VectorBase) :
+    if isinstance(var[0],VectorBase):
         rot = var[0]
-    elif isinstance(var[0],list) :
-        rot = upgradeToVector(var[0],reg,"rotation",addRegistry) 
+    elif isinstance(var[0],list):
+        rot = upgradeToVector(var[0],reg,"rotation",addRegistry)
+    else:
+        raise TypeError("Unknown rotation type: {}".format(type(var[0])))
 
-    if isinstance(var[1],VectorBase) :
-        tra = var[1] 
-    elif isinstance(var[1],list) : 
-        tra = upgradeToVector(var[1],reg,"position",addRegistry) 
+    if isinstance(var[1],VectorBase):
+        tra = var[1]
+    elif isinstance(var[1],list):
+        tra = upgradeToVector(var[1],reg,"position",addRegistry)
+    else:
+        raise TypeError("Unknown position type: {}".format(type(var[1])))
+
 
     return [rot,tra]
 

@@ -66,7 +66,7 @@ def axisangle2matrix(axis, angle):
     a_32 = (versin * z * y) + (x * sin)
     a_33 = (versin * z * z) + cos
 
-    return  _np.matrix([[a_11, a_12, a_13],
+    return  _np.array([[a_11, a_12, a_13],
                         [a_21, a_22, a_23],
                         [a_31, a_32, a_33]])
 
@@ -136,17 +136,17 @@ def tbxyz2matrix(angles):
     cz = _np.cos(z)
 
     # Rotation matrices.
-    mx = _np.matrix([[1,    0,    0],
+    mx = _np.array([[1,    0,    0],
                      [0,   cx,  -sx],
                      [0,  sx,    cx]])
-    my = _np.matrix([[ cy,  0,   sy],
+    my = _np.array([[ cy,  0,   sy],
                      [  0,  1,    0],
                      [-sy,   0,  cy]])
-    mz = _np.matrix([[ cz, -sz,  0],
+    mz = _np.array([[ cz, -sz,  0],
                      [ sz,  cz,  0],
                      [  0,   0,  1]])
 
-    m = mz * my * mx
+    m = mz.dot(my.dot(mx))
     return m
 
 def matrix_from(v_from, v_to):
@@ -162,7 +162,7 @@ def matrix_from(v_from, v_to):
     """
     # Trivial cases that the algorithm otherwise can't handle:
     if are_parallel(v_from, v_to):
-        return _np.matrix(_np.eye(3))
+        return _np.array(_np.eye(3))
     elif are_anti_parallel(v_from, v_to):
         return _rodrigues_anti_parallel(v_from, v_to)
     # Get the axis to rotate around and the angle to rotate by:
@@ -176,18 +176,16 @@ def matrix_from(v_from, v_to):
                           * _np.linalg.norm(v_to)))
 
     # Construct the skew-symmetric cross product matrix.
-    cross_matrix = _np.matrix([[0,       -axis[2],  axis[1]],
+    cross_matrix = _np.array([[0,       -axis[2],  axis[1]],
                                [axis[2],       0,  -axis[0]],
                                [-axis[1], axis[0],        0]])
     # Rodrigues' rotation formula.
     rotation_matrix = (_np.eye(3)
-                       + (_np.sin(angle)
-                          * cross_matrix)
+                       + (_np.sin(angle) * (cross_matrix))
                        + ((1 - _np.cos(angle))
-                          * cross_matrix
-                          * cross_matrix))
+                          * (cross_matrix).dot(cross_matrix)))
 
-    assert are_parallel(v_to, rotation_matrix.dot(v_from).A1), (
+    assert are_parallel(v_to, rotation_matrix.dot(v_from)), (
         "Not parallel!")
     assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), (
         "Not orthogonal!")
@@ -210,7 +208,7 @@ def _rodrigues_anti_parallel(v_from, v_to):
 
     # Handle case when vector is along the z-axis:
     if _np.allclose(abs(v_from[2]), 1.0):
-        return _np.matrix([[-1, 0, 0],
+        return _np.array([[-1, 0, 0],
                            [ 0, 1, 0],
                            [ 0, 0, -1]])
 
@@ -231,11 +229,11 @@ def _rodrigues_anti_parallel(v_from, v_to):
 
     factor = 1 / (1 - v_from[2]**2)
 
-    rotation_matrix = factor * _np.matrix([[R_11, R_12, R_13],
+    rotation_matrix = factor * _np.array([[R_11, R_12, R_13],
                                            [R_21, R_22, R_23],
                                            [R_31, R_32, R_33]])
 
-    assert are_parallel(v_to, rotation_matrix.dot(v_from).A1), (
+    assert are_parallel(v_to, rotation_matrix.dot(v_from)), (
         "Not parallel!")
     assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), (
         "Not orthogonal!")
