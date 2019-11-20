@@ -123,7 +123,7 @@ class LogicalVolume(object):
                     pass
                 elif s[0]*s[1]*s[2] == -1 :
                     mesh = mesh.inverse()
-                    boundingmesh.invese()
+                    boundingmesh.inverse()
 
             # translate
             t = pv.position.eval()
