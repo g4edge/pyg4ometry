@@ -6,6 +6,7 @@ from hashlib import md5 as _md5
 from functools import reduce
 
 from geom import Vertex as _Vertex
+from geom import Vector as _Vector
 
 class CSG(object):
     """
@@ -425,27 +426,49 @@ class CSG(object):
 
                     denom = bvunit.dot(aPlaneNormal)
                     if denom != 0 :
-                        soln  = -(b0 - a0).dot(aPlaneNormal)/denom
-                        inter =  soln*bvunit+b0
+                        soln   = -(b0 - a0).dot(aPlaneNormal)/denom
+                        inter  =  soln*bvunit+b0
                         adist  = (inter-a0).dot(avunit)
                         bdist  = (inter-b0).dot(bvunit)
                         andist = (inter-a0).dot(apoly.plane.normal)
 
                         if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:
-                            vertsInter.append(inter)
+                            vertsInter.append(_Vector(inter))
 
             return vertsInter
 
-        def convexHull(positions) :
-            v = []
+        def convexHull(positions,normal) :
 
-            if len(positions) >= 3 :
-                for p in positions :
-                    v.append(_Vertex(p))
-
-                return Polygon(v)
-            else :
+            if len(positions) < 3 :
                 return None
+
+            hull = []
+
+            q_now  = positions[0]
+            q_next = positions[1]
+
+            nhull = 0
+            while nhull < len(positions) :
+
+                hull.append(q_now)
+                nhull = nhull + 1
+
+                for p in positions :
+                    p1 = (q_next-q_now).unit()
+                    p2 = (p-q_now).unit()
+
+                    if p1.cross(p2).dot(normal) < 0 :
+                        q_next = p
+
+                q_now = q_next
+                q_next = positions[0]
+
+            v = []
+            for p in hull :
+                v.append(_Vertex(p))
+
+            # print v
+            return Polygon(v)
 
         for i in range(0,len(apolygons),1):                     # loop over all A polygons
             apoly  = apolygons[i]
@@ -471,7 +494,7 @@ class CSG(object):
                 points.extend(bInsideA)
                 points.extend(aInterB)
 
-                polygon  = convexHull(points)
+                polygon  = convexHull(points,bpoly.plane.normal)
                 if polygon :
                     polygons.append(polygon)
 
