@@ -32,6 +32,9 @@ class PhysicalVolume(object):
             position = _Defines.Position(name+"_pos",position[0],position[1],position[2],"mm",registry,False)
         if isinstance(rotation,list) :
             rotation = _Defines.Rotation(name+"_rot",rotation[0],rotation[1],rotation[2],"rad",registry,False)
+        if isinstance(scale,list) :
+            scale    = _Defines.Rotation(name+"_sca",scale[0],scale[1],scale[2],"none",registry,False)
+
 
         # geant4 required objects
         self.rotation      = rotation
@@ -62,8 +65,8 @@ class PhysicalVolume(object):
 
         [vMin,vMax] = self.logicalVolume.extent(includeBoundingSolid)
 
-        vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)[0, :])[0]
-        vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)[0, :])[0]
+        vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)).flatten()
+        vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)).flatten()
 
         return [vMinPrime, vMaxPrime]
         

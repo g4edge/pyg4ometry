@@ -98,10 +98,10 @@ class LogicalVolume(object):
         transformedBoundingMeshes = []
 
         # transform meshes (and bounding meshes) into logical volume frame
-        for pv in self.daughterVolumes :
+        for pv in self.daughterVolumes:
 
             # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement" :
+            if  pv.type != "placement":
                 continue
 
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
@@ -118,6 +118,12 @@ class LogicalVolume(object):
                 s = pv.scale.eval()
                 mesh.scale(s)
                 boundingmesh.scale(s)
+
+                if s[0]*s[1]*s[2] == 1 :
+                    pass
+                elif s[0]*s[1]*s[2] == -1 :
+                    mesh = mesh.inverse()
+                    boundingmesh.inverse()
 
             # translate
             t = pv.position.eval()
@@ -171,6 +177,7 @@ class LogicalVolume(object):
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
 
             if interMesh.vertexCount() != 0 :
+                pass
                 #print "LogicalVolume.checkOverlaps> overlap with mother",interMesh.vertexCount()
                 self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
 

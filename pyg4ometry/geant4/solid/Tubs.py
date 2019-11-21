@@ -141,15 +141,17 @@ class Tubs(_SolidBase):
                 vWedg.append(_Vertex([xRMinP1, yRMinP1,  pDz],None))
                 vWedg.append(_Vertex([xRMaxP1, yRMaxP1,  pDz],None))
                 vWedg.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
+                vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
                 pass
                 vWedg = []
-                vWedg.append(_Vertex([xRMinP1, yRMinP1, -pDz],None))
-                vWedg.append(_Vertex([xRMaxP1, yRMaxP1, -pDz],None))
-                vWedg.append(_Vertex([xRMaxP1, yRMaxP1,  pDz],None))
-                vWedg.append(_Vertex([xRMinP1, yRMinP1,  pDz],None))
+                vWedg.append(_Vertex([xRMinP2, yRMinP2, -pDz],None))
+                vWedg.append(_Vertex([xRMaxP2, yRMaxP2, -pDz],None))
+                vWedg.append(_Vertex([xRMaxP2, yRMaxP2,  pDz],None))
+                vWedg.append(_Vertex([xRMinP2, yRMinP2,  pDz],None))
+                vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
             ###########################
