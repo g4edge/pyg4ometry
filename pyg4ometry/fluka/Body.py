@@ -625,3 +625,37 @@ class ZEC(Body):
             self.name,
             self.x, self.y,
             self.xsemi, self.ysemi)
+
+
+class PLA(Body):
+    """Generic half-space.
+
+    Parameters:
+    point = point on surface of halfspace
+    normal = vector normal to the surface (pointing outwards from the
+             contents of the body)
+    """
+
+    def __init__(self, name, normal, point, flukaregistry=None):
+        self.name = name
+        self.normal = _Three(normal)
+        self.point = _Three(point)
+
+        # normalise it if it is not normalised.
+        self.normal = self.normal / _np.linalg.norm(self.normal)
+
+    def centre(self):
+        return self.point - 0.5 * INFINITY * self.normal.unit()
+
+    def rotation(self):
+        # Choose the face pointing in the direction of the positive
+        # z-axis to make the surface of the half space.
+        return _trans.matrix_from([0, 0, 1], self.normal)
+
+    def geant4_solid(self, reg):
+        return _g4.solid.Box(self.name,
+                             INFINITY,
+                             INFINITY,
+                             INFINITY,
+                             reg,
+                             lunit="mm")
