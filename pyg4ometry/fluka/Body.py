@@ -112,6 +112,56 @@ class BOX(Body):
                                             e2.x, e2.y, e2.z,
                                             e3.x, e3.y, e3.z)
 
+
+class ELL(Body):
+    """Ellipsoid of revolution.
+    focus1 = location of one of the foci on the major ellipsoid axis
+    focus2 = location of the other focus on the major ellipsoid axis
+    length = full length of the major ellipsoid axis
+    """
+
+    def __init__(self, name, focus1, focus2, length, flukaregistry=None):
+        self.name = name
+        self.focus1 = _Three(focus1)
+        self.focus2 = _Three(focus2)
+        self.length = length # major axis length
+
+        # semi-major axis should be greater than the distances to the
+        # foci from the centre (aka the linear eccentricity).
+        if (0.5*self.length <= (self.focus1 - self.centre()).length()
+            or 0.5*self.length <= (self.focus2 - self.centre()).length()):
+            raise ValueError("Distance from foci to centre must be"
+                             " smaller than the semi-major axis length.")
+
+    def centre(self):
+        return 0.5 * (self.focus1 + self.focus2)
+
+    def rotation(self):
+        # TODO: ELL is underconstrained, there is some convention
+        # baked into FLUKA that I must recreate here to get the
+        # correct rotation around the semi-major axis.
+        initial = [1, 0, 0]  # foci start pointing along x (we choose)
+        # initial2 = [0, 1, 0]  # semiminor starts pointing along y.
+        final = self.focus1 - self.focus2
+        # final2 =
+        # return _two_fold_orientation(initial1, final1, initial2, final2)
+        return _trans.matrix_from(initial, final).T # .T fudge factor
+
+    def geant4_solid(self, greg):
+        centre = self.centre()
+        linear_eccentricity = (self.focus1 - self.centre()).length()
+        semiminor = _np.sqrt((0.5*self.length)**2 - linear_eccentricity**2)
+        # We choose the x-z plane as the plane of the ellipse that
+        # gives the ellipsoid of rotation.  So the semi-minor is in y.
+        return _g4.solid.Ellipsoid(self.name,
+                                   0.5 * self.length,
+                                   semiminor,
+                                   0.5 * self.length,
+                                   -self.length, # cuts, we don't cut.
+                                   self.length,
+                                   greg)
+
+
 class RCC(Body):
     """Right circular cylinder
     face = centre of one of the faces
@@ -659,3 +709,10 @@ class PLA(Body):
                              INFINITY,
                              reg,
                              lunit="mm")
+
+
+def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
+    if (first.dot(second) != 0.0
+        or first.dot(third) != 0
+        or second.dot(third) != 0.0):
+        raise ValueError(message)
