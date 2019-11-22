@@ -79,10 +79,9 @@ class BOX(Body):
         self.edge2   = _Three(edge2)
         self.edge3   = _Three(edge3)
 
-        if (self.edge1.dot(self.edge2) != 0.0
-            or self.edge1.dot(self.edge3) != 0
-            or self.edge2.dot(self.edge3) != 0.0):
-            raise ValueError("Edges are not all mutally orthogonal.")
+        _raise_if_not_all_mutually_perpendicular(
+            self.edge1, self.edge2, self.edge3,
+            "Edges are not all mutally orthogonal.")
 
     def centre(self):
         return self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3)
@@ -228,11 +227,10 @@ class REC(Body):
         self.semiminor = _Three(semiminor)
         self.semimajor = _Three(semimajor)
 
-        if (self.direction.dot(self.semiminor) != 0.0
-            or self.direction.dot(self.semimajor) != 0.0
-            or self.semiminor.dot(self.semimajor) != 0.0):
-            raise TypeError("Direction, semiminor, and semimajor are"
-                            " not all mutually perpendicular.")
+        _raise_if_not_all_mutually_perpendicular(
+            self.direction, self.semiminor, semimajor,
+            ("Direction, semiminor, and semimajor are"
+             " not all mutually perpendicular."))
 
         self.addToRegistry(flukaregistry)
 
