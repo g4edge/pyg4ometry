@@ -1,5 +1,9 @@
 import numpy as _np
 from Vector import Three as _Three
+import pyg4ometry.pycsg.core
+from pyg4ometry.pycsg.core import CSG as _CSG
+import pyg4ometry.pycsg.geom as _geom
+
 
 import pyg4ometry.transformation as _trans
 import pyg4ometry.geant4 as _g4
@@ -163,6 +167,126 @@ class ELL(Body):
                                    -self.length, # cuts, we don't cut.
                                    self.length,
                                    greg)
+
+
+class ARB(Body):
+    """ Has 4, 5, or 6 faces.
+
+    vertices: 8 vertices must be provided as a list of 8 lists,
+    i.e. [[x1, y1, z1], [x2, y2, y2], ...].
+    facenumbers: a list of 4 numbers which refers to the vertices
+    making up the six faces.  The vertex numbers must be provided
+    either ALL in clockwise order or ALL in anticlockwise order.
+    Combining the two conventions will result in erroneous output
+    without warning.
+
+    """
+
+    def __init__(self, name, vertices, facenumbers, flukaregistry):
+        self.name = name
+        self.vertices = [_Three(v) for v in vertices]
+        self.facenumbers = facenumbers
+
+        if len(self.vertices) != 8:
+            raise TypeError("8 vertices must always be supplied,"
+                            " even if not all are used.")
+        if len(self.facenumbers) != 6:
+            raise TypeError("6 face numbers must always be supplied.")
+
+        self._nfaces = 6
+        for facenumber in self.facenumbers:
+            if facenumber == 0:
+                self._nfaces -= 1
+        if self._nfaces < 4:
+            raise TypeError("Not enough faces provided in arg facenumbers."
+                            "  Must be 4, 5 or 6.")
+
+    def centre(self):
+        return _Three(0, 0, 0)
+
+    def rotation(self):
+        return _np.identity(3)
+
+    def geant4_solid(self, greg):
+        # pyg4ometry expects right handed corkscrew for the vertices
+        # for TesselatedSolid (and in general).
+        # Fluka however for ARB can take either all right or left
+        # handed (but no mixing and matching).  If our normals are all in
+        # the wrong direction, when we union with a solid which
+        # envelops that tesselated solid we will get a NullMeshError,
+        # which we can catch and then we invert the mesh and return
+        # that TesselatedSolid.
+
+        # We need the minimum and maximum extents of the tesselated
+        # solid to make the enveloping box.
+        xmin = 0
+        xmax = 0
+        ymin = 0
+        ymax = 0
+        zmin = 0
+        zmax = 0
+        polygon_list = []
+        for fnumber in self.facenumbers:
+            if fnumber == 0:
+                continue
+
+            # store the digits of the fnumbers as indices which are
+            # zero counting (c.f. input in which they count from 1)
+            zc_vertex_indices = []
+
+            for vertex_index in str(int(fnumber)):
+                zero_counting_index = int(vertex_index) - 1
+                 # duplicate digits in the fnumber should be ignored
+                if zero_counting_index in zc_vertex_indices:
+                    continue
+                # digit=0 in the fnumber should be ignored, no extra vertex
+                if zero_counting_index == -1:
+                    continue
+                zc_vertex_indices.append(zero_counting_index)
+
+                xmin = min(xmin, self.vertices[zero_counting_index].x)
+                xmax = max(xmax, self.vertices[zero_counting_index].x)
+                ymin = min(ymin, self.vertices[zero_counting_index].y)
+                ymax = max(ymax, self.vertices[zero_counting_index].y)
+                zmin = min(zmin, self.vertices[zero_counting_index].z)
+                zmax = max(zmax, self.vertices[zero_counting_index].z)
+
+
+            face_vertices = [_geom.Vertex(self.vertices[i])
+                             for i in zc_vertex_indices]
+            polygon = _geom.Polygon(face_vertices)
+            polygon_list.append(polygon)
+
+        mesh = _CSG.fromPolygons(polygon_list)
+        vertices_and_polygons = mesh.toVerticesAndPolygons()
+        tesselated_solid = _g4.solid.TessellatedSolid(self.name,
+                                                      vertices_and_polygons,
+                                                      greg,
+                                                      addRegistry=False)
+        # make massive box with totally envelops the tesselated solid
+        big_box = _g4.solid.Box("test_box",
+                                10*(xmax - xmin),
+                                10*(ymax - ymin),
+                                10*(zmax - zmin),
+                                greg,
+                                addRegistry=False)
+        test_union = _g4.solid.Union("test_union",
+                                     tesselated_solid,
+                                     big_box,
+                                     [[0,0,0],[0,0,0]],
+                                     _g4.Registry(),
+                                     addRegistry=False)
+        try:
+            # try to mesh the union of the enveloping box and the
+            # tesselated solid.  if we get a null mesh error we have
+            # the faces the wrong way around.
+            test_union.pycsgmesh()
+        except pyg4ometry.exceptions.NullMeshError:
+            # inverse to get it right
+            vertices_and_polygons = mesh.inverse().toVerticesAndPolygons()
+        return _g4.solid.TessellatedSolid(self.name,
+                                          vertices_and_polygons,
+                                          greg)
 
 
 class RCC(Body):
