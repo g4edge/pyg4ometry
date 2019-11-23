@@ -46,6 +46,14 @@ class RPP(Body):
         self.lower = _Three([xmin, ymin, zmin])
         self.upper = _Three([xmax, ymax, zmax])
 
+        if not all([self.xmin < self.xmax,
+                    self.ymin < self.ymax,
+                    self.zmin < self.zmax]):
+            raise ValueError("Each of the xmin, ymin, zmin must be"
+                             " smaller than the corresponding"
+                             " xmax, ymax, zmax.")
+
+
         self.addToRegistry(flukaregistry)
 
     def centre(self):
