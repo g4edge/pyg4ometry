@@ -169,6 +169,77 @@ class ELL(Body):
                                    greg)
 
 
+class _WED_RAW(Body):
+    """WED and RAW are aliases for one another, so we define it in a
+    single place and then inherit this class to provide the correct
+    names below.
+
+    """
+    def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry):
+        self.name = name
+        self.vertex = _Three(vertex)
+        self.edge1 = _Three(edge1)  # direction of the triangular face.
+        self.edge2 = _Three(edge2)  # direction of length of the prism.
+        self.edge3 = _Three(edge3)  # other direction of the triangular face.
+        # from IPython import embed; embed()
+        _raise_if_not_all_mutually_perpendicular(
+            self.edge1, self.edge2, self.edge3,
+            "Edges are not all mutually perpendicular")
+
+    def centre(self):
+        return self.vertex
+
+    def rotation(self):
+        initial1 = [1, 0, 0] # self.edge1 starts off pointing in the x-direction
+        initial2 = [0, 0, 1] # self.edge2 starts off pointing in the z-direction
+        initial3 = [0, 1, 0] # self.edge3 starts off pointing in the y-direction
+
+        # return _trans.three_fold_orientation(initial1,
+        #                                      self.edge1,
+        #                                      initial2,
+        #                                      self.edge2,
+        #                                      initial3,
+        #                                      self.edge3).T
+        basis1 = _np.array([initial1,
+                            initial2,
+                            initial3])
+        basis2 = _np.array([self.edge1.unit(),
+                            self.edge2.unit(),
+                            self.edge3.unit()])
+        # from IPython import embed; embed()
+        return basis1.T.dot(basis2)
+
+
+        # return _trans.two_fold_orientation(initial1,
+        #                                      self.edge1,
+        #                                      initial2,
+        #                                      self.edge2
+        #                                      # initial3,
+        #                                      # self.edge3
+        # ).T
+
+
+    def geant4_solid(self, greg):
+        # We choose self.vertex to be at [0, 0].
+        face = [[0, 0],
+                [self.edge1.length(), 0],
+                [0, self.edge3.length()]]
+        return _g4.solid.ExtrudedSolid(self.name,
+                                       face,
+                                       [[0,[0, 0], 1],
+                                        [self.edge2.length(), [0, 0], 1]],
+                                       registry=greg)
+
+
+
+class WED(_WED_RAW):
+    pass
+
+
+class RAW(_WED_RAW):
+    pass
+
+
 class ARB(Body):
     """ Has 4, 5, or 6 faces.
 
