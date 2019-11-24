@@ -22,7 +22,7 @@ class Intersection(_SolidBase):
     :type registry: Registry
 
     """
-    def __init__(self, name, obj1, obj2, tra2, registry):
+    def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
         # circular import 
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
@@ -38,10 +38,9 @@ class Intersection(_SolidBase):
         self.dependents = []
 
         self.registry = registry
-        registry.addSolid(self)
+        if addRegistry:
+            registry.addSolid(self)
 
-        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
 
@@ -54,8 +53,8 @@ class Intersection(_SolidBase):
         _log.info('Intersection.pycshmesh>')
 
         # look up solids in registry 
-        obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-        obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
+        obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
+        obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
         # transformation 
         rot   = tbxyz2axisangle(self.tra2[0].eval())

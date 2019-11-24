@@ -26,6 +26,9 @@ class FlukaRegistry(object):
     def addLattice(self, lattice):
         self.latticeDict.add(lattice)
 
+    def getBody(self, name):
+        return self.bodyDict[name]
+
     def printDefinitions(self):
         print "bodyDict = {}".format(self.bodyDict)
         print "bodyTransformDict = {}".format(self.bodyTransformDict)

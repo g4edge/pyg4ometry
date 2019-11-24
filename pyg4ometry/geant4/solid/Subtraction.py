@@ -22,7 +22,7 @@ class Subtraction(_SolidBase):
     :type registry: Registry
 
     """
-    def __init__(self,name, obj1, obj2, tra2, registry):
+    def __init__(self,name, obj1, obj2, tra2, registry, addRegistry=True):
         # circular import 
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
@@ -38,11 +38,9 @@ class Subtraction(_SolidBase):
         self.dependents = []
 
         self.registry = registry
-        if registry :
+        if addRegistry:
             registry.addSolid(self)
 
-        # obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-        # obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
         obj1.dependents.append(self) 
         obj2.dependents.append(self)
 
@@ -55,12 +53,8 @@ class Subtraction(_SolidBase):
 
         # look up solids in registry 
         import pyg4ometry.geant4 as _g4
-        if self.registry:
-            obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
-            obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
-        else:
-            obj1 = self.obj1
-            obj2 = self.obj2
+        obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
+        obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
         # transformation 
         rot = tbxyz2axisangle(self.tra2[0].eval())
