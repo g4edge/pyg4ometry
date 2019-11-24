@@ -2,7 +2,7 @@ import time as _time
 
 class SolidBase(object):
     """
-    Base class for all solis
+    Base class for all solids
     """
     def __init__(self, name="noname", registry=None):
         self.name = name
