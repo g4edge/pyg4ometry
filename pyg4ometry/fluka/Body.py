@@ -64,7 +64,7 @@ class RPP(Body):
     def rotation(self):
         return _np.identity(3)
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         self.g4_solid =  _g4.solid.Box(self.name,
                                        self.upper[0]-self.lower[0],
                                        self.upper[1]-self.lower[1],
@@ -97,7 +97,7 @@ class BOX(Body):
     def rotation(self):
         return _np.identity(3)
 
-    def geant4_solid(self, greg):
+    def geant4_solid(self, greg, scale=None):
         return _g4.solid.Box(self.name,
                              self.edge1.length(),
                              self.edge2.length(),
@@ -154,7 +154,7 @@ class ELL(Body):
         # return _two_fold_orientation(initial1, final1, initial2, final2)
         return _trans.matrix_from(initial, final).T # .T fudge factor
 
-    def geant4_solid(self, greg):
+    def geant4_solid(self, greg, scale=None):
         centre = self.centre()
         linear_eccentricity = (self.focus1 - self.centre()).length()
         semiminor = _np.sqrt((0.5*self.length)**2 - linear_eccentricity**2)
@@ -219,7 +219,7 @@ class _WED_RAW(Body):
         # ).T
 
 
-    def geant4_solid(self, greg):
+    def geant4_solid(self, greg, scale=None):
         # We choose self.vertex to be at [0, 0].
         face = [[0, 0],
                 [self.edge1.length(), 0],
@@ -278,7 +278,7 @@ class ARB(Body):
     def rotation(self):
         return _np.identity(3)
 
-    def geant4_solid(self, greg):
+    def geant4_solid(self, greg, scale=None):
         # pyg4ometry expects right handed corkscrew for the vertices
         # for TesselatedSolid (and in general).
         # Fluka however for ARB can take either all right or left
@@ -386,7 +386,7 @@ class RCC(Body):
         rotation = _trans.matrix_from(initial, final)
         return rotation.T # invert rotation fudge factor to make it work
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.Tubs(self.name,
                               0.0,
                               self.radius,
@@ -448,7 +448,7 @@ class REC(Body):
                                                final_semiminor)
         return rotation.T # invert rotation fudge factor to make it work
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.EllipticalTube(self.name,
                                         2 * self.semiminor.length(),
                                         2 * self.semimajor.length(),
@@ -507,7 +507,7 @@ class TRC(Body):
     def centre(self):
         return self.major_centre + 0.5 * self.direction
 
-    def geant4_solid(self, registry):
+    def geant4_solid(self, registry, scale=None):
         # The first face of _g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         return _g4.solid.Cons(self.name,
@@ -552,7 +552,7 @@ class SPH(Body):
     def centre(self):
         return self.point
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         """Construct a solid, whole, geant4 sphere from this."""
         return _g4.solid.Orb(self.name,
                              self.radius,
@@ -570,7 +570,7 @@ class HalfSpace(Body):
     def rotation(self):
         return _np.identity(3)
 
-    def geant4_solid(self, registry):
+    def geant4_solid(self, registry, scale=None):
         return _g4.solid.Box(self.name,
                              INFINITY,
                              INFINITY,
@@ -634,7 +634,7 @@ class YZP(HalfSpace):
 
 
 class InfiniteCylinder(Body):
-    def geant4_solid(self, registry):
+    def geant4_solid(self, registry, scale=None):
         return _g4.solid.Tubs(self.name,
                               0.0,
                               self.radius,
@@ -767,7 +767,7 @@ class XEC(Body):
                           [0, 1, 0],
                           [1, 0, 0]])
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.EllipticalTube(self.name,
                                         2 * self.zsemi, # full width, not semi
                                         2 * self.ysemi,
@@ -815,7 +815,7 @@ class YEC(Body):
                           [0, 0, 1],
                           [0, -1, 0]])
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.EllipticalTube(self.name,
                                         2 * self.xsemi, # full width, not semi
                                         2 * self.zsemi,
@@ -859,7 +859,7 @@ class ZEC(Body):
     def rotation(self):
         return _np.identity(3)
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.EllipticalTube(self.name,
                                         2 * self.xsemi, # full width, not semi
                                         2 * self.ysemi,
@@ -899,7 +899,7 @@ class PLA(Body):
         # z-axis to make the surface of the half space.
         return _trans.matrix_from([0, 0, 1], self.normal)
 
-    def geant4_solid(self, reg):
+    def geant4_solid(self, reg, scale=None):
         return _g4.solid.Box(self.name,
                              INFINITY,
                              INFINITY,
