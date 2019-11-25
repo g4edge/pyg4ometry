@@ -1,5 +1,6 @@
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.geant4 as _g4
+from pyg4ometry.exceptions import IdenticalNameError
 
 
 class FlukaRegistry(object):
@@ -12,6 +13,8 @@ class FlukaRegistry(object):
         self.cardDict          = _OrderedDict()
 
     def addBody(self, body):
+        if body.name in self.bodyDict:
+            raise IdenticalNameError(body.name)
         self.bodyDict[body.name] = body
 
     def addBodyTransform(self, trans):
