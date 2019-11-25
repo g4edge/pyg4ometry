@@ -164,9 +164,16 @@ class BOX(Body):
 
 class ELL(Body):
     """Ellipsoid of revolution.
-    focus1 = location of one of the foci on the major ellipsoid axis
-    focus2 = location of the other focus on the major ellipsoid axis
-    length = full length of the major ellipsoid axis
+
+    :param name: of body
+    :type name: str
+    :param focus1: vector [x, y, z] denoting of one of the foci.
+    :type focus1: list
+    :param focus2: vector [x, y, z] denoting the other focus.
+    :type focus2: list
+    :param length: length of the ellipse axis which the foci lie on.
+    :type length: float
+
     """
 
     def __init__(self, name, focus1, focus2, length, flukaregistry=None):
