@@ -99,7 +99,7 @@ class RPP(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.lower + 0.5 * self.upper
+        return 0.5 * (self.lower + self.upper)
 
     def rotation(self):
         return _np.identity(3)
