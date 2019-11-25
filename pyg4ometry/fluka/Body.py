@@ -74,10 +74,12 @@ class RPP(Body):
         return self.g4_solid
 
     def __repr__(self):
-        return ("<RPP: {s.name},"
-                " x0={s.xmin}, x1={s.xmax},"
-                " y0={s.ymin}, y1={s.ymax},"
-                " z0={s.zmin}, z1={s.zmax}>").format(s=self)
+        l = self.lower
+        u = self.upper
+        return ("<RPP: {},"
+                " x0={l.x}, x1={u.x},"
+                " y0={l.y}, y1={u.y},"
+                " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
 
 class BOX(Body):
     def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry=None):
