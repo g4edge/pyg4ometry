@@ -184,6 +184,7 @@ def _get_tra2(first, second):
     relative_translation = _get_relative_translation(first, second)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
-    relative_translation = [list(relative_translation[0]),
-                            list(relative_translation[1])]
+
+    relative_transformation = [list(relative_transformation[0]),
+                               list(relative_transformation[1])]
     return relative_transformation
