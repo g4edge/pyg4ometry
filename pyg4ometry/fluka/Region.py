@@ -44,7 +44,6 @@ class Zone(object):
             bName = "s"+str(i)
             print i,bName
             tra2 = _get_tra2(body0, boolean.body)
-            tra2 = [list(tra2[0]), list(tra2[1])]
 
             other_solid = boolean.body.geant4_solid(reg)
             if isinstance(boolean, Subtraction):
@@ -102,7 +101,6 @@ class Region(object):
             zone_name = "z"+str(i)
             print i, zone_name
             tra2 = _get_tra2(zone0, zone)
-            tra2 = [list(tra2[0]), list(tra2[1])]
 
             result  = _g4.solid.Union(zone_name, result,
                                       zone.geant4_solid(reg),
@@ -154,4 +152,7 @@ def _get_tra2(first, second):
     relative_angles = _get_relative_rotation(first, second)
     relative_translation = _get_relative_translation(first, second)
     relative_transformation = [relative_angles, relative_translation]
+    # convert to the tra2 format of a list of lists...
+    relative_translation = [list(relative_translation[0]),
+                            list(relative_translation[1])]
     return relative_transformation
