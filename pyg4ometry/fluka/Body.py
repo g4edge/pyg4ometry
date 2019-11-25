@@ -18,9 +18,8 @@ logger.setLevel(logging.DEBUG)
 INFINITY = 500
 
 class Body(object):
-    """A class representing a body as defined in FLUKA. gdml_solid()
-    returns the body as a pygdml.solid.
-
+    """
+    Base class representing a body as defined in FLUKA
     """
 
     def __init__(self):
@@ -36,7 +35,24 @@ class Body(object):
 
 
 class RPP(Body):
-    """An RPP is a rectangular parallelpiped (a cuboid). """
+    """
+    An RPP is a rectangular parallelpiped (a cuboid)
+
+    :param name: of body
+    :type name: str
+    :param xmin: lower x coordinate of RPP
+    :type xmin: float
+    :param xmax: upper x coordinate of RPP
+    :type xmax: float
+    :param ymin: lower y coordinate of RPP
+    :type ymin: float
+    :param ymax: upper y coordinate of RPP
+    :type ymax: float
+    :param zmin: lower z coordinate of RPP
+    :type zmin: float
+    :param zmax: upper z coordinate of RPP
+    :type zmax: float
+    """
 
     def __init__(self, name,
                  xmin, xmax,

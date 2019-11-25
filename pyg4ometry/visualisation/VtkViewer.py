@@ -85,7 +85,7 @@ class VtkViewer:
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
                              self.physicalActorMapOverlap,
-                             visOptions)
+                             visOptions, False)
 
         # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
@@ -151,7 +151,7 @@ class VtkViewer:
                             visOptions.alpha = 1.0
                         self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
                                      self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
-                                     visOptions)
+                                     visOptions, False)
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
 
@@ -182,7 +182,7 @@ class VtkViewer:
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None):
+                mappers, mapperMap, actors, actorMap, visOptions = None, glyph = False):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -241,41 +241,40 @@ class VtkViewer:
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
 
+        if glyph :
+            # Surface normals
+            vtkNormals = _vtk.vtkPolyDataNormals()
+            vtkNormals.SetInputData(vtkPD)
 
-        '''
-        # Surface normals
-        vtkNormals = _vtk.vtkPolyDataNormals()
-        vtkNormals.SetInputData(vtkPD)
+            #vtkNormals.ComputePointNormalsOff()
+            #vtkNormals.ComputeCellNormalsOn()
+            #vtkNormals.SplittingOff()
+            vtkNormals.FlipNormalsOn()
+            #vtkNormals.ConsistencyOn()
+            #vtkNormals.AutoOrientNormalsOn()
+            vtkNormals.Update()
 
-        #vtkNormals.ComputePointNormalsOff()
-        #vtkNormals.ComputeCellNormalsOn()
-        #vtkNormals.SplittingOff()
-        vtkNormals.FlipNormalsOn()
-        #vtkNormals.ConsistencyOn()
-        #vtkNormals.AutoOrientNormalsOn()
-        vtkNormals.Update()
+            glyph = _vtk.vtkGlyph3D()
+            arrow = _vtk.vtkArrowSource()
+            arrow.Update()
 
-        glyph = _vtk.vtkGlyph3D()
-        arrow = _vtk.vtkArrowSource()
-        arrow.Update()
+            glyph.SetInputData(vtkNormals.GetOutput())
+            glyph.SetSourceData(arrow.GetOutput())
+            glyph.SetVectorModeToUseNormal()
+            glyph.SetScaleModeToScaleByVector()
+            glyph.SetScaleFactor(100)
+            glyph.OrientOn()
+            glyph.Update()
 
-        glyph.SetInputData(vtkNormals.GetOutput())
-        glyph.SetSourceData(arrow.GetOutput())
-        glyph.SetVectorModeToUseNormal()
-        glyph.SetScaleModeToScaleByVector()
-        glyph.SetScaleFactor(3)
-        glyph.OrientOn()
-        glyph.Update()
+            glyph_mapper = _vtk.vtkPolyDataMapper()
+            glyph_mapper.SetInputData(glyph.GetOutput())
+            # glyph_mapper.ImmediateModeRenderingOn()
+            glyph_actor = _vtk.vtkActor()
+            glyph_actor.SetMapper(glyph_mapper)
+            glyph_actor.GetProperty().SetColor(1, 0.4, 1)
 
-        glyph_mapper = _vtk.vtkPolyDataMapper()
-        glyph_mapper.SetInputData(glyph.GetOutput())
-        # glyph_mapper.ImmediateModeRenderingOn()
-        glyph_actor = _vtk.vtkActor()
-        glyph_actor.SetMapper(glyph_mapper)
-        glyph_actor.GetProperty().SetColor(1, 0.4, 1)
+            self.ren.AddActor(glyph_actor)
 
-        self.ren.AddActor(glyph_actor)
-        '''
         # set visualisation properties
         if visOptions :
             vtkActor.GetProperty().SetColor(visOptions.color[0],
