@@ -1,24 +1,51 @@
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
+from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
+from uuid import uuid4
+
+class _Boolean(object):
+    def generate_name(self, index, rootname=None):
+        """Try to generate a sensible name for intermediate
+        Geant4 booleans which have no FLUKA analogue."""
+        if rootname is None:
+            rootname = "a{}".format(uuid4()).replace("-", "")
+
+        type_name = type(self).__name__
+        type_name = type_name[:3]
 
 
+        if isinstance(self.body, _Body):
+            return "{}{}_{}_{}".format(type_name,
+                                       index,
+                                       self.body.name,
+                                       rootname)
+        elif isinstance(self.body, Zone):
+            return "{}{}_{}_{}".format(type_name,
+                                       index,
+                                       "zone",
+                                       rootname)
 
-class Subtraction(object):
+
+class Subtraction(_Boolean):
     def __init__(self, body):
         self.body = body
+        self._typestring = "sub"
 
-class Intersection(object):
+class Intersection(_Boolean):
     def __init__(self, body):
         self.body = body
+        self._typestrin = "int"
 
-class Union(object):
+class Union(_Boolean):
     def __init__(self, body):
         self.body = body
+        self._typestring = "uni"
 
 class Zone(object):
-    def __init__(self):
+    def __init__(self, name=None):
         self.boolean = []
+        self.name = name
 
     def addSubtraction(self, body):
         self.boolean.append(Subtraction(body))
@@ -35,27 +62,31 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
+    def _getSolidFromBoolean(self, boolean, reg):
+        try:
+            return reg.solidDict[boolean.body.name]
+        except KeyError:
+            return boolean.body.geant4_solid(reg)
+
     def geant4_solid(self, reg):
-
         body0 = self.boolean[0].body
-        result = body0.geant4_solid(reg)
-
+        result = self._getSolidFromBoolean(self.boolean[0], reg)
         for boolean,i in zip(self.boolean[1:],range(0,len(self.boolean[1:])+2)):
-            bName = "s"+str(i)
-            print i,bName
+            boolean_name = boolean.generate_name(i, rootname=self.name)
+            print i, boolean_name
+
             tra2 = _get_tra2(body0, boolean.body)
 
-            other_solid = boolean.body.geant4_solid(reg)
+            other_solid = self._getSolidFromBoolean(boolean, reg)
             if isinstance(boolean, Subtraction):
-                result  =_g4.solid.Subtraction(bName,
+                result  =_g4.solid.Subtraction(boolean_name,
                                                result, other_solid,
                                                tra2, reg)
 
             elif isinstance(boolean, Intersection):
-                result  =_g4.solid.Intersection(bName,
+                result  =_g4.solid.Intersection(boolean_name,
                                                 result, other_solid,
                                                 tra2, reg)
-
         return result
 
     def fluka_free_string(self):
