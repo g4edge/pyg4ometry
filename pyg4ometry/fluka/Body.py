@@ -33,6 +33,30 @@ class Body(object):
         return _trans.matrix2tbxyz(self.rotation())
 
 
+class _HalfSpace(Body):
+    # Base class for XYP, XZP, YZP.
+    def rotation(self):
+        return _np.identity(3)
+
+    def geant4_solid(self, registry, scale=None):
+        return _g4.solid.Box(self.name,
+                             INFINITY,
+                             INFINITY,
+                             INFINITY,
+                             registry)
+
+
+class _InfiniteCylinder(Body):
+    # Base class for XCC, YCC, ZCC.
+    def geant4_solid(self, registry, scale=None):
+        return _g4.solid.Tubs(self.name,
+                              0.0,
+                              self.radius,
+                              INFINITY,
+                              0.0, 2*_np.pi,
+                              registry,
+                              lunit="mm")
+
 
 class RPP(Body):
     """
@@ -584,19 +608,8 @@ class SPH(Body):
                                                            self.radius)
 
 
-class HalfSpace(Body):
-    def rotation(self):
-        return _np.identity(3)
 
-    def geant4_solid(self, registry, scale=None):
-        return _g4.solid.Box(self.name,
-                             INFINITY,
-                             INFINITY,
-                             INFINITY,
-                             registry)
-
-
-class XYP(HalfSpace):
+class XYP(_HalfSpace):
     """Infinite half space perpendicular to the z-axis."""
     def __init__(self, name, z, translation=None, flukaregistry=None):
         self.name = name
@@ -614,7 +627,7 @@ class XYP(HalfSpace):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
 
-class XZP(HalfSpace):
+class XZP(_HalfSpace):
     """Half space perpendicular to the y-axis."""
     def __init__(self, name, y, translation=None, flukaregistry=None):
         self.name = name
@@ -633,7 +646,7 @@ class XZP(HalfSpace):
         return "<XZP: {}, y={}>".format(self.name, self.y)
 
 
-class YZP(HalfSpace):
+class YZP(_HalfSpace):
     """Infinite half space perpendicular to the x-axis."""
     def __init__(self, name, x, translation=None, flukaregistry=None):
         self.name = name
@@ -651,18 +664,9 @@ class YZP(HalfSpace):
         return "<YZP: {}, x={}>".format(self.name, self.x)
 
 
-class InfiniteCylinder(Body):
-    def geant4_solid(self, registry, scale=None):
-        return _g4.solid.Tubs(self.name,
-                              0.0,
-                              self.radius,
-                              INFINITY,
-                              0.0, 2*_np.pi,
-                              registry,
-                              lunit="mm")
 
 
-class XCC(InfiniteCylinder):
+class XCC(_InfiniteCylinder):
     """Infinite circular cylinder parallel to x-axis
 
     y = y-coordinate of the centre of the cylinder
@@ -693,7 +697,7 @@ class XCC(InfiniteCylinder):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
 
 
-class YCC(InfiniteCylinder):
+class YCC(_InfiniteCylinder):
     """Infinite circular cylinder parallel to y-axis
 
     z = z-coordinate of the centre of the cylinder
@@ -725,7 +729,7 @@ class YCC(InfiniteCylinder):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
 
 
-class ZCC(InfiniteCylinder):
+class ZCC(_InfiniteCylinder):
     """Infinite circular cylinder parallel to z-axis
 
     x = x-coordinate of the centre of the cylinder
