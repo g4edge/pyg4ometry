@@ -48,11 +48,11 @@ class Reader(object) :
             obj.Label = obj.Label.replace(")","_")
             obj.Label = obj.Label.replace("-","_")
             obj.Label = obj.Label.replace(u' ','_')
-            obj.Label = obj.Label.replace(u'.','dot')
-            obj.Label = obj.Label.replace(u',','comma')
-            obj.Label = obj.Label.replace(u'\\','fs')
-            obj.Label = obj.Label.replace(u'3','three')
-            
+            obj.Label = obj.Label.replace(u'.','_dot_')
+            obj.Label = obj.Label.replace(u',','_comma_')
+            obj.Label = obj.Label.replace(u':','_colon_')
+            obj.Label = obj.Label.replace(u'\\','_fs_')
+
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
@@ -105,7 +105,8 @@ class Reader(object) :
                     globalRotation      = _fc.Rotation(),
                     extentScale         = 1.0,
                     daughterMaterial    = "G4_Galactic",
-                    storePartCentrePos  = False):
+                    storePartCentrePos  = False,
+                    meshShrinkFactor    = 1e-6):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -205,18 +206,18 @@ class Reader(object) :
                 centres.append(objCentre)
 
                 # Mesh tidying
-                mc = MeshCleaning(m)                
+                mc = MeshCleaning(m)
                 # print 'Removed triangles',mc
 
                 # Mesh shrinking 
-                vn = MeshShrink(m)
+                vn = MeshShrink(m,meshShrinkFactor)
 
 #                print obj.Label, obj.TypeId, len(m[0])
                 if len(m[0]) == 0 :                      # skip empty meshes (can happen with compound objects)
                     continue
 
                 # Mesh analysis
-                ma = MeshAnalysis(m) 
+                ma = MeshAnalysis(m)
               
                 # facet list 
                 # f =  MeshToFacetList(m)
@@ -250,15 +251,12 @@ class Reader(object) :
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        # print tmin, tmax, tmax-tmin
-        tsize   = tmax-tmin 
+        tsize   = tmax-tmin
         tcentre = (tmax-tmin)/2.0+tmin
 
         # scale world volume extents
         if extentScale != 1.0:
             tsize.scale(extentScale,extentScale,extentScale)
-
-        # print tcentre
 
         bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x,tsize.y,tsize.z,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
@@ -602,7 +600,7 @@ def MeshCleaning(m) :
 
         return iremoved
 
-def MeshShrink(m) : 
+def MeshShrink(m, shrinkFactor = 1e-5) :
     verts = m[0]
     facet = m[1]
 
@@ -655,9 +653,9 @@ def MeshShrink(m) :
          # print vertnormalmag, vertnormals[i]
         
     for i in range(0,len(verts)) :
-        verts[i][0] = verts[i][0] - 1e-1*vertnormals[i][0]
-        verts[i][1] = verts[i][1] - 1e-1*vertnormals[i][1]
-        verts[i][2] = verts[i][2] - 1e-1*vertnormals[i][2]
+        verts[i][0] = verts[i][0] - shrinkFactor*vertnormals[i][0]
+        verts[i][1] = verts[i][1] - shrinkFactor*vertnormals[i][1]
+        verts[i][2] = verts[i][2] - shrinkFactor*vertnormals[i][2]
 
     m.append(vertnormals)
         
