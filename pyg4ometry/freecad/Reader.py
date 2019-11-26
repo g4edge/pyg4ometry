@@ -99,13 +99,14 @@ class Reader(object) :
             else:
                 raise SystemExit("Unsupported type for material: {}".format(type(material)))
 
-    def convertFlat(self, meshDeviation = 0.001,
+    def convertFlat(self, meshDeviation = 0.05,
                     centreName          = '',
                     globalOffset        = _fc.Vector(),
                     globalRotation      = _fc.Rotation(),
                     extentScale         = 1.0,
                     daughterMaterial    = "G4_Galactic",
-                    storePartCentrePos  = False):
+                    storePartCentrePos  = False,
+                    meshShrinkFactor    = 1e-6):
         '''Convert file without structure'''
 
         import pyg4ometry.geant4.solid.Box
@@ -148,13 +149,8 @@ class Reader(object) :
                 # tesellate         
                 m = list(obj.Shape.tessellate(meshDeviation))
 
-
-                print 'global mesh',m
-
                 # global placement
                 globalPlacement = obj.getGlobalPlacement()
-
-                print 'placement',globalPlacement
 
                 # global rotation
                 if isinstance(globalRotation, _fc.Rotation):
@@ -205,8 +201,6 @@ class Reader(object) :
                 if objMax.z > tmax.z :
                     tmax.z = objMax.z
 
-                print 'removed placement',m
-
                 objCentre = (objMax - objMin) / 2.0 + objMin
                 extents.append([objMin,objMax])
                 centres.append(objCentre)
@@ -216,7 +210,7 @@ class Reader(object) :
                 # print 'Removed triangles',mc
 
                 # Mesh shrinking 
-                vn = MeshShrink(m,1e-6)
+                vn = MeshShrink(m,meshShrinkFactor)
 
 #                print obj.Label, obj.TypeId, len(m[0])
                 if len(m[0]) == 0 :                      # skip empty meshes (can happen with compound objects)
@@ -253,22 +247,16 @@ class Reader(object) :
                 m33[2][2] = m44.A33                
                 tba = _trans.matrix2tbxyz(m33)
 
-                print x,y,z
-                print tba
-
                 names.append(obj.Label)
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        print 'tsizes', tmin, tmax, tmax-tmin
-        tsize   = tmax-tmin 
+        tsize   = tmax-tmin
         tcentre = (tmax-tmin)/2.0+tmin
 
         # scale world volume extents
         if extentScale != 1.0:
             tsize.scale(extentScale,extentScale,extentScale)
-
-        # print tcentre
 
         bSolid   = pyg4ometry.geant4.solid.Box("worldSolid",tsize.x,tsize.y,tsize.z,registry=self._registry)
         bLogical = pyg4ometry.geant4.LogicalVolume(bSolid,"G4_Galactic","worldLogical",registry=self._registry)
