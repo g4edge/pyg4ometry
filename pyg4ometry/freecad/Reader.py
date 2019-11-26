@@ -48,11 +48,11 @@ class Reader(object) :
             obj.Label = obj.Label.replace(")","_")
             obj.Label = obj.Label.replace("-","_")
             obj.Label = obj.Label.replace(u' ','_')
-            obj.Label = obj.Label.replace(u'.','dot')
-            obj.Label = obj.Label.replace(u',','comma')
-            obj.Label = obj.Label.replace(u'\\','fs')
-            obj.Label = obj.Label.replace(u'3','three')
-            
+            obj.Label = obj.Label.replace(u'.','_dot_')
+            obj.Label = obj.Label.replace(u',','_comma_')
+            obj.Label = obj.Label.replace(u':','_colon_')
+            obj.Label = obj.Label.replace(u'\\','_fs_')
+
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
@@ -99,7 +99,7 @@ class Reader(object) :
             else:
                 raise SystemExit("Unsupported type for material: {}".format(type(material)))
 
-    def convertFlat(self, meshDeviation = 0.05,
+    def convertFlat(self, meshDeviation = 0.001,
                     centreName          = '',
                     globalOffset        = _fc.Vector(),
                     globalRotation      = _fc.Rotation(),
@@ -148,8 +148,13 @@ class Reader(object) :
                 # tesellate         
                 m = list(obj.Shape.tessellate(meshDeviation))
 
+
+                print 'global mesh',m
+
                 # global placement
                 globalPlacement = obj.getGlobalPlacement()
+
+                print 'placement',globalPlacement
 
                 # global rotation
                 if isinstance(globalRotation, _fc.Rotation):
@@ -200,23 +205,25 @@ class Reader(object) :
                 if objMax.z > tmax.z :
                     tmax.z = objMax.z
 
+                print 'removed placement',m
+
                 objCentre = (objMax - objMin) / 2.0 + objMin
                 extents.append([objMin,objMax])
                 centres.append(objCentre)
 
                 # Mesh tidying
-                mc = MeshCleaning(m)                
+                mc = MeshCleaning(m)
                 # print 'Removed triangles',mc
 
                 # Mesh shrinking 
-                vn = MeshShrink(m)
+                vn = MeshShrink(m,1e-6)
 
 #                print obj.Label, obj.TypeId, len(m[0])
                 if len(m[0]) == 0 :                      # skip empty meshes (can happen with compound objects)
                     continue
 
                 # Mesh analysis
-                ma = MeshAnalysis(m) 
+                ma = MeshAnalysis(m)
               
                 # facet list 
                 # f =  MeshToFacetList(m)
@@ -246,11 +253,14 @@ class Reader(object) :
                 m33[2][2] = m44.A33                
                 tba = _trans.matrix2tbxyz(m33)
 
+                print x,y,z
+                print tba
+
                 names.append(obj.Label)
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        # print tmin, tmax, tmax-tmin
+        print 'tsizes', tmin, tmax, tmax-tmin
         tsize   = tmax-tmin 
         tcentre = (tmax-tmin)/2.0+tmin
 
@@ -602,7 +612,7 @@ def MeshCleaning(m) :
 
         return iremoved
 
-def MeshShrink(m) : 
+def MeshShrink(m, shrinkFactor = 1e-5) :
     verts = m[0]
     facet = m[1]
 
@@ -655,9 +665,9 @@ def MeshShrink(m) :
          # print vertnormalmag, vertnormals[i]
         
     for i in range(0,len(verts)) :
-        verts[i][0] = verts[i][0] - 1e-1*vertnormals[i][0]
-        verts[i][1] = verts[i][1] - 1e-1*vertnormals[i][1]
-        verts[i][2] = verts[i][2] - 1e-1*vertnormals[i][2]
+        verts[i][0] = verts[i][0] - shrinkFactor*vertnormals[i][0]
+        verts[i][1] = verts[i][1] - shrinkFactor*vertnormals[i][1]
+        verts[i][2] = verts[i][2] - shrinkFactor*vertnormals[i][2]
 
     m.append(vertnormals)
         
