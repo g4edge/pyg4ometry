@@ -142,39 +142,6 @@ class Reader(object):
                          flukaregistry = self.flukaRegistry)
 
         return body
-
-    def parseBox(self, lstart) : 
-        pass
-
-    def parseSph(self, lstart) :
-        pass 
-
-    def parseRcc(self, lstart) : 
-        pass
-
-    def parseRec(self, lstart) :
-        pass 
-
-    def parseTrc(self, lstart) : 
-        pass
-
-    def parseEll(self, lstart) : 
-        pass
-
-    def parseWed(self, lstart) : 
-        pass
-    
-    def parseRaw(self, lstart) : 
-        pass
-    
-    def parseArb(self, lstart) : 
-        pass
-
-    def parseXyp(self, lstart) :
-        pass
-    
-    def parseZxp(self, lstart) :
-        pass
         
     def parseRegions(self) :
         region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
