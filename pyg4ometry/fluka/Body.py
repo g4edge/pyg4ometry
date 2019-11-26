@@ -166,9 +166,9 @@ class ELL(Body):
 
     :param name: of body
     :type name: str
-    :param focus1: vector [x, y, z] denoting of one of the foci.
+    :param focus1: position [x, y, z] denoting of one of the foci.
     :type focus1: list
-    :param focus2: vector [x, y, z] denoting the other focus.
+    :param focus2: position [x, y, z] denoting the other focus.
     :type focus2: list
     :param length: length of the ellipse axis which the foci lie on.
     :type length: float
@@ -218,73 +218,83 @@ class ELL(Body):
 
 
 class _WED_RAW(Body):
-    """WED and RAW are aliases for one another, so we define it in a
-    single place and then inherit this class to provide the correct
-    names below.
-
-    """
+    # WED and RAW are aliases for one another, so we define it in a
+    # single place and then inherit this class to provide the correct
+    # type names below.
     def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry):
         self.name = name
         self.vertex = _Three(vertex)
         self.edge1 = _Three(edge1)  # direction of the triangular face.
         self.edge2 = _Three(edge2)  # direction of length of the prism.
         self.edge3 = _Three(edge3)  # other direction of the triangular face.
-        # from IPython import embed; embed()
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
-            "Edges are not all mutually perpendicular")
+            "Edges are not all mutually perpendicular.")
 
     def centre(self):
-        return self.vertex
+        # need to determine the handedness of the three direction
+        # vectors to get the correct vertex to use.
+        crossproduct = _np.cross(self.edge1, self.edge3)
+        if _trans.are_parallel(crossproduct, self.edge2):
+            return self.vertex
+        elif _trans.are_anti_parallel(crossproduct, self.edge2):
+            return self.vertex + self.edge2
+        else:
+            raise ValueError(
+                "Unable to determine if parallel or anti-parallel.")
 
     def rotation(self):
-        initial1 = [1, 0, 0] # self.edge1 starts off pointing in the x-direction
-        initial2 = [0, 0, 1] # self.edge2 starts off pointing in the z-direction
-        initial3 = [0, 1, 0] # self.edge3 starts off pointing in the y-direction
-
-        # return _trans.three_fold_orientation(initial1,
-        #                                      self.edge1,
-        #                                      initial2,
-        #                                      self.edge2,
-        #                                      initial3,
-        #                                      self.edge3).T
-        basis1 = _np.array([initial1,
-                            initial2,
-                            initial3])
-        basis2 = _np.array([self.edge1.unit(),
-                            self.edge2.unit(),
-                            self.edge3.unit()])
-        # from IPython import embed; embed()
-        return basis1.T.dot(basis2)
-
-
-        # return _trans.two_fold_orientation(initial1,
-        #                                      self.edge1,
-        #                                      initial2,
-        #                                      self.edge2
-        #                                      # initial3,
-        #                                      # self.edge3
-        # ).T
-
+        initial1 = [1, 0, 0] # edge1 starts off pointing in the x-direction.
+        initial3 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
+        return _trans.two_fold_orientation(initial1, self.edge1.unit(),
+                                           initial3, self.edge3.unit())
 
     def geant4_solid(self, greg, scale=None):
-        # We choose self.vertex to be at [0, 0].
         face = [[0, 0],
                 [self.edge1.length(), 0],
                 [0, self.edge3.length()]]
+
         return _g4.solid.ExtrudedSolid(self.name,
                                        face,
                                        [[0,[0, 0], 1],
                                         [self.edge2.length(), [0, 0], 1]],
                                        registry=greg)
 
+    def __repr__(self):
+        typename = type(self).__name__ # Can be either WED or RAW
+        v = self.vertex
+        e1 = self.edge1
+        e2 = self.edge2
+        e3 = self.edge3
+        return ("<{}: {}, v=({}, {}, {}),"
+                " e1=({}, {}, {}),"
+                " e2=({}, {}, {}), "
+                " e3=({}, {}, {})>").format(typename, self.name,
+                                            v.x, v.y, v.z,
+                                            e1.x, e1.y, e1.z,
+                                            e2.x, e2.y, e2.z,
+                                            e3.x, e3.y, e3.z)
 
 
 class WED(_WED_RAW):
+    """Wedge
+
+    :param name: of body
+    :type name: str
+    :param vertex: position [x, y, z] of one of the the rectangular corners.
+    :type vertex: list
+    :param edge1: vector [x, y, z] denoting height of the wedge.
+    :type edge1: list
+    :param edge2: vector [x, y, z] denoting width of the wedge.
+    :type edge2: list
+    :param edge3: vector [x, y, z] denoting length of the wedge.
+    :type edge3: list
+    """
     pass
 
 
 class RAW(_WED_RAW):
+    __doc__ = WED.__doc__
     pass
 
 
