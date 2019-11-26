@@ -105,13 +105,12 @@ class RPP(Body):
         return _np.identity(3)
 
     def geant4_solid(self, reg, scale=None):
-        self.g4_solid =  _g4.solid.Box(self.name,
-                                       self.upper[0]-self.lower[0],
-                                       self.upper[1]-self.lower[1],
-                                       self.upper[2]-self.lower[2],
-                                       reg,
-                                       lunit="mm")
-        return self.g4_solid
+        return  _g4.solid.Box(self.name,
+                              (xmax - xmin).length(),
+                              (ymax - ymin).length(),
+                              (zmax - zmin).length(),
+                              reg,
+                              lunit="mm")
 
     def __repr__(self):
         l = self.lower
