@@ -105,10 +105,9 @@ class RPP(Body):
         return _np.identity(3)
 
     def geant4_solid(self, reg, scale=None):
+        v = self.upper - self.lower
         return  _g4.solid.Box(self.name,
-                              (xmax - xmin).length(),
-                              (ymax - ymin).length(),
-                              (zmax - zmin).length(),
+                              v.x, v.y, v.z,
                               reg,
                               lunit="mm")
 
@@ -147,18 +146,10 @@ class BOX(Body):
                              lunit="mm")
 
     def __repr__(self):
-        v = self.vertex
-        e1 = self.edge1
-        e2 = self.edge2
-        e3 = self.edge3
-        return ("<BOX: {}, v=({}, {}, {}),"
-                " e1=({}, {}, {}),"
-                " e2=({}, {}, {}), "
-                " e3=({}, {}, {})>").format(self.name,
-                                            v.x, v.y, v.z,
-                                            e1.x, e1.y, e1.z,
-                                            e2.x, e2.y, e2.z,
-                                            e3.x, e3.y, e3.z)
+        return ("<BOX: {}, v={}, e1={}, e2={}, e3={}, >").format(
+            self.name,
+            list(self.vertex),
+            list(self.edge1), list(self.edge2), list(self.edge3))
 
 
 class ELL(Body):
@@ -216,6 +207,10 @@ class ELL(Body):
                                    self.length,
                                    greg)
 
+    def __repr__(self):
+        return "<ELL: {}, f1={}, f2={}, length={}>".format(
+            self.name, list(self.focus1), list(self.focus2), self.length)
+
 
 class _WED_RAW(Body):
     # WED and RAW are aliases for one another, so we define it in a
@@ -261,19 +256,13 @@ class _WED_RAW(Body):
                                        registry=greg)
 
     def __repr__(self):
-        typename = type(self).__name__ # Can be either WED or RAW
-        v = self.vertex
-        e1 = self.edge1
-        e2 = self.edge2
-        e3 = self.edge3
-        return ("<{}: {}, v=({}, {}, {}),"
-                " e1=({}, {}, {}),"
-                " e2=({}, {}, {}), "
-                " e3=({}, {}, {})>").format(typename, self.name,
-                                            v.x, v.y, v.z,
-                                            e1.x, e1.y, e1.z,
-                                            e2.x, e2.y, e2.z,
-                                            e3.x, e3.y, e3.z)
+        return ("<{}: {}, v={}, e1={}, e2={}, e3={}>").format(
+            type(self).__name__, # Can be either WED or RAW
+            self.name,
+            list(self.vertex),
+            list(self.edge1),
+            list(self.edge2),
+            list(self.edge3))
 
 
 class WED(_WED_RAW):
@@ -417,6 +406,14 @@ class ARB(Body):
                                           vertices_and_polygons,
                                           greg)
 
+    def __repr__(self):
+        vs = map(list, self.vertices)
+        vstrings = ["v{}={}".format(i, v) for (i, v)  in enumerate(vs, 1)]
+        vstring = ", ".join(vstrings)
+        return "<ARB: {}, {}, faces={}>".format(self.name,
+                                                vstring, self.facenumbers)
+
+
 
 class RCC(Body):
     """Right circular cylinder
@@ -455,14 +452,8 @@ class RCC(Body):
                               lunit="mm")
 
     def __repr__(self):
-        f = self.face
-        d = self.direction
-        return ("<RCC: {}, face=({}, {}, {}),"
-                " dir=({}, {}, {}),"
-                " r={}>").format(self.name,
-                                 f.x, f.y, f.z,
-                                 d.x, d.y, d.z,
-                                 self.radius)
+        return ("<RCC: {}, face={}, dir={}, r={}>").format(
+            self.name, list(self.face), list(self.direction), self.radius)
 
 class REC(Body):
     """Right circular cylinder
@@ -515,18 +506,10 @@ class REC(Body):
                                         lunit="mm")
 
     def __repr__(self):
-        f = self.face
-        d = self.direction
-        m0 = self.semiminor
-        m1 = self.semimajor
-        return ("<REC: {}, face=({}, {}, {}),"
-                " dir=({}, {}, {}),"
-                " semimin=({}, {}, {}),"
-                " semimaj=({}, {}, {})>").format(self.name,
-                                                 f.x, f.y, f.z,
-                                                 m0.x, m0.y, m0.z,
-                                                 m1.x, m1.y, m1.z,
-                                                 d.x, d.y, d.z)
+        return ("<REC: {}, face={}, dir={}, semimin={}, semimaj={}>").format(
+            self.name,
+            list(self.face), list(self.direction),
+            list(self.semiminor), list(self.semimajor))
 
 
 class TRC(Body):
@@ -577,15 +560,12 @@ class TRC(Body):
                               lunit="mm")
 
     def __repr__(self):
-        m = self.major_centre
-        d = self.direction
-        return ("<TRC: {}, major=({}, {}, {}),"
-                " direction=({}, {}, {}),"
-                " rmaj={}, rmin={}>").format(self.name,
-                                             m.x, m.y, m.z,
-                                             d.x, d.y, d.z,
-                                             self.major_radius,
-                                             self.minor_radius)
+        return ("<TRC: {}, major={} direction={} rmaj={}, rmin={}>").format(
+            self.name,
+            list(self.major_centre),
+            list(self.direction),
+            self.major_radius,
+            self.minor_radius)
 
 
 class SPH(Body):
@@ -618,10 +598,9 @@ class SPH(Body):
                              lunit="mm")
 
     def __repr__(self):
-        c = self.centre()
-        return "<SPH: {}, centre=({},{},{}, r={})>".format(self.name,
-                                                           c.x, c.y, c.z,
-                                                           self.radius)
+        return "<SPH: {}, centre={}, r={})>".format(self.name,
+                                                    list(self.centre()),
+                                                    self.radius)
 
 
 
@@ -944,6 +923,11 @@ class PLA(Body):
                              INFINITY,
                              reg,
                              lunit="mm")
+
+    def __repr__(self):
+        return "<PLA: {}, normal={}, point={}>".format(self.name,
+                                                       list(self.normal),
+                                                       list(self.point))
 
 
 def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
