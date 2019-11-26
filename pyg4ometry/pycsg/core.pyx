@@ -357,9 +357,9 @@ class CSG(object):
             aplane = apoly.plane
             bplane = bpoly.plane
 
-            if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-8  :
+            if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-7  :
                 return True
-            elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-8 :
+            elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-7 :
                 return True
             else :
                 return False
