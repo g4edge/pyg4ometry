@@ -354,24 +354,14 @@ class CSG(object):
             FRONT = 1  # all the vertices are in front of the plane
             BACK = 2  # all the vertices are at the back of the plane
 
-
             aplane = apoly.plane
-            polygonType = 0
-            for i in range(len(bpoly.vertices)):
-                t = aplane.normal.dot(bpoly.vertices[i].pos) - aplane.w
-                loc = -1
+            bplane = bpoly.plane
 
-                if t < -1e-8:
-                    loc = BACK
-                elif t > 1e-8:
-                    loc = FRONT
-                else:
-                    loc = COPLANAR
-                polygonType |= loc
-
-            if polygonType == COPLANAR :
+            if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-8  :
                 return True
-            else:
+            elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-8 :
+                return True
+            else :
                 return False
 
         def polyVertsInside(apoly, bpoly):
@@ -472,7 +462,7 @@ class CSG(object):
 
         for i in range(0,len(apolygons),1):                     # loop over all A polygons
             apoly  = apolygons[i]
-            for j in range(i,len(bpolygons),1):                 # loop over all B polygons
+            for j in range(0,len(bpolygons),1):                 # loop over all B polygons
                 bpoly = bpolygons[j]
 
                 copl  = coplanarPolys(apoly,bpoly)
@@ -485,9 +475,7 @@ class CSG(object):
                 aInterB  = polyEdgeIntersection(apoly,bpoly)
 
                 #if len(aInsideB)+len(bInsideA)+len(aInterB) != 0 :
-                #    print len(aInsideB)
-                #    print len(bInsideA)
-                #    print len(aInterB)
+                #    print len(aInsideB),len(bInsideA),len(aInterB)
 
                 points = []
                 points.extend(aInsideB)
