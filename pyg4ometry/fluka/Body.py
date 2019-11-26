@@ -119,13 +119,14 @@ class RPP(Body):
                 " y0={l.y}, y1={u.y},"
                 " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
 
+
 class BOX(Body):
     def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry=None):
         self.name = name
-        self.vertex    = _Three(vertex)
-        self.edge1   = _Three(edge1)
-        self.edge2   = _Three(edge2)
-        self.edge3   = _Three(edge3)
+        self.vertex = _Three(vertex)
+        self.edge1 = _Three(edge1)
+        self.edge2 = _Three(edge2)
+        self.edge3 = _Three(edge3)
 
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -150,6 +151,195 @@ class BOX(Body):
             self.name,
             list(self.vertex),
             list(self.edge1), list(self.edge2), list(self.edge3))
+
+
+class SPH(Body):
+    """A sphere.
+
+    point = centre of sphere
+    radius = radius of sphere
+    """
+    def __init__(self, name, point, radius, flukaregistry=None):
+        self.name = name
+        self.point = _Three(point)
+        # if translation is not None:
+        #     self.point += _Three(translation)
+        self.radius = radius
+
+
+        self.addToRegistry(flukaregistry)
+
+    def rotation(self):
+        return _np.identity(3)
+
+    def centre(self):
+        return self.point
+
+    def geant4_solid(self, reg, scale=None):
+        """Construct a solid, whole, geant4 sphere from this."""
+        return _g4.solid.Orb(self.name,
+                             self.radius,
+                             reg,
+                             lunit="mm")
+
+    def __repr__(self):
+        return "<SPH: {}, centre={}, r={})>".format(self.name,
+                                                    list(self.centre()),
+                                                    self.radius)
+
+
+class RCC(Body):
+    """Right circular cylinder
+    face = centre of one of the faces
+    direction = vector pointing from one face to the other.
+                the magnitude of this vector is the cylinder length.
+    radius = radius of the cylinder face
+    """
+
+    def __init__(self, name, face, direction, radius, flukaregistry=None):
+        self.name = name
+        self.face = _Three(face)
+        self.direction = _Three(direction)
+        self.radius = radius
+
+        self.addToRegistry(flukaregistry)
+
+    def centre(self):
+        return self.face + 0.5 * self.direction
+
+    def rotation(self):
+        initial = [0, 0, 1]
+        final = self.direction
+
+        rotation = _trans.matrix_from(initial, final)
+        return rotation.T # invert rotation fudge factor to make it work
+
+    def geant4_solid(self, reg, scale=None):
+        return _g4.solid.Tubs(self.name,
+                              0.0,
+                              self.radius,
+                              self.direction.length(),
+                              0.0,
+                              2*_np.pi,
+                              reg,
+                              lunit="mm")
+
+    def __repr__(self):
+        return ("<RCC: {}, face={}, dir={}, r={}>").format(
+            self.name, list(self.face), list(self.direction), self.radius)
+
+
+class REC(Body):
+    """Right circular cylinder
+    face = centre of one of the faces
+    direction = vector pointing from one face to the other.
+                the magnitude of this vector is the cylinder length.
+    semiminor = vector pointing in the direction of the ellipse
+                semi-minor axis.  its magnitude is the length of the
+                semi-minor axis of the ellipse.
+    semimajor = vector pointing in the direction of the semimajor axis.  its
+                magnitude is the length of semi-major axis of the ellipse.
+    """
+
+    def __init__(self, name, face, direction, semiminor, semimajor,
+                 flukaregistry=None):
+        self.name = name
+        self.face = _Three(face)
+        self.direction = _Three(direction)
+        self.semiminor = _Three(semiminor)
+        self.semimajor = _Three(semimajor)
+
+        _raise_if_not_all_mutually_perpendicular(
+            self.direction, self.semiminor, semimajor,
+            ("Direction, semiminor, and semimajor are"
+             " not all mutually perpendicular."))
+
+        self.addToRegistry(flukaregistry)
+
+    def centre(self):
+        return self.face + 0.5 * self.direction
+
+    def rotation(self):
+        initial_direction = [0, 0, 1]
+        initial_semiminor = [1, 0, 0]
+
+        final_direction = self.direction
+        final_semiminor = self.semiminor
+        rotation = _trans.two_fold_orientation(initial_direction,
+                                               final_direction,
+                                               initial_semiminor,
+                                               final_semiminor)
+        return rotation.T # invert rotation fudge factor to make it work
+
+    def geant4_solid(self, reg, scale=None):
+        return _g4.solid.EllipticalTube(self.name,
+                                        2 * self.semiminor.length(),
+                                        2 * self.semimajor.length(),
+                                        self.direction.length(),
+                                        reg,
+                                        lunit="mm")
+
+    def __repr__(self):
+        return ("<REC: {}, face={}, dir={}, semimin={}, semimaj={}>").format(
+            self.name,
+            list(self.face), list(self.direction),
+            list(self.semiminor), list(self.semimajor))
+
+
+class TRC(Body):
+    """Truncated Right-angled Cone.
+
+    centre: coordinates of the centre of the larger face.
+    direction: coordinates of the vector pointing from major to minor.
+    radius_major: radius of the larger face.
+    radius_minor: radius of the smaller face.
+    """
+    def __init__(self,
+                 name,
+                 major_centre,
+                 direction,
+                 major_radius,
+                 minor_radius,
+                 translation=None,
+                 flukaregistry=None):
+        self.name = name
+        self.major_centre = _Three(major_centre)
+        if translation is not None:
+            self.major_centre += _Three(translation)
+        self.direction = _Three(direction)
+        self.major_radius = major_radius
+        self.minor_radius = minor_radius
+
+        self.addToRegistry(flukaregistry)
+
+    def rotation(self):
+        # We choose in the as_gdml_solid method to place the major at
+        # -z, and the major at +z:
+        rotation = _trans.matrix_from([0, 0, 1], self.direction)
+        rotation = rotation.T # invert rotation matrix fudge to make it work
+        return rotation
+
+    def centre(self):
+        return self.major_centre + 0.5 * self.direction
+
+    def geant4_solid(self, registry, scale=None):
+        # The first face of _g4.Cons is located at -z, and the
+        # second at +z.  Here choose to put the major face at -z.
+        return _g4.solid.Cons(self.name,
+                              0.0, self.major_radius,
+                              0.0, self.minor_radius,
+                              self.direction.length(),
+                              0.0, 2*_np.pi,
+                              registry,
+                              lunit="mm")
+
+    def __repr__(self):
+        return ("<TRC: {}, major={} direction={} rmaj={}, rmin={}>").format(
+            self.name,
+            list(self.major_centre),
+            list(self.direction),
+            self.major_radius,
+            self.minor_radius)
 
 
 class ELL(Body):
@@ -414,196 +604,6 @@ class ARB(Body):
                                                 vstring, self.facenumbers)
 
 
-
-class RCC(Body):
-    """Right circular cylinder
-    face = centre of one of the faces
-    direction = vector pointing from one face to the other.
-                the magnitude of this vector is the cylinder length.
-    radius = radius of the cylinder face
-    """
-
-    def __init__(self, name, face, direction, radius, flukaregistry=None):
-        self.name = name
-        self.face = _Three(face)
-        self.direction = _Three(direction)
-        self.radius = radius
-
-        self.addToRegistry(flukaregistry)
-
-    def centre(self):
-        return self.face + 0.5 * self.direction
-
-    def rotation(self):
-        initial = [0, 0, 1]
-        final = self.direction
-
-        rotation = _trans.matrix_from(initial, final)
-        return rotation.T # invert rotation fudge factor to make it work
-
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.Tubs(self.name,
-                              0.0,
-                              self.radius,
-                              self.direction.length(),
-                              0.0,
-                              2*_np.pi,
-                              reg,
-                              lunit="mm")
-
-    def __repr__(self):
-        return ("<RCC: {}, face={}, dir={}, r={}>").format(
-            self.name, list(self.face), list(self.direction), self.radius)
-
-class REC(Body):
-    """Right circular cylinder
-    face = centre of one of the faces
-    direction = vector pointing from one face to the other.
-                the magnitude of this vector is the cylinder length.
-    semiminor = vector pointing in the direction of the ellipse
-                semi-minor axis.  its magnitude is the length of the
-                semi-minor axis of the ellipse.
-    semimajor = vector pointing in the direction of the semimajor axis.  its
-                magnitude is the length of semi-major axis of the ellipse.
-    """
-
-    def __init__(self, name, face, direction, semiminor, semimajor,
-                 flukaregistry=None):
-        self.name = name
-        self.face = _Three(face)
-        self.direction = _Three(direction)
-        self.semiminor = _Three(semiminor)
-        self.semimajor = _Three(semimajor)
-
-        _raise_if_not_all_mutually_perpendicular(
-            self.direction, self.semiminor, semimajor,
-            ("Direction, semiminor, and semimajor are"
-             " not all mutually perpendicular."))
-
-        self.addToRegistry(flukaregistry)
-
-    def centre(self):
-        return self.face + 0.5 * self.direction
-
-    def rotation(self):
-        initial_direction = [0, 0, 1]
-        initial_semiminor = [1, 0, 0]
-
-        final_direction = self.direction
-        final_semiminor = self.semiminor
-        rotation = _trans.two_fold_orientation(initial_direction,
-                                               final_direction,
-                                               initial_semiminor,
-                                               final_semiminor)
-        return rotation.T # invert rotation fudge factor to make it work
-
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.EllipticalTube(self.name,
-                                        2 * self.semiminor.length(),
-                                        2 * self.semimajor.length(),
-                                        self.direction.length(),
-                                        reg,
-                                        lunit="mm")
-
-    def __repr__(self):
-        return ("<REC: {}, face={}, dir={}, semimin={}, semimaj={}>").format(
-            self.name,
-            list(self.face), list(self.direction),
-            list(self.semiminor), list(self.semimajor))
-
-
-class TRC(Body):
-    """Truncated Right-angled Cone.
-
-    centre: coordinates of the centre of the larger face.
-    direction: coordinates of the vector pointing from major to minor.
-    radius_major: radius of the larger face.
-    radius_minor: radius of the smaller face.
-    """
-    def __init__(self,
-                 name,
-                 major_centre,
-                 direction,
-                 major_radius,
-                 minor_radius,
-                 translation=None,
-                 flukaregistry=None):
-        self.name = name
-        self.major_centre = _Three(major_centre)
-        if translation is not None:
-            self.major_centre += _Three(translation)
-        self.direction = _Three(direction)
-        self.major_radius = major_radius
-        self.minor_radius = minor_radius
-
-        self.addToRegistry(flukaregistry)
-
-    def rotation(self):
-        # We choose in the as_gdml_solid method to place the major at
-        # -z, and the major at +z:
-        rotation = _trans.matrix_from([0, 0, 1], self.direction)
-        rotation = rotation.T # invert rotation matrix fudge to make it work
-        return rotation
-
-    def centre(self):
-        return self.major_centre + 0.5 * self.direction
-
-    def geant4_solid(self, registry, scale=None):
-        # The first face of _g4.Cons is located at -z, and the
-        # second at +z.  Here choose to put the major face at -z.
-        return _g4.solid.Cons(self.name,
-                              0.0, self.major_radius,
-                              0.0, self.minor_radius,
-                              self.direction.length(),
-                              0.0, 2*_np.pi,
-                              registry,
-                              lunit="mm")
-
-    def __repr__(self):
-        return ("<TRC: {}, major={} direction={} rmaj={}, rmin={}>").format(
-            self.name,
-            list(self.major_centre),
-            list(self.direction),
-            self.major_radius,
-            self.minor_radius)
-
-
-class SPH(Body):
-    """A sphere.
-
-    point = centre of sphere
-    radius = radius of sphere
-    """
-    def __init__(self, name, point, radius, flukaregistry=None):
-        self.name = name
-        self.point = _Three(point)
-        # if translation is not None:
-        #     self.point += _Three(translation)
-        self.radius = radius
-
-
-        self.addToRegistry(flukaregistry)
-
-    def rotation(self):
-        return _np.identity(3)
-
-    def centre(self):
-        return self.point
-
-    def geant4_solid(self, reg, scale=None):
-        """Construct a solid, whole, geant4 sphere from this."""
-        return _g4.solid.Orb(self.name,
-                             self.radius,
-                             reg,
-                             lunit="mm")
-
-    def __repr__(self):
-        return "<SPH: {}, centre={}, r={})>".format(self.name,
-                                                    list(self.centre()),
-                                                    self.radius)
-
-
-
 class XYP(_HalfSpace):
     """Infinite half space perpendicular to the z-axis."""
     def __init__(self, name, z, translation=None, flukaregistry=None):
@@ -659,6 +659,43 @@ class YZP(_HalfSpace):
         return "<YZP: {}, x={}>".format(self.name, self.x)
 
 
+class PLA(Body):
+    """Generic half-space.
+
+    Parameters:
+    point = point on surface of halfspace
+    normal = vector normal to the surface (pointing outwards from the
+             contents of the body)
+    """
+
+    def __init__(self, name, normal, point, flukaregistry=None):
+        self.name = name
+        self.normal = _Three(normal)
+        self.point = _Three(point)
+
+        # normalise it if it is not normalised.
+        self.normal = self.normal / _np.linalg.norm(self.normal)
+
+    def centre(self):
+        return self.point - 0.5 * INFINITY * self.normal.unit()
+
+    def rotation(self):
+        # Choose the face pointing in the direction of the positive
+        # z-axis to make the surface of the half space.
+        return _trans.matrix_from([0, 0, 1], self.normal)
+
+    def geant4_solid(self, reg, scale=None):
+        return _g4.solid.Box(self.name,
+                             INFINITY,
+                             INFINITY,
+                             INFINITY,
+                             reg,
+                             lunit="mm")
+
+    def __repr__(self):
+        return "<PLA: {}, normal={}, point={}>".format(self.name,
+                                                       list(self.normal),
+                                                       list(self.point))
 
 
 class XCC(_InfiniteCylinder):
@@ -889,45 +926,6 @@ class ZEC(Body):
             self.name,
             self.x, self.y,
             self.xsemi, self.ysemi)
-
-
-class PLA(Body):
-    """Generic half-space.
-
-    Parameters:
-    point = point on surface of halfspace
-    normal = vector normal to the surface (pointing outwards from the
-             contents of the body)
-    """
-
-    def __init__(self, name, normal, point, flukaregistry=None):
-        self.name = name
-        self.normal = _Three(normal)
-        self.point = _Three(point)
-
-        # normalise it if it is not normalised.
-        self.normal = self.normal / _np.linalg.norm(self.normal)
-
-    def centre(self):
-        return self.point - 0.5 * INFINITY * self.normal.unit()
-
-    def rotation(self):
-        # Choose the face pointing in the direction of the positive
-        # z-axis to make the surface of the half space.
-        return _trans.matrix_from([0, 0, 1], self.normal)
-
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.Box(self.name,
-                             INFINITY,
-                             INFINITY,
-                             INFINITY,
-                             reg,
-                             lunit="mm")
-
-    def __repr__(self):
-        return "<PLA: {}, normal={}, point={}>".format(self.name,
-                                                       list(self.normal),
-                                                       list(self.point))
 
 
 def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
