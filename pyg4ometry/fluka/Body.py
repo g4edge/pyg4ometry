@@ -491,7 +491,7 @@ class ARB(Body):
 
     """
 
-    def __init__(self, name, vertices, facenumbers, flukaregistry):
+    def __init__(self, name, vertices, facenumbers, flukaregistry=None):
         self.name = name
         self.vertices = [_Three(v) for v in vertices]
         self.facenumbers = facenumbers
@@ -509,6 +509,7 @@ class ARB(Body):
         if self._nfaces < 4:
             raise TypeError("Not enough faces provided in arg facenumbers."
                             "  Must be 4, 5 or 6.")
+        self.addToRegistry(flukaregistry)
 
     def centre(self):
         return _Three(0, 0, 0)
@@ -677,6 +678,8 @@ class PLA(Body):
         # normalise it if it is not normalised.
         self.normal = self.normal / _np.linalg.norm(self.normal)
 
+        self.addToRegistry(flukaregistry)
+
     def centre(self):
         return self.point - 0.5 * INFINITY * self.normal.unit()
 
@@ -718,6 +721,8 @@ class XCC(_InfiniteCylinder):
         self.z = z
         self.radius = radius
 
+        self.addToRegistry(flukaregistry)
+
     def centre(self):
         return _Three(0.0, self.y, self.z)
 
@@ -749,6 +754,7 @@ class YCC(_InfiniteCylinder):
         self.x = x
         self.radius = radius
 
+        self.addToRegistry(flukaregistry)
 
     def centre(self):
         return _Three(self.x, 0.0, self.z)
@@ -780,6 +786,8 @@ class ZCC(_InfiniteCylinder):
         self.x = x
         self.y = y
         self.radius = radius
+
+        self.addToRegistry(flukaregistry)
 
     def centre(self):
         return _Three(self.x, self.y, 0.0)
