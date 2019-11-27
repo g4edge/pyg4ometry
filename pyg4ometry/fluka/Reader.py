@@ -250,27 +250,27 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
         b = _body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
                       **transforms)
     elif body_type == "XCC":
-        b = _body.XCC(name, param[0], param[1], param[2:],
+        b = _body.XCC(name, param[0], param[1], param[2],
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "YCC":
-        b = _body.YCC(name, param[0], param[1], param[2:],
+        b = _body.YCC(name, param[0], param[1], param[2],
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "ZCC":
-        b = _body.ZCC(name, param[0], param[1], param[2:],
+        b = _body.ZCC(name, param[0], param[1], param[2],
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "XEC":
-        b = _body.XEC(name, param[0], param[1], param[2], param[3:],
+        b = _body.XEC(name, param[0], param[1], param[2], param[3],
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "YEC":
-        b = _body.YEC(name, param[0], param[1], param[2], param[3:],
+        b = _body.YEC(name, param[0], param[1], param[2], param[3],
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "ZEC":
-        b = _body.ZEC(name, param[0], param[1], param[2], param[3:],
+        b = _body.ZEC(name, param[0], param[1], param[2], param[3],
                       flukaregistry=flukareg,
                       **transforms)
     else:
