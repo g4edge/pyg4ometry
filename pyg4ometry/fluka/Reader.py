@@ -241,11 +241,11 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
                       flukaregistry=flukareg,
                       **transforms)
     elif body_type == "XYP":
-        b = _body.XYP(name, param[0:], flukaregistry=flukareg, **transforms)
+        b = _body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "XZP":
-        b = _body.XZP(name, param[0:], flukaregistry=flukareg, **transforms)
+        b = _body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "YZP":
-        b = _body.YZP(name, param[0:], flukaregistry=flukareg, **transforms)
+        b = _body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "PLA":
         b = _body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
                       **transforms)
