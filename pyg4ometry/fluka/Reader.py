@@ -5,8 +5,10 @@ import Body as _body
 from FlukaRegistry import *
 from BodyTransform import *
 from copy import deepcopy
-from pyg4ometry.fluka.RegionExpression import RegionEvaluator as _RegionEval
-
+from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
+                                               RegionParser,
+                                               RegionLexer)
+import antlr4
 
 _BODY_NAMES = {"RPP",
                "BOX",
@@ -153,28 +155,26 @@ class Reader(object):
 
 
     def parseRegions(self) :
-        region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
+        regions_block = self.fileLines[self.bodiesend+1:self.regionsend]
+        regions_block = "\n".join(regions_block) # turn back into 1 big string
 
-        description = "" # for accumulating multi-line information
-        for i, line in enumerate(region_block):
-            sline = _freeform_split(line)
+        # Create ANTLR4 char stream from processed regions_block string
+        istream = antlr4.InputStream(regions_block)
+        # tokenize
+        lexed_input = RegionLexer(istream)
+        lexed_input.removeErrorListeners()
 
-            previous_description = deepcopy(description)
-            terminate_region = True
+        # Create a buffer of tokens from lexer
+        tokens = antlr4.CommonTokenStream(lexed_input)
 
-            # The opening declaration has an int as the second argument
-            if sline[0] == "END" or sline[1].isdigit():
-                description = line
-            else:
-                description += line
-                terminate_region = False
+        # Create a parser that reads from stream of tokens
+        parser = RegionParser(tokens)
+        parser.removeErrorListeners()
 
-            if previous_description and terminate_region:
-                parser = _RegionEval()
-                boolean_only = "".join(_freeform_split(previous_description)[2:])
-                parsed =  parser.parse(boolean_only)
-                print "Parsed: ", "".join([p.getText() for p in parsed.children])
-                #result = parser.evaluate(parsed, self.flukaRegistry.bodyDict)
+        tree = parser.regions()
+
+        visitor = RegionVisitor(self.flukaregistry)
+        visitor.visit(tree)  # populates flukaregistry
 
     def parseMaterials(self) :
         pass
@@ -278,9 +278,111 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
     return b
 
 
+class FlukaRegionVisitor(RegionParserVisitor):
+    """
+    A visitor class for accumulating the region definitions.  The body
+    instances are provided at instatiation, and then these are used
+    when traversing the tree to build up a dictionary of region name
+    and pyfluka.geometry.Region instances.
+
+    """
+    def __init__(self, flukaregistry):
+        self.flukaregistry = flukaregistry
+        self.regions = collections.OrderedDict()
+        self.current_region = None
+
+    def visitSimpleRegion(self, ctx):
+        # Simple in the sense that it consists of no unions of Zones.
+        region_defn = self.visitChildren(ctx)
+        # Build a zone from the list of bodies or single body:
+        zone = [pyfluka.geometry.Zone(region_defn)]
+        region_name = ctx.RegionName().getText()
+        # temporarily G4_Galactic
+        self.regions[region_name] = pyfluka.geometry.Region(region_name, zone,
+                                                            "G4_Galactic")
+
+    def visitComplexRegion(self, ctx):
+        # Complex in the sense that it consists of the union of
+        # multiple zones.
+
+        # Get the list of tuples of operators and bodies/zones
+        region_defn = self.visitChildren(ctx)
+        # Construct zones out of these:
+        zones = [pyfluka.geometry.Zone(defn) for defn in region_defn]
+        region_name = ctx.RegionName().getText()
+        region = pyfluka.geometry.Region(region_name, zones, "G4_Galactic")
+        self.regions[region_name] = region
+
+    def visitUnaryAndBoolean(self, ctx):
+        left_solid = self.visit(ctx.unaryExpression())
+        right_solid = self.visit(ctx.expr())
+
+        # If both are tuples (i.e. operator, body/zone pairs):
+        if (isinstance(left_solid, tuple)
+                and isinstance(right_solid, tuple)):
+            return [left_solid, right_solid]
+        elif (isinstance(left_solid, tuple)
+              and isinstance(right_solid, list)):
+            right_solid.append(left_solid)
+            return right_solid
+        else:
+            raise RuntimeError("dunno what's going on here")
+
+    def visitUnaryExpression(self, ctx):
+        body_name = ctx.ID().getText()
+        body = self.flukaregistry.bodyDict[body_name]
+        if ctx.Plus():
+            return  ('+', body)
+        elif ctx.Minus():
+            return ('-', body)
+        return None
+
+    def visitUnaryAndSubZone(self, ctx):
+        sub_zone = self.visit(ctx.subZone())
+        expr = self.visit(ctx.expr())
+        # If expr is already a list, append to it rather than building
+        # up a series of nested lists.  This is to keep it flat, with
+        # the only nesting occuring in Zones.
+        if isinstance(expr, list):
+            return [sub_zone] + expr
+        return [sub_zone, expr]
+
+    def visitSingleUnion(self, ctx):
+        zone = [(self.visit(ctx.zone()))]
+        return zone
+
+    def visitMultipleUnion(self, ctx):
+        # Get the zones:
+        zones = [self.visit(zone) for zone in ctx.zone()]
+        return zones
+
+    def visitMultipleUnion2(self, ctx):
+        # This rule exists because of the three ways of expressing a
+        # union:
+        # - | +x +y (union with nothing)
+        # -   +x | +y (infix union operator)
+        # - | +x | +y (infix union operator with leading union op)
+        # The latter two are identical, hence this method simply calling
+        # the other.
+        return self.visitMultipleUnion(ctx)
+
+    def visitSubZone(self, ctx):
+        if ctx.Plus():
+            operator = '+'
+        elif ctx.Minus():
+            operator = '-'
+        solids = self.visit(ctx.expr())
+        zone = pyfluka.geometry.Zone(solids)
+        return (operator, zone)
+
+
+class RegionVisitor(RegionParserVisitor):
+    def __init__(self, flukaregistry):
+        self.flukaregistry = flukaregistry
+
+
 def main(filein):
     r = Reader(filein)
-    from IPython import embed; embed()b
 
 if __name__ == '__main__':
     main(sys.argv[1])

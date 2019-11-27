@@ -8,30 +8,30 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write(u"\rL\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4")
-        buf.write(u"\b\t\b\3\2\6\2\22\n\2\r\2\16\2\23\3\3\3\3\3\3\3\3\3\3")
-        buf.write(u"\3\3\5\3\34\n\3\3\4\3\4\3\4\3\4\6\4\"\n\4\r\4\16\4#\3")
-        buf.write(u"\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4-\n\4\f\4\16\4\60\13\4")
-        buf.write(u"\3\4\3\4\5\4\64\n\4\3\5\3\5\5\58\n\5\3\6\3\6\3\6\3\6")
-        buf.write(u"\3\6\3\6\3\6\3\6\5\6B\n\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b")
-        buf.write(u"\3\b\3\b\2\2\t\2\4\6\b\n\f\16\2\3\3\2\t\n\2N\2\21\3\2")
-        buf.write(u"\2\2\4\33\3\2\2\2\6\63\3\2\2\2\b\67\3\2\2\2\nA\3\2\2")
-        buf.write(u"\2\fC\3\2\2\2\16H\3\2\2\2\20\22\5\4\3\2\21\20\3\2\2\2")
-        buf.write(u"\22\23\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24\3\3\2\2")
-        buf.write(u"\2\25\26\7\b\2\2\26\27\7\7\2\2\27\34\5\b\5\2\30\31\7")
-        buf.write(u"\b\2\2\31\32\7\7\2\2\32\34\5\6\4\2\33\25\3\2\2\2\33\30")
-        buf.write(u"\3\2\2\2\34\5\3\2\2\2\35\36\7\13\2\2\36!\5\b\5\2\37 ")
-        buf.write(u"\7\13\2\2 \"\5\b\5\2!\37\3\2\2\2\"#\3\2\2\2#!\3\2\2\2")
-        buf.write(u"#$\3\2\2\2$\64\3\2\2\2%&\7\13\2\2&\64\5\b\5\2\'(\5\b")
-        buf.write(u"\5\2(.\7\13\2\2)*\5\b\5\2*+\7\13\2\2+-\3\2\2\2,)\3\2")
-        buf.write(u"\2\2-\60\3\2\2\2.,\3\2\2\2./\3\2\2\2/\61\3\2\2\2\60.")
-        buf.write(u"\3\2\2\2\61\62\5\b\5\2\62\64\3\2\2\2\63\35\3\2\2\2\63")
-        buf.write(u"%\3\2\2\2\63\'\3\2\2\2\64\7\3\2\2\2\658\5\n\6\2\668\5")
-        buf.write(u"\f\7\2\67\65\3\2\2\2\67\66\3\2\2\28\t\3\2\2\29B\5\16")
-        buf.write(u"\b\2:;\5\16\b\2;<\5\n\6\2<B\3\2\2\2=>\5\f\7\2>?\5\n\6")
-        buf.write(u"\2?B\3\2\2\2@B\5\f\7\2A9\3\2\2\2A:\3\2\2\2A=\3\2\2\2")
-        buf.write(u"A@\3\2\2\2B\13\3\2\2\2CD\t\2\2\2DE\7\f\2\2EF\5\n\6\2")
-        buf.write(u"FG\7\r\2\2G\r\3\2\2\2HI\t\2\2\2IJ\7\b\2\2J\17\3\2\2\2")
+        buf.write(u"\16L\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write(u"\4\b\t\b\3\2\6\2\22\n\2\r\2\16\2\23\3\3\3\3\3\3\3\3\3")
+        buf.write(u"\3\3\3\5\3\34\n\3\3\4\3\4\3\4\3\4\6\4\"\n\4\r\4\16\4")
+        buf.write(u"#\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4-\n\4\f\4\16\4\60\13")
+        buf.write(u"\4\3\4\3\4\5\4\64\n\4\3\5\3\5\5\58\n\5\3\6\3\6\3\6\3")
+        buf.write(u"\6\3\6\3\6\3\6\3\6\5\6B\n\6\3\7\3\7\3\7\3\7\3\7\3\b\3")
+        buf.write(u"\b\3\b\3\b\2\2\t\2\4\6\b\n\f\16\2\3\3\2\n\13\2N\2\21")
+        buf.write(u"\3\2\2\2\4\33\3\2\2\2\6\63\3\2\2\2\b\67\3\2\2\2\nA\3")
+        buf.write(u"\2\2\2\fC\3\2\2\2\16H\3\2\2\2\20\22\5\4\3\2\21\20\3\2")
+        buf.write(u"\2\2\22\23\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24\3\3")
+        buf.write(u"\2\2\2\25\26\7\b\2\2\26\27\7\7\2\2\27\34\5\b\5\2\30\31")
+        buf.write(u"\7\b\2\2\31\32\7\7\2\2\32\34\5\6\4\2\33\25\3\2\2\2\33")
+        buf.write(u"\30\3\2\2\2\34\5\3\2\2\2\35\36\7\f\2\2\36!\5\b\5\2\37")
+        buf.write(u" \7\f\2\2 \"\5\b\5\2!\37\3\2\2\2\"#\3\2\2\2#!\3\2\2\2")
+        buf.write(u"#$\3\2\2\2$\64\3\2\2\2%&\7\f\2\2&\64\5\b\5\2\'(\5\b\5")
+        buf.write(u"\2(.\7\f\2\2)*\5\b\5\2*+\7\f\2\2+-\3\2\2\2,)\3\2\2\2")
+        buf.write(u"-\60\3\2\2\2.,\3\2\2\2./\3\2\2\2/\61\3\2\2\2\60.\3\2")
+        buf.write(u"\2\2\61\62\5\b\5\2\62\64\3\2\2\2\63\35\3\2\2\2\63%\3")
+        buf.write(u"\2\2\2\63\'\3\2\2\2\64\7\3\2\2\2\658\5\n\6\2\668\5\f")
+        buf.write(u"\7\2\67\65\3\2\2\2\67\66\3\2\2\28\t\3\2\2\29B\5\16\b")
+        buf.write(u"\2:;\5\16\b\2;<\5\n\6\2<B\3\2\2\2=>\5\f\7\2>?\5\n\6\2")
+        buf.write(u"?B\3\2\2\2@B\5\f\7\2A9\3\2\2\2A:\3\2\2\2A=\3\2\2\2A@")
+        buf.write(u"\3\2\2\2B\13\3\2\2\2CD\t\2\2\2DE\7\r\2\2EF\5\n\6\2FG")
+        buf.write(u"\7\16\2\2G\r\3\2\2\2HI\t\2\2\2IJ\7\t\2\2J\17\3\2\2\2")
         buf.write(u"\t\23\33#.\63\67A")
         return buf.getvalue()
 
@@ -47,12 +47,12 @@ class RegionParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"'+'", u"'-'", 
-                     u"'|'", u"'('", u"')'" ]
+                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
+                     u"'+'", u"'-'", u"'|'", u"'('", u"')'" ]
 
     symbolicNames = [ u"<INVALID>", u"Whitespace", u"InLineComment", u"LineComment", 
-                      u"Newline", u"Integer", u"RegionName", u"Plus", u"Minus", 
-                      u"Bar", u"LParen", u"RParen" ]
+                      u"Newline", u"Integer", u"RegionName", u"BodyName", 
+                      u"Plus", u"Minus", u"Bar", u"LParen", u"RParen" ]
 
     RULE_regions = 0
     RULE_region = 1
@@ -72,11 +72,12 @@ class RegionParser ( Parser ):
     Newline=4
     Integer=5
     RegionName=6
-    Plus=7
-    Minus=8
-    Bar=9
-    LParen=10
-    RParen=11
+    BodyName=7
+    Plus=8
+    Minus=9
+    Bar=10
+    LParen=11
+    RParen=12
 
     def __init__(self, input, output=sys.stdout):
         super(RegionParser, self).__init__(input, output=output)
@@ -755,8 +756,8 @@ class RegionParser ( Parser ):
             super(RegionParser.UnaryExpressionContext, self).__init__(parent, invokingState)
             self.parser = parser
 
-        def RegionName(self):
-            return self.getToken(RegionParser.RegionName, 0)
+        def BodyName(self):
+            return self.getToken(RegionParser.BodyName, 0)
 
         def Minus(self):
             return self.getToken(RegionParser.Minus, 0)
@@ -799,7 +800,7 @@ class RegionParser ( Parser ):
                 self._errHandler.reportMatch(self)
                 self.consume()
             self.state = 71
-            self.match(RegionParser.RegionName)
+            self.match(RegionParser.BodyName)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)

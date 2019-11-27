@@ -12,7 +12,7 @@ InLineComment
 
 // Skip preprocessor directives.
 LineComment
-    : ('*'|'#') {getCharPositionInLine() == 1}? ~[\r\n]*
+    : ('*'|'#') {self.column == 1}? ~[\r\n]*
 	-> skip
     ;
 
@@ -32,7 +32,11 @@ Digit
     ;
 
 RegionName
-    : [A-Za-z] {getCharPositionInLine() == 1}? [A-Za-z0-9_]+
+    : [A-Za-z] {self.column == 1}? [A-Za-z0-9_]+
+    ;
+
+BodyName
+    : [A-Za-z] [A-Za-z0-9_]+
     ;
 
 Plus : '+' ;

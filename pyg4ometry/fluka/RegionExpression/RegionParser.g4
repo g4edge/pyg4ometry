@@ -37,5 +37,5 @@ subZone
     ;
 
 unaryExpression
-    : (Minus | Plus) RegionName
+    : (Minus | Plus) BodyName 
     ;
