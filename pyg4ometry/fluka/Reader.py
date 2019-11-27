@@ -109,45 +109,48 @@ class Reader(object):
         bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
 
         # there can only be one of each directive used at a time, and
-        # the order in which they are nested is irrelevant so no need
-        # for a stack.
-        transforms = {"expansion": None,
-                      "translation": None,
-                      "transform": None}
+        # the order in which they are nested is irrelevant to the
+        # order of application so no need for a stack.
+        expansion = None
+        translation = None
+        transform = None
 
-        description = "" # for accumulating multi-line information
-        for i, line in enumerate(bodies_block):
-            line_parts = _freeform_split(line)
+        # type, name, parameters, etc.,  may be accumulated
+        # over many lines, each part is a string in the list in order.
+        body_parts = []
+        in_body = False # flag to tell us if we are currently in a body defn
+        for line in bodies_block:
             print line
-
-            previous_transforms  = deepcopy(transforms)
-            previous_description = deepcopy(description)
-            terminate_body = True
-
-            if line_parts[0] == "END":
-                descripion = ""
-            elif line_parts[0].startswith("$"): # geometry directive
-                description = ""         # No body info here
-                (transforms["expansion"],
-                 transforms["translation"],
-                 transforms["transform"]) = _parseGeometryDirective(
-                    line_parts,
-                    transforms["expansion"],
-                    transforms["translation"],
-                    transforms["transform"])
-            elif line_parts[0] in _BODY_NAMES:
-                description = line
+            # split the line into chunks according to the FLUKA delimiter rules.
+            line_parts = _freeform_split(line) 
+            # Get the first bit of the line, which determines what we do next.
+            first_bit = line_parts[0]
+            if first_bit in _BODY_NAMES: # start of body definition
+                if in_body: # already in body, build the previous one.
+                    _make_body(body_parts, expansion, translation, transform,
+                               self.flukaregistry)
+                body_parts = line_parts
+                in_body = True
+            elif first_bit.startswith("$"): # geometry directive
+                if in_body: # build the body we have accrued...
+                    _make_body(body_parts, expansion, translation, transform,
+                               self.flukaregistry)
+                expansion, translation, transform = _parseGeometryDirective(
+                    line_parts, expansion, translation, transform)
+                in_body = False
+            elif first_bit == "END": # finished parsing bodies
+                if in_body: # one last body to make
+                    _make_body(body_parts, expansion, translation, transform,
+                               self.flukaregistry) 
+                break
+            elif in_body: # continue appending bits to the body_parts list.
+                body_parts.append(line_parts)
             else:
-                description += line # Continuing body definition
-                terminate_body = False
+                raise RuntimeError(
+                    "Failed to parse FLUKA input line: {}".format(line))
+        else: # we should always break out of the above loop with END.
+            raise RuntimeError("Unable to parse FLUKA bodies.")
 
-            if previous_description and terminate_body:
-                _make_body(previous_description,
-                           previous_transforms,
-                           # previous_transforms["expansion"],
-                           # previous_transforms["translation"],
-                           # previous_transforms["transform"],
-                           self.flukaregistry)
 
     def parseRegions(self) :
         region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
@@ -204,12 +207,15 @@ def _parseGeometryDirective(line_parts, expansion, translation, transform):
 
     return expansion, translation, transform
 
-def _make_body(definition, transforms, flukareg):
+def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
-    elements = _freeform_split(definition)
-    body_type = elements[0]
-    name = elements[1]
-    param = map(float, elements[2:])
+    body_type = body_parts[0]
+    name = body_parts[1]
+    param = map(float, body_parts[2:])
+
+    transforms = {"expansion": expansion,
+                  "translation": translation,
+                  "transform": transform}
 
     if body_type == "RPP":
         b = _body.RPP(name, *param, flukaregistry=flukareg, **transforms)
@@ -274,6 +280,7 @@ def _make_body(definition, transforms, flukareg):
 
 def main(filein):
     r = Reader(filein)
+    from IPython import embed; embed()b
 
 if __name__ == '__main__':
     main(sys.argv[1])
