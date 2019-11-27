@@ -195,7 +195,7 @@ def _parseGeometryDirective(line_parts, expansion, translation, transform):
     elif directive == "$start_expansion":
         expansion = float(line_parts[1])
     elif directive == "$start_transform":
-        transform = line_parts[1:]
+        transform = line_parts[1]
     elif directive == "$end_translat":
         translation = None
     elif directive == "$end_expansion":
