@@ -62,7 +62,7 @@ class Reader(object):
             if len(fileLineStripped) == 0 :
                 continue
             # skip comment
-            if fileLineStripped[0] != '*' : 
+            if fileLineStripped[0] != '*' :
                 fileLinesStripped.append(l.rstrip())
         self.fileLines = fileLinesStripped
 
@@ -122,7 +122,7 @@ class Reader(object):
         for line in bodies_block:
             print line
             # split the line into chunks according to the FLUKA delimiter rules.
-            line_parts = _freeform_split(line) 
+            line_parts = _freeform_split(line)
             # Get the first bit of the line, which determines what we do next.
             first_bit = line_parts[0]
             if first_bit in _BODY_NAMES: # start of body definition
@@ -141,7 +141,7 @@ class Reader(object):
             elif first_bit == "END": # finished parsing bodies
                 if in_body: # one last body to make
                     _make_body(body_parts, expansion, translation, transform,
-                               self.flukaregistry) 
+                               self.flukaregistry)
                 break
             elif in_body: # continue appending bits to the body_parts list.
                 body_parts.append(line_parts)
@@ -179,7 +179,7 @@ class Reader(object):
     def parseMaterials(self) :
         pass
 
-    def parseMaterialAssignment(self) : 
+    def parseMaterialAssignment(self) :
         pass
 
     def parseCards(self) :
