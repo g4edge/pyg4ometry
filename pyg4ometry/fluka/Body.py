@@ -406,7 +406,7 @@ class _WED_RAW(Body):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
-    def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry):
+    def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry=None):
         self.name = name
         self.vertex = _Three(vertex)
         self.edge1 = _Three(edge1)  # direction of the triangular face.
@@ -415,6 +415,7 @@ class _WED_RAW(Body):
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
             "Edges are not all mutually perpendicular.")
+        self.addToRegistry(flukaregistry)
 
     def centre(self):
         # need to determine the handedness of the three direction
