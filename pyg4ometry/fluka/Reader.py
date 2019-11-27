@@ -4,7 +4,7 @@ import pyg4ometry.geant4
 import Body as _body
 from FlukaRegistry import *
 from BodyTransform import *
-from copy import deepcopy as _dc
+from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import RegionEvaluator as _RegionEval
 
 
@@ -115,25 +115,25 @@ class Reader(object):
 
         description = "" # for accumulating multi-line information
         for i, line in enumerate(bodies_block):
-            sline = _freeform_split(line)
+            line_parts = _freeform_split(line)
             print line
 
-            previous_transforms  = _dc(transforms)
-            previous_description = _dc(description)
+            previous_transforms  = deepcopy(transforms)
+            previous_description = deepcopy(description)
             terminate_body = True
 
-            if sline[0] == "END":
+            if line_parts[0] == "END":
                 descripion = ""
-            elif sline[0].startswith("$"): # Transfrom manipulation
+            elif line_parts[0].startswith("$"): # Transfrom manipulation
                 description = ""         # No body info here
-                if "start" in sline[0].lower():
-                    trans_type = sline[0].split("_")[1]
+                if "start" in line_parts[0].lower():
+                    trans_type = line_parts[0].split("_")[1]
                     trans = self.parseBodyTransform(line)
                     transforms[trans_type] = trans
-                elif "end" in sline[0].lower():
-                    trans_type = sline[0].split("_")[1]
+                elif "end" in line_parts[0].lower():
+                    trans_type = line_parts[0].split("_")[1]
                     transforms[trans_type] = None
-            elif sline[0] in _BODY_NAMES:
+            elif line_parts[0] in _BODY_NAMES:
                 description = line
             else:
                 description += line # Continuing body definition
@@ -149,7 +149,7 @@ class Reader(object):
         for i, line in enumerate(region_block):
             sline = _freeform_split(line)
 
-            previous_description = _dc(description)
+            previous_description = deepcopy(description)
             terminate_region = True
 
             # The opening declaration has an int as the second argument
