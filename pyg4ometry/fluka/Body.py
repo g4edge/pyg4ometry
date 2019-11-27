@@ -82,8 +82,8 @@ class RPP(Body):
                  xmin, xmax,
                  ymin, ymax,
                  zmin, zmax,
-                 expansion=1.0,
-                 translation=[0,0,0],
+                 expansion=None,
+                 translation=None,
                  rotdefi=None,
                  flukaregistry=None):
         self.name  = name
@@ -121,7 +121,11 @@ class RPP(Body):
 
 
 class BOX(Body):
-    def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry=None):
+    def __init__(self, name, vertex, edge1, edge2, edge3,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.vertex = _Three(vertex)
         self.edge1 = _Three(edge1)
@@ -159,7 +163,11 @@ class SPH(Body):
     point = centre of sphere
     radius = radius of sphere
     """
-    def __init__(self, name, point, radius, flukaregistry=None):
+    def __init__(self, name, point, radius,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.point = _Three(point)
         # if translation is not None:
@@ -196,7 +204,11 @@ class RCC(Body):
     radius = radius of the cylinder face
     """
 
-    def __init__(self, name, face, direction, radius, flukaregistry=None):
+    def __init__(self, name, face, direction, radius,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.face = _Three(face)
         self.direction = _Three(direction)
@@ -242,6 +254,9 @@ class REC(Body):
     """
 
     def __init__(self, name, face, direction, semiminor, semimajor,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
                  flukaregistry=None):
         self.name = name
         self.face = _Three(face)
@@ -294,13 +309,11 @@ class TRC(Body):
     radius_major: radius of the larger face.
     radius_minor: radius of the smaller face.
     """
-    def __init__(self,
-                 name,
-                 major_centre,
-                 direction,
-                 major_radius,
-                 minor_radius,
+    def __init__(self, name, major_centre, direction,
+                 major_radius, minor_radius,
+                 expansion=None,
                  translation=None,
+                 rotdefi=None,
                  flukaregistry=None):
         self.name = name
         self.major_centre = _Three(major_centre)
@@ -356,7 +369,11 @@ class ELL(Body):
 
     """
 
-    def __init__(self, name, focus1, focus2, length, flukaregistry=None):
+    def __init__(self, name, focus1, focus2, length,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.focus1 = _Three(focus1)
         self.focus2 = _Three(focus2)
@@ -406,7 +423,11 @@ class _WED_RAW(Body):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
-    def __init__(self, name, vertex, edge1, edge2, edge3, flukaregistry=None):
+    def __init__(self, name, vertex, edge1, edge2, edge3,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.vertex = _Three(vertex)
         self.edge1 = _Three(edge1)  # direction of the triangular face.
@@ -491,7 +512,11 @@ class ARB(Body):
 
     """
 
-    def __init__(self, name, vertices, facenumbers, flukaregistry=None):
+    def __init__(self, name, vertices, facenumbers,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.vertices = [_Three(v) for v in vertices]
         self.facenumbers = facenumbers
@@ -608,11 +633,13 @@ class ARB(Body):
 
 class XYP(_HalfSpace):
     """Infinite half space perpendicular to the z-axis."""
-    def __init__(self, name, z, translation=None, flukaregistry=None):
+    def __init__(self, name, z,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.z = z
-        # if translation is not None:
-        #     self.z += translation[2]
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -626,12 +653,13 @@ class XYP(_HalfSpace):
 
 class XZP(_HalfSpace):
     """Half space perpendicular to the y-axis."""
-    def __init__(self, name, y, translation=None, flukaregistry=None):
+    def __init__(self, name, y,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.y = y
-        # if translation is not None:
-        #     self.y += translation[1]
-
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -645,11 +673,13 @@ class XZP(_HalfSpace):
 
 class YZP(_HalfSpace):
     """Infinite half space perpendicular to the x-axis."""
-    def __init__(self, name, x, translation=None, flukaregistry=None):
+    def __init__(self, name, x,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.x = x
-        # if translation is not None:
-        #     self.x += translation[0]
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -670,7 +700,11 @@ class PLA(Body):
              contents of the body)
     """
 
-    def __init__(self, name, normal, point, flukaregistry=None):
+    def __init__(self, name, normal, point,
+                 expansion=None,
+                 translation=None,
+                 rotdefi=None,
+                 flukaregistry=None):
         self.name = name
         self.normal = _Three(normal)
         self.point = _Three(point)
