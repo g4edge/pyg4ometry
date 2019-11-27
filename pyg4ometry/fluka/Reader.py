@@ -235,7 +235,7 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "REC":
-        b = Body.REC(name, param[0:3], param[3:6], param[7], param[8],
+        b = Body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "WED":
