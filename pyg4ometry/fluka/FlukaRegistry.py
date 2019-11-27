@@ -51,7 +51,7 @@ class FlukaRegistry(object):
         for name, region in self.regionDict.iteritems():
             s = region.geant4_solid(greg)
             bm = _g4.MaterialPredefined("G4_Fe")
-            rlv = _g4.LogicalVolume(s, bm, "bl", greg)
+            rlv = _g4.LogicalVolume(s, bm, name+"bl", greg)
 
             rpv = _g4.PhysicalVolume(list(region.tbxyz()),
                                      list(region.centre()),
