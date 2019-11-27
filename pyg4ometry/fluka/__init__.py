@@ -1,6 +1,11 @@
-from Reader        import *
-from FlukaRegistry import *
-from Body          import *
-from Vector        import *
-from Region        import *
-from RegionExpression import *
+from Body import (RPP, BOX, SPH, RCC, REC,
+                  TRC, ELL, WED, RAW, ARB,
+                  XYP, XZP, YZP, PLA, XCC,
+                  YCC, ZCC, XEC, YEC, ZEC)
+from Reader        import Reader
+from FlukaRegistry import FlukaRegistry
+from Vector        import Three
+from Region        import Zone, Region
+# from RegionExpression import *
+
+

@@ -1,9 +1,9 @@
 import sys
 import re as _re
-import pyg4ometry.geant4
-import Body as _body
-from FlukaRegistry import *
-from BodyTransform import *
+from . import Body
+from .Region import Zone, Region
+from FlukaRegistry import FlukaRegistry
+from BodyTransform import BodyTransform
 from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
@@ -45,7 +45,6 @@ class Reader(object):
     def __init__(self, filename) :
         self.fileName = filename
         self.flukaregistry = FlukaRegistry()
-        self.registry = pyg4ometry.geant4.Registry()
         self.load()
 
     def load(self) :
@@ -153,7 +152,6 @@ class Reader(object):
         else: # we should always break out of the above loop with END.
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
-
     def parseRegions(self) :
         regions_block = self.fileLines[self.bodiesend+1:self.regionsend]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
@@ -171,10 +169,10 @@ class Reader(object):
         parser = RegionParser(tokens)
         parser.removeErrorListeners()
 
-        tree = parser.regions()
+        tree = parser.regions() # build the tree
 
         visitor = RegionVisitor(self.flukaregistry)
-        visitor.visit(tree)  # populates flukaregistry
+        visitor.visit(tree)  # walk the tree, populating flukaregistry
 
     def parseMaterials(self) :
         pass
@@ -211,74 +209,75 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
-    param = map(float, body_parts[2:])
+    # we are converting from millimetres to centimetres here!!!
+    param = [float(p)/10. for p in body_parts[2:]]
 
     transforms = {"expansion": expansion,
                   "translation": translation,
                   "transform": transform}
 
     if body_type == "RPP":
-        b = _body.RPP(name, *param, flukaregistry=flukareg, **transforms)
+        b = Body.RPP(name, *param, flukaregistry=flukareg, **transforms)
     elif body_type == "BOX":
-        b = _body.BOX(name, param[0:3], param[3:6], param[6:9],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.BOX(name, param[0:3], param[3:6], param[6:9],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "ELL":
-        b = _body.ELL(name, param[0:3], param[3:6], param[7],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.ELL(name, param[0:3], param[3:6], param[7],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "WED":
-        b = _body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                      flukaregistry=flukareg, **transforms)
+        b = Body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                       flukaregistry=flukareg, **transforms)
     elif body_type == "RAW":
-        b = _body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                      flukaregistry=flukareg, **transforms)
+        b = Body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                       flukaregistry=flukareg, **transforms)
     elif body_type == "ARB":
         vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
                     param[12:15], param[15:18], param[18:21], param[21:24]]
         facenumbers = param[24:]
-        b = _body.ARB(name, vertices, facenumbers,
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.ARB(name, vertices, facenumbers,
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "XYP":
-        b = _body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = Body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "XZP":
-        b = _body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = Body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "YZP":
-        b = _body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = Body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "PLA":
-        b = _body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
-                      **transforms)
+        b = Body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "XCC":
-        b = _body.XCC(name, param[0], param[1], param[2],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.XCC(name, param[0], param[1], param[2],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "YCC":
-        b = _body.YCC(name, param[0], param[1], param[2],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.YCC(name, param[0], param[1], param[2],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "ZCC":
-        b = _body.ZCC(name, param[0], param[1], param[2],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.ZCC(name, param[0], param[1], param[2],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "XEC":
-        b = _body.XEC(name, param[0], param[1], param[2], param[3],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.XEC(name, param[0], param[1], param[2], param[3],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "YEC":
-        b = _body.YEC(name, param[0], param[1], param[2], param[3],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.YEC(name, param[0], param[1], param[2], param[3],
+                       flukaregistry=flukareg,
+                       **transforms)
     elif body_type == "ZEC":
-        b = _body.ZEC(name, param[0], param[1], param[2], param[3],
-                      flukaregistry=flukareg,
-                      **transforms)
+        b = Body.ZEC(name, param[0], param[1], param[2], param[3],
+                       flukaregistry=flukareg,
+                       **transforms)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b
 
 
-class FlukaRegionVisitor(RegionParserVisitor):
+class RegionVisitor(RegionParserVisitor):
     """
     A visitor class for accumulating the region definitions.  The body
     instances are provided at instatiation, and then these are used
@@ -288,18 +287,25 @@ class FlukaRegionVisitor(RegionParserVisitor):
     """
     def __init__(self, flukaregistry):
         self.flukaregistry = flukaregistry
-        self.regions = collections.OrderedDict()
         self.current_region = None
 
     def visitSimpleRegion(self, ctx):
         # Simple in the sense that it consists of no unions of Zones.
+        region_name = ctx.RegionName().getText()
         region_defn = self.visitChildren(ctx)
         # Build a zone from the list of bodies or single body:
-        zone = [pyfluka.geometry.Zone(region_defn)]
-        region_name = ctx.RegionName().getText()
-        # temporarily G4_Galactic
-        self.regions[region_name] = pyfluka.geometry.Region(region_name, zone,
-                                                            "G4_Galactic")
+
+        zone = Zone(name="{}_zone".format(region_name))
+        # from IPython import embed; embed()
+        for operator, body in region_defn:
+            if operator == "+":
+                zone.addIntersection(body)
+            else:
+                zone.addSubtraction(body)
+
+        region = Region(region_name)
+        region.addZone(zone)
+        self.flukaregistry.addRegion(region)
 
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
@@ -316,25 +322,26 @@ class FlukaRegionVisitor(RegionParserVisitor):
     def visitUnaryAndBoolean(self, ctx):
         left_solid = self.visit(ctx.unaryExpression())
         right_solid = self.visit(ctx.expr())
-
         # If both are tuples (i.e. operator, body/zone pairs):
-        if (isinstance(left_solid, tuple)
-                and isinstance(right_solid, tuple)):
-            return [left_solid, right_solid]
-        elif (isinstance(left_solid, tuple)
-              and isinstance(right_solid, list)):
-            right_solid.append(left_solid)
-            return right_solid
-        else:
-            raise RuntimeError("dunno what's going on here")
+        right_solid.extend(left_solid)
+        return right_solid
+        # if (isinstance(left_solid, tuple)
+        #         and isinstance(right_solid, tuple)):
+        #     return [left_solid, right_solid]
+        # elif (isinstance(left_solid, tuple)
+        #       and isinstance(right_solid, list)):
+        #     right_solid.append(left_solid)
+        #     return right_solid
+        # else:
+        #     raise RuntimeError("dunno what's going on here")
 
     def visitUnaryExpression(self, ctx):
-        body_name = ctx.ID().getText()
+        body_name = ctx.BodyName().getText()
         body = self.flukaregistry.bodyDict[body_name]
         if ctx.Plus():
-            return  ('+', body)
+            return  [('+', body)]
         elif ctx.Minus():
-            return ('-', body)
+            return [('-', body)]
         return None
 
     def visitUnaryAndSubZone(self, ctx):
@@ -374,12 +381,6 @@ class FlukaRegionVisitor(RegionParserVisitor):
         solids = self.visit(ctx.expr())
         zone = pyfluka.geometry.Zone(solids)
         return (operator, zone)
-
-
-class RegionVisitor(RegionParserVisitor):
-    def __init__(self, flukaregistry):
-        self.flukaregistry = flukaregistry
-
 
 def main(filein):
     r = Reader(filein)

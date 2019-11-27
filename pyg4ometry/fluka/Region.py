@@ -44,20 +44,21 @@ class Union(_Boolean):
 
 class Zone(object):
     def __init__(self, name=None):
-        self.boolean = []
+        self.intersections = []
+        self.subtractions = []
         self.name = name
 
     def addSubtraction(self, body):
-        self.boolean.append(Subtraction(body))
+        self.subtractions.append(Subtraction(body))
 
     def addIntersection(self,body):
-        self.boolean.append(Intersection(body))
+        self.intersections.append(Intersection(body))
 
     def centre(self):
-        return self.boolean[0].body.centre()
+        return self.intersections[0].body.centre()
 
     def rotation(self):
-        return self.boolean[0].body.rotation()
+        return self.intersections[0].body.rotation()
 
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
@@ -69,9 +70,12 @@ class Zone(object):
             return boolean.body.geant4_solid(reg)
 
     def geant4_solid(self, reg):
-        body0 = self.boolean[0].body
-        result = self._getSolidFromBoolean(self.boolean[0], reg)
-        for boolean,i in zip(self.boolean[1:],range(0,len(self.boolean[1:])+2)):
+        body0 = self.intersections[0].body
+        result = self._getSolidFromBoolean(self.intersections[0], reg)
+
+        booleans = self.intersections + self.subtractions
+
+        for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
             boolean_name = boolean.generate_name(i, rootname=self.name)
             print i, boolean_name
 
