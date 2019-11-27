@@ -8,6 +8,21 @@ from copy import deepcopy as _dc
 from pyg4ometry.fluka.RegionExpression import RegionEvaluator as _RegionEval
 
 
+_BODY_NAMES = {"RPP",
+               "BOX",
+               "SPH",
+               "RCC",
+               "REC",
+               "TRC",
+               "ELL",
+               "WED", "RAW",
+               "ARB ",
+               "XYP", "XZP", "YZP",
+               "PLA",
+               "XCC", "YCC", "ZCC",
+               "XEC", "YEC", "ZEC",
+               "QUA"}
+
 def _freeform_split(string):
     """Method to split a string in FLUKA FREE format into its components"""
     # Split the string along non-black separators [,;:/\]
@@ -25,20 +40,20 @@ def _freeform_split(string):
     return components
 
 class Reader(object):
-    def __init__(self, filename) : 
+    def __init__(self, filename) :
         self.fileName = filename
-        self.flukaRegistry = FlukaRegistry()
+        self.flukaregistry = FlukaRegistry()
         self.registry = pyg4ometry.geant4.Registry()
         self.load()
-        
-    def load(self) : 
+
+    def load(self) :
 
         # read file
         flukaFile = open(self.fileName)
         self.fileLines = flukaFile.readlines()
         flukaFile.close()
-        
-        # strip comments 
+
+        # strip comments
         fileLinesStripped = []
         for l in self.fileLines :
             fileLineStripped = l.lstrip()
@@ -83,10 +98,10 @@ class Reader(object):
     def parseBodyTransform(self, line):
         sline = _freeform_split(line)
         trans_type = sline[0].split("_")[1]
-        transcount = len(self.flukaRegistry.bodyTransformDict)
+        transcount = len(self.flukaregistry.bodyTransformDict)
         name = "bodytransform_{}".format(transcount+1)
         value = sline[1:]
-        trans = BodyTransform(name, trans_type, value, self.flukaRegistry)
+        trans = BodyTransform(name, trans_type, value, self.flukaregistry)
 
         return trans
 
@@ -94,9 +109,9 @@ class Reader(object):
         bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
 
         # keep a dict of acitve transforms
-        transforms = {"expansion" : 1,
-                      "translat" : [0,0,0],
-                      "transform" : None} # rot-defi
+        transforms = {"expansion": 1,
+                      "translat": [0,0,0],
+                      "transform": None} # rot-defi
 
         description = "" # for accumulating multi-line information
         for i, line in enumerate(bodies_block):
@@ -118,32 +133,15 @@ class Reader(object):
                 elif "end" in sline[0].lower():
                     trans_type = sline[0].split("_")[1]
                     transforms[trans_type] = None
-            elif hasattr(self, "parse{}".format(sline[0].capitalize())): # New body defintion
+            elif sline[0] in _BODY_NAMES:
                 description = line
             else:
                 description += line # Continuing body definition
                 terminate_body = False
 
             if previous_description and terminate_body:
-                name = _freeform_split(previous_description)[0]
-                body_parser = getattr(self, "parse{}".format(name.capitalize()))
-                body = body_parser(previous_description, previous_transforms)
-                body.geant4_solid(self.registry)
+                _make_body(previous_description, transforms, self.flukaregistry)
 
-
-    def parseRpp(self, description, transforms) :
-        par = _freeform_split(description) # parameters
-        body = _body.RPP(par[1],
-                         float(par[2]), float(par[3]),
-                         float(par[4]), float(par[5]),
-                         float(par[6]), float(par[7]),
-                         expansion = transforms["expansion"],
-                         translation = transforms["translat"],
-                         rotdefi = transforms["transform"],
-                         flukaregistry = self.flukaRegistry)
-
-        return body
-        
     def parseRegions(self) :
         region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
 
@@ -180,7 +178,79 @@ class Reader(object):
     def parseLattice(self) :
         pass
 
-    
+
+def _make_body(definition, transforms, flukareg):
+    # definition is string of the entire definition as written in the file.
+    elements = _freeform_split(definition)
+    body_type = elements[0]
+    name = elements[1]
+    param = map(float, elements[2:])
+
+    transforms = {"translation": transforms["translat"],
+                  "expansion": transforms["expansion"],
+                  "rotdefi" : transforms["rotdefi"]}
+
+    if body_type == "RPP":
+        b = _body.RPP(name, *param, flukaregistry=flukareg, **transforms)
+    elif body_type == "BOX":
+        b = _body.BOX(name, param[0:3], param[3:6], param[6:9],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "ELL":
+        b = _body.ELL(name, param[0:3], param[3:6], param[7],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "WED":
+        b = _body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                      flukaregistry=flukareg, **transforms)
+    elif body_type == "RAW":
+        b = _body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                      flukaregistry=flukareg, **transforms)
+    elif body_type == "ARB":
+        vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
+                    param[12:15], param[15:18], param[18:21], param[21:24]]
+        facenumbers = param[24:]
+        b = _body.ARB(name, vertices, facenumbers,
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "XYP":
+        b = _body.XYP(name, param[0:], flukaregistry=flukareg, **transforms)
+    elif body_type == "XZP":
+        b = _body.XZP(name, param[0:], flukaregistry=flukareg, **transforms)
+    elif body_type == "YZP":
+        b = _body.YZP(name, param[0:], flukaregistry=flukareg, **transforms)
+    elif body_type == "PLA":
+        b = _body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "XCC":
+        b = _body.XCC(name, param[0], param[1], param[2:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "YCC":
+        b = _body.YCC(name, param[0], param[1], param[2:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "ZCC":
+        b = _body.ZCC(name, param[0], param[1], param[2:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "XEC":
+        b = _body.XEC(name, param[0], param[1], param[2], param[3:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "YEC":
+        b = _body.YEC(name, param[0], param[1], param[2], param[3:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    elif body_type == "ZEC":
+        b = _body.ZEC(name, param[0], param[1], param[2], param[3:],
+                      flukaregistry=flukareg,
+                      **transforms)
+    else:
+        raise TypeError("Body type {} not supported".format(body_type))
+    return b
+
+
 def main(filein):
     r = Reader(filein)
 
