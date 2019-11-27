@@ -1,3 +1,4 @@
+import sys
 import re as _re
 import pyg4ometry.geant4
 import Body as _body
@@ -180,3 +181,8 @@ class Reader(object):
         pass
 
     
+def main(filein):
+    r = Reader(filein)
+
+if __name__ == '__main__':
+    main(sys.argv[1])
