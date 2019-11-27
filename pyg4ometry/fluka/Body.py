@@ -84,7 +84,7 @@ class RPP(Body):
                  zmin, zmax,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name  = name
         self.lower = _Three([xmin, ymin, zmin])
@@ -124,7 +124,7 @@ class BOX(Body):
     def __init__(self, name, vertex, edge1, edge2, edge3,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.vertex = _Three(vertex)
@@ -166,7 +166,7 @@ class SPH(Body):
     def __init__(self, name, point, radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.point = _Three(point)
@@ -207,7 +207,7 @@ class RCC(Body):
     def __init__(self, name, face, direction, radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.face = _Three(face)
@@ -256,7 +256,7 @@ class REC(Body):
     def __init__(self, name, face, direction, semiminor, semimajor,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.face = _Three(face)
@@ -313,7 +313,7 @@ class TRC(Body):
                  major_radius, minor_radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.major_centre = _Three(major_centre)
@@ -372,7 +372,7 @@ class ELL(Body):
     def __init__(self, name, focus1, focus2, length,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.focus1 = _Three(focus1)
@@ -426,7 +426,7 @@ class _WED_RAW(Body):
     def __init__(self, name, vertex, edge1, edge2, edge3,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.vertex = _Three(vertex)
@@ -515,7 +515,7 @@ class ARB(Body):
     def __init__(self, name, vertices, facenumbers,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.vertices = [_Three(v) for v in vertices]
@@ -636,7 +636,7 @@ class XYP(_HalfSpace):
     def __init__(self, name, z,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.z = z
@@ -656,7 +656,7 @@ class XZP(_HalfSpace):
     def __init__(self, name, y,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.y = y
@@ -676,7 +676,7 @@ class YZP(_HalfSpace):
     def __init__(self, name, x,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.x = x
@@ -703,7 +703,7 @@ class PLA(Body):
     def __init__(self, name, normal, point,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.normal = _Three(normal)
@@ -748,7 +748,7 @@ class XCC(_InfiniteCylinder):
     def __init__(self, name, y, z, radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.y = y
@@ -781,7 +781,7 @@ class YCC(_InfiniteCylinder):
     def __init__(self, name, z, x, radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.z = z
@@ -814,7 +814,7 @@ class ZCC(_InfiniteCylinder):
     def __init__(self, name, x, y, radius,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.x = x
@@ -846,7 +846,7 @@ class XEC(Body):
     def __init__(self, name, y, z, ysemi, zsemi,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.y = y
@@ -893,7 +893,7 @@ class YEC(Body):
     def __init__(self, name, z, x, zsemi, xsemi,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.z = z
@@ -940,7 +940,7 @@ class ZEC(Body):
     def __init__(self, name, x, y, xsemi, ysemi,
                  expansion=None,
                  translation=None,
-                 rotdefi=None,
+                 transform=None,
                  flukaregistry=None):
         self.name = name
         self.x = x
