@@ -108,10 +108,12 @@ class Reader(object):
     def parseBodies(self) :
         bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
 
-        # keep a dict of acitve transforms
-        transforms = {"expansion": 1,
-                      "translat": [0,0,0],
-                      "transform": None} # rot-defi
+        # there can only be one of each directive used at a time, and
+        # the order in which they are nested is irrelevant so no need
+        # for a stack.
+        transforms = {"expansion": None,
+                      "translation": None,
+                      "transform": None}
 
         description = "" # for accumulating multi-line information
         for i, line in enumerate(bodies_block):
@@ -124,15 +126,15 @@ class Reader(object):
 
             if line_parts[0] == "END":
                 descripion = ""
-            elif line_parts[0].startswith("$"): # Transfrom manipulation
+            elif line_parts[0].startswith("$"): # geometry directive
                 description = ""         # No body info here
-                if "start" in line_parts[0].lower():
-                    trans_type = line_parts[0].split("_")[1]
-                    trans = self.parseBodyTransform(line)
-                    transforms[trans_type] = trans
-                elif "end" in line_parts[0].lower():
-                    trans_type = line_parts[0].split("_")[1]
-                    transforms[trans_type] = None
+                (transforms["expansion"],
+                 transforms["translation"],
+                 transforms["transform"]) = _parseGeometryDirective(
+                    line_parts,
+                    transforms["expansion"],
+                    transforms["translation"],
+                    transforms["transform"])
             elif line_parts[0] in _BODY_NAMES:
                 description = line
             else:
@@ -140,7 +142,12 @@ class Reader(object):
                 terminate_body = False
 
             if previous_description and terminate_body:
-                _make_body(previous_description, transforms, self.flukaregistry)
+                _make_body(previous_description,
+                           previous_transforms,
+                           # previous_transforms["expansion"],
+                           # previous_transforms["translation"],
+                           # previous_transforms["transform"],
+                           self.flukaregistry)
 
     def parseRegions(self) :
         region_block = self.fileLines[self.bodiesend+1:self.regionsend+1]
@@ -178,6 +185,24 @@ class Reader(object):
     def parseLattice(self) :
         pass
 
+def _parseGeometryDirective(line_parts, expansion, translation, transform):
+    directive = line_parts[0].lower()
+    if directive == "$start_translat":
+        translation = map(float, line_parts[1:3])
+    elif directive == "$start_expansion":
+        expansion = float(line_parts[1])
+    elif directive == "$start_transform":
+        transform = line_parts[1:]
+    elif directive == "$end_translat":
+        translation = None
+    elif directive == "$end_expansion":
+        expansion = None
+    elif directive == "$end_transform":
+        expansion = None
+    else:
+        raise ValueError("Unknown geometry directive: {}.".format(directive))
+
+    return expansion, translation, transform
 
 def _make_body(definition, transforms, flukareg):
     # definition is string of the entire definition as written in the file.
@@ -185,10 +210,6 @@ def _make_body(definition, transforms, flukareg):
     body_type = elements[0]
     name = elements[1]
     param = map(float, elements[2:])
-
-    transforms = {"translation": transforms["translat"],
-                  "expansion": transforms["expansion"],
-                  "rotdefi" : transforms["rotdefi"]}
 
     if body_type == "RPP":
         b = _body.RPP(name, *param, flukaregistry=flukareg, **transforms)
