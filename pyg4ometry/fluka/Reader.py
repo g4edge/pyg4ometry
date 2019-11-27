@@ -308,7 +308,6 @@ class RegionVisitor(RegionParserVisitor):
         # Build a zone from the list of bodies or single body:
 
         zone = Zone(name="{}_zone".format(region_name))
-        # from IPython import embed; embed()
         for operator, body in region_defn:
             if operator == "+":
                 zone.addIntersection(body)
@@ -322,30 +321,27 @@ class RegionVisitor(RegionParserVisitor):
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
         # multiple zones.
-
+        region_name = ctx.RegionName().getText()
+        region = Region(region_name)
         # Get the list of tuples of operators and bodies/zones
         region_defn = self.visitChildren(ctx)
-        # Construct zones out of these:
-        zones = [pyfluka.geometry.Zone(defn) for defn in region_defn]
-        region_name = ctx.RegionName().getText()
-        region = pyfluka.geometry.Region(region_name, zones, "G4_Galactic")
-        self.regions[region_name] = region
+
+        # Construct zones out of these nested lists.
+        for i, z in enumerate(region_defn):
+            zone = Zone(name="{}_zone{}".format(region_name, i))
+            for operator, body in z:
+                if operator == "+":
+                    zone.addIntersection(body)
+                else:
+                    zone.addSubtraction(body)
+            region.addZone(zone)
+        self.flukaregistry.addRegion(region)
 
     def visitUnaryAndBoolean(self, ctx):
         left_solid = self.visit(ctx.unaryExpression())
         right_solid = self.visit(ctx.expr())
-        # If both are tuples (i.e. operator, body/zone pairs):
         right_solid.extend(left_solid)
         return right_solid
-        # if (isinstance(left_solid, tuple)
-        #         and isinstance(right_solid, tuple)):
-        #     return [left_solid, right_solid]
-        # elif (isinstance(left_solid, tuple)
-        #       and isinstance(right_solid, list)):
-        #     right_solid.append(left_solid)
-        #     return right_solid
-        # else:
-        #     raise RuntimeError("dunno what's going on here")
 
     def visitUnaryExpression(self, ctx):
         body_name = ctx.BodyName().getText()
