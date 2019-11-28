@@ -144,18 +144,13 @@ class Region(object):
 
         zone0 = self.zones[0]
         result = zone0.geant4_solid(reg)
-
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
+            other_g4 = zone.geant4_solid(reg)
             zone_name = "{}_union_z{}".format(self.name, i)
-
             print i, zone_name
             tra2 = _get_tra2(zone0, zone)
-
-            result  = _g4.solid.Union(zone_name, result,
-                                      zone.geant4_solid(reg),
-                                      tra2,
-                                      reg)
             logger.debug("union tra2 = %s", tra2)
+            result  = _g4.solid.Union(zone_name, result, other_g4, tra2, reg)
 
         return result
 
