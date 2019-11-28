@@ -1,8 +1,20 @@
+import logging
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
 from uuid import uuid4
+
+
+
+# logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+logging.basicConfig(format=FORMAT)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
+
+
 
 class _Boolean(object):
     def generate_name(self, index, rootname=None):
@@ -80,7 +92,7 @@ class Zone(object):
             print i, boolean_name
 
             tra2 = _get_tra2(body0, boolean.body)
-
+            logger.debug("subint tra2 = %s", tra2)
             other_solid = self._getSolidFromBoolean(boolean, reg)
             if isinstance(boolean, Subtraction):
                 result  =_g4.solid.Subtraction(boolean_name,
@@ -142,6 +154,7 @@ class Region(object):
                                       zone.geant4_solid(reg),
                                       tra2,
                                       reg)
+            logger.debug("union tra2 = %s", tra2)
 
         return result
 
