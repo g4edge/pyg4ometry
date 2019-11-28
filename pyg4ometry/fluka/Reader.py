@@ -209,9 +209,8 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
-    # we are converting from millimetres to centimetres here!!!
-    param = [float(p)/10. for p in body_parts[2:]]
-
+    # we are converting from centimetres to millimetres here!!!
+    param = [float(p)*10. for p in body_parts[2:]]
     transforms = {"expansion": expansion,
                   "translation": translation,
                   "transform": transform}
