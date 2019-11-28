@@ -15,7 +15,7 @@ logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
 logger.setLevel(logging.DEBUG)
 
-INFINITY = 500
+INFINITY = 5000
 
 class Body(object):
     """

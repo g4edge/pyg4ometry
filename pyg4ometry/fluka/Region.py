@@ -181,8 +181,7 @@ def _get_relative_translation(first, second):
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
     offset_vector = second.centre() - first.centre()
-    mat = first.rotation() # don't invert this  don't know why.  something
-    # changed internally in pyg4ometry i think.  this works.
+    mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
 
