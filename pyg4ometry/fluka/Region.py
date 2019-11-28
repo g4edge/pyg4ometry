@@ -108,7 +108,8 @@ class Zone(object):
     def fluka_free_string(self):
         fs = ""
 
-        for s in self.boolean :
+        booleans = self.intersections + self.subtractions
+        for s in booleans:
             if isinstance(s,Intersection) :
                 if isinstance(s.body,Zone) :
                     fs = fs+" +("+s.body.fluka_free_string()+")"
