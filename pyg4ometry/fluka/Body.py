@@ -59,8 +59,7 @@ class _InfiniteCylinder(Body):
 
 
 class RPP(Body):
-    """
-    An RPP is a rectangular parallelpiped (a cuboid)
+    """Rectangular Parallelepiped
 
     :param name: of body
     :type name: str
@@ -121,6 +120,19 @@ class RPP(Body):
 
 
 class BOX(Body):
+    """General Rectangular Parallelepiped
+
+    :param name: of body
+    :type name: str
+    :param vertex: position [x, y, z] of one of the corners.
+    :type vertex: list
+    :param edge1: vector [x, y, z] denoting the first side of the box.
+    :type edge1: list
+    :param edge2: vector [x, y, z] denoting the second side of the box.
+    :type edge2: list
+    :param edge3: vector [x, y, z] denoting the second side of the box.
+    :type edge3: list
+    """
     def __init__(self, name, vertex, edge1, edge2, edge3,
                  expansion=None,
                  translation=None,
@@ -158,10 +170,14 @@ class BOX(Body):
 
 
 class SPH(Body):
-    """A sphere.
+    """Sphere
 
-    point = centre of sphere
-    radius = radius of sphere
+    :param name: of body
+    :type name: str
+    :param point: position [x, y, z] of the centre of the sphere.
+    :type point: list
+    :param radius: radius of the sphere.
+    :type radius: float
     """
     def __init__(self, name, point, radius,
                  expansion=None,
@@ -184,7 +200,6 @@ class SPH(Body):
         return self.point
 
     def geant4_solid(self, reg, scale=None):
-        """Construct a solid, whole, geant4 sphere from this."""
         return _g4.solid.Orb(self.name,
                              self.radius,
                              reg,
@@ -197,13 +212,18 @@ class SPH(Body):
 
 
 class RCC(Body):
-    """Right circular cylinder
-    face = centre of one of the faces
-    direction = vector pointing from one face to the other.
-                the magnitude of this vector is the cylinder length.
-    radius = radius of the cylinder face
-    """
+    """Right Circular Cylinder
 
+    :param name: of body
+    :type name: str
+    :param vertex: position [x, y, z] of one of the faces of the cylinder.
+    :type vertex: list
+    :param edge1: vector [x, y, z] denoting the direction along the
+    length of the cylinder.
+    :type edge1: list
+    :param edge2: radius of the cylinder face.
+    :type edge2: float
+    """
     def __init__(self, name, face, direction, radius,
                  expansion=None,
                  translation=None,
@@ -242,17 +262,19 @@ class RCC(Body):
 
 
 class REC(Body):
-    """Right circular cylinder
-    face = centre of one of the faces
-    direction = vector pointing from one face to the other.
-                the magnitude of this vector is the cylinder length.
-    semiminor = vector pointing in the direction of the ellipse
-                semi-minor axis.  its magnitude is the length of the
-                semi-minor axis of the ellipse.
-    semimajor = vector pointing in the direction of the semimajor axis.  its
-                magnitude is the length of semi-major axis of the ellipse.
-    """
+    """Right Elliptical Cylinder
 
+    :param name: of body
+    :type name: str
+    :param vertex: position [x, y, z] of one of the faces of the cylinder.
+    :type vertex: list
+    :param semiminor: vector [x, y, z] denoting the direction along the
+    semiminor axis of the ellipse.
+    :type semiminor: list
+    :param semimajor: vector [x, y, z] denoting the direction along the
+    semimajor axis of the ellipse.
+    :type semimajor: list
+    """
     def __init__(self, name, face, direction, semiminor, semimajor,
                  expansion=None,
                  translation=None,
@@ -302,12 +324,20 @@ class REC(Body):
 
 
 class TRC(Body):
-    """Truncated Right-angled Cone.
+    """Truncated Right-angled Cone
 
-    centre: coordinates of the centre of the larger face.
-    direction: coordinates of the vector pointing from major to minor.
-    radius_major: radius of the larger face.
-    radius_minor: radius of the smaller face.
+    :param name: of body
+    :type name: str
+    :param major_centre: vector [x, y, z] position of the centre of the
+    larger face.
+    :type major_centre: list
+    :param direction: vector [x, y, z] pointing from the larger face
+    to the smaller face.
+    :type direction: list
+    :param major_radius: radius of the larger face.
+    :type major_radius: float
+    :param minor_radius: radius of the smaller face.
+    :type minor_radius: float
     """
     def __init__(self, name, major_centre, direction,
                  major_radius, minor_radius,
@@ -356,7 +386,7 @@ class TRC(Body):
 
 
 class ELL(Body):
-    """Ellipsoid of revolution.
+    """Ellipsoid of Revolution
 
     :param name: of body
     :type name: str
@@ -366,9 +396,7 @@ class ELL(Body):
     :type focus2: list
     :param length: length of the ellipse axis which the foci lie on.
     :type length: float
-
     """
-
     def __init__(self, name, focus1, focus2, length,
                  expansion=None,
                  translation=None,
@@ -478,7 +506,7 @@ class _WED_RAW(Body):
 
 
 class WED(_WED_RAW):
-    """Wedge
+    """Right Angle Wedge
 
     :param name: of body
     :type name: str
@@ -491,27 +519,31 @@ class WED(_WED_RAW):
     :param edge3: vector [x, y, z] denoting length of the wedge.
     :type edge3: list
     """
-    pass
 
 
 class RAW(_WED_RAW):
     __doc__ = WED.__doc__
-    pass
 
 
 class ARB(Body):
-    """ Has 4, 5, or 6 faces.
+    """Arbitrary Convex Polyhedron
 
-    vertices: 8 vertices must be provided as a list of 8 lists,
-    i.e. [[x1, y1, z1], [x2, y2, y2], ...].
-    facenumbers: a list of 4 numbers which refers to the vertices
-    making up the six faces.  The vertex numbers must be provided
-    either ALL in clockwise order or ALL in anticlockwise order.
-    Combining the two conventions will result in erroneous output
-    without warning.
-
+    :param name: of body
+    :type name: str
+    :param vertices: Eight vertices which make up the polyhedron as
+    [[x1, y1, z1], [x2, y2, z2], ...].  There must be eight even if
+    only six or seven vertices are needed to make up the polydedron.
+    :type vertices: list
+    :param facenumbers: The faces of the polyhedron expressed as
+    floats where each digit of the float refers to one of the vertices
+    which makes up that face. Six must always be provided as [1234,
+    8765, ...], even if only four or five faces are needed.  Any
+    unneeded faces must be set to 0 (no less than 4 sides).  Note that
+    the references to the vertices are not zero-counting.  The order
+    of the vertices denoted in the facenumbers must be either all
+    clockwise or anticlockwise, which if not obeyed will result in
+    erroneous output without warning.
     """
-
     def __init__(self, name, vertices, facenumbers,
                  expansion=None,
                  translation=None,
@@ -632,7 +664,15 @@ class ARB(Body):
 
 
 class XYP(_HalfSpace):
-    """Infinite half space perpendicular to the z-axis."""
+    """Infinite half-space delimited by the x-y plane (pependicular to
+    the z-axis)
+
+    :param name: of body
+    :type name: str
+    :param z: position of the x-y plane on the z-axis.  All points
+    less than z are considered to be part of this body.
+    :type z: float
+    """
     def __init__(self, name, z,
                  expansion=None,
                  translation=None,
@@ -652,7 +692,15 @@ class XYP(_HalfSpace):
 
 
 class XZP(_HalfSpace):
-    """Half space perpendicular to the y-axis."""
+    """Infinite half-space delimited by the x-y plane (pependicular to
+    the y-axis)
+
+    :param name: of body
+    :type name: str
+    :param y: position of the x-y plane on the y-axis.  All points
+    less than y are considered to be part of this body.
+    :type y: float
+    """
     def __init__(self, name, y,
                  expansion=None,
                  translation=None,
@@ -672,7 +720,15 @@ class XZP(_HalfSpace):
 
 
 class YZP(_HalfSpace):
-    """Infinite half space perpendicular to the x-axis."""
+    """Infinite half-space delimited by the x-y plane (pependicular to
+    the x-axis)
+
+    :param name: of body
+    :type name: str
+    :param x: position of the x-y plane on the x-axis.  All points
+    less than x are considered to be part of this body.
+    :type x: float
+    """
     def __init__(self, name, x,
                  expansion=None,
                  translation=None,
@@ -692,14 +748,17 @@ class YZP(_HalfSpace):
 
 
 class PLA(Body):
-    """Generic half-space.
+    """Infinite half-space delimited by the x-y plane (pependicular to
+    the z-axis)
 
-    Parameters:
-    point = point on surface of halfspace
-    normal = vector normal to the surface (pointing outwards from the
-             contents of the body)
+    :param name: of body
+    :type name: str
+    :param normal: position of a point on the plane
+    :type point: list
+    :param normal: vector perpendicular to the face of the plane,
+    pointing away from the contents of the half space.
+    :type normal: list
     """
-
     def __init__(self, name, normal, point,
                  expansion=None,
                  translation=None,
@@ -737,14 +796,17 @@ class PLA(Body):
 
 
 class XCC(_InfiniteCylinder):
-    """Infinite circular cylinder parallel to x-axis
+    """Infinite Circular Cylinder parallel to the x-axis
 
-    y = y-coordinate of the centre of the cylinder
-    z = z-coordinate of the centre of the cylinder
-    radius = radius of the cylinder
-
+    :param name: of body
+    :type name: str
+    :param y: position of the centre on the
+    :type y: float
+    :param z: position of the centre on the
+    :type z: float
+    :param radius: position of the centre on the
+    :type radius: float
     """
-
     def __init__(self, name, y, z, radius,
                  expansion=None,
                  translation=None,
@@ -770,14 +832,17 @@ class XCC(_InfiniteCylinder):
 
 
 class YCC(_InfiniteCylinder):
-    """Infinite circular cylinder parallel to y-axis
+    """Infinite Circular Cylinder parallel to the y-axis
 
-    z = z-coordinate of the centre of the cylinder
-    x = x-coordinate of the centre of the cylinder
-    radius = radius of the cylinder
-
+    :param name: of body
+    :type name: str
+    :param z: position of the centre on the
+    :type z: float
+    :param x: position of the centre on the
+    :type x: float
+    :param radius: position of the centre on the
+    :type radius: float
     """
-
     def __init__(self, name, z, x, radius,
                  expansion=None,
                  translation=None,
@@ -803,14 +868,17 @@ class YCC(_InfiniteCylinder):
 
 
 class ZCC(_InfiniteCylinder):
-    """Infinite circular cylinder parallel to z-axis
+    """Infinite Circular Cylinder parallel to the z-axis
 
-    x = x-coordinate of the centre of the cylinder
-    y = y-coordinate of the centre of the cylinder
-    radius = radius of the cylinder
-
+    :param name: of body
+    :type name: str
+    :param x: position of the centre on the
+    :type x: float
+    :param y: position of the centre on the
+    :type y: float
+    :param radius: position of the centre on the
+    :type radius: float
     """
-
     def __init__(self, name, x, y, radius,
                  expansion=None,
                  translation=None,
@@ -834,15 +902,19 @@ class ZCC(_InfiniteCylinder):
 
 
 class XEC(Body):
-    """Infinite elliptical cylinder parallel to x-axis
+    """Infinite Elliptical Cylinder parallel to the x-axis
 
-    y = y-coordinate of the centre of the cylinder
-    z = z-coordinate of the centre of the cylinder
-    ysemi = semi-axis of the ellipse face in the y-directiony
-    zsemi = semi-axis of the ellipse face in the z-direction
-
+    :param name: of body
+    :type name: str
+    :param y: position of the centre on the
+    :type y: float
+    :param z: position of the centre on the
+    :type z: float
+    :param ysemi: position of the centre on the
+    :type ysemi: float
+    :param zsemi: position of the centre on the
+    :type zsemi: float
     """
-
     def __init__(self, name, y, z, ysemi, zsemi,
                  expansion=None,
                  translation=None,
@@ -881,15 +953,19 @@ class XEC(Body):
 
 
 class YEC(Body):
-    """Infinite elliptical cylinder parallel to y-axis
+    """Infinite Elliptical Cylinder parallel to the y-axis
 
-    z = z-coordinate of the centre of the cylinder
-    y = y-coordinate of the centre of the cylinder
-    ysemi = semi-axis of the ellipse face in the y-directiony
-    zsemi = semi-axis of the ellipse face in the z-direction
-
+    :param name: of body
+    :type name: str
+    :param z: position of the centre on the
+    :type z: float
+    :param x: position of the centre on the
+    :type x: float
+    :param zsemi: position of the centre on the
+    :type zsemi: float
+    :param xsemi: position of the centre on the
+    :type xsemi: float
     """
-
     def __init__(self, name, z, x, zsemi, xsemi,
                  expansion=None,
                  translation=None,
@@ -928,15 +1004,19 @@ class YEC(Body):
 
 
 class ZEC(Body):
-    """Infinite elliptical cylinder parallel to z-axis
+    """Infinite Elliptical Cylinder parallel to the z-axis
 
-    z = z-coordinate of the centre of the cylinder
-    y = y-coordinate of the centre of the cylinder
-    ysemi = semi-axis of the ellipse face in the y-directiony
-    zsemi = semi-axis of the ellipse face in the z-direction
-
+    :param name: of body
+    :type name: str
+    :param x: position of the centre on the
+    :type x: float
+    :param y: position of the centre on the
+    :type y: float
+    :param xsemi: position of the centre on the
+    :type xsemi: float
+    :param ysemi: position of the centre on the
+    :type ysemi: float
     """
-
     def __init__(self, name, x, y, xsemi, ysemi,
                  expansion=None,
                  translation=None,
