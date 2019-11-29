@@ -75,8 +75,8 @@ class RPP(Body):
     :type zmin: float
     :param zmax: upper z coordinate of RPP
     :type zmax: float
-    """
 
+    """
     def __init__(self, name,
                  xmin, xmax,
                  ymin, ymax,
@@ -132,6 +132,7 @@ class BOX(Body):
     :type edge2: list
     :param edge3: vector [x, y, z] denoting the second side of the box.
     :type edge3: list
+
     """
     def __init__(self, name, vertex, edge1, edge2, edge3,
                  expansion=None,
@@ -178,6 +179,7 @@ class SPH(Body):
     :type point: list
     :param radius: radius of the sphere.
     :type radius: float
+
     """
     def __init__(self, name, point, radius,
                  expansion=None,
@@ -223,6 +225,7 @@ class RCC(Body):
     :type edge1: list
     :param edge2: radius of the cylinder face.
     :type edge2: float
+
     """
     def __init__(self, name, face, direction, radius,
                  expansion=None,
@@ -274,6 +277,7 @@ class REC(Body):
     :param semimajor: vector [x, y, z] denoting the direction along the
     semimajor axis of the ellipse.
     :type semimajor: list
+
     """
     def __init__(self, name, face, direction, semiminor, semimajor,
                  expansion=None,
@@ -338,6 +342,7 @@ class TRC(Body):
     :type major_radius: float
     :param minor_radius: radius of the smaller face.
     :type minor_radius: float
+
     """
     def __init__(self, name, major_centre, direction,
                  major_radius, minor_radius,
@@ -396,6 +401,7 @@ class ELL(Body):
     :type focus2: list
     :param length: length of the ellipse axis which the foci lie on.
     :type length: float
+
     """
     def __init__(self, name, focus1, focus2, length,
                  expansion=None,
@@ -672,6 +678,7 @@ class XYP(_HalfSpace):
     :param z: position of the x-y plane on the z-axis.  All points
     less than z are considered to be part of this body.
     :type z: float
+
     """
     def __init__(self, name, z,
                  expansion=None,
@@ -728,6 +735,7 @@ class YZP(_HalfSpace):
     :param x: position of the x-y plane on the x-axis.  All points
     less than x are considered to be part of this body.
     :type x: float
+
     """
     def __init__(self, name, x,
                  expansion=None,
@@ -806,6 +814,7 @@ class XCC(_InfiniteCylinder):
     :type z: float
     :param radius: position of the centre on the
     :type radius: float
+
     """
     def __init__(self, name, y, z, radius,
                  expansion=None,
@@ -842,6 +851,7 @@ class YCC(_InfiniteCylinder):
     :type x: float
     :param radius: position of the centre on the
     :type radius: float
+
     """
     def __init__(self, name, z, x, radius,
                  expansion=None,
@@ -878,6 +888,7 @@ class ZCC(_InfiniteCylinder):
     :type y: float
     :param radius: position of the centre on the
     :type radius: float
+
     """
     def __init__(self, name, x, y, radius,
                  expansion=None,
@@ -914,6 +925,7 @@ class XEC(Body):
     :type ysemi: float
     :param zsemi: position of the centre on the
     :type zsemi: float
+
     """
     def __init__(self, name, y, z, ysemi, zsemi,
                  expansion=None,
@@ -965,6 +977,7 @@ class YEC(Body):
     :type zsemi: float
     :param xsemi: position of the centre on the
     :type xsemi: float
+
     """
     def __init__(self, name, z, x, zsemi, xsemi,
                  expansion=None,
@@ -1016,6 +1029,7 @@ class ZEC(Body):
     :type xsemi: float
     :param ysemi: position of the centre on the
     :type ysemi: float
+
     """
     def __init__(self, name, x, y, xsemi, ysemi,
                  expansion=None,
