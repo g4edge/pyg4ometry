@@ -5,6 +5,7 @@ from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Mesh as _Mesh
 import logging as _log
+import random
 
 class VtkViewer:
     def __init__(self,size=(1024,768)):
@@ -49,10 +50,13 @@ class VtkViewer:
         self.axes.SetTotalLength(length,length,length)
         self.axes.SetOrigin(origin[0], origin[1], origin[2])
         self.ren.AddActor(self.axes)
-        
-    def setOpacity(self,v):
-        for a in self.actors:
-            a.GetProperty().SetOpacity(v)
+
+    def setOpacity(self, v, iActor = -1):
+        for a, i in zip(self.actors,range(0,len(self.actors))):
+            if i == iActor :
+                a.GetProperty().SetOpacity(v)
+            elif iActor == -1:
+                a.GetProperty().SetOpacity(v)
 
     def setWireframe(self) :
         for a in self.actors :
@@ -65,6 +69,13 @@ class VtkViewer:
     def setWireframeOverlap(self) :
         for a in self.actorsOverlap :
             a.GetProperty().SetRepresentationToWireframe()
+
+    def setRandomColours(self):
+        for a in self.actors:
+
+            a.GetProperty().SetColor(random.random(),
+                                     random.random(),
+                                     random.random())
 
     def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
