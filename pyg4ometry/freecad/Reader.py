@@ -53,6 +53,9 @@ class Reader(object) :
             obj.Label = obj.Label.replace(u':','_colon_')
             obj.Label = obj.Label.replace(u'\\','_fs_')
 
+            if obj.Label[0].isdigit() :
+                obj.Label = "number"+obj.Label
+
 
     def loadAuxilaryData(self, fileName, colorByMaterial = True) : 
         f = open(fileName,"r") 
@@ -251,7 +254,7 @@ class Reader(object) :
                 logicals.append(l)
                 placements.append([tba,[x,y,z]])
 
-        tsize   = tmax-tmin
+        tsize   = (tmax-tmin)*(1+0.0)
         tcentre = (tmax-tmin)/2.0+tmin
 
         # scale world volume extents
