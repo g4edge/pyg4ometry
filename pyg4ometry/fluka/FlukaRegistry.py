@@ -1,6 +1,7 @@
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.exceptions import IdenticalNameError
+import warnings
 
 WORLD_DIMENSIONS = 10000
 
@@ -45,8 +46,15 @@ class FlukaRegistry(object):
         bigger = FlukaRegistry()
         smaller = FlukaRegistry()
         for name, body in self.bodyDict.iteritems():
-            bigger.addBody(body.safety_expanded())
-            smaller.addBody(body.safety_shrunk())
+            try:
+                bigger.addBody(body.safety_expanded())
+                smaller.addBody(body.safety_shrunk())
+            except AttributeError:
+                warnings.warn(
+                    "No length safety supported for body type {}.".format(
+                        type(body).__name__))
+                bigger.addBody(body)
+                smaller.addBody(body)
 
         # return bigger, smaller
         fluka_reg_out = FlukaRegistry()
