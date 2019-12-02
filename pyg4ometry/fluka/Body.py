@@ -15,7 +15,9 @@ logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
 logger.setLevel(logging.DEBUG)
 
-INFINITY = 5000
+INFINITY = 50000
+LENGTH_SAFETY = 1e-6
+
 
 class Body(object):
     """
@@ -31,6 +33,16 @@ class Body(object):
 
     def tbxyz(self):
         return _trans.matrix2tbxyz(self.rotation())
+
+    # in the per body _with_lengthsafety methods below, factor =
+    # -1*LENGTH_SAFETY should make the body small in
+    # _with_lengthsafety, and +LENGTH_SAFETY must make the body
+    # bigger.
+    def safety_expanded(self, reg=None):
+        return self._with_lengthsafety(LENGTH_SAFETY, reg)
+
+    def safety_shrunk(self, reg=None):
+        return self._with_lengthsafety(-LENGTH_SAFETY, reg)
 
 
 class _HalfSpace(Body):
@@ -117,6 +129,16 @@ class RPP(Body):
                 " x0={l.x}, x1={u.x},"
                 " y0={l.y}, y1={u.y},"
                 " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
+
+    def _with_lengthsafety(self, safety, reg):
+        lower = self.lower - [safety, safety, safety]
+        upper = self.upper + [safety, safety, safety]
+        return RPP(self.name,
+                   lower.x, upper.x,
+                   lower.y, upper.y,
+                   lower.z, upper.z,
+                   flukaregistry=reg)
+
 
 
 class BOX(Body):
@@ -212,6 +234,10 @@ class SPH(Body):
                                                     list(self.centre()),
                                                     self.radius)
 
+    def _with_lengthsafety(self, safety, reg):
+        return SPH(self.name, self.point, self.radius + safety,
+                   flukaregistry=reg)
+
 
 class RCC(Body):
     """Right Circular Cylinder
@@ -262,6 +288,15 @@ class RCC(Body):
     def __repr__(self):
         return ("<RCC: {}, face={}, dir={}, r={}>").format(
             self.name, list(self.face), list(self.direction), self.radius)
+
+    def _with_lengthsafety(self, safety, reg):
+        unit = self.direction.unit()
+        face = self.face - safety * unit
+        direction = self.direction + safety * unit
+        return RCC(self.name,
+                   face, direction,
+                   self.radius + safety,
+                   flukaregistry=reg)
 
 
 class REC(Body):
@@ -697,6 +732,11 @@ class XYP(_HalfSpace):
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
+    def _with_lengthsafety(self, safety, reg):
+        return XYP(self.name,
+                   self.z + safety,
+                   flukaregistry=flukaregistry)
+
 
 class XZP(_HalfSpace):
     """Infinite half-space delimited by the x-y plane (pependicular to
@@ -724,6 +764,11 @@ class XZP(_HalfSpace):
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
+
+    def _with_lengthsafety(self, safety, reg):
+        return XZP(self.name,
+                   self.y + safety,
+                   flukaregistry=flukaregistry)
 
 
 class YZP(_HalfSpace):
@@ -753,6 +798,12 @@ class YZP(_HalfSpace):
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
+
+
+    def _with_lengthsafety(self, safety, reg):
+        return YZP(self.name,
+                   self.x + safety,
+                   flukaregistry=reg)
 
 
 class PLA(Body):

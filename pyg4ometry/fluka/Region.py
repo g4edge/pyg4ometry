@@ -5,6 +5,7 @@ from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
 from uuid import uuid4
 
+from copy import deepcopy
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -122,6 +123,67 @@ class Zone(object):
                     fs=fs+" -"+s.body.name
         return fs
 
+    def with_length_safety(self, bigger_flukareg, smaller_flukareg,
+                           shrink_intersections):
+        zone_out = Zone(name=self.name)
+        logger.debug("zone.name = %s", self.name)
+        for boolean in self.intersections:
+            body = boolean.body
+            name = body.name
+
+            if isinstance(body, Zone):
+                zone_out.addIntersection(body.with_length_safety(
+                    bigger_flukareg,
+                    smaller_flukareg,
+                    shrink_intersections))
+            elif shrink_intersections:
+                ls_body = deepcopy(smaller_flukareg.getBody(name))
+                ls_body.name += "_s"
+                logger.debug("Adding shrunk intersection %s to registry",
+                             ls_body.name)
+                print "Adding body to registry", ls_body.name
+                zone_out.addIntersection(ls_body)
+            else:
+                ls_body = deepcopy(bigger_flukareg.getBody(name))
+                ls_body.name += "_e"
+                logger.debug("Adding expanded intersection %s to registry",
+                             ls_body.name)
+                zone_out.addIntersection(ls_body)
+
+        for boolean in self.subtractions:
+            body = boolean.body
+            name = body.name
+            if isinstance(body, Zone):
+                zone_out.addSubtraction(body.with_length_safety(
+                    bigger_flukareg,
+                    smaller_flukareg,
+                    not shrink_intersections)) # flip length safety
+                # convention if entering a subtracted subzone.
+            elif shrink_intersections:
+                ls_body = deepcopy(bigger_flukareg.getBody(name))
+                ls_body.name += "_e"
+                logger.debug("Adding expanded subtraction %s to registry",
+                             ls_body.name)
+                zone_out.addSubtraction(ls_body)
+            else:
+                ls_body = deepcopy(smaller_flukareg.getBody(name))
+                ls_body.name += "_s"
+                logger.debug("Adding shrunk subtraction %s to registry",
+                             ls_body.name)
+                zone_out.addSubtraction(ls_body)
+        return zone_out
+
+    def allBodiesToRegistry(self, flukaregistry):
+        for boolean in self.intersections + self.subtractions:
+            body = boolean.body
+            print body.name
+            # if isinstance(body, Zone):
+            #     self.allBodiesToRegistry(flukaregistry)
+            # else:
+            #     flukaregistry.addBody(body)
+
+
+
 class Region(object):
 
     def __init__(self, name):
@@ -172,6 +234,20 @@ class Region(object):
             fs=fs+" | "+z.fluka_free_string()
 
         return fs
+
+    def with_length_safety(self, bigger_flukareg, smaller_flukareg):
+        result = Region(self.name)
+        for zone in self.zones:
+            result.addZone(zone.with_length_safety(bigger_flukareg,
+                                                   smaller_flukareg,
+                                                   shrink_intersections=True))
+        return result
+
+
+    def allBodiesToRegistry(self, registry):
+        for zone in self.zones:
+            zone.allBodiesToRegistry(registry)
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
