@@ -184,7 +184,7 @@ class Zone(object):
             name = body.name
             print body.name
             if isinstance(body, Zone):
-                self.allBodiesToRegistry(flukaregistry)
+                body.allBodiesToRegistry(flukaregistry)
             elif name not in flukaregistry.bodyDict:
                 flukaregistry.addBody(body)
 
