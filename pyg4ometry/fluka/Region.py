@@ -4,6 +4,7 @@ from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
 from uuid import uuid4
+from pyg4ometry.exceptions import FLUKAError
 
 from copy import deepcopy
 
@@ -83,7 +84,11 @@ class Zone(object):
             return boolean.body.geant4_solid(reg)
 
     def geant4_solid(self, reg):
-        body0 = self.intersections[0].body
+        try:
+            body0 = self.intersections[0].body
+        except IndexError:
+            raise FLUKAError("Each zone must consist of at least one +.")
+
         result = self._getSolidFromBoolean(self.intersections[0], reg)
 
         booleans = self.intersections + self.subtractions
