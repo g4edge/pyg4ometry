@@ -853,6 +853,11 @@ class PLA(Body):
                                                        list(self.normal),
                                                        list(self.point))
 
+    def _with_lengthsafety(self, safety, reg=None):
+        norm = self.normal().unit()
+        newpoint = self.point + norm * safety
+        return PLA(self.name, norm, newpoint, flukaregistry=reg)
+
 
 class XCC(_InfiniteCylinder):
     """Infinite Circular Cylinder parallel to the x-axis
