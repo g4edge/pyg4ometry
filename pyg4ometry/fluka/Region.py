@@ -176,11 +176,12 @@ class Zone(object):
     def allBodiesToRegistry(self, flukaregistry):
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
+            name = body.name
             print body.name
-            # if isinstance(body, Zone):
-            #     self.allBodiesToRegistry(flukaregistry)
-            # else:
-            #     flukaregistry.addBody(body)
+            if isinstance(body, Zone):
+                self.allBodiesToRegistry(flukaregistry)
+            elif name not in flukaregistry.bodyDict:
+                flukaregistry.addBody(body)
 
 
 
