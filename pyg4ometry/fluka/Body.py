@@ -455,6 +455,8 @@ class ELL(Body):
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
+        self.addToRegistry(flukaregistry)
+
     def centre(self):
         return 0.5 * (self.focus1 + self.focus2)
 
