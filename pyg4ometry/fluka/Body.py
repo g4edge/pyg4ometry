@@ -735,7 +735,7 @@ class XYP(_HalfSpace):
     def _with_lengthsafety(self, safety, reg):
         return XYP(self.name,
                    self.z + safety,
-                   flukaregistry=flukaregistry)
+                   flukaregistry=reg)
 
 
 class XZP(_HalfSpace):
@@ -768,7 +768,7 @@ class XZP(_HalfSpace):
     def _with_lengthsafety(self, safety, reg):
         return XZP(self.name,
                    self.y + safety,
-                   flukaregistry=flukaregistry)
+                   flukaregistry=reg)
 
 
 class YZP(_HalfSpace):
