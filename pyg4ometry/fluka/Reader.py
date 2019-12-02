@@ -298,36 +298,40 @@ class RegionVisitor(RegionParserVisitor):
     """
     def __init__(self, flukaregistry):
         self.flukaregistry = flukaregistry
-        self.current_region = None
+        # Purely so we can give nested subzones meaningful names:
+        self.region_name = None
+        self.subzone_counter = 0
 
     def visitSimpleRegion(self, ctx):
         # Simple in the sense that it consists of no unions of Zones.
-        region_name = ctx.RegionName().getText()
+        self.region_name = ctx.RegionName().getText()
+        self.subzone_counter = 0
         region_defn = self.visitChildren(ctx)
         # Build a zone from the list of bodies or single body:
 
-        zone = Zone(name="{}_zone".format(region_name))
+        zone = Zone(name="{}_zone".format(self.region_name))
         for operator, body in region_defn:
             if operator == "+":
                 zone.addIntersection(body)
             else:
                 zone.addSubtraction(body)
 
-        region = Region(region_name)
+        region = Region(self.region_name)
         region.addZone(zone)
         self.flukaregistry.addRegion(region)
 
     def visitComplexRegion(self, ctx):
         # Complex in the sense that it consists of the union of
         # multiple zones.
-        region_name = ctx.RegionName().getText()
-        region = Region(region_name)
+        self.region_name = ctx.RegionName().getText()
+        self.subzone_counter = 0
+        region = Region(self.region_name)
         # Get the list of tuples of operators and bodies/zones
         region_defn = self.visitChildren(ctx)
 
         # Construct zones out of these nested lists.
         for i, z in enumerate(region_defn):
-            zone = Zone(name="{}_zone{}".format(region_name, i))
+            zone = Zone(name="{}_zone{}".format(self.region_name, i))
             for operator, body in z:
                 if operator == "+":
                     zone.addIntersection(body)
@@ -381,13 +385,19 @@ class RegionVisitor(RegionParserVisitor):
         return self.visitMultipleUnion(ctx)
 
     def visitSubZone(self, ctx):
+        operator = '-'
         if ctx.Plus():
             operator = '+'
-        elif ctx.Minus():
-            operator = '-'
+        self.subzone_counter += 1
         solids = self.visit(ctx.expr())
-        zone = pyfluka.geometry.Zone(solids)
-        return (operator, zone)
+        z = Zone(name="{}_subzone{}".format(self.region_name, 
+                                            self.subzone_counter))
+        for op, body in solids:
+            if op == "+":
+                z.addIntersection(body)
+            else:
+                z.addSubtraction(body)
+        return [(operator, z)]
 
 def main(filein):
     r = Reader(filein)
