@@ -222,9 +222,9 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
                        flukaregistry=flukareg,
                        **transforms)
     elif body_type == "ELL":
-        b = Body.ELL(name, param[0:3], param[3:6], param[7],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = Body.ELL(name, param[0:3], param[3:6], param[6],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "RCC":
         b = Body.RCC(name, param[0:3], param[3:6], param[6],
                      flukaregistry=flukareg,
