@@ -1026,6 +1026,12 @@ class XEC(Body):
             self.y, self.z,
             self.ysemi, self.zsemi)
 
+    def _with_lengthsafety(self, safety, reg=None):
+        return XEC(self.name, self.y, self.z,
+                   self.ysemi + safety,
+                   self.zsemi + safety,
+                   flukaregistry=reg)
+
 
 class YEC(Body):
     """Infinite Elliptical Cylinder parallel to the y-axis
@@ -1078,6 +1084,12 @@ class YEC(Body):
             self.z, self.x,
             self.zsemi, self.xsemi)
 
+    def _with_lengthsafety(self, safety, reg=None):
+        return YEC(self.name, self.z, self.x,
+                   self.zsemi + safety,
+                   self.xsemi + safety,
+                   flukaregistry=reg)
+
 
 class ZEC(Body):
     """Infinite Elliptical Cylinder parallel to the z-axis
@@ -1126,6 +1138,12 @@ class ZEC(Body):
             self.name,
             self.x, self.y,
             self.xsemi, self.ysemi)
+
+    def _with_lengthsafety(self, safety, reg=None):
+        return ZEC(self.name, self.x, self.y,
+                   self.xsemi + safety,
+                   self.ysemi + safety,
+                   flukaregistry=reg)
 
 
 def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
