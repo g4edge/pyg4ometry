@@ -74,13 +74,17 @@ class FlukaRegistry(object):
         wlv = _g4.LogicalVolume(ws, wm, "wl", greg)
 
         for name, region in flukareg.regionDict.iteritems():
-            s = region.geant4_solid(greg)
-            bm = _g4.MaterialPredefined("G4_Fe")
-            rlv = _g4.LogicalVolume(s, bm, name+"bl", greg)
-
-            rpv = _g4.PhysicalVolume(list(region.tbxyz()),
-                                     list(region.centre()),
-                                     rlv, "b_pv1", wlv, greg)
+            region_solid = region.geant4_solid(greg)
+            region_material = _g4.MaterialPredefined("G4_Fe")
+            region_lv = _g4.LogicalVolume(region_solid,
+                                          region_material,
+                                          "{}_lv".format(name),
+                                          greg)
+            region_pv = _g4.PhysicalVolume(list(region.tbxyz()),
+                                           list(region.centre()),
+                                           region_lv,
+                                           "{}_pv".format(name),
+                                           wlv, greg)
 
         greg.setWorld(wlv.name)
         return greg
