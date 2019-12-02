@@ -890,6 +890,10 @@ class XCC(_InfiniteCylinder):
     def __repr__(self):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
 
+    def _with_lengthsafety(self, safety, reg=None):
+        return XCC(self.name, self.y, self.z, self.radius + safety,
+                   flukaregistry=reg)
+
 
 class YCC(_InfiniteCylinder):
     """Infinite Circular Cylinder parallel to the y-axis
@@ -927,6 +931,10 @@ class YCC(_InfiniteCylinder):
     def __repr__(self):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
 
+    def _with_lengthsafety(self, safety, reg=None):
+        return YCC(self.name, self.z, self.x, self.radius + safety,
+                   flukaregistry=reg)
+
 
 class ZCC(_InfiniteCylinder):
     """Infinite Circular Cylinder parallel to the z-axis
@@ -961,6 +969,10 @@ class ZCC(_InfiniteCylinder):
 
     def __repr__(self):
         return "<ZCC: {}, x={}, y={}>".format(self.name, self.x, self.y)
+
+    def _with_lengthsafety(self, safety, reg=None):
+        return ZCC(self.name, self.x, self.y, self.radius + safety,
+                   flukaregistry=reg)
 
 
 class XEC(Body):
