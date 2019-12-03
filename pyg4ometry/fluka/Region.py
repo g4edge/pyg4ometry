@@ -5,6 +5,7 @@ from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
 from uuid import uuid4
 from pyg4ometry.exceptions import FLUKAError
+import networkx as nx
 
 from copy import deepcopy
 
@@ -254,6 +255,70 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
+    def _determine_connected_zones(self):
+        # dummy_registry = _g4.Registry()
+
+        n_zones = len(self.zones)
+        tried = []
+        # Build undirected graph, and add nodes corresponding to each zone.
+        graph = nx.Graph()
+        graph.add_nodes_from(range(n_zones))
+        if n_zones == 1: # return here if there's only one zone.
+            return nx.connected_components(graph)
+        # Build up a cache of booleans and extents for each zone.
+        # format: {zone_index: (boolean, extent)}
+        # from IPython import embed; embed()
+
+        self._get_zone_extents()
+        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
+        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
+
+        # Loop over all combinations of zone numbers within this region
+        for i, j in itertools.product(range(n_zones), range(n_zones)):
+            # Trivially connected to self or tried this combination.
+            if i == j or {i, j} in tried:
+                continue
+            tried.append({i, j})
+            # Check if the bounding boxes overlap.  Cheaper than intersecting.
+            if not are_extents_overlapping(booleans_and_extents[i][1],
+                                           booleans_and_extents[j][1]):
+                continue
+
+            # Check if a path already exists.  Not sure how often this
+            # arises but should at least occasionally save some time.
+            if nx.has_path(graph, i, j):
+                continue
+
+            # Finally: we must do the intersection op.  add 1 because
+            # we conform to convention thatg
+            logger.debug("Intersecting zone %d with %d", i, j)
+            if get_overlap(booleans_and_extents[i][0],
+                           booleans_and_extents[j][0]) is not None:
+                graph.add_edge(i, j)
+        return nx.connected_components(graph)
+
+    def _get_zone_extents(self):
+        material = _g4.MaterialPredefined("G4_Galactic")
+        extents = []
+        for zone in self.zones:
+            greg = _g4.Registry()
+            wlv = _make_wlv(greg)
+
+            zone_solid = zone.geant4_solid(reg=greg)
+            lv = _g4.LogicalVolume(zone_solid,
+                                   material,
+                                   _random_name(),
+                                   greg)
+
+            pv = _g4.PhysicalVolume(list(zone.tbxyz()),
+                                    list(zone.centre()),
+                                    lv,
+                                    _random_name(),
+                                    wlv, greg)
+
+            extents.append(zone.extent)
+        return extents
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
@@ -283,3 +348,13 @@ def _get_tra2(first, second):
     relative_transformation = [list(relative_transformation[0]),
                                list(relative_transformation[1])]
     return relative_transformation
+
+
+
+def _random_name():
+    return "a{}".format(uuid4()).replace("-", "")
+
+def _make_wlv(reg):
+    world_material = _g4.MaterialPredefined("G4_Galactic")
+    world_solid = _g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
+    return _g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
