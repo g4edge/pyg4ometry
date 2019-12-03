@@ -45,8 +45,10 @@ class Body(object):
         return self._with_lengthsafety(-LENGTH_SAFETY, reg)
 
     def _set_translation(self, translation):
-        if translation is None:
-            self.translation = _Three([0, 0, 0])
+        self.translation = _Three([0, 0, 0])
+        if translation is not None:
+            self.translation = translation
+
 
 
 class _HalfSpace(Body):
