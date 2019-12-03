@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import networkx as nx
 
-from pyg4ometry.exceptions import FLUKAError
+from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
@@ -288,7 +288,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Intersecting zone %d with %d", i, j)
-            if get_overlap(zones[i], zones[j]) is not None:
+            if _get_zone_overlap(zones[i], zones[j]) is not None:
                 graph.add_edge(i, j)
         return list(nx.connected_components(graph))
 
@@ -365,6 +365,22 @@ def are_extents_overlapping(extent1, extent2):
                     upper1.z < lower2.z,
                     lower1.z > upper2.z])
 
+def _get_zone_overlap(zone1, zone2):
+    greg = _g4.Registry()
 
-    # from IPython import embed; embed()
-# pass
+    solid1 = zone1.geant4_solid(greg)
+    solid2 = zone2.geant4_solid(greg)
+
+    tra2 = _get_tra2(zone1, zone2)
+
+    intersection = _g4.solid.Intersection(_random_name(),
+                           solid1,
+                           solid2,
+                           tra2,
+                           greg)
+
+    try:
+        mesh = intersection.pycsgmesh()
+    except NullMeshError:
+        return None
+    return mesh
