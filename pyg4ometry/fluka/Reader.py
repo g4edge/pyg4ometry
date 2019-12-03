@@ -189,7 +189,7 @@ class Reader(object):
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()
     if directive == "$start_translat":
-        translation = map(float, line_parts[1:3])
+        translation = map(float, line_parts[1:4])
     elif directive == "$start_expansion":
         expansion = float(line_parts[1])
     elif directive == "$start_transform":
