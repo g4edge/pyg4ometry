@@ -194,9 +194,10 @@ class Zone(object):
 
 class Region(object):
 
-    def __init__(self, name):
+    def __init__(self, name, material=None):
         self.name = name
         self.zones = []
+        self.material = material
 
     def addZone(self,zone):
         self.zones.append(zone)
@@ -268,9 +269,8 @@ class Region(object):
             return nx.connected_components(graph)
         # Build up a cache of booleans and extents for each zone.
         # format: {zone_index: (boolean, extent)}
-        # from IPython import embed; embed()
 
-        self._get_zone_extents()
+        zone_extents = self._get_zone_extents()
         # booleans_and_extents = self._get_zone_booleans_and_extents(True)
         # booleans_and_extents = self._get_zone_booleans_and_extents(True)
 
