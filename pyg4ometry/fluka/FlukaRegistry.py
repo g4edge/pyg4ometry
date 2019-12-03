@@ -74,11 +74,12 @@ class FlukaRegistry(object):
         fluka_reg_out = FlukaRegistry()
         for name, region in self.regionDict.iteritems():
             if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
+                fluka_reg_out.addRegion(deepcopy(region))
                 continue
 
             connected_zones = region.get_connected_zones()
             if len(connected_zones) == 1: # then there are no disjoint unions
-                fluka_reg_out.addRegion(region)
+                fluka_reg_out.addRegion(deepcopy(region))
                 continue
 
             for connection in connected_zones: # loop over the connections
