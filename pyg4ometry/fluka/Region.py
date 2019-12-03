@@ -257,10 +257,10 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def _determine_connected_zones(self):
-        # dummy_registry = _g4.Registry()
+    def get_connected_zones(self):
+        zones = self.zones
+        n_zones = len(zones)
 
-        n_zones = len(self.zones)
         tried = []
         # Build undirected graph, and add nodes corresponding to each zone.
         graph = nx.Graph()
@@ -271,8 +271,6 @@ class Region(object):
         # format: {zone_index: (boolean, extent)}
 
         zone_extents = self._get_zone_extents()
-        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
-        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -280,9 +278,9 @@ class Region(object):
             if i == j or {i, j} in tried:
                 continue
             tried.append({i, j})
+
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            if not are_extents_overlapping(booleans_and_extents[i][1],
-                                           booleans_and_extents[j][1]):
+            if not are_extents_overlapping(zone_extents[i], zone_extents[j]):
                 continue
 
             # Check if a path already exists.  Not sure how often this
@@ -290,13 +288,11 @@ class Region(object):
             if nx.has_path(graph, i, j):
                 continue
 
-            # Finally: we must do the intersection op.  add 1 because
-            # we conform to convention thatg
+            # Finally: we must do the intersection op.
             logger.debug("Intersecting zone %d with %d", i, j)
-            if get_overlap(booleans_and_extents[i][0],
-                           booleans_and_extents[j][0]) is not None:
+            if get_overlap(zones[i], zones[j]) is not None:
                 graph.add_edge(i, j)
-        return nx.connected_components(graph)
+        return list(nx.connected_components(graph))
 
     def _get_zone_extents(self):
         material = _g4.MaterialPredefined("G4_Galactic")
@@ -317,7 +313,7 @@ class Region(object):
                                     _random_name(),
                                     wlv, greg)
 
-            extents.append(zone.extent)
+            extents.append(wlv.extent())
         return extents
 
 
@@ -350,8 +346,6 @@ def _get_tra2(first, second):
                                list(relative_transformation[1])]
     return relative_transformation
 
-
-
 def _random_name():
     return "a{}".format(uuid4()).replace("-", "")
 
@@ -359,3 +353,20 @@ def _make_wlv(reg):
     world_material = _g4.MaterialPredefined("G4_Galactic")
     world_solid = _g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return _g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
+
+def are_extents_overlapping(extent1, extent2):
+    lower1 = Three(extent1[0])
+    upper1 = Three(extent1[1])
+    lower2 = Three(extent2[0])
+    upper2 = Three(extent2[1])
+
+    return not any([upper1.x < lower2.x,
+                    lower1.x > upper2.x,
+                    upper1.y < lower2.y,
+                    lower1.y > upper2.y,
+                    upper1.z < lower2.z,
+                    lower1.z > upper2.z])
+
+
+    # from IPython import embed; embed()
+# pass

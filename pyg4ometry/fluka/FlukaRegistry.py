@@ -1,7 +1,12 @@
-from collections import OrderedDict as _OrderedDict
-import pyg4ometry.geant4 as _g4
-from pyg4ometry.exceptions import IdenticalNameError
 import warnings
+from collections import OrderedDict as _OrderedDict
+from copy import deepcopy
+
+import pyg4ometry.geant4 as _g4
+from .Region import Region
+
+from pyg4ometry.exceptions import IdenticalNameError
+
 
 WORLD_DIMENSIONS = 10000
 
@@ -65,11 +70,47 @@ class FlukaRegistry(object):
 
         return fluka_reg_out
 
-    def toG4Registry(self, with_length_safety=True):
+    def _make_disjoint_unions_registry(self):
+        fluka_reg_out = FlukaRegistry()
+        for name, region in self.regionDict.iteritems():
+            if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
+                continue
+
+            connected_zones = region.get_connected_zones()
+            if len(connected_zones) == 1: # then there are no disjoint unions
+                fluka_reg_out.addRegion(region)
+                continue
+
+            for connection in connected_zones: # loop over the connections
+
+                # make new region with appropriate name
+                zones_string = "_".join(map(str, connection))
+                new_region_name = "{}_djz{}".format(name, zones_string)
+                new_region = Region(new_region_name, material=region.material)
+
+                # get the zones which are connected
+                zones = [(i, region.zones[i]) for i in connection]
+                for index, zone in zones:
+                    # copy teh zone, give it a new name since it now
+                    # belongs to a different region.
+                    new_zone = deepcopy(zone)
+                    new_zone.name = "{}_djz_z{}".format(new_zone.name, index)
+                    new_region.addZone(new_zone)
+                    new_region.allBodiesToRegistry(fluka_reg_out)
+                    fluka_reg_out.addRegion(new_region)
+
+        return fluka_reg_out
+
+    def toG4Registry(self, with_length_safety=True, split_disjoint_unions=True):
         flukareg = self
         if with_length_safety:
-            flukareg = self._make_length_safety_registry()
+            flukareg = flukareg._make_length_safety_registry()
 
+        if split_disjoint_unions:
+            flukareg = flukareg._make_disjoint_unions_registry()
+
+        if not flukareg.regionDict:
+            raise ValueError("No regions in registry.")
 
         greg = _g4.Registry()
 
@@ -80,6 +121,8 @@ class FlukaRegistry(object):
                            WORLD_DIMENSIONS,
                            WORLD_DIMENSIONS, greg, "mm")
         wlv = _g4.LogicalVolume(ws, wm, "wl", greg)
+
+
 
         for name, region in flukareg.regionDict.iteritems():
             region_solid = region.geant4_solid(greg)
