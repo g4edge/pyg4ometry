@@ -1,14 +1,15 @@
-import numpy as _np
-from Vector import Three as _Three
-import pyg4ometry.pycsg.core
+import logging
+
+import numpy as np
+
+from .Vector import Three
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 
-
 import pyg4ometry.transformation as _trans
-import pyg4ometry.geant4 as _g4
+import pyg4ometry.geant4 as g4
 
-import logging
+
 logger = logging.getLogger(__name__)
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
@@ -23,10 +24,6 @@ class Body(object):
     """
     Base class representing a body as defined in FLUKA
     """
-
-    def __init__(self):
-        pass
-
     def addToRegistry(self, flukaregistry):
         if flukaregistry is not None:
             flukaregistry.addBody(self)
@@ -45,35 +42,35 @@ class Body(object):
         return self._with_lengthsafety(-LENGTH_SAFETY, reg)
 
     def _set_translation(self, translation):
-        self.translation = _Three([0, 0, 0])
         if translation is not None:
-            self.translation = translation
+            return translation
+        return Three([0, 0, 0])
 
 
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
-    def geant4_solid(self, registry, scale=None):
-        return _g4.solid.Box(self.name,
-                             INFINITY,
-                             INFINITY,
-                             INFINITY,
-                             registry)
+    def geant4_solid(self, registry):
+        return g4.solid.Box(self.name,
+                            INFINITY,
+                            INFINITY,
+                            INFINITY,
+                            registry)
 
 
 class _InfiniteCylinder(Body):
     # Base class for XCC, YCC, ZCC.
-    def geant4_solid(self, registry, scale=None):
-        return _g4.solid.Tubs(self.name,
-                              0.0,
-                              self.radius,
-                              INFINITY,
-                              0.0, 2*_np.pi,
-                              registry,
-                              lunit="mm")
+    def geant4_solid(self, registry):
+        return g4.solid.Tubs(self.name,
+                             0.0,
+                             self.radius,
+                             INFINITY,
+                             0.0, 2*np.pi,
+                             registry,
+                             lunit="mm")
 
 
 class RPP(Body):
@@ -103,12 +100,12 @@ class RPP(Body):
                  translation=None,
                  transform=None,
                  flukaregistry=None):
-        self.name  = name
-        self.lower = _Three([xmin, ymin, zmin])
-        self.upper = _Three([xmax, ymax, zmax])
+        self.name = name
+        self.lower = Three([xmin, ymin, zmin])
+        self.upper = Three([xmax, ymax, zmax])
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
@@ -123,14 +120,14 @@ class RPP(Body):
         return self.translation + 0.5 * (self.lower + self.upper)
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
-    def geant4_solid(self, reg, scale=None):
+    def geant4_solid(self, reg):
         v = self.upper - self.lower
-        return  _g4.solid.Box(self.name,
-                              v.x, v.y, v.z,
-                              reg,
-                              lunit="mm")
+        return g4.solid.Box(self.name,
+                            v.x, v.y, v.z,
+                            reg,
+                            lunit="mm")
 
     def __repr__(self):
         l = self.lower
@@ -175,18 +172,20 @@ class BOX(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.vertex = _Three(vertex)
-        self.edge1 = _Three(edge1)
-        self.edge2 = _Three(edge2)
-        self.edge3 = _Three(edge3)
+        self.vertex = Three(vertex)
+        self.edge1 = Three(edge1)
+        self.edge2 = Three(edge2)
+        self.edge3 = Three(edge3)
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
             "Edges are not all mutally orthogonal.")
+
+        self.addToRegistry(flukaregistry)
 
     def centre(self):
         return (self.translation
@@ -194,15 +193,15 @@ class BOX(Body):
                 + 0.5 * (self.edge1 + self.edge2 + self.edge3))
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
-    def geant4_solid(self, greg, scale=None):
-        return _g4.solid.Box(self.name,
-                             self.edge1.length(),
-                             self.edge2.length(),
-                             self.edge3.length(),
-                             greg,
-                             lunit="mm")
+    def geant4_solid(self, greg):
+        return g4.solid.Box(self.name,
+                            self.edge1.length(),
+                            self.edge2.length(),
+                            self.edge3.length(),
+                            greg,
+                            lunit="mm")
 
     def __repr__(self):
         return ("<BOX: {}, v={}, e1={}, e2={}, e3={}, >").format(
@@ -228,26 +227,26 @@ class SPH(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.point = _Three(point)
+        self.point = Three(point)
         self.radius = radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
     def centre(self):
         return self.translation + self.point
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.Orb(self.name,
-                             self.radius,
-                             reg,
-                             lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.Orb(self.name,
+                            self.radius,
+                            reg,
+                            lunit="mm")
 
     def __repr__(self):
         return "<SPH: {}, centre={}, r={})>".format(self.name,
@@ -282,12 +281,12 @@ class RCC(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.face = _Three(face)
-        self.direction = _Three(direction)
+        self.face = Three(face)
+        self.direction = Three(direction)
         self.radius = radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -302,15 +301,15 @@ class RCC(Body):
         rotation = _trans.matrix_from(initial, final)
         return rotation.T # invert rotation fudge factor to make it work
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.Tubs(self.name,
-                              0.0,
-                              self.radius,
-                              self.direction.length(),
-                              0.0,
-                              2*_np.pi,
-                              reg,
-                              lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.Tubs(self.name,
+                             0.0,
+                             self.radius,
+                             self.direction.length(),
+                             0.0,
+                             2*np.pi,
+                             reg,
+                             lunit="mm")
 
     def __repr__(self):
         return ("<RCC: {}, face={}, dir={}, r={}>").format(
@@ -350,13 +349,13 @@ class REC(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.face = _Three(face)
-        self.direction = _Three(direction)
-        self.semiminor = _Three(semiminor)
-        self.semimajor = _Three(semimajor)
+        self.face = Three(face)
+        self.direction = Three(direction)
+        self.semiminor = Three(semiminor)
+        self.semimajor = Three(semimajor)
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         _raise_if_not_all_mutually_perpendicular(
@@ -381,13 +380,13 @@ class REC(Body):
                                                final_semiminor)
         return rotation.T # invert rotation fudge factor to make it work
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.EllipticalTube(self.name,
-                                        2 * self.semiminor.length(),
-                                        2 * self.semimajor.length(),
-                                        self.direction.length(),
-                                        reg,
-                                        lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.EllipticalTube(self.name,
+                                       2 * self.semiminor.length(),
+                                       2 * self.semimajor.length(),
+                                       self.direction.length(),
+                                       reg,
+                                       lunit="mm")
 
     def __repr__(self):
         return ("<REC: {}, face={}, dir={}, semimin={}, semimaj={}>").format(
@@ -420,15 +419,15 @@ class TRC(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.major_centre = _Three(major_centre)
+        self.major_centre = Three(major_centre)
         if translation is not None:
-            self.major_centre += _Three(translation)
-        self.direction = _Three(direction)
+            self.major_centre += Three(translation)
+        self.direction = Three(direction)
         self.major_radius = major_radius
         self.minor_radius = minor_radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -443,16 +442,16 @@ class TRC(Body):
     def centre(self):
         return self.translation + self.major_centre + 0.5 * self.direction
 
-    def geant4_solid(self, registry, scale=None):
-        # The first face of _g4.Cons is located at -z, and the
+    def geant4_solid(self, registry):
+        # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
-        return _g4.solid.Cons(self.name,
-                              0.0, self.major_radius,
-                              0.0, self.minor_radius,
-                              self.direction.length(),
-                              0.0, 2*_np.pi,
-                              registry,
-                              lunit="mm")
+        return g4.solid.Cons(self.name,
+                             0.0, self.major_radius,
+                             0.0, self.minor_radius,
+                             self.direction.length(),
+                             0.0, 2*np.pi,
+                             registry,
+                             lunit="mm")
 
     def __repr__(self):
         return ("<TRC: {}, major={} direction={} rmaj={}, rmin={}>").format(
@@ -482,18 +481,18 @@ class ELL(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.focus1 = _Three(focus1)
-        self.focus2 = _Three(focus2)
+        self.focus1 = Three(focus1)
+        self.focus2 = Three(focus2)
         self.length = length # major axis length
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
         if (0.5*self.length <= (self.focus1 - self.centre()).length()
-            or 0.5*self.length <= (self.focus2 - self.centre()).length()):
+                or 0.5*self.length <= (self.focus2 - self.centre()).length()):
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
@@ -513,19 +512,19 @@ class ELL(Body):
         # return _two_fold_orientation(initial1, final1, initial2, final2)
         return _trans.matrix_from(initial, final).T # .T fudge factor
 
-    def geant4_solid(self, greg, scale=None):
+    def geant4_solid(self, greg):
         centre = self.centre()
         linear_eccentricity = (self.focus1 - self.centre()).length()
-        semiminor = _np.sqrt((0.5*self.length)**2 - linear_eccentricity**2)
+        semiminor = np.sqrt((0.5*self.length)**2 - linear_eccentricity**2)
         # We choose the x-z plane as the plane of the ellipse that
         # gives the ellipsoid of rotation.  So the semi-minor is in y.
-        return _g4.solid.Ellipsoid(self.name,
-                                   0.5 * self.length,
-                                   semiminor,
-                                   0.5 * self.length,
-                                   -self.length, # cuts, we don't cut.
-                                   self.length,
-                                   greg)
+        return g4.solid.Ellipsoid(self.name,
+                                  0.5 * self.length,
+                                  semiminor,
+                                  0.5 * self.length,
+                                  -self.length, # cuts, we don't cut.
+                                  self.length,
+                                  greg)
 
     def __repr__(self):
         return "<ELL: {}, f1={}, f2={}, length={}>".format(
@@ -542,13 +541,13 @@ class _WED_RAW(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.vertex = _Three(vertex)
-        self.edge1 = _Three(edge1)  # direction of the triangular face.
-        self.edge2 = _Three(edge2)  # direction of length of the prism.
-        self.edge3 = _Three(edge3)  # other direction of the triangular face.
+        self.vertex = Three(vertex)
+        self.edge1 = Three(edge1)  # direction of the triangular face.
+        self.edge2 = Three(edge2)  # direction of length of the prism.
+        self.edge3 = Three(edge3)  # other direction of the triangular face.
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         _raise_if_not_all_mutually_perpendicular(
@@ -559,7 +558,7 @@ class _WED_RAW(Body):
     def centre(self):
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
-        crossproduct = _np.cross(self.edge1, self.edge3)
+        crossproduct = np.cross(self.edge1, self.edge3)
         if _trans.are_parallel(crossproduct, self.edge2):
             return self.translation + self.vertex
         elif _trans.are_anti_parallel(crossproduct, self.edge2):
@@ -574,16 +573,16 @@ class _WED_RAW(Body):
         return _trans.two_fold_orientation(initial1, self.edge1.unit(),
                                            initial3, self.edge3.unit())
 
-    def geant4_solid(self, greg, scale=None):
+    def geant4_solid(self, greg):
         face = [[0, 0],
                 [self.edge1.length(), 0],
                 [0, self.edge3.length()]]
 
-        return _g4.solid.ExtrudedSolid(self.name,
-                                       face,
-                                       [[0,[0, 0], 1],
-                                        [self.edge2.length(), [0, 0], 1]],
-                                       registry=greg)
+        return g4.solid.ExtrudedSolid(self.name,
+                                      face,
+                                      [[0, [0, 0], 1],
+                                       [self.edge2.length(), [0, 0], 1]],
+                                      registry=greg)
 
     def __repr__(self):
         return ("<{}: {}, v={}, e1={}, e2={}, e3={}>").format(
@@ -640,11 +639,11 @@ class ARB(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.vertices = [_Three(v) for v in vertices]
+        self.vertices = [Three(v) for v in vertices]
         self.facenumbers = facenumbers
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         if len(self.vertices) != 8:
@@ -663,12 +662,12 @@ class ARB(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(0, 0, 0)
+        return self.translation + Three(0, 0, 0)
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
-    def geant4_solid(self, greg, scale=None):
+    def geant4_solid(self, greg):
         # pyg4ometry expects right handed corkscrew for the vertices
         # for TesselatedSolid (and in general).
         # Fluka however for ARB can take either all right or left
@@ -720,23 +719,23 @@ class ARB(Body):
 
         mesh = _CSG.fromPolygons(polygon_list)
         vertices_and_polygons = mesh.toVerticesAndPolygons()
-        tesselated_solid = _g4.solid.TessellatedSolid(self.name,
-                                                      vertices_and_polygons,
-                                                      greg,
-                                                      addRegistry=False)
+        tesselated_solid = g4.solid.TessellatedSolid(self.name,
+                                                     vertices_and_polygons,
+                                                     greg,
+                                                     addRegistry=False)
         # make massive box with totally envelops the tesselated solid
-        big_box = _g4.solid.Box("test_box",
-                                10*(xmax - xmin),
-                                10*(ymax - ymin),
-                                10*(zmax - zmin),
-                                greg,
-                                addRegistry=False)
-        test_union = _g4.solid.Union("test_union",
-                                     tesselated_solid,
-                                     big_box,
-                                     [[0,0,0],[0,0,0]],
-                                     _g4.Registry(),
-                                     addRegistry=False)
+        big_box = g4.solid.Box("test_box",
+                               10*(xmax - xmin),
+                               10*(ymax - ymin),
+                               10*(zmax - zmin),
+                               greg,
+                               addRegistry=False)
+        test_union = g4.solid.Union("test_union",
+                                    tesselated_solid,
+                                    big_box,
+                                    [[0, 0, 0], [0, 0, 0]],
+                                    g4.Registry(),
+                                    addRegistry=False)
         try:
             # try to mesh the union of the enveloping box and the
             # tesselated solid.  if we get a null mesh error we have
@@ -745,9 +744,9 @@ class ARB(Body):
         except pyg4ometry.exceptions.NullMeshError:
             # inverse to get it right
             vertices_and_polygons = mesh.inverse().toVerticesAndPolygons()
-        return _g4.solid.TessellatedSolid(self.name,
-                                          vertices_and_polygons,
-                                          greg)
+        return g4.solid.TessellatedSolid(self.name,
+                                         vertices_and_polygons,
+                                         greg)
 
     def __repr__(self):
         vs = map(list, self.vertices)
@@ -777,14 +776,14 @@ class XYP(_HalfSpace):
         self.z = z
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = _Three(0, 0 ,0)
-        centre =  transverseOffset + _Three(0, 0, self.z - (INFINITY * 0.5))
+        transverseOffset = Three(0, 0, 0)
+        centre = transverseOffset + Three(0, 0, self.z - (INFINITY * 0.5))
         return self.translation + centre
 
     def __repr__(self):
@@ -818,14 +817,14 @@ class XZP(_HalfSpace):
         self.y = y
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = _Three(0, 0 ,0)
-        centre = transverseOffset + _Three(0, self.y - (INFINITY * 0.5), 0)
+        transverseOffset = Three(0, 0, 0)
+        centre = transverseOffset + Three(0, self.y - (INFINITY * 0.5), 0)
         return self.translation + centre
 
     def __repr__(self):
@@ -860,14 +859,14 @@ class YZP(_HalfSpace):
         self.x = x
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = _Three(0, 0 ,0)
-        centre = transverseOffset + _Three(self.x - (INFINITY * 0.5), 0, 0)
+        transverseOffset = Three(0, 0, 0)
+        centre = transverseOffset + Three(self.x - (INFINITY * 0.5), 0, 0)
         return self.translation + centre
 
     def __repr__(self):
@@ -901,14 +900,14 @@ class PLA(Body):
                  transform=None,
                  flukaregistry=None):
         self.name = name
-        self.normal = _Three(normal)
-        self.point = _Three(point)
+        self.normal = Three(normal)
+        self.point = Three(point)
 
         # normalise it if it is not normalised.
-        self.normal = self.normal / _np.linalg.norm(self.normal)
+        self.normal = self.normal / np.linalg.norm(self.normal)
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -923,13 +922,13 @@ class PLA(Body):
         # z-axis to make the surface of the half space.
         return _trans.matrix_from([0, 0, 1], self.normal)
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.Box(self.name,
-                             INFINITY,
-                             INFINITY,
-                             INFINITY,
-                             reg,
-                             lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.Box(self.name,
+                            INFINITY,
+                            INFINITY,
+                            INFINITY,
+                            reg,
+                            lunit="mm")
 
     def __repr__(self):
         return "<PLA: {}, normal={}, point={}>".format(self.name,
@@ -970,18 +969,18 @@ class XCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(0.0, self.y, self.z)
+        return self.translation + Three(0.0, self.y, self.z)
 
     def rotation(self):
-        return _np.array([[0, 0, -1],
-                          [0, 1, 0],
-                          [1, 0, 0]])
+        return np.array([[0, 0, -1],
+                         [0, 1, 0],
+                         [1, 0, 0]])
 
     def __repr__(self):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
@@ -1018,18 +1017,18 @@ class YCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(self.x, 0.0, self.z)
+        return self.translation + Three(self.x, 0.0, self.z)
 
     def rotation(self):
-        return _np.array([[1, 0, 0],
-                          [0, 0, 1],
-                          [0, -1, 0]])
+        return np.array([[1, 0, 0],
+                         [0, 0, 1],
+                         [0, -1, 0]])
 
     def __repr__(self):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
@@ -1066,16 +1065,16 @@ class ZCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(self.x, self.y, 0.0)
+        return self.translation + Three(self.x, self.y, 0.0)
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
     def __repr__(self):
         return "<ZCC: {}, x={}, y={}>".format(self.name, self.x, self.y)
@@ -1115,26 +1114,26 @@ class XEC(Body):
         self.zsemi = zsemi
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(0.0, self.y, self.z)
+        return self.translation + Three(0.0, self.y, self.z)
 
     def rotation(self):
-        return _np.array([[0, 0, -1],
-                          [0, 1, 0],
-                          [1, 0, 0]])
+        return np.array([[0, 0, -1],
+                         [0, 1, 0],
+                         [1, 0, 0]])
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.EllipticalTube(self.name,
-                                        2 * self.zsemi, # full width, not semi
-                                        2 * self.ysemi,
-                                        INFINITY,
-                                        reg,
-                                        lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.EllipticalTube(self.name,
+                                       2 * self.zsemi, # full width, not semi
+                                       2 * self.ysemi,
+                                       INFINITY,
+                                       reg,
+                                       lunit="mm")
 
 
     def __repr__(self):
@@ -1180,27 +1179,27 @@ class YEC(Body):
         self.xsemi = xsemi
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(self.x, 0.0, self.z)
+        return self.translation + Three(self.x, 0.0, self.z)
 
 
     def rotation(self):
-        return _np.array([[1, 0, 0],
-                          [0, 0, 1],
-                          [0, -1, 0]])
+        return np.array([[1, 0, 0],
+                         [0, 0, 1],
+                         [0, -1, 0]])
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.EllipticalTube(self.name,
-                                        2 * self.xsemi, # full width, not semi
-                                        2 * self.zsemi,
-                                        INFINITY,
-                                        reg,
-                                        lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.EllipticalTube(self.name,
+                                       2 * self.xsemi, # full width, not semi
+                                       2 * self.zsemi,
+                                       INFINITY,
+                                       reg,
+                                       lunit="mm")
 
     def __repr__(self):
         return "<YEC: {}, z={}, x={}, zsemi={}, xsemi={}>".format(
@@ -1245,24 +1244,24 @@ class ZEC(Body):
         self.ysemi = ysemi
 
         self.expansion = expansion
-        self._set_translation(translation)
+        self.translation = self._set_translation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + _Three(self.x, self.y, 0.0)
+        return self.translation + Three(self.x, self.y, 0.0)
 
     def rotation(self):
-        return _np.identity(3)
+        return np.identity(3)
 
-    def geant4_solid(self, reg, scale=None):
-        return _g4.solid.EllipticalTube(self.name,
-                                        2 * self.xsemi, # full width, not semi
-                                        2 * self.ysemi,
-                                        INFINITY,
-                                        reg,
-                                        lunit="mm")
+    def geant4_solid(self, reg):
+        return g4.solid.EllipticalTube(self.name,
+                                       2 * self.xsemi, # full width, not semi
+                                       2 * self.ysemi,
+                                       INFINITY,
+                                       reg,
+                                       lunit="mm")
 
     def __repr__(self):
         return "<ZEC: {}, x={}, y={}, xsemi={}, ysemi={}>".format(
@@ -1282,6 +1281,6 @@ class ZEC(Body):
 
 def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
     if (first.dot(second) != 0.0
-        or first.dot(third) != 0
-        or second.dot(third) != 0.0):
+            or first.dot(third) != 0
+            or second.dot(third) != 0.0):
         raise ValueError(message)
