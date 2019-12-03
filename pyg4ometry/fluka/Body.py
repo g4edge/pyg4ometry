@@ -147,6 +147,9 @@ class RPP(Body):
                    lower.x, upper.x,
                    lower.y, upper.y,
                    lower.z, upper.z,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -253,6 +256,9 @@ class SPH(Body):
 
     def _with_lengthsafety(self, safety, reg):
         return SPH(self.name, self.point, self.radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -317,6 +323,9 @@ class RCC(Body):
         return RCC(self.name,
                    face, direction,
                    self.radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -784,6 +793,9 @@ class XYP(_HalfSpace):
     def _with_lengthsafety(self, safety, reg):
         return XYP(self.name,
                    self.z + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -822,6 +834,9 @@ class XZP(_HalfSpace):
     def _with_lengthsafety(self, safety, reg):
         return XZP(self.name,
                    self.y + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -862,6 +877,9 @@ class YZP(_HalfSpace):
     def _with_lengthsafety(self, safety, reg):
         return YZP(self.name,
                    self.x + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -921,7 +939,11 @@ class PLA(Body):
     def _with_lengthsafety(self, safety, reg=None):
         norm = self.normal.unit()
         newpoint = self.point + norm * safety
-        return PLA(self.name, norm, newpoint, flukaregistry=reg)
+        return PLA(self.name, norm, newpoint,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
 
 
 class XCC(_InfiniteCylinder):
@@ -966,6 +988,9 @@ class XCC(_InfiniteCylinder):
 
     def _with_lengthsafety(self, safety, reg=None):
         return XCC(self.name, self.y, self.z, self.radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -1011,6 +1036,9 @@ class YCC(_InfiniteCylinder):
 
     def _with_lengthsafety(self, safety, reg=None):
         return YCC(self.name, self.z, self.x, self.radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -1054,6 +1082,9 @@ class ZCC(_InfiniteCylinder):
 
     def _with_lengthsafety(self, safety, reg=None):
         return ZCC(self.name, self.x, self.y, self.radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -1116,6 +1147,9 @@ class XEC(Body):
         return XEC(self.name, self.y, self.z,
                    self.ysemi + safety,
                    self.zsemi + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -1178,6 +1212,9 @@ class YEC(Body):
         return YEC(self.name, self.z, self.x,
                    self.zsemi + safety,
                    self.xsemi + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
@@ -1237,6 +1274,9 @@ class ZEC(Body):
         return ZEC(self.name, self.x, self.y,
                    self.xsemi + safety,
                    self.ysemi + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
                    flukaregistry=reg)
 
 
