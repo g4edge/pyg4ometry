@@ -44,6 +44,10 @@ class Body(object):
     def safety_shrunk(self, reg=None):
         return self._with_lengthsafety(-LENGTH_SAFETY, reg)
 
+    def _set_translation(self, translation):
+        if translation is None:
+            self.translation = _Three([0, 0, 0])
+
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
@@ -93,13 +97,17 @@ class RPP(Body):
                  xmin, xmax,
                  ymin, ymax,
                  zmin, zmax,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name  = name
         self.lower = _Three([xmin, ymin, zmin])
         self.upper = _Three([xmax, ymax, zmax])
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
             raise ValueError("Each of the xmin, ymin, zmin must be"
@@ -157,7 +165,7 @@ class BOX(Body):
 
     """
     def __init__(self, name, vertex, edge1, edge2, edge3,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -166,6 +174,10 @@ class BOX(Body):
         self.edge1 = _Three(edge1)
         self.edge2 = _Three(edge2)
         self.edge3 = _Three(edge3)
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -204,16 +216,17 @@ class SPH(Body):
 
     """
     def __init__(self, name, point, radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name = name
         self.point = _Three(point)
-        # if translation is not None:
-        #     self.point += _Three(translation)
         self.radius = radius
 
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -254,7 +267,7 @@ class RCC(Body):
 
     """
     def __init__(self, name, face, direction, radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -262,6 +275,10 @@ class RCC(Body):
         self.face = _Three(face)
         self.direction = _Three(direction)
         self.radius = radius
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -315,7 +332,7 @@ class REC(Body):
 
     """
     def __init__(self, name, face, direction, semiminor, semimajor,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -324,6 +341,10 @@ class REC(Body):
         self.direction = _Three(direction)
         self.semiminor = _Three(semiminor)
         self.semimajor = _Three(semimajor)
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         _raise_if_not_all_mutually_perpendicular(
             self.direction, self.semiminor, semimajor,
@@ -381,7 +402,7 @@ class TRC(Body):
     """
     def __init__(self, name, major_centre, direction,
                  major_radius, minor_radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -392,6 +413,10 @@ class TRC(Body):
         self.direction = _Three(direction)
         self.major_radius = major_radius
         self.minor_radius = minor_radius
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -439,7 +464,7 @@ class ELL(Body):
 
     """
     def __init__(self, name, focus1, focus2, length,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -447,6 +472,10 @@ class ELL(Body):
         self.focus1 = _Three(focus1)
         self.focus2 = _Three(focus2)
         self.length = length # major axis length
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
@@ -495,7 +524,7 @@ class _WED_RAW(Body):
     # single place and then inherit this class to provide the correct
     # type names below.
     def __init__(self, name, vertex, edge1, edge2, edge3,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -504,6 +533,11 @@ class _WED_RAW(Body):
         self.edge1 = _Three(edge1)  # direction of the triangular face.
         self.edge2 = _Three(edge2)  # direction of length of the prism.
         self.edge3 = _Three(edge3)  # other direction of the triangular face.
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
+
         _raise_if_not_all_mutually_perpendicular(
             self.edge1, self.edge2, self.edge3,
             "Edges are not all mutually perpendicular.")
@@ -588,13 +622,17 @@ class ARB(Body):
     erroneous output without warning.
     """
     def __init__(self, name, vertices, facenumbers,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name = name
         self.vertices = [_Three(v) for v in vertices]
         self.facenumbers = facenumbers
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         if len(self.vertices) != 8:
             raise TypeError("8 vertices must always be supplied,"
@@ -718,12 +756,17 @@ class XYP(_HalfSpace):
 
     """
     def __init__(self, name, z,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name = name
         self.z = z
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
+
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -751,12 +794,17 @@ class XZP(_HalfSpace):
     :type y: float
     """
     def __init__(self, name, y,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name = name
         self.y = y
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
+
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -785,12 +833,17 @@ class YZP(_HalfSpace):
 
     """
     def __init__(self, name, x,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
         self.name = name
         self.x = x
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
+
         self.addToRegistry(flukaregistry)
 
     def centre(self):
@@ -821,7 +874,7 @@ class PLA(Body):
     :type normal: list
     """
     def __init__(self, name, normal, point,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -831,6 +884,10 @@ class PLA(Body):
 
         # normalise it if it is not normalised.
         self.normal = self.normal / _np.linalg.norm(self.normal)
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -875,7 +932,7 @@ class XCC(_InfiniteCylinder):
 
     """
     def __init__(self, name, y, z, radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -883,6 +940,10 @@ class XCC(_InfiniteCylinder):
         self.y = y
         self.z = z
         self.radius = radius
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -916,7 +977,7 @@ class YCC(_InfiniteCylinder):
 
     """
     def __init__(self, name, z, x, radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -924,6 +985,10 @@ class YCC(_InfiniteCylinder):
         self.z = z
         self.x = x
         self.radius = radius
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -957,7 +1022,7 @@ class ZCC(_InfiniteCylinder):
 
     """
     def __init__(self, name, x, y, radius,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -965,6 +1030,10 @@ class ZCC(_InfiniteCylinder):
         self.x = x
         self.y = y
         self.radius = radius
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -998,7 +1067,7 @@ class XEC(Body):
 
     """
     def __init__(self, name, y, z, ysemi, zsemi,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -1007,6 +1076,10 @@ class XEC(Body):
         self.z = z
         self.ysemi = ysemi
         self.zsemi = zsemi
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -1056,7 +1129,7 @@ class YEC(Body):
 
     """
     def __init__(self, name, z, x, zsemi, xsemi,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -1065,6 +1138,10 @@ class YEC(Body):
         self.x = x
         self.zsemi = zsemi
         self.xsemi = xsemi
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
@@ -1114,7 +1191,7 @@ class ZEC(Body):
 
     """
     def __init__(self, name, x, y, xsemi, ysemi,
-                 expansion=None,
+                 expansion=1.0,
                  translation=None,
                  transform=None,
                  flukaregistry=None):
@@ -1123,6 +1200,10 @@ class ZEC(Body):
         self.y = y
         self.xsemi = xsemi
         self.ysemi = ysemi
+
+        self.expansion = expansion
+        self._set_translation(translation)
+        self.transform = transform
 
         self.addToRegistry(flukaregistry)
 
