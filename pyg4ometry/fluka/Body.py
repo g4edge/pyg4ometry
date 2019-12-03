@@ -118,7 +118,7 @@ class RPP(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return 0.5 * (self.lower + self.upper)
+        return self.translation + 0.5 * (self.lower + self.upper)
 
     def rotation(self):
         return _np.identity(3)
@@ -184,7 +184,9 @@ class BOX(Body):
             "Edges are not all mutally orthogonal.")
 
     def centre(self):
-        return self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3)
+        return (self.translation
+                + self.vertex
+                + 0.5 * (self.edge1 + self.edge2 + self.edge3))
 
     def rotation(self):
         return _np.identity(3)
@@ -234,7 +236,7 @@ class SPH(Body):
         return _np.identity(3)
 
     def centre(self):
-        return self.point
+        return self.translation + self.point
 
     def geant4_solid(self, reg, scale=None):
         return _g4.solid.Orb(self.name,
@@ -283,7 +285,7 @@ class RCC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.face + 0.5 * self.direction
+        return self.translation + self.face + 0.5 * self.direction
 
     def rotation(self):
         initial = [0, 0, 1]
@@ -354,7 +356,7 @@ class REC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.face + 0.5 * self.direction
+        return self.translation + self.face + 0.5 * self.direction
 
     def rotation(self):
         initial_direction = [0, 0, 1]
@@ -428,7 +430,7 @@ class TRC(Body):
         return rotation
 
     def centre(self):
-        return self.major_centre + 0.5 * self.direction
+        return self.translation + self.major_centre + 0.5 * self.direction
 
     def geant4_solid(self, registry, scale=None):
         # The first face of _g4.Cons is located at -z, and the
@@ -487,7 +489,7 @@ class ELL(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return 0.5 * (self.focus1 + self.focus2)
+        return self.translation + 0.5 * (self.focus1 + self.focus2)
 
     def rotation(self):
         # TODO: ELL is underconstrained, there is some convention
@@ -548,9 +550,9 @@ class _WED_RAW(Body):
         # vectors to get the correct vertex to use.
         crossproduct = _np.cross(self.edge1, self.edge3)
         if _trans.are_parallel(crossproduct, self.edge2):
-            return self.vertex
+            return self.translation + self.vertex
         elif _trans.are_anti_parallel(crossproduct, self.edge2):
-            return self.vertex + self.edge2
+            return self.translation + self.vertex + self.edge2
         else:
             raise ValueError(
                 "Unable to determine if parallel or anti-parallel.")
@@ -650,7 +652,7 @@ class ARB(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(0, 0, 0)
+        return self.translation + _Three(0, 0, 0)
 
     def rotation(self):
         return _np.identity(3)
@@ -772,7 +774,7 @@ class XYP(_HalfSpace):
     def centre(self):
         transverseOffset = _Three(0, 0 ,0)
         centre =  transverseOffset + _Three(0, 0, self.z - (INFINITY * 0.5))
-        return centre
+        return self.translation + centre
 
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
@@ -810,7 +812,7 @@ class XZP(_HalfSpace):
     def centre(self):
         transverseOffset = _Three(0, 0 ,0)
         centre = transverseOffset + _Three(0, self.y - (INFINITY * 0.5), 0)
-        return centre
+        return self.translation + centre
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
@@ -849,7 +851,7 @@ class YZP(_HalfSpace):
     def centre(self):
         transverseOffset = _Three(0, 0 ,0)
         centre = transverseOffset + _Three(self.x - (INFINITY * 0.5), 0, 0)
-        return centre
+        return self.translation + centre
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
@@ -892,7 +894,9 @@ class PLA(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.point - 0.5 * INFINITY * self.normal.unit()
+        return (self.translation
+                + self.point
+                - 0.5 * INFINITY * self.normal.unit())
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
@@ -948,7 +952,7 @@ class XCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(0.0, self.y, self.z)
+        return self.translation + _Three(0.0, self.y, self.z)
 
     def rotation(self):
         return _np.array([[0, 0, -1],
@@ -993,7 +997,7 @@ class YCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(self.x, 0.0, self.z)
+        return self.translation + _Three(self.x, 0.0, self.z)
 
     def rotation(self):
         return _np.array([[1, 0, 0],
@@ -1038,7 +1042,7 @@ class ZCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(self.x, self.y, 0.0)
+        return self.translation + _Three(self.x, self.y, 0.0)
 
     def rotation(self):
         return _np.identity(3)
@@ -1084,7 +1088,7 @@ class XEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(0.0, self.y, self.z)
+        return self.translation + _Three(0.0, self.y, self.z)
 
     def rotation(self):
         return _np.array([[0, 0, -1],
@@ -1146,7 +1150,7 @@ class YEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(self.x, 0.0, self.z)
+        return self.translation + _Three(self.x, 0.0, self.z)
 
 
     def rotation(self):
@@ -1208,7 +1212,7 @@ class ZEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return _Three(self.x, self.y, 0.0)
+        return self.translation + _Three(self.x, self.y, 0.0)
 
     def rotation(self):
         return _np.identity(3)
