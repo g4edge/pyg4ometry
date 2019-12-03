@@ -148,7 +148,6 @@ class Zone(object):
                 ls_body.name += "_s"
                 logger.debug("Adding shrunk intersection %s to registry",
                              ls_body.name)
-                print "Adding body to registry", ls_body.name
                 zone_out.addIntersection(ls_body)
             else:
                 ls_body = deepcopy(bigger_flukareg.getBody(name))
@@ -184,7 +183,6 @@ class Zone(object):
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
             name = body.name
-            print body.name
             if isinstance(body, Zone):
                 body.allBodiesToRegistry(flukaregistry)
             elif name not in flukaregistry.bodyDict:
