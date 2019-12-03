@@ -917,7 +917,7 @@ class PLA(Body):
                                                        list(self.point))
 
     def _with_lengthsafety(self, safety, reg=None):
-        norm = self.normal().unit()
+        norm = self.normal.unit()
         newpoint = self.point + norm * safety
         return PLA(self.name, norm, newpoint, flukaregistry=reg)
 
