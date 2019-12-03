@@ -1,13 +1,15 @@
+import itertools
 import logging
+from copy import deepcopy
+from uuid import uuid4
+
+import networkx as nx
+
+from pyg4ometry.exceptions import FLUKAError
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
-from uuid import uuid4
-from pyg4ometry.exceptions import FLUKAError
-import networkx as nx
-
-from copy import deepcopy
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -16,7 +18,6 @@ FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
 # logger.setLevel(logging.DEBUG)
-
 
 
 class _Boolean(object):
