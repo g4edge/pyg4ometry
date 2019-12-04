@@ -464,6 +464,20 @@ class TRC(Body):
             self.major_radius,
             self.minor_radius)
 
+    def _with_lengthsafety(self, safety, reg):
+        unit = self.direction.unit()
+        major_centre = self.major_centre - safety * unit
+        # Apply double safety for the same reason as we did with the RCC.
+        direction = self.direction + 2 * safety * unit
+        return TRC(self.name,
+                   major_centre,
+                   direction,
+                   self.major_radius + safety,
+                   self.minor_radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform)
+
 
 class ELL(Body):
     """Ellipsoid of Revolution
