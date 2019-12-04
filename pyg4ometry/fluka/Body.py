@@ -423,8 +423,6 @@ class TRC(Body):
                  flukaregistry=None):
         self.name = name
         self.major_centre = Three(major_centre)
-        if translation is not None:
-            self.major_centre += Three(translation)
         self.direction = Three(direction)
         self.major_radius = major_radius
         self.minor_radius = minor_radius
