@@ -204,7 +204,7 @@ class BOX(Body):
                             lunit="mm")
 
     def __repr__(self):
-        return ("<BOX: {}, v={}, e1={}, e2={}, e3={}, >").format(
+        return ("<BOX: {}, v={}, e1={}, e2={}, e3={}>").format(
             self.name,
             list(self.vertex),
             list(self.edge1), list(self.edge2), list(self.edge3))
