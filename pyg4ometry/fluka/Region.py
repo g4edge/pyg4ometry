@@ -210,8 +210,11 @@ class Region(object):
         return self.zones[0].rotation()
 
     def geant4_solid(self, reg):
+        try:
+            zone0 = self.zones[0]
+        except IndexError:
+            raise FLUKAError("Region {} has no zones.".format(self.name))
 
-        zone0 = self.zones[0]
         result = zone0.geant4_solid(reg)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             other_g4 = zone.geant4_solid(reg)
