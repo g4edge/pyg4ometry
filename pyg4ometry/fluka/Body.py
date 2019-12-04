@@ -318,7 +318,10 @@ class RCC(Body):
     def _with_lengthsafety(self, safety, reg):
         unit = self.direction.unit()
         face = self.face - safety * unit
-        direction = self.direction + safety * unit
+        # Apply double safety to the direction to account for the fact
+        # that the face has been shifted by a single amount of
+        # safety in the direction of the direction vector.
+        direction = self.direction + 2 * safety * unit
         return RCC(self.name,
                    face, direction,
                    self.radius + safety,
