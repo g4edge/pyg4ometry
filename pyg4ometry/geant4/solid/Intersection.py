@@ -50,7 +50,7 @@ class Intersection(_SolidBase):
     def pycsgmesh(self):
         import pyg4ometry.geant4 as _g4
 
-        _log.info('Intersection.pycshmesh>')
+        _log.info('Intersection.pycsgmesh>>')
 
         # look up solids in registry 
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
@@ -61,16 +61,16 @@ class Intersection(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes 
-        _log.info('Intersection.pycshmesh> mesh1')
+        _log.info('Intersection.pycsgmesh> mesh1')
         m1 = obj1.pycsgmesh()
-        _log.info('Intersection.pycshmesh> mesh2')
+        _log.info('Intersection.pycsgmesh> mesh2')
         m2 = obj2.pycsgmesh().clone()
         
         # apply transform to second mesh
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.info('Intersection.pycshmesh> intersect')
+        _log.info('Intersection.pycsgmesh> intersect')
         mesh = m1.intersect(m2)
         if not mesh.toPolygons():
             raise pyg4ometry.exceptions.NullMeshError(self)

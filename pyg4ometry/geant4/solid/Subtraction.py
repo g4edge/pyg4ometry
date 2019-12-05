@@ -49,7 +49,7 @@ class Subtraction(_SolidBase):
 
     def pycsgmesh(self):
 
-        _log.info('subtraction.pycshmesh>')
+        _log.info('subtraction.pycsgmesh>')
 
         # look up solids in registry 
         import pyg4ometry.geant4 as _g4

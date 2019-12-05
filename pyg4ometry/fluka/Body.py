@@ -204,11 +204,25 @@ class BOX(Body):
                             lunit="mm")
 
     def __repr__(self):
-        return ("<BOX: {}, v={}, e1={}, e2={}, e3={}, >").format(
+        return ("<BOX: {}, v={}, e1={}, e2={}, e3={}>").format(
             self.name,
             list(self.vertex),
             list(self.edge1), list(self.edge2), list(self.edge3))
 
+    def _with_lengthsafety(self, safety, reg):
+        u1 = self.edge1.unit()
+        u2 = self.edge2.unit()
+        u3 = self.edge3.unit()
+        new_vertex = self.vertex - (u1 + u2 + u3) * safety
+        return BOX(self.name,
+                   new_vertex,
+                   self.edge1 + 2 * safety * u1,
+                   self.edge2 + 2 * safety * u2,
+                   self.edge3 + 2 * safety * u3,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
 
 class SPH(Body):
     """Sphere
@@ -318,7 +332,10 @@ class RCC(Body):
     def _with_lengthsafety(self, safety, reg):
         unit = self.direction.unit()
         face = self.face - safety * unit
-        direction = self.direction + safety * unit
+        # Apply double safety to the direction to account for the fact
+        # that the face has been shifted by a single amount of
+        # safety in the direction of the direction vector.
+        direction = self.direction + 2 * safety * unit
         return RCC(self.name,
                    face, direction,
                    self.radius + safety,
@@ -420,8 +437,6 @@ class TRC(Body):
                  flukaregistry=None):
         self.name = name
         self.major_centre = Three(major_centre)
-        if translation is not None:
-            self.major_centre += Three(translation)
         self.direction = Three(direction)
         self.major_radius = major_radius
         self.minor_radius = minor_radius
@@ -460,6 +475,20 @@ class TRC(Body):
             list(self.direction),
             self.major_radius,
             self.minor_radius)
+
+    def _with_lengthsafety(self, safety, reg):
+        unit = self.direction.unit()
+        major_centre = self.major_centre - safety * unit
+        # Apply double safety for the same reason as we did with the RCC.
+        direction = self.direction + 2 * safety * unit
+        return TRC(self.name,
+                   major_centre,
+                   direction,
+                   self.major_radius + safety,
+                   self.minor_radius + safety,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform)
 
 
 class ELL(Body):

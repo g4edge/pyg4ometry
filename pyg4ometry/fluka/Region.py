@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import networkx as nx
 
-from pyg4ometry.exceptions import FLUKAError
+from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as _g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
@@ -148,7 +148,6 @@ class Zone(object):
                 ls_body.name += "_s"
                 logger.debug("Adding shrunk intersection %s to registry",
                              ls_body.name)
-                print "Adding body to registry", ls_body.name
                 zone_out.addIntersection(ls_body)
             else:
                 ls_body = deepcopy(bigger_flukareg.getBody(name))
@@ -184,7 +183,6 @@ class Zone(object):
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
             name = body.name
-            print body.name
             if isinstance(body, Zone):
                 body.allBodiesToRegistry(flukaregistry)
             elif name not in flukaregistry.bodyDict:
@@ -194,9 +192,10 @@ class Zone(object):
 
 class Region(object):
 
-    def __init__(self, name):
+    def __init__(self, name, material=None):
         self.name = name
         self.zones = []
+        self.material = material
 
     def addZone(self,zone):
         self.zones.append(zone)
@@ -211,8 +210,11 @@ class Region(object):
         return self.zones[0].rotation()
 
     def geant4_solid(self, reg):
+        try:
+            zone0 = self.zones[0]
+        except IndexError:
+            raise FLUKAError("Region {} has no zones.".format(self.name))
 
-        zone0 = self.zones[0]
         result = zone0.geant4_solid(reg)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             other_g4 = zone.geant4_solid(reg)
@@ -223,17 +225,6 @@ class Region(object):
             result  = _g4.solid.Union(zone_name, result, other_g4, tra2, reg)
 
         return result
-
-    def geant4_test(self):
-        reg = _g4.Registry()
-        wb  = _g4.solid.Box("world_solid",50,50,50,reg,"mm")
-        wl  = _g4.LogicalVolume(wb,"G4_Galactic","world_logical",reg,True)
-        fs  = self.geant4_solid(reg)
-        fl  = _g4.LogicalVolume(fs,"G4_Fe","fluka_solid",reg,True)
-        fp  = _g4.PhysicalVolume([0,0,0],[0,0,0],fl,"fluka_placement",wl,reg)
-
-        return wl
-
 
     def fluka_free_string(self):
         fs = "region "+self.name
@@ -256,10 +247,10 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def _determine_connected_zones(self):
-        # dummy_registry = _g4.Registry()
+    def get_connected_zones(self):
+        zones = self.zones
+        n_zones = len(zones)
 
-        n_zones = len(self.zones)
         tried = []
         # Build undirected graph, and add nodes corresponding to each zone.
         graph = nx.Graph()
@@ -268,11 +259,8 @@ class Region(object):
             return nx.connected_components(graph)
         # Build up a cache of booleans and extents for each zone.
         # format: {zone_index: (boolean, extent)}
-        # from IPython import embed; embed()
 
-        self._get_zone_extents()
-        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
-        # booleans_and_extents = self._get_zone_booleans_and_extents(True)
+        zone_extents = self._get_zone_extents()
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -280,9 +268,9 @@ class Region(object):
             if i == j or {i, j} in tried:
                 continue
             tried.append({i, j})
+
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            if not are_extents_overlapping(booleans_and_extents[i][1],
-                                           booleans_and_extents[j][1]):
+            if not are_extents_overlapping(zone_extents[i], zone_extents[j]):
                 continue
 
             # Check if a path already exists.  Not sure how often this
@@ -290,13 +278,11 @@ class Region(object):
             if nx.has_path(graph, i, j):
                 continue
 
-            # Finally: we must do the intersection op.  add 1 because
-            # we conform to convention thatg
+            # Finally: we must do the intersection op.
             logger.debug("Intersecting zone %d with %d", i, j)
-            if get_overlap(booleans_and_extents[i][0],
-                           booleans_and_extents[j][0]) is not None:
+            if _get_zone_overlap(zones[i], zones[j]) is not None:
                 graph.add_edge(i, j)
-        return nx.connected_components(graph)
+        return list(nx.connected_components(graph))
 
     def _get_zone_extents(self):
         material = _g4.MaterialPredefined("G4_Galactic")
@@ -317,7 +303,7 @@ class Region(object):
                                     _random_name(),
                                     wlv, greg)
 
-            extents.append(zone.extent)
+            extents.append(wlv.extent())
         return extents
 
 
@@ -350,8 +336,6 @@ def _get_tra2(first, second):
                                list(relative_transformation[1])]
     return relative_transformation
 
-
-
 def _random_name():
     return "a{}".format(uuid4()).replace("-", "")
 
@@ -359,3 +343,36 @@ def _make_wlv(reg):
     world_material = _g4.MaterialPredefined("G4_Galactic")
     world_solid = _g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return _g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
+
+def are_extents_overlapping(extent1, extent2):
+    lower1 = Three(extent1[0])
+    upper1 = Three(extent1[1])
+    lower2 = Three(extent2[0])
+    upper2 = Three(extent2[1])
+
+    return not any([upper1.x < lower2.x,
+                    lower1.x > upper2.x,
+                    upper1.y < lower2.y,
+                    lower1.y > upper2.y,
+                    upper1.z < lower2.z,
+                    lower1.z > upper2.z])
+
+def _get_zone_overlap(zone1, zone2):
+    greg = _g4.Registry()
+
+    solid1 = zone1.geant4_solid(greg)
+    solid2 = zone2.geant4_solid(greg)
+
+    tra2 = _get_tra2(zone1, zone2)
+
+    intersection = _g4.solid.Intersection(_random_name(),
+                           solid1,
+                           solid2,
+                           tra2,
+                           greg)
+
+    try:
+        mesh = intersection.pycsgmesh()
+    except NullMeshError:
+        return None
+    return mesh
