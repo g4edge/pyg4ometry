@@ -267,6 +267,47 @@ class LogicalVolume(object):
 
         return [vMin, vMax]
 
+    def clipSolid(self, recursive = False):
+        # loop over daughter volumes to find centres
+
+        eMin = [1e99, 1e99, 1e99]
+        eMax = [-1e99, -1e99, -1e99]
+
+        for dv in self.daughterVolumes :
+            e = dv.extent()
+
+            if e[0][0] < eMin[0]:
+                eMin[0] = e[0][0]
+            if e[0][1] < eMin[1]:
+                eMin[1] = e[0][1]
+            if e[0][2] < eMin[2]:
+                eMin[2] = e[0][2]
+            if e[1][0] > eMax[0]:
+                eMax[0] = e[1][0]
+            if e[1][1] > eMax[1]:
+                eMax[1] = e[1][1]
+            if e[1][2] > eMax[2]:
+                eMax[2] = e[1][2]
+
+        eMin = _np.array(eMin)
+        eMax = _np.array(eMax)
+        diff   = eMax-eMin
+        centre = (eMin + eMax)/2.0
+
+        # move daughter volumes to centre
+        for dv in self.daughterVolumes :
+            dv.position = dv.position - centre
+
+        # resize outer solid
+
+        # cuboidal solid
+        if self.solid.type == "Box":
+            self.solid.pX = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
+            self.solid.pY = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
+            self.solid.pZ = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
+
+        self.mesh.remesh()
+
     def findLogicalByName(self,name) : 
         lv = [] 
 
