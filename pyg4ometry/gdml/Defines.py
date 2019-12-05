@@ -91,7 +91,7 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
         return var 
 
     # create appropriate vector type
-    if isinstance(var,list) :
+    if isinstance(var,list) or isinstance(var,_np.ndarray):
         if type == "position" :
             return Position("",var[0],var[1],var[2],"mm",reg, addRegistry)
         elif type == "rotation" : 
@@ -553,7 +553,10 @@ class VectorBase(object) :
         p.z.registry    = self.registry
         return p
 
-    def __sub__(self,other) : 
+    def __sub__(self,other) :
+
+        other = upgradeToVector(other,self.registry,"position",False)
+
         p  = Position("vec_{}_sub_{}".format(self.name,other.name),
                       '({})-({})'.format(self.x.expression,other.x.expression),
                       '({})-({})'.format(self.y.expression,other.y.expression),
