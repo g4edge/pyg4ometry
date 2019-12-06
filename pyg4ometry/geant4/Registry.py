@@ -382,5 +382,9 @@ class Registry:
         print self.solidTypeCountDict
         print self.logicalVolumeUsageCountDict
 
+    def toFlukaRegistry(self):
+        import pyg4ometry.fluka as _f
+
+        freg = _f.FlukaRegistry()
 
 registry = Registry()
