@@ -76,6 +76,8 @@ class VtkViewer:
             a.GetProperty().SetColor(random.random(),
                                      random.random(),
                                      random.random())
+    def start(self):
+        self.iren.Start()
 
     def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
