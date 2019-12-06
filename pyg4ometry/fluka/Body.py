@@ -639,6 +639,22 @@ class _WED_RAW(Body):
             list(self.edge2),
             list(self.edge3))
 
+    def _with_lengthsafety(self, safety, reg):
+        ctor = type(self) # return WED or RAW, not _WED_RAW.
+        u1 = self.edge1.unit()
+        u2 = self.edge2.unit()
+        u3 = self.edge3.unit()
+        new_vertex = self.vertex - (u1 + u2 + u3) * safety
+        return ctor(self.name,
+                    new_vertex,
+                    self.edge1 + 2 * safety * u1,
+                    self.edge2 + 2 * safety * u2,
+                    self.edge3 + 2 * safety * u3,
+                    expansion=self.expansion,
+                    translation=self.translation,
+                    transform=self.transform,
+                    flukaregistry=reg)
+
 
 class WED(_WED_RAW):
     """Right Angle Wedge
