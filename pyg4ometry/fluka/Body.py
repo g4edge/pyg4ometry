@@ -982,7 +982,7 @@ class PLA(Body):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return _trans.matrix_from([0, 0, 1], self.normal)
+        return _trans.matrix_from([0, 0, 1], self.normal).T # .T = fudge
 
     def geant4_solid(self, reg):
         return g4.solid.Box(self.name,
