@@ -206,7 +206,7 @@ class ScalarBase(object) :
     def __neg__(self):
         v1 = upgradeToStringExpression(self.registry,self)
 
-        v = Constant("var_neg_{}".format(v1), '(-{})'.format(v1),
+        v = Constant("var_neg_{}".format(v1), '-({})'.format(v1),
                      registry=self.registry,
                      addRegistry=False)
         return v
