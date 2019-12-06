@@ -411,6 +411,23 @@ class REC(Body):
             list(self.face), list(self.direction),
             list(self.semiminor), list(self.semimajor))
 
+    def _with_lengthsafety(self, safety, reg):
+        direction_unit = self.direction.unit()
+        face = self.face - safety * direction_unit
+        # Apply double safety to the direction for the same reason as RCC.
+        direction = self.direction + 2 * safety * direction_unit
+        semiminor = self.semiminor + safety * self.semiminor.unit()
+        semimajor = self.semimajor + safety * self.semimajor.unit()
+
+        return REC(self.name, face,
+                   direction,
+                   semiminor,
+                   semimajor,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
+
 
 class TRC(Body):
     """Truncated Right-angled Cone
