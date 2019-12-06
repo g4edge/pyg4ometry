@@ -267,7 +267,7 @@ class LogicalVolume(object):
 
         return [vMin, vMax]
 
-    def clipSolid(self, recursive = False):
+    def clipSolid(self, recursive = False, lengthSafety = 1e-6):
         # loop over daughter volumes to find centres
 
         eMin = [1e99, 1e99, 1e99]
@@ -291,7 +291,7 @@ class LogicalVolume(object):
 
         eMin = _np.array(eMin)
         eMax = _np.array(eMax)
-        diff   = eMax-eMin
+        diff   = eMax-eMin+lengthSafety
         centre = (eMin + eMax)/2.0
 
         # move daughter volumes to centre
