@@ -33,7 +33,7 @@ class GeometryModel :
             r = pyg4ometry.freecad.Reader(fileName)
             r.relabelModel()
             r.convertFlat()
-            self.registyDict[name] = r.getRegistry()
+            self.registryDict[name] = r.getRegistry()
         elif type == "stl" :
             r = pyg4ometry.stl.Reader(fileName)
             reg = pyg4ometry.geant4.Registry()
@@ -41,3 +41,8 @@ class GeometryModel :
             self.registryDict[name] = reg
         elif type == "inp" :
             r = pyg4ometry.fluka.Reader(fileName)
+        elif type == "py" :
+            # load and execute python to create registry
+            pass
+
+        return name

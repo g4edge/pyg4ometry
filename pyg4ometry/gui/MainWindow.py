@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QCheckBox, QFileDialog, QLayout, QVBoxLayout, QPushButton
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QFileDialog, QTreeWidget, QTreeWidget, QTreeWidgetItem, QDockWidget
 from QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
 
 from GeometryModel import GeometryModel
@@ -45,6 +46,11 @@ class MainWindow(QMainWindow):
         overlapAction.setStatusTip('Check overlaps')
         actionMenu.addAction(overlapAction)
 
+        self.treeView = QTreeWidget()
+        self.treeDockWidget = QDockWidget("Models")
+        self.treeDockWidget.setWidget(self.treeView)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.treeDockWidget)
+
         from vtk.vtkFiltersSources import vtkConeSource
         from vtk.vtkRenderingCore import vtkActor, vtkPolyDataMapper, vtkRenderer
 
@@ -57,6 +63,7 @@ class MainWindow(QMainWindow):
         # vtkWidget.AddObserver("ExitEvent", lambda o, e, a=app: a.quit())
 
         ren = vtkRenderer()
+        ren.SetBackground(1.0, 1.0, 1.0)
         vtkWidget.GetRenderWindow().AddRenderer(ren)
 
         cone = vtkConeSource()
@@ -83,7 +90,11 @@ class MainWindow(QMainWindow):
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py);;GDML files (*.gdml);;STL files (*stl);;STEP files (*step);;FLUKA files (*inp)", options=options)
         if fileName:
-            self.geometryModel.loadNewRegistry(fileName)
+            name = self.geometryModel.loadNewRegistry(fileName)
+            item = QTreeWidgetItem()
+            item.setText(0,name)
+            self.treeView.insertTopLevelItem(0,item)
+            self.treeView.show()
     
     def saveFileDialog(self):
         options = QFileDialog.Options()
