@@ -7,7 +7,7 @@ import pyg4ometry.fluka
 import os.path
 
 def extensionFromPath(fileName) :
-    return os.path.splitext(fileName)[1].split(".")[1]
+    return os.path.splitext(fileName)[1].split(".")[1].lower()
 
 def nameFromPath(fileName) :
     return os.path.splitext(fileName)[0].split("/")[-1]
@@ -31,16 +31,18 @@ class GeometryModel :
             r = pyg4ometry.gdml.Reader(fileName)
             self.registryDict[name] = r.getRegistry()
             self.worldLogicalDict[name] = self.registryDict[name].getWorldVolume()
-        elif type == "step" :
+        elif type == "step" or type == "stp" :
             r = pyg4ometry.freecad.Reader(fileName)
             r.relabelModel()
             r.convertFlat()
             self.registryDict[name] = r.getRegistry()
+            self.worldLogicalDict[name] = self.registryDict[name].getWorldVolume()
         elif type == "stl" :
             r = pyg4ometry.stl.Reader(fileName)
             reg = pyg4ometry.geant4.Registry()
-            l = r.logicalVolume(name,"G4_Galactic",reg)
+            log = r.logicalVolume(name,"G4_Galactic",reg)
             self.registryDict[name] = reg
+            self.worldLogicalDict[name] = log
         elif type == "inp" :
             r = pyg4ometry.fluka.Reader(fileName)
         elif type == "py" :
@@ -51,6 +53,5 @@ class GeometryModel :
         l = self.worldLogicalDict[name]
         v.addLogicalVolume(l)
         self.vtkDict[name] = v
-
 
         return name
