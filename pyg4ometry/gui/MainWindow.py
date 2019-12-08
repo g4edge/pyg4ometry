@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QFileDialog, QTreeWidget, QTreeWidget, QTreeWidgetItem, QDockWidget
 from QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
 
+import pyg4ometry.visualisation.VtkViewer
+
 from GeometryModel import GeometryModel
 
 class MainWindow(QMainWindow):
@@ -54,31 +56,31 @@ class MainWindow(QMainWindow):
         from vtk.vtkFiltersSources import vtkConeSource
         from vtk.vtkRenderingCore import vtkActor, vtkPolyDataMapper, vtkRenderer
 
-        vtkWidget  = QVTKRenderWindowInteractor()
-        self.setCentralWidget(vtkWidget)
+        self.vtkWidget  = QVTKRenderWindowInteractor()
+        self.setCentralWidget(self.vtkWidget)
 
-        vtkWidget.Initialize()
-        vtkWidget.Start()
+        self.vtkWidget.Initialize()
+        self.vtkWidget.Start()
         # if you don't want the 'q' key to exit comment this.
         # vtkWidget.AddObserver("ExitEvent", lambda o, e, a=app: a.quit())
 
-        ren = vtkRenderer()
-        ren.SetBackground(1.0, 1.0, 1.0)
-        vtkWidget.GetRenderWindow().AddRenderer(ren)
+        #ren = vtkRenderer()
+        #ren.SetBackground(1.0, 1.0, 1.0)
+        #vtkWidget.GetRenderWindow().AddRenderer(ren)
 
-        cone = vtkConeSource()
-        cone.SetResolution(8)
+        #cone = vtkConeSource()
+        #cone.SetResolution(8)
 
-        coneMapper = vtkPolyDataMapper()
-        coneMapper.SetInputConnection(cone.GetOutputPort())
+        #coneMapper = vtkPolyDataMapper()
+        #coneMapper.SetInputConnection(cone.GetOutputPort())
 
-        coneActor = vtkActor()
-        coneActor.SetMapper(coneMapper)
+        #coneActor = vtkActor()
+        #coneActor.SetMapper(coneMapper)
 
-        ren.AddActor(coneActor)
+        #ren.AddActor(coneActor)
 
         # show the widget
-        vtkWidget.show()
+        #self.vtkWidget.show()
 
         self.statusBar().showMessage('Ready')
         self.setGeometry(300, 300, 1000, 750)
@@ -95,7 +97,11 @@ class MainWindow(QMainWindow):
             item.setText(0,name)
             self.treeView.insertTopLevelItem(0,item)
             self.treeView.show()
-    
+
+            self.vtkWidget.GetRenderWindow().AddRenderer(self.geometryModel.vtkDict[name].ren)
+            print self.vtkWidget.GetRenderWindow().GetRenderers()
+            self.vtkWidget.show()
+
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog

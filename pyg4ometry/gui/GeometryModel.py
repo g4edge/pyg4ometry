@@ -15,7 +15,8 @@ def nameFromPath(fileName) :
 class GeometryModel :
     def __init__(self):
         self.registryDict    = {}
-        self.worldVolumeDict = {}
+        self.worldLogicalDict = {}
+        self.vtkDict = {}
 
     def createNewRegistry(self, name, type):
         reg = pyg4ometry.geant4.Registry()
@@ -29,6 +30,7 @@ class GeometryModel :
         if type == "gdml" :
             r = pyg4ometry.gdml.Reader(fileName)
             self.registryDict[name] = r.getRegistry()
+            self.worldLogicalDict[name] = self.registryDict[name].getWorldVolume()
         elif type == "step" :
             r = pyg4ometry.freecad.Reader(fileName)
             r.relabelModel()
@@ -44,5 +46,11 @@ class GeometryModel :
         elif type == "py" :
             # load and execute python to create registry
             pass
+
+        v = pyg4ometry.visualisation.VtkViewer()
+        l = self.worldLogicalDict[name]
+        v.addLogicalVolume(l)
+        self.vtkDict[name] = v
+
 
         return name
