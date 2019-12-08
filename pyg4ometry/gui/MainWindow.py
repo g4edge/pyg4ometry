@@ -59,29 +59,6 @@ class MainWindow(QMainWindow):
         self.vtkWidget  = QVTKRenderWindowInteractor()
         self.setCentralWidget(self.vtkWidget)
 
-        self.vtkWidget.Initialize()
-        self.vtkWidget.Start()
-        # if you don't want the 'q' key to exit comment this.
-        # vtkWidget.AddObserver("ExitEvent", lambda o, e, a=app: a.quit())
-
-        #ren = vtkRenderer()
-        #ren.SetBackground(1.0, 1.0, 1.0)
-        #vtkWidget.GetRenderWindow().AddRenderer(ren)
-
-        #cone = vtkConeSource()
-        #cone.SetResolution(8)
-
-        #coneMapper = vtkPolyDataMapper()
-        #coneMapper.SetInputConnection(cone.GetOutputPort())
-
-        #coneActor = vtkActor()
-        #coneActor.SetMapper(coneMapper)
-
-        #ren.AddActor(coneActor)
-
-        # show the widget
-        #self.vtkWidget.show()
-
         self.statusBar().showMessage('Ready')
         self.setGeometry(300, 300, 1000, 750)
         self.setWindowTitle('pyg4ometry')
@@ -100,6 +77,11 @@ class MainWindow(QMainWindow):
 
             self.vtkWidget.GetRenderWindow().AddRenderer(self.geometryModel.vtkDict[name].ren)
             print self.vtkWidget.GetRenderWindow().GetRenderers()
+
+            if len(self.geometryModel.registryDict) == 1 :
+                self.vtkWidget.Initialize()
+                self.vtkWidget.Start()
+
             self.vtkWidget.show()
 
     def saveFileDialog(self):
@@ -108,7 +90,6 @@ class MainWindow(QMainWindow):
         fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)", options=options)
         if fileName:
             print(fileName)
-
 
 def main() :
     app = QApplication(sys.argv)
