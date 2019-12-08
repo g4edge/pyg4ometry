@@ -2,15 +2,19 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QCheckBox, QFileDialog, QLayout, QVBoxLayout, QPushButton
 from QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
 
+from GeometryModel import GeometryModel
+
 class MainWindow(QMainWindow):
     
     def __init__(self):
         super(MainWindow,self).__init__()
 
+        self.initModel()
         self.initUI()
 
-        
-        
+    def initModel(self):
+        self.geometryModel = GeometryModel()
+
     def initUI(self):
 
         menubar = self.menuBar()
@@ -35,8 +39,11 @@ class MainWindow(QMainWindow):
         exitAction.triggered.connect(self.close)
         fileMenu.addAction(exitAction)
 
-        fileMenu = menubar.addMenu('Actions')
-
+        actionMenu = menubar.addMenu('Actions')
+        overlapAction = QAction('Check overlaps', self)
+        overlapAction.setShortcut('Ctrl+O')
+        overlapAction.setStatusTip('Check overlaps')
+        actionMenu.addAction(overlapAction)
 
         from vtk.vtkFiltersSources import vtkConeSource
         from vtk.vtkRenderingCore import vtkActor, vtkPolyDataMapper, vtkRenderer
@@ -44,11 +51,10 @@ class MainWindow(QMainWindow):
         vtkWidget  = QVTKRenderWindowInteractor()
         self.setCentralWidget(vtkWidget)
 
-
         vtkWidget.Initialize()
         vtkWidget.Start()
         # if you don't want the 'q' key to exit comment this.
-        vtkWidget.AddObserver("ExitEvent", lambda o, e, a=app: a.quit())
+        # vtkWidget.AddObserver("ExitEvent", lambda o, e, a=app: a.quit())
 
         ren = vtkRenderer()
         vtkWidget.GetRenderWindow().AddRenderer(ren)
@@ -67,14 +73,6 @@ class MainWindow(QMainWindow):
         # show the widget
         vtkWidget.show()
 
-
-
-
-
-
-
-
-
         self.statusBar().showMessage('Ready')
         self.setGeometry(300, 300, 1000, 750)
         self.setWindowTitle('pyg4ometry')
@@ -83,9 +81,9 @@ class MainWindow(QMainWindow):
     def openFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py);;GDML files (*.gdml);;STL files (*stl);;STEP files (*step);;FLUKA files (*inp)", options=options)
         if fileName:
-            print(fileName)
+            self.geometryModel.loadNewRegistry(fileName)
     
     def saveFileDialog(self):
         options = QFileDialog.Options()
@@ -95,8 +93,10 @@ class MainWindow(QMainWindow):
             print(fileName)
 
 
-if __name__ == '__main__':
-    
+def main() :
     app = QApplication(sys.argv)
     ex = MainWindow()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
