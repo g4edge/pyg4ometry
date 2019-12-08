@@ -48,13 +48,18 @@ class MainWindow(QMainWindow):
         overlapAction.setStatusTip('Check overlaps')
         actionMenu.addAction(overlapAction)
 
+        randomColourAction = QAction('Random colour', self)
+        randomColourAction.setStatusTip('Random colour')
+        actionMenu.addAction(randomColourAction)
+
+        materialColourAction = QAction('Material colour', self)
+        materialColourAction.setStatusTip('Material colour')
+        actionMenu.addAction(materialColourAction)
+
         self.treeView = QTreeWidget()
         self.treeDockWidget = QDockWidget("Models")
         self.treeDockWidget.setWidget(self.treeView)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.treeDockWidget)
-
-        from vtk.vtkFiltersSources import vtkConeSource
-        from vtk.vtkRenderingCore import vtkActor, vtkPolyDataMapper, vtkRenderer
 
         self.vtkWidget  = QVTKRenderWindowInteractor()
         self.setCentralWidget(self.vtkWidget)
@@ -63,6 +68,9 @@ class MainWindow(QMainWindow):
         self.setGeometry(300, 300, 1000, 750)
         self.setWindowTitle('pyg4ometry')
         self.show()
+
+    def setDisplayRenderer(self, iRenderer):
+        ren = self.vtkWidget.GetRenderWindow().GetRenderers()[0]
 
     def openFileNameDialog(self):
         options = QFileDialog.Options()
@@ -76,12 +84,12 @@ class MainWindow(QMainWindow):
             self.treeView.show()
 
             self.vtkWidget.GetRenderWindow().AddRenderer(self.geometryModel.vtkDict[name].ren)
-            print self.vtkWidget.GetRenderWindow().GetRenderers()
 
             if len(self.geometryModel.registryDict) == 1 :
                 self.vtkWidget.Initialize()
                 self.vtkWidget.Start()
 
+            self.vtkWidget.GetRenderWindow().Render()
             self.vtkWidget.show()
 
     def saveFileDialog(self):
