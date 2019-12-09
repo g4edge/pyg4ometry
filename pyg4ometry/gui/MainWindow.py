@@ -83,11 +83,18 @@ class MainWindow(QMainWindow):
             self.treeView.insertTopLevelItem(0,item)
             self.treeView.show()
 
-            self.vtkWidget.GetRenderWindow().AddRenderer(self.geometryModel.vtkDict[name].ren)
+            ren = self.geometryModel.vtkDict[name].ren
+
+            self.vtkWidget.GetRenderWindow().AddRenderer(ren)
 
             if len(self.geometryModel.registryDict) == 1 :
                 self.vtkWidget.Initialize()
                 self.vtkWidget.Start()
+
+            rens = self.vtkWidget.GetRenderWindow().GetRenderers()
+            self.vtkWidget.GetRenderWindow().SetNumberOfLayers(rens.GetNumberOfItems())
+            for r,i in zip(self.vtkWidget.GetRenderWindow().GetRenderers(),range(rens.GetNumberOfItems())) :
+                r.SetLayer(i)
 
             self.vtkWidget.GetRenderWindow().Render()
             self.vtkWidget.show()
