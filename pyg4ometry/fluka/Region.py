@@ -89,7 +89,7 @@ class Zone(object):
         try:
             body0 = self.intersections[0].body
         except IndexError:
-            raise FLUKAError("Each zone must consist of at least one +.")
+            raise FLUKAError("zone has no +")
 
         result = self._getSolidFromBoolean(self.intersections[0], reg)
 
@@ -217,7 +217,11 @@ class Region(object):
 
         result = zone0.geant4_solid(reg)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
-            other_g4 = zone.geant4_solid(reg)
+            try:
+                other_g4 = zone.geant4_solid(reg)
+            except FLUKAError as e:
+                msg = e.message
+                raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
             print i, zone_name
             tra2 = _get_tra2(zone0, zone)

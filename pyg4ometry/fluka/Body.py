@@ -411,6 +411,23 @@ class REC(Body):
             list(self.face), list(self.direction),
             list(self.semiminor), list(self.semimajor))
 
+    def _with_lengthsafety(self, safety, reg):
+        direction_unit = self.direction.unit()
+        face = self.face - safety * direction_unit
+        # Apply double safety to the direction for the same reason as RCC.
+        direction = self.direction + 2 * safety * direction_unit
+        semiminor = self.semiminor + safety * self.semiminor.unit()
+        semimajor = self.semimajor + safety * self.semimajor.unit()
+
+        return REC(self.name, face,
+                   direction,
+                   semiminor,
+                   semimajor,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
+
 
 class TRC(Body):
     """Truncated Right-angled Cone
@@ -621,6 +638,22 @@ class _WED_RAW(Body):
             list(self.edge1),
             list(self.edge2),
             list(self.edge3))
+
+    def _with_lengthsafety(self, safety, reg):
+        ctor = type(self) # return WED or RAW, not _WED_RAW.
+        u1 = self.edge1.unit()
+        u2 = self.edge2.unit()
+        u3 = self.edge3.unit()
+        new_vertex = self.vertex - (u1 + u2 + u3) * safety
+        return ctor(self.name,
+                    new_vertex,
+                    self.edge1 + 2 * safety * u1,
+                    self.edge2 + 2 * safety * u2,
+                    self.edge3 + 2 * safety * u3,
+                    expansion=self.expansion,
+                    translation=self.translation,
+                    transform=self.transform,
+                    flukaregistry=reg)
 
 
 class WED(_WED_RAW):
@@ -949,7 +982,7 @@ class PLA(Body):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return _trans.matrix_from([0, 0, 1], self.normal)
+        return _trans.matrix_from([0, 0, 1], self.normal).T # .T = fudge
 
     def geant4_solid(self, reg):
         return g4.solid.Box(self.name,
