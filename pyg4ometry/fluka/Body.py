@@ -943,6 +943,9 @@ class YZP(_HalfSpace):
                    transform=self.transform,
                    flukaregistry=reg)
 
+    def fluka_free_string(self):
+        return "YZP: {} {}".format(self.name, self.x)
+
 
 class PLA(Body):
     """Infinite half-space delimited by the x-y plane (pependicular to
@@ -1212,6 +1215,11 @@ class XEC(Body):
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
+
+    def fluka_free_string(self):
+        return "XEC: {} {} {} {} {}".format(self.name,
+                                            self.y, self.z,
+                                            self.ysemi, self.zsemi)
 
 
 class YEC(Body):
