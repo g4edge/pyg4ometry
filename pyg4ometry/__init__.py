@@ -1,11 +1,11 @@
-import fluka
-import transformation
-import exceptions
-import stl
-import gdml
-import visualisation
-import geant4
-import freecad
-import gui
-import test
-
+from . import convert
+from . import exceptions
+from . import fluka
+from . import freecad
+from . import gdml
+from . import geant4
+from . import gui
+from . import stl
+from . import test
+from . import transformation
+from . import visualisation
