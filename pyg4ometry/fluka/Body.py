@@ -313,7 +313,7 @@ class RCC(Body):
         final = self.direction
 
         rotation = _trans.matrix_from(initial, final)
-        return rotation.T # invert rotation fudge factor to make it work
+        return rotation
 
     def geant4_solid(self, reg):
         return g4.solid.Tubs(self.name,
@@ -395,7 +395,7 @@ class REC(Body):
                                                final_direction,
                                                initial_semiminor,
                                                final_semiminor)
-        return rotation.T # invert rotation fudge factor to make it work
+        return rotation
 
     def geant4_solid(self, reg):
         return g4.solid.EllipticalTube(self.name,
@@ -468,7 +468,7 @@ class TRC(Body):
         # We choose in the as_gdml_solid method to place the major at
         # -z, and the major at +z:
         rotation = _trans.matrix_from([0, 0, 1], self.direction)
-        rotation = rotation.T # invert rotation matrix fudge to make it work
+        rotation = rotation
         return rotation
 
     def centre(self):
@@ -556,7 +556,7 @@ class ELL(Body):
         final = self.focus1 - self.focus2
         # final2 =
         # return _two_fold_orientation(initial1, final1, initial2, final2)
-        return _trans.matrix_from(initial, final).T # .T fudge factor
+        return _trans.matrix_from(initial, final)
 
     def geant4_solid(self, greg):
         centre = self.centre()
@@ -985,7 +985,7 @@ class PLA(Body):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return _trans.matrix_from([0, 0, 1], self.normal).T # .T = fudge
+        return _trans.matrix_from([0, 0, 1], self.normal)
 
     def geant4_solid(self, reg):
         return g4.solid.Box(self.name,
