@@ -5,6 +5,8 @@ from .Region import Region
 
 from pyg4ometry.exceptions import IdenticalNameError
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class FlukaRegistry(object):
     def __init__(self) :
@@ -18,6 +20,7 @@ class FlukaRegistry(object):
     def addBody(self, body):
         if body.name in self.bodyDict:
             raise IdenticalNameError(body.name)
+        logger.debug("%s", body)
         self.bodyDict[body.name] = body
 
     def addBodyTransform(self, trans):
