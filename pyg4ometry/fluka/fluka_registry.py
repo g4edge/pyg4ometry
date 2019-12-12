@@ -1,8 +1,8 @@
 from collections import OrderedDict as _OrderedDict
+import logging
 
 import pyg4ometry.geant4 as _g4
-from .Region import Region
-
+from .region import Region
 from pyg4ometry.exceptions import IdenticalNameError
 
 logger = logging.getLogger(__name__)

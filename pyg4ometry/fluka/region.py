@@ -6,10 +6,10 @@ from uuid import uuid4
 import networkx as nx
 
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
-import pyg4ometry.geant4 as _g4
+import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
-from pyg4ometry.fluka.Body import Body as _Body
-from .Vector import Three
+from pyg4ometry.fluka.body import Body
+from .vector import Three
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,7 +25,7 @@ class _Boolean(object):
         type_name = type_name[:3]
 
 
-        if isinstance(self.body, _Body):
+        if isinstance(self.body, Body):
             return "{}{}_{}_{}".format(type_name,
                                        index,
                                        self.body.name,
@@ -95,12 +95,12 @@ class Zone(object):
             tra2 = _get_tra2(body0, boolean.body)
             other_solid = self._getSolidFromBoolean(boolean, reg)
             if isinstance(boolean, Subtraction):
-                result  =_g4.solid.Subtraction(boolean_name,
+                result  =g4.solid.Subtraction(boolean_name,
                                                result, other_solid,
                                                tra2, reg)
 
             elif isinstance(boolean, Intersection):
-                result  =_g4.solid.Intersection(boolean_name,
+                result  =g4.solid.Intersection(boolean_name,
                                                 result, other_solid,
                                                 tra2, reg)
         return result
@@ -211,14 +211,14 @@ class Region(object):
         result = zone0.geant4_solid(reg)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             try:
-                other_g4 = zone.geant4_solid(reg)
+                otherg4 = zone.geant4_solid(reg)
             except FLUKAError as e:
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
             tra2 = _get_tra2(zone0, zone)
             logger.debug("union tra2 = %s", tra2)
-            result  = _g4.solid.Union(zone_name, result, other_g4, tra2, reg)
+            result  = g4.solid.Union(zone_name, result, otherg4, tra2, reg)
 
         return result
 
@@ -281,19 +281,19 @@ class Region(object):
         return list(nx.connected_components(graph))
 
     def _get_zone_extents(self):
-        material = _g4.MaterialPredefined("G4_Galactic")
+        material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
-            greg = _g4.Registry()
+            greg = g4.Registry()
             wlv = _make_wlv(greg)
 
             zone_solid = zone.geant4_solid(reg=greg)
-            lv = _g4.LogicalVolume(zone_solid,
+            lv = g4.LogicalVolume(zone_solid,
                                    material,
                                    _random_name(),
                                    greg)
 
-            pv = _g4.PhysicalVolume(list(zone.tbxyz()),
+            pv = g4.PhysicalVolume(list(zone.tbxyz()),
                                     list(zone.centre()),
                                     lv,
                                     _random_name(),
@@ -340,9 +340,9 @@ def _random_name():
     return "a{}".format(uuid4()).replace("-", "")
 
 def _make_wlv(reg):
-    world_material = _g4.MaterialPredefined("G4_Galactic")
-    world_solid = _g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
-    return _g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
+    world_material = g4.MaterialPredefined("G4_Galactic")
+    world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
+    return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
 def are_extents_overlapping(extent1, extent2):
     lower1 = Three(extent1[0])
@@ -358,14 +358,14 @@ def are_extents_overlapping(extent1, extent2):
                     lower1.z > upper2.z])
 
 def _get_zone_overlap(zone1, zone2):
-    greg = _g4.Registry()
+    greg = g4.Registry()
 
     solid1 = zone1.geant4_solid(greg)
     solid2 = zone2.geant4_solid(greg)
 
     tra2 = _get_tra2(zone1, zone2)
 
-    intersection = _g4.solid.Intersection(_random_name(),
+    intersection = g4.solid.Intersection(_random_name(),
                            solid1,
                            solid2,
                            tra2,

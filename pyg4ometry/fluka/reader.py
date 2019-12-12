@@ -1,8 +1,8 @@
 import sys
 import re as _re
-from . import Body
-from .Region import Zone, Region
-from FlukaRegistry import FlukaRegistry
+from . import body
+from .region import Zone, Region
+from .fluka_registry import FlukaRegistry
 from BodyTransform import BodyTransform
 from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
@@ -210,73 +210,73 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
                   "transform": transform}
 
     if body_type == "RPP":
-        b = Body.RPP(name, *param, flukaregistry=flukareg, **transforms)
+        b = body.RPP(name, *param, flukaregistry=flukareg, **transforms)
     elif body_type == "BOX":
-        b = Body.BOX(name, param[0:3], param[3:6], param[6:9],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.BOX(name, param[0:3], param[3:6], param[6:9],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "ELL":
-        b = Body.ELL(name, param[0:3], param[3:6], param[6],
+        b = body.ELL(name, param[0:3], param[3:6], param[6],
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "RCC":
-        b = Body.RCC(name, param[0:3], param[3:6], param[6],
+        b = body.RCC(name, param[0:3], param[3:6], param[6],
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "SPH":
-        b = Body.SPH(name, param[0:3], param[3],
+        b = body.SPH(name, param[0:3], param[3],
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "REC":
-        b = Body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
+        b = body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "WED":
-        b = Body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                       flukaregistry=flukareg, **transforms)
+        b = body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                     flukaregistry=flukareg, **transforms)
     elif body_type == "RAW":
-        b = Body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                       flukaregistry=flukareg, **transforms)
+        b = body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                     flukaregistry=flukareg, **transforms)
     elif body_type == "ARB":
         vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
                     param[12:15], param[15:18], param[18:21], param[21:24]]
         facenumbers = param[24:]
-        b = Body.ARB(name, vertices, facenumbers,
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.ARB(name, vertices, facenumbers,
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "XYP":
-        b = Body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "XZP":
-        b = Body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "YZP":
-        b = Body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
     elif body_type == "PLA":
-        b = Body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
-                       **transforms)
+        b = body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "XCC":
-        b = Body.XCC(name, param[0], param[1], param[2],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.XCC(name, param[0], param[1], param[2],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "YCC":
-        b = Body.YCC(name, param[0], param[1], param[2],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.YCC(name, param[0], param[1], param[2],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "ZCC":
-        b = Body.ZCC(name, param[0], param[1], param[2],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.ZCC(name, param[0], param[1], param[2],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "XEC":
-        b = Body.XEC(name, param[0], param[1], param[2], param[3],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.XEC(name, param[0], param[1], param[2], param[3],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "YEC":
-        b = Body.YEC(name, param[0], param[1], param[2], param[3],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.YEC(name, param[0], param[1], param[2], param[3],
+                     flukaregistry=flukareg,
+                     **transforms)
     elif body_type == "ZEC":
-        b = Body.ZEC(name, param[0], param[1], param[2], param[3],
-                       flukaregistry=flukareg,
-                       **transforms)
+        b = body.ZEC(name, param[0], param[1], param[2], param[3],
+                     flukaregistry=flukareg,
+                     **transforms)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b

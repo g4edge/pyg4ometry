@@ -2,19 +2,14 @@ import logging
 
 import numpy as np
 
-from .Vector import Three
+from .vector import Three
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
-
-import pyg4ometry.transformation as _trans
+import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 
-
 logger = logging.getLogger(__name__)
-FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
-logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
 
 INFINITY = 50000
 LENGTH_SAFETY = 1e-6
@@ -29,7 +24,7 @@ class Body(object):
             flukaregistry.addBody(self)
 
     def tbxyz(self):
-        return _trans.matrix2tbxyz(self.rotation())
+        return trans.matrix2tbxyz(self.rotation())
 
     # in the per body _with_lengthsafety methods below, factor =
     # -1*LENGTH_SAFETY should make the body small in
@@ -312,7 +307,7 @@ class RCC(Body):
         initial = [0, 0, 1]
         final = self.direction
 
-        rotation = _trans.matrix_from(initial, final)
+        rotation = trans.matrix_from(initial, final)
         return rotation
 
     def geant4_solid(self, reg):
@@ -391,10 +386,10 @@ class REC(Body):
 
         final_direction = self.direction
         final_semiminor = self.semiminor
-        rotation = _trans.two_fold_orientation(initial_direction,
-                                               final_direction,
-                                               initial_semiminor,
-                                               final_semiminor)
+        rotation = trans.two_fold_orientation(initial_direction,
+                                              final_direction,
+                                              initial_semiminor,
+                                              final_semiminor)
         return rotation
 
     def geant4_solid(self, reg):
@@ -467,7 +462,7 @@ class TRC(Body):
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
         # -z, and the major at +z:
-        rotation = _trans.matrix_from([0, 0, 1], self.direction)
+        rotation = trans.matrix_from([0, 0, 1], self.direction)
         rotation = rotation
         return rotation
 
@@ -556,7 +551,7 @@ class ELL(Body):
         final = self.focus1 - self.focus2
         # final2 =
         # return _two_fold_orientation(initial1, final1, initial2, final2)
-        return _trans.matrix_from(initial, final)
+        return trans.matrix_from(initial, final)
 
     def geant4_solid(self, greg):
         centre = self.centre()
@@ -605,9 +600,9 @@ class _WED_RAW(Body):
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
         crossproduct = np.cross(self.edge1, self.edge3)
-        if _trans.are_parallel(crossproduct, self.edge2):
+        if trans.are_parallel(crossproduct, self.edge2):
             return self.translation + self.vertex
-        elif _trans.are_anti_parallel(crossproduct, self.edge2):
+        elif trans.are_anti_parallel(crossproduct, self.edge2):
             return self.translation + self.vertex + self.edge2
         else:
             raise ValueError(
@@ -616,7 +611,7 @@ class _WED_RAW(Body):
     def rotation(self):
         initial1 = [1, 0, 0] # edge1 starts off pointing in the x-direction.
         initial3 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
-        return _trans.two_fold_orientation(initial1, self.edge1.unit(),
+        return trans.two_fold_orientation(initial1, self.edge1.unit(),
                                            initial3, self.edge3.unit())
 
     def geant4_solid(self, greg):
@@ -985,7 +980,7 @@ class PLA(Body):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return _trans.matrix_from([0, 0, 1], self.normal)
+        return trans.matrix_from([0, 0, 1], self.normal)
 
     def geant4_solid(self, reg):
         return g4.solid.Box(self.name,
