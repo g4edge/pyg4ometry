@@ -91,11 +91,6 @@ class Reader(object):
                 else:
                     self.regionsend = i
 
-        print self.geobegin, self.fileLines[self.geobegin]
-        print self.bodiesend, self.fileLines[self.bodiesend]
-        print self.regionsend, self.fileLines[self.regionsend]
-        print self.geoend,self.fileLines[self.geoend]
-
     def parseBodyTransform(self, line):
         sline = _freeform_split(line)
         trans_type = sline[0].split("_")[1]
@@ -121,7 +116,6 @@ class Reader(object):
         body_parts = []
         in_body = False # flag to tell us if we are currently in a body defn
         for line in bodies_block:
-            print line
             # split the line into chunks according to the FLUKA delimiter rules.
             line_parts = _freeform_split(line)
             # Get the first bit of the line, which determines what we do next.

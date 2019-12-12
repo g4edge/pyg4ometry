@@ -11,14 +11,8 @@ from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
 from pyg4ometry.fluka.Body import Body as _Body
 from .Vector import Three
 
-
-# logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
-logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
-# logger.setLevel(logging.DEBUG)
-
 
 class _Boolean(object):
     def generate_name(self, index, rootname=None):
@@ -97,10 +91,8 @@ class Zone(object):
 
         for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
             boolean_name = boolean.generate_name(i, rootname=self.name)
-            print i, boolean_name
 
             tra2 = _get_tra2(body0, boolean.body)
-            logger.debug("subint tra2 = %s", tra2)
             other_solid = self._getSolidFromBoolean(boolean, reg)
             if isinstance(boolean, Subtraction):
                 result  =_g4.solid.Subtraction(boolean_name,
@@ -210,6 +202,7 @@ class Region(object):
         return self.zones[0].rotation()
 
     def geant4_solid(self, reg):
+        logger.debug("Region = %s", self.name)
         try:
             zone0 = self.zones[0]
         except IndexError:
@@ -223,7 +216,6 @@ class Region(object):
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
-            print i, zone_name
             tra2 = _get_tra2(zone0, zone)
             logger.debug("union tra2 = %s", tra2)
             result  = _g4.solid.Union(zone_name, result, other_g4, tra2, reg)
@@ -335,6 +327,10 @@ def _get_tra2(first, second):
     relative_translation = _get_relative_translation(first, second)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
+
+    logger.debug("%s, %s", first.name, second.name)
+    logger.debug("relative_angles = %s", relative_angles)
+    logger.debug("relative_translation = %s", relative_translation)
 
     relative_transformation = [list(relative_transformation[0]),
                                list(relative_transformation[1])]
