@@ -3,6 +3,7 @@ import warnings
 
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
+import pyg4ometry.transformation as trans
 
 WORLD_DIMENSIONS = 10000
 
@@ -36,7 +37,12 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                                      region_material,
                                      "{}_lv".format(name),
                                      greg)
-        g4.PhysicalVolume(list(region.tbxyz()),
+        # We reverse because rotations in the context of Booleans are
+        # active, and that is the convention we have followed so far,
+        # but volume rotations are passive, so we have to reverse the
+        # rotation.
+        rot = list(trans.reverse(region.tbxyz()))
+        g4.PhysicalVolume(rot,
                           list(region.centre()),
                           region_lv,
                           "{}_pv".format(name),
