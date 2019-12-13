@@ -275,7 +275,7 @@ class Region(object):
                 continue
 
             # Finally: we must do the intersection op.
-            logger.debug("Intersecting zone %d with %d", i, j)
+            logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
             if _get_zone_overlap(zones[i], zones[j]) is not None:
                 graph.add_edge(i, j)
         return graph
