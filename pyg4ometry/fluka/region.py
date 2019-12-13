@@ -253,9 +253,8 @@ class Region(object):
         graph.add_nodes_from(range(n_zones))
         if n_zones == 1: # return here if there's only one zone.
             return nx.connected_components(graph)
-        # Build up a cache of booleans and extents for each zone.
-        # format: {zone_index: (boolean, extent)}
 
+        # Get extent for each zone
         zone_extents = self._get_zone_extents()
 
         # Loop over all combinations of zone numbers within this region
@@ -292,15 +291,15 @@ class Region(object):
 
             zone_solid = zone.geant4_solid(reg=greg)
             lv = g4.LogicalVolume(zone_solid,
-                                   material,
-                                   _random_name(),
-                                   greg)
+                                  material,
+                                  _random_name(),
+                                  greg)
 
             pv = g4.PhysicalVolume(list(zone.tbxyz()),
-                                    list(zone.centre()),
-                                    lv,
-                                    _random_name(),
-                                    wlv, greg)
+                                   list(zone.centre()),
+                                   lv,
+                                   _random_name(),
+                                   wlv, greg)
 
             extents.append(wlv.extent())
         return extents
