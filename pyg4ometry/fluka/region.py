@@ -243,7 +243,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def get_connected_zones(self):
+    def zone_graph(self):
         zones = self.zones
         n_zones = len(zones)
 
@@ -278,7 +278,10 @@ class Region(object):
             logger.debug("Intersecting zone %d with %d", i, j)
             if _get_zone_overlap(zones[i], zones[j]) is not None:
                 graph.add_edge(i, j)
-        return list(nx.connected_components(graph))
+        return graph
+
+    def get_connected_zones(self):
+        return list(nx.connected_components(self.zone_graph()))
 
     def _get_zone_extents(self):
         material = g4.MaterialPredefined("G4_Galactic")
