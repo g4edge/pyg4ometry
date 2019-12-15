@@ -7,7 +7,7 @@ import networkx as nx
 
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
-from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix
+from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import Body
 from .vector import Three
 
@@ -294,8 +294,8 @@ class Region(object):
                                   material,
                                   _random_name(),
                                   greg)
-
-            pv = g4.PhysicalVolume(list(zone.tbxyz()),
+            rot = list(reverse(list(zone.tbxyz())))
+            pv = g4.PhysicalVolume(rot,
                                    list(zone.centre()),
                                    lv,
                                    _random_name(),
