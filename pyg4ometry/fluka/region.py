@@ -300,8 +300,8 @@ class Region(object):
                                    lv,
                                    _random_name(),
                                    wlv, greg)
-
-            extents.append(wlv.extent())
+            lower, upper = wlv.extent()
+            extents.append(Extent(lower, upper))
         return extents
 
 
@@ -346,18 +346,14 @@ def _make_wlv(reg):
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def are_extents_overlapping(extent1, extent2):
-    lower1 = Three(extent1[0])
-    upper1 = Three(extent1[1])
-    lower2 = Three(extent2[0])
-    upper2 = Three(extent2[1])
-
-    return not any([upper1.x < lower2.x,
-                    lower1.x > upper2.x,
-                    upper1.y < lower2.y,
-                    lower1.y > upper2.y,
-                    upper1.z < lower2.z,
-                    lower1.z > upper2.z])
+def are_extents_overlapping(first, second):
+    """Check if two Extent instances are overlapping."""
+    return not (first.upper.x < second.lower.x
+                or first.lower.x > second.upper.x
+                or first.upper.y < second.lower.y
+                or first.lower.y > second.upper.y
+                or first.upper.z < second.lower.z
+                or first.lower.z > second.upper.z)
 
 def _get_zone_overlap(zone1, zone2):
     greg = g4.Registry()
@@ -378,3 +374,23 @@ def _get_zone_overlap(zone1, zone2):
     except NullMeshError:
         return None
     return mesh
+
+
+class Extent(object):
+    def __init__(self, lower, upper):
+        self.lower = Three(lower)
+        self.upper = Three(upper)
+        self.size = self.upper - self.lower
+        self.centre = self.upper - 0.5 * self.size
+
+        for i, j in zip(lower, upper):
+            if i >= j:
+                raise ValueError("Lower extent must be less than upper.")
+
+    def __repr__(self):
+        return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
+                " Upper({upper.x}, {upper.y}, {upper.z})>".format(
+                    upper=self.upper, lower=self.lower))
+
+    def __eq__(self, other):
+        return self.lower == other.lower and self.upper == other.upper
