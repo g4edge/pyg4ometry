@@ -69,5 +69,8 @@ class PhysicalVolume(object):
         vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)).flatten()
         vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)).flatten()
 
-        return [vMinPrime, vMaxPrime]
-        
+        vmin = [min(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
+        vmax = [max(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
+
+
+        return [vmin, vmax]
