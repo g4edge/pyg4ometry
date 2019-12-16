@@ -553,9 +553,11 @@ class ELL(Body):
         # location, whereas centre takes into account geometry directives.
         return (self.focus1 - self.focus2).length() * 0.5
 
+    def _semiminor(self):
+        return np.sqrt((0.5*self.length)**2 - self._linear_eccentricity()**2)
+
     def geant4_solid(self, greg):
-        semiminor = np.sqrt((0.5*self.length)**2
-                            - self._linear_eccentricity()**2)
+        semiminor = self._semiminor()
         return g4.solid.Ellipsoid(self.name,
                                   semiminor,
                                   semiminor,
@@ -567,6 +569,22 @@ class ELL(Body):
     def __repr__(self):
         return "<ELL: {}, f1={}, f2={}, length={}>".format(
             self.name, list(self.focus1), list(self.focus2), self.length)
+
+    def _with_lengthsafety(self, safety, reg):
+        centre = (self.focus1 + self.focus2) * 0.5
+
+        # XXX: Dial up the safety so that the semiminor axes are
+        # reduced sufficiently as well.  Maybe not ideal.
+        ls_length = self.length + 10*safety
+
+        return ELL(self.name,
+                   self.focus1,
+                   self.focus2,
+                   ls_length,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
 
 
 class _WED_RAW(Body):
