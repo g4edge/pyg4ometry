@@ -44,12 +44,20 @@ class VtkViewer:
         self.actorsOverlap = [] 
         self.physicalActorMapOverlap = {}
 
+        # axes
+        self.axes = []
+
     def addAxes(self, length = 20.0, origin = (0,0,0)):
-        self.axes = _vtk.vtkAxesActor()
-        # axes.SetTotalLength([self.xrange,self.yrange,self.xrange]);
-        self.axes.SetTotalLength(length,length,length)
-        self.axes.SetOrigin(origin[0], origin[1], origin[2])
-        self.ren.AddActor(self.axes)
+        axes = _vtk.vtkAxesActor()
+
+        # transform to move axes
+        tran = _vtk.vtkTransform()
+        tran.Translate(origin[0],origin[1], origin[2])
+        axes.SetUserTransform(tran)
+
+        self.axes.append(axes)
+        axes.SetTotalLength(length,length,length)
+        self.ren.AddActor(axes)
 
     def setOpacity(self, v, iActor = -1):
         for a, i in zip(self.actors,range(0,len(self.actors))):
