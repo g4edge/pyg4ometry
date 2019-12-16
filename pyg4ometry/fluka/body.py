@@ -38,7 +38,7 @@ class Body(object):
 
     def _set_translation(self, translation):
         if translation is not None:
-            return translation
+            return Three(translation)
         return Three([0, 0, 0])
 
 
