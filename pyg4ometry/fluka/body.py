@@ -532,8 +532,8 @@ class ELL(Body):
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
-        if (0.5*self.length <= (self.focus1 - self.centre()).length()
-                or 0.5*self.length <= (self.focus2 - self.centre()).length()):
+        semimajor = 0.5*self.length
+        if (semimajor <= self._linear_eccentricity()):
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
@@ -543,26 +543,23 @@ class ELL(Body):
         return self.translation + 0.5 * (self.focus1 + self.focus2)
 
     def rotation(self):
-        # TODO: ELL is underconstrained, there is some convention
-        # baked into FLUKA that I must recreate here to get the
-        # correct rotation around the semi-major axis.
-        initial = [1, 0, 0]  # foci start pointing along x (we choose)
-        # initial2 = [0, 1, 0]  # semiminor starts pointing along y.
+        initial = [0, 0, 1]  # major axis pointing along z
         final = self.focus1 - self.focus2
-        # final2 =
-        # return _two_fold_orientation(initial1, final1, initial2, final2)
         return trans.matrix_from(initial, final)
 
+    def _linear_eccentricity(self):
+        # Distance from centre to one of the foci.  This doesn't use
+        # the .centre method as this ought to be independent of
+        # location, whereas centre takes into account geometry directives.
+        return (self.focus1 - self.focus2).length() * 0.5
+
     def geant4_solid(self, greg):
-        centre = self.centre()
-        linear_eccentricity = (self.focus1 - self.centre()).length()
-        semiminor = np.sqrt((0.5*self.length)**2 - linear_eccentricity**2)
-        # We choose the x-z plane as the plane of the ellipse that
-        # gives the ellipsoid of rotation.  So the semi-minor is in y.
+        semiminor = np.sqrt((0.5*self.length)**2
+                            - self._linear_eccentricity()**2)
         return g4.solid.Ellipsoid(self.name,
-                                  0.5 * self.length,
                                   semiminor,
-                                  0.5 * self.length,
+                                  semiminor,
+                                  0.5 * self.length, # choose z to be the major.
                                   -self.length, # cuts, we don't cut.
                                   self.length,
                                   greg)
