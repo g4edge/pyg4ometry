@@ -73,7 +73,7 @@ class _InfiniteCylinder(Body):
 
     def _inf_cylinder_freestring_helper(self, coord1, coord2):
         typename = type(self).__name__
-        return "{} {} {} {}".format(typename, self.name, coord1 coord2)
+        return "{} {} {} {}".format(typename, self.name, coord1, coord2)
 
 
 class RPP(Body):
@@ -294,13 +294,15 @@ class SPH(Body):
 
 
 class RCC(Body):
-    """Right Circular Cylinder
+    """
+
+    Right Circular Cylinder
 
     :param name: of body
     :type name: str
     :param vertex: position [x, y, z] of one of the faces of the cylinder.
     :type vertex: list
-    :param edge1: vector [x, y, z] denoting the direction along the
+    :param edge1: vector [x, y, z] denoting the direction along the \
     length of the cylinder.
     :type edge1: list
     :param edge2: radius of the cylinder face.
@@ -370,16 +372,18 @@ class RCC(Body):
 
 
 class REC(Body):
-    """Right Elliptical Cylinder
+    """
+
+    Right Elliptical Cylinder
 
     :param name: of body
     :type name: str
     :param vertex: position [x, y, z] of one of the faces of the cylinder.
     :type vertex: list
-    :param semiminor: vector [x, y, z] denoting the direction along the
+    :param semiminor: vector [x, y, z] denoting the direction along the \
     semiminor axis of the ellipse.
     :type semiminor: list
-    :param semimajor: vector [x, y, z] denoting the direction along the
+    :param semimajor: vector [x, y, z] denoting the direction along the \
     semimajor axis of the ellipse.
     :type semimajor: list
 
@@ -461,14 +465,16 @@ class REC(Body):
 
 
 class TRC(Body):
-    """Truncated Right-angled Cone
+    """
+
+    Truncated Right-angled Cone
 
     :param name: of body
     :type name: str
-    :param major_centre: vector [x, y, z] position of the centre of the
+    :param major_centre: vector [x, y, z] position of the centre of the \
     larger face.
     :type major_centre: list
-    :param direction: vector [x, y, z] pointing from the larger face
+    :param direction: vector [x, y, z] pointing from the larger face \
     to the smaller face.
     :type direction: list
     :param major_radius: radius of the larger face.
@@ -744,23 +750,24 @@ class RAW(_WED_RAW):
 
 
 class ARB(Body):
-    """Arbitrary Convex Polyhedron
+    """
+    Arbitrary Convex Polyhedron
 
     :param name: of body
     :type name: str
-    :param vertices: Eight vertices which make up the polyhedron as
-    [[x1, y1, z1], [x2, y2, z2], ...].  There must be eight even if
+    :param vertices: Eight vertices which make up the polyhedron as \
+    [[x1, y1, z1], [x2, y2, z2], ...].  There must be eight even if \
     only six or seven vertices are needed to make up the polydedron.
     :type vertices: list
-    :param facenumbers: The faces of the polyhedron expressed as
-    floats where each digit of the float refers to one of the vertices
-    which makes up that face. Six must always be provided as [1234,
-    8765, ...], even if only four or five faces are needed.  Any
-    unneeded faces must be set to 0 (no less than 4 sides).  Note that
-    the references to the vertices are not zero-counting.  The order
-    of the vertices denoted in the facenumbers must be either all
-    clockwise or anticlockwise, which if not obeyed will result in
-    erroneous output without warning.
+    :param facenumbers: The faces of the polyhedron expressed as floats \
+    where each digit of the float refers to one of the vertices which makes \
+    up that face. Six must always be provided as [1234,8765, ...], even if \
+    only four or five faces are needed.  Any unneeded faces must be set to 0 \
+    (no less than 4 sides).  Note that the references to the vertices are not \
+    zero-counting.  The order of the vertices denoted in the facenumbers must \
+    be either all clockwise or anticlockwise, which if not obeyed will result \
+    in erroneous output without warning.
+    :type facenumbers: float
     """
     def __init__(self, name, vertices, facenumbers,
                  expansion=1.0,
@@ -886,12 +893,13 @@ class ARB(Body):
 
 
 class XYP(_HalfSpace):
-    """Infinite half-space delimited by the x-y plane (pependicular to
-    the z-axis)
+    """
+
+    Infinite half-space delimited by the x-y plane (pependicular to the z-axis)
 
     :param name: of body
     :type name: str
-    :param z: position of the x-y plane on the z-axis.  All points
+    :param z: position of the x-y plane on the z-axis.  All points\
     less than z are considered to be part of this body.
     :type z: float
 
@@ -930,14 +938,17 @@ class XYP(_HalfSpace):
 
 
 class XZP(_HalfSpace):
-    """Infinite half-space delimited by the x-y plane (pependicular to
-    the y-axis)
+    """
+
+    Infinite half-space delimited by the x-y plane (pependicular
+    to the y-axis)
 
     :param name: of body
     :type name: str
-    :param y: position of the x-y plane on the y-axis.  All points
+    :param y: position of the x-y plane on the y-axis.  All points \
     less than y are considered to be part of this body.
     :type y: float
+
     """
     def __init__(self, name, y,
                  expansion=1.0,
@@ -973,12 +984,14 @@ class XZP(_HalfSpace):
 
 
 class YZP(_HalfSpace):
-    """Infinite half-space delimited by the x-y plane (pependicular to
+    """
+
+    Infinite half-space delimited by the x-y plane (pependicular to \
     the x-axis)
 
     :param name: of body
     :type name: str
-    :param x: position of the x-y plane on the x-axis.  All points
+    :param x: position of the x-y plane on the x-axis.  All points \
     less than x are considered to be part of this body.
     :type x: float
 
@@ -1029,8 +1042,9 @@ class PLA(Body):
     :param normal: position of a point on the plane
     :type point: list
     :param normal: vector perpendicular to the face of the plane,
-    pointing away from the contents of the half space.
+pointing away from the contents of the half space.
     :type normal: list
+
     """
     def __init__(self, name, normal, point,
                  expansion=1.0,
