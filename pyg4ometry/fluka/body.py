@@ -112,13 +112,15 @@ class RPP(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + 0.5 * (self.lower + self.upper)
+        return (self.translation
+                + self.expansion
+                * 0.5 * (self.lower + self.upper))
 
     def rotation(self):
         return np.identity(3)
 
     def geant4_solid(self, reg):
-        v = self.upper - self.lower
+        v = self.expansion * (self.upper - self.lower)
         return g4.solid.Box(self.name,
                             v.x, v.y, v.z,
                             reg,
