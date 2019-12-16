@@ -839,8 +839,7 @@ class XYP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = Three(0, 0, 0)
-        centre = transverseOffset + Three(0, 0, self.z - (INFINITY * 0.5))
+        centre = Three(0, 0, self.z - (INFINITY * 0.5))
         return self.translation + centre
 
     def __repr__(self):
@@ -880,8 +879,7 @@ class XZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = Three(0, 0, 0)
-        centre = transverseOffset + Three(0, self.y - (INFINITY * 0.5), 0)
+        centre = Three(0, self.y - (INFINITY * 0.5), 0)
         return self.translation + centre
 
     def __repr__(self):
@@ -922,8 +920,7 @@ class YZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        transverseOffset = Three(0, 0, 0)
-        centre = transverseOffset + Three(self.x - (INFINITY * 0.5), 0, 0)
+        centre = Three(self.x - (INFINITY * 0.5), 0, 0)
         return self.translation + centre
 
     def __repr__(self):
