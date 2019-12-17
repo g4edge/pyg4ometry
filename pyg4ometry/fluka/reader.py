@@ -34,8 +34,8 @@ class Reader(object):
         self.flukaregistry = FlukaRegistry()
         self.load()
 
-    def load(self) :
 
+    def load(self):
         # read file
         flukaFile = open(self.fileName)
         self.fileLines = flukaFile.readlines()
@@ -63,17 +63,20 @@ class Reader(object):
         self.parseLattice()
         self.parseCards()
 
+
     def findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
         firstEND = True
         for i, line in enumerate(self.fileLines) :
             if "GEOBEGIN" in line:
                 self.geobegin = i
+                self.bodiesbegin = i + 2
             elif "GEOEND" in line:
                 self.geoend = i
             elif "END" in line:
                 if firstEND:
                     self.bodiesend = i
+                    self.regionsbegin = i + 1
                     firstEND = False
                 else:
                     self.regionsend = i
@@ -89,7 +92,7 @@ class Reader(object):
         return trans
 
     def parseBodies(self) :
-        bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
+        bodies_block = self.fileLines[self.bodiesbegin:self.bodiesend+1]
 
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
@@ -134,7 +137,7 @@ class Reader(object):
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
     def parseRegions(self) :
-        regions_block = self.fileLines[self.bodiesend+1:self.regionsend]
+        regions_block = self.fileLines[self.regionsbegin:self.regionsend+1]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
