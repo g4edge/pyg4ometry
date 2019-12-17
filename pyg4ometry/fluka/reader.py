@@ -1,5 +1,4 @@
 import sys
-import re as _re
 from . import body
 from .region import Zone, Region
 from .fluka_registry import FlukaRegistry
@@ -8,7 +7,7 @@ from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from .card import freeFormatStringSplit
+from .card import freeFormatStringSplit, Card
 
 import antlr4
 
@@ -30,44 +29,44 @@ _BODY_NAMES = {"RPP",
 
 class Reader(object):
     def __init__(self, filename):
-        self.fileName = filename
+        self.filename = filename
         self.flukaregistry = FlukaRegistry()
+        self.cards = []
+
         self.load()
 
 
     def load(self):
         # read file
-        flukaFile = open(self.fileName)
-        self.fileLines = flukaFile.readlines()
+        flukaFile = open(self.filename)
+        self._lines = flukaFile.readlines()
         flukaFile.close()
 
         # strip comments
-        fileLinesStripped = []
-        for l in self.fileLines :
-            fileLineStripped = l.lstrip()
+        strippedLines = []
+        for l in self._lines :
+            strippedLine = l.lstrip()
 
             # if there is nothing on  the line
-            if len(fileLineStripped) == 0 :
+            if len(strippedLine) == 0 :
                 continue
             # skip comment
-            if fileLineStripped[0] != '*' :
-                fileLinesStripped.append(l.rstrip())
-        self.fileLines = fileLinesStripped
+            if strippedLine[0] != '*':
+                strippedLines.append(l.rstrip())
+
+        self._lines = strippedLines
 
         # parse file
         self.findLines()
         self.parseBodies()
         self.parseRegions()
-        self.parseMaterials()
-        self.parseMaterialAssignment()
-        self.parseLattice()
-        self.parseCards()
+        self.cards = self._parseCards()
 
 
     def findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
         firstEND = True
-        for i, line in enumerate(self.fileLines) :
+        for i, line in enumerate(self._lines) :
             if "GEOBEGIN" in line:
                 self.geobegin = i
                 self.bodiesbegin = i + 2
@@ -92,7 +91,7 @@ class Reader(object):
         return trans
 
     def parseBodies(self) :
-        bodies_block = self.fileLines[self.bodiesbegin:self.bodiesend+1]
+        bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
 
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
@@ -137,7 +136,7 @@ class Reader(object):
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
     def parseRegions(self) :
-        regions_block = self.fileLines[self.regionsbegin:self.regionsend+1]
+        regions_block = self._lines[self.regionsbegin:self.regionsend+1]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
@@ -158,17 +157,25 @@ class Reader(object):
         visitor = RegionVisitor(self.flukaregistry)
         visitor.visit(tree)  # walk the tree, populating flukaregistry
 
-    def parseMaterials(self) :
-        pass
+    def _parseCards(self):
+        fixed = True # start off parsing as fixed, i.e. not free format.
+        cards = []
+        for line in self._lines[:self.geobegin] + self._lines[self.geoend:]:
+            if fixed:
+                cards.append(Card.fromFixed(line))
+                kw = cards[-1].keyword
+            else: # must be free format
+                cards.append(Card.fromFree(line))
+                kw = cards[-1].keyword
 
-    def parseMaterialAssignment(self) :
-        pass
+            if kw != "FREE" and kw != "FIXED":
+                continue
+            elif kw == "FREE":
+                fixed = False
+            else:
+                fixed = True
+        return cards
 
-    def parseCards(self) :
-        pass
-
-    def parseLattice(self) :
-        pass
 
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()

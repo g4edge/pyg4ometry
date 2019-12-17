@@ -1,4 +1,5 @@
 import sys
+import re
 
 
 FIXED = "ROT-DEFI                   45.       45.       50.       50.       50.bb1rotdefi"
@@ -12,13 +13,13 @@ class Card(object):
     """
     def __init__(self, keyword, what1, what2, what3, what4, what5, what6, sdum):
         self.keyword = keyword
-        self.what1 = what1
-        self.what2 = what2
-        self.what3 = what3
-        self.what4 = what4
-        self.what5 = what5
-        self.what6 = what6
-        self.sdum = sdum
+        self.what1 = _attempt_float_coercion(what1)
+        self.what2 = _attempt_float_coercion(what2)
+        self.what3 = _attempt_float_coercion(what3)
+        self.what4 = _attempt_float_coercion(what4)
+        self.what5 = _attempt_float_coercion(what5)
+        self.what6 = _attempt_float_coercion(what6)
+        self.sdum = _attempt_float_coercion(sdum)
 
     def __repr__(self):
         return self.to_free_string()
@@ -27,14 +28,17 @@ class Card(object):
         return [self.keyword, self.what1, self.what2, self.what3,
                 self.what4, self.what5, self.what6, self.sdum]
 
-    def to_free_string(self, delim=","):
+    def to_free_string(self, delim=", "):
         # Coerce to strings, replace None with empty string.
         entries = ["" if s is None else str(s) for s in self.asList()]
         return delim.join(entries)
 
     @classmethod
     def fromFree(cls, line):
-        return cls(*freeFormatStringSplit(line))
+        card_bits = freeFormatStringSplit(line)
+        while len(card_bits) != 8:
+            card_bits.append(None)
+        return cls(*card_bits)
 
     @classmethod
     def fromFixed(cls, line):
