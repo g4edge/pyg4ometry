@@ -6,7 +6,7 @@ FREE = "ROT-DEFI  , 927002., 0.0, 0.0, 0.0, 0.0, 0., XXTb413"
 
 class Card(object):
     """Card class for representing a FLUKA input card. To construct
-    instances from a of FLUKA input, use the from_free or from_fixed
+    instances from a of FLUKA input, use the fromFree or fromFixed
     class method for FREE and FIXED format, respectively.
 
     """
@@ -23,21 +23,21 @@ class Card(object):
     def __repr__(self):
         return self.to_free_string()
 
-    def as_list(self):
+    def asList(self):
         return [self.keyword, self.what1, self.what2, self.what3,
                 self.what4, self.what5, self.what6, self.sdum]
 
     def to_free_string(self, delim=","):
         # Coerce to strings, replace None with empty string.
-        entries = ["" if s is None else str(s) for s in self.as_list()]
+        entries = ["" if s is None else str(s) for s in self.asList()]
         return delim.join(entries)
 
     @classmethod
-    def from_free(cls, line):
-        return cls(*free_format_string_split(line))
+    def fromFree(cls, line):
+        return cls(*freeFormatStringSplit(line))
 
     @classmethod
-    def from_fixed(cls, line):
+    def fromFixed(cls, line):
         if len(line) > 80:
             raise TypeError("Line too long.  Maximum line length is 80.")
         line = line.rstrip('\n')
@@ -62,16 +62,13 @@ def _attempt_float_coercion(string):
     except (ValueError, TypeError):
         return string
 
-def rotdefini_to_matrix(card):
+def rotdefiniToMatrix(card):
     if keyword != "ROT-DEFI":
         raise ValueError("Not a ROT-DEFI card.")
 
-    if card.what1 is not None:
-        raise ValueError("non-default value for WHAT(1) is not supported.")
-
     from IPython import embed; embed()
 
-def free_format_string_split(string):
+def freeFormatStringSplit(string):
     """Method to split a string in FLUKA FREE format into its components."""
     # Split the string along non-black separators [,;:/\]
     partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))

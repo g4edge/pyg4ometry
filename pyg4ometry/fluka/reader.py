@@ -8,7 +8,7 @@ from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from .card import free_format_string_split
+from .card import freeFormatStringSplit
 
 import antlr4
 
@@ -79,7 +79,7 @@ class Reader(object):
                     self.regionsend = i
 
     def parseBodyTransform(self, line):
-        sline = free_format_string_split(line)
+        sline = freeFormatStringSplit(line)
         trans_type = sline[0].split("_")[1]
         transcount = len(self.flukaregistry.bodyTransformDict)
         name = "bodytransform_{}".format(transcount+1)
@@ -104,7 +104,7 @@ class Reader(object):
         in_body = False # flag to tell us if we are currently in a body defn
         for line in bodies_block:
             # split the line into chunks according to the FLUKA delimiter rules.
-            line_parts = free_format_string_split(line)
+            line_parts = freeFormatStringSplit(line)
             # Get the first bit of the line, which determines what we do next.
             first_bit = line_parts[0]
             if first_bit in _BODY_NAMES: # start of body definition
