@@ -881,6 +881,11 @@ class ARB(Body):
                                                      vertices_and_polygons,
                                                      greg,
                                                      addRegistry=False)
+        # XXX: This is my dirty way of deciding whether the
+        # facenumbers are clockwise or anticlockwise, and matching
+        # with TesselatedSolid ctor which requires clockwise.  Perhaps
+        # this can be done better, but this does work.
+
         # make massive box with totally envelops the tesselated solid
         big_box = g4.solid.Box("test_box",
                                10*(xmax - xmin),
