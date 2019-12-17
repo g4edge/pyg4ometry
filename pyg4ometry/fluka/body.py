@@ -582,7 +582,7 @@ class ELL(Body):
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
-        semimajor = 0.5*self.length
+        semimajor = 0.5 * self.expansion * self.length
         if (semimajor <= self._linear_eccentricity()):
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
@@ -590,7 +590,8 @@ class ELL(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + 0.5 * (self.focus1 + self.focus2)
+        return (self.translation
+                + 0.5 * self.expansion * (self.focus1 + self.focus2))
 
     def rotation(self):
         initial = [0, 0, 1]  # major axis pointing along z
@@ -601,19 +602,23 @@ class ELL(Body):
         # Distance from centre to one of the foci.  This doesn't use
         # the .centre method as this ought to be independent of
         # location, whereas centre takes into account geometry directives.
-        return (self.focus1 - self.focus2).length() * 0.5
+        return 0.5 * self.expansion * (self.focus1 - self.focus2).length()
 
     def _semiminor(self):
-        return np.sqrt((0.5*self.length)**2 - self._linear_eccentricity()**2)
+        return np.sqrt((0.5 * self.expansion * self.length)**2 -
+                       self._linear_eccentricity()**2)
 
     def geant4_solid(self, greg):
         semiminor = self._semiminor()
+        expansion = self.expansion
         return g4.solid.Ellipsoid(self.name,
                                   semiminor,
                                   semiminor,
-                                  0.5 * self.length, # choose z to be the major.
-                                  -self.length, # cuts, we don't cut.
-                                  self.length,
+                                   # choose z to be the major.
+                                  0.5 * expansion * self.length,
+                                   # cuts, we don't cut:
+                                  -self.length * expansion,
+                                  self.length * expansion,
                                   greg)
 
     def __repr__(self):
