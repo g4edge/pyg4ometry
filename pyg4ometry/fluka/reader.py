@@ -107,7 +107,7 @@ class Reader(object):
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
         # order of application so no need for a stack.
-        expansion = None
+        expansion = 1.0
         translation = None
         transform = None
 
@@ -191,7 +191,7 @@ def _parseGeometryDirective(line_parts, expansion, translation, transform):
     elif directive == "$end_translat":
         translation = None
     elif directive == "$end_expansion":
-        expansion = None
+        expansion = 1.0
     elif directive == "$end_transform":
         expansion = None
     else:
