@@ -27,17 +27,17 @@ class Body(object):
     def tbxyz(self):
         return trans.matrix2tbxyz(self.rotation())
 
-    # in the per body _with_lengthsafety methods below, factor =
+    # in the per body _withLengthSafety methods below, factor =
     # -1*LENGTH_SAFETY should make the body small in
-    # _with_lengthsafety, and +LENGTH_SAFETY must make the body
+    # _withLengthSafety, and +LENGTH_SAFETY must make the body
     # bigger.
-    def safety_expanded(self, reg=None):
-        return self._with_lengthsafety(LENGTH_SAFETY, reg)
+    def safetyExpanded(self, reg=None):
+        return self._withLengthSafety(LENGTH_SAFETY, reg)
 
-    def safety_shrunk(self, reg=None):
-        return self._with_lengthsafety(-LENGTH_SAFETY, reg)
+    def safetyShrunk(self, reg=None):
+        return self._withLengthSafety(-LENGTH_SAFETY, reg)
 
-    def _set_translation(self, translation):
+    def _set_translation_setTranslation(self, translation):
         if translation is not None:
             return Three(translation)
         return Three([0, 0, 0])
@@ -48,7 +48,7 @@ class _HalfSpace(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4_solid(self, registry):
+    def geant4Solid(self, registry):
         exp = self.expansion
         return g4.solid.Box(self.name,
                             exp * INFINITY,
@@ -56,14 +56,14 @@ class _HalfSpace(Body):
                             exp * INFINITY,
                             registry)
 
-    def _halfspace_free_string_helper(self, coordinate):
+    def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
         return "{} {} {}".format(typename, self.name, coordinate)
 
 
 class _InfiniteCylinder(Body):
     # Base class for XCC, YCC, ZCC.
-    def geant4_solid(self, registry):
+    def geant4Solid(self, registry):
         exp = self.expansion
         return g4.solid.Tubs(self.name,
                              0.0,
@@ -73,7 +73,7 @@ class _InfiniteCylinder(Body):
                              registry,
                              lunit="mm")
 
-    def _inf_cylinder_freestring_helper(self, coord1, coord2):
+    def _infCylinderFreestringHelper(self, coord1, coord2):
         typename = type(self).__name__
         return "{} {} {} {}".format(typename, self.name, coord1, coord2)
 
@@ -110,7 +110,7 @@ class RPP(Body):
         self.upper = Three([xmax, ymax, zmax])
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
@@ -129,7 +129,7 @@ class RPP(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         v = self.expansion * (self.upper - self.lower)
         return g4.solid.Box(self.name,
                             v.x, v.y, v.z,
@@ -144,7 +144,7 @@ class RPP(Body):
                 " y0={l.y}, y1={u.y},"
                 " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         lower = self.lower - [safety, safety, safety]
         upper = self.upper + [safety, safety, safety]
         return RPP(self.name,
@@ -185,10 +185,10 @@ class BOX(Body):
         self.edge3 = Three(edge3)
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
-        _raise_if_not_all_mutually_perpendicular(
+        _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
             "Edges are not all mutally orthogonal.")
 
@@ -202,7 +202,7 @@ class BOX(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4_solid(self, greg):
+    def geant4Solid(self, greg):
         exp = self.expansion
         return g4.solid.Box(self.name,
                             exp * self.edge1.length(),
@@ -217,7 +217,7 @@ class BOX(Body):
             list(self.vertex),
             list(self.edge1), list(self.edge2), list(self.edge3))
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         u1 = self.edge1.unit()
         u2 = self.edge2.unit()
         u3 = self.edge3.unit()
@@ -232,8 +232,8 @@ class BOX(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        param_string = _iterables_to_free_string(self.vertex,
+    def flukaFreeString(self):
+        param_string = _iterablesToFreeString(self.vertex,
                                                  self.edge1,
                                                  self.edge2,
                                                  self.edge3)
@@ -261,7 +261,7 @@ class SPH(Body):
         self.radius = radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -272,7 +272,7 @@ class SPH(Body):
     def centre(self):
         return self.translation + self.expansion * self.point
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         return g4.solid.Orb(self.name,
                             self.expansion * self.radius,
                             reg,
@@ -283,16 +283,16 @@ class SPH(Body):
                                                     list(self.centre()),
                                                     self.radius)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         return SPH(self.name, self.point, self.radius + safety,
                    expansion=self.expansion,
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "SPH {} {} {}".format(self.name,
-                                     _iterables_to_free_string(self.point),
+                                     _iterablesToFreeString(self.point),
                                      self.radius)
 
 
@@ -323,7 +323,7 @@ class RCC(Body):
         self.radius = radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -339,7 +339,7 @@ class RCC(Body):
         rotation = trans.matrix_from(initial, final)
         return rotation
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.Tubs(self.name,
                              0.0,
@@ -354,7 +354,7 @@ class RCC(Body):
         return ("<RCC: {}, face={}, dir={}, r={}>").format(
             self.name, list(self.face), list(self.direction), self.radius)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
         face = self.face - safety * unit
         # Apply double safety to the direction to account for the fact
@@ -369,9 +369,9 @@ class RCC(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "RCC {} {} {}".format(self.name,
-                                     _iterables_to_free_string(self.face,
+                                     _iterablesToFreeString(self.face,
                                                                self.direction),
                                      self.radius)
 
@@ -405,10 +405,10 @@ class REC(Body):
         self.semimajor = Three(semimajor)
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
-        _raise_if_not_all_mutually_perpendicular(
+        _raiseIfNotAllMutuallyPerpendicular(
             self.direction, self.semiminor, semimajor,
             ("Direction, semiminor, and semimajor are"
              " not all mutually perpendicular."))
@@ -432,7 +432,7 @@ class REC(Body):
                                               final_semiminor)
         return rotation
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.EllipticalTube(self.name,
                                        2 * exp * self.semiminor.length(),
@@ -447,7 +447,7 @@ class REC(Body):
             list(self.face), list(self.direction),
             list(self.semiminor), list(self.semimajor))
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         direction_unit = self.direction.unit()
         face = self.face - safety * direction_unit
         # Apply double safety to the direction for the same reason as RCC.
@@ -464,9 +464,9 @@ class REC(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "REC {} {}".format(self.name,
-                                  _iterables_to_free_string(self.face,
+                                  _iterablesToFreeString(self.face,
                                                             self.direction,
                                                             self.semiminor,
                                                             self.semimajor))
@@ -504,7 +504,7 @@ class TRC(Body):
         self.minor_radius = minor_radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -521,7 +521,7 @@ class TRC(Body):
                 + self.expansion
                 * (self.major_centre + 0.5 * self.direction))
 
-    def geant4_solid(self, registry):
+    def geant4Solid(self, registry):
         # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         exp = self.expansion
@@ -541,7 +541,7 @@ class TRC(Body):
             self.major_radius,
             self.minor_radius)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
         major_centre = self.major_centre - safety * unit
         # Apply double safety for the same reason as we did with the RCC.
@@ -555,9 +555,9 @@ class TRC(Body):
                    translation=self.translation,
                    transform=self.transform)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "TRC {} {} {} {}".format(self.name,
-                                        _iterables_to_free_string(
+                                        _iterablesToFreeString(
                                             self.major_centre,
                                             self.direction),
                                         self.major_radius,
@@ -588,13 +588,13 @@ class ELL(Body):
         self.length = length # major axis length
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
         semimajor = 0.5 * self.expansion * self.length
-        if (semimajor <= self._linear_eccentricity()):
+        if (semimajor <= self._linearEccentricity()):
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
@@ -609,7 +609,7 @@ class ELL(Body):
         final = self.focus1 - self.focus2
         return trans.matrix_from(initial, final)
 
-    def _linear_eccentricity(self):
+    def _linearEccentricity(self):
         # Distance from centre to one of the foci.  This doesn't use
         # the .centre method as this ought to be independent of
         # location, whereas centre takes into account geometry directives.
@@ -617,9 +617,9 @@ class ELL(Body):
 
     def _semiminor(self):
         return np.sqrt((0.5 * self.expansion * self.length)**2 -
-                       self._linear_eccentricity()**2)
+                       self._linearEccentricity()**2)
 
-    def geant4_solid(self, greg):
+    def geant4Solid(self, greg):
         semiminor = self._semiminor()
         expansion = self.expansion
         return g4.solid.Ellipsoid(self.name,
@@ -636,7 +636,7 @@ class ELL(Body):
         return "<ELL: {}, f1={}, f2={}, length={}>".format(
             self.name, list(self.focus1), list(self.focus2), self.length)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         centre = (self.focus1 + self.focus2) * 0.5
 
         # XXX: Dial up the safety so that the semiminor axes are
@@ -652,9 +652,9 @@ class ELL(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "ELL {} {} {}".format(self.name,
-                                     _iterables_to_free_string(self.focus1,
+                                     _iterablesToFreeString(self.focus1,
                                                                self.focus2),
                                      self.length)
 
@@ -674,10 +674,10 @@ class _WED_RAW(Body):
         self.edge3 = Three(edge3)  # other direction of the triangular face.
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
-        _raise_if_not_all_mutually_perpendicular(
+        _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
             "Edges are not all mutually perpendicular.")
         self.addToRegistry(flukaregistry)
@@ -701,7 +701,7 @@ class _WED_RAW(Body):
         return trans.two_fold_orientation(initial1, self.edge1.unit(),
                                            initial3, self.edge3.unit())
 
-    def geant4_solid(self, greg):
+    def geant4Solid(self, greg):
         exp = self.expansion
         face = [[0, 0],
                 [exp * self.edge1.length(), 0],
@@ -722,7 +722,7 @@ class _WED_RAW(Body):
             list(self.edge2),
             list(self.edge3))
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         ctor = type(self) # return WED or RAW, not _WED_RAW.
         u1 = self.edge1.unit()
         u2 = self.edge2.unit()
@@ -738,10 +738,10 @@ class _WED_RAW(Body):
                     transform=self.transform,
                     flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         typename = type(self).__name__
         return "{} {} {}".format(typename, self.name,
-                                 _iterables_to_free_string(self.vertex,
+                                 _iterablesToFreeString(self.vertex,
                                                            self.edge1,
                                                            self.edge2,
                                                            self.edge3))
@@ -797,7 +797,7 @@ class ARB(Body):
         self.facenumbers = facenumbers
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         if len(self.vertices) != 8:
@@ -821,7 +821,7 @@ class ARB(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4_solid(self, greg):
+    def geant4Solid(self, greg):
         # pyg4ometry expects right handed corkscrew for the vertices
         # for TesselatedSolid (and in general).
         # Fluka however for ARB can take either all right or left
@@ -940,7 +940,7 @@ class XYP(_HalfSpace):
         self.z = z
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -952,7 +952,7 @@ class XYP(_HalfSpace):
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         return XYP(self.name,
                    self.z + safety,
                    expansion=self.expansion,
@@ -960,8 +960,8 @@ class XYP(_HalfSpace):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return _halfspace_free_string_helper(self.z)
+    def flukaFreeString(self):
+        return self._halfspaceFreeStringHelper(self.z)
 
 
 class XZP(_HalfSpace):
@@ -986,7 +986,7 @@ class XZP(_HalfSpace):
         self.y = y
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -998,7 +998,7 @@ class XZP(_HalfSpace):
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         return XZP(self.name,
                    self.y + safety,
                    expansion=self.expansion,
@@ -1006,8 +1006,8 @@ class XZP(_HalfSpace):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return _halfspace_free_string_helper(self.y)
+    def flukaFreeString(self):
+        return self._halfspaceFreeStringHelper(self.y)
 
 
 class YZP(_HalfSpace):
@@ -1032,7 +1032,7 @@ class YZP(_HalfSpace):
         self.x = x
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1045,7 +1045,7 @@ class YZP(_HalfSpace):
         return "<YZP: {}, x={}>".format(self.name, self.x)
 
 
-    def _with_lengthsafety(self, safety, reg):
+    def _withLengthSafety(self, safety, reg):
         return YZP(self.name,
                    self.x + safety,
                    expansion=self.expansion,
@@ -1053,11 +1053,8 @@ class YZP(_HalfSpace):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return "YZP {} {}".format(self.name, self.x)
-
-    def fluka_free_string(self):
-        return _halfspace_free_string_helper(self.x)
+    def flukaFreeString(self):
+        return self._halfspaceFreeStringHelper(self.x)
 
 
 class PLA(Body):
@@ -1087,7 +1084,7 @@ class PLA(Body):
         self.normal = self.normal / np.linalg.norm(self.normal)
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1102,7 +1099,7 @@ class PLA(Body):
         # z-axis to make the surface of the half space.
         return trans.matrix_from([0, 0, 1], self.normal)
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.Box(self.name,
                             exp * INFINITY,
@@ -1116,7 +1113,7 @@ class PLA(Body):
                                                        list(self.normal),
                                                        list(self.point))
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         norm = self.normal.unit()
         newpoint = self.point + norm * safety
         return PLA(self.name, norm, newpoint,
@@ -1125,9 +1122,9 @@ class PLA(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "PLA {} {}".format(self.name,
-                                  _iterables_to_free_string(self.normal,
+                                  _iterablesToFreeString(self.normal,
                                                             self.point))
 
 
@@ -1155,7 +1152,7 @@ class XCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1171,15 +1168,15 @@ class XCC(_InfiniteCylinder):
     def __repr__(self):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return XCC(self.name, self.y, self.z, self.radius + safety,
                    expansion=self.expansion,
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return self._inf_cylinder_freestring_helper(self.y, self.z)
+    def flukaFreeString(self):
+        return self._infCylinderFreestringHelper(self.y, self.z)
 
 
 class YCC(_InfiniteCylinder):
@@ -1206,7 +1203,7 @@ class YCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1222,15 +1219,15 @@ class YCC(_InfiniteCylinder):
     def __repr__(self):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return YCC(self.name, self.z, self.x, self.radius + safety,
                    expansion=self.expansion,
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return self._inf_cylinder_freestring_helper(self.z, self.x)
+    def flukaFreeString(self):
+        return self._infCylinderFreestringHelper(self.z, self.x)
 
 
 class ZCC(_InfiniteCylinder):
@@ -1257,7 +1254,7 @@ class ZCC(_InfiniteCylinder):
         self.radius = radius
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1271,15 +1268,15 @@ class ZCC(_InfiniteCylinder):
     def __repr__(self):
         return "<ZCC: {}, x={}, y={}>".format(self.name, self.x, self.y)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return ZCC(self.name, self.x, self.y, self.radius + safety,
                    expansion=self.expansion,
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
-        return self._inf_cylinder_freestring_helper(self.x, self.y)
+    def flukaFreeString(self):
+        return self._infCylinderFreestringHelper(self.x, self.y)
 
 
 class XEC(Body):
@@ -1309,7 +1306,7 @@ class XEC(Body):
         self.zsemi = zsemi
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1322,7 +1319,7 @@ class XEC(Body):
                          [0, 1, 0],
                          [1, 0, 0]])
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi:
@@ -1339,7 +1336,7 @@ class XEC(Body):
             self.y, self.z,
             self.ysemi, self.zsemi)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return XEC(self.name, self.y, self.z,
                    self.ysemi + safety,
                    self.zsemi + safety,
@@ -1348,7 +1345,7 @@ class XEC(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "XEC {} {} {} {} {}".format(self.name,
                                            self.y, self.z,
                                            self.ysemi, self.zsemi)
@@ -1381,7 +1378,7 @@ class YEC(Body):
         self.xsemi = xsemi
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1395,7 +1392,7 @@ class YEC(Body):
                          [0, 0, 1],
                          [0, -1, 0]])
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
@@ -1411,7 +1408,7 @@ class YEC(Body):
             self.z, self.x,
             self.zsemi, self.xsemi)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return YEC(self.name, self.z, self.x,
                    self.zsemi + safety,
                    self.xsemi + safety,
@@ -1420,7 +1417,7 @@ class YEC(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "YEC {} {} {} {} {}".format(self.name,
                                            self.z, self.x,
                                            self.ysemi, self.zsemi)
@@ -1453,7 +1450,7 @@ class ZEC(Body):
         self.ysemi = ysemi
 
         self.expansion = expansion
-        self.translation = self._set_translation(translation)
+        self.translation = self._set_translation_setTranslation(translation)
         self.transform = transform
 
         self.addToRegistry(flukaregistry)
@@ -1464,7 +1461,7 @@ class ZEC(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         exp = self.expansion
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
@@ -1480,7 +1477,7 @@ class ZEC(Body):
             self.x, self.y,
             self.xsemi, self.ysemi)
 
-    def _with_lengthsafety(self, safety, reg=None):
+    def _withLengthSafety(self, safety, reg=None):
         return ZEC(self.name, self.x, self.y,
                    self.xsemi + safety,
                    self.ysemi + safety,
@@ -1489,17 +1486,17 @@ class ZEC(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         return "ZEC {} {} {} {} {}".format(self.name,
                                            self.x, self.y,
                                            self.ysemi, self.zsemi)
 
 
-def _raise_if_not_all_mutually_perpendicular(first, second, third, message):
+def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0
             or first.dot(third) != 0
             or second.dot(third) != 0.0):
         raise ValueError(message)
 
-def _iterables_to_free_string(*iterables):
+def _iterablesToFreeString(*iterables):
     return " ".join([str(e) for e in chain(*iterables)])

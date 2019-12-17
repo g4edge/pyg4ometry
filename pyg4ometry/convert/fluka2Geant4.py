@@ -31,7 +31,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
 
 
     for name, region in flukareg.regionDict.iteritems():
-        region_solid = region.geant4_solid(greg)
+        region_solid = region.geant4Solid(greg)
         region_material = g4.MaterialPredefined("G4_Fe")
         region_lv = g4.LogicalVolume(region_solid,
                                      region_material,
@@ -69,7 +69,7 @@ def _make_length_safety_registry(flukareg):
     # return bigger, smaller
     fluka_reg_out = fluka.FlukaRegistry()
     for region in flukareg.regionDict.itervalues():
-        ls_region = region.with_length_safety(bigger, smaller)
+        ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
 
