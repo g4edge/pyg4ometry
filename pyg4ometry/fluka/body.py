@@ -1420,7 +1420,7 @@ class YEC(Body):
     def flukaFreeString(self):
         return "YEC {} {} {} {} {}".format(self.name,
                                            self.z, self.x,
-                                           self.ysemi, self.zsemi)
+                                           self.zsemi, self.xsemi)
 
 
 class ZEC(Body):
@@ -1489,7 +1489,7 @@ class ZEC(Body):
     def flukaFreeString(self):
         return "ZEC {} {} {} {} {}".format(self.name,
                                            self.x, self.y,
-                                           self.ysemi, self.zsemi)
+                                           self.xsemi, self.ysemi)
 
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
