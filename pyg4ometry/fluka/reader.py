@@ -8,6 +8,8 @@ from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
+from .card import free_format_string_split
+
 import antlr4
 
 _BODY_NAMES = {"RPP",
@@ -25,24 +27,9 @@ _BODY_NAMES = {"RPP",
                "XEC", "YEC", "ZEC",
                "QUA"}
 
-def _freeform_split(string):
-    """Method to split a string in FLUKA FREE format into its components"""
-    # Split the string along non-black separators [,;:/\]
-    partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
-
-    # Populate zeros between consequtive non-blank separators as per the FLUKA manual
-    is_blank  = lambda s : not set(s) or set(s) == {" "}
-    noblanks_split = [chunk if not is_blank(chunk) else '0.0' for chunk in partial_split]
-
-    # Split along whitespaces now for complete result
-    components = []
-    for chunk in noblanks_split:
-        components += chunk.split()
-
-    return components
 
 class Reader(object):
-    def __init__(self, filename) :
+    def __init__(self, filename):
         self.fileName = filename
         self.flukaregistry = FlukaRegistry()
         self.load()
@@ -92,7 +79,7 @@ class Reader(object):
                     self.regionsend = i
 
     def parseBodyTransform(self, line):
-        sline = _freeform_split(line)
+        sline = free_format_string_split(line)
         trans_type = sline[0].split("_")[1]
         transcount = len(self.flukaregistry.bodyTransformDict)
         name = "bodytransform_{}".format(transcount+1)
@@ -117,7 +104,7 @@ class Reader(object):
         in_body = False # flag to tell us if we are currently in a body defn
         for line in bodies_block:
             # split the line into chunks according to the FLUKA delimiter rules.
-            line_parts = _freeform_split(line)
+            line_parts = free_format_string_split(line)
             # Get the first bit of the line, which determines what we do next.
             first_bit = line_parts[0]
             if first_bit in _BODY_NAMES: # start of body definition

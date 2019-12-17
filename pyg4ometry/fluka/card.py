@@ -4,7 +4,6 @@ import sys
 TEST_STRING = "ROT-DEFI                   45.       45.       50.       50.       50.bb1rotdefi"
 
 
-
 class Card(object):
     def __init__(self, line): # fixed format only.
         if len(line) > 80:
@@ -37,6 +36,10 @@ class Card(object):
         raise TypeError("keyword=None  for continuation cards only and"
                         " don't support that yet.")
 
+    @classmethod
+    def from_freeformat_string(cls, string):
+        pass
+
 
 def _attempt_float_coercion(string):
     try:
@@ -52,9 +55,25 @@ def rotdefini_to_matrix(card):
     if card.what1 is not None:
         raise ValueError("non-default value for WHAT(1) is not supported.")
 
-    
+    from IPython import embed; embed()
 
-    from IPython import embed; embed()    
+def free_format_string_split(string):
+    """Method to split a string in FLUKA FREE format into its components."""
+    # Split the string along non-black separators [,;:/\]
+    partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
+
+    # Populate zeros between consequtive non-blank separators as per
+    # the FLUKA manual.
+    is_blank  = lambda s : not set(s) or set(s) == {" "}
+    noblanks_split = [chunk if not is_blank(chunk) else '0.0'
+                      for chunk in partial_split]
+
+    # Split along whitespaces now for complete result.
+    components = []
+    for chunk in noblanks_split:
+        components += chunk.split()
+
+    return components
 
 
 def main(filein):
