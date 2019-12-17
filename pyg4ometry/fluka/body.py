@@ -8,6 +8,7 @@ from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
+import pyg4ometry.exceptions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
