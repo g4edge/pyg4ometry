@@ -1,8 +1,13 @@
 import sys
+from collections import OrderedDict
+
+import numpy as np
+
+
 from . import body
 from .region import Zone, Region
+from .vector import Three, RotoTranslation
 from .fluka_registry import FlukaRegistry
-from BodyTransform import BodyTransform
 from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
@@ -32,6 +37,7 @@ class Reader(object):
         self.filename = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
+        self.rotDefinis = OrderedDict()
 
         self.load()
 
@@ -58,9 +64,10 @@ class Reader(object):
 
         # parse file
         self.findLines()
+        self.cards = self._parseCards()
+        self.parseRotDefinis()
         self.parseBodies()
         self.parseRegions()
-        self.cards = self._parseCards()
 
 
     def findLines(self) :
@@ -79,16 +86,6 @@ class Reader(object):
                     firstEND = False
                 else:
                     self.regionsend = i
-
-    def parseBodyTransform(self, line):
-        sline = freeFormatStringSplit(line)
-        trans_type = sline[0].split("_")[1]
-        transcount = len(self.flukaregistry.bodyTransformDict)
-        name = "bodytransform_{}".format(transcount+1)
-        value = sline[1:]
-        trans = BodyTransform(name, trans_type, value, self.flukaregistry)
-
-        return trans
 
     def parseBodies(self) :
         bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
@@ -176,6 +173,17 @@ class Reader(object):
                 fixed = True
         return cards
 
+    def parseRotDefinis(self):
+        for card in self.cards:
+            if card.keyword != "ROT-DEFI":
+                continue
+            rototrans = _parseRotDefiniCard(card)
+
+            if rototrans.name in self.rotDefinis:
+                pass
+                # raise ValueError("can't handle recursive ones yet...")
+            else:
+                self.rotDefinis[rototrans.name] = rototrans
 
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()
@@ -381,7 +389,7 @@ class RegionVisitor(RegionParserVisitor):
             operator = '+'
         self.subzone_counter += 1
         solids = self.visit(ctx.expr())
-        z = Zone(name="{}_subzone{}".format(self.region_name, 
+        z = Zone(name="{}_subzone{}".format(self.region_name,
                                             self.subzone_counter))
         for op, body in solids:
             if op == "+":
@@ -389,6 +397,65 @@ class RegionVisitor(RegionParserVisitor):
             else:
                 z.addSubtraction(body)
         return [(operator, z)]
+
+
+def _parseRotDefiniCard(card):
+    # This only is indended to work for transforms applied to
+    # geometries.  It may or may not be useful for the other
+    # applications of ROT-DEFInis.
+    if card.keyword != "ROT-DEFI":
+        raise ValueError("Not a ROT-DEFI card.")
+
+    what1 = float(card.what1)
+
+    if what1 > 1000.:
+        i = what1 // 1000
+        j = int(str(what1)[-1])
+    elif what1 > 100. and what1 < 1000.:
+        i = int(str(what1)[-1])
+        j = what1 // 100
+    elif what1 > 0 and what1 <= 100:
+        i = int(what1)
+        j = 0
+    else:
+        raise ValueError("Unable to parse ROT-DEFI transformation index.")
+
+    # XXX: I think this is the correct way to deal with a ROT-DEFINI
+    # without a name, this may be wrong.
+    name = card.sdum
+    if name is None:
+        name = i
+
+    theta = card.what2 # polar angle
+    phi = card.what3 # azimuthal angle
+    translation = Three(card.what4, card.what5, card.what6)
+
+    # From note 4 of the ROT-DEFI entry of the manual (page 253 for me):
+    if j == 1: # x
+        r1 = np.array([[np.cos(theta), np.sin(theta), 0],
+                       [-np.sin(theta), np.cos(theta), 0],
+                       [0, 0, 1]])
+        r2 = np.array([[1, 0, 0],
+                       [0, np.cos(phi), np.sin(phi)],
+                       [0, -np.sin(phi), np.cos(phi)]])
+    elif j == 2:
+        r1 = np.array([[1, 0, 0],
+                       [0, np.cos(theta), np.sin(theta)],
+                       [0, -np.sin(theta), np.cos(theta)]])
+        r2 = np.array([[np.cos(phi), 0, -np.sin(phi)],
+                       [0, 1, 0],
+                       [np.sin(phi), 0, np.cos(phi)]])
+    elif j == 3 or j == 0:
+        r1 = np.array([[np.cos(theta), 0, -np.sin(theta)],
+                       [0, 1, 0],
+                       [np.sin(theta), 0, np.cos(theta)]])
+        r2 = np.array([[np.cos(phi), np.sin(phi), 0],
+                       [-np.sin(phi), np.cos(phi), 0],
+                       [0, 0, 1]])
+
+    matrix = r1.dot(r2)
+
+    return RotoTranslation(name, matrix, translation)
 
 def main(filein):
     r = Reader(filein)

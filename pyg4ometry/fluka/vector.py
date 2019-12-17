@@ -127,6 +127,13 @@ class Three(_np.ndarray):
         self.z = temp.z
         return self
 
+
+class RotoTranslation(object):
+    def __init__(self, name, rotation_matrix, translation):
+        self.name = name
+        self.rotation_matrix = _np.array(rotation_matrix)
+        self.translation = Three(translation)
+
 def point_on_line_closest_to_point(point, point_on_line, direction):
     """
     Line is defined in terms of two vectors:  a point on the line and

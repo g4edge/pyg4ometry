@@ -66,16 +66,11 @@ def _attempt_float_coercion(string):
     except (ValueError, TypeError):
         return string
 
-def rotdefiniToMatrix(card):
-    if keyword != "ROT-DEFI":
-        raise ValueError("Not a ROT-DEFI card.")
-
-    from IPython import embed; embed()
 
 def freeFormatStringSplit(string):
     """Method to split a string in FLUKA FREE format into its components."""
     # Split the string along non-black separators [,;:/\]
-    partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
+    partial_split = re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
 
     # Populate zeros between consequtive non-blank separators as per
     # the FLUKA manual.
