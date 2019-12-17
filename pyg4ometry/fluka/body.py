@@ -1056,15 +1056,16 @@ class YZP(_HalfSpace):
 
 
 class PLA(Body):
-    """Infinite half-space delimited by the x-y plane (pependicular to
-    the z-axis)
+    """
+
+    Generic infinite half-space.
 
     :param name: of body
     :type name: str
     :param normal: position of a point on the plane
     :type point: list
-    :param normal: vector perpendicular to the face of the plane,
-pointing away from the contents of the half space.
+    :param normal: vector perpendicular to the face of the plane, \
+    pointing away from the contents of the half space.
     :type normal: list
 
     """
