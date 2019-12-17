@@ -49,11 +49,8 @@ class Reader(object):
         """
         load FLUKA file
         """
-
-        # read file
-        flukaFile = open(self.fileName)
-        self._lines = flukaFile.readlines()
-        flukaFile.close()
+        with open(self.filename, "r") as f:
+            self._lines = flukaFile.readlines()
 
         # strip comments
         strippedLines = []
