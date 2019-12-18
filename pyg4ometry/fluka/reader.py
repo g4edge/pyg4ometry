@@ -180,7 +180,7 @@ class Reader(object):
         for card in self.cards:
             if card.keyword != "ROT-DEFI":
                 continue
-            name, rotation, translation = _parseRotDefiniCard(card)
+            name, matrix = _parseRotDefiniCard(card)
 
             if name in self.rotDefinis:
                 pass
@@ -440,37 +440,42 @@ def _parseRotDefiniCard(card):
     # me):
     # Note I have turned these into transformation matrices, so that
     # transforms can be easily combined.
+    ct = np.cos(theta)
+    cp = np.cos(phi)
+    st = np.sin(theta)
+    sp = np.cos(phi)
     if j == 1: # x
-        r1 = np.array([[np.cos(theta), np.sin(theta), 0, 0],
-                       [-np.sin(theta), np.cos(theta), 0, 0],
-                       [0, 0, 1, 0]
-                       [0, 0, 0, 1]])
-        r2 = np.array([[1, 0, 0, tx],
-                       [0, np.cos(phi), np.sin(phi), ty],
-                       [0, -np.sin(phi), np.cos(phi), tz],
-                       [0, 0, 0, 1]])
+        r1 = np.array([[ ct, st, 0, 0],
+                       [-st, ct, 0, 0],
+                       [ 0,   0, 1, 0]
+                       [ 0,   0, 0, 1]])
+        r2 = np.array([[1,  0,   0,             tx],
+                       [0,  cp, sp,  ty*cp + tz*sp],
+                       [0, -sp, cp, -ty*sp + tz*cp],
+                       [0,   0,  0,              1]])
+
     elif j == 2: # y
-        r1 = np.array([[1, 0, 0, 0],
-                       [0, np.cos(theta), np.sin(theta), 0],
-                       [0, -np.sin(theta), np.cos(theta), 0],
-                       [0, 0, 0, 1]])
-        r2 = np.array([[np.cos(phi), 0, -np.sin(phi), tx],
-                       [0, 1, 0, ty],
-                       [np.sin(phi), 0, np.cos(phi), tz]
-                       [0, 0, 0, 1]])
+        r1 = np.array([[1,   0,  0, 0],
+                       [0,  ct, st, 0],
+                       [0, -st, ct, 0],
+                       [0,   0,  0, 1]])
+        r2 = np.array([[cp, 0, -sp, tx*cp - tz*sp],
+                       [0,  1,   0,            ty],
+                       [sp, 0,  cp, tx*sp + tz*cp]
+                       [0,  0,   0,             1]])
     elif j == 3 or j == 0: # z
-        r1 = np.array([[np.cos(theta), 0, -np.sin(theta), 0],
-                       [0, 1, 0, 0,],
-                       [np.sin(theta), 0, np.cos(theta), 0],
-                       [0, 0, 0, 1]])
-        r2 = np.array([[np.cos(phi), np.sin(phi), 0, tx],
-                       [-np.sin(phi), np.cos(phi), 0, ty],
-                       [0, 0, 1, tz]
-                       [0, 0, 0, 1]])
+        r1 = np.array([[ct, 0, -st, 0],
+                       [0,  1,  0,  0,],
+                       [st, 0,  ct, 0],
+                       [0,  0,  0,  1]])
+        r2 = np.array([[cp,  sp, 0, tx*cp + ty*sp],
+                       [-sp, cp, 0, ty*cp - tx*sp],
+                       [  0,  0, 1,            tz]
+                       [  0,  0, 0,             1]])
 
     matrix = r1.dot(r2)
 
-    return name, matrix, [tx, ty, tz]
+    return name, matrix
 
 def main(filein):
     r = Reader(filein)
