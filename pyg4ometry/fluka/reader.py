@@ -40,7 +40,7 @@ class Reader(object):
         self.fileName = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
-        self.rotDefinis = OrderedDict()
+        self.transforms = OrderedDict()
 
         self.load()
 
@@ -181,12 +181,14 @@ class Reader(object):
             if card.keyword != "ROT-DEFI":
                 continue
             name, matrix = _parseRotDefiniCard(card)
-
-            if name in self.rotDefinis:
-                pass
-                # raise ValueError("can't handle recursive ones yet...")
+            if name in self.transforms:
+                # if already defined (i.e. it is defined recursively)
+                # then left multiply it with the existing transform
+                # definition.
+                existing = self.transforms[name]
+                self.transforms[name] = matrix.dot(existing)
             else:
-                self.rotDefinis[name] = rotation, translation
+                self.transforms[name] = matrix
 
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()
@@ -432,9 +434,8 @@ def _parseRotDefiniCard(card):
     theta = card.what2 # polar angle
     phi = card.what3 # azimuthal angle
 
+    # the translation coordinates
     tx, ty, tz = card.what4, card.what5, card.what6
-
-    # DEFINITELY TRANSLATION AND THEN ROTATION!!!
 
     # From note 4 of the ROT-DEFI entry of the manual (page 253 for
     # me):
@@ -447,11 +448,11 @@ def _parseRotDefiniCard(card):
     if j == 1: # x
         r1 = np.array([[ ct, st, 0, 0],
                        [-st, ct, 0, 0],
-                       [ 0,   0, 1, 0]
+                       [ 0,   0, 1, 0],
                        [ 0,   0, 0, 1]])
         r2 = np.array([[1,  0,   0,             tx],
                        [0,  cp, sp,  ty*cp + tz*sp],
-                       [0, -sp, cp, -ty*sp + tz*cp],
+                       [0, -sp, cp,  tz*cp - ty*sp],
                        [0,   0,  0,              1]])
 
     elif j == 2: # y
@@ -461,7 +462,7 @@ def _parseRotDefiniCard(card):
                        [0,   0,  0, 1]])
         r2 = np.array([[cp, 0, -sp, tx*cp - tz*sp],
                        [0,  1,   0,            ty],
-                       [sp, 0,  cp, tx*sp + tz*cp]
+                       [sp, 0,  cp, tx*sp + tz*cp],
                        [0,  0,   0,             1]])
     elif j == 3 or j == 0: # z
         r1 = np.array([[ct, 0, -st, 0],
@@ -470,7 +471,7 @@ def _parseRotDefiniCard(card):
                        [0,  0,  0,  1]])
         r2 = np.array([[cp,  sp, 0, tx*cp + ty*sp],
                        [-sp, cp, 0, ty*cp - tx*sp],
-                       [  0,  0, 1,            tz]
+                       [  0,  0, 1,            tz],
                        [  0,  0, 0,             1]])
 
     matrix = r1.dot(r2)
