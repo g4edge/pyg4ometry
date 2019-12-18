@@ -6,7 +6,6 @@ import numpy as np
 
 from . import body
 from .region import Zone, Region
-from .vector import Three, RotoTranslation
 from .fluka_registry import FlukaRegistry
 from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
@@ -50,7 +49,7 @@ class Reader(object):
         load FLUKA file
         """
         with open(self.filename, "r") as f:
-            self._lines = flukaFile.readlines()
+            self._lines = f.readlines()
 
         # strip comments
         strippedLines = []
@@ -181,13 +180,13 @@ class Reader(object):
         for card in self.cards:
             if card.keyword != "ROT-DEFI":
                 continue
-            rototrans = _parseRotDefiniCard(card)
+            name, rotation, translation = _parseRotDefiniCard(card)
 
-            if rototrans.name in self.rotDefinis:
+            if name in self.rotDefinis:
                 pass
                 # raise ValueError("can't handle recursive ones yet...")
             else:
-                self.rotDefinis[rototrans.name] = rototrans
+                self.rotDefinis[name] = rotation, translation
 
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()
@@ -432,9 +431,14 @@ def _parseRotDefiniCard(card):
 
     theta = card.what2 # polar angle
     phi = card.what3 # azimuthal angle
-    translation = Three(card.what4, card.what5, card.what6)
 
-    # From note 4 of the ROT-DEFI entry of the manual (page 253 for me):
+    tx, ty, tz = card.what4, card.what5, card.what6
+
+    # DEFINITELY TRANSLATION AND THEN ROTATION!!!
+
+    # From note 4 of the ROT-DEFI entry of the manual (page 253 for
+    # me):
+    # Note I have turned these into rotation matrices...
     if j == 1: # x
         r1 = np.array([[np.cos(theta), np.sin(theta), 0],
                        [-np.sin(theta), np.cos(theta), 0],
@@ -459,7 +463,7 @@ def _parseRotDefiniCard(card):
 
     matrix = r1.dot(r2)
 
-    return RotoTranslation(name, matrix, translation)
+    return name, matrix, [tx, ty, tz]
 
 def main(filein):
     r = Reader(filein)
