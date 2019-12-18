@@ -438,28 +438,35 @@ def _parseRotDefiniCard(card):
 
     # From note 4 of the ROT-DEFI entry of the manual (page 253 for
     # me):
-    # Note I have turned these into rotation matrices...
+    # Note I have turned these into transformation matrices, so that
+    # transforms can be easily combined.
     if j == 1: # x
-        r1 = np.array([[np.cos(theta), np.sin(theta), 0],
-                       [-np.sin(theta), np.cos(theta), 0],
-                       [0, 0, 1]])
-        r2 = np.array([[1, 0, 0],
-                       [0, np.cos(phi), np.sin(phi)],
-                       [0, -np.sin(phi), np.cos(phi)]])
-    elif j == 2:
-        r1 = np.array([[1, 0, 0],
-                       [0, np.cos(theta), np.sin(theta)],
-                       [0, -np.sin(theta), np.cos(theta)]])
-        r2 = np.array([[np.cos(phi), 0, -np.sin(phi)],
-                       [0, 1, 0],
-                       [np.sin(phi), 0, np.cos(phi)]])
-    elif j == 3 or j == 0:
-        r1 = np.array([[np.cos(theta), 0, -np.sin(theta)],
-                       [0, 1, 0],
-                       [np.sin(theta), 0, np.cos(theta)]])
-        r2 = np.array([[np.cos(phi), np.sin(phi), 0],
-                       [-np.sin(phi), np.cos(phi), 0],
-                       [0, 0, 1]])
+        r1 = np.array([[np.cos(theta), np.sin(theta), 0, 0],
+                       [-np.sin(theta), np.cos(theta), 0, 0],
+                       [0, 0, 1, 0]
+                       [0, 0, 0, 1]])
+        r2 = np.array([[1, 0, 0, tx],
+                       [0, np.cos(phi), np.sin(phi), ty],
+                       [0, -np.sin(phi), np.cos(phi), tz],
+                       [0, 0, 0, 1]])
+    elif j == 2: # y
+        r1 = np.array([[1, 0, 0, 0],
+                       [0, np.cos(theta), np.sin(theta), 0],
+                       [0, -np.sin(theta), np.cos(theta), 0],
+                       [0, 0, 0, 1]])
+        r2 = np.array([[np.cos(phi), 0, -np.sin(phi), tx],
+                       [0, 1, 0, ty],
+                       [np.sin(phi), 0, np.cos(phi), tz]
+                       [0, 0, 0, 1]])
+    elif j == 3 or j == 0: # z
+        r1 = np.array([[np.cos(theta), 0, -np.sin(theta), 0],
+                       [0, 1, 0, 0,],
+                       [np.sin(theta), 0, np.cos(theta), 0],
+                       [0, 0, 0, 1]])
+        r2 = np.array([[np.cos(phi), np.sin(phi), 0, tx],
+                       [-np.sin(phi), np.cos(phi), 0, ty],
+                       [0, 0, 1, tz]
+                       [0, 0, 0, 1]])
 
     matrix = r1.dot(r2)
 
