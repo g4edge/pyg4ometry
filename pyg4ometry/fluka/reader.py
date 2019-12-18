@@ -42,12 +42,21 @@ def _freeform_split(string):
     return components
 
 class Reader(object):
+
+    """
+    Class to read FLUKA filie
+    """
+
     def __init__(self, filename) :
         self.fileName = filename
         self.flukaregistry = FlukaRegistry()
         self.load()
 
     def load(self) :
+
+        """
+        load FLUKA file
+        """
 
         # read file
         flukaFile = open(self.fileName)
