@@ -46,12 +46,12 @@ class Reader(object):
         self.load()
 
     def load(self):
-    """
-    load FLUKA file
-    """
+        """
+        load FLUKA file
+        """
 
         # read file
-        flukaFile = open(self.filename)
+        flukaFile = open(self.fileName)
         self._lines = flukaFile.readlines()
         flukaFile.close()
 
