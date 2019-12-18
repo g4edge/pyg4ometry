@@ -1,13 +1,19 @@
 import sys
-import re as _re
+from collections import OrderedDict
+
+import numpy as np
+
+
 from . import body
 from .region import Zone, Region
+from .vector import Three, RotoTranslation
 from .fluka_registry import FlukaRegistry
-from BodyTransform import BodyTransform
 from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
+from .card import freeFormatStringSplit, Card
+
 import antlr4
 
 _BODY_NAMES = {"RPP",
@@ -25,24 +31,8 @@ _BODY_NAMES = {"RPP",
                "XEC", "YEC", "ZEC",
                "QUA"}
 
-def _freeform_split(string):
-    """Method to split a string in FLUKA FREE format into its components"""
-    # Split the string along non-black separators [,;:/\]
-    partial_split = _re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
-
-    # Populate zeros between consequtive non-blank separators as per the FLUKA manual
-    is_blank  = lambda s : not set(s) or set(s) == {" "}
-    noblanks_split = [chunk if not is_blank(chunk) else '0.0' for chunk in partial_split]
-
-    # Split along whitespaces now for complete result
-    components = []
-    for chunk in noblanks_split:
-        components += chunk.split()
-
-    return components
 
 class Reader(object):
-
     """
     Class to read FLUKA filie
     """
@@ -50,73 +40,67 @@ class Reader(object):
     def __init__(self, filename) :
         self.fileName = filename
         self.flukaregistry = FlukaRegistry()
+        self.cards = []
+        self.rotDefinis = OrderedDict()
+
         self.load()
 
-    def load(self) :
-
-        """
-        load FLUKA file
-        """
+    def load(self):
+    """
+    load FLUKA file
+    """
 
         # read file
-        flukaFile = open(self.fileName)
-        self.fileLines = flukaFile.readlines()
+        flukaFile = open(self.filename)
+        self._lines = flukaFile.readlines()
         flukaFile.close()
 
         # strip comments
-        fileLinesStripped = []
-        for l in self.fileLines :
-            fileLineStripped = l.lstrip()
+        strippedLines = []
+        for l in self._lines :
+            strippedLine = l.lstrip()
 
             # if there is nothing on  the line
-            if len(fileLineStripped) == 0 :
+            if len(strippedLine) == 0 :
                 continue
             # skip comment
-            if fileLineStripped[0] != '*' :
-                fileLinesStripped.append(l.rstrip())
-        self.fileLines = fileLinesStripped
+            if strippedLine[0] != '*':
+                strippedLines.append(l.rstrip())
+
+        self._lines = strippedLines
 
         # parse file
         self.findLines()
+        self.cards = self._parseCards()
+        self.parseRotDefinis()
         self.parseBodies()
         self.parseRegions()
-        self.parseMaterials()
-        self.parseMaterialAssignment()
-        self.parseLattice()
-        self.parseCards()
+
 
     def findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
         firstEND = True
-        for i, line in enumerate(self.fileLines) :
+        for i, line in enumerate(self._lines) :
             if "GEOBEGIN" in line:
                 self.geobegin = i
+                self.bodiesbegin = i + 2
             elif "GEOEND" in line:
                 self.geoend = i
             elif "END" in line:
                 if firstEND:
                     self.bodiesend = i
+                    self.regionsbegin = i + 1
                     firstEND = False
                 else:
                     self.regionsend = i
 
-    def parseBodyTransform(self, line):
-        sline = _freeform_split(line)
-        trans_type = sline[0].split("_")[1]
-        transcount = len(self.flukaregistry.bodyTransformDict)
-        name = "bodytransform_{}".format(transcount+1)
-        value = sline[1:]
-        trans = BodyTransform(name, trans_type, value, self.flukaregistry)
-
-        return trans
-
     def parseBodies(self) :
-        bodies_block = self.fileLines[self.geobegin+2:self.bodiesend+1]
+        bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
 
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
         # order of application so no need for a stack.
-        expansion = None
+        expansion = 1.0
         translation = None
         transform = None
 
@@ -126,7 +110,7 @@ class Reader(object):
         in_body = False # flag to tell us if we are currently in a body defn
         for line in bodies_block:
             # split the line into chunks according to the FLUKA delimiter rules.
-            line_parts = _freeform_split(line)
+            line_parts = freeFormatStringSplit(line)
             # Get the first bit of the line, which determines what we do next.
             first_bit = line_parts[0]
             if first_bit in _BODY_NAMES: # start of body definition
@@ -156,7 +140,7 @@ class Reader(object):
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
     def parseRegions(self) :
-        regions_block = self.fileLines[self.bodiesend+1:self.regionsend]
+        regions_block = self._lines[self.regionsbegin:self.regionsend+1]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
@@ -177,17 +161,36 @@ class Reader(object):
         visitor = RegionVisitor(self.flukaregistry)
         visitor.visit(tree)  # walk the tree, populating flukaregistry
 
-    def parseMaterials(self) :
-        pass
+    def _parseCards(self):
+        fixed = True # start off parsing as fixed, i.e. not free format.
+        cards = []
+        for line in self._lines[:self.geobegin] + self._lines[self.geoend:]:
+            if fixed:
+                cards.append(Card.fromFixed(line))
+                kw = cards[-1].keyword
+            else: # must be free format
+                cards.append(Card.fromFree(line))
+                kw = cards[-1].keyword
 
-    def parseMaterialAssignment(self) :
-        pass
+            if kw != "FREE" and kw != "FIXED":
+                continue
+            elif kw == "FREE":
+                fixed = False
+            else:
+                fixed = True
+        return cards
 
-    def parseCards(self) :
-        pass
+    def parseRotDefinis(self):
+        for card in self.cards:
+            if card.keyword != "ROT-DEFI":
+                continue
+            rototrans = _parseRotDefiniCard(card)
 
-    def parseLattice(self) :
-        pass
+            if rototrans.name in self.rotDefinis:
+                pass
+                # raise ValueError("can't handle recursive ones yet...")
+            else:
+                self.rotDefinis[rototrans.name] = rototrans
 
 def _parseGeometryDirective(line_parts, expansion, translation, transform):
     directive = line_parts[0].lower()
@@ -200,7 +203,7 @@ def _parseGeometryDirective(line_parts, expansion, translation, transform):
     elif directive == "$end_translat":
         translation = None
     elif directive == "$end_expansion":
-        expansion = None
+        expansion = 1.0
     elif directive == "$end_transform":
         expansion = None
     else:
@@ -393,7 +396,7 @@ class RegionVisitor(RegionParserVisitor):
             operator = '+'
         self.subzone_counter += 1
         solids = self.visit(ctx.expr())
-        z = Zone(name="{}_subzone{}".format(self.region_name, 
+        z = Zone(name="{}_subzone{}".format(self.region_name,
                                             self.subzone_counter))
         for op, body in solids:
             if op == "+":
@@ -401,6 +404,65 @@ class RegionVisitor(RegionParserVisitor):
             else:
                 z.addSubtraction(body)
         return [(operator, z)]
+
+
+def _parseRotDefiniCard(card):
+    # This only is indended to work for transforms applied to
+    # geometries.  It may or may not be useful for the other
+    # applications of ROT-DEFInis.
+    if card.keyword != "ROT-DEFI":
+        raise ValueError("Not a ROT-DEFI card.")
+
+    what1 = float(card.what1)
+
+    if what1 > 1000.:
+        i = what1 // 1000
+        j = int(str(what1)[-1])
+    elif what1 > 100. and what1 < 1000.:
+        i = int(str(what1)[-1])
+        j = what1 // 100
+    elif what1 > 0 and what1 <= 100:
+        i = int(what1)
+        j = 0
+    else:
+        raise ValueError("Unable to parse ROT-DEFI transformation index.")
+
+    # XXX: I think this is the correct way to deal with a ROT-DEFINI
+    # without a name, this may be wrong.
+    name = card.sdum
+    if name is None:
+        name = i
+
+    theta = card.what2 # polar angle
+    phi = card.what3 # azimuthal angle
+    translation = Three(card.what4, card.what5, card.what6)
+
+    # From note 4 of the ROT-DEFI entry of the manual (page 253 for me):
+    if j == 1: # x
+        r1 = np.array([[np.cos(theta), np.sin(theta), 0],
+                       [-np.sin(theta), np.cos(theta), 0],
+                       [0, 0, 1]])
+        r2 = np.array([[1, 0, 0],
+                       [0, np.cos(phi), np.sin(phi)],
+                       [0, -np.sin(phi), np.cos(phi)]])
+    elif j == 2:
+        r1 = np.array([[1, 0, 0],
+                       [0, np.cos(theta), np.sin(theta)],
+                       [0, -np.sin(theta), np.cos(theta)]])
+        r2 = np.array([[np.cos(phi), 0, -np.sin(phi)],
+                       [0, 1, 0],
+                       [np.sin(phi), 0, np.cos(phi)]])
+    elif j == 3 or j == 0:
+        r1 = np.array([[np.cos(theta), 0, -np.sin(theta)],
+                       [0, 1, 0],
+                       [np.sin(theta), 0, np.cos(theta)]])
+        r2 = np.array([[np.cos(phi), np.sin(phi), 0],
+                       [-np.sin(phi), np.cos(phi), 0],
+                       [0, 0, 1]])
+
+    matrix = r1.dot(r2)
+
+    return RotoTranslation(name, matrix, translation)
 
 def main(filein):
     r = Reader(filein)

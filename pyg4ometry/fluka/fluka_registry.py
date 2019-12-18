@@ -9,6 +9,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 class FlukaRegistry(object):
+
+    '''
+    Object to store geometry for FLUKA input and output. All of the FLUKA classes \
+    can be used without storing them in the Registry. The registry is used to write \
+    the FLUKA output file.
+    '''
+
     def __init__(self) :
         self.bodyDict          = _OrderedDict()
         self.bodyTransformDict = _OrderedDict()

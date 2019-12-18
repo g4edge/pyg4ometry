@@ -77,9 +77,9 @@ class Zone(object):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
-            return boolean.body.geant4_solid(reg)
+            return boolean.body.geant4Solid(reg)
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         try:
             body0 = self.intersections[0].body
         except IndexError:
@@ -105,24 +105,24 @@ class Zone(object):
                                                 tra2, reg)
         return result
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         fs = ""
 
         booleans = self.intersections + self.subtractions
         for s in booleans:
             if isinstance(s,Intersection) :
                 if isinstance(s.body,Zone) :
-                    fs = fs+" +("+s.body.fluka_free_string()+")"
+                    fs = fs+" +("+s.body.flukaFreeString()+")"
                 else :
                     fs=fs+" +"+s.body.name
             elif isinstance(s,Subtraction) :
                 if isinstance(s.body,Zone) :
-                    fs = fs+" -("+s.body.fluka_free_string()+")"
+                    fs = fs+" -("+s.body.flukaFreeString()+")"
                 else :
                     fs=fs+" -"+s.body.name
         return fs
 
-    def with_length_safety(self, bigger_flukareg, smaller_flukareg,
+    def withLengthSafety(self, bigger_flukareg, smaller_flukareg,
                            shrink_intersections):
         zone_out = Zone(name=self.name)
         logger.debug("zone.name = %s", self.name)
@@ -131,7 +131,7 @@ class Zone(object):
             name = body.name
 
             if isinstance(body, Zone):
-                zone_out.addIntersection(body.with_length_safety(
+                zone_out.addIntersection(body.withLengthSafety(
                     bigger_flukareg,
                     smaller_flukareg,
                     shrink_intersections))
@@ -152,7 +152,7 @@ class Zone(object):
             body = boolean.body
             name = body.name
             if isinstance(body, Zone):
-                zone_out.addSubtraction(body.with_length_safety(
+                zone_out.addSubtraction(body.withLengthSafety(
                     bigger_flukareg,
                     smaller_flukareg,
                     not shrink_intersections)) # flip length safety
@@ -201,17 +201,17 @@ class Region(object):
     def rotation(self):
         return self.zones[0].rotation()
 
-    def geant4_solid(self, reg):
+    def geant4Solid(self, reg):
         logger.debug("Region = %s", self.name)
         try:
             zone0 = self.zones[0]
         except IndexError:
             raise FLUKAError("Region {} has no zones.".format(self.name))
 
-        result = zone0.geant4_solid(reg)
+        result = zone0.geant4Solid(reg)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             try:
-                otherg4 = zone.geant4_solid(reg)
+                otherg4 = zone.geant4Solid(reg)
             except FLUKAError as e:
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
@@ -222,20 +222,20 @@ class Region(object):
 
         return result
 
-    def fluka_free_string(self):
+    def flukaFreeString(self):
         fs = "region "+self.name
 
         for z in self.zones :
-            fs=fs+" | "+z.fluka_free_string()
+            fs=fs+" | "+z.flukaFreeString()
 
         return fs
 
-    def with_length_safety(self, bigger_flukareg, smaller_flukareg):
+    def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
         result = Region(self.name)
         for zone in self.zones:
-            result.addZone(zone.with_length_safety(bigger_flukareg,
-                                                   smaller_flukareg,
-                                                   shrink_intersections=True))
+            result.addZone(zone.withLengthSafety(bigger_flukareg,
+                                                 smaller_flukareg,
+                                                 shrink_intersections=True))
         return result
 
 
@@ -243,7 +243,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zone_graph(self):
+    def zoneGraph(self):
         zones = self.zones
         n_zones = len(zones)
 
@@ -280,7 +280,7 @@ class Region(object):
         return graph
 
     def get_connected_zones(self):
-        return list(nx.connected_components(self.zone_graph()))
+        return list(nx.connected_components(self.zoneGraph()))
 
     def _get_zone_extents(self):
         material = g4.MaterialPredefined("G4_Galactic")
@@ -289,7 +289,7 @@ class Region(object):
             greg = g4.Registry()
             wlv = _make_wlv(greg)
 
-            zone_solid = zone.geant4_solid(reg=greg)
+            zone_solid = zone.geant4Solid(reg=greg)
             lv = g4.LogicalVolume(zone_solid,
                                   material,
                                   _random_name(),
@@ -358,8 +358,8 @@ def are_extents_overlapping(first, second):
 def _get_zone_overlap(zone1, zone2):
     greg = g4.Registry()
 
-    solid1 = zone1.geant4_solid(greg)
-    solid2 = zone2.geant4_solid(greg)
+    solid1 = zone1.geant4Solid(greg)
+    solid2 = zone2.geant4Solid(greg)
 
     tra2 = _get_tra2(zone1, zone2)
 

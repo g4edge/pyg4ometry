@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QFileDialog, QTreeWidget, QTreeWidget, QTreeWidgetItem, QDockWidget
 from QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
 
@@ -60,6 +60,7 @@ class MainWindow(QMainWindow):
         self.treeDockWidget = QDockWidget("Models")
         self.treeDockWidget.setWidget(self.treeView)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.treeDockWidget)
+        self.treeView.clicked.connect(self.slotModelChanged)
 
         self.vtkWidget  = QVTKRenderWindowInteractor()
         self.setCentralWidget(self.vtkWidget)
@@ -68,6 +69,22 @@ class MainWindow(QMainWindow):
         self.setGeometry(300, 300, 1000, 750)
         self.setWindowTitle('pyg4ometry')
         self.show()
+
+    def slotModelChanged(self, signal):
+        iModel = signal.row()
+        print signal,iModel
+
+        rens = self.vtkWidget.GetRenderWindow().GetRenderers()
+
+
+        for r,i in zip(self.vtkWidget.GetRenderWindow().GetRenderers(),range(rens.GetNumberOfItems())) :
+
+            if i == iModel :
+                r.SetDraw(1)
+                r.SetLayer(0)
+            else :
+                r.SetDraw(0)
+        self.vtkWidget.GetRenderWindow().Render()
 
     def setDisplayRenderer(self, iRenderer):
         ren = self.vtkWidget.GetRenderWindow().GetRenderers()[0]
@@ -93,6 +110,7 @@ class MainWindow(QMainWindow):
 
             rens = self.vtkWidget.GetRenderWindow().GetRenderers()
             self.vtkWidget.GetRenderWindow().SetNumberOfLayers(rens.GetNumberOfItems())
+            #self.vtkWidget.GetRenderWindow().SetNumberOfLayers(1)
             for r,i in zip(self.vtkWidget.GetRenderWindow().GetRenderers(),range(rens.GetNumberOfItems())) :
                 r.SetLayer(i)
 
