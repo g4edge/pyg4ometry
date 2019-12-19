@@ -191,10 +191,11 @@ class Reader(object):
 
     def _parseGeometryDirective(self,
                                 line_parts, expansion, translation, transform):
+
         directive = line_parts[0].lower()
         if directive == "$start_translat":
             # CONVERTING TO MILLIMETRES HERE
-            translation = [10*float(x) for x in translation[1:4]]
+            translation = [10*float(x) for x in line_parts[1:4]]
         elif directive == "$end_translat":
             translation = None
         elif directive == "$start_expansion":
