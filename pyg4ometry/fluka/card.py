@@ -33,6 +33,14 @@ class Card(object):
         entries = ["" if s is None else str(s) for s in self.asList()]
         return delim.join(entries)
 
+
+    def nonesToZero(self):
+        """Return a class instance with same contents as this
+        instance, but with all entries of None set to 0.0 instead."""
+        contents = self.asList()
+        contents = [0 if c is None else c for c in contents]
+        return Card(*contents)
+
     @classmethod
     def fromFree(cls, line):
         card_bits = freeFormatStringSplit(line)

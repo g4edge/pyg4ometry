@@ -417,6 +417,7 @@ def _parseRotDefiniCard(card):
     if card.keyword != "ROT-DEFI":
         raise ValueError("Not a ROT-DEFI card.")
 
+    card = card.nonesToZero()
     what1 = float(card.what1)
 
     if what1 > 1000.:
