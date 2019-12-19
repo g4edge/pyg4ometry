@@ -447,6 +447,12 @@ def _parseRotDefiniCard(card):
     theta = np.pi * card.what2 / 180 # polar angle
     phi = np.pi * card.what3 / 180  # azimuthal angle
 
+    if theta < 0 or theta > np.pi:
+        raise ValueError(
+            "WHAT2 must be between 0 and +pi.  WHAT2={}".format(theta))
+    if phi < -np.pi or phi > np.pi:
+        raise ValueError(
+            "WHAT3 must be between -pi and +pi.  WHAT3={}".format(phi))
 
     # the translation coordinates
     tx, ty, tz = card.what4, card.what5, card.what6
