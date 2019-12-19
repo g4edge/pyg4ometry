@@ -119,7 +119,7 @@ class Reader(object):
                 if in_body: # build the body we have accrued...
                     _make_body(body_parts, expansion, translation, transform,
                                self.flukaregistry)
-                expansion, translation, transform = _parseGeometryDirective(
+                expansion, translation, transform = self._parseGeometryDirective(
                     line_parts, expansion, translation, transform)
                 in_body = False
             elif first_bit == "END": # finished parsing bodies
@@ -181,6 +181,7 @@ class Reader(object):
             if card.keyword != "ROT-DEFI":
                 continue
             name, matrix = _parseRotDefiniCard(card)
+
             if name in self.transforms:
                 # if already defined (i.e. it is defined recursively)
                 # then left multiply it with the existing transform
@@ -190,30 +191,32 @@ class Reader(object):
             else:
                 self.transforms[name] = matrix
 
-def _parseGeometryDirective(line_parts, expansion, translation, transform):
-    directive = line_parts[0].lower()
-    if directive == "$start_translat":
-        translation = map(float, line_parts[1:4])
-    elif directive == "$start_expansion":
-        expansion = float(line_parts[1])
-    elif directive == "$start_transform":
-        transform = line_parts[1]
-    elif directive == "$end_translat":
-        translation = None
-    elif directive == "$end_expansion":
-        expansion = 1.0
-    elif directive == "$end_transform":
-        expansion = None
-    else:
-        raise ValueError("Unknown geometry directive: {}.".format(directive))
+    def _parseGeometryDirective(self,
+                                line_parts, expansion, translation, transform):
+        directive = line_parts[0].lower()
+        if directive == "$start_translat":
+            # CONVERTING TO MILLIMETRES HERE
+            translation = [10*float(x) for x in translation[1:4]]
+        elif directive == "$end_translat":
+            translation = None
+        elif directive == "$start_expansion":
+            expansion = float(line_parts[1])
+        elif directive == "$end_expansion":
+            expansion = 1.0
+        elif directive == "$start_transform":
+            transform = self.transforms[line_parts[1]]
+        elif directive == "$end_transform":
+            transform = None
+        else:
+            raise ValueError("Unknown geometry directive: {}.".format(directive))
 
-    return expansion, translation, transform
+        return expansion, translation, transform
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
-    # we are converting from centimetres to millimetres here!!!
+    # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
     param = [float(p)*10. for p in body_parts[2:]]
     transforms = {"expansion": expansion,
                   "translation": translation,
@@ -431,11 +434,18 @@ def _parseRotDefiniCard(card):
     if name is None:
         name = i
 
-    theta = card.what2 # polar angle
-    phi = card.what3 # azimuthal angle
+    # rotation angles, converting from degrees to radians:
+    theta = np.pi * card.what2 / 180 # polar angle
+    phi = np.pi * card.what3 / 180  # azimuthal angle
+
 
     # the translation coordinates
     tx, ty, tz = card.what4, card.what5, card.what6
+
+    # CONVERTING TO MILLIMETRES!!
+    tx *= 10
+    ty *= 10
+    tz *= 10
 
     # From note 4 of the ROT-DEFI entry of the manual (page 253 for
     # me):
@@ -444,7 +454,7 @@ def _parseRotDefiniCard(card):
     ct = np.cos(theta)
     cp = np.cos(phi)
     st = np.sin(theta)
-    sp = np.cos(phi)
+    sp = np.sin(phi)
     if j == 1: # x
         r1 = np.array([[ ct, st, 0, 0],
                        [-st, ct, 0, 0],
