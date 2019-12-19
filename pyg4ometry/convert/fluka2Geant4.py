@@ -56,15 +56,8 @@ def _make_length_safety_registry(flukareg):
     smaller = fluka.FlukaRegistry()
 
     for body in flukareg.bodyDict.itervalues():
-        try:
-            bigger.addBody(body.safety_expanded())
-            smaller.addBody(body.safety_shrunk())
-        except AttributeError:
-            warnings.warn(
-                "No length safety supported for body type {}.".format(
-                    type(body).__name__))
-            bigger.addBody(body)
-            smaller.addBody(body)
+        bigger.addBody(body.safetyExpanded())
+        smaller.addBody(body.safetyShrunk())
 
     # return bigger, smaller
     fluka_reg_out = fluka.FlukaRegistry()
