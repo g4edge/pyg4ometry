@@ -37,17 +37,15 @@ class Reader(object):
     """
 
     def __init__(self, filename) :
-        self.fileName = filename
+        self.filename = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
         self.transforms = OrderedDict()
 
-        self.load()
+        self._load()
 
-    def load(self):
-        """
-        load FLUKA file
-        """
+    def _load(self):
+        """Load the FLUKA input file"""
         with open(self.filename, "r") as f:
             self._lines = f.readlines()
 
@@ -66,14 +64,14 @@ class Reader(object):
         self._lines = strippedLines
 
         # parse file
-        self.findLines()
+        self._findLines()
         self.cards = self._parseCards()
-        self.parseRotDefinis()
-        self.parseBodies()
-        self.parseRegions()
+        self._parseRotDefinis()
+        self._parseBodies()
+        self._parseRegions()
 
 
-    def findLines(self) :
+    def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
         firstEND = True
         for i, line in enumerate(self._lines) :
@@ -90,7 +88,7 @@ class Reader(object):
                 else:
                     self.regionsend = i
 
-    def parseBodies(self) :
+    def _parseBodies(self) :
         bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
 
         # there can only be one of each directive used at a time, and
@@ -135,7 +133,7 @@ class Reader(object):
         else: # we should always break out of the above loop with END.
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
-    def parseRegions(self) :
+    def _parseRegions(self) :
         regions_block = self._lines[self.regionsbegin:self.regionsend+1]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
@@ -176,7 +174,7 @@ class Reader(object):
                 fixed = True
         return cards
 
-    def parseRotDefinis(self):
+    def _parseRotDefinis(self):
         for card in self.cards:
             if card.keyword != "ROT-DEFI":
                 continue
