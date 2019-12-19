@@ -43,6 +43,14 @@ class Body(object):
             return Three(translation)
         return Three([0, 0, 0])
 
+    def _set_transform(self, transform):
+        if transform is None: # identity transform
+            return np.array([[1, 0, 0, 0],
+                             [0, 1, 0, 0],
+                             [0, 0, 1, 0],
+                             [0, 0, 0, 1]])
+        return transform
+
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
@@ -112,7 +120,7 @@ class RPP(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
             raise ValueError("Each of the xmin, ymin, zmin must be"
@@ -123,12 +131,12 @@ class RPP(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + self.expansion
-                * 0.5 * (self.lower + self.upper))
+        pre_transform = (self.translation
+                         + self.expansion * 0.5 * (self.lower + self.upper))
+        return _apply_transform(self.transform, pre_transform)
 
     def rotation(self):
-        return np.identity(3)
+        return _apply_transform_rotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg):
         v = self.expansion * (self.upper - self.lower)
@@ -1452,15 +1460,18 @@ class ZEC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(self.x, self.y, 0.0)
+        pre_transform = (self.translation
+                         + self.expansion * Three(self.x, self.y, 0.0))
+        post_transform = _apply_transform(self.transform, pre_transform)
+        return post_transform
 
     def rotation(self):
-        return np.identity(3)
+        return _apply_transform_rotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg):
         exp = self.expansion
@@ -1492,6 +1503,14 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
+
+def _apply_transform(transform, vector):
+    vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
+    result4d =  transform.dot(vector4d)
+    return Three(result4d[0:3])
+
+def _apply_transform_rotation(transform, rotation_matrix):
+    return transform[:3,:3].dot(rotation_matrix)
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0
