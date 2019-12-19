@@ -223,37 +223,8 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
 
     if body_type == "RPP":
         b = body.RPP(name, *param, flukaregistry=flukareg, **transforms)
-    elif body_type == "BOX":
-        b = body.BOX(name, param[0:3], param[3:6], param[6:9],
-                     flukaregistry=flukareg,
-                     **transforms)
-    elif body_type == "ELL":
-        b = body.ELL(name, param[0:3], param[3:6], param[6],
-                     flukaregistry=flukareg,
-                     **transforms)
     elif body_type == "RCC":
         b = body.RCC(name, param[0:3], param[3:6], param[6],
-                     flukaregistry=flukareg,
-                     **transforms)
-    elif body_type == "SPH":
-        b = body.SPH(name, param[0:3], param[3],
-                     flukaregistry=flukareg,
-                     **transforms)
-    elif body_type == "REC":
-        b = body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg,
-                     **transforms)
-    elif body_type == "WED":
-        b = body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **transforms)
-    elif body_type == "RAW":
-        b = body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **transforms)
-    elif body_type == "ARB":
-        vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
-                    param[12:15], param[15:18], param[18:21], param[21:24]]
-        facenumbers = param[24:]
-        b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
                      **transforms)
     elif body_type == "XYP":
@@ -291,6 +262,35 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
                      **transforms)
     elif body_type == "TRC":
         b = body.TRC(name, param[0:3], param[3:6], param[6], param[7],
+                     flukaregistry=flukareg,
+                     **transforms)
+    elif body_type == "SPH":
+        b = body.SPH(name, param[0:3], param[3],
+                     flukaregistry=flukareg,
+                     **transforms)
+    elif body_type == "REC":
+        b = body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                     flukaregistry=flukareg,
+                     **transforms)
+    elif body_type == "ELL":
+        b = body.ELL(name, param[0:3], param[3:6], param[6],
+                     flukaregistry=flukareg,
+                     **transforms)
+    elif body_type == "BOX":
+        b = body.BOX(name, param[0:3], param[3:6], param[6:9],
+                     flukaregistry=flukareg,
+                     **transforms)
+    elif body_type == "WED":
+        b = body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                     flukaregistry=flukareg, **transforms)
+    elif body_type == "RAW":
+        b = body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
+                     flukaregistry=flukareg, **transforms)
+    elif body_type == "ARB":
+        vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
+                    param[12:15], param[15:18], param[18:21], param[21:24]]
+        facenumbers = param[24:]
+        b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
                      **transforms)
     else:
