@@ -423,6 +423,11 @@ def _parseRotDefiniCard(card):
     elif what1 > 0 and what1 <= 100:
         i = int(what1)
         j = 0
+    elif what1 == 0:
+        # If left empty (i.e. 0), then this is a translation
+        # about the z-axis.  But I don't know what that means for i.
+        i = what1
+        j = 0
     else:
         raise ValueError("Unable to parse ROT-DEFI transformation index.")
 
