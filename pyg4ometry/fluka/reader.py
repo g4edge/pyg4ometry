@@ -289,6 +289,10 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
         b = body.ZEC(name, param[0], param[1], param[2], param[3],
                      flukaregistry=flukareg,
                      **transforms)
+    elif body_type == "TRC":
+        b = body.TRC(name, param[0:3], param[3:6], param[6], param[7],
+                     flukaregistry=flukareg,
+                     **transforms)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b
