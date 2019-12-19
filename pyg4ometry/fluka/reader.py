@@ -418,7 +418,7 @@ def _parseRotDefiniCard(card):
         raise ValueError("Not a ROT-DEFI card.")
 
     card = card.nonesToZero()
-    what1 = float(card.what1)
+    what1 = int(card.what1)
 
     if what1 > 1000.:
         i = what1 // 1000
@@ -464,6 +464,7 @@ def _parseRotDefiniCard(card):
     cp = np.cos(phi)
     st = np.sin(theta)
     sp = np.sin(phi)
+
     if j == 1: # x
         r1 = np.array([[ ct, st, 0, 0],
                        [-st, ct, 0, 0],
