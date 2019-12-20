@@ -1,6 +1,7 @@
 try : 
     from Reader import *
 except ImportError :
-    print 'Cannot load freecad'
+    pass
+    # print 'Cannot load freecad'
 
     

@@ -9,9 +9,15 @@ def solidName(var) :
         return var
 
 class Registry:
-    '''
-    Object to store geometry for input and output. All of the pyg4ometry classes can be used without storing them in the Registry. The registry is used to write the GDML output file. A registry needs to be used in conjunction with gdml Define objects for evalation of expressions. 
-    '''
+
+    """
+    Object to store geometry for input and output. \
+    All of the pyg4ometry classes can be used without \
+    storing them in the Registry. The registry is used \
+    to write the GDML output file. A registry needs to \
+    be used in conjunction with gdml Define objects for \
+    evalation of expressions.
+    """
     
     def __init__(self):
         self.defineDict                   = _OrderedDict()
@@ -382,5 +388,9 @@ class Registry:
         print self.solidTypeCountDict
         print self.logicalVolumeUsageCountDict
 
+    def toFlukaRegistry(self):
+        import pyg4ometry.fluka as _f
+
+        freg = _f.FlukaRegistry()
 
 registry = Registry()

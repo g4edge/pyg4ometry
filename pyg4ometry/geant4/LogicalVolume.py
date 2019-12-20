@@ -74,6 +74,7 @@ class LogicalVolume(object):
 
         self.name            = name
         self.daughterVolumes = []
+        self.bdsimObjects = []
 
         # geometry mesh
         self.mesh            = _Mesh(self.solid)
@@ -92,7 +93,10 @@ class LogicalVolume(object):
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
 
-    def checkOverlaps(self, recursive = False, debugIO = False) :
+    def addBDSIMObject(self, bdsimobject):
+        self.bdsimObjects.append(bdsimobject)
+
+    def checkOverlaps(self, recursive = False, coplanar = True, debugIO = False) :
 
         # print 'LogicalVolume.checkOverlaps>'
 
@@ -160,22 +164,23 @@ class LogicalVolume(object):
         # coplanar daughter pv checks
         # print 'coplanar with pvs'
         # print "LogicalVolume.checkOverlaps> daughter coplanar overlaps"
-        for i in range(0,len(transformedMeshes)) :
-            for j in range(i+1,len(transformedMeshes)) :
+        if coplanar :
+            for i in range(0,len(transformedMeshes)) :
+                for j in range(i+1,len(transformedMeshes)) :
 
-                if debugIO :
-                    print "LogicalVolume.checkOverlaps> full coplanar test",transformedMeshesNames[i],transformedMeshesNames[j]
+                    if debugIO :
+                        print "LogicalVolume.checkOverlaps> full coplanar test",transformedMeshesNames[i],transformedMeshesNames[j]
 
-                # first check if bounding mesh intersects
-                cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
-                cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
-                if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
-                     continue
+                    # first check if bounding mesh intersects
+                    cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
+                    cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
+                    if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
+                         continue
 
-                coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
-                if coplanarMesh.vertexCount() != 0:
-                    print "LogicalVolume.checkOverlaps> coplanar overlap between daughters",transformedMeshesNames[i],transformedMeshesNames[j],coplanarMesh.vertexCount()
-                    self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
+                    coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
+                    if coplanarMesh.vertexCount() != 0:
+                        print "LogicalVolume.checkOverlaps> coplanar overlap between daughters",transformedMeshesNames[i],transformedMeshesNames[j],coplanarMesh.vertexCount()
+                        self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
         # overlap with solid
         for i in range(0,len(transformedMeshes)) :
@@ -196,18 +201,20 @@ class LogicalVolume(object):
 
         # coplanar with solid
         # print 'coplanar with solid'
-        for i in range(0,len(transformedMeshes)) :
-            if debugIO :
-                print "LogicalVolume.checkOverlaps> full daughter-mother coplanar test",transformedMeshesNames[i]
+        if coplanar :
+            for i in range(0,len(transformedMeshes)) :
+                if debugIO :
+                    print "LogicalVolume.checkOverlaps> full daughter-mother coplanar test",transformedMeshesNames[i]
 
-            cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
-            if cullCoplanar.vertexCount() == 0 :
-                continue
+                cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
+                if cullCoplanar.vertexCount() == 0 :
+                    continue
 
-            coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
-            if coplanarMesh.vertexCount() != 0 :
-                print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", transformedMeshesNames[i],coplanarMesh.vertexCount()
-                self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
+                coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
+                if coplanarMesh.vertexCount() != 0 :
+                    print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", transformedMeshesNames[i],coplanarMesh.vertexCount()
+                    print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", transformedMeshesNames[i],coplanarMesh.vertexCount()
+                    self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
         # recusively check entire tree
         if recursive :
@@ -263,6 +270,47 @@ class LogicalVolume(object):
                 vMin[2] = vMinDaughter[2]
 
         return [vMin, vMax]
+
+    def clipSolid(self, recursive = False, lengthSafety = 1e-6):
+        # loop over daughter volumes to find centres
+
+        eMin = [1e99, 1e99, 1e99]
+        eMax = [-1e99, -1e99, -1e99]
+
+        for dv in self.daughterVolumes :
+            e = dv.extent()
+
+            if e[0][0] < eMin[0]:
+                eMin[0] = e[0][0]
+            if e[0][1] < eMin[1]:
+                eMin[1] = e[0][1]
+            if e[0][2] < eMin[2]:
+                eMin[2] = e[0][2]
+            if e[1][0] > eMax[0]:
+                eMax[0] = e[1][0]
+            if e[1][1] > eMax[1]:
+                eMax[1] = e[1][1]
+            if e[1][2] > eMax[2]:
+                eMax[2] = e[1][2]
+
+        eMin = _np.array(eMin)
+        eMax = _np.array(eMax)
+        diff   = eMax-eMin+lengthSafety
+        centre = (eMin + eMax)/2.0
+
+        # move daughter volumes to centre
+        for dv in self.daughterVolumes :
+            dv.position = dv.position - centre
+
+        # resize outer solid
+
+        # cuboidal solid
+        if self.solid.type == "Box":
+            self.solid.pX = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
+            self.solid.pY = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
+            self.solid.pZ = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
+
+        self.mesh.remesh()
 
     def findLogicalByName(self,name) : 
         lv = [] 

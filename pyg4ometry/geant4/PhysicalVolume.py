@@ -65,8 +65,12 @@ class PhysicalVolume(object):
 
         [vMin,vMax] = self.logicalVolume.extent(includeBoundingSolid)
 
+        # TODO do we need scale here?
         vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)).flatten()
         vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)).flatten()
 
-        return [vMinPrime, vMaxPrime]
-        
+        vmin = [min(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
+        vmax = [max(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
+
+
+        return [vmin, vmax]

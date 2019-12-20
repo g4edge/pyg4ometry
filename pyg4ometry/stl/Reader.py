@@ -93,4 +93,3 @@ class Reader(object):
 
         return tessSolid
         '''
-

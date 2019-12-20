@@ -50,7 +50,7 @@ class Union(_SolidBase):
         return 'Union %s(%s %s)' % (self.name, self.obj1.name, self.obj2.name)
 
     def pycsgmesh(self):
-        _log.info('union.pycshmesh>')
+        _log.info('union.pycsgmesh>')
 
         # look up solids in registry 
         import pyg4ometry.geant4 as _g4
@@ -63,7 +63,7 @@ class Union(_SolidBase):
         _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
 
         # get meshes 
-        _log.info('union.pycshmesh> mesh1')
+        _log.info('union.pycsgmesh> mesh1')
         m1 = obj1.pycsgmesh()
         _log.info('union.pycsgmesh> mesh2')
         m2 = obj2.pycsgmesh().clone()

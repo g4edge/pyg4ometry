@@ -43,3 +43,6 @@ class IdenticalNameError(Exception):
                 "Identical {} name detected in registry: {}".format(
                     nametype, name))
         super(Exception, self).__init__(self.message)
+
+class FLUKAError(Exception):
+    pass

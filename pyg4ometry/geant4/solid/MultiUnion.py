@@ -45,7 +45,7 @@ class MultiUnion(_SolidBase):
 
     def pycsgmesh(self):
 
-        _log.info('MultiUnion.pycshmesh>')
+        _log.info('MultiUnion.pycsgmesh>')
 
         
         # untransformed first solid
@@ -59,7 +59,7 @@ class MultiUnion(_SolidBase):
             _log.info('MulUnion.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
             
             # get meshes 
-            _log.info('union.pycshmesh> mesh %s' % str(idx))
+            _log.info('union.pycsgmesh> mesh %s' % str(idx))
             m2 = obj.pycsgmesh()
 
             # apply transform to second mesh 
