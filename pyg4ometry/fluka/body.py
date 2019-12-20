@@ -436,9 +436,9 @@ class REC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + self.face
-                + 0.5 * self.expansion * self.direction)
+        return self._apply_transform(self.translation
+                                     + self.face
+                                     + 0.5 * self.expansion * self.direction)
 
     def rotation(self):
         initial_direction = [0, 0, 1]
@@ -450,7 +450,7 @@ class REC(Body):
                                               final_direction,
                                               initial_semiminor,
                                               final_semiminor)
-        return rotation
+        return self._apply_transform_rotation(rotation)
 
     def geant4Solid(self, reg):
         exp = self.expansion
