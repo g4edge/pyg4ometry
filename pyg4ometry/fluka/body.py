@@ -51,6 +51,14 @@ class Body(object):
                              [0, 0, 0, 1]])
         return transform
 
+    def _apply_transform(self, vector):
+        vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
+        result4d =  self.transform.dot(vector4d)
+        return Three(result4d[0:3])
+
+    def _apply_transform_rotation(self, rotation_matrix):
+        return self.transform[:3,:3].dot(rotation_matrix)
+
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
@@ -127,16 +135,15 @@ class RPP(Body):
                              " smaller than the corresponding"
                              " xmax, ymax, zmax.")
 
-
         self.addToRegistry(flukaregistry)
 
     def centre(self):
         pre_transform = (self.translation
                          + self.expansion * 0.5 * (self.lower + self.upper))
-        return _apply_transform(self.transform, pre_transform)
+        return self._apply_transform(pre_transform)
 
     def rotation(self):
-        return _apply_transform_rotation(self.transform, np.identity(3))
+        return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, reg):
         v = self.expansion * (self.upper - self.lower)
@@ -164,7 +171,6 @@ class RPP(Body):
                    translation=self.translation,
                    transform=self.transform,
                    flukaregistry=reg)
-
 
 
 class BOX(Body):
@@ -1467,11 +1473,10 @@ class ZEC(Body):
     def centre(self):
         pre_transform = (self.translation
                          + self.expansion * Three(self.x, self.y, 0.0))
-        post_transform = _apply_transform(self.transform, pre_transform)
-        return post_transform
+        return self._apply_transform(pre_transform)
 
     def rotation(self):
-        return _apply_transform_rotation(self.transform, np.identity(3))
+        return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, reg):
         exp = self.expansion
@@ -1503,14 +1508,6 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
-
-def _apply_transform(transform, vector):
-    vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
-    result4d =  transform.dot(vector4d)
-    return Three(result4d[0:3])
-
-def _apply_transform_rotation(transform, rotation_matrix):
-    return transform[:3,:3].dot(rotation_matrix)
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0
