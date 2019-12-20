@@ -63,7 +63,7 @@ class Body(object):
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
-        return np.identity(3)
+        return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, registry):
         exp = self.expansion
@@ -969,8 +969,9 @@ class XYP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        centre = self.expansion * Three(0, 0, self.z - (INFINITY * 0.5))
-        return self.translation + centre
+        return self._apply_transform(self.translation +
+                                     self.expansion
+                                     * Three(0, 0, self.z - (INFINITY * 0.5)))
 
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
@@ -1015,8 +1016,10 @@ class XZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        centre = self.expansion * Three(0, self.y - (INFINITY * 0.5), 0)
-        return self.translation + centre
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(0, self.y - (INFINITY * 0.5), 0))
+
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
@@ -1061,8 +1064,9 @@ class YZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        centre = self.expansion * Three(self.x - (INFINITY * 0.5), 0, 0)
-        return self.translation + centre
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(self.x - (INFINITY * 0.5), 0, 0))
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
