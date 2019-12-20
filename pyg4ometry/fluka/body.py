@@ -1117,14 +1117,16 @@ class PLA(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + self.expansion
-                * (self.point - 0.5 * INFINITY * self.normal.unit()))
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * (self.point - 0.5
+                                        * INFINITY * self.normal.unit()))
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return trans.matrix_from([0, 0, 1], self.normal)
+        return self._apply_transform_rotation(trans.matrix_from([0, 0, 1],
+                                                                self.normal))
 
     def geant4Solid(self, reg):
         exp = self.expansion
