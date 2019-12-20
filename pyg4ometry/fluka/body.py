@@ -349,15 +349,15 @@ class RCC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + self.expansion
-                * (self.face + 0.5 * self.direction))
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * (self.face + 0.5 * self.direction))
 
     def rotation(self):
         initial = [0, 0, 1]
         final = self.direction
         rotation = trans.matrix_from(initial, final)
-        return rotation
+        return self._apply_transform_rotation(rotation)
 
     def geant4Solid(self, reg):
         exp = self.expansion
