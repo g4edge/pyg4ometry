@@ -621,13 +621,14 @@ class ELL(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + 0.5 * self.expansion * (self.focus1 + self.focus2))
+        return self._apply_transform(self.translation
+                                     + 0.5 * self.expansion
+                                     * (self.focus1 + self.focus2))
 
     def rotation(self):
         initial = [0, 0, 1]  # major axis pointing along z
         final = self.focus1 - self.focus2
-        return trans.matrix_from(initial, final)
+        return self._apply_transform_rotation(trans.matrix_from(initial, final))
 
     def _linearEccentricity(self):
         # Distance from centre to one of the foci.  This doesn't use
