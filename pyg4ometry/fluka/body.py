@@ -1185,12 +1185,14 @@ class XCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(0.0, self.y, self.z)
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(0.0, self.y, self.z))
 
     def rotation(self):
-        return np.array([[0, 0, -1],
-                         [0, 1, 0],
-                         [1, 0, 0]])
+        return self._apply_transform_rotation(np.array([[0, 0, -1],
+                                                        [0, 1, 0],
+                                                        [1, 0, 0]]))
 
     def __repr__(self):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
@@ -1236,12 +1238,14 @@ class YCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(self.x, 0.0, self.z)
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(self.x, 0.0, self.z))
 
     def rotation(self):
-        return np.array([[1, 0, 0],
-                         [0, 0, 1],
-                         [0, -1, 0]])
+        return self._apply_transform_rotation(np.array([[1, 0, 0],
+                                                        [0, 0, 1],
+                                                        [0, -1, 0]]))
 
     def __repr__(self):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
@@ -1287,10 +1291,12 @@ class ZCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(self.x, self.y, 0.0)
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(self.x, self.y, 0.0))
 
     def rotation(self):
-        return np.identity(3)
+        return self._apply_transform_rotation(np.identity(3))
 
     def __repr__(self):
         return "<ZCC: {}, x={}, y={}>".format(self.name, self.x, self.y)
