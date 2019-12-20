@@ -175,6 +175,12 @@ class Ellipsoid(_SolidBase):
 
         dTheta = 2 * _np.pi / self.nslice
 
+        # If cuts lay outside of the ellipsoid then don't do any cut.
+        if pzTopCut > pzSemiAxis:
+            pzTopCut = pzSemiAxis
+        if pzBottomCut < -pzSemiAxis:
+            pzBottomCut = -pzSemiAxis
+
         PhiTop =          _np.arccos(pzTopCut   / pzSemiAxis)
         PhiBot = _np.pi - _np.arccos(pzBottomCut/-pzSemiAxis)
 
