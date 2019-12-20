@@ -210,12 +210,15 @@ class BOX(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return (self.translation
-                + self.expansion
-                * (self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3)))
+        pre_transform = (self.translation
+                         + self.expansion
+                         * (self.vertex + 0.5 * (self.edge1
+                                                 + self.edge2
+                                                 + self.edge3)))
+        return self._apply_transform(pre_transform)
 
     def rotation(self):
-        return np.identity(3)
+        return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, greg):
         exp = self.expansion
