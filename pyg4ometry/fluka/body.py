@@ -284,11 +284,13 @@ class SPH(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def rotation(self):
-        return np.identity(3)
-
     def centre(self):
-        return self.translation + self.expansion * self.point
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * self.point)
+
+    def rotation(self):
+        return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, reg):
         return g4.solid.Orb(self.name,
