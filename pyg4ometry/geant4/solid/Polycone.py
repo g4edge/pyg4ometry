@@ -68,7 +68,7 @@ class Polycone(_SolidBase):
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
 
-    def pycsgmesh(self):
+    def pycsgmeshOld(self):
 
         _log.info("polycone.pycsgmesh>")
         basicmesh = self.basicmesh()
@@ -178,3 +178,187 @@ class Polycone(_SolidBase):
             mesh = basicmesh
 
         return mesh
+
+
+    def pycsgmesh(self):
+
+        _log.info("polycone.pycsgmesh>")
+
+        _log.info("polycone.antlr>")
+
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        luval = _Units.unit(self.lunit)
+        auval = _Units.unit(self.aunit)
+
+        pSPhi = self.evaluateParameter(self.pSPhi) * auval
+        pDPhi = self.evaluateParameter(self.pDPhi) * auval
+
+        pZpl = [val * luval for val in self.evaluateParameter(self.pZpl)]
+        pRMin = [val * luval for val in self.evaluateParameter(self.pRMin)]
+        pRMax = [val * luval for val in self.evaluateParameter(self.pRMax)]
+
+        _log.info("polycone.basicmesh>")
+        polygons = []
+
+        slices = self.nslice
+
+        dPhi = (pDPhi - pSPhi) / slices
+        stacks = len(pZpl)
+
+        rinout = [pRMin, pRMax]
+
+        for R in rinout:
+            
+            for j0 in range(stacks-1):
+                   
+                j1 = j0
+                j2 = j0 + 1
+
+                r1 = R[j1]
+                r2 = R[j2]
+
+                if (pDPhi - pSPhi) != 2 * _np.pi:
+                    #   for i0 in range(0,stacks - 1, 1):
+                    # j1 = i0
+                    # j2 = j1 + 1
+
+                    x1s = pRMin[j1] * _np.cos(pSPhi)
+                    y1s = pRMin[j1] * _np.sin(pSPhi)
+                    z1s = pZpl[j1]
+
+                    x2s = pRMax[j1] * _np.cos(pSPhi)
+                    y2s = pRMax[j1] * _np.sin(pSPhi)
+                    z2s = pZpl[j1]
+
+                    x3s = pRMax[j2] * _np.cos(pSPhi)
+                    y3s = pRMax[j2] * _np.sin(pSPhi)
+                    z3s = pZpl[j2]
+
+                    x4s = pRMin[j2] * _np.cos(pSPhi)
+                    y4s = pRMin[j2] * _np.sin(pSPhi)
+                    z4s = pZpl[j2]
+
+                    vertices_Start = []
+
+                    vertices_Start.append(_Vertex([x1s, y1s, z1s], None))
+                    vertices_Start.append(_Vertex([x2s, y2s, z2s], None))
+                    vertices_Start.append(_Vertex([x3s, y3s, z3s], None))
+                    vertices_Start.append(_Vertex([x4s, y4s, z4s], None))
+
+                    polygons.append(_Polygon(vertices_Start))
+
+                    x1e = pRMax[j1] * _np.cos(pDPhi)
+                    y1e = pRMax[j1] * _np.sin(pDPhi)
+                    z1e = pZpl[j1]
+
+                    x2e = pRMin[j1] * _np.cos(pDPhi)
+                    y2e = pRMin[j1] * _np.sin(pDPhi)
+                    z2e = pZpl[j1]
+
+                    x3e = pRMin[j2] * _np.cos(pDPhi)
+                    y3e = pRMin[j2] * _np.sin(pDPhi)
+                    z3e = pZpl[j2]
+
+                    x4e = pRMax[j2] * _np.cos(pDPhi)
+                    y4e = pRMax[j2] * _np.sin(pDPhi)
+                    z4e = pZpl[j2]
+
+                    vertices_End = []
+
+                    vertices_End.append(_Vertex([x1e, y1e, z1e], None))
+                    vertices_End.append(_Vertex([x2e, y2e, z2e], None))
+                    vertices_End.append(_Vertex([x3e, y3e, z3e], None))
+                    vertices_End.append(_Vertex([x4e, y4e, z4e], None))
+
+                    polygons.append(_Polygon(vertices_End))
+                    
+                for i0 in range(slices):
+                    i1 = i0
+                    i2 = i0 + 1
+
+                    x1 = r1 * _np.cos(i1 * dPhi + pSPhi)
+                    y1 = r1 * _np.sin(i1 * dPhi + pSPhi)
+                    z1 = pZpl[j1]
+
+                    x2 = r2 * _np.cos(i1 * dPhi + pSPhi)
+                    y2 = r2 * _np.sin(i1 * dPhi + pSPhi)
+                    z2 = pZpl[j2]
+
+                    x3 = r2 * _np.cos(i2 * dPhi + pSPhi)
+                    y3 = r2 * _np.sin(i2 * dPhi + pSPhi)
+                    z3 = pZpl[j2]
+
+                    x4 = r1 * _np.cos(i2 * dPhi + pSPhi)
+                    y4 = r1 * _np.sin(i2 * dPhi + pSPhi)
+                    z4 = pZpl[j1]
+
+                    vertices = []
+
+                    vertices.append(_Vertex([x1, y1, z1], None))
+                    vertices.append(_Vertex([x2, y2, z2], None))
+                    vertices.append(_Vertex([x3, y3, z3], None))
+                    vertices.append(_Vertex([x4, y4, z4], None))
+
+                    polygons.append(_Polygon(vertices))
+
+                    if pRMin[-1] != pRMax[-1]:
+                        x1 = pRMin[-1] * _np.cos(i2 * dPhi + pSPhi)
+                        y1 = pRMin[-1] * _np.sin(i2 * dPhi + pSPhi)
+                        z1 = pZpl[-1]
+
+                        x2 = pRMin[-1] * _np.cos(i0 * dPhi + pSPhi)
+                        y2 = pRMin[-1] * _np.sin(i0 * dPhi + pSPhi)
+                        z2 = pZpl[-1]
+
+                        x3 = pRMax[-1] * _np.cos(i0 * dPhi + pSPhi)
+                        y3 = pRMax[-1] * _np.sin(i0 * dPhi + pSPhi)
+                        z3 = pZpl[-1]
+
+                        x4 = pRMax[-1] * _np.cos(i2 * dPhi + pSPhi)
+                        y4 = pRMax[-1] * _np.sin(i2 * dPhi + pSPhi)
+                        z4 = pZpl[-1]
+
+                        vertices_Tops = []
+
+                        vertices_Tops.append(_Vertex([x1, y1, z1], None))
+                        vertices_Tops.append(_Vertex([x2, y2, z2], None))
+                        vertices_Tops.append(_Vertex([x3, y3, z3], None))
+                        vertices_Tops.append(_Vertex([x4, y4, z4], None))
+
+                        polygons.append(_Polygon(vertices_Tops))
+
+                    if pRMin[0] != pRMax[0]:
+                        x1 = pRMin[0] * _np.cos(i0 * dPhi + pSPhi)
+                        y1 = pRMin[0] * _np.sin(i0 * dPhi + pSPhi)
+                        z1 = pZpl[0]
+
+                        x2 = pRMin[0] * _np.cos(i2 * dPhi + pSPhi)
+                        y2 = pRMin[0] * _np.sin(i2 * dPhi + pSPhi)
+                        z2 = pZpl[0]
+
+                        x3 = pRMax[0] * _np.cos(i2 * dPhi + pSPhi)
+                        y3 = pRMax[0] * _np.sin(i2 * dPhi + pSPhi)
+                        z3 = pZpl[0]
+
+                        x4 = pRMax[0] * _np.cos(i0 * dPhi + pSPhi)
+                        y4 = pRMax[0] * _np.sin(i0 * dPhi + pSPhi)
+                        z4 = pZpl[0]
+
+                        vertices_Bottoms = []
+
+                        vertices_Bottoms.append(_Vertex([x1, y1, z1], None))
+                        vertices_Bottoms.append(_Vertex([x2, y2, z2], None))
+                        vertices_Bottoms.append(_Vertex([x3, y3, z3], None))
+                        vertices_Bottoms.append(_Vertex([x4, y4, z4], None))
+
+                        polygons.append(_Polygon(vertices_Bottoms))
+
+
+
+        mesh = _CSG.fromPolygons(polygons)
+
+        return mesh
+
+
+
+
