@@ -69,7 +69,7 @@ class Sphere(_SolidBase):
         self.checkParameters()
 
     def checkParameters(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         auval = _Units.unit(self.aunit)
         if self.evaluateParameter(self.pRmin) > self.evaluateParameter(self.pRmax):
             raise ValueError("Inner radius must be less than outer radius.")
@@ -88,7 +88,7 @@ class Sphere(_SolidBase):
         # 2.78316307068 1612
         _log.info("sphere.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
@@ -98,7 +98,7 @@ class Sphere(_SolidBase):
         pDPhi   = self.evaluateParameter(self.pDPhi)*auval
         pSTheta = self.evaluateParameter(self.pSTheta)*auval
         pDTheta = self.evaluateParameter(self.pDTheta)*auval
-        
+
         _log.info("sphere.pycsgmesh>")
         thetaFin = pSTheta + pDTheta
         phiFin   = pSPhi + pDPhi
@@ -140,6 +140,12 @@ class Sphere(_SolidBase):
         return mesh
 
     def pycsgmeshNew(self):
+        """
+        working off
+        0 < phi < 2pi
+        0 < theta < pi
+        :return:
+        """
         # 0.00972580909729 80
         _log.info("sphere.antlr>")
 
@@ -158,8 +164,8 @@ class Sphere(_SolidBase):
 
         polygons = []
 
-        dPhi   = pDPhi/self.nslice
-        dTheta = pDTheta/self.nstack
+        dPhi   = (pDPhi-pSPhi)/self.nslice
+        dTheta = (pDTheta-pSTheta)/self.nstack
 
         for i in range(0,self.nslice,1) :
 
@@ -228,7 +234,7 @@ class Sphere(_SolidBase):
                 ###########################
                 # Curved sphere faces
                 ###########################
-                if t1 == 0 :                 # if north pole (triangles)
+                if t1 == 0:                 # if north pole (triangles)
                     vCurv = []
                     vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
                     vCurv.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
@@ -248,14 +254,14 @@ class Sphere(_SolidBase):
                     vCurv.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1], None))
                     polygons.append(_Polygon(vCurv))
 
-                if pRmin != 0 :
-                    if t1 == 0 :  # if north pole (triangles)
+                if pRmin != 0:
+                    if t1 == 0:  # if north pole (triangles)
                         vCurv = []
                         vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
                         vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
                         polygons.append(_Polygon(vCurv))
-                    elif t2 == _np.pi :  # if south pole (triangleS)
+                    elif t2 == _np.pi:  # if south pole
                         vCurv = []
                         vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
@@ -269,40 +275,121 @@ class Sphere(_SolidBase):
                         vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
                         polygons.append(_Polygon(vCurv))
 
-                if dPhi != 2*_np.pi :
-                    if i == 0 :
-                        if t1 == 0 :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
-                        elif t2 == _np.pi :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
-                        else :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
+        if (pDTheta - pSTheta) != 2 * _np.pi:
 
-                    if i == self.nslice-1 :
-                        if t1 == 0 :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
-                        elif t2 == _np.pi :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
-                        else :
-                            if pRmin == 0 :
-                                pass
-                            else :
-                                pass
+            for i0 in range(0, self.nstack, 1):
+                i1 = i0
+                i2 = i0 + 1
+
+                x1_inner = pRmin * _np.sin(pSTheta) * _np.cos(dPhi * i1 + pSPhi)
+                y1_inner = pRmin * _np.sin(pSTheta) * _np.sin(dPhi * i1 + pSPhi)
+                z1_inner = pRmin * _np.cos(pSTheta)
+
+                x2_inner = pRmin * _np.sin(pSTheta) * _np.cos(dPhi * i2 + pSPhi)
+                y2_inner = pRmin * _np.sin(pSTheta) * _np.sin(dPhi * i2 + pSPhi)
+                z2_inner = pRmin * _np.cos(pSTheta)
+
+                x2_outer = pRmax * _np.sin(pSTheta) * _np.cos(dPhi * i2 + pSPhi)
+                y2_outer = pRmax * _np.sin(pSTheta) * _np.sin(dPhi * i2 + pSPhi)
+                z2_outer = pRmax * _np.cos(pSTheta)
+
+                x1_outer = pRmax * _np.sin(pSTheta) * _np.cos(dPhi * i1 + pSPhi)
+                y1_outer = pRmax * _np.sin(pSTheta) * _np.sin(dPhi * i1 + pSPhi)
+                z1_outer = pRmax * _np.cos(pSTheta)
+
+                vertices_wedges_S = [] # leading face
+
+                vertices_wedges_S.append(_Vertex([x1_inner, y1_inner, z1_inner], None))
+                vertices_wedges_S.append(_Vertex([x2_inner, y2_inner, z2_inner], None))
+                vertices_wedges_S.append(_Vertex([x2_outer, y2_outer, z2_outer], None))
+                vertices_wedges_S.append(_Vertex([x1_outer, y1_outer, z1_outer], None))
+
+                polygons.append(_Polygon(vertices_wedges_S))
+
+                #############################################################################
+
+                x4_outer = pRmax * _np.sin(pDTheta) * _np.cos(dPhi * i1 + pSPhi)
+                y4_outer = pRmax * _np.sin(pDTheta) * _np.sin(dPhi * i1 + pSPhi)
+                z4_outer = pRmax * _np.cos(pDTheta)
+
+                x3_outer = pRmax * _np.sin(pDTheta) * _np.cos(dPhi * i2 + pSPhi)
+                y3_outer = pRmax * _np.sin(pDTheta) * _np.sin(dPhi * i2 + pSPhi)
+                z3_outer = pRmax * _np.cos(pDTheta)
+
+                x3_inner = pRmin * _np.sin(pDTheta) * _np.cos(dPhi * i2 + pSPhi)
+                y3_inner = pRmin * _np.sin(pDTheta) * _np.sin(dPhi * i2 + pSPhi)
+                z3_inner = pRmin * _np.cos(pDTheta)
+
+                x4_inner = pRmin * _np.sin(pDTheta) * _np.cos(dPhi * i1 + pSPhi)
+                y4_inner = pRmin * _np.sin(pDTheta) * _np.sin(dPhi * i1 + pSPhi)
+                z4_inner = pRmin * _np.cos(pDTheta)
+
+                vertices_wedges_D = [] # ending face
+
+                vertices_wedges_D.append(_Vertex([x4_outer, y4_outer, z4_outer], None))
+                vertices_wedges_D.append(_Vertex([x3_outer, y3_outer, z3_outer], None))
+                vertices_wedges_D.append(_Vertex([x3_inner, y3_inner, z3_inner], None))
+                vertices_wedges_D.append(_Vertex([x4_inner, y4_inner, z4_inner], None))
+
+                polygons.append(_Polygon(vertices_wedges_D))
+
+        if (pDPhi - pSPhi) != _np.pi:
+
+            for i0 in range(self.nslice):
+                i1 = i0
+                i2 = i0 + 1
+
+                x1_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pSPhi)
+                y1_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pSPhi)
+                z1_inner = pRmin * _np.cos(dTheta * i1 + pSTheta)
+
+                x2_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pSPhi)
+                y2_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pSPhi)
+                z2_inner = pRmin * _np.cos(dTheta * i2 + pSTheta)
+
+                x2_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pSPhi)
+                y2_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pSPhi)
+                z2_outer = pRmax * _np.cos(dTheta * i2 + pSTheta)
+
+                x1_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pSPhi)
+                y1_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pSPhi)
+                z1_outer = pRmax * _np.cos(dTheta * i1 + pSTheta)
+
+                vertices_wedges_S = [] # leading face
+
+                vertices_wedges_S.append(_Vertex([x1_inner, y1_inner, z1_inner], None))
+                vertices_wedges_S.append(_Vertex([x2_inner, y2_inner, z2_inner], None))
+                vertices_wedges_S.append(_Vertex([x2_outer, y2_outer, z2_outer], None))
+                vertices_wedges_S.append(_Vertex([x1_outer, y1_outer, z1_outer], None))
+
+                polygons.append(_Polygon(vertices_wedges_S))
+
+                #############################################################################
+
+                x4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pDPhi)
+                y4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pDPhi)
+                z4_outer = pRmax * _np.cos(dTheta * i1 + pSTheta)
+
+                x3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pDPhi)
+                y3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pDPhi)
+                z3_outer = pRmax * _np.cos(dTheta * i2 + pSTheta)
+
+                x3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pDPhi)
+                y3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pDPhi)
+                z3_inner = pRmin * _np.cos(dTheta * i2 + pSTheta)
+
+                x4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pDPhi)
+                y4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pDPhi)
+                z4_inner = pRmin * _np.cos(dTheta * i1 + pSTheta)
+
+                vertices_wedges_D = [] # ending face
+
+                vertices_wedges_D.append(_Vertex([x4_outer, y4_outer, z4_outer], None))
+                vertices_wedges_D.append(_Vertex([x3_outer, y3_outer, z3_outer], None))
+                vertices_wedges_D.append(_Vertex([x3_inner, y3_inner, z3_inner], None))
+                vertices_wedges_D.append(_Vertex([x4_inner, y4_inner, z4_inner], None))
+
+                polygons.append(_Polygon(vertices_wedges_D))
 
         mesh = _CSG.fromPolygons(polygons)
         return mesh
