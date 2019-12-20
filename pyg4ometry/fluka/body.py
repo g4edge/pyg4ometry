@@ -529,17 +529,17 @@ class TRC(Body):
 
         self.addToRegistry(flukaregistry)
 
+    def centre(self):
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * (self.major_centre
+                                        + 0.5 * self.direction))
+
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
         # -z, and the major at +z:
         rotation = trans.matrix_from([0, 0, 1], self.direction)
-        rotation = rotation
-        return rotation
-
-    def centre(self):
-        return (self.translation
-                + self.expansion
-                * (self.major_centre + 0.5 * self.direction))
+        return self._apply_transform_rotation(rotation)
 
     def geant4Solid(self, registry):
         # The first face of g4.Cons is located at -z, and the
