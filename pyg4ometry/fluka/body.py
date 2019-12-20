@@ -691,8 +691,8 @@ class _WED_RAW(Body):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)  # direction of the triangular face.
-        self.edge2 = Three(edge2)  # direction of length of the prism.
-        self.edge3 = Three(edge3)  # other direction of the triangular face.
+        self.edge2 = Three(edge2)  # direction of the triangular face.
+        self.edge3 = Three(edge3)  # direction of length of the prism.
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
@@ -707,31 +707,33 @@ class _WED_RAW(Body):
         exp = self.expansion
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
-        crossproduct = np.cross(self.edge1, self.edge3)
-        if trans.are_parallel(crossproduct, self.edge2):
-            return self.translation + exp *  self.vertex
-        elif trans.are_anti_parallel(crossproduct, self.edge2):
-            return self.translation + exp * (self.vertex + self.edge2)
+        crossproduct = np.cross(self.edge1, self.edge2)
+        if trans.are_parallel(crossproduct, self.edge3):
+            centre = self.translation + exp * self.vertex
+        elif trans.are_anti_parallel(crossproduct, self.edge3):
+            centre = self.translation + exp * (self.vertex + self.edge3)
         else:
             raise ValueError(
                 "Unable to determine if parallel or anti-parallel.")
+        return self._apply_transform(centre)
 
     def rotation(self):
         initial1 = [1, 0, 0] # edge1 starts off pointing in the x-direction.
-        initial3 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
-        return trans.two_fold_orientation(initial1, self.edge1.unit(),
-                                           initial3, self.edge3.unit())
+        initial2 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
+        rotation =  trans.two_fold_orientation(initial1, self.edge1.unit(),
+                                               initial2, self.edge2.unit())
+        return self._apply_transform_rotation(rotation)
 
     def geant4Solid(self, greg):
         exp = self.expansion
         face = [[0, 0],
                 [exp * self.edge1.length(), 0],
-                [0, exp * self.edge3.length()]]
+                [0, exp * self.edge2.length()]]
 
         return g4.solid.ExtrudedSolid(self.name,
                                       face,
                                       [[0, [0, 0], 1],
-                                       [exp * self.edge2.length(), [0, 0], 1]],
+                                       [exp * self.edge3.length(), [0, 0], 1]],
                                       registry=greg)
 
     def __repr__(self):
