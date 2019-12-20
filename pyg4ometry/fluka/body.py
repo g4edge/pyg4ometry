@@ -195,7 +195,7 @@ class BOX(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -271,7 +271,7 @@ class SPH(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -333,7 +333,7 @@ class RCC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -415,7 +415,7 @@ class REC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.direction, self.semiminor, semimajor,
@@ -514,7 +514,7 @@ class TRC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -598,7 +598,7 @@ class ELL(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
@@ -684,7 +684,7 @@ class _WED_RAW(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -807,7 +807,7 @@ class ARB(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         if len(self.vertices) != 8:
             raise TypeError("8 vertices must always be supplied,"
@@ -950,7 +950,7 @@ class XYP(_HalfSpace):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -996,7 +996,7 @@ class XZP(_HalfSpace):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1042,7 +1042,7 @@ class YZP(_HalfSpace):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1094,7 +1094,7 @@ class PLA(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1162,7 +1162,7 @@ class XCC(_InfiniteCylinder):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1213,7 +1213,7 @@ class YCC(_InfiniteCylinder):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1264,7 +1264,7 @@ class ZCC(_InfiniteCylinder):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1316,7 +1316,7 @@ class XEC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
@@ -1388,7 +1388,7 @@ class YEC(Body):
 
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
-        self.transform = transform
+        self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
