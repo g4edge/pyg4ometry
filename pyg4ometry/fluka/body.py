@@ -1345,12 +1345,14 @@ class XEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(0.0, self.y, self.z)
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(0.0, self.y, self.z))
 
     def rotation(self):
-        return np.array([[0, 0, -1],
-                         [0, 1, 0],
-                         [1, 0, 0]])
+        return self._apply_transform_rotation(np.array([[0, 0, -1],
+                                                        [0, 1, 0],
+                                                        [1, 0, 0]]))
 
     def geant4Solid(self, reg):
         exp = self.expansion
@@ -1361,7 +1363,6 @@ class XEC(Body):
                                        INFINITY,
                                        reg,
                                        lunit="mm")
-
 
     def __repr__(self):
         return "<XEC: {}, y={}, z={}, ysemi={}, zsemi={}>".format(
@@ -1417,13 +1418,14 @@ class YEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        return self.translation + self.expansion * Three(self.x, 0.0, self.z)
-
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(self.x, 0.0, self.z))
 
     def rotation(self):
-        return np.array([[1, 0, 0],
-                         [0, 0, 1],
-                         [0, -1, 0]])
+        return self._apply_transform_rotation(np.array([[1, 0, 0],
+                                                        [0, 0, 1],
+                                                        [0, -1, 0]]))
 
     def geant4Solid(self, reg):
         exp = self.expansion
@@ -1489,10 +1491,9 @@ class ZEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self):
-        pre_transform = (self.translation
-                         + self.expansion * Three(self.x, self.y, 0.0))
-        return self._apply_transform(pre_transform)
-
+        return self._apply_transform(self.translation
+                                     + self.expansion
+                                     * Three(self.x, self.y, 0.0))
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
