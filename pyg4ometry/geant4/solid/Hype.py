@@ -322,7 +322,7 @@ class Hype(_SolidBase):
                         verticesBottom.append(_Vertex([0, 0, halfLenZ], None))
                         verticesBottom.append(_Vertex([x3_rot_outer, y3_rot_outer, z3_outer], None))
 
-                    polygons.append(_Polygon(verticesBottom))
+                        polygons.append(_Polygon(verticesBottom))
 
         mesh = _CSG.fromPolygons(polygons)
         return mesh
