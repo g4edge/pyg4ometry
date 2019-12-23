@@ -80,12 +80,16 @@ def _make_disjoint_unions_registry(flukareg):
     fluka_reg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
         if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
-            fluka_reg_out.addRegion(deepcopy(region))
+            new_region = deepcopy(region)
+            fluka_reg_out.addRegion(new_region)
+            new_region.allBodiesToRegistry(fluka_reg_out)
             continue
 
         connected_zones = region.get_connected_zones()
         if len(connected_zones) == 1: # then there are no disjoint unions
-            fluka_reg_out.addRegion(deepcopy(region))
+            new_region = deepcopy(region)
+            fluka_reg_out.addRegion(new_region)
+            new_region.allBodiesToRegistry(fluka_reg_out)
             continue
 
         for connection in connected_zones: # loop over the connections
