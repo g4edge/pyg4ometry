@@ -446,6 +446,5 @@ def _getResolvedExtent(extent, body_name):
     except AttributeError:
         raise
     except KeyError:
-        import ipdb; ipdb.set_trace()
         raise KeyError("Failed to find body {} in extent map".format(
             body_name))

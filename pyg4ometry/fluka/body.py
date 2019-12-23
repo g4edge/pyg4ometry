@@ -63,7 +63,9 @@ class Body(object):
         if extent is None: # if no extent then just use the global constant.
             return INFINITY
         else:
-            return max(extent.size * 1.5)
+            # Multiply by sqrt(3) to account for any rotations of the body
+            # within the extent so that the body is definitely big enough.
+            return max(extent.size * 1.5 * np.sqrt(3))
 
     def _extent_to_offset(self, extent):
         if extent is None:
@@ -82,10 +84,11 @@ class _HalfSpace(Body):
 
     def geant4Solid(self, registry, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.Box(self.name,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            exp * INFINITY,
+                            exp * scale,
+                            exp * scale,
+                            exp * scale,
                             registry)
 
     def _halfspaceFreeStringHelper(self, coordinate):
@@ -985,9 +988,13 @@ class XYP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation +
                                      self.expansion
-                                     * Three(0, 0, self.z - (INFINITY * 0.5)))
+                                     * Three(offset.x,
+                                             offset.y,
+                                             self.z - (scale * 0.5)))
 
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
@@ -1032,9 +1039,13 @@ class XZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0, self.y - (INFINITY * 0.5), 0))
+                                     * Three(offset.x,
+                                             self.y - (scale * 0.5),
+                                             offset.z))
 
 
     def __repr__(self):
@@ -1080,9 +1091,13 @@ class YZP(_HalfSpace):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x - (INFINITY * 0.5), 0, 0))
+                                     * Three(self.x - (scale * 0.5),
+                                             offset.y,
+                                             offset.z))
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
@@ -1100,7 +1115,7 @@ class YZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.x)
 
 
-class PLA(Body):
+class PLA(_HalfSpace):
     """
     Infinite half-space delimited by the x-y plane (pependicular to \
     the z-axis) Generic infinite half-space.
@@ -1123,9 +1138,6 @@ class PLA(Body):
         self.normal = Three(normal)
         self.point = Three(point)
 
-        # normalise it if it is not normalised.
-        self.normal = self.normal / np.linalg.norm(self.normal)
-
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
         self.transform = self._set_transform(transform)
@@ -1133,25 +1145,27 @@ class PLA(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        # multiply by sqrt(3) to account for any rotation of the halfspace.
+        scale = self._extent_to_scale_factor(extent)
+        # Get point on plane closest to the centre of the extent:
+        closest_point = self._closest_point(offset)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * (self.point - 0.5
-                                        * INFINITY * self.normal.unit()))
+                                     * (closest_point
+                                        - 0.5 * scale * self.normal.unit()))
+
+    def _closest_point(self, point):
+        """Get point on plane which is closest to point not on the plane."""
+        distance = np.dot((self.point - point), self.normal.unit())
+        closest_point = point + distance * self.normal.unit()
+        return closest_point
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
         return self._apply_transform_rotation(trans.matrix_from([0, 0, 1],
                                                                 self.normal))
-
-    def geant4Solid(self, reg, extent=None):
-        exp = self.expansion
-        return g4.solid.Box(self.name,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            reg,
-                            lunit="mm")
 
     def __repr__(self):
         return "<PLA: {}, normal={}, point={}>".format(self.name,
