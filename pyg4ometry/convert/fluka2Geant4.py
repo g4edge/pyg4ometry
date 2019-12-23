@@ -140,5 +140,5 @@ def _make_body_minimum_extent_map(flukareg):
 def _getMaximalOfTwoExtents(extent1, extent2):
     # Get combined extents which are greatest
     lower = [min(a, b) for a, b in zip(extent1.lower, extent2.lower)]
-    upper = [max(a, b) for a, b in zip(extent1.uppwer, extent2.upper)]
+    upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
