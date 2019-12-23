@@ -66,7 +66,7 @@ class Zone(object):
 
     def centre(self, extent=None):
         body_name = self.intersections[0].body.name
-        extent = _getExtent(extent, body_name)
+        extent = _getExtent(extent, self.intersections[0])
         return self.intersections[0].body.centre(extent=extent)
 
     def rotation(self):
@@ -79,7 +79,7 @@ class Zone(object):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
-            extent = _getExtent(extent, boolean.body.name)
+            extent = _getExtent(extent, boolean)
             return boolean.body.geant4Solid(reg, extent=extent)
 
     def geant4Solid(self, reg, extent=None):
@@ -352,9 +352,9 @@ def _get_relative_translation(first, second, extent):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    extent1 = _getExtent(extent, first.name)
-    extent2 = _getExtent(extent, second.name)
-    offset_vector = second.centre(extent=extent1) - first.centre(extent=extent2)
+    extent1 = _getExtent(extent, first)
+    extent2 = _getExtent(extent, second)
+    offset_vector = second.centre(extent=extent2) - first.centre(extent=extent1)
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
@@ -437,8 +437,17 @@ class Extent(object):
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
 
-def _getExtent(extent, body_name):
+def _getExtent(extent, boolean):
     """Extent can either a dictionary of a number."""
+    if isinstance(boolean, Zone):
+        return extent
+    elif isinstance(boolean, _Boolean):
+        body_name = boolean.body.name
+    elif isinstance(boolean, Body):
+        body_name = boolean.name
+    else:
+        raise ValueError("Unknown boolean type")
+
     if extent is None:
         return None
     try:
@@ -446,6 +455,5 @@ def _getExtent(extent, body_name):
     except AttributeError:
         raise
     except KeyError:
-        import ipdb; ipdb.set_trace()
         raise KeyError("Failed to find body {} in extent map".format(
             body_name))
