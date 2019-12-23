@@ -406,7 +406,7 @@ class Extent(object):
 def _getResolvedExtent(extent, body_name):
     """Extent can either a dictionary of a number."""
     if extent is None:
-        return extent
+        return None
     try:
         return extent[body_name]
     except AttributeError:

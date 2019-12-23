@@ -34,7 +34,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                                WORLD_DIMENSIONS, greg, "mm")
     wlv = g4.LogicalVolume(world_solid, world_material, "wl", greg)
 
-    extent_map = {body: None for body in flukareg.bodyDict}
+    extent_map = None
     if minimise_solids:
         extent_map = _make_body_minimum_extent_map(flukareg)
 
