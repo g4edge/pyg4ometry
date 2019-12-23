@@ -14,7 +14,43 @@ from .vector import Three
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+class _Boolean(object):
+    def generate_name(self, index, rootname=None):
+        """Try to generate a sensible name for intermediate
+        Geant4 booleans which have no FLUKA analogue."""
+        if rootname is None:
+            rootname = "a{}".format(uuid4()).replace("-", "")
 
+        type_name = type(self).__name__
+        type_name = type_name[:3]
+
+
+        if isinstance(self.body, Body):
+            return "{}{}_{}_{}".format(type_name,
+                                       index,
+                                       self.body.name,
+                                       rootname)
+        elif isinstance(self.body, Zone):
+            return "{}{}_{}_{}".format(type_name,
+                                       index,
+                                       "zone",
+                                       rootname)
+
+
+class Subtraction(_Boolean):
+    def __init__(self, body):
+        self.body = body
+        self._typestring = "sub"
+
+class Intersection(_Boolean):
+    def __init__(self, body):
+        self.body = body
+        self._typestrin = "int"
+
+class Union(_Boolean):
+    def __init__(self, body):
+        self.body = body
+        self._typestring = "uni"
 
 class Zone(object):
     def __init__(self, name=None):
@@ -23,32 +59,32 @@ class Zone(object):
         self.name = name
 
     def addSubtraction(self, body):
-        self.subtractions.append(body)
+        self.subtractions.append(Subtraction(body))
 
     def addIntersection(self,body):
-        self.intersections.append(body)
+        self.intersections.append(Intersection(body))
 
     def centre(self, extent=None):
-        body_name = self.intersections[0].name
+        body_name = self.intersections[0].body.name
         extent = _getResolvedExtent(extent, body_name)
-        return self.intersections[0].centre(extent=extent)
+        return self.intersections[0].body.centre(extent=extent)
 
     def rotation(self):
-        return self.intersections[0].rotation()
+        return self.intersections[0].body.rotation()
 
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, body, reg, extent):
+    def _getSolidFromBoolean(self, boolean, reg, extent):
         try:
-            return reg.solidDict[body.name]
+            return reg.solidDict[boolean.body.name]
         except KeyError:
-            extent = _getResolvedExtent(extent, body.name)
-            return body.geant4Solid(reg, extent=extent)
+            extent = _getResolvedExtent(extent, boolean.body.name)
+            return boolean.body.geant4Solid(reg, extent=extent)
 
     def geant4Solid(self, reg, extent=None):
         try:
-            body0 = self.intersections[0]
+            body0 = self.intersections[0].body
         except IndexError:
             raise FLUKAError("zone has no +")
 
@@ -58,23 +94,17 @@ class Zone(object):
 
         booleans = self.intersections + self.subtractions
 
-        for body,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
-            tra2 = _get_tra2(body0, body, extent)
-            other_solid = self._getSolidFromBoolean(body, reg, extent)
-            if body in self.intersections:
-                boolean_name = _generate_boolean_name(body,
-                                                      i,
-                                                      "int",
-                                                      rootname=self.name)
+        for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
+            boolean_name = boolean.generate_name(i, rootname=self.name)
+
+            tra2 = _get_tra2(body0, boolean.body, extent)
+            other_solid = self._getSolidFromBoolean(boolean, reg, extent)
+            if isinstance(boolean, Subtraction):
                 result = g4.solid.Subtraction(boolean_name,
                                               result, other_solid,
                                               tra2, reg)
 
-            elif body in self.subtractions:
-                boolean_name = _generate_boolean_name(body,
-                                                      i,
-                                                      "sub",
-                                                      rootname=self.name)
+            elif isinstance(boolean, Intersection):
                 result = g4.solid.Intersection(boolean_name,
                                                result, other_solid,
                                                tra2, reg)
@@ -83,24 +113,26 @@ class Zone(object):
     def flukaFreeString(self):
         fs = ""
 
-        for body in self.intersections + self.subtractions:
-            if body in self.intersections:
-                if isinstance(body,Zone):
-                    fs = fs+" +("+body.flukaFreeString()+")"
+        booleans = self.intersections + self.subtractions
+        for s in booleans:
+            if isinstance(s,Intersection) :
+                if isinstance(s.body,Zone) :
+                    fs = fs+" +("+s.body.flukaFreeString()+")"
                 else :
-                    fs=fs+" +"+body.name
-            elif body in self.intersections:
-                if isinstance(body,Zone):
-                    fs = fs+" -("+body.flukaFreeString()+")"
+                    fs=fs+" +"+s.body.name
+            elif isinstance(s,Subtraction) :
+                if isinstance(s.body,Zone) :
+                    fs = fs+" -("+s.body.flukaFreeString()+")"
                 else :
-                    fs=fs+" -"+body.name
+                    fs=fs+" -"+s.body.name
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg,
                            shrink_intersections):
         zone_out = Zone(name=self.name)
         logger.debug("zone.name = %s", self.name)
-        for body in self.intersections:
+        for boolean in self.intersections:
+            body = boolean.body
             name = body.name
 
             if isinstance(body, Zone):
@@ -121,7 +153,8 @@ class Zone(object):
                              ls_body.name)
                 zone_out.addIntersection(ls_body)
 
-        for body in self.subtractions:
+        for boolean in self.subtractions:
+            body = boolean.body
             name = body.name
             if isinstance(body, Zone):
                 zone_out.addSubtraction(body.withLengthSafety(
@@ -144,7 +177,8 @@ class Zone(object):
         return zone_out
 
     def allBodiesToRegistry(self, flukaregistry):
-        for body in self.intersections + self.subtractions:
+        for boolean in self.intersections + self.subtractions:
+            body = boolean.body
             name = body.name
             if isinstance(body, Zone):
                 body.allBodiesToRegistry(flukaregistry)
@@ -153,14 +187,14 @@ class Zone(object):
 
     def bodies(self):
         bodies = set()
-        for body in self.intersections + self.subtractions:
+        for boolean in self.intersections + self.subtractions:
+            body = boolean.body
             name = body.name
             if isinstance(body, Zone):
                 bodies.union(body.bodies())
             else:
                 bodies.add(body)
         return bodies
-
 
 class Region(object):
 
@@ -414,21 +448,3 @@ def _getResolvedExtent(extent, body_name):
     except KeyError:
         raise KeyError("Failed to find body {} in extent map".format(
             body_name))
-
-
-def _generate_boolean_name(body, index, type_name, rootname=None):
-    """Try to generate a sensible name for intermediate
-    Geant4 booleans which have no FLUKA analogue."""
-    if rootname is None:
-        rootname = "a{}".format(uuid4()).replace("-", "")
-
-    if isinstance(body, Body):
-        return "{}{}_{}_{}".format(type_name,
-                                   index,
-                                   body.name,
-                                   rootname)
-    elif isinstance(body, Zone):
-        return "{}{}_{}_{}".format(type_name,
-                                   index,
-                                   "zone",
-                                   rootname)
