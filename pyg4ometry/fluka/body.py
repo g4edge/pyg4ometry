@@ -59,6 +59,21 @@ class Body(object):
     def _apply_transform_rotation(self, rotation_matrix):
         return self.transform[:3,:3].dot(rotation_matrix)
 
+    def _extent_to_scale_factor(self, extent):
+        if extent is None: # if no extent then just use the global constant.
+            return INFINITY
+        else:
+            return max(extent.size * 1.5)
+
+    def _extent_to_offset(self, extent):
+        if extent is None:
+            offset = Three(0, 0, 0)
+        elif extent is not None:
+            offset = extent.centre
+        else:
+            raise TypeError("Unknown type of extent {}".format(extent))
+        return offset
+
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
@@ -82,10 +97,11 @@ class _InfiniteCylinder(Body):
     # Base class for XCC, YCC, ZCC.
     def geant4Solid(self, registry, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.Tubs(self.name,
                              0.0,
                              exp * self.radius,
-                             exp * INFINITY,
+                             scale * exp,
                              0.0, 2*np.pi,
                              registry,
                              lunit="mm")
@@ -1187,9 +1203,10 @@ class XCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0.0, self.y, self.z))
+                                     * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[0, 0, -1],
@@ -1240,9 +1257,10 @@ class YCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, 0.0, self.z))
+                                     * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[1, 0, 0],
@@ -1293,9 +1311,10 @@ class ZCC(_InfiniteCylinder):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, self.y, 0.0))
+                                     * Three(self.x, self.y, extent_offset.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))

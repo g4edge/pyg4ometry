@@ -39,7 +39,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
         extent_map = _make_body_minimum_extent_map(flukareg)
 
     for name, region in flukareg.regionDict.iteritems():
-        region_solid = region.geant4Solid(greg, extent_map)
+        region_solid = region.geant4Solid(greg, extent=extent_map)
         region_material = g4.MaterialPredefined("G4_Fe")
         region_lv = g4.LogicalVolume(region_solid,
                                      region_material,
@@ -122,10 +122,8 @@ def _make_body_minimum_extent_map(flukareg):
         body_region_extents = [region_extents[region_name]
                                for region_name in region_names]
         if len(region_extents) == 1:
-            extent = region_extents[0]
+            extent = region_extents.values()[0]
         elif len(region_extents) > 1:
-            # _logger.debug("Reducing to minimum extent: %s",
-            #               body_region_extents)
             extent = reduce(_getMaximalOfTwoExtents, body_region_extents)
             _logger.debug("Minimum extent = %s", extent)
         else:

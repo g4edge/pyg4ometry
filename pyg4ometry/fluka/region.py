@@ -65,6 +65,8 @@ class Zone(object):
         self.intersections.append(Intersection(body))
 
     def centre(self, extent=None):
+        body_name = self.intersections[0].body.name
+        extent = _getResolvedExtent(extent, body_name)
         return self.intersections[0].body.centre(extent=extent)
 
     def rotation(self):
@@ -77,7 +79,8 @@ class Zone(object):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
-            return boolean.body.geant4Solid(reg)
+            extent = _getResolvedExtent(extent, boolean.body.name)
+            return boolean.body.geant4Solid(reg, extent=extent)
 
     def geant4Solid(self, reg, extent=None):
         try:
@@ -233,7 +236,7 @@ class Region(object):
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
-            tra2 = _get_tra2(zone0, zone, extent)
+            tra2 = _get_tra2(zone0, zone, extent=extent)
             logger.debug("union tra2 = %s", tra2)
             result  = g4.solid.Union(zone_name, result, otherg4, tra2, reg)
 
@@ -349,7 +352,9 @@ def _get_relative_translation(first, second, extent):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    offset_vector = second.centre(extent=None) - first.centre(extent=None)
+    extent1 = _getResolvedExtent(extent, first.name)
+    extent2 = _getResolvedExtent(extent, second.name)
+    offset_vector = second.centre(extent=extent1) - first.centre(extent=extent2)
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
@@ -363,8 +368,7 @@ def _get_relative_rotation(first, second):
 
 def _get_tra2(first, second, extent):
     relative_angles = _get_relative_rotation(first, second)
-    relative_translation = _get_relative_translation(first, second,
-                                                     extent)
+    relative_translation = _get_relative_translation(first, second, extent)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
 
@@ -432,3 +436,16 @@ class Extent(object):
 
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
+
+def _getResolvedExtent(extent, body_name):
+    """Extent can either a dictionary of a number."""
+    if extent is None:
+        return extent
+    try:
+        return extent[body_name]
+    except AttributeError:
+        raise
+    except KeyError:
+        import ipdb; ipdb.set_trace()
+        raise KeyError("Failed to find body {} in extent map".format(
+            body_name))
