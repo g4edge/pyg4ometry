@@ -1,3 +1,4 @@
+import logging
 from copy import deepcopy
 import warnings
 
@@ -5,10 +6,15 @@ import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
 
+_logger = logging.getLogger(__name__)
+_logger.setLevel(logging.INFO)
+
 WORLD_DIMENSIONS = 10000
 
 def fluka2Geant4(flukareg, with_length_safety=True,
-                 split_disjoint_unions=True):
+                 split_disjoint_unions=True,
+                 minimise_solids=True):
+
     if with_length_safety:
         flukareg = _make_length_safety_registry(flukareg)
 
@@ -28,7 +34,9 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                                WORLD_DIMENSIONS, greg, "mm")
     wlv = g4.LogicalVolume(world_solid, world_material, "wl", greg)
 
-    region_extents = _get_region_extents(flukareg)
+    if minimise_solids:
+        extent_map = _make_body_minimum_extent_map(flukareg)
+        from IPython import embed; embed()
 
     for name, region in flukareg.regionDict.iteritems():
         region_solid = region.geant4Solid(greg)
@@ -104,3 +112,31 @@ def _get_region_extents(flukareg):
     regionmap = flukareg.regionDict
     return {name: region.extent() for name, region in regionmap.iteritems()}
 
+def _make_body_minimum_extent_map(flukareg):
+    region_extents = _get_region_extents(flukareg)
+    bodies_to_regions = flukareg.getBodyToRegionsMap()
+
+    bodies_to_minimum_extents = {}
+    for body_name, region_names in bodies_to_regions.iteritems():
+        _logger.debug("Getting minimum extent for body: %s", body_name)
+        body_region_extents = [region_extents[region_name]
+                               for region_name in region_names]
+        if len(region_extents) == 1:
+            extent = region_extents[0]
+        elif len(region_extents) > 1:
+            # _logger.debug("Reducing to minimum extent: %s",
+            #               body_region_extents)
+            extent = reduce(_getMaximalOfTwoExtents, body_region_extents)
+            _logger.debug("Minimum extent = %s", extent)
+        else:
+            raise ValueError("WHAT?")
+
+        bodies_to_minimum_extents[body_name] = extent
+
+    return bodies_to_minimum_extents
+
+def _getMaximalOfTwoExtents(extent1, extent2):
+    # Get combined extents which are greatest
+    lower = [min(a, b) for a, b in zip(extent1.lower, extent2.lower)]
+    upper = [max(a, b) for a, b in zip(extent1.uppwer, extent2.upper)]
+    return fluka.Extent(lower, upper)
