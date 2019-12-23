@@ -180,7 +180,16 @@ class Zone(object):
             elif name not in flukaregistry.bodyDict:
                 flukaregistry.addBody(body)
 
-
+    def bodies(self):
+        bodies = set()
+        for boolean in self.intersections + self.subtractions:
+            body = boolean.body
+            name = body.name
+            if isinstance(body, Zone):
+                bodies.union(body.bodies())
+            else:
+                bodies.add(body)
+        return bodies
 
 class Region(object):
 
@@ -200,6 +209,12 @@ class Region(object):
 
     def rotation(self):
         return self.zones[0].rotation()
+
+    def bodies(self):
+        bodies = set()
+        for zone in self.zones:
+            bodies = bodies.union(zone.bodies())
+        return bodies
 
     def geant4Solid(self, reg):
         logger.debug("Region = %s", self.name)
