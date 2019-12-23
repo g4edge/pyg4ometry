@@ -28,7 +28,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                                WORLD_DIMENSIONS, greg, "mm")
     wlv = g4.LogicalVolume(world_solid, world_material, "wl", greg)
 
-
+    region_extents = _get_region_extents(flukareg)
 
     for name, region in flukareg.regionDict.iteritems():
         region_solid = region.geant4Solid(greg)
@@ -99,3 +99,8 @@ def _make_disjoint_unions_registry(flukareg):
                 fluka_reg_out.addRegion(new_region)
 
     return fluka_reg_out
+
+def _get_region_extents(flukareg):
+    regionmap = flukareg.regionDict
+    return {name: region.extent() for name, region in regionmap.iteritems()}
+

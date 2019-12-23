@@ -304,6 +304,26 @@ class Region(object):
             extents.append(Extent(lower, upper))
         return extents
 
+    def extent(self):
+        greg = g4.Registry()
+        world_solid = g4.solid.Box("world_solid", 1e4, 1e4, 1e4, greg, "mm")
+        wlv = g4.LogicalVolume(world_solid,
+                               g4.MaterialPredefined("G4_Galactic"),
+                               "wl", greg)
+
+        region_lv = g4.LogicalVolume(self.geant4Solid(greg),
+                                     g4.MaterialPredefined("G4_Galactic"),
+                                     "{}_lv".format(self.name),
+                                     greg)
+        g4.PhysicalVolume(list(reverse(self.tbxyz())),
+                          list(self.centre()),
+                          region_lv,
+                          "{}_pv".format(self.name),
+                          wlv, greg)
+
+        lower, upper = wlv.extent()
+        return Extent(lower, upper)
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
