@@ -1380,9 +1380,10 @@ class XEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0.0, self.y, self.z))
+                                     * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[0, 0, -1],
@@ -1391,11 +1392,12 @@ class XEC(Body):
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi:
                                        2 * exp * self.zsemi,
                                        2 * exp * self.ysemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 
@@ -1453,9 +1455,10 @@ class YEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, 0.0, self.z))
+                                     * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[1, 0, 0],
@@ -1464,11 +1467,12 @@ class YEC(Body):
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
                                        2 * exp * self.zsemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 
@@ -1526,19 +1530,21 @@ class ZEC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, self.y, 0.0))
+                                     * Three(self.x, self.y, extent_offset.z))
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
                                        2 * exp * self.ysemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 
