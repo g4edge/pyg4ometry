@@ -64,8 +64,8 @@ class Zone(object):
     def addIntersection(self,body):
         self.intersections.append(Intersection(body))
 
-    def centre(self):
-        return self.intersections[0].body.centre()
+    def centre(self, extent=None):
+        return self.intersections[0].body.centre(extent=extent)
 
     def rotation(self):
         return self.intersections[0].body.rotation()
@@ -73,36 +73,38 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, boolean, reg):
+    def _getSolidFromBoolean(self, boolean, reg, extent):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
             return boolean.body.geant4Solid(reg)
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         try:
             body0 = self.intersections[0].body
         except IndexError:
             raise FLUKAError("zone has no +")
 
-        result = self._getSolidFromBoolean(self.intersections[0], reg)
+        result = self._getSolidFromBoolean(self.intersections[0],
+                                           reg,
+                                           extent)
 
         booleans = self.intersections + self.subtractions
 
         for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
             boolean_name = boolean.generate_name(i, rootname=self.name)
 
-            tra2 = _get_tra2(body0, boolean.body)
-            other_solid = self._getSolidFromBoolean(boolean, reg)
+            tra2 = _get_tra2(body0, boolean.body, extent)
+            other_solid = self._getSolidFromBoolean(boolean, reg, extent)
             if isinstance(boolean, Subtraction):
-                result  =g4.solid.Subtraction(boolean_name,
-                                               result, other_solid,
-                                               tra2, reg)
+                result = g4.solid.Subtraction(boolean_name,
+                                              result, other_solid,
+                                              tra2, reg)
 
             elif isinstance(boolean, Intersection):
-                result  =g4.solid.Intersection(boolean_name,
-                                                result, other_solid,
-                                                tra2, reg)
+                result = g4.solid.Intersection(boolean_name,
+                                               result, other_solid,
+                                               tra2, reg)
         return result
 
     def flukaFreeString(self):
@@ -201,8 +203,8 @@ class Region(object):
     def addZone(self,zone):
         self.zones.append(zone)
 
-    def centre(self):
-        return self.zones[0].centre()
+    def centre(self, extent=None):
+        return self.zones[0].centre(extent=extent)
 
     def tbxyz(self):
         return self.zones[0].tbxyz()
@@ -216,22 +218,22 @@ class Region(object):
             bodies = bodies.union(zone.bodies())
         return bodies
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         logger.debug("Region = %s", self.name)
         try:
             zone0 = self.zones[0]
         except IndexError:
             raise FLUKAError("Region {} has no zones.".format(self.name))
 
-        result = zone0.geant4Solid(reg)
+        result = zone0.geant4Solid(reg, extent=extent)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             try:
-                otherg4 = zone.geant4Solid(reg)
+                otherg4 = zone.geant4Solid(reg, extent=extent)
             except FLUKAError as e:
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
-            tra2 = _get_tra2(zone0, zone)
+            tra2 = _get_tra2(zone0, zone, extent)
             logger.debug("union tra2 = %s", tra2)
             result  = g4.solid.Union(zone_name, result, otherg4, tra2, reg)
 
@@ -290,7 +292,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if _get_zone_overlap(zones[i], zones[j]) is not None:
+            if _get_zone_overlap(zones[i], zones[j], extent=None) is not None:
                 graph.add_edge(i, j)
         return graph
 
@@ -343,11 +345,11 @@ class Region(object):
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
 
-def _get_relative_translation(first, second):
+def _get_relative_translation(first, second, extent):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    offset_vector = second.centre() - first.centre()
+    offset_vector = second.centre(extent=None) - first.centre(extent=None)
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
@@ -359,9 +361,10 @@ def _get_relative_rotation(first, second):
     # rotation.
     return matrix2tbxyz(_get_relative_rot_matrix(first, second))
 
-def _get_tra2(first, second):
+def _get_tra2(first, second, extent):
     relative_angles = _get_relative_rotation(first, second)
-    relative_translation = _get_relative_translation(first, second)
+    relative_translation = _get_relative_translation(first, second,
+                                                     extent)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
 
@@ -390,13 +393,13 @@ def are_extents_overlapping(first, second):
                 or first.upper.z < second.lower.z
                 or first.lower.z > second.upper.z)
 
-def _get_zone_overlap(zone1, zone2):
+def _get_zone_overlap(zone1, zone2, extent):
     greg = g4.Registry()
 
     solid1 = zone1.geant4Solid(greg)
     solid2 = zone2.geant4Solid(greg)
 
-    tra2 = _get_tra2(zone1, zone2)
+    tra2 = _get_tra2(zone1, zone2, extent)
 
     intersection = g4.solid.Intersection(_random_name(),
                            solid1,
