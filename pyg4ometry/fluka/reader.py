@@ -467,7 +467,7 @@ def _parseRotDefiniCard(card):
         i = int(what1)
         j = 0
     elif what1 == 0:
-        # If left empty (i.e. 0), then this is a translation
+        # If left empty (i.e. 0), then this is a transformation
         # about the z-axis.  But I don't know what that means for i.
         i = what1
         j = 0
@@ -508,6 +508,9 @@ def _parseRotDefiniCard(card):
     st = np.sin(theta)
     sp = np.sin(phi)
 
+    # The sine and cosine terms in the translation column are to make
+    # it so the rotation is applied *after* the translation, which is
+    # the case in FLUKA.
     if j == 1: # x
         r1 = np.array([[ ct, st, 0, 0],
                        [-st, ct, 0, 0],
