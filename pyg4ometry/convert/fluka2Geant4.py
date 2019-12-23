@@ -34,12 +34,12 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                                WORLD_DIMENSIONS, greg, "mm")
     wlv = g4.LogicalVolume(world_solid, world_material, "wl", greg)
 
+    extent_map = {body: None for body in flukareg.bodyDict}
     if minimise_solids:
         extent_map = _make_body_minimum_extent_map(flukareg)
-        from IPython import embed; embed()
 
     for name, region in flukareg.regionDict.iteritems():
-        region_solid = region.geant4Solid(greg)
+        region_solid = region.geant4Solid(greg, extent_map)
         region_material = g4.MaterialPredefined("G4_Fe")
         region_lv = g4.LogicalVolume(region_solid,
                                      region_material,
@@ -51,7 +51,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
         # rotation.
         rot = list(trans.reverse(region.tbxyz()))
         g4.PhysicalVolume(rot,
-                          list(region.centre()),
+                          list(region.centre(extent=extent_map)),
                           region_lv,
                           "{}_pv".format(name),
                           wlv, greg)
