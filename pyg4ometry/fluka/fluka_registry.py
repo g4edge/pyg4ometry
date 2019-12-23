@@ -38,7 +38,7 @@ class FlukaRegistry(object):
     def addRegion(self, region, addBodies=False):
         # Always build a map of bodies to regions, which we need for
         for body in region.bodies():
-            if body in self._bodiesAndRegions:
+            if body.name in self._bodiesAndRegions:
                 self._bodiesAndRegions[body.name].add(region.name)
             else:
                 self._bodiesAndRegions[body.name] = {region.name}
