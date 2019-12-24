@@ -59,18 +59,36 @@ class Body(object):
     def _apply_transform_rotation(self, rotation_matrix):
         return self.transform[:3,:3].dot(rotation_matrix)
 
+    def _extent_to_scale_factor(self, extent):
+        if extent is None: # if no extent then just use the global constant.
+            return INFINITY
+        else:
+            # Multiply by sqrt(3) to account for any rotations of the body
+            # within the extent so that the body is definitely big enough.
+            return max(extent.size * 1.5 * np.sqrt(3))
+
+    def _extent_to_offset(self, extent):
+        if extent is None:
+            offset = Three(0, 0, 0)
+        elif extent is not None:
+            offset = extent.centre
+        else:
+            raise TypeError("Unknown type of extent {}".format(extent))
+        return offset
+
 
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
-    def geant4Solid(self, registry):
+    def geant4Solid(self, registry, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.Box(self.name,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            exp * INFINITY,
+                            exp * scale,
+                            exp * scale,
+                            exp * scale,
                             registry)
 
     def _halfspaceFreeStringHelper(self, coordinate):
@@ -80,12 +98,13 @@ class _HalfSpace(Body):
 
 class _InfiniteCylinder(Body):
     # Base class for XCC, YCC, ZCC.
-    def geant4Solid(self, registry):
+    def geant4Solid(self, registry, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.Tubs(self.name,
                              0.0,
                              exp * self.radius,
-                             exp * INFINITY,
+                             scale * exp,
                              0.0, 2*np.pi,
                              registry,
                              lunit="mm")
@@ -137,7 +156,7 @@ class RPP(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         pre_transform = (self.translation
                          + self.expansion * 0.5 * (self.lower + self.upper))
         return self._apply_transform(pre_transform)
@@ -145,7 +164,7 @@ class RPP(Body):
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         v = self.expansion * (self.upper - self.lower)
         return g4.solid.Box(self.name,
                             v.x, v.y, v.z,
@@ -209,7 +228,7 @@ class BOX(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         pre_transform = (self.translation
                          + self.expansion
                          * (self.vertex + 0.5 * (self.edge1
@@ -220,7 +239,7 @@ class BOX(Body):
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
-    def geant4Solid(self, greg):
+    def geant4Solid(self, greg, extent=None):
         exp = self.expansion
         return g4.solid.Box(self.name,
                             exp * self.edge1.length(),
@@ -284,7 +303,7 @@ class SPH(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self._apply_transform(self.translation
                                      + self.expansion
                                      * self.point)
@@ -292,7 +311,7 @@ class SPH(Body):
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         return g4.solid.Orb(self.name,
                             self.expansion * self.radius,
                             reg,
@@ -348,7 +367,7 @@ class RCC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self._apply_transform(self.translation
                                      + self.expansion
                                      * (self.face + 0.5 * self.direction))
@@ -359,7 +378,7 @@ class RCC(Body):
         rotation = trans.matrix_from(initial, final)
         return self._apply_transform_rotation(rotation)
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         exp = self.expansion
         return g4.solid.Tubs(self.name,
                              0.0,
@@ -435,7 +454,7 @@ class REC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self._apply_transform(self.translation
                                      + self.face
                                      + 0.5 * self.expansion * self.direction)
@@ -452,7 +471,7 @@ class REC(Body):
                                               final_semiminor)
         return self._apply_transform_rotation(rotation)
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         exp = self.expansion
         return g4.solid.EllipticalTube(self.name,
                                        2 * exp * self.semiminor.length(),
@@ -529,7 +548,7 @@ class TRC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self._apply_transform(self.translation
                                      + self.expansion
                                      * (self.major_centre
@@ -541,7 +560,7 @@ class TRC(Body):
         rotation = trans.matrix_from([0, 0, 1], self.direction)
         return self._apply_transform_rotation(rotation)
 
-    def geant4Solid(self, registry):
+    def geant4Solid(self, registry, extent=None):
         # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         exp = self.expansion
@@ -620,7 +639,7 @@ class ELL(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self._apply_transform(self.translation
                                      + 0.5 * self.expansion
                                      * (self.focus1 + self.focus2))
@@ -640,7 +659,7 @@ class ELL(Body):
         return np.sqrt((0.5 * self.expansion * self.length)**2 -
                        self._linearEccentricity()**2)
 
-    def geant4Solid(self, greg):
+    def geant4Solid(self, greg, extent=None):
         semiminor = self._semiminor()
         expansion = self.expansion
         return g4.solid.Ellipsoid(self.name,
@@ -703,7 +722,7 @@ class _WED_RAW(Body):
             "Edges are not all mutually perpendicular.")
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         exp = self.expansion
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
@@ -724,7 +743,7 @@ class _WED_RAW(Body):
                                                initial2, self.edge2.unit())
         return self._apply_transform_rotation(rotation)
 
-    def geant4Solid(self, greg):
+    def geant4Solid(self, greg, extent=None):
         exp = self.expansion
         face = [[0, 0],
                 [exp * self.edge1.length(), 0],
@@ -838,13 +857,13 @@ class ARB(Body):
                             "  Must be 4, 5 or 6.")
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
         return self.translation + Three(0, 0, 0)
 
     def rotation(self):
         return np.identity(3)
 
-    def geant4Solid(self, greg):
+    def geant4Solid(self, greg, extent=None):
         # pyg4ometry expects right handed corkscrew for the vertices
         # for TesselatedSolid (and in general).
         # Fluka however for ARB can take either all right or left
@@ -968,10 +987,14 @@ class XYP(_HalfSpace):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation +
                                      self.expansion
-                                     * Three(0, 0, self.z - (INFINITY * 0.5)))
+                                     * Three(offset.x,
+                                             offset.y,
+                                             self.z - (scale * 0.5)))
 
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
@@ -1015,10 +1038,14 @@ class XZP(_HalfSpace):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0, self.y - (INFINITY * 0.5), 0))
+                                     * Three(offset.x,
+                                             self.y - (scale * 0.5),
+                                             offset.z))
 
 
     def __repr__(self):
@@ -1063,10 +1090,14 @@ class YZP(_HalfSpace):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        scale = self._extent_to_scale_factor(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x - (INFINITY * 0.5), 0, 0))
+                                     * Three(self.x - (scale * 0.5),
+                                             offset.y,
+                                             offset.z))
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
@@ -1084,7 +1115,7 @@ class YZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.x)
 
 
-class PLA(Body):
+class PLA(_HalfSpace):
     """
     Infinite half-space delimited by the x-y plane (pependicular to \
     the z-axis) Generic infinite half-space.
@@ -1107,35 +1138,34 @@ class PLA(Body):
         self.normal = Three(normal)
         self.point = Three(point)
 
-        # normalise it if it is not normalised.
-        self.normal = self.normal / np.linalg.norm(self.normal)
-
         self.expansion = expansion
         self.translation = self._set_translation_setTranslation(translation)
         self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        offset = self._extent_to_offset(extent)
+        # multiply by sqrt(3) to account for any rotation of the halfspace.
+        scale = self._extent_to_scale_factor(extent)
+        # Get point on plane closest to the centre of the extent:
+        closest_point = self._closest_point(offset)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * (self.point - 0.5
-                                        * INFINITY * self.normal.unit()))
+                                     * (closest_point
+                                        - 0.5 * scale * self.normal.unit()))
+
+    def _closest_point(self, point):
+        """Get point on plane which is closest to point not on the plane."""
+        distance = np.dot((self.point - point), self.normal.unit())
+        closest_point = point + distance * self.normal.unit()
+        return closest_point
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
         return self._apply_transform_rotation(trans.matrix_from([0, 0, 1],
                                                                 self.normal))
-
-    def geant4Solid(self, reg):
-        exp = self.expansion
-        return g4.solid.Box(self.name,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            exp * INFINITY,
-                            reg,
-                            lunit="mm")
 
     def __repr__(self):
         return "<PLA: {}, normal={}, point={}>".format(self.name,
@@ -1186,10 +1216,11 @@ class XCC(_InfiniteCylinder):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0.0, self.y, self.z))
+                                     * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[0, 0, -1],
@@ -1239,10 +1270,11 @@ class YCC(_InfiniteCylinder):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, 0.0, self.z))
+                                     * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[1, 0, 0],
@@ -1292,10 +1324,11 @@ class ZCC(_InfiniteCylinder):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, self.y, 0.0))
+                                     * Three(self.x, self.y, extent_offset.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
@@ -1346,23 +1379,25 @@ class XEC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(0.0, self.y, self.z))
+                                     * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[0, 0, -1],
                                                         [0, 1, 0],
                                                         [1, 0, 0]]))
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi:
                                        2 * exp * self.zsemi,
                                        2 * exp * self.ysemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 
@@ -1419,23 +1454,25 @@ class YEC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, 0.0, self.z))
+                                     * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
         return self._apply_transform_rotation(np.array([[1, 0, 0],
                                                         [0, 0, 1],
                                                         [0, -1, 0]]))
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
                                        2 * exp * self.zsemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 
@@ -1492,20 +1529,22 @@ class ZEC(Body):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self):
+    def centre(self, extent=None):
+        extent_offset = self._extent_to_offset(extent)
         return self._apply_transform(self.translation
                                      + self.expansion
-                                     * Three(self.x, self.y, 0.0))
+                                     * Three(self.x, self.y, extent_offset.z))
     def rotation(self):
         return self._apply_transform_rotation(np.identity(3))
 
-    def geant4Solid(self, reg):
+    def geant4Solid(self, reg, extent=None):
         exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
                                        2 * exp * self.ysemi,
-                                       INFINITY,
+                                       scale,
                                        reg,
                                        lunit="mm")
 

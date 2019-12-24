@@ -1,19 +1,24 @@
-import sys
 from collections import OrderedDict
+from copy import deepcopy
+from operator import mul, add
+import sys
+from warnings import warn
 
+
+import antlr4
 import numpy as np
 
 
 from . import body
 from .region import Zone, Region
 from .fluka_registry import FlukaRegistry
-from copy import deepcopy
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
+from .vector import Three
 from .card import freeFormatStringSplit, Card
 
-import antlr4
+
 
 _BODY_NAMES = {"RPP",
                "BOX",
@@ -69,7 +74,8 @@ class Reader(object):
         self._parseRotDefinis()
         self._parseBodies()
         self._parseRegions()
-
+        self._material_assignments = self._parseMaterialAssignments()
+        self._assignMaterials()
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -94,9 +100,9 @@ class Reader(object):
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
         # order of application so no need for a stack.
-        expansion = 1.0
-        translation = None
-        transform = None
+        expansion_stack = []
+        translation_stack = []
+        transform_stack = []
 
         # type, name, parameters, etc.,  may be accumulated
         # over many lines, each part is a string in the list in order.
@@ -109,20 +115,31 @@ class Reader(object):
             first_bit = line_parts[0]
             if first_bit in _BODY_NAMES: # start of body definition
                 if in_body: # already in body, build the previous one.
-                    _make_body(body_parts, expansion, translation, transform,
+                    _make_body(body_parts,
+                               expansion_stack,
+                               translation_stack,
+                               transform_stack,
                                self.flukaregistry)
                 body_parts = line_parts
                 in_body = True
             elif first_bit.startswith("$"): # geometry directive
                 if in_body: # build the body we have accrued...
-                    _make_body(body_parts, expansion, translation, transform,
+                    _make_body(body_parts,
+                               expansion_stack,
+                               translation_stack,
+                               transform_stack,
                                self.flukaregistry)
-                expansion, translation, transform = self._parseGeometryDirective(
-                    line_parts, expansion, translation, transform)
+                self._parseGeometryDirective(line_parts,
+                                             expansion_stack,
+                                             translation_stack,
+                                             transform_stack)
                 in_body = False
             elif first_bit == "END": # finished parsing bodies
                 if in_body: # one last body to make
-                    _make_body(body_parts, expansion, translation, transform,
+                    _make_body(body_parts,
+                               expansion_stack,
+                               translation_stack,
+                               transform_stack,
                                self.flukaregistry)
                 break
             elif in_body: # continue appending bits to the body_parts list.
@@ -189,27 +206,103 @@ class Reader(object):
             else:
                 self.transforms[name] = matrix
 
-    def _parseGeometryDirective(self,
-                                line_parts, expansion, translation, transform):
+    def _parseGeometryDirective(self, line_parts,
+                                expansion_stack,
+                                translation_stack,
+                                transform_stack):
 
         directive = line_parts[0].lower()
         if directive == "$start_translat":
             # CONVERTING TO MILLIMETRES HERE
-            translation = [10*float(x) for x in line_parts[1:4]]
+            translation_stack.append(
+                Three([10*float(x) for x in line_parts[1:4]]))
         elif directive == "$end_translat":
-            translation = None
+            translation_stack.pop()
         elif directive == "$start_expansion":
-            expansion = float(line_parts[1])
+            expansion_stack.append(float(line_parts[1]))
         elif directive == "$end_expansion":
-            expansion = 1.0
+            expansion_stack.pop()
         elif directive == "$start_transform":
-            transform = self.transforms[line_parts[1]]
+            transform_name = line_parts[1]
+            inverse = False
+            if transform_name.startswith("-"):
+                transform_name = transform_name[1:]
+                inverse = True
+            transform = self.transforms[transform_name]
+            if inverse:
+                transform = np.linalg.inv(transform)
+            transform_stack.append(transform)
         elif directive == "$end_transform":
-            transform = None
+            transform_stack.pop()
         else:
             raise ValueError("Unknown geometry directive: {}.".format(directive))
 
-        return expansion, translation, transform
+    def _parseMaterialAssignments(self):
+        material_assignments = dict()
+        regions = self.flukaregistry.regionDict
+        # Need to make a list of the keys to account for index-based
+        # material assignments.
+        regionlist = self.flukaregistry.regionDict.keys()
+        for card in self.cards:
+            if card.keyword != "ASSIGNMA":
+                continue
+
+            material_name = card.what1
+            region_lower = card.what2
+            region_upper = card.what3
+            step = card.what4
+
+            # WHAT1 is the material name or index
+            if material_name is None:
+                material_name = 1
+            elif (not isinstance(material_name, basestring)
+                    and int(material_name) <= 0.0):
+                material_name = 1
+
+            # WHAT2 is either the lower region name or index.
+            if isinstance(region_lower, basestring):
+                if region_lower not in regionlist:
+                    continue
+                start = regionlist.index(region_lower)
+            elif material_name is None:
+                start = 2
+            else:
+                start = int(card.what1)
+
+            # WHAT3 is the upper region name or index.
+            if isinstance(region_upper, basestring):
+                if region_upper not in regionlist:
+                    msg = ("Region referred to in WHAT3 of ASSIGNMA"
+                           " has not been defined.".format(region_upper))
+                    raise ValueError(msg)
+                stop = regionlist.index(region_upper)
+            elif region_upper is None:
+                stop = start
+            else:
+                stop = int(region_upper)
+            stop += 1
+
+            # WHAT4 is the step length in assigning indices
+            if step is None:
+                step = 1
+            else:
+                step = int(step)
+
+            # Add 1 to index as the bound is open on the upper bound
+            # in python, but closed in the ASSIGMA case of fluka.
+            for region_name in regionlist[start:stop+1:step]:
+                material_assignments[region_name] = material_name
+
+        return material_assignments
+
+    def _assignMaterials(self):
+        for region_name in self.flukaregistry.regionDict.iterkeys():
+            if region_name not in self._material_assignments:
+                warn("No material assigned to {}, setting to BLCKHOLE.".format(
+                    region_name))
+            material = self._material_assignments[region_name]
+            self.flukaregistry.regionDict[region_name].material = material
+
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
@@ -217,82 +310,96 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
     name = body_parts[1]
     # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
     param = [float(p)*10. for p in body_parts[2:]]
-    transforms = {"expansion": expansion,
-                  "translation": translation,
-                  "transform": transform}
+
+    # Reduce the stacks of directives into single directives.
+    expansion = reduce(mul, expansion, 1.0)
+    if translation is not None:
+        translation = reduce(add, translation, [0, 0, 0])
+    if transform is not None:
+        # Note that we have to multiply the transformation matrices in
+        # reverse order.
+        transform = reduce(np.matmul, transform[::-1], np.identity(4))
+
+    geometry_directives = {"expansion": expansion,
+                           "translation": translation,
+                           "transform": transform}
 
     if body_type == "RPP":
-        b = body.RPP(name, *param, flukaregistry=flukareg, **transforms)
+        b = body.RPP(name, *param, flukaregistry=flukareg,
+                     **geometry_directives)
     elif body_type == "RCC":
         b = body.RCC(name, param[0:3], param[3:6], param[6],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "XYP":
-        b = body.XYP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.XYP(name, param[0], flukaregistry=flukareg,
+                     **geometry_directives)
     elif body_type == "XZP":
-        b = body.XZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.XZP(name, param[0], flukaregistry=flukareg,
+                     **geometry_directives)
     elif body_type == "YZP":
-        b = body.YZP(name, param[0], flukaregistry=flukareg, **transforms)
+        b = body.YZP(name, param[0], flukaregistry=flukareg,
+                     **geometry_directives)
     elif body_type == "PLA":
         b = body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "XCC":
         b = body.XCC(name, param[0], param[1], param[2],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "YCC":
         b = body.YCC(name, param[0], param[1], param[2],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "ZCC":
         b = body.ZCC(name, param[0], param[1], param[2],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "XEC":
         b = body.XEC(name, param[0], param[1], param[2], param[3],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "YEC":
         b = body.YEC(name, param[0], param[1], param[2], param[3],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "ZEC":
         b = body.ZEC(name, param[0], param[1], param[2], param[3],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "TRC":
         b = body.TRC(name, param[0:3], param[3:6], param[6], param[7],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "SPH":
         b = body.SPH(name, param[0:3], param[3],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "REC":
         b = body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "ELL":
         b = body.ELL(name, param[0:3], param[3:6], param[6],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "BOX":
         b = body.BOX(name, param[0:3], param[3:6], param[6:9], param[9:12],
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     elif body_type == "WED":
         b = body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **transforms)
+                     flukaregistry=flukareg, **geometry_directives)
     elif body_type == "RAW":
         b = body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **transforms)
+                     flukaregistry=flukareg, **geometry_directives)
     elif body_type == "ARB":
         vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
                     param[12:15], param[15:18], param[18:21], param[21:24]]
         facenumbers = param[24:]
         b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
-                     **transforms)
+                     **geometry_directives)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b
@@ -430,7 +537,7 @@ def _parseRotDefiniCard(card):
         i = int(what1)
         j = 0
     elif what1 == 0:
-        # If left empty (i.e. 0), then this is a translation
+        # If left empty (i.e. 0), then this is a transformation
         # about the z-axis.  But I don't know what that means for i.
         i = what1
         j = 0
@@ -471,6 +578,9 @@ def _parseRotDefiniCard(card):
     st = np.sin(theta)
     sp = np.sin(phi)
 
+    # The sine and cosine terms in the translation column are to make
+    # it so the rotation is applied *after* the translation, which is
+    # the case in FLUKA.
     if j == 1: # x
         r1 = np.array([[ ct, st, 0, 0],
                        [-st, ct, 0, 0],

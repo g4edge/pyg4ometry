@@ -24,6 +24,8 @@ class FlukaRegistry(object):
         self.latticeDict       = _OrderedDict()
         self.cardDict          = _OrderedDict()
 
+        self._bodiesAndRegions = {}
+
     def addBody(self, body):
         if body.name in self.bodyDict:
             raise IdenticalNameError(body.name)
@@ -33,7 +35,14 @@ class FlukaRegistry(object):
     def addBodyTransform(self, trans):
         self.bodyTransformDict[trans.name] = trans
 
-    def addRegion(self, region):
+    def addRegion(self, region, addBodies=False):
+        # Always build a map of bodies to regions, which we need for
+        for body in region.bodies():
+            if body.name in self._bodiesAndRegions:
+                self._bodiesAndRegions[body.name].add(region.name)
+            else:
+                self._bodiesAndRegions[body.name] = {region.name}
+
         self.regionDict[region.name] = region
 
     def addMaterial(self, material):
@@ -45,6 +54,9 @@ class FlukaRegistry(object):
     def getBody(self, name):
         return self.bodyDict[name]
 
+    def getBodyToRegionsMap(self):
+        return self._bodiesAndRegions
+
     def printDefinitions(self):
         print "bodyDict = {}".format(self.bodyDict)
         print "bodyTransformDict = {}".format(self.bodyTransformDict)
@@ -52,4 +64,3 @@ class FlukaRegistry(object):
         print "materialDict = {}".format(self.materialDict)
         print "latticeDict = {}".format(self.latticeDict)
         print "cardDict = {}".format(self.cardDict)
-
