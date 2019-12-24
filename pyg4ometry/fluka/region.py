@@ -448,6 +448,9 @@ def _getExtent(extent, boolean):
     else:
         raise ValueError("Unknown boolean type")
 
+    if body_name is None:
+        return extent
+
     if extent is None:
         return None
     try:
