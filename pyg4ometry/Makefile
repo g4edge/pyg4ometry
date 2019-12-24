@@ -6,3 +6,6 @@ uninstall:
 
 develop:
 	pip install --editable . --user
+
+cleanpyc:
+	rm -rf */*pyc */*/*pyc
