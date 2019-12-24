@@ -251,7 +251,7 @@ class Region(object):
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
-        result = Region(self.name)
+        result = Region(self.name, material=self.material)
         for zone in self.zones:
             result.addZone(zone.withLengthSafety(bigger_flukareg,
                                                  smaller_flukareg,

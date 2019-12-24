@@ -40,6 +40,11 @@ def fluka2Geant4(flukareg, with_length_safety=True,
 
     for name, region in flukareg.regionDict.iteritems():
         region_solid = region.geant4Solid(greg, extent=extent_map)
+
+        region_material = region.material
+        if region_material is None:
+            warnings.warn("No material assigned for region {}".format(name))
+
         region_material = g4.MaterialPredefined("G4_Fe")
         region_lv = g4.LogicalVolume(region_solid,
                                      region_material,

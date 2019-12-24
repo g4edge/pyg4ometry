@@ -1,7 +1,9 @@
-import sys
 from collections import OrderedDict
-from operator import mul, add
 from copy import deepcopy
+from operator import mul, add
+import sys
+from warnings import warn
+
 
 import antlr4
 import numpy as np
@@ -72,7 +74,8 @@ class Reader(object):
         self._parseRotDefinis()
         self._parseBodies()
         self._parseRegions()
-
+        self._material_assignments = self._parseMaterialAssignments()
+        self._assignMaterials()
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -233,6 +236,73 @@ class Reader(object):
             transform_stack.pop()
         else:
             raise ValueError("Unknown geometry directive: {}.".format(directive))
+
+    def _parseMaterialAssignments(self):
+        material_assignments = dict()
+        regions = self.flukaregistry.regionDict
+        # Need to make a list of the keys to account for index-based
+        # material assignments.
+        regionlist = self.flukaregistry.regionDict.keys()
+        for card in self.cards:
+            if card.keyword != "ASSIGNMA":
+                continue
+
+            material_name = card.what1
+            region_lower = card.what2
+            region_upper = card.what3
+            step = card.what4
+
+            # WHAT1 is the material name or index
+            if material_name is None:
+                material_name = 1
+            elif (not isinstance(material_name, basestring)
+                    and int(material_name) <= 0.0):
+                material_name = 1
+
+            # WHAT2 is either the lower region name or index.
+            if isinstance(region_lower, basestring):
+                if region_lower not in regionlist:
+                    continue
+                start = regionlist.index(region_lower)
+            elif material_name is None:
+                start = 2
+            else:
+                start = int(card.what1)
+
+            # WHAT3 is the upper region name or index.
+            if isinstance(region_upper, basestring):
+                if region_upper not in regionlist:
+                    msg = ("Region referred to in WHAT3 of ASSIGNMA"
+                           " has not been defined.".format(region_upper))
+                    raise ValueError(msg)
+                stop = regionlist.index(region_upper)
+            elif region_upper is None:
+                stop = start
+            else:
+                stop = int(region_upper)
+            stop += 1
+
+            # WHAT4 is the step length in assigning indices
+            if step is None:
+                step = 1
+            else:
+                step = int(step)
+
+            # Add 1 to index as the bound is open on the upper bound
+            # in python, but closed in the ASSIGMA case of fluka.
+            for region_name in regionlist[start:stop+1:step]:
+                material_assignments[region_name] = material_name
+
+        return material_assignments
+
+    def _assignMaterials(self):
+        for region_name in self.flukaregistry.regionDict.iterkeys():
+            if region_name not in self._material_assignments:
+                warn("No material assigned to {}, setting to BLCKHOLE.".format(
+                    region_name))
+            material = self._material_assignments[region_name]
+            self.flukaregistry.regionDict[region_name].material = material
+
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
