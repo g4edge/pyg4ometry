@@ -1,2 +1,2 @@
-from .sampler import Sampler
-from .scoring_mesh import ScoringMesh
+from sampler import *
+from scoring_mesh import *
