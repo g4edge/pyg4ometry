@@ -13,7 +13,12 @@ WORLD_DIMENSIONS = 10000
 
 def fluka2Geant4(flukareg, with_length_safety=True,
                  split_disjoint_unions=True,
-                 minimise_solids=True):
+                 minimise_solids=True,
+                 world_material="G4_Galactic",
+                 omit_blackhole_regions=True):
+
+    if omit_blackhole_regions:
+        flukareg = _without_blackhole_regions(flukareg)
 
     if with_length_safety:
         flukareg = _make_length_safety_registry(flukareg)
@@ -26,7 +31,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
 
     greg = g4.Registry()
 
-    world_material = g4.MaterialPredefined("G4_Galactic")
+    world_material = g4.MaterialPredefined(world_material)
 
     world_solid = g4.solid.Box("world_solid",
                                WORLD_DIMENSIONS,
@@ -147,3 +152,12 @@ def _getMaximalOfTwoExtents(extent1, extent2):
     lower = [min(a, b) for a, b in zip(extent1.lower, extent2.lower)]
     upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
+
+def _without_blackhole_regions(flukareg):
+    freg_out = fluka.FlukaRegistry()
+    for name, region in flukareg.regionDict.iteritems():
+        if region.material == "BLCKHOLE":
+            continue
+        freg_out.addRegion(region)
+        region.allBodiesToRegistry(freg_out)
+    return freg_out
