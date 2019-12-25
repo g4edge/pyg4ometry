@@ -83,13 +83,16 @@ def freeFormatStringSplit(string):
     # Populate zeros between consequtive non-blank separators as per
     # the FLUKA manual.
     is_blank  = lambda s : not set(s) or set(s) == {" "}
-    noblanks_split = [chunk if not is_blank(chunk) else '0.0'
+    noblanks_split = [chunk if not is_blank(chunk) else None
                       for chunk in partial_split]
 
-    # Split along whitespaces now for complete result.
+    # Strip whitespace
     components = []
     for chunk in noblanks_split:
-        components += chunk.split()
+        if chunk is None:
+            components.append(None)
+            continue
+        components.extend(chunk.split())
 
     return components
 

@@ -292,7 +292,6 @@ class Reader(object):
             # in python, but closed in the ASSIGMA case of fluka.
             for region_name in regionlist[start:stop+1:step]:
                 material_assignments[region_name] = material_name
-
         return material_assignments
 
     def _assignMaterials(self):

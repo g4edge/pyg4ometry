@@ -86,7 +86,7 @@ class Zone(object):
         try:
             body0 = self.intersections[0].body
         except IndexError:
-            raise FLUKAError("zone has no +")
+            raise FLUKAError("zone has no +.")
 
         result = self._getSolidFromBoolean(self.intersections[0],
                                            reg,
@@ -191,7 +191,7 @@ class Zone(object):
             body = boolean.body
             name = body.name
             if isinstance(body, Zone):
-                bodies.union(body.bodies())
+                bodies = bodies.union(body.bodies())
             else:
                 bodies.add(body)
         return bodies
@@ -309,7 +309,12 @@ class Region(object):
             greg = g4.Registry()
             wlv = _make_wlv(greg)
 
-            zone_solid = zone.geant4Solid(reg=greg)
+            try:
+                zone_solid = zone.geant4Solid(reg=greg)
+            except FLUKAError as e:
+                raise FLUKAError(" Error in region {}: {}".format(self.name,
+                                                                  e.message))
+
             lv = g4.LogicalVolume(zone_solid,
                                   material,
                                   _random_name(),
