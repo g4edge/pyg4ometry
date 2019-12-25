@@ -191,7 +191,7 @@ class Zone(object):
             body = boolean.body
             name = body.name
             if isinstance(body, Zone):
-                bodies.union(body.bodies())
+                bodies = bodies.union(body.bodies())
             else:
                 bodies.add(body)
         return bodies
