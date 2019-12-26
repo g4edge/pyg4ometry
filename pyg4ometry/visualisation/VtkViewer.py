@@ -64,12 +64,12 @@ class VtkViewer:
 
     def addAxesWidget(self):
         axesActor = _vtk.vtkAnnotatedCubeActor();
-        axesActor.SetXPlusFaceText('R')
-        axesActor.SetXMinusFaceText('L')
-        axesActor.SetYMinusFaceText('B')
-        axesActor.SetYPlusFaceText('F')
-        axesActor.SetZMinusFaceText('B')
-        axesActor.SetZPlusFaceText('T')
+        axesActor.SetXPlusFaceText('+x')
+        axesActor.SetXMinusFaceText('-x')
+        axesActor.SetYPlusFaceText('+y')
+        axesActor.SetYMinusFaceText('-y')
+        axesActor.SetZPlusFaceText('+z')
+        axesActor.SetZMinusFaceText('-z')
         axesActor.GetTextEdgesProperty().SetColor(1, 1, 1)
         axesActor.GetTextEdgesProperty().SetLineWidth(2)
         axesActor.GetCubeProperty().SetColor(0.4, 0.4, 0.4)
@@ -86,25 +86,40 @@ class VtkViewer:
             elif iActor == -1:
                 a.GetProperty().SetOpacity(v)
 
-    def setWireframe(self) :
-        for a in self.actors :
-            a.GetProperty().SetRepresentationToWireframe()
+    def setWireframe(self, iActor = -1 ) :
+        for a, i in zip(self.actors,range(0,len(self.actors))):
+            if i == iActor :
+                a.GetProperty().SetRepresentationToWireframe()
+            elif iActor == -1 :
+                a.GetProperty().SetRepresentationToWireframe()
 
-    def setSurface(self):
-        for a in self.actors :
-            a.GetProperty().SetRepresentationToSurface()
+    def setSurface(self, iActor = -1):
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
+                a.GetProperty().SetRepresentationToSurface()
+            elif iActor == -1 :
+                a.GetProperty().SetRepresentationToSurface()
 
-    def setOpacityOverlap(self,v):
-        for a in self.actorsOverlap:
-            a.GetProperty().SetOpacity(v)
+    def setOpacityOverlap(self,v, iActor = -1):
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
+                a.GetProperty().SetOpacity(v)
+            elif iActor == -1:
+                a.GetProperty().SetOpacity(v)
 
-    def setWireframeOverlap(self) :
-        for a in self.actorsOverlap :
-            a.GetProperty().SetRepresentationToWireframe()
+    def setWireframeOverlap(self, iActor = -1) :
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
+                a.GetProperty().SetRepresentationToWireframe()
+            elif iActor == -1:
+                a.GetProperty().SetRepresentationToWireframe()
 
-    def setSurfaceOverlap(self):
-        for a in self.actorsOverlap :
-            a.GetProperty().SetRepresentationToSurface()
+    def setSurfaceOverlap(self, iActor = -1):
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
+                a.GetProperty().SetRepresentationToSurface()
+            elif iActor == -1:
+                a.GetProperty().SetRepresentationToSurface()
 
     def setRandomColours(self):
         for a in self.actors:
@@ -142,6 +157,7 @@ class VtkViewer:
         lvmActor = _vtk.vtkActor()
         lvmActor.SetMapper(lvmMAP)         
         lvmActor.GetProperty().SetRepresentationToWireframe()
+        self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
     def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
@@ -222,9 +238,9 @@ class VtkViewer:
             vtkPD = localmeshes[solid_name]
         else : 
             vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
-            localmeshes[solid_name] = vtkPD    
-        
-        # Filter : check if filter is in the filters dict 
+            localmeshes[solid_name] = vtkPD
+
+        # Filter : check if filter is in the filters dict
         _log.info('VtkViewer.addLogicalVolume> vtkFLT')
         filtername = solid_name+"_filter"
         if filters.has_key(filtername) :
@@ -234,9 +250,9 @@ class VtkViewer:
             vtkFLT.AddInputData(vtkPD)
             filters[filtername]  = vtkFLT
 
-        # Mapper 
-        _log.info('VtkViewer.addLogicalVolume> vtkMAP')            
-        mappername = pv_name+"_mapper" 
+        # Mapper
+        _log.info('VtkViewer.addLogicalVolume> vtkMAP')
+        mappername = pv_name+"_mapper"
         vtkMAP = _vtk.vtkPolyDataMapper()
         vtkMAP.ScalarVisibilityOff()
         # TRIANGLE/NON-TRIANGLE FILTER
@@ -269,6 +285,31 @@ class VtkViewer:
         vtkTransform.SetElement(3,3,1)
 
         vtkActor.SetUserMatrix(vtkTransform)
+
+        plane = _vtk.vtkPlane()
+        plane.SetOrigin(0, 0, 0)
+        plane.SetNormal(0, 1, 0)
+
+        vtkTransFLT = _vtk.vtkTransformFilter()
+        vtkTransform1 = _vtk.vtkTransform()
+        vtkTransform1.SetMatrix(vtkTransform)
+        vtkTransFLT.SetTransform(vtkTransform1)
+        vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
+
+        cutter = _vtk.vtkCutter()
+        cutter.SetCutFunction(plane)
+        cutter.SetInputConnection(vtkTransFLT.GetOutputPort())
+        cutter.Update()
+
+        cutterMapper = _vtk.vtkPolyDataMapper()
+        cutterMapper.SetInputConnection(cutter.GetOutputPort())
+
+        planeActor = _vtk.vtkActor()
+        colors = _vtk.vtkNamedColors()
+        planeActor.GetProperty().SetColor(colors.GetColor3d("Yellow"))
+        planeActor.GetProperty().SetLineWidth(2)
+        planeActor.SetMapper(cutterMapper)
+        self.ren.AddActor(planeActor)
 
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
