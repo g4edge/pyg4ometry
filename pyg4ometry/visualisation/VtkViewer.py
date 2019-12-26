@@ -47,6 +47,9 @@ class VtkViewer:
         # axes
         self.axes = []
 
+        # axes widget
+        self.addAxesWidget()
+
     def addAxes(self, length = 20.0, origin = (0,0,0)):
         axes = _vtk.vtkAxesActor()
 
@@ -59,6 +62,23 @@ class VtkViewer:
         axes.SetTotalLength(length,length,length)
         self.ren.AddActor(axes)
 
+    def addAxesWidget(self):
+        axesActor = _vtk.vtkAnnotatedCubeActor();
+        axesActor.SetXPlusFaceText('R')
+        axesActor.SetXMinusFaceText('L')
+        axesActor.SetYMinusFaceText('B')
+        axesActor.SetYPlusFaceText('F')
+        axesActor.SetZMinusFaceText('B')
+        axesActor.SetZPlusFaceText('T')
+        axesActor.GetTextEdgesProperty().SetColor(1, 1, 1)
+        axesActor.GetTextEdgesProperty().SetLineWidth(2)
+        axesActor.GetCubeProperty().SetColor(0.4, 0.4, 0.4)
+        self.axesWidget = _vtk.vtkOrientationMarkerWidget()
+        self.axesWidget.SetOrientationMarker(axesActor)
+        self.axesWidget.SetInteractor(self.iren)
+        self.axesWidget.EnabledOn()
+        self.axesWidget.InteractiveOn()
+
     def setOpacity(self, v, iActor = -1):
         for a, i in zip(self.actors,range(0,len(self.actors))):
             if i == iActor :
@@ -70,6 +90,10 @@ class VtkViewer:
         for a in self.actors :
             a.GetProperty().SetRepresentationToWireframe()
 
+    def setSurface(self):
+        for a in self.actors :
+            a.GetProperty().SetRepresentationToSurface()
+
     def setOpacityOverlap(self,v):
         for a in self.actorsOverlap:
             a.GetProperty().SetOpacity(v)
@@ -77,6 +101,10 @@ class VtkViewer:
     def setWireframeOverlap(self) :
         for a in self.actorsOverlap :
             a.GetProperty().SetRepresentationToWireframe()
+
+    def setSurfaceOverlap(self):
+        for a in self.actorsOverlap :
+            a.GetProperty().SetRepresentationToSurface()
 
     def setRandomColours(self):
         for a in self.actors:
@@ -92,21 +120,12 @@ class VtkViewer:
             self.addLogicalVolumeBounding(logical)
             for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
                                                      range(0, len(logical.mesh.overlapmeshes))):
-                visOptions = _VisOptions()
-                if overlaptype == _OverlapType.protrusion:
-                    visOptions.color = [1, 0, 0]
-                    visOptions.alpha = 1.0
-                elif overlaptype == _OverlapType.overlap:
-                    visOptions.color = [0, 1, 0]
-                    visOptions.alpha = 1.0
-                elif overlaptype == _OverlapType.coplanar:
-                    visOptions.color = [0, 0, 1]
-                    visOptions.alpha = 1.0
+                visOptions = self.setOverlapVisOptions(overlaptype)
                 self.addMesh(logical.name, logical.solid.name + "_overlap" + str(i), overlapmesh, mtra, tra,
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
                              self.physicalActorMapOverlap,
-                             visOptions, False)
+                             visOptions)
 
         # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
@@ -160,19 +179,11 @@ class VtkViewer:
 
                     # overlap meshes
                     for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
-                        visOptions = _VisOptions()
-                        if overlaptype == _OverlapType.protrusion :
-                            visOptions.color = [1,0,0]
-                            visOptions.alpha = 1.0
-                        elif overlaptype == _OverlapType.overlap :
-                            visOptions.color = [0,1,0]
-                            visOptions.alpha = 1.0
-                        elif overlaptype == _OverlapType.coplanar :
-                            visOptions.color = [0,0,1]
-                            visOptions.alpha = 1.0
+                        visOptions = self.setOverlapVisOptions(overlaptype)
+
                         self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
                                      self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
-                                     visOptions, False)
+                                     visOptions)
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
 
@@ -203,7 +214,7 @@ class VtkViewer:
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None, glyph = False):
+                mappers, mapperMap, actors, actorMap, visOptions = None):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -262,6 +273,7 @@ class VtkViewer:
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
 
+        '''
         if glyph :
             # Surface normals
             vtkNormals = _vtk.vtkPolyDataNormals()
@@ -295,6 +307,7 @@ class VtkViewer:
             glyph_actor.GetProperty().SetColor(1, 0.4, 1)
 
             self.ren.AddActor(glyph_actor)
+        '''
 
         # set visualisation properties
         if visOptions :
@@ -314,7 +327,7 @@ class VtkViewer:
 
     def view(self, interactive = True):
         # enable user interface interactor
-        # self.iren.Initialize()
+        self.iren.Initialize()
 
         # Camera setup
         camera =_vtk.vtkCamera();
@@ -326,3 +339,17 @@ class VtkViewer:
 
         if interactive : 
             self.iren.Start()
+
+    def setOverlapVisOptions(self, overlaptype):
+        visOptions = _VisOptions()
+        if overlaptype == _OverlapType.protrusion:
+            visOptions.color = [1, 0, 0]
+            visOptions.alpha = 1.0
+        elif overlaptype == _OverlapType.overlap:
+            visOptions.color = [0, 1, 0]
+            visOptions.alpha = 1.0
+        elif overlaptype == _OverlapType.coplanar:
+            visOptions.color = [0, 0, 1]
+            visOptions.alpha = 1.0
+
+        return visOptions
