@@ -1,14 +1,15 @@
 import vtk as _vtk
 import itertools as _itertools
 
-def WriteSTL(fileName, meshes) :
+def writeVtkPolyDataAsSTLFile(fileName, meshes):
+# Convert vtkPolyData to STL mesh
     ''' meshes : list of triFilters '''
 
     appendFilter = _vtk.vtkAppendPolyData()
 
     for m in meshes:
         if m :
-            appendFilter.AddInputConnection(m.GetOutputPort())
+            appendFilter.AddInputData(m)
 
     # append mesh to filter
     appendFilter.Update()
@@ -19,15 +20,11 @@ def WriteSTL(fileName, meshes) :
     cleanFilter.Update()
 
     # write STL file
-    print 'stlWriter'
     stlWriter = _vtk.vtkSTLWriter()
-    print 'setFileName'
     stlWriter.SetFileName(fileName)
-    print 'inputConnection'
     stlWriter.SetInputConnection(appendFilter.GetOutputPort())
-    print 'write'
     stlWriter.Write()
-    print 'done'
     return stlWriter
+
 
 
