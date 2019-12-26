@@ -4,10 +4,8 @@ from operator import mul, add
 import sys
 from warnings import warn
 
-
 import antlr4
 import numpy as np
-
 
 from . import body
 from .region import Zone, Region
@@ -15,6 +13,8 @@ from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
+from pyg4ometry.exceptions import FLUKAError
+
 from .vector import Three
 from .card import freeFormatStringSplit, Card
 
@@ -52,23 +52,11 @@ class Reader(object):
     def _load(self):
         """Load the FLUKA input file"""
         with open(self.filename, "r") as f:
-            self._lines = f.readlines()
-
-        # strip comments
-        strippedLines = []
-        for l in self._lines :
-            strippedLine = l.lstrip()
-
-            # if there is nothing on  the line
-            if len(strippedLine) == 0 :
-                continue
-            # skip comment
-            if strippedLine[0] != '*':
-                strippedLines.append(l.rstrip())
-
-        self._lines = strippedLines
+            self._raw_lines = f.readlines()
+            self._lines = self._raw_lines
 
         # parse file
+        self._preprocess()
         self._findLines()
         self.cards = self._parseCards()
         self._parseRotDefinis()
@@ -76,6 +64,53 @@ class Reader(object):
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
         self._assignMaterials()
+
+    # def _prepreprocess
+
+    def _preprocess(self):
+        preprocessed_lines = []
+
+        defines = {}
+        if_stack = [] # [_IfInfo1, _IfInfo2, ...]
+        line_stack = list(reversed(self._lines)) # a stack of lines
+
+        while line_stack:
+            line = line_stack.pop()
+            if not line.split(): # If just a line of whitespace
+                continue
+
+            line = line.split("!")[0] # "!" comments
+            line = line.strip()  # Leading and trailing whitespace
+
+            if line.startswith("*"): # line starting with "*" comment
+                continue
+
+            if line[0] == "#":
+                split_line = line.split()
+                directive = split_line[0]
+
+                if directive == "#define" or directive == "#undef":
+                    _parse_preprocessor_define(directive, split_line, defines)
+                elif directive == "#include":
+                    _parse_preprocessor_include(directive,
+                                                split_line,
+                                                line_stack)
+                elif directive in ["#if", "#elif", "#endif", "#else"]:
+                    _parse_preprocessor_conditional(directive,
+                                                    split_line,
+                                                    defines,
+                                                    if_stack)
+                else:
+                    raise ValueError(
+                        "Unknown preprocessor directive: {}".format(directive))
+                continue # Don't include preprocessoes
+            if if_stack and not all([e.read_until_next for e in if_stack]):
+                continue
+
+            print line
+            preprocessed_lines.append(line)
+
+        self._lines = preprocessed_lines
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -303,12 +338,100 @@ class Reader(object):
             self.flukaregistry.regionDict[region_name].material = material
 
 
+class _IfInfo(object):
+    """Tells us about current conditional and its state at the current line.
+
+
+    - If the conditional at this level has been satisfied (e.g. if the
+      IF has been satisfied then we don't read any subsequent ELIF or
+      ELSE clauses).
+    - If we should read until the next conditional directive (e.g. if
+      the ELIF has been satisfied then we should read all lines at
+      this level until we reach the next level.
+    """
+    def __init__(self, any_branch_satisfied, read_until_next):
+        self.any_branch_satisfied = any_branch_satisfied
+        self.read_until_next = read_until_next
+
+    def __repr__(self):
+        return ("<IfInfo: any_branch_satisfied={}, "
+                "read_until_next={}>").format(self.any_branch_satisfied,
+                                              self.read_until_next)
+
+
+def _parse_preprocessor_define(directive, split_line, defines):
+    directive = split_line[0]
+    if directive == "#define": # format = #define var_name (value)?
+        name = split_line[1]
+        try:
+            value = split_line[2]
+        except IndexError:
+            value = None
+        defines[name] = value
+    elif directive == "#undef":
+        # must be "undef": format =  #undef var_name
+        name = split_line[1]
+        # remove name from defines if it has been defined.
+        defines.pop(name, None)
+    else:
+        raise ValueError("Unrecognised define directive: {}".format(
+            directive))
+
+def _parse_preprocessor_include(directive, split_line, line_stack):
+    if split_line[0] == "#include":
+        filename = split_line[1]
+        with open(filename, "r") as f:
+            line_stack.extend(reversed(f.readlines())) # read in reverse
+    else:
+        raise ValueError("Unknown include preprocessor directive: {}".format(
+            split_line[1]))
+
+def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
+    read_elif = False
+    if if_stack:
+        read_elif = not if_stack[-1].any_branch_satisfied
+
+    if directive == "#if":
+        try:
+            variable = split_line[1]
+        except IndexError:
+            raise FLUKAError("Missing expression in preprocessor #if.")
+        if variable in defines:
+            if_stack.append(_IfInfo(any_branch_satisfied=True,
+                                    read_until_next=True))
+        else:
+            if_stack.append(_IfInfo(any_branch_satisfied=False,
+                                    read_until_next=False))
+    elif directive == "#elif" and read_elif:
+        try:
+            variable = split_line[1]
+        except IndexError:
+            raise FLUKAError("Missing expression in #elif.")
+        if variable in defines:
+            if_stack[-1].any_branch_satisfied = True
+            if_stack[-1].read_until_next = True
+    elif directive == "#elif" and not read_elif:
+        if_stack[-1].read_until_next = False
+    elif directive == "#else" and read_elif:
+        if_stack[-1].any_branch_satisfied = True
+        if_stack[-1].read_until_next = True
+    elif directive == "#else" and read_elif:
+        if_stack[-1].read_until_next = True
+    elif directive == "#else" and not read_elif:
+        if_stack[-1].read_until_next = False
+    elif directive == "#endif":
+        if_stack.pop()
+    else:
+        raise ValueError("Unknown conditional directive state.")
+
+
 def _make_body(body_parts, expansion, translation, transform, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
     # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
     param = [float(p)*10. for p in body_parts[2:]]
+
 
     # Reduce the stacks of directives into single directives.
     expansion = reduce(mul, expansion, 1.0)
