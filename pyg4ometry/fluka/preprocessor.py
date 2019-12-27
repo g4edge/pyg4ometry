@@ -121,8 +121,8 @@ def _parse_preprocessor_define(directive, split_line, defines):
         name = split_line[1]
         try:
             expression = split_line[2]
-            c = _Calc(defines)
-            value = c.evaluate(expression)
+            calculator = _Calc(defines)
+            value = calculator.evaluate(expression)
         except IndexError:
             value = None
         defines[name] = value
@@ -134,15 +134,6 @@ def _parse_preprocessor_define(directive, split_line, defines):
     else:
         raise ValueError("Unrecognised define directive: {}".format(
             directive))
-
-def _parse_preprocessor_include(directive, split_line, line_stack):
-    if split_line[0] == "#include":
-        filename = split_line[1]
-        with open(filename, "r") as f:
-            line_stack.extend(reversed(f.readlines())) # read in reverse
-    else:
-        raise ValueError("Unknown include preprocessor directive: {}".format(
-            split_line[1]))
 
 def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
     read_elif = False
@@ -182,6 +173,14 @@ def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
     else:
         raise ValueError("Unknown conditional directive state.")
 
+def _parse_preprocessor_include(directive, split_line, line_stack):
+    if split_line[0] == "#include":
+        filename = split_line[1]
+        with open(filename, "r") as f:
+            line_stack.extend(reversed(f.readlines())) # read in reverse
+    else:
+        raise ValueError("Unknown include preprocessor directive: {}".format(
+            split_line[1]))
 
 class _Calc(ast.NodeVisitor):
 
@@ -191,6 +190,7 @@ class _Calc(ast.NodeVisitor):
         ast.Mult: operator.mul,
         ast.Div: operator.div,
         ast.Invert: operator.neg,
+        ast.Pow: operator.pow
     }
 
     def __init__(self, definitions):
@@ -228,7 +228,7 @@ class _Calc(ast.NodeVisitor):
             return _FLUKA_PREDEFINED_FUNCTIONS[name]
         except KeyError:
             raise FLUKAError("Unknown name in preprocessor define: {}".format(
-            name))
+                name))
 
     def visit_Call(self, node):
         function = self.visit(node.func)
@@ -237,93 +237,6 @@ class _Calc(ast.NodeVisitor):
 
     def visit_Expr(self, node):
         return self.visit(node.value)
-
-
-class _IfInfo(object):
-    """Tells us about current conditional and its state at the current line.
-
-
-    - If the conditional at this level has been satisfied (e.g. if the
-      IF has been satisfied then we don't read any subsequent ELIF or
-      ELSE clauses).
-    - If we should read until the next conditional directive (e.g. if
-      the ELIF has been satisfied then we should read all lines at
-      this level until we reach the next level.
-    """
-    def __init__(self, any_branch_satisfied, read_until_next):
-        self.any_branch_satisfied = any_branch_satisfied
-        self.read_until_next = read_until_next
-
-    def __repr__(self):
-        return ("<IfInfo: any_branch_satisfied={}, "
-                "read_until_next={}>").format(self.any_branch_satisfied,
-                                              self.read_until_next)
-
-
-def _parse_preprocessor_define(directive, split_line, defines):
-    directive = split_line[0]
-    if directive == "#define": # format = #define var_name (value)?
-        name = split_line[1]
-        try:
-            value = split_line[2]
-        except IndexError:
-            value = None
-        defines[name] = value
-    elif directive == "#undef":
-        # must be "undef": format =  #undef var_name
-        name = split_line[1]
-        # remove name from defines if it has been defined.
-        defines.pop(name, None)
-    else:
-        raise ValueError("Unrecognised define directive: {}".format(
-            directive))
-
-def _parse_preprocessor_include(directive, split_line, line_stack):
-    if split_line[0] == "#include":
-        filename = split_line[1]
-        with open(filename, "r") as f:
-            line_stack.extend(reversed(f.readlines())) # read in reverse
-    else:
-        raise ValueError("Unknown include preprocessor directive: {}".format(
-            split_line[1]))
-
-def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
-    read_elif = False
-    if if_stack:
-        read_elif = not if_stack[-1].any_branch_satisfied
-
-    if directive == "#if":
-        try:
-            variable = split_line[1]
-        except IndexError:
-            raise FLUKAError("Missing expression in preprocessor #if.")
-        if variable in defines:
-            if_stack.append(_IfInfo(any_branch_satisfied=True,
-                                    read_until_next=True))
-        else:
-            if_stack.append(_IfInfo(any_branch_satisfied=False,
-                                    read_until_next=False))
-    elif directive == "#elif" and read_elif:
-        try:
-            variable = split_line[1]
-        except IndexError:
-            raise FLUKAError("Missing expression in #elif.")
-        if variable in defines:
-            if_stack[-1].any_branch_satisfied = True
-            if_stack[-1].read_until_next = True
-    elif directive == "#elif" and not read_elif:
-        if_stack[-1].read_until_next = False
-    elif directive == "#else" and read_elif:
-        if_stack[-1].any_branch_satisfied = True
-        if_stack[-1].read_until_next = True
-    elif directive == "#else" and read_elif:
-        if_stack[-1].read_until_next = True
-    elif directive == "#else" and not read_elif:
-        if_stack[-1].read_until_next = False
-    elif directive == "#endif":
-        if_stack.pop()
-    else:
-        raise ValueError("Unknown conditional directive state.")
 
 
 if __name__ == '__main__':
