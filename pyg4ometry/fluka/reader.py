@@ -4,17 +4,18 @@ from operator import mul, add
 import sys
 from warnings import warn
 
-
 import antlr4
 import numpy as np
 
-
 from . import body
+from . preprocessor import preprocess
 from .region import Zone, Region
 from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
+from pyg4ometry.exceptions import FLUKAError
+
 from .vector import Three
 from .card import freeFormatStringSplit, Card
 
@@ -51,24 +52,9 @@ class Reader(object):
 
     def _load(self):
         """Load the FLUKA input file"""
-        with open(self.filename, "r") as f:
-            self._lines = f.readlines()
-
-        # strip comments
-        strippedLines = []
-        for l in self._lines :
-            strippedLine = l.lstrip()
-
-            # if there is nothing on  the line
-            if len(strippedLine) == 0 :
-                continue
-            # skip comment
-            if strippedLine[0] != '*':
-                strippedLines.append(l.rstrip())
-
-        self._lines = strippedLines
 
         # parse file
+        self._lines, self._raw_lines = preprocess(self.filename)
         self._findLines()
         self.cards = self._parseCards()
         self._parseRotDefinis()
@@ -76,6 +62,7 @@ class Reader(object):
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
         self._assignMaterials()
+
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -324,6 +311,7 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
     name = body_parts[1]
     # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
     param = [float(p)*10. for p in body_parts[2:]]
+
 
     # Reduce the stacks of directives into single directives.
     expansion = reduce(mul, expansion, 1.0)
