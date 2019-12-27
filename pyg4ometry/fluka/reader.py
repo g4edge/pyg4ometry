@@ -114,20 +114,35 @@ class Reader(object):
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
-        firstEND = True
+        found_geobegin = False
+        found_geoend = False
+        found_first_end = False
+        found_second_end = False
         for i, line in enumerate(self._lines) :
             if "GEOBEGIN" in line:
+                found_geobegin = True
                 self.geobegin = i
                 self.bodiesbegin = i + 2
             elif "GEOEND" in line:
+                found_geoend = True
                 self.geoend = i
             elif "END" in line:
-                if firstEND:
+                if found_first_end:
+                    found_second_end = True
+                    self.regionsend = i
+                else:
                     self.bodiesend = i
                     self.regionsbegin = i + 1
-                    firstEND = False
-                else:
-                    self.regionsend = i
+                    found_first_end = True
+
+        if not found_geobegin:
+            raise FLUKAError("Missing GEOBEGIN card in input.")
+        if not found_geoend:
+            raise FLUKAError("Missing GEOEND card in input.")
+        if not found_first_end:
+            raise FLUKAError("Missing both END cards within geometry section.")
+        if not found_second_end:
+            raise FLUKAError("Missing second END card within geometry section.")
 
     def _parseBodies(self) :
         bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
