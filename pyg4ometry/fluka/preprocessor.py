@@ -61,6 +61,9 @@ def preprocess(filein):
         line = line.split("!")[0] # "!" comments
         line = line.strip()  # Leading and trailing whitespace
 
+        if not line: # If "!" commented out entire line.
+            continue
+
         if line.startswith("*"): # line starting with "*" comment
             continue
 
