@@ -286,30 +286,37 @@ class VtkViewer:
 
         vtkActor.SetUserMatrix(vtkTransform)
 
-        plane = _vtk.vtkPlane()
-        plane.SetOrigin(0, 0, 0)
-        plane.SetNormal(0, 1, 0)
+        def makeCutterPlane(normal,color) :
 
-        vtkTransFLT = _vtk.vtkTransformFilter()
-        vtkTransform1 = _vtk.vtkTransform()
-        vtkTransform1.SetMatrix(vtkTransform)
-        vtkTransFLT.SetTransform(vtkTransform1)
-        vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
+            plane = _vtk.vtkPlane()
+            plane.SetOrigin(0, 0, 0)
+            plane.SetNormal(normal[0], normal[1], normal[2])
+            vtkTransFLT = _vtk.vtkTransformFilter()
+            vtkTransform1 = _vtk.vtkTransform()
+            vtkTransform1.SetMatrix(vtkTransform)
+            vtkTransFLT.SetTransform(vtkTransform1)
+            vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
 
-        cutter = _vtk.vtkCutter()
-        cutter.SetCutFunction(plane)
-        cutter.SetInputConnection(vtkTransFLT.GetOutputPort())
-        cutter.Update()
+            cutter = _vtk.vtkCutter()
+            cutter.SetCutFunction(plane)
+            cutter.SetInputConnection(vtkTransFLT.GetOutputPort())
+            cutter.Update()
 
-        cutterMapper = _vtk.vtkPolyDataMapper()
-        cutterMapper.SetInputConnection(cutter.GetOutputPort())
+            cutterMapper = _vtk.vtkPolyDataMapper()
+            cutterMapper.ScalarVisibilityOff()
+            cutterMapper.SetInputConnection(cutter.GetOutputPort())
 
-        planeActor = _vtk.vtkActor()
-        colors = _vtk.vtkNamedColors()
-        planeActor.GetProperty().SetColor(colors.GetColor3d("Yellow"))
-        planeActor.GetProperty().SetLineWidth(2)
-        planeActor.SetMapper(cutterMapper)
-        self.ren.AddActor(planeActor)
+            planeActor = _vtk.vtkActor()
+            planeActor.SetMapper(cutterMapper)
+            planeActor.GetProperty().SetLineWidth(4)
+            planeActor.GetProperty().SetColor(color[0],color[1],color[2])
+            planeActor.GetProperty().SetRepresentationToSurface()
+            self.ren.AddActor(planeActor)
+
+        makeCutterPlane([1,0,0],[1,0,0])
+        makeCutterPlane([0,1,0],[0,1,0])
+        makeCutterPlane([0,0,1],[0,0,1])
+
 
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
