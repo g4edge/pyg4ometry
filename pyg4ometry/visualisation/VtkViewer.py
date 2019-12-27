@@ -140,7 +140,7 @@ class VtkViewer:
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
                              self.physicalActorMapOverlap,
-                             visOptions)
+                             visOptions = visOptions, overlap = True)
 
         # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
@@ -191,15 +191,16 @@ class VtkViewer:
                     #mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
+                                 visOptions = pv.visOptions, overlap = False)
 
                     # overlap meshes
                     for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
                         visOptions = self.setOverlapVisOptions(overlaptype)
 
-                        self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap, self.filtersOverlap,
-                                     self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap, self.physicalActorMapOverlap,
-                                     visOptions)
+                        self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap,
+                                     self.filtersOverlap, self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
+                                     self.physicalActorMapOverlap, visOptions = visOptions, overlap =True)
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
 
@@ -214,7 +215,8 @@ class VtkViewer:
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
+                                 visOptions = pv.visOptions, overlap = False)
             elif pv.type == "parametrised":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -227,10 +229,11 @@ class VtkViewer:
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes,
                                  self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap, pv.visOptions)
+                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
+                                 visOptions = pv.visOptions, overlap = False)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None):
+                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -401,3 +404,12 @@ class VtkViewer:
             visOptions.alpha = 1.0
 
         return visOptions
+
+def axesFromExtents(extent) :
+    low  = _np.array(extent[0])
+    high = _np.array(extent[1])
+    diff = high-low
+    centre = (high+low)/2.0
+    length = diff.max()/2
+
+    return length,centre
