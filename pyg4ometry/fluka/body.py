@@ -1650,7 +1650,6 @@ class QUA(Body):
         verts = []
         facet = []
 
-        print pd.GetNumberOfCells()
         for i in range(0,pd.GetNumberOfCells(),1) :
             c = pd.GetCell(i)
             p = c.GetPoints()
