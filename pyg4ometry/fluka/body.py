@@ -1631,20 +1631,17 @@ class QUA(Body):
         import vtk
 
         quadric = vtk.vtkQuadric()
-        #quadric.SetCoefficients(1.0, 1.0, -1.0 , 0, 0.0, 0, 0, 0.0, 0, 0)
-        #quadric.SetCoefficients(.5, 1, .2, 0, .1, 0, 0, .2, 0, 0)
-        #quadric.SetCoefficients(1, 1, 1, 0, 0, 0, 0, 0, 0, 1)
-        #quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
-        #                        self.A_xy, self.A_yz, self.A_xz,
-        #                        self.A_x,  self.A_y,  self.A_z, self.A_0)
+        quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
+                                self.A_xy, self.A_yz, self.A_xz,
+                                self.A_x,  self.A_y,  self.A_z, 0.0)
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
-        sample.SetModelBounds(-10,10,-10,10,-10,10)
+        sample.SetModelBounds(-1,1,-1,1,-1,1)
         sample.SetImplicitFunction(quadric)
 
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, 0, 0)
+        contours.GenerateValues(1, -self.A_0, -self.A_0)
         contours.Update()
 
         pd = contours.GetOutput()
