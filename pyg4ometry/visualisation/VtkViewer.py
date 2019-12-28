@@ -101,7 +101,7 @@ class VtkViewer:
                 a.GetProperty().SetRepresentationToSurface()
 
     def setOpacityOverlap(self,v, iActor = -1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actorsOverlap, range(0, len(self.actorsOverlap))):
             if i == iActor:
                 a.GetProperty().SetOpacity(v)
             elif iActor == -1:
@@ -348,49 +348,32 @@ class VtkViewer:
         makeCutterPlane([0,1,0],[0,1,0])
         makeCutterPlane([0,0,1],[0,0,1])
 
-        makeClipperPlane([1,0,0])
-        makeClipperPlane([0,1,0])
-        makeClipperPlane([0,0,1])
+        # makeClipperPlane([1,0,0])
+        # makeClipperPlane([0,1,0])
+        # makeClipperPlane([0,0,1])
 
+        if overlap :
+            overlapText = _vtk.vtkVectorText()
+            overlapText.SetText("overlap")
+
+            overlapMapper = _vtk.vtkPolyDataMapper()
+            overlapMapper.SetInputConnection(overlapText.GetOutputPort())
+
+            comFilter = _vtk.vtkCenterOfMass()
+            comFilter.SetInputConnection(vtkTransFLT.GetOutputPort())
+            comFilter.SetUseScalarsAsWeights(False);
+            comFilter.Update()
+
+            overlapActor = _vtk.vtkFollower()
+            overlapActor.GetProperty().SetColor(visOptions.color)
+            overlapActor.SetPosition(comFilter.GetCenter())
+            overlapActor.SetMapper(overlapMapper)
+            self.ren.ResetCameraClippingRange()
+            overlapActor.SetCamera(self.ren.GetActiveCamera());
+            self.ren.AddActor(overlapActor)
 
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
-
-        '''
-        if glyph :
-            # Surface normals
-            vtkNormals = _vtk.vtkPolyDataNormals()
-            vtkNormals.SetInputData(vtkPD)
-
-            #vtkNormals.ComputePointNormalsOff()
-            #vtkNormals.ComputeCellNormalsOn()
-            #vtkNormals.SplittingOff()
-            vtkNormals.FlipNormalsOn()
-            #vtkNormals.ConsistencyOn()
-            #vtkNormals.AutoOrientNormalsOn()
-            vtkNormals.Update()
-
-            glyph = _vtk.vtkGlyph3D()
-            arrow = _vtk.vtkArrowSource()
-            arrow.Update()
-
-            glyph.SetInputData(vtkNormals.GetOutput())
-            glyph.SetSourceData(arrow.GetOutput())
-            glyph.SetVectorModeToUseNormal()
-            glyph.SetScaleModeToScaleByVector()
-            glyph.SetScaleFactor(100)
-            glyph.OrientOn()
-            glyph.Update()
-
-            glyph_mapper = _vtk.vtkPolyDataMapper()
-            glyph_mapper.SetInputData(glyph.GetOutput())
-            # glyph_mapper.ImmediateModeRenderingOn()
-            glyph_actor = _vtk.vtkActor()
-            glyph_actor.SetMapper(glyph_mapper)
-            glyph_actor.GetProperty().SetColor(1, 0.4, 1)
-
-            self.ren.AddActor(glyph_actor)
-        '''
 
         # set visualisation properties
         if visOptions :
@@ -413,11 +396,9 @@ class VtkViewer:
         self.iren.Initialize()
 
         # Camera setup
-        camera =_vtk.vtkCamera();
-        self.ren.SetActiveCamera(camera);
         self.ren.ResetCamera()
 
-        # Render 
+        # Render
         self.renWin.Render()
 
         if interactive : 
