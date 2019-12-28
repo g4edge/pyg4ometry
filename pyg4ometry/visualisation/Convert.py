@@ -1,7 +1,6 @@
 import vtk as _vtk
 import copy as _copy
 
-
 # python iterable to vtkIdList
 def mkVtkIdList(it):
     vil = _vtk.vtkIdList()

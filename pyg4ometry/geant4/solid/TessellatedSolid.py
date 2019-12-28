@@ -1,8 +1,5 @@
 from SolidBase import SolidBase as _SolidBase
-from Plane import Plane as _Plane
-from pyg4ometry.geant4.Registry import registry as _registry
 from pyg4ometry.pycsg.core import CSG     as _CSG
-from pyg4ometry.pycsg.geom import Vector  as _Vector
 from pyg4ometry.pycsg.geom import Vertex  as _Vertex
 from pyg4ometry.pycsg.geom import Polygon as _Polygon
 
@@ -25,7 +22,6 @@ class TessellatedSolid(_SolidBase):
     
     """
 
-
     class MeshType : 
         Freecad = 1
         Gdml    = 2
@@ -39,10 +35,6 @@ class TessellatedSolid(_SolidBase):
         self.meshtype    = meshtype
 
         self.dependents = []
-
-        #self.indexed_facet_list = []
-        #self.unique_vertices    = []
-        #self.reduceVertices()
 
         if addRegistry:
             registry.addSolid(self)
@@ -114,12 +106,6 @@ class TessellatedSolid(_SolidBase):
         polygon_list = []
 
         for f in facet:
-            #v1 = _Vertex(verts[f[0]])
-            #v2 = _Vertex(verts[f[1]])
-            #v3 = _Vertex(verts[f[2]])
-
-            #polygon = _Polygon([v1,v2,v3])
-
             # This allows for both triangular and quadrilateral facets
             polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygon_list.append(polygon)            
