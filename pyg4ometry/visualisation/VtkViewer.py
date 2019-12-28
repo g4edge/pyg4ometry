@@ -289,6 +289,12 @@ class VtkViewer:
 
         vtkActor.SetUserMatrix(vtkTransform)
 
+        vtkTransFLT = _vtk.vtkTransformFilter()
+        vtkTransform1 = _vtk.vtkTransform()
+        vtkTransform1.SetMatrix(vtkTransform)
+        vtkTransFLT.SetTransform(vtkTransform1)
+        vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
+
         def makeCutterPlane(normal,color) :
 
             plane = _vtk.vtkPlane()
@@ -316,9 +322,35 @@ class VtkViewer:
             planeActor.GetProperty().SetRepresentationToSurface()
             self.ren.AddActor(planeActor)
 
+        def makeClipperPlane(normal) :
+            plane = _vtk.vtkPlane()
+            plane.SetOrigin(0, 0, 0)
+            plane.SetNormal(normal[0], normal[1], normal[2])
+            clipper = _vtk.vtkClipPolyData()
+            clipper.SetInputConnection(vtkTransFLT.GetOutputPort())
+            clipper.SetClipFunction(plane)
+            clipper.InsideOutOn()
+
+            clipperMapper = _vtk.vtkPolyDataMapper()
+            clipperMapper.ScalarVisibilityOff()
+            clipperMapper.SetInputConnection(clipper.GetOutputPort())
+
+            clipperActor =_vtk.vtkActor()
+            clipperActor.SetMapper(clipperMapper)
+            clipperActor.GetProperty().SetColor(1.0, 1.0, 1.0)
+            clipperActor.GetProperty().SetOpacity(1.0)
+            clipperActor.SetScale(1, 1, 1)
+
+            vtkActor.GetProperty().SetOpacity(0.0)
+            self.ren.AddActor(clipperActor)  # selection part end
+
         makeCutterPlane([1,0,0],[1,0,0])
         makeCutterPlane([0,1,0],[0,1,0])
         makeCutterPlane([0,0,1],[0,0,1])
+
+        makeClipperPlane([1,0,0])
+        makeClipperPlane([0,1,0])
+        makeClipperPlane([0,0,1])
 
 
         if not actorMap.has_key(actorname) :
