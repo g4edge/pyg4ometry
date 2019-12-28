@@ -1568,6 +1568,114 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
+class QUA(Body):
+    """Generic quadric
+
+    :param name: of body
+    :type name: str
+    :param A_xx: x^2 coefficient
+    :type A_xx: float
+    :param A_yy: y^2 coefficient
+    :type A_yy: float
+    :param A_zz: z^2 coefficient
+    :type A_zz: float
+    :param A_xy: xy coefficient
+    :type A_xy: float
+    :param A_xz: xz coefficient
+    :type A_xz: float
+    :param A_yz: yz coefficient
+    :type A_yz: float
+    :param A_x : x coefficient
+    :type A_x: float
+    :param A_y : y coefficient
+    :type A_y: float
+    :param A_z : z coefficient
+    :type A_z: float
+    :param A_0 : constant
+    :type A_0: constant
+    """
+    def __init__(self, name, A_xx, A_yy, A_zz, A_xy, A_xz, A_yz, A_x, A_y, A_z, A_0,
+                 expansion=1.0,
+                 translation=None,
+                 transform=None,
+                 flukaregistry=None):
+        self.name = name
+
+        self.A_xx = A_xx
+        self.A_yy = A_yy
+        self.A_zz = A_zz
+        self.A_xy = A_xy
+        self.A_xz = A_xz
+        self.A_yz = A_yz
+        self.A_x  = A_x
+        self.A_y  = A_y
+        self.A_z  = A_z
+        self.A_0  = A_0
+
+        self.expansion = expansion
+        self.translation = self._set_translation_setTranslation(translation)
+        self.transform = self._set_transform(transform)
+
+        self.addToRegistry(flukaregistry)
+
+    def centre(self, extent=None):
+        return Three([0,0,0])
+
+    def rotation(self):
+        return self._apply_transform_rotation(np.identity(3))
+
+    def geant4Solid(self, reg, extent=None):
+        exp = self.expansion
+        scale = self._extent_to_scale_factor(extent)
+
+        import vtk
+
+        quadric = vtk.vtkQuadric()
+        #quadric.SetCoefficients(1.0, 1.0, -1.0 , 0, 0.0, 0, 0, 0.0, 0, 0)
+        #quadric.SetCoefficients(.5, 1, .2, 0, .1, 0, 0, .2, 0, 0)
+        #quadric.SetCoefficients(1, 1, 1, 0, 0, 0, 0, 0, 0, 1)
+        #quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
+        #                        self.A_xy, self.A_yz, self.A_xz,
+        #                        self.A_x,  self.A_y,  self.A_z, self.A_0)
+        sample = vtk.vtkSampleFunction()
+        sample.SetSampleDimensions(50, 50, 50)
+        sample.SetModelBounds(-10,10,-10,10,-10,10)
+        sample.SetImplicitFunction(quadric)
+
+        contours = vtk.vtkContourFilter()
+        contours.SetInputConnection(sample.GetOutputPort())
+        contours.GenerateValues(1, 0, 0)
+        contours.Update()
+
+        pd = contours.GetOutput()
+
+        mesh  = []
+        verts = []
+        facet = []
+
+        print pd.GetNumberOfCells()
+        for i in range(0,pd.GetNumberOfCells(),1) :
+            c = pd.GetCell(i)
+            p = c.GetPoints()
+            verts.append(np.array(p.GetPoint(0)))
+            verts.append(np.array(p.GetPoint(1)))
+            verts.append(np.array(p.GetPoint(2)))
+            facet.append([3*i+0,3*i+1,3*i+2])
+
+        mesh.append(verts)
+        mesh.append(facet)
+
+        return g4.solid.TessellatedSolid(self.name,mesh,reg,g4.solid.TessellatedSolid.MeshType.Freecad)
+
+    def _withLengthSafety(self, safety, reg=None):
+        return QUA(self.name,
+                   self.A_xx, self.A_yy, self.A_zz,
+                   self.A_xy, self.A_xz, self.A_yz,
+                   self.A_x, self.A_y,  self.A_z, self.A_0,
+                   expansion=self.expansion,
+                   translation=self.translation,
+                   transform=self.transform,
+                   flukaregistry=reg)
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0
@@ -1577,3 +1685,4 @@ def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
 
 def _iterablesToFreeString(*iterables):
     return " ".join([str(e) for e in chain(*iterables)])
+
