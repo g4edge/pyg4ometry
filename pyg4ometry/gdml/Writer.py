@@ -540,7 +540,7 @@ class Writer(object):
 
             dim = self.doc.createElement('{}_dimensions'.format(dim_solid))
             for name in dim_names:
-                dim.setAttribute(dim_names[name], str(float(getattr(params, name))))
+                dim.setAttribute(dim_names[name], self.getValueOrExprFromInstance(params,name))
             for unit in ["lunit", "aunit"]:
                 if hasattr(params, unit):
                     dim.setAttribute(unit, getattr(params, unit))
@@ -551,9 +551,9 @@ class Writer(object):
                 dim.setAttribute("numRZ", str(len(z_planes)))
                 for pl in z_planes:
                     zpl = self.doc.createElement('zplane')
-                    zpl.setAttribute("rmin", str(float(pl[1])))
-                    zpl.setAttribute("rmax",  str(float(pl[2])))
-                    zpl.setAttribute("z",  str(float(pl[0])))
+                    zpl.setAttribute("z",    self.getValueOrExpr(pl[0]))
+                    zpl.setAttribute("rmin", self.getValueOrExpr(pl[1]))
+                    zpl.setAttribute("rmax", self.getValueOrExpr(pl[2]))
                     dim.appendChild(zpl)
 
             param_node.appendChild(dim)
