@@ -176,7 +176,7 @@ class ParameterisedVolume(_ReplicaVolume):
 
         meshes = []
 
-        for paramData,i in zip(self.paramData,range(0,int(self.ncopies.eval()),1)):
+        for paramData, i in zip(self.paramData, range(0, int(self.ncopies), 1)):
             # box
             if self.logicalVolume.solid.type == "Box" and isinstance(paramData,self.BoxDimensions):
                 solid = _copy.deepcopy(self.logicalVolume.solid)
