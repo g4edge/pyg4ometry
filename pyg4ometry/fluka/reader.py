@@ -146,7 +146,7 @@ class Reader(object):
                                self.flukaregistry)
                 break
             elif in_body: # continue appending bits to the body_parts list.
-                body_parts.append(line_parts)
+                body_parts.extend(line_parts)
             else:
                 raise RuntimeError(
                     "Failed to parse FLUKA input line: {}".format(line))
