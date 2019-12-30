@@ -482,7 +482,9 @@ class RegionVisitor(RegionParserVisitor):
         # up a series of nested lists.  This is to keep it flat, with
         # the only nesting occuring in Zones.
         if isinstance(expr, list):
-            return [sub_zone] + expr
+            if not isinstance(sub_zone, list):
+                sub_zone = [sub_zone]
+            return sub_zone + expr
         return [sub_zone, expr]
 
     def visitSingleUnion(self, ctx):
@@ -517,7 +519,7 @@ class RegionVisitor(RegionParserVisitor):
                 z.addIntersection(body)
             else:
                 z.addSubtraction(body)
-        return [(operator, z)]
+        return (operator, z)
 
 
 def _parseRotDefiniCard(card):
