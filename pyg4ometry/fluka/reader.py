@@ -528,11 +528,10 @@ def _parseRotDefiniCard(card):
 
     card = card.nonesToZero()
     what1 = int(card.what1)
-
-    if what1 > 1000.:
+    if what1 >= 1000.:
         i = what1 // 1000
         j = int(str(what1)[-1])
-    elif what1 > 100. and what1 < 1000.:
+    elif what1 >= 100. and what1 < 1000.:
         i = int(str(what1)[-1])
         j = what1 // 100
     elif what1 > 0 and what1 <= 100:
@@ -611,6 +610,10 @@ def _parseRotDefiniCard(card):
                        [-sp, cp, 0, ty*cp - tx*sp],
                        [  0,  0, 1,            tz],
                        [  0,  0, 0,             1]])
+    else:
+        msg = ("Unable to determine rotation"
+               " matrix for rotation index j = {}".format(j))
+        raise ValueError(msg)
 
     matrix = r1.dot(r2)
 
