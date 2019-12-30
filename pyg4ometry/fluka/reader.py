@@ -274,7 +274,7 @@ class Reader(object):
             # WHAT3 is the upper region name or index.
             if isinstance(region_upper, basestring):
                 if region_upper not in regionlist:
-                    msg = ("Region referred to in WHAT3 of ASSIGNMA"
+                    msg = ("Region {} referred to in WHAT3 of ASSIGNMA"
                            " has not been defined.".format(region_upper))
                     raise ValueError(msg)
                 stop = regionlist.index(region_upper)
@@ -544,7 +544,7 @@ def _parseRotDefiniCard(card):
         i = what1
         j = 0
     else:
-        raise ValueError("Unable to parse ROT-DEFI transformation index.")
+        raise ValueError("Unable to parse ROT-DEFI WHAT1: {}.".format(what1))
 
     # XXX: I think this is the correct way to deal with a ROT-DEFINI
     # without a name, this may be wrong.
