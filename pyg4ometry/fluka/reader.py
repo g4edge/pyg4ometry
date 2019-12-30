@@ -71,17 +71,18 @@ class Reader(object):
         found_first_end = False
         found_second_end = False
         for i, line in enumerate(self._lines) :
-            if "GEOBEGIN" in line:
+            if line.startswith("GEOBEGIN"):
                 found_geobegin = True
                 self.geobegin = i
                 self.bodiesbegin = i + 2
-            elif "GEOEND" in line:
+            elif line.startswith("GEOEND"):
                 found_geoend = True
                 self.geoend = i
-            elif "END" in line:
+            elif line.startswith("END"):
                 if found_first_end:
                     found_second_end = True
                     self.regionsend = i
+                    self.latticebegin = i + 1
                 else:
                     self.bodiesend = i
                     self.regionsbegin = i + 1
