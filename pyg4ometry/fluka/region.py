@@ -9,7 +9,7 @@ from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import Body
-from .vector import Three, Extent
+from .vector import Three, Extent, areExtentsOverlapping
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
