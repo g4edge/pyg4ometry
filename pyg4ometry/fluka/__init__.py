@@ -5,5 +5,5 @@ from .body import (RPP, BOX, SPH, RCC, REC,
                    QUA)
 from .reader import Reader
 from .fluka_registry import FlukaRegistry
-from .vector import Three
-from .region import Zone, Region, Extent
+from .vector import Three, Extent
+from .region import Zone, Region

@@ -127,6 +127,35 @@ class Three(_np.ndarray):
         self.z = temp.z
         return self
 
+
+class Extent(object):
+    def __init__(self, lower, upper):
+        self.lower = Three(lower)
+        self.upper = Three(upper)
+        self.size = self.upper - self.lower
+        self.centre = self.upper - 0.5 * self.size
+
+        for i, j in zip(lower, upper):
+            if i >= j:
+                raise ValueError("Lower extent must be less than upper.")
+
+    def __repr__(self):
+        return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
+                " Upper({upper.x}, {upper.y}, {upper.z})>".format(
+                    upper=self.upper, lower=self.lower))
+
+    def __eq__(self, other):
+        return self.lower == other.lower and self.upper == other.upper
+
+def areExtentsOverlapping(first, second):
+    """Check if two Extent instances are overlapping."""
+    return not (first.upper.x < second.lower.x
+                or first.lower.x > second.upper.x
+                or first.upper.y < second.lower.y
+                or first.lower.y > second.upper.y
+                or first.upper.z < second.lower.z
+                or first.lower.z > second.upper.z)
+
 def applyTransform(transform, vector):
     vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
     result4d =  transform.dot(vector4d)

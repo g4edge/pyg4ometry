@@ -9,7 +9,7 @@ from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import Body
-from .vector import Three
+from .vector import Three, Extent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -393,15 +393,6 @@ def _make_wlv(reg):
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def are_extents_overlapping(first, second):
-    """Check if two Extent instances are overlapping."""
-    return not (first.upper.x < second.lower.x
-                or first.lower.x > second.upper.x
-                or first.upper.y < second.lower.y
-                or first.lower.y > second.upper.y
-                or first.upper.z < second.lower.z
-                or first.lower.z > second.upper.z)
-
 def _get_zone_overlap(zone1, zone2, extent):
     greg = g4.Registry()
 
@@ -422,25 +413,6 @@ def _get_zone_overlap(zone1, zone2, extent):
         return None
     return mesh
 
-
-class Extent(object):
-    def __init__(self, lower, upper):
-        self.lower = Three(lower)
-        self.upper = Three(upper)
-        self.size = self.upper - self.lower
-        self.centre = self.upper - 0.5 * self.size
-
-        for i, j in zip(lower, upper):
-            if i >= j:
-                raise ValueError("Lower extent must be less than upper.")
-
-    def __repr__(self):
-        return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
-                " Upper({upper.x}, {upper.y}, {upper.z})>".format(
-                    upper=self.upper, lower=self.lower))
-
-    def __eq__(self, other):
-        return self.lower == other.lower and self.upper == other.upper
 
 def _getExtent(extent, boolean):
     """Extent can either a dictionary of a number."""
