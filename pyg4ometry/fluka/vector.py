@@ -127,6 +127,14 @@ class Three(_np.ndarray):
         self.z = temp.z
         return self
 
+def applyTransform(transform, vector):
+    vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
+    result4d =  transform.dot(vector4d)
+    return Three(result4d[0:3])
+
+def applyTransformRotation(transform, rotation_matrix):
+    return transform[:3,:3].dot(rotation_matrix)
+
 
 def point_on_line_closest_to_point(point, point_on_line, direction):
     """
