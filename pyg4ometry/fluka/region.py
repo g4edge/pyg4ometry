@@ -295,7 +295,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if _get_zone_overlap(zones[i], zones[j], extent=None) is not None:
+            if areOverlapping(zones[i], zones[j], extent=None):
                 graph.add_edge(i, j)
         return graph
 
@@ -393,13 +393,13 @@ def _make_wlv(reg):
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def _get_zone_overlap(zone1, zone2, extent):
+def areOverlapping(first, second, extent=None):
     greg = g4.Registry()
 
-    solid1 = zone1.geant4Solid(greg)
-    solid2 = zone2.geant4Solid(greg)
+    solid1 = first.geant4Solid(greg, extent=extent)
+    solid2 = second.geant4Solid(greg, extent=extent)
 
-    tra2 = _get_tra2(zone1, zone2, extent)
+    tra2 = _get_tra2(first, second, extent)
 
     intersection = g4.solid.Intersection(_random_name(),
                            solid1,
@@ -410,9 +410,8 @@ def _get_zone_overlap(zone1, zone2, extent):
     try:
         mesh = intersection.pycsgmesh()
     except NullMeshError:
-        return None
-    return mesh
-
+        return False
+    return True
 
 def _getExtent(extent, boolean):
     """Extent can either a dictionary of a number."""
