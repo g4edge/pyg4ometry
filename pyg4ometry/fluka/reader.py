@@ -316,52 +316,36 @@ class Reader(object):
     def _parseLattice(self):
         lattice = {} # {cellName: rot-defi-matrix, ...}
         for card in self.cards:
-            if card.keyword == "LATTICE":
-                cellName = card.what1
-
-                if card.what2 is not None:
-                    msg = "Unable to parse LATTICE with non-default WHAT2."
-                    raise ValueError(msg)
-
-                transformName = card.sdum
-                if transformName.startswith(("ROT", "Rot", "rot")):
-                    try:
-                        transformIndex = int(transformName[3:])
-                        transform = self.transforms.keys()[transformIndex]
-                    except ValueError:
-                        transform = self.transforms[transformName]
-                elif transformName.startswith(("RO", "Ro", "ro")):
-                    try:
-                        transformIndex = int(transformName[2:])
-                        transform = self.transforms.keys()[transformIndex]
-                    except ValueError:
-                        transform = self.transforms[transformName]
-                else:
-                    transform = self.transforms[transformName]
-
-                # Deal with inverse rotation notation
-                if transformName[0] == "-":
-                    transform = np.linalg.inv(transform)
-
-                lattice[cellName] = transform
-
-            elif card.keyword == "LATTSNGL":
-                cellName = card.what1
-                transform1Name = card.what2
-                transform2Name = card.what3
-
-                if transform1Name is not None:
-                    transform1 = self.transforms[transform1Name]
-                    if transform1Name[0] == "-":
-                        transform1 = np.linalg.inv(transform1)
-                if transform2Name is not None:
-                    transform2 = self.transforms[transform2Name]
-                    if transform2Name[0] == "-":
-                        transform2 = np.linalg.inv(transform2)
-
-                lattice[cellName] = transform2.dot(transform1)
-            else:
+            if card.keyword != "LATTICE":
                 continue
+            cellName = card.what1
+
+            if card.what2 is not None:
+                msg = "Unable to parse LATTICE with non-default WHAT2."
+                raise ValueError(msg)
+
+            transformName = card.sdum
+            if transformName.startswith(("ROT", "Rot", "rot")):
+                try:
+                    transformIndex = int(transformName[3:])
+                    transform = self.transforms.keys()[transformIndex]
+                except ValueError:
+                    transform = self.transforms[transformName]
+            elif transformName.startswith(("RO", "Ro", "ro")):
+                try:
+                    transformIndex = int(transformName[2:])
+                    transform = self.transforms.keys()[transformIndex]
+                except ValueError:
+                    transform = self.transforms[transformName]
+            else:
+                transform = self.transforms[transformName]
+
+            # Deal with inverse rotation notation
+            if transformName[0] == "-":
+                transform = np.linalg.inv(transform)
+
+            lattice[cellName] = transform
+
         return lattice
 
 
