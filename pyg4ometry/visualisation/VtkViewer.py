@@ -8,7 +8,7 @@ import logging as _log
 import random
 
 class VtkViewer:
-    def __init__(self,size=(1024,768)):
+    def __init__(self,size=(2048,1536)):
         
         # create a renderer
         self.ren = _vtk.vtkRenderer()
@@ -127,8 +127,92 @@ class VtkViewer:
             a.GetProperty().SetColor(random.random(),
                                      random.random(),
                                      random.random())
+
+    def setCameraFocusPosition(self,focalPoint = [0,0,0], position = [100,100,100]):
+        self.ren.GetActiveCamera().SetFocalPoint(focalPoint)
+        self.ren.GetActiveCamera().SetPosition(position)
+
     def start(self):
+        self.renWin.Render()
         self.iren.Start()
+
+    def exportOBJScene(self,fileName="scene") :
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkOBJExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.SetFilePrefix("./"+fileName)  # create mtl and obj file.
+        exporter.Write()
+
+
+
+    def exportVRMLScene(self,fileName="scene") :
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkVRMLExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.SetFileName("./"+fileName)  # create mtl and obj file.
+        exporter.Write()
+
+    def exportScreenShot(self, fileName="screenshot.png", rgba=True):
+        '''
+
+        Write the render window view to an image file.
+
+        Image types supported are:
+         BMP, JPEG, PNM, PNG, PostScript, TIFF.
+        The default parameters are used for all writers, change as needed.
+
+        :param fileName: The file name, if no extension then PNG is assumed.
+        :param renWin: The render window.
+        :param rgba: Used to set the buffer type.
+        :return:
+
+        '''
+
+        import os
+
+        if fileName:
+            # Select the writer to use.
+            path, ext = os.path.splitext(fileName)
+            ext = ext.lower()
+            if not ext:
+                ext = '.png'
+                fileName = fileName + ext
+            if ext == '.bmp':
+                writer = _vtk.vtkBMPWriter()
+            elif ext == '.jpg':
+                writer = _vtk.vtkJPEGWriter()
+            elif ext == '.pnm':
+                writer = _vtk.vtkPNMWriter()
+            elif ext == '.ps':
+                if rgba:
+                    rgba = False
+                writer = _vtk.vtkPostScriptWriter()
+            elif ext == '.tiff':
+                writer = _vtk.vtkTIFFWriter()
+            else:
+                writer = _vtk.vtkPNGWriter()
+
+            windowto_image_filter = _vtk.vtkWindowToImageFilter()
+            windowto_image_filter.SetInput(self.renWin)
+            windowto_image_filter.SetScale(1)  # image quality
+            if rgba:
+                windowto_image_filter.SetInputBufferTypeToRGBA()
+            else:
+                windowto_image_filter.SetInputBufferTypeToRGB()
+                # Read from the front buffer.
+                windowto_image_filter.ReadFrontBufferOff()
+                windowto_image_filter.Update()
+
+            writer.SetFileName(fileName)
+            writer.SetInputConnection(windowto_image_filter.GetOutputPort())
+            writer.Write()
+        else:
+            raise RuntimeError('Need a filename.')
+
 
     def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
         if logical.type == "logical" :
@@ -157,6 +241,7 @@ class VtkViewer:
         lvmActor = _vtk.vtkActor()
         lvmActor.SetMapper(lvmMAP)         
         lvmActor.GetProperty().SetRepresentationToWireframe()
+        lvmActor.GetProperty().SetOpacity(0.2)
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
@@ -348,9 +433,9 @@ class VtkViewer:
         makeCutterPlane([0,1,0],[0,1,0])
         makeCutterPlane([0,0,1],[0,0,1])
 
-        # makeClipperPlane([1,0,0])
-        # makeClipperPlane([0,1,0])
-        # makeClipperPlane([0,0,1])
+        #makeClipperPlane([1,0,0])
+        #makeClipperPlane([0,1,0])
+        #makeClipperPlane([0,0,1])
 
         if overlap :
             overlapText = _vtk.vtkVectorText()
