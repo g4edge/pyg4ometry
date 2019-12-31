@@ -274,7 +274,7 @@ class Reader(object):
             # WHAT3 is the upper region name or index.
             if isinstance(region_upper, basestring):
                 if region_upper not in regionlist:
-                    msg = ("Region referred to in WHAT3 of ASSIGNMA"
+                    msg = ("Region {} referred to in WHAT3 of ASSIGNMA"
                            " has not been defined.".format(region_upper))
                     raise ValueError(msg)
                 stop = regionlist.index(region_upper)
@@ -302,7 +302,13 @@ class Reader(object):
                 warn("No material assigned to {}, setting to BLCKHOLE.".format(
                     region_name))
             material = self._material_assignments[region_name]
-            self.flukaregistry.regionDict[region_name].material = material
+            # Don't crash on assigning a material to a region that
+            # haven't been defined.
+            try:
+                self.flukaregistry.regionDict[region_name].material = material
+            except KeyError:
+                continue
+
 
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
@@ -544,7 +550,7 @@ def _parseRotDefiniCard(card):
         i = what1
         j = 0
     else:
-        raise ValueError("Unable to parse ROT-DEFI transformation index.")
+        raise ValueError("Unable to parse ROT-DEFI WHAT1: {}.".format(what1))
 
     # XXX: I think this is the correct way to deal with a ROT-DEFINI
     # without a name, this may be wrong.
