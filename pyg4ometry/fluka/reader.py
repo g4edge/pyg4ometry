@@ -61,8 +61,8 @@ class Reader(object):
         self._parseBodies()
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
-        self._assignMaterials()
         self.flukaregistry.latticeDict.update(self._parseLattice())
+        self._assignMaterials()
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -301,10 +301,17 @@ class Reader(object):
 
     def _assignMaterials(self):
         for region_name in self.flukaregistry.regionDict.iterkeys():
-            if region_name not in self._material_assignments:
-                warn("No material assigned to {}, setting to BLCKHOLE.".format(
-                    region_name))
-            material = self._material_assignments[region_name]
+            try:
+                material = self._material_assignments[region_name]
+            except KeyError:
+                # if there's no material assigned to a LATTICE cell
+                # then it doesn't matter because the material is not
+                # used in such circumstances anyway.
+                if region_name not in self.flukaregistry.latticeDict:
+                    warn("No material assigned to Region {}.".format(
+                        region_name))
+                continue
+
             # Don't crash on assigning a material to a region that
             # haven't been defined.
             try:
