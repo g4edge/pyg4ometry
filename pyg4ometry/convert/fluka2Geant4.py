@@ -83,7 +83,7 @@ def _make_length_safety_registry(flukareg):
         ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
-
+    fluka_reg_out.latticeDict = flukareg.latticeDict
     return fluka_reg_out
 
 def _make_disjoint_unions_registry(flukareg):
@@ -119,7 +119,7 @@ def _make_disjoint_unions_registry(flukareg):
                 new_region.addZone(new_zone)
                 new_region.allBodiesToRegistry(fluka_reg_out)
                 fluka_reg_out.addRegion(new_region)
-
+    fluka_reg_out.latticeDict = flukareg.latticeDict
     return fluka_reg_out
 
 def _get_region_extents(flukareg):
@@ -160,4 +160,5 @@ def _without_blackhole_regions(flukareg):
             continue
         freg_out.addRegion(region)
         region.allBodiesToRegistry(freg_out)
+    freg_out.latticeDict = flukareg.latticeDict
     return freg_out
