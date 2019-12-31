@@ -463,8 +463,10 @@ class RegionVisitor(RegionParserVisitor):
     def visitUnaryAndBoolean(self, ctx):
         left_solid = self.visit(ctx.unaryExpression())
         right_solid = self.visit(ctx.expr())
-        right_solid.extend(left_solid)
-        return right_solid
+        if isinstance(right_solid, tuple):
+            right_solid = [right_solid]
+
+        return left_solid + right_solid
 
     def visitUnaryExpression(self, ctx):
         body_name = ctx.BodyName().getText()
