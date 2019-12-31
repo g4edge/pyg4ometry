@@ -415,7 +415,7 @@ def areOverlapping(first, second, extent=None):
 
 def _getExtent(extent, boolean):
     """Extent can either a dictionary of a number."""
-    if isinstance(boolean, Zone):
+    if isinstance(boolean, (Zone, Region)):
         return extent
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
