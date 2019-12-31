@@ -302,7 +302,13 @@ class Reader(object):
                 warn("No material assigned to {}, setting to BLCKHOLE.".format(
                     region_name))
             material = self._material_assignments[region_name]
-            self.flukaregistry.regionDict[region_name].material = material
+            # Don't crash on assigning a material to a region that
+            # haven't been defined.
+            try:
+                self.flukaregistry.regionDict[region_name].material = material
+            except KeyError:
+                continue
+
 
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
