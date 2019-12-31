@@ -62,7 +62,7 @@ class Reader(object):
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
         self._assignMaterials()
-
+        self.flukaregistry.latticeDict.update(self._parseLattice())
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -178,7 +178,9 @@ class Reader(object):
     def _parseCards(self):
         fixed = True # start off parsing as fixed, i.e. not free format.
         cards = []
-        for line in self._lines[:self.geobegin] + self._lines[self.geoend:]:
+        # Parse everything except the bodies and the regions as cards:
+        lines = self._lines[:self.geobegin] + self._lines[self.latticebegin:]
+        for line in lines:
             if fixed:
                 cards.append(Card.fromFixed(line))
                 kw = cards[-1].keyword
@@ -304,6 +306,57 @@ class Reader(object):
                     region_name))
             material = self._material_assignments[region_name]
             self.flukaregistry.regionDict[region_name].material = material
+
+    def _parseLattice(self):
+        lattice = {} # {cellName: rot-defi-matrix, ...}
+        for card in self.cards:
+            if card.keyword == "LATTICE":
+                cellName = card.what1
+
+                if card.what2 is not None:
+                    msg = "Unable to parse LATTICE with non-default WHAT2."
+                    raise ValueError(msg)
+
+                transformName = card.sdum
+                if transformName.startswith(("ROT", "Rot", "rot")):
+                    try:
+                        transformIndex = int(transformName[3:])
+                        transform = self.transforms.keys()[transformIndex]
+                    except ValueError:
+                        transform = self.transforms[transformName]
+                elif transformName.startswith(("RO", "Ro", "ro")):
+                    try:
+                        transformIndex = int(transformName[2:])
+                        transform = self.transforms.keys()[transformIndex]
+                    except ValueError:
+                        transform = self.transforms[transformName]
+                else:
+                    transform = self.transforms[transformName]
+
+                # Deal with inverse rotation notation
+                if transformName[0] == "-":
+                    transform = np.linalg.inv(transform)
+
+                lattice[cellName] = transform
+
+            elif card.keyword == "LATTSNGL":
+                cellName = card.what1
+                transform1Name = card.what2
+                transform2Name = card.what3
+
+                if transform1Name is not None:
+                    transform1 = self.transforms[transform1Name]
+                    if transform1Name[0] == "-":
+                        transform1 = np.linalg.inv(transform1)
+                if transform2Name is not None:
+                    transform2 = self.transforms[transform2Name]
+                    if transform2Name[0] == "-":
+                        transform2 = np.linalg.inv(transform2)
+
+                lattice[cellName] = transform2.dot(transform1)
+            else:
+                continue
+        return lattice
 
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
