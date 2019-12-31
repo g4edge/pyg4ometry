@@ -64,3 +64,11 @@ class FlukaRegistry(object):
         print "materialDict = {}".format(self.materialDict)
         print "latticeDict = {}".format(self.latticeDict)
         print "cardDict = {}".format(self.cardDict)
+
+    def getNonLatticeRegions(self):
+        out = {}
+        for name, region in self.regionDict.iteritems():
+            if name in self.latticeDict:
+                continue
+            out[name] = region
+        return out
