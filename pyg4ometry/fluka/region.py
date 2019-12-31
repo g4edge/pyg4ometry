@@ -285,7 +285,7 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            # if not are_extents_overlapping(zone_extents[i], zone_extents[j]):
+            # if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
             #     continue
 
             # Check if a path already exists.  Not sure how often this
