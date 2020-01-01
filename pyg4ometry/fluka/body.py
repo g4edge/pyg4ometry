@@ -13,7 +13,7 @@ import pyg4ometry.exceptions
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-INFINITY = 50000
+INFINITY = 50000000
 LENGTH_SAFETY = 1e-6
 
 

@@ -44,7 +44,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
     if minimise_solids:
         region_extents = _get_region_extents(flukareg)
         extent_map = _make_body_minimum_extent_map(flukareg, region_extents)
-    elif flukaregistry.latticeDict:
+    elif flukareg.latticeDict:
         region_extents = _get_region_extents(flukareg)
 
     regionsWithLVs = {}
@@ -78,6 +78,10 @@ def fluka2Geant4(flukareg, with_length_safety=True,
                           "{}_pv".format(name),
                           wlv, greg)
 
+    # If not lattices defined then we end the conversion here.
+    if not flukareg.latticeDict:
+        greg.setWorld(wlv.name)
+        return greg
     latticeContents = _getContentsOfLatticeCells(flukareg, region_extents)
     for latticeName, contents in latticeContents.iteritems():
         # We take the LVs associated with this lattice (which have been
