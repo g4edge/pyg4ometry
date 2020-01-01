@@ -61,8 +61,8 @@ class Reader(object):
         self._parseBodies()
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
+        self.flukaregistry.latticeDict.update(self._parseLattice())
         self._assignMaterials()
-
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -71,17 +71,18 @@ class Reader(object):
         found_first_end = False
         found_second_end = False
         for i, line in enumerate(self._lines) :
-            if "GEOBEGIN" in line:
+            if line.startswith("GEOBEGIN"):
                 found_geobegin = True
                 self.geobegin = i
                 self.bodiesbegin = i + 2
-            elif "GEOEND" in line:
+            elif line.startswith("GEOEND"):
                 found_geoend = True
                 self.geoend = i
-            elif "END" in line:
+            elif line.startswith("END"):
                 if found_first_end:
                     found_second_end = True
                     self.regionsend = i
+                    self.latticebegin = i + 1
                 else:
                     self.bodiesend = i
                     self.regionsbegin = i + 1
@@ -145,7 +146,7 @@ class Reader(object):
                                self.flukaregistry)
                 break
             elif in_body: # continue appending bits to the body_parts list.
-                body_parts.append(line_parts)
+                body_parts.extend(line_parts)
             else:
                 raise RuntimeError(
                     "Failed to parse FLUKA input line: {}".format(line))
@@ -177,7 +178,9 @@ class Reader(object):
     def _parseCards(self):
         fixed = True # start off parsing as fixed, i.e. not free format.
         cards = []
-        for line in self._lines[:self.geobegin] + self._lines[self.geoend:]:
+        # Parse everything except the bodies and the regions as cards:
+        lines = self._lines[:self.geobegin] + self._lines[self.latticebegin:]
+        for line in lines:
             if fixed:
                 cards.append(Card.fromFixed(line))
                 kw = cards[-1].keyword
@@ -298,10 +301,17 @@ class Reader(object):
 
     def _assignMaterials(self):
         for region_name in self.flukaregistry.regionDict.iterkeys():
-            if region_name not in self._material_assignments:
-                warn("No material assigned to {}, setting to BLCKHOLE.".format(
-                    region_name))
-            material = self._material_assignments[region_name]
+            try:
+                material = self._material_assignments[region_name]
+            except KeyError:
+                # if there's no material assigned to a LATTICE cell
+                # then it doesn't matter because the material is not
+                # used in such circumstances anyway.
+                if region_name not in self.flukaregistry.latticeDict:
+                    warn("No material assigned to Region {}.".format(
+                        region_name))
+                continue
+
             # Don't crash on assigning a material to a region that
             # haven't been defined.
             try:
@@ -309,6 +319,41 @@ class Reader(object):
             except KeyError:
                 continue
 
+
+    def _parseLattice(self):
+        lattice = {} # {cellName: rot-defi-matrix, ...}
+        for card in self.cards:
+            if card.keyword != "LATTICE":
+                continue
+            cellName = card.what1
+
+            if card.what2 is not None:
+                msg = "Unable to parse LATTICE with non-default WHAT2."
+                raise ValueError(msg)
+
+            transformName = card.sdum
+            if transformName.startswith(("ROT", "Rot", "rot")):
+                try:
+                    transformIndex = int(transformName[3:])
+                    transform = self.transforms.keys()[transformIndex]
+                except ValueError:
+                    transform = self.transforms[transformName]
+            elif transformName.startswith(("RO", "Ro", "ro")):
+                try:
+                    transformIndex = int(transformName[2:])
+                    transform = self.transforms.keys()[transformIndex]
+                except ValueError:
+                    transform = self.transforms[transformName]
+            else:
+                transform = self.transforms[transformName]
+
+            # Deal with inverse rotation notation
+            if transformName[0] == "-":
+                transform = np.linalg.inv(transform)
+
+            lattice[cellName] = transform
+
+        return lattice
 
 
 def _make_body(body_parts, expansion, translation, transform, flukareg):
@@ -468,8 +513,10 @@ class RegionVisitor(RegionParserVisitor):
     def visitUnaryAndBoolean(self, ctx):
         left_solid = self.visit(ctx.unaryExpression())
         right_solid = self.visit(ctx.expr())
-        right_solid.extend(left_solid)
-        return right_solid
+        if isinstance(right_solid, tuple):
+            right_solid = [right_solid]
+
+        return left_solid + right_solid
 
     def visitUnaryExpression(self, ctx):
         body_name = ctx.BodyName().getText()
@@ -487,7 +534,9 @@ class RegionVisitor(RegionParserVisitor):
         # up a series of nested lists.  This is to keep it flat, with
         # the only nesting occuring in Zones.
         if isinstance(expr, list):
-            return [sub_zone] + expr
+            if not isinstance(sub_zone, list):
+                sub_zone = [sub_zone]
+            return sub_zone + expr
         return [sub_zone, expr]
 
     def visitSingleUnion(self, ctx):
@@ -522,7 +571,7 @@ class RegionVisitor(RegionParserVisitor):
                 z.addIntersection(body)
             else:
                 z.addSubtraction(body)
-        return [(operator, z)]
+        return (operator, z)
 
 
 def _parseRotDefiniCard(card):
@@ -534,11 +583,10 @@ def _parseRotDefiniCard(card):
 
     card = card.nonesToZero()
     what1 = int(card.what1)
-
-    if what1 > 1000.:
+    if what1 >= 1000.:
         i = what1 // 1000
         j = int(str(what1)[-1])
-    elif what1 > 100. and what1 < 1000.:
+    elif what1 >= 100. and what1 < 1000.:
         i = int(str(what1)[-1])
         j = what1 // 100
     elif what1 > 0 and what1 <= 100:
@@ -617,6 +665,10 @@ def _parseRotDefiniCard(card):
                        [-sp, cp, 0, ty*cp - tx*sp],
                        [  0,  0, 1,            tz],
                        [  0,  0, 0,             1]])
+    else:
+        msg = ("Unable to determine rotation"
+               " matrix for rotation index j = {}".format(j))
+        raise ValueError(msg)
 
     matrix = r1.dot(r2)
 
