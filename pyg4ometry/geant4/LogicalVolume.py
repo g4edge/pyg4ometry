@@ -74,12 +74,12 @@ class LogicalVolume(object):
 
         self.name            = name
         self.daughterVolumes = []
-        self.bdsimObjects = []
+        self.bdsimObjects    = []
 
         # geometry mesh
         self.mesh            = _Mesh(self.solid)
 
-        self.auxiliary = []
+        self.auxiliary       = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 
         # registry logic
