@@ -54,6 +54,7 @@ class EllipticalCone(_SolidBase):
         if pzTopCut <= -zMax/2.0 or pzTopCut > zMax/2.0:
             raise ValueError("zMax must be greater than pzTopCut")
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info("ellipticalcone.antlr>")
@@ -139,6 +140,7 @@ class EllipticalCone(_SolidBase):
         mesh = _CSG.fromPolygons(polygons)
 
         return mesh
+    '''
 
     def pycsgmesh(self):
         _log.info("ellipticalcone.antlr>")

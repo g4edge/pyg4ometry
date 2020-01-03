@@ -68,6 +68,7 @@ class Polycone(_SolidBase):
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info("polycone.pycsgmesh>")
@@ -179,7 +180,7 @@ class Polycone(_SolidBase):
 
         return mesh
 
-
+    '''
     def pycsgmesh(self):
 
         _log.info("polycone.pycsgmesh>")

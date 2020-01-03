@@ -65,6 +65,7 @@ class Ellipsoid(_SolidBase):
                                                       self.pySemiAxis, self.pzSemiAxis,
                                                       self.pzBottomCut, self.pzTopCut)
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info('ellipsoid.pycsgmesh>')
@@ -155,6 +156,7 @@ class Ellipsoid(_SolidBase):
 
         return mesh
 
+    '''
     def pycsgmesh(self):
         _log.info("ellipsoid.antlr>")
 

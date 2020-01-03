@@ -86,6 +86,7 @@ class Cons(_SolidBase):
         return "Cons : {} {} {} {} {} {} {} {}".format(self.name, self.pRmin1, self.pRmax1,
                                                        self.pRmin2, self.pRmax2, self.pDz,
                                                        self.pSPhi, self.pDPhi)
+    '''
     def pycsgmeshOld(self):
         # 0.0759389400482 102
 
@@ -152,7 +153,8 @@ class Cons(_SolidBase):
             mesh = mesh.intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
 
         return mesh
-
+    '''
+    
     def pycsgmesh(self):
         # 0.00581502914429 66
 

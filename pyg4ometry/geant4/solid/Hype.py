@@ -73,6 +73,7 @@ class Hype(_SolidBase):
         if float(self.innerRadius) > float(self.outerRadius):
             raise ValueError("Inner radius must be less than outer radius.")
 
+    '''
     def pycsgmeshOld(self):
         _log.info('hype.pycsgmesh> antlr')
 
@@ -182,7 +183,7 @@ class Hype(_SolidBase):
 
         return mesh
 
-
+    '''
     def pycsgmesh(self):
         _log.info('hype.pycsgmesh> antlr')
 

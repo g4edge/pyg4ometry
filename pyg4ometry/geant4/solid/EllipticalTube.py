@@ -56,6 +56,7 @@ class EllipticalTube(_SolidBase):
         return "EllipticalTube : {} {} {} {}".format(self.name, self.pDx,
                                                      self.pDy, self.pDz)
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info('ellipticaltube.antlr>')
@@ -139,6 +140,7 @@ class EllipticalTube(_SolidBase):
         mesh  = _CSG.fromPolygons(polygons)
 
         return mesh
+    '''
 
     def pycsgmesh(self):
         """new meshing based of Tubs meshing"""
