@@ -243,7 +243,8 @@ class Region(object):
         return result
 
     def flukaFreeString(self):
-        fs = "region "+self.name
+        #fs = "region "+self.name
+        fs = self.name+" "+str(5)
 
         for z in self.zones :
             fs=fs+" | "+z.flukaFreeString()
