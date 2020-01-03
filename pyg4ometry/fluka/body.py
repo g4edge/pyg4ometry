@@ -109,9 +109,9 @@ class _InfiniteCylinder(Body):
                              registry,
                              lunit="mm")
 
-    def _infCylinderFreestringHelper(self, coord1, coord2):
+    def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
-        return "{} {} {} {}".format(typename, self.name, coord1, coord2)
+        return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
 
 
 class RPP(Body):
@@ -191,6 +191,14 @@ class RPP(Body):
                    transform=self.transform,
                    flukaregistry=reg)
 
+    def flukaFreeString(self):
+        return "RPP {} {} {} {} {} {} {}".format(self.name,
+                                                 str(self.lower[0]),
+                                                 str(self.upper[0]),
+                                                 str(self.lower[1]),
+                                                 str(self.upper[1]),
+                                                 str(self.lower[2]),
+                                                 str(self.upper[2]))
 
 class BOX(Body):
     """General Rectangular Parallelepiped
@@ -1344,7 +1352,7 @@ class ZCC(_InfiniteCylinder):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._infCylinderFreestringHelper(self.x, self.y)
+        return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
 class XEC(Body):
