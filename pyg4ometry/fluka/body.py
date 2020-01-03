@@ -3,7 +3,7 @@ from itertools import chain
 
 import numpy as np
 
-from .vector import Three
+from .vector import Three, applyTransform, applyTransformRotation
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
@@ -13,7 +13,7 @@ import pyg4ometry.exceptions
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-INFINITY = 50000
+INFINITY = 50000000
 LENGTH_SAFETY = 1e-6
 
 
@@ -51,14 +51,6 @@ class Body(object):
                              [0, 0, 0, 1]])
         return transform
 
-    def _apply_transform(self, vector):
-        vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
-        result4d =  self.transform.dot(vector4d)
-        return Three(result4d[0:3])
-
-    def _apply_transform_rotation(self, rotation_matrix):
-        return self.transform[:3,:3].dot(rotation_matrix)
-
     def _extent_to_scale_factor(self, extent):
         if extent is None: # if no extent then just use the global constant.
             return INFINITY
@@ -80,7 +72,7 @@ class Body(object):
 class _HalfSpace(Body):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, registry, extent=None):
         exp = self.expansion
@@ -159,10 +151,10 @@ class RPP(Body):
     def centre(self, extent=None):
         pre_transform = (self.translation
                          + self.expansion * 0.5 * (self.lower + self.upper))
-        return self._apply_transform(pre_transform)
+        return applyTransform(self.transform, pre_transform)
 
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg, extent=None):
         v = self.expansion * (self.upper - self.lower)
@@ -242,10 +234,10 @@ class BOX(Body):
                          * (self.vertex + 0.5 * (self.edge1
                                                  + self.edge2
                                                  + self.edge3)))
-        return self._apply_transform(pre_transform)
+        return applyTransform(self.transform, pre_transform)
 
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, greg, extent=None):
         exp = self.expansion
@@ -312,12 +304,13 @@ class SPH(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * self.point)
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * self.point)
 
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg, extent=None):
         return g4.solid.Orb(self.name,
@@ -376,15 +369,16 @@ class RCC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * (self.face + 0.5 * self.direction))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * (self.face + 0.5 * self.direction))
 
     def rotation(self):
         initial = [0, 0, 1]
         final = self.direction
         rotation = trans.matrix_from(initial, final)
-        return self._apply_transform_rotation(rotation)
+        return applyTransformRotation(self.transform, rotation)
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
@@ -463,9 +457,10 @@ class REC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return self._apply_transform(self.translation
-                                     + self.face
-                                     + 0.5 * self.expansion * self.direction)
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.face
+                              + 0.5 * self.expansion * self.direction)
 
     def rotation(self):
         initial_direction = [0, 0, 1]
@@ -477,7 +472,7 @@ class REC(Body):
                                               final_direction,
                                               initial_semiminor,
                                               final_semiminor)
-        return self._apply_transform_rotation(rotation)
+        return applyTransformRotation(self.transform, rotation)
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
@@ -557,16 +552,17 @@ class TRC(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * (self.major_centre
-                                        + 0.5 * self.direction))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * (self.major_centre
+                                 + 0.5 * self.direction))
 
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
         # -z, and the major at +z:
         rotation = trans.matrix_from([0, 0, 1], self.direction)
-        return self._apply_transform_rotation(rotation)
+        return applyTransformRotation(self.transform, rotation)
 
     def geant4Solid(self, registry, extent=None):
         # The first face of g4.Cons is located at -z, and the
@@ -648,14 +644,16 @@ class ELL(Body):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return self._apply_transform(self.translation
-                                     + 0.5 * self.expansion
-                                     * (self.focus1 + self.focus2))
+        return applyTransform(self.transform,
+                              self.translation
+                              + 0.5 * self.expansion
+                              * (self.focus1 + self.focus2))
 
     def rotation(self):
         initial = [0, 0, 1]  # major axis pointing along z
         final = self.focus1 - self.focus2
-        return self._apply_transform_rotation(trans.matrix_from(initial, final))
+        return applyTransformRotation(self.transform,
+                                      trans.matrix_from(initial, final))
 
     def _linearEccentricity(self):
         # Distance from centre to one of the foci.  This doesn't use
@@ -742,14 +740,14 @@ class _WED_RAW(Body):
         else:
             raise ValueError(
                 "Unable to determine if parallel or anti-parallel.")
-        return self._apply_transform(centre)
+        return applyTransform(self.transform, centre)
 
     def rotation(self):
         initial1 = [1, 0, 0] # edge1 starts off pointing in the x-direction.
         initial2 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
         rotation =  trans.two_fold_orientation(initial1, self.edge1.unit(),
                                                initial2, self.edge2.unit())
-        return self._apply_transform_rotation(rotation)
+        return applyTransformRotation(self.transform, rotation)
 
     def geant4Solid(self, greg, extent=None):
         exp = self.expansion
@@ -998,12 +996,13 @@ class XYP(_HalfSpace):
     def centre(self, extent=None):
         offset = self._extent_to_offset(extent)
         scale = self._extent_to_scale_factor(extent)
-        return self._apply_transform(self.translation +
-                                     self.expansion
-                                     * Three(offset.x,
-                                             offset.y,
-                                             self.z - (scale * 0.5)))
-
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(offset.x,
+                                      offset.y,
+                                      self.z - (scale * 0.5)))
+    
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
@@ -1049,12 +1048,13 @@ class XZP(_HalfSpace):
     def centre(self, extent=None):
         offset = self._extent_to_offset(extent)
         scale = self._extent_to_scale_factor(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(offset.x,
-                                             self.y - (scale * 0.5),
-                                             offset.z))
-
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(offset.x,
+                                      self.y - (scale * 0.5),
+                                      offset.z))
+    
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
@@ -1101,12 +1101,13 @@ class YZP(_HalfSpace):
     def centre(self, extent=None):
         offset = self._extent_to_offset(extent)
         scale = self._extent_to_scale_factor(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(self.x - (scale * 0.5),
-                                             offset.y,
-                                             offset.z))
-
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(self.x - (scale * 0.5),
+                                      offset.y,
+                                      offset.z))
+    
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
 
@@ -1158,11 +1159,12 @@ class PLA(_HalfSpace):
         scale = self._extent_to_scale_factor(extent)
         # Get point on plane closest to the centre of the extent:
         closest_point = self._closest_point(offset)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * (closest_point
-                                        - 0.5 * scale * self.normal.unit()))
-
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * (closest_point
+                                 - 0.5 * scale * self.normal.unit()))
+    
     def _closest_point(self, point):
         """Get point on plane which is closest to point not on the plane."""
         distance = np.dot((self.point - point), self.normal.unit())
@@ -1172,8 +1174,8 @@ class PLA(_HalfSpace):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return self._apply_transform_rotation(trans.matrix_from([0, 0, 1],
-                                                                self.normal))
+        return applyTransformRotation(self.transform,
+                                      trans.matrix_from([0, 0, 1], self.normal))
 
     def __repr__(self):
         return "<PLA: {}, normal={}, point={}>".format(self.name,
@@ -1226,14 +1228,15 @@ class XCC(_InfiniteCylinder):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(extent_offset.x, self.y, self.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
-        return self._apply_transform_rotation(np.array([[0, 0, -1],
-                                                        [0, 1, 0],
-                                                        [1, 0, 0]]))
+        return applyTransformRotation(self.transform, np.array([[0, 0, -1],
+                                                                [0, 1, 0],
+                                                                [1, 0, 0]]))
 
     def __repr__(self):
         return "<XCC: {}, y={}, z={}>".format(self.name, self.y, self.z)
@@ -1280,14 +1283,15 @@ class YCC(_InfiniteCylinder):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(self.x, extent_offset.y, self.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
-        return self._apply_transform_rotation(np.array([[1, 0, 0],
-                                                        [0, 0, 1],
-                                                        [0, -1, 0]]))
+        return applyTransformRotation(self.transform, np.array([[1, 0, 0],
+                                                                [0, 0, 1],
+                                                                [0, -1, 0]]))
 
     def __repr__(self):
         return "<YCC: {}, z={}, x={}>".format(self.name, self.z, self.x)
@@ -1334,12 +1338,13 @@ class ZCC(_InfiniteCylinder):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(self.x, self.y, extent_offset.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(self.x, self.y, extent_offset.z))
 
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def __repr__(self):
         return "<ZCC: {}, x={}, y={}>".format(self.name, self.x, self.y)
@@ -1389,14 +1394,15 @@ class XEC(Body):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(extent_offset.x, self.y, self.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(extent_offset.x, self.y, self.z))
 
     def rotation(self):
-        return self._apply_transform_rotation(np.array([[0, 0, -1],
-                                                        [0, 1, 0],
-                                                        [1, 0, 0]]))
+        return applyTransformRotation(self.transform, np.array([[0, 0, -1],
+                                                                [0, 1, 0],
+                                                                [1, 0, 0]]))
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
@@ -1464,14 +1470,15 @@ class YEC(Body):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(self.x, extent_offset.y, self.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(self.x, extent_offset.y, self.z))
 
     def rotation(self):
-        return self._apply_transform_rotation(np.array([[1, 0, 0],
-                                                        [0, 0, 1],
-                                                        [0, -1, 0]]))
+        return applyTransformRotation(self.transform, np.array([[1, 0, 0],
+                                                                [0, 0, 1],
+                                                                [0, -1, 0]]))
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
@@ -1539,11 +1546,12 @@ class ZEC(Body):
 
     def centre(self, extent=None):
         extent_offset = self._extent_to_offset(extent)
-        return self._apply_transform(self.translation
-                                     + self.expansion
-                                     * Three(self.x, self.y, extent_offset.z))
+        return applyTransform(self.transform,
+                              self.translation
+                              + self.expansion
+                              * Three(self.x, self.y, extent_offset.z))
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion
@@ -1630,7 +1638,7 @@ class QUA(Body):
         return Three([0,0,0])
 
     def rotation(self):
-        return self._apply_transform_rotation(np.identity(3))
+        return applyTransformRotation(self.transform, np.identity(3))
 
     def geant4Solid(self, reg, extent=None):
         exp = self.expansion

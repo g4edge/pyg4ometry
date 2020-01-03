@@ -9,7 +9,7 @@ from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import Body
-from .vector import Three
+from .vector import Three, Extent, areExtentsOverlapping
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -286,7 +286,7 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            # if not are_extents_overlapping(zone_extents[i], zone_extents[j]):
+            # if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
             #     continue
 
             # Check if a path already exists.  Not sure how often this
@@ -296,7 +296,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if _get_zone_overlap(zones[i], zones[j], extent=None) is not None:
+            if areOverlapping(zones[i], zones[j], extent=None):
                 graph.add_edge(i, j)
         return graph
 
@@ -394,22 +394,13 @@ def _make_wlv(reg):
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def are_extents_overlapping(first, second):
-    """Check if two Extent instances are overlapping."""
-    return not (first.upper.x < second.lower.x
-                or first.lower.x > second.upper.x
-                or first.upper.y < second.lower.y
-                or first.lower.y > second.upper.y
-                or first.upper.z < second.lower.z
-                or first.lower.z > second.upper.z)
-
-def _get_zone_overlap(zone1, zone2, extent):
+def areOverlapping(first, second, extent=None):
     greg = g4.Registry()
 
-    solid1 = zone1.geant4Solid(greg)
-    solid2 = zone2.geant4Solid(greg)
+    solid1 = first.geant4Solid(greg, extent=extent)
+    solid2 = second.geant4Solid(greg, extent=extent)
 
-    tra2 = _get_tra2(zone1, zone2, extent)
+    tra2 = _get_tra2(first, second, extent)
 
     intersection = g4.solid.Intersection(_random_name(),
                            solid1,
@@ -420,32 +411,12 @@ def _get_zone_overlap(zone1, zone2, extent):
     try:
         mesh = intersection.pycsgmesh()
     except NullMeshError:
-        return None
-    return mesh
-
-
-class Extent(object):
-    def __init__(self, lower, upper):
-        self.lower = Three(lower)
-        self.upper = Three(upper)
-        self.size = self.upper - self.lower
-        self.centre = self.upper - 0.5 * self.size
-
-        for i, j in zip(lower, upper):
-            if i >= j:
-                raise ValueError("Lower extent must be less than upper.")
-
-    def __repr__(self):
-        return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
-                " Upper({upper.x}, {upper.y}, {upper.z})>".format(
-                    upper=self.upper, lower=self.lower))
-
-    def __eq__(self, other):
-        return self.lower == other.lower and self.upper == other.upper
+        return False
+    return True
 
 def _getExtent(extent, boolean):
     """Extent can either a dictionary of a number."""
-    if isinstance(boolean, Zone):
+    if isinstance(boolean, (Zone, Region)):
         return extent
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
