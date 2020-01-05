@@ -13,7 +13,11 @@ class Writer :
         f.write("    0    0                                                                    \n")
         # loop over bodies
         for bk in self.flukaRegistry.bodyDict.keys() :
+            f.write("$Start_translat {} {} {}\n".format(self.flukaRegistry.bodyDict[bk].translation[0],
+                                                        self.flukaRegistry.bodyDict[bk].translation[1],
+                                                        self.flukaRegistry.bodyDict[bk].translation[2]))
             f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString()+"\n")
+            f.write("$End_translat\n")
         f.write("END\n")
 
         # loop over regions

@@ -132,7 +132,8 @@ class RPP(Body):
                  expansion=1.0,
                  translation=None,
                  transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,
+                 addRegistry=False):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
@@ -146,7 +147,8 @@ class RPP(Body):
                              " smaller than the corresponding"
                              " xmax, ymax, zmax.")
 
-        self.addToRegistry(flukaregistry)
+        if addRegistry :
+            self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
         pre_transform = (self.translation

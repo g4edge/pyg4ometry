@@ -14,10 +14,9 @@ def geant42Fluka(logicalVolume, rotation = [0,0,0], position = [0,0,0], scale = 
     # extent of outer solid (good for setting BLKHOLE)
     lvExtent    = logicalVolume.extent(includeBoundingSolid = True)
 
-
     # convert lv bounding solid
     frName = "F"+format(flukaRegionCount,'04')
-    lvRegion = geant4Solid2FlukaZone(frName,lvSolid,rotation,position,scale,flukaRegistry)
+    lvRegion, lvBodies = geant4Solid2FlukaZone(frName,lvSolid,rotation,position,scale,flukaRegistry)
     flukaRegionCount += 1
 
     for daughterVolume, dvI in zip(logicalVolume.daughterVolumes, range(1,len(logicalVolume.daughterVolumes)+1)):
@@ -36,7 +35,7 @@ def geant42Fluka(logicalVolume, rotation = [0,0,0], position = [0,0,0], scale = 
 
         # convert daughterVolume
         frName = "F" + format(flukaRegionCount, '04')
-        dvRegion     = geant4Solid2FlukaZone(frName,dvSolid,dvRotation,dvPosition,dvScale,flukaRegistry)
+        dvRegion, lvBodies     = geant4Solid2FlukaZone(frName,dvSolid,dvRotation,dvPosition,dvScale,flukaRegistry)
         flukaRegionCount +=1
 
         # substract daughters
@@ -50,10 +49,30 @@ def geant42Fluka(logicalVolume, rotation = [0,0,0], position = [0,0,0], scale = 
 
     return flukaRegistry, flukaRegionCount
 
+
+def g2fTopLogical(logicalVolume) :
+    rotation = [0,0,0]
+    position = [0,0,0]
+    scale    = [1,1,1]
+
+    flukaRegistry = _fluka.FlukaRegistry()
+
+    for dv in logicalVolume.daughterVolumes :
+        pass
+
+def g2fPhysicalVolume(physicalVolume,flukaRegistry=flukaRegistry) :
+    lvSolid = physicalVolume.logicalVolume.solid
+
+    for dv in physicalVolume.logicalVolume.daugherVolumes :
+        dvSolid = g2fPhysicalVolume(dv,flukaRegistry=flukaRegistry)
+
+
+
 # TODO should this be a zone of region
 def geant4Solid2FlukaZone(name,solid, rotation = [0,0,0], position = [0,0,0], scale = [1,1,1], flukaRegistry = None) :
 
     fregion = None
+    fbodies = []
 
     transform= [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
 
@@ -64,7 +83,13 @@ def geant4Solid2FlukaZone(name,solid, rotation = [0,0,0], position = [0,0,0], sc
                            -float(solid.pY)/2, float(solid.pY)/2,
                            -float(solid.pZ)/2, float(solid.pZ)/2,
                            translation=position,transform=transform,
-                           flukaregistry=flukaRegistry)
+                           flukaregistry=flukaRegistry,
+                           addRegistry=False)
+
+        # store all bodies
+        fbodies.append(fbody)
+
+        # create zones and region
         fzone = _fluka.Zone()
         fzone.addIntersection(fbody)
         fregion = _fluka.Region(name)
@@ -161,7 +186,7 @@ def geant4Solid2FlukaZone(name,solid, rotation = [0,0,0], position = [0,0,0], sc
         pass
 
 
-    return fregion
+    return fregion, fbodies
 
 def materialMapper(g4Mat) :
     pass
