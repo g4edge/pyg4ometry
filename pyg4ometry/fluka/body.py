@@ -133,7 +133,7 @@ class RPP(Body):
                  translation=None,
                  transform=None,
                  flukaregistry=None,
-                 addRegistry=False):
+                 addRegistry=True):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
