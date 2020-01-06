@@ -1,2 +1,2 @@
 from pyg4ometry.convert.fluka2Geant4 import fluka2Geant4
-from pyg4ometry.convert.geant42Fluka import geant42Fluka
+from pyg4ometry.convert.geant42Fluka import *
