@@ -453,6 +453,10 @@ def _make_body(body_parts, expansion, translation, transform, flukareg):
         b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
                      **geometry_directives)
+    elif body_type == "QUA":
+        b = body.QUA(name, *param,
+                     flukaregistry=flukareg,
+                     **geometry_directives)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b
