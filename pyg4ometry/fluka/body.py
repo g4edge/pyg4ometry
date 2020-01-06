@@ -869,25 +869,12 @@ class ARB(Body):
     def rotation(self):
         return np.identity(3)
 
-    def geant4Solid(self, greg, extent=None):
-        # pyg4ometry expects right handed corkscrew for the vertices
-        # for TesselatedSolid (and in general).
-        # Fluka however for ARB can take either all right or left
-        # handed (but no mixing and matching).  If our normals are all in
-        # the wrong direction, when we union with a solid which
-        # envelops that tesselated solid we will get a NullMeshError,
-        # which we can catch and then we invert the mesh and return
-        # that TesselatedSolid.
+    def _verticesAreClockwise(self):
+        polygons = self._toPolygons()
+        from IPython import embed; embed()
 
-        # We need the minimum and maximum extents of the tesselated
-        # solid to make the enveloping box.
-        xmin = 0
-        xmax = 0
-        ymin = 0
-        ymax = 0
-        zmin = 0
-        zmax = 0
-        polygon_list = []
+    def _toPolygons(self):
+        polygons = []
 
         # Apply any expansion to the ARB's vertices.
         exp = self.expansion
@@ -910,20 +897,16 @@ class ARB(Body):
                     continue
                 zc_vertex_indices.append(zero_counting_index)
 
-                xmin = min(xmin, vertices[zero_counting_index].x)
-                xmax = max(xmax, vertices[zero_counting_index].x)
-                ymin = min(ymin, vertices[zero_counting_index].y)
-                ymax = max(ymax, vertices[zero_counting_index].y)
-                zmin = min(zmin, vertices[zero_counting_index].z)
-                zmax = max(zmax, vertices[zero_counting_index].z)
-
 
             face_vertices = [_geom.Vertex(vertices[i])
                              for i in zc_vertex_indices]
             polygon = _geom.Polygon(face_vertices)
-            polygon_list.append(polygon)
+            polygons.append(polygon)
 
-        mesh = _CSG.fromPolygons(polygon_list)
+        pass
+
+    def geant4Solid(self, greg, extent=None):
+        mesh = _CSG.fromPolygons(polygons)
         vertices_and_polygons = mesh.toVerticesAndPolygons()
         tesselated_solid = g4.solid.TessellatedSolid(self.name,
                                                      vertices_and_polygons,
