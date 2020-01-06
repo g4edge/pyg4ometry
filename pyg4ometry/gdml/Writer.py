@@ -269,7 +269,7 @@ class Writer(object):
             if material.type == 'simple':
                 oe.setAttribute('Z', str(int(material.Z)))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(int(material.A)))
+                se.setAttribute('value', str(material.A))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:

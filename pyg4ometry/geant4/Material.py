@@ -53,8 +53,8 @@ def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=
     Inputs:
         name          - string
         density       - float, material density in g/cm3
-        atomic_number - int, total number of nucleons, commonly known as 'Z'
-        atomic_weght  - int, molar weight in g/mole, commonly known as 'a'
+        atomic_number - int, number of protons, commonly known as 'Z'
+        atomic_weight  - molar weight in g/mole, commonly known as 'A'
     """
     return Material(**locals())
 
@@ -78,9 +78,8 @@ def ElementSimple(name, symbol, Z, A):
     Inputs:
         name   - string
         symbol - string, chemical formula of the compound
-        Z      - int, atomic number
-        A      - int, mass number
-        a      - float, atomic weigth in g/mole
+        Z      - int, Atomic number
+        A      - float, mass number
     """
     return Element(**locals())
 
