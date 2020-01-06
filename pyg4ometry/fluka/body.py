@@ -1669,9 +1669,9 @@ class QUA(Body):
         for i in range(0,pd.GetNumberOfCells(),1) :
             c = pd.GetCell(i)
             p = c.GetPoints()
-            verts.append(np.array(p.GetPoint(0)))
-            verts.append(np.array(p.GetPoint(1)))
             verts.append(np.array(p.GetPoint(2)))
+            verts.append(np.array(p.GetPoint(1)))
+            verts.append(np.array(p.GetPoint(0)))
             facet.append([3*i+0,3*i+1,3*i+2])
 
         mesh.append(verts)
