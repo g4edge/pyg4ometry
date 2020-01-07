@@ -99,6 +99,18 @@ class Writer(object):
         f.write(xmlString)
         f.close()
 
+    def writeGMADTesterNoBeamline(self, gmad, gdml):
+        text = """test: placement, geometryFile="gdml:{}";
+
+beam, particle="e-",
+      energy=250*GeV;
+
+option, physicsList="em";
+""".format(gdml)
+
+        with open(gmad, "w") as f:
+            f.write(text)
+
     def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()

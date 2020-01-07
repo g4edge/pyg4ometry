@@ -1,4 +1,4 @@
-from collections import OrderedDict as _OrderedDict
+from collections import OrderedDict
 import logging
 
 import pyg4ometry.geant4 as _g4
@@ -17,12 +17,12 @@ class FlukaRegistry(object):
     '''
 
     def __init__(self) :
-        self.bodyDict          = _OrderedDict()
-        self.bodyTransformDict = _OrderedDict()
-        self.regionDict        = _OrderedDict()
-        self.materialDict      = _OrderedDict()
-        self.latticeDict       = _OrderedDict()
-        self.cardDict          = _OrderedDict()
+        self.bodyDict = OrderedDict()
+        self.rotoTranslationsDict = OrderedDict()
+        self.regionDict = OrderedDict()
+        self.materialDict = OrderedDict()
+        self.latticeDict = OrderedDict()
+        self.cardDict = OrderedDict()
 
         self._bodiesAndRegions = {}
 
@@ -32,8 +32,16 @@ class FlukaRegistry(object):
         logger.debug("%s", body)
         self.bodyDict[body.name] = body
 
-    def addBodyTransform(self, trans):
-        self.bodyTransformDict[trans.name] = trans
+    def addRotoTranslation(self, rototrans):
+        # Coerce to RecursiveRotoTranslations so that
+        name = rototrans.name
+        if name in self.rotoTranslationsDict:
+            self.rotoTranslationsDict[name].append(rototrans)
+        else:
+            # Insert as a RecursiveRotoTranslation to make any future
+            # adding of RotoTranslations easier.
+            recur = RecursiveRotoTranslation(name, [rototrans])
+            self.rotoTranslationsDict[name] = recur
 
     def addRegion(self, region, addBodies=False):
         # Always build a map of bodies to regions, which we need for

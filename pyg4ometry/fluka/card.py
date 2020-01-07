@@ -2,9 +2,6 @@ import sys
 import re
 
 
-FIXED = "ROT-DEFI                   45.       45.       50.       50.       50.bb1rotdefi"
-FREE = "ROT-DEFI  , 927002., 0.0, 0.0, 0.0, 0.0, 0., XXTb413"
-
 class Card(object):
     """Card class for representing a FLUKA input card. To construct
     instances from a of FLUKA input, use the fromFree or fromFixed
@@ -22,22 +19,21 @@ class Card(object):
         self.sdum = _attempt_float_coercion(sdum)
 
     def __repr__(self):
-        return self.to_free_string()
+        return "<Card: {}>".format(self.toFreeString())
 
-    def asList(self):
+    def toList(self):
         return [self.keyword, self.what1, self.what2, self.what3,
                 self.what4, self.what5, self.what6, self.sdum]
 
-    def to_free_string(self, delim=", "):
+    def toFreeString(self, delim=", "):
         # Coerce to strings, replace None with empty string.
-        entries = ["" if s is None else str(s) for s in self.asList()]
+        entries = ["" if s is None else str(s) for s in self.toList()]
         return delim.join(entries)
-
 
     def nonesToZero(self):
         """Return a class instance with same contents as this
         instance, but with all entries of None set to 0.0 instead."""
-        contents = self.asList()
+        contents = self.toList()
         contents = [0 if c is None else c for c in contents]
         return Card(*contents)
 

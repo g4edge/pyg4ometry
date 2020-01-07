@@ -8,3 +8,4 @@ from pyg4ometry.fluka.Writer import Writer
 from .fluka_registry import FlukaRegistry
 from .vector import Three, Extent
 from .region import Zone, Region
+from .directive import Transform, RotoTranslation

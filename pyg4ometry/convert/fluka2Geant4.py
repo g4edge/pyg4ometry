@@ -16,32 +16,37 @@ from pyg4ometry.fluka.region import areOverlapping
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
 
-WORLD_DIMENSIONS = 10000
+WORLD_DIMENSIONS = [10000, 10000, 10000]
 
-def fluka2Geant4(flukareg, with_length_safety=True,
-                 split_disjoint_unions=True,
-                 minimise_solids=True,
-                 world_material="G4_Galactic",
-                 omit_blackhole_regions=True):
+def fluka2Geant4(flukareg, withLengthSafety=True,
+                 splitDisjointUnions=True,
+                 minimiseSolids=True,
+                 worldMaterial="G4_Galactic",
+                 worldDimensions=None,
+                 omitBlackholeRegions=True):
 
-    if omit_blackhole_regions:
+    if omitBlackholeRegions:
         flukareg = _without_blackhole_regions(flukareg)
 
-    if with_length_safety:
+    if withLengthSafety:
         flukareg = _make_length_safety_registry(flukareg)
 
-    if split_disjoint_unions:
+    if splitDisjointUnions:
         flukareg = _make_disjoint_unions_registry(flukareg)
+
+    if worldDimensions is None:
+        worldDimensions = WORLD_DIMENSIONS
+
 
     if not flukareg.regionDict:
         raise ValueError("No regions in registry.")
 
     greg = g4.Registry()
 
-    wlv = _makeWorldVolume(WORLD_DIMENSIONS, world_material, greg)
+    wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
 
     extent_map = None
-    if minimise_solids:
+    if minimiseSolids:
         region_extents = _get_region_extents(flukareg)
         extent_map = _make_body_minimum_extent_map(flukareg, region_extents)
     elif flukareg.latticeDict:
@@ -103,13 +108,13 @@ def fluka2Geant4(flukareg, with_length_safety=True,
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
-    world_material = g4.MaterialPredefined(material)
+    worldMaterial = g4.MaterialPredefined(material)
 
     world_solid = g4.solid.Box("world_solid",
-                               WORLD_DIMENSIONS,
-                               WORLD_DIMENSIONS,
-                               WORLD_DIMENSIONS, g4registry, "mm")
-    wlv = g4.LogicalVolume(world_solid, world_material, "wl", g4registry)
+                               dimensions[0],
+                               dimensions[1],
+                               dimensions[2], g4registry, "mm")
+    wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
 def _make_length_safety_registry(flukareg):

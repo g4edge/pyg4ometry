@@ -18,6 +18,7 @@ from pyg4ometry.exceptions import FLUKAError
 
 from .vector import Three
 from .card import freeFormatStringSplit, Card
+from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
 
 
 
@@ -180,15 +181,21 @@ class Reader(object):
         cards = []
         # Parse everything except the bodies and the regions as cards:
         lines = self._lines[:self.geobegin] + self._lines[self.latticebegin:]
+        inTitle = False
         for line in lines:
-            if fixed:
+            if inTitle: # Special treatment for the title line.
+                self.title = line
+                inTitle = False
+            elif fixed:
                 cards.append(Card.fromFixed(line))
                 kw = cards[-1].keyword
             else: # must be free format
                 cards.append(Card.fromFree(line))
                 kw = cards[-1].keyword
 
-            if kw != "FREE" and kw != "FIXED":
+            if kw == "TITLE":
+                inTitle = True
+            elif kw != "FREE" and kw != "FIXED":
                 continue
             elif kw == "FREE":
                 fixed = False
@@ -200,16 +207,16 @@ class Reader(object):
         for card in self.cards:
             if card.keyword != "ROT-DEFI":
                 continue
-            name, matrix = _parseRotDefiniCard(card)
-
+            rotdefi = RotoTranslation.fromCard(card)
+            name = rotdefi.name
             if name in self.transforms:
                 # if already defined (i.e. it is defined recursively)
-                # then left multiply it with the existing transform
-                # definition.
-                existing = self.transforms[name]
-                self.transforms[name] = matrix.dot(existing)
+                # then append it to the list of ROTDEFI cards with
+                # this name.
+                self.transforms[name].append(rotdefi)
             else:
-                self.transforms[name] = matrix
+                self.transforms[name] = RecursiveRotoTranslation(
+                    name, [rotdefi])
 
     def _parseGeometryDirective(self, line_parts,
                                 expansion_stack,
@@ -319,7 +326,6 @@ class Reader(object):
             except KeyError:
                 continue
 
-
     def _parseLattice(self):
         lattice = {} # {cellName: rot-defi-matrix, ...}
         for card in self.cards:
@@ -356,107 +362,82 @@ class Reader(object):
         return lattice
 
 
-def _make_body(body_parts, expansion, translation, transform, flukareg):
+def _make_body(body_parts,
+               expansion_stack, translation_stack, transform_stack, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
     # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
-    param = [float(p)*10. for p in body_parts[2:]]
+    p = [float(p)*10. for p in body_parts[2:]] # p = parameters
 
-
-    # Reduce the stacks of directives into single directives.
-    expansion = reduce(mul, expansion, 1.0)
-    if translation is not None:
-        translation = reduce(add, translation, [0, 0, 0])
-    if transform is not None:
-        # Note that we have to multiply the transformation matrices in
-        # reverse order.
-        transform = reduce(np.matmul, transform[::-1], np.identity(4))
-
-    geometry_directives = {"expansion": expansion,
-                           "translation": translation,
-                           "transform": transform}
+    # Note that we have to reverse the transform stack to match FLUKA
+    # here, because it seems that FLUKA applys nested transforms
+    # outside first, rather than inside first.
+    transform = Transform(expansion_stack,
+                          translation_stack,
+                          transform_stack[::-1])
 
     if body_type == "RPP":
-        b = body.RPP(name, *param, flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.RPP(name, *p, flukaregistry=flukareg, transform=transform)
     elif body_type == "RCC":
-        b = body.RCC(name, param[0:3], param[3:6], param[6],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.RCC(name, p[0:3], p[3:6], p[6], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "XYP":
-        b = body.XYP(name, param[0], flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.XYP(name, p[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "XZP":
-        b = body.XZP(name, param[0], flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.XZP(name, p[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "YZP":
-        b = body.YZP(name, param[0], flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.YZP(name, p[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "PLA":
-        b = body.PLA(name, param[0:3], param[3:6], flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.PLA(name, p[0:3], p[3:6], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "XCC":
-        b = body.XCC(name, param[0], param[1], param[2],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.XCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "YCC":
-        b = body.YCC(name, param[0], param[1], param[2],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.YCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "ZCC":
-        b = body.ZCC(name, param[0], param[1], param[2],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.ZCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "XEC":
-        b = body.XEC(name, param[0], param[1], param[2], param[3],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.XEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "YEC":
-        b = body.YEC(name, param[0], param[1], param[2], param[3],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.YEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "ZEC":
-        b = body.ZEC(name, param[0], param[1], param[2], param[3],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.ZEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "TRC":
-        b = body.TRC(name, param[0:3], param[3:6], param[6], param[7],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.TRC(name, p[0:3], p[3:6], p[6], p[7], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "SPH":
-        b = body.SPH(name, param[0:3], param[3],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.SPH(name, p[0:3], p[3], flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "REC":
-        b = body.REC(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.REC(name, p[0:3], p[3:6], p[6:9], p[9:12],
+                     flukaregistry=flukareg, transform=transform)
     elif body_type == "ELL":
-        b = body.ELL(name, param[0:3], param[3:6], param[6],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.ELL(name, p[0:3], p[3:6], p[6],
+                     flukaregistry=flukareg, transform=transform)
     elif body_type == "BOX":
-        b = body.BOX(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.BOX(name, p[0:3], p[3:6], p[6:9], p[9:12],
+                     flukaregistry=flukareg, transform=transform)
     elif body_type == "WED":
-        b = body.WED(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **geometry_directives)
+        b = body.WED(name, p[0:3], p[3:6], p[6:9], p[9:12],
+                     flukaregistry=flukareg, transform=transform)
     elif body_type == "RAW":
-        b = body.RAW(name, param[0:3], param[3:6], param[6:9], param[9:12],
-                     flukaregistry=flukareg, **geometry_directives)
+        b = body.RAW(name, p[0:3], p[3:6], p[6:9], p[9:12],
+                     flukaregistry=flukareg, transform=transform)
     elif body_type == "ARB":
-        vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
-                    param[12:15], param[15:18], param[18:21], param[21:24]]
-        facenumbers = param[24:]
-        b = body.ARB(name, vertices, facenumbers,
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        vertices = [p[0:3], p[3:6], p[6:9], p[9:12],
+                    p[12:15], p[15:18], p[18:21], p[21:24]]
+        facenumbers = p[24:]
+        b = body.ARB(name, vertices, facenumbers, flukaregistry=flukareg,
+                     transform=transform)
     elif body_type == "QUA":
-        b = body.QUA(name, *param,
-                     flukaregistry=flukareg,
-                     **geometry_directives)
+        b = body.QUA(name, *p, flukaregistry=flukareg, transform=transform)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b
@@ -576,107 +557,6 @@ class RegionVisitor(RegionParserVisitor):
             else:
                 z.addSubtraction(body)
         return (operator, z)
-
-
-def _parseRotDefiniCard(card):
-    # This only is indended to work for transforms applied to
-    # geometries.  It may or may not be useful for the other
-    # applications of ROT-DEFInis.
-    if card.keyword != "ROT-DEFI":
-        raise ValueError("Not a ROT-DEFI card.")
-
-    card = card.nonesToZero()
-    what1 = int(card.what1)
-    if what1 >= 1000.:
-        i = what1 // 1000
-        j = int(str(what1)[-1])
-    elif what1 >= 100. and what1 < 1000.:
-        i = int(str(what1)[-1])
-        j = what1 // 100
-    elif what1 > 0 and what1 <= 100:
-        i = int(what1)
-        j = 0
-    elif what1 == 0:
-        # If left empty (i.e. 0), then this is a transformation
-        # about the z-axis.  But I don't know what that means for i.
-        i = what1
-        j = 0
-    else:
-        raise ValueError("Unable to parse ROT-DEFI WHAT1: {}.".format(what1))
-
-    # XXX: I think this is the correct way to deal with a ROT-DEFINI
-    # without a name, this may be wrong.
-    name = card.sdum
-    if name is None:
-        name = i
-
-    # rotation angles, converting from degrees to radians:
-    theta = np.pi * card.what2 / 180 # polar angle
-    phi = np.pi * card.what3 / 180  # azimuthal angle
-
-    if theta < 0 or theta > np.pi:
-        raise ValueError(
-            "WHAT2 must be between 0 and +pi.  WHAT2={}".format(theta))
-    if phi < -np.pi or phi > np.pi:
-        raise ValueError(
-            "WHAT3 must be between -pi and +pi.  WHAT3={}".format(phi))
-
-    # the translation coordinates
-    tx, ty, tz = card.what4, card.what5, card.what6
-
-    # CONVERTING TO MILLIMETRES!!
-    tx *= 10
-    ty *= 10
-    tz *= 10
-
-    # From note 4 of the ROT-DEFI entry of the manual (page 253 for
-    # me):
-    # Note I have turned these into transformation matrices, so that
-    # transforms can be easily combined.
-    ct = np.cos(theta)
-    cp = np.cos(phi)
-    st = np.sin(theta)
-    sp = np.sin(phi)
-
-    # The sine and cosine terms in the translation column are to make
-    # it so the rotation is applied *after* the translation, which is
-    # the case in FLUKA.
-    if j == 1: # x
-        r1 = np.array([[ ct, st, 0, 0],
-                       [-st, ct, 0, 0],
-                       [ 0,   0, 1, 0],
-                       [ 0,   0, 0, 1]])
-        r2 = np.array([[1,  0,   0,             tx],
-                       [0,  cp, sp,  ty*cp + tz*sp],
-                       [0, -sp, cp,  tz*cp - ty*sp],
-                       [0,   0,  0,              1]])
-
-    elif j == 2: # y
-        r1 = np.array([[1,   0,  0, 0],
-                       [0,  ct, st, 0],
-                       [0, -st, ct, 0],
-                       [0,   0,  0, 1]])
-        r2 = np.array([[cp, 0, -sp, tx*cp - tz*sp],
-                       [0,  1,   0,            ty],
-                       [sp, 0,  cp, tx*sp + tz*cp],
-                       [0,  0,   0,             1]])
-    elif j == 3 or j == 0: # z
-        r1 = np.array([[ct, 0, -st, 0],
-                       [0,  1,  0,  0,],
-                       [st, 0,  ct, 0],
-                       [0,  0,  0,  1]])
-        r2 = np.array([[cp,  sp, 0, tx*cp + ty*sp],
-                       [-sp, cp, 0, ty*cp - tx*sp],
-                       [  0,  0, 1,            tz],
-                       [  0,  0, 0,             1]])
-    else:
-        msg = ("Unable to determine rotation"
-               " matrix for rotation index j = {}".format(j))
-        raise ValueError(msg)
-
-    matrix = r1.dot(r2)
-
-    return name, matrix
 
 def main(filein):
     r = Reader(filein)
