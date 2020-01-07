@@ -1656,6 +1656,7 @@ class QUA(Body):
         sample.SetSampleDimensions(50, 50, 50)
         sample.SetModelBounds(-1,1,-1,1,-1,1)
         sample.SetImplicitFunction(quadric)
+        sample.SetCapping(1)
 
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
