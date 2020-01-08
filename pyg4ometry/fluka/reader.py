@@ -186,6 +186,7 @@ class Reader(object):
             if inTitle: # Special treatment for the title line.
                 self.title = line
                 inTitle = False
+                kw = None
             elif fixed:
                 cards.append(Card.fromFixed(line))
                 kw = cards[-1].keyword
