@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import logging
 from itertools import chain
 
@@ -14,8 +15,25 @@ from .directive import Transform
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-INFINITY = 50000000
+_DEFAULT_INFINITY = 50000000
+INFINITY = _DEFAULT_INFINITY
 LENGTH_SAFETY = 1e-6
+
+
+@contextmanager
+def infinity(inf):
+    """Use this to temporarily modify INFINITY, with it resetting back
+    to the default once the block has exited.  INFINITY is used
+    throughout the bodies to approximate the infinite size of infinity
+    (elliptical) cylinders, half space, and quadric.
+
+    :param inf: the value to temporarily set INFINITY to."""
+    global INFINITY
+    INFINITY = inf
+    try:
+        yield inf
+    finally:
+        INFINITY = _DEFAULT_INFINITY
 
 
 class Body(object):
