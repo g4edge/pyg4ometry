@@ -13,7 +13,7 @@ from .card import Card
 class Transform(object):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
-    RotoTranslations and RecursiveRotoTranslations"""
+    RotoTranslation and RecursiveRotoTranslation"""
     def __init__(self, expansion=None, translation=None, rotoTranslation=None):
         self.expansion = expansion
         self.translation = translation
