@@ -9,15 +9,25 @@ class Writer :
     def write(self, fileName):
         f = open(fileName,"w")
 
+        # actually used rot-defi directives
+        rotdefi = []
+
         f.write("GEOBEGIN                                                              COMBNAME\n")
         f.write("    0    0                                                                    \n")
         # loop over bodies
         for bk in self.flukaRegistry.bodyDict.keys() :
-            f.write("$Start_translat {} {} {}\n".format(self.flukaRegistry.bodyDict[bk].translation[0],
-                                                        self.flukaRegistry.bodyDict[bk].translation[1],
-                                                        self.flukaRegistry.bodyDict[bk].translation[2]))
+            #f.write("$Start_translat {} {} {}\n".format(self.flukaRegistry.bodyDict[bk].translation[0],
+            #                                            self.flukaRegistry.bodyDict[bk].translation[1],
+            #                                            self.flukaRegistry.bodyDict[bk].translation[2]))
+            transform = self.flukaRegistry.bodyDict[bk].transform
+
+            if transform.flukaFreeString() != '' :
+                f.write("$Start_transform "+transform.name+"\n")
+                rotdefi.append(transform)
             f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString()+"\n")
-            f.write("$End_translat\n")
+
+            if transform.flukaFreeString() != '' :
+                f.write("$End_transform\n")
         f.write("END\n")
 
         # loop over regions
@@ -26,6 +36,12 @@ class Writer :
         f.write("END\n")
         f.write("GEOEND\n")
 
+        # loop over materials
 
+        # loop over rotdefis
+        f.write("FREE\n")
+        for rd in rotdefi :
+            f.write(rd.flukaFreeString()+'\n')
+        f.write("END\n")
         f.close()
 
