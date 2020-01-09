@@ -1,4 +1,4 @@
-from collections import MutableSequence
+from collections import MutableSequence, OrderedDict
 import numbers
 from operator import mul
 
@@ -257,6 +257,34 @@ class RecursiveRotoTranslation(MutableSequence):
 
     def flukaFreeString(self):
         return "\n".join([c.toCard().toFreeString() for c in self])
+
+    def transformationIndex(self):
+        pass
+
+    def _transformationIndices(self):
+        return [rtrans.index for rtrans in self]
+
+    def areAllTheSameTransformationIndices(self):
+        if not self:
+            return True
+        indices = self._transformationIndices()
+        return indices.count(indices[0]) == len(indices)
+
+    @property
+    def transformationIndex(self):
+        if not self: # if empty
+            return None
+        return self[0].transformationIndex
+
+    @transformationIndex.setter
+    def transformationIndex(self, transformationIndex):
+        for rtrans in self:
+            rtrans.transformationIndex = transformationIndex
+
+    @transformationIndex.deleter
+    def transformationIndex(self):
+        for rtrans in self:
+            del rtrans.transformationIndex
 
 
 def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
