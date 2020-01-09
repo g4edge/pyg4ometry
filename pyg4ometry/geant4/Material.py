@@ -263,7 +263,7 @@ class Isotope:
         name - string
         Z    - int, atomic number
         N    - int, mass number
-        a    - float, molar weigth in g/mole
+        a    - float, molar weight in g/mole
     """
     def __init__(self, name, Z, N, a):
         self.name = name
