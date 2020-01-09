@@ -3,56 +3,8 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslati
 import numpy as _np
 import copy as _copy
 
-def geant42Fluka(logicalVolume, rotation = [0,0,0], position = [0,0,0], scale = [1,1,1], flukaRegistry = None,flukaRegionCount = 0) :
 
-    # fluka registry
-    if flukaRegistry == None :
-        flukaRegistry = _fluka.FlukaRegistry()
-
-    lvName      = logicalVolume.name
-    lvSolid     = logicalVolume.solid
-    lvMaterial  = logicalVolume.material
-
-    # extent of outer solid (good for setting BLKHOLE)
-    lvExtent    = logicalVolume.extent(includeBoundingSolid = True)
-
-    # convert lv bounding solid
-    frName = "F"+format(flukaRegionCount,'04')
-    lvRegion, lvBodies = geant4Solid2FlukaZone(frName,lvSolid,rotation,position,scale,flukaRegistry)
-    flukaRegionCount += 1
-
-    for daughterVolume, dvI in zip(logicalVolume.daughterVolumes, range(1,len(logicalVolume.daughterVolumes)+1)):
-        dvName     = daughterVolume.name
-        dvLogical  = daughterVolume.logicalVolume
-        dvSolid    = daughterVolume.logicalVolume.solid
-        dvMaterial = daughterVolume.logicalVolume.material
-        dvRotation = daughterVolume.rotation.eval()
-        dvPosition = daughterVolume.position.eval()
-        dvScale    = daughterVolume.scale
-        # check the scale as can be none in Physical volume (TODO better interface?)
-        if dvScale :
-            dvScale = dvScale.eval()
-
-        # compound transformation to be in world coords
-
-        # convert daughterVolume
-        frName = "F" + format(flukaRegionCount, '04')
-        dvRegion, lvBodies     = geant4Solid2FlukaZone(frName,dvSolid,dvRotation,dvPosition,dvScale,flukaRegistry)
-        flukaRegionCount +=1
-
-        # substract daughters
-        for z in dvRegion.zones:
-            lvRegion.zones[-1].addSubtraction(z)
-
-        # add daughters
-        freg, flukaRegionCount = geant42Fluka(dvLogical,flukaRegistry=flukaRegistry, flukaRegionCount=flukaRegionCount)
-
-    flukaRegistry.addRegion(lvRegion)
-
-    return flukaRegistry, flukaRegionCount
-
-
-def g2fTopLogical(logicalVolume) :
+def geant42FlukaLogical(logicalVolume) :
     rotation = _np.array([0,0,0])
     position = _np.array([0,0,0])
     scale    = _np.array([1,1,1])
@@ -72,16 +24,17 @@ def g2fTopLogical(logicalVolume) :
     for dv in logicalVolume.daughterVolumes :
 
         newposition = position + _np.array(dv.position.eval())
+        newrotation = _np.array(dv.rotation.eval())
         # new rotation
         # new scale
 
-        flukaDaughterOuterRegion, flukaNameCount = g2fPhysicalVolume(dv,rotation,newposition,scale,flukaRegistry,flukaNameCount)
+        flukaDaughterOuterRegion, flukaNameCount = geant42FlukaPhysicalVolume(dv,newrotation,newposition,scale,flukaRegistry,flukaNameCount)
 
         # subtract daughters from black body
 
     return flukaRegistry
 
-def g2fPhysicalVolume(physicalVolume,
+def geant42FlukaPhysicalVolume(physicalVolume,
                       rotation = [0,0,0],position = [0,0,0], scale = [1,1,1],
                       flukaRegistry=None,flukaNameCount=0) :
 
@@ -101,10 +54,10 @@ def g2fPhysicalVolume(physicalVolume,
 
         # placement information for daughter
         newposition = position + _np.array(dv.position.eval())
-        newrotation = _np.array(dv.rotation.eval())/_np.pi*180
+        newrotation = _np.array(dv.rotation.eval())
         # new scale
 
-        flukaDaughterOuterRegion, flukaNameCount = g2fPhysicalVolume(dv,rotation=newrotation,position=newposition,scale=scale,flukaRegistry=flukaRegistry, flukaNameCount=flukaNameCount)
+        flukaDaughterOuterRegion, flukaNameCount = geant42FlukaPhysicalVolume(dv,rotation=newrotation,position=newposition,scale=scale,flukaRegistry=flukaRegistry, flukaNameCount=flukaNameCount)
 
         for motherZones in flukaMotherRegion.zones:
             for daughterZones in flukaDaughterOuterRegion.zones:
