@@ -121,7 +121,7 @@ def geant4Solid2FlukaRegion(name,solid, rotation = [0,0,0], position = [0,0,0], 
     fregion = None
     fbodies = []
 
-    transform=_rotoTranslationFromTra2("T"+name,[rotation,position])
+    transform=_rotoTranslationFromTra2("T"+name,[rotation,position], flukaregistry=flukaRegistry)
 
     if solid.type == 'Box' :
 
