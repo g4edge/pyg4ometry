@@ -75,12 +75,13 @@ class Transform(object):
 class RotoTranslation(object):
     """translation in mm, angles in degrees"""
     def __init__(self, name, axis=None, polar=0., azimuth=0.,
-                 translation=None, flukaregistry=None):
+                 translation=None, transformationIndex=None, flukaregistry=None):
         self.name = name
         self.axis = axis
         self.polar = polar
         self.azimuth = azimuth
         self.translation = translation
+        self.transformationIndex = transformationIndex
 
         if not axis and any([polar, azimuth]):
             raise TypeError("Axis not set for non-zero polar and/or azimuth.")
@@ -150,8 +151,8 @@ class RotoTranslation(object):
         return r1.dot(r2)
 
     def toCard(self):
-        index = ["z", "x", "y", "z"].index(self.axis)
-        index += 10000 # see fluka manual on ROT-DEFI
+        index = [None, "x", "y", "z"].index(self.axis)
+        index += self.transformationIndex # see fluka manual on ROT-DEFI
         tx, ty, tz = self.translation
         # CONVERTING TO CENTIMETRES!!
         return Card("ROT-DEFI", index,
