@@ -88,9 +88,9 @@ class RotoTranslation(object):
         if flukaregistry is not None:
             flukaregistry.addRotoTranslation(self)
 
-        if len(name) > 8:
+        if len(name) > 10:
             raise ValueError(
-                "Name {} is too long.  Max length = 8.".format(name))
+                "Name {} is too long.  Max length = 10.".format(name))
         if polar < 0 or polar > 180.:
             raise ValueError(
                 "Polar angle must be between 0 and +180 deg: {}".format(polar))
