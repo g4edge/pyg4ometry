@@ -291,7 +291,7 @@ def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
                                       flukaregistry=flukaregistry)
 
     if any(translation): # Don't append a translation of zeros
-        result.append(RotoTranslation(name, axis="x",
+        result.append(RotoTranslation(name,
                                       translation=translation,
                                       flukaregistry=flukaregistry))
     return result
