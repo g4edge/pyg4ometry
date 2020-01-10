@@ -14,13 +14,13 @@ def geant42FlukaLogical(logicalVolume) :
     flukaNameCount = 0
 
     # find extent of logical
-    extent = logicalVolume.extent()
+    extent = logicalVolume.extent(includeBoundingSolid = True)
 
     # create black body body
     blackBody = _fluka.RPP("BLKBODY",
-                           2*extent[0][0],2*extent[1][0],
-                           2*extent[0][1],2*extent[1][1],
-                           2*extent[0][2],2*extent[1][2],
+                           2*extent[0][0]/10,2*extent[1][0]/10,
+                           2*extent[0][1]/10,2*extent[1][1]/10,
+                           2*extent[0][2]/10,2*extent[1][2]/10,
                            transform=_rotoTranslationFromTra2("BBROTDEF",[rotation,position], flukaregistry=flukaRegistry),
                            flukaregistry=flukaRegistry)
 
@@ -28,8 +28,11 @@ def geant42FlukaLogical(logicalVolume) :
     fzone.addIntersection(blackBody)
 
     # create top logical volume
-    #flukaMotherOuterRegion = geant4Solid2FlukaRegion("WORLD",logicalVolume.solid,rotation,position,scale,flukaRegistry)
-    #flukaRegistry.addRegion(flukaMotherRegion)
+    flukaMotherOuterRegion = geant4Solid2FlukaRegion("WRLD",logicalVolume.solid,rotation,position,scale,flukaRegistry)
+    flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
+
+    for zone in flukaMotherOuterRegion.zones :
+        fzone.addSubtraction(zone)
 
     for dv in logicalVolume.daughterVolumes :
 
@@ -39,14 +42,17 @@ def geant42FlukaLogical(logicalVolume) :
         flukaDaughterOuterRegion, flukaNameCount = geant42FlukaPhysicalVolume(dv,newrotation,newposition,scale,flukaRegistry,flukaNameCount)
 
         # subtract daughters from black body
-        for daughterZones in flukaDaughterOuterRegion.zones :
-            fzone.addSubtraction(daughterZones)
+        for motherZones in flukaMotherRegion.zones :
+            for daughterZones in flukaDaughterOuterRegion.zones :
+                motherZones.addSubtraction(daughterZones)
+
 
     # create black body region
-    fregion = _fluka.Region("blackReg")
+    fregion = _fluka.Region("BLKHOLE")
     fregion.addZone(fzone)
-
     flukaRegistry.addRegion(fregion)
+
+    flukaRegistry.addRegion(flukaMotherRegion)
 
     return flukaRegistry
 
@@ -113,33 +119,38 @@ def geant4Solid2FlukaRegion(name,solid, rotation = [0,0,0], position = [0,0,0], 
         fregion.addZone(fzone)
 
     elif solid.type == "Tubs":
+
+        uval = _Units.unit(solid.lunit)/10
+        aval = _Units.unit(solid.aunit)
+
+
         # main cylinder
-        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,float(solid.pRMax),
+        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,float(solid.pRMax)*uval,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # low z cut
-        fbody2 = _fluka.XYP("B"+name+"_02",-float(solid.pDz)/2,transform=transform,
+        fbody2 = _fluka.XYP("B"+name+"_02",-float(solid.pDz)*uval/2,transform=transform,
                             flukaregistry=flukaRegistry)
 
         # high z cut
-        fbody3 = _fluka.XYP("B"+name+"_03", float(solid.pDz)/2,transform=transform,
+        fbody3 = _fluka.XYP("B"+name+"_03", float(solid.pDz)*uval/2,transform=transform,
                             flukaregistry=flukaRegistry)
 
         # inner cylinder
-        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,float(solid.pRMin),
+        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,float(solid.pRMin)*uval,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # phi cuts
         fbody5 = _fluka.PLA("B"+name+"_05",
-                            [_np.sin(float(solid.pSPhi)),_np.cos(float(solid.pSPhi)),0],
+                            [_np.sin(float(solid.pSPhi)*aval),_np.cos(float(solid.pSPhi)*aval),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         fbody6 = _fluka.PLA("B"+name+"_06",
-                            [_np.sin(float(solid.pSPhi+solid.pDPhi)),_np.cos(float(solid.pSPhi+solid.pDPhi)),0],
+                            [_np.sin(float(solid.pSPhi+solid.pDPhi)*aval),_np.cos(float(solid.pSPhi+solid.pDPhi)*aval),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
