@@ -116,7 +116,10 @@ class RotoTranslation(object):
         # The sine and cosine terms in the translation column are to make
         # it so the rotation is applied *after* the translation, which is
         # the case in FLUKA.
-        if self.axis == "x":
+        if self.axis is None:
+            r1 = np.identity(4)
+            r2 = _translationTo4DMatrix(self.translation)
+        elif self.axis == "x":
             r1 = np.array([[ ct,  st, 0, 0],
                            [-st,  ct, 0, 0],
                            [  0,   0, 1, 0],
