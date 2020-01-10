@@ -152,133 +152,132 @@ class Cons(_SolidBase):
             mesh = mesh.intersect(pWedge).subtract(pBotCut).subtract(pTopCut)
 
         return mesh
-
     
-    def pycsgmesh(self):
-        # 0.00581502914429 66
+    # def pycsgmesh(self):
+    #     # 0.00581502914429 66
 
-        _log.info('cons.antlr>')
+    #     _log.info('cons.antlr>')
 
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit)
+    #     import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    #     luval = _Units.unit(self.lunit)
+    #     auval = _Units.unit(self.aunit)
 
-        pRmin1 = self.evaluateParameter(self.pRmin1) * luval
-        pRmax1 = self.evaluateParameter(self.pRmax1) * luval
-        pRmin2 = self.evaluateParameter(self.pRmin2) * luval
-        pRmax2 = self.evaluateParameter(self.pRmax2) * luval
-        pDz = self.evaluateParameter(self.pDz) * luval / 2.0
-        pSPhi = self.evaluateParameter(self.pSPhi) * auval
-        pDPhi = self.evaluateParameter(self.pDPhi) * auval
+    #     pRmin1 = self.evaluateParameter(self.pRmin1) * luval
+    #     pRmax1 = self.evaluateParameter(self.pRmax1) * luval
+    #     pRmin2 = self.evaluateParameter(self.pRmin2) * luval
+    #     pRmax2 = self.evaluateParameter(self.pRmax2) * luval
+    #     pDz = self.evaluateParameter(self.pDz) * luval / 2.0
+    #     pSPhi = self.evaluateParameter(self.pSPhi) * auval
+    #     pDPhi = self.evaluateParameter(self.pDPhi) * auval
 
-        _log.info('cons.pycsgmesh>')
+    #     _log.info('cons.pycsgmesh>')
 
-        polygons = []
+    #     polygons = []
 
-        dPhi = pDPhi/self.nslice
+    #     dPhi = pDPhi/self.nslice
 
-        for i in range(0,self.nslice,1) :
+    #     for i in range(0,self.nslice,1) :
 
-            i1 = i
-            i2 = i+1
+    #         i1 = i
+    #         i2 = i+1
 
-            p1 = dPhi*i1 + pSPhi
-            p2 = dPhi*i2 + pSPhi
+    #         p1 = dPhi*i1 + pSPhi
+    #         p2 = dPhi*i2 + pSPhi
 
-            xRMinZMinP1 = pRmin1*_np.cos(p1)
-            yRMinZMinP1 = pRmin1*_np.sin(p1)
-            xRMaxZMinP1 = pRmax1*_np.cos(p1)
-            yRMaxZMinP1 = pRmax1*_np.sin(p1)
+    #         xRMinZMinP1 = pRmin1*_np.cos(p1)
+    #         yRMinZMinP1 = pRmin1*_np.sin(p1)
+    #         xRMaxZMinP1 = pRmax1*_np.cos(p1)
+    #         yRMaxZMinP1 = pRmax1*_np.sin(p1)
 
-            xRMinZMinP2 = pRmin1*_np.cos(p2)
-            yRMinZMinP2 = pRmin1*_np.sin(p2)
-            xRMaxZMinP2 = pRmax1*_np.cos(p2)
-            yRMaxZMinP2 = pRmax1*_np.sin(p2)
+    #         xRMinZMinP2 = pRmin1*_np.cos(p2)
+    #         yRMinZMinP2 = pRmin1*_np.sin(p2)
+    #         xRMaxZMinP2 = pRmax1*_np.cos(p2)
+    #         yRMaxZMinP2 = pRmax1*_np.sin(p2)
 
-            xRMinZMaxP1 = pRmin2*_np.cos(p1)
-            yRMinZMaxP1 = pRmin2*_np.sin(p1)
-            xRMaxZMaxP1 = pRmax2*_np.cos(p1)
-            yRMaxZMaxP1 = pRmax2*_np.sin(p1)
+    #         xRMinZMaxP1 = pRmin2*_np.cos(p1)
+    #         yRMinZMaxP1 = pRmin2*_np.sin(p1)
+    #         xRMaxZMaxP1 = pRmax2*_np.cos(p1)
+    #         yRMaxZMaxP1 = pRmax2*_np.sin(p1)
 
-            xRMinZMaxP2 = pRmin2*_np.cos(p2)
-            yRMinZMaxP2 = pRmin2*_np.sin(p2)
-            xRMaxZMaxP2 = pRmax2*_np.cos(p2)
-            yRMaxZMaxP2 = pRmax2*_np.sin(p2)
-
-
-            ###########################
-            # wedge ends
-            ###########################
-            if pDPhi != 2*_np.pi and i == 0:
-                vWedg = []
-                vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz],None))
-                vWedg.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz],None))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
-                vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
-                polygons.append(_Polygon(vWedg))
-
-            if pDPhi != 2*_np.pi and i == self.nslice-1 :
-                pass
-                vWedg = []
-                vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz], None))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMinZMaxP1, pDz], None))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1, pDz], None))
-                vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz], None))
-                polygons.append(_Polygon(vWedg))
-
-            ###########################
-            # cone ends
-            ###########################
-            if pRmin1 == 0:
-                vEnd = []
-                vEnd.append(_Vertex([0,0,-pDz],None))
-                vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
-                vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
-                polygons.append(_Polygon(vEnd))
-            else :
-                vEnd = []
-                vEnd.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz],None))
-                vEnd.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
-                vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
-                vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
-                polygons.append(_Polygon(vEnd))
-
-            if pRmin2 == 0 :
-                vEnd = []
-                vEnd.append(_Vertex([0,0,-pDz],None))
-                vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
-                vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
-                polygons.append(_Polygon(vEnd))
-            else :
-                vEnd = []
-                vEnd.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz],None))
-                vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
-                vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
-                vEnd.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
-                polygons.append(_Polygon(vEnd))
-
-                pass
+    #         xRMinZMaxP2 = pRmin2*_np.cos(p2)
+    #         yRMinZMaxP2 = pRmin2*_np.sin(p2)
+    #         xRMaxZMaxP2 = pRmax2*_np.cos(p2)
+    #         yRMaxZMaxP2 = pRmax2*_np.sin(p2)
 
 
-            ###########################
-            # Curved cone faces
-            ###########################
-            vCurv = []
-            vCurv.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
-            vCurv.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
-            vCurv.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
-            vCurv.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
-            polygons.append(_Polygon(vCurv))
+    #         ###########################
+    #         # wedge ends
+    #         ###########################
+    #         if pDPhi != 2*_np.pi and i == 0:
+    #             vWedg = []
+    #             vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz],None))
+    #             vWedg.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz],None))
+    #             vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+    #             vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+    #             polygons.append(_Polygon(vWedg))
 
-            if pRmin1 != 0 or pRmin2 != 0 :
-                vCurv = []
-                vCurv.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz], None))
-                vCurv.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz], None))
-                vCurv.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
-                vCurv.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
-                polygons.append(_Polygon(vCurv))
+    #         if pDPhi != 2*_np.pi and i == self.nslice-1 :
+    #             pass
+    #             vWedg = []
+    #             vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz], None))
+    #             vWedg.append(_Vertex([xRMaxZMaxP1, yRMinZMaxP1, pDz], None))
+    #             vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1, pDz], None))
+    #             vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz], None))
+    #             polygons.append(_Polygon(vWedg))
 
-        mesh = _CSG.fromPolygons(polygons)
+    #         ###########################
+    #         # cone ends
+    #         ###########################
+    #         if pRmin1 == 0:
+    #             vEnd = []
+    #             vEnd.append(_Vertex([0,0,-pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
+    #             polygons.append(_Polygon(vEnd))
+    #         else :
+    #             vEnd = []
+    #             vEnd.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz],None))
+    #             vEnd.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+    #             polygons.append(_Polygon(vEnd))
 
-        return mesh
+    #         if pRmin2 == 0 :
+    #             vEnd = []
+    #             vEnd.append(_Vertex([0,0,-pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+    #             polygons.append(_Polygon(vEnd))
+    #         else :
+    #             vEnd = []
+    #             vEnd.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+    #             vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
+    #             vEnd.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
+    #             polygons.append(_Polygon(vEnd))
+
+    #             pass
+
+
+    #         ###########################
+    #         # Curved cone faces
+    #         ###########################
+    #         vCurv = []
+    #         vCurv.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+    #         vCurv.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
+    #         vCurv.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
+    #         vCurv.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+    #         polygons.append(_Polygon(vCurv))
+
+    #         if pRmin1 != 0 or pRmin2 != 0 :
+    #             vCurv = []
+    #             vCurv.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz], None))
+    #             vCurv.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz], None))
+    #             vCurv.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
+    #             vCurv.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
+    #             polygons.append(_Polygon(vCurv))
+
+    #     mesh = _CSG.fromPolygons(polygons)
+
+    #     return mesh
 
