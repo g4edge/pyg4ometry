@@ -1,8 +1,8 @@
+import pyg4ometry.transformation as _transformation
 import pyg4ometry.fluka as _fluka
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
 import numpy as _np
 import copy as _copy
-
 
 def geant42FlukaLogical(logicalVolume) :
     rotation = _np.array([0,0,0])
@@ -16,21 +16,37 @@ def geant42FlukaLogical(logicalVolume) :
     # find extent of logical
     extent = logicalVolume.extent()
 
-    # create black body
-    # blackBody = _fluka.RPP("BLKBODY",)
+    # create black body body
+    blackBody = _fluka.RPP("BLKBODY",
+                           2*extent[0][0],2*extent[1][0],
+                           2*extent[0][1],2*extent[1][1],
+                           2*extent[0][2],2*extent[1][2],
+                           transform=_rotoTranslationFromTra2("BBROTDEF",[rotation,position], flukaregistry=flukaRegistry),
+                           flukaregistry=flukaRegistry)
 
+    fzone = _fluka.Zone()
+    fzone.addIntersection(blackBody)
 
+    # create top logical volume
+    #flukaMotherOuterRegion = geant4Solid2FlukaRegion("WORLD",logicalVolume.solid,rotation,position,scale,flukaRegistry)
+    #flukaRegistry.addRegion(flukaMotherRegion)
 
     for dv in logicalVolume.daughterVolumes :
 
         newposition = position + _np.array(dv.position.eval())
-        newrotation = _np.array(dv.rotation.eval())
-        # new rotation
-        # new scale
+        newrotation = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(dv.rotation.eval())).dot(_transformation.tbxyz2matrix(-rotation)))
 
         flukaDaughterOuterRegion, flukaNameCount = geant42FlukaPhysicalVolume(dv,newrotation,newposition,scale,flukaRegistry,flukaNameCount)
 
         # subtract daughters from black body
+        for daughterZones in flukaDaughterOuterRegion.zones :
+            fzone.addSubtraction(daughterZones)
+
+    # create black body region
+    fregion = _fluka.Region("blackReg")
+    fregion.addZone(fzone)
+
+    flukaRegistry.addRegion(fregion)
 
     return flukaRegistry
 
@@ -53,9 +69,8 @@ def geant42FlukaPhysicalVolume(physicalVolume,
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
         # placement information for daughter
-        newposition = position + _np.array(dv.position.eval())
-        newrotation = _np.array(dv.rotation.eval())
-        # new scale
+        newposition = position + _transformation.tbxyz2matrix(rotation).dot(_np.array(dv.position.eval()))
+        newrotation = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(rotation)).dot(_transformation.tbxyz2matrix(-_np.array(dv.rotation.eval()))))
 
         flukaDaughterOuterRegion, flukaNameCount = geant42FlukaPhysicalVolume(dv,rotation=newrotation,position=newposition,scale=scale,flukaRegistry=flukaRegistry, flukaNameCount=flukaNameCount)
 

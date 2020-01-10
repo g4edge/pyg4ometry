@@ -21,13 +21,15 @@ class Writer :
             #                                            self.flukaRegistry.bodyDict[bk].translation[2]))
             transform = self.flukaRegistry.bodyDict[bk].transform
 
-            if transform.flukaFreeString() != '' :
-                f.write("$Start_transform "+transform.name+"\n")
-                rotdefi.append(transform)
+            if len(transform) != 0 :
+                if transform.flukaFreeString() != '' :
+                    f.write("$Start_transform "+transform.name+"\n")
+                    rotdefi.append(transform)
             f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString()+"\n")
 
-            if transform.flukaFreeString() != '' :
-                f.write("$End_transform\n")
+            if len(transform) != 0 :
+                if transform.flukaFreeString() != '' :
+                    f.write("$End_transform\n")
         f.write("END\n")
 
         # loop over regions
