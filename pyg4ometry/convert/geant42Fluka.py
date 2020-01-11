@@ -174,39 +174,43 @@ def geant4Solid2FlukaRegion(name,solid, rotation = [0,0,0], position = [0,0,0], 
         flukaRegistry.addRegion(fregion)
 
     elif solid.type == "CutTubs" :
+
+        uval = _Units.unit(solid.lunit)/10
+        aval = _Units.unit(solid.aunit)
+
         # main cylinder
-        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,float(solid.pRMax),
+        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,float(solid.pRMax)*uval,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # low z cut
         fbody2 = _fluka.PLA("B"+name+"_02",
                             [-float(solid.pLowNorm[0]),-float(solid.pLowNorm[1]),-float(solid.pLowNorm[2])],
-                            [0, 0, -float(solid.pDz)/2],
+                            [0, 0, -float(solid.pDz)*uval/2],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # high z cut
         fbody3 = _fluka.PLA("B"+name+"_03",
                             [float(solid.pHighNorm[0]),float(solid.pHighNorm[1]),float(solid.pHighNorm[2])],
-                            [0, 0, float(solid.pDz)/2],
+                            [0, 0, float(solid.pDz)*uval/2],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # inner cylinder
-        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,float(solid.pRMin),
+        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,float(solid.pRMin)*uval,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # phi cuts
         fbody5 = _fluka.PLA("B"+name+"_05",
-                            [_np.sin(float(solid.pSPhi)),_np.cos(float(solid.pSPhi)),0],
+                            [_np.sin(float(solid.pSPhi)*aval),_np.cos(float(solid.pSPhi)*aval),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         fbody6 = _fluka.PLA("B"+name+"_06",
-                            [_np.sin(float(solid.pSPhi+solid.pDPhi)),_np.cos(float(solid.pSPhi+solid.pDPhi)),0],
+                            [_np.sin(float(solid.pSPhi+solid.pDPhi)*aval),_np.cos(float(solid.pSPhi+solid.pDPhi)*aval),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
@@ -228,9 +232,60 @@ def geant4Solid2FlukaRegion(name,solid, rotation = [0,0,0], position = [0,0,0], 
         fregion.addZone(fzone)
         flukaRegistry.addRegion(fregion)
 
-    elif solid.type == "Cons":
+    elif solid.type == "EllipticalTube":
+        uval = _Units.unit(solid.lunit)/10
+
+        # main elliptical cylinder
+        fbody1 = _fluka.ZEC("B"+name+"_01",
+                            0,0,
+                            float(solid.pDx)*uval,
+                            float(solid.pDy)*uval,
+                            transform=transform,
+                            flukaregistry=flukaRegistry)
+
+        # low z cut
+        fbody2 = _fluka.XYP("B"+name+"_02",-float(solid.pDz)*uval,transform=transform,
+                            flukaregistry=flukaRegistry)
+
+        # high z cut
+        fbody3 = _fluka.XYP("B"+name+"_03", float(solid.pDz)*uval,transform=transform,
+                            flukaregistry=flukaRegistry)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fzone.addSubtraction(fbody2)
+        fzone.addIntersection(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+        flukaRegistry.addRegion(fregion)
+
+    elif solid.type == "EllipticalCone" :
         pass
 
+    elif solid.type == "ExtrudedSolid":
+        # create low z end plane
+        # create high z end plane
+        # loop over z planes
+
+        # loop over xy points
+
+        pass
+
+    elif solid.type == "Union" :
+        # build both solids to regions
+        # take zones from 2 and add as zones to 1
+        pass
+
+    elif solid.type == "Subtraction" :
+        # build both solids to regions
+        # take zones from 2 and distribute over zones of 1
+        pass
+
+    elif solid.type == "Intersection" :
+        # build both zones to regions
+        # take zones from 2 and distribute over zones of 1
+        pass
 
     return fregion
 
