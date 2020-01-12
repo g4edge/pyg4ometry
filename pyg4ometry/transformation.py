@@ -4,7 +4,7 @@ def rad2deg(rad) :
     return 180 * (rad / _np.pi)
 
 def deg2rad(deg) :
-    return _np.pi * (rad / 180.)
+    return _np.pi * (deg / 180.)
 
 def tbxyz2axisangle(rv) :
     """
