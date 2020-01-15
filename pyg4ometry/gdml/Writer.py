@@ -101,12 +101,10 @@ class Writer(object):
 
     def writeGMADTesterNoBeamline(self, gmad, gdml):
         text = """test: placement, geometryFile="gdml:{}";
-
-beam, particle="e-",
-      energy=250*GeV;
-
-option, physicsList="em";
-""".format(gdml)
+        beam, particle="e-",
+        energy=250*GeV;
+        option, physicsList="em";
+        """.format(gdml)
 
         with open(gmad, "w") as f:
             f.write(text)

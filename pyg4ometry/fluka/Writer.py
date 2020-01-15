@@ -10,7 +10,7 @@ class Writer :
         f = open(fileName,"w")
 
         # actually used rot-defi directives
-        rotdefi = []
+        rotdefi = {}
 
         f.write("GEOBEGIN                                                              COMBNAME\n")
         f.write("    0    0                                                                    \n")
@@ -21,10 +21,15 @@ class Writer :
             #                                            self.flukaRegistry.bodyDict[bk].translation[2]))
             transform = self.flukaRegistry.bodyDict[bk].transform
 
+
             if len(transform) != 0 :
                 if transform.flukaFreeString() != '' :
                     f.write("$Start_transform "+transform.name+"\n")
-                    rotdefi.append(transform)
+                    try :
+                        rotdefi[transform.name] = transform
+                    except KeyError :
+                        pass
+
             f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString()+"\n")
 
             if len(transform) != 0 :
@@ -42,8 +47,8 @@ class Writer :
 
         # loop over rotdefis
         f.write("FREE\n")
-        for rd in rotdefi :
-            f.write(rd.flukaFreeString()+'\n')
+        for k in rotdefi.keys() :
+            f.write(rotdefi[k].flukaFreeString()+'\n')
         f.write("END\n")
         f.close()
 
