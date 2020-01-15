@@ -170,7 +170,7 @@ class LogicalVolume(object):
                 for j in range(i+1,len(transformedMeshes)) :
 
                     if debugIO :
-                        print "LogicalVolume.checkOverlaps> full coplanar test",transformedMeshesNames[i],transformedMeshesNames[j]
+                        print "LogicalVolume.checkOverlaps> full coplanar test between daughters",transformedMeshesNames[i],transformedMeshesNames[j]
 
                     # first check if bounding mesh intersects
                     cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])

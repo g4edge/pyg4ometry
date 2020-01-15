@@ -102,13 +102,12 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
     # print 'geant4Solid2FlukaRegion',flukaNameCount,name,solid.type, rotation,position,transform
 
     if solid.type == 'Box' :
+        uval = _Units.unit(solid.lunit)/10.
+        pX = solid.evaluateParameter(solid.pX)*uval/2
+        pY = solid.evaluateParameter(solid.pY)*uval/2
+        pZ = solid.evaluateParameter(solid.pZ)*uval/2.0
 
-        uval = _Units.unit(solid.lunit)
-
-        fbody = _fluka.RPP("B"+name+'_01',
-                           -float(solid.pX)*uval/2/10., float(solid.pX)*uval/2/10.,
-                           -float(solid.pY)*uval/2/10., float(solid.pY)*uval/2/10.,
-                           -float(solid.pZ)*uval/2/10., float(solid.pZ)*uval/2/10.,
+        fbody = _fluka.RPP("B"+name+'_01', -pX, pX, -pY, pY, -pZ, pZ,
                            transform=transform,
                            flukaregistry=flukaRegistry,
                            addRegistry=True)
@@ -195,39 +194,51 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         uval = _Units.unit(solid.lunit)/10
         aval = _Units.unit(solid.aunit)
 
+        pRMin = solid.evaluateParameter(solid.pRMin)*uval
+        pSPhi = solid.evaluateParameter(solid.pSPhi)*aval
+        pDPhi = solid.evaluateParameter(solid.pDPhi)*aval
+        pDz   = solid.evaluateParameter(solid.pDz)*uval
+        pRMax = solid.evaluateParameter(solid.pRMax)*uval
+        pLowNorm0  = solid.evaluateParameter(solid.pLowNorm[0])
+        pLowNorm1  = solid.evaluateParameter(solid.pLowNorm[1])
+        pLowNorm2  = solid.evaluateParameter(solid.pLowNorm[2])
+        pHighNorm0 = solid.evaluateParameter(solid.pHighNorm[0])
+        pHighNorm1 = solid.evaluateParameter(solid.pHighNorm[1])
+        pHighNorm2 = solid.evaluateParameter(solid.pHighNorm[2])
+
         # main cylinder
-        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,float(solid.pRMax)*uval,
+        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,pRMax,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # low z cut
         fbody2 = _fluka.PLA("B"+name+"_02",
-                            [-float(solid.pLowNorm[0]),-float(solid.pLowNorm[1]),-float(solid.pLowNorm[2])],
-                            [0, 0, -float(solid.pDz)*uval/2],
+                            [-pLowNorm0,-pLowNorm1,-pLowNorm2],
+                            [0, 0, -pDz/2],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # high z cut
         fbody3 = _fluka.PLA("B"+name+"_03",
-                            [float(solid.pHighNorm[0]),float(solid.pHighNorm[1]),float(solid.pHighNorm[2])],
-                            [0, 0, float(solid.pDz)*uval/2],
+                            [pHighNorm0,pHighNorm1,pHighNorm2],
+                            [0, 0, pDz/2.],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # inner cylinder
-        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,float(solid.pRMin)*uval,
+        fbody4 = _fluka.ZCC("B"+name+"_04",0,0,pRMin,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # phi cuts
         fbody5 = _fluka.PLA("B"+name+"_05",
-                            [_np.sin(float(solid.pSPhi)*aval),_np.cos(float(solid.pSPhi)*aval),0],
+                            [_np.sin(pSPhi),_np.cos(pSPhi),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         fbody6 = _fluka.PLA("B"+name+"_06",
-                            [_np.sin((float(solid.pSPhi)+float(solid.pDPhi))*aval),_np.cos((float(solid.pSPh)+float(solid.pDPhi))*aval),0],
+                            [_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                             [0, 0, 0],
                             transform=transform,
                             flukaregistry=flukaRegistry)
@@ -251,22 +262,26 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         flukaNameCount += 1
 
     elif solid.type == "EllipticalTube":
-        uval = _Units.unit(solid.lunit)/10
+        uval = _Units.unit(solid.lunit)/10.
+
+        pDx = solid.evaluateParameter(solid.pDx)*uval
+        pDy = solid.evaluateParameter(solid.pDy)*uval
+        pDz = solid.evaluateParameter(solid.pDz)*uval
 
         # main elliptical cylinder
         fbody1 = _fluka.ZEC("B"+name+"_01",
                             0,0,
-                            float(solid.pDx)*uval,
-                            float(solid.pDy)*uval,
+                            pDx,
+                            pDy,
                             transform=transform,
                             flukaregistry=flukaRegistry)
 
         # low z cut
-        fbody2 = _fluka.XYP("B"+name+"_02",-float(solid.pDz)*uval,transform=transform,
+        fbody2 = _fluka.XYP("B"+name+"_02",-pDz/2,transform=transform,
                             flukaregistry=flukaRegistry)
 
         # high z cut
-        fbody3 = _fluka.XYP("B"+name+"_03", float(solid.pDz)*uval,transform=transform,
+        fbody3 = _fluka.XYP("B"+name+"_03", pDz/2,transform=transform,
                             flukaregistry=flukaRegistry)
 
         fzone = _fluka.Zone()
@@ -279,6 +294,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
 
         flukaNameCount += 1
 
+    elif solid.type == "Sphere" :
+        pass
+    elif solid.type == "Orb" :
+        pass
     elif solid.type == "EllipticalCone" :
         pass
 
