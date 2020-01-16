@@ -26,7 +26,7 @@ def infinity(inf):
     """Use this to temporarily modify INFINITY, with it resetting back
     to the default once the block has exited.  INFINITY is used
     throughout the bodies to approximate the infinite size of infinity
-    (elliptical) cylinders, half space, and quadric.
+    (elliptical) cylinders, half spaces, and quadrics.
 
     :param inf: the value to temporarily set INFINITY to."""
     global INFINITY
@@ -37,7 +37,7 @@ def infinity(inf):
         INFINITY = _DEFAULT_INFINITY
 
 
-class Body(object):
+class BodyMixin(object):
     """
     Base class representing a body as defined in FLUKA
     """
@@ -81,7 +81,7 @@ class Body(object):
         return offset
 
 
-class _HalfSpace(Body):
+class _HalfSpaceMixin(BodyMixin):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -100,7 +100,7 @@ class _HalfSpace(Body):
         return "{} {} {}".format(typename, self.name, coordinate)
 
 
-class _InfiniteCylinder(Body):
+class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
     def geant4Solid(self, registry, extent=None):
         exp = self.transform.netExpansion()
@@ -118,7 +118,7 @@ class _InfiniteCylinder(Body):
         return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
 
 
-class RPP(Body):
+class RPP(BodyMixin):
     """Rectangular Parallelepiped
 
     :param name: of body
@@ -195,7 +195,7 @@ class RPP(Body):
                                                  str(self.lower[2]),
                                                  str(self.upper[2]))
 
-class BOX(Body):
+class BOX(BodyMixin):
     """General Rectangular Parallelepiped
 
     :param name: of body
@@ -271,7 +271,7 @@ class BOX(Body):
         return "BOX {} {}".format(self.name, param_string)
 
 
-class SPH(Body):
+class SPH(BodyMixin):
     """Sphere
 
     :param name: of body
@@ -319,7 +319,7 @@ class SPH(Body):
                                      self.radius)
 
 
-class RCC(Body):
+class RCC(BodyMixin):
     """
 
     Right Circular Cylinder
@@ -391,7 +391,7 @@ class RCC(Body):
                                      self.radius)
 
 
-class REC(Body):
+class REC(BodyMixin):
     """
 
     Right Elliptical Cylinder
@@ -480,7 +480,7 @@ class REC(Body):
                                                             self.semimajor))
 
 
-class TRC(Body):
+class TRC(BodyMixin):
     """
 
     Truncated Right-angled Cone
@@ -564,7 +564,7 @@ class TRC(Body):
                                         self.minor_radius)
 
 
-class ELL(Body):
+class ELL(BodyMixin):
     """Ellipsoid of Revolution
 
     :param name: of body
@@ -653,7 +653,7 @@ class ELL(Body):
                                                                self.focus2),
                                      self.length)
 
-class _WED_RAW(Body):
+class _WED_RAW(BodyMixin):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
@@ -757,7 +757,7 @@ class RAW(_WED_RAW):
     __doc__ = WED.__doc__
 
 
-class ARB(Body):
+class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
 
@@ -904,7 +904,7 @@ class ARB(Body):
                                                 vstring, self.facenumbers)
 
 
-class XYP(_HalfSpace):
+class XYP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to the z-axis)
@@ -944,7 +944,7 @@ class XYP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.z)
 
 
-class XZP(_HalfSpace):
+class XZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular
@@ -985,7 +985,7 @@ class XZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.y)
 
 
-class YZP(_HalfSpace):
+class YZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to \
@@ -1027,7 +1027,7 @@ class YZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.x)
 
 
-class PLA(_HalfSpace):
+class PLA(_HalfSpaceMixin):
     """
     Infinite half-space delimited by the x-y plane (pependicular to \
     the z-axis) Generic infinite half-space.
@@ -1090,7 +1090,7 @@ class PLA(_HalfSpace):
                                                             self.point))
 
 
-class XCC(_InfiniteCylinder):
+class XCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1136,7 +1136,7 @@ class XCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.y, self.z)
 
 
-class YCC(_InfiniteCylinder):
+class YCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1182,7 +1182,7 @@ class YCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.z, self.x)
 
 
-class ZCC(_InfiniteCylinder):
+class ZCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1226,7 +1226,7 @@ class ZCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
-class XEC(Body):
+class XEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1293,7 +1293,7 @@ class XEC(Body):
                                            self.ysemi, self.zsemi)
 
 
-class YEC(Body):
+class YEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1361,7 +1361,7 @@ class YEC(Body):
                                            self.zsemi, self.xsemi)
 
 
-class ZEC(Body):
+class ZEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1426,7 +1426,7 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
-class QUA(Body):
+class QUA(BodyMixin):
     """Generic quadric
 
     :param name: of body
