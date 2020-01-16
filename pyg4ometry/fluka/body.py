@@ -1430,43 +1430,43 @@ class QUA(Body):
 
     :param name: of body
     :type name: str
-    :param A_xx: x^2 coefficient
-    :type A_xx: float
-    :param A_yy: y^2 coefficient
-    :type A_yy: float
-    :param A_zz: z^2 coefficient
-    :type A_zz: float
-    :param A_xy: xy coefficient
-    :type A_xy: float
-    :param A_xz: xz coefficient
-    :type A_xz: float
-    :param A_yz: yz coefficient
-    :type A_yz: float
-    :param A_x : x coefficient
-    :type A_x: float
-    :param A_y : y coefficient
-    :type A_y: float
-    :param A_z : z coefficient
-    :type A_z: float
-    :param A_0 : constant
-    :type A_0: constant
+    :param Axx: x^2 coefficient
+    :type Axx: float
+    :param Ayy: y^2 coefficient
+    :type Ayy: float
+    :param Azz: z^2 coefficient
+    :type Azz: float
+    :param Axy: xy coefficient
+    :type Axy: float
+    :param Axz: xz coefficient
+    :type Axz: float
+    :param Ayz: yz coefficient
+    :type Ayz: float
+    :param Ax : x coefficient
+    :type Ax: float
+    :param Ay : y coefficient
+    :type Ay: float
+    :param Az : z coefficient
+    :type Az: float
+    :param A0 : constant
+    :type A0: constant
     """
     def __init__(self, name,
-                 A_xx, A_yy, A_zz, A_xy, A_xz, A_yz, A_x, A_y, A_z, A_0,
+                 Axx, Ayy, Azz, Axy, Axz, Ayz, Ax, Ay, Az, A0,
                  transform=None,
                  flukaregistry=None):
         self.name = name
 
-        self.A_xx = A_xx
-        self.A_yy = A_yy
-        self.A_zz = A_zz
-        self.A_xy = A_xy
-        self.A_xz = A_xz
-        self.A_yz = A_yz
-        self.A_x  = A_x
-        self.A_y  = A_y
-        self.A_z  = A_z
-        self.A_0  = A_0
+        self.Axx = Axx
+        self.Ayy = Ayy
+        self.Azz = Azz
+        self.Axy = Axy
+        self.Axz = Axz
+        self.Ayz = Ayz
+        self.Ax  = Ax
+        self.Ay  = Ay
+        self.Az  = Az
+        self.A0  = A0
 
         self.transform = self._set_transform(transform)
 
@@ -1485,9 +1485,9 @@ class QUA(Body):
         import vtk
 
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
-                                self.A_xy, self.A_yz, self.A_xz,
-                                self.A_x,  self.A_y,  self.A_z, 0.0)
+        quadric.SetCoefficients(self.Axx, self.Ayy, self.Azz,
+                                self.Axy, self.Ayz, self.Axz,
+                                self.Ax,  self.Ay,  self.Az, 0.0)
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
         sample.SetModelBounds(-1,1,-1,1,-1,1)
@@ -1496,7 +1496,7 @@ class QUA(Body):
 
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, -self.A_0, -self.A_0)
+        contours.GenerateValues(1, -self.A0, -self.A0)
         contours.Update()
 
         pd = contours.GetOutput()
@@ -1520,9 +1520,9 @@ class QUA(Body):
 
     def _withLengthSafety(self, safety, reg=None):
         return QUA(self.name,
-                   self.A_xx, self.A_yy, self.A_zz,
-                   self.A_xy, self.A_xz, self.A_yz,
-                   self.A_x, self.A_y,  self.A_z, self.A_0,
+                   self.Axx, self.Ayy, self.Azz,
+                   self.Axy, self.Axz, self.Ayz,
+                   self.Ax, self.Ay,  self.Az, self.A0,
                    transform=self.transform,
                    flukaregistry=reg)
 
