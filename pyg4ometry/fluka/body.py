@@ -3,6 +3,7 @@ import logging
 from itertools import chain
 
 import numpy as np
+import vtk
 
 from .vector import Three
 from pyg4ometry.pycsg.core import CSG as _CSG
@@ -1481,8 +1482,6 @@ class QUA(Body):
     def geant4Solid(self, reg, extent=None):
         exp = self.transform.netExpansion()
         scale = self._extent_to_scale_factor(extent)
-
-        import vtk
 
         quadric = vtk.vtkQuadric()
         quadric.SetCoefficients(self.Axx, self.Ayy, self.Azz,
