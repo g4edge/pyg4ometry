@@ -57,12 +57,12 @@ def fluka2Geant4(flukareg,
 
     wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
 
-    extent_map = None
+    extentMap = None
     if minimiseSolids:
         region_extents = _get_region_extents(flukareg, regions)
-        extent_map = _make_body_minimum_extent_map(flukareg,
-                                                   region_extents,
-                                                   regions)
+        extentMap = _make_body_minimum_extentMap(flukareg,
+                                                 region_extents,
+                                                 regions)
     elif flukareg.latticeDict:
         # Don't pass a subset of the region name here because for
         # LATTICE we need to consider all regions.  E.g. if we want to
@@ -78,7 +78,7 @@ def fluka2Geant4(flukareg,
             continue
 
         region = flukareg.regionDict[name]
-        region_solid = region.geant4Solid(greg, extent=extent_map)
+        region_solid = region.geant4Solid(greg, extent=extentMap)
 
         region_material = region.material
         if region_material is None:
@@ -98,7 +98,7 @@ def fluka2Geant4(flukareg,
         # rotation.
         rot = list(trans.reverse(region.tbxyz()))
         g4.PhysicalVolume(rot,
-                          list(region.centre(extent=extent_map)),
+                          list(region.centre(extent=extentMap)),
                           region_lv,
                           "{}_pv".format(name),
                           wlv, greg)
@@ -206,7 +206,7 @@ def _get_region_extents(flukareg, regions):
         regionExtents[name] = region.extent()
     return regionExtents
 
-def _make_body_minimum_extent_map(flukareg, region_extents, regions):
+def _make_body_minimum_extentMap(flukareg, region_extents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
 
     bodies_to_minimum_extents = {}
