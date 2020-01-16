@@ -444,9 +444,14 @@ class CSG(object):
                 nhull = nhull + 1
 
                 for p in positions :
-                    p1 = (q_next-q_now).unit()
-                    p2 = (p-q_now).unit()
-
+                    try :
+                        p1 = (q_next-q_now).unit()
+                    except ZeroDivisionError :
+                        return None
+                    try :
+                        p2 = (p-q_now).unit()
+                    except ZeroDivisionError :
+                        return None
                     if p1.cross(p2).dot(normal) < 0 :
                         q_next = p
 
@@ -474,6 +479,9 @@ class CSG(object):
                 bInsideA = polyVertsInside(bpoly,apoly)
                 aInterB  = polyEdgeIntersection(apoly,bpoly)
 
+                #if len(aInsideB) != 0 and len(bInsideA) != 0 and len(aInterB) != 0 :
+                #    print len(aInsideB), len(bInsideA), len(aInterB)
+
                 #if len(aInsideB)+len(bInsideA)+len(aInterB) != 0 :
                 #    print len(aInsideB),len(bInsideA),len(aInterB)
 
@@ -485,7 +493,8 @@ class CSG(object):
                 polygon  = convexHull(points,bpoly.plane.normal)
                 if polygon :
                     polygons.append(polygon)
-
+                else :
+                    polygons.append(bpoly)
         return CSG.fromPolygons(polygons)
 
     def coplanar(self, csg):

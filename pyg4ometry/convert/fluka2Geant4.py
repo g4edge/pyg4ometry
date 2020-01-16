@@ -16,44 +16,69 @@ from pyg4ometry.fluka.region import areOverlapping
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
 
-WORLD_DIMENSIONS = 10000
+WORLD_DIMENSIONS = [10000, 10000, 10000]
 
-def fluka2Geant4(flukareg, with_length_safety=True,
-                 split_disjoint_unions=True,
-                 minimise_solids=True,
-                 world_material="G4_Galactic",
-                 omit_blackhole_regions=True):
+def fluka2Geant4(flukareg,
+                 regions=None,
+                 withLengthSafety=True,
+                 splitDisjointUnions=True,
+                 minimiseSolids=True,
+                 worldMaterial="G4_Galactic",
+                 worldDimensions=None,
+                 omitBlackholeRegions=True):
 
-    if omit_blackhole_regions:
-        flukareg = _without_blackhole_regions(flukareg)
+    if regions is None:
+        regions = list(flukareg.regionDict)
 
-    if with_length_safety:
-        flukareg = _make_length_safety_registry(flukareg)
+    if omitBlackholeRegions:
+        flukareg = _without_blackhole_regions(flukareg, regions)
 
-    if split_disjoint_unions:
-        flukareg = _make_disjoint_unions_registry(flukareg)
+    if withLengthSafety:
+        flukareg = _make_length_safety_registry(flukareg, regions)
+
+    if splitDisjointUnions:
+        flukareg, newNamesToOldNames = _make_disjoint_unions_registry(flukareg,
+                                                                      regions)
+
+        newRegions = []
+        for newName, oldName in newNamesToOldNames.iteritems():
+            if oldName in regions:
+                newRegions.append(newName)
+        regions = newRegions
+
+    if worldDimensions is None:
+        worldDimensions = WORLD_DIMENSIONS
+
 
     if not flukareg.regionDict:
         raise ValueError("No regions in registry.")
 
     greg = g4.Registry()
 
-    wlv = _makeWorldVolume(WORLD_DIMENSIONS, world_material, greg)
+    wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
 
-    extent_map = None
-    if minimise_solids:
-        region_extents = _get_region_extents(flukareg)
-        extent_map = _make_body_minimum_extent_map(flukareg, region_extents)
+    extentMap = None
+    if minimiseSolids:
+        region_extents = _get_region_extents(flukareg, regions)
+        extentMap = _make_body_minimum_extentMap(flukareg,
+                                                 region_extents,
+                                                 regions)
     elif flukareg.latticeDict:
-        region_extents = _get_region_extents(flukareg)
+        # Don't pass a subset of the region name here because for
+        # LATTICE we need to consider all regions.  E.g. if we want to
+        # copy the cell but not the prototype.
+        region_extents = _get_region_extents(flukareg, flukareg.regionDict)
 
     regionsWithLVs = {}
     # Do non-lattice regions first as we convert the lattices in the
     # loop after this, as they must be treated differently.
     nonLatticeRegions = flukareg.getNonLatticeRegions()
     for name, region in nonLatticeRegions.iteritems():
+        if name not in regions:
+            continue
+
         region = flukareg.regionDict[name]
-        region_solid = region.geant4Solid(greg, extent=extent_map)
+        region_solid = region.geant4Solid(greg, extent=extentMap)
 
         region_material = region.material
         if region_material is None:
@@ -73,7 +98,7 @@ def fluka2Geant4(flukareg, with_length_safety=True,
         # rotation.
         rot = list(trans.reverse(region.tbxyz()))
         g4.PhysicalVolume(rot,
-                          list(region.centre(extent=extent_map)),
+                          list(region.centre(extent=extentMap)),
                           region_lv,
                           "{}_pv".format(name),
                           wlv, greg)
@@ -103,16 +128,16 @@ def fluka2Geant4(flukareg, with_length_safety=True,
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
-    world_material = g4.MaterialPredefined(material)
+    worldMaterial = g4.MaterialPredefined(material)
 
     world_solid = g4.solid.Box("world_solid",
-                               WORLD_DIMENSIONS,
-                               WORLD_DIMENSIONS,
-                               WORLD_DIMENSIONS, g4registry, "mm")
-    wlv = g4.LogicalVolume(world_solid, world_material, "wl", g4registry)
+                               dimensions[0],
+                               dimensions[1],
+                               dimensions[2], g4registry, "mm")
+    wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
-def _make_length_safety_registry(flukareg):
+def _make_length_safety_registry(flukareg, regions):
     bigger = fluka.FlukaRegistry()
     smaller = fluka.FlukaRegistry()
 
@@ -122,20 +147,27 @@ def _make_length_safety_registry(flukareg):
 
     # return bigger, smaller
     fluka_reg_out = fluka.FlukaRegistry()
-    for region in flukareg.regionDict.itervalues():
+    for name, region in flukareg.regionDict.iteritems():
+        if name not in regions:
+            continue
+
         ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
     fluka_reg_out.latticeDict = flukareg.latticeDict
     return fluka_reg_out
 
-def _make_disjoint_unions_registry(flukareg):
+def _make_disjoint_unions_registry(flukareg, regions):
     fluka_reg_out = fluka.FlukaRegistry()
+    newNamesToOldNames = {}
     for name, region in flukareg.regionDict.iteritems():
+        if name not in regions:
+            continue
         if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
             new_region = deepcopy(region)
             fluka_reg_out.addRegion(new_region)
             new_region.allBodiesToRegistry(fluka_reg_out)
+            newNamesToOldNames[name] = name
             continue
 
         connected_zones = region.get_connected_zones()
@@ -143,15 +175,15 @@ def _make_disjoint_unions_registry(flukareg):
             new_region = deepcopy(region)
             fluka_reg_out.addRegion(new_region)
             new_region.allBodiesToRegistry(fluka_reg_out)
+            newNamesToOldNames[name] = name
             continue
 
         for connection in connected_zones: # loop over the connections
-
             # make new region with appropriate name
             zones_string = "_".join(map(str, connection))
             new_region_name = "{}_djz{}".format(name, zones_string)
             new_region = fluka.Region(new_region_name, material=region.material)
-
+            newNamesToOldNames[new_region_name] = name
             # get the zones which are connected
             zones = [(i, region.zones[i]) for i in connection]
             for index, zone in zones:
@@ -163,24 +195,34 @@ def _make_disjoint_unions_registry(flukareg):
                 new_region.allBodiesToRegistry(fluka_reg_out)
                 fluka_reg_out.addRegion(new_region)
     fluka_reg_out.latticeDict = flukareg.latticeDict
-    return fluka_reg_out
+    return fluka_reg_out, newNamesToOldNames
 
-def _get_region_extents(flukareg):
+def _get_region_extents(flukareg, regions):
     regionmap = flukareg.regionDict
-    return {name: region.extent() for name, region in regionmap.iteritems()}
+    regionExtents = {}
+    for name, region in regionmap.iteritems():
+        if name not in regions:
+            continue
+        regionExtents[name] = region.extent()
+    return regionExtents
 
-def _make_body_minimum_extent_map(flukareg, region_extents):
+def _make_body_minimum_extentMap(flukareg, region_extents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
 
     bodies_to_minimum_extents = {}
     for body_name, region_names in bodies_to_regions.iteritems():
         _logger.debug("Getting minimum extent for body: %s", body_name)
-        body_region_extents = [region_extents[region_name]
-                               for region_name in region_names]
+
+        bodyRegionExtents = []
+        for region_name in region_names:
+            if region_name not in regions:
+                continue
+            bodyRegionExtents.append(region_extents[region_name])
+
         if len(region_extents) == 1:
             extent = region_extents.values()[0]
         elif len(region_extents) > 1:
-            extent = reduce(_getMaximalOfTwoExtents, body_region_extents)
+            extent = reduce(_getMaximalOfTwoExtents, bodyRegionExtents)
             _logger.debug("Minimum extent = %s", extent)
         else:
             raise ValueError("WHAT?")
@@ -195,10 +237,12 @@ def _getMaximalOfTwoExtents(extent1, extent2):
     upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
 
-def _without_blackhole_regions(flukareg):
+def _without_blackhole_regions(flukareg, regions):
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
         if region.material == "BLCKHOLE":
+            continue
+        if name not in regions:
             continue
         freg_out.addRegion(region)
         region.allBodiesToRegistry(freg_out)

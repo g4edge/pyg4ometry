@@ -170,7 +170,7 @@ class LogicalVolume(object):
                 for j in range(i+1,len(transformedMeshes)) :
 
                     if debugIO :
-                        print "LogicalVolume.checkOverlaps> full coplanar test",transformedMeshesNames[i],transformedMeshesNames[j]
+                        print "LogicalVolume.checkOverlaps> full coplanar test between daughters",transformedMeshesNames[i],transformedMeshesNames[j]
 
                     # first check if bounding mesh intersects
                     cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
@@ -339,3 +339,23 @@ class LogicalVolume(object):
             av.add(dv)
 
         return av
+
+    def makeWorldVolume(self, worldMaterial = 'G4_Galactic'):
+
+        import pyg4ometry.geant4 as _g4
+
+        extent = self.extent(True)
+
+        # create world box
+        ws = _g4.solid.Box("worldSolid",
+                           2 * (extent[1][0] - extent[0][0]),
+                           2 * (extent[1][1] - extent[0][1]),
+                           2 * (extent[1][2] - extent[0][2]),
+                           reg, "mm")
+
+        wm = _g4.MaterialPredefined(worldMaterial)
+
+        wl = _g4.LogicalVolume(ws, wm, "wl", self.registry)
+        cp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], self, self.name+"_pv1", wl, self.registry)
+
+        self.registry.setWorld(wl.name)

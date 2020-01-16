@@ -99,6 +99,16 @@ class Writer(object):
         f.write(xmlString)
         f.close()
 
+    def writeGMADTesterNoBeamline(self, gmad, gdml):
+        text = """test: placement, geometryFile="gdml:{}";
+        beam, particle="e-",
+        energy=250*GeV;
+        option, physicsList="em";
+        """.format(gdml)
+
+        with open(gmad, "w") as f:
+            f.write(text)
+
     def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()
@@ -269,7 +279,7 @@ class Writer(object):
             if material.type == 'simple':
                 oe.setAttribute('Z', str(int(material.Z)))
                 se = self.doc.createElement('atom')
-                se.setAttribute('value', str(int(material.A)))
+                se.setAttribute('value', str(material.A))
                 oe.appendChild(se)
             elif material.type == 'composite':
                 for comp_info in material.components:

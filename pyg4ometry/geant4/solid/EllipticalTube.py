@@ -32,7 +32,7 @@ class EllipticalTube(_SolidBase):
     """
     
 
-    def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
+    def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",nstack=10,
                  nslice=20, addRegistry=True):
 
         self.type   = 'EllipticalTube'
@@ -42,6 +42,7 @@ class EllipticalTube(_SolidBase):
         self.pDz    = pDz
         self.lunit  = lunit
         self.nslice = nslice
+        self.nstack = nstack
 
         self.dependents = []
 

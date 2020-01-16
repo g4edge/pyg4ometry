@@ -1,10 +1,10 @@
 import numpy as _np
 
 def rad2deg(rad) :
-    return float(rad)/_np.pi*180.
+    return 180 * (rad / _np.pi)
 
 def deg2rad(deg) :
-    return float(deg)/180.*_np.pi
+    return _np.pi * (deg / 180.)
 
 def tbxyz2axisangle(rv) :
     """
