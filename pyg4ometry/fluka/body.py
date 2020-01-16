@@ -1505,7 +1505,7 @@ class QUA(Body):
         verts = []
         facet = []
 
-        for i in range(0,pd.GetNumberOfCells(),1) :
+        for i in range(pd.GetNumberOfCells()) :
             c = pd.GetCell(i)
             p = c.GetPoints()
             verts.append(np.array(p.GetPoint(2)))
@@ -1516,7 +1516,11 @@ class QUA(Body):
         mesh.append(verts)
         mesh.append(facet)
 
-        return g4.solid.TessellatedSolid(self.name,mesh,reg,g4.solid.TessellatedSolid.MeshType.Freecad)
+        return g4.solid.TessellatedSolid(
+            self.name,
+            mesh,
+            reg,
+            g4.solid.TessellatedSolid.MeshType.Freecad)
 
     def _withLengthSafety(self, safety, reg=None):
         return QUA(self.name,
