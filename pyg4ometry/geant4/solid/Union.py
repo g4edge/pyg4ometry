@@ -74,7 +74,5 @@ class Union(_SolidBase):
 
         _log.info('union.pycsgmesh> union')
         mesh = m1.union(m2)
-        if not mesh.toPolygons():
-            raise pyg4ometry.exceptions.NullMeshError(self)
 
         return mesh

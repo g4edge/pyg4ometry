@@ -7,3 +7,4 @@ class Sampler(object):
         self.apers = apers
         if len(apers) != 4:
             raise ValueError("apers1-4 must be provided.")
+

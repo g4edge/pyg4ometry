@@ -33,7 +33,7 @@ class PhysicalVolume(object):
         if isinstance(rotation,list) :
             rotation = _Defines.Rotation(name+"_rot",rotation[0],rotation[1],rotation[2],"rad",registry,False)
         if isinstance(scale,list) :
-            scale    = _Defines.Rotation(name+"_sca",scale[0],scale[1],scale[2],"none",registry,False)
+            scale    = _Defines.Scale(name+"_sca",scale[0],scale[1],scale[2],"none",registry,False)
 
 
         # geant4 required objects

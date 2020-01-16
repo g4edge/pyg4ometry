@@ -139,6 +139,7 @@ class Sphere(_SolidBase):
 
         return mesh
 
+    '''
     def pycsgmeshNew(self):
         """
         working off
@@ -393,3 +394,4 @@ class Sphere(_SolidBase):
 
         mesh = _CSG.fromPolygons(polygons)
         return mesh
+    '''

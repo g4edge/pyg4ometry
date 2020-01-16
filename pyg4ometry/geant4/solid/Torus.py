@@ -67,6 +67,7 @@ class Torus(_SolidBase):
                                                   self.pRmax, self.pRtor,
                                                   self.pSPhi, self.pDPhi)
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info("torus.antlr>")
@@ -156,6 +157,7 @@ class Torus(_SolidBase):
             mesh = pWedge.intersect(mesh)
 
         return mesh
+    '''
 
     def pycsgmesh(self):
 

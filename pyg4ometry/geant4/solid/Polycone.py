@@ -68,6 +68,7 @@ class Polycone(_SolidBase):
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
 
+    '''
     def pycsgmeshOld(self):
 
         _log.info("polycone.pycsgmesh>")
@@ -179,7 +180,7 @@ class Polycone(_SolidBase):
 
         return mesh
 
-
+    '''
     def pycsgmesh(self):
 
         _log.info("polycone.pycsgmesh>")
@@ -202,7 +203,8 @@ class Polycone(_SolidBase):
 
         slices = self.nslice
 
-        dPhi = (pDPhi - pSPhi) / slices
+        # dPhi = (pDPhi - pSPhi) / slices
+        dPhi = pDPhi/slices
         stacks = len(pZpl)
 
         rinout = [pRMin, pRMax]
@@ -218,9 +220,6 @@ class Polycone(_SolidBase):
                 r2 = R[j2]
 
                 if (pDPhi - pSPhi) != 2 * _np.pi:
-                    #   for i0 in range(0,stacks - 1, 1):
-                    # j1 = i0
-                    # j2 = j1 + 1
 
                     x1s = pRMin[j1] * _np.cos(pSPhi)
                     y1s = pRMin[j1] * _np.sin(pSPhi)
@@ -247,20 +246,20 @@ class Polycone(_SolidBase):
 
                     polygons.append(_Polygon(vertices_Start))
 
-                    x1e = pRMax[j1] * _np.cos(pDPhi)
-                    y1e = pRMax[j1] * _np.sin(pDPhi)
+                    x1e = pRMax[j1] * _np.cos(pDPhi+pSPhi)
+                    y1e = pRMax[j1] * _np.sin(pDPhi+pSPhi)
                     z1e = pZpl[j1]
 
-                    x2e = pRMin[j1] * _np.cos(pDPhi)
-                    y2e = pRMin[j1] * _np.sin(pDPhi)
+                    x2e = pRMin[j1] * _np.cos(pDPhi+pSPhi)
+                    y2e = pRMin[j1] * _np.sin(pDPhi+pSPhi)
                     z2e = pZpl[j1]
 
-                    x3e = pRMin[j2] * _np.cos(pDPhi)
-                    y3e = pRMin[j2] * _np.sin(pDPhi)
+                    x3e = pRMin[j2] * _np.cos(pDPhi+pSPhi)
+                    y3e = pRMin[j2] * _np.sin(pDPhi+pSPhi)
                     z3e = pZpl[j2]
 
-                    x4e = pRMax[j2] * _np.cos(pDPhi)
-                    y4e = pRMax[j2] * _np.sin(pDPhi)
+                    x4e = pRMax[j2] * _np.cos(pDPhi+pSPhi)
+                    y4e = pRMax[j2] * _np.sin(pDPhi+pSPhi)
                     z4e = pZpl[j2]
 
                     vertices_End = []

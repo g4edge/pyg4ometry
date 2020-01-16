@@ -56,6 +56,7 @@ class Paraboloid(_SolidBase):
         return "Paraboloid : {} {} {} {}".format(self.name, self.pDz,
                                                  self.pR1, self.pR2)
 
+    '''
     def pycsgmeshOld(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
         _log.info("paraboloid.antlr>")
@@ -142,6 +143,7 @@ class Paraboloid(_SolidBase):
         mesh  = _CSG.fromPolygons(polygons)
 
         return mesh
+    '''
 
     def pycsgmesh(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import

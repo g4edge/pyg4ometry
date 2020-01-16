@@ -565,8 +565,8 @@ class DivisionVolume(_PhysicalVolume.PhysicalVolume) :
 
             [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
 
-            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0, :])[0]
-            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0, :])[0]
+            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)).flatten()
+            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)).flatten()
 
 
             if vMaxDaughter[0] > vMax[0] :

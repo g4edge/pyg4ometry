@@ -176,7 +176,7 @@ class ParameterisedVolume(_ReplicaVolume):
 
         meshes = []
 
-        for paramData,i in zip(self.paramData,range(0,int(self.ncopies.eval()),1)):
+        for paramData, i in zip(self.paramData, range(0, int(self.ncopies), 1)):
             # box
             if self.logicalVolume.solid.type == "Box" and isinstance(paramData,self.BoxDimensions):
                 solid = _copy.deepcopy(self.logicalVolume.solid)
@@ -409,8 +409,9 @@ class ParameterisedVolume(_ReplicaVolume):
 
             [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
 
-            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0, :])[0]
-            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0, :])[0]
+            # TODO do we need scale here?
+            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)).flatten()
+            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)).flatten()
 
 
             if vMaxDaughter[0] > vMax[0] :

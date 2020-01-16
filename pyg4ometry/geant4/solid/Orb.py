@@ -46,6 +46,7 @@ class Orb(_SolidBase):
     def __repr__(self):
         return "Orb : {} {}".format(self.name, self.pRMax)
 
+    ''''
     def pycsgmeshOld(self):
         _log.info("orb.antlr>")
 
@@ -58,7 +59,7 @@ class Orb(_SolidBase):
         mesh = _CSG.sphere(center=[0,0,0], radius=pRMax,
                            slices=self.nslice, stacks=self.nstack)
         return mesh
-
+    '''
     def pycsgmesh(self):
 
         _log.info("orb.antlr>")
