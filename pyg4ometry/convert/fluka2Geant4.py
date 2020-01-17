@@ -89,7 +89,7 @@ def fluka2Geant4(flukareg,
         elif region_material in materialMap:
             region_material = materialMap[region_material]
         else:
-            warnings.warn("Region {} material being set to G4_Fe.".format(name))
+            # warnings.warn("Region {} material being set to G4_Fe.".format(name))
             region_material = g4.MaterialPredefined("G4_Fe")
 
         region_lv = g4.LogicalVolume(region_solid,
