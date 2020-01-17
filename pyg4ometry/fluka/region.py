@@ -25,7 +25,7 @@ class _Boolean(object):
         type_name = type_name[:3]
 
 
-        if isinstance(self.body, Body):
+        if isinstance(self.body, BodyMixin):
             return "{}{}_{}_{}".format(type_name,
                                        index,
                                        self.body.name,
