@@ -25,7 +25,8 @@ def fluka2Geant4(flukareg,
                  minimiseSolids=True,
                  worldMaterial="G4_Galactic",
                  worldDimensions=None,
-                 omitBlackholeRegions=True):
+                 omitBlackholeRegions=True,
+                 materialMap=None):
 
     if regions is None:
         regions = list(flukareg.regionDict)
@@ -49,6 +50,8 @@ def fluka2Geant4(flukareg,
     if worldDimensions is None:
         worldDimensions = WORLD_DIMENSIONS
 
+    if not materialMap:
+        materialMap = {}
 
     if not flukareg.regionDict:
         raise ValueError("No regions in registry.")
@@ -83,9 +86,12 @@ def fluka2Geant4(flukareg,
         region_material = region.material
         if region_material is None:
             warnings.warn("No material assigned for region {}".format(name))
+        elif region_material in materialMap:
+            region_material = materialMap[region_material]
+        else:
+            warnings.warn("Region {} material being set to G4_Fe.".format(name))
+            region_material = g4.MaterialPredefined("G4_Fe")
 
-
-        region_material = g4.MaterialPredefined("G4_Fe")
         region_lv = g4.LogicalVolume(region_solid,
                                      region_material,
                                      "{}_lv".format(name),
