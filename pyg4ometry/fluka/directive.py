@@ -294,21 +294,25 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     """tbxyz = trait bryan angles in radians"""
     # Reverse it's because different convention in FLUKA (passive vs
     # active angles).
-    tbxyz = Three(reverse(tbxyz))
+    # tbxyz = Three(reverse(tbxyz))
+    tbxyz = Three(tbxyz)
     result = RecursiveRotoTranslation(name, [])
     # Don't append a RotoTranslation for 0-angle rotations.
     # Note that we are converting from radians to degrees here.
-    if tbxyz.x:
-        result.append(RotoTranslation(name, axis="x",
-                                      azimuth=tbxyz[0]*180/np.pi,
+
+    if tbxyz.z:
+        result.append(RotoTranslation(name, axis="z",
+                                      azimuth=tbxyz[2]*180/np.pi,
                                       flukaregistry=flukaregistry))
+
     if tbxyz.y:
         result.append(RotoTranslation(name, axis="y",
                                       azimuth=tbxyz[1]*180/np.pi,
                                       flukaregistry=flukaregistry))
-    if tbxyz.z:
-        result.append(RotoTranslation(name, axis="z",
-                                      azimuth=tbxyz[2]*180/np.pi,
+
+    if tbxyz.x:
+        result.append(RotoTranslation(name, axis="x",
+                                      azimuth=tbxyz[0]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     return result
