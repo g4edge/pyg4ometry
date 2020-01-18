@@ -3,6 +3,7 @@ import logging
 from itertools import chain
 
 import numpy as np
+import vtk
 
 from .vector import Three
 from pyg4ometry.pycsg.core import CSG as _CSG
@@ -25,7 +26,7 @@ def infinity(inf):
     """Use this to temporarily modify INFINITY, with it resetting back
     to the default once the block has exited.  INFINITY is used
     throughout the bodies to approximate the infinite size of infinity
-    (elliptical) cylinders, half space, and quadric.
+    (elliptical) cylinders, half spaces, and quadrics.
 
     :param inf: the value to temporarily set INFINITY to."""
     global INFINITY
@@ -36,7 +37,7 @@ def infinity(inf):
         INFINITY = _DEFAULT_INFINITY
 
 
-class Body(object):
+class BodyMixin(object):
     """
     Base class representing a body as defined in FLUKA
     """
@@ -80,7 +81,7 @@ class Body(object):
         return offset
 
 
-class _HalfSpace(Body):
+class _HalfSpaceMixin(BodyMixin):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -99,7 +100,7 @@ class _HalfSpace(Body):
         return "{} {} {}".format(typename, self.name, coordinate)
 
 
-class _InfiniteCylinder(Body):
+class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
     def geant4Solid(self, registry, extent=None):
         exp = self.transform.netExpansion()
@@ -117,7 +118,7 @@ class _InfiniteCylinder(Body):
         return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
 
 
-class RPP(Body):
+class RPP(BodyMixin):
     """Rectangular Parallelepiped
 
     :param name: of body
@@ -194,7 +195,7 @@ class RPP(Body):
                                                  str(self.lower[2]),
                                                  str(self.upper[2]))
 
-class BOX(Body):
+class BOX(BodyMixin):
     """General Rectangular Parallelepiped
 
     :param name: of body
@@ -270,7 +271,7 @@ class BOX(Body):
         return "BOX {} {}".format(self.name, param_string)
 
 
-class SPH(Body):
+class SPH(BodyMixin):
     """Sphere
 
     :param name: of body
@@ -318,7 +319,7 @@ class SPH(Body):
                                      self.radius)
 
 
-class RCC(Body):
+class RCC(BodyMixin):
     """
 
     Right Circular Cylinder
@@ -390,7 +391,7 @@ class RCC(Body):
                                      self.radius)
 
 
-class REC(Body):
+class REC(BodyMixin):
     """
 
     Right Elliptical Cylinder
@@ -479,7 +480,7 @@ class REC(Body):
                                                             self.semimajor))
 
 
-class TRC(Body):
+class TRC(BodyMixin):
     """
 
     Truncated Right-angled Cone
@@ -563,7 +564,7 @@ class TRC(Body):
                                         self.minor_radius)
 
 
-class ELL(Body):
+class ELL(BodyMixin):
     """Ellipsoid of Revolution
 
     :param name: of body
@@ -652,7 +653,7 @@ class ELL(Body):
                                                                self.focus2),
                                      self.length)
 
-class _WED_RAW(Body):
+class _WED_RAW(BodyMixin):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
@@ -756,7 +757,7 @@ class RAW(_WED_RAW):
     __doc__ = WED.__doc__
 
 
-class ARB(Body):
+class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
 
@@ -903,7 +904,7 @@ class ARB(Body):
                                                 vstring, self.facenumbers)
 
 
-class XYP(_HalfSpace):
+class XYP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to the z-axis)
@@ -943,7 +944,7 @@ class XYP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.z)
 
 
-class XZP(_HalfSpace):
+class XZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular
@@ -984,7 +985,7 @@ class XZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.y)
 
 
-class YZP(_HalfSpace):
+class YZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to \
@@ -1026,7 +1027,7 @@ class YZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.x)
 
 
-class PLA(_HalfSpace):
+class PLA(_HalfSpaceMixin):
     """
     Infinite half-space delimited by the x-y plane (pependicular to \
     the z-axis) Generic infinite half-space.
@@ -1089,7 +1090,7 @@ class PLA(_HalfSpace):
                                                             self.point))
 
 
-class XCC(_InfiniteCylinder):
+class XCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1135,7 +1136,7 @@ class XCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.y, self.z)
 
 
-class YCC(_InfiniteCylinder):
+class YCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1181,7 +1182,7 @@ class YCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.z, self.x)
 
 
-class ZCC(_InfiniteCylinder):
+class ZCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1225,7 +1226,7 @@ class ZCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
-class XEC(Body):
+class XEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1292,7 +1293,7 @@ class XEC(Body):
                                            self.ysemi, self.zsemi)
 
 
-class YEC(Body):
+class YEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1360,7 +1361,7 @@ class YEC(Body):
                                            self.zsemi, self.xsemi)
 
 
-class ZEC(Body):
+class ZEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1425,48 +1426,48 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
-class QUA(Body):
+class QUA(BodyMixin):
     """Generic quadric
 
     :param name: of body
     :type name: str
-    :param A_xx: x^2 coefficient
-    :type A_xx: float
-    :param A_yy: y^2 coefficient
-    :type A_yy: float
-    :param A_zz: z^2 coefficient
-    :type A_zz: float
-    :param A_xy: xy coefficient
-    :type A_xy: float
-    :param A_xz: xz coefficient
-    :type A_xz: float
-    :param A_yz: yz coefficient
-    :type A_yz: float
-    :param A_x : x coefficient
-    :type A_x: float
-    :param A_y : y coefficient
-    :type A_y: float
-    :param A_z : z coefficient
-    :type A_z: float
-    :param A_0 : constant
-    :type A_0: constant
+    :param Axx: x^2 coefficient
+    :type Axx: float
+    :param Ayy: y^2 coefficient
+    :type Ayy: float
+    :param Azz: z^2 coefficient
+    :type Azz: float
+    :param Axy: xy coefficient
+    :type Axy: float
+    :param Axz: xz coefficient
+    :type Axz: float
+    :param Ayz: yz coefficient
+    :type Ayz: float
+    :param Ax : x coefficient
+    :type Ax: float
+    :param Ay : y coefficient
+    :type Ay: float
+    :param Az : z coefficient
+    :type Az: float
+    :param A0 : constant
+    :type A0: constant
     """
     def __init__(self, name,
-                 A_xx, A_yy, A_zz, A_xy, A_xz, A_yz, A_x, A_y, A_z, A_0,
+                 Axx, Ayy, Azz, Axy, Axz, Ayz, Ax, Ay, Az, A0,
                  transform=None,
                  flukaregistry=None):
         self.name = name
 
-        self.A_xx = A_xx
-        self.A_yy = A_yy
-        self.A_zz = A_zz
-        self.A_xy = A_xy
-        self.A_xz = A_xz
-        self.A_yz = A_yz
-        self.A_x  = A_x
-        self.A_y  = A_y
-        self.A_z  = A_z
-        self.A_0  = A_0
+        self.Axx = Axx
+        self.Ayy = Ayy
+        self.Azz = Azz
+        self.Axy = Axy
+        self.Axz = Axz
+        self.Ayz = Ayz
+        self.Ax  = Ax
+        self.Ay  = Ay
+        self.Az  = Az
+        self.A0  = A0
 
         self.transform = self._set_transform(transform)
 
@@ -1482,12 +1483,10 @@ class QUA(Body):
         exp = self.transform.netExpansion()
         scale = self._extent_to_scale_factor(extent)
 
-        import vtk
-
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
-                                self.A_xy, self.A_yz, self.A_xz,
-                                self.A_x,  self.A_y,  self.A_z, 0.0)
+        quadric.SetCoefficients(self.Axx, self.Ayy, self.Azz,
+                                self.Axy, self.Ayz, self.Axz,
+                                self.Ax,  self.Ay,  self.Az, 0.0)
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
         sample.SetModelBounds(-1,1,-1,1,-1,1)
@@ -1496,7 +1495,7 @@ class QUA(Body):
 
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, -self.A_0, -self.A_0)
+        contours.GenerateValues(1, -self.A0, -self.A0)
         contours.Update()
 
         pd = contours.GetOutput()
@@ -1505,7 +1504,7 @@ class QUA(Body):
         verts = []
         facet = []
 
-        for i in range(0,pd.GetNumberOfCells(),1) :
+        for i in range(pd.GetNumberOfCells()) :
             c = pd.GetCell(i)
             p = c.GetPoints()
             verts.append(np.array(p.GetPoint(2)))
@@ -1516,13 +1515,17 @@ class QUA(Body):
         mesh.append(verts)
         mesh.append(facet)
 
-        return g4.solid.TessellatedSolid(self.name,mesh,reg,g4.solid.TessellatedSolid.MeshType.Freecad)
+        return g4.solid.TessellatedSolid(
+            self.name,
+            mesh,
+            reg,
+            g4.solid.TessellatedSolid.MeshType.Freecad)
 
     def _withLengthSafety(self, safety, reg=None):
         return QUA(self.name,
-                   self.A_xx, self.A_yy, self.A_zz,
-                   self.A_xy, self.A_xz, self.A_yz,
-                   self.A_x, self.A_y,  self.A_z, self.A_0,
+                   self.Axx, self.Ayy, self.Azz,
+                   self.Axy, self.Axz, self.Ayz,
+                   self.Ax, self.Ay,  self.Az, self.A0,
                    transform=self.transform,
                    flukaregistry=reg)
 

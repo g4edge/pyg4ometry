@@ -8,7 +8,7 @@ import networkx as nx
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
-from pyg4ometry.fluka.body import Body
+from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, Extent, areExtentsOverlapping
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class _Boolean(object):
         type_name = type_name[:3]
 
 
-        if isinstance(self.body, Body):
+        if isinstance(self.body, BodyMixin):
             return "{}{}_{}_{}".format(type_name,
                                        index,
                                        self.body.name,
@@ -420,7 +420,7 @@ def _getExtent(extent, boolean):
         return extent
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
-    elif isinstance(boolean, Body):
+    elif isinstance(boolean, BodyMixin):
         body_name = boolean.name
     else:
         raise ValueError("Unknown boolean type")
