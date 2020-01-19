@@ -164,7 +164,7 @@ class Sphere(_SolidBase):
         polygons = []
 
         dPhi   = (pDPhi-pSPhi)/self.nslice
-        dTheta = (pDTheta-pSTheta)/self.nstack
+        dTheta = pDTheta/self.nstack
 
         for i in range(0,self.nslice,1) :
 
