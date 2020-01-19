@@ -241,7 +241,7 @@ class VtkViewer:
         lvmActor = _vtk.vtkActor()
         lvmActor.SetMapper(lvmMAP)         
         lvmActor.GetProperty().SetRepresentationToWireframe()
-        lvmActor.GetProperty().SetOpacity(0.2)
+        lvmActor.GetProperty().SetOpacity(0.5)
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
