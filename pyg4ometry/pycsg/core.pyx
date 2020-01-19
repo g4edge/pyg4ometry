@@ -493,8 +493,8 @@ class CSG(object):
                 polygon  = convexHull(points,bpoly.plane.normal)
                 if polygon :
                     polygons.append(polygon)
-                else :
-                    polygons.append(bpoly)
+                #else :
+                #    polygons.append(bpoly)
         return CSG.fromPolygons(polygons)
 
     def coplanar(self, csg):
