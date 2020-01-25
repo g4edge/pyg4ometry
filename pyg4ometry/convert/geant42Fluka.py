@@ -16,6 +16,9 @@ def geant4Logical2Fluka(logicalVolume) :
     # find extent of logical
     extent = logicalVolume.extent(includeBoundingSolid = True)
 
+    #position = [(extent[1][0] - extent[0][0])/2,
+    #              (extent[1][1] - extent[0][1])/2,
+    #              (extent[1][2] - extent[0][2])/2]
     # create black body body
     blackBody = _fluka.RPP("BLKBODY",
                            2*extent[0][0]/10,2*extent[1][0]/10,
@@ -318,6 +321,50 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
 
         flukaNameCount += 1
 
+    elif solid.type == "Para" :
+        luval = _Units.unit(solid.lunit)/10.0
+        auval = _Units.unit(solid.aunit)
+
+        pX     = solid.evaluateParameter(solid.pX)*luval
+        pY     = solid.evaluateParameter(solid.pY)*luval
+        pZ     = solid.evaluateParameter(solid.pZ)*luval
+        pAlpha = solid.evaluateParameter(solid.pAlpha)*auval
+        pTheta = solid.evaluateParameter(solid.pTheta)*auval
+        pPhi   = solid.evaluateParameter(solid.pPhi)*auval
+
+        mTheta = _transformation.tbxyz2matrix([0,-pTheta,0])
+        mAlpha = _transformation.tbxyz2matrix([0,0,-pAlpha])
+        n1     = mAlpha.dot(mTheta).dot(_np.array([-1,0,0]))
+        n2     = mAlpha.dot(mTheta).dot(_np.array([1,0,0]))
+        fbody1 = _fluka.PLA("B"+name+"_01",n1,[-pX,0,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody2 = _fluka.PLA("B"+name+"_02",n2,[pX,0,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fbody3 = _fluka.PLA("B"+name+"_03",[0,-_np.cos(pPhi),_np.sin(pPhi)],[0,-pY,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody4 = _fluka.PLA("B"+name+"_04",[0,_np.cos(pPhi),-_np.sin(pPhi)],[0,pY,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fbody5 = _fluka.PLA("B"+name+"_05",[0,0,-1],[0,0,-pZ],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody6 = _fluka.PLA("B"+name+"_06",[0,0,1],[0,0,pZ],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fzone.addIntersection(fbody2)
+        fzone.addIntersection(fbody3)
+        fzone.addIntersection(fbody4)
+        fzone.addIntersection(fbody5)
+        fzone.addIntersection(fbody6)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
+        flukaNameCount += 1
+
+
     elif solid.type == "Sphere" :
 
         luval = _Units.unit(solid.lunit)/10.0
@@ -477,10 +524,42 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
     #elif solid.type == "EllipticalCone" :
     #    pass
 
-    #elif solid.type == "ExtrudedSolid":
-    # create low z end plane
-    # create high z end plane
-    # loop over z planes
+    elif solid.type == "ExtrudedSolid":
+
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(solid.lunit)
+
+        pZslices = solid.evaluateParameter(solid.pZslices)
+        pPolygon = solid.evaluateParameter(solid.pPolygon)
+
+        zpos     = [zslice[0]*luval for zslice in pZslices]
+        x_offs   = [zslice[1][0]*luval for zslice in pZslices]
+        y_offs   = [zslice[1][1]*luval for zslice in pZslices]
+        scale    = [zslice[2] for zslice in pZslices]
+        vertices = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygon]
+        nslices  = len(pZslices)
+
+        print zpos
+        print x_offs
+        print y_offs
+        print scale
+        print vertices
+        print nslices
+
+        avertices = _np.array(vertices)
+        ax_offs   = _np.array(x_offs)
+        ay_offs   = _np.array(y_offs)
+        ascale    = _np.array(scale)
+        a_offs
+
+        for islice1 in range(0,nslices-1,1) :
+            islice2 = islice1+1
+
+            polygon1 = avertices*ascale[i]
+            polygon2 = avertices*ascale[i+1]
+
+
+            print islice1, islice2
 
     # loop over xy points
 
