@@ -316,19 +316,45 @@ class LogicalVolume(object):
 
         self.mesh.remesh()
 
+    def makeLogicalPhysicalNameSets(self):
+
+        logicalNames = set([])
+        physicalNames = set([])
+
+        logicalNames.add(self.name)
+
+        for dv in self.daughterVolumes :
+            physicalNames.add(dv.name)
+            lvn, pvn = dv.logicalVolume.makeLogicalPhysicalNameSets()
+            print lvn
+            logicalNames  = logicalNames.union(lvn)
+            physicalNames = physicalNames.union(pvn)
+        return logicalNames, physicalNames
+
     def findLogicalByName(self,name) : 
-        lv = [] 
+        lv = []
 
         if self.name.find(name) != -1 : 
             lv.append(self)
 
-        
         for d in self.daughterVolumes : 
             l = d.logicalVolume.findLogicalByName(name)
             if len(l) != 0 :
                 lv.append(l)
         
         return lv
+
+    def makeMaterialNameSet(self):
+
+        materialNames = set([])
+
+        materialNames.add(self.material.name)
+
+        for dv in self.daughterVolumes :
+            dvMaterialNames = dv.logicalVolume.makeMaterialNameSet()
+            materialNames = materialNames.union(dvMaterialNames)
+
+        return materialNames
 
     def assemblyVolume(self):
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
