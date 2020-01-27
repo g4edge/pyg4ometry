@@ -432,16 +432,16 @@ def _make_body(body_parts,
         b = body.RAW(name, p[0:3], p[3:6], p[6:9], p[9:12],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "ARB":
-        vertices = [param[0:3], param[3:6], param[6:9], param[9:12],
-                    param[12:15], param[15:18], param[18:21], param[21:24]]
-        facenumbers = param[24:]
+        vertices = [p[0:3], p[3:6], p[6:9], p[9:12],
+                    p[12:15], p[15:18], p[18:21], p[21:24]]
+        facenumbers = p[24:]
         # Remember we converted to param to millimetres blindly above, well,
         # facenumbers are not dimensions, but indices, so we convert
         # back to "centimetres" here:
         facenumbers = [f/10. for f in facenumbers]
         b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
-                     **geometry_directives)
+                     transform=transform)
     elif body_type == "QUA":
         b = body.QUA(name, *p, flukaregistry=flukareg, transform=transform)
     else:
