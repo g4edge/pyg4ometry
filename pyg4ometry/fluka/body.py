@@ -810,7 +810,7 @@ class ARB(BodyMixin):
 
         # Null-faces must be put as 0.0 in the facenumbers and they
         # must be at the end (i.e. 5 and 6 or 6).
-        if zeros and zeros != [5, 6] or zeros != [6]:
+        if zeros and (zeros != [4, 5] or zeros != [5]):
             raise ValueError("Facenumbers equal to zero to must be at"
                              " the end of the list.")
 
