@@ -798,7 +798,9 @@ class ARB(BodyMixin):
                             " even if not all are used.")
 
         self._nfaces = 6
-        zeros = []
+        # Get the indices of the facenumbers equal to zero and count
+        # how many faces we have by counting the number of zeros.
+        zeros = [] # zero-counting index here to refer to face numbers...
         for i, facenumber in enumerate(self.facenumbers):
             if facenumber == 0:
                 self._nfaces -= 1
