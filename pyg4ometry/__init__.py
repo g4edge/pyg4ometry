@@ -4,7 +4,7 @@ from . import fluka
 from . import freecad
 from . import gdml
 from . import geant4
-from . import gui
+# from . import gui
 from . import stl
 from . import test
 from . import transformation

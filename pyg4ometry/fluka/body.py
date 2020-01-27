@@ -785,19 +785,35 @@ class ARB(BodyMixin):
 
         self.transform = self._set_transform(transform)
 
+        # Checking on the inputs to match FLUKA's behaviour described
+        # in the manual.
+
+        # Must always provide 8 vertices.
         if len(self.vertices) != 8:
-            raise TypeError("8 vertices must always be supplied,"
+            raise ValueError("8 vertices must always be supplied,"
                             " even if not all are used.")
+        # Must always provide 6 facenumbers.
         if len(self.facenumbers) != 6:
-            raise TypeError("6 face numbers must always be supplied.")
+            raise ValueError("6 face numbers must always be supplied,"
+                            " even if not all are used.")
 
         self._nfaces = 6
-        for facenumber in self.facenumbers:
+        zeros = []
+        for i, facenumber in enumerate(self.facenumbers):
             if facenumber == 0:
                 self._nfaces -= 1
+                zeros.append(i)
+        # Can't have less than 4 faces
         if self._nfaces < 4:
-            raise TypeError("Not enough faces provided in arg facenumbers."
+            raise ValueError("Not enough faces provided in arg facenumbers."
                             "  Must be 4, 5 or 6.")
+
+        # Null-faces must be put as 0.0 in the facenumbers and they
+        # must be at the end (i.e. 5 and 6 or 6).
+        if zeros and zeros != [5, 6] or zeros != [6]:
+            raise ValueError("Facenumbers equal to zero to must be at"
+                             " the end of the list.")
+
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
@@ -806,17 +822,50 @@ class ARB(BodyMixin):
     def rotation(self):
         return np.identity(3)
 
+    def _faceNumbersToZeroCountingIndices(self):
+        # Convert the facenumbers which are one-indexed to
+        # zero-indexed, and also account for the way in which faces
+        # with 3 vertices are encoded.  Quotes from the FLUKA manual
+        # are copied here to explain some of the logic.
+        zeroCountingIndicesOut = []
+        for fn in self.facenumbers:
+            # "When the number of the faces is less than 6, the
+            # remaining face description(s) must be zero, and must
+            # appear at the end of the list."
+            if fn == 0.0:
+                continue
+
+            fn = str(int(fn)) # Convert 1234.0 to string of integer 1234
+
+            # "If a face has three vertices, the omitted position may
+            # be either 0 or a repeat of one of the other vertices."
+            fn = fn.replace("0", "")
+            if len(set(fn)) != len(fn):
+                unique_fn = []
+                for n in fn:
+                    if n not in unique_fn:
+                        unique_fn.append(fn)
+                fn = unique_fn
+
+            # Finally we convert back to integers, subtract 1 to make
+            # them zero-counding, and append to the list of outputted
+            # zero counting indices.
+            zeroCountingIndicesOut.append([int(n) - 1 for n in fn])
+
+        return zeroCountingIndicesOut
+
     def _verticesAreClockwise(self):
         polygons = self._toPolygons()
-        from IPython import embed; embed()
 
     def _toPolygons(self):
         polygons = []
+        from IPython import embed; embed()
 
         # Apply any expansion to the ARB's vertices.
         exp = self.transform.netExpansion()
         vertices = [exp * v for v in self.vertices]
         for fnumber in self.facenumbers:
+            # This means that we are defining less than 6 faces
             if fnumber == 0:
                 continue
 
