@@ -593,7 +593,7 @@ class Writer(object):
         pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
         surf.appendChild(pvr1)
         pvr2 = self.doc.createElement('physvolref')
-        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref2))
         surf.appendChild(pvr2)
 
         self.structure.appendChild(surf)

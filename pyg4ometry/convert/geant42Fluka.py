@@ -16,6 +16,9 @@ def geant4Logical2Fluka(logicalVolume) :
     # find extent of logical
     extent = logicalVolume.extent(includeBoundingSolid = True)
 
+    #position = [(extent[1][0] - extent[0][0])/2,
+    #              (extent[1][1] - extent[0][1])/2,
+    #              (extent[1][2] - extent[0][2])/2]
     # create black body body
     blackBody = _fluka.RPP("BLKBODY",
                            2*extent[0][0]/10,2*extent[1][0]/10,
@@ -318,6 +321,50 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
 
         flukaNameCount += 1
 
+    elif solid.type == "Para" :
+        luval = _Units.unit(solid.lunit)/10.0
+        auval = _Units.unit(solid.aunit)
+
+        pX     = solid.evaluateParameter(solid.pX)*luval
+        pY     = solid.evaluateParameter(solid.pY)*luval
+        pZ     = solid.evaluateParameter(solid.pZ)*luval
+        pAlpha = solid.evaluateParameter(solid.pAlpha)*auval
+        pTheta = solid.evaluateParameter(solid.pTheta)*auval
+        pPhi   = solid.evaluateParameter(solid.pPhi)*auval
+
+        mTheta = _transformation.tbxyz2matrix([0,-pTheta,0])
+        mAlpha = _transformation.tbxyz2matrix([0,0,-pAlpha])
+        n1     = mAlpha.dot(mTheta).dot(_np.array([-1,0,0]))
+        n2     = mAlpha.dot(mTheta).dot(_np.array([1,0,0]))
+        fbody1 = _fluka.PLA("B"+name+"_01",n1,[-pX,0,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody2 = _fluka.PLA("B"+name+"_02",n2,[pX,0,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fbody3 = _fluka.PLA("B"+name+"_03",[0,-_np.cos(pPhi),_np.sin(pPhi)],[0,-pY,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody4 = _fluka.PLA("B"+name+"_04",[0,_np.cos(pPhi),-_np.sin(pPhi)],[0,pY,0],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fbody5 = _fluka.PLA("B"+name+"_05",[0,0,-1],[0,0,-pZ],
+                            transform=transform,flukaregistry=flukaRegistry)
+        fbody6 = _fluka.PLA("B"+name+"_06",[0,0,1],[0,0,pZ],
+                            transform=transform,flukaregistry=flukaRegistry)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fzone.addIntersection(fbody2)
+        fzone.addIntersection(fbody3)
+        fzone.addIntersection(fbody4)
+        fzone.addIntersection(fbody5)
+        fzone.addIntersection(fbody6)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
+        flukaNameCount += 1
+
+
     elif solid.type == "Sphere" :
 
         luval = _Units.unit(solid.lunit)/10.0
@@ -477,14 +524,89 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
     #elif solid.type == "EllipticalCone" :
     #    pass
 
-    #elif solid.type == "ExtrudedSolid":
-    # create low z end plane
-    # create high z end plane
-    # loop over z planes
+    elif solid.type == "ExtrudedSolid":
 
-    # loop over xy points
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        luval = _Units.unit(solid.lunit)
 
-    #    pass
+        pZslices = solid.evaluateParameter(solid.pZslices)
+        pPolygon = solid.evaluateParameter(solid.pPolygon)
+
+        zpos     = [zslice[0]*luval/10. for zslice in pZslices]
+        x_offs   = [zslice[1][0]*luval/10. for zslice in pZslices]
+        y_offs   = [zslice[1][1]*luval/10. for zslice in pZslices]
+        scale    = [zslice[2] for zslice in pZslices]
+        vertices = [[pPolygon[0]*luval/10., pPolygon[1]*luval/10.] for pPolygon in pPolygon]
+        nslices  = len(pZslices)
+
+        avertices = _np.array(vertices)
+        ax_offs   = _np.array(x_offs)
+        ay_offs   = _np.array(y_offs)
+        ascale    = _np.array(scale)
+
+        #print "---------"
+        #print avertices
+        #print ax_offs
+        #print ay_offs
+        #print ascale
+        #print "---------"
+
+
+
+        # create region
+        fregion = _fluka.Region("R" + name)
+
+        ibody = 1
+
+        # loop over slices
+        for islice1 in range(0,nslices-1,1) :
+            islice2 = islice1+1
+
+            polygon1 = avertices*ascale[islice1] + _np.array([ax_offs[islice1],ay_offs[islice1]])
+            polygon2 = avertices*ascale[islice2] + _np.array([ax_offs[islice2],ay_offs[islice2]])
+
+            polygon1 = _np.insert(polygon1,2,values=zpos[islice1],axis=1)
+            polygon2 = _np.insert(polygon2,2,values=zpos[islice2],axis=1)
+
+            fzone = _fluka.Zone()
+
+            pla1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, -1], [0, 0, zpos[islice1]], transform=transform,
+                              flukaregistry=flukaRegistry)
+
+            ibody += 1
+            pla2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, 1], [0, 0, zpos[islice2]], transform=transform,
+                              flukaregistry=flukaRegistry)
+            ibody += 1
+
+            fzone.addIntersection(pla1)
+            fzone.addIntersection(pla2)
+
+            # loop over planes
+            for iplane1 in range(0,len(polygon1),1) :
+                iplane2 = iplane1+1
+
+                if iplane2 == len(polygon1) :
+                    iplane2 = 0
+
+                p11 = polygon1[iplane1]
+                p12 = polygon1[iplane2]
+                p21 = polygon2[iplane1]
+                p22 = polygon2[iplane2]
+
+                d21 = p21-p11
+                d12 = p12-p11
+
+                normal = _np.cross(d21,d12)
+                normal = normal/_np.linalg.norm(normal)
+
+                pla = _fluka.PLA("B"+name+"_"+format(ibody,'02'),normal,p11,transform=transform,flukaregistry=flukaRegistry)
+                ibody += 1
+
+                fzone.addIntersection(pla)
+
+            fregion.addZone(fzone)
+
+        flukaNameCount += 1
 
     elif solid.type == "Union":
         # build both solids to regions
@@ -589,4 +711,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
     else :
         print solid.type
     return fregion, flukaNameCount
+
+
+
+
 
