@@ -155,7 +155,10 @@ class RotoTranslation(object):
 
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
-        index += self.transformationIndex # see fluka manual on ROT-DEFI
+        try:
+            index += self.transformationIndex # see fluka manual on ROT-DEFI
+        except:
+            pass
         tx, ty, tz = self.translation
         # CONVERTING TO CENTIMETRES!!
         return Card("ROT-DEFI", index,
@@ -205,6 +208,8 @@ class RotoTranslation(object):
 
         return cls(card.sdum, axis, card.what2, card.what3, [tx, ty, tz])
 
+    def isPureTranslation(self):
+        return (self.polar == 0) and (self.azimuth == 0)
 
 class RecursiveRotoTranslation(MutableSequence):
     """container for dealing with a recursively defined
@@ -258,8 +263,28 @@ class RecursiveRotoTranslation(MutableSequence):
         matrices = [mat.to4DMatrix() for mat in self]
         return _rightMultiplyMatrices(matrices)
 
-    def flukaFreeString(self):
-        return "\n".join([c.toCard().toFreeString() for c in self])
+    def flukaFreeString(self, order="zyxt"):
+        out = []
+        s = self
+        seen = []
+        for flag in order:
+            if flag in seen:
+                continue
+            if flag == "t":
+                out.extend([rot for rot in s if rot.isPureTranslation()])
+                seen.append(flag)
+            elif flag == "x":
+                out.extend([rot for rot in s if rot.axis == "x"])
+                seen.append(flag)
+            elif flag == "y":
+                out.extend([rot for rot in s if rot.axis == "y"])
+                seen.append(flag)
+            elif flag == "z":
+                out.extend([rot for rot in s if rot.axis == "z"])
+                seen.append(flag)
+
+        return [c.toCard().toFreeString() for c in out]
+
 
     def transformationIndex(self):
         pass
