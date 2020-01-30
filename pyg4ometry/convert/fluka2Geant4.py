@@ -85,7 +85,11 @@ def fluka2Geant4(flukareg,
 
         region_material = region.material
         if region_material is None:
-            warnings.warn("No material assigned for region {}".format(name))
+            warnings.warn(
+                "Setting None material in region {} to G4_Fe.".format(
+                    name))
+            region_material = g4.MaterialPredefined("G4_Fe")
+
         elif region_material in materialMap:
             region_material = materialMap[region_material]
         else:
