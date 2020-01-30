@@ -12,6 +12,7 @@ import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from .directive import Transform
+from .vector import Extent as _Extent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -773,8 +774,8 @@ class ARB(BodyMixin):
     only four or five faces are needed.  Any unneeded faces must be set to 0 \
     (no less than 4 sides).  Note that the references to the vertices are not \
     zero-counting.  The order of the vertices denoted in the facenumbers must \
-    be either all clockwise or anticlockwise, which if not obeyed will result \
-    in erroneous output without warning.
+    be either all clockwise or all anticlockwise, which if not obeyed
+    will \ result in erroneous output without warning.
     :type facenumbers: float
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
@@ -822,7 +823,7 @@ class ARB(BodyMixin):
         return self.transform.leftMultiplyVector(Three([0, 0, 0]))
 
     def rotation(self):
-        return np.identity(3)
+        return self.transform.leftMultiplyRotation(np.identity(3))
 
     def _faceNumbersToZeroCountingIndices(self):
         # Convert the facenumbers which are one-indexed to
@@ -836,7 +837,6 @@ class ARB(BodyMixin):
             # appear at the end of the list."
             if fn == 0.0:
                 continue
-
             fn = str(int(fn)) # Convert 1234.0 to string of integer 1234
 
             # "If a face has three vertices, the omitted position may
@@ -856,79 +856,68 @@ class ARB(BodyMixin):
 
         return zeroCountingIndicesOut
 
-    def _verticesAreClockwise(self):
-        polygons = self._toPolygons()
+    def _extent(self):
+        vertices, _, _ = self._toVerticesAndPolygons(reverse=False)
+        vertices = np.vstack(vertices)
+        x = vertices[...,0]
+        y = vertices[...,1]
+        z = vertices[...,2]
+        return _Extent([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
-    def _toPolygons(self):
-        polygons = []
-        from IPython import embed; embed()
+    def geant4Solid(self, greg, extent=None):
+        verticesAndPolygons = self._getVerticesAndPolygons()
+        return self._toTesselatedSolid(verticesAndPolygons,
+                                       greg,
+                                       addRegistry=True)
 
+    def _toTesselatedSolid(self, verticesAndPolygons, greg, addRegistry):
+        return g4.solid.TessellatedSolid(self.name,
+                                         verticesAndPolygons,
+                                         greg,
+                                         addRegistry=addRegistry)
+
+    def _getVerticesAndPolygons(self):
+        extent = self._extent()
+        verticesAndPolygons = self._toVerticesAndPolygons(reverse=False)
+        # XXX: This is a fairly hacky but hopefully fairly robust way
+        # to deal with arbitrary clockwise/anticlockwise vertex
+        # ordering for the ARB input.
+        g4reg = g4.Registry()
+        tesselatedSolid = self._toTesselatedSolid(verticesAndPolygons,
+                                                  g4reg,
+                                                  addRegistry=False)
+        envelopingBox = g4.solid.Box("test_box",
+                                     10*(extent.size.x),
+                                     10*(extent.size.y),
+                                     10*(extent.size.z),
+                                     g4reg,
+                                     addRegistry=False)
+        test_union = g4.solid.Union("test_union",
+                                    tesselatedSolid,
+                                    envelopingBox,
+                                    [[0, 0, 0], [0, 0, 0]],
+                                    g4reg,
+                                    addRegistry=False)
+        # If a null mesh results from a union, then the input mesh of
+        # the ARB must have been malformed, as this is not otherwise possible.
+        # Try reversing the vertex order, and return that either way.
+        if not test_union.pycsgmesh().toPolygons():
+            verticesAndPolygons = self._toVerticesAndPolygons(reverse=True)
+        return verticesAndPolygons
+
+    def _toVerticesAndPolygons(self, reverse):
         # Apply any expansion to the ARB's vertices.
         exp = self.transform.netExpansion()
         vertices = [exp * v for v in self.vertices]
-        for fnumber in self.facenumbers:
-            # This means that we are defining less than 6 faces
-            if fnumber == 0:
-                continue
 
-            # store the digits of the fnumbers as indices which are
-            # zero counting (c.f. input in which they count from 1)
-            zc_vertex_indices = []
+        polygons = []
+        for faceIndices in self._faceNumbersToZeroCountingIndices():
+            faceVertices = [_geom.Vertex(vertices[i]) for i in faceIndices]
+            if reverse:
+                faceVertices = faceVertices[::-1]
+            polygons.append(_geom.Polygon(faceVertices))
 
-            for vertex_index in str(int(fnumber)):
-                zero_counting_index = int(vertex_index) - 1
-                 # duplicate digits in the fnumber should be ignored
-                if zero_counting_index in zc_vertex_indices:
-                    continue
-                # digit=0 in the fnumber should be ignored, no extra vertex
-                if zero_counting_index == -1:
-                    continue
-                zc_vertex_indices.append(zero_counting_index)
-
-
-            face_vertices = [_geom.Vertex(vertices[i])
-                             for i in zc_vertex_indices]
-            polygon = _geom.Polygon(face_vertices)
-            polygons.append(polygon)
-
-        pass
-
-    def geant4Solid(self, greg, extent=None):
-        mesh = _CSG.fromPolygons(polygons)
-        vertices_and_polygons = mesh.toVerticesAndPolygons()
-        tesselated_solid = g4.solid.TessellatedSolid(self.name,
-                                                     vertices_and_polygons,
-                                                     greg,
-                                                     addRegistry=False)
-        # XXX: This is my dirty way of deciding whether the
-        # facenumbers are clockwise or anticlockwise, and matching
-        # with TesselatedSolid ctor which requires clockwise.  Perhaps
-        # this can be done better, but this does work.
-
-        # make massive box with totally envelops the tesselated solid
-        big_box = g4.solid.Box("test_box",
-                               10*(xmax - xmin),
-                               10*(ymax - ymin),
-                               10*(zmax - zmin),
-                               greg,
-                               addRegistry=False)
-        test_union = g4.solid.Union("test_union",
-                                    tesselated_solid,
-                                    big_box,
-                                    [[0, 0, 0], [0, 0, 0]],
-                                    g4.Registry(),
-                                    addRegistry=False)
-        try:
-            # try to mesh the union of the enveloping box and the
-            # tesselated solid.  if we get a null mesh error we have
-            # the faces the wrong way around.
-            test_union.pycsgmesh()
-        except pyg4ometry.exceptions.NullMeshError:
-            # inverse to get it right
-            vertices_and_polygons = mesh.inverse().toVerticesAndPolygons()
-        return g4.solid.TessellatedSolid(self.name,
-                                         vertices_and_polygons,
-                                         greg)
+        return _CSG.fromPolygons(polygons).toVerticesAndPolygons()
 
     def __repr__(self):
         vs = map(list, self.vertices)
@@ -936,6 +925,35 @@ class ARB(BodyMixin):
         vstring = ", ".join(vstrings)
         return "<ARB: {}, {}, faces={}>".format(self.name,
                                                 vstring, self.facenumbers)
+
+    def _withLengthSafety(self, safety, reg):
+        arb = ARB(self.name,
+                  self.vertices,
+                  self.facenumbers,
+                  transform=self.transform,
+                  flukaregistry=reg)
+        vertices, faces , _ = arb._getVerticesAndPolygons()
+        vertices = [np.array(v) for v in vertices]
+        facenumbers = []
+        for face in faces:
+            faceVertices = [_geom.Vertex(vertices[i]) for i in face]
+            polygon = _geom.Polygon(faceVertices)
+            normal = polygon.plane.normal
+            ls = safety * np.array(normal)
+            for i in face:
+                vertices[i] -= ls
+            facenumbers.append([i+1 for i in face])
+
+        # Convert lists of vertex integers for each face to individual floats
+        facenumbersCorrected = []
+        for fn in facenumbers:
+            facenumbersCorrected.append(float("".join(str(f) for f in fn)))
+
+        return ARB(self.name,
+                   vertices,
+                   facenumbersCorrected,
+                   transform=self.transform,
+                   flukaregistry=reg)
 
 
 class XYP(_HalfSpaceMixin):
