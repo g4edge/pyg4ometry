@@ -270,14 +270,16 @@ class Registry:
             self.addVolumeRecursive(volume.logicalVolume)
 
             # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
+            self.transferDefines(volume.position,namePolicy)
             self.addDefine(volume.position,namePolicy)
+            self.transferDefines(volume.rotation,namePolicy)
             self.addDefine(volume.rotation,namePolicy)
             if volume.scale :
+                self.transferDefines(volume.scale, namePolicy)
                 self.addDefine(volume.scale,namePolicy)
             self.addPhysicalVolume(volume,namePolicy)
 
         elif isinstance(volume, _LogicalVolume) :
-
             # loop over all daughters
             for dv in volume.daughterVolumes :
                 self.addVolumeRecursive(dv, namePolicy)
@@ -298,13 +300,21 @@ class Registry:
 
 
     def transferSolidDefines(self, solid, namePolicy):       # TODO make this work for all classes (using update variables method)
+
+        if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
+            self.transferSolidDefines(solid.obj1,namePolicy)
+            self.transferSolidDefines(solid.obj2,namePolicy)
+        elif solid.type == "MultiUnion" :
+            for object in solid.objects :
+                self.transferSolidDefines(object, namePolicy)
+
         for varName in solid.varNames :
 
             # skip unit variables
             if varName.find("unit") != -1:
                 continue
             # skip slicing variables
-            if varName.find("slice") != -1:
+            if varName.find("slice") != -1 and varName.find("pZslices") == -1 :
                 continue
             # skip stack variables
             if varName.find("stack") != -1:
@@ -325,7 +335,7 @@ class Registry:
             if isinstance(var,float) :                        # float  could not be in registry
                 continue
             if isinstance(var,str) :                          # could be an expression
-                pass
+                continue
             if isinstance(var,list) :                         # list of variables
                 var = flatten(var)
             else :
@@ -341,6 +351,18 @@ class Registry:
 
         # If the variable is a position, rotation or scale
         if isinstance(var,_Defines.VectorBase) :
+            for v in var.x.variables() :
+                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy)
+
+            for v in var.y.variables() :
+                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy)
+
+            for v in var.z.variables() :
+                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy)
+
             if self._registryOld.defineDict.has_key(var.name):
                 var.name = self.addDefine(var,"reuse")
             var.setRegistry(self)
