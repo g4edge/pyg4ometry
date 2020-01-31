@@ -337,17 +337,13 @@ class Region(object):
                                g4.MaterialPredefined("G4_Galactic"),
                                "wl", greg)
 
-        region_lv = g4.LogicalVolume(self.geant4Solid(greg),
+        regionLV = g4.LogicalVolume(self.geant4Solid(greg),
                                      g4.MaterialPredefined("G4_Galactic"),
                                      "{}_lv".format(self.name),
                                      greg)
-        g4.PhysicalVolume(list(reverse(self.tbxyz())),
-                          list(self.centre()),
-                          region_lv,
-                          "{}_pv".format(self.name),
-                          wlv, greg)
 
-        lower, upper = wlv.extent()
+        lower, upper = regionLV.mesh.getBoundingBox(self.rotation(),
+                                                    self.centre())
         return Extent(lower, upper)
 
 
