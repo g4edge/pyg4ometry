@@ -286,8 +286,8 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            # if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
-            #     continue
+            if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
+                continue
 
             # Check if a path already exists.  Not sure how often this
             # arises but should at least occasionally save some time.
@@ -313,20 +313,16 @@ class Region(object):
             try:
                 zone_solid = zone.geant4Solid(reg=greg)
             except FLUKAError as e:
-                raise FLUKAError(" Error in region {}: {}".format(self.name,
-                                                                  e.message))
+                raise FLUKAError("Error in region {}: {}".format(self.name,
+                                                                 e.message))
 
-            lv = g4.LogicalVolume(zone_solid,
-                                  material,
-                                  _random_name(),
-                                  greg)
-            rot = list(reverse(list(zone.tbxyz())))
-            pv = g4.PhysicalVolume(rot,
-                                   list(zone.centre()),
-                                   lv,
-                                   _random_name(),
-                                   wlv, greg)
-            lower, upper = wlv.extent()
+            zoneLV = g4.LogicalVolume(zone_solid,
+                                      material,
+                                      _random_name(),
+                                      greg)
+            lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
+                                                      zone.centre())
+
             extents.append(Extent(lower, upper))
         return extents
 
