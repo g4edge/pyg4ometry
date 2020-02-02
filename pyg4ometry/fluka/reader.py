@@ -14,7 +14,7 @@ from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from pyg4ometry.exceptions import FLUKAError
+from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
 
 from .vector import Three
 from .card import freeFormatStringSplit, Card
@@ -158,7 +158,7 @@ class Reader(object):
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
     def _parseRegions(self) :
-        regions_block = self._lines[self.regionsbegin:self.regionsend+1]
+        regions_block = self._lines[self.regionsbegin:self.regionsend]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
@@ -166,6 +166,7 @@ class Reader(object):
         # tokenize
         lexed_input = RegionLexer(istream)
         lexed_input.removeErrorListeners()
+        lexed_input.addErrorListener(SensitiveErrorListener())
 
         # Create a buffer of tokens from lexer
         tokens = antlr4.CommonTokenStream(lexed_input)
@@ -173,6 +174,7 @@ class Reader(object):
         # Create a parser that reads from stream of tokens
         parser = RegionParser(tokens)
         parser.removeErrorListeners()
+        parser.addErrorListener(SensitiveErrorListener())
 
         tree = parser.regions() # build the tree
 
@@ -566,6 +568,21 @@ class RegionVisitor(RegionParserVisitor):
             else:
                 z.addSubtraction(body)
         return (operator, z)
+
+
+class SensitiveErrorListener(antlr4.error.ErrorListener.ErrorListener):
+    """ANTLR4 by default is very passive regarding parsing errors, it will
+    just carry on parsing and potentially build a nonsense-tree. This
+    is not ideal as pyfluka has a very convoluted syntax; we want to
+    be very strict about what our parser can and can't do.  For that
+    reason this is a very sensitive error listener, throwing
+    exceptions readily.
+
+    """
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        msg = ("At ({}, {}), Error: {}.  Warning:  The provided line and"
+               " column numbers may be deceptive.").format(line, column, msg)
+        raise antlr4.error.Errors.ParseCancellationException(msg)
 
 def main(filein):
     r = Reader(filein)
