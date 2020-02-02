@@ -263,7 +263,7 @@ class RecursiveRotoTranslation(MutableSequence):
         matrices = [mat.to4DMatrix() for mat in self]
         return _rightMultiplyMatrices(matrices)
 
-    def flukaFreeString(self, order="zyxt"):
+    def flukaFreeString(self, order="xyzt"):
         out = []
         s = self
         seen = []
@@ -327,17 +327,17 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
 
     if tbxyz.z:
         result.append(RotoTranslation(name, axis="z",
-                                      azimuth=tbxyz[2]*180/np.pi,
+                                      azimuth=-tbxyz[2]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     if tbxyz.y:
         result.append(RotoTranslation(name, axis="y",
-                                      azimuth=tbxyz[1]*180/np.pi,
+                                      azimuth=-tbxyz[1]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     if tbxyz.x:
         result.append(RotoTranslation(name, axis="x",
-                                      azimuth=tbxyz[0]*180/np.pi,
+                                      azimuth=-tbxyz[0]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     return result

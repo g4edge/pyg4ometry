@@ -5,9 +5,8 @@ import numpy as _np
 import copy as _copy
 
 def geant4Logical2Fluka(logicalVolume) :
-    rotation = _np.array([0,0,0])
-    position = _np.array([0,0,0])
-    scale    = _np.array([1,1,1])
+    mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
+    tra  = _np.array([0,0,0])
 
     flukaRegistry = _fluka.FlukaRegistry()
 
@@ -20,18 +19,24 @@ def geant4Logical2Fluka(logicalVolume) :
     #              (extent[1][1] - extent[0][1])/2,
     #              (extent[1][2] - extent[0][2])/2]
     # create black body body
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    position = tra
+
     blackBody = _fluka.RPP("BLKBODY",
                            2*extent[0][0]/10,2*extent[1][0]/10,
                            2*extent[0][1]/10,2*extent[1][1]/10,
                            2*extent[0][2]/10,2*extent[1][2]/10,
-                           transform=_rotoTranslationFromTra2("BBROTDEF",[rotation,position], flukaregistry=flukaRegistry),
+                           transform=_rotoTranslationFromTra2("BBROTDEF",[rotation,position],
+                                                              flukaregistry=flukaRegistry),
                            flukaregistry=flukaRegistry)
 
     fzone = _fluka.Zone()
     fzone.addIntersection(blackBody)
 
     # create top logical volume
-    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,logicalVolume.solid,rotation,position,scale,flukaRegistry)
+    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,logicalVolume.solid,mtra,tra,
+                                                                     flukaRegistry)
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaNameCount += 1
 
@@ -40,10 +45,14 @@ def geant4Logical2Fluka(logicalVolume) :
 
     for dv in logicalVolume.daughterVolumes :
 
-        newposition = position + _np.array(dv.position.eval())
-        newrotation = _transformation.matrix2tbxyz(_np.linalg.inv(_transformation.tbxyz2matrix(_np.array(dv.rotation.eval()))).dot(_transformation.tbxyz2matrix(rotation)))
+        pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
+        pvtra =  _np.array(dv.position.eval())
 
-        flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,newrotation,newposition,scale,flukaRegistry,flukaNameCount)
+        new_mtra = mtra * pvmrot
+        new_tra  = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+        flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,flukaRegistry,
+                                                                              flukaNameCount)
 
         # subtract daughters from black body
         for motherZones in flukaMotherRegion.zones :
@@ -61,26 +70,33 @@ def geant4Logical2Fluka(logicalVolume) :
     return flukaRegistry
 
 def geant4PhysicalVolume2Fluka(physicalVolume,
-                               rotation = [0,0,0],position = [0,0,0], scale = [1,1,1],
+                               mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                               tra=_np.array([0, 0, 0]),
                                flukaRegistry=None,flukaNameCount=0) :
 
     # logical volume (outer and complete)
     geant4LvOuterSolid = physicalVolume.logicalVolume.solid
     # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
-    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,geant4LvOuterSolid,
-                                                                     rotation,position,scale,
+    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,
+                                                                     geant4LvOuterSolid,
+                                                                     mtra,tra,
                                                                      flukaRegistry)
-    flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
 
+    flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
 
     # loop over daughers and remove from mother region
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
         # placement information for daughter
-        newposition = position + _transformation.tbxyz2matrix(rotation).dot(_np.array(dv.position.eval()))
-        newrotation = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(rotation)).dot(_transformation.tbxyz2matrix(_np.array(dv.rotation.eval()))))
+        pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
+        pvtra  = _np.array(dv.position.eval())
 
-        flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,rotation=newrotation,position=newposition,scale=scale,flukaRegistry=flukaRegistry, flukaNameCount=flukaNameCount)
+        new_mtra = mtra * pvmrot
+        new_tra  = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+        flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,
+                                                                              flukaRegistry=flukaRegistry,
+                                                                              flukaNameCount=flukaNameCount)
 
         for motherZones in flukaMotherRegion.zones:
             for daughterZones in flukaDaughterOuterRegion.zones:
@@ -90,8 +106,8 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
 
     return flukaMotherOuterRegion, flukaNameCount
 
-def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position = [0,0,0], scale = [1,1,1], flukaRegistry = None, addRegistry = True) :
-
+def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                            tra=_np.array([0, 0, 0]), flukaRegistry = None, addRegistry = True) :
 
     import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
@@ -100,8 +116,11 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
     fregion = None
     fbodies = []
 
+    rotation = _transformation.matrix2tbxyz(mtra)
+    position = tra
 
-    transform=_rotoTranslationFromTra2("T"+name,[rotation,position],flukaregistry=flukaRegistry)
+    transform= _rotoTranslationFromTra2("T"+name,[rotation,tra],flukaregistry=flukaRegistry)
+
 
     # print 'geant4Solid2FlukaRegion',flukaNameCount,name,solid.type, rotation,position,transform
 
@@ -551,8 +570,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         #print ascale
         #print "---------"
 
-
-
         # create region
         fregion = _fluka.Region("R" + name)
 
@@ -570,12 +587,12 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
 
             fzone = _fluka.Zone()
 
-            pla1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, -1], [0, 0, zpos[islice1]], transform=transform,
-                              flukaregistry=flukaRegistry)
+            pla1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, -1], [0, 0, zpos[islice1]],
+                              transform=transform, flukaregistry=flukaRegistry)
 
             ibody += 1
-            pla2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, 1], [0, 0, zpos[islice2]], transform=transform,
-                              flukaregistry=flukaRegistry)
+            pla2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, 1], [0, 0, zpos[islice2]],
+                              transform=transform, flukaregistry=flukaRegistry)
             ibody += 1
 
             fzone.addIntersection(pla1)
@@ -599,7 +616,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
                 normal = _np.cross(d21,d12)
                 normal = normal/_np.linalg.norm(normal)
 
-                pla = _fluka.PLA("B"+name+"_"+format(ibody,'02'),normal,p11,transform=transform,flukaregistry=flukaRegistry)
+                pla = _fluka.PLA("B"+name+"_"+format(ibody,'02'),normal,p11,
+                                 transform=transform,flukaregistry=flukaRegistry)
                 ibody += 1
 
                 fzone.addIntersection(pla)
@@ -612,17 +630,20 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         # build both solids to regions
         # take zones from 2 and add as zones to 1
 
-        rot = solid.tra2[0]
-        pos = solid.tra2[1]
+        bsrot = solid.tra2[0].eval()
+        bspos = solid.tra2[1].eval()
+
+        bsmtra = _transformation.tbxyz2matrix(bsrot)
+        bstra  = bspos
 
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        position2 = position + _np.linalg.inv(_transformation.tbxyz2matrix(rotation)).dot(_np.array(pos.eval()))
-        rotation2 = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(rotation)).dot(_np.linalg.inv(_transformation.tbxyz2matrix(_np.array(rot.eval())))))
+        new_mtra = mtra * bsmtra
+        new_tra  = (_np.array(mtra.dot(bstra)) + tra)[0]
 
-        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,rotation , position ,[1,1,1],flukaRegistry,False)
-        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,rotation2, position2,[1,1,1],flukaRegistry,False)
+        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,mtra , tra ,flukaRegistry,False)
+        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False)
 
         if 0 :
             print "-------------------------"
@@ -645,17 +666,20 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         # build both solids to regions
         # take zones from 2 and distribute over zones of 1
 
-        rot = solid.tra2[0]
-        pos = solid.tra2[1]
+        bsrot = solid.tra2[0].eval()
+        bspos = solid.tra2[1].eval()
+
+        bsmtra = _transformation.tbxyz2matrix(bsrot)
+        bstra  = bspos
 
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        position2 = position + _np.linalg.inv(_transformation.tbxyz2matrix(rotation)).dot(_np.array(pos.eval()))
-        rotation2 = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(rotation)).dot(_np.linalg.inv(_transformation.tbxyz2matrix(_np.array(rot.eval())))))
+        new_mtra = mtra * bsmtra
+        new_tra  = (_np.array(mtra.dot(bstra)) + tra)[0]
 
-        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,rotation , position ,[1,1,1],flukaRegistry,False)
-        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,rotation2, position2,[1,1,1],flukaRegistry,False)
+        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,mtra , tra ,flukaRegistry,False)
+        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False)
 
         if 0 :
             print "-------------------------"
@@ -680,17 +704,20 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, rotation = [0,0,0], position =
         # build both solids to regions
         # take zones from 2 and distribute over zones of 1
 
-        rot = solid.tra2[0]
-        pos = solid.tra2[1]
+        bsrot = solid.tra2[0].eval()
+        bspos = solid.tra2[1].eval()
+
+        bsmtra = _transformation.tbxyz2matrix(bsrot)
+        bstra  = bspos
 
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        position2 = position + _np.linalg.inv(_transformation.tbxyz2matrix(rotation)).dot(_np.array(pos.eval()))
-        rotation2 = _transformation.matrix2tbxyz(_transformation.tbxyz2matrix(_np.array(rotation)).dot(_np.linalg.inv(_transformation.tbxyz2matrix(_np.array(rot.eval())))))
+        new_mtra = mtra * bsmtra
+        new_tra  = (_np.array(mtra.dot(bstra)) + tra)[0]
 
-        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,rotation , position ,[1,1,1],flukaRegistry,False)
-        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,rotation2, position2,[1,1,1],flukaRegistry,False)
+        r1,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid1,mtra , tra ,flukaRegistry,False)
+        r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False)
 
         if 0 :
             print "-------------------------"
