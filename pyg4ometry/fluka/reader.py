@@ -562,6 +562,11 @@ class RegionVisitor(RegionParserVisitor):
         solids = self.visit(ctx.expr())
         z = Zone(name="{}_subzone{}".format(self.region_name,
                                             self.subzone_counter))
+
+        if ctx.BodyName():
+            body = self.flukaregistry.bodyDict[ctx.BodyName().getText()]
+            z.addIntersection(body)
+
         for op, body in solids:
             if op == "+":
                 z.addIntersection(body)
@@ -569,6 +574,34 @@ class RegionVisitor(RegionParserVisitor):
                 z.addSubtraction(body)
         return (operator, z)
 
+    def visitZoneExpr(self, ctx):
+        opsAndBooleans= self.visit(ctx.expr())
+
+        if not ctx.BodyName():
+            return opsAndBooleans
+
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        boolean = [("+", body)] # implicit intersection
+        boolean.extend(opsAndBooleans)
+        return boolean
+
+    def visitZoneSubZone(self, ctx):
+        opsAndBooleans= self.visit(ctx.subZone())
+
+        if not ctx.BodyName():
+            return opsAndBooleans
+
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        boolean = [("+", body)] # implict intersection
+        boolean.extend(opsAndBooleans)
+        return boolean
+
+    def visitZoneBody(self, ctx):
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        return [("+", body)] # implicit intersection
 
 class SensitiveErrorListener(antlr4.error.ErrorListener.ErrorListener):
     """ANTLR4 by default is very passive regarding parsing errors, it will
