@@ -1,5 +1,6 @@
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.exceptions as _exceptions
+import Material as _mat
 import solid.SolidBase
 
 def solidName(var) : 
@@ -20,6 +21,7 @@ class Registry:
     """
     
     def __init__(self):
+        self.materialList = []
         self.defineDict                   = _OrderedDict()
         self.materialDict                 = _OrderedDict()
         self.solidDict                    = _OrderedDict()
@@ -62,7 +64,7 @@ class Registry:
         if solid.name in self.solidDict:
             self.editedSolids.append(solid.name)
 
-    def addMaterial(self, material, namePolicy = "none"):
+    def addMaterial(self, material, namePolicy = "reuse"):
         """
         :param material: Material object for starage 
         :type material: Material
@@ -234,6 +236,37 @@ class Registry:
         self.worldVolume = self.logicalVolumeDict[self.worldName]
         self.orderLogicalVolumes(worldName)
         self.logicalVolumeList.append(worldName)
+
+    def _orderMaterialList(self, materials, materials_ordered=[]):
+        for mat in materials:
+            if isinstance(mat, _mat.Material) and mat not in materials_ordered:
+                component_objects = [comp[0] for comp in mat.components]
+                materials_ordered = self._orderMaterialList(component_objects, materials_ordered)
+                materials_ordered.append(mat)
+        return materials_ordered
+
+    def orderMaterials(self):
+        '''Need to have a ordered list of all material entities for writing to
+        GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
+
+        for name, obj in self.materialDict.iteritems():  # Forces registered materials to
+            if isinstance(obj, _mat.Material):           # recursively register their components too
+                obj.set_registry(self)
+
+        # Order is isotopes -> elements -> materials
+        isotopes = []  # Isotopes and elements don't need internal ordering as no
+        elements = []  # istotope of isotopes or element of elements
+        materials = []  # Material do need internal ordering as material of materials is possible
+        for name, obj in self.materialDict.iteritems():
+            if isinstance(obj, _mat.Isotope):
+                isotopes.append(obj)
+            elif isinstance(obj, _mat.Element):
+                elements.append(obj)
+            else:
+                materials.append(obj)
+
+        materials_ordered = self._orderMaterialList(materials)
+        self.materialList = isotopes + elements + materials_ordered
 
     def orderLogicalVolumes(self, lvName, first = True):
         '''Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
