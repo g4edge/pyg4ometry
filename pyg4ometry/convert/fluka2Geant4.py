@@ -26,9 +26,15 @@ def fluka2Geant4(flukareg,
                  worldMaterial="G4_Galactic",
                  worldDimensions=None,
                  omitBlackholeRegions=True,
-                 materialMap=None):
+                 materialMap=None,
+                 omitRegions=None):
 
-    if regions is None:
+
+    if regions and omitRegions:
+        raise ValueError("Only one of regions and omitRegions may be set.")
+    elif omitRegions:
+        regions = set(flukareg.regionDict).difference(omitRegions)
+    elif regions is None:
         regions = list(flukareg.regionDict)
 
     if omitBlackholeRegions:

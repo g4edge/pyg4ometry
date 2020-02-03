@@ -35,8 +35,18 @@ class RegionParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by RegionParser#zone.
-    def visitZone(self, ctx):
+    # Visit a parse tree produced by RegionParser#zoneExpr.
+    def visitZoneExpr(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by RegionParser#zoneSubZone.
+    def visitZoneSubZone(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by RegionParser#zoneBody.
+    def visitZoneBody(self, ctx):
         return self.visitChildren(ctx)
 
 
