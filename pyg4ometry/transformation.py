@@ -103,11 +103,11 @@ def matrix2tbxyz(matrix):
         y = _np.arcsin(-a_31)
         z = _np.arctan2(a_21, a_11)
     elif a_31 == -1:
-        y = _np.pi / 2
+        y = _np.pi / 2.0
         z = 0.0
         x = _np.arctan2(a_12, a_13) + z
     elif a_31 == +1:
-        y = -_np.pi / 2
+        y = -_np.pi / 2.0
         z = 0.0
         x = _np.arctan2(-a_12, -a_13) - z
 
@@ -147,6 +147,41 @@ def tbxyz2matrix(angles):
                      [  0,   0,  1]])
 
     m = mz.dot(my.dot(mx))
+    return m
+
+def tbzyx2matrix(angles):
+    """
+    convert tait bryan angles to a single passive rotation matrix.
+    rotation order = x -> y -> z.
+
+    parameters
+    ----------
+    angles : list of angles:  x, y, z
+
+    returns: rotation matrix
+    """
+    x = angles[0]
+    y = angles[1]
+    z = angles[2]
+    sx = _np.sin(x)
+    cx = _np.cos(x)
+    sy = _np.sin(y)
+    cy = _np.cos(y)
+    sz = _np.sin(z)
+    cz = _np.cos(z)
+
+    # Rotation matrices.
+    mx = _np.array([[1,    0,    0],
+                     [0,   cx,  -sx],
+                     [0,  sx,    cx]])
+    my = _np.array([[ cy,  0,   sy],
+                     [  0,  1,    0],
+                     [-sy,   0,  cy]])
+    mz = _np.array([[ cz, -sz,  0],
+                     [ sz,  cz,  0],
+                     [  0,   0,  1]])
+
+    m = mx.dot(my.dot(mz))
     return m
 
 def matrix_from(v_from, v_to):
