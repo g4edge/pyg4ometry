@@ -420,6 +420,10 @@ def _getExtent(extent, boolean):
     if body_name is None:
         return extent
 
+    if (isinstance(boolean, (Subtraction, Intersection))
+            and isinstance(boolean.body, Zone)):
+        return extent
+
     if extent is None:
         return None
     try:
