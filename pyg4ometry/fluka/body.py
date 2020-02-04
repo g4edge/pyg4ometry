@@ -1526,7 +1526,7 @@ class QUA(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return Three([0,0,0])
+        return self.transform.leftMultiplyVector([0, 0, 0])
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
