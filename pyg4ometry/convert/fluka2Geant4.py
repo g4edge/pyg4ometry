@@ -27,8 +27,10 @@ def fluka2Geant4(flukareg,
                  worldDimensions=None,
                  omitBlackholeRegions=True,
                  materialMap=None,
-                 omitRegions=None):
+                 omitRegions=None,
+                 quadricRegionExtents=None):
 
+    _checkQuadric(flukareg, quadricRegionExtents)
 
     if regions and omitRegions:
         raise ValueError("Only one of regions and omitRegions may be set.")
@@ -341,3 +343,21 @@ def _isTransformedCellRegionIntersectingWithRegion(region,
     cellRegion.centre = types.MethodType(centre, cellRegion)
 
     return areOverlapping(cellRegion, region)
+
+def _checkQuadric(flukareg, quadricRegionExtents):
+    for region_name, region in flukareg.regionDict.iteritems():
+        regionBodies = region.bodies()
+        quadrics = {r for r in regionBodies if isinstance(r, fluka.QUA)}
+
+        if not quadrics:
+            continue
+
+        if quadricRegionExtents is None:
+            msg = "quadricRegionExtents must be set for regions with QUAs."
+            raise ValueError(msg)
+
+        for q in quadrics:
+            if q.name not in quadricRegionExtents:
+                msg = ("Region {} with QUA missing "
+                       "extent in quadricRegionExtents.".format(region_name))
+                raise ValueError(msg)

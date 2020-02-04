@@ -1541,7 +1541,16 @@ class QUA(BodyMixin):
                                 self.Ax,  self.Ay,  self.Az, 0.0)
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
-        sample.SetModelBounds(-1,1,-1,1,-1,1)
+        if extent is None:
+            sample.SetModelBounds(-INFINITY, INFINITY,
+                                  -INFINITY, INFINITY,
+                                  -INFINITY, INFINITY)
+        else:
+            sample.SetModelBounds(extent.lower.x, extent.upper.x,
+                                  extent.lower.y, extent.upper.y,
+                                  extent.lower.z, extent.upper.z)
+
+
         sample.SetImplicitFunction(quadric)
         sample.SetCapping(1)
 
