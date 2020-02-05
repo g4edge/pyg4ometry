@@ -3,6 +3,8 @@ from copy import deepcopy
 import warnings
 import types
 
+import numpy as np
+
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
@@ -13,8 +15,8 @@ from pyg4ometry.fluka.vector import (Extent,
 from pyg4ometry.fluka.region import areOverlapping
 
 
-_logger = logging.getLogger(__name__)
-_logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 WORLD_DIMENSIONS = [10000, 10000, 10000]
 
@@ -63,6 +65,7 @@ def fluka2Geant4(flukareg,
         extentMap = _make_body_minimum_extentMap(flukareg,
                                                  region_extents,
                                                  regions)
+        flukareg = _filterHalfSpaces(flukareg, region_extents)
     elif flukareg.latticeDict:
         # Don't pass a subset of the region name here because for
         # LATTICE we need to consider all regions.  E.g. if we want to
@@ -218,7 +221,7 @@ def _make_body_minimum_extentMap(flukareg, region_extents, regions):
 
     bodies_to_minimum_extents = {}
     for body_name, region_names in bodies_to_regions.iteritems():
-        _logger.debug("Getting minimum extent for body: %s", body_name)
+        logger.debug("Getting minimum extent for body: %s", body_name)
 
         bodyRegionExtents = []
         for region_name in region_names:
@@ -230,7 +233,7 @@ def _make_body_minimum_extentMap(flukareg, region_extents, regions):
             extent = region_extents.values()[0]
         elif len(region_extents) > 1:
             extent = reduce(_getMaximalOfTwoExtents, bodyRegionExtents)
-            _logger.debug("Minimum extent = %s", extent)
+            logger.debug("Minimum extent = %s", extent)
         else:
             raise ValueError("WHAT?")
 
@@ -371,3 +374,32 @@ def _getSelectedRegions(flukareg, regions, omitRegions):
         return set(flukareg.regionDict).difference(omitRegions)
     elif regions is None:
         return list(flukareg.regionDict)
+
+def _filterHalfSpaces(flukareg, extents):
+    fout = fluka.FlukaRegistry()
+    logger.debug("Filtering half spaces")
+
+    for region_name, region in flukareg.regionDict.iteritems():
+        regionOut = deepcopy(region)
+        regionExtent = extents[region_name]
+        for body in regionOut.bodies():
+            if isinstance(body, (fluka.XYP, fluka.XZP,
+                                 fluka.YZP, fluka.PLA)):
+                normal, pointOnPlane = body.toPlane()
+                extentCornerDistance = regionExtent.cornerDistance()
+                d = _distanceFromPointToPlane(normal, pointOnPlane,
+                                              regionExtent.centre)
+                if d > 1.1 * extentCornerDistance:
+                    logger.debug(
+                        ("Filtering %s from region %s."
+                         "  extent = %s, extentMax = %s, d=%s"),
+                        body, region_name, regionExtent,
+                        extentCornerDistance, d)
+                    regionOut.removeBody(body.name)
+        fout.addRegion(regionOut)
+        regionOut.allBodiesToRegistry(fout)
+    return fout
+
+def _distanceFromPointToPlane(normal, pointOnPlane, point):
+    normal = fluka.Three(normal).unit()
+    return abs(np.dot(normal, point - pointOnPlane))
