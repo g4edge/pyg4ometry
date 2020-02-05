@@ -83,7 +83,7 @@ class Sphere(_SolidBase):
                                                       self.pRmax, self.pSPhi,
                                                       self.pDPhi, self.pSTheta,
                                                       self.pDTheta)
-
+    """
     def pycsgmeshOld(self):
         # 2.78316307068 1612
         _log.info("sphere.antlr>")
@@ -138,7 +138,7 @@ class Sphere(_SolidBase):
             mesh = mesh.intersect(mesh_wedge)
 
         return mesh
-
+    """
 
     def pycsgmesh(self):
         """
@@ -147,7 +147,6 @@ class Sphere(_SolidBase):
         0 < theta < pi
         """
         _log.info("sphere.antlr>")
-
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
@@ -163,8 +162,10 @@ class Sphere(_SolidBase):
 
         polygons = []
 
-        dPhi   = (pDPhi-pSPhi)/self.nslice
-        dTheta = (pDTheta-pSTheta)/self.nstack
+        # changed from d - s/ st
+
+        dPhi   = (pDPhi)/self.nslice
+        dTheta = (pDTheta)/self.nstack
 
         for i in range(0,self.nslice,1) :
 
@@ -273,11 +274,14 @@ class Sphere(_SolidBase):
                         vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
                         vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
                         polygons.append(_Polygon(vCurv))
+    
+
+        # edge meshings
 
         # checking pole to pole angle coverage
-        if (pDTheta - pSTheta) != 2 * _np.pi:
+        if pDTheta != _np.pi:
 
-            # if north pole dont mesh as will be degen
+            # if no north pole dont mesh as will be degen
             if (pSTheta != 0 ) and (pSTheta != 2*_np.pi):
 
                 for i0 in range(0, self.nslice, 1):
@@ -311,28 +315,28 @@ class Sphere(_SolidBase):
 
                 #############################################################################
 
-            # if south pole dont mesh as will be degen
-            if (pDTheta != 0) and (pDTheta != 2 * _np.pi):
+            # if no south pole dont mesh as will be degen
+            if (pSTheta + pDTheta != _np.pi):
 
                 for i0 in range(0, self.nslice, 1):
                     i1 = i0
                     i2 = i0 + 1
 
-                    x4_outer = pRmax * _np.sin(pDTheta) * _np.cos(dPhi * i1 + pSPhi)
-                    y4_outer = pRmax * _np.sin(pDTheta) * _np.sin(dPhi * i1 + pSPhi)
-                    z4_outer = pRmax * _np.cos(pDTheta)
+                    x4_outer = pRmax * _np.sin(pSTheta + pDTheta) * _np.cos(dPhi * i1 + pSPhi)
+                    y4_outer = pRmax * _np.sin(pSTheta + pDTheta) * _np.sin(dPhi * i1 + pSPhi)
+                    z4_outer = pRmax * _np.cos(pSTheta + pDTheta)
 
-                    x3_outer = pRmax * _np.sin(pDTheta) * _np.cos(dPhi * i2 + pSPhi)
-                    y3_outer = pRmax * _np.sin(pDTheta) * _np.sin(dPhi * i2 + pSPhi)
-                    z3_outer = pRmax * _np.cos(pDTheta)
+                    x3_outer = pRmax * _np.sin(pSTheta + pDTheta) * _np.cos(dPhi * i2 + pSPhi)
+                    y3_outer = pRmax * _np.sin(pSTheta + pDTheta) * _np.sin(dPhi * i2 + pSPhi)
+                    z3_outer = pRmax * _np.cos(pSTheta + pDTheta)
 
-                    x3_inner = pRmin * _np.sin(pDTheta) * _np.cos(dPhi * i2 + pSPhi)
-                    y3_inner = pRmin * _np.sin(pDTheta) * _np.sin(dPhi * i2 + pSPhi)
-                    z3_inner = pRmin * _np.cos(pDTheta)
+                    x3_inner = pRmin * _np.sin(pSTheta + pDTheta) * _np.cos(dPhi * i2 + pSPhi)
+                    y3_inner = pRmin * _np.sin(pSTheta + pDTheta) * _np.sin(dPhi * i2 + pSPhi)
+                    z3_inner = pRmin * _np.cos(pSTheta + pDTheta)
 
-                    x4_inner = pRmin * _np.sin(pDTheta) * _np.cos(dPhi * i1 + pSPhi)
-                    y4_inner = pRmin * _np.sin(pDTheta) * _np.sin(dPhi * i1 + pSPhi)
-                    z4_inner = pRmin * _np.cos(pDTheta)
+                    x4_inner = pRmin * _np.sin(pSTheta + pDTheta) * _np.cos(dPhi * i1 + pSPhi)
+                    y4_inner = pRmin * _np.sin(pSTheta + pDTheta) * _np.sin(dPhi * i1 + pSPhi)
+                    z4_inner = pRmin * _np.cos(pSTheta + pDTheta)
 
                     vertices_wedges_D = [] # ending face
 
@@ -343,8 +347,8 @@ class Sphere(_SolidBase):
 
                     polygons.append(_Polygon(vertices_wedges_D))
 
-        # checking equator angle coverage
-        if (pDPhi - pSPhi) != _np.pi:
+        # checking equator angle coverage to make rim edges
+        if pDPhi != 2*_np.pi:
 
             for i0 in range(self.nstack):
                 i1 = i0
@@ -377,20 +381,20 @@ class Sphere(_SolidBase):
 
                 #############################################################################
 
-                x4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pDPhi)
-                y4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pDPhi)
+                x4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pSPhi + pDPhi)
+                y4_outer = pRmax * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pSPhi + pDPhi)
                 z4_outer = pRmax * _np.cos(dTheta * i1 + pSTheta)
 
-                x3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pDPhi)
-                y3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pDPhi)
+                x3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pSPhi + pDPhi)
+                y3_outer = pRmax * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pSPhi + pDPhi)
                 z3_outer = pRmax * _np.cos(dTheta * i2 + pSTheta)
 
-                x3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pDPhi)
-                y3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pDPhi)
+                x3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.cos(pSPhi + pDPhi)
+                y3_inner = pRmin * _np.sin(dTheta * i2 + pSTheta) * _np.sin(pSPhi + pDPhi)
                 z3_inner = pRmin * _np.cos(dTheta * i2 + pSTheta)
 
-                x4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pDPhi)
-                y4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pDPhi)
+                x4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.cos(pSPhi + pDPhi)
+                y4_inner = pRmin * _np.sin(dTheta * i1 + pSTheta) * _np.sin(pSPhi + pDPhi)
                 z4_inner = pRmin * _np.cos(dTheta * i1 + pSTheta)
 
                 vertices_wedges_D = [] # ending face
