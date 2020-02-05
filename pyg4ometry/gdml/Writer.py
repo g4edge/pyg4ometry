@@ -41,6 +41,12 @@ class Writer(object):
     def addDetector(self, registry) :
         self.registry = registry
 
+        if not self.registry.userInfo:
+            # Geant4 version earlier than 10.1 do not support userinfo
+            # If no user info is specified, remove the userinfo tag from the GDML document
+            # This is done here, because the regsitry is not available at construction time
+            self.top.removeChild([n for n in self.top.childNodes if n.tagName == "userinfo"][0])
+
         # Set the world again to force a refresh on the
         # ordering of logical volumes
         self.registry.setWorld(self.registry.worldName)
