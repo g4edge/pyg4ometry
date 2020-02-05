@@ -32,16 +32,22 @@ def fluka2Geant4(flukareg,
                  omitRegions=None,
                  quadricRegionExtents=None):
 
+    # Bomb if we have quadrics but no quadricRegionExtents
     _checkQuadric(flukareg, quadricRegionExtents)
 
+    # Filter on selected regions
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
 
-    if omitBlackholeRegions:
-        flukareg = _without_blackhole_regions(flukareg, regions)
+    # Filter BLCKHOLE regions
+    flukareg = _filterBlackHoleRegions(omitBlackholeRegions, flukareg, regions)
 
-    if withLengthSafety:
-        flukareg = _make_length_safety_registry(flukareg, regions)
+    # Make a new registry with automatic length safety applied.
+    flukareg = _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions)
 
+    # set world dimensions
+    worldDimensions = _getWorldDimensions(worldDimensions)
+
+    # Split disjoint unions into their constituents.
     if splitDisjointUnions:
         flukareg, newNamesToOldNames = _make_disjoint_unions_registry(flukareg,
                                                                       regions)
@@ -52,13 +58,7 @@ def fluka2Geant4(flukareg,
                 newRegions.append(newName)
         regions = newRegions
 
-    worldDimensions = _getWorldDimensions(worldDimensions)
-    materialMap = _getMaterialMap(materialMap)
-
-    greg = g4.Registry()
-
-    wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
-
+    # Do infinite solid minimisation
     extentMap = None
     if minimiseSolids:
         region_extents = _get_region_extents(flukareg, regions)
@@ -72,6 +72,11 @@ def fluka2Geant4(flukareg,
         # copy the cell but not the prototype.
         region_extents = _get_region_extents(flukareg, flukareg.regionDict)
 
+
+    # With the modified fluka registry, finally, we convert to Geant4:
+    greg = g4.Registry()
+    wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
+    materialMap = _getMaterialMap(materialMap)
     regionsWithLVs = {}
     # Do non-lattice regions first as we convert the lattices in the
     # loop after this, as they must be treated differently.
@@ -147,7 +152,10 @@ def _makeWorldVolume(dimensions, material, g4registry):
     wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
-def _make_length_safety_registry(flukareg, regions):
+def _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions):
+    if not withLengthSafety:
+        return flukareg
+
     bigger = fluka.FlukaRegistry()
     smaller = fluka.FlukaRegistry()
 
@@ -247,7 +255,9 @@ def _getMaximalOfTwoExtents(extent1, extent2):
     upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
 
-def _without_blackhole_regions(flukareg, regions):
+def _filterBlackHoleRegions(omitBlackholeRegions, flukareg, regions):
+    if not omitBlackholeRegions:
+        return flukareg
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
         if region.material == "BLCKHOLE":
