@@ -4,6 +4,7 @@ from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
 from   pyg4ometry.visualisation  import Mesh            as _Mesh
+from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 import solid                     as                 _solid
 import Material                  as                 _mat
@@ -21,7 +22,7 @@ def _solid2tessellated(solid):
     # Use VTK to reduce all polygons to triangles
     # as CSG operations can produce arbitrary polygons
     # which cannot be used in Tessellated Solid
-    meshVTKPD = _vi.pycsgMeshToVtkPolyData(pycsg_mesh)
+    meshVTKPD = _Convert.pycsgMeshToVtkPolyData(pycsg_mesh)
     vtkFLT = _vtk.vtkTriangleFilter()
     vtkFLT.AddInputData(meshVTKPD)
     vtkFLT.Update()
