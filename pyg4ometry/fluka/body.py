@@ -995,6 +995,15 @@ class XYP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.z)
 
+    def pycsgmesh(self):
+        self.transform.leftMultiplyVector = lmv
+
+        corner1 = _geom.Vertex(lmv([INFINITY, INFINITY, self.z]))
+        corner2 = _geom.Vertex(lmv([INFINITY, -INFINITY, self.z]))
+        corner3 = _geom.Vertex(lmv([-INFINITY, -INFINITY, self.z]))
+        corner4 = _geom.Vertex(lmv([-INFINITY, INFINITY, self.z]))
+
+        return _CSG.fromPolygons([_Polygon(corner1, corner2, corner3, corner4)])
 
 class XZP(_HalfSpaceMixin):
     """
@@ -1035,6 +1044,16 @@ class XZP(_HalfSpaceMixin):
 
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.y)
+
+    def pycsgmesh(self):
+        self.transform.leftMultiplyVector = lmv
+
+        corner1 = _geom.Vertex(lmv([INFINITY, self.y, INFINITY]))
+        corner2 = _geom.Vertex(lmv([INFINITY, self.y, -INFINITY]))
+        corner3 = _geom.Vertex(lmv([-INFINITY, self.y, -INFINITY]))
+        corner4 = _geom.Vertex(lmv([-INFINITY, self.y, INFINITY]))
+
+        return _CSG.fromPolygons([_Polygon(corner1, corner2, corner3, corner4)])
 
 
 class YZP(_HalfSpaceMixin):
@@ -1077,6 +1096,16 @@ class YZP(_HalfSpaceMixin):
 
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.x)
+
+    def pycsgmesh(self):
+        self.transform.leftMultiplyVector = lmv
+
+        corner1 = _geom.Vertex(lmv([self.x, INFINITY, INFINITY]))
+        corner2 = _geom.Vertex(lmv([self.x, -INFINITY, INFINITY]))
+        corner3 = _geom.Vertex(lmv([self.x, -INFINITY, -INFINITY]))
+        corner4 = _geom.Vertex(lmv([self.x, INFINITY, -INFINITY]))
+
+        return _CSG.fromPolygons([_Polygon(corner1, corner2, corner3, corner4)])
 
 
 class PLA(_HalfSpaceMixin):
