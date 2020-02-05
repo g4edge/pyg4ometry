@@ -46,3 +46,7 @@ class IdenticalNameError(Exception):
 
 class FLUKAError(Exception):
     pass
+
+class FLUKAInputError(Exception):
+    def __init__(self, message):
+        super(Exception, self).__init__(self.message)

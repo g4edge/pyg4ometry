@@ -7,6 +7,7 @@ import pyg4ometry.exceptions
 from pyg4ometry.pycsg.core import CSG as _CSG
 
 import logging as _log
+import numpy as _np
 
 class OverlapType:
     protrusion = 1
@@ -41,35 +42,34 @@ class Mesh(object) :
         # recreate bounding mesh
         self.localboundingmesh = self.getBoundingBoxMesh()
 
-    def addOverlapMesh(self, mesh) : 
+    def addOverlapMesh(self, mesh) :
         self.overlapmeshes.append(mesh)
 
     def getLocalMesh(self) :
-        return self.localmesh 
+        return self.localmesh
 
-    def getBoundingBox(self) :
-        '''Axes aligned bounding box'''
+    def getBoundingBox(self, rotationMatrix=None, translation=None) :
+        '''Axes aligned bounding box.  Can also provide a rotation and
+        a translation (applied in that order) to the vertices.'''
 
-        vAndP = self.localmesh.toVerticesAndPolygons()
-        
-        vMin = [ 1e99, 1e99,1e99]
-        vMax = [-1e99,-1e99,-1e99]
-        for v in vAndP[0] : 
-             if v[0] < vMin[0] : 
-                 vMin[0] = v[0]
-             if v[1] < vMin[1] : 
-                 vMin[1] = v[1]
-             if v[2] < vMin[2] :
-                 vMin[2] = v[2]
+        vertices, _, _ = self.localmesh.toVerticesAndPolygons()
+        vertices = _np.vstack(vertices)
 
-             if v[0] > vMax[0] :
-                 vMax[0] = v[0]
-             if v[1] > vMax[1] :
-                 vMax[1] = v[1]
-             if v[2] > vMax[2] : 
-                 vMax[2] = v[2]
+        if rotationMatrix is not None:
+            vertices = rotationMatrix.dot(vertices.T).T
+        if translation is not None:
+            vertices[...,0] += translation[0]
+            vertices[...,1] += translation[1]
+            vertices[...,2] += translation[2]
 
-        _log.info('visualisation.Mesh.getBoundingBox> %s %s' % (str(vMin), str(vMax)))
+        vMin = [min(vertices[...,0]),
+                min(vertices[...,1]),
+                min(vertices[...,2])]
+        vMax = [max(vertices[...,0]),
+                max(vertices[...,1]),
+                max(vertices[...,2])]
+
+        _log.info('visualisation.Mesh.getBoundingBox> %s %s', vMin, vMax)
 
         return [vMin, vMax]
 

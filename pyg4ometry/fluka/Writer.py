@@ -48,7 +48,9 @@ class Writer :
         # loop over rotdefis
         f.write("FREE\n")
         for k in rotdefi.keys() :
-            f.write(rotdefi[k].flukaFreeString()+'\n')
+            for r in rotdefi[k].flukaFreeString("xyzt") :
+                # print k, r
+                f.write(r+"\n")
         f.write("END\n")
         f.close()
 

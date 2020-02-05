@@ -4,6 +4,7 @@ from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
 from   pyg4ometry.visualisation  import Mesh            as _Mesh
+from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 import solid                     as                 _solid
 import Material                  as                 _mat
@@ -21,7 +22,7 @@ def _solid2tessellated(solid):
     # Use VTK to reduce all polygons to triangles
     # as CSG operations can produce arbitrary polygons
     # which cannot be used in Tessellated Solid
-    meshVTKPD = _vi.pycsgMeshToVtkPolyData(pycsg_mesh)
+    meshVTKPD = _Convert.pycsgMeshToVtkPolyData(pycsg_mesh)
     vtkFLT = _vtk.vtkTriangleFilter()
     vtkFLT.AddInputData(meshVTKPD)
     vtkFLT.Update()
@@ -63,12 +64,13 @@ class LogicalVolume(object):
  
         if isinstance(material, _mat.Material):
             self.material = material
+            self.material.set_registry(registry)
         elif isinstance(material, str):
             # If the material is registered already, use it
             if registry and material in registry.materialDict:
                 self.material = registry.materialDict[material]
             else:  # This will work out if it is a valid NIST and set the type appropriately
-                self.material = _mat.MaterialPredefined(name=material)
+                self.material = _mat.MaterialPredefined(name=material, registry=registry)
         else:
             raise ValueError("Unsupported type for material: {}".format(type(material)))
 
@@ -316,19 +318,45 @@ class LogicalVolume(object):
 
         self.mesh.remesh()
 
+    def makeLogicalPhysicalNameSets(self):
+
+        logicalNames = set([])
+        physicalNames = set([])
+
+        logicalNames.add(self.name)
+
+        for dv in self.daughterVolumes :
+            physicalNames.add(dv.name)
+            lvn, pvn = dv.logicalVolume.makeLogicalPhysicalNameSets()
+            print lvn
+            logicalNames  = logicalNames.union(lvn)
+            physicalNames = physicalNames.union(pvn)
+        return logicalNames, physicalNames
+
     def findLogicalByName(self,name) : 
-        lv = [] 
+        lv = []
 
         if self.name.find(name) != -1 : 
             lv.append(self)
 
-        
         for d in self.daughterVolumes : 
             l = d.logicalVolume.findLogicalByName(name)
             if len(l) != 0 :
                 lv.append(l)
         
         return lv
+
+    def makeMaterialNameSet(self):
+
+        materialNames = set([])
+
+        materialNames.add(self.material.name)
+
+        for dv in self.daughterVolumes :
+            dvMaterialNames = dv.logicalVolume.makeMaterialNameSet()
+            materialNames = materialNames.union(dvMaterialNames)
+
+        return materialNames
 
     def assemblyVolume(self):
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume

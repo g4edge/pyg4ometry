@@ -49,16 +49,16 @@ class TessellatedSolid(_SolidBase):
         # render GDML mesh
         #############################################
         if self.meshtype == self.MeshType.Gdml :
-            # vertex name - integer dict 
+            # vertex name - integer dict
             vdict = {}
  
             i = 0
-            for f in self.mesh :                 
-                for j in range(0,3,1) :
-                    try :
-                        vdict[f[j]] 
-                    except KeyError :
-                        vdict[f[j]] = i 
+            for f in self.mesh:
+                for facet_vertex in f:
+                    try:
+                        vdict[facet_vertex]
+                    except KeyError:
+                        vdict[facet_vertex] = i
                         i += 1
                         
             verts = [0 for dummy in range(0,len(vdict.keys()),1)] 
@@ -67,8 +67,8 @@ class TessellatedSolid(_SolidBase):
                 p = self.registry.defineDict[vdi[0]]
                 verts[vdi[1]] = p.eval() 
 
-            for f in self.mesh : 
-                facet.append([vdict[f[0]],vdict[f[1]],vdict[f[2]]])
+            for f in self.mesh:
+                facet.append([vdict[fi] for fi in f])
 
         #############################################
         # Mesh from CAD

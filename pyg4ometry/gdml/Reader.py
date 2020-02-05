@@ -330,7 +330,7 @@ class Reader(object):
             N    = float(isotope.get("N", ""))
             a    = float(isotope.get("a", 0.0))
 
-            isotope_dict[name] = _g4.Isotope(name, Z, N, a)
+            iso = _g4.Isotope(name, Z, N, a, registry=self._registry)
 
         for element in elements:
             name = str(element.get("name", ""))
@@ -339,17 +339,16 @@ class Reader(object):
             if not element["components"]:
                 Z    = float(element.get("Z", 0))
                 a    = float(element.get("a", 0.0))
-                element_dict[name] = _g4.ElementSimple(name, symbol, Z, a)
+                ele = _g4.ElementSimple(name, symbol, Z, a, registry=self._registry)
 
             else:
                 n_comp = len(element["components"])
-                ele = _g4.ElementIsotopeMixture(name, symbol, n_comp)
+                ele = _g4.ElementIsotopeMixture(name, symbol, n_comp, registry=self._registry)
 
                 for comp in element["components"]:
                     ref = str(comp.get("ref", ""))
                     abundance = float(comp.get("n", 0.0))
-                    ele.add_isotope(isotope_dict[ref], abundance)
-                element_dict[name] = ele
+                    ele.add_isotope(self._registry.materialDict[ref], abundance)
 
         for material in materials:
             name = str(material.get("name", ""))
@@ -370,17 +369,16 @@ class Reader(object):
                         ref = str(comp.get("ref", ""))
                         abundance = float(comp.get("n", 0.0))
 
-                        if ref in self._registry.materialDict:
-                            target = self._registry.materialDict[ref]
+                        target = self._registry.materialDict[ref]
+                        if isinstance(target, _g4.Material):
                             mat.add_material(target, abundance)
                         else:
-                            target = element_dict[ref]
                             mat.add_element_massfraction(target, abundance)
 
                     elif comp_type == "composite":
                         ref = comp.get("ref", "")
                         natoms = int(comp.get("n", 0))
-                        mat.add_element_natoms(element_dict[ref], natoms)
+                        mat.add_element_natoms(self._registry.materialDict[ref], natoms)
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))

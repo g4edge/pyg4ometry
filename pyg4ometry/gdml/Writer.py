@@ -41,6 +41,12 @@ class Writer(object):
     def addDetector(self, registry) :
         self.registry = registry
 
+        if not self.registry.userInfo:
+            # Geant4 version earlier than 10.1 do not support userinfo
+            # If no user info is specified, remove the userinfo tag from the GDML document
+            # This is done here, because the regsitry is not available at construction time
+            self.top.removeChild([n for n in self.top.childNodes if n.tagName == "userinfo"][0])
+
         # Set the world again to force a refresh on the
         # ordering of logical volumes
         self.registry.setWorld(self.registry.worldName)
@@ -593,7 +599,7 @@ class Writer(object):
         pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
         surf.appendChild(pvr1)
         pvr2 = self.doc.createElement('physvolref')
-        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref2))
         surf.appendChild(pvr2)
 
         self.structure.appendChild(surf)
@@ -814,9 +820,9 @@ class Writer(object):
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
 
+        facet_makers = {3: self.createTriangularFacet,
+                        4: self.createQuadrangularFacet}
         if instance.meshtype == instance.MeshType.Gdml:
-            facet_makers = { 3 : self.createTriangularFacet,
-                             4 : self.createQuadrangularFacet}
             for f in instance.mesh:
                 oe.appendChild(facet_makers[len(f)](*f))
 
@@ -828,12 +834,14 @@ class Writer(object):
             for vertex_id, v in enumerate(verts) :
                 defname = "{}_{}".format(name, vertex_id)
                 vert_names.append(defname)
+
                 self.writeDefine(_Defines.Position(defname, v[0],v[1],v[2]))
 
             for f in facet :
-                oe.appendChild(self.createTriangularFacet(vert_names[f[0]],
-                                                          vert_names[f[1]],
-                                                          vert_names[f[2]]))
+                oe.appendChild(facet_makers[len(f)](*[vert_names[fi] for fi in f]))
+                # oe.appendChild(self.createTriangularFacet(vert_names[f[0]],
+                #                                           vert_names[f[1]],
+                #                                           vert_names[f[2]]))
         else:
             facet = instance.mesh
 

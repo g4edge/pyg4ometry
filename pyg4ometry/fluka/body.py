@@ -3,6 +3,7 @@ import logging
 from itertools import chain
 
 import numpy as np
+import vtk
 
 from .vector import Three
 from pyg4ometry.pycsg.core import CSG as _CSG
@@ -11,6 +12,7 @@ import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from .directive import Transform
+from .vector import Extent as _Extent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,7 +27,7 @@ def infinity(inf):
     """Use this to temporarily modify INFINITY, with it resetting back
     to the default once the block has exited.  INFINITY is used
     throughout the bodies to approximate the infinite size of infinity
-    (elliptical) cylinders, half space, and quadric.
+    (elliptical) cylinders, half spaces, and quadrics.
 
     :param inf: the value to temporarily set INFINITY to."""
     global INFINITY
@@ -36,7 +38,7 @@ def infinity(inf):
         INFINITY = _DEFAULT_INFINITY
 
 
-class Body(object):
+class BodyMixin(object):
     """
     Base class representing a body as defined in FLUKA
     """
@@ -80,7 +82,7 @@ class Body(object):
         return offset
 
 
-class _HalfSpace(Body):
+class _HalfSpaceMixin(BodyMixin):
     # Base class for XYP, XZP, YZP.
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -99,7 +101,7 @@ class _HalfSpace(Body):
         return "{} {} {}".format(typename, self.name, coordinate)
 
 
-class _InfiniteCylinder(Body):
+class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
     def geant4Solid(self, registry, extent=None):
         exp = self.transform.netExpansion()
@@ -117,7 +119,7 @@ class _InfiniteCylinder(Body):
         return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
 
 
-class RPP(Body):
+class RPP(BodyMixin):
     """Rectangular Parallelepiped
 
     :param name: of body
@@ -194,7 +196,7 @@ class RPP(Body):
                                                  str(self.lower[2]),
                                                  str(self.upper[2]))
 
-class BOX(Body):
+class BOX(BodyMixin):
     """General Rectangular Parallelepiped
 
     :param name: of body
@@ -270,7 +272,7 @@ class BOX(Body):
         return "BOX {} {}".format(self.name, param_string)
 
 
-class SPH(Body):
+class SPH(BodyMixin):
     """Sphere
 
     :param name: of body
@@ -318,7 +320,7 @@ class SPH(Body):
                                      self.radius)
 
 
-class RCC(Body):
+class RCC(BodyMixin):
     """
 
     Right Circular Cylinder
@@ -390,7 +392,7 @@ class RCC(Body):
                                      self.radius)
 
 
-class REC(Body):
+class REC(BodyMixin):
     """
 
     Right Elliptical Cylinder
@@ -479,7 +481,7 @@ class REC(Body):
                                                             self.semimajor))
 
 
-class TRC(Body):
+class TRC(BodyMixin):
     """
 
     Truncated Right-angled Cone
@@ -563,7 +565,7 @@ class TRC(Body):
                                         self.minor_radius)
 
 
-class ELL(Body):
+class ELL(BodyMixin):
     """Ellipsoid of Revolution
 
     :param name: of body
@@ -652,7 +654,7 @@ class ELL(Body):
                                                                self.focus2),
                                      self.length)
 
-class _WED_RAW(Body):
+class _WED_RAW(BodyMixin):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
@@ -756,7 +758,7 @@ class RAW(_WED_RAW):
     __doc__ = WED.__doc__
 
 
-class ARB(Body):
+class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
 
@@ -772,8 +774,8 @@ class ARB(Body):
     only four or five faces are needed.  Any unneeded faces must be set to 0 \
     (no less than 4 sides).  Note that the references to the vertices are not \
     zero-counting.  The order of the vertices denoted in the facenumbers must \
-    be either all clockwise or anticlockwise, which if not obeyed will result \
-    in erroneous output without warning.
+    be either all clockwise or all anticlockwise, which if not obeyed
+    will \ result in erroneous output without warning.
     :type facenumbers: float
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
@@ -784,116 +786,138 @@ class ARB(Body):
 
         self.transform = self._set_transform(transform)
 
+        # Checking on the inputs to match FLUKA's behaviour described
+        # in the manual.
+
+        # Must always provide 8 vertices.
         if len(self.vertices) != 8:
-            raise TypeError("8 vertices must always be supplied,"
+            raise ValueError("8 vertices must always be supplied,"
                             " even if not all are used.")
+        # Must always provide 6 facenumbers.
         if len(self.facenumbers) != 6:
-            raise TypeError("6 face numbers must always be supplied.")
+            raise ValueError("6 face numbers must always be supplied,"
+                            " even if not all are used.")
 
         self._nfaces = 6
-        for facenumber in self.facenumbers:
+        # Get the indices of the facenumbers equal to zero and count
+        # how many faces we have by counting the number of zeros.
+        zeros = [] # zero-counting index here to refer to face numbers...
+        for i, facenumber in enumerate(self.facenumbers):
             if facenumber == 0:
                 self._nfaces -= 1
+                zeros.append(i)
+        # Can't have less than 4 faces
         if self._nfaces < 4:
-            raise TypeError("Not enough faces provided in arg facenumbers."
+            raise ValueError("Not enough faces provided in arg facenumbers."
                             "  Must be 4, 5 or 6.")
+
+        # Null-faces must be put as 0.0 in the facenumbers and they
+        # must be at the end (i.e. 5 and 6 or 6).
+        if zeros and (zeros != [4, 5] or zeros != [5]):
+            raise ValueError("Facenumbers equal to zero to must be at"
+                             " the end of the list.")
+
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
         return self.transform.leftMultiplyVector(Three([0, 0, 0]))
 
     def rotation(self):
-        return np.identity(3)
+        return self.transform.leftMultiplyRotation(np.identity(3))
+
+    def _faceNumbersToZeroCountingIndices(self):
+        # Convert the facenumbers which are one-indexed to
+        # zero-indexed, and also account for the way in which faces
+        # with 3 vertices are encoded.  Quotes from the FLUKA manual
+        # are copied here to explain some of the logic.
+        zeroCountingIndicesOut = []
+        for fn in self.facenumbers:
+            # "When the number of the faces is less than 6, the
+            # remaining face description(s) must be zero, and must
+            # appear at the end of the list."
+            if fn == 0.0:
+                continue
+            fn = str(int(fn)) # Convert 1234.0 to string of integer 1234
+
+            # "If a face has three vertices, the omitted position may
+            # be either 0 or a repeat of one of the other vertices."
+            fn = fn.replace("0", "")
+            if len(set(fn)) != len(fn):
+                unique_fn = []
+                for n in fn:
+                    if n not in unique_fn:
+                        unique_fn.append(fn)
+                fn = unique_fn
+
+            # Finally we convert back to integers, subtract 1 to make
+            # them zero-counding, and append to the list of outputted
+            # zero counting indices.
+            zeroCountingIndicesOut.append([int(n) - 1 for n in fn])
+
+        return zeroCountingIndicesOut
+
+    def _extent(self):
+        vertices, _, _ = self._toVerticesAndPolygons(reverse=False)
+        vertices = np.vstack(vertices)
+        x = vertices[...,0]
+        y = vertices[...,1]
+        z = vertices[...,2]
+        return _Extent([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
     def geant4Solid(self, greg, extent=None):
-        # pyg4ometry expects right handed corkscrew for the vertices
-        # for TesselatedSolid (and in general).
-        # Fluka however for ARB can take either all right or left
-        # handed (but no mixing and matching).  If our normals are all in
-        # the wrong direction, when we union with a solid which
-        # envelops that tesselated solid we will get a NullMeshError,
-        # which we can catch and then we invert the mesh and return
-        # that TesselatedSolid.
+        verticesAndPolygons = self._getVerticesAndPolygons()
+        return self._toTesselatedSolid(verticesAndPolygons,
+                                       greg,
+                                       addRegistry=True)
 
-        # We need the minimum and maximum extents of the tesselated
-        # solid to make the enveloping box.
-        xmin = 0
-        xmax = 0
-        ymin = 0
-        ymax = 0
-        zmin = 0
-        zmax = 0
-        polygon_list = []
+    def _toTesselatedSolid(self, verticesAndPolygons, greg, addRegistry):
+        return g4.solid.TessellatedSolid(self.name,
+                                         verticesAndPolygons,
+                                         greg,
+                                         addRegistry=addRegistry)
 
+    def _getVerticesAndPolygons(self):
+        extent = self._extent()
+        verticesAndPolygons = self._toVerticesAndPolygons(reverse=False)
+        # XXX: This is a fairly hacky but hopefully fairly robust way
+        # to deal with arbitrary clockwise/anticlockwise vertex
+        # ordering for the ARB input.
+        g4reg = g4.Registry()
+        tesselatedSolid = self._toTesselatedSolid(verticesAndPolygons,
+                                                  g4reg,
+                                                  addRegistry=False)
+        envelopingBox = g4.solid.Box("test_box",
+                                     10*(extent.size.x),
+                                     10*(extent.size.y),
+                                     10*(extent.size.z),
+                                     g4reg,
+                                     addRegistry=False)
+        test_union = g4.solid.Union("test_union",
+                                    tesselatedSolid,
+                                    envelopingBox,
+                                    [[0, 0, 0], [0, 0, 0]],
+                                    g4reg,
+                                    addRegistry=False)
+        # If a null mesh results from a union, then the input mesh of
+        # the ARB must have been malformed, as this is not otherwise possible.
+        # Try reversing the vertex order, and return that either way.
+        if not test_union.pycsgmesh().toPolygons():
+            verticesAndPolygons = self._toVerticesAndPolygons(reverse=True)
+        return verticesAndPolygons
+
+    def _toVerticesAndPolygons(self, reverse):
         # Apply any expansion to the ARB's vertices.
         exp = self.transform.netExpansion()
         vertices = [exp * v for v in self.vertices]
-        for fnumber in self.facenumbers:
-            if fnumber == 0:
-                continue
 
-            # store the digits of the fnumbers as indices which are
-            # zero counting (c.f. input in which they count from 1)
-            zc_vertex_indices = []
+        polygons = []
+        for faceIndices in self._faceNumbersToZeroCountingIndices():
+            faceVertices = [_geom.Vertex(vertices[i]) for i in faceIndices]
+            if reverse:
+                faceVertices = faceVertices[::-1]
+            polygons.append(_geom.Polygon(faceVertices))
 
-            for vertex_index in str(int(fnumber)):
-                zero_counting_index = int(vertex_index) - 1
-                 # duplicate digits in the fnumber should be ignored
-                if zero_counting_index in zc_vertex_indices:
-                    continue
-                # digit=0 in the fnumber should be ignored, no extra vertex
-                if zero_counting_index == -1:
-                    continue
-                zc_vertex_indices.append(zero_counting_index)
-
-                xmin = min(xmin, vertices[zero_counting_index].x)
-                xmax = max(xmax, vertices[zero_counting_index].x)
-                ymin = min(ymin, vertices[zero_counting_index].y)
-                ymax = max(ymax, vertices[zero_counting_index].y)
-                zmin = min(zmin, vertices[zero_counting_index].z)
-                zmax = max(zmax, vertices[zero_counting_index].z)
-
-
-            face_vertices = [_geom.Vertex(vertices[i])
-                             for i in zc_vertex_indices]
-            polygon = _geom.Polygon(face_vertices)
-            polygon_list.append(polygon)
-
-        mesh = _CSG.fromPolygons(polygon_list)
-        vertices_and_polygons = mesh.toVerticesAndPolygons()
-        tesselated_solid = g4.solid.TessellatedSolid(self.name,
-                                                     vertices_and_polygons,
-                                                     greg,
-                                                     addRegistry=False)
-        # XXX: This is my dirty way of deciding whether the
-        # facenumbers are clockwise or anticlockwise, and matching
-        # with TesselatedSolid ctor which requires clockwise.  Perhaps
-        # this can be done better, but this does work.
-
-        # make massive box with totally envelops the tesselated solid
-        big_box = g4.solid.Box("test_box",
-                               10*(xmax - xmin),
-                               10*(ymax - ymin),
-                               10*(zmax - zmin),
-                               greg,
-                               addRegistry=False)
-        test_union = g4.solid.Union("test_union",
-                                    tesselated_solid,
-                                    big_box,
-                                    [[0, 0, 0], [0, 0, 0]],
-                                    g4.Registry(),
-                                    addRegistry=False)
-        try:
-            # try to mesh the union of the enveloping box and the
-            # tesselated solid.  if we get a null mesh error we have
-            # the faces the wrong way around.
-            test_union.pycsgmesh()
-        except pyg4ometry.exceptions.NullMeshError:
-            # inverse to get it right
-            vertices_and_polygons = mesh.inverse().toVerticesAndPolygons()
-        return g4.solid.TessellatedSolid(self.name,
-                                         vertices_and_polygons,
-                                         greg)
+        return _CSG.fromPolygons(polygons).toVerticesAndPolygons()
 
     def __repr__(self):
         vs = map(list, self.vertices)
@@ -902,8 +926,37 @@ class ARB(Body):
         return "<ARB: {}, {}, faces={}>".format(self.name,
                                                 vstring, self.facenumbers)
 
+    def _withLengthSafety(self, safety, reg):
+        arb = ARB(self.name,
+                  self.vertices,
+                  self.facenumbers,
+                  transform=self.transform,
+                  flukaregistry=reg)
+        vertices, faces , _ = arb._getVerticesAndPolygons()
+        vertices = [np.array(v) for v in vertices]
+        facenumbers = []
+        for face in faces:
+            faceVertices = [_geom.Vertex(vertices[i]) for i in face]
+            polygon = _geom.Polygon(faceVertices)
+            normal = polygon.plane.normal
+            ls = safety * np.array(normal)
+            for i in face:
+                vertices[i] -= ls
+            facenumbers.append([i+1 for i in face])
 
-class XYP(_HalfSpace):
+        # Convert lists of vertex integers for each face to individual floats
+        facenumbersCorrected = []
+        for fn in facenumbers:
+            facenumbersCorrected.append(float("".join(str(f) for f in fn)))
+
+        return ARB(self.name,
+                   vertices,
+                   facenumbersCorrected,
+                   transform=self.transform,
+                   flukaregistry=reg)
+
+
+class XYP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to the z-axis)
@@ -943,7 +996,7 @@ class XYP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.z)
 
 
-class XZP(_HalfSpace):
+class XZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular
@@ -984,7 +1037,7 @@ class XZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.y)
 
 
-class YZP(_HalfSpace):
+class YZP(_HalfSpaceMixin):
     """
 
     Infinite half-space delimited by the x-y plane (pependicular to \
@@ -1026,7 +1079,7 @@ class YZP(_HalfSpace):
         return self._halfspaceFreeStringHelper(self.x)
 
 
-class PLA(_HalfSpace):
+class PLA(_HalfSpaceMixin):
     """
     Infinite half-space delimited by the x-y plane (pependicular to \
     the z-axis) Generic infinite half-space.
@@ -1089,7 +1142,7 @@ class PLA(_HalfSpace):
                                                             self.point))
 
 
-class XCC(_InfiniteCylinder):
+class XCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1135,7 +1188,7 @@ class XCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.y, self.z)
 
 
-class YCC(_InfiniteCylinder):
+class YCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1181,7 +1234,7 @@ class YCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.z, self.x)
 
 
-class ZCC(_InfiniteCylinder):
+class ZCC(_InfiniteCylinderMixin):
     """Infinite Circular Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1225,7 +1278,7 @@ class ZCC(_InfiniteCylinder):
         return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
-class XEC(Body):
+class XEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1292,7 +1345,7 @@ class XEC(Body):
                                            self.ysemi, self.zsemi)
 
 
-class YEC(Body):
+class YEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1360,7 +1413,7 @@ class YEC(Body):
                                            self.zsemi, self.xsemi)
 
 
-class ZEC(Body):
+class ZEC(BodyMixin):
     """Infinite Elliptical Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1425,55 +1478,55 @@ class ZEC(Body):
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
-class QUA(Body):
+class QUA(BodyMixin):
     """Generic quadric
 
     :param name: of body
     :type name: str
-    :param A_xx: x^2 coefficient
-    :type A_xx: float
-    :param A_yy: y^2 coefficient
-    :type A_yy: float
-    :param A_zz: z^2 coefficient
-    :type A_zz: float
-    :param A_xy: xy coefficient
-    :type A_xy: float
-    :param A_xz: xz coefficient
-    :type A_xz: float
-    :param A_yz: yz coefficient
-    :type A_yz: float
-    :param A_x : x coefficient
-    :type A_x: float
-    :param A_y : y coefficient
-    :type A_y: float
-    :param A_z : z coefficient
-    :type A_z: float
-    :param A_0 : constant
-    :type A_0: constant
+    :param Axx: x^2 coefficient
+    :type Axx: float
+    :param Ayy: y^2 coefficient
+    :type Ayy: float
+    :param Azz: z^2 coefficient
+    :type Azz: float
+    :param Axy: xy coefficient
+    :type Axy: float
+    :param Axz: xz coefficient
+    :type Axz: float
+    :param Ayz: yz coefficient
+    :type Ayz: float
+    :param Ax : x coefficient
+    :type Ax: float
+    :param Ay : y coefficient
+    :type Ay: float
+    :param Az : z coefficient
+    :type Az: float
+    :param A0 : constant
+    :type A0: constant
     """
     def __init__(self, name,
-                 A_xx, A_yy, A_zz, A_xy, A_xz, A_yz, A_x, A_y, A_z, A_0,
+                 Axx, Ayy, Azz, Axy, Axz, Ayz, Ax, Ay, Az, A0,
                  transform=None,
                  flukaregistry=None):
         self.name = name
 
-        self.A_xx = A_xx
-        self.A_yy = A_yy
-        self.A_zz = A_zz
-        self.A_xy = A_xy
-        self.A_xz = A_xz
-        self.A_yz = A_yz
-        self.A_x  = A_x
-        self.A_y  = A_y
-        self.A_z  = A_z
-        self.A_0  = A_0
+        self.Axx = Axx
+        self.Ayy = Ayy
+        self.Azz = Azz
+        self.Axy = Axy
+        self.Axz = Axz
+        self.Ayz = Ayz
+        self.Ax  = Ax
+        self.Ay  = Ay
+        self.Az  = Az
+        self.A0  = A0
 
         self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        return Three([0,0,0])
+        return self.transform.leftMultiplyVector([0, 0, 0])
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -1482,21 +1535,28 @@ class QUA(Body):
         exp = self.transform.netExpansion()
         scale = self._extent_to_scale_factor(extent)
 
-        import vtk
-
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(self.A_xx, self.A_yy, self.A_zz,
-                                self.A_xy, self.A_yz, self.A_xz,
-                                self.A_x,  self.A_y,  self.A_z, 0.0)
+        quadric.SetCoefficients(self.Axx, self.Ayy, self.Azz,
+                                self.Axy, self.Ayz, self.Axz,
+                                self.Ax,  self.Ay,  self.Az, 0.0)
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
-        sample.SetModelBounds(-1,1,-1,1,-1,1)
+        if extent is None:
+            sample.SetModelBounds(-INFINITY, INFINITY,
+                                  -INFINITY, INFINITY,
+                                  -INFINITY, INFINITY)
+        else:
+            sample.SetModelBounds(extent.lower.x, extent.upper.x,
+                                  extent.lower.y, extent.upper.y,
+                                  extent.lower.z, extent.upper.z)
+
+
         sample.SetImplicitFunction(quadric)
         sample.SetCapping(1)
 
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, -self.A_0, -self.A_0)
+        contours.GenerateValues(1, -self.A0, -self.A0)
         contours.Update()
 
         pd = contours.GetOutput()
@@ -1505,7 +1565,7 @@ class QUA(Body):
         verts = []
         facet = []
 
-        for i in range(0,pd.GetNumberOfCells(),1) :
+        for i in range(pd.GetNumberOfCells()) :
             c = pd.GetCell(i)
             p = c.GetPoints()
             verts.append(np.array(p.GetPoint(2)))
@@ -1516,13 +1576,17 @@ class QUA(Body):
         mesh.append(verts)
         mesh.append(facet)
 
-        return g4.solid.TessellatedSolid(self.name,mesh,reg,g4.solid.TessellatedSolid.MeshType.Freecad)
+        return g4.solid.TessellatedSolid(
+            self.name,
+            mesh,
+            reg,
+            g4.solid.TessellatedSolid.MeshType.Freecad)
 
     def _withLengthSafety(self, safety, reg=None):
         return QUA(self.name,
-                   self.A_xx, self.A_yy, self.A_zz,
-                   self.A_xy, self.A_xz, self.A_yz,
-                   self.A_x, self.A_y,  self.A_z, self.A_0,
+                   self.Axx, self.Ayy, self.Azz,
+                   self.Axy, self.Axz, self.Ayz,
+                   self.Ax, self.Ay,  self.Az, self.A0,
                    transform=self.transform,
                    flukaregistry=reg)
 

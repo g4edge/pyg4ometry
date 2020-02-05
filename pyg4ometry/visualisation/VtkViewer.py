@@ -50,6 +50,9 @@ class VtkViewer:
         # axes widget
         self.addAxesWidget()
 
+        # material options dict
+        self.materialVisualisationOptions = None
+
     def addAxes(self, length = 20.0, origin = (0,0,0)):
         axes = _vtk.vtkAxesActor()
 
@@ -127,6 +130,9 @@ class VtkViewer:
             a.GetProperty().SetColor(random.random(),
                                      random.random(),
                                      random.random())
+
+    def setMaterialVisualisationOptions(self, dict):
+        self.materialVisualisationOptions = dict
 
     def setCameraFocusPosition(self,focalPoint = [0,0,0], position = [100,100,100]):
         self.ren.GetActiveCamera().SetFocalPoint(focalPoint)
@@ -241,7 +247,7 @@ class VtkViewer:
         lvmActor = _vtk.vtkActor()
         lvmActor.SetMapper(lvmMAP)         
         lvmActor.GetProperty().SetRepresentationToWireframe()
-        lvmActor.GetProperty().SetOpacity(0.2)
+        lvmActor.GetProperty().SetOpacity(0.5)
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
@@ -275,9 +281,13 @@ class VtkViewer:
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
                     #mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
+                    if self.materialVisualisationOptions :
+                        visOptions = self.materialVisualisationOptions[pv.logicalVolume.material.name]
+                    else :
+                        visOptions = pv.visOptions
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions = pv.visOptions, overlap = False)
+                                 visOptions = visOptions, overlap = False)
 
                     # overlap meshes
                     for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
@@ -460,6 +470,8 @@ class VtkViewer:
         if not actorMap.has_key(actorname) :
             actorMap[actorname] = vtkActor
 
+        # check if there is a material visualisation options
+
         # set visualisation properties
         if visOptions :
             vtkActor.GetProperty().SetColor(visOptions.color[0],
@@ -473,6 +485,8 @@ class VtkViewer:
         else : 
             vtkActor.GetProperty().SetColor(1,0,0)
 
+
+        vtkActor.SetVisibility(visOptions.visible)
         actors.append(vtkActor)
         self.ren.AddActor(vtkActor)
 

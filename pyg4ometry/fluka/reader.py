@@ -14,7 +14,7 @@ from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from pyg4ometry.exceptions import FLUKAError
+from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
 
 from .vector import Three
 from .card import freeFormatStringSplit, Card
@@ -30,7 +30,7 @@ _BODY_NAMES = {"RPP",
                "TRC",
                "ELL",
                "WED", "RAW",
-               "ARB ",
+               "ARB",
                "XYP", "XZP", "YZP",
                "PLA",
                "XCC", "YCC", "ZCC",
@@ -71,15 +71,18 @@ class Reader(object):
         found_geoend = False
         found_first_end = False
         found_second_end = False
+        in_geo = False
         for i, line in enumerate(self._lines) :
             if line.startswith("GEOBEGIN"):
-                found_geobegin = True
+                found_geobegin = in_geo = True
                 self.geobegin = i
                 self.bodiesbegin = i + 2
             elif line.startswith("GEOEND"):
                 found_geoend = True
+                in_geo = False
                 self.geoend = i
-            elif line.startswith("END"):
+                break
+            elif line.startswith("END") and in_geo:
                 if found_first_end:
                     found_second_end = True
                     self.regionsend = i
@@ -155,7 +158,7 @@ class Reader(object):
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
     def _parseRegions(self) :
-        regions_block = self._lines[self.regionsbegin:self.regionsend+1]
+        regions_block = self._lines[self.regionsbegin:self.regionsend]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
@@ -163,6 +166,7 @@ class Reader(object):
         # tokenize
         lexed_input = RegionLexer(istream)
         lexed_input.removeErrorListeners()
+        lexed_input.addErrorListener(SensitiveErrorListener())
 
         # Create a buffer of tokens from lexer
         tokens = antlr4.CommonTokenStream(lexed_input)
@@ -170,6 +174,7 @@ class Reader(object):
         # Create a parser that reads from stream of tokens
         parser = RegionParser(tokens)
         parser.removeErrorListeners()
+        parser.addErrorListener(SensitiveErrorListener())
 
         tree = parser.regions() # build the tree
 
@@ -435,7 +440,12 @@ def _make_body(body_parts,
         vertices = [p[0:3], p[3:6], p[6:9], p[9:12],
                     p[12:15], p[15:18], p[18:21], p[21:24]]
         facenumbers = p[24:]
-        b = body.ARB(name, vertices, facenumbers, flukaregistry=flukareg,
+        # Remember we converted to param to millimetres blindly above, well,
+        # facenumbers are not dimensions, but indices, so we convert
+        # back to "centimetres" here:
+        facenumbers = [f/10. for f in facenumbers]
+        b = body.ARB(name, vertices, facenumbers,
+                     flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "QUA":
         b = body.QUA(name, *p, flukaregistry=flukareg, transform=transform)
@@ -552,12 +562,60 @@ class RegionVisitor(RegionParserVisitor):
         solids = self.visit(ctx.expr())
         z = Zone(name="{}_subzone{}".format(self.region_name,
                                             self.subzone_counter))
+
+        if ctx.BodyName():
+            body = self.flukaregistry.bodyDict[ctx.BodyName().getText()]
+            z.addIntersection(body)
+
         for op, body in solids:
             if op == "+":
                 z.addIntersection(body)
             else:
                 z.addSubtraction(body)
         return (operator, z)
+
+    def visitZoneExpr(self, ctx):
+        opsAndBooleans= self.visit(ctx.expr())
+
+        if not ctx.BodyName():
+            return opsAndBooleans
+
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        boolean = [("+", body)] # implicit intersection
+        boolean.extend(opsAndBooleans)
+        return boolean
+
+    def visitZoneSubZone(self, ctx):
+        opsAndBooleans= self.visit(ctx.subZone())
+
+        if not ctx.BodyName():
+            return opsAndBooleans
+
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        boolean = [("+", body)] # implict intersection
+        boolean.extend(opsAndBooleans)
+        return boolean
+
+    def visitZoneBody(self, ctx):
+        bodyName = ctx.BodyName().getText()
+        body = self.flukaregistry.bodyDict[bodyName]
+        return [("+", body)] # implicit intersection
+
+class SensitiveErrorListener(antlr4.error.ErrorListener.ErrorListener):
+    """ANTLR4 by default is very passive regarding parsing errors, it will
+    just carry on parsing and potentially build a nonsense-tree. This
+    is not ideal as pyfluka has a very convoluted syntax; we want to
+    be very strict about what our parser can and can't do.  For that
+    reason this is a very sensitive error listener, throwing
+    exceptions readily.
+
+    """
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        msg = ("At ({}, {}), Error: {}.  Warning:  The provided line and"
+               " column numbers may be deceptive.").format(line, column, msg)
+        raise antlr4.error.Errors.ParseCancellationException(msg)
 
 def main(filein):
     r = Reader(filein)

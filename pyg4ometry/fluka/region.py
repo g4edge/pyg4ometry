@@ -8,7 +8,7 @@ import networkx as nx
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
-from pyg4ometry.fluka.body import Body
+from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, Extent, areExtentsOverlapping
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class _Boolean(object):
         type_name = type_name[:3]
 
 
-        if isinstance(self.body, Body):
+        if isinstance(self.body, BodyMixin):
             return "{}{}_{}_{}".format(type_name,
                                        index,
                                        self.body.name,
@@ -286,8 +286,8 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            # if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
-            #     continue
+            if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
+                continue
 
             # Check if a path already exists.  Not sure how often this
             # arises but should at least occasionally save some time.
@@ -313,20 +313,16 @@ class Region(object):
             try:
                 zone_solid = zone.geant4Solid(reg=greg)
             except FLUKAError as e:
-                raise FLUKAError(" Error in region {}: {}".format(self.name,
-                                                                  e.message))
+                raise FLUKAError("Error in region {}: {}".format(self.name,
+                                                                 e.message))
 
-            lv = g4.LogicalVolume(zone_solid,
-                                  material,
-                                  _random_name(),
-                                  greg)
-            rot = list(reverse(list(zone.tbxyz())))
-            pv = g4.PhysicalVolume(rot,
-                                   list(zone.centre()),
-                                   lv,
-                                   _random_name(),
-                                   wlv, greg)
-            lower, upper = wlv.extent()
+            zoneLV = g4.LogicalVolume(zone_solid,
+                                      material,
+                                      _random_name(),
+                                      greg)
+            lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
+                                                      zone.centre())
+
             extents.append(Extent(lower, upper))
         return extents
 
@@ -337,17 +333,13 @@ class Region(object):
                                g4.MaterialPredefined("G4_Galactic"),
                                "wl", greg)
 
-        region_lv = g4.LogicalVolume(self.geant4Solid(greg),
+        regionLV = g4.LogicalVolume(self.geant4Solid(greg),
                                      g4.MaterialPredefined("G4_Galactic"),
                                      "{}_lv".format(self.name),
                                      greg)
-        g4.PhysicalVolume(list(reverse(self.tbxyz())),
-                          list(self.centre()),
-                          region_lv,
-                          "{}_pv".format(self.name),
-                          wlv, greg)
 
-        lower, upper = wlv.extent()
+        lower, upper = regionLV.mesh.getBoundingBox(self.rotation(),
+                                                    self.centre())
         return Extent(lower, upper)
 
 
@@ -420,12 +412,16 @@ def _getExtent(extent, boolean):
         return extent
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
-    elif isinstance(boolean, Body):
+    elif isinstance(boolean, BodyMixin):
         body_name = boolean.name
     else:
         raise ValueError("Unknown boolean type")
 
     if body_name is None:
+        return extent
+
+    if (isinstance(boolean, (Subtraction, Intersection))
+            and isinstance(boolean.body, Zone)):
         return extent
 
     if extent is None:

@@ -1,6 +1,6 @@
 from Mesh                 import Mesh
 from Mesh                 import OverlapType
-from VisualisationOptions import VisualisationOptions
+from VisualisationOptions import *
 from VtkViewer            import *
 
 # from Viewer import viewLogicalVolume, viewWorld, Viewer

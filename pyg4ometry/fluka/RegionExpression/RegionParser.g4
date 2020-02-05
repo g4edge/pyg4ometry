@@ -21,8 +21,9 @@ zoneUnion
     ;
 
 zone
-    : expr
-    | subZone
+    : BodyName? expr       # zoneExpr
+    | BodyName? subZone    # zoneSubZone
+    | BodyName             # zoneBody
     ;
 
 expr
@@ -33,9 +34,9 @@ expr
     ;
 
 subZone
-    : (Minus | Plus) LParen expr RParen
+    : (Minus | Plus) LParen BodyName? expr RParen
     ;
 
 unaryExpression
-    : (Minus | Plus) BodyName 
+    : (Minus | Plus) BodyName
     ;
