@@ -32,12 +32,7 @@ def fluka2Geant4(flukareg,
 
     _checkQuadric(flukareg, quadricRegionExtents)
 
-    if regions and omitRegions:
-        raise ValueError("Only one of regions and omitRegions may be set.")
-    elif omitRegions:
-        regions = set(flukareg.regionDict).difference(omitRegions)
-    elif regions is None:
-        regions = list(flukareg.regionDict)
+    regions = _getSelectedRegions(flukareg, regions, omitRegions)
 
     if omitBlackholeRegions:
         flukareg = _without_blackhole_regions(flukareg, regions)
@@ -55,14 +50,8 @@ def fluka2Geant4(flukareg,
                 newRegions.append(newName)
         regions = newRegions
 
-    if worldDimensions is None:
-        worldDimensions = WORLD_DIMENSIONS
-
-    if not materialMap:
-        materialMap = {}
-
-    if not flukareg.regionDict:
-        raise ValueError("No regions in registry.")
+    worldDimensions = _getWorldDimensions(worldDimensions)
+    materialMap = _getMaterialMap(materialMap)
 
     greg = g4.Registry()
 
@@ -361,3 +350,24 @@ def _checkQuadric(flukareg, quadricRegionExtents):
                 msg = ("Region {} with QUA missing "
                        "extent in quadricRegionExtents.".format(region_name))
                 raise ValueError(msg)
+
+
+def _getWorldDimensions(worldDimensions):
+    if worldDimensions is None:
+        return WORLD_DIMENSIONS
+    return worldDimensions
+
+def _getMaterialMap(materialMap):
+    if not materialMap:
+        return {}
+    return materialMap
+
+def _getSelectedRegions(flukareg, regions, omitRegions):
+    if not flukareg.regionDict:
+        raise ValueError("No regions in registry.")
+    elif regions and omitRegions:
+        raise ValueError("Only one of regions and omitRegions may be set.")
+    elif omitRegions:
+        return set(flukareg.regionDict).difference(omitRegions)
+    elif regions is None:
+        return list(flukareg.regionDict)
