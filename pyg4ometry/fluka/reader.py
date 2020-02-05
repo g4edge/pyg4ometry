@@ -47,7 +47,6 @@ class Reader(object):
         self.filename = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
-        self.transforms = OrderedDict()
 
         self._load()
 
@@ -215,14 +214,7 @@ class Reader(object):
                 continue
             rotdefi = RotoTranslation.fromCard(card)
             name = rotdefi.name
-            if name in self.transforms:
-                # if already defined (i.e. it is defined recursively)
-                # then append it to the list of ROTDEFI cards with
-                # this name.
-                self.transforms[name].append(rotdefi)
-            else:
-                self.transforms[name] = RecursiveRotoTranslation(
-                    name, [rotdefi])
+            self.flukaregistry.addRotoTranslation(rotdefi)
 
     def _parseGeometryDirective(self, line_parts,
                                 expansion_stack,
@@ -246,7 +238,7 @@ class Reader(object):
             if transform_name.startswith("-"):
                 transform_name = transform_name[1:]
                 inverse = True
-            transform = self.transforms[transform_name]
+            transform = self.flukaregistry.rotoTranslations[transform_name]
             if inverse:
                 transform = np.linalg.inv(transform)
             transform_stack.append(transform)
@@ -379,9 +371,11 @@ def _make_body(body_parts,
     # Note that we have to reverse the transform stack to match FLUKA
     # here, because it seems that FLUKA applys nested transforms
     # outside first, rather than inside first.
-    transform = Transform(expansion_stack,
-                          translation_stack,
-                          transform_stack[::-1])
+
+    # deepcopies because otherwise when we pop from the stacks, we
+    transform = Transform(deepcopy(expansion_stack),
+                          deepcopy(translation_stack),
+                          deepcopy(transform_stack[::-1]))
 
     if body_type == "RPP":
         b = body.RPP(name, *p, flukaregistry=flukareg, transform=transform)

@@ -20,7 +20,7 @@ class FlukaRegistry(object):
 
     def __init__(self) :
         self.bodyDict = OrderedDict()
-        self.rotoTranslationsDict = RotoTranslationStore()
+        self.rotoTranslations = RotoTranslationStore()
         self.regionDict = OrderedDict()
         self.materialDict = OrderedDict()
         self.latticeDict = OrderedDict()
@@ -35,7 +35,7 @@ class FlukaRegistry(object):
         self.bodyDict[body.name] = body
 
     def addRotoTranslation(self, rototrans):
-        self.rotoTranslationsDict.addRotoTranslation(rototrans)
+        self.rotoTranslations.addRotoTranslation(rototrans)
 
     def addRegion(self, region, addBodies=False):
         # Always build a map of bodies to regions, which we need for
