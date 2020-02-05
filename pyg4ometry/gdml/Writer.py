@@ -820,9 +820,9 @@ class Writer(object):
         name     = instance.name
         oe.setAttribute('name', self.prepend + name)
 
+        facet_makers = {3: self.createTriangularFacet,
+                        4: self.createQuadrangularFacet}
         if instance.meshtype == instance.MeshType.Gdml:
-            facet_makers = { 3 : self.createTriangularFacet,
-                             4 : self.createQuadrangularFacet}
             for f in instance.mesh:
                 oe.appendChild(facet_makers[len(f)](*f))
 
@@ -834,12 +834,14 @@ class Writer(object):
             for vertex_id, v in enumerate(verts) :
                 defname = "{}_{}".format(name, vertex_id)
                 vert_names.append(defname)
+
                 self.writeDefine(_Defines.Position(defname, v[0],v[1],v[2]))
 
             for f in facet :
-                oe.appendChild(self.createTriangularFacet(vert_names[f[0]],
-                                                          vert_names[f[1]],
-                                                          vert_names[f[2]]))
+                oe.appendChild(facet_makers[len(f)](*[vert_names[fi] for fi in f]))
+                # oe.appendChild(self.createTriangularFacet(vert_names[f[0]],
+                #                                           vert_names[f[1]],
+                #                                           vert_names[f[2]]))
         else:
             facet = instance.mesh
 
