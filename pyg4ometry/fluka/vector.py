@@ -147,6 +147,12 @@ class Extent(object):
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
 
+    def cornerDistance(self):
+        # distance from centre to one of the corners.
+        size = self.size
+        return ((0.5 * size.x)**2 + (0.5 * size.y)**2 + (0.5 * size.z)**2)**0.5
+
+
 def areExtentsOverlapping(first, second):
     """Check if two Extent instances are overlapping."""
     return not (first.upper.x < second.lower.x
