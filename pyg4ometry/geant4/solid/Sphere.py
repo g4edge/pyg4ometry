@@ -257,22 +257,22 @@ class Sphere(_SolidBase):
                 if pRmin != 0:
                     if t1 == 0:  # if north pole (triangles)
                         vCurv = []
-                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
-                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
                         vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         polygons.append(_Polygon(vCurv))
                     elif t2 == _np.pi:  # if south pole
                         vCurv = []
-                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
-                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
                         vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         polygons.append(_Polygon(vCurv))
                     else:  # normal curved quad
                         vCurv = []
-                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
-                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
-                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
                         vCurv.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                        vCurv.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        vCurv.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                        vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         polygons.append(_Polygon(vCurv))
     
 
