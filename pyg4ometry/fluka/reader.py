@@ -239,9 +239,7 @@ class Reader(object):
                 transform_name = transform_name[1:]
                 inverse = True
             transform = self.flukaregistry.rotoTranslations[transform_name]
-            if inverse:
-                transform = np.linalg.inv(transform)
-            transform_stack.append(transform)
+            transform_stack.append((transform, inverse))
         elif directive == "$end_transform":
             transform_stack.pop()
         else:
@@ -373,9 +371,13 @@ def _make_body(body_parts,
     # outside first, rather than inside first.
 
     # deepcopies because otherwise when we pop from the stacks, we
-    transform = Transform(deepcopy(expansion_stack),
-                          deepcopy(translation_stack),
-                          deepcopy(transform_stack[::-1]))
+    transform_stack = deepcopy(transform_stack[::-1])
+    rotoTranslations = [x[0] for x in transform_stack]
+    inversion_stack = [x[1] for x in transform_stack]
+    transform = Transform(expansion=deepcopy(expansion_stack),
+                          translation=deepcopy(translation_stack),
+                          rotoTranslation=rotoTranslations,
+                          invertRotoTranslation=inversion_stack)
 
     if body_type == "RPP":
         b = body.RPP(name, *p, flukaregistry=flukareg, transform=transform)
