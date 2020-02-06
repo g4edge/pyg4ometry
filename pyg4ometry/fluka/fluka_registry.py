@@ -1,3 +1,4 @@
+import cPickle
 from collections import OrderedDict, MutableMapping
 from itertools import count
 import logging
@@ -74,6 +75,17 @@ class FlukaRegistry(object):
                 continue
             out[name] = region
         return out
+
+    def regionExtents(self, write=None):
+        regionExtents = {}
+        for regionName, region in self.regionDict.iteritems():
+            regionExtents[regionName] = region.extent()
+
+        if write:
+            with open(write, "wb") as f:
+                cPickle.dump(regionExtents, f)
+
+        return regionExtents
 
 class RotoTranslationStore(MutableMapping):
     """ only get by names."""
