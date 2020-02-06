@@ -956,6 +956,26 @@ class ARB(BodyMixin):
                    transform=self.transform,
                    flukaregistry=reg)
 
+    def flukaFreeString(self):
+        line1 = []
+        line1.extend(list(self.vertices[0]))
+        line1.extend(list(self.vertices[1]))
+        line2 = []
+        line2.extend(list(self.vertices[2]))
+        line2.extend(list(self.vertices[3]))
+        line3 = []
+        line3.extend(list(self.vertices[4]))
+        line3.extend(list(self.vertices[5]))
+        line4 = []
+        line4.extend(list(self.vertices[6]))
+        line4.extend(list(self.vertices[7]))
+        itfs = _iterablesToFreeString
+        return "{}\n{}\n{}\n{}\n{}".format(itfs(line1),
+                                           itfs(line2),
+                                           itfs(line3),
+                                           itfs(line4),
+                                           itfs(self.facenumbers))
+
 
 class XYP(_HalfSpaceMixin):
     """
