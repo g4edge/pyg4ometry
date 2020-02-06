@@ -8,11 +8,9 @@ import numpy as np
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
-from pyg4ometry.fluka.vector import (Extent,
-                                     areExtentsOverlapping,
-                                     applyTransform,
-                                     applyTransformRotation)
+from pyg4ometry.fluka.vector import (Extent, areExtentsOverlapping)
 from pyg4ometry.fluka.region import areOverlapping
+from pyg4ometry.fluka import Transform
 
 
 logger = logging.getLogger(__name__)
@@ -77,11 +75,10 @@ def fluka2Geant4(flukareg,
     greg = g4.Registry()
     wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
     materialMap = _getMaterialMap(materialMap)
-    regionsWithLVs = {}
+    regionsToLVs = {} # For possible convertion of LATTICEs
     # Do non-lattice regions first as we convert the lattices in the
     # loop after this, as they must be treated differently.
-    nonLatticeRegions = flukareg.getNonLatticeRegions()
-    for name, region in nonLatticeRegions.iteritems():
+    for name, region in flukareg.regionDict.iteritems():
         if name not in regions:
             continue
 
@@ -106,7 +103,7 @@ def fluka2Geant4(flukareg,
                                      "{}_lv".format(name),
                                      greg)
 
-        regionsWithLVs[name] = region_lv
+        regionsToLVs[name] = region_lv
         # We reverse because rotations in the context of Booleans are
         # active, and that is the convention we have followed so far,
         # but volume rotations are passive, so we have to reverse the
@@ -118,27 +115,7 @@ def fluka2Geant4(flukareg,
                           "{}_pv".format(name),
                           wlv, greg)
 
-    # If not lattices defined then we end the conversion here.
-    if not flukareg.latticeDict:
-        greg.setWorld(wlv.name)
-        return greg
-    latticeContents = _getContentsOfLatticeCells(flukareg, region_extents)
-    for latticeName, contents in latticeContents.iteritems():
-        # We take the LVs associated with this lattice (which have been
-        # placed above as PV) and place it with the translation and
-        # rotation of the lattice cell.
-        latticeRegion = flukareg.regionDict[latticeName]
-        latticeCentre = list(latticeRegion.centre())
-        latticeRotation = list(trans.reverse(latticeRegion.tbxyz()))
-
-        for prototypeName in contents:
-            prototypeLV = regionsWithLVs[prototypeName]
-            g4.PhysicalVolume(latticeRotation,
-                              latticeCentre,
-                              prototypeLV,
-                              "{}_lattice_pv".format(latticeName),
-                              wlv, greg)
-
+    _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs)
     greg.setWorld(wlv.name)
     return greg
 
@@ -172,7 +149,8 @@ def _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions):
         ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
-    fluka_reg_out.latticeDict = flukareg.latticeDict
+    fluka_reg_out.latticeDict = deepcopy(flukareg.latticeDict)
+
     return fluka_reg_out
 
 def _make_disjoint_unions_registry(flukareg, regions):
@@ -212,7 +190,8 @@ def _make_disjoint_unions_registry(flukareg, regions):
                 new_region.addZone(new_zone)
                 new_region.allBodiesToRegistry(fluka_reg_out)
                 fluka_reg_out.addRegion(new_region)
-    fluka_reg_out.latticeDict = flukareg.latticeDict
+    fluka_reg_out.latticeDict = deepcopy(flukareg.latticeDict)
+
     return fluka_reg_out, newNamesToOldNames
 
 def _get_region_extents(flukareg, regions):
@@ -266,7 +245,7 @@ def _filterBlackHoleRegions(omitBlackholeRegions, flukareg, regions):
             continue
         freg_out.addRegion(region)
         region.allBodiesToRegistry(freg_out)
-    freg_out.latticeDict = flukareg.latticeDict
+    freg_out.latticeDict = deepcopy(flukareg.latticeDict)
     return freg_out
 
 def _getOverlappingExtents(extent, extents):
@@ -277,64 +256,55 @@ def _getOverlappingExtents(extent, extents):
     return overlappingExtents
 
 def _getContentsOfLatticeCells(flukaregistry, regionExtents):
-    lattice = flukaregistry.latticeDict
     regions = flukaregistry.regionDict
 
     cellContents = {}
-    for cellName, transform in lattice.iteritems():
-        cellRegion = regions[cellName]
+    for cellName, lattice in flukaregistry.latticeDict.iteritems():
+        transformedCellExtent = _getTransformedCellRegionExtent(lattice)
 
-        transformedCellExtent = _getTransformedCellRegionExtent(cellRegion,
-                                                                transform)
         overlappingExents = _getOverlappingExtents(transformedCellExtent,
                                                    regionExtents)
         cellContents[cellName] = []
         for regionName in overlappingExents:
             region = regions[regionName]
             overlapping = _isTransformedCellRegionIntersectingWithRegion(
-                region, cellRegion, transform)
+                region, lattice)
             if overlapping:
                 cellContents[cellName].append(regionName)
 
     return cellContents
 
-def _getTransformedCellRegionExtent(cellRegion, latticeTransform):
+def _getTransformedCellRegionExtent(lattice):
     # Move the lattice cell region onto the prototype region.
-    cellRotation = applyTransformRotation(latticeTransform,
-                                          cellRegion.rotation())
-    cellCentre = list(applyTransform(latticeTransform, cellRegion.centre()))
+    transform = lattice.getTransform()
+    cellRegion = deepcopy(lattice.cellRegion)
+
+
+    cellRotation = transform.leftMultiplyRotation(cellRegion.rotation())
+    cellCentre = list(transform.leftMultiplyVector(cellRegion.centre()))
     cellName = cellRegion.name
+
     greg = g4.Registry()
     wlv = _makeWorldVolume(WORLD_DIMENSIONS, "G4_Galactic", greg)
 
 
     region_solid = cellRegion.geant4Solid(greg, extent=None)
-    region_lv = g4.LogicalVolume(region_solid,
+    regionLV = g4.LogicalVolume(region_solid,
                                  "G4_Galactic",
                                  "{}_lv".format(cellName),
                                  greg)
 
-    # Invert the rotation as usual and convert to tbxyz
-    cellRotation = list(trans.matrix2tbxyz(cellRotation.T))
-    g4.PhysicalVolume(cellRotation,
-                      cellCentre,
-                      region_lv,
-                      "{}_pv".format(cellName),
-                      wlv, greg)
+    lower, upper = regionLV.mesh.getBoundingBox(cellRotation,
+                                                cellCentre)
+    return fluka.Extent(lower, upper)
 
-    lower, upper = wlv.extent()
-    extent = fluka.Extent(lower, upper)
+def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
+    cellRegion = deepcopy(lattice.cellRegion)
 
-    return extent
-
-def _isTransformedCellRegionIntersectingWithRegion(region,
-                                                   cellRegion,
-                                                   latticeTransform):
-    cellRegion = deepcopy(cellRegion)
-    cellRotation = applyTransformRotation(latticeTransform,
-                                          cellRegion.rotation())
-    cellCentre = applyTransform(latticeTransform,
-                                cellRegion.centre())
+    transform = lattice.getTransform()
+    
+    cellRotation = transform.leftMultiplyRotation(cellRegion.rotation())
+    cellCentre = list(transform.leftMultiplyVector(cellRegion.centre()))
 
     # XXX: Nasty hack to get the cellRegion to return the rotation and
     # centre that I want it to return.  These two lines save me a lot
@@ -408,8 +378,30 @@ def _filterHalfSpaces(flukareg, extents):
                     regionOut.removeBody(body.name)
         fout.addRegion(regionOut)
         regionOut.allBodiesToRegistry(fout)
+
+    fout.latticeDict = deepcopy(flukareg.latticeDict)
+
     return fout
 
 def _distanceFromPointToPlane(normal, pointOnPlane, point):
     normal = fluka.Three(normal).unit()
     return abs(np.dot(normal, point - pointOnPlane))
+
+def _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs):
+    # If no lattices defined then we end the conversion here.
+    latticeContents = _getContentsOfLatticeCells(flukareg, region_extents)
+    for latticeName, contents in latticeContents.iteritems():
+        # We take the LVs associated with this lattice (which have been
+        # placed above as PV) and place it with the translation and
+        # rotation of the lattice cell.
+        cellRegion = flukareg.latticeDict[latticeName].cellRegion
+        cellCentre = list(cellRegion.centre())
+        cellRotation = list(trans.reverse(cellRegion.tbxyz()))
+
+        for prototypeName in contents:
+            prototypeLV = regionsToLVs[prototypeName]
+            g4.PhysicalVolume(cellRotation,
+                              cellCentre,
+                              prototypeLV,
+                              "{}_lattice_pv".format(latticeName),
+                              wlv, greg)

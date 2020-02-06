@@ -8,17 +8,17 @@ import antlr4
 import numpy as np
 
 from . import body
+from .card import freeFormatStringSplit, Card
+from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
+from .fluka_registry import FlukaRegistry
+from .lattice import Lattice
 from . preprocessor import preprocess
 from .region import Zone, Region
-from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
-
 from .vector import Three
-from .card import freeFormatStringSplit, Card
-from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
+from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
 
 
 
@@ -61,7 +61,7 @@ class Reader(object):
         self._parseBodies()
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
-        self.flukaregistry.latticeDict.update(self._parseLattice())
+        self._parseLattice()
         self._assignMaterials()
 
     def _findLines(self) :
@@ -323,7 +323,6 @@ class Reader(object):
                 continue
 
     def _parseLattice(self):
-        lattice = {} # {cellName: rot-defi-matrix, ...}
         for card in self.cards:
             if card.keyword != "LATTICE":
                 continue
@@ -334,28 +333,38 @@ class Reader(object):
                 raise ValueError(msg)
 
             transformName = card.sdum
-            if transformName.startswith(("ROT", "Rot", "rot")):
+            badPrefixes1 = ("ROT", "Rot", "rot")
+            badPrefixes2 = ("RO", "Ro", "ro")
+            failmsg = "Currently can't parse LATTICE 'SDUM with '{}' prefixes"
+            if transformName.startswith(badPrefixes1):
                 try:
                     transformIndex = int(transformName[3:])
-                    transform = self.transforms.keys()[transformIndex]
+                    raise FLUKAError(failmsg.format(", ".join(badPrefixe1)))
                 except ValueError:
-                    transform = self.transforms[transformName]
-            elif transformName.startswith(("RO", "Ro", "ro")):
+                    pass
+            if transformName.startswith(badPrefixes2):
                 try:
                     transformIndex = int(transformName[2:])
-                    transform = self.transforms.keys()[transformIndex]
+                    raise FLUKAError(failmsg.format(", ".join(badPrefixes2)))
                 except ValueError:
-                    transform = self.transforms[transformName]
-            else:
-                transform = self.transforms[transformName]
+                    pass
+
+            rotoTranslation = self.flukaregistry.rotoTranslations[transformName]
 
             # Deal with inverse rotation notation
+            invert = False
             if transformName[0] == "-":
-                transform = np.linalg.inv(transform)
+                invert = True
 
-            lattice[cellName] = transform
-
-        return lattice
+            cellRegion = self.flukaregistry.regionDict[cellName]
+            lattice = Lattice(cellRegion, rotoTranslation,
+                              invertRotoTranslation=invert)
+            # It's a LATTICE region which we store in the latticeDict,
+            # not the regionDict.  Now we know that the region read in
+            # previously is a LATTICE cell we don't store it in there
+            # any more.
+            del self.flukaregistry.regionDict[cellRegion.name]
+            self.flukaregistry.addLattice(lattice)
 
 
 def _make_body(body_parts,

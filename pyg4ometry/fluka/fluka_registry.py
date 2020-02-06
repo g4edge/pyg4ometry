@@ -48,11 +48,11 @@ class FlukaRegistry(object):
 
         self.regionDict[region.name] = region
 
-    def addMaterial(self, material):
-        self.materialDict.add(material)
-
     def addLattice(self, lattice):
-        self.latticeDict.add(lattice)
+        if lattice.cellRegion.name in self.regionDict:
+            raise ValueError(
+                "LATTICE cell already been defined as a region in regionDict")
+        self.latticeDict[lattice.cellRegion.name] = lattice
 
     def getBody(self, name):
         return self.bodyDict[name]
@@ -62,19 +62,10 @@ class FlukaRegistry(object):
 
     def printDefinitions(self):
         print "bodyDict = {}".format(self.bodyDict)
-        print "bodyTransformDict = {}".format(self.bodyTransformDict)
         print "regionDict = {}".format(self.regionDict)
         print "materialDict = {}".format(self.materialDict)
         print "latticeDict = {}".format(self.latticeDict)
         print "cardDict = {}".format(self.cardDict)
-
-    def getNonLatticeRegions(self):
-        out = {}
-        for name, region in self.regionDict.iteritems():
-            if name in self.latticeDict:
-                continue
-            out[name] = region
-        return out
 
     def regionExtents(self, write=None):
         regionExtents = {}
@@ -86,6 +77,13 @@ class FlukaRegistry(object):
                 cPickle.dump(regionExtents, f)
 
         return regionExtents
+
+    def latticeExtents(self):
+        latticeCellExtents = {}
+        for cellName, lattice in self.latticeDict.iteritems():
+            latticeCellExtents[cellName] = lattice.cellRegion.extent()
+        return latticeCellExtents
+
 
 class RotoTranslationStore(MutableMapping):
     """ only get by names."""

@@ -62,9 +62,9 @@ class Transform(object):
             matrix = self.rotoTranslation.to4DMatrix()
             try:
                 invertThis = self.invertRotoTranslation[0]
-            except (IndexError, AttributeError):
+            except (IndexError, TypeError):
                 invertThis = bool(self.invertRotoTranslation)
-            if inverThis :
+            if invertThis :
                 matrix = np.linalg.inv(matrix)
             return [matrix]
         except AttributeError:
