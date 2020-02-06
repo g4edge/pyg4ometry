@@ -252,7 +252,7 @@ class Reader(object):
         # material assignments.
         regionlist = self.flukaregistry.regionDict.keys()
         for card in self.cards:
-            if card.keyword != "ASSIGNMA":
+            if card.keyword != "ASSIGNMA" and card.keyword != "ASSIGNMAT":
                 continue
 
             material_name = card.what1
