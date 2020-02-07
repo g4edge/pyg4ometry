@@ -8,7 +8,7 @@ import logging as _log
 import random
 
 class VtkViewer:
-    def __init__(self,size=(2048,1536)):
+    def __init__(self,size=(2048,1536), interpolation="none"):
         
         # create a renderer
         self.ren = _vtk.vtkRenderer()
@@ -52,6 +52,13 @@ class VtkViewer:
 
         # material options dict
         self.materialVisualisationOptions = None
+
+        # interpolation for vertex shading
+        interps = ("none", "flat", "gouraud", "phong")
+        if interpolation not in interps:
+            raise ValueError("Unrecognised interpolation option {}."
+                             " Possible options are :{}".format(interpolation, ", ".join(interps)))
+        self.interpolation = interpolation
 
     def addAxes(self, length = 20.0, origin = (0,0,0)):
         axes = _vtk.vtkAxesActor()
@@ -338,6 +345,21 @@ class VtkViewer:
             vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
             localmeshes[solid_name] = vtkPD
 
+        if self.interpolation is not "none":
+            normal_generator = _vtk.vtkPolyDataNormals()
+            normal_generator.SetInputData(vtkPD)
+            # normal_generator.ComputePointNormalsOn()
+            # normal_generator.ComputeCellNormalsOn()
+            normal_generator.SetSplitting(0)
+            normal_generator.SetConsistency(0)
+            normal_generator.SetAutoOrientNormals(0)
+            normal_generator.SetComputePointNormals(1)
+            normal_generator.SetComputeCellNormals(1)
+            normal_generator.SetFlipNormals(0)
+            normal_generator.SetNonManifoldTraversal(0)
+            normal_generator.Update()
+            vtkPD = normal_generator.GetOutput()
+
         # Filter : check if filter is in the filters dict
         _log.info('VtkViewer.addLogicalVolume> vtkFLT')
         filtername = solid_name+"_filter"
@@ -365,7 +387,15 @@ class VtkViewer:
         # Actor
         actorname = pv_name+"_actor"             
         vtkActor = _vtk.vtkActor() 
-        vtkActor.SetMapper(vtkMAP)        
+        vtkActor.SetMapper(vtkMAP)
+
+        if self.interpolation is not "none":
+            if self.interpolation == "gouraud":
+                vtkActor.GetProperty().SetInterpolationToGouraud()
+            elif self.interpolation == "phong":
+                vtkActor.GetProperty().SetInterpolationToPhong()
+            elif self.interpolation == "flat":
+                vtkActor.GetProperty().SetInterpolationToFlat()
 
         vtkTransform = _vtk.vtkMatrix4x4()
         vtkTransform.SetElement(0,0,mtra[0,0])
