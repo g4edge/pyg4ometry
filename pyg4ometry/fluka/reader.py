@@ -8,17 +8,17 @@ import antlr4
 import numpy as np
 
 from . import body
+from .card import freeFormatStringSplit, Card
+from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
+from .fluka_registry import FlukaRegistry
+from .lattice import Lattice
 from . preprocessor import preprocess
 from .region import Zone, Region
-from .fluka_registry import FlukaRegistry
 from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionParser,
                                                RegionLexer)
-from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
-
 from .vector import Three
-from .card import freeFormatStringSplit, Card
-from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
+from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
 
 
 
@@ -47,7 +47,6 @@ class Reader(object):
         self.filename = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
-        self.transforms = OrderedDict()
 
         self._load()
 
@@ -62,7 +61,7 @@ class Reader(object):
         self._parseBodies()
         self._parseRegions()
         self._material_assignments = self._parseMaterialAssignments()
-        self.flukaregistry.latticeDict.update(self._parseLattice())
+        self._parseLattice()
         self._assignMaterials()
 
     def _findLines(self) :
@@ -201,6 +200,9 @@ class Reader(object):
 
             if kw == "TITLE":
                 inTitle = True
+            if kw == "GLOBAL": # See manual
+                if cards[-1].what4 == 2.0:
+                    fixed = False
             elif kw != "FREE" and kw != "FIXED":
                 continue
             elif kw == "FREE":
@@ -215,14 +217,7 @@ class Reader(object):
                 continue
             rotdefi = RotoTranslation.fromCard(card)
             name = rotdefi.name
-            if name in self.transforms:
-                # if already defined (i.e. it is defined recursively)
-                # then append it to the list of ROTDEFI cards with
-                # this name.
-                self.transforms[name].append(rotdefi)
-            else:
-                self.transforms[name] = RecursiveRotoTranslation(
-                    name, [rotdefi])
+            self.flukaregistry.addRotoTranslation(rotdefi)
 
     def _parseGeometryDirective(self, line_parts,
                                 expansion_stack,
@@ -246,10 +241,8 @@ class Reader(object):
             if transform_name.startswith("-"):
                 transform_name = transform_name[1:]
                 inverse = True
-            transform = self.transforms[transform_name]
-            if inverse:
-                transform = np.linalg.inv(transform)
-            transform_stack.append(transform)
+            transform = self.flukaregistry.rotoTranslations[transform_name]
+            transform_stack.append((transform, inverse))
         elif directive == "$end_transform":
             transform_stack.pop()
         else:
@@ -262,7 +255,7 @@ class Reader(object):
         # material assignments.
         regionlist = self.flukaregistry.regionDict.keys()
         for card in self.cards:
-            if card.keyword != "ASSIGNMA":
+            if card.keyword != "ASSIGNMA" and card.keyword != "ASSIGNMAT":
                 continue
 
             material_name = card.what1
@@ -301,7 +294,7 @@ class Reader(object):
             stop += 1
 
             # WHAT4 is the step length in assigning indices
-            if step is None:
+            if step is None or step == 0.0:
                 step = 1
             else:
                 step = int(step)
@@ -333,7 +326,6 @@ class Reader(object):
                 continue
 
     def _parseLattice(self):
-        lattice = {} # {cellName: rot-defi-matrix, ...}
         for card in self.cards:
             if card.keyword != "LATTICE":
                 continue
@@ -344,28 +336,38 @@ class Reader(object):
                 raise ValueError(msg)
 
             transformName = card.sdum
-            if transformName.startswith(("ROT", "Rot", "rot")):
+            badPrefixes1 = ("ROT", "Rot", "rot")
+            badPrefixes2 = ("RO", "Ro", "ro")
+            failmsg = "Currently can't parse LATTICE 'SDUM with '{}' prefixes"
+            if transformName.startswith(badPrefixes1):
                 try:
                     transformIndex = int(transformName[3:])
-                    transform = self.transforms.keys()[transformIndex]
+                    raise FLUKAError(failmsg.format(", ".join(badPrefixe1)))
                 except ValueError:
-                    transform = self.transforms[transformName]
-            elif transformName.startswith(("RO", "Ro", "ro")):
+                    pass
+            if transformName.startswith(badPrefixes2):
                 try:
                     transformIndex = int(transformName[2:])
-                    transform = self.transforms.keys()[transformIndex]
+                    raise FLUKAError(failmsg.format(", ".join(badPrefixes2)))
                 except ValueError:
-                    transform = self.transforms[transformName]
-            else:
-                transform = self.transforms[transformName]
+                    pass
+
+            rotoTranslation = self.flukaregistry.rotoTranslations[transformName]
 
             # Deal with inverse rotation notation
+            invert = False
             if transformName[0] == "-":
-                transform = np.linalg.inv(transform)
+                invert = True
 
-            lattice[cellName] = transform
-
-        return lattice
+            cellRegion = self.flukaregistry.regionDict[cellName]
+            lattice = Lattice(cellRegion, rotoTranslation,
+                              invertRotoTranslation=invert)
+            # It's a LATTICE region which we store in the latticeDict,
+            # not the regionDict.  Now we know that the region read in
+            # previously is a LATTICE cell we don't store it in there
+            # any more.
+            del self.flukaregistry.regionDict[cellRegion.name]
+            self.flukaregistry.addLattice(lattice)
 
 
 def _make_body(body_parts,
@@ -379,9 +381,15 @@ def _make_body(body_parts,
     # Note that we have to reverse the transform stack to match FLUKA
     # here, because it seems that FLUKA applys nested transforms
     # outside first, rather than inside first.
-    transform = Transform(expansion_stack,
-                          translation_stack,
-                          transform_stack[::-1])
+
+    # deepcopies because otherwise when we pop from the stacks, we
+    transform_stack = deepcopy(transform_stack[::-1])
+    rotoTranslations = [x[0] for x in transform_stack]
+    inversion_stack = [x[1] for x in transform_stack]
+    transform = Transform(expansion=deepcopy(expansion_stack),
+                          translation=deepcopy(translation_stack),
+                          rotoTranslation=rotoTranslations,
+                          invertRotoTranslation=inversion_stack)
 
     if body_type == "RPP":
         b = body.RPP(name, *p, flukaregistry=flukareg, transform=transform)

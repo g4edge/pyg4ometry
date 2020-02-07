@@ -14,10 +14,12 @@ class Transform(object):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
     RotoTranslation and RecursiveRotoTranslation"""
-    def __init__(self, expansion=None, translation=None, rotoTranslation=None):
+    def __init__(self, expansion=None, translation=None,
+                 rotoTranslation=None, invertRotoTranslation=None):
         self.expansion = expansion
         self.translation = translation
         self.rotoTranslation = rotoTranslation
+        self.invertRotoTranslation = invertRotoTranslation
 
     def leftMultiplyVector(self, vector):
         vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
@@ -57,11 +59,30 @@ class Transform(object):
         if not self.rotoTranslation:
             return [np.identity(4)]
         try: # A single RotoTranslation or RecursiveRotoTranslation
-            return [self.rotoTranslation.to4DMatrix()]
+            matrix = self.rotoTranslation.to4DMatrix()
+            try:
+                invertThis = self.invertRotoTranslation[0]
+            except (IndexError, TypeError):
+                invertThis = bool(self.invertRotoTranslation)
+            if invertThis :
+                matrix = np.linalg.inv(matrix)
+            return [matrix]
         except AttributeError:
             matrices = [] # Then it is a stack of recursive definitions
-            for rtrans in self.rotoTranslation:
-                matrices.append(rtrans.to4DMatrix())
+            anyInversion = bool(self.invertRotoTranslation)
+            for i, rtrans in enumerate(self.rotoTranslation):
+                matrix = rtrans.to4DMatrix()
+                if anyInversion:
+                    try:
+                        invertThis = self.invertRotoTranslation[i]
+                    except (IndexError, AttributeError):
+                        msg = "malformed invertRotoTranslation stack."
+                        raise ValueError(msg)
+                    if invertThis:
+                        matrix = np.linalg.inv(matrix)
+
+                matrices.append(matrix)
+
             return matrices
 
     def to4DMatrix(self):

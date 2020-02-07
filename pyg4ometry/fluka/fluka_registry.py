@@ -1,3 +1,4 @@
+import cPickle
 from collections import OrderedDict, MutableMapping
 from itertools import count
 import logging
@@ -20,7 +21,7 @@ class FlukaRegistry(object):
 
     def __init__(self) :
         self.bodyDict = OrderedDict()
-        self.rotoTranslationsDict = RotoTranslationStore()
+        self.rotoTranslations = RotoTranslationStore()
         self.regionDict = OrderedDict()
         self.materialDict = OrderedDict()
         self.latticeDict = OrderedDict()
@@ -35,7 +36,7 @@ class FlukaRegistry(object):
         self.bodyDict[body.name] = body
 
     def addRotoTranslation(self, rototrans):
-        self.rotoTranslationsDict.addRotoTranslation(rototrans)
+        self.rotoTranslations.addRotoTranslation(rototrans)
 
     def addRegion(self, region, addBodies=False):
         # Always build a map of bodies to regions, which we need for
@@ -47,11 +48,11 @@ class FlukaRegistry(object):
 
         self.regionDict[region.name] = region
 
-    def addMaterial(self, material):
-        self.materialDict.add(material)
-
     def addLattice(self, lattice):
-        self.latticeDict.add(lattice)
+        if lattice.cellRegion.name in self.regionDict:
+            raise ValueError(
+                "LATTICE cell already been defined as a region in regionDict")
+        self.latticeDict[lattice.cellRegion.name] = lattice
 
     def getBody(self, name):
         return self.bodyDict[name]
@@ -61,19 +62,28 @@ class FlukaRegistry(object):
 
     def printDefinitions(self):
         print "bodyDict = {}".format(self.bodyDict)
-        print "bodyTransformDict = {}".format(self.bodyTransformDict)
         print "regionDict = {}".format(self.regionDict)
         print "materialDict = {}".format(self.materialDict)
         print "latticeDict = {}".format(self.latticeDict)
         print "cardDict = {}".format(self.cardDict)
 
-    def getNonLatticeRegions(self):
-        out = {}
-        for name, region in self.regionDict.iteritems():
-            if name in self.latticeDict:
-                continue
-            out[name] = region
-        return out
+    def regionExtents(self, write=None):
+        regionExtents = {}
+        for regionName, region in self.regionDict.iteritems():
+            regionExtents[regionName] = region.extent()
+
+        if write:
+            with open(write, "wb") as f:
+                cPickle.dump(regionExtents, f)
+
+        return regionExtents
+
+    def latticeExtents(self):
+        latticeCellExtents = {}
+        for cellName, lattice in self.latticeDict.iteritems():
+            latticeCellExtents[cellName] = lattice.cellRegion.extent()
+        return latticeCellExtents
+
 
 class RotoTranslationStore(MutableMapping):
     """ only get by names."""
