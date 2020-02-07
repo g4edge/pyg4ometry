@@ -200,6 +200,9 @@ class Reader(object):
 
             if kw == "TITLE":
                 inTitle = True
+            if kw == "GLOBAL": # See manual
+                if cards[-1].what4 == 2.0:
+                    fixed = False
             elif kw != "FREE" and kw != "FIXED":
                 continue
             elif kw == "FREE":
@@ -291,7 +294,7 @@ class Reader(object):
             stop += 1
 
             # WHAT4 is the step length in assigning indices
-            if step is None:
+            if step is None or step == 0.0:
                 step = 1
             else:
                 step = int(step)
