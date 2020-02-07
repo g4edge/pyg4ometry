@@ -379,7 +379,7 @@ class LogicalVolume(object):
                            2 * (extent[1][0] - extent[0][0]),
                            2 * (extent[1][1] - extent[0][1]),
                            2 * (extent[1][2] - extent[0][2]),
-                           reg, "mm")
+                           self.registry, "mm")
 
         wm = _g4.MaterialPredefined(worldMaterial)
 

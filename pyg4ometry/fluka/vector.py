@@ -147,6 +147,12 @@ class Extent(object):
     def __eq__(self, other):
         return self.lower == other.lower and self.upper == other.upper
 
+    def cornerDistance(self):
+        # distance from centre to one of the corners.
+        size = self.size
+        return ((0.5 * size.x)**2 + (0.5 * size.y)**2 + (0.5 * size.z)**2)**0.5
+
+
 def areExtentsOverlapping(first, second):
     """Check if two Extent instances are overlapping."""
     return not (first.upper.x < second.lower.x
@@ -156,16 +162,7 @@ def areExtentsOverlapping(first, second):
                 or first.upper.z < second.lower.z
                 or first.lower.z > second.upper.z)
 
-def applyTransform(transform, vector):
-    vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
-    result4d =  transform.dot(vector4d)
-    return Three(result4d[0:3])
-
-def applyTransformRotation(transform, rotation_matrix):
-    return transform[:3,:3].dot(rotation_matrix)
-
-
-def point_on_line_closest_to_point(point, point_on_line, direction):
+def pointOnLineClosestToPoint(point, point_on_line, direction):
     """
     Line is defined in terms of two vectors:  a point on the line and
     the direction of the line.
@@ -177,9 +174,9 @@ def point_on_line_closest_to_point(point, point_on_line, direction):
     # Algorithm pinched from:
 
     # Get another point on the line:
-    p0 = point
-    p1 = point_on_line
-    a = direction
+    p0 = Three(point)
+    p1 = Three(point_on_line)
+    a = Three(direction)
 
     # In the name of rapidity, implementation pinched from:
     # https://math.stackexchange.com/questions/13176/how-to-find-a-point-on-a-line-closest-to-another-given-point

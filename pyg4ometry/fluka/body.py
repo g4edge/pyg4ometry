@@ -5,7 +5,7 @@ from itertools import chain
 import numpy as np
 import vtk
 
-from .vector import Three
+from .vector import Three, pointOnLineClosestToPoint
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
@@ -14,6 +14,7 @@ import pyg4ometry.exceptions
 from .directive import Transform
 from .vector import Extent as _Extent
 
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -117,6 +118,21 @@ class _InfiniteCylinderMixin(BodyMixin):
     def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
         return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
+
+
+class _ShiftableCylinderMixin(object):
+    def _shiftInfiniteCylinderCentre(self, extent, initialDirection,
+                                     initialCentre):
+        transformedDirection = self.transform.leftMultiplyRotation(
+            initialDirection)
+        transformedCentre = self.transform.leftMultiplyVector(initialCentre)
+        # Shift the ZEC along its infinite axis to the point closest
+        # to the extent centre.
+        shiftedCentre = pointOnLineClosestToPoint(extent.centre,
+                                                  transformedCentre,
+                                                  transformedDirection)
+
+        return Three(shiftedCentre)
 
 
 class RPP(BodyMixin):
@@ -955,6 +971,26 @@ class ARB(BodyMixin):
                    transform=self.transform,
                    flukaregistry=reg)
 
+    def flukaFreeString(self):
+        line1 = []
+        line1.extend(list(self.vertices[0]))
+        line1.extend(list(self.vertices[1]))
+        line2 = []
+        line2.extend(list(self.vertices[2]))
+        line2.extend(list(self.vertices[3]))
+        line3 = []
+        line3.extend(list(self.vertices[4]))
+        line3.extend(list(self.vertices[5]))
+        line4 = []
+        line4.extend(list(self.vertices[6]))
+        line4.extend(list(self.vertices[7]))
+        itfs = _iterablesToFreeString
+        return "{}\n{}\n{}\n{}\n{}".format(itfs(line1),
+                                           itfs(line2),
+                                           itfs(line3),
+                                           itfs(line4),
+                                           itfs(self.facenumbers))
+
 
 class XYP(_HalfSpaceMixin):
     """
@@ -995,6 +1031,24 @@ class XYP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.z)
 
+    def pycsgmesh(self):
+        lmv = self.transform.leftMultiplyVector
+
+        corner1 = _geom.Vertex(lmv([INFINITY, INFINITY, self.z]))
+        corner2 = _geom.Vertex(lmv([INFINITY, -INFINITY, self.z]))
+        corner3 = _geom.Vertex(lmv([-INFINITY, -INFINITY, self.z]))
+        corner4 = _geom.Vertex(lmv([-INFINITY, INFINITY, self.z]))
+
+        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
+                                                 corner3, corner4])])
+
+    def toPlane(self):
+        normal = Three(0, 0, 1)
+        point = Three(0, 0, self.z)
+        normal = self.transform.leftMultiplyRotation(normal)
+        point = self.transform.leftMultiplyVector(point)
+
+        return normal, point
 
 class XZP(_HalfSpaceMixin):
     """
@@ -1035,6 +1089,25 @@ class XZP(_HalfSpaceMixin):
 
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.y)
+
+    def pycsgmesh(self):
+        lmv = self.transform.leftMultiplyVector
+
+        corner1 = _geom.Vertex(lmv([INFINITY, self.y, INFINITY]))
+        corner2 = _geom.Vertex(lmv([INFINITY, self.y, -INFINITY]))
+        corner3 = _geom.Vertex(lmv([-INFINITY, self.y, -INFINITY]))
+        corner4 = _geom.Vertex(lmv([-INFINITY, self.y, INFINITY]))
+
+        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
+                                                 corner3, corner4])])
+
+    def toPlane(self):
+        normal = Three(0, 1, 0)
+        point = Three(0, self.y, 0)
+        normal = self.transform.leftMultiplyRotation(normal)
+        point = self.transform.leftMultiplyVector(point)
+
+        return normal, point
 
 
 class YZP(_HalfSpaceMixin):
@@ -1077,6 +1150,25 @@ class YZP(_HalfSpaceMixin):
 
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.x)
+
+    def pycsgmesh(self):
+        lmv = self.transform.leftMultiplyVector
+
+        corner1 = _geom.Vertex(lmv([self.x, INFINITY, INFINITY]))
+        corner2 = _geom.Vertex(lmv([self.x, -INFINITY, INFINITY]))
+        corner3 = _geom.Vertex(lmv([self.x, -INFINITY, -INFINITY]))
+        corner4 = _geom.Vertex(lmv([self.x, INFINITY, -INFINITY]))
+
+
+        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
+                                                 corner3, corner4])])
+    def toPlane(self):
+        normal = Three(1, 0, 0)
+        point = Three(self.x, 0, 0)
+        normal = self.transform.leftMultiplyRotation(normal)
+        point = self.transform.leftMultiplyVector(point)
+
+        return normal, point
 
 
 class PLA(_HalfSpaceMixin):
@@ -1141,8 +1233,15 @@ class PLA(_HalfSpaceMixin):
                                   _iterablesToFreeString(self.normal,
                                                             self.point))
 
+    def toPlane(self):
+        normal = self.transform.leftMultiplyRotation(self.normal)
+        point = self.transform.leftMultiplyVector(self.point)
 
-class XCC(_InfiniteCylinderMixin):
+        return normal, point
+
+
+
+class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1166,10 +1265,12 @@ class XCC(_InfiniteCylinderMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(extent_offset.x,
-                                                       self.y,
-                                                       self.z))
+        initialCentre = Three(0, self.y, self.z)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [1, 0, 0],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.array([[0, 0, -1],
@@ -1188,7 +1289,7 @@ class XCC(_InfiniteCylinderMixin):
         return self._infCylinderFreestringHelper(self.y, self.z)
 
 
-class YCC(_InfiniteCylinderMixin):
+class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1212,10 +1313,12 @@ class YCC(_InfiniteCylinderMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(self.x,
-                                                       extent_offset.y,
-                                                       self.z))
+        initialCentre = Three(self.x, 0, self.z)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [0, 1, 0],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.array([[1, 0, 0],
@@ -1234,7 +1337,7 @@ class YCC(_InfiniteCylinderMixin):
         return self._infCylinderFreestringHelper(self.z, self.x)
 
 
-class ZCC(_InfiniteCylinderMixin):
+class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1258,10 +1361,12 @@ class ZCC(_InfiniteCylinderMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(self.x,
-                                                       self.y,
-                                                       extent_offset.z))
+        initialCentre = Three(self.x, self.y, 0)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [0, 0, 1],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -1278,7 +1383,7 @@ class ZCC(_InfiniteCylinderMixin):
         return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
-class XEC(BodyMixin):
+class XEC(BodyMixin, _ShiftableCylinderMixin):
     """Infinite Elliptical Cylinder parallel to the x-axis
 
     :param name: of body
@@ -1305,10 +1410,12 @@ class XEC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(extent_offset.x,
-                                                       self.y,
-                                                       self.z))
+        initialCentre = Three(0, self.y, self.z)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [1, 0, 0],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.array([[0, 0, -1],
@@ -1345,7 +1452,7 @@ class XEC(BodyMixin):
                                            self.ysemi, self.zsemi)
 
 
-class YEC(BodyMixin):
+class YEC(BodyMixin, _ShiftableCylinderMixin):
     """Infinite Elliptical Cylinder parallel to the y-axis
 
     :param name: of body
@@ -1373,10 +1480,12 @@ class YEC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(self.x,
-                                                       extent_offset.y,
-                                                       self.z))
+        initialCentre = Three(self.x, 0, self.z)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [0, 1, 0],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.array([[1, 0, 0],
@@ -1413,7 +1522,7 @@ class YEC(BodyMixin):
                                            self.zsemi, self.xsemi)
 
 
-class ZEC(BodyMixin):
+class ZEC(BodyMixin, _ShiftableCylinderMixin):
     """Infinite Elliptical Cylinder parallel to the z-axis
 
     :param name: of body
@@ -1441,10 +1550,12 @@ class ZEC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, extent=None):
-        extent_offset = self._extent_to_offset(extent)
-        return self.transform.leftMultiplyVector(Three(self.x,
-                                                       self.y,
-                                                       extent_offset.z))
+        initialCentre = Three(self.x, self.y, 0)
+        if extent is None:
+            return initialCentre
+        return self._shiftInfiniteCylinderCentre(extent,
+                                                 [0, 0, 1],
+                                                 initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))

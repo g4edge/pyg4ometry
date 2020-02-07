@@ -196,6 +196,26 @@ class Zone(object):
                 bodies.add(body)
         return bodies
 
+    def removeBody(self, name):
+        newIntersections = []
+        for intsx in self.intersections:
+            if isinstance(intsx, Zone):
+                intsx.body.removeBody(name)
+                newIntersections.append(intsx)
+            elif intsx.body.name != name:
+                newIntersections.append(intsx)
+
+        newSubtractions = []
+        for subt in self.subtractions:
+            if isinstance(subt, Zone):
+                subt.body.removeBody(name)
+                newSubtractions.append(subt)
+            elif subt.body.name != name:
+                newSubtractions.append(subt)
+
+        self.intersections = newIntersections
+        self.subtractions = newSubtractions
+
 class Region(object):
 
     def __init__(self, name, material=None):
@@ -342,6 +362,9 @@ class Region(object):
                                                     self.centre())
         return Extent(lower, upper)
 
+    def removeBody(self, name):
+        for zone in self.zones:
+            zone.removeBody(name)
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
