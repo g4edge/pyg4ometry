@@ -64,10 +64,12 @@ class Zone(object):
     def addIntersection(self,body):
         self.intersections.append(Intersection(body))
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         body_name = self.intersections[0].body.name
-        extent = _getExtent(extent, self.intersections[0])
-        return self.intersections[0].body.centre(extent=extent)
+        referenceExtent = _getReferenceExtent(referenceExtent,
+                                              self.intersections[0])
+        return self.intersections[0].body.centre(
+            referenceExtent=referenceExtent)
 
     def rotation(self):
         return self.intersections[0].body.rotation()
@@ -75,14 +77,15 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, boolean, reg, extent):
+    def _getSolidFromBoolean(self, boolean, reg, referenceExtent):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
-            extent = _getExtent(extent, boolean)
-            return boolean.body.geant4Solid(reg, extent=extent)
+            referenceExtent = _getReferenceExtent(referenceExtent, boolean)
+            return boolean.body.geant4Solid(reg,
+                                            referenceExtent=referenceExtent)
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         try:
             body0 = self.intersections[0].body
         except IndexError:
@@ -90,15 +93,16 @@ class Zone(object):
 
         result = self._getSolidFromBoolean(self.intersections[0],
                                            reg,
-                                           extent)
+                                           referenceExtent)
 
         booleans = self.intersections + self.subtractions
 
         for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
             boolean_name = boolean.generate_name(i, rootname=self.name)
 
-            tra2 = _get_tra2(body0, boolean.body, extent)
-            other_solid = self._getSolidFromBoolean(boolean, reg, extent)
+            tra2 = _get_tra2(body0, boolean.body, referenceExtent)
+            other_solid = self._getSolidFromBoolean(boolean, reg,
+                                                    referenceExtent)
             if isinstance(boolean, Subtraction):
                 result = g4.solid.Subtraction(boolean_name,
                                               result, other_solid,
@@ -226,8 +230,8 @@ class Region(object):
     def addZone(self,zone):
         self.zones.append(zone)
 
-    def centre(self, extent=None):
-        return self.zones[0].centre(extent=extent)
+    def centre(self, referenceExtent=None):
+        return self.zones[0].centre(referenceExtent=referenceExtent)
 
     def tbxyz(self):
         return self.zones[0].tbxyz()
@@ -241,22 +245,22 @@ class Region(object):
             bodies = bodies.union(zone.bodies())
         return bodies
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         logger.debug("Region = %s", self.name)
         try:
             zone0 = self.zones[0]
         except IndexError:
             raise FLUKAError("Region {} has no zones.".format(self.name))
 
-        result = zone0.geant4Solid(reg, extent=extent)
+        result = zone0.geant4Solid(reg, referenceExtent=referenceExtent)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             try:
-                otherg4 = zone.geant4Solid(reg, extent=extent)
+                otherg4 = zone.geant4Solid(reg, referenceExtent=referenceExtent)
             except FLUKAError as e:
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
-            tra2 = _get_tra2(zone0, zone, extent=extent)
+            tra2 = _get_tra2(zone0, zone, referenceExtent=referenceExtent)
             logger.debug("union tra2 = %s", tra2)
             result  = g4.solid.Union(zone_name, result, otherg4, tra2, reg)
 
@@ -284,7 +288,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zoneGraph(self):
+    def zoneGraph(self, referenceExtent=None):
         zones = self.zones
         n_zones = len(zones)
 
@@ -296,7 +300,7 @@ class Region(object):
             return nx.connected_components(graph)
 
         # Get extent for each zone
-        zone_extents = self._get_zone_extents()
+        zone_extents = self._get_zone_extents(referenceExtent=referenceExtent)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -316,14 +320,16 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if areOverlapping(zones[i], zones[j], extent=None):
+            if areOverlapping(zones[i], zones[j],
+                              referenceExtent=referenceExtent):
                 graph.add_edge(i, j)
         return graph
 
-    def get_connected_zones(self):
-        return list(nx.connected_components(self.zoneGraph()))
+    def get_connected_zones(self, referenceExtent=None):
+        return list(nx.connected_components(
+            self.zoneGraph(referenceExtent=referenceExtent)))
 
-    def _get_zone_extents(self):
+    def _get_zone_extents(self, referenceExtent=None):
         material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
@@ -331,7 +337,8 @@ class Region(object):
             wlv = _make_wlv(greg)
 
             try:
-                zone_solid = zone.geant4Solid(reg=greg)
+                zone_solid = zone.geant4Solid(reg=greg,
+                                              referenceExtent=referenceExtent)
             except FLUKAError as e:
                 raise FLUKAError("Error in region {}: {}".format(self.name,
                                                                  e.message))
@@ -346,20 +353,23 @@ class Region(object):
             extents.append(Extent(lower, upper))
         return extents
 
-    def extent(self):
+    def extent(self, referenceExtent=None):
         greg = g4.Registry()
         world_solid = g4.solid.Box("world_solid", 1e4, 1e4, 1e4, greg, "mm")
         wlv = g4.LogicalVolume(world_solid,
                                g4.MaterialPredefined("G4_Galactic"),
                                "wl", greg)
 
-        regionLV = g4.LogicalVolume(self.geant4Solid(greg),
-                                     g4.MaterialPredefined("G4_Galactic"),
-                                     "{}_lv".format(self.name),
-                                     greg)
+        regionLV = g4.LogicalVolume(self.geant4Solid(
+            greg, referenceExtent=referenceExtent),
+                                    g4.MaterialPredefined("G4_Galactic"),
+                                    "{}_lv".format(self.name),
+                                    greg)
 
-        lower, upper = regionLV.mesh.getBoundingBox(self.rotation(),
-                                                    self.centre())
+        lower, upper = regionLV.mesh.getBoundingBox(
+            self.rotation(),
+            self.centre(referenceExtent=referenceExtent))
+
         return Extent(lower, upper)
 
     def removeBody(self, name):
@@ -369,13 +379,14 @@ class Region(object):
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
 
-def _get_relative_translation(first, second, extent):
+def _get_relative_translation(first, second, referenceExtent):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    extent1 = _getExtent(extent, first)
-    extent2 = _getExtent(extent, second)
-    offset_vector = second.centre(extent=extent2) - first.centre(extent=extent1)
+    referenceExtent1 = _getReferenceExtent(referenceExtent, first)
+    referenceExtent2 = _getReferenceExtent(referenceExtent, second)
+    offset_vector = (second.centre(referenceExtent=referenceExtent2)
+                     - first.centre(referenceExtent=referenceExtent1))
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
@@ -387,9 +398,10 @@ def _get_relative_rotation(first, second):
     # rotation.
     return matrix2tbxyz(_get_relative_rot_matrix(first, second))
 
-def _get_tra2(first, second, extent):
+def _get_tra2(first, second, referenceExtent):
     relative_angles = _get_relative_rotation(first, second)
-    relative_translation = _get_relative_translation(first, second, extent)
+    relative_translation = _get_relative_translation(first, second,
+                                                     referenceExtent)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
 
@@ -409,13 +421,13 @@ def _make_wlv(reg):
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def areOverlapping(first, second, extent=None):
+def areOverlapping(first, second, referenceExtent=None):
     greg = g4.Registry()
 
-    solid1 = first.geant4Solid(greg, extent=extent)
-    solid2 = second.geant4Solid(greg, extent=extent)
+    solid1 = first.geant4Solid(greg, referenceExtent=referenceExtent)
+    solid2 = second.geant4Solid(greg, referenceExtent=referenceExtent)
 
-    tra2 = _get_tra2(first, second, extent)
+    tra2 = _get_tra2(first, second, referenceExtent)
 
     intersection = g4.solid.Intersection(_random_name(),
                            solid1,
@@ -429,10 +441,11 @@ def areOverlapping(first, second, extent=None):
         return False
     return True
 
-def _getExtent(extent, boolean):
-    """Extent can either a dictionary of a number."""
+def _getReferenceExtent(referenceExtent, boolean):
+    """referenceExtent should really be a dictionary of 
+    {bodyName: extentInstance}."""
     if isinstance(boolean, (Zone, Region)):
-        return extent
+        return referenceExtent
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
     elif isinstance(boolean, BodyMixin):
@@ -441,18 +454,18 @@ def _getExtent(extent, boolean):
         raise ValueError("Unknown boolean type")
 
     if body_name is None:
-        return extent
+        return referenceExtent
 
     if (isinstance(boolean, (Subtraction, Intersection))
             and isinstance(boolean.body, Zone)):
-        return extent
+        return referenceExtent
 
-    if extent is None:
+    if referenceExtent is None:
         return None
     try:
-        return extent[body_name]
+        return referenceExtent[body_name]
     except AttributeError:
         raise
     except KeyError:
-        raise KeyError("Failed to find body {} in extent map".format(
-            body_name))
+        logger.debug("%s not found in %s", body_name, referenceExtent)
+        return None

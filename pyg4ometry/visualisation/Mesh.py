@@ -53,6 +53,9 @@ class Mesh(object) :
         a translation (applied in that order) to the vertices.'''
 
         vertices, _, _ = self.localmesh.toVerticesAndPolygons()
+        if not vertices:
+            raise pyg4ometry.exceptions.NullMeshError(self.solid)
+
         vertices = _np.vstack(vertices)
 
         if rotationMatrix is not None:
