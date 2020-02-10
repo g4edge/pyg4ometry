@@ -590,7 +590,45 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "GenericPolycone" :
-        pass
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        luval = _Units.unit(solid.lunit)
+        auval = _Units.unit(solid.aunit)
+
+        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+        pR = [val * luval for val in solid.evaluateParameter(solid.pR)]
+        pZ = [val * luval for val in solid.evaluateParameter(solid.pZ)]
+
+        ibody = 1
+
+        # create region
+        fregion = _fluka.Region("R" + name)
+
+        # number of z planes
+        ntrc = len(pZ)
+
+        if pDPhi != 2*_np.pi :
+            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi-_np.pi/2),_np.sin(pSPhi-_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi+pDPhi+_np.pi/2),_np.sin(pSPhi+pDPhi+_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+        for itrc in range(0,ntrc) :
+            pass
+
+
+
     elif solid.type == "EllipticalTube":
         uval = _Units.unit(solid.lunit)/10.
 
