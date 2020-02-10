@@ -40,7 +40,7 @@ _BODY_NAMES = {"RPP",
 
 class Reader(object):
     """
-    Class to read FLUKA filie
+    Class to read a FLUKA file.
     """
 
     def __init__(self, filename) :
