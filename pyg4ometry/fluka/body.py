@@ -1718,6 +1718,12 @@ class QUA(BodyMixin):
             facet.append([3*j+0,3*j+1,3*j+2])
             j += 1
 
+        if not verts:
+            raise pyg4ometry.exceptions.NullMeshError(
+                "Failed to generate a mesh for QUA {}"
+                " with referenceExtent={}".format(self.name,
+                                                  referenceExtent))
+
         mesh.append(verts)
         mesh.append(facet)
         return g4.solid.TessellatedSolid(
