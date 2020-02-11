@@ -64,12 +64,12 @@ def fluka2Geant4(flukareg,
     # Do infinite solid minimisation
     referenceExtentMap = None
     if minimiseSolids:
-        region_extents = _get_region_extents(flukareg, regions,
-                                             quadricReferenceExtents)
+        regionExtents = _get_regionExtents(flukareg, regions,
+                                           quadricReferenceExtents)
         referenceExtentMap = _makeBodyMinimumReferenceExtentMap(flukareg,
-                                                                region_extents,
+                                                                regionExtents,
                                                                 regions)
-        flukareg = _filterHalfSpaces(flukareg, region_extents)
+        flukareg = _filterHalfSpaces(flukareg, regionExtents)
 
 
     # With the modified fluka registry, finally, we convert to Geant4:
@@ -117,7 +117,7 @@ def fluka2Geant4(flukareg,
             "{}_pv".format(name),
             wlv, greg)
 
-    _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs)
+    _convertLatticeCells(greg, flukareg, wlv, regionExtents, regionsToLVs)
     greg.setWorld(wlv.name)
     return greg
 
@@ -207,7 +207,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
 
     return fluka_reg_out, newNamesToOldNames
 
-def _get_region_extents(flukareg, regions, quadricReferenceExtents):
+def _get_regionExtents(flukareg, regions, quadricReferenceExtents):
     regionmap = flukareg.regionDict
     regionExtents = {}
     for name, region in regionmap.iteritems():
@@ -217,7 +217,7 @@ def _get_region_extents(flukareg, regions, quadricReferenceExtents):
             referenceExtent=quadricReferenceExtents)
     return regionExtents
 
-def _makeBodyMinimumReferenceExtentMap(flukareg, region_extents, regions):
+def _makeBodyMinimumReferenceExtentMap(flukareg, regionExtents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
 
     bodies_to_minimum_extents = {}
@@ -228,11 +228,11 @@ def _makeBodyMinimumReferenceExtentMap(flukareg, region_extents, regions):
         for region_name in region_names:
             if region_name not in regions:
                 continue
-            bodyRegionExtents.append(region_extents[region_name])
+            bodyRegionExtents.append(regionExtents[region_name])
 
-        if len(region_extents) == 1:
-            extent = region_extents.values()[0]
-        elif len(region_extents) > 1:
+        if len(regionExtents) == 1:
+            extent = regionExtents.values()[0]
+        elif len(regionExtents) > 1:
             extent = reduce(_getMaximalOfTwoExtents, bodyRegionExtents)
             logger.debug("Minimum extent = %s", extent)
         else:
@@ -406,9 +406,9 @@ def _distanceFromPointToPlane(normal, pointOnPlane, point):
     normal = fluka.Three(normal).unit()
     return abs(np.dot(normal, point - pointOnPlane))
 
-def _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs):
+def _convertLatticeCells(greg, flukareg, wlv, regionExtents, regionsToLVs):
     # If no lattices defined then we end the conversion here.
-    latticeContents = _getContentsOfLatticeCells(flukareg, region_extents)
+    latticeContents = _getContentsOfLatticeCells(flukareg, regionExtents)
     for latticeName, contents in latticeContents.iteritems():
         # We take the LVs associated with this lattice (which have been
         # placed above as PV) and place it with the translation and
