@@ -467,5 +467,8 @@ def _getReferenceExtent(referenceExtent, boolean):
     except AttributeError:
         raise
     except KeyError:
+        # This can happen if we have provided a referenceExtentMap for
+        # the Quadrics but have not yet generated extents for the
+        # other bodies.
         logger.debug("%s not found in %s", body_name, referenceExtent)
         return None
