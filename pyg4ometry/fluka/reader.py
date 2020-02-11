@@ -342,7 +342,7 @@ class Reader(object):
             if transformName.startswith(badPrefixes1):
                 try:
                     transformIndex = int(transformName[3:])
-                    raise FLUKAError(failmsg.format(", ".join(badPrefixe1)))
+                    raise FLUKAError(failmsg.format(", ".join(badPrefix1)))
                 except ValueError:
                     pass
             if transformName.startswith(badPrefixes2):
