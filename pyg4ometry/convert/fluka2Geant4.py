@@ -64,8 +64,8 @@ def fluka2Geant4(flukareg,
     # Do infinite solid minimisation
     referenceExtentMap = None
     if minimiseSolids:
-        regionExtents = _get_regionExtents(flukareg, regions,
-                                           quadricReferenceExtents)
+        regionExtents = _getRegionExtents(flukareg, regions,
+                                          quadricReferenceExtents)
         referenceExtentMap = _makeBodyMinimumReferenceExtentMap(flukareg,
                                                                 regionExtents,
                                                                 regions)
@@ -207,7 +207,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
 
     return fluka_reg_out, newNamesToOldNames
 
-def _get_regionExtents(flukareg, regions, quadricReferenceExtents):
+def _getRegionExtents(flukareg, regions, quadricReferenceExtents):
     regionmap = flukareg.regionDict
     regionExtents = {}
     for name, region in regionmap.iteritems():
