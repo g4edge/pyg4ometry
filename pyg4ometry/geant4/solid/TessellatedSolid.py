@@ -35,10 +35,20 @@ class TessellatedSolid(_SolidBase):
         self.meshtype    = meshtype
 
         self.dependents = []
+        self.varNames = []
 
         if addRegistry:
             registry.addSolid(self)
         self.registry = registry
+
+        if self.type == TessellatedSolid.MeshType.Gdml:
+            # In GDML, vertices are defines that are referred to by name.
+            # When merging registries, the vertx defines need to be carried over
+            for f in self.mesh:
+                for facet_vertex in f:
+                    if facet_vertex not in self.varNames:
+                        self.varNames.append(facet_vertex)
+
 
     def __repr__(self):
         return self.type
