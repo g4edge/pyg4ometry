@@ -47,6 +47,7 @@ class GafferWriter :
                                              "translation":translation}]
 
     def write(self, outputDirectory):
+        pass
         # make output directory
 
         # loop over meshes and write obj files
