@@ -40,7 +40,7 @@ _BODY_NAMES = {"RPP",
 
 class Reader(object):
     """
-    Class to read FLUKA filie
+    Class to read a FLUKA file.
     """
 
     def __init__(self, filename) :
@@ -342,7 +342,7 @@ class Reader(object):
             if transformName.startswith(badPrefixes1):
                 try:
                     transformIndex = int(transformName[3:])
-                    raise FLUKAError(failmsg.format(", ".join(badPrefixe1)))
+                    raise FLUKAError(failmsg.format(", ".join(badPrefix1)))
                 except ValueError:
                     pass
             if transformName.startswith(badPrefixes2):
