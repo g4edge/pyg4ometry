@@ -3,6 +3,7 @@ from Mesh                 import OverlapType
 from VisualisationOptions import *
 from VtkViewer            import *
 from GafferWriter         import *
+from Convert              import *
 
 # from Viewer import viewLogicalVolume, viewWorld, Viewer
 #from Viewer import Viewer
