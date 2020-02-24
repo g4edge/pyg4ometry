@@ -1645,6 +1645,8 @@ class QUA(BodyMixin):
 
         if "safety" in kwargs:
             self.safety = kwargs["safety"]
+        else:
+            self.safety = None
 
     def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector([0, 0, 0])
@@ -1717,6 +1719,14 @@ class QUA(BodyMixin):
                 "Failed to generate a mesh for QUA {}"
                 " with referenceExtent={}".format(self.name,
                                                   referenceExtent))
+
+        if self.safety is not None:
+            from pyg4ometry.pyg4ometry.freecad.Reader import MeshShrink
+            # Multiply by -1 to match convention of MeshShrink
+            # (positive shrinkFactor = smaller mesh), which is
+            # opposite of this.
+            verts, facet = MeshShrink((verts, facet),
+                                      shrinkFactor=-1*self.safety)
 
         mesh.append(verts)
         mesh.append(facet)
