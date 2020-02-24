@@ -424,3 +424,19 @@ def _convertLatticeCells(greg, flukareg, wlv, regionExtents, regionsToLVs):
                               prototypeLV,
                               "{}_lattice_pv".format(latticeName),
                               wlv, greg)
+
+def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
+    bodiesToRegions = flukareg.getBodyToRegionsMap()
+    flukaRegOut = fluka.FlukaRegistry()
+    for regionName, region in flukareg.regionDict.iteritems():
+        if regionName in quadricRegionExtents:
+            uniqueRegion = region.makeUnique("_"+regionName, flukaRegOut)
+            flukaRegOut.addRegion(uniqueRegion)
+        else:
+            newRegion = deepcopy(region)
+            flukaRegOut.addRegion(newRegion)
+            newRegion.allBodiesToRegistry(flukaRegOut)
+
+
+    flukaRegOut.latticeDict = flukareg.latticeDict
+    return flukareg
