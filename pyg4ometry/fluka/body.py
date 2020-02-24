@@ -71,10 +71,10 @@ class BodyMixin(object):
                                     # use the global constant.
             return INFINITY
         else:
-            # Multiply by sqrt(3) to account for any rotations of the
-            # body within the referenceExtent so that the body is
-            # definitely big enough.
-            return max(referenceExtent.size * 1.5 * np.sqrt(3))
+            # This should be used as a FULL LENGTH.
+            return np.sqrt((referenceExtent.size.x**2
+                            + referenceExtent.size.y**2
+                            + referenceExtent.size.z**2)) * 1.1
 
     def _referenceExtent_to_offset(self, referenceExtent):
         if referenceExtent is None:
