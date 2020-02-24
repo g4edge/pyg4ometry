@@ -11,3 +11,4 @@ from .vector import Three, Extent
 from .region import Zone, Region
 from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
 from .lattice import Lattice
+from .flair import Flair

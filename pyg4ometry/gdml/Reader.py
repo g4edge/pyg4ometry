@@ -308,8 +308,6 @@ class Reader(object):
                         except KeyError :
                             pass
 
-
-
                 def_attrs["components"] = components
                 def_attrs["properties"] = properties
                 materials.append(def_attrs)

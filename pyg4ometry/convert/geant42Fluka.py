@@ -45,7 +45,7 @@ def geant4Logical2Fluka(logicalVolume) :
 
     for dv in logicalVolume.daughterVolumes :
 
-        pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
+        pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
         pvtra =  _np.array(dv.position.eval())
 
         new_mtra = mtra * pvmrot
@@ -88,7 +88,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
         # placement information for daughter
-        pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
+        pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
         pvtra  = _np.array(dv.position.eval())
 
         new_mtra = mtra * pvmrot
@@ -507,6 +507,128 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         flukaNameCount += 1
 
+    elif solid.type == "Polycone":
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        luval = _Units.unit(solid.lunit)
+        auval = _Units.unit(solid.aunit)
+
+        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+
+        print pSPhi, pDPhi
+        pZpl = [val * luval/10. for val in solid.evaluateParameter(solid.pZpl)]
+        pRMin = [val * luval/10. for val in solid.evaluateParameter(solid.pRMin)]
+        pRMax = [val * luval/10. for val in solid.evaluateParameter(solid.pRMax)]
+
+        # create region
+        fregion = _fluka.Region("R" + name)
+
+        # number of z planes
+        nslices = len(pZpl)
+
+        ibody = 1
+
+        if pDPhi != 2*_np.pi :
+            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi-_np.pi/2),_np.sin(pSPhi-_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi+pDPhi+_np.pi/2),_np.sin(pSPhi+pDPhi+_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+
+        for islice1 in range(0,nslices-1,1) :
+            islice2 = islice1+1
+
+            base = [0,0,pZpl[islice1]]
+            dir  = [0,0,pZpl[islice2]-pZpl[islice1]]
+
+            pRMax1 = pRMax[islice1]
+            pRMax2 = pRMax[islice2]
+
+            pRMin1 = pRMin[islice1]
+            pRMin2 = pRMin[islice2]
+
+            trc1 = _fluka.TRC("B"+name+"_"+format(ibody,'02'),base,dir,pRMax1,pRMax2,
+                              transform=transform,flukaregistry=flukaRegistry)
+            ibody += 1
+
+            trc2 = _fluka.TRC("B"+name+"_"+format(ibody,'02'),base,dir,pRMin1,pRMin2,
+                              transform=transform,flukaregistry=flukaRegistry)
+            ibody += 1
+
+            # phi cuts planes
+
+            fzone1 = _fluka.Zone()
+            fzone1.addIntersection(trc1)
+            fzone1.addSubtraction(trc2)
+
+            # cut phi
+            if pDPhi != 2 * _np.pi:
+                fzone2 = _fluka.Zone()
+                if pDPhi < _np.pi :
+                    fzone2.addIntersection(fbody1)
+                    fzone2.addIntersection(fbody2)
+                    fzone1.addIntersection(fzone2)
+                else :
+                    fzone2.addSubtraction(fbody1)
+                    fzone2.addSubtraction(fbody2)
+                    fzone1.addSubtraction(fzone2)
+
+            fregion.addZone(fzone1)
+
+        # increment name count
+        flukaNameCount += 1
+
+    elif solid.type == "GenericPolycone" :
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        luval = _Units.unit(solid.lunit)
+        auval = _Units.unit(solid.aunit)
+
+        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+        pR = [val * luval for val in solid.evaluateParameter(solid.pR)]
+        pZ = [val * luval for val in solid.evaluateParameter(solid.pZ)]
+
+        ibody = 1
+
+        # create region
+        fregion = _fluka.Region("R" + name)
+
+        # number of z planes
+        ntrc = len(pZ)
+
+        if pDPhi != 2*_np.pi :
+            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi-_np.pi/2),_np.sin(pSPhi-_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
+                                [_np.cos(pSPhi+pDPhi+_np.pi/2),_np.sin(pSPhi+pDPhi+_np.pi/2),0],
+                                [0, 0, 0],
+                                transform=transform,
+                                flukaregistry=flukaRegistry)
+
+            ibody += 1
+
+        for itrc in range(0,ntrc) :
+            pass
+
+
+
     elif solid.type == "EllipticalTube":
         uval = _Units.unit(solid.lunit)/10.
 
@@ -737,9 +859,26 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
     else :
         print solid.type
+
     return fregion, flukaNameCount
 
 
+def geant4Material2FlukaMaterial(g4registry = None) :
+    for material in g4registry.materialDict.items() :
+        materialName      = material[0]
+        if materialName.find("0x") != -1 :
+            materialNameStrip = materialName[0:materialName.find("0x")]
+        else :
+            materialNameStrip = materialName
+        materialInstance  = material[1]
+
+        print materialName, materialNameStrip, materialInstance,\
+            materialInstance.density,materialInstance.atomic_number, materialInstance.atomic_weight,materialInstance.number_of_components
+
+        if materialInstance.number_of_components == 0 :
+            pass
+        else :
+            pass
 
 
 

@@ -38,5 +38,24 @@ def pycsgMeshToVtkPolyData(mesh):
 
     return meshPolyData
 
+def pycsgMeshToObj(mesh, fileName):
 
+    vtkPD = pycsgMeshToVtkPolyData(mesh)
+    vtkFLT = _vtk.vtkTriangleFilter()
+    vtkMAP = _vtk.vtkPolyDataMapper()
+    vtkMAP.ScalarVisibilityOff()
+    vtkMAP.SetInputData(vtkPD)
+    # vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+    vtkActor = _vtk.vtkActor()
+    vtkActor.SetMapper(vtkMAP)
 
+    ren = _vtk.vtkRenderer()
+    ren.AddActor(vtkActor)
+
+    rw = _vtk.vtkRenderWindow()
+    rw.AddRenderer(ren)
+
+    exporter = _vtk.vtkOBJExporter()
+    exporter.SetRenderWindow(rw)
+    exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
+    exporter.Write()
