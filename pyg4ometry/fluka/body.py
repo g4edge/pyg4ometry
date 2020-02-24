@@ -1670,18 +1670,12 @@ class QUA(BodyMixin):
         # be quite noticeably undersampled and we will lose detail, so
         # to be safe we make the ModelBounds a bit bigger than the
         # extent
-        scale = 0.1
-        xsize = referenceExtent.size.x
-        ysize = referenceExtent.size.y
-        zsize = referenceExtent.size.z
-
-        sample.SetModelBounds(referenceExtent.lower.x - xsize,
-                              referenceExtent.upper.x + xsize,
-                              referenceExtent.lower.y - ysize,
-                              referenceExtent.upper.y + ysize,
-                              referenceExtent.lower.z - zsize,
-                              referenceExtent.upper.z + zsize)
-
+        sample.SetModelBounds(referenceExtent.lower.x - scale,
+                              referenceExtent.upper.x + scale,
+                              referenceExtent.lower.y - scale,
+                              referenceExtent.upper.y + scale,
+                              referenceExtent.lower.z - scale,
+                              referenceExtent.upper.z + scale)
 
         sample.SetImplicitFunction(quadric)
         sample.SetCapping(1)
