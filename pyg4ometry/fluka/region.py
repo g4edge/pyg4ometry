@@ -220,6 +220,48 @@ class Zone(object):
         self.intersections = newIntersections
         self.subtractions = newSubtractions
 
+    def makeUnique(self, nameSuffix, flukaregistry):
+        """Get this zone with every constituent body recreated with a
+        unique name by appending nameSuffix.
+
+        :param nameSuffix: The string to append to the names of the
+        bodies.
+        :param flukaregistry: the FlukaRegisytr instance to add the
+        uniquely defined bodies to.
+        """
+
+        result = Zone()
+        for boolean in self.intersections + self.subtractions:
+            body = boolean.body
+            name = body.name + nameSuffix
+            booleanType = type(boolean)
+
+            if isinstance(body, Zone):
+                if booleanType is Intersection:
+                    result.addIntersection(body.makeUnique(
+                        flukaregistry=flukaregistry,
+                        nameSuffix=nameSuffix))
+                elif booleanType is Subtraction:
+                    result.addSubtraction(body.makeUnique(
+                        flukaregistry=flukaregistry,
+                        nameSuffix=nameSuffix))
+            else:
+                if name in flukaregistry.bodyDict:
+                    newBody = flukaregistry.getBody(name)
+                else:
+                    newBody = deepcopy(body)
+                    newBody.name = name
+                    flukaregistry.addBody(newBody)
+
+                if booleanType is Intersection:
+                    result.addIntersection(newBody)
+                elif booleanType is Subtraction:
+                    result.addSubtraction(newBody)
+                else:
+                    raise ValueError("Unknown Boolean type")
+        return result
+
+
 class Region(object):
 
     def __init__(self, name, material=None):
@@ -375,6 +417,22 @@ class Region(object):
     def removeBody(self, name):
         for zone in self.zones:
             zone.removeBody(name)
+
+    def makeUnique(self, nameSuffix, flukaregistry):
+        """Get this Region instance with every constituent body
+        with a unique name by appending nameSuffix to each Body
+        instance.
+
+        :param nameSuffix: string to append to each Body instance.
+        :param flukaregistry: FlukaRegisty instance to add each
+        newly-defined body to."""
+
+        result = Region(self.name, self.material)
+        for zone in self.zones:
+            result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
+                                           nameSuffix=nameSuffix))
+        return result
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
