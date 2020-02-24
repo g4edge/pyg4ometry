@@ -401,9 +401,8 @@ class Region(object):
         wlv = g4.LogicalVolume(world_solid,
                                g4.MaterialPredefined("G4_Galactic"),
                                "wl", greg)
-
-        regionLV = g4.LogicalVolume(self.geant4Solid(
-            greg, referenceExtent=referenceExtent),
+        solid = self.geant4Solid(greg, referenceExtent=referenceExtent)
+        regionLV = g4.LogicalVolume(solid,
                                     g4.MaterialPredefined("G4_Galactic"),
                                     "{}_lv".format(self.name),
                                     greg)
