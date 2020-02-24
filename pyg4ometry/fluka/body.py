@@ -96,7 +96,7 @@ class _HalfSpaceMixin(BodyMixin):
         exp = self.transform.netExpansion()
         scale = self._referenceExtent_to_scale_factor(referenceExtent)
         return g4.solid.Box(self.name,
-                            exp * scale,
+                            exp * scale, # Full length
                             exp * scale,
                             exp * scale,
                             registry)
