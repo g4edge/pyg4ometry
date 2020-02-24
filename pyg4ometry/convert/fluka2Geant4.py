@@ -28,12 +28,16 @@ def fluka2Geant4(flukareg,
                  omitBlackholeRegions=True,
                  materialMap=None,
                  omitRegions=None,
-                 quadricReferenceExtents=None):
+                 quadricRegionExtents=None):
     """Convert a FLUKA registry to a Geant4 Registry"""
 
 
     # Bomb if we have quadrics but no quadricReferenceExtents
-    quadricReferenceExtents = _quadricExents(flukareg, quadricReferenceExtents)
+    quadricRegionExtents = _checkQuadricRegionExtents(flukareg,
+                                                      quadricRegionExtents)
+    # If we have quadricReferenceExtents then use them
+    if quadricRegionExtents:
+        flukareg = _makeUniqueQuadricRegions(flukareg, quadricRegionExtents)
 
     # Filter on selected regions
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
@@ -44,28 +48,31 @@ def fluka2Geant4(flukareg,
 
     # Make a new registry with automatic length safety applied.
     if withLengthSafety:
-        flukareg, quadricReferenceExtents = _makeLengthSafetyRegistry(
-            flukareg, regions,
-            quadricReferenceExtents)
+        flukareg = _makeLengthSafetyRegistry(flukareg, regions)
     # set world dimensions
     worldDimensions = _getWorldDimensions(worldDimensions)
 
     # Split disjoint unions into their constituents.
     if splitDisjointUnions:
         flukareg, newNamesToOldNames = _makeDisjointUnionsFlukaRegistry(
-            flukareg, regions, quadricReferenceExtents)
+            flukareg, regions, quadricRegionExtents)
 
         newRegions = []
+        newQuadricRegionExtents = {}
         for newName, oldName in newNamesToOldNames.iteritems():
             if oldName in regions:
                 newRegions.append(newName)
+            if oldName in quadricRegionExtents:
+                newQuadricRegionExtents[newName] = quadricRegionExtents[oldName]
+
         regions = newRegions
+        quadricRegionExtents = newQuadricRegionExtents
 
     # Do infinite solid minimisation
     referenceExtentMap = None
     if minimiseSolids:
         regionExtents = _getRegionExtents(flukareg, regions,
-                                          quadricReferenceExtents)
+                                          quadricRegionExtents)
         referenceExtentMap = _makeBodyMinimumReferenceExtentMap(flukareg,
                                                                 regionExtents,
                                                                 regions)
@@ -131,7 +138,7 @@ def _makeWorldVolume(dimensions, material, g4registry):
     wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
-def _makeLengthSafetyRegistry(flukareg, regions, quadricReferenceExtents):
+def _makeLengthSafetyRegistry(flukareg, regions):
 
     bigger = fluka.FlukaRegistry()
     smaller = fluka.FlukaRegistry()
@@ -151,24 +158,16 @@ def _makeLengthSafetyRegistry(flukareg, regions, quadricReferenceExtents):
         ls_region.allBodiesToRegistry(fluka_reg_out)
     fluka_reg_out.latticeDict = deepcopy(flukareg.latticeDict)
 
-    # Update the quadricReferenceExtents in light of the new
-    # safetyExpanded names. (_e and _s suffixes).
-    lsQuadricExtents = {}
-    for name, extent in quadricReferenceExtents.iteritems():
-        expandedName = name+"_e"
-        if expandedName in fluka_reg_out.bodyDict:
-            lsQuadricExtents[expandedName] = extent
-        shrunkName = name + "_s"
-        if shrunkName in fluka_reg_out.bodyDict:
-            lsQuadricExtents[shrunkName] = extent
+    return fluka_reg_out
 
-    return fluka_reg_out, lsQuadricExtents
-
-def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
-                                     quadricReferenceExtents):
+def _makeDisjointUnionsFlukaRegistry(flukareg, regions, quadricRegionExtents):
     fluka_reg_out = fluka.FlukaRegistry()
     newNamesToOldNames = {}
+
+    quadricRegionBodyExtentMap = _makeQuadricRegionBodyExtentMap(
+        flukareg, quadricRegionExtents)
     for name, region in flukareg.regionDict.iteritems():
+
         if name not in regions:
             continue
         if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
@@ -178,8 +177,10 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
             newNamesToOldNames[name] = name
             continue
 
+
         connected_zones = region.get_connected_zones(
-            referenceExtent=quadricReferenceExtents)
+            referenceExtent=quadricRegionBodyExtentMap)
+
         if len(connected_zones) == 1: # then there are no disjoint unions
             new_region = deepcopy(region)
             fluka_reg_out.addRegion(new_region)
@@ -207,14 +208,20 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
 
     return fluka_reg_out, newNamesToOldNames
 
-def _getRegionExtents(flukareg, regions, quadricReferenceExtents):
+def _getRegionExtents(flukareg, regions, quadricRegionExtents):
     regionmap = flukareg.regionDict
     regionExtents = {}
+    referenceExtent = None
+    if quadricRegionExtents:
+        referenceExtent = _makeQuadricRegionBodyExtentMap(flukareg,
+                                                          quadricRegionExtents)
     for name, region in regionmap.iteritems():
+        if name in quadricRegionExtents:
+            regionExtents[name] = quadricRegionExtents[name]
+
         if name not in regions:
             continue
-        regionExtents[name] = region.extent(
-            referenceExtent=quadricReferenceExtents)
+        regionExtents[name] = region.extent(referenceExtent=referenceExtent)
     return regionExtents
 
 def _makeBodyMinimumReferenceExtentMap(flukareg, regionExtents, regions):
@@ -329,27 +336,27 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
 
     return areOverlapping(cellRegion, region)
 
-def _quadricExents(flukareg, quadricReferenceExtents):
-    for region_name, region in flukareg.regionDict.iteritems():
+def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
+    for regionName, region in flukareg.regionDict.iteritems():
         regionBodies = region.bodies()
         quadrics = {r for r in regionBodies if isinstance(r, fluka.QUA)}
 
+        # If this region has no Quadrics then all is well
         if not quadrics:
             continue
+        elif quadricRegionExtents is None:
+            msg = "quadricRegionExtents must be set for regions with QUAs."
+        elif regionName in quadricRegionExtents:
+            continue
 
-        if quadricReferenceExtents is None:
-            msg = "quadricReferenceExtents must be set for regions with QUAs."
-            raise ValueError(msg)
+        raise ValueError(
+            "QUA region missing from quadricRegionExtents: {}".format(
+                regionName))
 
-        for q in quadrics:
-            if q.name not in quadricReferenceExtents:
-                msg = ("Region {} with QUA missing "
-                       "referenceExtent in quadricReferenceExtents.".format(
-                           region_name))
-                raise ValueError(msg)
-    if not quadricReferenceExtents:
+
+    if not quadricRegionExtents:
         return {}
-    return quadricReferenceExtents
+    return quadricRegionExtents
 
 
 
