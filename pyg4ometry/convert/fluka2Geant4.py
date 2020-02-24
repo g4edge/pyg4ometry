@@ -440,3 +440,15 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
 
     flukaRegOut.latticeDict = flukareg.latticeDict
     return flukareg
+
+def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
+    if quadricRegionExtents is None:
+        return {}
+    if quadricRegionExtents is not None:
+        quadricRegionBodyExtentMap = {}
+        for regionName, extent in quadricRegionExtents.iteritems():
+            if regionName not in flukareg.regionDict:
+                continue
+            for body in flukareg.regionDict[regionName].bodies():
+                quadricRegionBodyExtentMap[body.name] = extent
+        return quadricRegionBodyExtentMap
