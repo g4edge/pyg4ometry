@@ -54,7 +54,7 @@ class BodyMixin(object):
     # in the per body _withLengthSafety methods below, factor =
     # -1*LENGTH_SAFETY should make the body small in
     # _withLengthSafety, and +LENGTH_SAFETY must make the body
-    # bigger.
+    # bigger.  i.e. NEGATIVE means shrink and POSITIVE means expand.
     def safetyExpanded(self, reg=None):
         return self._withLengthSafety(LENGTH_SAFETY, reg)
 
