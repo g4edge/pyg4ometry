@@ -1650,21 +1650,64 @@ class QUA(BodyMixin):
             self.safety = None
 
     def centre(self, referenceExtent=None):
-        return self.transform.leftMultiplyVector([0, 0, 0])
+        return Three(0, 0, 0)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.identity(3))
+        return np.identity(3)
+
+    def coefficientsMatrix(self):
+        cxx = self.cxx
+        cyy = self.cyy
+        czz = self.czz
+        cxy = self.cxy / 2.
+        cxz = self.cxz / 2.
+        cyz = self.cyz / 2.
+        cx = self.cx / 2.
+        cy = self.cy / 2.
+        cz = self.cz / 2.
+        c = self.c
+
+        return np.array([[cxx, cxy, cxz, cx],
+                         [cxy, cyy, cyz, cy],
+                         [cxz, cyz, czz, cz],
+                         [ cx,  cy,  cz,  c]])
+
+    @staticmethod
+    def _quadricMatrixToCoefficients(matrix):
+        return {"cxx": matrix[0,0],
+                "cyy": matrix[1,1],
+                "czz": matrix[2,2],
+
+                "cxy": 2 * matrix[0,1],
+                "cxz": 2 * matrix[0,2],
+                "cyz": 2 * matrix[1,2],
+
+                "cx": 2 * matrix[0,3],
+                "cy": 2 * matrix[1,3],
+                "cz": 2 * matrix[2,3],
+
+                "c": matrix[3,3]}
 
     def geant4Solid(self, reg, referenceExtent=None):
         if referenceExtent is None:
             raise ValueError("QUA must be evaluated with respect to an extent.")
-        exp = self.transform.netExpansion()
+
         scale = self._referenceExtent_to_scale_factor(referenceExtent)
 
+        # Apply any geometry directives.
+        matrix = self.coefficientsMatrix()
+        # Combined expansion, rototranslation and translation
+        netTransformationMatrix = self.transform.to4DMatrix()
+        inv = np.linalg.inv(netTransformationMatrix)
+        transformedQuadric = inv.T.dot(matrix).dot(inv)
+        coeff = self._quadricMatrixToCoefficients(transformedQuadric)
+
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(self.cxx, self.cyy, self.czz,
-                                self.cxy, self.cyz, self.cxz,
-                                self.cx,  self.cy,  self.cz, self.c)
+        quadric.SetCoefficients(coeff["cxx"], coeff["cyy"], coeff["czz"],
+                                coeff["cxy"], coeff["cyz"], coeff["cxz"],
+                                coeff["cx"],  coeff["cy"], coeff["cz"],
+                                coeff["c"])
+
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
 
