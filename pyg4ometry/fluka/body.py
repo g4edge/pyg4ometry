@@ -121,12 +121,18 @@ class _HalfSpaceMixin(BodyMixin):
         closest_point = point + distance * normal.unit()
         return closest_point
 
-    def _shiftedHalfspaceCentre(self, referenceExtent):
-        # Normal to halfspace face and point on it
-        # normal, point = self.toPlane()
-        centre = referenceExtent.centre
-        closestPointOnFace = self.pointOnPlaneClosestTo(centre)
-        normal, _ = self.toPlane()
+    def centre(self, referenceExtent=None):
+        normal, pointOnPlane = self.toPlane()
+        referencePoint = pointOnPlane
+        try: # Try using the centre of the extent as a reference point
+            centre = referenceExtent.centre
+        except AttributeError:
+            pass
+
+        # Get point on plane closest to the reference point
+        closestPointOnFace = self.pointOnPlaneClosestTo(referencePoint)
+        # Use reference point and normal to shift the box backwards by
+        # half the box size.
         shiftedCentre = (closestPointOnFace
                          - normal * 0.5 * self._boxFullSize(referenceExtent))
 
@@ -1044,13 +1050,6 @@ class XYP(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
-        if referenceExtent is None:
-            return self.transform.leftMultiplyVector(
-                [0, 0, self.z - 0.5 * self._boxFullSize(referenceExtent=None)])
-
-        return self._shiftedHalfspaceCentre(referenceExtent)
-
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
@@ -1102,13 +1101,6 @@ class XZP(_HalfSpaceMixin):
         self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
-
-    def centre(self, referenceExtent=None):
-        if referenceExtent is None:
-            return self.transform.leftMultiplyVector(
-                [0, self.y - 0.5 * self._boxFullSize(referenceExtent=None), 0])
-
-        return self._shiftedHalfspaceCentre(referenceExtent)
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
@@ -1162,17 +1154,8 @@ class YZP(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
-        if referenceExtent is None:
-            # offset = self._referenceExtent_to_offset(referenceExtent)
-            # scale = self._referenceExtent_to_scale_factor(referenceExtent)
-            return self.transform.leftMultiplyVector(
-                [self.x - 0.5 * self._boxFullSize(referenceExtent=None), 0, 0])
-        return self._shiftedHalfspaceCentre(referenceExtent)
-
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
-
 
     def _withLengthSafety(self, safety, reg):
         return YZP(self.name,
@@ -1225,17 +1208,6 @@ class PLA(_HalfSpaceMixin):
         self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
-
-    def centre(self, referenceExtent=None):
-        if referenceExtent is None:
-            closest_point = self.pointOnPlaneClosestTo([0, 0, 0])
-            return self.transform.leftMultiplyVector(
-                closest_point
-                - 0.5
-                * self._boxFullSize(referenceExtent=None)
-                * self.normal.unit())
-        return self._shiftedHalfspaceCentre(referenceExtent)
-
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
