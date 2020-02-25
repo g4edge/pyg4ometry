@@ -7,13 +7,14 @@ import numpy as np
 import vtk
 
 from .vector import Three, pointOnLineClosestToPoint
+from .directive import Transform
+from .vector import Extent as _Extent
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
-from .directive import Transform
-from .vector import Extent as _Extent
+from pyg4ometry.meshutils import MeshShrink
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -1721,12 +1722,11 @@ class QUA(BodyMixin):
                                                   referenceExtent))
 
         if self.safety is not None:
-            from pyg4ometry.pyg4ometry.freecad.Reader import MeshShrink
             # Multiply by -1 to match convention of MeshShrink
             # (positive shrinkFactor = smaller mesh), which is
             # opposite of this.
-            verts, facet = MeshShrink((verts, facet),
-                                      shrinkFactor=-1*self.safety)
+            vertnormals = MeshShrink([verts, facet],
+                                     shrinkFactor=-1*self.safety)
 
         mesh.append(verts)
         mesh.append(facet)
