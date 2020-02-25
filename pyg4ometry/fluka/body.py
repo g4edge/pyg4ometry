@@ -94,13 +94,21 @@ class _HalfSpaceMixin(BodyMixin):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
     def geant4Solid(self, registry, referenceExtent=None):
-        exp = self.transform.netExpansion()
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        boxsize = self._boxFullSize(referenceExtent)
         return g4.solid.Box(self.name,
-                            exp * scale, # Full length
-                            exp * scale,
-                            exp * scale,
+                            boxsize,
+                            boxsize,
+                            boxsize,
                             registry)
+
+    def _boxFullSize(self, referenceExtent):
+        if referenceExtent is None:
+            return INFINITY
+        else:
+            # This should be used as a FULL LENGTH.
+            return np.sqrt((referenceExtent.size.x**2
+                            + referenceExtent.size.y**2
+                            + referenceExtent.size.z**2)) * 1.1
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
