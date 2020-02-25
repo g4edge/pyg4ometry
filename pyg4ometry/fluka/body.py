@@ -125,7 +125,7 @@ class _HalfSpaceMixin(BodyMixin):
         normal, pointOnPlane = self.toPlane()
         referencePoint = pointOnPlane
         try: # Try using the centre of the extent as a reference point
-            centre = referenceExtent.centre
+            referencePoint = referenceExtent.centre
         except AttributeError:
             pass
 
