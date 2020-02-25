@@ -51,7 +51,7 @@ class Transform(object):
             return [np.identity(4)]
         if isinstance(self.translation[0], numbers.Number):
             # Then it's just a single translation I assume
-            return [_translationTo4DMatrix(self.translation[0])]
+            return [_translationTo4DMatrix(self.translation)]
         # Then it's a list of translations
         return [_translationTo4DMatrix(m) for m in self.translation]
 
