@@ -452,9 +452,9 @@ def _make_body(body_parts,
     elif body_type == "ARB":
         vertices = [pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
                     pmm[12:15], pmm[15:18], pmm[18:21], pmm[21:24]]
-        # Remember we converted to param to millimetres blindly above, well,
-        # facenumbers are not dimensions, but indices, so we convert
-        # use the raw numbers / "centimetres" here:
+        # Remember we converted to param to millimetres blindly above,
+        # well, facenumbers are not dimensions, but indices, so we use
+        # the raw numbers / "centimetres" here:
         facenumbers = pcm[24:]
         b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
