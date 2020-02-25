@@ -1062,17 +1062,6 @@ class XYP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.z)
 
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([INFINITY, INFINITY, self.z]))
-        corner2 = _geom.Vertex(lmv([INFINITY, -INFINITY, self.z]))
-        corner3 = _geom.Vertex(lmv([-INFINITY, -INFINITY, self.z]))
-        corner4 = _geom.Vertex(lmv([-INFINITY, INFINITY, self.z]))
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
-
     def toPlane(self):
         normal = Three(0, 0, 1)
         point = Three(0, 0, self.z)
@@ -1113,17 +1102,6 @@ class XZP(_HalfSpaceMixin):
 
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.y)
-
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([INFINITY, self.y, INFINITY]))
-        corner2 = _geom.Vertex(lmv([INFINITY, self.y, -INFINITY]))
-        corner3 = _geom.Vertex(lmv([-INFINITY, self.y, -INFINITY]))
-        corner4 = _geom.Vertex(lmv([-INFINITY, self.y, INFINITY]))
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
 
     def toPlane(self):
         normal = Three(0, 1, 0)
@@ -1166,17 +1144,6 @@ class YZP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.x)
 
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([self.x, INFINITY, INFINITY]))
-        corner2 = _geom.Vertex(lmv([self.x, -INFINITY, INFINITY]))
-        corner3 = _geom.Vertex(lmv([self.x, -INFINITY, -INFINITY]))
-        corner4 = _geom.Vertex(lmv([self.x, INFINITY, -INFINITY]))
-
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
     def toPlane(self):
         normal = Three(1, 0, 0)
         point = Three(self.x, 0, 0)
