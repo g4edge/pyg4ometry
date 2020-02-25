@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from copy import deepcopy
 import logging
 from itertools import chain
 
@@ -6,13 +7,14 @@ import numpy as np
 import vtk
 
 from .vector import Three, pointOnLineClosestToPoint
+from .directive import Transform
+from .vector import Extent as _Extent
 from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
-from .directive import Transform
-from .vector import Extent as _Extent
+from pyg4ometry.meshutils import MeshShrink
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -53,7 +55,7 @@ class BodyMixin(object):
     # in the per body _withLengthSafety methods below, factor =
     # -1*LENGTH_SAFETY should make the body small in
     # _withLengthSafety, and +LENGTH_SAFETY must make the body
-    # bigger.
+    # bigger.  i.e. NEGATIVE means shrink and POSITIVE means expand.
     def safetyExpanded(self, reg=None):
         return self._withLengthSafety(LENGTH_SAFETY, reg)
 
@@ -65,21 +67,24 @@ class BodyMixin(object):
             return Transform()
         return transform
 
-    def _extent_to_scale_factor(self, extent):
-        if extent is None: # if no extent then just use the global constant.
+    def _referenceExtent_to_scale_factor(self, referenceExtent):
+        if referenceExtent is None: # if no referenceExtent then just
+                                    # use the global constant.
             return INFINITY
         else:
-            # Multiply by sqrt(3) to account for any rotations of the body
-            # within the extent so that the body is definitely big enough.
-            return max(extent.size * 1.5 * np.sqrt(3))
+            # This should be used as a FULL LENGTH.
+            return np.sqrt((referenceExtent.size.x**2
+                            + referenceExtent.size.y**2
+                            + referenceExtent.size.z**2)) * 1.1
 
-    def _extent_to_offset(self, extent):
-        if extent is None:
+    def _referenceExtent_to_offset(self, referenceExtent):
+        if referenceExtent is None:
             offset = Three(0, 0, 0)
-        elif extent is not None:
-            offset = extent.centre
+        elif referenceExtent is not None:
+            offset = referenceExtent.centre
         else:
-            raise TypeError("Unknown type of extent {}".format(extent))
+            raise TypeError(
+                "Unknown type of referenceExtent {}".format(referenceExtent))
         return offset
 
 
@@ -88,25 +93,57 @@ class _HalfSpaceMixin(BodyMixin):
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, registry, extent=None):
-        exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+    def geant4Solid(self, registry, referenceExtent=None):
+        boxsize = self._boxFullSize(referenceExtent)
         return g4.solid.Box(self.name,
-                            exp * scale,
-                            exp * scale,
-                            exp * scale,
+                            boxsize,
+                            boxsize,
+                            boxsize,
                             registry)
+
+    def _boxFullSize(self, referenceExtent):
+        if referenceExtent is None:
+            return INFINITY
+        else:
+            # This should be used as a FULL LENGTH.
+            return np.sqrt((referenceExtent.size.x**2
+                            + referenceExtent.size.y**2
+                            + referenceExtent.size.z**2)) * 1.1
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
         return "{} {} {}".format(typename, self.name, coordinate)
 
+    def pointOnPlaneClosestTo(self, point):
+        """Get point on plane which is closest to point not on the plane."""
+        normal, pointOnPlane = self.toPlane()
+        distance = np.dot((pointOnPlane - point), normal.unit())
+        closest_point = point + distance * normal.unit()
+        return closest_point
+
+    def centre(self, referenceExtent=None):
+        normal, pointOnPlane = self.toPlane()
+        referencePoint = pointOnPlane
+        try: # Try using the centre of the extent as a reference point
+            referencePoint = referenceExtent.centre
+        except AttributeError:
+            pass
+
+        # Get point on plane closest to the reference point
+        closestPointOnFace = self.pointOnPlaneClosestTo(referencePoint)
+        # Use reference point and normal to shift the box backwards by
+        # half the box size.
+        shiftedCentre = (closestPointOnFace
+                         - normal * 0.5 * self._boxFullSize(referenceExtent))
+
+        return shiftedCentre
+
 
 class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
-    def geant4Solid(self, registry, extent=None):
+    def geant4Solid(self, registry, referenceExtent=None):
         exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
         return g4.solid.Tubs(self.name,
                              0.0,
                              exp * self.radius,
@@ -117,18 +154,19 @@ class _InfiniteCylinderMixin(BodyMixin):
 
     def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
-        return "{} {} {} {} {}".format(typename, self.name, coord1, coord2, coord3)
+        return "{} {} {} {} {}".format(typename, self.name,
+                                       coord1, coord2, coord3)
 
 
 class _ShiftableCylinderMixin(object):
-    def _shiftInfiniteCylinderCentre(self, extent, initialDirection,
+    def _shiftInfiniteCylinderCentre(self, referenceExtent, initialDirection,
                                      initialCentre):
         transformedDirection = self.transform.leftMultiplyRotation(
             initialDirection)
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
         # Shift the ZEC along its infinite axis to the point closest
-        # to the extent centre.
-        shiftedCentre = pointOnLineClosestToPoint(extent.centre,
+        # to the referenceExtent centre.
+        shiftedCentre = pointOnLineClosestToPoint(referenceExtent.centre,
                                                   transformedCentre,
                                                   transformedDirection)
 
@@ -171,14 +209,14 @@ class RPP(BodyMixin):
         if addRegistry :
             self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(0.5 * (self.lower
                                                         + self.upper))
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         v = self.transform.netExpansion() * (self.upper - self.lower)
         return g4.solid.Box(self.name,
                             v.x, v.y, v.z,
@@ -243,7 +281,7 @@ class BOX(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector((self.vertex
                                                   + 0.5 * (self.edge1
                                                            + self.edge2
@@ -252,7 +290,7 @@ class BOX(BodyMixin):
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, greg, extent=None):
+    def geant4Solid(self, greg, referenceExtent=None):
         exp = self.transform.netExpansion()
         return g4.solid.Box(self.name,
                             exp * self.edge1.length(),
@@ -308,13 +346,13 @@ class SPH(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(self.point)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         return g4.solid.Orb(self.name,
                             self.transform.netExpansion() * self.radius,
                             reg,
@@ -363,7 +401,7 @@ class RCC(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(self.face
                                                  + 0.5 * self.direction)
 
@@ -373,7 +411,7 @@ class RCC(BodyMixin):
         rotation = trans.matrix_from(initial, final)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
         return g4.solid.Tubs(self.name,
                              0.0,
@@ -443,7 +481,7 @@ class REC(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(self.face
                                                  + 0.5 * self.direction)
 
@@ -459,7 +497,7 @@ class REC(BodyMixin):
                                               final_semiminor)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
         return g4.solid.EllipticalTube(self.name,
                                        2 * exp * self.semiminor.length(),
@@ -530,7 +568,7 @@ class TRC(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(self.major_centre
                                                  + 0.5 * self.direction)
 
@@ -540,7 +578,7 @@ class TRC(BodyMixin):
         rotation = trans.matrix_from([0, 0, 1], self.direction)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, registry, extent=None):
+    def geant4Solid(self, registry, referenceExtent=None):
         # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         exp = self.transform.netExpansion()
@@ -612,7 +650,7 @@ class ELL(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(0.5 * (self.focus1
                                                         + self.focus2))
 
@@ -633,7 +671,7 @@ class ELL(BodyMixin):
         return np.sqrt((0.5 * self.transform.netExpansion() * self.length)**2 -
                        self._linearEccentricity()**2)
 
-    def geant4Solid(self, greg, extent=None):
+    def geant4Solid(self, greg, referenceExtent=None):
         semiminor = self._semiminor()
         expansion = self.transform.netExpansion()
         return g4.solid.Ellipsoid(self.name,
@@ -689,7 +727,7 @@ class _WED_RAW(BodyMixin):
             "Edges are not all mutually perpendicular.")
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         exp = self.transform.netExpansion()
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
@@ -710,7 +748,7 @@ class _WED_RAW(BodyMixin):
                                                initial2, self.edge2.unit())
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, greg, extent=None):
+    def geant4Solid(self, greg, referenceExtent=None):
         exp = self.transform.netExpansion()
         face = [[0, 0],
                 [exp * self.edge1.length(), 0],
@@ -835,7 +873,7 @@ class ARB(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(Three([0, 0, 0]))
 
     def rotation(self):
@@ -880,7 +918,7 @@ class ARB(BodyMixin):
         z = vertices[...,2]
         return _Extent([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
-    def geant4Solid(self, greg, extent=None):
+    def geant4Solid(self, greg, referenceExtent=None):
         verticesAndPolygons = self._getVerticesAndPolygons()
         return self._toTesselatedSolid(verticesAndPolygons,
                                        greg,
@@ -1012,13 +1050,6 @@ class XYP(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
-        offset = self._extent_to_offset(extent)
-        scale = self._extent_to_scale_factor(extent)
-        return self.transform.leftMultiplyVector(Three(offset.x,
-                                                       offset.y,
-                                                       self.z - (scale * 0.5)))
-
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
 
@@ -1031,21 +1062,10 @@ class XYP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.z)
 
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([INFINITY, INFINITY, self.z]))
-        corner2 = _geom.Vertex(lmv([INFINITY, -INFINITY, self.z]))
-        corner3 = _geom.Vertex(lmv([-INFINITY, -INFINITY, self.z]))
-        corner4 = _geom.Vertex(lmv([-INFINITY, INFINITY, self.z]))
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
-
     def toPlane(self):
         normal = Three(0, 0, 1)
         point = Three(0, 0, self.z)
-        normal = self.transform.leftMultiplyRotation(normal)
+        normal = Three(self.transform.leftMultiplyRotation(normal))
         point = self.transform.leftMultiplyVector(point)
 
         return normal, point
@@ -1071,13 +1091,6 @@ class XZP(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
-        offset = self._extent_to_offset(extent)
-        scale = self._extent_to_scale_factor(extent)
-        return self.transform.leftMultiplyVector(Three(offset.x,
-                                                       self.y - (scale * 0.5),
-                                                       offset.z))
-
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
 
@@ -1090,23 +1103,11 @@ class XZP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.y)
 
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([INFINITY, self.y, INFINITY]))
-        corner2 = _geom.Vertex(lmv([INFINITY, self.y, -INFINITY]))
-        corner3 = _geom.Vertex(lmv([-INFINITY, self.y, -INFINITY]))
-        corner4 = _geom.Vertex(lmv([-INFINITY, self.y, INFINITY]))
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
-
     def toPlane(self):
         normal = Three(0, 1, 0)
         point = Three(0, self.y, 0)
-        normal = self.transform.leftMultiplyRotation(normal)
+        normal = Three(self.transform.leftMultiplyRotation(normal))
         point = self.transform.leftMultiplyVector(point)
-
         return normal, point
 
 
@@ -1131,16 +1132,8 @@ class YZP(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
-        offset = self._extent_to_offset(extent)
-        scale = self._extent_to_scale_factor(extent)
-        return self.transform.leftMultiplyVector(Three(self.x - (scale * 0.5),
-                                                       offset.y,
-                                                       offset.z))
-
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
-
 
     def _withLengthSafety(self, safety, reg):
         return YZP(self.name,
@@ -1151,21 +1144,10 @@ class YZP(_HalfSpaceMixin):
     def flukaFreeString(self):
         return self._halfspaceFreeStringHelper(self.x)
 
-    def pycsgmesh(self):
-        lmv = self.transform.leftMultiplyVector
-
-        corner1 = _geom.Vertex(lmv([self.x, INFINITY, INFINITY]))
-        corner2 = _geom.Vertex(lmv([self.x, -INFINITY, INFINITY]))
-        corner3 = _geom.Vertex(lmv([self.x, -INFINITY, -INFINITY]))
-        corner4 = _geom.Vertex(lmv([self.x, INFINITY, -INFINITY]))
-
-
-        return _CSG.fromPolygons([_geom.Polygon([corner1, corner2,
-                                                 corner3, corner4])])
     def toPlane(self):
         normal = Three(1, 0, 0)
         point = Three(self.x, 0, 0)
-        normal = self.transform.leftMultiplyRotation(normal)
+        normal = Three(self.transform.leftMultiplyRotation(normal))
         point = self.transform.leftMultiplyVector(point)
 
         return normal, point
@@ -1194,22 +1176,6 @@ class PLA(_HalfSpaceMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
-        offset = self._extent_to_offset(extent)
-        # multiply by sqrt(3) to account for any rotation of the halfspace.
-        scale = self._extent_to_scale_factor(extent)
-        # Get point on plane closest to the centre of the extent:
-        closest_point = self._closest_point(offset)
-        return self.transform.leftMultiplyVector(closest_point
-                                                 - 0.5
-                                                 * scale * self.normal.unit())
-
-    def _closest_point(self, point):
-        """Get point on plane which is closest to point not on the plane."""
-        distance = np.dot((self.point - point), self.normal.unit())
-        closest_point = point + distance * self.normal.unit()
-        return closest_point
-
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
@@ -1234,8 +1200,8 @@ class PLA(_HalfSpaceMixin):
                                                             self.point))
 
     def toPlane(self):
-        normal = self.transform.leftMultiplyRotation(self.normal)
-        point = self.transform.leftMultiplyVector(self.point)
+        normal = Three(self.transform.leftMultiplyRotation(self.normal))
+        point = Three(self.transform.leftMultiplyVector(self.point))
 
         return normal, point
 
@@ -1264,11 +1230,11 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(0, self.y, self.z)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [1, 0, 0],
                                                  initialCentre)
 
@@ -1312,11 +1278,11 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(self.x, 0, self.z)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [0, 1, 0],
                                                  initialCentre)
 
@@ -1360,11 +1326,11 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(self.x, self.y, 0)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [0, 0, 1],
                                                  initialCentre)
 
@@ -1398,7 +1364,8 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
     :type zsemi: float
 
     """
-    def __init__(self, name, y, z, ysemi, zsemi, transform=None, flukaregistry=None):
+    def __init__(self, name, y, z, ysemi, zsemi,
+                 transform=None, flukaregistry=None):
         self.name = name
         self.y = y
         self.z = z
@@ -1409,11 +1376,11 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(0, self.y, self.z)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [1, 0, 0],
                                                  initialCentre)
 
@@ -1422,9 +1389,9 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
                                                              [0, 1, 0],
                                                              [1, 0, 0]]))
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi:
                                        2 * exp * self.zsemi,
@@ -1479,11 +1446,11 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(self.x, 0, self.z)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [0, 1, 0],
                                                  initialCentre)
 
@@ -1492,9 +1459,9 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
                                                              [0, 0, 1],
                                                              [0, -1, 0]]))
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
@@ -1549,20 +1516,20 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
+    def centre(self, referenceExtent=None):
         initialCentre = Three(self.x, self.y, 0)
-        if extent is None:
+        if referenceExtent is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(extent,
+        return self._shiftInfiniteCylinderCentre(referenceExtent,
                                                  [0, 0, 1],
                                                  initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, extent=None):
+    def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
@@ -1594,99 +1561,178 @@ class QUA(BodyMixin):
 
     :param name: of body
     :type name: str
-    :param Axx: x^2 coefficient
-    :type Axx: float
-    :param Ayy: y^2 coefficient
-    :type Ayy: float
-    :param Azz: z^2 coefficient
-    :type Azz: float
-    :param Axy: xy coefficient
-    :type Axy: float
-    :param Axz: xz coefficient
-    :type Axz: float
-    :param Ayz: yz coefficient
-    :type Ayz: float
-    :param Ax : x coefficient
-    :type Ax: float
-    :param Ay : y coefficient
-    :type Ay: float
-    :param Az : z coefficient
-    :type Az: float
-    :param A0 : constant
-    :type A0: constant
+    :param cxx: x^2 coefficient
+    :type cxx: float
+    :param cyy: y^2 coefficient
+    :type cyy: float
+    :param czz: z^2 coefficient
+    :type czz: float
+    :param cxy: xy coefficient
+    :type cxy: float
+    :param cxz: xz coefficient
+    :type cxz: float
+    :param cyz: yz coefficient
+    :type cyz: float
+    :param cx : x coefficient
+    :type cx: float
+    :param cy : y coefficient
+    :type cy: float
+    :param cz : z coefficient
+    :type cz: float
+    :param c : constant
+    :type c: constant
     """
     def __init__(self, name,
-                 Axx, Ayy, Azz, Axy, Axz, Ayz, Ax, Ay, Az, A0,
+                 cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
                  transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,
+                 **kwargs):
         self.name = name
 
-        self.Axx = Axx
-        self.Ayy = Ayy
-        self.Azz = Azz
-        self.Axy = Axy
-        self.Axz = Axz
-        self.Ayz = Ayz
-        self.Ax  = Ax
-        self.Ay  = Ay
-        self.Az  = Az
-        self.A0  = A0
+        self.cxx = cxx
+        self.cyy = cyy
+        self.czz = czz
+        self.cxy = cxy
+        self.cxz = cxz
+        self.cyz = cyz
+        self.cx  = cx
+        self.cy  = cy
+        self.cz  = cz
+        self.c  = c
 
         self.transform = self._set_transform(transform)
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, extent=None):
-        return self.transform.leftMultiplyVector([0, 0, 0])
+        if "safety" in kwargs:
+            self.safety = kwargs["safety"]
+        else:
+            self.safety = None
+
+    def centre(self, referenceExtent=None):
+        return Three(0, 0, 0)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.identity(3))
+        return np.identity(3)
 
-    def geant4Solid(self, reg, extent=None):
-        exp = self.transform.netExpansion()
-        scale = self._extent_to_scale_factor(extent)
+    def coefficientsMatrix(self):
+        cxx = self.cxx
+        cyy = self.cyy
+        czz = self.czz
+        cxy = self.cxy / 2.
+        cxz = self.cxz / 2.
+        cyz = self.cyz / 2.
+        cx = self.cx / 2.
+        cy = self.cy / 2.
+        cz = self.cz / 2.
+        c = self.c
+
+        return np.array([[cxx, cxy, cxz, cx],
+                         [cxy, cyy, cyz, cy],
+                         [cxz, cyz, czz, cz],
+                         [ cx,  cy,  cz,  c]])
+
+    @staticmethod
+    def _quadricMatrixToCoefficients(matrix):
+        return {"cxx": matrix[0,0],
+                "cyy": matrix[1,1],
+                "czz": matrix[2,2],
+
+                "cxy": 2 * matrix[0,1],
+                "cxz": 2 * matrix[0,2],
+                "cyz": 2 * matrix[1,2],
+
+                "cx": 2 * matrix[0,3],
+                "cy": 2 * matrix[1,3],
+                "cz": 2 * matrix[2,3],
+
+                "c": matrix[3,3]}
+
+    def geant4Solid(self, reg, referenceExtent=None):
+        if referenceExtent is None:
+            raise ValueError("QUA must be evaluated with respect to an extent.")
+
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+
+        # Apply any geometry directives.
+        matrix = self.coefficientsMatrix()
+        # Combined expansion, rototranslation and translation
+        netTransformationMatrix = self.transform.to4DMatrix()
+        inv = np.linalg.inv(netTransformationMatrix)
+        transformedQuadric = inv.T.dot(matrix).dot(inv)
+        coeff = self._quadricMatrixToCoefficients(transformedQuadric)
 
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(self.Axx, self.Ayy, self.Azz,
-                                self.Axy, self.Ayz, self.Axz,
-                                self.Ax,  self.Ay,  self.Az, 0.0)
+        quadric.SetCoefficients(coeff["cxx"], coeff["cyy"], coeff["czz"],
+                                coeff["cxy"], coeff["cyz"], coeff["cxz"],
+                                coeff["cx"],  coeff["cy"], coeff["cz"],
+                                coeff["c"])
+
         sample = vtk.vtkSampleFunction()
         sample.SetSampleDimensions(50, 50, 50)
-        if extent is None:
-            sample.SetModelBounds(-INFINITY, INFINITY,
-                                  -INFINITY, INFINITY,
-                                  -INFINITY, INFINITY)
-        else:
-            sample.SetModelBounds(extent.lower.x, extent.upper.x,
-                                  extent.lower.y, extent.upper.y,
-                                  extent.lower.z, extent.upper.z)
 
+        # Don't set bounds exactly equal to the extent because the
+        # curved regions directly at the edge of the extent/bounds can
+        # be quite noticeably undersampled and we will lose detail, so
+        # to be safe we make the ModelBounds a bit bigger than the
+        # extent
+        sample.SetModelBounds(referenceExtent.lower.x - scale,
+                              referenceExtent.upper.x + scale,
+                              referenceExtent.lower.y - scale,
+                              referenceExtent.upper.y + scale,
+                              referenceExtent.lower.z - scale,
+                              referenceExtent.upper.z + scale)
 
         sample.SetImplicitFunction(quadric)
         sample.SetCapping(1)
 
+
+        # Make the mesh, generating a single contour at F(x, y, z) = 0.
         contours = vtk.vtkContourFilter()
         contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, -self.A0, -self.A0)
-        contours.Update()
+        contours.GenerateValues(1, 0, 0)
 
-        pd = contours.GetOutput()
+        # Deal with facets which are zero-area facets (i.e. lines).
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputConnection(contours.GetOutputPort())
+        cleaner.ConvertLinesToPointsOn()
+        cleaner.Update()
+
+        pd = cleaner.GetOutput()
 
         mesh  = []
         verts = []
         facet = []
 
+        j = 0
         for i in range(pd.GetNumberOfCells()) :
             c = pd.GetCell(i)
             p = c.GetPoints()
+            if p.GetNumberOfPoints() < 3: # lines.
+                continue
+            # if p.GetNumberOfPoints() > 3: # this shouldn't happen
+            #     raise ValueError("2 many poitnts")
             verts.append(np.array(p.GetPoint(2)))
             verts.append(np.array(p.GetPoint(1)))
             verts.append(np.array(p.GetPoint(0)))
-            facet.append([3*i+0,3*i+1,3*i+2])
+            facet.append([3*j+0,3*j+1,3*j+2])
+            j += 1
+
+        if not verts:
+            raise pyg4ometry.exceptions.NullMeshError(
+                "Failed to generate a mesh for QUA {}"
+                " with referenceExtent={}".format(self.name,
+                                                  referenceExtent))
+
+        if self.safety is not None:
+            # Multiply by -1 to match convention of MeshShrink
+            # (positive shrinkFactor = smaller mesh), which is
+            # opposite of this.
+            vertnormals = MeshShrink([verts, facet],
+                                     shrinkFactor=-1*self.safety)
 
         mesh.append(verts)
         mesh.append(facet)
-
         return g4.solid.TessellatedSolid(
             self.name,
             mesh,
@@ -1695,11 +1741,22 @@ class QUA(BodyMixin):
 
     def _withLengthSafety(self, safety, reg=None):
         return QUA(self.name,
-                   self.Axx, self.Ayy, self.Azz,
-                   self.Axy, self.Axz, self.Ayz,
-                   self.Ax, self.Ay,  self.Az, self.A0,
+                   self.cxx, self.cyy, self.czz,
+                   self.cxy, self.cxz, self.cyz,
+                   self.cx, self.cy,  self.cz, self.c,
                    transform=self.transform,
-                   flukaregistry=reg)
+                   flukaregistry=reg,
+                   safety=safety)
+
+    def __repr__(self):
+        return ("<QUA: {} xx={}, yy={}, zz={}, xy={}, "
+                "xz={}, yz={}, x={}, y={}, z={}, c={}>").format(
+                    self.name,
+                    self.cxx, self.cyy, self.czz,
+                    self.cxy, self.cxz, self.cyz,
+                    self.cx, self.cy, self.cz,
+                    self.c)
+
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0

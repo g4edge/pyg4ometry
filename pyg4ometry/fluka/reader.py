@@ -376,7 +376,8 @@ def _make_body(body_parts,
     body_type = body_parts[0]
     name = body_parts[1]
     # WE ARE CONVERTING FROM CENTIMETRES TO MILLIMETRES HERE.
-    p = [float(p)*10. for p in body_parts[2:]] # p = parameters
+    pcm = np.array([float(m) for m in body_parts[2:]])
+    pmm = 10 * pcm
 
     # Note that we have to reverse the transform stack to match FLUKA
     # here, because it seems that FLUKA applys nested transforms
@@ -392,71 +393,85 @@ def _make_body(body_parts,
                           invertRotoTranslation=inversion_stack)
 
     if body_type == "RPP":
-        b = body.RPP(name, *p, flukaregistry=flukareg, transform=transform)
+        b = body.RPP(name, *pmm, flukaregistry=flukareg, transform=transform)
     elif body_type == "RCC":
-        b = body.RCC(name, p[0:3], p[3:6], p[6], flukaregistry=flukareg,
+        b = body.RCC(name, pmm[0:3], pmm[3:6], pmm[6], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "XYP":
-        b = body.XYP(name, p[0], flukaregistry=flukareg, transform=transform)
+        b = body.XYP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "XZP":
-        b = body.XZP(name, p[0], flukaregistry=flukareg, transform=transform)
+        b = body.XZP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "YZP":
-        b = body.YZP(name, p[0], flukaregistry=flukareg, transform=transform)
+        b = body.YZP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "PLA":
-        b = body.PLA(name, p[0:3], p[3:6], flukaregistry=flukareg,
+        b = body.PLA(name, pmm[0:3], pmm[3:6], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "XCC":
-        b = body.XCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+        b = body.XCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "YCC":
-        b = body.YCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+        b = body.YCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "ZCC":
-        b = body.ZCC(name, p[0], p[1], p[2], flukaregistry=flukareg,
+        b = body.ZCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "XEC":
-        b = body.XEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+        b = body.XEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
+                     flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "YEC":
-        b = body.YEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+        b = body.YEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
+                     flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "ZEC":
-        b = body.ZEC(name, p[0], p[1], p[2], p[3], flukaregistry=flukareg,
+        b = body.ZEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
+                     flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "TRC":
-        b = body.TRC(name, p[0:3], p[3:6], p[6], p[7], flukaregistry=flukareg,
+        b = body.TRC(name, pmm[0:3], pmm[3:6], pmm[6], pmm[7],
+                     flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "SPH":
-        b = body.SPH(name, p[0:3], p[3], flukaregistry=flukareg,
+        b = body.SPH(name, pmm[0:3], pmm[3], flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "REC":
-        b = body.REC(name, p[0:3], p[3:6], p[6:9], p[9:12],
+        b = body.REC(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "ELL":
-        b = body.ELL(name, p[0:3], p[3:6], p[6],
+        b = body.ELL(name, pmm[0:3], pmm[3:6], pmm[6],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "BOX":
-        b = body.BOX(name, p[0:3], p[3:6], p[6:9], p[9:12],
+        b = body.BOX(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "WED":
-        b = body.WED(name, p[0:3], p[3:6], p[6:9], p[9:12],
+        b = body.WED(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "RAW":
-        b = body.RAW(name, p[0:3], p[3:6], p[6:9], p[9:12],
+        b = body.RAW(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
                      flukaregistry=flukareg, transform=transform)
     elif body_type == "ARB":
-        vertices = [p[0:3], p[3:6], p[6:9], p[9:12],
-                    p[12:15], p[15:18], p[18:21], p[21:24]]
-        facenumbers = p[24:]
-        # Remember we converted to param to millimetres blindly above, well,
-        # facenumbers are not dimensions, but indices, so we convert
-        # back to "centimetres" here:
-        facenumbers = [f/10. for f in facenumbers]
+        vertices = [pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
+                    pmm[12:15], pmm[15:18], pmm[18:21], pmm[21:24]]
+        # Remember we converted to param to millimetres blindly above,
+        # well, facenumbers are not dimensions, but indices, so we use
+        # the raw numbers / "centimetres" here:
+        facenumbers = pcm[24:]
         b = body.ARB(name, vertices, facenumbers,
                      flukaregistry=flukareg,
                      transform=transform)
     elif body_type == "QUA":
-        b = body.QUA(name, *p, flukaregistry=flukareg, transform=transform)
+        # This slightly more convoluted unit conversion is to account
+        # for the different order of the terms.  Converting to mm
+        # requires diving by 10 for the first 6 terms because these
+        # are square/skew terms.  The x,y,z terms are the same as the
+        # original because the input will be in mm.  The last,
+        # constant, term must be in mm.
+        quaParameters = []
+        quaParameters.extend(pcm[0:6] / 10.)
+        quaParameters.extend(pcm[6:9])
+        quaParameters.append(pmm[-1])
+        b = body.QUA(name, *quaParameters, flukaregistry=flukareg,
+                     transform=transform)
     else:
         raise TypeError("Body type {} not supported".format(body_type))
     return b

@@ -29,46 +29,54 @@ def fluka2Geant4(flukareg,
                  materialMap=None,
                  omitRegions=None,
                  quadricRegionExtents=None):
+    """Convert a FLUKA registry to a Geant4 Registry"""
 
-    # Bomb if we have quadrics but no quadricRegionExtents
-    _checkQuadric(flukareg, quadricRegionExtents)
+
+    # Bomb if we have quadrics but no quadricReferenceExtents
+    quadricRegionExtents = _checkQuadricRegionExtents(flukareg,
+                                                      quadricRegionExtents)
+    # If we have quadricReferenceExtents then use them
+    if quadricRegionExtents:
+        flukareg = _makeUniqueQuadricRegions(flukareg, quadricRegionExtents)
 
     # Filter on selected regions
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
 
     # Filter BLCKHOLE regions
-    flukareg = _filterBlackHoleRegions(omitBlackholeRegions, flukareg, regions)
+    if omitBlackholeRegions:
+        flukareg = _filterBlackHoleRegions(flukareg, regions)
 
     # Make a new registry with automatic length safety applied.
-    flukareg = _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions)
-
+    if withLengthSafety:
+        flukareg = _makeLengthSafetyRegistry(flukareg, regions)
     # set world dimensions
     worldDimensions = _getWorldDimensions(worldDimensions)
 
     # Split disjoint unions into their constituents.
     if splitDisjointUnions:
-        flukareg, newNamesToOldNames = _make_disjoint_unions_registry(flukareg,
-                                                                      regions)
+        flukareg, newNamesToOldNames = _makeDisjointUnionsFlukaRegistry(
+            flukareg, regions, quadricRegionExtents)
 
         newRegions = []
+        newQuadricRegionExtents = {}
         for newName, oldName in newNamesToOldNames.iteritems():
             if oldName in regions:
                 newRegions.append(newName)
+            if oldName in quadricRegionExtents:
+                newQuadricRegionExtents[newName] = quadricRegionExtents[oldName]
+
         regions = newRegions
+        quadricRegionExtents = newQuadricRegionExtents
 
     # Do infinite solid minimisation
-    extentMap = None
+    referenceExtentMap = None
     if minimiseSolids:
-        region_extents = _get_region_extents(flukareg, regions)
-        extentMap = _make_body_minimum_extentMap(flukareg,
-                                                 region_extents,
-                                                 regions)
-        flukareg = _filterHalfSpaces(flukareg, region_extents)
-    elif flukareg.latticeDict:
-        # Don't pass a subset of the region name here because for
-        # LATTICE we need to consider all regions.  E.g. if we want to
-        # copy the cell but not the prototype.
-        region_extents = _get_region_extents(flukareg, flukareg.regionDict)
+        regionExtents = _getRegionExtents(flukareg, regions,
+                                          quadricRegionExtents)
+        referenceExtentMap = _makeBodyMinimumReferenceExtentMap(flukareg,
+                                                                regionExtents,
+                                                                regions)
+        flukareg = _filterHalfSpaces(flukareg, regionExtents)
 
 
     # With the modified fluka registry, finally, we convert to Geant4:
@@ -83,7 +91,8 @@ def fluka2Geant4(flukareg,
             continue
 
         region = flukareg.regionDict[name]
-        region_solid = region.geant4Solid(greg, extent=extentMap)
+        region_solid = region.geant4Solid(greg,
+                                          referenceExtent=referenceExtentMap)
 
         region_material = region.material
         if region_material is None:
@@ -95,7 +104,6 @@ def fluka2Geant4(flukareg,
         elif region_material in materialMap:
             region_material = materialMap[region_material]
         else:
-            # warnings.warn("Region {} material being set to G4_Fe.".format(name))
             region_material = g4.MaterialPredefined("G4_Fe")
 
         region_lv = g4.LogicalVolume(region_solid,
@@ -109,13 +117,14 @@ def fluka2Geant4(flukareg,
         # but volume rotations are passive, so we have to reverse the
         # rotation.
         rot = list(trans.reverse(region.tbxyz()))
-        g4.PhysicalVolume(rot,
-                          list(region.centre(extent=extentMap)),
-                          region_lv,
-                          "{}_pv".format(name),
-                          wlv, greg)
+        g4.PhysicalVolume(
+            rot,
+            list(region.centre(referenceExtent=referenceExtentMap)),
+            region_lv,
+            "{}_pv".format(name),
+            wlv, greg)
 
-    _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs)
+    _convertLatticeCells(greg, flukareg, wlv, regionExtents, regionsToLVs)
     greg.setWorld(wlv.name)
     return greg
 
@@ -129,9 +138,7 @@ def _makeWorldVolume(dimensions, material, g4registry):
     wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
-def _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions):
-    if not withLengthSafety:
-        return flukareg
+def _makeLengthSafetyRegistry(flukareg, regions):
 
     bigger = fluka.FlukaRegistry()
     smaller = fluka.FlukaRegistry()
@@ -153,10 +160,14 @@ def _makeLengthSafetyRegistry(withLengthSafety, flukareg, regions):
 
     return fluka_reg_out
 
-def _make_disjoint_unions_registry(flukareg, regions):
+def _makeDisjointUnionsFlukaRegistry(flukareg, regions, quadricRegionExtents):
     fluka_reg_out = fluka.FlukaRegistry()
     newNamesToOldNames = {}
+
+    quadricRegionBodyExtentMap = _makeQuadricRegionBodyExtentMap(
+        flukareg, quadricRegionExtents)
     for name, region in flukareg.regionDict.iteritems():
+
         if name not in regions:
             continue
         if len(region.zones) == 1: # can't be any disjoint unions if 1 zone.
@@ -166,7 +177,10 @@ def _make_disjoint_unions_registry(flukareg, regions):
             newNamesToOldNames[name] = name
             continue
 
-        connected_zones = region.get_connected_zones()
+
+        connected_zones = region.get_connected_zones(
+            referenceExtent=quadricRegionBodyExtentMap)
+
         if len(connected_zones) == 1: # then there are no disjoint unions
             new_region = deepcopy(region)
             fluka_reg_out.addRegion(new_region)
@@ -194,16 +208,23 @@ def _make_disjoint_unions_registry(flukareg, regions):
 
     return fluka_reg_out, newNamesToOldNames
 
-def _get_region_extents(flukareg, regions):
+def _getRegionExtents(flukareg, regions, quadricRegionExtents):
     regionmap = flukareg.regionDict
     regionExtents = {}
+    referenceExtent = None
+    if quadricRegionExtents:
+        referenceExtent = _makeQuadricRegionBodyExtentMap(flukareg,
+                                                          quadricRegionExtents)
     for name, region in regionmap.iteritems():
+        if name in quadricRegionExtents:
+            regionExtents[name] = quadricRegionExtents[name]
+
         if name not in regions:
             continue
-        regionExtents[name] = region.extent()
+        regionExtents[name] = region.extent(referenceExtent=referenceExtent)
     return regionExtents
 
-def _make_body_minimum_extentMap(flukareg, region_extents, regions):
+def _makeBodyMinimumReferenceExtentMap(flukareg, regionExtents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
 
     bodies_to_minimum_extents = {}
@@ -214,11 +235,11 @@ def _make_body_minimum_extentMap(flukareg, region_extents, regions):
         for region_name in region_names:
             if region_name not in regions:
                 continue
-            bodyRegionExtents.append(region_extents[region_name])
+            bodyRegionExtents.append(regionExtents[region_name])
 
-        if len(region_extents) == 1:
-            extent = region_extents.values()[0]
-        elif len(region_extents) > 1:
+        if len(regionExtents) == 1:
+            extent = regionExtents.values()[0]
+        elif len(regionExtents) > 1:
             extent = reduce(_getMaximalOfTwoExtents, bodyRegionExtents)
             logger.debug("Minimum extent = %s", extent)
         else:
@@ -234,9 +255,8 @@ def _getMaximalOfTwoExtents(extent1, extent2):
     upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
 
-def _filterBlackHoleRegions(omitBlackholeRegions, flukareg, regions):
-    if not omitBlackholeRegions:
-        return flukareg
+def _filterBlackHoleRegions(flukareg, regions):
+
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
         if region.material == "BLCKHOLE":
@@ -288,7 +308,7 @@ def _getTransformedCellRegionExtent(lattice):
     wlv = _makeWorldVolume(WORLD_DIMENSIONS, "G4_Galactic", greg)
 
 
-    region_solid = cellRegion.geant4Solid(greg, extent=None)
+    region_solid = cellRegion.geant4Solid(greg, referenceExtent=None)
     regionLV = g4.LogicalVolume(region_solid,
                                  "G4_Galactic",
                                  "{}_lv".format(cellName),
@@ -302,7 +322,7 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     cellRegion = deepcopy(lattice.cellRegion)
 
     transform = lattice.getTransform()
-    
+
     cellRotation = transform.leftMultiplyRotation(cellRegion.rotation())
     cellCentre = list(transform.leftMultiplyVector(cellRegion.centre()))
 
@@ -310,29 +330,34 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     # centre that I want it to return.  These two lines save me a lot
     # of work elsewhere.
     def rotation(self): return cellRotation
-    def centre(self, extent=None): return cellCentre
+    def centre(self, referenceExtent=None): return cellCentre
     cellRegion.rotation = types.MethodType(rotation, cellRegion)
     cellRegion.centre = types.MethodType(centre, cellRegion)
 
     return areOverlapping(cellRegion, region)
 
-def _checkQuadric(flukareg, quadricRegionExtents):
-    for region_name, region in flukareg.regionDict.iteritems():
+def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
+    for regionName, region in flukareg.regionDict.iteritems():
         regionBodies = region.bodies()
         quadrics = {r for r in regionBodies if isinstance(r, fluka.QUA)}
 
+        # If this region has no Quadrics then all is well
         if not quadrics:
             continue
-
-        if quadricRegionExtents is None:
+        elif quadricRegionExtents is None:
             msg = "quadricRegionExtents must be set for regions with QUAs."
-            raise ValueError(msg)
+        elif regionName in quadricRegionExtents:
+            continue
 
-        for q in quadrics:
-            if q.name not in quadricRegionExtents:
-                msg = ("Region {} with QUA missing "
-                       "extent in quadricRegionExtents.".format(region_name))
-                raise ValueError(msg)
+        raise ValueError(
+            "QUA region missing from quadricRegionExtents: {}".format(
+                regionName))
+
+
+    if not quadricRegionExtents:
+        return {}
+    return quadricRegionExtents
+
 
 
 def _getWorldDimensions(worldDimensions):
@@ -354,6 +379,7 @@ def _getSelectedRegions(flukareg, regions, omitRegions):
         return set(flukareg.regionDict).difference(omitRegions)
     elif regions is None:
         return list(flukareg.regionDict)
+    return regions
 
 def _filterHalfSpaces(flukareg, extents):
     fout = fluka.FlukaRegistry()
@@ -387,9 +413,9 @@ def _distanceFromPointToPlane(normal, pointOnPlane, point):
     normal = fluka.Three(normal).unit()
     return abs(np.dot(normal, point - pointOnPlane))
 
-def _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs):
+def _convertLatticeCells(greg, flukareg, wlv, regionExtents, regionsToLVs):
     # If no lattices defined then we end the conversion here.
-    latticeContents = _getContentsOfLatticeCells(flukareg, region_extents)
+    latticeContents = _getContentsOfLatticeCells(flukareg, regionExtents)
     for latticeName, contents in latticeContents.iteritems():
         # We take the LVs associated with this lattice (which have been
         # placed above as PV) and place it with the translation and
@@ -405,3 +431,31 @@ def _convertLatticeCells(greg, flukareg, wlv, region_extents, regionsToLVs):
                               prototypeLV,
                               "{}_lattice_pv".format(latticeName),
                               wlv, greg)
+
+def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
+    bodiesToRegions = flukareg.getBodyToRegionsMap()
+    flukaRegOut = fluka.FlukaRegistry()
+    for regionName, region in flukareg.regionDict.iteritems():
+        if regionName in quadricRegionExtents:
+            uniqueRegion = region.makeUnique("_"+regionName, flukaRegOut)
+            flukaRegOut.addRegion(uniqueRegion)
+        else:
+            newRegion = deepcopy(region)
+            flukaRegOut.addRegion(newRegion)
+            newRegion.allBodiesToRegistry(flukaRegOut)
+
+
+    flukaRegOut.latticeDict = flukareg.latticeDict
+    return flukareg
+
+def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
+    if quadricRegionExtents is None:
+        return {}
+    if quadricRegionExtents is not None:
+        quadricRegionBodyExtentMap = {}
+        for regionName, extent in quadricRegionExtents.iteritems():
+            if regionName not in flukareg.regionDict:
+                continue
+            for body in flukareg.regionDict[regionName].bodies():
+                quadricRegionBodyExtentMap[body.name] = extent
+        return quadricRegionBodyExtentMap
