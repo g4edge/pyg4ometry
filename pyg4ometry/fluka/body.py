@@ -114,6 +114,24 @@ class _HalfSpaceMixin(BodyMixin):
         typename = type(self).__name__
         return "{} {} {}".format(typename, self.name, coordinate)
 
+    def _closest_point(self, point):
+        """Get point on plane which is closest to point not on the plane."""
+        normal, pointOnPlane = self.toPlane()
+        distance = np.dot((pointOnPlane - point), normal.unit())
+        closest_point = point + distance * normal.unit()
+        return closest_point
+
+    def _shiftedHalfspaceCentre(self, referenceExtent):
+        # Normal to halfspace face and point on it
+        # normal, point = self.toPlane()
+        centre = referenceExtent.centre
+        closestPointOnFace = self._closest_point(centre)
+        normal, _ = self.toPlane()
+        shiftedCentre = (closestPointOnFace
+                         - normal * 0.5 * self._boxFullSize(referenceExtent))
+
+        return shiftedCentre
+
 
 class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
@@ -1027,11 +1045,11 @@ class XYP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        offset = self._referenceExtent_to_offset(referenceExtent)
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-        return self.transform.leftMultiplyVector(Three(offset.x,
-                                                       offset.y,
-                                                       self.z - (scale * 0.5)))
+        if referenceExtent is None:
+            return self.transform.leftMultiplyVector(
+                [0, 0, self.z - 0.5 * self._boxFullSize(referenceExtent=None)])
+
+        return self._shiftedHalfspaceCentre(referenceExtent)
 
     def __repr__(self):
         return "<XYP: {}, z={}>".format(self.name, self.z)
@@ -1086,11 +1104,11 @@ class XZP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        offset = self._referenceExtent_to_offset(referenceExtent)
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-        return self.transform.leftMultiplyVector(Three(offset.x,
-                                                       self.y - (scale * 0.5),
-                                                       offset.z))
+        if referenceExtent is None:
+            return self.transform.leftMultiplyVector(
+                [0, self.y - 0.5 * self._boxFullSize(referenceExtent=None), 0])
+
+        return self._shiftedHalfspaceCentre(referenceExtent)
 
     def __repr__(self):
         return "<XZP: {}, y={}>".format(self.name, self.y)
@@ -1145,11 +1163,12 @@ class YZP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        offset = self._referenceExtent_to_offset(referenceExtent)
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-        return self.transform.leftMultiplyVector(Three(self.x - (scale * 0.5),
-                                                       offset.y,
-                                                       offset.z))
+        if referenceExtent is None:
+            # offset = self._referenceExtent_to_offset(referenceExtent)
+            # scale = self._referenceExtent_to_scale_factor(referenceExtent)
+            return self.transform.leftMultiplyVector(
+                [self.x - 0.5 * self._boxFullSize(referenceExtent=None), 0, 0])
+        return self._shiftedHalfspaceCentre(referenceExtent)
 
     def __repr__(self):
         return "<YZP: {}, x={}>".format(self.name, self.x)
@@ -1208,20 +1227,15 @@ class PLA(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        offset = self._referenceExtent_to_offset(referenceExtent)
-        # multiply by sqrt(3) to account for any rotation of the halfspace.
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-        # Get point on plane closest to the centre of the referenceExtent:
-        closest_point = self._closest_point(offset)
-        return self.transform.leftMultiplyVector(closest_point
-                                                 - 0.5
-                                                 * scale * self.normal.unit())
+        if referenceExtent is None:
+            closest_point = self._closest_point([0, 0, 0])
+            return self.transform.leftMultiplyVector(
+                closest_point
+                - 0.5
+                * self._boxFullSize(referenceExtent=None)
+                * self.normal.unit())
+        return self._shiftedHalfspaceCentre(referenceExtent)
 
-    def _closest_point(self, point):
-        """Get point on plane which is closest to point not on the plane."""
-        distance = np.dot((self.point - point), self.normal.unit())
-        closest_point = point + distance * self.normal.unit()
-        return closest_point
 
     def rotation(self):
         # Choose the face pointing in the direction of the positive
