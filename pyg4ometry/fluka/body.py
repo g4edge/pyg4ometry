@@ -114,7 +114,7 @@ class _HalfSpaceMixin(BodyMixin):
         typename = type(self).__name__
         return "{} {} {}".format(typename, self.name, coordinate)
 
-    def _closest_point(self, point):
+    def pointOnPlaneClosestTo(self, point):
         """Get point on plane which is closest to point not on the plane."""
         normal, pointOnPlane = self.toPlane()
         distance = np.dot((pointOnPlane - point), normal.unit())
@@ -125,7 +125,7 @@ class _HalfSpaceMixin(BodyMixin):
         # Normal to halfspace face and point on it
         # normal, point = self.toPlane()
         centre = referenceExtent.centre
-        closestPointOnFace = self._closest_point(centre)
+        closestPointOnFace = self.pointOnPlaneClosestTo(centre)
         normal, _ = self.toPlane()
         shiftedCentre = (closestPointOnFace
                          - normal * 0.5 * self._boxFullSize(referenceExtent))
@@ -1228,7 +1228,7 @@ class PLA(_HalfSpaceMixin):
 
     def centre(self, referenceExtent=None):
         if referenceExtent is None:
-            closest_point = self._closest_point([0, 0, 0])
+            closest_point = self.pointOnPlaneClosestTo([0, 0, 0])
             return self.transform.leftMultiplyVector(
                 closest_point
                 - 0.5
