@@ -1261,7 +1261,7 @@ class PLA(_HalfSpaceMixin):
                                                             self.point))
 
     def toPlane(self):
-        normal = self.transform.leftMultiplyRotation(self.normal)
+        normal = Three(self.transform.leftMultiplyRotation(self.normal))
         point = Three(self.transform.leftMultiplyVector(self.point))
 
         return normal, point
