@@ -1669,7 +1669,8 @@ class QUA(BodyMixin):
                                 coeff["c"])
 
         sample = vtk.vtkSampleFunction()
-        sample.SetSampleDimensions(50, 50, 50)
+        # sample.SetSampleDimensions(50, 50, 50)
+        sample.SetSampleDimensions(75, 75, 75)
 
         # Don't set bounds exactly equal to the extent because the
         # curved regions directly at the edge of the extent/bounds can
