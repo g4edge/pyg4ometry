@@ -1,5 +1,6 @@
 import ast
 import operator
+import os.path
 import sys
 
 import numpy as np
@@ -48,6 +49,7 @@ def preprocess(filein):
         lines = f.readlines()
 
     preprocessed_lines = []
+    directory = os.path.dirname(filein)
 
     defines = {}
     if_stack = [] # [_IfInfo1, _IfInfo2, ...]
@@ -74,7 +76,8 @@ def preprocess(filein):
             if directive == "#define" or directive == "#undef":
                 _parse_preprocessor_define(directive, split_line, defines)
             elif directive == "#include":
-                _parse_preprocessor_include(directive,
+                _parse_preprocessor_include(directory,
+                                            directive,
                                             split_line,
                                             line_stack)
             elif directive in ["#if", "#elif", "#endif", "#else"]:
@@ -173,11 +176,17 @@ def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
     else:
         raise ValueError("Unknown conditional directive state.")
 
-def _parse_preprocessor_include(directive, split_line, line_stack):
+def _parse_preprocessor_include(directory, directive, split_line, line_stack):
     if split_line[0] == "#include":
         filename = split_line[1]
-        with open(filename, "r") as f:
-            line_stack.extend(reversed(f.readlines())) # read in reverse
+        if not os.path.isabs(filename):
+            filename = os.path.join(directory, filename)
+        try:
+            with open(filename, "r") as f:
+                line_stack.extend(reversed(f.readlines())) # read in # reverse
+        except IOError:
+            raise FLUKAError("Included preprocessor file {} not found.".format(
+                filename))
     else:
         raise ValueError("Unknown include preprocessor directive: {}".format(
             split_line[1]))
