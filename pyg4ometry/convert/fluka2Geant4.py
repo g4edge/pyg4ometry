@@ -412,9 +412,10 @@ def _filterHalfSpaces(flukareg, extents):
                                               regionExtent.centre)
                 # If the distance from the point on the plane closest
                 # to the centre of the extent is greater than the
-                # maximum distance from centre to corner, then we omit
-                # it (accounting for some tolerance).
-                if d > 1.1 * extentCornerDistance:
+                # maximum distance from centre to corner, then we
+                # remove it (accounting for some tolerance) from the
+                # region.
+                if d > 1.025 * extentCornerDistance:
                     logger.debug(
                         ("Filtering %s from region %s."
                          "  extent = %s, extentMax = %s, d=%s"),
