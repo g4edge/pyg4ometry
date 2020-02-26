@@ -231,9 +231,15 @@ class Zone(object):
         """
 
         result = Zone()
+        nestedZoneCount = 0
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
-            name = body.name + nameSuffix
+            if body.name is None: # e.g. a zone with no name
+                name = "zone{}_{}".format(nestedZoneCount, nameSuffix)
+                nestedZoneCount += 1
+            else:
+                name = body.name + nameSuffix
+
             booleanType = type(boolean)
 
             if isinstance(body, Zone):
