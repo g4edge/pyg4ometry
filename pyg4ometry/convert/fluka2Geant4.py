@@ -337,6 +337,11 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     return areOverlapping(cellRegion, region)
 
 def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
+    """Loop over the regions looking for quadrics and for any quadrics we
+    find, make sure that that whregion has a defined region extent in
+    quadricRegionExtents.
+
+    """
     for regionName, region in flukareg.regionDict.iteritems():
         regionBodies = region.bodies()
         quadrics = {r for r in regionBodies if isinstance(r, fluka.QUA)}
@@ -362,6 +367,10 @@ def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
 
 
 def _getWorldDimensions(worldDimensions):
+    """Get world dimensinos and if None then return the global constant
+    WORLD_DIMENSIONS.
+
+    """
     if worldDimensions is None:
         return WORLD_DIMENSIONS
     return worldDimensions
@@ -383,19 +392,28 @@ def _getSelectedRegions(flukareg, regions, omitRegions):
     return regions
 
 def _filterHalfSpaces(flukareg, extents):
+    """Filter redundant half spaces from the regions of the
+    FlukaRegistry instance.  Extents is a dictionary of region names
+    to region extents."""
     fout = fluka.FlukaRegistry()
     logger.debug("Filtering half spaces")
 
     for region_name, region in flukareg.regionDict.iteritems():
         regionOut = deepcopy(region)
         regionExtent = extents[region_name]
+        # Loop over the bodies of this region
         for body in regionOut.bodies():
+            # Only potentially omit half spaces
             if isinstance(body, (fluka.XYP, fluka.XZP,
                                  fluka.YZP, fluka.PLA)):
                 normal, pointOnPlane = body.toPlane()
                 extentCornerDistance = regionExtent.cornerDistance()
                 d = _distanceFromPointToPlane(normal, pointOnPlane,
                                               regionExtent.centre)
+                # If the distance from the point on the plane closest
+                # to the centre of the extent is greater than the
+                # maximum distance from centre to corner, then we omit
+                # it (accounting for some tolerance).
                 if d > 1.1 * extentCornerDistance:
                     logger.debug(
                         ("Filtering %s from region %s."
