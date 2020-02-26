@@ -1,7 +1,10 @@
+import os as _os
+import shutil as _shutil
 import numpy as _np
 import pyg4ometry.transformation as _transformation
+import Convert as _convert
 
-class GafferWriter :
+class RenderWriter :
     def __init__(self):
         self.materials = {}
         self.meshes    = {}
@@ -47,10 +50,23 @@ class GafferWriter :
                                              "translation":translation}]
 
     def write(self, outputDirectory):
-        pass
+
         # make output directory
+        _shutil.rmtree(outputDirectory, ignore_errors = True)
+        _os.mkdir(outputDirectory)
 
         # loop over meshes and write obj files
+        for mk in self.meshes :
+            _convert.pycsgMeshToObj(self.meshes[mk],outputDirectory+"/"+mk)
 
-        # loop of instances and write JSON file
+        # loop of instances and write ascii file
+        f = open("0_instances.dat","w")
+        for ik in self.instances:
+            for instance in self.instances[ik] :
+                instanceName     = ik
+                instanceMaterial = str(self.materials[ik])
+                instanceTransformation = str(instance["transformation"]).replace("\n","").replace("[","").replace("]","")
+                instancePosition      = str(instance["translation"]).replace("\n","").replace("[","").replace("]","")
 
+                f.write(instanceName+" "+instanceMaterial+" "+instanceTransformation+" "+instancePosition+"\n")
+        f.close()
