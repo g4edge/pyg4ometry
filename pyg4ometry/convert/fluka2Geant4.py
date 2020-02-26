@@ -39,14 +39,15 @@ def fluka2Geant4(flukareg,
     if quadricRegionExtents:
         flukareg = _makeUniqueQuadricRegions(flukareg, quadricRegionExtents)
 
-    # Filter on selected regions
+    # Filter on selected regions (regions and omitRegions)
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
 
-    # Filter BLCKHOLE regions
+    # Filter BLCKHOLE regions from the FlukaRegistry
     if omitBlackholeRegions:
         flukareg = _filterBlackHoleRegions(flukareg, regions)
 
-    # Make a new registry with automatic length safety applied.
+    # Make a new FlukaRegistry with length safety applied to all of
+    # the regions.
     if withLengthSafety:
         flukareg = _makeLengthSafetyRegistry(flukareg, regions)
     # set world dimensions
@@ -358,8 +359,6 @@ def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
         raise ValueError(
             "QUA region missing from quadricRegionExtents: {}".format(
                 regionName))
-
-
     if not quadricRegionExtents:
         return {}
     return quadricRegionExtents
@@ -422,6 +421,8 @@ def _filterHalfSpaces(flukareg, extents):
                         body, region_name, regionExtent,
                         extentCornerDistance, d)
                     regionOut.removeBody(body.name)
+        # add this region to the output fluka registry along with the
+        # filtered bodies.
         fout.addRegion(regionOut)
         regionOut.allBodiesToRegistry(fout)
 
@@ -469,6 +470,9 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
     return flukareg
 
 def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
+    """Given a map of regions featuring quadrics to their extents, we
+    loop over the bodies of the region and set their extents equal to
+    the region extent."""
     if quadricRegionExtents is None:
         return {}
     if quadricRegionExtents is not None:
