@@ -35,6 +35,9 @@ def fluka2Geant4(flukareg,
     # Bomb if we have quadrics but no quadricReferenceExtents
     quadricRegionExtents = _checkQuadricRegionExtents(flukareg,
                                                       quadricRegionExtents)
+    quadricRegionExtents = _getMaximalQuadricRegionExtents(flukareg,
+                                                           quadricRegionExtents)
+
     # If we have quadricReferenceExtents then use them
     if quadricRegionExtents:
         flukareg = _makeUniqueQuadricRegions(flukareg, quadricRegionExtents)
@@ -223,6 +226,11 @@ def _getRegionExtents(flukareg, regions, quadricRegionExtents):
         if name not in regions:
             continue
         regionExtents[name] = region.extent(referenceExtent=referenceExtent)
+    # XXX: We choose to use the quadricRegionExtents rather than the
+    # newly caclulated ones as each quadric must be evaluated with
+    # exactly the same extent in all its uses.  Could go again with
+    # getMaximalQuadricRegionExtents here, and ideally would.
+    regionExtents.update(quadricRegionExtents)
     return regionExtents
 
 def _makeBodyMinimumReferenceExtentMap(flukareg, regionExtents, regions):
@@ -483,3 +491,26 @@ def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
             for body in flukareg.regionDict[regionName].bodies():
                 quadricRegionBodyExtentMap[body.name] = extent
         return quadricRegionBodyExtentMap
+
+def _getMaximalQuadricRegionExtents(freg, quadricRegionExtents):
+    # Loop over the regions.  If a QUA in this region is present in
+    # another region, then do max(currentExtent, otherExtent) for this
+    # region's extent.
+
+    regionSharedExtents = {}
+    bodiesToRegions = freg.getBodyToRegionsMap()
+    for regionName, regionExtent in quadricRegionExtents.iteritems():
+        region = freg.regionDict[regionName]
+        for body in region.bodies():
+            if not isinstance(body, fluka.QUA):
+                continue
+
+            regionSharedExtents[regionName] = regionExtent
+            otherRegions = bodiesToRegions[body.name]
+            for otherRegion in otherRegions:
+                if otherRegion in quadricRegionExtents:
+                    otherExtent = quadricRegionExtents[otherRegion]
+                    currentExtent = regionSharedExtents[regionName]
+                    regionSharedExtents[regionName] = \
+                        _getMaximalOfTwoExtents(otherExtent, currentExtent)
+    return regionSharedExtents
