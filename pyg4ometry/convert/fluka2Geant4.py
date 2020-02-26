@@ -346,6 +346,7 @@ def _checkQuadricRegionExtents(flukareg, quadricRegionExtents):
             continue
         elif quadricRegionExtents is None:
             msg = "quadricRegionExtents must be set for regions with QUAs."
+            raise ValueError(msg)
         elif regionName in quadricRegionExtents:
             continue
 
