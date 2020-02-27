@@ -28,20 +28,41 @@ def fluka2Geant4(flukareg,
                  omitBlackholeRegions=True,
                  materialMap=None,
                  omitRegions=None,
-                 quadricRegionExtents=None,
-                 **kwargs):
+                 quadricRegionExtents=None):
     """Convert a FLUKA registry to a Geant4 Registry.
 
-    :param flukareg: Fluka registry to be converted
+    :param flukareg: FlukaRegistry instance to be converted.
     :type flukareg: FlukaRegistry
     :param regions: Names of regions to be converted, by default \
     all are converted.  Mutually exclusive with omitRegions.
     :type regions: list
+    :param withLengthSafety: Whether or not to apply automatic length safety.
+    :type withLengthSafety: bool
+    :param splitDisjointUnions: Whether or not to split disjoint unions into \
+    separate regions before conversion.
+    :type splitDisjointUnions: bool
+    :param minimiseSolids: Whether or not to minimise the boxes and tubes of \
+    Geant4 used to represent infinite solids in FLUKA.
+    :type minimiseSolids: bool
+    :param worldMaterial: name of world material to be used.
+    :type worldMaterial: string
+    :param worldDimensions: dimensions of world logical volume in \
+    converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
+    :type worldDimensions: list
+    :param omitBlackholeRegions: whether or not to omit regions with
+    the FLUKA material BLCKHOLE from the conversion.
+    :type omitBlackholeRegions: bool
+    :param materialMap: Dictionary of FLUKA material names to Geant4 \
+    materials used to determine the materials of the resulting geometry.
+    :type materialMap: dict
+    :param omitRegions: Names of regions to be omitted from the \
+    conversion.  This option is mutually exclusive with the kwarg regions.
+    :type omitRegions: list
+    :param quadricRegionExtents: The axis-aligned extents of any regions \
+    featuring QUA bodies, mapping region names to fluka.Extent instances.
+    :type quadricRegionExtents: dict
 
-
-
-"""
-
+    """
 
     # Bomb if we have quadrics but no quadricReferenceExtents
     quadricRegionExtents = _checkQuadricRegionExtents(flukareg,
