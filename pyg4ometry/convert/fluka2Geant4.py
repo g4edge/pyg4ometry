@@ -28,8 +28,19 @@ def fluka2Geant4(flukareg,
                  omitBlackholeRegions=True,
                  materialMap=None,
                  omitRegions=None,
-                 quadricRegionExtents=None):
-    """Convert a FLUKA registry to a Geant4 Registry"""
+                 quadricRegionExtents=None,
+                 **kwargs):
+    """Convert a FLUKA registry to a Geant4 Registry.
+
+    :param flukareg: Fluka registry to be converted
+    :type flukareg: FlukaRegistry
+    :param regions: Names of regions to be converted, by default \
+    all are converted.  Mutually exclusive with omitRegions.
+    :type regions: list
+
+
+
+"""
 
 
     # Bomb if we have quadrics but no quadricReferenceExtents
