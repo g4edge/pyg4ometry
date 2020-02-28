@@ -13,6 +13,8 @@ units = {
     "deg" : _np.pi/180.0,
     "degree" : _np.pi/180.0,
     "rad" : 1.0,
+    "mrad": 1.0e-3,
+    "urad": 1.0e-6,
     "radian" : 1.0,
 
     # Energy units
