@@ -28,11 +28,31 @@ class PhysicalVolume(object):
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
-        if isinstance(position,list) :             
-            position = _Defines.Position(name+"_pos",position[0],position[1],position[2],"mm",registry,False)
+        if isinstance(position,list) :
+            if len(position) == 3:
+                unit = "mm"
+            elif len(position) == 4:
+                unit = position[3]
+            else:
+                raise ValueError("Position array must be in the format"
+                                 " [px, py, pz] or [px, py, pz, unit]")
+
+            position = _Defines.Position(name+"_pos",position[0],position[1],position[2],unit,registry,False)
         if isinstance(rotation,list) :
-            rotation = _Defines.Rotation(name+"_rot",rotation[0],rotation[1],rotation[2],"rad",registry,False)
+            if len(rotation) == 3:
+                unit = "rad"
+            elif len(rotation) == 4:
+                unit = rotation[3]
+            else:
+                raise ValueError("Rotation array must be in the format"
+                                 "[rx, ry, rz] or [rx, ry, rz, unit]")
+
+            rotation = _Defines.Rotation(name+"_rot",rotation[0],rotation[1],rotation[2],unit,registry,False)
         if isinstance(scale,list) :
+            if not len(scale) == 3:
+                raise ValueError("Scale array must be in the format"
+                                 "[sx, sy, sz]")
+
             scale    = _Defines.Scale(name+"_sca",scale[0],scale[1],scale[2],"none",registry,False)
 
 
