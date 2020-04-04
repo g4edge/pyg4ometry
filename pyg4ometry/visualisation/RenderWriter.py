@@ -60,7 +60,7 @@ class RenderWriter :
             _convert.pycsgMeshToObj(self.meshes[mk],outputDirectory+"/"+mk)
 
         # loop of instances and write ascii file
-        f = open("0_instances.dat","w")
+        f = open(outputDirectory+"/"+"0_instances.dat","w")
         for ik in self.instances:
             for instance in self.instances[ik] :
                 instanceName     = ik
