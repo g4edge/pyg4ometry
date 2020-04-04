@@ -194,12 +194,14 @@ class RPP(BodyMixin):
     """
     def __init__(self, name,
                  xmin, xmax, ymin, ymax, zmin, zmax,
-                 transform=None, flukaregistry=None, addRegistry=True):
+                 transform=None, flukaregistry=None, addRegistry=True, comment = ""):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
             raise ValueError("Each of the xmin, ymin, zmin must be"
@@ -242,7 +244,11 @@ class RPP(BodyMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "RPP {} {} {} {} {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "RPP {} {} {} {} {} {} {}".format(self.name,
                                                  str(self.lower[0]),
                                                  str(self.upper[0]),
                                                  str(self.lower[1]),
@@ -266,7 +272,7 @@ class BOX(BodyMixin):
 
     """
     def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None, comment = ""):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)
@@ -274,6 +280,8 @@ class BOX(BodyMixin):
         self.edge3 = Three(edge3)
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -323,7 +331,11 @@ class BOX(BodyMixin):
                                                  self.edge1,
                                                  self.edge2,
                                                  self.edge3)
-        return "BOX {} {}".format(self.name, param_string)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "BOX {} {}".format(self.name, param_string)
 
 
 class SPH(BodyMixin):
@@ -337,12 +349,15 @@ class SPH(BodyMixin):
     :type radius: float
 
     """
-    def __init__(self, name, point, radius, transform=None, flukaregistry=None):
+    def __init__(self, name, point, radius, transform=None, flukaregistry=None,
+                 comment = ""):
         self.name = name
         self.point = Three(point)
         self.radius = radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -369,7 +384,11 @@ class SPH(BodyMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "SPH {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "SPH {} {} {}".format(self.name,
                                      _iterablesToFreeString(self.point),
                                      self.radius)
 
@@ -391,13 +410,15 @@ class RCC(BodyMixin):
 
     """
     def __init__(self, name, face, direction, radius, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None, comment = ""):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
         self.radius = radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -440,7 +461,11 @@ class RCC(BodyMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "RCC {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "RCC {} {} {}".format(self.name,
                                      _iterablesToFreeString(self.face,
                                                                self.direction),
                                      self.radius)
@@ -465,7 +490,8 @@ class REC(BodyMixin):
     """
     def __init__(self, name, face, direction, semiminor, semimajor,
                  transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,
+                 comment = "" ):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
@@ -473,6 +499,8 @@ class REC(BodyMixin):
         self.semimajor = Three(semimajor)
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.direction, self.semiminor, semimajor,
@@ -528,12 +556,15 @@ class REC(BodyMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "REC {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "REC {} {}".format(self.name,
                                   _iterablesToFreeString(self.face,
-                                                            self.direction,
-                                                            self.semiminor,
-                                                            self.semimajor))
-
+                                                         self.direction,
+                                                         self.semiminor,
+                                                         self.semimajor))
 
 class TRC(BodyMixin):
     """
@@ -557,7 +588,8 @@ class TRC(BodyMixin):
     def __init__(self, name, major_centre, direction,
                  major_radius, minor_radius,
                  transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,
+                 comment=""):
         self.name = name
         self.major_centre = Three(major_centre)
         self.direction = Three(direction)
@@ -565,6 +597,8 @@ class TRC(BodyMixin):
         self.minor_radius = minor_radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -611,10 +645,14 @@ class TRC(BodyMixin):
                    transform=self.transform)
 
     def flukaFreeString(self):
-        return "TRC {} {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "TRC {} {} {} {}".format(self.name,
                                         _iterablesToFreeString(
-                                            self.major_centre,
-                                            self.direction),
+                                        self.major_centre,
+                                        self.direction),
                                         self.major_radius,
                                         self.minor_radius)
 
@@ -633,13 +671,15 @@ class ELL(BodyMixin):
 
     """
     def __init__(self, name, focus1, focus2, length, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,comment=""):
         self.name = name
         self.focus1 = Three(focus1)
         self.focus2 = Three(focus2)
         self.length = length # major axis length
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
@@ -703,9 +743,13 @@ class ELL(BodyMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "ELL {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "ELL {} {} {}".format(self.name,
                                      _iterablesToFreeString(self.focus1,
-                                                               self.focus2),
+                                                            self.focus2),
                                      self.length)
 
 class _WED_RAW(BodyMixin):
@@ -713,7 +757,7 @@ class _WED_RAW(BodyMixin):
     # single place and then inherit this class to provide the correct
     # type names below.
     def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)  # direction of the triangular face.
@@ -721,6 +765,8 @@ class _WED_RAW(BodyMixin):
         self.edge3 = Three(edge3)  # direction of length of the prism.
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
             self.edge1, self.edge2, self.edge3,
@@ -785,7 +831,11 @@ class _WED_RAW(BodyMixin):
 
     def flukaFreeString(self):
         typename = type(self).__name__
-        return "{} {} {}".format(typename, self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "{} {} {}".format(typename, self.name,
                                  _iterablesToFreeString(self.vertex,
                                                            self.edge1,
                                                            self.edge2,
@@ -833,12 +883,14 @@ class ARB(BodyMixin):
     :type facenumbers: float
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,comment=""):
         self.name = name
         self.vertices = [Three(v) for v in vertices]
         self.facenumbers = facenumbers
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         # Checking on the inputs to match FLUKA's behaviour described
         # in the manual.
@@ -1023,7 +1075,11 @@ class ARB(BodyMixin):
         line4.extend(list(self.vertices[6]))
         line4.extend(list(self.vertices[7]))
         itfs = _iterablesToFreeString
-        return "{}\n{}\n{}\n{}\n{}".format(itfs(line1),
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "{}\n{}\n{}\n{}\n{}".format(itfs(line1),
                                            itfs(line2),
                                            itfs(line3),
                                            itfs(line4),
@@ -1042,11 +1098,13 @@ class XYP(_HalfSpaceMixin):
     :type z: float
 
     """
-    def __init__(self, name, z, transform=None, flukaregistry=None):
+    def __init__(self, name, z, transform=None, flukaregistry=None,comment=""):
         self.name = name
         self.z = z
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1060,7 +1118,11 @@ class XYP(_HalfSpaceMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._halfspaceFreeStringHelper(self.z)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._halfspaceFreeStringHelper(self.z)
 
     def toPlane(self):
         normal = Three(0, 0, 1)
@@ -1083,7 +1145,7 @@ class XZP(_HalfSpaceMixin):
     :type y: float
 
     """
-    def __init__(self, name, y, transform=None, flukaregistry=None):
+    def __init__(self, name, y, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.y = y
 
@@ -1101,7 +1163,11 @@ class XZP(_HalfSpaceMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._halfspaceFreeStringHelper(self.y)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._halfspaceFreeStringHelper(self.y)
 
     def toPlane(self):
         normal = Three(0, 1, 0)
@@ -1124,11 +1190,13 @@ class YZP(_HalfSpaceMixin):
     :type x: float
 
     """
-    def __init__(self, name, x, transform=None, flukaregistry=None):
+    def __init__(self, name, x, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.x = x
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1142,7 +1210,11 @@ class YZP(_HalfSpaceMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._halfspaceFreeStringHelper(self.x)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._halfspaceFreeStringHelper(self.x)
 
     def toPlane(self):
         normal = Three(1, 0, 0)
@@ -1167,12 +1239,14 @@ class PLA(_HalfSpaceMixin):
     :type normal: list
 
     """
-    def __init__(self, name, normal, point, transform=None, flukaregistry=None):
+    def __init__(self, name, normal, point, transform=None, flukaregistry=None,comment=""):
         self.name = name
         self.normal = Three(normal)
         self.point = Three(point)
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1195,9 +1269,13 @@ class PLA(_HalfSpaceMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "PLA {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "PLA {} {}".format(self.name,
                                   _iterablesToFreeString(self.normal,
-                                                            self.point))
+                                                         self.point))
 
     def toPlane(self):
         normal = Three(self.transform.leftMultiplyRotation(self.normal))
@@ -1220,13 +1298,15 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, y, z, radius, transform=None, flukaregistry=None):
+    def __init__(self, name, y, z, radius, transform=None, flukaregistry=None,comment=""):
         self.name = name
         self.y = y
         self.z = z
         self.radius = radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1252,7 +1332,11 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._infCylinderFreestringHelper(self.y, self.z)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._infCylinderFreestringHelper(self.y, self.z)
 
 
 class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
@@ -1268,13 +1352,15 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, z, x, radius, transform=None, flukaregistry=None):
+    def __init__(self, name, z, x, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
         self.radius = radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1300,7 +1386,11 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._infCylinderFreestringHelper(self.z, self.x)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._infCylinderFreestringHelper(self.z, self.x)
 
 
 class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
@@ -1316,13 +1406,15 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, x, y, radius, transform=None, flukaregistry=None):
+    def __init__(self, name, x, y, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.x = x
         self.y = y
         self.radius = radius
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1346,7 +1438,11 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return self._infCylinderFreestringHelper(self.x, self.y, self.radius)
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
 
 class XEC(BodyMixin, _ShiftableCylinderMixin):
@@ -1365,7 +1461,7 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
 
     """
     def __init__(self, name, y, z, ysemi, zsemi,
-                 transform=None, flukaregistry=None):
+                 transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.y = y
         self.z = z
@@ -1373,6 +1469,8 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         self.zsemi = zsemi
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1414,7 +1512,11 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "XEC {} {} {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "XEC {} {} {} {} {}".format(self.name,
                                            self.y, self.z,
                                            self.ysemi, self.zsemi)
 
@@ -1435,7 +1537,7 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
 
     """
     def __init__(self, name, z, x, zsemi, xsemi, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
@@ -1443,6 +1545,8 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         self.xsemi = xsemi
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1484,7 +1588,11 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "YEC {} {} {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "YEC {} {} {} {} {}".format(self.name,
                                            self.z, self.x,
                                            self.zsemi, self.xsemi)
 
@@ -1505,7 +1613,7 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
 
     """
     def __init__(self, name, x, y, xsemi, ysemi, transform=None,
-                 flukaregistry=None):
+                 flukaregistry=None,comment=""):
         self.name = name
         self.x = x
         self.y = y
@@ -1513,6 +1621,8 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         self.ysemi = ysemi
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
@@ -1552,7 +1662,11 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
                    flukaregistry=reg)
 
     def flukaFreeString(self):
-        return "ZEC {} {} {} {} {}".format(self.name,
+        prefix = ""
+        if self.comment != "" :
+            prefix = "* "+self.comment+"\n"
+        return prefix+\
+               "ZEC {} {} {} {} {}".format(self.name,
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
 
@@ -1586,6 +1700,7 @@ class QUA(BodyMixin):
                  cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
                  transform=None,
                  flukaregistry=None,
+                 comment="",
                  **kwargs):
         self.name = name
 
@@ -1601,6 +1716,8 @@ class QUA(BodyMixin):
         self.c  = c
 
         self.transform = self._set_transform(transform)
+
+        self.comment = comment
 
         self.addToRegistry(flukaregistry)
 

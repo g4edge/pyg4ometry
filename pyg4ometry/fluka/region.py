@@ -270,10 +270,11 @@ class Zone(object):
 
 class Region(object):
 
-    def __init__(self, name, material=None):
+    def __init__(self, name, material=None, comment = ""):
         self.name = name
         self.zones = []
         self.material = material
+        self.comment = comment
 
     def addZone(self,zone):
         self.zones.append(zone)
@@ -320,6 +321,9 @@ class Region(object):
 
         for z in self.zones :
             fs=fs+" | "+z.flukaFreeString()
+
+        if self.comment != "" :
+            fs = "* "+self.comment+"\n"+fs
 
         return fs
 
