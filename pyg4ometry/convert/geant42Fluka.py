@@ -410,6 +410,74 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         flukaNameCount += 1
 
+    elif solid.type == "Trd" :
+        luval = _Units.unit(solid.lunit)/10.0
+
+        pDx1  = solid.evaluateParameter(solid.pX1)*luval
+        pDy1  = solid.evaluateParameter(solid.pY1)*luval
+        pDx2  = solid.evaluateParameter(solid.pX2)*luval
+        pDy2  = solid.evaluateParameter(solid.pY2)*luval
+        pDz   = solid.evaluateParameter(solid.pZ)*luval
+
+        # -pDz plane
+        fbody1 = _fluka.PLA("B" + name + "_01",
+                            [0, 0, -1],
+                            [0, 0, -pDz],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        # pDz plane
+        fbody2 = _fluka.PLA("B" + name + "_02",
+                            [0, 0, 1],
+                            [0, 0,  pDz],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        # +pDx plane
+        fbody3 = _fluka.PLA("B" + name + "_03",
+                            [2.*pDz, 0, pDx2-pDx1],
+                            [(pDx1 + pDx2) / 2.0, 0, 0],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        # -pDx plane
+        fbody4 = _fluka.PLA("B" + name + "_04",
+                            [-2.*pDz, 0, pDx2-pDx1],
+                            [-(pDx1 + pDx2) / 2.0, 0, 0],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        # +pDy plane
+        fbody5 = _fluka.PLA("B" + name + "_05",
+                            [0, 2.*pDz, pDy2-pDy1],
+                            [0, (pDy1 + pDy2) / 2.0, 0],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        # -pDy plane
+        fbody6 = _fluka.PLA("B" + name + "_06",
+                            [0, -2.*pDz, pDy2-pDy1],
+                            [0, -(pDy1 + pDy2) / 2.0, 0],
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fzone.addIntersection(fbody2)
+        fzone.addIntersection(fbody3)
+        fzone.addIntersection(fbody4)
+        fzone.addIntersection(fbody5)
+        fzone.addIntersection(fbody6)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
+        flukaNameCount += 1
 
     elif solid.type == "Sphere" :
 
