@@ -23,14 +23,18 @@ class CSG(object) :
         c.npolyvert = numpy.array(c.npolyvert)
         c.polys     = numpy.array(c.polys)
 
-        vertspp = (c.verts.__array_interface__['data'][0] + numpy.arange(c.verts.shape[0]) * c.verts.strides[0]).astype(numpy.uintp)
-        polyspp = (c.polys.__array_interface__['data'][0] + numpy.arange(c.polys.shape[0]) * c.polys.strides[0]).astype(numpy.uintp)
+        vertspp = (c.verts.__array_interface__['data'][0] +
+                   numpy.arange(c.verts.shape[0]) * c.verts.strides[0]).astype(numpy.uintp)
+        polyspp = (c.polys.__array_interface__['data'][0] +
+                   numpy.arange(c.polys.shape[0]) * c.polys.strides[0]).astype(numpy.uintp)
 
-        c.polyhedron = cgal.vertexfacet_polyhedron(len(c.verts),
-                                                   len(c.polys),
-                                                   vertspp,
-                                                   c.npolyvert,
-                                                   polyspp)
+        c.polyhedron = cgal.vertexfacet_to_polyhedron(len(c.verts),
+                                                      len(c.polys),
+                                                      vertspp,
+                                                      c.npolyvert,
+                                                      polyspp)
+        #c.nefpolyhedron = cgal.polyhedron_to_nefpolyhedron(c.polyhedron)
+        #c.surfacemesh   = cgal.nefpolyhedron_to_surfacemesh(c.nefpolyhedron)
         return c
 
     def toPolygons(self):

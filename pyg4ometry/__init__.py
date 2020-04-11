@@ -4,6 +4,7 @@ from . import fluka
 from . import freecad
 from . import gdml
 from . import geant4
+from . import pycgal
 try:
     from . import gui
 except ImportError:

@@ -413,11 +413,11 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     elif solid.type == "Trd" :
         luval = _Units.unit(solid.lunit)/10.0
 
-        pDx1  = solid.evaluateParameter(solid.pX1)*luval
-        pDy1  = solid.evaluateParameter(solid.pY1)*luval
-        pDx2  = solid.evaluateParameter(solid.pX2)*luval
-        pDy2  = solid.evaluateParameter(solid.pY2)*luval
-        pDz   = solid.evaluateParameter(solid.pZ)*luval
+        pDx1  = solid.evaluateParameter(solid.pX1)*luval/2.
+        pDy1  = solid.evaluateParameter(solid.pY1)*luval/2.
+        pDx2  = solid.evaluateParameter(solid.pX2)*luval/2.
+        pDy2  = solid.evaluateParameter(solid.pY2)*luval/2.
+        pDz   = solid.evaluateParameter(solid.pZ)*luval/2.
 
         # -pDz plane
         fbody1 = _fluka.PLA("B" + name + "_01",
@@ -476,6 +476,11 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
+
+        flukaNameCount += 1
+
+    elif solid.type == "Trap" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -1008,12 +1013,57 @@ def geant4Material2FlukaMaterial(g4registry = None) :
         materialInstance  = material[1]
 
         print materialName, materialNameStrip, materialInstance,\
-            materialInstance.density,materialInstance.atomic_number, materialInstance.atomic_weight,materialInstance.number_of_components
+            materialInstance.density,materialInstance.atomic_number, \
+            materialInstance.atomic_weight,materialInstance.number_of_components
 
         if materialInstance.number_of_components == 0 :
             pass
         else :
             pass
+
+def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
+    import pyg4ometry.pycgal as pycgal
+    import ctypes as ctypes
+
+    nef = pycgal.pycsgmesh2NefPolyhedron(mesh)
+
+    nconvex = ctypes.c_int(0)
+    vpArray = ctypes.c_void_p*1000;
+    polyhedra = vpArray()
+
+    pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
+
+    print 'mesh has ',nconvex.value
+
+    fregion = _fluka.Region("R" + name)
+
+    for i in range(0,nconvex.value,1) :
+        print i,polyhedra[i]
+
+        # pycgal.polyhedron_print(polyhedra[i])
+
+        nplanes = ctypes.c_int(0)
+
+        planes = _np.zeros((1000, 6))
+        planespp = (planes.__array_interface__['data'][0] +
+                   _np.arange(planes.shape[0]) * planes.strides[0]).astype(_np.uintp)
+
+        pycgal.convexpolyhedron_to_planes(polyhedra[i], ctypes.byref(nplanes), planespp)
+
+        fzone = _fluka.Zone()
+
+        for j in range(0,nplanes.value) :
+            fbody = _fluka.PLA("B" + name + "_"+str(j),
+                              -planes[j][3:],
+                               planes[j][0:3]/10.0,
+                               transform=transform,
+                               flukaregistry=flukaRegistry,
+                               comment=commentName)
+            fzone.addSubtraction(fbody)
+
+        fregion.addZone(fzone)
+
+    return fregion
 
 
 
