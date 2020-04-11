@@ -90,7 +90,7 @@ def fluka2Geant4(flukareg,
 
     # Split disjoint unions into their constituents.
     if splitDisjointUnions:
-        print 'splitDisjointUnions'
+        # print 'splitDisjointUnions'
         flukareg, newNamesToOldNames = _makeDisjointUnionsFlukaRegistry(
             flukareg, regions, quadricRegionExtents)
 
@@ -108,7 +108,7 @@ def fluka2Geant4(flukareg,
     # Do infinite solid minimisation
     referenceExtentMap = None
     if minimiseSolids:
-        print 'minimiseSolids'
+        # print 'minimiseSolids'
         regionExtents = _getRegionExtents(flukareg, regions,
                                           quadricRegionExtents)
         referenceExtentMap = _makeBodyMinimumReferenceExtentMap(flukareg,
@@ -128,7 +128,7 @@ def fluka2Geant4(flukareg,
         if name not in regions:
             continue
 
-        print name
+        # print name
         region = flukareg.regionDict[name]
         region_solid = region.geant4Solid(greg,
                                           referenceExtent=referenceExtentMap)
