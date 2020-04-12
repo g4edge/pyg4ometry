@@ -219,10 +219,10 @@ class Cons(_SolidBase):
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
                 pass
                 vWedg = []
-                vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz], None))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMinZMaxP1, pDz], None))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1, pDz], None))
-                vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz], None))
+                vWedg.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz], None))
+                vWedg.append(_Vertex([xRMaxZMaxP2, yRMinZMaxP2, pDz], None))
+                vWedg.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2, pDz], None))
+                vWedg.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz], None))
                 polygons.append(_Polygon(vWedg))
 
             ###########################
