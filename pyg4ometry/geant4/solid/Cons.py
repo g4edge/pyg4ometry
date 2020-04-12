@@ -214,6 +214,8 @@ class Cons(_SolidBase):
                 vWedg.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz],None))
                 vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
                 vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+                vWedg.reverse()
+                # print "sphi wedge end", len(polygons)
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
@@ -223,6 +225,7 @@ class Cons(_SolidBase):
                 vWedg.append(_Vertex([xRMaxZMaxP2, yRMinZMaxP2, pDz], None))
                 vWedg.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2, pDz], None))
                 vWedg.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz], None))
+                # print "sphi+dphiwedge end", len(polygons)
                 polygons.append(_Polygon(vWedg))
 
             ###########################
@@ -233,6 +236,7 @@ class Cons(_SolidBase):
                 vEnd.append(_Vertex([0,0,-pDz],None))
                 vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
                 vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
+                # print "r1=0 low z cone end", len(polygons)
                 polygons.append(_Polygon(vEnd))
             else :
                 vEnd = []
@@ -240,6 +244,7 @@ class Cons(_SolidBase):
                 vEnd.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
                 vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
                 vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz],None))
+                # print "r1!=0 low z cone end", len(polygons)
                 polygons.append(_Polygon(vEnd))
 
             if pRmin2 == 0 :
@@ -247,6 +252,7 @@ class Cons(_SolidBase):
                 vEnd.append(_Vertex([0,0,-pDz],None))
                 vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
                 vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+                # print "r2=0 high z cone end", len(polygons)
                 polygons.append(_Polygon(vEnd))
             else :
                 vEnd = []
@@ -254,6 +260,7 @@ class Cons(_SolidBase):
                 vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
                 vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
                 vEnd.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
+                # print "r2!=0 high z cone end", len(polygons)
                 polygons.append(_Polygon(vEnd))
 
                 pass
@@ -267,6 +274,7 @@ class Cons(_SolidBase):
             vCurv.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
             vCurv.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
             vCurv.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
+            print "curved outer r", len(polygons)
             polygons.append(_Polygon(vCurv))
 
             if pRmin1 != 0 or pRmin2 != 0 :
@@ -275,6 +283,7 @@ class Cons(_SolidBase):
                 vCurv.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz], None))
                 vCurv.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
                 vCurv.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
+                print "curved inner r", len(polygons)
                 polygons.append(_Polygon(vCurv))
 
         mesh = _CSG.fromPolygons(polygons)
