@@ -190,118 +190,75 @@ class Torus(_SolidBase):
                 i1 = i0
                 i2 = i0 + 1
 
-                x1_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(dPhi * j1)
-                y1_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(dPhi * j1)
-                z1_outter =           pRmax * _np.sin(dTheta * i1)
+                xRMaxP1T1 = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(dPhi * j1)
+                yRMaxP1T1 = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(dPhi * j1)
+                zRMaxP1T1 =           pRmax * _np.sin(dTheta * i1)
 
-                x2_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(dPhi * j1)
-                y2_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(dPhi * j1)
-                z2_outter =           pRmax * _np.sin(dTheta * i2)
+                xRMaxP1T2 = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(dPhi * j1)
+                yRMaxP1T2 = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(dPhi * j1)
+                zRMaxP1T2 =           pRmax * _np.sin(dTheta * i2)
 
-                x3_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(dPhi * j2)
-                y3_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(dPhi * j2)
-                z3_outter =           pRmax * _np.sin(dTheta * i2)
+                xRMaxP2T2 = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(dPhi * j2)
+                yRMaxP2T2 = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(dPhi * j2)
+                zRMaxP2T2 =           pRmax * _np.sin(dTheta * i2)
 
-                x4_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(dPhi * j2)
-                y4_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(dPhi * j2)
-                z4_outter =           pRmax * _np.sin(dTheta * i1)
+                xRMaxP2T1 = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(dPhi * j2)
+                yRMaxP2T1 = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(dPhi * j2)
+                zRMaxP2T1 =           pRmax * _np.sin(dTheta * i1)
 
-                vertices_outter = []
+                vertices_outer = []
+                vertices_outer.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
+                vertices_outer.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
+                vertices_outer.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
+                vertices_outer.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1], None))
+                polygons.append(_Polygon(vertices_outer))
 
-                vertices_outter.append(_Vertex([x1_outter, y1_outter, z1_outter], None))
-                vertices_outter.append(_Vertex([x2_outter, y2_outter, z2_outter], None))
-                vertices_outter.append(_Vertex([x3_outter, y3_outter, z3_outter], None))
-                vertices_outter.append(_Vertex([x4_outter, y4_outter, z4_outter], None))
 
-                polygons.append(_Polygon(vertices_outter))
+                xRMinP1T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(dPhi * j1)
+                yRMinP1T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(dPhi * j1)
+                zRMinP1T1 =           pRmin * _np.sin(dTheta * i1)
+
+                xRMinP1T2 = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(dPhi * j1)
+                yRMinP1T2 = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(dPhi * j1)
+                zRMinP1T2 =           pRmin * _np.sin(dTheta * i2)
+
+                xRMinP2T2 = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(dPhi * j2)
+                yRMinP2T2 = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(dPhi * j2)
+                zRMinP2T2 =           pRmin * _np.sin(dTheta * i2)
+
+                xRMinP2T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(dPhi * j2)
+                yRMinP2T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(dPhi * j2)
+                zRMinP2T1 =           pRmin * _np.sin(dTheta * i1)
 
                 if 0 < pRmin < pRmax:
-
-                    x1_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(dPhi * j1)
-                    y1_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(dPhi * j1)
-                    z1_inner =           pRmin * _np.sin(dTheta * i1)
-
-                    x2_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(dPhi * j1)
-                    y2_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(dPhi * j1)
-                    z2_inner =           pRmin * _np.sin(dTheta * i2)
-
-                    x3_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(dPhi * j2)
-                    y3_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(dPhi * j2)
-                    z3_inner =           pRmin * _np.sin(dTheta * i2)
-
-                    x4_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(dPhi * j2)
-                    y4_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(dPhi * j2)
-                    z4_inner =           pRmin * _np.sin(dTheta * i1)
-
                     vertices_inner = []
-
-                    vertices_inner.append(_Vertex([x1_inner, y1_inner, z1_inner], None))
-                    vertices_inner.append(_Vertex([x2_inner, y2_inner, z2_inner], None))
-                    vertices_inner.append(_Vertex([x3_inner, y3_inner, z3_inner], None))
-                    vertices_inner.append(_Vertex([x4_inner, y4_inner, z4_inner], None))
-
+                    vertices_inner.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
+                    vertices_inner.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                    vertices_inner.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                    vertices_inner.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                    vertices_inner.reverse()
                     polygons.append(_Polygon(vertices_inner))
 
+                if pDPhi != 2*_np.pi :
+                    if j1 == 0 :
+                        end= []
+                        if pRmin == 0 :
+                            end.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
+                        end.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
+                        end.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
+                        end.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1], None))
+                        polygons.append(_Polygon(end))
 
-        ###### wedges #####
+                    if j1 == nslice-1 :
+                        end= []
+                        if pRmin == 0 :
+                            end.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
+                        end.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
+                        end.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
+                        end.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1], None))
+                        end.reverse()
+                        polygons.append(_Polygon(end))
 
-        if ((pDPhi - pSPhi) != 2 * _np.pi):
-
-            for i0 in range(nstack):
-                i1 = i0
-                i2 = i0 + 1
-
-                x1_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(pSPhi)
-                y1_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(pSPhi)
-                z1_inner =           pRmin * _np.sin(dTheta * i1)
-
-                x2_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(pSPhi)
-                y2_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(pSPhi)
-                z2_inner =           pRmin * _np.sin(dTheta * i2)
-
-                x1_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(pSPhi)
-                y1_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(pSPhi)
-                z1_outter =           pRmax * _np.sin(dTheta * i1)
-
-                x2_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(pSPhi)
-                y2_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(pSPhi)
-                z2_outter =           pRmax * _np.sin(dTheta * i2)
-
-                vertices_wedges_S = []
-
-                vertices_wedges_S.append(_Vertex([x1_inner, y1_inner, z1_inner], None))
-                vertices_wedges_S.append(_Vertex([x2_inner, y2_inner, z2_inner], None))
-                vertices_wedges_S.append(_Vertex([x2_outter, y2_outter, z2_outter], None))
-                vertices_wedges_S.append(_Vertex([x1_outter, y1_outter, z1_outter], None))
-
-                polygons.append(_Polygon(vertices_wedges_S))
-
-                #############################################################################
-
-                x4_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.cos(pDPhi)
-                y4_outter = (pRtor + (pRmax * _np.cos(dTheta * i1))) * _np.sin(pDPhi)
-                z4_outter =           pRmax * _np.sin(dTheta * i1)
-
-                x3_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.cos(pDPhi)
-                y3_outter = (pRtor + (pRmax * _np.cos(dTheta * i2))) * _np.sin(pDPhi)
-                z3_outter =           pRmax * _np.sin(dTheta * i2)
-
-                x3_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.cos(pDPhi)
-                y3_inner = (pRtor + (pRmin * _np.cos(dTheta * i2))) * _np.sin(pDPhi)
-                z3_inner =           pRmin * _np.sin(dTheta * i2)
-
-                x4_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(pDPhi)
-                y4_inner = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(pDPhi)
-                z4_inner =           pRmin * _np.sin(dTheta * i1)
-                
-                vertices_wedges_D = []
-
-                vertices_wedges_D.append(_Vertex([x4_outter, y4_outter, z4_outter], None))
-                vertices_wedges_D.append(_Vertex([x3_outter, y3_outter, z3_outter], None))
-                vertices_wedges_D.append(_Vertex([x3_inner, y3_inner, z3_inner], None))
-                vertices_wedges_D.append(_Vertex([x4_inner, y4_inner, z4_inner], None))
-
-                polygons.append(_Polygon(vertices_wedges_D))
 
         mesh    = _CSG.fromPolygons(polygons)
 
