@@ -41,6 +41,9 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 #define SUCCESS 0
 #define FAILURE 1
 
+std::ios_base::Init toEnsureInitialization;
+
+
 template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS> 
 {
 
@@ -60,6 +63,8 @@ public:
     vertList  = vertListIn;
     nVertFacet= nVertFacetIn;
     facetList = facetListIn;
+
+    printf("Build_Polygon_VertexFacet %i %i\n",nVert,nFacet);
   }
   
   void operator()( HDS& hds) 
@@ -67,24 +72,33 @@ public:
     // Postcondition: hds is a valid polyhedral surface.
     CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
 
-    B.begin_surface( nVert, nFacet);
+    B.begin_surface( nVert, nFacet,0, CGAL::Polyhedron_incremental_builder_3<HDS>::RELATIVE_INDEXING);
     
     typedef typename HDS::Vertex   Vertex;
     typedef typename Vertex::Point Point;
     
     for(int iVert=0;iVert < nVert; iVert++) {
       B.add_vertex( Point(vertList[iVert][0], vertList[iVert][1], vertList[iVert][2]));
+      printf("Build_Polygon_VertexFacet> vertex %i %f %f %f %i\n",iVert,vertList[iVert][0], vertList[iVert][1], vertList[iVert][2], (int)B.error());
     }
 
     for(int iFacet=0;iFacet < nFacet; iFacet++) {
+
       B.begin_facet();
+      printf("Build_Polygon_VertexFacet> facet %i ",iFacet);
       for(int iFacetVertex=0;iFacetVertex<nVertFacet[iFacet];iFacetVertex++) {
+       printf("%ld ", facetList[iFacet][iFacetVertex]);
 	B.add_vertex_to_facet(facetList[iFacet][iFacetVertex]);
       }
-     B.end_facet();
-    }
+      B.end_facet();
+      printf("%i \n",(int)B.error());
 
+    }
     B.end_surface();
+
+    printf("Build_Polygon_VertexFacet> unconnected %i\n", (int)B.check_unconnected_vertices());
+    printf("Build_Polygon_VertexFacet> error %i\n", (int)B.error());
+    B.remove_unconnected_vertices();
   }
 };
 
@@ -212,6 +226,8 @@ extern "C" void* pyg4_cgal_vertexfacet_to_polyhedron(int nVert,
   Polyhedron *P = new Polyhedron();
   Build_Polygon_VertexFacet<HalfedgeDS> pvf(nVert,nFacet,vertList,nVertFacet,facetList);
   P->delegate(pvf);
+  // printf("pyg4_cgal_vertexfacet_to_polyhedron> unconnected verts %i",(int)pvf.check_unconnected_vertices());
+  // CGAL_assertion( P->is_triangle( P->halfedges_begin()));
   return (void*)(P);
 }
 
@@ -240,7 +256,7 @@ extern "C" int pyg4_cgal_convexpolyhedron_to_planes(void *polyhedronIn,
     planeList[ifacet][4] = CGAL::to_double(pn.y());
     planeList[ifacet][5] = CGAL::to_double(pn.z());
       
-    printf("plane %f %f %f %f %f %f\n",
+    printf("pyg4_cgal_convexpolyhedron_to_planes> plane %f %f %f %f %f %f\n",
 	   CGAL::to_double(pp.x()), 
 	   CGAL::to_double(pp.y()), 
 	   CGAL::to_double(pp.z()),

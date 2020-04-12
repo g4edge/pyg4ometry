@@ -220,6 +220,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         flukaNameCount += 1
 
     elif solid.type == "CutTubs" :
@@ -301,6 +303,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         flukaNameCount += 1
 
     elif solid.type == "Cons" :
@@ -361,6 +365,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         flukaNameCount += 1
 
     elif solid.type == "Para" :
@@ -408,74 +414,12 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         flukaNameCount += 1
 
     elif solid.type == "Trd" :
-        luval = _Units.unit(solid.lunit)/10.0
-
-        pDx1  = solid.evaluateParameter(solid.pX1)*luval/2.
-        pDy1  = solid.evaluateParameter(solid.pY1)*luval/2.
-        pDx2  = solid.evaluateParameter(solid.pX2)*luval/2.
-        pDy2  = solid.evaluateParameter(solid.pY2)*luval/2.
-        pDz   = solid.evaluateParameter(solid.pZ)*luval/2.
-
-        # -pDz plane
-        fbody1 = _fluka.PLA("B" + name + "_01",
-                            [0, 0, -1],
-                            [0, 0, -pDz],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-        # pDz plane
-        fbody2 = _fluka.PLA("B" + name + "_02",
-                            [0, 0, 1],
-                            [0, 0,  pDz],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        # +pDx plane
-        fbody3 = _fluka.PLA("B" + name + "_03",
-                            [2.*pDz, 0, pDx2-pDx1],
-                            [(pDx1 + pDx2) / 2.0, 0, 0],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        # -pDx plane
-        fbody4 = _fluka.PLA("B" + name + "_04",
-                            [-2.*pDz, 0, pDx2-pDx1],
-                            [-(pDx1 + pDx2) / 2.0, 0, 0],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        # +pDy plane
-        fbody5 = _fluka.PLA("B" + name + "_05",
-                            [0, 2.*pDz, pDy2-pDy1],
-                            [0, (pDy1 + pDy2) / 2.0, 0],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        # -pDy plane
-        fbody6 = _fluka.PLA("B" + name + "_06",
-                            [0, -2.*pDz, pDy2-pDy1],
-                            [0, -(pDy1 + pDy2) / 2.0, 0],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-        fzone.addIntersection(fbody2)
-        fzone.addIntersection(fbody3)
-        fzone.addIntersection(fbody4)
-        fzone.addIntersection(fbody5)
-        fzone.addIntersection(fbody6)
-
-        fregion = _fluka.Region("R"+name)
-        fregion.addZone(fzone)
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -607,6 +551,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
+
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -800,92 +746,11 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     #    pass
 
     elif solid.type == "ExtrudedSolid":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        luval = _Units.unit(solid.lunit)
-
-        pZslices = solid.evaluateParameter(solid.pZslices)
-        pPolygon = solid.evaluateParameter(solid.pPolygon)
-
-        zpos     = [zslice[0]*luval/10. for zslice in pZslices]
-        x_offs   = [zslice[1][0]*luval/10. for zslice in pZslices]
-        y_offs   = [zslice[1][1]*luval/10. for zslice in pZslices]
-        scale    = [zslice[2] for zslice in pZslices]
-        vertices = [[pPolygon[0]*luval/10., pPolygon[1]*luval/10.] for pPolygon in pPolygon]
-        nslices  = len(pZslices)
-
-        avertices = _np.array(vertices)
-        ax_offs   = _np.array(x_offs)
-        ay_offs   = _np.array(y_offs)
-        ascale    = _np.array(scale)
-
-        #print "---------"
-        #print avertices
-        #print ax_offs
-        #print ay_offs
-        #print ascale
-        #print "---------"
-
-        # create region
-        fregion = _fluka.Region("R" + name)
-
-        ibody = 1
-
-        # loop over slices
-        for islice1 in range(0,nslices-1,1) :
-            islice2 = islice1+1
-
-            polygon1 = avertices*ascale[islice1] + _np.array([ax_offs[islice1],ay_offs[islice1]])
-            polygon2 = avertices*ascale[islice2] + _np.array([ax_offs[islice2],ay_offs[islice2]])
-
-            polygon1 = _np.insert(polygon1,2,values=zpos[islice1],axis=1)
-            polygon2 = _np.insert(polygon2,2,values=zpos[islice2],axis=1)
-
-            fzone = _fluka.Zone()
-
-            pla1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, -1], [0, 0, zpos[islice1]],
-                              transform=transform,
-                              flukaregistry=flukaRegistry,
-                              comment=commentName)
-
-            ibody += 1
-            pla2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'), [0, 0, 1], [0, 0, zpos[islice2]],
-                              transform=transform,
-                              flukaregistry=flukaRegistry,
-                              comment=commentName)
-            ibody += 1
-
-            fzone.addIntersection(pla1)
-            fzone.addIntersection(pla2)
-
-            # loop over planes
-            for iplane1 in range(0,len(polygon1),1) :
-                iplane2 = iplane1+1
-
-                if iplane2 == len(polygon1) :
-                    iplane2 = 0
-
-                p11 = polygon1[iplane1]
-                p12 = polygon1[iplane2]
-                p21 = polygon2[iplane1]
-                p22 = polygon2[iplane2]
-
-                d21 = p21-p11
-                d12 = p12-p11
-
-                normal = _np.cross(d21,d12)
-                normal = normal/_np.linalg.norm(normal)
-
-                pla = _fluka.PLA("B"+name+"_"+format(ibody,'02'),normal,p11,
-                                 transform=transform,
-                                 flukaregistry=flukaRegistry,
-                                 comment=commentName)
-                ibody += 1
-
-                fzone.addIntersection(pla)
-
-            fregion.addZone(fzone)
-
+    elif solid.type == "TwistedBox":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "Union":
@@ -1025,20 +890,23 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
     import pyg4ometry.pycgal as pycgal
     import ctypes as ctypes
 
+    pycgal.pycsgmeshWritePolygon(mesh,"test.pol")
     nef = pycgal.pycsgmesh2NefPolyhedron(mesh)
 
     nconvex = ctypes.c_int(0)
-    vpArray = ctypes.c_void_p*1000;
+    vpArray = ctypes.c_void_p*10000;
     polyhedra = vpArray()
 
     pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
 
-    print 'mesh has ',nconvex.value
+    print 'pycsgmesh2FlukaRegion> nconvex=',nconvex.value
 
     fregion = _fluka.Region("R" + name)
 
+    ibody = 0
+
     for i in range(0,nconvex.value,1) :
-        print i,polyhedra[i]
+        print 'pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i]
 
         # pycgal.polyhedron_print(polyhedra[i])
 
@@ -1053,13 +921,14 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
         fzone = _fluka.Zone()
 
         for j in range(0,nplanes.value) :
-            fbody = _fluka.PLA("B" + name + "_"+str(j),
+            fbody = _fluka.PLA("B" + name + "_"+str(ibody),
                               -planes[j][3:],
                                planes[j][0:3]/10.0,
                                transform=transform,
                                flukaregistry=flukaRegistry,
                                comment=commentName)
             fzone.addSubtraction(fbody)
+            ibody += 1
 
         fregion.addZone(fzone)
 

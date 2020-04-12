@@ -6,3 +6,6 @@ pyg4_cgal.so : pyg4_cgal.o
 
 clean : 
 	rm -rf *.o *.so *.pyc *~
+
+polyhedron_load : polyhedron_load.cpp
+	g++ -o $@ polyhedron_load.cpp -I/opt/local/include -L/opt/local/lib/ -lCGAL -lmpfr -lgmp -lboost_thread-mt -lstdc++
