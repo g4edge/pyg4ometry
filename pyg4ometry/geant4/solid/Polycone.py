@@ -352,8 +352,6 @@ class Polycone(_SolidBase):
 
                         polygons.append(_Polygon(vertices_Bottoms))
 
-
-
         mesh = _CSG.fromPolygons(polygons)
 
         return mesh
