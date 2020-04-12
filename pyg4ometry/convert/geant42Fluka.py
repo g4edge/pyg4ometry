@@ -572,6 +572,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+        flukaNameCount += 1
+
+    elif solid.type == "Torus" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         flukaNameCount += 1
 
     elif solid.type == "Polycone":
@@ -661,50 +668,28 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
             fregion.addZone(fzone1)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
         # increment name count
         flukaNameCount += 1
 
     elif solid.type == "GenericPolycone" :
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        luval = _Units.unit(solid.lunit)
-        auval = _Units.unit(solid.aunit)
 
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
-        pR = [val * luval for val in solid.evaluateParameter(solid.pR)]
-        pZ = [val * luval for val in solid.evaluateParameter(solid.pZ)]
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
-        ibody = 1
+        flukaNameCount += 1
 
-        # create region
-        fregion = _fluka.Region("R" + name)
+    elif solid.type == "Polyhedra" :
 
-        # number of z planes
-        ntrc = len(pZ)
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
-        if pDPhi != 2*_np.pi :
-            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
-                                [_np.cos(pSPhi-_np.pi/2),_np.sin(pSPhi-_np.pi/2),0],
-                                [0, 0, 0],
-                                transform=transform,
-                                flukaregistry=flukaRegistry,
-                                comment=commentName)
+        flukaNameCount += 1
 
-            ibody += 1
+    elif solid.type == "GenericPolyhedra" :
 
-            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
-                                [_np.cos(pSPhi+pDPhi+_np.pi/2),_np.sin(pSPhi+pDPhi+_np.pi/2),0],
-                                [0, 0, 0],
-                                transform=transform,
-                                flukaregistry=flukaRegistry,
-                                comment=commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
-            ibody += 1
-
-        for itrc in range(0,ntrc) :
-            pass
-
-
+        flukaNameCount += 1
 
     elif solid.type == "EllipticalTube":
         uval = _Units.unit(solid.lunit)/10.
@@ -740,16 +725,50 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
-    #elif solid.type == "EllipticalCone" :
-    #    pass
+    elif solid.type == "Ellipsoid" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "EllipticalCone" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "Paraboloid" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "Hype" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "Tet" :
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
         fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "TwistedTrap":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "TwistedTrd":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "TwistedTubs":
+        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+
+    elif solid.type == "GenericTrap":
         fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
