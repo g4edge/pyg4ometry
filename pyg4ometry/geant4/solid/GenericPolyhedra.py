@@ -5,7 +5,7 @@ import logging as _log
 import numpy as _np
 
 class GenericPolyhedra(_SolidBase):
-    def __init__(self, name, pSPhi, pDPhi, numSide, pR, pZ,
+    def __init__(self, name, pSPhi, pDPhi, numSide, pZ, pR,
                  registry, lunit="mm", aunit="rad", addRegistry=True):
         """
         Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
