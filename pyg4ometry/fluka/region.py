@@ -394,6 +394,11 @@ class Region(object):
             except FLUKAError as e:
                 raise FLUKAError("Error in region {}: {}".format(self.name,
                                                                  e.message))
+            except NullMeshError as e:
+                raise NullMeshError("Error in region {} whilst "
+                                    "determining connected zones: {}").format(
+                                        self.name,
+                                        e.message)
 
             zoneLV = g4.LogicalVolume(zone_solid,
                                       material,
@@ -509,7 +514,7 @@ def areOverlapping(first, second, referenceExtent=None):
     return True
 
 def _getReferenceExtent(referenceExtent, boolean):
-    """referenceExtent should really be a dictionary of 
+    """referenceExtent should really be a dictionary of
     {bodyName: extentInstance}."""
     if isinstance(boolean, (Zone, Region)):
         return referenceExtent
