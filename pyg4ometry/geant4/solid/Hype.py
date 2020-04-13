@@ -278,7 +278,7 @@ class Hype(_SolidBase):
                     vertices_inner.append(_Vertex([x2_rot_inner, y2_rot_inner, z2_inner], None))
                     vertices_inner.append(_Vertex([x3_rot_inner, y3_rot_inner, z3_inner], None))
                     vertices_inner.append(_Vertex([x4_rot_inner, y4_rot_inner, z4_inner], None))
-
+                    vertices_inner.reverse()
                     polygons.append(_Polygon(vertices_inner))
 
                     if i1 == 0:
