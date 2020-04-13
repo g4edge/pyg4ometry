@@ -164,93 +164,62 @@ class Paraboloid(_SolidBase):
         stacks  = self.nstack
         slices  = self.nslice
 
-        b = 2*pDz/(pR2**2 - pR1**2)
-        a = b*pR1**2 + pDz
+        k1 = (pR2 ** 2 - pR1 ** 2)/(2*pDz)
+        k2 = (pR1**2 + pR2**2)/2.0
 
-        for j0 in range(0,slices):
+        for i in range(0,slices):
 
-            j1 = j0
-            j2 = j0 + 1
+            i1 = i
+            i2 = i + 1
 
-            z1b = sz
-            rho1b = _np.sqrt((z1b + a) / b)
-            x1b = rho1b * _np.cos(dTheta * j1)
-            y1b = rho1b * _np.sin(dTheta * j1)
+            for j in range(0,stacks):
+                j1 = j
+                j2 = j + 1
 
-            z2b = sz
-            rho2b = 0
-            x2b = rho2b * _np.cos(dTheta * j1)
-            y2b = rho2b * _np.sin(dTheta * j1)
+                z1 = j1 * dz + sz
+                rho1 = _np.sqrt(k1*z1 + k2)
+                x1 = rho1 * _np.cos(dTheta * i1)
+                y1 = rho1 * _np.sin(dTheta * i1)
 
-            z3b = sz
-            rho3b = _np.sqrt((z3b + a) / b)
-            x3b = rho3b * _np.cos(dTheta * j2)
-            y3b = rho3b * _np.sin(dTheta * j2)
+                z2 = j2 * dz + sz
+                rho2 = _np.sqrt(k1*z2 + k2)
+                x2 = rho2 * _np.cos(dTheta * i1)
+                y2 = rho2 * _np.sin(dTheta * i1)
 
-            vertices_Bottom = []
+                z3 = j2 * dz + sz
+                rho3 = _np.sqrt(k1*z3 + k2)
+                x3 = rho3 * _np.cos(dTheta * i2)
+                y3 = rho3 * _np.sin(dTheta * i2)
 
-            vertices_Bottom.append(_Vertex([x1b, y1b, z1b], None))
-            vertices_Bottom.append(_Vertex([x2b, y2b, z2b], None))
-            vertices_Bottom.append(_Vertex([x3b, y3b, z3b], None))
-
-            polygons.append(_Polygon(vertices_Bottom))
-
-            z1t = pDz
-            rho1t = pR2
-            x1t = rho1t * _np.cos(dTheta * j1)
-            y1t = rho1t * _np.sin(dTheta * j1)
-
-            z2t = pDz
-            rho2t = pR2
-            x2t = rho2t * _np.cos(dTheta * j1)
-            y2t = rho2t * _np.sin(dTheta * j1)
-
-            z3t = pDz
-            rho3t = 0
-            x3t = rho3t * _np.cos(dTheta * j2)
-            y3t = rho3t * _np.sin(dTheta * j2)
-
-            vertices_Top = []
-
-            vertices_Top.append(_Vertex([x1t, y1t, z1t], None))
-            vertices_Top.append(_Vertex([x2t, y2t, z2t], None))
-            vertices_Top.append(_Vertex([x3t, y3t, z3t], None))
-
-            polygons.append(_Polygon(vertices_Top))
-
-            for i0 in range(stacks):
-                i1 = i0
-                i2 = i0 + 1
-
-                z1 = i1 * dz + sz
-                rho = _np.sqrt((z1 + a)/b)
-                x1 = rho * _np.cos(dTheta * j1)
-                y1 = rho * _np.sin(dTheta * j1)
-                z1 = i1 * dz + sz
-
-                z2 = i2 * dz + sz
-                rho = _np.sqrt((z2 + a) / b)
-                x2 = rho * _np.cos(dTheta * j1)
-                y2 = rho * _np.sin(dTheta * j1)
-
-                z3 = i2 * dz + sz
-                rho = _np.sqrt((z3 + a) / b)
-                x3 = rho * _np.cos(dTheta * j2)
-                y3 = rho * _np.sin(dTheta * j2)
-
-                z4 = i1 * dz + sz
-                rho = _np.sqrt((z4 + a) / b)
-                x4 = rho * _np.cos(dTheta * j2)
-                y4 = rho * _np.sin(dTheta * j2)
+                z4 = j1 * dz + sz
+                rho4 = _np.sqrt(k1*z4 + k2)
+                x4 = rho4 * _np.cos(dTheta * i2)
+                y4 = rho4 * _np.sin(dTheta * i2)
 
                 vertices = []
 
-                vertices.append(_Vertex([x1, y1, z1], None))
+                if rho1 != 0 :
+                    vertices.append(_Vertex([x1, y1, z1], None))
                 vertices.append(_Vertex([x2, y2, z2], None))
                 vertices.append(_Vertex([x3, y3, z3], None))
                 vertices.append(_Vertex([x4, y4, z4], None))
-
                 polygons.append(_Polygon(vertices))
+
+                if rho1 != 0 and j == 0 :
+                    end = []
+                    end.append(_Vertex([ 0, 0,-pDz],None))
+                    end.append(_Vertex([x1,y1,-pDz],None))
+                    end.append(_Vertex([x4,y4,-pDz],None))
+                    polygons.append(_Polygon(end))
+
+                if j == stacks-1 :
+                    end = []
+                    end.append(_Vertex([ 0, 0,pDz],None))
+                    end.append(_Vertex([x2,y2,pDz],None))
+                    end.append(_Vertex([x3,y3,pDz],None))
+                    end.reverse()
+                    polygons.append(_Polygon(end))
+
 
         mesh  = _CSG.fromPolygons(polygons)
 
