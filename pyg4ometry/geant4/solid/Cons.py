@@ -274,7 +274,7 @@ class Cons(_SolidBase):
             vCurv.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz],None))
             vCurv.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
             vCurv.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
-            print "curved outer r", len(polygons)
+            # print "curved outer r", len(polygons)
             polygons.append(_Polygon(vCurv))
 
             if pRmin1 != 0 or pRmin2 != 0 :
@@ -283,7 +283,7 @@ class Cons(_SolidBase):
                 vCurv.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz], None))
                 vCurv.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz],None))
                 vCurv.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz],None))
-                print "curved inner r", len(polygons)
+                # print "curved inner r", len(polygons)
                 polygons.append(_Polygon(vCurv))
 
         mesh = _CSG.fromPolygons(polygons)
