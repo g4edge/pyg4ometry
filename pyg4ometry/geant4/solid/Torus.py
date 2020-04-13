@@ -242,7 +242,7 @@ class Torus(_SolidBase):
                 if pDPhi != 2*_np.pi :
                     if j1 == 0 :
                         end= []
-                        if pRmin == 0 :
+                        if pRmin != 0 :
                             end.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1], None))
                         end.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2], None))
                         end.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2], None))
@@ -251,7 +251,7 @@ class Torus(_SolidBase):
 
                     if j1 == nslice-1 :
                         end= []
-                        if pRmin == 0 :
+                        if pRmin != 0 :
                             end.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1], None))
                         end.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2], None))
                         end.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2], None))
