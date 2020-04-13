@@ -284,41 +284,49 @@ class Polycone(_SolidBase):
                 ###########################
                 # cone ends
                 ###########################
-                if i1 == 0 :
+                if i1 == 0 and rMin1 != rMax2 :
                     vEnd = []
-                    if rMin1 !=0 :
-                        vEnd.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1], None))
-                    vEnd.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2], None))
-                    vEnd.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2], None))
-                    vEnd.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1], None))
-                    polygons.append(_Polygon(vEnd))
+
+                    if rMin1 != rMax1 :
+                        if rMin1 !=0  :
+                            vEnd.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1], None))
+                        vEnd.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2], None))
+                        vEnd.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2], None))
+                        vEnd.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1], None))
+                        polygons.append(_Polygon(vEnd))
 
                 elif i2 == stacks-1 :
                     vEnd = []
-                    if rMin2 != 0 :
-                        vEnd.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1], None))
-                    vEnd.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2], None))
-                    vEnd.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2], None))
-                    vEnd.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1], None))
-                    vEnd.reverse()
-                    polygons.append(_Polygon(vEnd))
+
+                    if rMin2 != rMax2 :
+                        if rMin2 != 0  :
+                            vEnd.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1], None))
+                        vEnd.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2], None))
+                        vEnd.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2], None))
+                        vEnd.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1], None))
+                        vEnd.reverse()
+                        polygons.append(_Polygon(vEnd))
 
                 ###########################
                 # wedge ends
                 ###########################
                 if pDPhi != 2*_np.pi and j == 0:
                     vWedg = []
-                    vWedg.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1],None))
+                    if rMin1 != rMax1 :
+                        vWedg.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1],None))
                     vWedg.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1],None))
-                    vWedg.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1],None))
+                    if rMin2 != rMax2 :
+                        vWedg.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1],None))
                     vWedg.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1],None))
                     polygons.append(_Polygon(vWedg))
 
                 if pDPhi != 2*_np.pi and j == self.nslice-1:
                     vWedg = []
-                    vWedg.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2],None))
+                    if rMin1 != rMax1 :
+                        vWedg.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2],None))
                     vWedg.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2],None))
-                    vWedg.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2],None))
+                    if rMin2 != rMax2 :
+                        vWedg.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2],None))
                     vWedg.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2],None))
                     vWedg.reverse()
                     polygons.append(_Polygon(vWedg))
