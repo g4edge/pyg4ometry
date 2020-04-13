@@ -282,7 +282,11 @@ class Reader(object):
 
             # WHAT3 is the upper region name or index.
             if isinstance(region_upper, basestring):
-                if region_upper not in regionlist:
+                 # Special name corresponding to "largest"
+                 # region number (last defined region)
+                if region_upper == "@LASTREG":
+                    region_upper = regionlist[-1]
+                elif region_upper not in regionlist:
                     msg = ("Region {} referred to in WHAT3 of ASSIGNMA"
                            " has not been defined.".format(region_upper))
                     raise ValueError(msg)
