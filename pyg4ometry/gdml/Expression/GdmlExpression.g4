@@ -102,6 +102,7 @@ funcname
    | EXP
    | SQRT
    | POWER
+   | ABS
    ;
 
 relop
@@ -163,6 +164,10 @@ POWER
    : 'pow'
    ;
 
+ABS
+   : 'abs'
+   ;
+   
 LPAREN
    : '('
    ;

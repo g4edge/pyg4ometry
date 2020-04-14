@@ -8,7 +8,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write(u"!w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4")
+        buf.write(u"\"w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4")
         buf.write(u"\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write(u"\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3\3\3")
         buf.write(u"\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4\62\n")
@@ -19,7 +19,7 @@ def serializedATN():
         buf.write(u"\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\7\16")
         buf.write(u"l\n\16\f\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20\3\20")
         buf.write(u"\3\20\2\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2")
-        buf.write(u"\7\3\2\22\23\3\2\24\25\3\2\34\36\3\2\3\r\3\2\26\30\2")
+        buf.write(u"\7\3\2\23\24\3\2\25\26\3\2\35\37\3\2\3\16\3\2\27\31\2")
         buf.write(u"s\2 \3\2\2\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2\n8\3")
         buf.write(u"\2\2\2\f:\3\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2")
         buf.write(u"\24V\3\2\2\2\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34r")
@@ -29,20 +29,20 @@ def serializedATN():
         buf.write(u",*\3\2\2\2-\63\5\f\7\2./\5\n\6\2/\60\5\f\7\2\60\62\3")
         buf.write(u"\2\2\2\61.\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2\2\63\64")
         buf.write(u"\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\t\2\2\2\67")
-        buf.write(u"\t\3\2\2\289\t\3\2\29\13\3\2\2\2:?\5\16\b\2;<\7\33\2")
+        buf.write(u"\t\3\2\2\289\t\3\2\29\13\3\2\2\2:?\5\16\b\2;<\7\34\2")
         buf.write(u"\2<>\5\16\b\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2")
-        buf.write(u"@\r\3\2\2\2A?\3\2\2\2BC\7\22\2\2CI\5\16\b\2DE\7\23\2")
+        buf.write(u"@\r\3\2\2\2A?\3\2\2\2BC\7\23\2\2CI\5\16\b\2DE\7\24\2")
         buf.write(u"\2EI\5\16\b\2FI\5\32\16\2GI\5\20\t\2HB\3\2\2\2HD\3\2")
         buf.write(u"\2\2HF\3\2\2\2HG\3\2\2\2I\17\3\2\2\2JS\5\22\n\2KS\5\24")
-        buf.write(u"\13\2LS\5\30\r\2MS\5\26\f\2NO\7\16\2\2OP\5\4\3\2PQ\7")
-        buf.write(u"\17\2\2QS\3\2\2\2RJ\3\2\2\2RK\3\2\2\2RL\3\2\2\2RM\3\2")
-        buf.write(u"\2\2RN\3\2\2\2S\21\3\2\2\2TU\7 \2\2U\23\3\2\2\2VW\5\30")
-        buf.write(u"\r\2WX\7\20\2\2X]\5\4\3\2YZ\7\31\2\2Z\\\5\4\3\2[Y\3\2")
+        buf.write(u"\13\2LS\5\30\r\2MS\5\26\f\2NO\7\17\2\2OP\5\4\3\2PQ\7")
+        buf.write(u"\20\2\2QS\3\2\2\2RJ\3\2\2\2RK\3\2\2\2RL\3\2\2\2RM\3\2")
+        buf.write(u"\2\2RN\3\2\2\2S\21\3\2\2\2TU\7!\2\2U\23\3\2\2\2VW\5\30")
+        buf.write(u"\r\2WX\7\21\2\2X]\5\4\3\2YZ\7\32\2\2Z\\\5\4\3\2[Y\3\2")
         buf.write(u"\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3\2\2\2_]\3\2\2")
-        buf.write(u"\2`a\7\21\2\2a\25\3\2\2\2bc\t\4\2\2c\27\3\2\2\2de\7\37")
-        buf.write(u"\2\2e\31\3\2\2\2fg\5\34\17\2gh\7\16\2\2hm\5\4\3\2ij\7")
-        buf.write(u"\31\2\2jl\5\4\3\2ki\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2")
-        buf.write(u"\2\2np\3\2\2\2om\3\2\2\2pq\7\17\2\2q\33\3\2\2\2rs\t\5")
+        buf.write(u"\2`a\7\22\2\2a\25\3\2\2\2bc\t\4\2\2c\27\3\2\2\2de\7 ")
+        buf.write(u"\2\2e\31\3\2\2\2fg\5\34\17\2gh\7\17\2\2hm\5\4\3\2ij\7")
+        buf.write(u"\32\2\2jl\5\4\3\2ki\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2")
+        buf.write(u"\2\2np\3\2\2\2om\3\2\2\2pq\7\20\2\2q\33\3\2\2\2rs\t\5")
         buf.write(u"\2\2s\35\3\2\2\2tu\t\6\2\2u\37\3\2\2\2\t*\63?HR]m")
         return buf.getvalue()
 
@@ -59,16 +59,17 @@ class GdmlExpressionParser ( Parser ):
 
     literalNames = [ u"<INVALID>", u"'cos'", u"'sin'", u"'tan'", u"'acos'", 
                      u"'asin'", u"'atan'", u"'log'", u"'log10'", u"'sqrt'", 
-                     u"'exp'", u"'pow'", u"'('", u"')'", u"'['", u"']'", 
-                     u"'+'", u"'-'", u"'*'", u"'/'", u"'>'", u"'<'", u"'='", 
-                     u"','", u"'.'", u"'^'", u"'pi'", u"<INVALID>", u"'i'" ]
+                     u"'exp'", u"'pow'", u"'abs'", u"'('", u"')'", u"'['", 
+                     u"']'", u"'+'", u"'-'", u"'*'", u"'/'", u"'>'", u"'<'", 
+                     u"'='", u"','", u"'.'", u"'^'", u"'pi'", u"<INVALID>", 
+                     u"'i'" ]
 
     symbolicNames = [ u"<INVALID>", u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", 
                       u"ATAN", u"LN", u"LOG", u"SQRT", u"EXP", u"POWER", 
-                      u"LPAREN", u"RPAREN", u"LBRACKET", u"RBRACKET", u"PLUS", 
-                      u"MINUS", u"TIMES", u"DIV", u"GT", u"LT", u"EQ", u"COMMA", 
-                      u"POINT", u"POW", u"PI", u"EULER", u"I", u"VARIABLE", 
-                      u"SCIENTIFIC_NUMBER", u"WS" ]
+                      u"ABS", u"LPAREN", u"RPAREN", u"LBRACKET", u"RBRACKET", 
+                      u"PLUS", u"MINUS", u"TIMES", u"DIV", u"GT", u"LT", 
+                      u"EQ", u"COMMA", u"POINT", u"POW", u"PI", u"EULER", 
+                      u"I", u"VARIABLE", u"SCIENTIFIC_NUMBER", u"WS" ]
 
     RULE_equation = 0
     RULE_expression = 1
@@ -103,26 +104,27 @@ class GdmlExpressionParser ( Parser ):
     SQRT=9
     EXP=10
     POWER=11
-    LPAREN=12
-    RPAREN=13
-    LBRACKET=14
-    RBRACKET=15
-    PLUS=16
-    MINUS=17
-    TIMES=18
-    DIV=19
-    GT=20
-    LT=21
-    EQ=22
-    COMMA=23
-    POINT=24
-    POW=25
-    PI=26
-    EULER=27
-    I=28
-    VARIABLE=29
-    SCIENTIFIC_NUMBER=30
-    WS=31
+    ABS=12
+    LPAREN=13
+    RPAREN=14
+    LBRACKET=15
+    RBRACKET=16
+    PLUS=17
+    MINUS=18
+    TIMES=19
+    DIV=20
+    GT=21
+    LT=22
+    EQ=23
+    COMMA=24
+    POINT=25
+    POW=26
+    PI=27
+    EULER=28
+    I=29
+    VARIABLE=30
+    SCIENTIFIC_NUMBER=31
+    WS=32
 
     def __init__(self, input, output=sys.stdout):
         super(GdmlExpressionParser, self).__init__(input, output=output)
@@ -151,14 +153,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_equation
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterEquation"):
-                listener.enterEquation(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitEquation"):
-                listener.exitEquation(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitEquation"):
@@ -211,14 +205,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_expression
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterExpression"):
-                listener.enterExpression(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitExpression"):
-                listener.exitExpression(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitExpression"):
@@ -281,14 +267,6 @@ class GdmlExpressionParser ( Parser ):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_multiplyingExpression
 
-        def enterRule(self, listener):
-            if hasattr(listener, "enterMultiplyingExpression"):
-                listener.enterMultiplyingExpression(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitMultiplyingExpression"):
-                listener.exitMultiplyingExpression(self)
-
         def accept(self, visitor):
             if hasattr(visitor, "visitMultiplyingExpression"):
                 return visitor.visitMultiplyingExpression(self)
@@ -342,14 +320,6 @@ class GdmlExpressionParser ( Parser ):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorAddSub
 
-        def enterRule(self, listener):
-            if hasattr(listener, "enterOperatorAddSub"):
-                listener.enterOperatorAddSub(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitOperatorAddSub"):
-                listener.exitOperatorAddSub(self)
-
         def accept(self, visitor):
             if hasattr(visitor, "visitOperatorAddSub"):
                 return visitor.visitOperatorAddSub(self)
@@ -395,14 +365,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorMulDiv
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterOperatorMulDiv"):
-                listener.enterOperatorMulDiv(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitOperatorMulDiv"):
-                listener.exitOperatorMulDiv(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitOperatorMulDiv"):
@@ -456,14 +418,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_powExpression
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterPowExpression"):
-                listener.enterPowExpression(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitPowExpression"):
-                listener.exitPowExpression(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitPowExpression"):
@@ -530,14 +484,6 @@ class GdmlExpressionParser ( Parser ):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_signedAtom
 
-        def enterRule(self, listener):
-            if hasattr(listener, "enterSignedAtom"):
-                listener.enterSignedAtom(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitSignedAtom"):
-                listener.exitSignedAtom(self)
-
         def accept(self, visitor):
             if hasattr(visitor, "visitSignedAtom"):
                 return visitor.visitSignedAtom(self)
@@ -569,7 +515,7 @@ class GdmlExpressionParser ( Parser ):
                 self.state = 67
                 self.signedAtom()
                 pass
-            elif token in [GdmlExpressionParser.COS, GdmlExpressionParser.SIN, GdmlExpressionParser.TAN, GdmlExpressionParser.ACOS, GdmlExpressionParser.ASIN, GdmlExpressionParser.ATAN, GdmlExpressionParser.LN, GdmlExpressionParser.LOG, GdmlExpressionParser.SQRT, GdmlExpressionParser.EXP, GdmlExpressionParser.POWER]:
+            elif token in [GdmlExpressionParser.COS, GdmlExpressionParser.SIN, GdmlExpressionParser.TAN, GdmlExpressionParser.ACOS, GdmlExpressionParser.ASIN, GdmlExpressionParser.ATAN, GdmlExpressionParser.LN, GdmlExpressionParser.LOG, GdmlExpressionParser.SQRT, GdmlExpressionParser.EXP, GdmlExpressionParser.POWER, GdmlExpressionParser.ABS]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 68
                 self.func()
@@ -624,14 +570,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_atom
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterAtom"):
-                listener.enterAtom(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitAtom"):
-                listener.exitAtom(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitAtom"):
@@ -705,14 +643,6 @@ class GdmlExpressionParser ( Parser ):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_scientific
 
-        def enterRule(self, listener):
-            if hasattr(listener, "enterScientific"):
-                listener.enterScientific(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitScientific"):
-                listener.exitScientific(self)
-
         def accept(self, visitor):
             if hasattr(visitor, "visitScientific"):
                 return visitor.visitScientific(self)
@@ -769,14 +699,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_matrixElement
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterMatrixElement"):
-                listener.enterMatrixElement(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitMatrixElement"):
-                listener.exitMatrixElement(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitMatrixElement"):
@@ -840,14 +762,6 @@ class GdmlExpressionParser ( Parser ):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_constant
 
-        def enterRule(self, listener):
-            if hasattr(listener, "enterConstant"):
-                listener.enterConstant(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitConstant"):
-                listener.exitConstant(self)
-
         def accept(self, visitor):
             if hasattr(visitor, "visitConstant"):
                 return visitor.visitConstant(self)
@@ -890,14 +804,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_variable
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterVariable"):
-                listener.enterVariable(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitVariable"):
-                listener.exitVariable(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitVariable"):
@@ -955,14 +861,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_func
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterFunc"):
-                listener.enterFunc(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitFunc"):
-                listener.exitFunc(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitFunc"):
@@ -1047,16 +945,11 @@ class GdmlExpressionParser ( Parser ):
         def POWER(self):
             return self.getToken(GdmlExpressionParser.POWER, 0)
 
+        def ABS(self):
+            return self.getToken(GdmlExpressionParser.ABS, 0)
+
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_funcname
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterFuncname"):
-                listener.enterFuncname(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitFuncname"):
-                listener.exitFuncname(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitFuncname"):
@@ -1076,7 +969,7 @@ class GdmlExpressionParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 112
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << GdmlExpressionParser.COS) | (1 << GdmlExpressionParser.SIN) | (1 << GdmlExpressionParser.TAN) | (1 << GdmlExpressionParser.ACOS) | (1 << GdmlExpressionParser.ASIN) | (1 << GdmlExpressionParser.ATAN) | (1 << GdmlExpressionParser.LN) | (1 << GdmlExpressionParser.LOG) | (1 << GdmlExpressionParser.SQRT) | (1 << GdmlExpressionParser.EXP) | (1 << GdmlExpressionParser.POWER))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << GdmlExpressionParser.COS) | (1 << GdmlExpressionParser.SIN) | (1 << GdmlExpressionParser.TAN) | (1 << GdmlExpressionParser.ACOS) | (1 << GdmlExpressionParser.ASIN) | (1 << GdmlExpressionParser.ATAN) | (1 << GdmlExpressionParser.LN) | (1 << GdmlExpressionParser.LOG) | (1 << GdmlExpressionParser.SQRT) | (1 << GdmlExpressionParser.EXP) | (1 << GdmlExpressionParser.POWER) | (1 << GdmlExpressionParser.ABS))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -1106,14 +999,6 @@ class GdmlExpressionParser ( Parser ):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_relop
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterRelop"):
-                listener.enterRelop(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitRelop"):
-                listener.exitRelop(self)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitRelop"):
