@@ -359,6 +359,20 @@ def pow(arg,power) :
     v = Constant("sqrt_{}".format(v1), 'pow({},{})'.format(v1,str(power)),registry=arg.registry, addRegistry=False)        
     return v
 
+def abs(arg) :
+    """
+    absolute value of arg
+
+    :param arg: Argument of abs(arg)
+    :type  arg: Constant, Quantity, Variable or Expression
+
+    """
+
+    v1 = upgradeToStringExpression(arg.registry,arg)
+    v = Constant("abs_{}".format(v1), 'abs({})'.format(v1),registry=arg.registry, addRegistry=False)
+    return v
+
+
 class Constant(ScalarBase) :
     """
     GDML constant define wrapper object
