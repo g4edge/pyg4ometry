@@ -23,7 +23,7 @@ def _makeNISTCompoundList():
     return nist_compound_list
 
 
-def MaterialPredefined(name, registry=None, bdsimMaterial = False):
+def MaterialPredefined(name, registry=None):
     """
     Proxy method to construct a NIST compund material - this is just a handle as nothing
     needs to be additionaly defined for a NIST compund. A check is perfored on the name
