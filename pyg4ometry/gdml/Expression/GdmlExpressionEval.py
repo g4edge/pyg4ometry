@@ -11,6 +11,7 @@ from GdmlExpressionVisitor import GdmlExpressionVisitor
 from ..Units import units as _units
 
 import math
+import numpy
 
 from IPython import embed
 import traceback
@@ -118,14 +119,21 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitFunc(self, ctx):
         function_name = str(self.visit(ctx.funcname()))
-        function = getattr(math, function_name)
+        if hasattr(math, function_name):
+            function = getattr(math, function_name)
+        elif hasattr(numpy, function_name):
+            function = getattr(numpy, function_name)
+        else:
+            raise ValueError("Function {} not found in 'numpy' or 'math'"
+                             "".format(function_name))
+            
         arguments = [self.visit(expr) for expr in ctx.expression()]
         return function(*arguments)
 
     def visitFuncname(self, ctx):
         funcs = ["SIN", "COS", "TAN", "ACOS",
                  "ASIN", "ATAN", "LOG", "LN",
-                 "EXP", "SQRT", "POWER"]
+                 "EXP", "SQRT", "POWER", "ABS"]
         for f in funcs:
             function = getattr(ctx, f)
             if function():
