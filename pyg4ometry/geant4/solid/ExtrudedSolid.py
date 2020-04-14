@@ -3,6 +3,9 @@ from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Polygon as _Polygon
+import pyg4ometry.pycgal as _pycgal
+import numpy as _np
+
 import numpy as _np
 
 import logging as _log
@@ -79,17 +82,30 @@ class ExtrudedSolid(_SolidBase):
             vertices = list(reversed(vertices))
 
 
-        poly_top = [_Vertex(_Vector(scale[-1]*vert[0]+x_offs[-1],
-                                  scale[-1]*vert[1]+y_offs[-1],
-                                  zpos[-1]),None) for vert in list(reversed(vertices))]
+        topPolyList = [[scale[-1]*vert[0]+x_offs[-1],
+                        scale[-1]*vert[1]+y_offs[-1]] for vert in list(reversed(vertices))]
 
 
-        poly_bot = [_Vertex(_Vector(scale[0]*vert[0]+x_offs[0],
-                                  scale[0]*vert[1]+y_offs[0],
-                                  zpos[0]),None) for vert in vertices]
+        topPolyListConvex = _pycgal.numpyPolygonConvex(_np.array(topPolyList))
 
-        polygonsT.append(_Polygon(poly_top))
-        polygonsB.append(_Polygon(poly_bot))
+        for topPoly in topPolyListConvex :
+            topPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[-1]),None) for vert in topPoly])
+            polygonsT.append(topPolyPolygon)
+
+
+        bottomPolyList = [[scale[0]*vert[0]+x_offs[0],
+                           scale[0]*vert[1]+y_offs[0]] for vert in list(reversed(vertices))]
+
+
+        bottomPolyListConvex = _pycgal.numpyPolygonConvex(_np.array(bottomPolyList))
+
+
+        for bottomPoly in bottomPolyListConvex :
+            bottomPoly = list(bottomPoly) # TODO reversed here because of needing counterclockwise in 2D convex decomp in CGAL
+            bottomPoly.reverse()
+
+            bottomPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[0]),None) for vert in bottomPoly])
+            polygonsB.append(bottomPolyPolygon)
 
         # It appears we must append the top and bottom faces and then tile the sides
         polygons.extend(polygonsT)
