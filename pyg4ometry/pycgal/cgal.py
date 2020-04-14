@@ -1,7 +1,7 @@
-import numpy as _np
 import ctypes as _ctypes
 import os as _os
 import numpy as _np
+import copy as _copy
 
 _lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__),
                                               "pyg4_cgal.so")
@@ -68,7 +68,27 @@ nefpolyhedron_to_surfacemesh.restype  = _ctypes.c_void_p
 
 nefpolyhedron_to_convexpolyhedra          = _lib.pyg4_cgal_nefpolyhedron_to_convexpolyhedra
 nefpolyhedron_to_convexpolyhedra.argtypes = [_ctypes.c_void_p,_ctypes.c_void_p*10000, _ctypes.POINTER(_ctypes.c_int)]
-nefpolyhedron_to_convexpolyhedra.restypes = _np.ctypeslib.ndpointer(dtype=_np.uintp, ndim=1)
+nefpolyhedron_to_convexpolyhedra.restype  = _ctypes.c_int
+
+vertex_to_polygon          = _lib.pyg4_cgal_vertex_to_polygon
+vertex_to_polygon.argtypes = [_np.ctypeslib.ndpointer(dtype=_np.uintp), _ctypes.c_int, _ctypes.c_bool]
+vertex_to_polygon.restype = _ctypes.c_void_p
+
+polygon_to_vertex          = _lib.pyg4_cgal_polygon_to_vertex
+polygon_to_vertex.argtypes = [_ctypes.c_void_p,_np.ctypeslib.ndpointer(dtype=_np.uintp), _ctypes.POINTER(_ctypes.c_int)]
+polygon_to_vertex.restype = _ctypes.c_int
+
+delete_polygon             = _lib.pyg4_cgal_delete_polygon
+delete_polygon.argtypes    = [_ctypes.c_void_p]
+delete_polygon.restype     = _ctypes.c_int
+
+polygon_to_convexpolygons   = _lib.pyg4_cgal_polygon_to_convexpolygons
+polygon_to_convexpolygons.argtypes   = [_ctypes.c_void_p,_ctypes.c_void_p*10000, _ctypes.POINTER(_ctypes.c_int)]
+polygon_to_convexpolygons.restype    = _ctypes.c_int
+
+delete_polygonlist         = _lib.pyg4_cgal_delete_polygonlist
+delete_polygonlist.argtypes= [_ctypes.c_void_p]
+delete_polygonlist.restype = _ctypes.c_int
 
 
 def pycsgmesh2NefPolyhedron(mesh) :
@@ -85,13 +105,6 @@ def pycsgmesh2NefPolyhedron(mesh) :
     npolyvert = _np.array(npolyvert)
     polys = _np.array(polys)
     polys = polyarray
-
-    # print len(verts), len(polys)
-    # print verts
-    #print npolyvert
-    #print polys
-    #print polyarray
-    #print count
 
     vertspp = (verts.__array_interface__['data'][0] +
                _np.arange(verts.shape[0]) * verts.strides[0]).astype(_np.uintp)
@@ -139,3 +152,36 @@ def pycsgmeshWritePolygon(mesh, fileName = "mesh.pol") :
         f.write("\n")
 
     f.close()
+
+
+def numpyPolygonConvex(polygonnp):
+    polygonpp = (polygonnp.__array_interface__['data'][0] +
+                 _np.arange(polygonnp.shape[0]) * polygonnp.strides[0]).astype(_np.uintp)
+
+    nconvex = _ctypes.c_int(0)
+    vpArray = _ctypes.c_void_p*10000;
+    polygons = vpArray()
+
+
+    polygon = vertex_to_polygon(polygonpp,len(polygonnp),_ctypes.c_bool(True))
+    polygon_to_convexpolygons(polygon,polygons,_ctypes.byref(nconvex))
+
+    nverts = _ctypes.c_int(0)
+
+    polyvertsnp = _np.zeros((1000,2))
+    polyvertspp = (polyvertsnp.__array_interface__['data'][0] +
+                _np.arange(polyvertsnp.shape[0]) * polyvertsnp.strides[0]).astype(_np.uintp)
+
+    polygonList = []
+
+    for i in range(0,nconvex.value):
+        polygon_to_vertex(polygons[i],polyvertspp,_ctypes.byref(nverts))
+
+        # no idea why this copy is needed
+        polygonList.append(_copy.deepcopy(polyvertsnp[0:nverts.value][:]))
+
+        delete_polygon(polygons[i])
+
+    delete_polygon(polygon)
+
+    return polygonList
