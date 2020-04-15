@@ -207,8 +207,6 @@ class Polycone(_SolidBase):
         dPhi = pDPhi/slices
         stacks = len(pZpl)
 
-        print pSPhi, pDPhi
-
         for i in range(0,stacks-1,1):
             i1 = i
             i2 = i + 1
