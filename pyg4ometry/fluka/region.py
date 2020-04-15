@@ -394,16 +394,17 @@ class Region(object):
             except FLUKAError as e:
                 raise FLUKAError("Error in region {}: {}".format(self.name,
                                                                  e.message))
-            except NullMeshError as e:
-                raise NullMeshError("Error in region {} whilst "
-                                    "determining connected zones: {}").format(
-                                        self.name,
-                                        e.message)
 
-            zoneLV = g4.LogicalVolume(zone_solid,
-                                      material,
-                                      _random_name(),
-                                      greg)
+            try:
+                zoneLV = g4.LogicalVolume(zone_solid,
+                                          material,
+                                          _random_name(),
+                                          greg)
+            except NullMeshError as e:
+                raise NullMeshError("Null zone in region {}: {}.".format(
+                    self.name,
+                    e.message))
+
             lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
                                                       zone.centre())
 
