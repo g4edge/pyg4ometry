@@ -387,7 +387,7 @@ class Constant(ScalarBase) :
     :type addRegistry: bool
     """
 
-    def __init__(self, name, value, registry = None, addRegistry = True) :
+    def __init__(self, name, value, registry, addRegistry = True) :
         super(Constant, self).__init__()
 
         self.name  = name
@@ -433,7 +433,7 @@ class Quantity(ScalarBase) :
     :type addRegistry: bool
     """
 
-    def __init__(self, name, value, unit, type, registry = None, addRegistry = True) :
+    def __init__(self, name, value, unit, type, registry, addRegistry = True) :
         super(Quantity, self).__init__()
         
         self.name  = name
@@ -476,7 +476,7 @@ class Variable(ScalarBase) :
     :type registry: Registry
     """
 
-    def __init__(self, name, value, registry = None, addRegistry = True) :
+    def __init__(self, name, value, registry, addRegistry = True) :
         super(Variable, self).__init__()
  
         self.name  = name
@@ -517,7 +517,7 @@ class Expression(ScalarBase) :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-    def __init__(self, name, value, registry = None, addRegistry = False) :
+    def __init__(self, name, value, registry, addRegistry = False) :
         super(Expression, self).__init__()
 
         self.name  = name
@@ -793,7 +793,7 @@ class Matrix :
     :type addRegistry: bool
     """
 
-    def __init__(self,name, coldim, values, registry = None, addRegistry = True) :
+    def __init__(self,name, coldim, values, registry, addRegistry = True) :
         self.name = name
         self.coldim = int(coldim)
 
