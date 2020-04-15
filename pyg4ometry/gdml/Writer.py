@@ -272,6 +272,23 @@ class Writer(object):
                 # materials which are simply names, so do not append child.
                 pass
 
+            for pname in material.state:
+                if pname == "temperature":
+                    tagname = 'T'
+                elif pname == "pressure":
+                    tagname = 'P'
+                else:
+                    continue
+
+                value = material.state[pname]
+                if value is None:
+                    continue
+
+                de = self.doc.createElement(tagname)
+                de.setAttribute('value', str(value))
+                de.setAttribute('unit', material.state[pname+"_unit"])
+                oe.appendChild(de)
+
             for pname, pref in material.properties.iteritems():
                 prop = self.doc.createElement('property')
                 prop.setAttribute('name', str(pname))

@@ -98,7 +98,7 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
-    def checkOverlaps(self, recursive = False, coplanar = True, debugIO = False) :
+    def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :
 
         # print 'LogicalVolume.checkOverlaps>'
 
@@ -161,7 +161,7 @@ class LogicalVolume(object):
                 _log.info('LogicalVolume.checkOverlaps> full inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0  :
                     if debugIO :
-                        print "LogicalVolume.checkOverlaps> overlap between daughters", transformedMeshesNames[i],transformedMeshesNames[j],interMesh.vertexCount()
+                        print "\033[1mLogicalVolume.checkOverlaps> overlap between daughters \033[0m", transformedMeshesNames[i],transformedMeshesNames[j],interMesh.vertexCount()
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
         # coplanar daughter pv checks
@@ -183,7 +183,7 @@ class LogicalVolume(object):
                     coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
                     if coplanarMesh.vertexCount() != 0:
                         if debugIO :
-                            print "LogicalVolume.checkOverlaps> coplanar overlap between daughters",transformedMeshesNames[i],transformedMeshesNames[j],coplanarMesh.vertexCount()
+                            print "\033[1mLogicalVolume.checkOverlaps> coplanar overlap between daughters \033[0m",transformedMeshesNames[i],transformedMeshesNames[j],coplanarMesh.vertexCount()
                         self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
         # overlap with solid
@@ -201,7 +201,7 @@ class LogicalVolume(object):
 
             if interMesh.vertexCount() != 0 :
                 if debugIO :
-                    print "LogicalVolume.checkOverlaps> overlap with mother",transformedMeshesNames[i],interMesh.vertexCount()
+                    print "\033[1mLogicalVolume.checkOverlaps> overlap with mother \033[0m",transformedMeshesNames[i],interMesh.vertexCount()
                 self.mesh.addOverlapMesh([interMesh,_OverlapType.protrusion])
 
         # coplanar with solid
@@ -218,8 +218,8 @@ class LogicalVolume(object):
                 coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
                 if coplanarMesh.vertexCount() != 0 :
                     if debugIO :
-                        print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", transformedMeshesNames[i],coplanarMesh.vertexCount()
-                        print "LogicalVolume.checkOverlaps> coplanar overlap between daughter and mother", transformedMeshesNames[i],coplanarMesh.vertexCount()
+                        print "\033[1mLogicalVolume.checkOverlaps> coplanar overlap between daughter and mother\033[0m", transformedMeshesNames[i],coplanarMesh.vertexCount()
+                        print "\033[1mLogicalVolume.checkOverlaps> coplanar overlap between daughter and mother\033[0m", transformedMeshesNames[i],coplanarMesh.vertexCount()
                     self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
         # recusively check entire tree

@@ -23,7 +23,7 @@ def _makeNISTCompoundList():
     return nist_compound_list
 
 
-def MaterialPredefined(name, registry=None, bdsimMaterial = False):
+def MaterialPredefined(name, registry=None):
     """
     Proxy method to construct a NIST compund material - this is just a handle as nothing
     needs to be additionaly defined for a NIST compund. A check is perfored on the name
@@ -160,6 +160,11 @@ class Material(MaterialBase):
         self.components = []
         self.properties = {}
 
+        self._state = {"temperature": None,
+                       "temperature_unit": None,
+                       "pressure": None,
+                       "pressure_unit": None}
+
         self.NIST_compounds =  _makeNISTCompoundList()
 
         if not any(_getClassVariables(self)):
@@ -245,7 +250,24 @@ class Material(MaterialBase):
 
         self.components.append((material_obj, fractionmass, "massfraction"))
 
-    def __str__(self) :
+    def set_pressure(self, value, unit="pascal"):
+        if self.type in ["predefined", "arbitrary"]:
+            raise ValueError("Cannot set pressure for predefined or aribtrary materials.")
+
+        self._state["pressure"] = value
+        self._state["pressure_unit"] = unit
+
+    def set_temperature(self, value, unit="K"):
+        if self.type in ["nist", "arbitrary"]:
+            raise ValueError("Cannot set temperature for predefined or aribtrary materials.")
+        self._state["temperature"] = value
+        self._state["temperature_unit"] = unit
+
+    @property
+    def state(self):
+        return self._state
+
+    def __str__(self):
         return self.name
 
 
