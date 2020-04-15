@@ -115,7 +115,7 @@ class Writer(object):
         with open(gmad, "w") as f:
             f.write(text)
 
-    def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, zLength=None, preprocessGDML=True):
+    def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()
 
