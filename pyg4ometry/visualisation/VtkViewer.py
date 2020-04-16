@@ -338,7 +338,7 @@ class VtkViewer:
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
-        if localmeshes.has_key(solid_name) :
+        if solid_name in localmeshes:
             vtkPD = localmeshes[solid_name]
         else : 
             vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
@@ -362,7 +362,7 @@ class VtkViewer:
         # Filter : check if filter is in the filters dict
         _log.info('VtkViewer.addLogicalVolume> vtkFLT')
         filtername = solid_name+"_filter"
-        if filters.has_key(filtername) :
+        if filtername in filters:
             vtkFLT = filters[filtername]
         else :
             vtkFLT = _vtk.vtkTriangleFilter()
@@ -380,7 +380,7 @@ class VtkViewer:
 
         mappers.append(vtkMAP)
 
-        if not mapperMap.has_key(mappername) :
+        if not mappername in mapperMap:
             mapperMap[mappername] = vtkMAP
             
         # Actor
@@ -496,7 +496,7 @@ class VtkViewer:
             overlapActor.SetCamera(self.ren.GetActiveCamera());
             self.ren.AddActor(overlapActor)
 
-        if not actorMap.has_key(actorname) :
+        if not actorname in actorMap:
             actorMap[actorname] = vtkActor
 
         # check if there is a material visualisation options

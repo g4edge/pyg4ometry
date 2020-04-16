@@ -1,3 +1,4 @@
+from functools import reduce
 from collections import MutableSequence, OrderedDict
 import numbers
 from operator import mul

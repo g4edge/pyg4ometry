@@ -121,7 +121,7 @@ class Writer(object):
 
         s = 'e1: element, geometry="gdml:'
         s += str(filenameGDML)
-        if self.registry.defineDict.has_key("GDML_Size_position_z"):
+        if "GDML_Size_position_z" in self.registry.defineDict:
             s += '", l=' + str(self.registry.defineDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
             # be super tolerant incase the meshing fails - still write out
@@ -289,7 +289,7 @@ class Writer(object):
                 de.setAttribute('unit', material.state[pname+"_unit"])
                 oe.appendChild(de)
 
-            for pname, pref in material.properties.iteritems():
+            for pname, pref in material.properties.items():
                 prop = self.doc.createElement('property')
                 prop.setAttribute('name', str(pname))
                 prop.setAttribute('value', str(pref))
@@ -644,7 +644,7 @@ class Writer(object):
 
         # Expression, Constant, Quantity or Variable
         elif isinstance(var, _Defines.Expression) or isinstance(var, _Defines.Constant) or isinstance(var, _Defines.Quantity) or isinstance(var, _Defines.Variable):
-            if self.registry.defineDict.has_key(var.name):
+            if var.name in self.registry.defineDict:
                 return var.name
             else :
                 return str(var.expr.expression)

@@ -48,7 +48,7 @@ class TwoVector(object):
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         if type(other) == float or type(other) == int:
             return TwoVector(self.x / other, self.y / other)
         else:

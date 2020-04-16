@@ -4,6 +4,7 @@ from operator import mul, add
 import sys
 from warnings import warn
 
+import antlr4
 from antlr4.error import ErrorListener
 from antlr4.error import Errors
 import numpy as np
@@ -254,7 +255,7 @@ class Reader(object):
         regions = self.flukaregistry.regionDict
         # Need to make a list of the keys to account for index-based
         # material assignments.
-        regionlist = self.flukaregistry.regionDict.keys()
+        regionlist = list(self.flukaregistry.regionDict.keys())
         for card in self.cards:
             if card.keyword != "ASSIGNMA" and card.keyword != "ASSIGNMAT":
                 continue
@@ -267,12 +268,12 @@ class Reader(object):
             # WHAT1 is the material name or index
             if material_name is None:
                 material_name = 1
-            elif (not isinstance(material_name, basestring)
+            elif (not isinstance(material_name, str)
                     and int(material_name) <= 0.0):
                 material_name = 1
 
             # WHAT2 is either the lower region name or index.
-            if isinstance(region_lower, basestring):
+            if isinstance(region_lower, str):
                 if region_lower not in regionlist:
                     continue
                 start = regionlist.index(region_lower)
@@ -282,7 +283,7 @@ class Reader(object):
                 start = int(card.what1)
 
             # WHAT3 is the upper region name or index.
-            if isinstance(region_upper, basestring):
+            if isinstance(region_upper, str):
                  # Special name corresponding to "largest"
                  # region number (last defined region)
                 if region_upper == "@LASTREG":
@@ -311,7 +312,7 @@ class Reader(object):
         return material_assignments
 
     def _assignMaterials(self):
-        for region_name in self.flukaregistry.regionDict.iterkeys():
+        for region_name in self.flukaregistry.regionDict.keys():
             try:
                 material = self._material_assignments[region_name]
             except KeyError:

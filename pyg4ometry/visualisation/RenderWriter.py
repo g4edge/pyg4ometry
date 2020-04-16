@@ -35,14 +35,14 @@ class RenderWriter :
                 self.addLogicalVolumeRecursive(pv.logicalVolume, mtra_new, tra_new)
 
     def addMesh(self, logical):
-        if self.materials.has_key(logical.name) :
+        if logical.name in self.materials:
             pass
         else :
             self.materials[logical.name] = logical.material
             self.meshes[logical.name] = logical.mesh.localmesh
 
     def addInstance(self, logical, transformation, translation):
-        if self.instances.has_key(logical.name) :
+        if logical.name in self.instances:
             self.instances[logical.name].append({"transformation":transformation,
                                                  "translation":translation})
         else :

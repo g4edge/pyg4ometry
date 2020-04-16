@@ -383,7 +383,7 @@ class Reader(object):
 
             # Set the optional properties
             properties = material.get("properties")
-            for pname, pref in properties.iteritems():
+            for pname, pref in properties.items():
                 mat.add_property(pname, pref)
 
     def parseUserInfo(self,xmldoc):
@@ -1426,15 +1426,15 @@ class Reader(object):
                                 
                 repNode   = chNode.getElementsByTagName("replicate_along_axis")[0]
                 dirNode   = repNode.getElementsByTagName("direction")[0]
-                if dirNode.attributes.has_key('x'):
+                if 'x' in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kXAxis 
-                elif dirNode.attributes.has_key('y'):
+                elif 'y' in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kYAxis
-                elif dirNode.attributes.has_key('z'):
+                elif 'z' in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kZAxis 
-                elif dirNode.attributes.has_key('rho'):
+                elif 'rho' in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kRho 
-                elif dirNode.attributes.has_key('phi'):
+                elif 'phi' in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kPhi 
 
                 nreplicas  = _defines.Expression(pvol_name+"_nreplica",
@@ -1510,7 +1510,7 @@ class Reader(object):
                             x = _defines.Expression(pvol_name + '_Box_pX', '{}'.format(ppsChNodeTag.attributes['x'].value),self._registry, False)
                             y = _defines.Expression(pvol_name + '_Box_pY', '{}'.format(ppsChNodeTag.attributes['y'].value),self._registry, False)
                             z = _defines.Expression(pvol_name + '_Box_pZ', '{}'.format(ppsChNodeTag.attributes['z'].value),self._registry, False)
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 unit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 unit = "mm"
@@ -1532,12 +1532,12 @@ class Reader(object):
                             pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['DeltaPhi'].value), self._registry,False)
 
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 lunit = "mm"
 
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else :
                                 aunit = "rad"
@@ -1564,12 +1564,12 @@ class Reader(object):
                             pDPhi = _defines.Expression(pvol_name + '_Tubs_DPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value), self._registry,False)
 
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 lunit = "mm"
 
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else :
                                 aunit = "rad"
@@ -1577,7 +1577,7 @@ class Reader(object):
                             dim = _g4.ParameterisedVolume.ConeDimensions(pRMin1,pRMax1, pRMin2, pRMax2, pDz, pSPhi, pDPhi, lunit, aunit)
                         elif ppsChNodeTag.tagName == "orb_dimensions":
                             pRMax = _defines.Expression(pvol_name + '_Orb_r','{}'.format(ppsChNodeTag.attributes['r'].value),self._registry, False)
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else :
                                 lunit = "mm"
@@ -1586,26 +1586,26 @@ class Reader(object):
                         elif ppsChNodeTag.tagName == "sphere_dimensions":
                             try :
                                 pRMin = _defines.Expression(pvol_name + '_Sphere_rMin','{}'.format(ppsChNodeTag.attributes['rmin'].value),self._registry, False)
-                            except KeyError :
+                            except KeyError:
                                 pRMin = _defines.Expression(pvol_name + '_Sphere_rMin', "0", self._registry, False)
                             pRMax = _defines.Expression(pvol_name + '_Sphere_rMax','{}'.format(ppsChNodeTag.attributes['rmax'].value),self._registry, False)
                             try :
                                 pSPhi = _defines.Expression(pvol_name + '_Sphere_sPhi','{}'.format(ppsChNodeTag.attributes['startphi'].value),self._registry, False)
-                            except KeyError :
+                            except KeyError:
                                 pSPhi = _defines.Expression(pvol_name + '_Sphere_sPhi', "0", self._registry, False)
                             pDPhi = _defines.Expression(pvol_name + '_Sphere_dPhi','{}'.format(ppsChNodeTag.attributes['deltaphi'].value),self._registry, False)
                             try :
                                 pSTheta = _defines.Expression(pvol_name + '_Sphere_sTheta','{}'.format(ppsChNodeTag.attributes['starttheta'].value),self._registry, False)
-                            except KeyError :
+                            except KeyError:
                                 pSTheta = _defines.Expression(pvol_name + '_Sphere_sTheta', "0", self._registry, False)
                             pDTheta = _defines.Expression(pvol_name + '_Sphere_sTheta','{}'.format(ppsChNodeTag.attributes['deltatheta'].value),self._registry, False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
 
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1621,11 +1621,11 @@ class Reader(object):
                                 pSPhi = _defines.Expression(pvol_name + '_Torus_sPhi', "0", self._registry, False)
                             pDPhi = _defines.Expression(pvol_name + '_Torus_dPhi', '{}'.format(ppsChNodeTag.attributes['deltaphi'].value),self._registry, False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1638,11 +1638,11 @@ class Reader(object):
                             outerStereo = _defines.Expression(pvol_name + '_Hype_ouSt','{}'.format(ppsChNodeTag.attributes['outst'].value), self._registry,False)
                             lenZ        = _defines.Expression(pvol_name + '_Hype_z','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1655,12 +1655,12 @@ class Reader(object):
                             pAlpha = _defines.Expression(pvol_name + '_Para_alpha','{}'.format(ppsChNodeTag.attributes['alpha'].value), self._registry,False)
                             pTheta = _defines.Expression(pvol_name + '_Para_theta', '{}'.format(ppsChNodeTag.attributes['theta'].value),self._registry, False)
                             pPhi = _defines.Expression(pvol_name + '_Para_phi', '{}'.format(ppsChNodeTag.attributes['phi'].value),self._registry, False)
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
 
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1673,7 +1673,7 @@ class Reader(object):
                             pY2 = _defines.Expression(pvol_name + '_Trd_y2','{}'.format(ppsChNodeTag.attributes['y2'].value), self._registry,False)
                             pZ = _defines.Expression(pvol_name + '_Trd_z','{}'.format(ppsChNodeTag.attributes['z'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
@@ -1692,11 +1692,11 @@ class Reader(object):
                             pDx4 = _defines.Expression(pvol_name + '_Trap_dx4','{}'.format(ppsChNodeTag.attributes['x4'].value), self._registry,False)
                             pAlp2 = _defines.Expression(pvol_name + '_Trap_dAlp2','{}'.format(ppsChNodeTag.attributes['alpha2'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1706,11 +1706,11 @@ class Reader(object):
                             startphi = _defines.Expression(pvol_name + '_Polycone_startphi','{}'.format(ppsChNodeTag.attributes['startPhi'].value), self._registry,False)
                             deltaphi = _defines.Expression(pvol_name + '_Polycone_deltaphi','{}'.format(ppsChNodeTag.attributes['openPhi'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1735,11 +1735,11 @@ class Reader(object):
                             deltaphi = _defines.Expression(pvol_name + '_Polyhedra_deltaphi','{}'.format(ppsChNodeTag.attributes['openPhi'].value), self._registry,False)
                             numsides = _defines.Expression(pvol_name + '_Polyhedra_numsides','{}'.format(ppsChNodeTag.attributes['numSide'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
-                            if ppsChNodeTag.attributes.has_key('aunit'):
+                            if 'aunit' in ppsChNodeTag.attributes:
                                 aunit = ppsChNodeTag.attributes['aunit'].value
                             else:
                                 aunit = "rad"
@@ -1767,7 +1767,7 @@ class Reader(object):
                             pzBottomCut = _defines.Expression(pvol_name + '_Ellipsoid_zcut1','{}'.format(ppsChNodeTag.attributes['zcut1'].value), self._registry,False)
                             pzTopCut = _defines.Expression(pvol_name + '_Ellipsoid_zcut2','{}'.format(ppsChNodeTag.attributes['zcut2'].value), self._registry,False)
 
-                            if ppsChNodeTag.attributes.has_key('lunit'):
+                            if 'lunit' in ppsChNodeTag.attributes:
                                 lunit = ppsChNodeTag.attributes['lunit'].value
                             else:
                                 lunit = "mm"
