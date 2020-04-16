@@ -911,7 +911,6 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
     import pyg4ometry.pycgal as pycgal
     import ctypes as ctypes
 
-    pycgal.pycsgmeshWritePolygon(mesh,"test.pol")
     nef = pycgal.pycsgmesh2NefPolyhedron(mesh)
 
     nconvex = ctypes.c_int(0)
