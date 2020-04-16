@@ -865,7 +865,7 @@ class RAW(_WED_RAW):
 class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
-
+    
     :param name: of body
     :type name: str
     :param vertices: Eight vertices which make up the polyhedron as \
@@ -878,9 +878,10 @@ class ARB(BodyMixin):
     only four or five faces are needed.  Any unneeded faces must be set to 0 \
     (no less than 4 sides).  Note that the references to the vertices are not \
     zero-counting.  The order of the vertices denoted in the facenumbers must \
-    be either all clockwise or all anticlockwise, which if not obeyed
-    will \ result in erroneous output without warning.
+    be either all clockwise or all anticlockwise, which if not obeyed \
+    will result in erroneous output without warning.
     :type facenumbers: float
+    
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
                  flukaregistry=None,comment=""):
@@ -1671,7 +1672,8 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
                                            self.xsemi, self.ysemi)
 
 class QUA(BodyMixin):
-    """Generic quadric
+    """
+    Generic quadric
 
     :param name: of body
     :type name: str
@@ -1687,14 +1689,15 @@ class QUA(BodyMixin):
     :type cxz: float
     :param cyz: yz coefficient
     :type cyz: float
-    :param cx : x coefficient
+    :param cx: x coefficient
     :type cx: float
-    :param cy : y coefficient
+    :param cy: y coefficient
     :type cy: float
-    :param cz : z coefficient
+    :param cz: z coefficient
     :type cz: float
-    :param c : constant
+    :param c: constant
     :type c: constant
+    
     """
     def __init__(self, name,
                  cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
