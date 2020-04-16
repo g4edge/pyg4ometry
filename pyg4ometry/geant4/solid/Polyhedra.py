@@ -1,7 +1,7 @@
-from GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
-from SolidBase import SolidBase as _SolidBase
+from .GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
+from .SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
-from Polycone import Polycone as _Polycone
+from .Polycone import Polycone as _Polycone
 import numpy as _np
 import logging as _log
 

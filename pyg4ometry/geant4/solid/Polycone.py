@@ -1,10 +1,10 @@
-from SolidBase             import SolidBase     as _SolidBase
-from GenericPolyhedra import GenericPolyhedra   as  _GenericPolyhedra
+from .SolidBase             import SolidBase     as _SolidBase
+from .GenericPolyhedra import GenericPolyhedra   as  _GenericPolyhedra
 from pyg4ometry.pycsg.core import CSG           as _CSG
 from pyg4ometry.pycsg.geom import Vector        as _Vector
 from pyg4ometry.pycsg.geom import Vertex        as _Vertex
 from pyg4ometry.pycsg.geom import Polygon       as _Polygon
-from Wedge                 import Wedge         as _Wedge
+from .Wedge                 import Wedge         as _Wedge
 
 import logging as _log
 import numpy as _np

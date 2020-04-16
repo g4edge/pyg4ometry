@@ -1,4 +1,4 @@
-from Registry import registry as _registry
+from .Registry import registry as _registry
 
 class SkinSurface:
     def __init__(self, name, volumeref, surface_property, registry, addRegistry=True):

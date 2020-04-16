@@ -1,1 +1,1 @@
-from GdmlExpressionEval import ExpressionParser
+from .GdmlExpressionEval import ExpressionParser

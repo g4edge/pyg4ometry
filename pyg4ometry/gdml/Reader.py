@@ -4,7 +4,7 @@ from   xml.dom import minidom            as _minidom
 import xml.parsers.expat                 as _expat
 import warnings                          as _warnings
 from   math import pi                    as _pi
-import Defines                           as _defines
+from . import Defines                           as _defines
 import logging                           as _log
 
 import pyg4ometry.geant4                          as _g4
@@ -88,11 +88,11 @@ class Reader(object):
         try :
             xmldoc = _minidom.parseString(fs)
         except _expat.ExpatError as ee : 
-            print ee.args
-            print ee.args[0]
+            print(ee.args)
+            print(ee.args[0])
             column = int(ee.args[0].split()[-1])
-            print column,fs[column-10:min(len(fs),column+100)]
-            print "        ^^^^ "
+            print(column,fs[column-10:min(len(fs),column+100)])
+            print("        ^^^^ ")
             raise _expat.ExpatError()
         _log.info('Reader.load> parse')
 
@@ -177,7 +177,7 @@ class Reader(object):
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name,coldim,values, self._registry)
             else:
-                print "Warning : unrecognised define: ", define_type
+                print("Warning : unrecognised define: ", define_type)
 
     def parseVector(self, node, type = "position", addRegistry=True) : 
         try : 
@@ -313,7 +313,7 @@ class Reader(object):
                 materials.append(def_attrs)
 
             else:
-                print "Urecognised define: ", mat_type
+                print("Urecognised define: ", mat_type)
 
         self._makeMaterials(materials, elements, isotopes)
 
@@ -503,7 +503,7 @@ class Reader(object):
                 pass
                 # self.parseSolidLoop(node)
             else : 
-                print solid_type, node.attributes['name'].value
+                print(solid_type, node.attributes['name'].value)
 
     def parseBox(self, node) : 
         solid_name = node.attributes['name'].value 
@@ -1361,9 +1361,9 @@ class Reader(object):
                 surf  = _g4.SkinSurface(name, volref, surf_property, self._registry)
 
             elif node_name == "loop" :
-                print "Reader> loop not implemented"
+                print("Reader> loop not implemented")
             else:
-                print "Unrecognised node: ", node_name
+                print("Unrecognised node: ", node_name)
         
     def parsePhysicalVolumeChildren(self, node, vol) :
         for chNode in node.childNodes :

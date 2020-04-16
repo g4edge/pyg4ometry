@@ -4,9 +4,9 @@ import sys
 
 from antlr4 import *
 
-from GdmlExpressionLexer import GdmlExpressionLexer
-from GdmlExpressionParser import GdmlExpressionParser
-from GdmlExpressionVisitor import GdmlExpressionVisitor
+from .GdmlExpressionLexer import GdmlExpressionLexer
+from .GdmlExpressionParser import GdmlExpressionParser
+from .GdmlExpressionVisitor import GdmlExpressionVisitor
 
 from ..Units import units as _units
 
@@ -39,7 +39,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitPrintExpr(self, ctx):
         value = self.visit(ctx.expr())
-        print value
+        print(value)
         return 0
 
     def visitScientific(self, ctx):

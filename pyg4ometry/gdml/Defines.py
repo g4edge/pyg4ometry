@@ -99,7 +99,7 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
         elif type == "scale" : 
             return Scale("",var[0],var[1],var[2],"none",reg, addRegistry)
         else : 
-            print 'type not defined'
+            print('type not defined')
 
 def upgradeToTransformation(var, reg, addRegistry = False) : 
     """
@@ -585,7 +585,7 @@ class VectorBase(object) :
         return p
 
     def __mul__(self,other) : 
-        print type(self),type(other)
+        print(type(self),type(other))
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
         

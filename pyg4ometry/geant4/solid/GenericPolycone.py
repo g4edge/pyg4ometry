@@ -1,5 +1,5 @@
-from SolidBase import SolidBase as _SolidBase
-from GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
+from .SolidBase import SolidBase as _SolidBase
+from .GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Polygon as _Polygon

@@ -4,7 +4,8 @@ from operator import mul, add
 import sys
 from warnings import warn
 
-import antlr4
+from antlr4.error import ErrorListener
+from antlr4.error import Errors
 import numpy as np
 
 from . import body
@@ -630,7 +631,7 @@ class RegionVisitor(RegionParserVisitor):
         body = self.flukaregistry.bodyDict[bodyName]
         return [("+", body)] # implicit intersection
 
-class SensitiveErrorListener(antlr4.error.ErrorListener.ErrorListener):
+class SensitiveErrorListener(ErrorListener.ErrorListener):
     """ANTLR4 by default is very passive regarding parsing errors, it will
     just carry on parsing and potentially build a nonsense-tree. This
     is not ideal as pyfluka has a very convoluted syntax; we want to

@@ -1,4 +1,4 @@
-import PhysicalVolume as _PhysicalVolume
+from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
 from   pyg4ometry.visualisation  import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
@@ -7,7 +7,7 @@ import numpy as _np
 import copy as _copy
 import logging as _log
 
-class ReplicaVolume(_PhysicalVolume.PhysicalVolume) : 
+class ReplicaVolume(_PhysicalVolume) :
     '''
     ReplicaVolume: G4PVReplica
 

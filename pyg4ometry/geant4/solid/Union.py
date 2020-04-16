@@ -1,4 +1,4 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
 import pyg4ometry.exceptions
 from ...transformation import *

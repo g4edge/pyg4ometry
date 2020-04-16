@@ -61,5 +61,6 @@ class SolidBase(object):
         start = _time.time()
         m = self.pycsgmesh()
         elapsed_time_fl = (_time.time() - start)
-        print elapsed_time_fl,len(m.polygons)
+        print(elapsed_time_fl)
+        print(len(m.polygons))
         return m

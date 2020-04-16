@@ -1,13 +1,15 @@
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.exceptions as _exceptions
-import Material as _mat
-import solid.SolidBase
+from . import Material as _mat
+from . import solid
 
-def solidName(var) : 
-    if isinstance(var,solid.SolidBase) :
+
+def solidName(var):
+    if isinstance(var, solid.SolidBase):
         return var.name
-    elif isinstance(var,str) :
+    elif isinstance(var, str):
         return var
+
 
 class Registry:
 
@@ -197,7 +199,7 @@ class Registry:
     def addParameter(self, parameter):
         try:
             self.parameterDict[parameter.name]
-            print 'parameter replicated', parameter.name
+            print(f'parameter replicated: {parameter.name}')
             raise _exceptions.IdenticalNameError(parameter.name,
                                                            "parameter")
         except KeyError:
@@ -440,8 +442,8 @@ class Registry:
         return self.worldVolume
 
     def printStats(self):
-        print self.solidTypeCountDict
-        print self.logicalVolumeUsageCountDict
+        print(self.solidTypeCountDict)
+        print(self.logicalVolumeUsageCountDict)
 
     def toFlukaRegistry(self):
         import pyg4ometry.fluka as _f

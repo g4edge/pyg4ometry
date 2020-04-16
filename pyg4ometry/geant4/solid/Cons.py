@@ -1,7 +1,7 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 from pyg4ometry.pycsg.core import CSG as _CSG
-from Plane import Plane as _Plane
-from Wedge import Wedge as _Wedge
+from .Plane import Plane as _Plane
+from .Wedge import Wedge as _Wedge
 from ...pycsg.geom import Vertex as _Vertex
 from pyg4ometry.pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Polygon as _Polygon

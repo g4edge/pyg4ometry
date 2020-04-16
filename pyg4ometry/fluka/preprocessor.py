@@ -197,7 +197,7 @@ class _Calc(ast.NodeVisitor):
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.Mult: operator.mul,
-        ast.Div: operator.div,
+        ast.Div: operator.truediv,
         ast.Invert: operator.neg,
         ast.Pow: operator.pow
     }
