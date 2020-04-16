@@ -1,11 +1,11 @@
 import sys
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QFileDialog, QTreeWidget, QTreeWidget, QTreeWidgetItem, QDockWidget
-from QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
+from .QVTKRenderWindowInteractor import  QVTKRenderWindowInteractor
 
 import pyg4ometry.visualisation.VtkViewer
 
-from GeometryModel import GeometryModel
+from .GeometryModel import GeometryModel
 
 class MainWindow(QMainWindow):
     
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
     def slotModelChanged(self, signal):
         iModel = signal.row()
-        print signal,iModel
+        print(signal,iModel)
 
         rens = self.vtkWidget.GetRenderWindow().GetRenderers()
 

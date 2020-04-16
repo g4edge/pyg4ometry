@@ -1,3 +1,4 @@
+import numbers
 from pyg4ometry.geant4 import Expression as _Expression
 from pyg4ometry.gdml import Units as _Units
 
@@ -20,8 +21,8 @@ def upgradeToStringExpression(reg, obj) :
         # return str(obj)                  # number like so return string
         return "%.15f" % obj
 
-    elif isinstance(obj,str) or isinstance(obj,unicode) : 
-        if reg.defineDict.has_key(obj) : # not sure if this is needed   
+    elif isinstance(obj, str):# or isinstance(obj,unicode) :
+        if obj in reg.defineDict:  # not sure if this is needed
             return obj
         else :
             e = _Expression("",obj,reg)
@@ -35,23 +36,24 @@ def upgradeToStringExpression(reg, obj) :
                 err.args = err.args + (msg,)
                 raise
 
-    elif isinstance(obj,ScalarBase) :   
-        if reg.defineDict.has_key(obj.name) :
+    elif isinstance(obj,ScalarBase):
+        if obj.name in reg.defineDict:
             return obj.name             # so a scalar expression in registry
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
 
 def evaluateToFloat(reg, obj):
     try:
+        if isinstance(obj, str):
+            raise AttributeError
         ans = [evaluateToFloat(reg, item) for item in obj.__iter__()]
-    except AttributeError:
-        if is_numlike(obj) or isinstance(obj, ScalarBase):
+    except (AttributeError, ):
+        if isinstance(obj, numbers.Number) or isinstance(obj, ScalarBase):
             evaluatable = obj
         elif isinstance(obj, VectorBase):
             return obj.eval()
         else:
             evaluatable = _Expression("",obj,reg)
-
         ans = float(evaluatable)
 
     return ans
@@ -185,7 +187,7 @@ class ScalarBase(object) :
                      addRegistry=False)
         return v
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
@@ -194,7 +196,7 @@ class ScalarBase(object) :
                      addRegistry=False)
         return v
 
-    def __rdiv__(self, other):
+    def __rtruediv__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
@@ -415,6 +417,7 @@ class Constant(ScalarBase) :
     def __repr__(self) :
         return "Constant : {} = {}".format(self.name, str(self.expr))
 
+
 class Quantity(ScalarBase) :
     """
     GDML quantity define wrapper object
@@ -463,6 +466,7 @@ class Quantity(ScalarBase) :
 
     def __repr__(self) :
         return "Quantity: {} = {} [{}] {}".format(self.name, str(self.expr), self.unit, self.type)
+
 
 class Variable(ScalarBase) :
     """
@@ -827,7 +831,7 @@ class Matrix :
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
 
     def __getitem__(self, key):
-        if self.registry.defineDict.has_key(self.name) :  
+        if self.name in self.registry.defineDict:
             stridx = ','.join([str(v+1) for v in key])
             return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
         else :

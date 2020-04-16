@@ -69,7 +69,7 @@ class FlukaRegistry(object):
 
     def regionExtents(self, write=None):
         regionExtents = {}
-        for regionName, region in self.regionDict.iteritems():
+        for regionName, region in self.regionDict.items():
             regionExtents[regionName] = region.extent()
 
         if write:
@@ -80,7 +80,7 @@ class FlukaRegistry(object):
 
     def latticeExtents(self):
         latticeCellExtents = {}
-        for cellName, lattice in self.latticeDict.iteritems():
+        for cellName, lattice in self.latticeDict.items():
             latticeCellExtents[cellName] = lattice.cellRegion.extent()
         return latticeCellExtents
 

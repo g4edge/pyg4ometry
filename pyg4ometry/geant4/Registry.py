@@ -72,7 +72,7 @@ class Registry:
         :type material: Material
         """        
 
-        if self.materialDict.has_key(material.name) :
+        if material.name in self.materialDict:
             if namePolicy == "none":
                 if material.name.find("G4") != -1 :
                     return
@@ -87,16 +87,16 @@ class Registry:
             self.materialDict[material.name] = material
             self.materialNameCount[material.name] = 0
 
-    def addSolid(self,solid, namePolicy = "none"):
+    def addSolid(self, solid, namePolicy="none"):
         """
         :param solid: Solid object for starage 
         :type solid: One of the geant4 solids
         """
 
-        if self.solidDict.has_key(solid.name) :
-            if namePolicy == "none" :
+        if solid.name in self.solidDict:
+            if namePolicy == "none":
                 raise _exceptions.IdenticalNameError(solid.name, "solid")
-            elif namePolicy == "reuse" :
+            elif namePolicy == "reuse":
                 return
             elif namePolicy == "increment" :
                 self.solidNameCount[solid.name] += 1
@@ -106,7 +106,6 @@ class Registry:
         else :
             self.solidDict[solid.name] = solid
             self.solidNameCount[solid.name] = 0
-
 
         try:
             self.solidTypeCountDict[solid.type] += 1
@@ -119,7 +118,7 @@ class Registry:
         :type volume: LogicalVolume
         """
 
-        if self.logicalVolumeDict.has_key(volume.name) :
+        if volume.name in self.logicalVolumeDict:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(volume.name,"logical volume")
             elif namePolicy == "reuse" :
@@ -145,7 +144,7 @@ class Registry:
         :type volume: PhysicalVolume
         """
 
-        if self.physicalVolumeDict.has_key(volume.name) :
+        if volume.name in self.physicalVolumeDict:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(volume.name,"physical volume")
             elif namePolicy == "reuse" :
@@ -176,7 +175,7 @@ class Registry:
         :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
         """
 
-        if self.surfaceDict.has_key(surface.name) :
+        if surface.name in self.surfaceDict:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(surface.name, "surface")
             elif namePolicy == "reuse" :
@@ -215,10 +214,10 @@ class Registry:
         """
 
         from pyg4ometry.gdml.Units import units as _units
-        if _units.has_key(define.name):
+        if define.name in _units:
             raise ValueError("Redefinition of a constant unit : {}".format(define.name))
 
-        if self.defineDict.has_key(define.name):
+        if define.name in self.defineDict:
             if namePolicy == "none" :
                 raise _exceptions.IdenticalNameError(define.name,"define")
             elif namePolicy == "reuse" :
@@ -251,7 +250,7 @@ class Registry:
         '''Need to have a ordered list of all material entities for writing to
         GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
 
-        for name, obj in self.materialDict.iteritems():  # Forces registered materials to
+        for name, obj in self.materialDict.items():  # Forces registered materials to
             if isinstance(obj, _mat.Material):           # recursively register their components too
                 obj.set_registry(self)
 
@@ -259,7 +258,7 @@ class Registry:
         isotopes = []  # Isotopes and elements don't need internal ordering as no
         elements = []  # istotope of isotopes or element of elements
         materials = []  # Material do need internal ordering as material of materials is possible
-        for name, obj in self.materialDict.iteritems():
+        for name, obj in self.materialDict.items():
             if isinstance(obj, _mat.Isotope):
                 isotopes.append(obj)
             elif isinstance(obj, _mat.Element):
@@ -387,27 +386,27 @@ class Registry:
         # If the variable is a position, rotation or scale
         if isinstance(var,_Defines.VectorBase) :
             for v in var.x.variables() :
-                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                if v in self._registryOld.defineDict:      # it in the other registry
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
             for v in var.y.variables() :
-                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                if v in self._registryOld.defineDict:      # it in the other registry
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
             for v in var.z.variables() :
-                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                if v in self._registryOld.defineDict:      # it in the other registry
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
-            if self._registryOld.defineDict.has_key(var.name):
+            if var.name in self._registryOld.defineDict:
                 var.name = self.addDefine(var,"reuse")
             var.setRegistry(self)
         # If a normal expression
         else :
             for v in var.expr.variables() :                       # loop over all variables needed for an express
-                if self._registryOld.defineDict.has_key(v) :      # it in the other registry
+                if v in self._registryOld.defineDict:      # it in the other registry
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
-            if self._registryOld.defineDict.has_key(var.name):    # check if variable is stored in registry, if so need to be transferred
+            if var.name in self._registryOld.defineDict:    # check if variable is stored in registry, if so need to be transferred
                 var.name = self.addDefine(var, "reuse")           # probabably best to reuse here
             var.setRegistry(self)
 

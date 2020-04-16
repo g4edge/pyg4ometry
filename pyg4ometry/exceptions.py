@@ -16,11 +16,12 @@ class NullMeshError(Exception):
                                 " {}, {}.".format(self.solid.obj1.name,
                                                   self.solid.obj2.name))
             else:
-                self.message == "Null mesh in {}.".format(type(self.solid))
-            super(Exception, self).__init__(self.message)
-        elif isinstance(arg, basestring):
+                self.message = "Null mesh in {}.".format(type(self.solid))
+            super(Exception, self).__init__(str(self))
+        elif isinstance(arg, str):
             self.message = arg
-            super(Exception, self).__init__(self.message)
+            super(Exception, self).__init__(str(self))
+
 
 class IdenticalNameError(Exception):
     """
@@ -44,8 +45,10 @@ class IdenticalNameError(Exception):
                     nametype, name))
         super(Exception, self).__init__(self.message)
 
+
 class FLUKAError(Exception):
     pass
+
 
 class FLUKAInputError(Exception):
     def __init__(self, message):
