@@ -1,4 +1,4 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 from pyg4ometry.geant4.Registry import registry as _registry
 from pyg4ometry.transformation import *
 

@@ -1,7 +1,7 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 
-from Tubs import Tubs as _Tubs
-from Plane import Plane as _Plane
+from .Tubs import Tubs as _Tubs
+from .Plane import Plane as _Plane
 
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex

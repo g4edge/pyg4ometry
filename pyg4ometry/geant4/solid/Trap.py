@@ -1,5 +1,5 @@
-from SolidBase import SolidBase as _SolidBase
-from Wedge     import Wedge     as _Wedge
+from .SolidBase import SolidBase as _SolidBase
+from .Wedge     import Wedge     as _Wedge
 from pyg4ometry.pycsg.core import CSG     as _CSG
 from pyg4ometry.pycsg.geom import Vector  as _Vector
 from pyg4ometry.pycsg.geom import Vertex  as _Vertex

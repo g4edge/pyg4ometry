@@ -1,1 +1,1 @@
-from Reader import *
+from .Reader import *

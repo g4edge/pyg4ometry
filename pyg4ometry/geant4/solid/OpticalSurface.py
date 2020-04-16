@@ -1,4 +1,4 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 
 class OpticalSurface(_SolidBase):
 

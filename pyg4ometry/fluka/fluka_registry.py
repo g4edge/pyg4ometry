@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 from collections import OrderedDict, MutableMapping
 from itertools import count
 import logging
@@ -61,11 +61,11 @@ class FlukaRegistry(object):
         return self._bodiesAndRegions
 
     def printDefinitions(self):
-        print "bodyDict = {}".format(self.bodyDict)
-        print "regionDict = {}".format(self.regionDict)
-        print "materialDict = {}".format(self.materialDict)
-        print "latticeDict = {}".format(self.latticeDict)
-        print "cardDict = {}".format(self.cardDict)
+        print("bodyDict = {}".format(self.bodyDict))
+        print("regionDict = {}".format(self.regionDict))
+        print("materialDict = {}".format(self.materialDict))
+        print("latticeDict = {}".format(self.latticeDict))
+        print("cardDict = {}".format(self.cardDict))
 
     def regionExtents(self, write=None):
         regionExtents = {}
@@ -74,7 +74,7 @@ class FlukaRegistry(object):
 
         if write:
             with open(write, "wb") as f:
-                cPickle.dump(regionExtents, f)
+                pickle.dump(regionExtents, f)
 
         return regionExtents
 

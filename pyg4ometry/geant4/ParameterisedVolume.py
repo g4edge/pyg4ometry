@@ -1,4 +1,4 @@
-from ReplicaVolume import ReplicaVolume as _ReplicaVolume
+from .ReplicaVolume import ReplicaVolume as _ReplicaVolume
 from pyg4ometry.visualisation import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans

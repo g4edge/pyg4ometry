@@ -1,9 +1,9 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Polygon as _Polygon
-from Wedge import Wedge as _Wedge
+from .Wedge import Wedge as _Wedge
 import sys as _sys
 
 import numpy as _np

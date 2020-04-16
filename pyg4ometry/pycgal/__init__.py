@@ -1,1 +1,1 @@
-from cgal import *
+from .cgal import *

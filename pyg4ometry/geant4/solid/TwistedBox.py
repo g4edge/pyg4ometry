@@ -1,8 +1,8 @@
-from SolidBase import SolidBase as _SolidBase
-from TwistedSolid import TwistedSolid as _TwistedSolid
-from Wedge import Wedge as _Wedge
-from TwoVector import TwoVector as _TwoVector
-from Layer import Layer as _Layer
+from .SolidBase import SolidBase as _SolidBase
+from .TwistedSolid import TwistedSolid as _TwistedSolid
+from .Wedge import Wedge as _Wedge
+from .TwoVector import TwoVector as _TwoVector
+from .Layer import Layer as _Layer
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
 from ...pycsg.geom import Vertex as _Vertex

@@ -591,7 +591,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
         pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
 
-        print pSPhi, pDPhi
+        print(pSPhi, pDPhi)
         pZpl = [val * luval/10. for val in solid.evaluateParameter(solid.pZpl)]
         pRMin = [val * luval/10. for val in solid.evaluateParameter(solid.pRMin)]
         pRMax = [val * luval/10. for val in solid.evaluateParameter(solid.pRMax)]
@@ -794,13 +794,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False,commentName=commentName)
 
         if 0 :
-            print "-------------------------"
-            print "Union"
-            print solid.obj1.name, solid.obj2.name
-            print solid.obj1.type, solid.obj2.type
-            print type(r1), type(r2)
-            print r1.flukaFreeString()
-            print r2.flukaFreeString()
+            print("-------------------------")
+            print("Union")
+            print(solid.obj1.name, solid.obj2.name)
+            print(solid.obj1.type, solid.obj2.type)
+            print(type(r1), type(r2))
+            print(r1.flukaFreeString())
+            print(r2.flukaFreeString())
 
         fregion = _fluka.Region("R"+name)
 
@@ -830,13 +830,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False,commentName=commentName)
 
         if 0 :
-            print "-------------------------"
-            print "Subtraction"
-            print solid.obj1.name, solid.obj2.name
-            print solid.obj1.type, solid.obj2.type
-            print type(r1), type(r2)
-            print r1.flukaFreeString()
-            print r2.flukaFreeString()
+            print("-------------------------")
+            print("Subtraction")
+            print(solid.obj1.name, solid.obj2.name)
+            print(solid.obj1.type, solid.obj2.type)
+            print(type(r1), type(r2))
+            print(r1.flukaFreeString())
+            print(r2.flukaFreeString())
 
         fregion = _fluka.Region("R"+name)
 
@@ -868,13 +868,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         r2,flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,solid2,new_mtra, new_tra,flukaRegistry,False,commentName=commentName)
 
         if 0 :
-            print "-------------------------"
-            print "Intersection"
-            print solid.obj1.name, solid.obj2.name
-            print solid.obj1.type, solid.obj2.type
-            print type(r1), type(r2)
-            print r1.flukaFreeString()
-            print r2.flukaFreeString()
+            print("-------------------------")
+            print("Intersection")
+            print(solid.obj1.name, solid.obj2.name)
+            print(solid.obj1.type, solid.obj2.type)
+            print(type(r1), type(r2))
+            print(r1.flukaFreeString())
+            print(r2.flukaFreeString())
 
         fregion = _fluka.Region("R"+name)
 
@@ -884,7 +884,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             fregion.addZone(zone1)
 
     else :
-        print solid.type
+        print(solid.type)
 
     return fregion, flukaNameCount
 
@@ -898,9 +898,9 @@ def geant4Material2FlukaMaterial(g4registry = None) :
             materialNameStrip = materialName
         materialInstance  = material[1]
 
-        print materialName, materialNameStrip, materialInstance,\
+        print(materialName, materialNameStrip, materialInstance,\
             materialInstance.density,materialInstance.atomic_number, \
-            materialInstance.atomic_weight,materialInstance.number_of_components
+            materialInstance.atomic_weight,materialInstance.number_of_components)
 
         if materialInstance.number_of_components == 0 :
             pass
@@ -919,7 +919,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
     pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
 
-    print 'pycsgmesh2FlukaRegion> nconvex=',nconvex.value
+    print('pycsgmesh2FlukaRegion> nconvex=',nconvex.value)
 
     fregion = _fluka.Region("R" + name)
 
@@ -935,7 +935,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
         pycgal.convexpolyhedron_to_planes(polyhedra[i], ctypes.byref(nplanes), planespp)
 
-        print 'pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i],nplanes.value
+        print('pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i],nplanes.value)
 
         fzone = _fluka.Zone()
 

@@ -1,4 +1,4 @@
-from SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 from pyg4ometry.pycsg.core import CSG as _CSG
 
 import logging as _log

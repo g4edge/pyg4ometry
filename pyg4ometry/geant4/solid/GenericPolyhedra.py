@@ -1,5 +1,5 @@
-from SolidBase import SolidBase as _SolidBase
-from Polyhedra import Polyhedra
+from .SolidBase import SolidBase as _SolidBase
+from .Polyhedra import Polyhedra
 
 import logging as _log
 import numpy as _np

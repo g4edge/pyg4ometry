@@ -2,7 +2,7 @@ import os as _os
 import shutil as _shutil
 import numpy as _np
 import pyg4ometry.transformation as _transformation
-import Convert as _convert
+from . import Convert as _convert
 
 class RenderWriter :
     def __init__(self):

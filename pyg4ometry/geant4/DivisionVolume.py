@@ -1,4 +1,4 @@
-import PhysicalVolume as _PhysicalVolume
+from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
 from   pyg4ometry.visualisation  import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
@@ -8,7 +8,7 @@ import copy as _copy
 import logging as _log
 
 
-class DivisionVolume(_PhysicalVolume.PhysicalVolume) : 
+class DivisionVolume(_PhysicalVolume) :
     '''
     DivisionVolume: G4PVDivision
 
