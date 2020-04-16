@@ -171,11 +171,10 @@ class VtkViewer:
 
     def exportScreenShot(self, fileName="screenshot.png", rgba=True):
         '''
-
         Write the render window view to an image file.
 
         Image types supported are:
-         BMP, JPEG, PNM, PNG, PostScript, TIFF.
+        BMP, JPEG, PNM, PNG, PostScript, TIFF.
         The default parameters are used for all writers, change as needed.
 
         :param fileName: The file name, if no extension then PNG is assumed.
