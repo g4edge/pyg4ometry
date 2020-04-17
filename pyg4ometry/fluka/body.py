@@ -865,7 +865,7 @@ class RAW(_WED_RAW):
 class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
-    
+
     :param name: of body
     :type name: str
     :param vertices: Eight vertices which make up the polyhedron as \
@@ -881,7 +881,7 @@ class ARB(BodyMixin):
     be either all clockwise or all anticlockwise, which if not obeyed \
     will result in erroneous output without warning.
     :type facenumbers: float
-    
+
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
                  flukaregistry=None,comment=""):
@@ -1697,7 +1697,7 @@ class QUA(BodyMixin):
     :type cz: float
     :param c: constant
     :type c: constant
-    
+
     """
     def __init__(self, name,
                  cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
