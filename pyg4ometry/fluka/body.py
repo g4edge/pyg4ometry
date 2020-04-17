@@ -1878,6 +1878,19 @@ class QUA(BodyMixin):
                     self.cx, self.cy, self.cz,
                     self.c)
 
+    def flukaFreeString(self):
+        prefix = ""
+        if self.comment:
+            prefix = "* "+self.comment+"\n"
+        return "{}QUA {} {}".format(
+            prefix,
+            self.name,
+            _iterablesToFreeString([self.cxx, self.cyy, self.czz,
+                                    self.cxy, self.cxz, self.cyz,
+                                    self.cx, self.cy, self.cz, self.c]))
+
+
+
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
     if (first.dot(second) != 0.0

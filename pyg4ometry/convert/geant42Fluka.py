@@ -810,7 +810,51 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Ellipsoid" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        uval = _Units.unit(solid.lunit) / 10.
+
+        xsemi = solid.evaluateParameter(solid.pxSemiAxis) * uval
+        ysemi = solid.evaluateParameter(solid.pySemiAxis) * uval
+        zsemi = solid.evaluateParameter(solid.pzSemiAxis) * uval
+        zlow = solid.evaluateParameter(solid.pzBottomCut) * uval
+        zhigh = solid.evaluateParameter(solid.pzTopCut) * uval
+
+        cxx = xsemi**-2
+        cyy = ysemi**-2
+        czz = zsemi**-2
+
+        # Main ellipsoid.  ELL can't be used as ELL is an ellipsoid of rotation.
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            cxx, cyy, czz,
+                            0, 0, 0, 0, 0, 0, -1,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+
+        # Optional cuts in z to the ellipsoid.
+        ellcuti = 2
+        if zhigh < zsemi:
+            fbody2 = _fluka.XYP("B{}_0{}".format(name, ellcuti),
+                                zhigh,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addIntersection(fbody2)
+            ellcuti += 1
+
+        if zlow > -zsemi:
+            fbody3 = _fluka.XYP("B{}_0{}".format(name, ellcuti),
+                                zlow,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "EllipticalCone" :
@@ -1031,6 +1075,3 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
         fregion.addZone(fzone)
 
     return fregion
-
-
-
