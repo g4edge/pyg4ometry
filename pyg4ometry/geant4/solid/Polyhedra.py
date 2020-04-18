@@ -1,3 +1,4 @@
+from GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
 from SolidBase import SolidBase as _SolidBase
 from ..Registry import registry as _registry
 from Polycone import Polycone as _Polycone
@@ -83,15 +84,22 @@ class Polyhedra(_SolidBase):
         rInner = [val*luval for val in self.evaluateParameter(self.rInner)]
         rOuter = [val*luval for val in self.evaluateParameter(self.rOuter)]
 
-        _log.info("polyhedra.pycsgmesh>")
-        fillfrac  = phiTotal/(2*_np.pi)
-        slices    = (numSide)/fillfrac
+        pZ = []
+        pR = []
 
-        ph        = _Polycone(self.name, phiStart, phiTotal,
-                              zPlane, rInner, rOuter,
-                              registry=self.registry,
-                              lunit="mm", aunit="rad",
-                              nslice=int(_np.ceil(slices)), addRegistry=False)
-        mesh = ph.pycsgmesh()
+        # first point or rInner
+        pZ.append(zPlane[0])
+        pR.append(rInner[0])
 
-        return mesh
+        # rest of outer
+        pZ.extend(zPlane)
+        pR.extend(rOuter)
+
+        # reversed inner
+        pZ.extend(zPlane[-1:0:-1])
+        pR.extend(rInner[-1:0:-1])
+
+        ps = _GenericPolyhedra("ps", phiStart, phiTotal, numSide, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
+
+        return ps.pycsgmesh()
+

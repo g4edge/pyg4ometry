@@ -1,5 +1,8 @@
 from SolidBase import SolidBase as _SolidBase
-from Polycone import Polycone
+from GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
+from ...pycsg.core import CSG as _CSG
+from ...pycsg.geom import Vertex as _Vertex
+from ...pycsg.geom import Polygon as _Polygon
 
 import logging as _log
 import numpy as _np
@@ -31,7 +34,7 @@ class GenericPolycone(_SolidBase):
     """
 
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
-                 registry, lunit="mm", aunit="rad", nslice=16,
+                 registry, lunit="mm", aunit="rad", nslice=32,
                  addRegistry=True):
 
         self.type    = 'GenericPolycone'
@@ -71,21 +74,6 @@ class GenericPolycone(_SolidBase):
         pR = [val*luval for val in self.evaluateParameter(self.pR)]
         pZ = [val*luval for val in self.evaluateParameter(self.pZ)]
 
-        _log.info("genericpolycone.pycsgmesh>")
-        r_first = pR[0]
-        r_last = pR[-1]
-        z_first = pZ[0]
-        z_last = pZ[-1]
-        pRMin = []
-        for i, r in enumerate(pR):
-            #linear interpolation
-            r = (r_first*(z_last-pZ[i]) + r_last*(pZ[i]-z_first))/(z_last - z_first)
-            pRMin.append(r)
+        ps = _GenericPolyhedra("ps", pSPhi, pDPhi, self.nslice, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
 
-        # Use a proxy polycone to get the mesh
-        _poly = Polycone("temp", pSPhi, pDPhi, pZ, pRMin, pR,
-                         registry=self.registry,
-                         lunit="mm", aunit="rad",
-                         nslice=self.nslice, addRegistry=False)
-
-        return _poly.pycsgmesh()
+        return ps.pycsgmesh()
