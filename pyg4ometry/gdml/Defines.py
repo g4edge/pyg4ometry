@@ -608,7 +608,7 @@ class VectorBase(object) :
 
     __rmul__ = __mul__
 
-    def __div__(self,other) : 
+    def __truediv__(self,other) :
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
         
@@ -807,7 +807,7 @@ class Matrix :
 
         self.values_asarray = _np.array(self.values, dtype=_np.object)
         if self.coldim > 1:
-            self.values_asarray = self.values_asarray.reshape(self.coldim, len(values)/self.coldim)
+            self.values_asarray = self.values_asarray.reshape(self.coldim, int(len(values)/self.coldim))
 
         if registry != None:
             self.registry = registry
