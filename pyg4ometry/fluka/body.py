@@ -465,10 +465,10 @@ class RCC(BodyMixin):
         if self.comment != "" :
             prefix = "* "+self.comment+"\n"
         return prefix+\
-               "RCC {} {} {}".format(self.name,
-                                     _iterablesToFreeString(self.face,
-                                                               self.direction),
-                                     self.radius)
+               "RCC {} {} {} {}".format(self.name,
+                                     _iterablesToFreeString(self.face),
+                                     _iterablesToFreeString(self.direction),
+                                     str(self.radius))
 
 
 class REC(BodyMixin):
