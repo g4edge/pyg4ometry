@@ -8,10 +8,12 @@ _lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__),
                                 )
 
 vertexfacet_to_polyhedron = _lib.pyg4_cgal_vertexfacet_to_polyhedron
-vertexfacet_to_polyhedron.argtypes = [_ctypes.c_int,_ctypes.c_int,
+vertexfacet_to_polyhedron.argtypes = [_ctypes.c_int,
+                                      _ctypes.c_int,
                                       _np.ctypeslib.ndpointer(dtype=_np.uintp),
                                       _np.ctypeslib.ndpointer(dtype=_np.int, ndim=1),
-                                      _np.ctypeslib.ndpointer(dtype=_np.uintp)]
+                                      _np.ctypeslib.ndpointer(dtype=_np.uintp),
+                                      _ctypes.c_bool]
 vertexfacet_to_polyhedron.restype = _ctypes.c_void_p
 
 convexpolyhedron_to_planes = _lib.pyg4_cgal_convexpolyhedron_to_planes
@@ -95,7 +97,7 @@ def pycsgmesh2NefPolyhedron(mesh) :
     verts, polys, count = mesh.toVerticesAndPolygons()
 
     verts = _np.array(verts)
-    polyarray = _np.zeros((len(polys),4),dtype=int)
+    polyarray = _np.zeros((len(polys),10),dtype=int)
     npolyvert = []
     for p,i  in zip(polys,range(0,len(polys))):
         npolyvert.append(len(p))
@@ -117,7 +119,9 @@ def pycsgmesh2NefPolyhedron(mesh) :
                                            len(polys),
                                            vertspp,
                                            npolyvert,
-                                           polyarraypp)
+                                           polyarraypp,
+                                           _ctypes.c_bool(True))
+
     nefpolyhedron = polyhedron_to_nefpolyhedron(polyhedron)
     delete_polyhedron(polyhedron)
 
