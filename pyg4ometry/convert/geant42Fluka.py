@@ -858,7 +858,51 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "EllipticalCone" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+        uval = _Units.unit(solid.lunit) / 10.
+
+        # xsemi and ysemi are unitless
+        xsemi = solid.evaluateParameter(solid.pxSemiAxis)
+        ysemi = solid.evaluateParameter(solid.pySemiAxis)
+        zheight = solid.evaluateParameter(solid.zMax) * uval
+        zcut = solid.evaluateParameter(solid.pzTopCut) * uval
+
+        # (x/xSemiAxis)^2 + (y/ySemiAxis)^2 = (zheight - z)^2
+        cxx = xsemi**-2
+        cyy = ysemi**-2
+        czz = -1
+        cz = 2 * zheight
+        c = -zheight**2
+
+        fzone = _fluka.Zone()
+        # Cone from general quadric
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            cxx, cyy, czz,
+                            0, 0, 0, 0, 0, cz, c,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+
+        # Do the cuts on the infinite cone to make it finite
+        zcut = min(zcut, zheight)
+        fbody2 = _fluka.XYP("B{}_02".format(name),
+                            zcut,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody2)
+
+        fbody3 = _fluka.XYP("B{}_03".format(name),
+                            -zcut,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Paraboloid" :
