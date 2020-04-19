@@ -314,7 +314,7 @@ class Reader(object) :
             if obj.TypeId == "Part::Feature" : 
                 if fileName == None :
                     # label r,g,b,a surface/wireframe material
-                    print obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic'
+                    print(obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic')
                 else : 
                     if not randomColors :
                         f.write(obj.Label+'\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n')
@@ -338,7 +338,7 @@ class Reader(object) :
             for gobj in obj.Group : 
                 self.recursePrintObjectTree(gobj)
         elif obj.TypeId == 'Part::Feature' : 
-            print 'Part::Feature',obj.TypeId,obj.Label,obj.Placement
+            print('Part::Feature', obj.TypeId, obj.Label, obj.Placement)
 
     def recurseObjectTree(self, obj) : 
 
@@ -414,7 +414,7 @@ class Reader(object) :
             return [l,obj.Placement]
                        
         else : 
-            print 'freecad.reader> unprocessed %s' %(obj.TypeId)
+            print('freecad.reader> unprocessed %s' %(obj.TypeId))
 
 
 def MeshToFacetList(mesh) : 
