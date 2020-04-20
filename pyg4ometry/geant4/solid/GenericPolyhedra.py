@@ -65,8 +65,6 @@ class GenericPolyhedra(_SolidBase):
         pR = [val*luval for val in self.evaluateParameter(self.pR)]
         pZ = [val*luval for val in self.evaluateParameter(self.pZ)]
 
-        polygons = []
-
         dPhi = pDPhi / numSide
 
         zrList  = [[z,r] for z,r in zip(pZ,pR)]
@@ -84,6 +82,8 @@ class GenericPolyhedra(_SolidBase):
                 _plt.plot(cvPolygon[:,0],cvPolygon[:,1])
 
         # plotConvex()
+
+        polygons = []
 
         for i in range(0, len(pZ), 1):
 
