@@ -906,7 +906,47 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Paraboloid" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+
+        uval = _Units.unit(solid.lunit) / 10.
+
+        halflength = solid.evaluateParameter(solid.pDz) * uval
+        rlow = solid.evaluateParameter(solid.pR1) * uval
+        rhigh = solid.evaluateParameter(solid.pR2) * uval
+
+        # Equation:
+        # x^2 + y^2 + bz + c = 0;
+
+        cz = (rlow**2 - rhigh**2) / (2 * halflength)
+        c = (-rhigh**2 - rlow**2) / 2
+
+        fzone = _fluka.Zone()
+        # Tip points in -ve z direction.  larger face is +ve z.
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            1, 1, 0,
+                            0, 0, 0, 0, 0, cz, c,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+        # cut at positive z.
+        fbody2 = _fluka.XYP("B{}_02".format(name),
+                            halflength,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody2)
+        # cut at negative z
+        fbody3 = _fluka.XYP("B{}_03".format(name),
+                            -halflength,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Hype" :
