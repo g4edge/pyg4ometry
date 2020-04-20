@@ -950,7 +950,64 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Hype" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        uvalL = _Units.unit(solid.lunit) / 10
+        uvalA = _Units.unit(solid.aunit)
+
+        outerRadius = solid.evaluateParameter(solid.outerRadius) * uvalL
+        innerRadius = solid.evaluateParameter(solid.innerRadius) * uvalL
+        outerStereo = solid.evaluateParameter(solid.outerStereo) * uvalA
+        innerStereo = solid.evaluateParameter(solid.innerStereo) * uvalA
+        lenZ =  solid.evaluateParameter(solid.lenZ) * uvalL
+
+        # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
+        cOuter = -outerRadius**2
+        cInner = -innerRadius**2
+
+        czzOuter = -_np.arctan(outerStereo)**2
+        czzInner = -_np.arctan(innerStereo)**2
+        # from IPython import embed; embed()
+        fzone = _fluka.Zone()
+
+        # Outer QUA
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            1, 1, czzOuter,
+                            0, 0, 0, 0, 0, 0, cOuter,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+
+        ihype = 2
+        # Only build if it is not null
+        if innerRadius != 0 or innerStereo != 0:
+            # Inner QUA
+            fbody2 = _fluka.QUA("B{}_0{}".format(name, ihype),
+                                1, 1, czzInner,
+                                0, 0, 0, 0, 0, 0, cInner,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addSubtraction(fbody2)
+            ihype += 1
+
+        fbody3 = _fluka.XYP("B{}_0{}".format(name, ihype),
+                            lenZ / 2.0,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody3)
+        ihype += 1
+
+        fbody4 = _fluka.XYP("B{}_0{}".format(name, ihype),
+                            -lenZ / 2.0,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody4)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Tet" :
