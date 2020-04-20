@@ -958,16 +958,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         outerStereo = solid.evaluateParameter(solid.outerStereo) * uvalA
         innerStereo = solid.evaluateParameter(solid.innerStereo) * uvalA
         lenZ =  solid.evaluateParameter(solid.lenZ) * uvalL
-
         # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
         cOuter = -outerRadius**2
         cInner = -innerRadius**2
-
         czzOuter = -_np.arctan(outerStereo)**2
         czzInner = -_np.arctan(innerStereo)**2
-        # from IPython import embed; embed()
-        fzone = _fluka.Zone()
 
+        fzone = _fluka.Zone()
         # Outer QUA
         fbody1 = _fluka.QUA("B{}_01".format(name),
                             1, 1, czzOuter,
