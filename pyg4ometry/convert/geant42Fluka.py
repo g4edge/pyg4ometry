@@ -689,7 +689,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
         pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
 
-        print pSPhi, pDPhi
         pZpl = [val * luval/10. for val in solid.evaluateParameter(solid.pZpl)]
         pRMin = [val * luval/10. for val in solid.evaluateParameter(solid.pRMin)]
         pRMax = [val * luval/10. for val in solid.evaluateParameter(solid.pRMax)]
@@ -737,7 +736,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
 
         for i in range(0, len(zrListConvex), 1):
-            print 'new zone', i
 
             posBodies = []
             negBodies = []
@@ -840,7 +838,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         for i in range(0, len(zrListConvex), 1):
 
             for j in range(0,numSide, 1) :
-                print 'new zone',j
 
                 j1 = j
                 j2 = j + 1
@@ -1337,7 +1334,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
     pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
 
-    print 'pycsgmesh2FlukaRegion> nconvex=',nconvex.value
+    # print 'pycsgmesh2FlukaRegion> nconvex=',nconvex.value
 
     fregion = _fluka.Region("R" + name)
 
@@ -1353,7 +1350,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
         pycgal.convexpolyhedron_to_planes(polyhedra[i], ctypes.byref(nplanes), planespp)
 
-        print 'pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i],nplanes.value
+        # print 'pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i],nplanes.value
 
         fzone = _fluka.Zone()
 
