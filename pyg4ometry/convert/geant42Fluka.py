@@ -333,7 +333,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pDPhi  = solid.evaluateParameter(solid.pDPhi)*auval
 
         dir    = pDz*_transformation.tbxyz2matrix(rotation).dot(_np.array([0, 0, 1]))
-        base   = _np.array(position)-dir/2.0
+        base   = -dir/2.0
 
         fbody1 = _fluka.TRC("B"+name+"_01",base,dir,pRmax1,pRmax2,
                             transform=transform,
@@ -455,13 +455,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pSTheta = solid.evaluateParameter(solid.pSTheta)*auval
         pDTheta = solid.evaluateParameter(solid.pDTheta)*auval
 
-        fbody1  = _fluka.SPH("B"+name+"_01", position, pRmax,
+        fbody1  = _fluka.SPH("B"+name+"_01", [0,0,0], pRmax,
                              transform=transform,
                              flukaregistry=flukaRegistry,
                              comment=commentName)
 
         if pRmin != 0 :
-            fbody2 = _fluka.SPH("B"+name+"_02", position, pRmin,
+            fbody2 = _fluka.SPH("B"+name+"_02", [0,0,0], pRmin,
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
@@ -580,7 +580,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         pRmax   = solid.evaluateParameter(solid.pRMax)*luval/10.0
 
-        fbody1  = _fluka.SPH("B"+name+"_01", position, pRmax,
+        fbody1  = _fluka.SPH("B"+name+"_01", [0,0,0], pRmax,
                              transform=transform,
                              flukaregistry=flukaRegistry,
                              comment=commentName)
