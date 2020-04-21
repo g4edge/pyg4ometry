@@ -745,8 +745,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
                 j1 = j
                 j2 = (j+1) % len(zrListConvex[i])
 
-                # print zrListConvex[i][j1], zrListConvex[i][j2]
-
                 z1 = zrListConvex[i][j1][0]
                 r1 = zrListConvex[i][j1][1]
 
