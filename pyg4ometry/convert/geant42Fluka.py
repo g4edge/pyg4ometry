@@ -1113,8 +1113,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
         cOuter = -outerRadius**2
         cInner = -innerRadius**2
-        czzOuter = -_np.arctan(outerStereo)**2
-        czzInner = -_np.arctan(innerStereo)**2
+        czzOuter = -_np.tan(outerStereo)**2
+        czzInner = -_np.tan(innerStereo)**2
 
         fzone = _fluka.Zone()
         # Outer QUA
