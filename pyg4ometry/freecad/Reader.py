@@ -167,7 +167,7 @@ class Reader(object) :
                             
                 # remove placement 
                 placement = obj.Placement.inverse()
-                
+
                 # mesh includes placement and rotation (so it needs to be removed)
                 for i in range(0,len(m[0])) :
                     m[0][i] = placement.multVec(m[0][i]) 
@@ -300,6 +300,7 @@ class Reader(object) :
                 pass
 
         self.rootLogical = bLogical
+        self.rootPlacement = [tcentre.x,tcentre.y, tcentre.z]
         self._registry.setWorld(bLogical.name)
         
     def getRegistry(self) : 
