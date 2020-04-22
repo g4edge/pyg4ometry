@@ -97,7 +97,7 @@ def pycsgmesh2NefPolyhedron(mesh) :
     verts, polys, count = mesh.toVerticesAndPolygons()
 
     verts = _np.array(verts)
-    polyarray = _np.zeros((len(polys),10),dtype=int)
+    polyarray = _np.zeros((len(polys),30),dtype=int)
     npolyvert = []
     for p,i  in zip(polys,range(0,len(polys))):
         npolyvert.append(len(p))
