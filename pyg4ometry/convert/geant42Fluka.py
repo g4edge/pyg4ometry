@@ -1299,6 +1299,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     else :
         print solid.type
 
+    # print solid.name, name, solid.type, len(fregion.zones)
+
     return fregion, flukaNameCount
 
 
