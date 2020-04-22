@@ -296,6 +296,15 @@ class VtkViewer:
                          self.physicalActorMap,visOptions=visOptions, overlap=False, cutters=False)
 
 
+    def addMeshSimple(self, csgMesh, visOptions = _VisOptions()):
+        self.addMesh("mesh", "mesh", csgMesh,
+                     _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                     _np.array([0, 0, 0]),
+                     self.localmeshes,
+                     self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                     self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+
+
     def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
 
