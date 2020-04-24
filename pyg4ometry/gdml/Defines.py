@@ -16,11 +16,7 @@ def upgradeToStringExpression(reg, obj) :
     :rtype: str
     """
 
-    if is_numlike(obj) :             
-        # return str(obj)                  # number like so return string
-        return "%.15f" % obj
-
-    elif isinstance(obj,str) or isinstance(obj,unicode) : 
+    if isinstance(obj,str) or isinstance(obj,unicode) : 
         if reg.defineDict.has_key(obj) : # not sure if this is needed   
             return obj
         else :
@@ -40,15 +36,22 @@ def upgradeToStringExpression(reg, obj) :
             return obj.name             # so a scalar expression in registry
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
+    elif is_numlike(obj) :             
+        # return str(obj)                  # number like so return string
+        return "%.15f" % obj
+
+
 
 def evaluateToFloat(reg, obj):
     try:
         ans = [evaluateToFloat(reg, item) for item in obj.__iter__()]
     except AttributeError:
-        if is_numlike(obj) or isinstance(obj, ScalarBase):
+        if isinstance(obj, ScalarBase):
             evaluatable = obj
         elif isinstance(obj, VectorBase):
             return obj.eval()
+        elif is_numlike(obj):
+            evaluatable = obj
         else:
             evaluatable = _Expression("",obj,reg)
 
