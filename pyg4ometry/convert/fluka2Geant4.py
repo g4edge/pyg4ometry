@@ -120,7 +120,8 @@ def fluka2Geant4(flukareg,
     # With the modified fluka registry, finally, we convert to Geant4:
     greg = g4.Registry()
     wlv = _makeWorldVolume(worldDimensions, worldMaterial, greg)
-    materialMap = _getMaterialMap(materialMap)
+
+    materialMap = {} if materialMap is None else materialMap
     regionsToLVs = {} # For possible convertion of LATTICEs
     # Do non-lattice regions first as we convert the lattices in the
     # loop after this, as they must be treated differently.
@@ -427,11 +428,6 @@ def _getWorldDimensions(worldDimensions):
     if worldDimensions is None:
         return WORLD_DIMENSIONS
     return worldDimensions
-
-def _getMaterialMap(materialMap):
-    if not materialMap:
-        return {}
-    return materialMap
 
 def _getSelectedRegions(flukareg, regions, omitRegions):
     if not flukareg.regionDict:
