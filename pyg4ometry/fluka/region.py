@@ -467,7 +467,7 @@ class Region(object):
                 graph.add_edge(i, j)
         return graph
 
-    def get_connected_zones(self, zoneExtents=zoneExtents,
+    def connectedZones(self, zoneExtents=zoneExtents,
                             referenceExtent=None):
         return list(nx.connected_components(
             self.zoneGraph(zoneExtents=zoneExtents,

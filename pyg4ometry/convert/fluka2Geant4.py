@@ -227,8 +227,8 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions, quadricRegionExtents):
             newNamesToOldNames[name] = name
             continue
 
-
-        connected_zones = region.get_connected_zones(
+        connected_zones = region.connectedZones(
+            zoneExtents=regionZoneExtents[name],
             referenceExtent=quadricRegionBodyExtentMap)
 
         if len(connected_zones) == 1: # then there are no disjoint unions
