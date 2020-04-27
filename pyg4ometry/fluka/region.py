@@ -426,7 +426,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zoneGraph(self, referenceExtent=None):
+    def zoneGraph(self, zoneExtents=None, referenceExtent=None):
         zones = self.zones
         n_zones = len(zones)
 
@@ -437,8 +437,12 @@ class Region(object):
         if n_zones == 1: # return here if there's only one zone.
             return nx.connected_components(graph)
 
-        # Get extent for each zone
-        zone_extents = self._get_zone_extents(referenceExtent=referenceExtent)
+        # We allow the user to provide a list of zoneExtents as an
+        # optimisation, but if they have not been provided, then we
+        # will generate them here
+        if zoneExtents is None:
+            zoneExtents = self.zoneExtents(
+                referenceExtent=referenceExtent)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -463,11 +467,13 @@ class Region(object):
                 graph.add_edge(i, j)
         return graph
 
-    def get_connected_zones(self, referenceExtent=None):
+    def get_connected_zones(self, zoneExtents=zoneExtents,
+                            referenceExtent=None):
         return list(nx.connected_components(
-            self.zoneGraph(referenceExtent=referenceExtent)))
+            self.zoneGraph(zoneExtents=zoneExtents,
+                referenceExtent=referenceExtent)))
 
-    def _get_zone_extents(self, referenceExtent=None):
+    def zoneExtents(self, referenceExtent=None):
         material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
@@ -539,9 +545,6 @@ class Region(object):
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
                                            nameSuffix=nameSuffix))
         return result
-
-    def zoneExtents(self, referenceExtent=None):
-        return [z.extent(referenceExtent=referenceExtent) for z in self.zones]
 
 
 def _get_relative_rot_matrix(first, second):
