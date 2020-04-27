@@ -178,7 +178,18 @@ def _makeWorldVolume(dimensions, material, g4registry):
     return wlv
 
 def _makeLengthSafetyRegistry(flukareg, regions):
+    """Make a new registry from a registry with length safety applied
+    to the zones and regions within.
 
+    :param flukareg: The FlukaRegistry from which the new registry
+    with length safety applied should be built.
+    :type flukareg: FlukaRegistry
+    :param regions: The names of the regions that are to be converted.
+
+    """
+    # Why do I pass regions in as an argument?  Why don't I just
+    # filter the FlukaRegistry instance early on and then just carry
+    # on?
     bigger = fluka.FlukaRegistry()
     smaller = fluka.FlukaRegistry()
 
