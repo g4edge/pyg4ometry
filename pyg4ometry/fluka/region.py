@@ -452,7 +452,7 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
+            if not areExtentsOverlapping(zoneExtents[i], zoneExtents[j]):
                 continue
 
             # Check if a path already exists.  Not sure how often this
@@ -467,8 +467,7 @@ class Region(object):
                 graph.add_edge(i, j)
         return graph
 
-    def connectedZones(self, zoneExtents=zoneExtents,
-                            referenceExtent=None):
+    def connectedZones(self, zoneExtents=None, referenceExtent=None):
         return list(nx.connected_components(
             self.zoneGraph(zoneExtents=zoneExtents,
                 referenceExtent=referenceExtent)))
@@ -545,7 +544,6 @@ class Region(object):
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
                                            nameSuffix=nameSuffix))
         return result
-
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
