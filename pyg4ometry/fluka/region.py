@@ -540,6 +540,9 @@ class Region(object):
                                            nameSuffix=nameSuffix))
         return result
 
+    def zoneExtents(self, referenceExtent=None):
+        return [z.extent(referenceExtent=referenceExtent) for z in self.zones]
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
