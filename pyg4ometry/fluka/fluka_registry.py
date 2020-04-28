@@ -7,6 +7,7 @@ import pyg4ometry.geant4 as _g4
 from .region import Region
 from .directive import RecursiveRotoTranslation, RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError
+from .material import (PREDEFINED_MATERIAL_NAMES, BuiltIn)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -26,6 +27,10 @@ class FlukaRegistry(object):
         self.materialDict = OrderedDict()
         self.latticeDict = OrderedDict()
         self.cardDict = OrderedDict()
+
+        for name in PREDEFINED_MATERIAL_NAMES:
+            self.materialDict[name] = BuiltIn(name)
+
 
         self._bodiesAndRegions = {}
 
@@ -83,6 +88,15 @@ class FlukaRegistry(object):
         for cellName, lattice in self.latticeDict.iteritems():
             latticeCellExtents[cellName] = lattice.cellRegion.extent()
         return latticeCellExtents
+
+    def addMaterial(self, material):
+        name = material.name
+        if name in self.materialDict:
+            raise IdenticalNameError(name)
+        self.materialDict[material.name] = material
+
+    def getMaterial(self, name):
+        return self.materialDict.get(name)
 
 
 class RotoTranslationStore(MutableMapping):
