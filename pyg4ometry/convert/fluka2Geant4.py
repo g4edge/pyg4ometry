@@ -160,6 +160,18 @@ def fluka2Geant4(flukareg,
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
+    """Make a world solid and logical volume with the given dimensions,
+    material, and size, and add it to the geant4 Registry provided
+
+    :param dimensions: list of 3 elements providing the dimensions in \
+    [x, y, z] of the world box.
+    :type dimension: list
+    :param material: The name of the material to be used for the world volume.
+    :type material: str
+    :param g4registry: The geant4 Registry instance this world solid \
+    and logical volume is to be added to.
+
+    """
     worldMaterial = g4.MaterialPredefined(material)
 
     world_solid = g4.solid.Box("world_solid",
@@ -347,13 +359,32 @@ def _makeBodyMinimumReferenceExtentMap(flukareg, regionZoneExtents, regions):
     return bodies_to_minimum_extents
 
 def _getMaximalOfTwoExtents(extent1, extent2):
+    """Given two extents, returns the total extent that tightly bounds
+    the two given extents.
+
+    :param extent1: The first extent.
+    :type extent1: Extent
+    :param extent2: The second extent
+    :type extent2: Extent
+
+    """
     # Get combined extents which are greatest
     lower = [min(a, b) for a, b in zip(extent1.lower, extent2.lower)]
     upper = [max(a, b) for a, b in zip(extent1.upper, extent2.upper)]
     return fluka.Extent(lower, upper)
 
 def _filterBlackHoleRegions(flukareg, regions):
+    """Returns a new FlukaRegistry instance with all regions with
+    BLKCHOLE material removed.
 
+    :param flukareg: The FlukaRegistry instance from which the new \
+    FlukaRegistry instance sans BLCKHOLE regions is built.
+    :type flukareg: FlukaRegistry
+    :param regions: The names of the regions to be copied to the new \
+    instance.
+    :type regions: list
+
+    """
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
         if region.material == "BLCKHOLE":
