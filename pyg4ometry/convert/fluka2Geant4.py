@@ -83,7 +83,6 @@ def fluka2Geant4(flukareg,
     if splitDisjointUnions or minimiseSolids:
         regionZoneExtents = _getRegionZoneExtents(fr, regions,
                                                   quadricRegionExtents)
-
     if splitDisjointUnions:
         fr, newNamesToOldNames, regionZoneExtents = \
             _makeDisjointUnionsFlukaRegistry(fr, regions,
@@ -289,26 +288,37 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
     return fluka_reg_out, newNamesToOldNames, newRegionZoneExtents
 
 def _getRegionZoneExtents(flukareg, regions, quadricRegionExtents):
-    regionmap = flukareg.regionDict
-    regionExtents = {}
-    referenceExtent = None
-    if quadricRegionExtents:
-        referenceExtent = _makeQuadricRegionBodyExtentMap(flukareg,
-                                                          quadricRegionExtents)
-    for name, region in regionmap.iteritems():
-        if name in quadricRegionExtents:
-            regionExtents[name] = quadricRegionExtents[name]
+    """Loop over the regions, and for each region, get all the extents
+    of the zones belonging to that region.  Don't do this for
+    quadricRegionExtents, instead, just continue to use the extent
+    provided by the user."""
 
-        if name not in regions:
+    regionZoneExtents = {}
+    for name, region in flukareg.regionDict.iteritems():
+        if name in quadricRegionExtents:
+            # We choose to use the quadricRegionExtents rather than
+            # calculate new ones as each quadric must be evaluated
+            # with exactly the same extent in all its uses.  E.g if a
+            # region consists of a QUA subtraction, and another region
+            # consists of that same QUA being used to fill the gap,
+            # then if the extents aren't identical, then the two QUA
+            # curves won't be perfectly flush against each other, but
+            # instead will overlap quite badly.
+
+            # This could be improved by indeed meshing the regions and
+            # zones with QUAs in them, for all regions in which a
+            # given QUA occurs, return the total enveloping extent.
+            # This will give a tighter mesh whilst still ensuring that
+            # filling -QUA with +QUA will still work.  However, this
+            # is much simpler, and still works reasonably well.
+            nzones = len(region.zones)
+            regionZoneExtents[name] = nzones * [quadricRegionExtents[name]]
             continue
-        regionExtents[name] = region.zoneExtents(
-            referenceExtent=referenceExtent)
-    # XXX: We choose to use the quadricRegionExtents rather than the
-    # newly caclulated ones as each quadric must be evaluated with
-    # exactly the same extent in all its uses.  Could go again with
-    # getMaximalQuadricRegionExtents here, and ideally would.
-    regionExtents.update(quadricRegionExtents)
-    return regionExtents
+        elif name not in regions:
+            continue
+        else:
+            regionZoneExtents[name] = region.zoneExtents(referenceExtent=None)
+    return regionZoneExtents
 
 def _makeBodyMinimumReferenceExtentMap(flukareg, regionZoneExtents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
