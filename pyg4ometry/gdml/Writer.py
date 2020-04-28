@@ -457,7 +457,7 @@ class Writer(object):
         pvol.appendChild(vr)
 
         pos_size = self.doc.createElement('parameterised_position_size')
-        for i in range(instance.ncopies):
+        for i in range(int(float(instance.ncopies))):
             param_node = self.doc.createElement('parameters')
             param_node.setAttribute('number', str(i+1)) # As zero-indexed in python
 
@@ -580,7 +580,7 @@ class Writer(object):
 
             # Special handling of polysolids
             if dim_solid in ["polycone", "polyhedra"]:
-                z_planes = zip(params.pZpl, params.pRMin, params.pRMax)
+                z_planes = list(zip(params.pZpl, params.pRMin, params.pRMax))
                 dim.setAttribute("numRZ", str(len(z_planes)))
                 for pl in z_planes:
                     zpl = self.doc.createElement('zplane')
