@@ -1,11 +1,13 @@
+CXX=g++
+
 %.o : %.cpp
-	g++ -std=c++11 -fPIC -c $< -I/opt/local/include
+	$(CXX) -std=c++14 -fPIC -c $< -I/usr/local/include
 
 pyg4_cgal.so : pyg4_cgal.o
-	g++ -shared -o $@ $< -I/opt/local/include -L/opt/local/lib/ -lCGAL -lmpfr -lgmp -lboost_thread-mt -lstdc++
+	$(CXX) -shared -o $@ $< -I/usr/local/include -L/usr/local/lib/ -lmpfr -lgmp -lboost_thread-mt -lstdc++
 
 clean : 
 	rm -rf *.o *.so *.pyc *~
 
 polyhedron_load : polyhedron_load.cpp
-	g++ -o $@ polyhedron_load.cpp -I/opt/local/include -L/opt/local/lib/ -lCGAL -lmpfr -lgmp -lboost_thread-mt -lstdc++
+	$(CXX) -o $@ polyhedron_load.cpp -I/usr/local/include -L/usr/local/lib/ -lmpfr -lgmp -lboost_thread-mt -lstdc++
