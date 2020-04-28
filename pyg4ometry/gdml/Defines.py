@@ -212,6 +212,13 @@ class ScalarBase(object) :
                      addRegistry=False)
         return v
 
+
+    def __abs__(self):
+        return abs(self)
+
+    def __pow__(self, power):
+        return pow(self,power)
+
     __radd__ = __add__
     __rmul__ = __mul__
 

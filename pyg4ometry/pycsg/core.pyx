@@ -1,12 +1,11 @@
-import math
 import operator
-from geom import *
+from .geom import *
 import numpy as _np
 from hashlib import md5 as _md5
 from functools import reduce
 
-from geom import Vertex as _Vertex
-from geom import Vector as _Vector
+from .geom import Vertex as _Vertex
+from .geom import Vector as _Vector
 
 class CSG(object):
     """
@@ -78,7 +77,7 @@ class CSG(object):
     
     def clone(self):
         csg = CSG()
-        csg.polygons = list(map(lambda p: p.clone(), self.polygons))
+        csg.polygons = list([p.clone() for p in self.polygons])
         return csg
         
     def toPolygons(self):
@@ -164,8 +163,8 @@ class CSG(object):
            angleDeg: rotation angle in degrees
         """
         ax = Vector(axis[0], axis[1], axis[2]).unit()
-        cosAngle = math.cos(math.pi * angleDeg / 180.)
-        sinAngle = math.sin(math.pi * angleDeg / 180.)
+        cosAngle = _np.cos(_np.pi * angleDeg / 180.)
+        sinAngle = _np.sin(_np.pi * angleDeg / 180.)
 
         def newVector(v):
             vA = v.dot(ax)
@@ -218,7 +217,7 @@ class CSG(object):
                 count += 1
             polys.append(cell)
         # sort by index
-        sortedVertexIndex = sorted(vertexIndexMap.items(),
+        sortedVertexIndex = sorted(list(vertexIndexMap.items()),
                                    key=operator.itemgetter(1))
         verts = []
         for v, i in sortedVertexIndex:
@@ -608,7 +607,7 @@ class CSG(object):
         not modified.
         """
         csg = self.clone()
-        map(lambda p: p.flip(), csg.polygons)
+        list(map(lambda p: p.flip(), csg.polygons))
         return csg
 
     @classmethod
@@ -631,25 +630,22 @@ class CSG(object):
         if isinstance(radius, list): r = radius
         else: r = [radius, radius, radius]
 
-        polygons = list(map(
-            lambda v: Polygon( 
-                list(map(lambda i: 
-                    Vertex(
+        polygons = list([Polygon( 
+                list([Vertex(
                         Vector(
                             c.x + r[0] * (2 * bool(i & 1) - 1),
                             c.y + r[1] * (2 * bool(i & 2) - 1),
                             c.z + r[2] * (2 * bool(i & 4) - 1)
                         ), 
                         None
-                    ), v[0]))),
-                    [
+                    ) for i in v[0]])) for v in [
                         [[0, 4, 6, 2], [-1, 0, 0]],
                         [[1, 3, 7, 5], [+1, 0, 0]],
                         [[0, 1, 5, 4], [0, -1, 0]],
                         [[2, 6, 7, 3], [0, +1, 0]],
                         [[0, 2, 3, 1], [0, 0, -1]],
                         [[4, 5, 7, 6], [0, 0, +1]]
-                    ]))
+                    ]])
         return CSG.fromPolygons(polygons)
         
     @classmethod
@@ -677,13 +673,13 @@ class CSG(object):
         polygons = []
         def appendVertex(vertices, theta, phi):
             d = Vector(
-                math.cos(theta) * math.sin(phi),
-                math.cos(phi),
-                math.sin(theta) * math.sin(phi))
+                _np.cos(theta) * _np.sin(phi),
+                _np.cos(phi),
+                _np.sin(theta) * _np.sin(phi))
             vertices.append(Vertex(c.plus(d.times(r)), d))
             
-        dTheta = math.pi * 2.0 / float(slices)
-        dPhi = math.pi / float(stacks)
+        dTheta = _np.pi * 2.0 / float(slices)
+        dPhi = _np.pi / float(stacks)
 
         j0 = 0
         j1 = j0 + 1
@@ -771,7 +767,7 @@ class CSG(object):
         ray = e.minus(s)
 
         axisZ = ray.unit()
-        isY = (math.fabs(axisZ.y) > 0.5)
+        isY = (_np.fabs(axisZ.y) > 0.5)
         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
         axisY = axisX.cross(axisZ).unit()
         start = Vertex(s, axisZ.negated())
@@ -779,14 +775,14 @@ class CSG(object):
         polygons = []
         
         def point(stack, angle, normalBlend):
-            out = axisX.times(math.cos(angle)).plus(
-                axisY.times(math.sin(angle)))
+            out = axisX.times(_np.cos(angle)).plus(
+                axisY.times(_np.sin(angle)))
             pos = s.plus(ray.times(stack)).plus(out.times(r))
-            normal = out.times(1.0 - math.fabs(normalBlend)).plus(
+            normal = out.times(1.0 - _np.fabs(normalBlend)).plus(
                 axisZ.times(normalBlend))
             return Vertex(pos, normal)
             
-        dt = math.pi * 2.0 / float(slices)
+        dt = _np.pi * 2.0 / float(slices)
         for i in range(0, slices):
             t0 = i * dt
             i1 = (i + 1) % slices
@@ -828,26 +824,26 @@ class CSG(object):
         ray = e.minus(s)
         
         axisZ = ray.unit()
-        isY = (math.fabs(axisZ.y) > 0.5)
+        isY = (_np.fabs(axisZ.y) > 0.5)
         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
         axisY = axisX.cross(axisZ).unit()
         startNormal = axisZ.negated()
         start = Vertex(s, startNormal)
         polygons = []
         
-        taperAngle = math.atan2(r, ray.length())
-        sinTaperAngle = math.sin(taperAngle)
-        cosTaperAngle = math.cos(taperAngle)
+        taperAngle = _np.atan2(r, ray.length())
+        sinTaperAngle = _np.sin(taperAngle)
+        cosTaperAngle = _np.cos(taperAngle)
         def point(angle):
             # radial direction pointing out
-            out = axisX.times(math.cos(angle)).plus(
-                axisY.times(math.sin(angle)))
+            out = axisX.times(_np.cos(angle)).plus(
+                axisY.times(_np.sin(angle)))
             pos = s.plus(out.times(r))
             # normal taking into account the tapering of the cone
             normal = out.times(cosTaperAngle).plus(axisZ.times(sinTaperAngle))
             return pos, normal
 
-        dt = math.pi * 2.0 / float(slices)
+        dt = _np.pi * 2.0 / float(slices)
         for i in range(0, slices):
             t0 = i * dt
             i1 = (i + 1) % slices

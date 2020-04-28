@@ -681,30 +681,45 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         flukaNameCount += 1
 
-    elif solid.type == "Polycone":
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        luval = _Units.unit(solid.lunit)
-        auval = _Units.unit(solid.aunit)
+    elif solid.type == "GenericPolycone"  or solid.type == "Polycone":
 
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+        if solid.type == "GenericPolycone":
 
-        pZpl = [val * luval/10. for val in solid.evaluateParameter(solid.pZpl)]
-        pRMin = [val * luval/10. for val in solid.evaluateParameter(solid.pRMin)]
-        pRMax = [val * luval/10. for val in solid.evaluateParameter(solid.pRMax)]
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)/10.0
+            auval = _Units.unit(solid.aunit)
 
-        # increment name count
-        flukaNameCount += 1
+            pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
+            pR = [val*luval for val in solid.evaluateParameter(solid.pR)]
+            pZ = [val*luval for val in solid.evaluateParameter(solid.pZ)]
 
-    elif solid.type == "GenericPolycone" :
+        elif solid.type == "Polycone":
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)/10.0
+            auval = _Units.unit(solid.aunit)
 
-        luval = _Units.unit(solid.lunit)
-        auval = _Units.unit(solid.aunit)
+            pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
 
-        pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
-        pR = [val*luval/10.0 for val in solid.evaluateParameter(solid.pR)]
-        pZ = [val*luval/10.0 for val in solid.evaluateParameter(solid.pZ)]
+            pZpl = [val * luval for val in solid.evaluateParameter(solid.pZpl)]
+            pRMin = [val * luval  for val in solid.evaluateParameter(solid.pRMin)]
+            pRMax = [val * luval  for val in solid.evaluateParameter(solid.pRMax)]
+
+            pZ = []
+            pR = []
+
+            # first point or rInner
+            pZ.append(pZpl[0])
+            pR.append(pRMin[0])
+
+            # rest of outer
+            pZ.extend(pZpl)
+            pR.extend(pRMax)
+
+            # reversed inner
+            pZ.extend(pZpl[-1:0:-1])
+            pR.extend(pRMin[-1:0:-1])
 
         zrList  = [[z,r] for z,r in zip(pZ,pR)]
         zrList.reverse()
@@ -802,25 +817,51 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         flukaNameCount += 1
 
-    elif solid.type == "Polyhedra" :
+    elif solid.type == "GenericPolyhedra" or solid.type == "Polyhedra":
 
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        if solid.type == "GenericPolyhedra" :
+            import pyg4ometry.gdml.Units as _Units #TODO move circular import
+            luval = _Units.unit(solid.lunit)
+            auval = _Units.unit(solid.aunit)
 
-        flukaNameCount += 1
+            pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
+            numSide = int(solid.evaluateParameter(solid.numSide))
+            pR = [val*luval/10.0 for val in solid.evaluateParameter(solid.pR)]
+            pZ = [val*luval/10.0 for val in solid.evaluateParameter(solid.pZ)]
 
-    elif solid.type == "GenericPolyhedra" :
+        elif solid.type == "Polyhedra" :
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)
+            auval = _Units.unit(solid.aunit)
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        luval = _Units.unit(solid.lunit)
-        auval = _Units.unit(solid.aunit)
+            pSPhi = solid.evaluateParameter(solid.phiStart) * auval
+            pDPhi = solid.evaluateParameter(solid.phiTotal) * auval
 
-        pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
-        numSide = int(solid.evaluateParameter(solid.numSide))
-        pR = [val*luval/10.0 for val in solid.evaluateParameter(solid.pR)]
-        pZ = [val*luval/10.0 for val in solid.evaluateParameter(solid.pZ)]
+            numSide = int(solid.evaluateParameter(solid.numSide))
+            numZPlanes = int(solid.numZPlanes)
+            zPlane = [val * luval for val in solid.evaluateParameter(solid.zPlane)]
+            rInner = [val * luval for val in solid.evaluateParameter(solid.rInner)]
+            rOuter = [val * luval for val in solid.evaluateParameter(solid.rOuter)]
+
+            pZ = []
+            pR = []
+
+            # first point or rInner
+            pZ.append(zPlane[0])
+            pR.append(rInner[0])
+
+            # rest of outer
+            pZ.extend(zPlane)
+            pR.extend(rOuter)
+
+            # reversed inner
+            pZ.extend(zPlane[-1:0:-1])
+            pR.extend(rInner[-1:0:-1])
+
 
         dPhi = pDPhi / numSide
+
 
         zrList  = [[z,r] for z,r in zip(pZ,pR)]
         zrList.reverse()
@@ -1164,7 +1205,124 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+        import pyg4ometry.gdml.Units as _Units
+
+        luval = _Units.unit(solid.lunit)/10.0
+
+        pZslices = solid.evaluateParameter(solid.pZslices)
+        pPolygon = solid.evaluateParameter(solid.pPolygon)
+
+        zpos     = [zslice[0]*luval for zslice in pZslices]
+        x_offs   = [zslice[1][0]*luval for zslice in pZslices]
+        y_offs   = [zslice[1][1]*luval for zslice in pZslices]
+        scale    = [zslice[2] for zslice in pZslices]
+        vertices = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygon]
+        nslices  = len(pZslices)
+
+        vertices = list(reversed(vertices))
+        polyListConvex = _pycgal.numpyPolygonConvex(_np.array(vertices))
+
+
+        fregion = _fluka.Region("R"+name)
+
+        ibody = 0
+        # loop over planes
+        for i in range(0,nslices-1,1):
+            i1 = i
+            i2 = i+1
+
+            zi1 = zpos[i1]
+            zi2 = zpos[i2]
+
+            # build i'th and i+1'th layers
+            i1PolyListConvex = []
+            i2PolyListConvex = []
+
+            for j in range(0, len(polyListConvex),1):
+                i1PolyListConvex.append([[scale[i1]*vert[0]+x_offs[i1],
+                                          scale[i1]*vert[1]+y_offs[i1]] for vert in polyListConvex[j]])
+
+                i2PolyListConvex.append([[scale[i2]*vert[0]+x_offs[i2],
+                                          scale[i2]*vert[1]+y_offs[i2]] for vert in polyListConvex[j]])
+
+
+            # end planes
+            fbody1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                [0, 0, -1],
+                                [0, 0, zi1],
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            ibody += 1
+            fbody2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                [0, 0, 1],
+                                [0, 0, zi2],
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            ibody += 1
+
+            for j in range(0,len(i1PolyListConvex),1):
+                fzone = _fluka.Zone()
+
+
+                fzone.addIntersection(fbody1)
+                fzone.addIntersection(fbody2)
+
+                for k in range(0,len(i1PolyListConvex[j]),1):
+                    k1 = k
+                    k2 = (k+1) % len(i1PolyListConvex[j])
+
+                    x0 = i1PolyListConvex[j][k1][0]
+                    y0 = i1PolyListConvex[j][k1][1]
+                    z0 = zi1
+
+                    x1 = i2PolyListConvex[j][k1][0]
+                    y1 = i2PolyListConvex[j][k1][1]
+                    z1 = zi2
+
+                    x2 = i1PolyListConvex[j][k2][0]
+                    y2 = i1PolyListConvex[j][k2][1]
+                    z2 = zi1
+
+                    dx1 = x1-x0
+                    dy1 = y1-y0
+                    dz1 = z1-z0
+
+                    ld1 = _np.sqrt(dx1**2+dy1**2+dz1**2)
+
+                    dx1 = dx1/ld1
+                    dy1 = dy1/ld1
+                    dz1 = dz1/ld1
+
+
+                    dx2 = x2-x0
+                    dy2 = y2-y0
+                    dz2 = z2-z0
+
+                    ld2 = _np.sqrt(dx2**2+dy2**2+dz2**2)
+
+                    dx2 = dx2/ld2
+                    dy2 = dy2/ld2
+                    dz2 = dz2/ld2
+
+                    nx = dy1*dz2 - dz1*dy2
+                    ny = dx2*dz1 - dx1*dz2
+                    nz = dx1*dy2 - dy1*dy2
+
+                    fbody = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                       [-nx,-ny,-nz],
+                                       [x0,y0,z0],
+                                       transform=transform,
+                                       flukaregistry=flukaRegistry,
+                                       comment=commentName)
+                    ibody += 1
+                    fzone.addIntersection(fbody)
+                fregion.addZone(fzone)
+
+
+        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
@@ -1298,6 +1456,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
     else :
         print(solid.type)
+
+    # print solid.name, name, solid.type, len(fregion.zones)
 
     return fregion, flukaNameCount
 

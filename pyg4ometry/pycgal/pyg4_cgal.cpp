@@ -453,9 +453,10 @@ extern "C" void* pyg4_cgal_vertex_to_polygon(double **verticesIn,
 					     bool debugIo = false) 
 {
   Polygon_2 *polygon = new Polygon_2();
-  std::cout << "pyg4_cgal_vertex_to_polygon> polygon ptr " << polygon << std::endl;
-  if(debugIo) 
+  if(debugIo) {
+    std::cout << "pyg4_cgal_vertex_to_polygon> polygon ptr " << polygon << std::endl;
     std::cout << "pyg4_cgal_vertex_to_polygon> nVertices=" << nVertices << std::endl;
+  }
   for(int i=0;i<nVertices;++i) {
     if(debugIo) 
       std::cout << "pyg4_cgal_vertex_to_polygon> vertex " 
@@ -490,7 +491,7 @@ extern "C" int pyg4_cgal_polygon_to_convexpolygons(void *polygonIn,
 {
 
   Polygon_2 *polygon = (Polygon_2*)polygonIn;
-  std::cout << "pyg4_cgal_polygon_to_convexpolygons> polygon ptr " << polygon  << std::endl;
+  //  std::cout << "pyg4_cgal_polygon_to_convexpolygons> polygon ptr " << polygon  << std::endl;
 
   Polygon_list partition_polys;
   
@@ -500,7 +501,7 @@ extern "C" int pyg4_cgal_polygon_to_convexpolygons(void *polygonIn,
 
   int i = 0;
   for(auto p = partition_polys.begin(); p != partition_polys.end(); ++p) {
-    std::cout << "pyg4_cgal_polygon_to_convexpolygons> " << i << std::endl;
+    //    std::cout << "pyg4_cgal_polygon_to_convexpolygons> " << i << std::endl;
     polygonOut[i] = (void*)new Polygon_2(*p);
     i++;
   }

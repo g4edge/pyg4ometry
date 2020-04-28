@@ -97,7 +97,7 @@ def pycsgmesh2NefPolyhedron(mesh) :
     verts, polys, count = mesh.toVerticesAndPolygons()
 
     verts = _np.array(verts)
-    polyarray = _np.zeros((len(polys),10),dtype=int)
+    polyarray = _np.zeros((len(polys),30),dtype=int)
     npolyvert = []
     for p,i  in zip(polys,range(0,len(polys))):
         npolyvert.append(len(p))
@@ -120,7 +120,7 @@ def pycsgmesh2NefPolyhedron(mesh) :
                                            vertspp,
                                            npolyvert,
                                            polyarraypp,
-                                           _ctypes.c_bool(True))
+                                           _ctypes.c_bool(False))
 
     nefpolyhedron = polyhedron_to_nefpolyhedron(polyhedron)
     delete_polyhedron(polyhedron)
@@ -167,7 +167,7 @@ def numpyPolygonConvex(polygonnp):
     polygons = vpArray()
 
 
-    polygon = vertex_to_polygon(polygonpp,len(polygonnp),_ctypes.c_bool(True))
+    polygon = vertex_to_polygon(polygonpp,len(polygonnp),_ctypes.c_bool(False))
     polygon_to_convexpolygons(polygon,polygons,_ctypes.byref(nconvex))
 
     nverts = _ctypes.c_int(0)
