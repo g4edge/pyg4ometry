@@ -83,6 +83,11 @@ class _MassNumberLookup(object):
 
     def getMassNumberFromAtomicNumber(self, z):
         t = self.table
-        return int(round(t["AtomicMass"][t["AtomicNumber"] == z].values))
+        result = t["AtomicMass"][t["AtomicNumber"] == z].values
+        if not result:
+            raise FLUKAError(
+                "Unable to determine mass number for Z = {}".format(z))
+
+        return int(round(result))
 
             
