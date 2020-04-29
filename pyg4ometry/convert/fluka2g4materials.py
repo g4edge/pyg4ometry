@@ -1,9 +1,13 @@
 import pandas as pd
+import os.path
 
 from pyg4ometry.geant4 import MaterialPredefined, MaterialSingleElement
 from pyg4ometry.fluka.material import BuiltIn, Element, Compound
 
+# http://www.fluka.org/content/manuals/online/5.2.html
+# See also fluka/material.py
 FLUKA_BUILTIN_TO_G4_MATERIAL_MAP = {
+    # Elements
     "BLCKHOLE": "G4_Galactic",
     "VACUUM": "G4_Galactic",
     "HYDROGEN": "G4_H",
@@ -28,7 +32,20 @@ FLUKA_BUILTIN_TO_G4_MATERIAL_MAP = {
     "TIN": "G4_Sn",
     "TUNGSTEN": "G4_W",
     "TITANIUM": "G4_Ti",
-    "NICKEL": "G4_Ni"
+    "NICKEL": "G4_Ni",
+    # Compounds
+    "WATER": "G4_WATER",
+    "POLYSTYR": "G4_POLYSTYRENE",
+    "PLASCINT": "G4_PLASTIC_SC_VINYLTOLUENE",
+    "PMMA": "G4_PLEXIGLASS",
+    "BONECOMP": "G4_BONE_COMPACT_ICRU",
+    "BONECORT": "G4_BONE_CORTICAL_ICRP", # This has slightly different density?
+    "MUSCLESK": "G4_MUSCLE_SKELETAL_ICRP", # So does this..
+    "MUSCLEST": "G4_MUSCLE_STRIATED_ICRU",
+    "ADTISSUE": "G4_ADIPOSE_TISSUE_ICRP", # and this
+    "KAPTON": "G4_KAPTON",
+    "POLYETHY": "G4_POLYETHYLENE",
+    "AIR": "G4_AIR"
 }
 
 
@@ -59,8 +76,10 @@ def addFlukaMaterialsToG4Registry(freg, greg):
     return greg
 
 class _MassNumberLookup(object):
+    THISDIR = os.path.dirname(os.path.abspath(__file__))
     def __init__(self):
-        self.table = pd.read_csv("periodic-table.csv")
+        self.table = pd.read_csv(
+            os.path.join(self.THISDIR, "periodic-table.csv"))
 
     def getMassNumberFromAtomicNumber(self, z):
         t = self.table
