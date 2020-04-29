@@ -1,4 +1,5 @@
 from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
+import pyg4ometry.geant4.solid as _solid
 from   pyg4ometry.visualisation  import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
@@ -111,8 +112,13 @@ class DivisionVolume(_PhysicalVolume) :
                                 width)
 
         for i, v in enumerate(placements):
-            solid = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Box(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                               self.motherVolume.solid.pX,
+                               self.motherVolume.solid.pY,
+                               self.motherVolume.solid.pZ,
+                               self.logicalVolume.registry,
+                               self.motherVolume.solid.lunit,
+                               False)
 
             if self.axis == self.Axis.kXAxis :
                 solid.pX.expr.expression = str(width)
@@ -150,8 +156,18 @@ class DivisionVolume(_PhysicalVolume) :
                                     width)
 
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Tubs(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                                self.motherVolume.solid.pRMin,
+                                self.motherVolume.solid.pRMax,
+                                self.motherVolume.solid.pDz,
+                                self.motherVolume.solid.pSPhi,
+                                self.motherVolume.solid.pDPhi,
+                                self.motherVolume.registry,
+                                self.motherVolume.solid.lunit,
+                                self.motherVolume.solid.aunit,
+                                self.logicalVolume.solid.nslice,
+                                False)
+
             if self.axis == self.Axis.kZAxis :
                 solid.pDz.expr.expression = str(width)
                 transforms.append([[0,0,0],[0,0,v]])
@@ -202,8 +218,20 @@ class DivisionVolume(_PhysicalVolume) :
         r_i = r1
         R_i = R1
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Cons(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                                self.motherVolume.solid.pRmin1,
+                                self.motherVolume.solid.pRmax1,
+                                self.motherVolume.solid.pRmin2,
+                                self.motherVolume.solid.pRmax2,
+                                self.motherVolume.solid.pDz,
+                                self.motherVolume.solid.pSPhi,
+                                self.motherVolume.solid.pDPhi,
+                                self.motherVolume.registry,
+                                self.motherVolume.solid.lunit,
+                                self.motherVolume.solid.aunit,
+                                self.motherVolume.solid.nslice,
+                                False)
+
             if self.axis == self.Axis.kZAxis :
                 solid.pRmin1.expr.expression = str(r_i) # Set the radii
                 solid.pRmax1.expr.expression = str(R_i)
@@ -245,8 +273,18 @@ class DivisionVolume(_PhysicalVolume) :
                                 width)
 
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Para(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                                self.motherVolume.solid.pX,
+                                self.motherVolume.solid.pY,
+                                self.motherVolume.solid.pZ,
+                                self.motherVolume.solid.pAlpha,
+                                self.motherVolume.solid.pTheta,
+                                self.motherVolume.solid.pPhi,
+                                self.motherVolume.registry,
+                                self.motherVolume.solid.lunit,
+                                self.motherVolume.solid.aunit,
+                                False)
+
             if self.axis == self.Axis.kXAxis :
                 solid.pX.expr.expression = str(width/2.)
                 transforms.append([[0,0,0],[v,0,0]])
@@ -290,8 +328,15 @@ class DivisionVolume(_PhysicalVolume) :
         h_i  = 0.
 
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Trd(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                               self.motherVolume.solid.pX1,
+                               self.motherVolume.solid.pX2,
+                               self.motherVolume.solid.pY1,
+                               self.motherVolume.solid.pY2,
+                               self.motherVolume.solid.pZ,
+                               self.motherVolume.registry,
+                               self.motherVolume.solid.lunit,
+                               False)
             if self.axis == self.Axis.kXAxis :
                 solid.pX1.expr.expression = str(width)
                 solid.pX2.expr.expression = str(width)
@@ -372,8 +417,18 @@ class DivisionVolume(_PhysicalVolume) :
                 h_i = offset - sum(zpl_sizes[:zsl_index])
 
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Polycone(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                                    self.motherVolume.solid.pSPhi,
+                                    self.motherVolume.solid.pDPhi,
+                                    self.motherVolume.solid.pZpl,
+                                    self.motherVolume.solid.pRMin,
+                                    self.motherVolume.solid.pRMax,
+                                    self.motherVolume.registry,
+                                    self.motherVolume.solid.lunit,
+                                    self.motherVolume.solid.aunit,
+                                    self.motherVolume.solid.nslice,
+                                    False)
+
             if self.axis == self.Axis.kRho :
                 r_0 = float(self.motherVolume.solid.pRMin[0])
                 w_0 = float(self.motherVolume.solid.pRMax[0]) - r_0
@@ -475,8 +530,19 @@ class DivisionVolume(_PhysicalVolume) :
                 h_i = offset - sum(zpl_sizes[:zsl_index])
 
         for i, v in enumerate(placements):
-            solid       = _copy.deepcopy(self.motherVolume.solid)
-            solid.name  = self.name+"_"+solid.name+"_"+str(i)
+            solid = _solid.Polyhedra(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
+                                     self.motherVolume.solid.phiStart,
+                                     self.motherVolume.solid.phiTotal,
+                                     self.motherVolume.solid.numSide,
+                                     self.motherVolume.solid.numZPlanes,
+                                     self.motherVolume.solid.zPlane,
+                                     self.motherVolume.solid.rInner,
+                                     self.motherVolume.solid.rOuter,
+                                     self.motherVolume.registry,
+                                     self.motherVolume.solid.lunit,
+                                     self.motherVolume.solid.aunit,
+                                     False)
+
             if self.axis == self.Axis.kRho :
                 r_0 = float(self.motherVolume.solid.rInner[0])
                 w_0 = float(self.motherVolume.solid.rOuter[0]) - r_0
