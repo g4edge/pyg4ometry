@@ -11,7 +11,7 @@ import pyg4ometry.transformation as trans
 from pyg4ometry.fluka.vector import (Extent, areExtentsOverlapping)
 from pyg4ometry.fluka.region import areOverlapping
 from pyg4ometry.fluka import Transform
-
+from .fluka2g4materials import addFlukaMaterialsToG4Registry
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
