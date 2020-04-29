@@ -210,7 +210,8 @@ def _makeLengthSafetyRegistry(flukareg, regions):
         ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
-    fluka_reg_out.latticeDict = deepcopy(flukareg.latticeDict)
+
+    _copy_misc_maps_to_new_flukareg(flukareg, fluka_reg_out)
 
     return fluka_reg_out
 
@@ -295,7 +296,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
                 new_region.addZone(new_zone)
                 new_region.allBodiesToRegistry(fluka_reg_out)
                 fluka_reg_out.addRegion(new_region)
-    fluka_reg_out.latticeDict = deepcopy(flukareg.latticeDict)
+    _copy_misc_maps_to_new_flukareg(flukareg, fluka_reg_out)
 
     return fluka_reg_out, newNamesToOldNames, newRegionZoneExtents
 
@@ -393,7 +394,8 @@ def _filterBlackHoleRegions(flukareg, regions):
             continue
         freg_out.addRegion(region)
         region.allBodiesToRegistry(freg_out)
-    freg_out.latticeDict = deepcopy(flukareg.latticeDict)
+
+    _copy_misc_maps_to_new_flukareg(flukareg, freg_out)
     return freg_out
 
 def _getOverlappingExtents(extent, extents):
@@ -545,7 +547,7 @@ def _filterHalfSpaces(flukareg, regionZoneExtents):
         fout.addRegion(regionOut)
         regionOut.allBodiesToRegistry(fout)
 
-    fout.latticeDict = deepcopy(flukareg.latticeDict)
+    _copy_misc_maps_to_new_flukareg(flukareg, fout)
 
     return fout
 
@@ -593,9 +595,8 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
             flukaRegOut.addRegion(newRegion)
             newRegion.allBodiesToRegistry(flukaRegOut)
 
-
-    flukaRegOut.latticeDict = flukareg.latticeDict
-    return flukareg
+    _copy_misc_maps_to_new_flukareg(flukareg, flukaRegOut)
+    return flukaRegOut
 
 def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
     """Given a map of regions featuring quadrics to their extents, we
@@ -647,3 +648,9 @@ def _regionZoneExtentsToRegionExtents(regionZoneExtents):
                               zoneExtents[0])
         regionExtents[name] = regionExtent
     return regionExtents
+
+
+def _copy_misc_maps_to_new_flukareg(fregi, fregout):
+    fregout.assignmas = deepcopy(fregi.assignmas)
+    fregout.latticeDict = deepcopy(fregi.latticeDict)
+    fregout.materials = deepcopy(fregi.materials)
