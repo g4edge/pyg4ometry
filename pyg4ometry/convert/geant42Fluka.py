@@ -5,7 +5,7 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslati
 import numpy as _np
 import copy as _copy
 
-import matplotlib.pyplot as _plt
+# import matplotlib.pyplot as _plt
 
 def geant4Logical2Fluka(logicalVolume) :
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])

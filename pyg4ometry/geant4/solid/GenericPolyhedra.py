@@ -73,13 +73,13 @@ class GenericPolyhedra(_SolidBase):
 
         zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
 
-        def plotConvex() :
-            import matplotlib.pyplot as _plt
-            _plt.figure(1)
-            _plt.plot(pZ,pR)
-
-            for cvPolygon in zrListConvex:
-                _plt.plot(cvPolygon[:,0],cvPolygon[:,1])
+        # def plotConvex() :
+        #     import matplotlib.pyplot as _plt
+        #     _plt.figure(1)
+        #     _plt.plot(pZ,pR)
+        #
+        #     for cvPolygon in zrListConvex:
+        #         _plt.plot(cvPolygon[:,0],cvPolygon[:,1])
 
         # plotConvex()
 
