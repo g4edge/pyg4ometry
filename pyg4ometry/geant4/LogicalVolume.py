@@ -1,4 +1,3 @@
-import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
 from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
