@@ -995,8 +995,8 @@ class Writer(object):
     def writePolyhedra(self, instance):
         oe = self.doc.createElement('polyhedra')
         oe.setAttribute('name', self.prepend + instance.name)
-        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'phiStart'))
-        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'phiTotal'))
+        oe.setAttribute('startphi',self.getValueOrExprFromInstance(instance,'pSPhi'))
+        oe.setAttribute('deltaphi',self.getValueOrExprFromInstance(instance,'pDPhi'))
         oe.setAttribute('numsides',self.getValueOrExprFromInstance(instance,'numSide'))
 
         i = instance

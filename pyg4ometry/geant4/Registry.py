@@ -448,5 +448,3 @@ class Registry:
         import pyg4ometry.fluka as _f
 
         freg = _f.FlukaRegistry()
-
-registry = Registry()

@@ -89,7 +89,7 @@ class DivisionVolume(_PhysicalVolume) :
 
         elif stype == "Polyhedra":
             sizes = [-1, -1, float(sd.zPlane[-1])-float(sd.zPlane[0]),
-                     float(sd.rOuter[0])-float(sd.rInner[0]), float(sd.phiTotal)]
+                     float(sd.rOuter[0])-float(sd.rInner[0]), float(sd.pDPhi)]
 
         return sizes[self.axis - 1]
 
@@ -485,8 +485,8 @@ class DivisionVolume(_PhysicalVolume) :
 
         if self.axis ==  self.Axis.kPhi:
             # Always take into account the inner sizes of the solids
-            sphi = float(self.motherVolume.solid.phiStart)
-            dphi = float(self.motherVolume.solid.phiTotal)
+            sphi = float(self.motherVolume.solid.pSPhi)
+            dphi = float(self.motherVolume.solid.pDPhi)
             nsides = int(float(self.motherVolume.solid.numSide))
             placements =_np.arange(sphi, sphi+dphi, dphi/nsides)
 
@@ -531,8 +531,8 @@ class DivisionVolume(_PhysicalVolume) :
 
         for i, v in enumerate(placements):
             solid = _solid.Polyhedra(self.name + "_" + self.motherVolume.solid.name + "_" + str(i),
-                                     self.motherVolume.solid.phiStart,
-                                     self.motherVolume.solid.phiTotal,
+                                     self.motherVolume.solid.pSPhi,
+                                     self.motherVolume.solid.pDPhi,
                                      self.motherVolume.solid.numSide,
                                      self.motherVolume.solid.numZPlanes,
                                      self.motherVolume.solid.zPlane,
@@ -556,8 +556,8 @@ class DivisionVolume(_PhysicalVolume) :
                 transforms.append([[0,0,0],[0,0,0]])
 
             elif self.axis == self.Axis.kPhi:
-                solid.phiStart.expr.expression = str(v)
-                solid.phiTotal.expr.expression = str(dphi/nsides)
+                solid.pSPhi.expr.expression = str(v)
+                solid.pDPhi.expr.expression = str(dphi / nsides)
                 solid.numSide.expr.expression = "1"
                 transforms.append([[0,0,0],[0,0,0]])
 

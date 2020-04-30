@@ -9,7 +9,6 @@ import logging                           as _log
 
 import pyg4ometry.geant4                          as _g4
 import pyg4ometry.visualisation                   as _vtk
-from   pyg4ometry.geant4.Registry import registry as _registry
 from   pyg4ometry.geant4 import Expression        as _Expression
 
 class Reader(object):

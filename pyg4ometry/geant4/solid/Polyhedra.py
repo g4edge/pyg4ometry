@@ -1,8 +1,5 @@
 from .GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
 from .SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
-from .Polycone import Polycone as _Polycone
-import numpy as _np
 import logging as _log
 
 class Polyhedra(_SolidBase):
@@ -11,10 +8,10 @@ class Polyhedra(_SolidBase):
     
     :param name:       of solid
     :type name:        str
-    :param phiStart:   start phi angle
-    :type phiStart:    float, Constant, Quantity, Variable, Expression
-    :param phiTotal:   delta phi angle
-    :type phiTotal:    float, Constant, Quantity, Variable, Expression
+    :param pSPhi:      start phi angle
+    :type pSPhi:       float, Constant, Quantity, Variable, Expression
+    :param pDPhi:      delta phi angle
+    :type pDPhi:       float, Constant, Quantity, Variable, Expression
     :param numSide:    number of sides
     :type numSide:     int
     :param numZPlanes: number of planes along z
@@ -34,14 +31,14 @@ class Polyhedra(_SolidBase):
     
     """
 
-    def __init__(self, name, phiStart, phiTotal, numSide, numZPlanes,
+    def __init__(self, name, pSPhi, pDPhi, numSide, numZPlanes,
                  zPlane, rInner, rOuter, registry, lunit="mm", aunit="rad",
                  addRegistry=True):
 
         self.type       = 'Polyhedra'
         self.name       = name
-        self.phiStart   = phiStart
-        self.phiTotal   = phiTotal
+        self.pSPhi      = pSPhi
+        self.pDPhi      = pDPhi
         self.numSide    = numSide
         self.numZPlanes = numZPlanes
         self.zPlane     = zPlane
@@ -50,7 +47,7 @@ class Polyhedra(_SolidBase):
         self.lunit      = lunit
         self.aunit      = aunit
 
-        self.varNames = ["phiStart", "phiTotal", "numSide", "numZPlanes","zPlane","rInner","rOuter"]
+        self.varNames = ["pSPhi", "pDPhi", "numSide", "numZPlanes","zPlane","rInner","rOuter"]
 
         self.dependents = []
 
@@ -60,8 +57,8 @@ class Polyhedra(_SolidBase):
         self.registry = registry
 
     def __repr__(self):
-        return "Polyhedra : {} {} {} {} {}".format(self.name, self.phiStart,
-                                                   self.phiTotal, self.numSide,
+        return "Polyhedra : {} {} {} {} {}".format(self.name, self.pSPhi,
+                                                   self.pDPhi, self.numSide,
                                                    self.numZPlanes)
 
     def pycsgmesh(self):
@@ -75,8 +72,8 @@ class Polyhedra(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        phiStart = self.evaluateParameter(self.phiStart)*auval
-        phiTotal = self.evaluateParameter(self.phiTotal)*auval
+        phiStart = self.evaluateParameter(self.pSPhi) * auval
+        phiTotal = self.evaluateParameter(self.pDPhi) * auval
 
         numSide = int(self.evaluateParameter(self.numSide))
         numZPlanes = int(self.numZPlanes)
