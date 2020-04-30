@@ -55,7 +55,7 @@ def addFlukaMaterialsToG4Registry(freg, greg):
 
     mnl = _MassNumberLookup()
 
-    fluka = freg.materialDict
+    fluka = freg.materials
 
     for name, material in fluka.iteritems():
         if isinstance(material, BuiltIn):

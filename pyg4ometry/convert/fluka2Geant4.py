@@ -1,17 +1,18 @@
-import logging
 from copy import deepcopy
-import warnings
+import logging
 import types
+import warnings
 
 import numpy as np
 
+from .fluka2g4materials import addFlukaMaterialsToG4Registry
+from pyg4ometry import exceptions
+from pyg4ometry.fluka import Transform
+from pyg4ometry.fluka.region import areOverlapping
+from pyg4ometry.fluka.vector import (Extent, areExtentsOverlapping)
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
-from pyg4ometry.fluka.vector import (Extent, areExtentsOverlapping)
-from pyg4ometry.fluka.region import areOverlapping
-from pyg4ometry.fluka import Transform
-from .fluka2g4materials import addFlukaMaterialsToG4Registry
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -26,7 +27,6 @@ def fluka2Geant4(flukareg,
                  worldMaterial="G4_Galactic",
                  worldDimensions=None,
                  omitBlackholeRegions=True,
-                 materialMap=None,
                  omitRegions=None,
                  quadricRegionExtents=None):
     """Convert a FLUKA registry to a Geant4 Registry.
@@ -52,9 +52,6 @@ def fluka2Geant4(flukareg,
     :param omitBlackholeRegions: whether or not to omit regions with
     the FLUKA material BLCKHOLE from the conversion.
     :type omitBlackholeRegions: bool
-    :param materialMap: Dictionary of FLUKA material names to Geant4 \
-    materials used to determine the materials of the resulting geometry.
-    :type materialMap: dict
     :param omitRegions: Names of regions to be omitted from the \
     conversion.  This option is mutually exclusive with the kwarg regions.
     :type omitRegions: list
@@ -111,10 +108,10 @@ def fluka2Geant4(flukareg,
 
     # This loop below do the main conversion
     greg = g4.Registry()
+    addFlukaMaterialsToG4Registry(fr, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldDimensions),
                            worldMaterial, greg)
-
-    materialMap = {} if materialMap is None else materialMap
+    assignmas = fr.assignmas
     regionNamesToLVs = {}
     for name, region in fr.regionDict.iteritems():
         if name not in regions:
@@ -125,20 +122,14 @@ def fluka2Geant4(flukareg,
         region_solid = region.geant4Solid(greg,
                                           referenceExtent=referenceExtentMap)
 
-        region_material = region.material
-        if region_material is None:
-            warnings.warn(
-                "Setting None material in region {} to G4_Fe.".format(
-                    name))
-            region_material = g4.MaterialPredefined("G4_Fe")
 
-        elif region_material in materialMap:
-            region_material = materialMap[region_material]
-        else:
-            region_material = g4.MaterialPredefined("G4_Fe")
+        try:
+            materialName = assignmas[name]
+        except KeyError:
+            raise FLUKAError("Region {} has no assigned material".format(name))
 
         region_lv = g4.LogicalVolume(region_solid,
-                                     region_material,
+                                     materialName,
                                      "{}_lv".format(name),
                                      greg)
 
@@ -210,8 +201,7 @@ def _makeLengthSafetyRegistry(flukareg, regions):
         ls_region = region.withLengthSafety(bigger, smaller)
         fluka_reg_out.addRegion(ls_region)
         ls_region.allBodiesToRegistry(fluka_reg_out)
-
-    _copy_misc_maps_to_new_flukareg(flukareg, fluka_reg_out)
+    _copyStructureToNewFlukaRegistry(flukareg, fluka_reg_out)
 
     return fluka_reg_out
 
@@ -296,7 +286,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
                 new_region.addZone(new_zone)
                 new_region.allBodiesToRegistry(fluka_reg_out)
                 fluka_reg_out.addRegion(new_region)
-    _copy_misc_maps_to_new_flukareg(flukareg, fluka_reg_out)
+    _copyStructureToNewFlukaRegistry(flukareg, fluka_reg_out)
 
     return fluka_reg_out, newNamesToOldNames, newRegionZoneExtents
 
@@ -388,14 +378,14 @@ def _filterBlackHoleRegions(flukareg, regions):
     """
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
-        if region.material == "BLCKHOLE":
+        materialName = flukareg.assignmas[name]
+        if materialName == "BLCKHOLE":
             continue
         if name not in regions:
             continue
         freg_out.addRegion(region)
         region.allBodiesToRegistry(freg_out)
-
-    _copy_misc_maps_to_new_flukareg(flukareg, freg_out)
+    _copyStructureToNewFlukaRegistry(flukareg, freg_out)
     return freg_out
 
 def _getOverlappingExtents(extent, extents):
@@ -547,7 +537,7 @@ def _filterHalfSpaces(flukareg, regionZoneExtents):
         fout.addRegion(regionOut)
         regionOut.allBodiesToRegistry(fout)
 
-    _copy_misc_maps_to_new_flukareg(flukareg, fout)
+    _copyStructureToNewFlukaRegistry(flukareg, fout)
 
     return fout
 
@@ -595,7 +585,7 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionExtents):
             flukaRegOut.addRegion(newRegion)
             newRegion.allBodiesToRegistry(flukaRegOut)
 
-    _copy_misc_maps_to_new_flukareg(flukareg, flukaRegOut)
+    _copyStructureToNewFlukaRegistry(flukareg, flukaRegOut)
     return flukaRegOut
 
 def _makeQuadricRegionBodyExtentMap(flukareg, quadricRegionExtents):
@@ -650,7 +640,7 @@ def _regionZoneExtentsToRegionExtents(regionZoneExtents):
     return regionExtents
 
 
-def _copy_misc_maps_to_new_flukareg(fregi, fregout):
-    fregout.assignmas = deepcopy(fregi.assignmas)
-    fregout.latticeDict = deepcopy(fregi.latticeDict)
-    fregout.materials = deepcopy(fregi.materials)
+def _copyStructureToNewFlukaRegistry(freg, fregtarget):
+    fregtarget.latticeDict = deepcopy(freg.latticeDict)
+    fregtarget.assignmas = deepcopy(freg.assignmas)
+    fregtarget.materials = deepcopy(freg.materials)
