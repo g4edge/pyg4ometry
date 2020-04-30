@@ -835,8 +835,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             luval = _Units.unit(solid.lunit)
             auval = _Units.unit(solid.aunit)
 
-            pSPhi = solid.evaluateParameter(solid.phiStart) * auval
-            pDPhi = solid.evaluateParameter(solid.phiTotal) * auval
+            pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
 
             numSide = int(solid.evaluateParameter(solid.numSide))
             numZPlanes = int(solid.numZPlanes)
