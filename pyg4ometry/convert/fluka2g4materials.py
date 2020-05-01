@@ -60,7 +60,7 @@ def makeFlukaToG4MaterialsMap(freg, greg):
 
     out = {}
 
-    for name, material in fluka.iteritems():
+    for name, material in fluka.items():
         totalMassNumber = material.massNumber
 
         if isinstance(material, BuiltIn):

@@ -117,7 +117,7 @@ def fluka2Geant4(flukareg,
                            worldMaterial, greg)
     assignmas = fr.assignmas
     regionNamesToLVs = {}
-    for name, region in fr.regionDict.iteritems():
+    for name, region in fr.regionDict.items():
         if name not in regions:
             continue
 
@@ -303,7 +303,7 @@ def _getRegionZoneExtents(flukareg, regions, quadricRegionExtents):
     provided by the user."""
 
     regionZoneExtents = {}
-    for name, region in flukareg.regionDict.iteritems():
+    for name, region in flukareg.regionDict.items():
         if name in quadricRegionExtents:
             # We choose to use the quadricRegionExtents rather than
             # calculate new ones as each quadric must be evaluated
@@ -383,7 +383,7 @@ def _filterBlackHoleRegions(flukareg, regions):
 
     """
     freg_out = fluka.FlukaRegistry()
-    for name, region in flukareg.regionDict.iteritems():
+    for name, region in flukareg.regionDict.items():
         try:
             materialName = flukareg.assignmas[name]
         except KeyError: # Ignore assignments to regions that are undefined.
@@ -517,7 +517,7 @@ def _filterHalfSpaces(flukareg, regionZoneExtents):
 
     regionExtents = _regionZoneExtentsToRegionExtents(regionZoneExtents)
 
-    for region_name, region in flukareg.regionDict.iteritems():
+    for region_name, region in flukareg.regionDict.items():
         regionOut = deepcopy(region)
         regionExtent = regionExtents[region_name]
         # Loop over the bodies of this region
@@ -640,7 +640,7 @@ def _regionZoneExtentsToRegionExtents(regionZoneExtents):
     """Given a map of region names to zone extents, return a map of
     region names to a total region extent."""
     regionExtents = {}
-    for name, zoneExtents in regionZoneExtents.iteritems():
+    for name, zoneExtents in regionZoneExtents.items():
         regionExtent = reduce(_getMaximalOfTwoExtents,
                               zoneExtents,
                               zoneExtents[0])

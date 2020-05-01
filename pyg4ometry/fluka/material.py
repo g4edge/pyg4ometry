@@ -1,5 +1,5 @@
 import os
-from itertools import izip_longest as _izip_longest
+from itertools import zip_longest as _zip_longest
 
 import pandas as pd
 
@@ -67,7 +67,7 @@ class _MassNumberLookup(object):
 _MASS_NUMBER_LOOKUP = _MassNumberLookup()
 
 def buildPredefinedMaterials():
-
+    pass
 
 class BuiltIn(object):
     def __init__(self, name, massNumber=None, flukaregistry=None):
@@ -267,4 +267,4 @@ def _grouper(n, iterable, fillvalue=None):
     """grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx
     https://docs.python.org/3/library/itertools.html#recipes"""
     args = [iter(iterable)] * n
-    return _izip_longest(fillvalue=fillvalue, *args)
+    return _zip_longest(fillvalue=fillvalue, *args)
