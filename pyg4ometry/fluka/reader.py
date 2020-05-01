@@ -8,6 +8,7 @@ import antlr4
 from antlr4.error import ErrorListener
 from antlr4.error import Errors
 import numpy as np
+import networkx as nx
 
 from . import body
 from .card import freeFormatStringSplit, Card
@@ -21,6 +22,7 @@ from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionLexer)
 from .vector import Three
 from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
+from .material import Element, Compound
 
 
 
@@ -62,6 +64,7 @@ class Reader(object):
         self._parseRotDefinis()
         self._parseBodies()
         self._parseRegions()
+        self._parseMaterials()
         self._material_assignments = self._parseMaterialAssignments()
         self._parseLattice()
         self._assignMaterials()
@@ -375,6 +378,81 @@ class Reader(object):
             del self.flukaregistry.regionDict[cellRegion.name]
             self.flukaregistry.addLattice(lattice)
 
+    def _parseMaterials(self):
+        g = nx.DiGraph()
+
+        singles, compounds, _ = self._splitMaterialCards()
+
+        g.add_nodes_from(singles)
+
+        for compoundName, cards in compounds.iteritems():
+            g.add_node(compoundName)
+
+            constitutents = _getConstituentMaterialNamesFromCompound(cards)
+            # Edge pointing from each constituent to the name of every
+            # compound that it is used in.
+            g.add_edges_from([(cst, compoundName) for cst in constitutents])
+
+        if not nx.algorithms.is_directed_acyclic_graph(g):
+            raise FLUKAError("Cyclic material definition detected.")
+
+        elements = {}
+        names = nx.topological_sort(g)
+        for name in names:
+            if name in singles:
+                m = Element.fromCard(singles[name], self.flukaregistry)
+            elif name in compounds:
+                Compound.fromCards(compounds[name], self.flukaregistry)
+
+    def _splitMaterialCards(self):
+        """Return a tuple as (Elements, Compounds, Matprop (not yet
+        implemented)).  Each is keyed with the name of the material,
+        and the value corresponds to the card (Element) or cards
+        (Compounds) that define the material.
+
+        """
+        singleElementMaterials = {}
+        compoundNames = set(c.sdum for c in self.cards if c.keyword == "COMPOUND")
+        compounds = {name: [] for name in compoundNames}
+
+        for card in self.cards:
+            materialName = card.sdum
+            kw = card.keyword
+            if kw == "MATERIAL" and materialName not in compoundNames:
+                singleElementMaterials[materialName] = card
+            elif kw == "MATERIAL" or kw == "COMPOUND":
+                compounds[materialName].append(card)
+
+        matprop = None
+
+        return singleElementMaterials, compounds, matprop
+
+
+def _getConstituentMaterialNamesFromCompound(compoundCards):
+    constituents = set()
+
+    for card in compoundCards:
+        if card.keyword == "MATERIAL":
+            continue
+
+        name2 = card.what2
+        name4 = card.what4
+        name6 = card.what6
+
+        if name2 is not None and name2.startswith("-"):
+            name2 = name2[1:]
+        if name4 is not None and name4.startswith("-"):
+            name4 = name4[1:]
+        if name6 is not None and name6.startswith("-"):
+            name6 = name6[1:]
+
+        constituents.add(name2)
+        constituents.add(name4)
+        constituents.add(name6)
+
+    constituents.discard(None)
+
+    return constituents
 
 def _make_body(body_parts,
                expansion_stack, translation_stack, transform_stack, flukareg):
