@@ -76,3 +76,17 @@ class Union(_SolidBase):
         mesh = m1.union(m2)
 
         return mesh
+
+    def translation(self):
+        return self.tra2[1].eval()
+
+    def rotation(self):
+        return self.tra2[0].eval()
+
+    def object1(self):
+        import pyg4ometry.geant4 as _g4
+        return self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
+
+    def object2(self):
+        import pyg4ometry.geant4 as _g4
+        return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)

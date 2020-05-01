@@ -1,8 +1,11 @@
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.fluka as _fluka
+import pyg4ometry.pycgal as _pycgal
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
 import numpy as _np
 import copy as _copy
+
+import matplotlib.pyplot as _plt
 
 def geant4Logical2Fluka(logicalVolume) :
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
@@ -190,14 +193,14 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         # phi cuts
         if pDPhi != 2*_np.pi :
             fbody5 = _fluka.PLA("B"+name+"_05",
-                                [_np.sin(pSPhi),_np.cos(pSPhi),0],
+                                [-_np.sin(pSPhi),  _np.cos(pSPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
 
             fbody6 = _fluka.PLA("B"+name+"_06",
-                                [_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
+                                [-_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
@@ -214,15 +217,19 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
 
         if pDPhi != 2*_np.pi :
-            fzone1 = _fluka.Zone()
-            fzone1.addIntersection(fbody5)
-            fzone1.addIntersection(fbody6)
-            fzone.addSubtraction(fzone1)
+            if pDPhi < _np.pi :
+                fzone.addSubtraction(fbody5)
+                fzone.addIntersection(fbody6)
+            elif pDPhi == _np.pi :
+                fzone.addSubtraction(fbody5)
+            else :
+                fzone1 = _fluka.Zone()
+                fzone1.addIntersection(fbody5)
+                fzone1.addSubtraction(fbody6)
+                fzone.addSubtraction(fzone1)
 
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -275,14 +282,14 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         # phi cuts
         if pDPhi != 2*_np.pi :
             fbody5 = _fluka.PLA("B"+name+"_05",
-                                [_np.sin(pSPhi),_np.cos(pSPhi),0],
+                                [-_np.sin(pSPhi),_np.cos(pSPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
 
             fbody6 = _fluka.PLA("B"+name+"_06",
-                                [_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
+                                [-_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
@@ -297,15 +304,19 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             fzone.addSubtraction(fbody4)
 
         if pDPhi != 2*_np.pi :
-            fzone1 = _fluka.Zone()
-            fzone1.addIntersection(fbody5)
-            fzone1.addIntersection(fbody6)
-            fzone.addSubtraction(fzone1)
+            if pDPhi < _np.pi :
+                fzone.addSubtraction(fbody5)
+                fzone.addIntersection(fbody6)
+            elif pDPhi == _np.pi :
+                fzone.addSubtraction(fbody5)
+            else :
+                fzone1 = _fluka.Zone()
+                fzone1.addIntersection(fbody5)
+                fzone1.addSubtraction(fbody6)
+                fzone.addSubtraction(fzone1)
 
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -322,7 +333,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pDPhi  = solid.evaluateParameter(solid.pDPhi)*auval
 
         dir    = pDz*_transformation.tbxyz2matrix(rotation).dot(_np.array([0, 0, 1]))
-        base   = _np.array(position)-dir/2.0
+        base   = -dir/2.0
 
         fbody1 = _fluka.TRC("B"+name+"_01",base,dir,pRmax1,pRmax2,
                             transform=transform,
@@ -337,15 +348,15 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         # phi cuts
         if pDPhi != 2*_np.pi :
-            fbody3 = _fluka.PLA("B"+name+"_05",
-                                [_np.sin(pSPhi),_np.cos(pSPhi),0],
+            fbody3 = _fluka.PLA("B"+name+"_03",
+                                [-_np.sin(pSPhi),_np.cos(pSPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
 
-            fbody4 = _fluka.PLA("B"+name+"_06",
-                                [_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
+            fbody4 = _fluka.PLA("B"+name+"_04",
+                                [-_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
@@ -359,15 +370,19 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             fzone.addSubtraction(fbody2)
 
         if pDPhi != 2*_np.pi :
-            fzone1 = _fluka.Zone()
-            fzone1.addIntersection(fbody3)
-            fzone1.addIntersection(fbody4)
-            fzone.addSubtraction(fzone1)
+            if pDPhi < _np.pi :
+                fzone.addSubtraction(fbody3)
+                fzone.addIntersection(fbody4)
+            elif pDPhi == _np.pi :
+                fzone.addSubtraction(fbody3)
+            else :
+                fzone1 = _fluka.Zone()
+                fzone1.addIntersection(fbody3)
+                fzone1.addSubtraction(fbody4)
+                fzone.addSubtraction(fzone1)
 
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -416,8 +431,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-
         flukaNameCount += 1
 
     elif solid.type == "Trd" :
@@ -442,13 +455,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pSTheta = solid.evaluateParameter(solid.pSTheta)*auval
         pDTheta = solid.evaluateParameter(solid.pDTheta)*auval
 
-        fbody1  = _fluka.SPH("B"+name+"_01", position, pRmax,
+        fbody1  = _fluka.SPH("B"+name+"_01", [0,0,0], pRmax,
                              transform=transform,
                              flukaregistry=flukaRegistry,
                              comment=commentName)
 
         if pRmin != 0 :
-            fbody2 = _fluka.SPH("B"+name+"_02", position, pRmin,
+            fbody2 = _fluka.SPH("B"+name+"_02", [0,0,0], pRmin,
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
@@ -456,14 +469,14 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         # phi cuts
         if pDPhi != 2*_np.pi :
             fbody3 = _fluka.PLA("B"+name+"_03",
-                                [_np.cos(pSPhi+3./2*_np.pi),_np.sin(pSPhi+3./2*_np.pi),0],
+                                [-_np.sin(pSPhi),_np.cos(pSPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
 
             fbody4 = _fluka.PLA("B"+name+"_04",
-                                [_np.cos(pSPhi+pDPhi+3./2*_np.pi),_np.sin(pSPhi+pDPhi+3./2*_np.pi),0],
+                                [-_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
@@ -529,10 +542,16 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             fzone.addSubtraction(fbody2)
 
         if pDPhi != 2*_np.pi :
-            fzone1 = _fluka.Zone()
-            fzone1.addSubtraction(fbody3)
-            fzone1.addIntersection(fbody4)
-            fzone.addSubtraction(fzone1)
+            if pDPhi < _np.pi :
+                fzone.addSubtraction(fbody3)
+                fzone.addIntersection(fbody4)
+            elif pDPhi == _np.pi :
+                fzone.addSubtraction(fbody3)
+            else :
+                fzone1 = _fluka.Zone()
+                fzone1.addIntersection(fbody3)
+                fzone1.addSubtraction(fbody4)
+                fzone.addSubtraction(fzone1)
 
         if pTheta1 != 0 :
             if pTheta1 < _np.pi/2.0 :
@@ -554,8 +573,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-
         flukaNameCount += 1
 
     elif solid.type == "Orb" :
@@ -563,7 +580,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         pRmax   = solid.evaluateParameter(solid.pRMax)*luval/10.0
 
-        fbody1  = _fluka.SPH("B"+name+"_01", position, pRmax,
+        fbody1  = _fluka.SPH("B"+name+"_01", [0,0,0], pRmax,
                              transform=transform,
                              flukaregistry=flukaRegistry,
                              comment=commentName)
@@ -574,122 +591,377 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         fregion = _fluka.Region("R"+name)
         fregion.addZone(fzone)
 
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-
         flukaNameCount += 1
 
     elif solid.type == "Torus" :
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-
-        flukaNameCount += 1
-
-    elif solid.type == "Polycone":
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
         luval = _Units.unit(solid.lunit)
         auval = _Units.unit(solid.aunit)
 
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+        pRmin = solid.evaluateParameter(solid.pRmin)*luval/10.0
+        pRmax = solid.evaluateParameter(solid.pRmax)*luval/10.0
+        pRtor = solid.evaluateParameter(solid.pRtor)*luval/10.0
+        pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
+        pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
 
-        print(pSPhi, pDPhi)
-        pZpl = [val * luval/10. for val in solid.evaluateParameter(solid.pZpl)]
-        pRMin = [val * luval/10. for val in solid.evaluateParameter(solid.pRMin)]
-        pRMax = [val * luval/10. for val in solid.evaluateParameter(solid.pRMax)]
+        dPhi = pDPhi/solid.nstack
 
         # create region
         fregion = _fluka.Region("R" + name)
 
-        # number of z planes
-        nslices = len(pZpl)
+        d =  pDPhi*pRtor/solid.nstack/2*1.35
 
-        ibody = 1
+        for i in range(0,solid.nstack,1):
 
+            x0 = pRtor * _np.cos(i*dPhi + pSPhi)
+            y0 = pRtor * _np.sin(i*dPhi + pSPhi)
+            z0 = 0
+
+            nx0 =  d * _np.cos(i*dPhi + pSPhi + _np.pi/2.0)
+            ny0 =  d * _np.sin(i*dPhi + pSPhi + _np.pi/2.0)
+            nz0 = 0
+
+            x1 = pRtor * _np.cos((i+0.5)*dPhi + pSPhi)
+            y1 = pRtor * _np.sin((i+0.5)*dPhi + pSPhi)
+            z1 = 0
+
+            nx1 =  d * _np.cos((i+0.5)*dPhi + pSPhi + _np.pi/2.0)
+            ny1 =  d * _np.sin((i+0.5)*dPhi + pSPhi + _np.pi/2.0)
+            nz1 = 0
+
+            x1 = x1 - nx1
+            y1 = y1 - ny1
+
+
+            x2 = pRtor * _np.cos((i+1)*dPhi + pSPhi)
+            y2 = pRtor * _np.sin((i+1)*dPhi + pSPhi)
+            z2 = 0
+
+            nx2 =  d * _np.cos((i+1)*dPhi + pSPhi + _np.pi/2.0)
+            ny2 =  d * _np.sin((i+1)*dPhi + pSPhi + _np.pi/2.0)
+            nz2 = 0
+
+            body1 = _fluka.RCC("B"+name+"_"+format(4*i,'02'),
+                               [x1,y1,z1],
+                               [2*nx1,2*ny1,2*nz1],
+                               pRmax,
+                               transform=transform,
+                               flukaregistry=flukaRegistry,
+                               comment=commentName)
+            body2 = _fluka.PLA("B"+name+"_"+format(4*i+1,'02'),
+                               [nx0, ny0, nz0],
+                               [x0,y0,z0],
+                               transform=transform,
+                               flukaregistry=flukaRegistry,
+                               comment=commentName)
+
+            body3 = _fluka.PLA("B"+name+"_"+format(4*i+2,'02'),
+                               [nx2, ny2, nz2],
+                               [x2,y2,z2],
+                               transform=transform,
+                               flukaregistry=flukaRegistry,
+                               comment=commentName)
+
+            if pRmin != 0 :
+                body4 = _fluka.RCC("B" + name + "_" + format(4 * i + 3, '02'),
+                                   [x1, y1, z1],
+                                   [2 * nx1, 2 * ny1, 2 * nz1],
+                                   pRmin,
+                                   transform=transform,
+                                   flukaregistry=flukaRegistry,
+                                   comment=commentName)
+
+            fzone = _fluka.Zone()
+            fzone.addIntersection(body1)
+            fzone.addSubtraction(body2)
+            fzone.addIntersection(body3)
+            if pRmin != 0 :
+                fzone.addSubtraction(body4)
+
+            fregion.addZone(fzone)
+
+        flukaNameCount += 1
+
+    elif solid.type == "GenericPolycone"  or solid.type == "Polycone":
+
+        if solid.type == "GenericPolycone":
+
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)/10.0
+            auval = _Units.unit(solid.aunit)
+
+            pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
+            pR = [val*luval for val in solid.evaluateParameter(solid.pR)]
+            pZ = [val*luval for val in solid.evaluateParameter(solid.pZ)]
+
+        elif solid.type == "Polycone":
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)/10.0
+            auval = _Units.unit(solid.aunit)
+
+            pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+
+            pZpl = [val * luval for val in solid.evaluateParameter(solid.pZpl)]
+            pRMin = [val * luval  for val in solid.evaluateParameter(solid.pRMin)]
+            pRMax = [val * luval  for val in solid.evaluateParameter(solid.pRMax)]
+
+            pZ = []
+            pR = []
+
+            # first point or rInner
+            pZ.append(pZpl[0])
+            pR.append(pRMin[0])
+
+            # rest of outer
+            pZ.extend(pZpl)
+            pR.extend(pRMax)
+
+            # reversed inner
+            pZ.extend(pZpl[-1:0:-1])
+            pR.extend(pRMin[-1:0:-1])
+
+        zrList  = [[z,r] for z,r in zip(pZ,pR)]
+        zrList.reverse()
+        zrArray = _np.array(zrList)
+
+        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+
+        # loop over zr convex polygons
+        ibody = 0
+
+        fregion = _fluka.Region("R"+name)
+
+        # phi cuts
         if pDPhi != 2*_np.pi :
-            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
-                                [_np.cos(pSPhi-_np.pi/2),_np.sin(pSPhi-_np.pi/2),0],
+            fbody1 = _fluka.PLA("B"+name+"_"+format(ibody, '02'),
+                                [-_np.sin(pSPhi),_np.cos(pSPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
-
             ibody += 1
-
-            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody,'02'),
-                                [_np.cos(pSPhi+pDPhi+_np.pi/2),_np.sin(pSPhi+pDPhi+_np.pi/2),0],
+            fbody2 = _fluka.PLA("B"+name+"_"+format(ibody, '02'),
+                                [-_np.sin(pSPhi+pDPhi),_np.cos(pSPhi+pDPhi),0],
                                 [0, 0, 0],
                                 transform=transform,
                                 flukaregistry=flukaRegistry,
                                 comment=commentName)
-
             ibody += 1
 
 
-        for islice1 in range(0,nslices-1,1) :
-            islice2 = islice1+1
+        for i in range(0, len(zrListConvex), 1):
 
-            base = [0,0,pZpl[islice1]]
-            dir  = [0,0,pZpl[islice2]-pZpl[islice1]]
+            posBodies = []
+            negBodies = []
 
-            pRMax1 = pRMax[islice1]
-            pRMax2 = pRMax[islice2]
+            for j in range(0,len(zrListConvex[i]),1) :
 
-            pRMin1 = pRMin[islice1]
-            pRMin2 = pRMin[islice2]
+                j1 = j
+                j2 = (j+1) % len(zrListConvex[i])
 
-            trc1 = _fluka.TRC("B"+name+"_"+format(ibody,'02'),
-                              base,dir,pRMax1,pRMax2,
-                              transform=transform,
-                              flukaregistry=flukaRegistry,
-                              comment=commentName)
-            ibody += 1
+                z1 = zrListConvex[i][j1][0]
+                r1 = zrListConvex[i][j1][1]
 
-            trc2 = _fluka.TRC("B"+name+"_"+format(ibody,'02'),
-                              base,dir,pRMin1,pRMin2,
-                              transform=transform,
-                              flukaregistry=flukaRegistry,
-                              comment=commentName)
-            ibody += 1
+                z2 = zrListConvex[i][j2][0]
+                r2 = zrListConvex[i][j2][1]
 
-            # phi cuts planes
+                dz = z2 - z1
+                dr = r2 - r1
 
-            fzone1 = _fluka.Zone()
-            fzone1.addIntersection(trc1)
-            fzone1.addSubtraction(trc2)
+                if dz == 0:
+                    pass
 
-            # cut phi
-            if pDPhi != 2 * _np.pi:
-                fzone2 = _fluka.Zone()
-                if pDPhi < _np.pi :
-                    fzone2.addIntersection(fbody1)
-                    fzone2.addIntersection(fbody2)
-                    fzone1.addIntersection(fzone2)
-                else :
-                    fzone2.addSubtraction(fbody1)
-                    fzone2.addSubtraction(fbody2)
-                    fzone1.addSubtraction(fzone2)
+                elif dz > 0:
+                    body = _fluka.TRC("B" + name + "_" + format(ibody, '02'),
+                                      [0,0,z1],
+                                      [0,0,dz],
+                                      r1,r2,
+                                      transform=transform,
+                                      flukaregistry=flukaRegistry,
+                                      comment=commentName)
+                    negBodies.append(body)
+                    ibody += 1
 
-            fregion.addZone(fzone1)
+                elif  dz < 0:
+                    body = _fluka.TRC("B" + name + "_" + format(ibody, '02'),
+                                      [0,0,z1],
+                                      [0,0,dz],
+                                      r1,r2,
+                                      transform=transform,
+                                      flukaregistry=flukaRegistry,
+                                      comment=commentName)
+                    posBodies.append(body)
+                    ibody += 1
 
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+            for pb in posBodies :
+                fzone = _fluka.Zone()
+                fzone.addIntersection(pb)
 
-        # increment name count
+                for nb in negBodies:
+                    fzone.addSubtraction(nb)
+
+                if pDPhi != 2 * _np.pi:
+                    if pDPhi < _np.pi:
+                        fzone.addSubtraction(fbody1)
+                        fzone.addIntersection(fbody2)
+                    elif pDPhi == _np.pi:
+                        fzone.addSubtraction(fbody2)
+                    else:
+                        fzone1 = _fluka.Zone()
+                        fzone1.addIntersection(fbody1)
+                        fzone1.addSubtraction(fbody2)
+                        fzone.addSubtraction(fzone1)
+
+                fregion.addZone(fzone)
+
         flukaNameCount += 1
 
-    elif solid.type == "GenericPolycone" :
+    elif solid.type == "GenericPolyhedra" or solid.type == "Polyhedra":
 
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        if solid.type == "GenericPolyhedra" :
+            import pyg4ometry.gdml.Units as _Units #TODO move circular import
+            luval = _Units.unit(solid.lunit)
+            auval = _Units.unit(solid.aunit)
 
-        flukaNameCount += 1
+            pSPhi = solid.evaluateParameter(solid.pSPhi)*auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi)*auval
+            numSide = int(solid.evaluateParameter(solid.numSide))
+            pR = [val*luval/10.0 for val in solid.evaluateParameter(solid.pR)]
+            pZ = [val*luval/10.0 for val in solid.evaluateParameter(solid.pZ)]
 
-    elif solid.type == "Polyhedra" :
+        elif solid.type == "Polyhedra" :
+            import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+            luval = _Units.unit(solid.lunit)
+            auval = _Units.unit(solid.aunit)
 
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+            pSPhi = solid.evaluateParameter(solid.phiStart) * auval
+            pDPhi = solid.evaluateParameter(solid.phiTotal) * auval
 
-        flukaNameCount += 1
+            numSide = int(solid.evaluateParameter(solid.numSide))
+            numZPlanes = int(solid.numZPlanes)
+            zPlane = [val * luval for val in solid.evaluateParameter(solid.zPlane)]
+            rInner = [val * luval for val in solid.evaluateParameter(solid.rInner)]
+            rOuter = [val * luval for val in solid.evaluateParameter(solid.rOuter)]
 
-    elif solid.type == "GenericPolyhedra" :
+            pZ = []
+            pR = []
 
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+            # first point or rInner
+            pZ.append(zPlane[0])
+            pR.append(rInner[0])
+
+            # rest of outer
+            pZ.extend(zPlane)
+            pR.extend(rOuter)
+
+            # reversed inner
+            pZ.extend(zPlane[-1:0:-1])
+            pR.extend(rInner[-1:0:-1])
+
+
+        dPhi = pDPhi / numSide
+
+
+        zrList  = [[z,r] for z,r in zip(pZ,pR)]
+        zrList.reverse()
+        zrArray = _np.array(zrList)
+
+        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+
+        fregion = _fluka.Region("R"+name)
+
+        # loop over zr convex polygons
+        ibody = 0
+
+        for i in range(0, len(zrListConvex), 1):
+
+            for j in range(0,numSide, 1) :
+
+                j1 = j
+                j2 = j + 1
+
+                phi1 = dPhi * j1 + pSPhi
+                phi2 = dPhi * j2 + pSPhi
+
+                fzone = _fluka.Zone()
+
+                for k in range(0,len(zrListConvex[i]),1) :
+
+                    k1 = k
+                    k2 = (k+1) % len(zrListConvex[i])                       # cyclic index as polygon is closed
+
+                    z1 = zrListConvex[i][k1][0]
+                    r1 = zrListConvex[i][k1][1]
+
+                    x1p1 = r1*_np.cos(phi1)
+                    y1p1 = r1*_np.sin(phi1)
+
+                    x1p2 = r1*_np.cos(phi2)
+                    y1p2 = r1*_np.sin(phi2)
+
+                    z2 = zrListConvex[i][k2][0]
+                    r2 = zrListConvex[i][k2][1]
+
+                    x2p1 = r2 * _np.cos(phi1)
+                    y2p1 = r2 * _np.sin(phi1)
+
+                    x2p2 = r2 * _np.cos(phi2)
+                    x2p2 = r2 * _np.sin(phi2)
+
+                    dx1 = x2p1 - x1p1
+                    dy1 = y2p1 - y1p1
+                    dz1 = z2 - z1
+
+                    l1  = _np.sqrt(dx1**2 + dy1**2 + dz1**2)
+
+                    dx1 = dx1/l1
+                    dy1 = dy1/l1
+                    dz1 = dz1/l1
+
+                    dx2 = x1p2 - x1p1
+                    dy2 = y1p2 - y1p1
+                    dz2 = 0
+
+                    l2  = _np.sqrt(dx2**2 + dy2**2 + dz2**2)
+
+                    dx2 = dx2/l2
+                    dy2 = dy2/l2
+                    dz2 = dz2/l2
+
+                    nx = dy1 * dz2 - dz1 * dy2
+                    ny = dz1 * dx2 - dx1 * dz2
+                    nz = dx1 * dy2 - dy1 * dx2
+
+                    fbody = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                       [nx,ny,nz],
+                                       [x1p1,y1p1,z1],
+                                       transform=transform,
+                                       flukaregistry=flukaRegistry,
+                                       comment=commentName)
+                    fzone.addIntersection(fbody)
+                    ibody += 1
+
+
+                fbody = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                   [_np.cos(phi1-_np.pi/2.0), _np.sin(phi1-_np.pi/2.0), 0],
+                                   [0, 0, 0],
+                                   transform=transform,
+                                   flukaregistry=flukaRegistry,
+                                   comment=commentName)
+                fzone.addIntersection(fbody)
+                ibody += 1
+
+                fbody = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                   [_np.cos(phi2+_np.pi/2.0), _np.sin(phi2+_np.pi/2.0), 0],
+                                   [0, 0, 0],
+                                   transform=transform,
+                                   flukaregistry=flukaRegistry,
+                                   comment=commentName)
+                fzone.addIntersection(fbody)
+                ibody += 1
+
+                fregion.addZone(fzone)
 
         flukaNameCount += 1
 
@@ -731,19 +1003,201 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Ellipsoid" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        uval = _Units.unit(solid.lunit) / 10.
+
+        xsemi = solid.evaluateParameter(solid.pxSemiAxis) * uval
+        ysemi = solid.evaluateParameter(solid.pySemiAxis) * uval
+        zsemi = solid.evaluateParameter(solid.pzSemiAxis) * uval
+        zlow = solid.evaluateParameter(solid.pzBottomCut) * uval
+        zhigh = solid.evaluateParameter(solid.pzTopCut) * uval
+
+        cxx = xsemi**-2
+        cyy = ysemi**-2
+        czz = zsemi**-2
+
+        # Main ellipsoid.  ELL can't be used as ELL is an ellipsoid of rotation.
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            cxx, cyy, czz,
+                            0, 0, 0, 0, 0, 0, -1,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+
+        # Optional cuts in z to the ellipsoid.
+        ellcuti = 2
+        if zhigh < zsemi:
+            fbody2 = _fluka.XYP("B{}_0{}".format(name, ellcuti),
+                                zhigh,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addIntersection(fbody2)
+            ellcuti += 1
+
+        if zlow > -zsemi:
+            fbody3 = _fluka.XYP("B{}_0{}".format(name, ellcuti),
+                                zlow,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "EllipticalCone" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+        uval = _Units.unit(solid.lunit) / 10.
+
+        # xsemi and ysemi are unitless
+        xsemi = solid.evaluateParameter(solid.pxSemiAxis)
+        ysemi = solid.evaluateParameter(solid.pySemiAxis)
+        zheight = solid.evaluateParameter(solid.zMax) * uval
+        zcut = solid.evaluateParameter(solid.pzTopCut) * uval
+
+        # (x/xSemiAxis)^2 + (y/ySemiAxis)^2 = (zheight - z)^2
+        cxx = xsemi**-2
+        cyy = ysemi**-2
+        czz = -1
+        cz = 2 * zheight
+        c = -zheight**2
+
+        fzone = _fluka.Zone()
+        # Cone from general quadric
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            cxx, cyy, czz,
+                            0, 0, 0, 0, 0, cz, c,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+
+        # Do the cuts on the infinite cone to make it finite
+        zcut = min(zcut, zheight)
+        fbody2 = _fluka.XYP("B{}_02".format(name),
+                            zcut,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody2)
+
+        fbody3 = _fluka.XYP("B{}_03".format(name),
+                            -zcut,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Paraboloid" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+
+        uval = _Units.unit(solid.lunit) / 10.
+
+        halflength = solid.evaluateParameter(solid.pDz) * uval
+        rlow = solid.evaluateParameter(solid.pR1) * uval
+        rhigh = solid.evaluateParameter(solid.pR2) * uval
+
+        # Equation:
+        # x^2 + y^2 + bz + c = 0;
+
+        cz = (rlow**2 - rhigh**2) / (2 * halflength)
+        c = (-rhigh**2 - rlow**2) / 2
+
+        fzone = _fluka.Zone()
+        # Tip points in -ve z direction.  larger face is +ve z.
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            1, 1, 0,
+                            0, 0, 0, 0, 0, cz, c,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+        # cut at positive z.
+        fbody2 = _fluka.XYP("B{}_02".format(name),
+                            halflength,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody2)
+        # cut at negative z
+        fbody3 = _fluka.XYP("B{}_03".format(name),
+                            -halflength,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody3)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Hype" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        uvalL = _Units.unit(solid.lunit) / 10
+        uvalA = _Units.unit(solid.aunit)
+
+        outerRadius = solid.evaluateParameter(solid.outerRadius) * uvalL
+        innerRadius = solid.evaluateParameter(solid.innerRadius) * uvalL
+        outerStereo = solid.evaluateParameter(solid.outerStereo) * uvalA
+        innerStereo = solid.evaluateParameter(solid.innerStereo) * uvalA
+        lenZ =  solid.evaluateParameter(solid.lenZ) * uvalL
+        # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
+        cOuter = -outerRadius**2
+        cInner = -innerRadius**2
+        czzOuter = -_np.tan(outerStereo)**2
+        czzInner = -_np.tan(innerStereo)**2
+
+        fzone = _fluka.Zone()
+        # Outer QUA
+        fbody1 = _fluka.QUA("B{}_01".format(name),
+                            1, 1, czzOuter,
+                            0, 0, 0, 0, 0, 0, cOuter,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody1)
+
+        ihype = 2
+        # Only build if it is not null
+        if innerRadius != 0 or innerStereo != 0:
+            # Inner QUA
+            fbody2 = _fluka.QUA("B{}_0{}".format(name, ihype),
+                                1, 1, czzInner,
+                                0, 0, 0, 0, 0, 0, cInner,
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            fzone.addSubtraction(fbody2)
+            ihype += 1
+
+        fbody3 = _fluka.XYP("B{}_0{}".format(name, ihype),
+                            lenZ / 2.0,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addIntersection(fbody3)
+        ihype += 1
+
+        fbody4 = _fluka.XYP("B{}_0{}".format(name, ihype),
+                            -lenZ / 2.0,
+                            transform=transform,
+                            flukaregistry=flukaRegistry,
+                            comment=commentName)
+        fzone.addSubtraction(fbody4)
+
+        fregion = _fluka.Region("R"+name)
+        fregion.addZone(fzone)
+
         flukaNameCount += 1
 
     elif solid.type == "Tet" :
@@ -751,7 +1205,124 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+
+        import pyg4ometry.gdml.Units as _Units
+
+        luval = _Units.unit(solid.lunit)/10.0
+
+        pZslices = solid.evaluateParameter(solid.pZslices)
+        pPolygon = solid.evaluateParameter(solid.pPolygon)
+
+        zpos     = [zslice[0]*luval for zslice in pZslices]
+        x_offs   = [zslice[1][0]*luval for zslice in pZslices]
+        y_offs   = [zslice[1][1]*luval for zslice in pZslices]
+        scale    = [zslice[2] for zslice in pZslices]
+        vertices = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygon]
+        nslices  = len(pZslices)
+
+        vertices = list(reversed(vertices))
+        polyListConvex = _pycgal.numpyPolygonConvex(_np.array(vertices))
+
+
+        fregion = _fluka.Region("R"+name)
+
+        ibody = 0
+        # loop over planes
+        for i in range(0,nslices-1,1):
+            i1 = i
+            i2 = i+1
+
+            zi1 = zpos[i1]
+            zi2 = zpos[i2]
+
+            # build i'th and i+1'th layers
+            i1PolyListConvex = []
+            i2PolyListConvex = []
+
+            for j in range(0, len(polyListConvex),1):
+                i1PolyListConvex.append([[scale[i1]*vert[0]+x_offs[i1],
+                                          scale[i1]*vert[1]+y_offs[i1]] for vert in polyListConvex[j]])
+
+                i2PolyListConvex.append([[scale[i2]*vert[0]+x_offs[i2],
+                                          scale[i2]*vert[1]+y_offs[i2]] for vert in polyListConvex[j]])
+
+
+            # end planes
+            fbody1 = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                [0, 0, -1],
+                                [0, 0, zi1],
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            ibody += 1
+            fbody2 = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                [0, 0, 1],
+                                [0, 0, zi2],
+                                transform=transform,
+                                flukaregistry=flukaRegistry,
+                                comment=commentName)
+            ibody += 1
+
+            for j in range(0,len(i1PolyListConvex),1):
+                fzone = _fluka.Zone()
+
+
+                fzone.addIntersection(fbody1)
+                fzone.addIntersection(fbody2)
+
+                for k in range(0,len(i1PolyListConvex[j]),1):
+                    k1 = k
+                    k2 = (k+1) % len(i1PolyListConvex[j])
+
+                    x0 = i1PolyListConvex[j][k1][0]
+                    y0 = i1PolyListConvex[j][k1][1]
+                    z0 = zi1
+
+                    x1 = i2PolyListConvex[j][k1][0]
+                    y1 = i2PolyListConvex[j][k1][1]
+                    z1 = zi2
+
+                    x2 = i1PolyListConvex[j][k2][0]
+                    y2 = i1PolyListConvex[j][k2][1]
+                    z2 = zi1
+
+                    dx1 = x1-x0
+                    dy1 = y1-y0
+                    dz1 = z1-z0
+
+                    ld1 = _np.sqrt(dx1**2+dy1**2+dz1**2)
+
+                    dx1 = dx1/ld1
+                    dy1 = dy1/ld1
+                    dz1 = dz1/ld1
+
+
+                    dx2 = x2-x0
+                    dy2 = y2-y0
+                    dz2 = z2-z0
+
+                    ld2 = _np.sqrt(dx2**2+dy2**2+dz2**2)
+
+                    dx2 = dx2/ld2
+                    dy2 = dy2/ld2
+                    dz2 = dz2/ld2
+
+                    nx = dy1*dz2 - dz1*dy2
+                    ny = dx2*dz1 - dx1*dz2
+                    nz = dx1*dy2 - dy1*dy2
+
+                    fbody = _fluka.PLA("B" + name + "_" + format(ibody, '02'),
+                                       [-nx,-ny,-nz],
+                                       [x0,y0,z0],
+                                       transform=transform,
+                                       flukaregistry=flukaRegistry,
+                                       comment=commentName)
+                    ibody += 1
+                    fzone.addIntersection(fbody)
+                fregion.addZone(fzone)
+
+
+        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
@@ -886,6 +1457,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     else :
         print(solid.type)
 
+    # print solid.name, name, solid.type, len(fregion.zones)
+
     return fregion, flukaNameCount
 
 
@@ -952,6 +1525,3 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
         fregion.addZone(fzone)
 
     return fregion
-
-
-

@@ -257,6 +257,54 @@ class VtkViewer:
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
+    def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first = True) :
+
+
+        if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection" :
+
+            if first:
+                mesh = solid.pycsgmesh()
+                visOptions = _VisOptions()
+                visOptions.representation = "surface"
+                visOptions.alpha = 1.0
+                visOptions.color = [0.5, 0.5, 0.5]
+                self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
+                             self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                             self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+                first = False
+
+            obj1 = solid.object1()
+            obj2 = solid.object2()
+
+            tran = solid.translation()
+            rotn = solid.rotation()
+
+            rotm = _transformation.tbxyz2matrix(rotn)
+            new_mtra = mtra * rotm
+            new_tra  = (_np.array(mtra.dot(tran)) + tra)[0]
+
+            self.addBooleanSolidRecursive(obj1, mtra, tra, first)
+            self.addBooleanSolidRecursive(obj2, new_mtra, new_tra, first)
+        else :
+            mesh = solid.pycsgmesh()
+            visOptions = _VisOptions()
+            visOptions.representation = "wireframe"
+            visOptions.alpha = 0.5
+            visOptions.color = [1,0,0]
+            self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
+                         self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                         self.physicalActorMap,visOptions=visOptions, overlap=False, cutters=False)
+
+
+    def addMeshSimple(self, csgMesh, visOptions = _VisOptions()):
+        self.addMesh("mesh", "mesh", csgMesh,
+                     _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                     _np.array([0, 0, 0]),
+                     self.localmeshes,
+                     self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                     self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+
+
     def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
 
@@ -285,7 +333,7 @@ class VtkViewer:
 
                 if pv.logicalVolume.type != "assembly" :
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
-                    #mesh = _Mesh(pv.logicalVolume.solid).localmesh
+                    # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
                     if self.materialVisualisationOptions :
                         visOptions = self.materialVisualisationOptions[pv.logicalVolume.material.name]
@@ -334,7 +382,7 @@ class VtkViewer:
                                  visOptions = pv.visOptions, overlap = False)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False):
+                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False, cutters = True):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -468,9 +516,10 @@ class VtkViewer:
             vtkActor.GetProperty().SetOpacity(0.0)
             self.ren.AddActor(clipperActor)  # selection part end
 
-        makeCutterPlane([1,0,0],[1,0,0])
-        makeCutterPlane([0,1,0],[0,1,0])
-        makeCutterPlane([0,0,1],[0,0,1])
+        if cutters :
+            makeCutterPlane([1,0,0],[1,0,0])
+            makeCutterPlane([0,1,0],[0,1,0])
+            makeCutterPlane([0,0,1],[0,0,1])
 
         #makeClipperPlane([1,0,0])
         #makeClipperPlane([0,1,0])

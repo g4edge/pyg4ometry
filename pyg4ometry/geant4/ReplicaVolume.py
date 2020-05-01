@@ -1,4 +1,5 @@
 from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
+import pyg4ometry.geant4.solid as _solid
 from   pyg4ometry.visualisation  import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
@@ -113,13 +114,17 @@ class ReplicaVolume(_PhysicalVolume) :
         for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
             if self.axis == self.Axis.kRho :
 
-                # Copy solid so we don't change the original
-                solid       = _copy.deepcopy(self.logicalVolume.solid)
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-                # Must be a tubs 
-                solid.pRMin.expr.expression = str(v)
-                solid.pRMax.expr.expression = str(v+width)            
+                solid = _solid.Tubs(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    v,
+                                    v+width,
+                                    self.logicalVolume.solid.pDz,
+                                    self.logicalVolume.solid.pSPhi,
+                                    self.logicalVolume.solid.pDPhi,
+                                    self.logicalVolume.registry,
+                                    self.logicalVolume.solid.lunit,
+                                    self.logicalVolume.solid.aunit,
+                                    self.logicalVolume.solid.nslice,
+                                    False)
                 mesh   = _Mesh(solid)                                
 
                 meshes.append(mesh)

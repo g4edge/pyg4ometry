@@ -1,0 +1,9 @@
+%.o : %.cpp
+	g++ -fPIC -c $< 
+
+pyg4_cgal.so : pyg4_cgal.o
+	g++ -shared -o $@ $< -lmpfr -lgmp -lboost_thread -lstdc++
+
+clean : 
+	rm -rf *.o *.so *.pyc *~
+

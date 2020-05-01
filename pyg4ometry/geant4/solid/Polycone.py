@@ -1,4 +1,5 @@
 from .SolidBase             import SolidBase     as _SolidBase
+from .GenericPolyhedra import GenericPolyhedra   as  _GenericPolyhedra
 from pyg4ometry.pycsg.core import CSG           as _CSG
 from pyg4ometry.pycsg.geom import Vector        as _Vector
 from pyg4ometry.pycsg.geom import Vertex        as _Vertex
@@ -42,7 +43,7 @@ class Polycone(_SolidBase):
 
 
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
-                 registry, lunit="mm", aunit="rad", nslice=16,
+                 registry, lunit="mm", aunit="rad", nslice=32,
                  addRegistry=True):
 
         self.type    = 'Polycone'
@@ -198,140 +199,25 @@ class Polycone(_SolidBase):
         pRMin = [val * luval for val in self.evaluateParameter(self.pRMin)]
         pRMax = [val * luval for val in self.evaluateParameter(self.pRMax)]
 
-        _log.info("polycone.basicmesh>")
-        polygons = []
 
-        slices = self.nslice
+        pZ = []
+        pR = []
 
-        # dPhi = (pDPhi - pSPhi) / slices
-        dPhi = pDPhi/slices
-        stacks = len(pZpl)
+        # first point or rInner
+        pZ.append(pZpl[0])
+        pR.append(pRMin[0])
 
-        for i in range(0,stacks-1,1):
-            i1 = i
-            i2 = i + 1
+        # rest of outer
+        pZ.extend(pZpl)
+        pR.extend(pRMax)
 
-            rMin1 = pRMin[i1]
-            rMin2 = pRMin[i2]
+        # reversed inner
+        pZ.extend(pZpl[-1:0:-1])
+        pR.extend(pRMin[-1:0:-1])
 
-            rMax1 = pRMax[i1]
-            rMax2 = pRMax[i2]
+        ps = _GenericPolyhedra("ps", pSPhi, pDPhi, self.nslice, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
 
-            z1 = pZpl[i1]
-            z2 = pZpl[i2]
-
-            for j in range(0,self.nslice,1):
-
-                j1 = j
-                j2 = j + 1
-
-                p1 = dPhi * j1 + pSPhi
-                p2 = dPhi * j2 + pSPhi
-
-                xRMinZ1P1 = rMin1*_np.cos(p1)
-                yRMinZ1P1 = rMin1*_np.sin(p1)
-                zRMinZ1P1 = z1
-
-                xRMinZ1P2 = rMin1*_np.cos(p2)
-                yRMinZ1P2 = rMin1*_np.sin(p2)
-                zRMinZ1P2 = z1
-
-                xRMinZ2P1 = rMin2 * _np.cos(p1)
-                yRMinZ2P1 = rMin2 * _np.sin(p1)
-                zRMinZ2P1 = z2
-
-                xRMinZ2P2 = rMin2 * _np.cos(p2)
-                yRMinZ2P2 = rMin2 * _np.sin(p2)
-                zRMinZ2P2 = z2
-
-                xRMaxZ1P1 = rMax1 * _np.cos(p1)
-                yRMaxZ1P1 = rMax1 * _np.sin(p1)
-                zRMaxZ1P1 = z1
-
-                xRMaxZ1P2 = rMax1 * _np.cos(p2)
-                yRMaxZ1P2 = rMax1 * _np.sin(p2)
-                zRMaxZ1P2 = z1
-
-                xRMaxZ2P1 = rMax2 * _np.cos(p1)
-                yRMaxZ2P1 = rMax2 * _np.sin(p1)
-                zRMaxZ2P1 = z2
-
-                xRMaxZ2P2 = rMax2 * _np.cos(p2)
-                yRMaxZ2P2 = rMax2 * _np.sin(p2)
-                zRMaxZ2P2 = z2
-
-                ###########################
-                # Curved cone faces
-                ###########################
-                vOuterCurved = []
-                vOuterCurved.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1], None))
-                vOuterCurved.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2], None))
-                vOuterCurved.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2], None))
-                vOuterCurved.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1], None))
-                polygons.append(_Polygon(vOuterCurved))
-
-                vInnerCurved = []
-                if rMin1 != 0 :
-                    vInnerCurved.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1], None))
-                vInnerCurved.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2], None))
-                vInnerCurved.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2], None))
-                vInnerCurved.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1], None))
-                vInnerCurved.reverse()
-                polygons.append(_Polygon(vInnerCurved))
-
-                ###########################
-                # cone ends
-                ###########################
-                if i1 == 0 and rMin1 != rMax2 :
-                    vEnd = []
-
-                    if rMin1 != rMax1 :
-                        if rMin1 !=0  :
-                            vEnd.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1], None))
-                        vEnd.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2], None))
-                        vEnd.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2], None))
-                        vEnd.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1], None))
-                        polygons.append(_Polygon(vEnd))
-
-                elif i2 == stacks-1 :
-                    vEnd = []
-
-                    if rMin2 != rMax2 :
-                        if rMin2 != 0  :
-                            vEnd.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1], None))
-                        vEnd.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2], None))
-                        vEnd.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2], None))
-                        vEnd.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1], None))
-                        vEnd.reverse()
-                        polygons.append(_Polygon(vEnd))
-
-                ###########################
-                # wedge ends
-                ###########################
-                if pDPhi != 2*_np.pi and j == 0:
-                    vWedg = []
-                    if rMin1 != rMax1 :
-                        vWedg.append(_Vertex([xRMinZ1P1, yRMinZ1P1, zRMinZ1P1],None))
-                    vWedg.append(_Vertex([xRMaxZ1P1, yRMaxZ1P1, zRMaxZ1P1],None))
-                    if rMin2 != rMax2 :
-                        vWedg.append(_Vertex([xRMaxZ2P1, yRMaxZ2P1, zRMaxZ2P1],None))
-                    vWedg.append(_Vertex([xRMinZ2P1, yRMinZ2P1, zRMinZ2P1],None))
-                    polygons.append(_Polygon(vWedg))
-
-                if pDPhi != 2*_np.pi and j == self.nslice-1:
-                    vWedg = []
-                    if rMin1 != rMax1 :
-                        vWedg.append(_Vertex([xRMinZ1P2, yRMinZ1P2, zRMinZ1P2],None))
-                    vWedg.append(_Vertex([xRMaxZ1P2, yRMaxZ1P2, zRMaxZ1P2],None))
-                    if rMin2 != rMax2 :
-                        vWedg.append(_Vertex([xRMaxZ2P2, yRMaxZ2P2, zRMaxZ2P2],None))
-                    vWedg.append(_Vertex([xRMinZ2P2, yRMinZ2P2, zRMinZ2P2],None))
-                    vWedg.reverse()
-                    polygons.append(_Polygon(vWedg))
-
-        mesh = _CSG.fromPolygons(polygons)
-
-        return mesh
+        return ps.pycsgmesh()
 
 
 

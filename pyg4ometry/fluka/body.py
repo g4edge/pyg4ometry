@@ -465,10 +465,10 @@ class RCC(BodyMixin):
         if self.comment != "" :
             prefix = "* "+self.comment+"\n"
         return prefix+\
-               "RCC {} {} {}".format(self.name,
-                                     _iterablesToFreeString(self.face,
-                                                               self.direction),
-                                     self.radius)
+               "RCC {} {} {} {}".format(self.name,
+                                     _iterablesToFreeString(self.face),
+                                     _iterablesToFreeString(self.direction),
+                                     str(self.radius))
 
 
 class REC(BodyMixin):
@@ -865,7 +865,7 @@ class RAW(_WED_RAW):
 class ARB(BodyMixin):
     """
     Arbitrary Convex Polyhedron
-    
+
     :param name: of body
     :type name: str
     :param vertices: Eight vertices which make up the polyhedron as \
@@ -881,7 +881,7 @@ class ARB(BodyMixin):
     be either all clockwise or all anticlockwise, which if not obeyed \
     will result in erroneous output without warning.
     :type facenumbers: float
-    
+
     """
     def __init__(self, name, vertices, facenumbers, transform=None,
                  flukaregistry=None,comment=""):
@@ -1697,7 +1697,7 @@ class QUA(BodyMixin):
     :type cz: float
     :param c: constant
     :type c: constant
-    
+
     """
     def __init__(self, name,
                  cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
@@ -1877,6 +1877,19 @@ class QUA(BodyMixin):
                     self.cxy, self.cxz, self.cyz,
                     self.cx, self.cy, self.cz,
                     self.c)
+
+    def flukaFreeString(self):
+        prefix = ""
+        if self.comment:
+            prefix = "* "+self.comment+"\n"
+        return "{}QUA {} {}".format(
+            prefix,
+            self.name,
+            _iterablesToFreeString([self.cxx, self.cyy, self.czz,
+                                    self.cxy, self.cxz, self.cyz,
+                                    self.cx, self.cy, self.cz, self.c]))
+
+
 
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):

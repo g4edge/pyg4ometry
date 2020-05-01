@@ -1,4 +1,5 @@
 from .ReplicaVolume import ReplicaVolume as _ReplicaVolume
+import pyg4ometry.geant4.solid as _solid
 from pyg4ometry.visualisation import Mesh as _Mesh
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
@@ -179,212 +180,203 @@ class ParameterisedVolume(_ReplicaVolume):
         for paramData, i in zip(self.paramData, range(0, int(self.ncopies), 1)):
             # box
             if self.logicalVolume.solid.type == "Box" and isinstance(paramData,self.BoxDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pX = paramData.pX
-                solid.pY = paramData.pY
-                solid.pZ = paramData.pZ
+                solid = _solid.Box(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                   paramData.pX,
+                                   paramData.pY,
+                                   paramData.pZ,
+                                   self.logicalVolume.registry,
+                                   paramData.lunit,
+                                   False)
 
                 mesh   = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Tubs" and isinstance(paramData,self.TubeDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pRMin = paramData.pRMin
-                solid.pRMax = paramData.pRMax
-                solid.pDz   = paramData.pDz
-                solid.pSPhi = paramData.pSPhi
-                solid.pDPhi = paramData.pDPhi
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
+                solid = _solid.Tubs(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    paramData.pRMin,
+                                    paramData.pRMax,
+                                    paramData.pDz,
+                                    paramData.pSPhi,
+                                    paramData.pDPhi,
+                                    self.logicalVolume.registry,
+                                    paramData.lunit,
+                                    paramData.aunit,
+                                    self.logicalVolume.solid.nslice,
+                                    False)
 
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Cons" and isinstance(paramData,self.ConeDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pRmin1 = paramData.pRMin1
-                solid.pRmax1 = paramData.pRMax1
-                solid.pRmin2 = paramData.pRMin2
-                solid.pRmax2 = paramData.pRMax2
-                solid.pDZ    = paramData.pDz
-                solid.pSPhi  = paramData.pSPhi
-                solid.pDPhi  = paramData.pDPhi
-                solid.lunit  = paramData.lunit
-                solid.aunit  = paramData.aunit
-
+                solid = _solid.Cons(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    paramData.pRMin1,
+                                    paramData.pRMax1,
+                                    paramData.pRMin2,
+                                    paramData.pRMax2,
+                                    paramData.pDz,
+                                    paramData.pSPhi,
+                                    paramData.pDPhi,
+                                    self.logicalVolume.registry,
+                                    paramData.lunit,
+                                    paramData.aunit,
+                                    self.logicalVolume.solid.nslice,
+                                    False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Orb" and isinstance(paramData,self.OrbDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pRMax = paramData.pRMax
-                solid.lunit = paramData.lunit
-
+                solid =_solid.Orb(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                  paramData.pRMax,
+                                  self.logicalVolume.registry,
+                                  paramData.lunit,
+                                  self.logicalVolume.solid.nslice,
+                                  self.logicalVolume.solid.nstack,
+                                  False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Sphere" and isinstance(paramData,self.SphereDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pRMin = paramData.pRMin
-                solid.pRMax = paramData.pRMax
-                solid.pSPhi = paramData.pSPhi
-                solid.pDPhi = paramData.pDPhi
-                solid.pSTheta = paramData.pSTheta
-                solid.pDTheta = paramData.pDTheta
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Sphere(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                      paramData.pRMin,
+                                      paramData.pRMax,
+                                      paramData.pSPhi,
+                                      paramData.pDPhi,
+                                      paramData.pSTheta,
+                                      paramData.pDTheta,
+                                      self.logicalVolume.registry,
+                                      paramData.lunit,
+                                      paramData.aunit,
+                                      self.logicalVolume.solid.nslice,
+                                      self.logicalVolume.solid.nstack,
+                                      False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Torus" and isinstance(paramData,self.TorusDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pRmin = paramData.pRMin
-                solid.pRmax = paramData.pRMax
-                solid.pRtor = paramData.pRTor
-                solid.pSPhi = paramData.pSPhi
-                solid.pDPhi = paramData.pDPhi
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Torus(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                     paramData.pRMin,
+                                     paramData.pRMax,
+                                     paramData.pRTor,
+                                     paramData.pSPhi,
+                                     paramData.pDPhi,
+                                     self.logicalVolume.registry,
+                                     paramData.lunit,
+                                     paramData.aunit,
+                                     self.logicalVolume.solid.nslice,
+                                     self.logicalVolume.solid.nstack,
+                                     False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Hype" and isinstance(paramData,self.HypeDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.innerRadius = paramData.innerRadius
-                solid.outerRadius = paramData.outerRadius
-                solid.innerStereo = paramData.innerStereo
-                solid.outerStereo = paramData.outerStereo
-                solid.lenZ = paramData.lenZ
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Hype(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    paramData.innerRadius,
+                                    paramData.outerRadius,
+                                    paramData.innerStereo,
+                                    paramData.outerStereo,
+                                    paramData.lenZ,
+                                    self.logicalVolume.registry,
+                                    paramData.lunit,
+                                    paramData.aunit,
+                                    self.logicalVolume.solid.nslice,
+                                    self.logicalVolume.solid.nstack,
+                                    False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Para" and isinstance(paramData,self.ParaDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pDx = paramData.pX
-                solid.pDy = paramData.pY
-                solid.pDz = paramData.pZ
-                solid.pAlpha = paramData.pAlpha
-                solid.pTheta = paramData.pTheta
-                solid.pPhi = paramData.pPhi
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Para(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    paramData.pX,
+                                    paramData.pY,
+                                    paramData.pZ,
+                                    paramData.pAlpha,
+                                    paramData.pTheta,
+                                    paramData.pPhi,
+                                    self.logicalVolume.registry,
+                                    paramData.lunit,
+                                    paramData.aunit,
+                                    False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Trd" and isinstance(paramData,self.TrdDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pX1 = paramData.pX1
-                solid.pX2 = paramData.pX2
-                solid.pY1 = paramData.pY1
-                solid.pY2 = paramData.pY2
-                solid.pZ = paramData.pZ
-                solid.lunit = paramData.lunit
-
+                solid = _solid.Trd(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                   paramData.pX1,
+                                   paramData.pX2,
+                                   paramData.pY1,
+                                   paramData.pY2,
+                                   paramData.pZ,
+                                   self.logicalVolume.registry,
+                                   paramData.lunit,
+                                   False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Trap" and isinstance(paramData,self.TrapDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pDz = paramData.pDz
-                solid.pTheta = paramData.pTheta
-                solid.pDPhi = paramData.pDPhi
-                solid.pDy1 = paramData.pDy1
-                solid.pDx1 = paramData.pDx1
-                solid.pDx2 = paramData.pDx2
-                solid.pAlp1 = paramData.pAlp1
-                solid.pDy2 = paramData.pDy2
-                solid.pDx3 = paramData.pDx3
-                solid.pDx4 = paramData.pDx4
-                solid.pAlp2 = paramData.pAlp2
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Trap(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                    paramData.pDz,
+                                    paramData.pTheta,
+                                    paramData.pDPhi,
+                                    paramData.pDy1,
+                                    paramData.pDx1,
+                                    paramData.pDx2,
+                                    paramData.pAlp1,
+                                    paramData.pDy2,
+                                    paramData.pDx3,
+                                    paramData.pDx4,
+                                    paramData.pAlp2,
+                                    self.logicalVolume.registry,
+                                    paramData.lunit,
+                                    paramData.aunit,
+                                    False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Polycone" and isinstance(paramData,self.PolyconeDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
 
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pSPhi = paramData.pSPhi
-                solid.pDPhi = paramData.pDPhi
-                solid.pZpl = paramData.pZpl
-                solid.pRMin = paramData.pRMin
-                solid.pRMax = paramData.pRMax
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
+                solid = _solid.Polycone(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                        paramData.pSPhi,
+                                        paramData.pDPhi,
+                                        paramData.pZpl,
+                                        paramData.pRMin,
+                                        paramData.pRMax,
+                                        self.logicalVolume.registry,
+                                        paramData.lunit,
+                                        paramData.aunit,
+                                        self.logicalVolume.solid.nslice,
+                                        False)
 
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Polyhedra" and isinstance(paramData,self.PolyhedraDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.phiStart = paramData.pSPhi
-                solid.phiTotal = paramData.pDPhi
-                solid.numSide = paramData.numSide
-                solid.numZplanes = len(paramData.pZpl)
-                solid.zPlane = paramData.pZpl
-                solid.rInner = paramData.pRMin
-                solid.rOuter = paramData.pRMax
-                solid.lunit = paramData.lunit
-                solid.aunit = paramData.aunit
-
+                solid = _solid.Polyhedra(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                         paramData.pSPhi,
+                                         paramData.pDPhi,
+                                         paramData.numSide,
+                                         len(paramData.pZpl),
+                                         paramData.pZpl,
+                                         paramData.pRMin,
+                                         paramData.pRMax,
+                                         self.logicalVolume.registry,
+                                         paramData.lunit,
+                                         paramData.aunit,
+                                         False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
+
             elif self.logicalVolume.solid.type == "Ellipsoid" and isinstance(paramData,self.EllipsoidDimensions):
-                solid = _copy.deepcopy(self.logicalVolume.solid)
-
-                # Needs to a good solid name for optimisiation in VtkViewer
-                solid.name  = self.name+"_"+solid.name+"_"+str(i)
-
-                solid.pxSemiAxis = paramData.pxSemiAxis
-                solid.pySemiAxis = paramData.pySemiAxis
-                solid.pzSemiAxis = paramData.pzSemiAxis
-                solid.pzBottomCut = paramData.pzBottomCut
-                solid.pzTopCut = paramData.pzTopCut
-                solid.lunit = paramData.lunit
-
+                solid = _solid.Ellipsoid(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                         paramData.pxSemiAxis,
+                                         paramData.pySemiAxis,
+                                         paramData.pzSemiAxis,
+                                         paramData.pzBottomCut,
+                                         paramData.pzTopCut,
+                                         self.logicalVolume.registry,
+                                         paramData.lunit,
+                                         self.logicalVolume.solid.nslice,
+                                         self.logicalVolume.solid.nstack,
+                                         False)
                 mesh = _Mesh(solid)
                 meshes.append(mesh)
 

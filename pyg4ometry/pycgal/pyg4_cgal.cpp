@@ -30,8 +30,6 @@
 
 /* IO */
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-//#include <CGAL/IO/Polyhedron_iostream_3.h>
-//#include <CGAL/IO/Surface_mesh_iostream_3.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                              Kernel;
 typedef Kernel::Point_3                                                                Point;
@@ -54,7 +52,6 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 std::ios_base::Init toEnsureInitialization;
 
-
 template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS> 
 {
 
@@ -72,7 +69,7 @@ public:
 			    double **vertListIn, 
 			    long int *nVertFacetIn, 
 			    long int **facetListIn, 
-			    bool debugIoIn = false ) 
+			    bool debugIoIn = false) 
   {
     nVert     = nVertIn;
     nFacet    = nFacetIn;
@@ -108,6 +105,15 @@ public:
 
     for(int iFacet=0;iFacet < nFacet; iFacet++) {
 
+      #if 0
+      B.begin_facet();
+      for(int iVert=0;iVert < nVertFacet[iFacet]; ++iVert) {
+	B.add_vertex_to_facet(facetList[iFacet][iVert]);	
+      }
+      B.end_facet();
+      #endif 
+      
+      # if 1
       if(nVertFacet[iFacet]== 3) {
 	B.begin_facet();
 	B.add_vertex_to_facet(facetList[iFacet][0]);
@@ -118,7 +124,7 @@ public:
 		    << facetList[iFacet][0] << " " << facetList[iFacet][1] << " " << facetList[iFacet][2] << " " << (int)B.error() << std::endl;	  
 	B.end_facet();
       }
-      else {
+      else if(nVertFacet[iFacet] == 4) {
 	B.begin_facet();
 	B.add_vertex_to_facet(facetList[iFacet][0]);
 	B.add_vertex_to_facet(facetList[iFacet][1]);
@@ -133,8 +139,8 @@ public:
 	if(debugIo)
 	  std::cout << "Build_Polygon_VertexFacet> quad " 
 		    << facetList[iFacet][0] << " " << facetList[iFacet][1] << " " << facetList[iFacet][2] << " " <<  facetList[iFacet][3] << " " << (int)B.error() << std::endl;	  
-
       }
+      #endif
     }
     B.end_surface();
     
@@ -181,7 +187,7 @@ extern "C" int pyg4_cgal_surfacemesh_write(void *meshIn,
 
 extern "C" int pyg4_cgal_polyhedron_print(void *polyhedronIn) 
 {
-  printf("pyg4_cgal_polyhedron_print>\n");
+  std::cout << "pyg4_cgal_polyhedron_print>" << std::endl;
 
   Polyhedron *polyhedron = (Polyhedron*)polyhedronIn;
 
@@ -264,15 +270,17 @@ extern "C" int pyg4_cgal_surfacemesh_print(void *meshIn)
   return SUCCESS;  
 }
 
-extern "C" void* pyg4_cgal_vertexfacet_to_polyhedron(int nVert,
-						     int nFacet, 
+extern "C" void* pyg4_cgal_vertexfacet_to_polyhedron(int         nVert,
+						     int         nFacet, 
 						     double    **vertList, 
 						     long int   *nVertFacet,
-						     long int  **facetList) 
+						     long int  **facetList,
+						     bool        debugIo) 
 {
   Polyhedron *P = new Polyhedron();
-  std::cout << "pyg4_cgal_vertexfacet_to_polyhedron> polyhedron ptr " << P << std::endl;
-  Build_Polygon_VertexFacet<HalfedgeDS> pvf(nVert,nFacet,vertList,nVertFacet,facetList);
+  if(debugIo) 
+    std::cout << "pyg4_cgal_vertexfacet_to_polyhedron> polyhedron ptr " << P << std::endl;
+  Build_Polygon_VertexFacet<HalfedgeDS> pvf(nVert, nFacet, vertList, nVertFacet, facetList, debugIo);
   P->delegate(pvf);
   return (void*)(P);
 }
@@ -445,9 +453,10 @@ extern "C" void* pyg4_cgal_vertex_to_polygon(double **verticesIn,
 					     bool debugIo = false) 
 {
   Polygon_2 *polygon = new Polygon_2();
-  std::cout << "pyg4_cgal_vertex_to_polygon> polygon ptr " << polygon << std::endl;
-  if(debugIo) 
+  if(debugIo) {
+    std::cout << "pyg4_cgal_vertex_to_polygon> polygon ptr " << polygon << std::endl;
     std::cout << "pyg4_cgal_vertex_to_polygon> nVertices=" << nVertices << std::endl;
+  }
   for(int i=0;i<nVertices;++i) {
     if(debugIo) 
       std::cout << "pyg4_cgal_vertex_to_polygon> vertex " 
@@ -482,7 +491,7 @@ extern "C" int pyg4_cgal_polygon_to_convexpolygons(void *polygonIn,
 {
 
   Polygon_2 *polygon = (Polygon_2*)polygonIn;
-  std::cout << "pyg4_cgal_polygon_to_convexpolygons> polygon ptr " << polygon  << std::endl;
+  //  std::cout << "pyg4_cgal_polygon_to_convexpolygons> polygon ptr " << polygon  << std::endl;
 
   Polygon_list partition_polys;
   
@@ -492,7 +501,7 @@ extern "C" int pyg4_cgal_polygon_to_convexpolygons(void *polygonIn,
 
   int i = 0;
   for(auto p = partition_polys.begin(); p != partition_polys.end(); ++p) {
-    std::cout << "pyg4_cgal_polygon_to_convexpolygons> " << i << std::endl;
+    //    std::cout << "pyg4_cgal_polygon_to_convexpolygons> " << i << std::endl;
     polygonOut[i] = (void*)new Polygon_2(*p);
     i++;
   }

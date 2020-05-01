@@ -77,3 +77,18 @@ class Subtraction(_SolidBase):
             raise pyg4ometry.exceptions.NullMeshError(self)
 
         return mesh
+
+    def translation(self):
+        return self.tra2[1].eval()
+
+    def rotation(self):
+        return self.tra2[0].eval()
+
+    def object1(self):
+        import pyg4ometry.geant4 as _g4
+        return self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
+
+    def object2(self):
+        import pyg4ometry.geant4 as _g4
+        return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
+

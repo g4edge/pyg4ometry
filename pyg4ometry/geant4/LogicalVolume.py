@@ -225,7 +225,9 @@ class LogicalVolume(object):
         # recusively check entire tree
         if recursive :
             for d in self.daughterVolumes :
-                d.logicalVolume.checkOverlaps(recursive=True)
+                d.logicalVolume.checkOverlaps(recursive=True,
+                                              coplanar = coplanar,
+                                              debugIO = debugIO)
 
     def setSolid(self, solid) : 
         self.solid = solid 

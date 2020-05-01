@@ -1,11 +1,14 @@
 from .SolidBase import SolidBase as _SolidBase
-from .Polyhedra import Polyhedra
+from ...pycsg.core import CSG as _CSG
+from ...pycsg.geom import Vertex as _Vertex
+from ...pycsg.geom import Polygon as _Polygon
+import pyg4ometry.pycgal as _pycgal
 
 import logging as _log
 import numpy as _np
 
 class GenericPolyhedra(_SolidBase):
-    def __init__(self, name, pSPhi, pDPhi, numSide, pZ, pR,
+    def __init__(self, name, pSPhi, pDPhi, numSide, pR, pZ,
                  registry, lunit="mm", aunit="rad", addRegistry=True):
         """
         Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
@@ -18,6 +21,7 @@ class GenericPolyhedra(_SolidBase):
         pR = r coordinate list
 		pZ = z coordinate list
         """
+
         self.type    = 'GenericPolyhedra'
         self.name    = name
         self.pSPhi   = pSPhi
@@ -57,23 +61,94 @@ class GenericPolyhedra(_SolidBase):
 
         pSPhi = self.evaluateParameter(self.pSPhi)*auval
         pDPhi = self.evaluateParameter(self.pDPhi)*auval
-        numSide = self.evaluateParameter(self.numSide)
+        numSide = int(self.evaluateParameter(self.numSide))
         pR = [val*luval for val in self.evaluateParameter(self.pR)]
         pZ = [val*luval for val in self.evaluateParameter(self.pZ)]
 
-        _log.info("genericpolyhedra.pycsgmesh>")
-        r_first = pR[0]
-        r_last = pR[-1]
-        z_first = pZ[0]
-        z_last = pZ[-1]
-        pRMin = []
-        for i, r in enumerate(pR):
-            #linear interpolation
-            r = (r_first*(z_last-pZ[i]) + r_last*(pZ[i]-z_first))/(z_last - z_first)
-            pRMin.append(r)
+        dPhi = pDPhi / numSide
 
-        # Use a proxy polycone to get the mesh
-        _poly = Polyhedra("temp", pSPhi, pDPhi, numSide, len(pZ), pZ, pRMin, pR,
-                          registry=self.registry, lunit="mm", aunit="rad", addRegistry=False)
+        zrList  = [[z,r] for z,r in zip(pZ,pR)]
+        zrList.reverse()
+        zrArray = _np.array(zrList)
 
-        return _poly.pycsgmesh()
+        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+
+        def plotConvex() :
+            import matplotlib.pyplot as _plt
+            _plt.figure(1)
+            _plt.plot(pZ,pR)
+
+            for cvPolygon in zrListConvex:
+                _plt.plot(cvPolygon[:,0],cvPolygon[:,1])
+
+        # plotConvex()
+
+        polygons = []
+
+        for i in range(0, len(pZ), 1):
+
+            i1 = i
+            i2 = (i + 1) % len(pZ)
+
+            zMin = pZ[i1]
+            zMax = pZ[i2]
+
+            for j in range(0, numSide, 1):
+                j1 = j
+                j2 = j + 1
+
+                phi1 = dPhi * j1 + pSPhi
+                phi2 = dPhi * j2 + pSPhi
+
+                xZMinP1 = pR[i1] * _np.cos(phi1)
+                yZMinP1 = pR[i1] * _np.sin(phi1)
+
+                xZMaxP1 = pR[i2] * _np.cos(phi1)
+                yZMaxP1 = pR[i2] * _np.sin(phi1)
+
+                xZMinP2 = pR[i1] * _np.cos(phi2)
+                yZMinP2 = pR[i1] * _np.sin(phi2)
+
+                xZMaxP2 = pR[i2] * _np.cos(phi2)
+                yZMaxP2 = pR[i2] * _np.sin(phi2)
+
+                vFace = []
+                vFace.append(_Vertex([xZMinP1, yZMinP1, zMin], None))
+                vFace.append(_Vertex([xZMaxP1, yZMaxP1, zMax], None))
+                vFace.append(_Vertex([xZMaxP2, yZMaxP2, zMax], None))
+                vFace.append(_Vertex([xZMinP2, yZMinP2, zMin], None))
+
+                polygons.append(_Polygon(vFace))
+
+        if dPhi != 2*_np.pi :
+            for cvPolygon in zrListConvex:
+
+                vPhi1 = []
+                for cvPolygonPoint in cvPolygon:
+                    z = cvPolygonPoint[0]
+                    r = cvPolygonPoint[1]
+
+                    xP1 = r * _np.cos(pSPhi)
+                    yP1 = r * _np.sin(pSPhi)
+
+                    vPhi1.append(_Vertex([xP1, yP1, z], None))
+
+                polygons.append(_Polygon(vPhi1))
+
+                vPhi2 = []
+                for cvPolygonPoint in reversed(cvPolygon):
+
+                    z = cvPolygonPoint[0]
+                    r = cvPolygonPoint[1]
+
+                    xP2 = r * _np.cos(pSPhi+pDPhi)
+                    yP2 = r * _np.sin(pSPhi+pDPhi)
+
+                    vPhi2.append(_Vertex([xP2, yP2, z], None))
+
+                polygons.append(_Polygon(vPhi2))
+
+        mesh = _CSG.fromPolygons(polygons)
+        # _pycgal.pycsgmesh2NefPolyhedron(mesh)
+
+        return mesh

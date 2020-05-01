@@ -284,12 +284,12 @@ class Polygon(object):
         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
     
     def clone(self):
-        vertices = list(map(lambda v: v.clone(), self.vertices))
+        vertices = list([v.clone() for v in self.vertices])
         return Polygon(vertices, self.shared)
                 
     def flip(self):
         self.vertices.reverse()
-        map(lambda v: v.flip(), self.vertices)
+        list(map(lambda v: v.flip(), self.vertices))
         self.plane.flip()
 
     def __repr__(self):
@@ -323,7 +323,7 @@ class BSPNode(object):
             node.front = self.front.clone()
         if self.back: 
             node.back = self.back.clone()
-        node.polygons = list(map(lambda p: p.clone(), self.polygons))
+        node.polygons = list([p.clone() for p in self.polygons])
         return node
         
     def invert(self):

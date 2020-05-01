@@ -2,7 +2,6 @@ import numbers
 from pyg4ometry.geant4 import Expression as _Expression
 from pyg4ometry.gdml import Units as _Units
 
-from matplotlib.cbook import is_numlike
 import numpy as _np
 
 def upgradeToStringExpression(reg, obj) : 
@@ -17,7 +16,7 @@ def upgradeToStringExpression(reg, obj) :
     :rtype: str
     """
 
-    if is_numlike(obj) :             
+    if isinstance(obj, numbers.Number):
         # return str(obj)                  # number like so return string
         return "%.15f" % obj
 
@@ -212,6 +211,13 @@ class ScalarBase(object) :
                      registry=self.registry,
                      addRegistry=False)
         return v
+
+
+    def __abs__(self):
+        return abs(self)
+
+    def __pow__(self, power):
+        return pow(self,power)
 
     __radd__ = __add__
     __rmul__ = __mul__

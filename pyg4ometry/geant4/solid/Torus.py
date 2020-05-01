@@ -180,7 +180,7 @@ class Torus(_SolidBase):
         nslice  = self.nslice
 
         dTheta  = 2*_np.pi/nstack
-        dPhi    = (pDPhi-pSPhi)/nslice
+        dPhi    = pDPhi/nslice
 
         for j0 in range(nslice):
             j1 = j0
