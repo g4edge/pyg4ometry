@@ -104,7 +104,7 @@ class FlukaRegistry(object):
             materialName = mat.name
         except AttributeError: # By name, get Ele/Comp from self.
             materialName = mat
-            mat = self.materials[name]
+            mat = self.materials[materialName]
         # More checks.
         if materialName not in self.materials:
             self.addMaterialAssignments(material)
@@ -119,9 +119,7 @@ class FlukaRegistry(object):
                 name = region.name
             except AttributeError:
                 name = region
-            if name not in self.regionDict:
-                raise KeyError(
-                    "Named region \"{}\" not found in registry".format(name))
+
             self.assignmas[name] = materialName
         
     def assignma(self, material, *regions):

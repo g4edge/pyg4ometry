@@ -1,4 +1,7 @@
+import os
 from itertools import izip_longest as _izip_longest
+
+import pandas as pd
 
 from .card import Card
 
@@ -45,10 +48,32 @@ PREDEFINED_COMPOUND_NAMES = ["WATER",
 
 PREDEFINED_MATERIAL_NAMES = PREDEFINED_ELEMENT_NAMES + PREDEFINED_COMPOUND_NAMES
 
+class _MassNumberLookup(object):
+    THISDIR = os.path.dirname(os.path.abspath(__file__))
+    def __init__(self):
+        self.table = pd.read_csv(
+            os.path.join(self.THISDIR, "periodic-table.csv"))
+
+    def getMassNumberFromAtomicNumber(self, z):
+        t = self.table
+        result = t["AtomicMass"][t["AtomicNumber"] == z].values
+        if not result:
+            raise FLUKAError(
+                "Unable to determine mass number for Z = {}".format(z))
+
+        return int(round(result))
+
+
+_MASS_NUMBER_LOOKUP = _MassNumberLookup()
+
+def buildPredefinedMaterials():
+
 
 class BuiltIn(object):
-    def __init__(self, name, flukaregistry=None):
+    def __init__(self, name, massNumber=None, flukaregistry=None):
         self.name = name
+
+        self.massNumner = massNumber # Necessary for some conversions.
 
         if flukaregistry is not None:
             return flukaregistry
@@ -67,7 +92,10 @@ class Element(object):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
-        self.massNumber = massNumber
+
+        if massNumber is None:
+            self.massNumber = _MASS_NUMBER_LOOKUP.getMassNumberFromAtomicNumber(
+                atomicNumber)
 
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
@@ -183,6 +211,13 @@ class Compound(object):
 
         return cls(compoundName, density, fractions, fractionTypes[0],
                    flukaregistry=flukareg)
+
+    @property
+    def massNumber(self):
+        number = 0
+        for material, _ in self.fractions:
+            number += material.massNumber
+        return number
 
     def __repr__(self):
         return "<Compound: {}, density={}*g/cm3, nparts={}>".format(

@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from .fluka2g4materials import addFlukaMaterialsToG4Registry
+from .fluka2g4materials import makeFlukaToG4MaterialsMap
 from pyg4ometry import exceptions
 from pyg4ometry.fluka import Transform
 from pyg4ometry.fluka.region import areOverlapping
@@ -108,7 +108,9 @@ def fluka2Geant4(flukareg,
 
     # This loop below do the main conversion
     greg = g4.Registry()
-    addFlukaMaterialsToG4Registry(fr, greg)
+    f2g4mat = makeFlukaToG4MaterialsMap(fr, greg)
+
+    fluka_material_names_to_g4 = makeFlukaToG4MaterialsMap(fr, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldDimensions),
                            worldMaterial, greg)
     assignmas = fr.assignmas
@@ -128,8 +130,10 @@ def fluka2Geant4(flukareg,
         except KeyError:
             raise FLUKAError("Region {} has no assigned material".format(name))
 
+        material = f2g4mat[materialName]
+
         region_lv = g4.LogicalVolume(region_solid,
-                                     materialName,
+                                     material,
                                      "{}_lv".format(name),
                                      greg)
 
@@ -378,7 +382,10 @@ def _filterBlackHoleRegions(flukareg, regions):
     """
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.iteritems():
-        materialName = flukareg.assignmas[name]
+        try:
+            materialName = flukareg.assignmas[name]
+        except KeyError: # Ignore assignments to regions that are undefined.
+            continue
         if materialName == "BLCKHOLE":
             continue
         if name not in regions:

@@ -1,7 +1,7 @@
 import pandas as pd
 import os.path
 
-from pyg4ometry.geant4 import MaterialPredefined, MaterialSingleElement
+import pyg4ometry.geant4 as g4
 from pyg4ometry.fluka.material import BuiltIn, Element, Compound
 
 # http://www.fluka.org/content/manuals/online/5.2.html
@@ -49,7 +49,8 @@ FLUKA_BUILTIN_TO_G4_MATERIAL_MAP = {
 }
 
 
-def addFlukaMaterialsToG4Registry(freg, greg):
+
+def makeFlukaToG4MaterialsMap(freg, greg):
     """Convert the materials defined in a FlukaRegistry, and populate
     the provided geant4 registry with said materials."""
 
@@ -57,23 +58,51 @@ def addFlukaMaterialsToG4Registry(freg, greg):
 
     fluka = freg.materials
 
+    out = {}
+
     for name, material in fluka.iteritems():
+        totalMassNumber = material.massNumber
+
         if isinstance(material, BuiltIn):
-            MaterialPredefined(FLUKA_BUILTIN_TO_G4_MATERIAL_MAP[name],
-                               registry=greg)
+            m = g4.MaterialPredefined(FLUKA_BUILTIN_TO_G4_MATERIAL_MAP[name],
+                                   registry=greg)
         elif isinstance(material, Element):
             name = material.name
             atomicNumber = material.atomicNumber
             density = material.density
             massNumber = material.massNumber
-            if massNumber is None:
-                massNumber = mnl.getMassNumberFromAtomicNumber(atomicNumber)
-            MaterialSingleElement(name, atomicNumber, massNumber,
-                                  density, registry=greg)
-        elif isinstance(material, Compound):
-            pass
 
-    return greg
+            m = g4.MaterialSingleElement(name, atomicNumber, massNumber,
+                                         density, registry=greg)
+        elif isinstance(material, Compound):
+            m = g4.MaterialCompound(name,
+                                    material.density,
+                                    len(material.fractions),
+                                    registry=greg)
+            fractionType = material.fractionType
+            for constituent, proportion in material.fractions:
+                fracName = constituent.name
+                constituentg4 = out[fracName] # Get g4 version of constituent
+                if (fractionType == "atomic" and isinstance(constituentg4,
+                                                            g4.Element)):
+                    m.add_element_natoms(constituent, proportion)
+                elif (fractionType == "atomic" and isinstance(constituentg4,
+                                                              g4.Material)):
+                    # from IPython import embed; embed()
+                    m.add_element_natoms(constituentg4, proportion)
+                elif fractionType == "mass":
+                    pass
+                    # from IPython import embed; embed()
+                elif fractionType == "volume":
+                    pass
+                    # from IPython import embed; embed()
+
+
+        out[name] = m
+    return out
+
+def _atomicFractionToMassFraction():
+    pass
 
 class _MassNumberLookup(object):
     THISDIR = os.path.dirname(os.path.abspath(__file__))

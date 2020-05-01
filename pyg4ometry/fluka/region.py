@@ -341,10 +341,9 @@ class Region(object):
 
     """
 
-    def __init__(self, name, material=None, comment = ""):
+    def __init__(self, name, comment = ""):
         self.name = name
         self.zones = []
-        self.material = material
         self.comment = comment
 
     def addZone(self,zone):
@@ -406,7 +405,7 @@ class Region(object):
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
-        result = Region(self.name, material=self.material)
+        result = Region(self.name)
         for zone in self.zones:
             result.addZone(zone.withLengthSafety(bigger_flukareg,
                                                  smaller_flukareg,
@@ -539,7 +538,7 @@ class Region(object):
         :param flukaregistry: FlukaRegisty instance to add each
         newly-defined body to."""
 
-        result = Region(self.name, self.material)
+        result = Region(self.name)
         for zone in self.zones:
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
                                            nameSuffix=nameSuffix))

@@ -432,9 +432,21 @@ def _getConstituentMaterialNamesFromCompound(compoundCards):
     for card in compoundCards:
         if card.keyword == "MATERIAL":
             continue
-        constituents.add(card.what2)
-        constituents.add(card.what4)
-        constituents.add(card.what6)
+
+        name2 = card.what2
+        name4 = card.what4
+        name6 = card.what6
+
+        if name2 is not None and name2.startswith("-"):
+            name2 = name2[1:]
+        if name4 is not None and name4.startswith("-"):
+            name4 = name4[1:]
+        if name6 is not None and name6.startswith("-"):
+            name6 = name6[1:]
+
+        constituents.add(name2)
+        constituents.add(name4)
+        constituents.add(name6)
 
     constituents.discard(None)
 
