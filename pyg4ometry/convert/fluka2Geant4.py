@@ -12,6 +12,7 @@ from pyg4ometry import exceptions
 from pyg4ometry.fluka import Transform
 from pyg4ometry.fluka.region import areOverlapping
 from pyg4ometry.fluka.vector import (Extent, areExtentsOverlapping)
+from pyg4ometry.exceptions import FLUKAError
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
@@ -130,9 +131,13 @@ def fluka2Geant4(flukareg,
         try:
             materialName = assignmas[name]
         except KeyError:
-            raise FLUKAError("Region {} has no assigned material".format(name))
+            warnings.warn(
+                "Setting region {} with no material to IRON.".format(name))
+            materialName = "IRON"
+
 
         material = f2g4mat[materialName]
+
 
         region_lv = g4.LogicalVolume(region_solid,
                                      material,
@@ -384,16 +389,16 @@ def _filterBlackHoleRegions(flukareg, regions):
     """
     freg_out = fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.items():
-        try:
-            materialName = flukareg.assignmas[name]
-        except KeyError: # Ignore assignments to regions that are undefined.
+        if name not in flukareg.assignmas and name in regions:
+            freg_out.addRegion(region) # add region even if no assigned material
+            region.allBodiesToRegistry(freg_out)
+        elif name not in regions:
             continue
-        if materialName == "BLCKHOLE":
+        elif flukareg.assignmas[name] == "BLCKHOLE":
             continue
-        if name not in regions:
-            continue
-        freg_out.addRegion(region)
-        region.allBodiesToRegistry(freg_out)
+        else:
+            freg_out.addRegion(region) # add region even if no assigned material
+            region.allBodiesToRegistry(freg_out)
     _copyStructureToNewFlukaRegistry(flukareg, freg_out)
     return freg_out
 
