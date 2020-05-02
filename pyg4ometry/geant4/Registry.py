@@ -301,7 +301,7 @@ class Registry:
         if isinstance(volume, _PhysicalVolume) :
 
             # add its logical volume
-            self.addVolumeRecursive(volume.logicalVolume)
+            self.addVolumeRecursive(volume.logicalVolume, namePolicy = namePolicy)
 
             # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
             self.transferDefines(volume.position,namePolicy)
