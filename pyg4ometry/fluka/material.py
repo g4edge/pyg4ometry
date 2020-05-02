@@ -73,7 +73,7 @@ class BuiltIn(object):
     def __init__(self, name, massNumber=None, flukaregistry=None):
         self.name = name
 
-        self.massNumner = massNumber # Necessary for some conversions.
+        self.massNumber = massNumber # Necessary for some conversions.
 
         if flukaregistry is not None:
             return flukaregistry
