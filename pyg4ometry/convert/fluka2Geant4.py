@@ -282,7 +282,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
             # make new region with appropriate name
             zones_string = "_".join(map(str, connection))
             new_region_name = "{}_djz{}".format(name, zones_string)
-            new_region = fluka.Region(new_region_name, material=region.material)
+            new_region = fluka.Region(new_region_name)
             newNamesToOldNames[new_region_name] = name
             # get the zones which are connected
             zones = [(i, region.zones[i]) for i in connection]
