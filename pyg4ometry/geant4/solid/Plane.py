@@ -1,7 +1,7 @@
 from .SolidBase import SolidBase as _SolidBase
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vector as _Vector
-from ..Registry import registry as _registry
+
 import math as _math
 
 class Plane(_SolidBase): # point on plane is on z-axis

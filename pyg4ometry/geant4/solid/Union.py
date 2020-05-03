@@ -1,5 +1,4 @@
 from .SolidBase import SolidBase as _SolidBase
-from ..Registry import registry as _registry
 import pyg4ometry.exceptions
 from ...transformation import *
 
@@ -57,7 +56,7 @@ class Union(_SolidBase):
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # tranformation
+        # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
         _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))

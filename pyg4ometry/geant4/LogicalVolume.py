@@ -1,8 +1,8 @@
-import pyg4ometry.exceptions
 from   pyg4ometry.pycsg.geom import Vector as _Vector
 from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
+import pyg4ometry as _pyg4ometry
 from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
@@ -314,9 +314,9 @@ class LogicalVolume(object):
 
         # cuboidal solid
         if self.solid.type == "Box":
-            self.solid.pX = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
-            self.solid.pY = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
-            self.solid.pZ = pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
+            self.solid.pX = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
+            self.solid.pY = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
+            self.solid.pZ = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
 
         self.mesh.remesh()
 

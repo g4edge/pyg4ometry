@@ -5,7 +5,7 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslati
 import numpy as _np
 import copy as _copy
 
-import matplotlib.pyplot as _plt
+# import matplotlib.pyplot as _plt
 
 def geant4Logical2Fluka(logicalVolume) :
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
@@ -835,8 +835,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
             luval = _Units.unit(solid.lunit)
             auval = _Units.unit(solid.aunit)
 
-            pSPhi = solid.evaluateParameter(solid.phiStart) * auval
-            pDPhi = solid.evaluateParameter(solid.phiTotal) * auval
+            pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+            pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
 
             numSide = int(solid.evaluateParameter(solid.numSide))
             numZPlanes = int(solid.numZPlanes)

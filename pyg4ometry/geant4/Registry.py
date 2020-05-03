@@ -19,9 +19,9 @@ class Registry:
     storing them in the Registry. The registry is used \
     to write the GDML output file. A registry needs to \
     be used in conjunction with gdml Define objects for \
-    evalation of expressions.
+    evaluation of expressions.
     """
-    
+
     def __init__(self):
         self.materialList = []
         self.defineDict                   = _OrderedDict()
@@ -448,5 +448,3 @@ class Registry:
         import pyg4ometry.fluka as _f
 
         freg = _f.FlukaRegistry()
-
-registry = Registry()
