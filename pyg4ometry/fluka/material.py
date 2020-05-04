@@ -60,8 +60,7 @@ class _MassNumberLookup(object):
         if not result:
             raise FLUKAError(
                 "Unable to determine mass number for Z = {}".format(z))
-
-        return int(round(result))
+        return int(round(float(result)))
 
 
 _MASS_NUMBER_LOOKUP = _MassNumberLookup()
