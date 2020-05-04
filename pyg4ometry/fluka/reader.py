@@ -385,7 +385,7 @@ class Reader(object):
 
         g.add_nodes_from(singles)
 
-        for compoundName, cards in compounds.iteritems():
+        for compoundName, cards in compounds.items():
             g.add_node(compoundName)
 
             constitutents = _getConstituentMaterialNamesFromCompound(cards)
