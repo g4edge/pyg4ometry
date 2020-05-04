@@ -94,6 +94,8 @@ def fluka2Geant4(flukareg,
         for newName, oldName in newNamesToOldNames.items():
             if oldName in regions:
                 newRegions.append(newName)
+            if oldName in fr.assignmas:
+                fr.assignmas[newName] = fr.assignmas[oldName]
             if oldName in quadricRegionExtents:
                 newQuadricRegionExtents[newName] = quadricRegionExtents[oldName]
 

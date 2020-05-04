@@ -100,6 +100,9 @@ class FlukaRegistry(object):
         return self.materials[name]
 
     def addMaterialAssignments(self, mat, *regions):
+        if isinstance(mat, Region):
+            raise TypeError("A Region instance has been provided as a material")
+
         try: # Element or Compound instance
             materialName = mat.name
         except AttributeError: # By name, get Ele/Comp from self.
