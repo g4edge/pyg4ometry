@@ -249,7 +249,7 @@ class Cons(_SolidBase):
 
             if pRmin2 == 0 :
                 vEnd = []
-                vEnd.append(_Vertex([0,0,-pDz],None))
+                vEnd.append(_Vertex([0,0,pDz],None))
                 vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz],None))
                 vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz],None))
                 # print "r2=0 high z cone end", len(polygons)
