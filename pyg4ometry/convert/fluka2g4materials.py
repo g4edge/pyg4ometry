@@ -48,75 +48,183 @@ FLUKA_BUILTIN_TO_G4_MATERIAL_MAP = {
     "AIR": "G4_AIR"
 }
 
+# Need this to build up the set element instances (distinct from
+# materials in Geant4)
+_FLUKA_ELEMENT_SYMBOLS = {"HYDROGEN": "H",
+                          "HELIUM": "He",
+                          "BERYLLIU": "Be",
+                          "CARBON": "B",
+                          "NITROGEN": "N",
+                          "OXYGEN": "O",
+                          "MAGNESIU": "Mg",
+                          "ALUMINUM": "Al",
+                          "IRON": "Fe",
+                          "COPPER": "Cu",
+                          "SILVER": "Ag",
+                          "SILICON": "Si",
+                          "GOLD": "Au",
+                          "MERCURY": "Hg",
+                          "LEAD": "Pb",
+                          "TANTALUM": "Ta",
+                          "SODIUM": "Na",
+                          "ARGON": "Ar",
+                          "CALCIUM": "Ca",
+                          "TIN": "Sn",
+                          "TUNGSTEN": "W",
+                          "TITANIUM": "Ti",
+                          "NICKEL": "Ni"}
 
+
+class _FlukaToG4MaterialConverter:
+    def __init__(self, freg, greg):
+        self.periodicTable = _PeriodicTable()
+        self.freg = freg
+        self.greg = greg
+        self.g4materials = {}
+        self.g4elements = {}
+
+        self.addPredefinedElements()
+
+        self.convertAll()
+
+    def addPredefinedElements(self):
+        # The Concept of materials and elements are distinct in G4,
+        # whereas in FLUKA they can be used interchangeably.
+        for flukaName, symbol in _FLUKA_ELEMENT_SYMBOLS.items():
+            z, a = self.periodicTable.atomicNumberAndMassFromSymbol(symbol)
+            m = g4.ElementSimple(flukaName, symbol, z, a, registry=self.greg)
+            self.g4elements[flukaName] = m
+
+    def convertAll(self):
+        for name, material in self.freg.materials.items():
+            if isinstance(material, BuiltIn):
+                self.convertBuiltin(name, material)
+            elif isinstance(material, Element):
+                self.convertElement(name, material)
+            elif isinstance(material, Compound):
+                self.convertCompound(material)
+            else:
+                raise TypeError(f"Unknown material type {material}")
+
+    def convertBuiltin(self, name, flukaMaterial):
+        assert name == flukaMaterial.name
+        g4material = g4.MaterialPredefined(
+            FLUKA_BUILTIN_TO_G4_MATERIAL_MAP[name],
+            registry=self.greg)
+        self.g4materials[name] = g4material
+
+    def convertElement(self, name, flukaElement):
+        assert name == flukaElement.name
+        name = flukaElement.name
+        atomicNumber = flukaElement.atomicNumber
+        density = flukaElement.density
+        atomicWeight = self.periodicTable.atomicWeightFromZ(atomicNumber)
+        massNumber = self.periodicTable.atomicWeightFromZ(atomicNumber)
+        # We make both an Element instance and a Material
+        # instance in case the element is to be used as an atomic
+        # fraction, or as a plain material.
+        g4element = g4.ElementSimple(name, name, atomicNumber,
+                                     massNumber, registry=self.greg)
+        g4material = g4.MaterialSingleElement(name, atomicNumber, atomicWeight,
+                                              density, registry=self.greg)
+        self.g4elements[name] = g4element
+        self.g4materials[name] = g4material
+
+    def convertCompound(self, flukaCompound):
+        name = flukaCompound.name
+        fractionType = flukaCompound.fractionType
+        if fractionType == "atomic":
+            self.convertAtomicFractionCompound(name, flukaCompound)
+        elif fractionType == "mass":
+            self.convertMassFractionCompound(name, flukaCompound)
+        elif fractionType == "volume":
+            self.convertVolumeFractionCompound(name, flukaCompound)
+
+    def _makeBaseCompoundMaterial(self, name, flukaCompound):
+        assert name == flukaCompound.name
+        return g4.MaterialCompound(name,
+                                   flukaCompound.density,
+                                   len(flukaCompound.fractions),
+                                   registry=self.greg)
+
+    def convertMassFractionCompound(self, name, flukaCompound):
+        assert flukaCompound.fractionType == "mass"
+        assert flukaCompound.name == name
+        total = flukaCompound.totalWeighting()
+        g4material = self._makeBaseCompoundMaterial(name, flukaCompound)
+
+        for part, weight in flukaCompound.fractions:
+            partName = part.name
+            massFraction = weight / total
+            g4part = self.g4materials[partName]
+            g4material.add_material(g4part, massFraction)
+        self.g4materials[name] = g4material
+
+    def convertVolumeFractionCompound(self, name, flukaCompound):
+        assert flukaCompound.fractionType == "volume"
+        assert flukaCompound.name == name
+        total = flukaCompound.totalWeighting(densityWeighted=True)
+        g4material = self._makeBaseCompoundMaterial(name, flukaCompound)
+
+        for part, weight in flukaCompound.fractions:
+            partName = part.name
+            massFraction = weight * part.density / total
+            g4part = self.g4materials[partName]
+            g4material.add_material(g4part, massFraction)
+        self.g4materials[name] = g4material
+
+    def convertAtomicFractionCompound(self, name, flukaCompound):
+        assert flukaCompound.fractionType == "atomic"
+        assert flukaCompound.name == name
+        g4material = self._makeBaseCompoundMaterial(name, flukaCompound)
+        totalAtomicWeight = self._totalMassWeightedFractionOfCompound(
+            flukaCompound) 
+
+        pt = self.periodicTable
+        for part, fraction in flukaCompound.fractions:
+            partName = part.name
+            partAtomicWeight = pt.atomicWeightFromZ(part.atomicNumber)
+            massfraction = fraction * partAtomicWeight / totalAtomicWeight
+            g4element = self.g4elements[partName]
+            g4material.add_element_massfraction(g4element, massfraction)
+        self.g4materials[name] = g4material
+
+    def _totalMassWeightedFractionOfCompound(self, compound):
+        total = 0
+        for part, fraction in compound.fractions:
+            total += (self.periodicTable.atomicWeightFromZ(part.atomicNumber)
+                      * fraction)
+        return total
 
 def makeFlukaToG4MaterialsMap(freg, greg):
     """Convert the materials defined in a FlukaRegistry, and populate
     the provided geant4 registry with said materials."""
+    g = _FlukaToG4MaterialConverter(freg, greg)
+    return g.g4materials
 
-    mnl = _MassNumberLookup()
-
-    fluka = freg.materials
-
-    out = {}
-
-    for name, material in fluka.items():
-        totalMassNumber = material.massNumber
-
-        if isinstance(material, BuiltIn):
-            m = g4.MaterialPredefined(FLUKA_BUILTIN_TO_G4_MATERIAL_MAP[name],
-                                   registry=greg)
-        elif isinstance(material, Element):
-            name = material.name
-            atomicNumber = material.atomicNumber
-            density = material.density
-            massNumber = material.massNumber
-
-            m = g4.MaterialSingleElement(name, atomicNumber, massNumber,
-                                         density, registry=greg)
-        elif isinstance(material, Compound):
-            m = g4.MaterialCompound(name,
-                                    material.density,
-                                    len(material.fractions),
-                                    registry=greg)
-            fractionType = material.fractionType
-            for constituent, proportion in material.fractions:
-                fracName = constituent.name
-                constituentg4 = out[fracName] # Get g4 version of constituent
-                if (fractionType == "atomic" and isinstance(constituentg4,
-                                                            g4.Element)):
-                    m.add_element_natoms(constituent, proportion)
-                elif (fractionType == "atomic" and isinstance(constituentg4,
-                                                              g4.Material)):
-                    # from IPython import embed; embed()
-                    m.add_element_natoms(constituentg4, proportion)
-                elif fractionType == "mass":
-                    pass
-                    # from IPython import embed; embed()
-                elif fractionType == "volume":
-                    pass
-                    # from IPython import embed; embed()
-
-
-        out[name] = m
-    return out
-
-def _atomicFractionToMassFraction():
-    pass
-
-class _MassNumberLookup(object):
+class _PeriodicTable(object):
     THISDIR = os.path.dirname(os.path.abspath(__file__))
     def __init__(self):
         self.table = pd.read_csv(
             os.path.join(self.THISDIR, "periodic-table.csv"))
 
-    def getMassNumberFromAtomicNumber(self, z):
+    def massNumberFromZ(self, z):
         t = self.table
-        result = t["AtomicMass"][t["AtomicNumber"] == z].values
-        if not result:
+        nNeutrons = t["NumberofNeutrons"][t["AtomicNumber"] == z].values
+        if not nNeutrons:
             raise FLUKAError(
                 "Unable to determine mass number for Z = {}".format(z))
+        return int(nNeutrons) + z
 
-        return int(round(result))
+    def atomicWeightFromZ(self, z):
+        t = self.table
+        mask = t["AtomicNumber"] == z
+        return float(t["AtomicMass"][mask])
 
-            
+    def atomicNumberAndMassFromSymbol(self, symbol):
+        t = self.table
+        mask = t["Symbol"] == symbol
+        massNumber = int(t.AtomicMass[mask])
+        atomicNumber = int(t.AtomicNumber[mask])
+
+        return atomicNumber, massNumber

@@ -48,31 +48,10 @@ PREDEFINED_COMPOUND_NAMES = ["WATER",
 
 PREDEFINED_MATERIAL_NAMES = PREDEFINED_ELEMENT_NAMES + PREDEFINED_COMPOUND_NAMES
 
-class _MassNumberLookup(object):
-    THISDIR = os.path.dirname(os.path.abspath(__file__))
-    def __init__(self):
-        self.table = pd.read_csv(
-            os.path.join(self.THISDIR, "periodic-table.csv"))
-
-    def getMassNumberFromAtomicNumber(self, z):
-        t = self.table
-        result = t["AtomicMass"][t["AtomicNumber"] == z].values
-        if not result:
-            raise FLUKAError(
-                "Unable to determine mass number for Z = {}".format(z))
-        return int(round(float(result)))
-
-
-_MASS_NUMBER_LOOKUP = _MassNumberLookup()
-
-def buildPredefinedMaterials():
-    pass
 
 class BuiltIn(object):
-    def __init__(self, name, massNumber=None, flukaregistry=None):
+    def __init__(self, name, flukaregistry=None):
         self.name = name
-
-        self.massNumber = massNumber # Necessary for some conversions.
 
         if flukaregistry is not None:
             return flukaregistry
@@ -87,14 +66,14 @@ class BuiltIn(object):
 class Element(object):
     def __init__(self, name, atomicNumber, density,
                  massNumber=None,
+                 atomicWeight=None,
                  flukaregistry=None):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
 
-        if massNumber is None:
-            self.massNumber = _MASS_NUMBER_LOOKUP.getMassNumberFromAtomicNumber(
-                atomicNumber)
+        self.atomicWeight = None
+        self.massNumber = None
 
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
@@ -105,6 +84,7 @@ class Element(object):
     def toCard(self):
         return Card("MATERIAL",
                     what1=self.atomicNumber,
+                    what2=self.atomicWeight,
                     what3=self.density,
                     what6=self.massNumber,
                     sdum=self.name)
@@ -127,9 +107,6 @@ class Element(object):
         return cls(card.sdum, card.what1, card.what3,
                    massNumber=card.what6,
                    flukaregistry=flukaregistry)
-
-    def geat4material(self, greg):
-        pass
 
 class Compound(object):
     def __init__(self, name, density, fractions, fractionType,
@@ -211,19 +188,16 @@ class Compound(object):
         return cls(compoundName, density, fractions, fractionTypes[0],
                    flukaregistry=flukareg)
 
-    @property
-    def massNumber(self):
-        number = 0
-        for material, _ in self.fractions:
-            number += material.massNumber
-        return number
-
     def __repr__(self):
         return "<Compound: {}, density={}*g/cm3, nparts={}>".format(
             self.name,
             self.density,
             len(self.fractions))
 
+    def totalWeighting(self, densityWeighted=False):
+        if not densityWeighted:
+            return sum(x[1] for x in self.fractions)
+        return sum(x[0].density * x[1] for x in self.fractions)
 
 def _appendFractionPairs(card, fractions, fractionTypes):
     if card.what1 is not None and card.what2 is not None:
