@@ -48,13 +48,11 @@ PREDEFINED_COMPOUND_NAMES = ["WATER",
 
 PREDEFINED_MATERIAL_NAMES = PREDEFINED_ELEMENT_NAMES + PREDEFINED_COMPOUND_NAMES
 
-
 class BuiltIn(object):
     def __init__(self, name, flukaregistry=None):
         self.name = name
-
         if flukaregistry is not None:
-            return flukaregistry
+            flukaregistry.addMaterial(self)
 
     def __repr__(self):
         return "<Builtin: {}>".format(self.name)
@@ -63,34 +61,65 @@ class BuiltIn(object):
         return ""
 
 
-class Element(object):
+class _GasMixin(object):
+    def isGas(self):
+        return self.density < 0.01 or self.pressure
+
+    def makeMatPropCard(self):
+        return Card("MAT-PROP", what1=self.pressure, what4=self.name)
+
+class Element(_GasMixin):
+    """A FLUKA material consisting of a single element.  This corresponds
+    to the case in FLUKA of a single MATERIAL card with no associated
+    COMPOUND cards, as well as a possible MAT-PROP card (only if a
+    pressure is provided, other options of MAT-PROP are unsupported).
+
+    :param name: The name of the material
+    :type name: str
+    :param atomicNumber: the atomic number, Z, of the element.
+    :type atomicNumber: int
+    :param density: the density in g/cm3 of the material.
+    :type density: float
+    :param massNumber: Optional mass number, will be inferred in FLUKA \
+    based on atomicNumber.  Allows one to specify a specific isotope.
+    :type massNumber: int
+    :param atomicWeight: The weight of the atom in g/mole.  Will be
+    inferred in FLUKA based on atomicNumber.
+    :type atomicWeight: float
+    :param pressure: Optional pressure if the material is a gas.
+    :type pressure: float
+    :param flukaregistry: Optional FlukaRegistry instance the material is to be
+    added to.
+    :type flukaregistry: FlukaRegistry
+
+    """
     def __init__(self, name, atomicNumber, density,
                  massNumber=None,
                  atomicWeight=None,
+                 pressure=None,
                  flukaregistry=None):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
-
         self.atomicWeight = None
         self.massNumber = None
-
+        self.pressure = pressure
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
 
-    def isGas(self):
-        return self.density < 0.01
-
-    def toCard(self):
-        return Card("MATERIAL",
-                    what1=self.atomicNumber,
-                    what2=self.atomicWeight,
-                    what3=self.density,
-                    what6=self.massNumber,
-                    sdum=self.name)
+    def toCards(self):
+        material = [Card("MATERIAL",
+                         what1=self.atomicNumber,
+                         what2=self.atomicWeight,
+                         what3=self.density,
+                         what6=self.massNumber,
+                         sdum=self.name)]
+        if self.pressure:
+            material.append(self.makeMatPropCard())
+        return material
 
     def flukaFreeString(self, delim=", "):
-        return self.toCard().toFreeString(delim=delim)
+        return "".join(c.toFreeString(delim=delim) for c in self.toCards())
 
     def __repr__(self):
         massNumber = ""
@@ -108,15 +137,39 @@ class Element(object):
                    massNumber=card.what6,
                    flukaregistry=flukaregistry)
 
-class Compound(object):
+
+class Compound(_GasMixin):
+    """A FLUKA compound material.  This corresponds to the case in
+    FLUKA of a single MATERIAL card with one or more associated
+    COMPOUND cards.
+
+    :param name: The name of the compound.
+    :type name: str
+    :param density: The density of the compound in g/cm3
+    :type density: float
+    :param fractions: List of (Element, fraction) and (Compound, \
+    fraction) tuples corresponding to the fractional proportion of \
+    that material.
+    :type fractions: list
+    :param fractionType: The type of the fractions listed in the \
+    fractions parameter, either atomic, mass, or volume.
+    :type fractionType: str
+    :param flukaregistry: Optional FlukaRegistry instance the Compound \
+    is to be added to.
+    :type flukaregistry: FlukaRegistry
+
+
+    """
     def __init__(self, name, density, fractions, fractionType,
+                 pressure=None,
                  flukaregistry=None):
         self.name = name
         self.density = density
         self.fractions = fractions
         if fractionType not in {"atomic", "mass", "volume"}:
-            raise ValueError("Unknown fractionType: {}".format(fractionType))
+            raise ValueError(f"Unknown fractionType: {fractionType}")
         self.fractionType = fractionType
+        self.pressure = pressure
 
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
@@ -144,7 +197,8 @@ class Compound(object):
                                                    fractionPrefix)
             card = Card("COMPOUND", what1=frac, what2=name, sdum=compoundName)
             if second is not None:
-                frac, name  = _formatFlukaMaterialPair(second, namePrefix,
+                frac, name  = _formatFlukaMaterialPair(second,
+                                                       namePrefix,
                                                        fractionPrefix)
                 card.what3 = frac
                 card.what4 = name
@@ -157,7 +211,11 @@ class Compound(object):
                 card.what6 = name
             compounds.append(card)
 
-        return [material] + compounds
+        matprop = []
+        if self.pressure:
+            matprop = [self.makeMatPropCard()]
+
+        return [material] + compounds + matprop
 
     def flukaFreeString(self, delim=", "):
         return "\n".join(c.toFreeString(delim=delim) for c in self.toCards())
@@ -179,7 +237,7 @@ class Compound(object):
 
         if len(set(fractionTypes)) > 2:
             raise TypeError("Mixed mass, volume, and fraction types"
-                            " are not supported for material={}".format(name))
+                            f" are not supported for material={compoundName}")
 
         # Map the material names to material/compound instances via
         # the FlukaRegistry.
@@ -199,6 +257,7 @@ class Compound(object):
             return sum(x[1] for x in self.fractions)
         return sum(x[0].density * x[1] for x in self.fractions)
 
+
 def _appendFractionPairs(card, fractions, fractionTypes):
     if card.what1 is not None and card.what2 is not None:
         name, fraction, fractiontype = _parseFraction(card.what1, card.what2)
@@ -216,7 +275,11 @@ def _appendFractionPairs(card, fractions, fractionTypes):
         fractionTypes.append(fractiontype)
 
 def _parseFraction(what1, what2):
-    """Returns the (name, fraction, fractionType)."""
+    """Returns the (name, fraction, fractionType). This is for handling
+    the different permuations found in the FLUKA manual COMPOUND
+    entry
+
+    """
     prefix1 = str(what1)[0]
     prefix2 = str(what2)[0]
     # What1 is a fraction, what2 is a formatted (potentially
@@ -232,9 +295,12 @@ def _parseFraction(what1, what2):
     raise ValueError("Unknown compound fraction format")
 
 
-def _formatFlukaMaterialPair(first, namePrefix, fractionPrefix):
-    return ("{}{}".format(fractionPrefix, first[1]),
-            "{}{}".format(namePrefix, first[0].name))
+def _formatFlukaMaterialPair(pair, namePrefix, fractionPrefix):
+    """Names and fractions maybe stored as "negative" numbers in the
+    FLUKA input, permuations between which mean different types of fractions."""
+    # pair is just an entry from the list of (material, fraction)
+    # tuples.
+    return (f"{fractionPrefix}{pair[1]}", f"{namePrefix}{pair[0].name}")
 
 def _grouper(n, iterable, fillvalue=None):
     """grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx
