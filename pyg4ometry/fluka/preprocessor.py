@@ -199,7 +199,9 @@ class _Calc(ast.NodeVisitor):
         ast.Mult: operator.mul,
         ast.Div: operator.truediv,
         ast.Invert: operator.neg,
-        ast.Pow: operator.pow
+        ast.Pow: operator.pow,
+        ast.USub: operator.neg,
+        ast.UAdd: operator.pos
     }
 
     def __init__(self, definitions):
@@ -214,7 +216,12 @@ class _Calc(ast.NodeVisitor):
     def visit_BinOp(self, node):
         left = self.visit(node.left)
         right = self.visit(node.right)
-        return _Calc.op_map[type(node.op)](left, right)
+        return self.op_map[type(node.op)](left, right)
+
+    def visit_UnaryOp(self, node):
+        op = self.op_map[type(node.op)]
+        operand = self.visit(node.operand)
+        return op(operand)
 
     def visit_Num(self, node):
         return node.n
