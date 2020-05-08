@@ -5,6 +5,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
 
+#include "geom.h"
+
 namespace py = pybind11;
 
 class CSG {
@@ -19,5 +21,13 @@ public:
   static CSG fromPolygons(py::list &polygons);
   
   py::list polygons();
-
+  void translate(Vector &disp);
+  void translate(py::list &disp);
+  void translate(py::array_t<double> &disp);
+  void rotate(Vector &axis, double angle);
+  void scale(double);
+  void toVerticesAndPolygons();
+  void unioN(CSG &csg);
+  void subtract(CSG &csg);
+  void intersect(CSG &csg);
 };
