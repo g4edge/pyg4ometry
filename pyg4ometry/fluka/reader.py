@@ -65,9 +65,8 @@ class Reader(object):
         self._parseBodies()
         self._parseRegions()
         self._parseMaterials()
-        self._material_assignments = self._parseMaterialAssignments()
         self._parseLattice()
-        self._assignMaterials()
+        self._parseMaterialAssignments()
 
     def _findLines(self) :
         # find geo(begin/end) lines and bodies/region ends
@@ -308,31 +307,11 @@ class Reader(object):
             else:
                 step = int(step)
 
+            # Do the material assignment
             # Add 1 to index as the bound is open on the upper bound
             # in python, but closed in the ASSIGMA case of fluka.
-            for region_name in regionlist[start:stop+1:step]:
-                material_assignments[region_name] = material_name
-        return material_assignments
-
-    def _assignMaterials(self):
-        for region_name in self.flukaregistry.regionDict.keys():
-            try:
-                material = self._material_assignments[region_name]
-            except KeyError:
-                # if there's no material assigned to a LATTICE cell
-                # then it doesn't matter because the material is not
-                # used in such circumstances anyway.
-                if region_name not in self.flukaregistry.latticeDict:
-                    warn("No material assigned to Region {}.".format(
-                        region_name))
-                continue
-
-            # Don't crash on assigning a material to a region that
-            # haven't been defined.
-            try:
-                self.flukaregistry.regionDict[region_name].material = material
-            except KeyError:
-                continue
+            self.flukaregistry.assignma(material_name,
+                                        *regionlist[start:stop+1:step])
 
     def _parseLattice(self):
         for card in self.cards:

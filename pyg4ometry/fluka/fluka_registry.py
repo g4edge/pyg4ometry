@@ -124,17 +124,10 @@ class FlukaRegistry(object):
                 name = region
 
             self.assignmas[name] = materialName
-        
+
     def assignma(self, material, *regions):
         return self.addMaterialAssignments(material, *regions)
 
-    def isBlackHoleRegion(self, material):
-        try:
-            name = material.name
-        except AttributeError:
-            name = material
-
-        return self.materials[name] == BuiltIn("BLCKHOLE")
 
 class RotoTranslationStore(MutableMapping):
     """ only get by names."""
