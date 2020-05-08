@@ -52,7 +52,7 @@ class RenderWriter :
     def write(self, outputDirectory):
 
         # make output directory
-        _shutil.rmtree(outputDirectory, ignore_errors = True)
+        #_shutil.rmtree(outputDirectory, ignore_errors = True)
         _os.mkdir(outputDirectory)
 
         # loop over meshes and write obj files
