@@ -53,15 +53,39 @@ class Union(_Boolean):
         self._typestring = "uni"
 
 class Zone(object):
+    """Represents a zone which consists of one or more body intersections
+    and zero or more body subtractions.  May also be used to represent
+    subzones, which are zones nested within zones, for example the form
+    +A -B -(+C -D).  Once instantiated, intersections and subtractions
+    can be added to this instance with the addIntersection and
+    addSubtraction method.
+
+    :param name: Optional name for the zone.  This is used to provide
+    more informative names in any resulting geant4solid.
+    :type name: string
+
+    """
     def __init__(self, name=None):
         self.intersections = []
         self.subtractions = []
         self.name = name
 
     def addSubtraction(self, body):
+        """Add a body or subzone as a subtraction to this Zone
+        instance.
+
+        :param body: Body or Zone instance.
+        :type body: Body or Zone
+        """
         self.subtractions.append(Subtraction(body))
 
     def addIntersection(self,body):
+        """Add a body or subzone as an intersection to this Zone
+        instance.
+
+        :param body: Body or Zone instance.
+        :type: body: Body or Zone
+        """
         self.intersections.append(Intersection(body))
 
     def centre(self, referenceExtent=None):
@@ -86,6 +110,22 @@ class Zone(object):
                                             referenceExtent=referenceExtent)
 
     def geant4Solid(self, reg, referenceExtent=None):
+        """Translate this zone to a geant4solid, adding the
+        constituent primitive solids and any Booleans to the Geant4
+        registry.  Returns the geant4 solid equivalent in geometry to
+        this Zone.
+
+        :param reg:  The Registry (geant4) instance to which the
+        resulting Geant4 definitions should be added.
+        :type reg: Registry
+        :param referenceExtent: Optional reference Extent or
+        dictionary of body name to Extent instances with which the
+        geant4 solid should be evaluated with respect to.  This is the
+        entry point to which solid minimisation can be performed.
+        :type reg: Extent or dict
+
+        """
+
         try:
             body0 = self.intersections[0].body
         except IndexError:
@@ -115,20 +155,23 @@ class Zone(object):
         return result
 
     def flukaFreeString(self):
+        """Returns a string of this Zone innstance in the equivalent
+        FLUKA syntax."""
         fs = ""
 
         booleans = self.intersections + self.subtractions
         for s in booleans:
             if isinstance(s,Intersection) :
                 if isinstance(s.body,Zone) :
-                    fs = fs+" +("+s.body.flukaFreeString()+")"
-                else :
-                    fs=fs+" +"+s.body.name
+                    fs += " +({})".format(s.body.flukaFreeString())
+                else:
+                    fs += " +{}".format(s.body.name)
             elif isinstance(s,Subtraction) :
                 if isinstance(s.body,Zone) :
-                    fs = fs+" -("+s.body.flukaFreeString()+")"
+                    fs += " -({})".format(s.body.flukaFreeString())
                 else :
-                    fs=fs+" -"+s.body.name
+                    fs += " -{}".format(s.body.name)
+
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg,
@@ -181,6 +224,14 @@ class Zone(object):
         return zone_out
 
     def allBodiesToRegistry(self, flukaregistry):
+        """Add all the bodies that contitute this Zone to the provided
+        FlukaRegistry instance.
+
+        :param flukaregistry: FlukaRegistry instance to which
+        constituent bodies will be added.
+        :type flukaregistry: FlukaRegistry
+
+        """
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
             name = body.name
@@ -190,6 +241,7 @@ class Zone(object):
                 flukaregistry.addBody(body)
 
     def bodies(self):
+        "Return the set of unique bodies that constitute this Zone."
         bodies = set()
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
@@ -201,6 +253,12 @@ class Zone(object):
         return bodies
 
     def removeBody(self, name):
+        """Remove a body from this zone by name.
+
+        :param name: The name of the body to be removed.
+        :type name: string
+
+        """
         newIntersections = []
         for intsx in self.intersections:
             if isinstance(intsx, Zone):
@@ -269,14 +327,32 @@ class Zone(object):
 
 
 class Region(object):
+    """Represents a region which consists of a region name, one or more
+    zones, and a single material.  Metadata may be provided with the
+    comment kwarg, which is used when writing to FLUKA to provide
+    contextual information to the physicist.
 
-    def __init__(self, name, material=None, comment = ""):
+    :param name: The name of this region.
+    :type name: str
+    :param material: The name of a material.
+    :type material: str
+    :param comment: Optional descriptive comment.
+    :type param: str
+
+    """
+
+    def __init__(self, name, comment = ""):
         self.name = name
         self.zones = []
-        self.material = material
         self.comment = comment
 
     def addZone(self,zone):
+        """Add a Zone instance to this region.
+
+        :param zone: The Zone instance to be added.
+        :type zone: Zone
+
+        """
         self.zones.append(zone)
 
     def centre(self, referenceExtent=None):
@@ -289,6 +365,7 @@ class Region(object):
         return self.zones[0].rotation()
 
     def bodies(self):
+        "Return the set of unique bodies that constitute this Zone."
         bodies = set()
         for zone in self.zones:
             bodies = bodies.union(zone.bodies())
@@ -328,7 +405,7 @@ class Region(object):
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
-        result = Region(self.name, material=self.material)
+        result = Region(self.name)
         for zone in self.zones:
             result.addZone(zone.withLengthSafety(bigger_flukareg,
                                                  smaller_flukareg,
@@ -337,10 +414,18 @@ class Region(object):
 
 
     def allBodiesToRegistry(self, registry):
+        """Add all the bodies that constitute this Region to the provided
+        FlukaRegistry instance.
+
+        :param flukaregistry: FlukaRegistry instance to which
+        constituent bodies will be added.
+        :type flukaregistry: FlukaRegistry
+
+        """
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zoneGraph(self, referenceExtent=None):
+    def zoneGraph(self, zoneExtents=None, referenceExtent=None):
         zones = self.zones
         n_zones = len(zones)
 
@@ -351,8 +436,12 @@ class Region(object):
         if n_zones == 1: # return here if there's only one zone.
             return nx.connected_components(graph)
 
-        # Get extent for each zone
-        zone_extents = self._get_zone_extents(referenceExtent=referenceExtent)
+        # We allow the user to provide a list of zoneExtents as an
+        # optimisation, but if they have not been provided, then we
+        # will generate them here
+        if zoneExtents is None:
+            zoneExtents = self.zoneExtents(
+                referenceExtent=referenceExtent)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -362,7 +451,7 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            if not areExtentsOverlapping(zone_extents[i], zone_extents[j]):
+            if not areExtentsOverlapping(zoneExtents[i], zoneExtents[j]):
                 continue
 
             # Check if a path already exists.  Not sure how often this
@@ -377,11 +466,12 @@ class Region(object):
                 graph.add_edge(i, j)
         return graph
 
-    def get_connected_zones(self, referenceExtent=None):
+    def connectedZones(self, zoneExtents=None, referenceExtent=None):
         return list(nx.connected_components(
-            self.zoneGraph(referenceExtent=referenceExtent)))
+            self.zoneGraph(zoneExtents=zoneExtents,
+                referenceExtent=referenceExtent)))
 
-    def _get_zone_extents(self, referenceExtent=None):
+    def zoneExtents(self, referenceExtent=None):
         material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
@@ -430,6 +520,12 @@ class Region(object):
         return Extent(lower, upper)
 
     def removeBody(self, name):
+        """Remove a body from this region by name.
+
+        :param name: The name of the body to be removed.
+        :type name: string
+
+        """
         for zone in self.zones:
             zone.removeBody(name)
 
@@ -442,12 +538,11 @@ class Region(object):
         :param flukaregistry: FlukaRegisty instance to add each
         newly-defined body to."""
 
-        result = Region(self.name, self.material)
+        result = Region(self.name)
         for zone in self.zones:
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
                                            nameSuffix=nameSuffix))
         return result
-
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
@@ -487,6 +582,7 @@ def _get_tra2(first, second, referenceExtent):
     return relative_transformation
 
 def _random_name():
+    "Returns a random name that is syntactically correct for use in GDML."
     return "a{}".format(uuid4()).replace("-", "")
 
 def _make_wlv(reg):
@@ -495,6 +591,22 @@ def _make_wlv(reg):
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
 def areOverlapping(first, second, referenceExtent=None):
+    """Determine if two Region, Zone, or Body instances are
+    overlapping, with the option to provide a reference Extent with
+    which the two operands may be evaluated with respect to.
+
+    :param first: The first Body, Zone, or Region instance with which
+    we check for overlaps with the second.
+    :type first: Body or Zone or Region
+    :param second: The second Body, Zone, or Region instance with which
+    we check for overlaps with the first.
+    :type second: Body or Zone or Region
+    :param referenceExtent: An Extent or dictionary of Extent
+    instances with which the two operands should be evaluated with
+    respect to.
+    :type referenceExtent: Extent or dict
+
+    """
     greg = g4.Registry()
 
     solid1 = first.geant4Solid(greg, referenceExtent=referenceExtent)

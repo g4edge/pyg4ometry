@@ -4,7 +4,7 @@ import numpy as _np
 import copy as _copy
 
 _lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__),
-                                              "pyg4_cgal.so")
+                                              "pyg4_cgal.cpython-37m-darwin.so")
                                 )
 
 vertexfacet_to_polyhedron = _lib.pyg4_cgal_vertexfacet_to_polyhedron

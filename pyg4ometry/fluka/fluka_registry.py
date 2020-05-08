@@ -7,6 +7,7 @@ import pyg4ometry.geant4 as _g4
 from .region import Region
 from .directive import RecursiveRotoTranslation, RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError
+from .material import (PREDEFINED_MATERIAL_NAMES, BuiltIn)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,9 +24,14 @@ class FlukaRegistry(object):
         self.bodyDict = OrderedDict()
         self.rotoTranslations = RotoTranslationStore()
         self.regionDict = OrderedDict()
-        self.materialDict = OrderedDict()
+        self.materials = OrderedDict()
         self.latticeDict = OrderedDict()
         self.cardDict = OrderedDict()
+        self.assignmas = OrderedDict()
+
+        # Instantiate the predefined materials as BuiltIn instances
+        for name in PREDEFINED_MATERIAL_NAMES:
+            self.materials[name] = BuiltIn(name)
 
         self._bodiesAndRegions = {}
 
@@ -63,7 +69,7 @@ class FlukaRegistry(object):
     def printDefinitions(self):
         print("bodyDict = {}".format(self.bodyDict))
         print("regionDict = {}".format(self.regionDict))
-        print("materialDict = {}".format(self.materialDict))
+        print("materialDict = {}".format(self.materials))
         print("latticeDict = {}".format(self.latticeDict))
         print("cardDict = {}".format(self.cardDict))
 
@@ -84,6 +90,51 @@ class FlukaRegistry(object):
             latticeCellExtents[cellName] = lattice.cellRegion.extent()
         return latticeCellExtents
 
+    def addMaterial(self, material):
+        name = material.name
+        if name in self.materials:
+            raise IdenticalNameError(name)
+        self.materials[material.name] = material
+
+    def getMaterial(self, name):
+        return self.materials[name]
+
+    def addMaterialAssignments(self, mat, *regions):
+        if isinstance(mat, Region):
+            raise TypeError("A Region instance has been provided as a material")
+
+        try: # Element or Compound instance
+            materialName = mat.name
+        except AttributeError: # By name, get Ele/Comp from self.
+            materialName = mat
+            mat = self.materials[materialName]
+        # More checks.
+        if materialName not in self.materials:
+            self.addMaterialAssignments(material)
+        elif mat not in self.materials.values():
+            msg = ("Mismatch between provided FLUKA material \"{}\" for "
+                   "assignment and existing found in registry".format(mat.name))
+            raise FLUKAError(msg)
+
+        for region in regions:
+            # Either region name or Region instance
+            try:
+                name = region.name
+            except AttributeError:
+                name = region
+
+            self.assignmas[name] = materialName
+        
+    def assignma(self, material, *regions):
+        return self.addMaterialAssignments(material, *regions)
+
+    def isBlackHoleRegion(self, material):
+        try:
+            name = material.name
+        except AttributeError:
+            name = material
+
+        return self.materials[name] == BuiltIn("BLCKHOLE")
 
 class RotoTranslationStore(MutableMapping):
     """ only get by names."""
