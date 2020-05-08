@@ -43,6 +43,7 @@ public:
   double length();
   Vector unit(); 
   Vector cross(const Vector v);
+  Vector transform(const double[3][3]);
   int len();
   std::string toString() const;
 

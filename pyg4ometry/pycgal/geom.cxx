@@ -112,6 +112,12 @@ Vector Vector::cross(const Vector v) {
 		_x * v._y - _y * v._x);
 }
 
+Vector Vector::transform(const double m[3][3]) {
+  return Vector(m[0][0] * _x+ m[0][1] * _y + m[0][2] * _z,
+		m[1][0] * _x+ m[1][1] * _y + m[1][2] * _z,
+		m[2][0] * _x+ m[2][1] * _y + m[2][2] * _z);		
+}
+
 int Vector::len() {
   return 3;
 }
@@ -162,6 +168,7 @@ PYBIND11_MODULE(geom, m) {
     .def("length", &Vector::length)
     .def("unit", &Vector::unit)
     .def("cross", &Vector::cross)
+	 // .def("transform", &Vector::transform)
     .def("__len__", &Vector::len)
     .def("__repr__", &Vector::toString)
     .def_readwrite("x",&Vector::_x)
