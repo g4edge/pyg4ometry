@@ -6,51 +6,59 @@ import pandas as pd
 from .card import Card
 
 # http://www.fluka.org/content/manuals/online/5.2.html
+# name, atomic mass, atomic number, density in g/cm3
+_PREDEFINED_ELEMENTS = [("BLCKHOLE",  0, 0, 0),
+                        ("VACUUM",    0, 0, 0),
+                        ("HYDROGEN",  1.00794, 1., 0.0000837),
+                        ("HELIUM",    4.002602, 2., 0.000166),
+                        ("BERYLLIU",  9.012182, 4., 1.848),
+                        ("CARBON",    12.0107, 6., 2.000),
+                        ("NITROGEN",  14.0067, 7., 0.00117),
+                        ("OXYGEN",    15.9994, 8., 0.00133),
+                        ("MAGNESIU",  24.3050, 12., 1.740),
+                        ("ALUMINUM",  26.981538, 13., 2.699),
+                        ("IRON",      55.845, 26., 7.874),
+                        ("COPPER",    63.546, 29., 8.960),
+                        ("SILVER",    107.8682, 47., 10.500),
+                        ("SILICON",   28.0855, 14., 2.329),
+                        ("GOLD",      196.96655, 79., 19.320),
+                        ("MERCURY",   200.59, 80., 13.546),
+                        ("LEAD",      207.2, 82., 11.350),
+                        ("TANTALUM",  180.9479, 73., 16.654),
+                        ("SODIUM",    22.989770, 11., 0.971),
+                        ("ARGON",     39.948, 18., 0.00166),
+                        ("CALCIUM",   40.078, 20., 1.550),
+                        ("TIN",       118.710, 50., 7.310),
+                        ("TUNGSTEN",  183.84, 74., 19.300),
+                        ("TITANIUM",  47.867, 22., 4.540),
+                        ("NICKEL",    58.6934, 28., 8.902)]
 
-PREDEFINED_ELEMENT_NAMES = ["BLCKHOLE",
-                            "VACUUM",
-                            "HYDROGEN",
-                            "HELIUM",
-                            "BERYLLIU",
-                            "CARBON",
-                            "NITROGEN",
-                            "OXYGEN",
-                            "MAGNESIU",
-                            "ALUMINUM",
-                            "IRON",
-                            "COPPER",
-                            "SILVER",
-                            "SILICON",
-                            "GOLD",
-                            "MERCURY",
-                            "LEAD",
-                            "TANTALUM",
-                            "SODIUM",
-                            "ARGON",
-                            "CALCIUM",
-                            "TIN",
-                            "TUNGSTEN",
-                            "TITANIUM",
-                            "NICKEL"]
 
-PREDEFINED_COMPOUND_NAMES = ["WATER",
-                             "POLYSTYR",
-                             "PLASCINT",
-                             "PMMA",
-                             "BONECOMP",
-                             "BONECORT",
-                             "MUSCLESK",
-                             "MUSCLEST",
-                             "ADTISSUE",
-                             "KAPTON",
-                             "POLYETHY",
-                             "AIR"]
 
-PREDEFINED_MATERIAL_NAMES = PREDEFINED_ELEMENT_NAMES + PREDEFINED_COMPOUND_NAMES
+_PREDEFINED_COMPOUND_NAMES = ["WATER",
+                              "POLYSTYR",
+                              "PLASCINT",
+                              "PMMA",
+                              "BONECOMP",
+                              "BONECORT",
+                              "MUSCLESK",
+                              "MUSCLEST",
+                              "ADTISSUE",
+                              "KAPTON",
+                              "POLYETHY",
+                              "AIR"]
+
 
 class BuiltIn(object):
-    def __init__(self, name, flukaregistry=None):
+    def __init__(self, name, *,
+                 atomicNumber=None,
+                 atomicMass=None,
+                 density=None,
+                 flukaregistry=None):
         self.name = name
+        self.atomicNumber = atomicNumber
+        self.atomicMass = atomicMass
+        self.density = density
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
 
@@ -60,6 +68,17 @@ class BuiltIn(object):
     def flukaFreeString(self, delim=""):
         return ""
 
+def defineBuiltInFlukaElements(flukaregistry=None):
+    out = {}
+    for name, atomicMass, atomicNumber, density in _PREDEFINED_ELEMENTS:
+        out[name] = BuiltIn(name,
+                            atomicNumber=atomicNumber,
+                            atomicMass=atomicMass,
+                            density=density,
+                            flukaregistry=flukaregistry)
+    for name in _PREDEFINED_COMPOUND_NAMES:
+        out[name] = BuiltIn(name, flukaregistry=flukaregistry)
+    return out
 
 class _GasMixin(object):
     def isGas(self):
@@ -83,9 +102,9 @@ class Element(_GasMixin):
     :param massNumber: Optional mass number, will be inferred in FLUKA \
     based on atomicNumber.  Allows one to specify a specific isotope.
     :type massNumber: int
-    :param atomicWeight: The weight of the atom in g/mole.  Will be
+    :param atomicMass: The mass of the atom in g/mole.  Will be
     inferred in FLUKA based on atomicNumber.
-    :type atomicWeight: float
+    :type atomicMass: float
     :param pressure: Optional pressure if the material is a gas.
     :type pressure: float
     :param flukaregistry: Optional FlukaRegistry instance the material is to be
@@ -95,14 +114,14 @@ class Element(_GasMixin):
     """
     def __init__(self, name, atomicNumber, density,
                  massNumber=None,
-                 atomicWeight=None,
+                 atomicMass=None,
                  pressure=None,
                  flukaregistry=None):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
-        self.atomicWeight = None
-        self.massNumber = None
+        self.atomicMass = atomicMass
+        self.massNumber = massNumber
         self.pressure = pressure
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
@@ -110,7 +129,7 @@ class Element(_GasMixin):
     def toCards(self):
         material = [Card("MATERIAL",
                          what1=self.atomicNumber,
-                         what2=self.atomicWeight,
+                         what2=self.atomicMass,
                          what3=self.density,
                          what6=self.massNumber,
                          sdum=self.name)]

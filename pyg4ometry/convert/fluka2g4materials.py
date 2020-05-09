@@ -118,14 +118,14 @@ class _FlukaToG4MaterialConverter:
         name = flukaElement.name
         atomicNumber = flukaElement.atomicNumber
         density = flukaElement.density
-        atomicWeight = self.periodicTable.atomicWeightFromZ(atomicNumber)
-        massNumber = self.periodicTable.atomicWeightFromZ(atomicNumber)
+        atomicMass = self.periodicTable.atomicMassFromZ(atomicNumber)
+        massNumber = self.periodicTable.atomicMassFromZ(atomicNumber)
         # We make both an Element instance and a Material
         # instance in case the element is to be used as an atomic
         # fraction, or as a plain material.
         g4element = g4.ElementSimple(name, name, atomicNumber,
                                      massNumber, registry=self.greg)
-        g4material = g4.MaterialSingleElement(name, atomicNumber, atomicWeight,
+        g4material = g4.MaterialSingleElement(name, atomicNumber, atomicMass,
                                               density, registry=self.greg)
         self.g4elements[name] = g4element
         self.g4materials[name] = g4material
@@ -183,7 +183,7 @@ class _FlukaToG4MaterialConverter:
         pt = self.periodicTable
         for part, fraction in flukaCompound.fractions:
             partName = part.name
-            partAtomicWeight = pt.atomicWeightFromZ(part.atomicNumber)
+            partAtomicWeight = pt.atomicMassFromZ(part.atomicNumber)
             massfraction = fraction * partAtomicWeight / totalAtomicWeight
             g4element = self.g4elements[partName]
             g4material.add_element_massfraction(g4element, massfraction)
@@ -192,7 +192,7 @@ class _FlukaToG4MaterialConverter:
     def _totalMassWeightedFractionOfCompound(self, compound):
         total = 0
         for part, fraction in compound.fractions:
-            total += (self.periodicTable.atomicWeightFromZ(part.atomicNumber)
+            total += (self.periodicTable.atomicMassFromZ(part.atomicNumber)
                       * fraction)
         return total
 
@@ -216,7 +216,7 @@ class _PeriodicTable(object):
                 "Unable to determine mass number for Z = {}".format(z))
         return int(nNeutrons) + z
 
-    def atomicWeightFromZ(self, z):
+    def atomicMassFromZ(self, z):
         t = self.table
         mask = t["AtomicNumber"] == z
         return float(t["AtomicMass"][mask])
