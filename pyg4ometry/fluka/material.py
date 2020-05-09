@@ -33,20 +33,21 @@ _PREDEFINED_ELEMENTS = [("BLCKHOLE",  0, 0, 0),
                         ("TITANIUM",  47.867, 22., 4.540),
                         ("NICKEL",    58.6934, 28., 8.902)]
 
-
-
 _PREDEFINED_COMPOUND_NAMES = ["WATER",
-                              "POLYSTYR",
-                              "PLASCINT",
-                              "PMMA",
-                              "BONECOMP",
-                              "BONECORT",
-                              "MUSCLESK",
-                              "MUSCLEST",
-                              "ADTISSUE",
-                              "KAPTON",
-                              "POLYETHY",
-                              "AIR"]
+                             "POLYSTYR",
+                             "PLASCINT",
+                             "PMMA",
+                             "BONECOMP",
+                             "BONECORT",
+                             "MUSCLESK",
+                             "MUSCLEST",
+                             "ADTISSUE",
+                             "KAPTON",
+                             "POLYETHY",
+                             "AIR"]
+
+PREDEFINED_MATERIAL_NAMES = ([i[0] for i in _PREDEFINED_ELEMENTS]
+                             + _PREDEFINED_COMPOUND_NAMES)
 
 
 class BuiltIn(object):
