@@ -5,6 +5,11 @@
 #include <cmath>
 #include "geom.h"
 
+std::ios_base::Init toEnsureInitialization;
+
+/*********************************************
+Vector
+*********************************************/
 Vector::Vector() 
 {
   _x = _y = _z = 0;
@@ -126,6 +131,10 @@ std::string Vector::toString() const {
   return "[" + std::to_string(_x) + ", " + std::to_string(_y) + ", " + std::to_string(_z)+"]";
 }
 
+
+/*********************************************
+Vertex
+*********************************************/
 Vertex::Vertex(Vector pos) {_pos = Vector(pos);};
 
 Vertex::Vertex(Vector pos, Vector normal) {
@@ -147,6 +156,9 @@ py::list Polygon::vertices() {
   return _vertices;
 }
 
+/*********************************************
+PYBIND
+*********************************************/
 PYBIND11_MODULE(geom, m) {
   py::class_<Vector>(m,"Vector")
     .def(py::init<>())

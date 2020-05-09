@@ -3,7 +3,19 @@
 // clang++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` geom.cpython-37m-darwin.so core.cxx -o core`python3-config --extension-suffix` -L/opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/ -lpython3.7m
 
 #include "core.h"
+
+#include <vector>
+#include <map> 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <functional>
+
+std::ios_base::Init toEnsureInitialization;
+
+/*********************************************
+CSG
+*********************************************/
 
 CSG::CSG() {}
 
@@ -90,6 +102,53 @@ void CSG::scale(double scale) {
 }
 
 void CSG::toVerticesAndPolygons() {
+
+  std::hash<std::string> hash;
+  std::map<size_t, unsigned int> vertexIndexMap;
+  
+  unsigned int count = 0;
+
+  std::ofstream fout("ra.txt");
+  
+  for(auto polyHandle : _polygons) {
+    Polygon *poly = polyHandle.cast<Polygon*>();
+    
+    std::vector<unsigned int> cell; 
+    for (auto vertHandle : poly->vertices()) {
+      Vertex *vert = vertHandle.cast<Vertex*>(); 
+      //size_t posHash  = hash(vert->pos().x()) ^ hash(vert->pos().y()) ^ hash(vert->pos().y());
+      std::ostringstream sstream;
+      sstream << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z();
+      size_t posHash = hash(sstream.str());
+      fout << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z() << " " << posHash << std::endl;
+      
+      // check if not in in map 
+      if (vertexIndexMap.find(posHash) == vertexIndexMap.end()) {
+	vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,_verts.size()));
+	_verts.push_back(vert->pos());
+      }
+      
+      cell.push_back(vertexIndexMap.find(posHash)->second);
+      count++;
+    }
+    _polys.push_back(cell);
+  }
+
+
+  for(auto v : _verts) {
+    fout << v.toString() << std::endl;
+  }
+
+  for(auto p : _polys) {
+    for(auto i : p) {
+      fout << i << " ";
+    }
+    fout << std::endl;
+  }
+}
+
+void CSG::toCGALSurfaceMesh() {
+  
 }
 
 void CSG::unioN(CSG &csg) {
@@ -102,7 +161,9 @@ void CSG::intersect(CSG &csg) {
 
 }
 
-
+/*********************************************
+PYBIND
+*********************************************/
 PYBIND11_MODULE(core, m) {
   py::class_<CSG>(m,"CSG")
     .def(py::init<>())
@@ -113,6 +174,7 @@ PYBIND11_MODULE(core, m) {
     .def("translate",(void (CSG::*)(py::array_t<double> &)) &CSG::translate)
     .def("rotate",&CSG::rotate)
     .def("scale",&CSG::scale)
+    .def("toVerticesAndPolygons",&CSG::toVerticesAndPolygons)
     .def("union",&CSG::unioN)
     .def("intersect",&CSG::intersect)
     .def("subtract",&CSG::subtract)
