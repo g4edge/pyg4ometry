@@ -34,7 +34,7 @@ class GenericPolycone(_SolidBase):
     """
 
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
-                 registry, lunit="mm", aunit="rad", nslice=32,
+                 registry, lunit="mm", aunit="rad", nslice=16,
                  addRegistry=True):
 
         self.type    = 'GenericPolycone'

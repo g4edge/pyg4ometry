@@ -120,7 +120,7 @@ class GenericPolyhedra(_SolidBase):
 
                 polygons.append(_Polygon(vFace))
 
-        if dPhi != 2*_np.pi :
+        if pDPhi != 2*_np.pi :
             for cvPolygon in zrListConvex:
 
                 vPhi1 = []
