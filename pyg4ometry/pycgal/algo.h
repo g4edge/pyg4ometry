@@ -5,11 +5,11 @@
 #include <pybind11/pytypes.h>
 #include <pybind11/stl.h>
 
-#include "core.h"
 #include "geom.h"
 
 /* Kernel */
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 /* 3D objects */
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -25,9 +25,18 @@
 /* 2D Algorithms */
 #include <CGAL/partition_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+/* transformations */
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
+/* corefinement */
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+
+// typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Simple_cartesian<double>                      Kernel;
 typedef Kernel::Point_3                                     Point;
+typedef Kernel::Vector_3                                    Vector_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3>                 Surface_mesh;
+typedef CGAL::Aff_transformation_3<Kernel>                  Aff_transformation_3;
 
 typedef CGAL::Partition_traits_2<Kernel>                    Partition_traits_2;
 typedef Partition_traits_2::Point_2                         Point_2;
@@ -52,12 +61,29 @@ class SurfaceMesh {
   Surface_mesh* _surfacemesh;
 
   SurfaceMesh();
+  SurfaceMesh(const SurfaceMesh &);
+  SurfaceMesh(Surface_mesh *);
   SurfaceMesh(py::list vertices, py::list faces);
   SurfaceMesh(py::array_t<double>, py::array_t<int>);
   ~SurfaceMesh();
 
   std::size_t add_vertex(double x, double y, double z);
-  void add_face(std::size_t i, std::size_t j, std::size_t k);
+  std::size_t add_face(std::size_t i, std::size_t j, std::size_t k);
+  std::size_t add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l);
+
+  void translate(double x, double y, double z);
+  void transform(double m11, double m12, double m13,
+		 double m21, double m22, double m23,
+		 double m31, double m32, double m33);
+
+  SurfaceMesh* unioN(SurfaceMesh &);
+  SurfaceMesh* intersect(SurfaceMesh &);
+  SurfaceMesh* subtract(SurfaceMesh &);
+
+  py::list* toVerticesAndPolygons();
+  int number_of_faces();
+
+  std::string toString();
 }; 
 
 class Polygon2 {

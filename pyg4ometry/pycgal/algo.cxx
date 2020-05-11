@@ -21,16 +21,42 @@ SurfaceMesh::SurfaceMesh() {
   _surfacemesh = new Surface_mesh();
 }
 
-SurfaceMesh::SurfaceMesh(py::list vertices, 
-			 py::list faces) {
-  _surfacemesh = new Surface_mesh();
+SurfaceMesh::SurfaceMesh(const SurfaceMesh &mesh) {
+  _surfacemesh = new Surface_mesh(*(mesh._surfacemesh));
+}
 
+SurfaceMesh::SurfaceMesh(Surface_mesh *mesh) {
+  _surfacemesh = mesh;
+}
+
+SurfaceMesh::SurfaceMesh(py::list vertices, 
+			 py::list faces)    {
+  _surfacemesh = new Surface_mesh();
+  
+  // loop over vertices 
+  for (py::handle vHandle : vertices) {
+    py::list vList = vHandle.cast<py::list>();
+    add_vertex(vList[0].cast<double>(),
+	       vList[1].cast<double>(),
+	       vList[2].cast<double>());
+  }
+  
+  // loop over faces 
+  for (py::handle fHandle : faces) {
+    py::list fList = fHandle.cast<py::list>();
+    add_face(fList[0].cast<int>(),
+	     fList[1].cast<int>(),
+	     fList[2].cast<int>());	    
+  }
 }
 
 SurfaceMesh::SurfaceMesh(py::array_t<double> vertices,
-			 py::array_t<int> faces) {
+			 py::array_t<int>    faces)    {
   _surfacemesh = new Surface_mesh();
 
+  // loop over vertices 
+
+  // loop over faces 
 }
 
 SurfaceMesh::~SurfaceMesh() {
@@ -41,10 +67,105 @@ std::size_t SurfaceMesh::add_vertex(double x, double y, double z) {
   return _surfacemesh->add_vertex(Point(x,y,z));
 }
 
-void SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k) {
+std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k) {
+  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+				Surface_mesh::Vertex_index(j),
+				Surface_mesh::Vertex_index(k));
+}
+
+std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l) {
+
   _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
 			 Surface_mesh::Vertex_index(j),
 			 Surface_mesh::Vertex_index(k));
+
+  _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+			 Surface_mesh::Vertex_index(k),
+			 Surface_mesh::Vertex_index(l));
+  /*
+  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+				Surface_mesh::Vertex_index(j),
+				Surface_mesh::Vertex_index(k),
+				Surface_mesh::Vertex_index(l));
+  */
+}
+
+void SurfaceMesh::translate(double x, double y, double z) {
+  Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(x, y, z));  
+  CGAL::Polygon_mesh_processing::transform(transl,*_surfacemesh);
+}
+
+void SurfaceMesh::transform(double m11, double m12, double m13,
+			    double m21, double m22, double m23,
+			    double m31, double m32, double m33) {
+  Aff_transformation_3 tform(m11,m12,m13,
+			     m21,m22,m23,
+			     m31,m32,m33,1);  
+  CGAL::Polygon_mesh_processing::transform(tform,*_surfacemesh);
+}
+
+
+SurfaceMesh* SurfaceMesh::unioN(SurfaceMesh &mesh2) {
+  Surface_mesh *out = new Surface_mesh();
+  bool valid_union = CGAL::Polygon_mesh_processing::corefine_and_compute_union(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  return new SurfaceMesh(out);
+}
+
+SurfaceMesh* SurfaceMesh::intersect(SurfaceMesh &mesh2) {
+  Surface_mesh *out = new Surface_mesh();
+  bool valid_intersection = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  return new SurfaceMesh(out);
+}
+
+SurfaceMesh* SurfaceMesh::subtract(SurfaceMesh &mesh2) {
+  Surface_mesh *out = new Surface_mesh();
+  bool valid_difference = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  return new SurfaceMesh(out);
+}
+
+py::list* SurfaceMesh::toVerticesAndPolygons() {
+  py::list *verts = new py::list();
+  py::list *polys = new py::list();
+
+  //std::vector<std::vector<double>> verts;
+  //std::vector<std::vector<int>>    polys;
+  
+  Surface_mesh::Point p;
+  for(Surface_mesh::Vertex_index vd : _surfacemesh->vertices()) {
+    py::list *v = new py::list();
+    p = _surfacemesh->point(vd);
+    v->append(CGAL::to_double(p.x()));
+    v->append(CGAL::to_double(p.y()));
+    v->append(CGAL::to_double(p.z()));    
+    verts->append(v);
+  }
+
+  int iCount = 0;
+  for(Surface_mesh::Face_index fd : _surfacemesh->faces()) {
+    py::list *p = new py::list();
+    for(Surface_mesh::Halfedge_index hd :  CGAL::halfedges_around_face(_surfacemesh->halfedge(fd),*_surfacemesh)) {
+      p->append((int)_surfacemesh->source(hd));
+    }
+    polys->append(p);
+    ++iCount;
+  }
+
+  py::list *ret = new py::list();
+  ret->append(verts);
+  ret->append(polys);
+  ret->append(iCount);
+  
+  return ret;
+}
+
+int SurfaceMesh::number_of_faces() {
+  return _surfacemesh->number_of_faces();
+}
+
+std::string SurfaceMesh::toString() { 
+  std::ostringstream sstream;
+  sstream << *_surfacemesh;
+  return sstream.str();
 }
 
 /*********************************************
@@ -207,8 +328,18 @@ PYBIND11_MODULE(algo, m) {
 
   py::class_<SurfaceMesh>(m,"SurfaceMesh")
     .def(py::init<>())
+    .def(py::init<py::list &, py::list &>())
     .def("add_vertex",&SurfaceMesh::add_vertex)
-    .def("add_face",&SurfaceMesh::add_face);
+    .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
+    .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
+    .def("translate",&SurfaceMesh::translate)
+    .def("transform",&SurfaceMesh::transform)
+    .def("union",&SurfaceMesh::unioN)
+    .def("intersect",&SurfaceMesh::intersect)
+    .def("subtract",&SurfaceMesh::subtract)
+    .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
+    .def("number_of_faces",&SurfaceMesh::number_of_faces)
+    .def("__repr__",&SurfaceMesh::toString);
 
   py::class_<Polygon2>(m,"Polygon2")
     .def(py::init<>())
@@ -227,6 +358,5 @@ PYBIND11_MODULE(algo, m) {
     .def("is_convex",&Polygon2::is_convex)
     .def("orientation",&Polygon2::orientation)
     .def("optimal_convex_partition",&Polygon2::optimal_convex_partition);
-  
 }
 

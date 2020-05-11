@@ -5,6 +5,7 @@
 #include <pybind11/pytypes.h>
 
 #include "geom.h"
+#include "algo.h"
 
 namespace py = pybind11;
 
@@ -12,27 +13,31 @@ class CSG {
 protected : 
  
 public:
-  py::list _polygons;
-
-  std::vector<Vector> _verts;
-  std::vector<std::vector<unsigned int>> _polys;
+  SurfaceMesh *_surfacemesh;
+  int count;
   
   CSG();
+  CSG(py::list &polygons);
+  CSG(CSG &csg);
+  CSG(SurfaceMesh *mesh);
   ~CSG();
 
-  static CSG fromPolygons(py::list &polygons);
+  static CSG* fromPolygons(py::list &polygons);
   
-  py::list polygons();
+  // py::list polygons();
   void translate(Vector &disp);
   void translate(py::list &disp);
   void translate(py::array_t<double> &disp);
   void rotate(Vector &axis, double angle);
+  void rotate(py::list &axis, double angle);
   void scale(double);
-  void toVerticesAndPolygons();
-  void toCGALSurfaceMesh();
-  void unioN(CSG &csg);
-  void subtract(CSG &csg);
-  void intersect(CSG &csg);
+  py::list* toVerticesAndPolygons();
+  void toCGALSurfaceMesh(py::list &polygons);
+  CSG* unioN(CSG &csg);
+  CSG* subtract(CSG &csg);
+  CSG* intersect(CSG &csg);
+  SurfaceMesh& getSurfaceMesh();
+  int getNumberPolys();
 };
 
 #endif

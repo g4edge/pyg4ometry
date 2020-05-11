@@ -1,7 +1,3 @@
-//
-// clang++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` core.cxx -o core`python3-config --extension-suffix` -L/opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/ -lpython3.7m
-// clang++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` geom.cpython-37m-darwin.so core.cxx -o core`python3-config --extension-suffix` -L/opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/ -lpython3.7m
-
 #include "core.h"
 
 #include <vector>
@@ -17,28 +13,43 @@ std::ios_base::Init toEnsureInitialization;
 CSG
 *********************************************/
 
-CSG::CSG() {}
+CSG::CSG() {
+  // py::print("CSG::CSG()");
+  _surfacemesh = new SurfaceMesh();
+}
 
-CSG::~CSG() {}
+CSG::CSG(py::list &polygons) {
+  // py::print("CSG::CSG(py::list&)");
+  _surfacemesh = new SurfaceMesh();
+  toCGALSurfaceMesh(polygons);
+}
 
-CSG CSG::fromPolygons(py::list &polygons) {
-  CSG csg;
-  csg._polygons = polygons;
+CSG::CSG(CSG &csg) {
+  //  py::print("CSG::CSG(CSG&)");
+  _surfacemesh = new SurfaceMesh(*(csg._surfacemesh));
+}
+
+CSG::CSG(SurfaceMesh* mesh) {
+  _surfacemesh = mesh;
+}
+
+CSG::~CSG() {
+  //  py::print("CSG::~CSG()");
+  delete _surfacemesh;
+}
+
+CSG* CSG::fromPolygons(py::list &polygons) {
+  //  py::print("CSG::fromPolygons(py::list &)");
+  CSG *csg = new CSG(polygons);
   return csg;
 }
 
-py::list CSG::polygons() {
-  return _polygons;
-}
+//py::list CSG::polygons() {
+//  return _polygons;
+//}
 
 void CSG::translate(Vector &disp) {
-  for (py::handle polyHandle : _polygons) {
-    Polygon *poly = polyHandle.cast<Polygon*>();
-    for (py::handle vertHandle : poly->vertices()) {
-      Vertex *vert = vertHandle.cast<Vertex*>(); 
-      vert->_pos = vert->_pos + disp;      
-    } 
-  }
+  _surfacemesh->translate(disp._x, disp._y, disp._z);
 }
 
 void CSG::translate(py::list &disp) {
@@ -60,7 +71,9 @@ void CSG::rotate(Vector &axis, double angleDeg) {
   double sinAngle = sin(angleDeg/180.0*3.14159264);
   double verSin   = 1-cosAngle;
 
-  // std::cout << normAxis.toString() << " " << cosAngle << " " << sinAngle << " " << verSin << std::endl;
+  // std::cout << normAxis.toString() << " " 
+  // << cosAngle << " " << sinAngle << " " 
+  // << verSin << std::endl;
   
   double x = normAxis._x;
   double y = normAxis._y;
@@ -82,35 +95,39 @@ void CSG::rotate(Vector &axis, double angleDeg) {
   // std::cout << rot[1][0] << " " << rot[1][1] << " " << rot[1][2] << std::endl;
   // std::cout << rot[2][0] << " " << rot[2][1] << " " << rot[2][2] << std::endl;
 
-  for (py::handle polyHandle : _polygons) {
-    Polygon *poly = polyHandle.cast<Polygon*>();
-    for (py::handle vertHandle : poly->vertices()) {
-      Vertex *vert = vertHandle.cast<Vertex*>(); 
-      vert->_pos = vert->_pos.transform(rot);
-    } 
-  }  
+  _surfacemesh->transform(rot[0][0],rot[0][1],rot[0][2],
+			  rot[1][0],rot[1][1],rot[1][2],
+			  rot[2][0],rot[2][1],rot[2][2]);
+}
+
+void CSG::rotate(py::list &axis, double angleDeg) {
+  Vector vAxis = Vector(axis[0].cast<double>(),
+			axis[1].cast<double>(),
+			axis[2].cast<double>());
+  rotate(vAxis,angleDeg);
 }
 
 void CSG::scale(double scale) {
-  for (py::handle polyHandle : _polygons) {
-    Polygon *poly = polyHandle.cast<Polygon*>();
-    for (py::handle vertHandle : poly->vertices()) {
-      Vertex *vert = vertHandle.cast<Vertex*>(); 
-      vert->_pos = vert->_pos * scale;      
-    } 
-  }
 }
 
-void CSG::toVerticesAndPolygons() {
+py::list* CSG::toVerticesAndPolygons() {
+  return _surfacemesh->toVerticesAndPolygons();
+}
 
+void CSG::toCGALSurfaceMesh(py::list &polygons) {
+
+  std::vector<Vector> verts;
+  std::vector<std::vector<unsigned int>> polys;
+   
+  /////////////////////////////////////////////////////////////
   std::hash<std::string> hash;
   std::map<size_t, unsigned int> vertexIndexMap;
   
   unsigned int count = 0;
 
-  std::ofstream fout("ra.txt");
+  //  std::ofstream fout("ra.txt");
   
-  for(auto polyHandle : _polygons) {
+  for(auto polyHandle : polygons) {
     Polygon *poly = polyHandle.cast<Polygon*>();
     
     std::vector<unsigned int> cell; 
@@ -120,45 +137,54 @@ void CSG::toVerticesAndPolygons() {
       std::ostringstream sstream;
       sstream << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z();
       size_t posHash = hash(sstream.str());
-      fout << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z() << " " << posHash << std::endl;
+      //fout << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z() << " " << posHash << std::endl;
       
       // check if not in in map 
       if (vertexIndexMap.find(posHash) == vertexIndexMap.end()) {
-	vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,_verts.size()));
-	_verts.push_back(vert->pos());
+	vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,verts.size()));
+	verts.push_back(vert->pos());
       }
       
       cell.push_back(vertexIndexMap.find(posHash)->second);
       count++;
     }
-    _polys.push_back(cell);
+    polys.push_back(cell);
   }
 
-
-  for(auto v : _verts) {
-    fout << v.toString() << std::endl;
+  for(auto v : verts) {
+    _surfacemesh->add_vertex(v._x,v._y, v._z); 
   }
 
-  for(auto p : _polys) {
-    for(auto i : p) {
-      fout << i << " ";
+  for(auto f : polys) {
+
+    if(f.size() == 3) {      
+      // py::print((size_t)f[0],(size_t)f[1],(size_t)f[2]);
+      _surfacemesh->add_face((size_t)f[0],(size_t)f[1], (size_t)f[2]);
     }
-    fout << std::endl;
-  }
+    else if(f.size() == 4) {
+      // py::print((size_t)f[0],(size_t)f[1],(size_t)f[2],(size_t)f[3]);
+      _surfacemesh->add_face((size_t)f[0],(size_t)f[1], (size_t)f[2], (size_t)f[3]);
+    }
+  } 
 }
 
-void CSG::toCGALSurfaceMesh() {
-  
+CSG* CSG::unioN(CSG &csg) {
+  return new CSG(_surfacemesh->unioN(*csg._surfacemesh));
+}
+CSG* CSG::intersect(CSG &csg) {
+  return new CSG(_surfacemesh->intersect(*csg._surfacemesh));
 }
 
-void CSG::unioN(CSG &csg) {
+CSG* CSG::subtract(CSG &csg) {
+  return new CSG(_surfacemesh->subtract(*csg._surfacemesh));
 }
 
-void CSG::subtract(CSG &csg) {
+SurfaceMesh& CSG::getSurfaceMesh() {
+  return *_surfacemesh;
 }
 
-void CSG::intersect(CSG &csg) {
-
+int CSG::getNumberPolys() {
+  return _surfacemesh->number_of_faces();
 }
 
 /*********************************************
@@ -167,16 +193,20 @@ PYBIND
 PYBIND11_MODULE(core, m) {
   py::class_<CSG>(m,"CSG")
     .def(py::init<>())
+    .def(py::init<py::list &>())
     .def("fromPolygons",&CSG::fromPolygons)
-    .def("polygons",&CSG::polygons)
+    //    .def("polygons",&CSG::polygons)
     .def("translate",(void (CSG::*)(Vector &)) &CSG::translate)
     .def("translate",(void (CSG::*)(py::list &)) &CSG::translate)
     .def("translate",(void (CSG::*)(py::array_t<double> &)) &CSG::translate)
-    .def("rotate",&CSG::rotate)
+    .def("rotate",(void (CSG::*)(Vector&, double)) &CSG::rotate)
+    .def("rotate",(void (CSG::*)(py::list&, double)) &CSG::rotate)
     .def("scale",&CSG::scale)
     .def("toVerticesAndPolygons",&CSG::toVerticesAndPolygons)
+    .def("toCGALSurfaceMesh",&CSG::toCGALSurfaceMesh)
     .def("union",&CSG::unioN)
     .def("intersect",&CSG::intersect)
     .def("subtract",&CSG::subtract)
-    .def_readwrite("polygons",&CSG::_polygons);
+    .def("getSurfaceMesh",&CSG::getSurfaceMesh)
+    .def("getNumberPolys",&CSG::getNumberPolys);
 }

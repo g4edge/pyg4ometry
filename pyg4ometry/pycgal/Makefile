@@ -21,18 +21,20 @@ clean :
 polyhedron_load : polyhedron_load.cpp
 	$(CXX) -o $@ polyhedron_load.cpp -I/usr/local/include -L/usr/local/lib/ -lmpfr -lgmp -lboost_thread-mt -lstdc++
 
-cgal : geom$(PYTHON_EXTENSION) core$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION)
+cgal : geom$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION) core$(PYTHON_EXTENSION) 
 
 geom$(PYTHON_EXTENSION) : geom.cxx geom.h
 	$(CXX) -O3 -Wall -shared -std=c++11 -fPIC $(PYTHON_INCLUDES) -o $@ $< $(PYTHON_LIBRARY) 
 
+algo$(PYTHON_EXTENSION) : algo.cxx algo.h
+	$(CXX) -O3 -Wall -shared -std=c++11 -fPIC $(PYTHON_INCLUDES) $(CGAL_INCLUDES) -o $@ $< $(PYTHON_LIBRARY) geom$(PYTHON_EXTENSION) $(CGAL_LIBS)
+	install_name_tool -change geom$(PYTHON_EXTENSION) @rpath/geom$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION)
+	install_name_tool -add_rpath $(PWD) algo$(PYTHON_EXTENSION)
+
 core$(PYTHON_EXTENSION) : core.cxx core.h
-	$(CXX) -O3 -Wall -shared -std=c++11 -fPIC $(PYTHON_INCLUDES) -o $@ $< $(PYTHON_LIBRARY) geom$(PYTHON_EXTENSION)	
+	$(CXX) -O3 -Wall -shared -std=c++11 -fPIC $(PYTHON_INCLUDES) $(CGAL_INCLUDES) -o $@ $< $(PYTHON_LIBRARY) $(CGAL_LIBS) geom$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION)
 	install_name_tool -change geom$(PYTHON_EXTENSION) @rpath/geom$(PYTHON_EXTENSION) core$(PYTHON_EXTENSION)
+	install_name_tool -change algo$(PYTHON_EXTENSION) @rpath/algo$(PYTHON_EXTENSION) core$(PYTHON_EXTENSION)
 	install_name_tool -add_rpath $(PWD) core$(PYTHON_EXTENSION)
 
-algo$(PYTHON_EXTENSION) : algo.cxx algo.h
-	$(CXX) -O3 -Wall -shared -std=c++11 -fPIC $(PYTHON_INCLUDES) $(CGAL_INCLUDES) -o $@ $< $(PYTHON_LIBRARY) geom$(PYTHON_EXTENSION) core$(PYTHON_EXTENSION) $(CGAL_LIBS)
-	install_name_tool -change geom$(PYTHON_EXTENSION) @rpath/geom$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION)
-	install_name_tool -change core$(PYTHON_EXTENSION) @rpath/core$(PYTHON_EXTENSION) algo$(PYTHON_EXTENSION)
-	install_name_tool -add_rpath $(PWD) algo$(PYTHON_EXTENSION)
+
