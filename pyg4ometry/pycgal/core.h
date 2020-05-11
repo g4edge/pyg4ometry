@@ -21,6 +21,7 @@ public:
   CSG(CSG &csg);
   CSG(SurfaceMesh *mesh);
   ~CSG();
+  CSG* clone();
 
   static CSG* fromPolygons(py::list &polygons);
   
