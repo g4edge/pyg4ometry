@@ -11,20 +11,20 @@
 namespace py = pybind11;
 
 class Vector {
-protected : 
-  
+protected :
+
 public:
   double _x;
   double _y;
   double _z;
 
-  Vector();   
+  Vector();
   Vector(double x, double y, double z);
   Vector(py::list list);
-  Vector(py::array_t<double> array); 
+  Vector(py::array_t<double> array);
 
   ~Vector();
-  
+
   double x();
   double y();
   double z();
@@ -32,7 +32,7 @@ public:
   Vector operator+(const Vector &v) const;
   Vector operator-(const Vector &v) const;
   Vector operator*(double value) const;
-  
+
   friend Vector operator*(double value, const Vector &v);
   friend Vector operator-(const Vector &v);
   Vector operator/(double value) const;
@@ -40,7 +40,7 @@ public:
   Vector scale(const Vector v);
   Vector lerp(const Vector v, double t);
   double length();
-  Vector unit(); 
+  Vector unit();
   Vector cross(const Vector v);
   Vector transform(const double[3][3]);
   int len();
@@ -56,7 +56,10 @@ public:
   Vector _normal;
 
   Vertex(Vector pos);
+  Vertex(py::list pos);
   Vertex(Vector pos, Vector normal);
+  Vertex(py::list pos, py::list normal);
+
   ~Vertex();
   Vector pos();
   Vector normal();

@@ -135,12 +135,26 @@ std::string Vector::toString() const {
 /*********************************************
 Vertex
 *********************************************/
-Vertex::Vertex(Vector pos) {_pos = Vector(pos);};
+Vertex::Vertex(Vector pos) {
+  _pos = Vector(pos);
+  _normal = Vector(0, 0, 0);
+};
+
+Vertex::Vertex(py::list pos) {
+  _pos = Vector(pos);
+  _normal = Vector(0, 0, 0);
+};
+
 
 Vertex::Vertex(Vector pos, Vector normal) {
   _pos = Vector(pos);
   _normal = Vector(normal);
 }
+
+Vertex::Vertex(py::list pos, py::list normal) {
+  _pos = Vector(pos);
+  _normal = Vector(normal);
+};
 
 Vertex::~Vertex() {};
 Vector Vertex::pos() {return _pos;}
@@ -189,7 +203,9 @@ PYBIND11_MODULE(geom, m) {
 
   py::class_<Vertex>(m,"Vertex")
     .def(py::init<Vector>())
+    .def(py::init<py::list>())
     .def(py::init<Vector, Vector>())
+    .def(py::init<py::list, py::list>())
     .def("pos",&Vertex::pos)
     .def("normal",&Vertex::normal)
     .def_readwrite("pos",&Vertex::_pos)
