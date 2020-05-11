@@ -160,13 +160,13 @@ class Tubs(_SolidBase):
             ###########################
             if pRMin == 0 :
                 vEnd = []
-                vEnd.append(_Vertex([0,0, -pDz],None))
+                vEnd.append(_Vertex([0,0, -pDz]))
                 vEnd.append(_Vertex([xRMaxP2, yRMaxP2, -pDz]))
                 vEnd.append(_Vertex([xRMaxP1, yRMaxP1, -pDz]))
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
-                vEnd.append(_Vertex([0,0,pDz],None))
+                vEnd.append(_Vertex([0,0,pDz]))
                 vEnd.append(_Vertex([xRMaxP1, yRMaxP1,pDz]))
                 vEnd.append(_Vertex([xRMaxP2, yRMaxP2,pDz]))
                 polygons.append(_Polygon(vEnd))

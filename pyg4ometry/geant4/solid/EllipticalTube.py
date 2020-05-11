@@ -177,25 +177,25 @@ class EllipticalTube(_SolidBase):
             # tube ends
             ##########################s
             vEnd = []
-            vEnd.append(_Vertex([0, 0,pDz],None))
-            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),pDz],None))
+            vEnd.append(_Vertex([0, 0,pDz]))
+            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),pDz]))
             vEnd.append(_Vertex([pDx*_np.cos(p2), pDy*_np.sin(p2),pDz], None))
             polygons.append(_Polygon(vEnd))
 
             vEnd = []
-            vEnd.append(_Vertex([0, 0,-pDz],None))
-            vEnd.append(_Vertex([pDx*_np.cos(p2), pDy*_np.sin(p2),-pDz],None))
-            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),-pDz],None))
+            vEnd.append(_Vertex([0, 0,-pDz]))
+            vEnd.append(_Vertex([pDx*_np.cos(p2), pDy*_np.sin(p2),-pDz]))
+            vEnd.append(_Vertex([pDx*_np.cos(p1), pDy*_np.sin(p1),-pDz]))
             polygons.append(_Polygon(vEnd))
 
             ###########################
             # Curved cylinder faces
             ###########################
             vCurv = []
-            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), -pDz],None))
-            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), -pDz],None))
-            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), pDz],None))
-            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), pDz],None))
+            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), -pDz]))
+            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), -pDz]))
+            vCurv.append(_Vertex([pDx * _np.cos(p2), pDy * _np.sin(p2), pDz]))
+            vCurv.append(_Vertex([pDx * _np.cos(p1), pDy * _np.sin(p1), pDz]))
             polygons.append(_Polygon(vCurv))
 
 
