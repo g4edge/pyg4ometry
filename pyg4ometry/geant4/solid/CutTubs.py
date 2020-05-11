@@ -154,19 +154,19 @@ class CutTubs(_SolidBase):
             ###########################
             if pDPhi != 2*_np.pi and i == 0:
                 vWedg = []
-                vWedg.append(_Vertex([xRMinP1,yRMinP1, zLowRMinP1],None))
-                vWedg.append(_Vertex([xRMinP1,yRMinP1, zHighRMinP1],None))
-                vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zHighRMaxP1],None))
-                vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zLowRMaxP1],None))
+                vWedg.append(_Vertex([xRMinP1,yRMinP1, zLowRMinP1]))
+                vWedg.append(_Vertex([xRMinP1,yRMinP1, zHighRMinP1]))
+                vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zHighRMaxP1]))
+                vWedg.append(_Vertex([xRMaxP1,yRMaxP1, zLowRMaxP1]))
                 vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2*_np.pi and i == self.nslice-1 :
                 vWedg = []
-                vWedg.append(_Vertex([xRMinP2,yRMinP2, zLowRMinP2],None))
-                vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zLowRMaxP2],None))
-                vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zHighRMaxP2],None))
-                vWedg.append(_Vertex([xRMinP2,yRMinP2, zHighRMinP2],None))
+                vWedg.append(_Vertex([xRMinP2,yRMinP2, zLowRMinP2]))
+                vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zLowRMaxP2]))
+                vWedg.append(_Vertex([xRMaxP2,yRMaxP2, zHighRMaxP2]))
+                vWedg.append(_Vertex([xRMinP2,yRMinP2, zHighRMinP2]))
                 vWedg.reverse()
                 polygons.append(_Polygon(vWedg))
 
@@ -175,48 +175,48 @@ class CutTubs(_SolidBase):
             ###########################
             if pRMin == 0:
                 vEnd = []
-                vEnd.append(_Vertex([0,0,-pDz],None))
-                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2],None))
-                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1],None))
+                vEnd.append(_Vertex([0,0,-pDz]))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2]))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1]))
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
-                vEnd.append(_Vertex([0,0, pDz],None))
-                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1],None))
-                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2],None))
+                vEnd.append(_Vertex([0,0, pDz]))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1]))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2]))
                 polygons.append(_Polygon(vEnd))
 
             else :
                 vEnd = []
-                vEnd.append(_Vertex([xRMinP1, yRMinP1, zLowRMinP1],None))
-                vEnd.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2],None))
-                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2],None))
-                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1],None))
+                vEnd.append(_Vertex([xRMinP1, yRMinP1, zLowRMinP1]))
+                vEnd.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2]))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2]))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1]))
                 polygons.append(_Polygon(vEnd))
 
                 vEnd = []
-                vEnd.append(_Vertex([xRMinP1, yRMinP1, zHighRMinP1],None))
-                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1],None))
-                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2],None))
-                vEnd.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2],None))
+                vEnd.append(_Vertex([xRMinP1, yRMinP1, zHighRMinP1]))
+                vEnd.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1]))
+                vEnd.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2]))
+                vEnd.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2]))
                 polygons.append(_Polygon(vEnd))
 
             ###########################
             # Curved cylinder faces
             ###########################
             vCurv = []
-            vCurv.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1],None))
-            vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2],None))
-            vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2],None))
-            vCurv.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1],None))
+            vCurv.append(_Vertex([xRMaxP1, yRMaxP1, zLowRMaxP1]))
+            vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zLowRMaxP2]))
+            vCurv.append(_Vertex([xRMaxP2, yRMaxP2, zHighRMaxP2]))
+            vCurv.append(_Vertex([xRMaxP1, yRMaxP1, zHighRMaxP1]))
             polygons.append(_Polygon(vCurv))
 
             if pRMin != 0 :
                 vCurv = []
-                vCurv.append(_Vertex([xRMinP1, yRMinP1, zLowRMinP1], None))
-                vCurv.append(_Vertex([xRMinP1, yRMinP1, zHighRMinP1], None))
-                vCurv.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2],None))
-                vCurv.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2],None))
+                vCurv.append(_Vertex([xRMinP1, yRMinP1, zLowRMinP1]))
+                vCurv.append(_Vertex([xRMinP1, yRMinP1, zHighRMinP1]))
+                vCurv.append(_Vertex([xRMinP2, yRMinP2, zHighRMinP2]))
+                vCurv.append(_Vertex([xRMinP2, yRMinP2, zLowRMinP2]))
                 polygons.append(_Polygon(vCurv))
 
         mesh = _CSG.fromPolygons(polygons)
