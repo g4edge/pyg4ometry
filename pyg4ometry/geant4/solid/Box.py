@@ -48,7 +48,22 @@ class Box(_SolidBase):
         pY = self.evaluateParameter(self.pY)*uval/2.0
         pZ = self.evaluateParameter(self.pZ)*uval/2.0
 
-        _log.info('box.pycsgmesh> mesh')
-        mesh = _CSG.cube(center=[0,0,0], radius=[pX,pY,pZ])
-        return mesh
+        c = _Vector(0, 0, 0)
+        r = [pX, pY, pZ]
 
+        polygons = list([_Polygon(
+            list([_Vertex(
+                _Vector(
+                    c.x + r[0] * (2 * bool(i & 1) - 1),
+                    c.y + r[1] * (2 * bool(i & 2) - 1),
+                    c.z + r[2] * (2 * bool(i & 4) - 1)
+                )
+            ) for i in v[0]])) for v in [
+                [[0, 4, 6, 2], [-1, 0, 0]],
+                [[1, 3, 7, 5], [+1, 0, 0]],
+                [[0, 1, 5, 4], [0, -1, 0]],
+                [[2, 6, 7, 3], [0, +1, 0]],
+                [[0, 2, 3, 1], [0, 0, -1]],
+                [[4, 5, 7, 6], [0, 0, +1]]
+            ]])
+        return _CSG.fromPolygons(polygons)
