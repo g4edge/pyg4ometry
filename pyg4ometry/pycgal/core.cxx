@@ -211,5 +211,6 @@ PYBIND11_MODULE(core, m) {
     .def("intersect",&CSG::intersect)
     .def("subtract",&CSG::subtract)
     .def("getSurfaceMesh",&CSG::getSurfaceMesh)
-    .def("getNumberPolys",&CSG::getNumberPolys);
+    .def("getNumberPolys",&CSG::getNumberPolys)
+    .def("isNull",&CSG::isNull);
 }

@@ -83,6 +83,9 @@ class CSG(object):
     def toPolygons(self):
         return self.polygons
 
+    def isNull(self):
+        return bool(self.toPolygons())
+
     def polygonCount(self):
         '''Return number of polygons in CSG solid'''
         return len(self.polygons)

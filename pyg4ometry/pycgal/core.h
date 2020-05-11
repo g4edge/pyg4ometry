@@ -39,6 +39,7 @@ public:
   CSG* intersect(CSG &csg);
   SurfaceMesh& getSurfaceMesh();
   int getNumberPolys();
+  bool isNull() { return getNumberPolys() == 0; }
 };
 
 #endif
