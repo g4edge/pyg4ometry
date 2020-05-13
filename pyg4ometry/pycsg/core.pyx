@@ -1,3 +1,5 @@
+# cython: language_level=3
+
 import operator
 from .geom import *
 import numpy as _np
@@ -84,7 +86,7 @@ class CSG(object):
         return self.polygons
 
     def isNull(self):
-        return bool(self.toPolygons())
+        return len(self.toPolygons()) == 0
 
     def polygonCount(self):
         '''Return number of polygons in CSG solid'''
