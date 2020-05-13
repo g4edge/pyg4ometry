@@ -1,5 +1,8 @@
 from .SolidBase import SolidBase as _SolidBase
 from pyg4ometry.pycsg.core import CSG as _CSG
+from pyg4ometry.pycsg.geom import Vector as _Vector
+from pyg4ometry.pycsg.geom import Vertex as _Vertex
+from pyg4ometry.pycsg.geom import Polygon as _Polygon
 
 import logging as _log
 
