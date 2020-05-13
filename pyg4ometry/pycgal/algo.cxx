@@ -79,9 +79,9 @@ std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, s
 			 Surface_mesh::Vertex_index(j),
 			 Surface_mesh::Vertex_index(k));
 
-  _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
-			 Surface_mesh::Vertex_index(k),
-			 Surface_mesh::Vertex_index(l));
+  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+				Surface_mesh::Vertex_index(k),
+				Surface_mesh::Vertex_index(l));
   /*
   return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
 				Surface_mesh::Vertex_index(j),

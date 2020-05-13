@@ -72,7 +72,7 @@ class Subtraction(_SolidBase):
 
         _log.info('subtraction.pycshmsh> subtraction')
         mesh = m1.subtract(m2)
-        if not mesh.toPolygons():
+        if mesh.isNull():
             raise pyg4ometry.exceptions.NullMeshError(self)
 
         return mesh

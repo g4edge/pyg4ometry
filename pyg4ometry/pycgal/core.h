@@ -21,6 +21,7 @@ public:
   CSG(CSG &csg);
   CSG(SurfaceMesh *mesh);
   ~CSG();
+  CSG* clone();
 
   static CSG* fromPolygons(py::list &polygons);
   
@@ -38,6 +39,7 @@ public:
   CSG* intersect(CSG &csg);
   SurfaceMesh& getSurfaceMesh();
   int getNumberPolys();
+  bool isNull() { return getNumberPolys() == 0; }
 };
 
 #endif

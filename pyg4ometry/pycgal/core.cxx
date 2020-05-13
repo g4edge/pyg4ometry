@@ -38,6 +38,8 @@ CSG::~CSG() {
   delete _surfacemesh;
 }
 
+CSG *CSG::clone() { return new CSG(*this); }
+
 CSG* CSG::fromPolygons(py::list &polygons) {
   //  py::print("CSG::fromPolygons(py::list &)");
   CSG *csg = new CSG(polygons);
@@ -194,6 +196,7 @@ PYBIND11_MODULE(core, m) {
   py::class_<CSG>(m,"CSG")
     .def(py::init<>())
     .def(py::init<py::list &>())
+    .def("clone", &CSG::clone)
     .def("fromPolygons",&CSG::fromPolygons)
     //    .def("polygons",&CSG::polygons)
     .def("translate",(void (CSG::*)(Vector &)) &CSG::translate)
@@ -208,5 +211,6 @@ PYBIND11_MODULE(core, m) {
     .def("intersect",&CSG::intersect)
     .def("subtract",&CSG::subtract)
     .def("getSurfaceMesh",&CSG::getSurfaceMesh)
-    .def("getNumberPolys",&CSG::getNumberPolys);
+    .def("getNumberPolys",&CSG::getNumberPolys)
+    .def("isNull",&CSG::isNull);
 }

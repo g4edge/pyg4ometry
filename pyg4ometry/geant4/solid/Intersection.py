@@ -71,7 +71,7 @@ class Intersection(_SolidBase):
 
         _log.info('Intersection.pycsgmesh> intersect')
         mesh = m1.intersect(m2)
-        if not mesh.toPolygons():
+        if mesh.isNull():
             raise pyg4ometry.exceptions.NullMeshError(self)
 
         #print 'intersection mesh ', self.name
