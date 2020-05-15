@@ -65,17 +65,16 @@ def fluka2Geant4(flukareg,
     """
     fr = flukareg # abbreviation
 
-    # Filter region names and check inputs
     regions = _getSelectedRegions(fr, regions, omitRegions)
+    if omitBlackholeRegions:
+        fr = _filterBlackHoleRegions(fr, regions)
+
     _checkQuadricRegionExtents(fr, quadricRegionExtents)
 
     if quadricRegionExtents:
         fr = _makeUniqueQuadricRegions(fr, quadricRegionExtents)
     else:
         quadricRegionExtents = {}
-
-    if omitBlackholeRegions:
-        fr = _filterBlackHoleRegions(fr, regions)
 
     if withLengthSafety:
         fr = _makeLengthSafetyRegistry(fr, regions)
