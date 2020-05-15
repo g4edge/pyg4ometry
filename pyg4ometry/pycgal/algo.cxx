@@ -5,14 +5,52 @@
 /*********************************************
 Polyhedron
 *********************************************/
-Polyhedron3::Polyhedron3() {}
-Polyhedron3::~Polyhedron3() {}
+Polyhedron::Polyhedron() {
+  _polyhedron = new Polyhedron_3();
+}
+
+Polyhedron::Polyhedron(const std::vector<std::vector<double>> &vertices,
+		       const std::vector<std::vector<int>>    &facets)
+{
+  _polyhedron = new Polyhedron_3();
+  Build_Polygon_VertexFacet<HalfedgeDS_3> pvf(vertices, facets);
+  _polyhedron->delegate(pvf);
+}
+		     
+
+Polyhedron::Polyhedron(const py::list vertices,
+		       const py::list facets) {
+  
+}
+
+Polyhedron::Polyhedron(const py::array_t<double> vertices, 
+		       const py::array_t<int> facest) {
+  
+}
+
+Polyhedron::~Polyhedron() {
+  delete _polyhedron;
+}
+
 
 /*********************************************
 Nef Polyhedron
 *********************************************/
-NefPolyhedron3::NefPolyhedron3() {}
-NefPolyhedron3::~NefPolyhedron3() {}
+NefPolyhedron::NefPolyhedron() {
+  nef_polyhedron = new Nef_polyhedron_3();  
+}
+
+NefPolyhedron::NefPolyhedron(const Polyhedron &polyhedron) {
+  nef_polyhedron = new Nef_polyhedron_3(*polyhedron._polyhedron);
+}
+
+NefPolyhedron::NefPolyhedron(const SurfaceMesh &surfacemesh) {
+  nef_polyhedron = new Nef_polyhedron_3(*surfacemesh._surfacemesh);
+}
+
+NefPolyhedron::~NefPolyhedron() {
+  delete nef_polyhedron;
+}
 
 /*********************************************
 Surface Mesh
@@ -158,6 +196,20 @@ bool SurfaceMesh::does_bound_a_volume() {
 
 void SurfaceMesh::triangulate_faces() {
   CGAL::Polygon_mesh_processing::triangulate_faces(*_surfacemesh);
+}
+
+int SurfaceMesh::number_of_border_halfedges(bool verbose) {
+
+  int ihole = 0;
+  for(auto hei : halfedges(*_surfacemesh))
+    {
+      if(_surfacemesh->is_border(hei)) {
+        ihole++;
+        if(verbose)
+	        py::print(int(hei),"hole");
+	  }
+    }
+  return ihole;
 }
 
 py::list* SurfaceMesh::toVerticesAndPolygons() {
@@ -357,10 +409,7 @@ PYBIND
 *********************************************/
 PYBIND11_MODULE(algo, m) {
 
-  py::class_<Polyhedron3>(m,"Polyhedron3")
-    .def(py::init<>());
-
-  py::class_<NefPolyhedron3>(m,"NefPolyhedron3")
+  py::class_<Polyhedron>(m,"Polyhedron")
     .def(py::init<>());
 
   py::class_<SurfaceMesh>(m,"SurfaceMesh")
@@ -380,10 +429,16 @@ PYBIND11_MODULE(algo, m) {
     .def("is_outward_oriented",&SurfaceMesh::is_outward_oriented)
     .def("does_self_intersect",&SurfaceMesh::does_self_intersect)
     .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
+    .def("holes",&SurfaceMesh::number_of_border_halfedges)
     .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
     .def("__repr__",&SurfaceMesh::toString);
+
+  py::class_<NefPolyhedron>(m,"NefPolyhedron")
+    .def(py::init<>())
+    .def(py::init<const Polyhedron &>())
+    .def(py::init<const SurfaceMesh &>());
 
   py::class_<Polygon2>(m,"Polygon2")
     .def(py::init<>())

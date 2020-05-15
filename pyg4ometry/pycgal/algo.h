@@ -33,11 +33,14 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-// typedef CGAL::Simple_cartesian<double>                      Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef Kernel::Vector_3                                    Vector_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3>                 Surface_mesh;
+typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron_3;
+typedef Polyhedron_3::HalfedgeDS                            HalfedgeDS_3;
+
+typedef CGAL::Nef_polyhedron_3<Kernel>                      Nef_polyhedron_3;
 typedef CGAL::Aff_transformation_3<Kernel>                  Aff_transformation_3;
 
 typedef CGAL::Partition_traits_2<Kernel>                    Partition_traits_2;
@@ -46,16 +49,55 @@ typedef Partition_traits_2::Polygon_2                       Polygon_2;
 
 namespace py = pybind11;
 
-class Polyhedron3 {
- public :
-  Polyhedron3();
-  ~Polyhedron3();
-};
-
-class NefPolyhedron3 {
+template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS> 
+{  
+ private: 
+  std::vector<std::vector<double>> _vertices;
+  std::vector<std::vector<int>>    _facets;
+  
  public:
-  NefPolyhedron3();
-  ~NefPolyhedron3();
+  Build_Polygon_VertexFacet(const std::vector<std::vector<double>> &vertices,
+			    const std::vector<std::vector<int>>    &facets) {
+    _vertices = vertices;
+    _facets    = facets;
+  }
+  
+  void operator()( HDS& hds) {
+    // Postcondition: hds is a valid polyhedral surface.
+    CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+    
+    B.begin_surface(_vertices.size(), _facets.size(),0, CGAL::Polyhedron_incremental_builder_3<HDS>::RELATIVE_INDEXING);
+    
+    typedef typename HDS::Vertex   Vertex;
+    typedef typename Vertex::Point Point;
+    
+    for(auto vert : _vertices) {
+      B.add_vertex(Point(vert[0], vert[1], vert[2]));
+    }
+    
+    for(auto facet : _facets) {      
+      B.begin_facet();
+      for(auto ivert : facet) {
+	B.add_vertex_to_facet(ivert);	
+      }
+      B.end_facet();
+    }
+    B.end_surface();
+  }
+};   
+
+class Polyhedron {
+ public :
+  Polyhedron_3 *_polyhedron; 
+
+  Polyhedron();
+  Polyhedron(const std::vector<std::vector<double>> &vertices, 
+	     const std::vector<std::vector<int>>    &facets);
+  Polyhedron(const py::list vertices, 
+	     const py::list facets);
+  Polyhedron(const py::array_t<double> vertices, 
+	     const py::array_t<int> facets);
+  ~Polyhedron();
 };
 
 class SurfaceMesh {
@@ -87,13 +129,24 @@ class SurfaceMesh {
   bool         is_closed();
   bool         does_self_intersect();
   bool         does_bound_a_volume();
-  void         triangulate_faces(); 
+  void         triangulate_faces();
+  int          number_of_border_halfedges(bool verbose = true);
 
   py::list* toVerticesAndPolygons();
   int number_of_faces();
 
   std::string toString();
 }; 
+
+class NefPolyhedron {
+ public:
+  Nef_polyhedron_3 *nef_polyhedron;
+
+  NefPolyhedron(); 
+  NefPolyhedron(const Polyhedron &polyhedron);
+  NefPolyhedron(const SurfaceMesh &surfacemesh);
+  ~NefPolyhedron();
+};
 
 class Polygon2 {
  public :

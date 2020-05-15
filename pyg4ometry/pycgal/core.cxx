@@ -29,7 +29,7 @@ CSG::CSG(CSG &csg) {
   _surfacemesh = new SurfaceMesh(*(csg._surfacemesh));
 }
 
-CSG::CSG(SurfaceMesh* mesh) {
+CSG::CSG(SurfaceMesh *mesh) {
   _surfacemesh = mesh;
 }
 
@@ -137,7 +137,19 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
       Vertex *vert = vertHandle.cast<Vertex*>(); 
       //size_t posHash  = hash(vert->pos().x()) ^ hash(vert->pos().y()) ^ hash(vert->pos().y());
       std::ostringstream sstream;
-      sstream << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z();
+      double x = vert->pos().x();
+      double y = vert->pos().y();
+      double z = vert->pos().z();
+
+      // sign of 0
+      if(fabs(x) < 1e-12) x = 0;
+      if(fabs(y) < 1e-12) y = 0;
+      if(fabs(z) < 1e-12) z = 0;
+      
+      sstream.precision(12);
+      sstream << std::fixed;      
+      sstream << x << " " << y << " " <<z;
+      py::print(sstream.str());
       size_t posHash = hash(sstream.str());
       //fout << vert->pos().x() << " " << vert->pos().y() << " " << vert->pos().z() << " " << posHash << std::endl;
       
