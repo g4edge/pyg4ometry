@@ -59,6 +59,13 @@ SurfaceMesh::SurfaceMesh(py::array_t<double> vertices,
   // loop over faces 
 }
 
+SurfaceMesh::SurfaceMesh(std::string &fileName) {
+  _surfacemesh = new Surface_mesh();
+  std::ifstream ifstr(fileName); 
+  ifstr >> *_surfacemesh;
+  ifstr.close();
+}
+
 SurfaceMesh::~SurfaceMesh() {
   delete _surfacemesh;
 }
@@ -75,6 +82,7 @@ std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k) {
 
 std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l) {
 
+  /*
   _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
 			 Surface_mesh::Vertex_index(j),
 			 Surface_mesh::Vertex_index(k));
@@ -82,15 +90,16 @@ std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, s
   return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
 				Surface_mesh::Vertex_index(k),
 				Surface_mesh::Vertex_index(l));
-  /*
+  */
+				
   return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
 				Surface_mesh::Vertex_index(j),
 				Surface_mesh::Vertex_index(k),
 				Surface_mesh::Vertex_index(l));
-  */
 }
 
 void SurfaceMesh::translate(double x, double y, double z) {
+  py::print(" SurfaceMesh::translate",x,y,z);
   Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(x, y, z));  
   CGAL::Polygon_mesh_processing::transform(transl,*_surfacemesh);
 }
@@ -107,20 +116,48 @@ void SurfaceMesh::transform(double m11, double m12, double m13,
 
 SurfaceMesh* SurfaceMesh::unioN(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
+  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   bool valid_union = CGAL::Polygon_mesh_processing::corefine_and_compute_union(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
 SurfaceMesh* SurfaceMesh::intersect(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
+  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   bool valid_intersection = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
 SurfaceMesh* SurfaceMesh::subtract(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
+  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   bool valid_difference = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
+}
+
+
+bool SurfaceMesh::is_valid() {
+  return _surfacemesh->is_valid(true);
+}
+
+bool SurfaceMesh::is_closed() {
+  return CGAL::is_closed(*_surfacemesh);
+}
+
+bool SurfaceMesh::is_outward_oriented() {
+  return CGAL::Polygon_mesh_processing::is_outward_oriented(*_surfacemesh);
+}
+
+bool SurfaceMesh::does_self_intersect() {
+  return CGAL::Polygon_mesh_processing::does_self_intersect(*_surfacemesh);
+}
+
+bool SurfaceMesh::does_bound_a_volume() {
+  return CGAL::Polygon_mesh_processing::does_bound_a_volume(*_surfacemesh);
+}
+
+void SurfaceMesh::triangulate_faces() {
+  CGAL::Polygon_mesh_processing::triangulate_faces(*_surfacemesh);
 }
 
 py::list* SurfaceMesh::toVerticesAndPolygons() {
@@ -329,6 +366,7 @@ PYBIND11_MODULE(algo, m) {
   py::class_<SurfaceMesh>(m,"SurfaceMesh")
     .def(py::init<>())
     .def(py::init<py::list &, py::list &>())
+    .def(py::init<std::string &>())
     .def("add_vertex",&SurfaceMesh::add_vertex)
     .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
     .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
@@ -337,6 +375,12 @@ PYBIND11_MODULE(algo, m) {
     .def("union",&SurfaceMesh::unioN)
     .def("intersect",&SurfaceMesh::intersect)
     .def("subtract",&SurfaceMesh::subtract)
+    .def("is_valid",&SurfaceMesh::is_valid)
+    .def("is_closed",&SurfaceMesh::is_closed)
+    .def("is_outward_oriented",&SurfaceMesh::is_outward_oriented)
+    .def("does_self_intersect",&SurfaceMesh::does_self_intersect)
+    .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
+    .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
     .def("__repr__",&SurfaceMesh::toString);

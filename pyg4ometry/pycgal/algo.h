@@ -30,9 +30,11 @@
 #include <CGAL/Polygon_mesh_processing/transform.h>
 /* corefinement */
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
-// typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Simple_cartesian<double>                      Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+// typedef CGAL::Simple_cartesian<double>                      Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef Kernel::Vector_3                                    Vector_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3>                 Surface_mesh;
@@ -65,6 +67,7 @@ class SurfaceMesh {
   SurfaceMesh(Surface_mesh *);
   SurfaceMesh(py::list vertices, py::list faces);
   SurfaceMesh(py::array_t<double>, py::array_t<int>);
+  SurfaceMesh(std::string &fileName);
   ~SurfaceMesh();
 
   std::size_t add_vertex(double x, double y, double z);
@@ -79,6 +82,12 @@ class SurfaceMesh {
   SurfaceMesh* unioN(SurfaceMesh &);
   SurfaceMesh* intersect(SurfaceMesh &);
   SurfaceMesh* subtract(SurfaceMesh &);
+  bool         is_valid();
+  bool         is_outward_oriented();
+  bool         is_closed();
+  bool         does_self_intersect();
+  bool         does_bound_a_volume();
+  void         triangulate_faces(); 
 
   py::list* toVerticesAndPolygons();
   int number_of_faces();

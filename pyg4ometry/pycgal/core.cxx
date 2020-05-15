@@ -154,7 +154,7 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
   }
 
   for(auto v : verts) {
-    _surfacemesh->add_vertex(v._x,v._y, v._z); 
+    _surfacemesh->add_vertex(v._x,v._y, v._z);
   }
 
   for(auto f : polys) {
@@ -196,6 +196,7 @@ PYBIND11_MODULE(core, m) {
   py::class_<CSG>(m,"CSG")
     .def(py::init<>())
     .def(py::init<py::list &>())
+    .def(py::init<SurfaceMesh *>())
     .def("clone", &CSG::clone)
     .def("fromPolygons",&CSG::fromPolygons)
     //    .def("polygons",&CSG::polygons)
