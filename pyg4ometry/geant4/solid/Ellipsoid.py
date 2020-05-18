@@ -86,12 +86,9 @@ class Ellipsoid(_SolidBase):
         pzTopCut    = float(self.pzTopCut)    * luval
 
         _log.info("ellipsoid.pycsgmesh>")
-        polygons = []
 
         slices = self.nslice
         stacks = self.nstack
-
-        dTheta = 2 * _np.pi / self.nslice
 
         # If cuts lay outside of the ellipsoid then don't do any cut.
         if pzTopCut > pzSemiAxis:
@@ -99,112 +96,83 @@ class Ellipsoid(_SolidBase):
         if pzBottomCut < -pzSemiAxis:
             pzBottomCut = -pzSemiAxis
 
-        PhiTop =          _np.arccos(pzTopCut   / pzSemiAxis)
-        PhiBot = _np.pi - _np.arccos(pzBottomCut/-pzSemiAxis)
+        thetaTop =          _np.arccos(pzTopCut   / pzSemiAxis)
+        thetaBot = _np.pi - _np.arccos(pzBottomCut/-pzSemiAxis)
 
-      #  PhiTop = 0.5
-      #   PhiBot = 3
+        dTheta = (thetaBot - thetaTop) / stacks
+        dPhi = 2 * _np.pi / self.nslice
 
-       # TopRadius = _np.srt( (pxSemiAxis * np_cos())**2 * (pySemiAxis * _np.sin())**2)
+        polygons = []
 
-        # yt = (pySemiAxis*_np.sqrt(1-(pzTopCut/pzSemiAxis)**2))
-        # xt = (pxSemiAxis*_np.sqrt(1-(pzTopCut/pzSemiAxis)**2))
-        # rt = _np.sqrt(xt**2 + yt**2)
-        #
-        # PhiTop = _np.arctan(rt/pzTopCut)
+        for i in range(0,slices):
+            i1 = i
+            i2 = i + 1
 
+            p1 = dPhi*i1
+            p2 = dPhi*i2
 
+            for j in range(0,stacks) :
 
+                j1 = j
+                j2 = j + 1
 
-        dPhi = (PhiBot - PhiTop) / stacks
+                t1 = dTheta*j1 + thetaTop
+                t2 = dTheta*j2 + thetaTop
 
-        # print('TOP = {}, BOT = {}, yt = {}, xt = {}, rt = {},{}'.format(PhiTop,PhiBot,yt,xt,rt,(pzTopCut/pzSemiAxis)**2))
+                x11 = pxSemiAxis * _np.sin(t1) * _np.cos(p1)
+                y11 = pySemiAxis * _np.sin(t1) * _np.sin(p1)
+                z11 = pzSemiAxis * _np.cos(t1)
 
+                x12 = pxSemiAxis * _np.sin(t1) * _np.cos(p2)
+                y12 = pySemiAxis * _np.sin(t1) * _np.sin(p2)
+                z12 = pzSemiAxis * _np.cos(t1)
 
-        for i0 in range(0,slices):
-            i1 = i0
-            i2 = i0 + 1
+                x21 = pxSemiAxis * _np.sin(t2) * _np.cos(p1)
+                y21 = pySemiAxis * _np.sin(t2) * _np.sin(p1)
+                z21 = pzSemiAxis * _np.cos(t2)
 
-            if PhiBot < _np.pi:
+                x22 = pxSemiAxis * _np.sin(t2) * _np.cos(p2)
+                y22 = pySemiAxis * _np.sin(t2) * _np.sin(p2)
+                z22 = pzSemiAxis * _np.cos(t2)
 
-                i1 = i0
-                i2 = i0 + 1
+                # Curved edges
+                if thetaTop == 0 and j == 0 :
+                    vCurv = []
+                    vCurv.append(_Vertex([x11, y11, z11]))
+                    vCurv.append(_Vertex([x22, y22, z22]))
+                    vCurv.append(_Vertex([x21, y21, z21]))
+                    vCurv.reverse()
+                    polygons.append(_Polygon(vCurv))
+                elif thetaBot == _np.pi and j == stacks-1:
+                    vCurv = []
+                    vCurv.append(_Vertex([x11, y11, z11]))
+                    vCurv.append(_Vertex([x12, y12, z12]))
+                    vCurv.append(_Vertex([x21, y21, z21]))
+                    vCurv.reverse()
+                    polygons.append(_Polygon(vCurv))
+                else :
+                    vCurv = []
+                    vCurv.append(_Vertex([x11, y11, z11]))
+                    vCurv.append(_Vertex([x12, y12, z12]))
+                    vCurv.append(_Vertex([x22, y22, z22]))
+                    vCurv.append(_Vertex([x21, y21, z21]))
+                    vCurv.reverse()
+                    polygons.append(_Polygon(vCurv))
 
-                vertices = []
+                # end plates if there are cuts
+                if thetaTop > 0 and j == 0:
+                    vEnd = []
+                    vEnd.append(_Vertex([0, 0, pzTopCut]))
+                    vEnd.append(_Vertex([x11, y11, pzTopCut]))
+                    vEnd.append(_Vertex([x12, y12, pzTopCut]))
+                    polygons.append(_Polygon(vEnd))
 
-               # PhiBot = -_np.arcsin(pzBottomCut/pzSemiAxis)
-
-                x1 = pxSemiAxis * _np.sin(PhiBot) * _np.cos(i1 * dTheta)
-                y1 = pySemiAxis * _np.sin(PhiBot) * _np.sin(i1 * dTheta)
-                z1 = pzBottomCut
-
-                x2 = 0
-                y2 = 0
-                z2 = pzBottomCut
-
-                x3 = pxSemiAxis * _np.sin(PhiBot) * _np.cos(i2 * dTheta)
-                y3 = pySemiAxis * _np.sin(PhiBot) * _np.sin(i2 * dTheta)
-                z3 = pzBottomCut
-
-                vertices.append(_Vertex([x1, y1, z1]))
-                vertices.append(_Vertex([x2, y2, z2]))
-                vertices.append(_Vertex([x3, y3, z3]))
-
-                polygons.append(_Polygon(vertices))
-
-            if PhiTop > 0:
-
-                i1 = i0
-                i2 = i0 + 1
-
-                vertices = []
-
-                x1 = pxSemiAxis * _np.sin(PhiTop) * _np.cos(i1 * dTheta)
-                y1 = pySemiAxis * _np.sin(PhiTop) * _np.sin(i1 * dTheta)
-                z1 = pzTopCut
-
-                x2 = pxSemiAxis * _np.sin(PhiTop) * _np.cos(i2 * dTheta)
-                y2 = pySemiAxis * _np.sin(PhiTop) * _np.sin(i2 * dTheta)
-                z2 = pzTopCut
-
-                x3 = 0
-                y3 = 0
-                z3 = pzTopCut
-
-                vertices.append(_Vertex([x1, y1, z1]))
-                vertices.append(_Vertex([x2, y2, z2]))
-                vertices.append(_Vertex([x3, y3, z3]))
-
-                polygons.append(_Polygon(vertices))
-
-            for j0 in range(stacks):
-                j1 = j0
-                j2 = j0 + 1
-
-                x1 = pxSemiAxis * _np.sin((j1 * dPhi) + PhiTop) * _np.cos(i1 * dTheta)
-                y1 = pySemiAxis * _np.sin((j1 * dPhi) + PhiTop) * _np.sin(i1 * dTheta)
-                z1 = pzSemiAxis * _np.cos((j1 * dPhi) + PhiTop)
-
-                x2 = pxSemiAxis * _np.sin((j2 * dPhi) + PhiTop) * _np.cos(i1 * dTheta)
-                y2 = pySemiAxis * _np.sin((j2 * dPhi) + PhiTop) * _np.sin(i1 * dTheta)
-                z2 = pzSemiAxis * _np.cos((j2 * dPhi) + PhiTop)
-
-                x3 = pxSemiAxis * _np.sin((j2 * dPhi) + PhiTop) * _np.cos(i2 * dTheta)
-                y3 = pySemiAxis * _np.sin((j2 * dPhi) + PhiTop) * _np.sin(i2 * dTheta)
-                z3 = pzSemiAxis * _np.cos((j2 * dPhi) + PhiTop)
-
-                x4 = pxSemiAxis * _np.sin((j1 * dPhi) + PhiTop) * _np.cos(i2 * dTheta)
-                y4 = pySemiAxis * _np.sin((j1 * dPhi) + PhiTop) * _np.sin(i2 * dTheta)
-                z4 = pzSemiAxis * _np.cos((j1 * dPhi) + PhiTop)
-
-                vertices = []
-
-                vertices.append(_Vertex([x1, y1, z1]))
-                vertices.append(_Vertex([x2, y2, z2]))
-                vertices.append(_Vertex([x3, y3, z3]))
-                vertices.append(_Vertex([x4, y4, z4]))
-
-                polygons.append(_Polygon(vertices))
+                elif thetaBot < _np.pi and j == stacks-1:
+                    vEnd = []
+                    vEnd.append(_Vertex([0, 0, pzBottomCut]))
+                    vEnd.append(_Vertex([x22, y22, pzBottomCut]))
+                    vEnd.append(_Vertex([x21, y21, pzBottomCut]))
+                    polygons.append(_Polygon(vEnd))
 
         return _CSG.fromPolygons(polygons)
 
