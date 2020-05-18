@@ -29,6 +29,13 @@ Vector::Vector(py::list list)
   _z = list[2].cast<double>();
 }
 
+Vector::Vector(py::tuple tuple)
+{
+  _x = tuple[0].cast<double>();
+  _y = tuple[1].cast<double>();
+  _z = tuple[2].cast<double>();
+}
+
 Vector::Vector(py::array_t<double> array) 
 {
   py::buffer_info buf = array.request();
@@ -145,6 +152,16 @@ Vertex::Vertex(py::list pos) {
   _normal = Vector(0, 0, 0);
 };
 
+Vertex::Vertex(py::tuple pos) {
+  _pos = Vector(pos);
+  _normal = Vector(0, 0, 0);
+};
+
+Vertex::Vertex(py::array_t<double> pos) {
+  _pos = Vector(pos);
+  _normal = Vector(0, 0, 0);
+};
+
 
 Vertex::Vertex(Vector pos, Vector normal) {
   _pos = Vector(pos);
@@ -178,6 +195,7 @@ PYBIND11_MODULE(geom, m) {
     .def(py::init<>())
     .def(py::init<double, double, double>())
     .def(py::init<py::list>())
+    .def(py::init<py::tuple>())
     .def(py::init<py::array_t<double>>())
     .def("x", &Vector::x)
     .def("y", &Vector::y)
@@ -204,6 +222,8 @@ PYBIND11_MODULE(geom, m) {
   py::class_<Vertex>(m,"Vertex")
     .def(py::init<Vector>())
     .def(py::init<py::list>())
+    .def(py::init<py::tuple>())
+    .def(py::init<py::array_t<double>>())
     .def(py::init<Vector, Vector>())
     .def(py::init<py::list, py::list>())
     .def("pos",&Vertex::pos)

@@ -1,10 +1,19 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 import pyg4ometry.pycgal as _pycgal
-import numpy as _np
 
 import numpy as _np
 
@@ -56,7 +65,7 @@ class ExtrudedSolid(_SolidBase):
         signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
         return signed_area
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info('xtru.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
@@ -89,7 +98,7 @@ class ExtrudedSolid(_SolidBase):
         topPolyListConvex = _pycgal.numpyPolygonConvex(_np.array(topPolyList))
 
         for topPoly in topPolyListConvex :
-            topPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[-1]),None) for vert in topPoly])
+            topPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[-1])) for vert in topPoly])
             polygonsT.append(topPolyPolygon)
 
 
@@ -104,7 +113,7 @@ class ExtrudedSolid(_SolidBase):
             bottomPoly = list(bottomPoly) # TODO reversed here because of needing counterclockwise in 2D convex decomp in CGAL
             bottomPoly.reverse()
 
-            bottomPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[0]),None) for vert in bottomPoly])
+            bottomPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[0])) for vert in bottomPoly])
             polygonsB.append(bottomPolyPolygon)
 
         # It appears we must append the top and bottom faces and then tile the sides
@@ -125,19 +134,19 @@ class ExtrudedSolid(_SolidBase):
 
                 poly = _Polygon([_Vertex(_Vector(scale[l_curr]*vert[0]+x_offs[l_curr],
                                                  scale[l_curr]*vert[1]+y_offs[l_curr],
-                                                 zpos[l_curr]), None),
+                                                 zpos[l_curr])),
 
                                  _Vertex(_Vector(scale[l_curr]*vert_next[0]+x_offs[l_curr],
                                                  scale[l_curr]*vert_next[1]+y_offs[l_curr],
-                                                 zpos[l_curr]), None),
+                                                 zpos[l_curr])),
 
                                  _Vertex(_Vector(scale[l_next]*vert_next[0]+x_offs[l_next],
                                                  scale[l_next]*vert_next[1]+y_offs[l_next],
-                                                 zpos[l_next]), None),
+                                                 zpos[l_next])),
 
                                  _Vertex(_Vector(scale[l_next]*vert[0]+x_offs[l_next],
                                                  scale[l_next]*vert[1]+y_offs[l_next],
-                                                 zpos[l_next]), None)])
+                                                 zpos[l_next]))])
 
                 polygons.append(poly)
 

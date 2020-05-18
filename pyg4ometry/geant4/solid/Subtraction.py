@@ -31,7 +31,6 @@ class Subtraction(_SolidBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
-        self.mesh = None
 
         self.varNames = ["tra2"]
         self.dependents = []
@@ -46,7 +45,7 @@ class Subtraction(_SolidBase):
     def __repr__(self):
         return 'Subtraction : ('+self.obj1.name+') - ('+str(self.obj2.name)+')'
 
-    def pycsgmesh(self):
+    def mesh(self):
 
         _log.info('subtraction.pycsgmesh>')
 
@@ -60,10 +59,10 @@ class Subtraction(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes 
-        _log.info('subtraction.pycsgmesh> mesh1')
-        m1 = obj1.pycsgmesh()
-        _log.info('subtraction.pycsgmesh> mesh2')
-        m2 = obj2.pycsgmesh().clone()
+        _log.info('subtraction.mesh> mesh1')
+        m1 = obj1.mesh()
+        _log.info('subtraction.mesh> mesh2')
+        m2 = obj2.mesh().clone()
 
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)

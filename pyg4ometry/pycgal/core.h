@@ -31,14 +31,20 @@ public:
   void translate(py::array_t<double> &disp);
   void rotate(Vector &axis, double angle);
   void rotate(py::list &axis, double angle);
-  void scale(double);
+  void scale(Vector &s);
+  void scale(py::list &s);
+  void scale(double xs, double ys, double zs);
   py::list* toVerticesAndPolygons();
   void toCGALSurfaceMesh(py::list &polygons);
   CSG* unioN(CSG &csg);
   CSG* subtract(CSG &csg);
   CSG* intersect(CSG &csg);
+  CSG* coplanarIntersection(CSG &csg);          // not yet implemented
+  CSG* inverse();
   SurfaceMesh& getSurfaceMesh();
   int getNumberPolys();
+  int vertexCount();
+  int polygonCount();
   bool isNull() { return getNumberPolys() == 0; }
 };
 

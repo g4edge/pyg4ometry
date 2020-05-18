@@ -1,9 +1,18 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
-from .Plane import Plane as _Plane
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 import logging as _log
 
 import numpy as _np
@@ -49,7 +58,6 @@ class Ellipsoid(_SolidBase):
         self.lunit       = lunit
         self.nslice      = nslice
         self.nstack      = nstack
-        self.mesh      = None
 
         self.dependents = []
 
@@ -65,99 +73,7 @@ class Ellipsoid(_SolidBase):
                                                       self.pySemiAxis, self.pzSemiAxis,
                                                       self.pzBottomCut, self.pzTopCut)
 
-    '''
-    def pycsgmeshOld(self):
-
-        _log.info('ellipsoid.pycsgmesh>')
-        basicmesh = self.basicmesh()
-        mesh = self.csgmesh(basicmesh)
-
-        return mesh
-
-    def basicmesh(self):
-
-        _log.info('ellipsoid.antlr>')
-
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
-        luval = _Units.unit(self.lunit)
-
-        pxSemiAxis = self.evaluateParameter(self.pxSemiAxis)*luval
-        pySemiAxis = self.evaluateParameter(self.pySemiAxis)*luval
-        pzSemiAxis = self.evaluateParameter(self.pzSemiAxis)*luval
-
-        _log.info('ellipsoid.basicmesh>')
-        def appendVertex(vertices, u, v):
-            d = _Vector(
-                pxSemiAxis*_np.cos(u)*_np.sin(v),
-                pySemiAxis*_np.cos(u)*_np.cos(v),
-                pzSemiAxis*_np.sin(u))
-
-            vertices.append(_Vertex(c.plus(d), None))
-
-        polygons = []
-
-        c      = _Vector([0,0,0])
-        slices = self.nslice
-        stacks = self.nstack
-
-        du     = _np.pi / float(slices)
-        dv     = 2*_np.pi / float(stacks)
-
-        su     = -_np.pi/2
-        sv     = -_np.pi
-
-        for j0 in range(0, slices):
-            j1 = j0 + 0.5
-            j2 = j0 + 1
-            for i0 in range(0, slices):
-                i1 = i0 + 0.5
-                i2 = i0 + 1
-
-                verticesN = []
-                appendVertex(verticesN, i1 * du + su, j1 * dv + sv)
-                appendVertex(verticesN, i2 * du + su, j2 * dv + sv)
-                appendVertex(verticesN, i0 * du + su, j2 * dv + sv)
-                polygons.append(_Polygon(verticesN))
-                verticesS = []
-                appendVertex(verticesS, i1 * du + su, j1 * dv + sv)
-                appendVertex(verticesS, i0 * du + su, j0 * dv + sv)
-                appendVertex(verticesS, i2 * du + su, j0 * dv + sv)
-                polygons.append(_Polygon(verticesS))
-                verticesW = []
-                appendVertex(verticesW, i1 * du + su, j1 * dv + sv)
-                appendVertex(verticesW, i0 * du + su, j2 * dv + sv)
-                appendVertex(verticesW, i0 * du + su, j0 * dv + sv)
-                polygons.append(_Polygon(verticesW))
-                verticesE = []
-                appendVertex(verticesE, i1 * du + su, j1 * dv + sv)
-                appendVertex(verticesE, i2 * du + su, j0 * dv + sv)
-                appendVertex(verticesE, i2 * du + su, j2 * dv + sv)
-                polygons.append(_Polygon(verticesE))
-
-        self.mesh  = _CSG.fromPolygons(polygons)
-
-        return self.mesh
-
-    def csgmesh(self, basicmesh):
-        _log.info('ellipsoid.antlr>')
-
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
-        luval = _Units.unit(self.lunit)
-
-        pzBottomCut = float(self.pzBottomCut)*luval
-        pzTopCut    = float(self.pzTopCut)*luval
-
-        _log.info('ellipsoid.csgmesh>')
-        topNorm     = _Vector(0,0,1)                              # These are tests of booleans operations, keep here for now
-        botNorm     = _Vector(0,0,-1)
-        pTopCut     = _Plane("pTopCut", topNorm, pzTopCut).pycsgmesh()
-        pBottomCut  = _Plane("pBottomCut", botNorm, pzBottomCut).pycsgmesh()
-        mesh   = basicmesh.subtract(pBottomCut).subtract(pTopCut)
-
-        return mesh
-
-    '''
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info("ellipsoid.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
@@ -230,9 +146,9 @@ class Ellipsoid(_SolidBase):
                 y3 = pySemiAxis * _np.sin(PhiBot) * _np.sin(i2 * dTheta)
                 z3 = pzBottomCut
 
-                vertices.append(_Vertex([x1, y1, z1], None))
-                vertices.append(_Vertex([x2, y2, z2], None))
-                vertices.append(_Vertex([x3, y3, z3], None))
+                vertices.append(_Vertex([x1, y1, z1]))
+                vertices.append(_Vertex([x2, y2, z2]))
+                vertices.append(_Vertex([x3, y3, z3]))
 
                 polygons.append(_Polygon(vertices))
 
@@ -255,9 +171,9 @@ class Ellipsoid(_SolidBase):
                 y3 = 0
                 z3 = pzTopCut
 
-                vertices.append(_Vertex([x1, y1, z1], None))
-                vertices.append(_Vertex([x2, y2, z2], None))
-                vertices.append(_Vertex([x3, y3, z3], None))
+                vertices.append(_Vertex([x1, y1, z1]))
+                vertices.append(_Vertex([x2, y2, z2]))
+                vertices.append(_Vertex([x3, y3, z3]))
 
                 polygons.append(_Polygon(vertices))
 
@@ -283,13 +199,12 @@ class Ellipsoid(_SolidBase):
 
                 vertices = []
 
-                vertices.append(_Vertex([x1, y1, z1], None))
-                vertices.append(_Vertex([x2, y2, z2], None))
-                vertices.append(_Vertex([x3, y3, z3], None))
-                vertices.append(_Vertex([x4, y4, z4], None))
+                vertices.append(_Vertex([x1, y1, z1]))
+                vertices.append(_Vertex([x2, y2, z2]))
+                vertices.append(_Vertex([x3, y3, z3]))
+                vertices.append(_Vertex([x4, y4, z4]))
 
                 polygons.append(_Polygon(vertices))
 
-        mesh = _CSG.fromPolygons(polygons)
+        return _CSG.fromPolygons(polygons)
 
-        return mesh

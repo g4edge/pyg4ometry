@@ -17,7 +17,7 @@ import logging as   _log
 
 
 def _solid2tessellated(solid):
-    pycsg_mesh = solid.pycsgmesh()
+    pycsg_mesh = solid.mesh()
 
     # Use VTK to reduce all polygons to triangles
     # as CSG operations can produce arbitrary polygons

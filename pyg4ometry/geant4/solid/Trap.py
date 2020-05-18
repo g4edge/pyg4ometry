@@ -1,11 +1,19 @@
-from .SolidBase import SolidBase as _SolidBase
-from .Wedge     import Wedge     as _Wedge
-from pyg4ometry.pycsg.core import CSG     as _CSG
-from pyg4ometry.pycsg.geom import Vector  as _Vector
-from pyg4ometry.pycsg.geom import Vertex  as _Vertex
-from pyg4ometry.pycsg.geom import Polygon as _Polygon
-import logging as _log
+from ... import config as _config
 
+from .SolidBase import SolidBase as _SolidBase
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
+import logging as _log
 import numpy as _np
 
 
@@ -71,7 +79,7 @@ class Trap(_SolidBase):
                                                                    self.pDy2, self.pDx3,
                                                                    self.pDx4, self.pAlp2)
 
-    def pycsgmesh(self):
+    def mesh(self):
 
         def listSub(lista, listb):
             result = [a_i - b_i for a_i, b_i in zip(lista, listb)]
@@ -169,34 +177,34 @@ class Trap(_SolidBase):
         polygons = []
 
         # Top face
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2]), None),
-                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2]), None),
-                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2]), None),
-                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]), None)])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2])),
+                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2])),
+                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2])),
+                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]))])])
 
         # Bottom face
-        polygons.extend([_Polygon([_Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2]), None),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2]), None),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2]), None),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2]), None)])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
+                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
+                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
+                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2]))])])
 
         # Side faces
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2]), None),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2]), None),
-                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2]), None),
-                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]), None)])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2]), None),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2]), None),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2]), None),
-                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2]), None)])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2]), None),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2]), None),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2]), None),
-                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2]), None)])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]), None),
-                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2]), None),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2]), None),
-                                   _Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2]), None)])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2])),
+                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
+                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
+                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]))])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2])),
+                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
+                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
+                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2]))])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2])),
+                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2])),
+                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
+                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2]))])])
+        polygons.extend([_Polygon([_Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2])),
+                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
+                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2])),
+                                   _Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2]))])])
 
 
         mesh  = _CSG.fromPolygons(polygons)

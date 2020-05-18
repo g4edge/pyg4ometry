@@ -1,9 +1,17 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from .Wedge import Wedge as _Wedge
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import logging as _log
 import numpy as _np
@@ -56,96 +64,7 @@ class Paraboloid(_SolidBase):
         return "Paraboloid : {} {} {} {}".format(self.name, self.pDz,
                                                  self.pR1, self.pR2)
 
-    '''
-    def pycsgmeshOld(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        _log.info("paraboloid.antlr>")
-
-        uval = _Units.unit(self.lunit)
-        pDz    = self.evaluateParameter(self.pDz)/2.0*uval
-        pR1    = self.evaluateParameter(self.pR1)*uval
-        pR2    = self.evaluateParameter(self.pR2)*uval
-
-        _log.info("paraboloid.pycsgmesh>")
-        polygons = []
-
-        sz      = -pDz
-        dz      = 2*pDz/self.nstack
-        dTheta  = 2*_np.pi/self.nslice
-        stacks  = self.nstack
-        slices  = self.nslice
-
-        K1 = (pR2**2-pR1**2)/(2*pDz)
-        K2 = (pR2**2+pR1**2)/2
-
-        def appendVertex(vertices, theta, z, k1=K1, k2=K2, norm=[]):
-            if k1 and k2:
-                rho = _np.sqrt(k1*z+k2)
-            else:
-                rho = 0
-
-            c = _Vector([0,0,0])
-            x = rho*_np.cos(theta)
-            y = rho*_np.sin(theta)
-
-            d = _Vector(x,y,z)
-
-#            if not norm:
-#                n = d
-#            else:
-#                n = _Vector(norm)
-            vertices.append(_Vertex(c.plus(d), d))
-
-
-        for j0 in range(stacks):
-            j1 = j0 + 0.5
-            j2 = j0 + 1
-            for i0 in range(slices):
-                i1 = i0 + 0.5
-                i2 = i0 + 1
-                verticesN = []
-                appendVertex(verticesN, i1 * dTheta, j1 * dz + sz)
-                appendVertex(verticesN, i2 * dTheta, j2 * dz + sz)
-                appendVertex(verticesN, i0 * dTheta, j2 * dz + sz)
-                polygons.append(_Polygon(verticesN))
-                verticesS = []
-                appendVertex(verticesS, i1 * dTheta, j1 * dz + sz)
-                appendVertex(verticesS, i0 * dTheta, j0 * dz + sz)
-                appendVertex(verticesS, i2 * dTheta, j0 * dz + sz)
-                polygons.append(_Polygon(verticesS))
-                verticesW = []
-                appendVertex(verticesW, i1 * dTheta, j1 * dz + sz)
-                appendVertex(verticesW, i0 * dTheta, j2 * dz + sz)
-                appendVertex(verticesW, i0 * dTheta, j0 * dz + sz)
-                polygons.append(_Polygon(verticesW))
-                verticesE = []
-                appendVertex(verticesE, i1 * dTheta, j1 * dz + sz)
-                appendVertex(verticesE, i2 * dTheta, j0 * dz + sz)
-                appendVertex(verticesE, i2 * dTheta, j2 * dz + sz)
-                polygons.append(_Polygon(verticesE))
-
-        for i0 in range(0, slices):
-            i1 = i0 + 1
-
-            vertices = []
-
-            appendVertex(vertices, i0 * dTheta, sz)
-            appendVertex(vertices, 0, sz, k1=0) #Setting K1=0 forces a zero vector which is used as the center
-            appendVertex(vertices, i1 * dTheta, sz)
-            polygons.append(_Polygon(vertices))
-
-            vertices = []
-            appendVertex(vertices, i1 * dTheta, stacks * dz + sz)
-            appendVertex(vertices, 0, stacks*dz + sz, k1=0)
-            appendVertex(vertices, i0 * dTheta, stacks * dz + sz)
-            polygons.append(_Polygon(vertices))
-
-        mesh  = _CSG.fromPolygons(polygons)
-
-        return mesh
-    '''
-
-    def pycsgmesh(self):
+    def mesh(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
 
         _log.info("paraboloid.antlr>")
@@ -199,24 +118,24 @@ class Paraboloid(_SolidBase):
                 vertices = []
 
                 if rho1 != 0 :
-                    vertices.append(_Vertex([x1, y1, z1], None))
-                vertices.append(_Vertex([x2, y2, z2], None))
-                vertices.append(_Vertex([x3, y3, z3], None))
-                vertices.append(_Vertex([x4, y4, z4], None))
+                    vertices.append(_Vertex([x1, y1, z1]))
+                vertices.append(_Vertex([x2, y2, z2]))
+                vertices.append(_Vertex([x3, y3, z3]))
+                vertices.append(_Vertex([x4, y4, z4]))
                 polygons.append(_Polygon(vertices))
 
                 if rho1 != 0 and j == 0 :
                     end = []
-                    end.append(_Vertex([ 0, 0,-pDz],None))
-                    end.append(_Vertex([x1,y1,-pDz],None))
-                    end.append(_Vertex([x4,y4,-pDz],None))
+                    end.append(_Vertex([ 0, 0,-pDz]))
+                    end.append(_Vertex([x1,y1,-pDz]))
+                    end.append(_Vertex([x4,y4,-pDz]))
                     polygons.append(_Polygon(end))
 
                 if j == stacks-1 :
                     end = []
-                    end.append(_Vertex([ 0, 0,pDz],None))
-                    end.append(_Vertex([x2,y2,pDz],None))
-                    end.append(_Vertex([x3,y3,pDz],None))
+                    end.append(_Vertex([ 0, 0,pDz]))
+                    end.append(_Vertex([x2,y2,pDz]))
+                    end.append(_Vertex([x3,y3,pDz]))
                     end.reverse()
                     polygons.append(_Polygon(end))
 

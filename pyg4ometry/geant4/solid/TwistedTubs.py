@@ -1,13 +1,21 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from .Wedge import Wedge as _Wedge
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 import logging as _log
 
 import numpy as _np
-from copy import deepcopy as _dc
 
 class TwistedTubs(_SolidBase):
     """
@@ -93,7 +101,7 @@ class TwistedTubs(_SolidBase):
         return layers
 
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info("polycone.antlr>")
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
         luval = _Units.unit(self.lunit)
@@ -129,7 +137,7 @@ class TwistedTubs(_SolidBase):
             xr = x*_np.cos(rotangle) - y*_np.sin(rotangle)
             yr = x*_np.sin(rotangle) + y*_np.cos(rotangle)
 
-            vertices.append(_Vertex(c.plus(_Vector(xr,yr,z)), None))
+            vertices.append(_Vertex(c+_Vector(xr,yr,z)))
 
         offs = 1.e-25 #Small offset to avoid point degenracy when the radius is zero. TODO: make more robust
 
@@ -154,8 +162,8 @@ class TwistedTubs(_SolidBase):
                     appendVertex(verticesB, k0 * dPhi + pSPhi, sz + j2*dz, R + offs, stwist + j2*dtwist)
                     appendVertex(verticesB, k0 * dPhi + pSPhi, sz + j0*dz, R + offs, stwist + j0*dtwist)
 
-                    polygons.append(_Polygon(_dc(verticesA)))
-                    polygons.append(_Polygon(_dc(verticesB)))
+                    polygons.append(_Polygon(verticesA))
+                    polygons.append(_Polygon(verticesB))
 
         # Mesh the top and bottom end pieces
         for i0 in range(slices):
@@ -168,13 +176,13 @@ class TwistedTubs(_SolidBase):
             appendVertex(vertices_t, i2 * dPhi + pSPhi, zlen/2., endinnerrad + offs, twistedangle/2.)
             appendVertex(vertices_t, i2 * dPhi + pSPhi, zlen/2., endouterrad + offs, twistedangle/2.)
             appendVertex(vertices_t, i0 * dPhi + pSPhi, zlen/2., endouterrad + offs, twistedangle/2.)
-            polygons.append(_Polygon(_dc(vertices_t)))
+            polygons.append(_Polygon(vertices_t))
 
             appendVertex(vertices_b, i2 * dPhi + pSPhi, -zlen/2., endinnerrad + offs, -twistedangle/2.)
             appendVertex(vertices_b, i0 * dPhi + pSPhi, -zlen/2., endinnerrad + offs, -twistedangle/2.)
             appendVertex(vertices_b, i0 * dPhi + pSPhi, -zlen/2., endouterrad + offs, -twistedangle/2.)
             appendVertex(vertices_b, i2 * dPhi + pSPhi, -zlen/2., endouterrad + offs, -twistedangle/2.)
-            polygons.append(_Polygon(_dc(vertices_b)))
+            polygons.append(_Polygon(vertices_b))
 
         # Mesh the segment endpieces (if not 2pi angle)
         if phi != 2*_np.pi:
@@ -192,8 +200,8 @@ class TwistedTubs(_SolidBase):
                 appendVertex(vertices_A2, pSPhi, sz + i0*dz, endouterrad + offs, stwist + i0*dtwist)
                 appendVertex(vertices_A2, pSPhi, sz + i2*dz, endouterrad + offs, stwist + i2*dtwist)
 
-                polygons.append(_Polygon(_dc(vertices_A1)))
-                polygons.append(_Polygon(_dc(vertices_A2)))
+                polygons.append(_Polygon(vertices_A1))
+                polygons.append(_Polygon(vertices_A2))
 
                 vertices_B1 = []
                 vertices_B2 = []
@@ -205,8 +213,8 @@ class TwistedTubs(_SolidBase):
                 appendVertex(vertices_B2, pSPhi + slices*dPhi, sz + i2*dz, endinnerrad + offs, stwist + i2*dtwist)
                 appendVertex(vertices_B2, pSPhi + slices*dPhi, sz + i2*dz, endouterrad + offs, stwist + i2*dtwist)
 
-                polygons.append(_Polygon(_dc(vertices_B1)))
-                polygons.append(_Polygon(_dc(vertices_B2)))
+                polygons.append(_Polygon(vertices_B1))
+                polygons.append(_Polygon(vertices_B2))
 
         mesh     = _CSG.fromPolygons(polygons)
         return mesh

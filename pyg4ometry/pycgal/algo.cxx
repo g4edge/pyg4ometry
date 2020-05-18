@@ -109,35 +109,48 @@ SurfaceMesh::~SurfaceMesh() {
 }
 
 std::size_t SurfaceMesh::add_vertex(double x, double y, double z) {
-  return _surfacemesh->add_vertex(Point(x,y,z));
+  size_t ret = _surfacemesh->add_vertex(Point(x,y,z));
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::add_vertex",x,y,z);
+  py::print("SurfaceMesh::add_vertex",ret);
+  #endif 
+
+  return ret;
 }
 
 std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k) {
-  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
-				Surface_mesh::Vertex_index(j),
-				Surface_mesh::Vertex_index(k));
+  size_t ret = _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+				      Surface_mesh::Vertex_index(j),
+				      Surface_mesh::Vertex_index(k));
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::add_face (tri)",i,j,k);
+  py::print("SurfaceMesh::add_face (tri)",ret);
+  #endif
+  return ret;
 }
 
 std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l) {
+  size_t ret = _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
+				      Surface_mesh::Vertex_index(j),
+				      Surface_mesh::Vertex_index(k),
+				      Surface_mesh::Vertex_index(l));
 
-  /*
-  _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
-			 Surface_mesh::Vertex_index(j),
-			 Surface_mesh::Vertex_index(k));
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::add_face (quad)",i,j,k,l);
+  py::print("SurfaceMesh::add_face (quad)",ret);
+  #endif
 
-  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
-				Surface_mesh::Vertex_index(k),
-				Surface_mesh::Vertex_index(l));
-  */
-				
-  return _surfacemesh->add_face(Surface_mesh::Vertex_index(i),
-				Surface_mesh::Vertex_index(j),
-				Surface_mesh::Vertex_index(k),
-				Surface_mesh::Vertex_index(l));
+  return ret;  
 }
 
 void SurfaceMesh::translate(double x, double y, double z) {
-  py::print(" SurfaceMesh::translate",x,y,z);
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::translate",x,y,z);
+  #endif
+
   Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(x, y, z));  
   CGAL::Polygon_mesh_processing::transform(transl,*_surfacemesh);
 }
@@ -151,28 +164,47 @@ void SurfaceMesh::transform(double m11, double m12, double m13,
   CGAL::Polygon_mesh_processing::transform(tform,*_surfacemesh);
 }
 
-
 SurfaceMesh* SurfaceMesh::unioN(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
-  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+  
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::unioN",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+  #endif
+
   bool valid_union = CGAL::Polygon_mesh_processing::corefine_and_compute_union(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
 SurfaceMesh* SurfaceMesh::intersect(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
-  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::intersect",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+  #endif
+
   bool valid_intersection = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
 SurfaceMesh* SurfaceMesh::subtract(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
-  py::print((void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::intersect",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
+  #endif
+
   bool valid_difference = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
+void SurfaceMesh::reverse_face_orientations() {
+
+  #ifdef __DEBUG_PYIO__
+  py::print("SurfaceMesh::reverse_face_orientations");
+  #endif
+
+  CGAL::Polygon_mesh_processing::reverse_face_orientations(*_surfacemesh);
+}
 
 bool SurfaceMesh::is_valid() {
   return _surfacemesh->is_valid(true);
@@ -206,8 +238,8 @@ int SurfaceMesh::number_of_border_halfedges(bool verbose) {
       if(_surfacemesh->is_border(hei)) {
         ihole++;
         if(verbose)
-	        py::print(int(hei),"hole");
-	  }
+	  py::print(int(hei),"hole");
+      }
     }
   return ihole;
 }
@@ -249,6 +281,10 @@ py::list* SurfaceMesh::toVerticesAndPolygons() {
 
 int SurfaceMesh::number_of_faces() {
   return _surfacemesh->number_of_faces();
+}
+
+int SurfaceMesh::number_of_vertices() {
+  return _surfacemesh->number_of_vertices();
 }
 
 std::string SurfaceMesh::toString() { 
@@ -433,6 +469,7 @@ PYBIND11_MODULE(algo, m) {
     .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
+    .def("number_of_vertices",&SurfaceMesh::number_of_vertices)
     .def("__repr__",&SurfaceMesh::toString);
 
   py::class_<NefPolyhedron>(m,"NefPolyhedron")

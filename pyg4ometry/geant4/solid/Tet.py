@@ -1,10 +1,17 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from .Wedge import Wedge as _Wedge
-from .Plane import Plane as _Plane
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import numpy as _np
 import logging as _log
@@ -60,7 +67,7 @@ class Tet(_SolidBase):
                                                           str(self.p3), 
                                                           str(self.p4))
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info('tet.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
@@ -72,16 +79,16 @@ class Tet(_SolidBase):
         p4 = [val*luval for val in self.evaluateParameter(self.p4)]
 
         _log.info('tet.pycsgmesh> mesh')
-        vert_ancr = _Vertex(_Vector(p4[0], p4[1], p4[2]), None)
+        vert_ancr = _Vertex(_Vector(p4[0], p4[1], p4[2]))
         base      = [anchor, p2, p3]
         vert_base = []
 
         for i in range(len(base)):
-            vert_base.append(_Vertex(_Vector(base[i][0],base[i][1],base[i][2]), None))
+            vert_base.append(_Vertex(_Vector(base[i][0],base[i][1],base[i][2])))
 
-        mesh = _CSG.fromPolygons([_Polygon([_dc(vert_base[2]), _dc(vert_base[1]), _dc(vert_base[0])], None),
-                                       _Polygon([_dc(vert_base[1]), _dc(vert_ancr), _dc(vert_base[0])], None),
-                                       _Polygon([_dc(vert_base[2]), _dc(vert_ancr), _dc(vert_base[1])], None),
-                                       _Polygon([_dc(vert_base[0]), _dc(vert_ancr), _dc(vert_base[2])], None)])
+        mesh = _CSG.fromPolygons([_Polygon([vert_base[2], vert_base[1], vert_base[0]]),
+                                  _Polygon([vert_base[1], vert_ancr, vert_base[0]]),
+                                  _Polygon([vert_base[2], vert_ancr, vert_base[1]]),
+                                  _Polygon([vert_base[0], vert_ancr, vert_base[2]])])
 
         return mesh

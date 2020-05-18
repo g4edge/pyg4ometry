@@ -621,7 +621,7 @@ def areOverlapping(first, second, referenceExtent=None):
                            greg)
 
     try:
-        mesh = intersection.pycsgmesh()
+        mesh = intersection.mesh()
     except NullMeshError:
         return False
     return True

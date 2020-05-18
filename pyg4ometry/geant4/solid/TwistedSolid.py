@@ -1,15 +1,15 @@
-from .SolidBase import SolidBase as _SolidBase
-from .Wedge import Wedge as _Wedge
-from .TwoVector import TwoVector as _TwoVector
-from .Layer import Layer as _Layer
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Plane as _Plane
-from ...pycsg.geom import Polygon as _Polygon
+from ... import config as _config
 
-
-import numpy as _np
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 class TwistedSolid(object):
     def makeFaceFromLayer(self, layer, reverse=False):
@@ -19,7 +19,7 @@ class TwistedSolid(object):
         if reverse:
             vertices.reverse()
         for p in vertices:
-            pols.append(_Vertex(_Vector(p.x, p.y, l.z), None))
+            pols.append(_Vertex(_Vector(p.x, p.y, l.z)))
         return _Polygon(pols)
 
     def makeSide(self, pal, pbl, pau, pbu, zl, zu, nsl):
@@ -37,14 +37,14 @@ class TwistedSolid(object):
             pul = pau + float(i)     * (pbu - pau) / nsl
             pur = pau + float(i+1)   * (pbu - pau) / nsl
 
-            pol1 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl), None),
-                             _Vertex(_Vector(pur.x, pur.y, zu), None),
-                             _Vertex(_Vector(pul.x, pul.y, zu), None)])
+            pol1 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl)),
+                             _Vertex(_Vector(pur.x, pur.y, zu)),
+                             _Vertex(_Vector(pul.x, pul.y, zu))])
             pols.append(pol1)
 
-            pol2 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl), None),
-                             _Vertex(_Vector(plr.x, plr.y, zl), None),
-                             _Vertex(_Vector(pur.x, pur.y, zu), None)])
+            pol2 = _Polygon([_Vertex(_Vector(pll.x, pll.y, zl)),
+                             _Vertex(_Vector(plr.x, plr.y, zl)),
+                             _Vertex(_Vector(pur.x, pur.y, zu))])
             pols.append(pol2)
         return pols
 

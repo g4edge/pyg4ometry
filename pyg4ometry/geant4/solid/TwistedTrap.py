@@ -2,10 +2,6 @@ from .SolidBase import SolidBase as _SolidBase
 from .TwistedSolid import TwistedSolid as _TwistedSolid
 from .TwoVector import TwoVector as _TwoVector
 from .Layer import Layer as _Layer
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
 
 import logging as _log
 import numpy as _np
@@ -125,7 +121,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         return layers
 
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info('twistedtrap.pycsgmesh> antlr')
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 

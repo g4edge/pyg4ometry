@@ -434,12 +434,12 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Trd" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
     elif solid.type == "Trap" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
@@ -1201,7 +1201,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Tet" :
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
@@ -1326,23 +1326,23 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrap":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrd":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTubs":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
-        fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "Union":

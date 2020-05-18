@@ -57,10 +57,10 @@ class SolidBase(object):
             raise ValueError(msg)
         self._name = name
 
-    def mesh(self):
-        start = _time.time()
-        m = self.pycsgmesh()
-        elapsed_time_fl = (_time.time() - start)
-        print(elapsed_time_fl)
-        print(len(m.polygons))
-        return m
+    #def mesh(self):
+    #    start = _time.time()
+    #   m = self.pycsgmesh()
+    #    elapsed_time_fl = (_time.time() - start)
+    #    print(elapsed_time_fl)
+    #    print(len(m.polygons))
+    #    return m

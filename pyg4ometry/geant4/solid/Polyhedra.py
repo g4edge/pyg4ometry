@@ -61,11 +61,7 @@ class Polyhedra(_SolidBase):
                                                    self.pDPhi, self.numSide,
                                                    self.numZPlanes)
 
-    def pycsgmesh(self):
-        mesh = self.basicmesh()
-        return mesh
-
-    def basicmesh(self):
+    def mesh(self):
         _log.info("polyhedra.antlr>")
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
@@ -98,5 +94,5 @@ class Polyhedra(_SolidBase):
 
         ps = _GenericPolyhedra("ps", phiStart, phiTotal, numSide, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
 
-        return ps.pycsgmesh()
+        return ps.mesh()
 

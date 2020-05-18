@@ -1008,7 +1008,7 @@ class ARB(BodyMixin):
         # If a null mesh results from a union, then the input mesh of
         # the ARB must have been malformed, as this is not otherwise possible.
         # Try reversing the vertex order, and return that either way.
-        if not test_union.pycsgmesh().toPolygons():
+        if not test_union.mesh().toPolygons():
             verticesAndPolygons = self._toVerticesAndPolygons(reverse=True)
         return verticesAndPolygons
 

@@ -1,7 +1,6 @@
 import copy as _copy 
 
 from pyg4ometry.transformation import *
-from pyg4ometry.pycsg.geom import Vector as _Vector
 import pyg4ometry.exceptions
 
 from pyg4ometry.pycsg.core import CSG as _CSG
@@ -24,7 +23,7 @@ class Mesh(object) :
         self.solid = solid 
 
         # mesh in local coordinates
-        self.localmesh = self.solid.pycsgmesh()
+        self.localmesh = self.solid.mesh()
 
         # bounding mesh in local coordinates
         self.localboundingmesh = self.getBoundingBoxMesh()
@@ -37,7 +36,7 @@ class Mesh(object) :
         self.overlapmeshes = []
 
         # recreate mesh
-        self.localmesh = self.solid.pycsgmesh().clone()
+        self.localmesh = self.solid.mesh().clone()
 
         # recreate bounding mesh
         self.localboundingmesh = self.getBoundingBoxMesh()

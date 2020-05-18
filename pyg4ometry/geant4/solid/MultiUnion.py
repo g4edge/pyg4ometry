@@ -28,7 +28,6 @@ class MultiUnion(_SolidBase):
         self.name            = name
         self.objects         = objects
         self.transformations = [_defines.upgradeToTransformation(t,registry) for t in transformations]
-        self.mesh = None
 
         self.varNames = ["transformations"]
         self.dependents = []
@@ -42,30 +41,30 @@ class MultiUnion(_SolidBase):
     def __repr__(self):
         return 'Multi Union %s' % (self.name)
 
-    def pycsgmesh(self):
+    def mesh(self):
 
         _log.info('MultiUnion.pycsgmesh>')
 
         
         # untransformed first solid
-        m1 = self.objects[0].pycsgmesh()
+        m1 = self.objects[0].mesh()
 
         for obj,tra2,idx in zip(self.objects[1:],self.transformations[1:],range(1,len(self.objects))) : 
             
             # tranformation
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()
-            _log.info('MulUnion.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
+            _log.info('MulUnion.mesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
             
             # get meshes 
-            _log.info('union.pycsgmesh> mesh %s' % str(idx))
-            m2 = obj.pycsgmesh()
+            _log.info('union.mesh> mesh %s' % str(idx))
+            m2 = obj.mesh()
 
             # apply transform to second mesh 
             m2.rotate(rot[0],-rad2deg(rot[1]))
             m2.translate(tlate)
 
-            _log.info('MultiUnion.pycsgmesh> union')
+            _log.info('MultiUnion.mesh> union')
             m1 = m1.union(m2)
 
         return m1

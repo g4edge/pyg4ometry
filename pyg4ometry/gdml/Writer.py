@@ -840,12 +840,12 @@ class Writer(object):
         facet_makers = {3: self.createTriangularFacet,
                         4: self.createQuadrangularFacet}
         if instance.meshtype == instance.MeshType.Gdml:
-            for f in instance.mesh:
+            for f in instance.meshtess:
                 oe.appendChild(facet_makers[len(f)](*f))
 
         elif instance.meshtype == instance.MeshType.Freecad:
-            verts = instance.mesh[0]
-            facet = instance.mesh[1]
+            verts = instance.meshtess[0]
+            facet = instance.meshtess[1]
 
             vert_names = []
             for vertex_id, v in enumerate(verts) :
@@ -860,7 +860,7 @@ class Writer(object):
                 #                                           vert_names[f[1]],
                 #                                           vert_names[f[2]]))
         else:
-            facet = instance.mesh
+            facet = instance.meshtess
 
             for facet_id, f in enumerate(facet) :
                 vertex_names = []

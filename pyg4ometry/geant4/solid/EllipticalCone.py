@@ -1,9 +1,18 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from .Wedge import Wedge as _Wedge
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 import logging as _log
 
 import numpy as _np
@@ -49,7 +58,7 @@ class EllipticalCone(_SolidBase):
                                                         self.pySemiAxis, self.zMax,
                                                         self.pzTopCut)
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info("ellipticalcone.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
@@ -72,8 +81,8 @@ class EllipticalCone(_SolidBase):
         dy1 = pySemiAxis * (zMax + pzTopCut)
 
         # Vertices of the larger and smaller faces.
-        centreBig = _Vertex([0, 0, -pzTopCut], None)
-        centreSmall = _Vertex([0, 0, +pzTopCut], None)
+        centreBig = _Vertex([0, 0, -pzTopCut])
+        centreSmall = _Vertex([0, 0, +pzTopCut])
 
         dTheta = 2 * _np.pi / self.nslice
         for i1 in range(0, self.nslice):
@@ -97,26 +106,25 @@ class EllipticalCone(_SolidBase):
 
             vertices = []
 
-            vertices.append(_Vertex([x4,y4,z4], None))
-            vertices.append(_Vertex([x3,y3,z3], None))
-            vertices.append(_Vertex([x2,y2,z2], None))
-            vertices.append(_Vertex([x1,y1,z1], None))
+            vertices.append(_Vertex([x4,y4,z4]))
+            vertices.append(_Vertex([x3,y3,z3]))
+            vertices.append(_Vertex([x2,y2,z2]))
+            vertices.append(_Vertex([x1,y1,z1]))
 
             polygons.append(_Polygon(vertices))
 
             # Bigger face (-pzTopCut)
             verticesb = []
-            from copy import deepcopy
-            verticesb.append(_Vertex([x2, y2, z2], None))
-            verticesb.append(_Vertex([x3, y3, z3], None))
-            verticesb.append(deepcopy(centreBig))
+            verticesb.append(_Vertex([x2, y2, z2]))
+            verticesb.append(_Vertex([x3, y3, z3]))
+            verticesb.append(centreBig)
             polygons.append(_Polygon(verticesb))
 
             # Smaller face (+pzTopCut)
             verticest = []
-            verticest.append(_Vertex([x1, y1, z1], None))
-            verticest.append(deepcopy(centreSmall))
-            verticest.append(_Vertex([x4, y4, z4], None))
+            verticest.append(_Vertex([x1, y1, z1]))
+            verticest.append(centreSmall)
+            verticest.append(_Vertex([x4, y4, z4]))
             polygons.append(_Polygon(verticest))
 
         mesh = _CSG.fromPolygons(polygons)

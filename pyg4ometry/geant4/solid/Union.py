@@ -31,7 +31,6 @@ class Union(_SolidBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
-        self.mesh = None
 
         self.varNames = ["tra2"]
         self.dependents = []
@@ -48,7 +47,7 @@ class Union(_SolidBase):
     def __repr__(self):
         return 'Union %s(%s %s)' % (self.name, self.obj1.name, self.obj2.name)
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info('union.pycsgmesh>')
 
         # look up solids in registry 
@@ -62,10 +61,10 @@ class Union(_SolidBase):
         _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
 
         # get meshes 
-        _log.info('union.pycsgmesh> mesh1')
-        m1 = obj1.pycsgmesh()
-        _log.info('union.pycsgmesh> mesh2')
-        m2 = obj2.pycsgmesh().clone()
+        _log.info('union.mesh> mesh1')
+        m1 = obj1.mesh()
+        _log.info('union.mesh> mesh2')
+        m2 = obj2.mesh().clone()
 
         # apply transform to second mesh 
         m2.rotate(rot[0],-rad2deg(rot[1]))

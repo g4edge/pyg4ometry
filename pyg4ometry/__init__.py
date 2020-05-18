@@ -1,3 +1,5 @@
+from . import config
+
 from . import convert
 from . import exceptions
 from . import fluka

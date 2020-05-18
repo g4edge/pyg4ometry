@@ -40,7 +40,7 @@ class Scaled(_SolidBase):
     def __repr__(self):
         return "Scaled : {} {} {} {} {}".format(self.name, self.solid, self.pX, self.pY, self.pZ)
 
-    def pycsgmesh(self):
+    def mesh(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
 
         _log.info('scaled.pycsgmesh> antlr')
@@ -49,7 +49,7 @@ class Scaled(_SolidBase):
         pY = self.evaluateParameter(self.pY)
         pZ = self.evaluateParameter(self.pZ)
 
-        mesh = self.solid.pycsgmesh()
+        mesh = self.solid.mesh()
         mesh.scale([pX,pY,pZ])
 
         _log.info('scaled.pycsgmesh> mesh')

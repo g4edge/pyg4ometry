@@ -21,6 +21,7 @@ public:
   Vector();
   Vector(double x, double y, double z);
   Vector(py::list list);
+  Vector(py::tuple tuple);
   Vector(py::array_t<double> array);
 
   ~Vector();
@@ -57,6 +58,8 @@ public:
 
   Vertex(Vector pos);
   Vertex(py::list pos);
+  Vertex(py::tuple pos);
+  Vertex(py::array_t<double> array);
   Vertex(Vector pos, Vector normal);
   Vertex(py::list pos, py::list normal);
 

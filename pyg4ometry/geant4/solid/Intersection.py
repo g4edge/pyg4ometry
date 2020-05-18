@@ -31,7 +31,6 @@ class Intersection(_SolidBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
-        self.mesh = None
 
         self.varNames = ["tra2"]
         self.dependents = []
@@ -46,7 +45,7 @@ class Intersection(_SolidBase):
     def __repr__(self):
         return 'Intersection '+self.name+': ('+str(self.obj1.name)+') with ('+str(self.obj2.name)+')'
 
-    def pycsgmesh(self):
+    def mesh(self):
         import pyg4ometry.geant4 as _g4
 
         _log.info('Intersection.pycsgmesh>>')
@@ -60,10 +59,10 @@ class Intersection(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes 
-        _log.info('Intersection.pycsgmesh> mesh1')
-        m1 = obj1.pycsgmesh()
-        _log.info('Intersection.pycsgmesh> mesh2')
-        m2 = obj2.pycsgmesh().clone()
+        _log.info('Intersection.mesh> mesh1')
+        m1 = obj1.mesh()
+        _log.info('Intersection.mesh> mesh2')
+        m2 = obj2.mesh().clone()
         
         # apply transform to second mesh
         m2.rotate(rot[0],-rad2deg(rot[1]))

@@ -1,8 +1,17 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import logging as _log
 
@@ -104,7 +113,7 @@ class GenericTrap(_SolidBase):
                 x = v_bot[0] + (dz * (v_top[0] - v_bot[0]))
                 y = v_bot[1] + (dz * (v_top[1] - v_bot[1]))
 
-                verts_i.append(_Vertex(_Vector(x, y, z), None))
+                verts_i.append(_Vertex(_Vector(x, y, z)))
 
             layers.append(verts_i)
 
@@ -112,8 +121,8 @@ class GenericTrap(_SolidBase):
 
 
 
-    def pycsgmesh(self):
-        _log.info('arb8.pycsgmesh> antlr')
+    def mesh(self):
+        _log.info('arb8.mesh> antlr')
 
         verts_top = []
         verts_bot = []
@@ -133,7 +142,7 @@ class GenericTrap(_SolidBase):
 
         all_verts = self.makeLayers(verts_bot, verts_top)
 
-        _log.info('arb8.pycsgmesh> mesh')
+        _log.info('arb8.mesh> mesh')
         polygons = []
 
         # Mesh top and bottom pieces

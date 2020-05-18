@@ -1,12 +1,20 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from pyg4ometry.pycsg.core import CSG     as _CSG
-from pyg4ometry.pycsg.geom import Vertex  as _Vertex
-from pyg4ometry.pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import numpy as _np
 
-
-    
 class TessellatedSolid(_SolidBase):
     """
     Constructs a tessellated solid
@@ -27,11 +35,11 @@ class TessellatedSolid(_SolidBase):
         Gdml    = 2
         Stl     = 3
 
-    def __init__(self, name, mesh, registry, meshtype=MeshType.Freecad, addRegistry=True):
+    def __init__(self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True):
         self.type        = 'TessellatedSolid'
         self.name        = name
 
-        self.mesh        = mesh
+        self.meshtess    = meshTess
         self.meshtype    = meshtype
 
         self.dependents = []
@@ -44,7 +52,7 @@ class TessellatedSolid(_SolidBase):
         if self.type == TessellatedSolid.MeshType.Gdml:
             # In GDML, vertices are defines that are referred to by name.
             # When merging registries, the vertx defines need to be carried over
-            for f in self.mesh:
+            for f in self.meshtess:
                 for facet_vertex in f:
                     if facet_vertex not in self.varNames:
                         self.varNames.append(facet_vertex)
@@ -53,7 +61,7 @@ class TessellatedSolid(_SolidBase):
     def __repr__(self):
         return self.type
     
-    def pycsgmesh(self) :
+    def mesh(self) :
 
         #############################################
         # render GDML mesh
@@ -63,7 +71,7 @@ class TessellatedSolid(_SolidBase):
             vdict = {}
  
             i = 0
-            for f in self.mesh:
+            for f in self.meshtess:
                 for facet_vertex in f:
                     try:
                         vdict[facet_vertex]
@@ -77,15 +85,15 @@ class TessellatedSolid(_SolidBase):
                 p = self.registry.defineDict[vdi[0]]
                 verts[vdi[1]] = p.eval() 
 
-            for f in self.mesh:
+            for f in self.meshtess:
                 facet.append([vdict[fi] for fi in f])
 
         #############################################
         # Mesh from CAD
         #############################################
         elif self.meshtype == self.MeshType.Freecad : 
-            verts = self.mesh[0]
-            facet = self.mesh[1]
+            verts = self.meshtess[0]
+            facet = self.meshtess[1]
 
         #############################################
         # Mesh from STL
@@ -95,7 +103,7 @@ class TessellatedSolid(_SolidBase):
             facet = []
             
             i = 0 
-            for f in self.mesh : 
+            for f in self.meshtess :
                 v1 = f[0][0]
                 v2 = f[0][1]
                 v3 = f[0][2]

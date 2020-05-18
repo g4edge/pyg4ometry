@@ -1,12 +1,17 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
 
-from .Tubs import Tubs as _Tubs
-from .Plane import Plane as _Plane
-
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Vector as _Vector
-from ...pycsg.geom import Polygon as _Polygon
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import numpy as _np
 import logging as _log
@@ -60,45 +65,7 @@ class CutTubs(_SolidBase):
         return "Cut tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                         self.pDz, self.pSPhi, self.pDPhi)
 
-    '''
-    def pycsgmeshOld(self):
-        # 0.0381021499634 80
-        _log.info('cuttubs.pycsgmesh> antlr')
-
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-        luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit)
-
-        pRMin     = self.evaluateParameter(self.pRMin)*luval
-        pRMax     = self.evaluateParameter(self.pRMax)*luval
-        pDz       = self.evaluateParameter(self.pDz)*luval/2.
-        pSPhi     = self.evaluateParameter(self.pSPhi)*auval
-        pDPhi     = self.evaluateParameter(self.pDPhi)*auval
-
-        pHighNorm = [val*luval for val in self.evaluateParameter(self.pHighNorm)]
-        pLowNorm = [val*luval for val in self.evaluateParameter(self.pLowNorm)]
-
-        _log.info('cuttubs.pycsgmesh> mesh')
-        mesh = _Tubs("tubs_temp", pRMin, pRMax, 2.5 * pDz, pSPhi, pDPhi, # Units are already rendered
-                     registry=self.registry, nslice=self.nslice, addRegistry=False).pycsgmesh()
-
-        if pLowNorm != [0,0,-1] or pHighNorm != [0,0,1]:
-                
-            zlength = 3 * pDz  # make the dimensions of the semi-infinite plane large enough
-            if pHighNorm != [0,0,1]:
-                pHigh = _Plane("pHigh_temp", pHighNorm, pDz, zlength).pycsgmesh()
-                mesh = mesh.subtract(pHigh)
-            if pLowNorm != [0,0,-1]:
-                pLow  = _Plane("pLow_temp", pLowNorm, -pDz, zlength).pycsgmesh()
-                mesh = mesh.subtract(pLow)
-                
-            return mesh
-        else : 
-            return mesh
-
-    '''
-
-    def pycsgmesh(self):
+    def mesh(self):
         # 0.00943803787231 66
         _log.info('tubs.pycsgmesh> antlr')
 

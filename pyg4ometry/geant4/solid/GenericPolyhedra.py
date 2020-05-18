@@ -1,7 +1,18 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
-from ...pycsg.core import CSG as _CSG
-from ...pycsg.geom import Vertex as _Vertex
-from ...pycsg.geom import Polygon as _Polygon
+
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 import pyg4ometry.pycgal as _pycgal
 
 import logging as _log
@@ -52,7 +63,7 @@ class GenericPolyhedra(_SolidBase):
         if len(self.pR) < 3:
             raise ValueError("Generic Polyhedra must have at least 3 R-Z points defined")
 
-    def pycsgmesh(self):
+    def mesh(self):
         _log.info("genericpolyhedra.antlr>")
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import 
@@ -113,10 +124,10 @@ class GenericPolyhedra(_SolidBase):
                 yZMaxP2 = pR[i2] * _np.sin(phi2)
 
                 vFace = []
-                vFace.append(_Vertex([xZMinP1, yZMinP1, zMin], None))
-                vFace.append(_Vertex([xZMaxP1, yZMaxP1, zMax], None))
-                vFace.append(_Vertex([xZMaxP2, yZMaxP2, zMax], None))
-                vFace.append(_Vertex([xZMinP2, yZMinP2, zMin], None))
+                vFace.append(_Vertex([xZMinP1, yZMinP1, zMin]))
+                vFace.append(_Vertex([xZMaxP1, yZMaxP1, zMax]))
+                vFace.append(_Vertex([xZMaxP2, yZMaxP2, zMax]))
+                vFace.append(_Vertex([xZMinP2, yZMinP2, zMin]))
 
                 polygons.append(_Polygon(vFace))
 
@@ -131,7 +142,7 @@ class GenericPolyhedra(_SolidBase):
                     xP1 = r * _np.cos(pSPhi)
                     yP1 = r * _np.sin(pSPhi)
 
-                    vPhi1.append(_Vertex([xP1, yP1, z], None))
+                    vPhi1.append(_Vertex([xP1, yP1, z]))
 
                 polygons.append(_Polygon(vPhi1))
 
@@ -144,11 +155,10 @@ class GenericPolyhedra(_SolidBase):
                     xP2 = r * _np.cos(pSPhi+pDPhi)
                     yP2 = r * _np.sin(pSPhi+pDPhi)
 
-                    vPhi2.append(_Vertex([xP2, yP2, z], None))
+                    vPhi2.append(_Vertex([xP2, yP2, z]))
 
                 polygons.append(_Polygon(vPhi2))
 
         mesh = _CSG.fromPolygons(polygons)
-        # _pycgal.pycsgmesh2NefPolyhedron(mesh)
 
         return mesh

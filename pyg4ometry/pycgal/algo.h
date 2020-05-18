@@ -32,6 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -124,16 +125,18 @@ class SurfaceMesh {
   SurfaceMesh* unioN(SurfaceMesh &);
   SurfaceMesh* intersect(SurfaceMesh &);
   SurfaceMesh* subtract(SurfaceMesh &);
+  void         reverse_face_orientations();
   bool         is_valid();
   bool         is_outward_oriented();
   bool         is_closed();
   bool         does_self_intersect();
   bool         does_bound_a_volume();
   void         triangulate_faces();
-  int          number_of_border_halfedges(bool verbose = true);
+  int          number_of_border_halfedges(bool verbose = false);
 
   py::list* toVerticesAndPolygons();
   int number_of_faces();
+  int number_of_vertices();
 
   std::string toString();
 }; 
