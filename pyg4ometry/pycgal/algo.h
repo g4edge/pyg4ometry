@@ -116,6 +116,7 @@ class SurfaceMesh {
   std::size_t add_vertex(double x, double y, double z);
   std::size_t add_face(std::size_t i, std::size_t j, std::size_t k);
   std::size_t add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l);
+  std::size_t add_face(const std::vector<unsigned int> &face);
 
   void translate(double x, double y, double z);
   void transform(double m11, double m12, double m13,
