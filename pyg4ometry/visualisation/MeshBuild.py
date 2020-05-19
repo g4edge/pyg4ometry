@@ -7,6 +7,14 @@ def quadric(lower, upper, *,
             cx=0, cy=0, cz=0,
             c=0,
             capping=False, vtkCleanPolyData=True):
+    """Make a vtk Quadric Surface polydata mesh.
+    lower: lower bound in which to generate the surface mesh
+    upper: upper bound in which to generate teh surface mesh
+    capping: whether to cap the open mesh.
+    vtkCleanPolyData: whether to apply the vtkCleaPolyData filter to the mesh.
+
+    """
+
     quadric = vtk.vtkQuadric()
     quadric.SetCoefficients(cxx, cyy, czz,
                             cxy, cyz, cxz,
