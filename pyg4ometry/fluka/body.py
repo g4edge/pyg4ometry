@@ -9,13 +9,24 @@ import vtk
 from .vector import Three, pointOnLineClosestToPoint
 from .directive import Transform
 from .vector import Extent as _Extent
-from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from pyg4ometry.meshutils import MeshShrink
-from pyg4ometry.visualisation import MeshBuild
+
+import pyg4ometry.config as _config
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -1769,12 +1780,7 @@ class QUA(BodyMixin):
 
                 "c": matrix[3,3]}
 
-    def geant4Solid(self, reg, referenceExtent=None):
-        if referenceExtent is None:
-            raise ValueError("QUA must be evaluated with respect to an extent.")
-
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-
+    def mesh(self, lower, upper, capping=True):
         # Apply any geometry directives.
         matrix = self.coefficientsMatrix()
         # Combined expansion, rototranslation and translation
@@ -1783,13 +1789,41 @@ class QUA(BodyMixin):
         transformedQuadric = inv.T.dot(matrix).dot(inv)
         coeff = self._quadricMatrixToCoefficients(transformedQuadric)
 
-        lower = referenceExtent.lower - scale
-        upper = referenceExtent.upper + scale
+        quadric = vtk.vtkQuadric()
+        quadric.SetCoefficients(coeff["cxx"], coeff["cyy"], coeff["czz"],
+                                coeff["cxy"], coeff["cyz"], coeff["cxz"],
+                                coeff["cx"],  coeff["cy"], coeff["cz"],
+                                coeff["c"])
 
-        pd = MeshBuild.quadric(lower, upper,
-                               **coeff,
-                               capping=True,
-                               vtkCleanPolyData=True)
+        sample = vtk.vtkSampleFunction()
+        # sample.SetSampleDimensions(50, 50, 50)
+        sample.SetSampleDimensions(75, 75, 75)
+
+        # Don't set bounds exactly equal to the extent because the
+        # curved regions directly at the edge of the extent/bounds can
+        # be quite noticeably undersampled and we will lose detail, so
+        # to be safe we make the ModelBounds a bit bigger than the
+        # extent
+        sample.SetModelBounds(lower[0], upper[0],
+                              lower[1], upper[1],
+                              lower[2], upper[2])
+
+        sample.SetImplicitFunction(quadric)
+        if capping:
+            sample.SetCapping(1)
+
+        # Make the mesh, generating a single contour at F(x, y, z) = 0.
+        contours = vtk.vtkContourFilter()
+        contours.SetInputConnection(sample.GetOutputPort())
+        contours.GenerateValues(1, 0, 0)
+
+        # Deal with facets which are zero-area facets (i.e. lines).
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputConnection(contours.GetOutputPort())
+        cleaner.ConvertLinesToPointsOn()
+        cleaner.Update()
+
+        pd = cleaner.GetOutput()
 
         mesh  = []
         verts = []
@@ -1811,22 +1845,41 @@ class QUA(BodyMixin):
 
         if not verts:
             raise pyg4ometry.exceptions.NullMeshError(
-                "Failed to generate a mesh for QUA {}"
-                " with referenceExtent={}".format(self.name,
-                                                  referenceExtent))
+                f"Failed to generate a mesh for QUA {self.name}"
+                f" with bounds {lower} {upper}.")
 
+        polygon_list = []
+        for f in facet:
+            # This allows for both triangular and quadrilateral facets
+            polygon = _Polygon([_Vertex(verts[facet_vertex])
+                                for facet_vertex in f])
+            polygon_list.append(polygon)
+
+        return _CSG.fromPolygons(polygon_list)
+
+
+    def geant4Solid(self, reg, referenceExtent=None):
+        if referenceExtent is None:
+            raise ValueError("QUA must be evaluated with respect to an extent.")
+
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        lower = referenceExtent.lower - scale
+        upper = referenceExtent.upper + scale
+
+        m = self.mesh(lower, upper)
+
+        vertices, facets, _ = m.toVerticesAndPolygons()
+        vertices = [list(v) for v in vertices]
         if self.safety is not None:
             # Multiply by -1 to match convention of MeshShrink
             # (positive shrinkFactor = smaller mesh), which is
             # opposite of this.
-            vertnormals = MeshShrink([verts, facet],
+            vertnormals = MeshShrink([vertices, facets],
                                      shrinkFactor=-1*self.safety)
 
-        mesh.append(verts)
-        mesh.append(facet)
         return g4.solid.TessellatedSolid(
             self.name,
-            mesh,
+            [vertices, facets],
             reg,
             g4.solid.TessellatedSolid.MeshType.Freecad)
 
