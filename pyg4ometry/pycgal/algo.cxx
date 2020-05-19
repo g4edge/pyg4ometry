@@ -152,7 +152,7 @@ std::size_t SurfaceMesh::add_face(const std::vector<unsigned int> &face) {
     faceV.push_back(Surface_mesh::Vertex_index(i));
   }
 
-  _surfacemesh->add_face(faceV);
+  return _surfacemesh->add_face(faceV);
 }
 
 void SurfaceMesh::translate(double x, double y, double z) {
