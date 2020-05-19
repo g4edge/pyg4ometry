@@ -68,10 +68,21 @@ public:
   Vector normal();
 };
 
+class Plane {
+ public:
+  double _w;
+  Vector _normal;
+  Plane();
+  Plane(Vector &a, Vector &b, Vector &c);
+  Plane(Vertex &a, Vertex &b, Vertex &c);
+  ~Plane();
+};
+
 class Polygon {
 
 public:
   py::list _vertices;
+  Plane _plane;
 
   Polygon(py::list &vertices);
   ~Polygon();

@@ -174,11 +174,37 @@ Vertex::Vertex(py::list pos, py::list normal) {
 };
 
 Vertex::~Vertex() {};
+
 Vector Vertex::pos() {return _pos;}
+
 Vector Vertex::normal() {return _normal;}
+
+Plane::Plane() {
+  _normal = Vector(0,0,1);
+  _w      = 0;
+}
+
+Plane::Plane(Vector &a, Vector &b, Vector &c) {  
+  _normal = (b-a).cross(c-a).unit();
+  _w  = _normal.dot(a);
+}
+
+Plane::Plane(Vertex &av, Vertex &bv, Vertex &cv) {
+  Vector a = av._pos;
+  Vector b = bv._pos;
+  Vector c = cv._pos;
+
+  _normal = (b-a).cross(c-a).unit();
+  _w  = _normal.dot(a);
+}
+
+Plane::~Plane() {}
 
 Polygon::Polygon(py::list &vertices) {
   _vertices = vertices;
+  _plane    = Plane(_vertices[0].cast<Vertex&>(),
+		    _vertices[1].cast<Vertex&>(),
+		    _vertices[2].cast<Vertex&>());
 } 
 
 Polygon::~Polygon(){}
@@ -226,14 +252,20 @@ PYBIND11_MODULE(geom, m) {
     .def(py::init<py::array_t<double>>())
     .def(py::init<Vector, Vector>())
     .def(py::init<py::list, py::list>())
-    .def("pos",&Vertex::pos)
-    .def("normal",&Vertex::normal)
     .def_readwrite("pos",&Vertex::_pos)
     .def_readwrite("normal",&Vertex::_normal);
+
+  py::class_<Plane>(m,"Plane")
+    .def(py::init<>())
+    .def(py::init<Vector &, Vector &, Vector &>())
+    .def(py::init<Vertex &, Vertex &, Vertex &>())
+    .def_readwrite("normal",&Plane::_normal)
+    .def_readwrite("w",&Plane::_w);
 
   py::class_<Polygon>(m,"Polygon")
     .def(py::init<py::list &>())
     .def("vertices", &Polygon::vertices)
-    .def_readwrite("vertices",&Polygon::_vertices);
+    .def_readwrite("vertices",&Polygon::_vertices)
+    .def_readwrite("plane",&Polygon::_plane);
 }
 
