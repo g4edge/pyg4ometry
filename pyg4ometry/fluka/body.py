@@ -15,6 +15,7 @@ import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from pyg4ometry.meshutils import MeshShrink
+from pyg4ometry.visualisation import MeshBuild
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -1782,44 +1783,13 @@ class QUA(BodyMixin):
         transformedQuadric = inv.T.dot(matrix).dot(inv)
         coeff = self._quadricMatrixToCoefficients(transformedQuadric)
 
-        quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(coeff["cxx"], coeff["cyy"], coeff["czz"],
-                                coeff["cxy"], coeff["cyz"], coeff["cxz"],
-                                coeff["cx"],  coeff["cy"], coeff["cz"],
-                                coeff["c"])
+        lower = referenceExtent.lower - scale
+        upper = referenceExtent.upper + scale
 
-        sample = vtk.vtkSampleFunction()
-        # sample.SetSampleDimensions(50, 50, 50)
-        sample.SetSampleDimensions(75, 75, 75)
-
-        # Don't set bounds exactly equal to the extent because the
-        # curved regions directly at the edge of the extent/bounds can
-        # be quite noticeably undersampled and we will lose detail, so
-        # to be safe we make the ModelBounds a bit bigger than the
-        # extent
-        sample.SetModelBounds(referenceExtent.lower.x - scale,
-                              referenceExtent.upper.x + scale,
-                              referenceExtent.lower.y - scale,
-                              referenceExtent.upper.y + scale,
-                              referenceExtent.lower.z - scale,
-                              referenceExtent.upper.z + scale)
-
-        sample.SetImplicitFunction(quadric)
-        sample.SetCapping(1)
-
-
-        # Make the mesh, generating a single contour at F(x, y, z) = 0.
-        contours = vtk.vtkContourFilter()
-        contours.SetInputConnection(sample.GetOutputPort())
-        contours.GenerateValues(1, 0, 0)
-
-        # Deal with facets which are zero-area facets (i.e. lines).
-        cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInputConnection(contours.GetOutputPort())
-        cleaner.ConvertLinesToPointsOn()
-        cleaner.Update()
-
-        pd = cleaner.GetOutput()
+        pd = MeshBuild.quadric(lower, upper,
+                               **coeff,
+                               capping=True,
+                               vtkCleanPolyData=True)
 
         mesh  = []
         verts = []
