@@ -9,7 +9,6 @@ import vtk
 from .vector import Three, pointOnLineClosestToPoint
 from .directive import Transform
 from .vector import Extent as _Extent
-import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
@@ -1031,11 +1030,10 @@ class ARB(BodyMixin):
 
         polygons = []
         for faceIndices in self._faceNumbersToZeroCountingIndices():
-            faceVertices = [_geom.Vertex(vertices[i]) for i in faceIndices]
+            faceVertices = [_Vertex(vertices[i]) for i in faceIndices]
             if reverse:
                 faceVertices = faceVertices[::-1]
-            polygons.append(_geom.Polygon(faceVertices))
-
+            polygons.append(_Polygon(faceVertices))
         return _CSG.fromPolygons(polygons).toVerticesAndPolygons()
 
     def __repr__(self):
@@ -1055,8 +1053,8 @@ class ARB(BodyMixin):
         vertices = [np.array(v) for v in vertices]
         facenumbers = []
         for face in faces:
-            faceVertices = [_geom.Vertex(vertices[i]) for i in face]
-            polygon = _geom.Polygon(faceVertices)
+            faceVertices = [_Vertex(vertices[i]) for i in face]
+            polygon = _Polygon(faceVertices)
             normal = polygon.plane.normal
             ls = safety * np.array(normal)
             for i in face:
