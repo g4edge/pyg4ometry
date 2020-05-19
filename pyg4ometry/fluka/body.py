@@ -9,12 +9,24 @@ import vtk
 from .vector import Three, pointOnLineClosestToPoint
 from .directive import Transform
 from .vector import Extent as _Extent
-from pyg4ometry.pycsg.core import CSG as _CSG
 import pyg4ometry.pycsg.geom as _geom
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from pyg4ometry.meshutils import MeshShrink
+
+import pyg4ometry.config as _config
+if _config.meshing == _config.meshingType.pycsg :
+    from pyg4ometry.pycsg.core import CSG as _CSG
+    from pyg4ometry.pycsg.geom import Vector as _Vector
+    from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm :
+    from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.geom import Vector as _Vector
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -1768,12 +1780,7 @@ class QUA(BodyMixin):
 
                 "c": matrix[3,3]}
 
-    def geant4Solid(self, reg, referenceExtent=None):
-        if referenceExtent is None:
-            raise ValueError("QUA must be evaluated with respect to an extent.")
-
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-
+    def mesh(self, lower, upper, capping=True):
         # Apply any geometry directives.
         matrix = self.coefficientsMatrix()
         # Combined expansion, rototranslation and translation
@@ -1797,16 +1804,13 @@ class QUA(BodyMixin):
         # be quite noticeably undersampled and we will lose detail, so
         # to be safe we make the ModelBounds a bit bigger than the
         # extent
-        sample.SetModelBounds(referenceExtent.lower.x - scale,
-                              referenceExtent.upper.x + scale,
-                              referenceExtent.lower.y - scale,
-                              referenceExtent.upper.y + scale,
-                              referenceExtent.lower.z - scale,
-                              referenceExtent.upper.z + scale)
+        sample.SetModelBounds(lower[0], upper[0],
+                              lower[1], upper[1],
+                              lower[2], upper[2])
 
         sample.SetImplicitFunction(quadric)
-        sample.SetCapping(1)
-
+        if capping:
+            sample.SetCapping(1)
 
         # Make the mesh, generating a single contour at F(x, y, z) = 0.
         contours = vtk.vtkContourFilter()
@@ -1841,22 +1845,41 @@ class QUA(BodyMixin):
 
         if not verts:
             raise pyg4ometry.exceptions.NullMeshError(
-                "Failed to generate a mesh for QUA {}"
-                " with referenceExtent={}".format(self.name,
-                                                  referenceExtent))
+                f"Failed to generate a mesh for QUA {self.name}"
+                f" with bounds {lower} {upper}.")
 
+        polygon_list = []
+        for f in facet:
+            # This allows for both triangular and quadrilateral facets
+            polygon = _Polygon([_Vertex(verts[facet_vertex])
+                                for facet_vertex in f])
+            polygon_list.append(polygon)
+
+        return _CSG.fromPolygons(polygon_list)
+
+
+    def geant4Solid(self, reg, referenceExtent=None):
+        if referenceExtent is None:
+            raise ValueError("QUA must be evaluated with respect to an extent.")
+
+        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        lower = referenceExtent.lower - scale
+        upper = referenceExtent.upper + scale
+
+        m = self.mesh(lower, upper)
+
+        vertices, facets, _ = m.toVerticesAndPolygons()
+        vertices = [list(v) for v in vertices]
         if self.safety is not None:
             # Multiply by -1 to match convention of MeshShrink
             # (positive shrinkFactor = smaller mesh), which is
             # opposite of this.
-            vertnormals = MeshShrink([verts, facet],
+            vertnormals = MeshShrink([vertices, facets],
                                      shrinkFactor=-1*self.safety)
 
-        mesh.append(verts)
-        mesh.append(facet)
         return g4.solid.TessellatedSolid(
             self.name,
-            mesh,
+            [vertices, facets],
             reg,
             g4.solid.TessellatedSolid.MeshType.Freecad)
 

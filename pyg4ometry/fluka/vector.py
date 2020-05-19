@@ -81,34 +81,42 @@ class Three(_np.ndarray):
         return not self == other
 
     def __add__(self, other):
-        if not _np.shape(other) == (3,):
-            msg = "Shape mismatch: {} {}".format(_np.shape(self),
-                                                 _np.shape(other))
-            raise ValueError(msg)
         try:
             return Three(self.x + other.x,
                          self.y + other.y,
                          self.z + other.z)
         except AttributeError:
+            pass
+        try:
             return Three(self.x + other[0],
                          self.y + other[1],
                          self.z + other[2])
+        except (AttributeError, IndexError):
+            pass
+        return Three(self.x + other,
+                     self.y + other,
+                     self.z + other)
+
     def __radd__(self, other):
         return self + other
 
     def __sub__(self, other):
-        if not _np.shape(other) == (3,):
-            msg = "Shape mismatch: {} {}".format(_np.shape(self),
-                                                 _np.shape(other))
-            raise ValueError(msg)
         try:
             return Three(self.x - other.x,
                          self.y - other.y,
                          self.z - other.z)
         except AttributeError:
+            pass
+        try:
             return Three(self.x - other[0],
                          self.y - other[1],
                          self.z - other[2])
+        except (AttributeError, IndexError):
+            pass
+        return Three(self.x - other,
+                     self.y - other,
+                     self.z - other)
+
 
     def __rsub__(self, other):
         return self - other
