@@ -145,6 +145,16 @@ std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, s
   return ret;  
 }
 
+std::size_t SurfaceMesh::add_face(const std::vector<unsigned int> &face) {
+
+  std::vector<Surface_mesh::Vertex_index> faceV;
+  for(auto i : face) {
+    faceV.push_back(Surface_mesh::Vertex_index(i));
+  }
+
+  _surfacemesh->add_face(faceV);
+}
+
 void SurfaceMesh::translate(double x, double y, double z) {
 
   #ifdef __DEBUG_PYIO__
