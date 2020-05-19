@@ -220,7 +220,6 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
       _surfacemesh->add_face((size_t)f[0],(size_t)f[1], (size_t)f[2], (size_t)f[3]);
     }
     else {
-      py::print("CSG::toCGALSurfaceMesh> not added");
       _surfacemesh->add_face(f);
     }
       

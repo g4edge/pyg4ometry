@@ -111,125 +111,13 @@ class Cons(_SolidBase):
 
         _log.info('cons.pycsgmesh>')
 
-        polygons = []
+        from .GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
 
-        dPhi = pDPhi/self.nslice
+        pZ = [-pDz,    -pDz,   pDz,    pDz]
+        pR = [ pRmin1, pRmax1, pRmax2, pRmin2]
 
-        for i in range(0,self.nslice,1) :
-
-            i1 = i
-            i2 = i+1
-
-            p1 = dPhi*i1 + pSPhi
-            p2 = dPhi*i2 + pSPhi
-
-            xRMinZMinP1 = pRmin1*_np.cos(p1)
-            yRMinZMinP1 = pRmin1*_np.sin(p1)
-            xRMaxZMinP1 = pRmax1*_np.cos(p1)
-            yRMaxZMinP1 = pRmax1*_np.sin(p1)
-
-            xRMinZMinP2 = pRmin1*_np.cos(p2)
-            yRMinZMinP2 = pRmin1*_np.sin(p2)
-            xRMaxZMinP2 = pRmax1*_np.cos(p2)
-            yRMaxZMinP2 = pRmax1*_np.sin(p2)
-
-            xRMinZMaxP1 = pRmin2*_np.cos(p1)
-            yRMinZMaxP1 = pRmin2*_np.sin(p1)
-            xRMaxZMaxP1 = pRmax2*_np.cos(p1)
-            yRMaxZMaxP1 = pRmax2*_np.sin(p1)
-
-            xRMinZMaxP2 = pRmin2*_np.cos(p2)
-            yRMinZMaxP2 = pRmin2*_np.sin(p2)
-            xRMaxZMaxP2 = pRmax2*_np.cos(p2)
-            yRMaxZMaxP2 = pRmax2*_np.sin(p2)
-
-            ###########################
-            # wedge ends
-            ###########################
-            if pDPhi != 2*_np.pi and i == 0:
-                vWedg = []
-                vWedg.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz]))
-                vWedg.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz]))
-                vWedg.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz]))
-                vWedg.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz]))
-                vWedg.reverse()
-                # print "sphi wedge end", len(polygons)
-                polygons.append(_Polygon(vWedg))
-
-            if pDPhi != 2*_np.pi and i == self.nslice-1 :
-                vWedg = []
-                vWedg.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz]))
-                vWedg.append(_Vertex([xRMaxZMaxP2, yRMinZMaxP2, pDz]))
-                vWedg.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2, pDz]))
-                vWedg.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz]))
-                # print "sphi+dphiwedge end", len(polygons)
-                polygons.append(_Polygon(vWedg))
-
-            ###########################
-            # cone ends
-            ###########################
-            if pRmin1 == 0:
-                vEnd = []
-                vEnd.append(_Vertex([0,0,-pDz]))
-                vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz]))
-                vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz]))
-                # print "r1=0 low z cone end", len(polygons)
-                vEnd.reverse()
-                polygons.append(_Polygon(vEnd))
-            else :
-                vEnd = []
-                vEnd.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz]))
-                vEnd.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz]))
-                vEnd.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz]))
-                vEnd.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz]))
-                # print "r1!=0 low z cone end", len(polygons)
-                vEnd.reverse()
-
-                polygons.append(_Polygon(vEnd))
-
-            if pRmin2 == 0 :
-                vEnd = []
-                vEnd.append(_Vertex([0,0,pDz]))
-                vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz]))
-                vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz]))
-                # print "r2=0 high z cone end", len(polygons)
-                vEnd.reverse()
-
-                polygons.append(_Polygon(vEnd))
-            else :
-                vEnd = []
-                vEnd.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz]))
-                vEnd.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz]))
-                vEnd.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz]))
-                vEnd.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz]))
-                # print "r2!=0 high z cone end", len(polygons)
-                vEnd.reverse()
-
-                polygons.append(_Polygon(vEnd))
-
-            ###########################
-            # Curved cone faces
-            ###########################
-            vCurv = []
-            vCurv.append(_Vertex([xRMaxZMinP1, yRMaxZMinP1, -pDz]))
-            vCurv.append(_Vertex([xRMaxZMinP2, yRMaxZMinP2, -pDz]))
-            vCurv.append(_Vertex([xRMaxZMaxP2, yRMaxZMaxP2,  pDz]))
-            vCurv.append(_Vertex([xRMaxZMaxP1, yRMaxZMaxP1,  pDz]))
-            vCurv.reverse()
-            # print "curved outer r", len(polygons)
-            polygons.append(_Polygon(vCurv))
-
-            if pRmin1 != 0 or pRmin2 != 0 :
-                vCurv = []
-                vCurv.append(_Vertex([xRMinZMinP1, yRMinZMinP1, -pDz]))
-                vCurv.append(_Vertex([xRMinZMaxP1, yRMinZMaxP1,  pDz]))
-                vCurv.append(_Vertex([xRMinZMaxP2, yRMinZMaxP2,  pDz]))
-                vCurv.append(_Vertex([xRMinZMinP2, yRMinZMinP2, -pDz]))
-                # print "curved inner r", len(polygons)
-                vCurv.reverse()
-                polygons.append(_Polygon(vCurv))
-
-        mesh = _CSG.fromPolygons(polygons)
+        ps = _GenericPolyhedra("ps", pSPhi, pDPhi, self.nslice, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
+        return ps.mesh()
 
         return mesh
 

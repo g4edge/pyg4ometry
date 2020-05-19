@@ -124,12 +124,18 @@ class GenericPolyhedra(_SolidBase):
                 yZMaxP2 = pR[i2] * _np.sin(phi2)
 
                 vFace = []
-                vFace.append(_Vertex([xZMinP1, yZMinP1, zMin]))
+                if pR[i1] != 0 :
+                    vFace.append(_Vertex([xZMinP1, yZMinP1, zMin]))
                 vFace.append(_Vertex([xZMaxP1, yZMaxP1, zMax]))
-                vFace.append(_Vertex([xZMaxP2, yZMaxP2, zMax]))
+                if pR[i2] != 0 :
+                    vFace.append(_Vertex([xZMaxP2, yZMaxP2, zMax]))
                 vFace.append(_Vertex([xZMinP2, yZMinP2, zMin]))
 
-                polygons.append(_Polygon(vFace))
+                vFace.reverse()
+                if pR[i1] == 0  and pR[i2] == 0 :
+                    pass
+                else :
+                    polygons.append(_Polygon(vFace))
 
         if pDPhi != 2*_np.pi :
             for cvPolygon in zrListConvex:
@@ -144,6 +150,7 @@ class GenericPolyhedra(_SolidBase):
 
                     vPhi1.append(_Vertex([xP1, yP1, z]))
 
+                vPhi1.reverse()
                 polygons.append(_Polygon(vPhi1))
 
                 vPhi2 = []
@@ -157,6 +164,7 @@ class GenericPolyhedra(_SolidBase):
 
                     vPhi2.append(_Vertex([xP2, yP2, z]))
 
+                vPhi2.reverse()
                 polygons.append(_Polygon(vPhi2))
 
         mesh = _CSG.fromPolygons(polygons)
