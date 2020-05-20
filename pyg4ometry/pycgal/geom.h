@@ -26,13 +26,18 @@ public:
 
   ~Vector();
 
-  double x();
-  double y();
-  double z();
+  double x() const;
+  double y() const;
+  double z() const;
+  double get(int i) const;
+  void set(int i, double value);
+
 
   Vector operator+(const Vector &v) const;
   Vector operator-(const Vector &v) const;
   Vector operator*(double value) const;
+
+  // double get(py::slice slice);
 
   friend Vector operator*(double value, const Vector &v);
   friend Vector operator-(const Vector &v);

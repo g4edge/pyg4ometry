@@ -2,6 +2,7 @@
 // clang++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` geom.cxx -o geom`python3-config --extension-suffix` -L/opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/ -lpython3.7m
 //
 
+#include <exception>
 #include <cmath>
 #include "geom.h"
 
@@ -54,18 +55,49 @@ Vector::Vector(py::array_t<double> array)
   
 
 Vector::~Vector() {};
-  
-double Vector::x() {
+
+
+double Vector::x() const {
   return _x;
 }
 
-double Vector::y() {
+double Vector::y() const {
   return _y;
 }
 
-double Vector::z() {
+double Vector::z() const {
   return _z;
 } 
+
+double Vector::get(int i) const {
+  switch (i) {
+  case 0:
+    return x();
+  case 1:
+    return y();
+  case 2:
+    return z();
+  default:
+    throw std::out_of_range(std::string("index = ") + std::to_string(i));
+  }
+}
+
+void Vector::set(int i, double value) {
+  switch (i) {
+  case 0:
+    _x = value;
+    break;
+  case 1:
+    _y = value;
+    break;
+  case 2:
+    _z = value;
+    break;
+  default:
+    throw std::out_of_range(std::string("index = ") + std::to_string(i));
+  }
+}
+
 
 Vector Vector::operator+(const Vector &v) const { 
   return Vector(_x + v._x, 
@@ -245,6 +277,8 @@ PYBIND11_MODULE(geom, m) {
 	 // .def("transform", &Vector::transform)
     .def("__len__", &Vector::len)
     .def("__repr__", &Vector::toString)
+    .def("__getitem__", &Vector::get)
+    .def("__setitem__", &Vector::set)
     .def_readwrite("x",&Vector::_x)
     .def_readwrite("y",&Vector::_y)
     .def_readwrite("z",&Vector::_z);
