@@ -173,11 +173,15 @@ Vertex::Vertex(py::list pos, py::list normal) {
   _normal = Vector(normal);
 };
 
+std::string Vertex::toString() const {
+  return std::string("<Vertex pos=") + pos().toString() + ">";
+}
+
 Vertex::~Vertex() {};
 
-Vector Vertex::pos() {return _pos;}
+Vector Vertex::pos() const { return _pos; }
 
-Vector Vertex::normal() {return _normal;}
+Vector Vertex::normal() const { return _normal; }
 
 Plane::Plane() {
   _normal = Vector(0,0,1);
@@ -253,7 +257,8 @@ PYBIND11_MODULE(geom, m) {
     .def(py::init<Vector, Vector>())
     .def(py::init<py::list, py::list>())
     .def_readwrite("pos",&Vertex::_pos)
-    .def_readwrite("normal",&Vertex::_normal);
+    .def_readwrite("normal",&Vertex::_normal)
+    .def("__repr__", &Vertex::toString);
 
   py::class_<Plane>(m,"Plane")
     .def(py::init<>())

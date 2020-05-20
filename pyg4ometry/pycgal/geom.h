@@ -62,10 +62,12 @@ public:
   Vertex(py::array_t<double> array);
   Vertex(Vector pos, Vector normal);
   Vertex(py::list pos, py::list normal);
+  std::string toString() const;
+
 
   ~Vertex();
-  Vector pos();
-  Vector normal();
+  Vector pos() const ;
+  Vector normal() const;
 };
 
 class Plane {
