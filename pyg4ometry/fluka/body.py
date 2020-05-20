@@ -1058,7 +1058,7 @@ class ARB(BodyMixin):
             normal = polygon.plane.normal
             ls = safety * np.array(normal)
             for i in face:
-                vertices[i] -= ls
+                vertices[i] -= [ls[0], ls[1], ls[2]]
             facenumbers.append([i+1 for i in face])
 
         # Convert lists of vertex integers for each face to individual floats
