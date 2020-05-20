@@ -475,7 +475,7 @@ PYBIND11_MODULE(algo, m) {
     .def("is_outward_oriented",&SurfaceMesh::is_outward_oriented)
     .def("does_self_intersect",&SurfaceMesh::does_self_intersect)
     .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
-    .def("holes",&SurfaceMesh::number_of_border_halfedges)
+    .def("number_of_boarder_halfedges",&SurfaceMesh::number_of_border_halfedges)
     .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
