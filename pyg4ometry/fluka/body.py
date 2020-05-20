@@ -1027,14 +1027,12 @@ class ARB(BodyMixin):
         # Apply any expansion to the ARB's vertices.
         exp = self.transform.netExpansion()
         vertices = [exp * v for v in self.vertices]
+        facets = self._faceNumbersToZeroCountingIndices()
 
-        polygons = []
-        for faceIndices in self._faceNumbersToZeroCountingIndices():
-            faceVertices = [_Vertex(vertices[i]) for i in faceIndices]
-            if reverse:
-                faceVertices = faceVertices[::-1]
-            polygons.append(_Polygon(faceVertices))
-        return _CSG.fromPolygons(polygons).toVerticesAndPolygons()
+        if reverse:
+            facets = [list(reversed(f)) for f in facets]
+
+        return vertices, facets, len(facets)
 
     def __repr__(self):
         vs = map(list, self.vertices)
