@@ -158,8 +158,6 @@ class VtkViewer:
         exporter.SetFilePrefix("./"+fileName)  # create mtl and obj file.
         exporter.Write()
 
-
-
     def exportVRMLScene(self,fileName="scene") :
         rw = _vtk.vtkRenderWindow()
         rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
