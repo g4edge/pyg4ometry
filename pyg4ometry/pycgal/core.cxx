@@ -114,7 +114,7 @@ void CSG::rotate(py::list &axis, double angleDeg) {
   Vector vAxis = Vector(axis[0].cast<double>(),
 			axis[1].cast<double>(),
 			axis[2].cast<double>());
-  rotate(vAxis,angleDeg);
+  rotate(vAxis,-angleDeg);
 }
 
 void CSG::scale(double xs, double ys, double zs) {

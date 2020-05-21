@@ -615,6 +615,9 @@ class CSG(object):
         list(map(lambda p: p.flip(), csg.polygons))
         return csg
 
+    def getNumberPolys(self):
+        return len(self.polygons)
+
     @classmethod
     def cube(cls, center=[0,0,0], radius=[1,1,1]):
         """
