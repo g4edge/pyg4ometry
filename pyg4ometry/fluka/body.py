@@ -15,12 +15,13 @@ import pyg4ometry.exceptions
 from pyg4ometry.meshutils import MeshShrink
 
 import pyg4ometry.config as _config
-if _config.meshing == _config.meshingType.pycsg :
+
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
@@ -56,6 +57,7 @@ class BodyMixin(object):
     """
     Base class representing a body as defined in FLUKA
     """
+
     def addToRegistry(self, flukaregistry):
         if flukaregistry is not None:
             flukaregistry.addBody(self)
@@ -74,13 +76,13 @@ class BodyMixin(object):
         return self._withLengthSafety(-LENGTH_SAFETY, reg)
 
     def _set_transform(self, transform):
-        if transform is None: # identity transform
+        if transform is None:  # identity transform
             return Transform()
         return transform
 
     def _referenceExtent_to_scale_factor(self, referenceExtent):
-        if referenceExtent is None: # if no referenceExtent then just
-                                    # use the global constant.
+        #  if no referenceExtent then just use the global constant.
+        if referenceExtent is None:
             return INFINITY
         else:
             # This should be used as a FULL LENGTH.
@@ -94,8 +96,7 @@ class BodyMixin(object):
         elif referenceExtent is not None:
             offset = referenceExtent.centre
         else:
-            raise TypeError(
-                "Unknown type of referenceExtent {}".format(referenceExtent))
+            raise TypeError(f"Unknown type of referenceExtent {referenceExtent}")
         return offset
 
 
@@ -106,11 +107,7 @@ class _HalfSpaceMixin(BodyMixin):
 
     def geant4Solid(self, registry, referenceExtent=None):
         boxsize = self._boxFullSize(referenceExtent)
-        return g4.solid.Box(self.name,
-                            boxsize,
-                            boxsize,
-                            boxsize,
-                            registry)
+        return g4.solid.Box(self.name, boxsize, boxsize, boxsize, registry)
 
     def _boxFullSize(self, referenceExtent):
         if referenceExtent is None:
@@ -123,7 +120,7 @@ class _HalfSpaceMixin(BodyMixin):
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
-        return "{} {} {}".format(typename, self.name, coordinate)
+        return f"{typename} {self.name} {coordinate}"
 
     def pointOnPlaneClosestTo(self, point):
         """Get point on plane which is closest to point not on the plane."""
@@ -135,7 +132,7 @@ class _HalfSpaceMixin(BodyMixin):
     def centre(self, referenceExtent=None):
         normal, pointOnPlane = self.toPlane()
         referencePoint = pointOnPlane
-        try: # Try using the centre of the extent as a reference point
+        try:  # Try using the centre of the extent as a reference point
             referencePoint = referenceExtent.centre
         except AttributeError:
             pass
@@ -165,8 +162,7 @@ class _InfiniteCylinderMixin(BodyMixin):
 
     def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
-        return "{} {} {} {} {}".format(typename, self.name,
-                                       coord1, coord2, coord3)
+        return f"{typename} {self.name} {coord1} {coord2} {coord3}"
 
 
 class _ShiftableCylinderMixin(object):
@@ -219,7 +215,7 @@ class RPP(BodyMixin):
                              " smaller than the corresponding"
                              " xmax, ymax, zmax.")
 
-        if addRegistry :
+        if addRegistry:
             self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
@@ -239,10 +235,8 @@ class RPP(BodyMixin):
     def __repr__(self):
         l = self.lower
         u = self.upper
-        return ("<RPP: {},"
-                " x0={l.x}, x1={u.x},"
-                " y0={l.y}, y1={u.y},"
-                " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
+        return (f"<RPP: {self.name},"
+                f" x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>")
 
     def _withLengthSafety(self, safety, reg):
         lower = self.lower - [safety, safety, safety]
@@ -322,7 +316,10 @@ class BOX(BodyMixin):
         return ("<BOX: {}, v={}, e1={}, e2={}, e3={}>").format(
             self.name,
             list(self.vertex),
-            list(self.edge1), list(self.edge2), list(self.edge3))
+            list(self.edge1),
+            list(self.edge2),
+            list(self.edge3),
+        )
 
     def _withLengthSafety(self, safety, reg):
         u1 = self.edge1.unit()
@@ -385,9 +382,7 @@ class SPH(BodyMixin):
                             lunit="mm")
 
     def __repr__(self):
-        return "<SPH: {}, centre={}, r={})>".format(self.name,
-                                                    list(self.centre()),
-                                                    self.radius)
+        return f"<SPH: {self.name}, point={list(self.point)}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg):
         return SPH(self.name, self.point, self.radius + safety,
@@ -434,8 +429,7 @@ class RCC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        return self.transform.leftMultiplyVector(self.face
-                                                 + 0.5 * self.direction)
+        return self.transform.leftMultiplyVector(self.face + 0.5 * self.direction)
 
     def rotation(self):
         initial = [0, 0, 1]
@@ -455,8 +449,9 @@ class RCC(BodyMixin):
                              lunit="mm")
 
     def __repr__(self):
-        return ("<RCC: {}, face={}, dir={}, r={}>").format(
-            self.name, list(self.face), list(self.direction), self.radius)
+        f = list(self.face)
+        d = list(self.direction)
+        return f"<RCC: {self.name}, face={f}, dir={d}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
@@ -614,8 +609,9 @@ class TRC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, referenceExtent=None):
-        return self.transform.leftMultiplyVector(self.major_centre
-                                                 + 0.5 * self.direction)
+        return self.transform.leftMultiplyVector(
+            self.major_centre + 0.5 * self.direction
+        )
 
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
@@ -695,7 +691,7 @@ class ELL(BodyMixin):
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
         semimajor = 0.5 * self.transform.netExpansion() * self.length
-        if (semimajor <= self._linearEccentricity()):
+        if semimajor <= self._linearEccentricity():
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
@@ -736,8 +732,9 @@ class ELL(BodyMixin):
                                   greg)
 
     def __repr__(self):
-        return "<ELL: {}, f1={}, f2={}, length={}>".format(
-            self.name, list(self.focus1), list(self.focus2), self.length)
+        f1 = list(self.focus1)
+        f2 = list(self.focus2)
+        return f"<ELL: {self.name}, f1={f1}, f2={f2}, length={self.length}>"
 
     def _withLengthSafety(self, safety, reg):
         centre = (self.focus1 + self.focus2) * 0.5
@@ -755,7 +752,7 @@ class ELL(BodyMixin):
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
+        if self.comment != "":
             prefix = "* "+self.comment+"\n"
         return prefix+\
                "ELL {} {} {}".format(self.name,
@@ -1118,7 +1115,7 @@ class XYP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<XYP: {}, z={}>".format(self.name, self.z)
+        return f"<XYP: {self.name}, z={self.z}>"
 
     def _withLengthSafety(self, safety, reg):
         return XYP(self.name,
@@ -1163,7 +1160,7 @@ class XZP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<XZP: {}, y={}>".format(self.name, self.y)
+        return f"<XZP: {self.name}, y={self.y}>"
 
     def _withLengthSafety(self, safety, reg):
         return XZP(self.name,
@@ -1210,7 +1207,7 @@ class YZP(_HalfSpaceMixin):
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<YZP: {}, x={}>".format(self.name, self.x)
+        return f"<YZP: {self.name}, x={self.x}>"
 
     def _withLengthSafety(self, safety, reg):
         return YZP(self.name,
@@ -1821,7 +1818,7 @@ class QUA(BodyMixin):
 
         pd = cleaner.GetOutput()
 
-        mesh  = []
+        mesh = []
         verts = []
         facet = []
 
@@ -1889,13 +1886,10 @@ class QUA(BodyMixin):
                    safety=safety)
 
     def __repr__(self):
-        return ("<QUA: {} xx={}, yy={}, zz={}, xy={}, "
-                "xz={}, yz={}, x={}, y={}, z={}, c={}>").format(
-                    self.name,
-                    self.cxx, self.cyy, self.czz,
-                    self.cxy, self.cxz, self.cyz,
-                    self.cx, self.cy, self.cz,
-                    self.c)
+        s = self
+        return (f"<QUA: {s.name} xx={s.cxx}, yy={s.cyy}, zz={s.czz},"
+                f" xy={s.cxy}, xz={s.cxz}, yz={s.cyz}, x={s.cx},"
+                f" y={s.cy}, z={s.cz}, c={s.c}>")
 
     def flukaFreeString(self):
         prefix = ""
