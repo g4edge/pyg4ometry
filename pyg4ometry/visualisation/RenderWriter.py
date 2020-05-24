@@ -15,8 +15,9 @@ class RenderWriter :
                                   mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                                   tra = _np.array([0,0,0])):
 
-        self.addMesh(logical)
-        self.addInstance(logical, mtra, tra)
+        if logical.type != "assembly" :
+            self.addMesh(logical)
+            self.addInstance(logical, mtra, tra)
 
         for pv in logical.daughterVolumes :
             if pv.type == "placement":
