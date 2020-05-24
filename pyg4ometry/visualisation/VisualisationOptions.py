@@ -9,6 +9,9 @@ class VisualisationOptions(object) :
         self.visible        = True
         self.lineWidth      = 1 
 
+    def __repr__(self):
+        return "VisualisationOptions ["+self.representation+","+str(self.color)+","+str(self.alpha)+","+str(self.visible)+","+str(self.lineWidth)+"]"
+
 def makeVisualisationOptionsDictFromMaterials(materials) :
 
     matVisDict = {}
