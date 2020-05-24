@@ -128,5 +128,5 @@ class TessellatedSolid(_SolidBase):
             polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygon_list.append(polygon)            
         
-        return _CSG.fromPolygons(polygon_list)        
+        return _CSG.fromPolygons(polygon_list, False)
 
