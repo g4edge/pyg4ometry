@@ -41,27 +41,30 @@ CSG::~CSG() {
 
 CSG *CSG::clone() { return new CSG(*this); }
 
-CSG* CSG::fromPolygons(py::list &polygons) {
+CSG* CSG::fromPolygons(py::list &polygons, bool cgalTest) {
+
   //  py::print("CSG::fromPolygons(py::list &)");
   CSG *csg = new CSG(polygons);
 
   // ensure surface is triangulated
   csg->_surfacemesh->triangulate_faces();
-  
-  // checks on solid
-  int  i_number_of_border_halfedges = csg->_surfacemesh->number_of_border_halfedges(false);
-  bool b_is_closed                  = csg->_surfacemesh->is_closed();
-  bool b_does_self_intersect        = csg->_surfacemesh->does_self_intersect();
-  bool b_does_bound_a_volume        = csg->_surfacemesh->does_bound_a_volume();
-  bool b_is_outward_oriented        = csg->_surfacemesh->is_outward_oriented();
 
-  #ifdef __DEBUG_PYIO__
-  py::print("CSG::surfacemesh::number_of_border_halfedges",i_number_of_border_halfedges);
-  py::print("CSG::surfacemesh::is_closed",b_is_closed);
-  py::print("CSG::surfacemesh::does_self_intersect",b_does_self_intersect);
-  py::print("CSG::surfacemesh::does_bound_a_volume",b_does_bound_a_volume);
-  py::print("CSG::surfacemesh::is_outward_oriented",b_is_outward_oriented);
-  #endif
+  // checks on solid
+  if(cgalTest) {
+    int  i_number_of_border_halfedges = csg->_surfacemesh->number_of_border_halfedges(false);
+    bool b_is_closed                  = csg->_surfacemesh->is_closed();
+    bool b_does_self_intersect        = csg->_surfacemesh->does_self_intersect();
+    bool b_does_bound_a_volume        = csg->_surfacemesh->does_bound_a_volume();
+    bool b_is_outward_oriented        = csg->_surfacemesh->is_outward_oriented();
+    
+    #ifdef __DEBUG_PYIO__
+    py::print("CSG::surfacemesh::number_of_border_halfedges",i_number_of_border_halfedges);
+    py::print("CSG::surfacemesh::is_closed",b_is_closed);
+    py::print("CSG::surfacemesh::does_self_intersect",b_does_self_intersect);
+    py::print("CSG::surfacemesh::does_bound_a_volume",b_does_bound_a_volume);
+    py::print("CSG::surfacemesh::is_outward_oriented",b_is_outward_oriented);
+    #endif
+  }
 
   return csg;
 }
@@ -271,8 +274,7 @@ PYBIND11_MODULE(core, m) {
     .def(py::init<py::list &>())
     .def(py::init<SurfaceMesh *>())
     .def("clone", &CSG::clone)
-    .def("fromPolygons",&CSG::fromPolygons)
-    //    .def("polygons",&CSG::polygons)
+    .def("fromPolygons",&CSG::fromPolygons, "from polygons", py::arg("cgalTest") = true)
     .def("translate",(void (CSG::*)(Vector &)) &CSG::translate)
     .def("translate",(void (CSG::*)(py::list &)) &CSG::translate)
     .def("translate",(void (CSG::*)(py::array_t<double> &)) &CSG::translate)

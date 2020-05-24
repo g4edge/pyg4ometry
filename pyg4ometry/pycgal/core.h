@@ -23,7 +23,7 @@ public:
   ~CSG();
   CSG* clone();
 
-  static CSG* fromPolygons(py::list &polygons);
+  static CSG* fromPolygons(py::list &polygons, bool cgalTest = true);
   
   // py::list polygons();
   void translate(Vector &disp);
