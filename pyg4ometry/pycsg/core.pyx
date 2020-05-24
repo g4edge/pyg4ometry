@@ -72,7 +72,7 @@ class CSG(object):
         return checksum
 
     @classmethod
-    def fromPolygons(cls, polygons):
+    def fromPolygons(cls, polygons, testGeom = False):
         csg = CSG()
         csg.polygons = polygons
         return csg
