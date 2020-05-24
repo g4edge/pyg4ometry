@@ -17,6 +17,9 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
+/* 3D algorithms */
+#include <CGAL/convex_decomposition_3.h> 
+
 /* 2D Objects */
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/number_utils.h>
@@ -28,6 +31,7 @@
 /* transformations */
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
+
 /* corefinement */
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -144,12 +148,16 @@ class SurfaceMesh {
 
 class NefPolyhedron {
  public:
-  Nef_polyhedron_3 *nef_polyhedron;
+  Nef_polyhedron_3 *_nef_polyhedron;
 
   NefPolyhedron(); 
   NefPolyhedron(const Polyhedron &polyhedron);
   NefPolyhedron(const SurfaceMesh &surfacemesh);
+  NefPolyhedron(Nef_polyhedron_3 *nef_polyhedron);
   ~NefPolyhedron();
+  std::vector<NefPolyhedron*> convexDecomposition(); 
+  void print();
+  int number_of_volumes();
 };
 
 class Polygon2 {

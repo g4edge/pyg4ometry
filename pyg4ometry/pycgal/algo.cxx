@@ -37,19 +37,58 @@ Polyhedron::~Polyhedron() {
 Nef Polyhedron
 *********************************************/
 NefPolyhedron::NefPolyhedron() {
-  nef_polyhedron = new Nef_polyhedron_3();  
+  _nef_polyhedron = new Nef_polyhedron_3();  
 }
 
 NefPolyhedron::NefPolyhedron(const Polyhedron &polyhedron) {
-  nef_polyhedron = new Nef_polyhedron_3(*polyhedron._polyhedron);
+  _nef_polyhedron = new Nef_polyhedron_3(*polyhedron._polyhedron);
 }
 
 NefPolyhedron::NefPolyhedron(const SurfaceMesh &surfacemesh) {
-  nef_polyhedron = new Nef_polyhedron_3(*surfacemesh._surfacemesh);
+  _nef_polyhedron = new Nef_polyhedron_3(*surfacemesh._surfacemesh);
+}
+
+NefPolyhedron::NefPolyhedron(Nef_polyhedron_3 *nef_polyhedron) {
+  _nef_polyhedron = nef_polyhedron;
 }
 
 NefPolyhedron::~NefPolyhedron() {
-  delete nef_polyhedron;
+  delete _nef_polyhedron;
+}
+
+std::vector<NefPolyhedron*> NefPolyhedron::convexDecomposition() {
+  std::vector<NefPolyhedron*> decomposed; 
+
+  py::print("starting decomposition");
+  CGAL::convex_decomposition_3(*_nef_polyhedron);
+  py::print("finished decomposition");
+
+  Nef_polyhedron_3::Volume_const_iterator ci = ++(*_nef_polyhedron).volumes_begin();
+  for(int i=0 ; ci != (*_nef_polyhedron).volumes_end(); ++ci, ++i) {    
+    if(ci->mark()) {
+      py::print("volume");
+      Polyhedron P = Polyhedron();
+      (*_nef_polyhedron).convert_inner_shell_to_polyhedron(ci->shells_begin(),*(P._polyhedron));
+      decomposed.push_back(new NefPolyhedron(P));
+    }
+  }
+  
+  return decomposed;
+}
+
+void NefPolyhedron::print() {
+  Nef_polyhedron_3::Volume_const_iterator vi = (*_nef_polyhedron).volumes_begin();
+  for(int i=0 ; vi != (*_nef_polyhedron).volumes_end(); ++vi, ++i) {
+    Nef_polyhedron_3::Shell_entry_const_iterator si = vi->shells_begin();
+    py::print("volume",i);
+    for(int j=0; si != vi->shells_end(); ++si, j++) {      
+      py::print("volume",i,"shell",j);
+    }    
+  }  
+}
+
+int NefPolyhedron::number_of_volumes() {
+  return _nef_polyhedron->number_of_volumes();
 }
 
 /*********************************************
@@ -475,7 +514,7 @@ PYBIND11_MODULE(algo, m) {
     .def("is_outward_oriented",&SurfaceMesh::is_outward_oriented)
     .def("does_self_intersect",&SurfaceMesh::does_self_intersect)
     .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
-    .def("number_of_boarder_halfedges",&SurfaceMesh::number_of_border_halfedges)
+    .def("number_of_border_halfedges",&SurfaceMesh::number_of_border_halfedges,"number of border halfedges ", py::arg("verbose") = false)
     .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
@@ -485,7 +524,10 @@ PYBIND11_MODULE(algo, m) {
   py::class_<NefPolyhedron>(m,"NefPolyhedron")
     .def(py::init<>())
     .def(py::init<const Polyhedron &>())
-    .def(py::init<const SurfaceMesh &>());
+    .def(py::init<const SurfaceMesh &>())
+    .def("convexDecomposition",&NefPolyhedron::convexDecomposition)  
+    .def("print",&NefPolyhedron::print)
+    .def("number_of_volumes",&NefPolyhedron::number_of_volumes);
 
   py::class_<Polygon2>(m,"Polygon2")
     .def(py::init<>())
