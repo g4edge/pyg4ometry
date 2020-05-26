@@ -16,6 +16,7 @@ from pyg4ometry.exceptions import FLUKAError
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
+from pyg4ometry.utils import Timer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,7 +32,8 @@ def fluka2Geant4(flukareg,
                  worldDimensions=None,
                  omitBlackholeRegions=True,
                  omitRegions=None,
-                 quadricRegionExtents=None):
+                 quadricRegionExtents=None,
+                 **kwargs):
     """Convert a FLUKA registry to a Geant4 Registry.
 
     :param flukareg: FlukaRegistry instance to be converted.
@@ -65,6 +67,8 @@ def fluka2Geant4(flukareg,
     """
     fr = flukareg # abbreviation
 
+    timer = Timer(kwargs.get("profiling_name"))
+
     regions = _getSelectedRegions(fr, regions, omitRegions)
     if omitBlackholeRegions:
         fr = _filterBlackHoleRegions(fr, regions)
@@ -78,10 +82,13 @@ def fluka2Geant4(flukareg,
 
     if withLengthSafety:
         fr = _makeLengthSafetyRegistry(fr, regions)
+        timer.add("length safety")
 
     if splitDisjointUnions or minimiseSolids:
         regionZoneExtents = _getRegionZoneExtents(fr, regions,
                                                   quadricRegionExtents)
+        timer.add("zone extents")
+
     if splitDisjointUnions:
         fr, newNamesToOldNames, regionZoneExtents = \
             _makeDisjointUnionsFlukaRegistry(fr, regions,
@@ -100,6 +107,7 @@ def fluka2Geant4(flukareg,
 
         regions = newRegions
         quadricRegionExtents = newQuadricRegionExtents
+        timer.add("disjoint")
 
     referenceExtentMap = None
     if minimiseSolids:
@@ -108,12 +116,12 @@ def fluka2Geant4(flukareg,
             regionZoneExtents,
             regions)
         fr = _filterHalfSpaces(fr, regionZoneExtents)
-
+        timer.add("solid minimisation")
 
     # This loop below do the main conversion
     greg = g4.Registry()
     f2g4mat = makeFlukaToG4MaterialsMap(fr, greg)
-
+    timer.add("materials")
     fluka_material_names_to_g4 = makeFlukaToG4MaterialsMap(fr, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldDimensions),
                            worldMaterial, greg)
@@ -157,9 +165,12 @@ def fluka2Geant4(flukareg,
             region_lv,
             "{}_pv".format(name),
             wlv, greg)
-
+    timer.add("main loop")
     _convertLatticeCells(greg, fr, wlv, regionZoneExtents, regionNamesToLVs)
     greg.setWorld(wlv.name)
+    print(timer)
+    if profiling_name in kwargs:
+        timer.write(profiling_name)
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
