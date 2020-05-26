@@ -48,4 +48,5 @@ public:
   bool isNull() { return getNumberPolys() == 0; }
 };
 
+bool do_intersect(CSG const &m1, CSG const &m2);
 #endif

@@ -872,3 +872,6 @@ class CSG(object):
             polygons.append(polySide)
 
         return CSG.fromPolygons(polygons)
+
+def do_intersect(first, second):
+    return not first.intersect(second).isNull()

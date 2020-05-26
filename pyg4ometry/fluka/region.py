@@ -2,6 +2,7 @@ import itertools
 import logging
 from copy import deepcopy
 from uuid import uuid4
+from math import degrees
 
 import networkx as nx
 
@@ -10,6 +11,20 @@ import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, Extent, areExtentsOverlapping
+from pyg4ometry.transformation import tbxyz2axisangle
+
+import pyg4ometry.config as _config
+if _config.meshing == _config.meshingType.pycsg:
+    from pyg4ometry.pycsg.core import CSG, do_intersect
+    # from pyg4ometry.pycsg.geom import Vector as _Vector
+    # from pyg4ometry.pycsg.geom import Vertex as _Vertex
+    # from pyg4ometry.pycsg.geom import Polygon as _Polygon
+elif _config.meshing == _config.meshingType.cgal_sm:
+    from pyg4ometry.pycgal.core import CSG, do_intersect
+    # from pyg4ometry.pycgal.geom import Vector as _Vector
+    # from pyg4ometry.pycgal.geom import Vertex as _Vertex
+    # from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -612,19 +627,16 @@ def areOverlapping(first, second, referenceExtent=None):
     solid1 = first.geant4Solid(greg, referenceExtent=referenceExtent)
     solid2 = second.geant4Solid(greg, referenceExtent=referenceExtent)
 
-    tra2 = _get_tra2(first, second, referenceExtent)
+    tbxyz, tra = _get_tra2(first, second, referenceExtent)
+    rot = tbxyz2axisangle(tbxyz)
 
-    intersection = g4.solid.Intersection(_random_name(),
-                           solid1,
-                           solid2,
-                           tra2,
-                           greg)
+    mesh1 = solid1.mesh()
+    mesh2 = solid2.mesh()
 
-    try:
-        mesh = intersection.mesh()
-    except NullMeshError:
-        return False
-    return True
+    mesh2.rotate(rot[0], -degrees(rot[1]))
+    mesh2.translate(tra)
+    return do_intersect(mesh1, mesh2)
+
 
 def _getReferenceExtent(referenceExtent, boolean):
     """referenceExtent should really be a dictionary of

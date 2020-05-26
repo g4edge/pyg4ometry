@@ -265,6 +265,12 @@ int CSG::polygonCount() {
   return _surfacemesh->number_of_faces();
 }
 
+bool do_intersect(CSG const &csg1, CSG const &csg2 ){
+  auto sm1 = *(csg1._surfacemesh->_surfacemesh);
+  auto sm2 = *(csg2._surfacemesh->_surfacemesh);
+  return CGAL::Polygon_mesh_processing::do_intersect(sm1, sm2);
+}
+
 /*********************************************
 PYBIND
 *********************************************/
@@ -295,4 +301,6 @@ PYBIND11_MODULE(core, m) {
     .def("vertexCount",&CSG::vertexCount)
     .def("polygonCount",&CSG::polygonCount)
     .def("isNull",&CSG::isNull);
+
+  m.def("do_intersect", &do_intersect, "Check intersection for two meshes");
 }
