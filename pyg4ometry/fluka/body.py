@@ -1,3 +1,4 @@
+from math import degrees
 from contextlib import contextmanager
 from copy import deepcopy
 import logging
@@ -99,6 +100,11 @@ class BodyMixin(object):
             raise TypeError(f"Unknown type of referenceExtent {referenceExtent}")
         return offset
 
+    def _transformMesh(self, mesh):
+        axis, angle = trans.tbxyz2axisangle(self.tbxyz())
+        mesh.rotate(axis, -degrees(angle))
+        mesh.translate(self.centre())
+
 
 class _HalfSpaceMixin(BodyMixin):
     # Base class for XYP, XZP, YZP.
@@ -165,6 +171,16 @@ class _InfiniteCylinderMixin(BodyMixin):
         return f"{typename} {self.name} {coord1} {coord2} {coord3}"
 
 
+class _CubeMeshMixin:
+    def mesh(self):
+        x, y, z = self.lengths()
+        g = g4.solid.Box("x", x, y, z, g4.Registry())
+        mesh = g.mesh()
+        mesh.rotate(*trans.tbxyz2axisangle(self.tbxyz()))
+        mesh.translate(self.centre())
+        return mesh
+
+
 class _ShiftableCylinderMixin(object):
     def _shiftInfiniteCylinderCentre(self, referenceExtent, initialDirection,
                                      initialCentre):
@@ -180,7 +196,7 @@ class _ShiftableCylinderMixin(object):
         return Three(shiftedCentre)
 
 
-class RPP(BodyMixin):
+class RPP(BodyMixin, _CubeMeshMixin):
     """Rectangular Parallelepiped
 
     :param name: of body
@@ -195,13 +211,15 @@ class RPP(BodyMixin):
     :type ymax: float
     :param zmin: lower z coordinate of RPP
     :type zmin: float
-    :param zmax: upper z coordinate of RPP
+    :param zmax: upper z coordinate of RPP)
     :type zmax: float
 
     """
     def __init__(self, name,
                  xmin, xmax, ymin, ymax, zmin, zmax,
-                 transform=None, flukaregistry=None, addRegistry=True, comment = ""):
+                 transform=None, flukaregistry=None,
+                 addRegistry=True,
+                 comment=""):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
@@ -224,6 +242,9 @@ class RPP(BodyMixin):
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
+
+    def lengths(self):
+        return self.upper - self.lower
 
     def geant4Solid(self, reg, referenceExtent=None):
         v = self.transform.netExpansion() * (self.upper - self.lower)
@@ -261,7 +282,7 @@ class RPP(BodyMixin):
                                                  str(self.lower[2]),
                                                  str(self.upper[2]))
 
-class BOX(BodyMixin):
+class BOX(BodyMixin, _CubeMeshMixin):
     """General Rectangular Parallelepiped
 
     :param name: of body
@@ -277,7 +298,7 @@ class BOX(BodyMixin):
 
     """
     def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None, comment = ""):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)
@@ -302,6 +323,10 @@ class BOX(BodyMixin):
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
+
+    def lengths(self):
+        n = np.linalg.norm
+        return Three(n(self.edge1), n(self.edge2), n(self.edge3))
 
     def geant4Solid(self, greg, referenceExtent=None):
         exp = self.transform.netExpansion()
@@ -358,7 +383,7 @@ class SPH(BodyMixin):
 
     """
     def __init__(self, name, point, radius, transform=None, flukaregistry=None,
-                 comment = ""):
+                 comment=""):
         self.name = name
         self.point = Three(point)
         self.radius = radius
@@ -368,6 +393,12 @@ class SPH(BodyMixin):
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
+
+    def mesh(self):
+        mesh = g4.solid.Orb("x", self.radius, g4.Registry()).mesh()
+        mesh.rotate(*trans.tbxyz2axisangle(self.tbxyz()))
+        mesh.translate(self.centre())
+        return mesh
 
     def centre(self, referenceExtent=None):
         return self.transform.leftMultiplyVector(self.point)
@@ -416,7 +447,7 @@ class RCC(BodyMixin):
 
     """
     def __init__(self, name, face, direction, radius, transform=None,
-                 flukaregistry=None, comment = ""):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
@@ -436,6 +467,11 @@ class RCC(BodyMixin):
         final = self.direction
         rotation = trans.matrix_from(initial, final)
         return self.transform.leftMultiplyRotation(rotation)
+
+    def mesh(self):
+        mesh = self.geant4Solid(g4.Registry()).mesh()
+        self._transformMesh(mesh)
+        return mesh
 
     def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
@@ -497,7 +533,7 @@ class REC(BodyMixin):
     def __init__(self, name, face, direction, semiminor, semimajor,
                  transform=None,
                  flukaregistry=None,
-                 comment = "" ):
+                 comment=""):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
@@ -530,6 +566,8 @@ class REC(BodyMixin):
                                               initial_semiminor,
                                               final_semiminor)
         return self.transform.leftMultiplyRotation(rotation)
+
+    # def mesh(self):
 
     def geant4Solid(self, reg, referenceExtent=None):
         exp = self.transform.netExpansion()
@@ -1167,6 +1205,9 @@ class XZP(_HalfSpaceMixin):
                    self.y + safety,
                    transform=self.transform,
                    flukaregistry=reg)
+
+    def mesh(self):
+        from IPython import embed; embed()
 
     def flukaFreeString(self):
         prefix = ""
