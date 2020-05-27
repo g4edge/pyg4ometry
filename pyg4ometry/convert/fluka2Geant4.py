@@ -68,6 +68,7 @@ def fluka2Geant4(flukareg,
     fr = flukareg # abbreviation
 
     timer = kwargs.get("timer", Timer())
+    timer.update()
 
     regions = _getSelectedRegions(fr, regions, omitRegions)
     if omitBlackholeRegions:
@@ -81,6 +82,7 @@ def fluka2Geant4(flukareg,
         quadricRegionExtents = {}
 
     if withLengthSafety:
+        timer.update()
         fr = _makeLengthSafetyRegistry(fr, regions)
         timer.add("length safety")
 
@@ -166,6 +168,7 @@ def fluka2Geant4(flukareg,
             "{}_pv".format(name),
             wlv, greg)
     timer.add("main loop")
+    timer.updateTotal()
     _convertLatticeCells(greg, fr, wlv, regionZoneExtents, regionNamesToLVs)
     greg.setWorld(wlv.name)
 
