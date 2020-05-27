@@ -169,8 +169,8 @@ def fluka2Geant4(flukareg,
     _convertLatticeCells(greg, fr, wlv, regionZoneExtents, regionNamesToLVs)
     greg.setWorld(wlv.name)
     print(timer)
-    if "profiling_name" in kwargs:
-        timer.write(kwargs["profiling_name"])
+    if "profile_path" in kwargs:
+        timer.write(kwargs["profile_path"])
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
