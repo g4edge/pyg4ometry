@@ -1,3 +1,4 @@
+import json
 import pickle
 import time
 
@@ -14,9 +15,9 @@ class Timer:
         self.times[name] = duration
         self.last_time = now
 
-    def write(self, name):
-        with open(f"{name}-timings.pickle", "wb") as f:
-            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+    def write(self, path):
+        with open(path, "w") as f:
+            json.dump(self.times, f)
 
     def __str__(self):
         return str(self.times)
