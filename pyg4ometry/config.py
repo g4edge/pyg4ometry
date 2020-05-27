@@ -3,10 +3,10 @@ class meshingType :
     cgal_sm  = 2
     cgal_np  = 3
 
-meshing = meshingType.cgal_sm
+# meshing = meshingType.cgal_sm
+meshing = meshingType.pycsg
 
-
-def backedName():
+def backendName():
     if meshing == 1:
         return "pycsg"
     if meshing == 2:
