@@ -67,7 +67,7 @@ def fluka2Geant4(flukareg,
     """
     fr = flukareg # abbreviation
 
-    timer = Timer()
+    timer = kwargs.get("timer", Timer())
 
     regions = _getSelectedRegions(fr, regions, omitRegions)
     if omitBlackholeRegions:
@@ -168,9 +168,7 @@ def fluka2Geant4(flukareg,
     timer.add("main loop")
     _convertLatticeCells(greg, fr, wlv, regionZoneExtents, regionNamesToLVs)
     greg.setWorld(wlv.name)
-    print(timer)
-    if "profile_path" in kwargs:
-        timer.write(kwargs["profile_path"])
+
     return greg
 
 def _makeWorldVolume(dimensions, material, g4registry):
