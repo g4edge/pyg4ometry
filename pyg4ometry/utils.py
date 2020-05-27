@@ -123,4 +123,4 @@ class Timer:
         now = time.process_time()
         total = now - self.time0
         self.time0 = time.process_time()
-        self.samples.add(name, "total")
+        self.samples.add("total", total)
