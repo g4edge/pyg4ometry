@@ -113,7 +113,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         pDy2 = self.evaluateParameter(self.pDy2)/2.
         pDz = self.evaluateParameter(self.pDz)/2.
 
-        _log.info('hype.pycsgmesh> mesh')
+        _log.info('twistedtrd.mesh> mesh')
         pl1 = _TwoVector(-pDx1, -pDy1)#, pDz]
         pl2 = _TwoVector(pDx1, -pDy1) # pDz]
         pl3 = _TwoVector(pDx1, pDy1) #pDz]
