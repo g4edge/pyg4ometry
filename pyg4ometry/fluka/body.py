@@ -121,10 +121,10 @@ class _HalfSpaceMixin(BodyMixin):
         if referenceExtent is None:
             return INFINITY
         else:
-            # This should be used as a FULL LENGTH.
-            return np.sqrt((referenceExtent.size.x**2
-                            + referenceExtent.size.y**2
-                            + referenceExtent.size.z**2)) * 1.1
+            # Should be used as a full length.  This is a very sensitive
+            # value.  The solid minimisation step will be harmed resulting
+            # in faulty meshes/GDML if this is incorrectly set.
+            return max(referenceExtent.size * 1.1 * np.sqrt(3))
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
