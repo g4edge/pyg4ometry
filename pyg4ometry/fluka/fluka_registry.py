@@ -7,9 +7,9 @@ import pyg4ometry.geant4 as _g4
 from .region import Region
 from .directive import RecursiveRotoTranslation, RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError
-from .material import (defineBuiltInFlukaElements,
+from .material import (defineBuiltInFlukaMaterials,
                        BuiltIn,
-                       PREDEFINED_MATERIAL_NAMES)
+                       predefinedMaterialNames)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,9 +30,10 @@ class FlukaRegistry(object):
         self.latticeDict = OrderedDict()
         self.cardDict = OrderedDict()
         self.assignmas = OrderedDict()
+        self._predefinedMaterialNames = set(predefinedMaterialNames())
 
         # Instantiate the predefined materials as BuiltIn instances
-        defineBuiltInFlukaElements(self)
+        defineBuiltInFlukaMaterials(self)
 
         self._bodiesAndRegions = {}
 
@@ -95,7 +96,7 @@ class FlukaRegistry(object):
         name = material.name
         # Only allow redefinition of builtins..  anything else is
         # almost certainly not deliberate.
-        if name in self.materials and name not in PREDEFINED_MATERIAL_NAMES:
+        if name in self.materials and name not in self._predefinedMaterialNames:
             raise IdenticalNameError(name)
         self.materials[material.name] = material
 

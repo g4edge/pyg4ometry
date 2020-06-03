@@ -33,22 +33,24 @@ _PREDEFINED_ELEMENTS = [("BLCKHOLE",  0, 0, 0),
                         ("TITANIUM",  47.867, 22., 4.540),
                         ("NICKEL",    58.6934, 28., 8.902)]
 
-_PREDEFINED_COMPOUND_NAMES = ["WATER",
-                             "POLYSTYR",
-                             "PLASCINT",
-                             "PMMA",
-                             "BONECOMP",
-                             "BONECORT",
-                             "MUSCLESK",
-                             "MUSCLEST",
-                             "ADTISSUE",
-                             "KAPTON",
-                             "POLYETHY",
-                             "AIR"]
+# Name, density
+_PREDEFINED_COMPOUNDS =  [("WATER", 1.0),
+                          ("POLYSTYR", 1.06),
+                          ("PLASCINT", 1.032),
+                          ("PMMA", 1.19),
+                          ("BONECOMP", 1.85),
+                          ("BONECORT", 1.85),
+                          ("MUSCLESK", 1.04),
+                          ("MUSCLEST", 1.04),
+                          ("ADTISSUE", 0.92),
+                          ("KAPTON", 1.42),
+                          ("POLYETHY", 0.94),
+                          ("AIR", 0.00120479)]
 
-PREDEFINED_MATERIAL_NAMES = ([i[0] for i in _PREDEFINED_ELEMENTS]
-                             + _PREDEFINED_COMPOUND_NAMES)
-
+def predefinedMaterialNames():
+    names = [i[0] for i in _PREDEFINED_ELEMENTS]
+    names.extend(i[0] for i in _PREDEFINED_COMPOUNDS)
+    return names
 
 class BuiltIn(object):
     def __init__(self, name, *,
@@ -69,7 +71,7 @@ class BuiltIn(object):
     def flukaFreeString(self, delim=""):
         return ""
 
-def defineBuiltInFlukaElements(flukaregistry=None):
+def defineBuiltInFlukaMaterials(flukaregistry=None):
     out = {}
     for name, atomicMass, atomicNumber, density in _PREDEFINED_ELEMENTS:
         out[name] = BuiltIn(name,
@@ -77,8 +79,8 @@ def defineBuiltInFlukaElements(flukaregistry=None):
                             atomicMass=atomicMass,
                             density=density,
                             flukaregistry=flukaregistry)
-    for name in _PREDEFINED_COMPOUND_NAMES:
-        out[name] = BuiltIn(name, flukaregistry=flukaregistry)
+    for name, density in _PREDEFINED_COMPOUNDS:
+        out[name] = BuiltIn(name, density=density, flukaregistry=flukaregistry)
     return out
 
 class _GasMixin(object):
