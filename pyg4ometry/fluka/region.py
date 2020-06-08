@@ -125,18 +125,9 @@ class Zone(object):
                                             referenceExtent=referenceExtent)
 
     def mesh(self, aabb=None):
-        body0 = self.intersections[0].body
-        result = body0.mesh(aabb=aabb)
-        booleans = self.intersections[1:] + self.subtractions
-
-        for boolean in booleans:
-            tra2 = _get_tra2(body0, boolean.body, aabb)
-            rot = tbxyz2axisangle(tra2[0])
-            tlate = tra2[1]
-
+        result = self.intersections[0].body.mesh(aabb=aabb)
+        for boolean in self.intersections[1:] + self.subtractions:
             mesh = boolean.body.mesh(aabb=aabb)
-            mesh.rotate(rot[0], -degrees(rot[1]))
-            mesh.translate(tlate)
 
             if isinstance(boolean, Intersection):
                 result = result.intersect(mesh)
@@ -405,6 +396,14 @@ class Region(object):
         for zone in self.zones:
             bodies = bodies.union(zone.bodies())
         return bodies
+
+    def mesh(self, aabb=None):
+        result = self.zones[0].mesh(aabb=aabb)
+        for zone in self.zones[1:]:
+            mesh = zone.mesh(aabb=aabb)
+            result = result.union(mesh)
+
+        return result
 
     def geant4Solid(self, reg, referenceExtent=None):
         logger.debug("Region = %s", self.name)
