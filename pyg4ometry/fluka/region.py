@@ -124,6 +124,26 @@ class Zone(object):
             return boolean.body.geant4Solid(reg,
                                             referenceExtent=referenceExtent)
 
+    def mesh(self, aabb=None):
+        body0 = self.intersections[0].body
+        result = body0.mesh(aabb=aabb)
+        booleans = self.intersections[1:] + self.subtractions
+
+        for boolean in booleans:
+            tra2 = _get_tra2(body0, boolean.body, aabb)
+            rot = tbxyz2axisangle(tra2[0])
+            tlate = tra2[1]
+
+            mesh = boolean.body.mesh(aabb=aabb)
+            mesh.rotate(rot[0], -degrees(rot[1]))
+            mesh.translate(tlate)
+
+            if isinstance(boolean, Intersection):
+                result = result.intersect(mesh)
+            elif isinstance(boolean, Subtraction):
+                result = result.subtract(mesh)
+        return result
+
     def geant4Solid(self, reg, referenceExtent=None):
         """Translate this zone to a geant4solid, adding the
         constituent primitive solids and any Booleans to the Geant4
@@ -636,7 +656,6 @@ def areOverlapping(first, second, referenceExtent=None):
     mesh2.rotate(rot[0], -degrees(rot[1]))
     mesh2.translate(tra)
     return do_intersect(mesh1, mesh2)
-
 
 def _getReferenceExtent(referenceExtent, boolean):
     """referenceExtent should really be a dictionary of
