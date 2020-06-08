@@ -100,6 +100,23 @@ class Samples:
     
 
 class Timer:
+    """A class for recording the CPU time at specific positions within code
+    with the use of a name.  Records time stamps in a Samples instance.
+    To record multiple samples of a given event, simply call add with the
+    same name repeatedly.
+
+    timer = Timer()
+
+    while True:
+        ...
+        timer.add("step1")
+        ...
+        timer.add("step2")
+
+    mean_step1 = timer.samples.means()["step1"]
+    std_step1 = timer.samples.stds()["step1"]
+
+    """
     def __init__(self):
         self.time0 = time.process_time()
         self.last_time = self.time0
