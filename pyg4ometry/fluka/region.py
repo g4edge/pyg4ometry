@@ -103,12 +103,10 @@ class Zone(object):
         """
         self.intersections.append(Intersection(body))
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         body_name = self.intersections[0].body.name
-        referenceExtent = _getReferenceExtent(referenceExtent,
-                                              self.intersections[0])
-        return self.intersections[0].body.centre(
-            referenceExtent=referenceExtent)
+        aabb = _getAxisAlignedBoundingBox(aabb, self.intersections[0])
+        return self.intersections[0].body.centre(aabb=aabb)
 
     def rotation(self):
         return self.intersections[0].body.rotation()
@@ -116,13 +114,12 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, boolean, reg, referenceExtent):
+    def _getSolidFromBoolean(self, boolean, reg, aabb):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
-            referenceExtent = _getReferenceExtent(referenceExtent, boolean)
-            return boolean.body.geant4Solid(reg,
-                                            referenceExtent=referenceExtent)
+            aabb = _getAxisAlignedBoundingBox(aabb, boolean)
+            return boolean.body.geant4Solid(reg, aabb=aabb)
 
     def mesh(self, aabb=None):
         result = self.intersections[0].body.mesh(aabb=aabb)
@@ -135,7 +132,7 @@ class Zone(object):
                 result = result.subtract(mesh)
         return result
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         """Translate this zone to a geant4solid, adding the
         constituent primitive solids and any Booleans to the Geant4
         registry.  Returns the geant4 solid equivalent in geometry to
@@ -144,7 +141,7 @@ class Zone(object):
         :param reg:  The Registry (geant4) instance to which the
         resulting Geant4 definitions should be added.
         :type reg: Registry
-        :param referenceExtent: Optional reference Extent or
+        :param aabb: Optional reference Extent or
         dictionary of body name to Extent instances with which the
         geant4 solid should be evaluated with respect to.  This is the
         entry point to which solid minimisation can be performed.
@@ -159,25 +156,25 @@ class Zone(object):
 
         result = self._getSolidFromBoolean(self.intersections[0],
                                            reg,
-                                           referenceExtent)
+                                           aabb)
 
         booleans = self.intersections + self.subtractions
 
         for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
             boolean_name = boolean.generate_name(i, rootname=self.name)
 
-            tra2 = _get_tra2(body0, boolean.body, referenceExtent)
+            transform = _getRelativeTransform(body0, boolean.body, aabb)
             other_solid = self._getSolidFromBoolean(boolean, reg,
-                                                    referenceExtent)
+                                                    aabb)
             if isinstance(boolean, Subtraction):
                 result = g4.solid.Subtraction(boolean_name,
                                               result, other_solid,
-                                              tra2, reg)
+                                              transform, reg)
 
             elif isinstance(boolean, Intersection):
                 result = g4.solid.Intersection(boolean_name,
                                                result, other_solid,
-                                               tra2, reg)
+                                               transform, reg)
         return result
 
     def flukaFreeString(self):
@@ -381,8 +378,8 @@ class Region(object):
         """
         self.zones.append(zone)
 
-    def centre(self, referenceExtent=None):
-        return self.zones[0].centre(referenceExtent=referenceExtent)
+    def centre(self, aabb=None):
+        return self.zones[0].centre(aabb=aabb)
 
     def tbxyz(self):
         return self.zones[0].tbxyz()
@@ -405,24 +402,23 @@ class Region(object):
 
         return result
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         logger.debug("Region = %s", self.name)
         try:
             zone0 = self.zones[0]
         except IndexError:
             raise FLUKAError("Region {} has no zones.".format(self.name))
-
-        result = zone0.geant4Solid(reg, referenceExtent=referenceExtent)
+        result = zone0.geant4Solid(reg, aabb=aabb)
         for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
             try:
-                otherg4 = zone.geant4Solid(reg, referenceExtent=referenceExtent)
+                otherg4 = zone.geant4Solid(reg, aabb=aabb)
             except FLUKAError as e:
                 msg = e.message
                 raise FLUKAError("In region {}, {}".format(self.name, msg))
             zone_name = "{}_union_z{}".format(self.name, i)
-            tra2 = _get_tra2(zone0, zone, referenceExtent=referenceExtent)
-            logger.debug("union tra2 = %s", tra2)
-            result  = g4.solid.Union(zone_name, result, otherg4, tra2, reg)
+            transform = _getRelativeTransform(zone0, zone, aabb=aabb)
+            logger.debug("union tra2 = %s", transform)
+            result  = g4.solid.Union(zone_name, result, otherg4, transform, reg)
 
         return result
 
@@ -459,7 +455,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zoneGraph(self, zoneExtents=None, referenceExtent=None):
+    def zoneGraph(self, zoneExtents=None, aabb=None):
         zones = self.zones
         n_zones = len(zones)
 
@@ -474,8 +470,7 @@ class Region(object):
         # optimisation, but if they have not been provided, then we
         # will generate them here
         if zoneExtents is None:
-            zoneExtents = self.zoneExtents(
-                referenceExtent=referenceExtent)
+            zoneExtents = self.zoneExtents(aabb=aabb)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -495,26 +490,23 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if areOverlapping(zones[i], zones[j],
-                              referenceExtent=referenceExtent):
+            if areOverlapping(zones[i], zones[j], aabb=aabb):
                 graph.add_edge(i, j)
         return graph
 
-    def connectedZones(self, zoneExtents=None, referenceExtent=None):
+    def connectedZones(self, zoneExtents=None, aabb=None):
         return list(nx.connected_components(
-            self.zoneGraph(zoneExtents=zoneExtents,
-                referenceExtent=referenceExtent)))
+            self.zoneGraph(zoneExtents=zoneExtents, aabb=aabb)))
 
-    def zoneExtents(self, referenceExtent=None):
+    def zoneExtents(self, aabb=None):
         material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
             greg = g4.Registry()
-            wlv = _make_wlv(greg)
+            wlv = _makeWorldLogicalVolume(greg)
 
             try:
-                zone_solid = zone.geant4Solid(reg=greg,
-                                              referenceExtent=referenceExtent)
+                zone_solid = zone.geant4Solid(reg=greg, aabb=aabb)
             except FLUKAError as e:
                 raise FLUKAError("Error in region {}: {}".format(self.name,
                                                                  e.message))
@@ -522,7 +514,7 @@ class Region(object):
             try:
                 zoneLV = g4.LogicalVolume(zone_solid,
                                           material,
-                                          _random_name(),
+                                          _randomName(),
                                           greg)
             except NullMeshError as e:
                 raise NullMeshError("Null zone in region {}: {}.".format(
@@ -535,13 +527,13 @@ class Region(object):
             extents.append(Extent(lower, upper))
         return extents
 
-    def extent(self, referenceExtent=None):
+    def extent(self, aabb=None):
         greg = g4.Registry()
         world_solid = g4.solid.Box("world_solid", 1e4, 1e4, 1e4, greg, "mm")
         wlv = g4.LogicalVolume(world_solid,
                                g4.MaterialPredefined("G4_Galactic"),
                                "wl", greg)
-        solid = self.geant4Solid(greg, referenceExtent=referenceExtent)
+        solid = self.geant4Solid(greg, aabb=aabb)
         regionLV = g4.LogicalVolume(solid,
                                     g4.MaterialPredefined("G4_Galactic"),
                                     "{}_lv".format(self.name),
@@ -549,7 +541,7 @@ class Region(object):
 
         lower, upper = regionLV.mesh.getBoundingBox(
             self.rotation(),
-            self.centre(referenceExtent=referenceExtent))
+            self.centre(aabb=aabb))
 
         return Extent(lower, upper)
 
@@ -581,14 +573,13 @@ class Region(object):
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
 
-def _get_relative_translation(first, second, referenceExtent):
+def _get_relative_translation(first, second, aabb):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
-    referenceExtent1 = _getReferenceExtent(referenceExtent, first)
-    referenceExtent2 = _getReferenceExtent(referenceExtent, second)
-    offset_vector = (second.centre(referenceExtent=referenceExtent2)
-                     - first.centre(referenceExtent=referenceExtent1))
+    aabb1 = _getAxisAlignedBoundingBox(aabb, first)
+    aabb2 = _getAxisAlignedBoundingBox(aabb, second)
+    offset_vector = (second.centre(aabb=aabb2) - first.centre(aabb=aabb1))
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
@@ -600,10 +591,10 @@ def _get_relative_rotation(first, second):
     # rotation.
     return matrix2tbxyz(_get_relative_rot_matrix(first, second))
 
-def _get_tra2(first, second, referenceExtent):
+def _getRelativeTransform(first, second, aabb):
     relative_angles = _get_relative_rotation(first, second)
     relative_translation = _get_relative_translation(first, second,
-                                                     referenceExtent)
+                                                     aabb)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
 
@@ -615,16 +606,16 @@ def _get_tra2(first, second, referenceExtent):
                                list(relative_transformation[1])]
     return relative_transformation
 
-def _random_name():
+def _randomName():
     "Returns a random name that is syntactically correct for use in GDML."
     return "a{}".format(uuid4()).replace("-", "")
 
-def _make_wlv(reg):
+def _makeWorldLogicalVolume(reg):
     world_material = g4.MaterialPredefined("G4_Galactic")
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
-def areOverlapping(first, second, referenceExtent=None):
+def areOverlapping(first, second, aabb=None):
     """Determine if two Region, Zone, or Body instances are
     overlapping, with the option to provide a reference Extent with
     which the two operands may be evaluated with respect to.
@@ -635,18 +626,18 @@ def areOverlapping(first, second, referenceExtent=None):
     :param second: The second Body, Zone, or Region instance with which
     we check for overlaps with the first.
     :type second: Body or Zone or Region
-    :param referenceExtent: An Extent or dictionary of Extent
+    :param aabb: An Extent or dictionary of Extent
     instances with which the two operands should be evaluated with
     respect to.
-    :type referenceExtent: Extent or dict
+    :type aabb: Extent or dict
 
     """
     greg = g4.Registry()
 
-    solid1 = first.geant4Solid(greg, referenceExtent=referenceExtent)
-    solid2 = second.geant4Solid(greg, referenceExtent=referenceExtent)
+    solid1 = first.geant4Solid(greg, aabb=aabb)
+    solid2 = second.geant4Solid(greg, aabb=aabb)
 
-    tbxyz, tra = _get_tra2(first, second, referenceExtent)
+    tbxyz, tra = _getRelativeTransform(first, second, aabb)
     rot = tbxyz2axisangle(tbxyz)
 
     mesh1 = solid1.mesh()
@@ -656,11 +647,11 @@ def areOverlapping(first, second, referenceExtent=None):
     mesh2.translate(tra)
     return do_intersect(mesh1, mesh2)
 
-def _getReferenceExtent(referenceExtent, boolean):
-    """referenceExtent should really be a dictionary of
+def _getAxisAlignedBoundingBox(aabb, boolean):
+    """aabb should really be a dictionary of
     {bodyName: extentInstance}."""
     if isinstance(boolean, (Zone, Region)):
-        return referenceExtent
+        return aabb
     elif isinstance(boolean, _Boolean):
         body_name = boolean.body.name
     elif isinstance(boolean, BodyMixin):
@@ -669,21 +660,21 @@ def _getReferenceExtent(referenceExtent, boolean):
         raise ValueError("Unknown boolean type")
 
     if body_name is None:
-        return referenceExtent
+        return aabb
 
     if (isinstance(boolean, (Subtraction, Intersection))
             and isinstance(boolean.body, Zone)):
-        return referenceExtent
+        return aabb
 
-    if referenceExtent is None:
+    if aabb is None:
         return None
     try:
-        return referenceExtent[body_name]
+        return aabb[body_name]
     except AttributeError:
         raise
     except KeyError:
-        # This can happen if we have provided a referenceExtentMap for
+        # This can happen if we have provided a aabbMap for
         # the Quadrics but have not yet generated extents for the
         # other bodies.
-        logger.debug("%s not found in %s", body_name, referenceExtent)
+        logger.debug("%s not found in %s", body_name, aabb)
         return None

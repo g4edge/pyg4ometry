@@ -111,9 +111,9 @@ def fluka2Geant4(flukareg,
         quadricRegionExtents = newQuadricRegionExtents
         timer.add("disjoint")
 
-    referenceExtentMap = None
+    aabbMap = None
     if minimiseSolids:
-        referenceExtentMap = _makeBodyMinimumReferenceExtentMap(
+        aabbMap = _makeBodyMinimumAABBMap(
             fr,
             regionZoneExtents,
             regions)
@@ -136,7 +136,7 @@ def fluka2Geant4(flukareg,
         # print name
         region = fr.regionDict[name]
         region_solid = region.geant4Solid(greg,
-                                          referenceExtent=referenceExtentMap)
+                                          aabb=aabbMap)
 
 
         try:
@@ -163,7 +163,7 @@ def fluka2Geant4(flukareg,
         rot = list(trans.reverse(region.tbxyz()))
         g4.PhysicalVolume(
             rot,
-            list(region.centre(referenceExtent=referenceExtentMap)),
+            list(region.centre(aabb=aabbMap)),
             region_lv,
             "{}_pv".format(name),
             wlv, greg)
@@ -281,7 +281,7 @@ def _makeDisjointUnionsFlukaRegistry(flukareg, regions,
 
         connected_zones = region.connectedZones(
             zoneExtents=regionZoneExtents[name],
-            referenceExtent=quadricRegionBodyExtentMap)
+            aabb=quadricRegionBodyExtentMap)
 
         if len(connected_zones) == 1: # then there are no disjoint unions
             new_region = deepcopy(region)
@@ -344,10 +344,10 @@ def _getRegionZoneExtents(flukareg, regions, quadricRegionExtents):
         elif name not in regions:
             continue
         else:
-            regionZoneExtents[name] = region.zoneExtents(referenceExtent=None)
+            regionZoneExtents[name] = region.zoneExtents(aabb=None)
     return regionZoneExtents
 
-def _makeBodyMinimumReferenceExtentMap(flukareg, regionZoneExtents, regions):
+def _makeBodyMinimumAABBMap(flukareg, regionZoneExtents, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
     regionExtents = _regionZoneExtentsToRegionExtents(regionZoneExtents)
 
@@ -455,7 +455,7 @@ def _getTransformedCellRegionExtent(lattice):
     wlv = _makeWorldVolume(WORLD_DIMENSIONS, "G4_Galactic", greg)
 
 
-    region_solid = cellRegion.geant4Solid(greg, referenceExtent=None)
+    region_solid = cellRegion.geant4Solid(greg, aabb=None)
     regionLV = g4.LogicalVolume(region_solid,
                                  "G4_Galactic",
                                  "{}_lv".format(cellName),
@@ -477,7 +477,7 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     # centre that I want it to return.  These two lines save me a lot
     # of work elsewhere.
     def rotation(self): return cellRotation
-    def centre(self, referenceExtent=None): return cellCentre
+    def centre(self, aabb=None): return cellCentre
     cellRegion.rotation = types.MethodType(rotation, cellRegion)
     cellRegion.centre = types.MethodType(centre, cellRegion)
 
