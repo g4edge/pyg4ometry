@@ -20,7 +20,7 @@ if _config.meshing == _config.meshingType.pycsg:
     # from pyg4ometry.pycsg.geom import Vertex as _Vertex
     # from pyg4ometry.pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import CSG, do_intersect
+    from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
     # from pyg4ometry.pycgal.geom import Vector as _Vector
     # from pyg4ometry.pycgal.geom import Vertex as _Vertex
     # from pyg4ometry.pycgal.geom import Polygon as _Polygon
@@ -457,6 +457,9 @@ class Region(object):
             zone.allBodiesToRegistry(registry)
 
     def zoneGraph(self, zoneExtents=None, aabb=None):
+        if _config.meshing == _config.meshingType.cgal_sm:
+            return self._zoneGraphPycgal()
+
         zones = self.zones
         n_zones = len(zones)
 
@@ -487,12 +490,22 @@ class Region(object):
             # Check if a path already exists.  Not sure how often this
             # arises but should at least occasionally save some time.
             if nx.has_path(graph, i, j):
+                graph.add_edge(i, j)
                 continue
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
             if areOverlapping(zones[i], zones[j], aabb=aabb):
                 graph.add_edge(i, j)
+
+        return graph
+
+    def _zoneGraphPycgal(self):
+        meshes = [z.mesh() for z in self.zones]
+        intersections = intersecting_meshes(meshes)
+        graph = nx.Graph()
+        graph.add_nodes_from(range(len(self.zones)))
+        graph.add_edges_from(intersections)
         return graph
 
     def connectedZones(self, zoneExtents=None, aabb=None):

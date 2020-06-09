@@ -5,7 +5,6 @@
 #include <pybind11/pytypes.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
-// #include <pybind11/functional.h>
 
 #include "geom.h"
 #include "algo.h"
