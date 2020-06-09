@@ -3,6 +3,9 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
+#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
+// #include <pybind11/functional.h>
 
 #include "geom.h"
 #include "algo.h"
@@ -49,4 +52,6 @@ public:
 };
 
 bool do_intersect(CSG const &m1, CSG const &m2);
+std::vector<std::pair<std::size_t, std::size_t>>
+intersecting_meshes(py::list const &csg_objects);
 #endif
