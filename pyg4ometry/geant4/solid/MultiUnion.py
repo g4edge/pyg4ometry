@@ -7,7 +7,7 @@ import logging as _log
 
 class MultiUnion(_SolidBase):
     """
-    Union between two solids     
+    Union between two or more solids.   
 
     :param name: of solid
     :type name: str
