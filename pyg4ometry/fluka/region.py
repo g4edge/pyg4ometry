@@ -403,22 +403,23 @@ class Region(object):
         return result
 
     def geant4Solid(self, reg, aabb=None):
-        logger.debug("Region = %s", self.name)
+        """Get the geant4Solid instance corresponding to this Region."""
         try:
             zone0 = self.zones[0]
         except IndexError:
             raise FLUKAError("Region {} has no zones.".format(self.name))
-        result = zone0.geant4Solid(reg, aabb=aabb)
-        for zone,i in zip(self.zones[1:],range(1,len(self.zones[1:])+1)):
-            try:
-                otherg4 = zone.geant4Solid(reg, aabb=aabb)
-            except FLUKAError as e:
-                msg = e.message
-                raise FLUKAError("In region {}, {}".format(self.name, msg))
-            zone_name = "{}_union_z{}".format(self.name, i)
-            transform = _getRelativeTransform(zone0, zone, aabb=aabb)
-            logger.debug("union tra2 = %s", transform)
-            result  = g4.solid.Union(zone_name, result, otherg4, transform, reg)
+
+        if len(self.zones) == 1:
+            return zone0.geant4Solid(reg, aabb=aabb)
+
+        zones = self.zones
+        solids = [z.geant4Solid(reg, aabb=aabb) for z in zones]
+        transforms = [_getRelativeTransform(zone0, z, aabb) for z in zones[1:]]
+
+        return g4.solid.MultiUnion(f"{self.name}_solid",
+                                   solids,
+                                   transforms,
+                                   registry=reg)
 
         return result
 
