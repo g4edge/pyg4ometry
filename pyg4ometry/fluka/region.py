@@ -29,28 +29,36 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
+
+def _generate_name(typename,index, name, isZone, rootname):
+    """Try to generate a sensible name for intermediate
+    Geant4 booleans which have no FLUKA analogue."""
+    if rootname is None:
+        rootname = "a{}".format(uuid4()).replace("-", "")
+
+
+    if isZone:
+        return "{}{}_{}_{}".format(typename,
+                                   index,
+                                   "zone",
+                                   rootname)
+    else:
+        return "{}{}_{}_{}".format(typename,
+                                   index,
+                                   name,
+                                   rootname)
+
+
 class _Boolean(object):
     def generate_name(self, index, rootname=None):
-        """Try to generate a sensible name for intermediate
-        Geant4 booleans which have no FLUKA analogue."""
-        if rootname is None:
-            rootname = "a{}".format(uuid4()).replace("-", "")
-
-        type_name = type(self).__name__
-        type_name = type_name[:3]
-
-
-        if isinstance(self.body, BodyMixin):
-            return "{}{}_{}_{}".format(type_name,
-                                       index,
-                                       self.body.name,
-                                       rootname)
-        elif isinstance(self.body, Zone):
-            return "{}{}_{}_{}".format(type_name,
-                                       index,
-                                       "zone",
-                                       rootname)
-
+        typename = type(self).__name__
+        typename = typename[:3]
+        return _generate_name(typename,
+                              index,
+                              self.body.name,
+                              isinstance(self.body, Zone),
+                              rootname)
 
 class Subtraction(_Boolean):
     def __init__(self, body):
@@ -154,27 +162,54 @@ class Zone(object):
         except IndexError:
             raise FLUKAError("zone has no +.")
 
-        result = self._getSolidFromBoolean(self.intersections[0],
-                                           reg,
-                                           aabb)
+        result = self._getSolidFromBoolean(self.intersections[0], reg, aabb)
+        result = self._combine_booleans(body0,
+                                        result,
+                                        self.intersections[1:],
+                                        g4.solid.Intersection,
+                                        reg,
+                                        aabb)
 
-        booleans = self.intersections + self.subtractions
+        if not self.subtractions:
+            return result
+        elif len(self.subtractions) < 5:
+            return self._combine_booleans(body0,
+                                          result,
+                                          self.subtractions,
+                                          g4.solid.Subtraction,
+                                          reg,
+                                          aabb)
+        else:
+            return self._geant4MultiUnionSubtraction(body0, result, reg, aabb)
 
-        for boolean,i in zip(booleans[1:],range(0,len(booleans[1:])+2)):
+    def _combine_booleans(self, body0, start, collection, operation, reg, aabb):
+        result = start
+        for i, boolean in enumerate(collection):
             boolean_name = boolean.generate_name(i, rootname=self.name)
-
             transform = _getRelativeTransform(body0, boolean.body, aabb)
-            other_solid = self._getSolidFromBoolean(boolean, reg,
-                                                    aabb)
-            if isinstance(boolean, Subtraction):
-                result = g4.solid.Subtraction(boolean_name,
-                                              result, other_solid,
-                                              transform, reg)
+            other_solid = self._getSolidFromBoolean(boolean, reg, aabb)
+            result = operation(boolean_name,
+                               result, other_solid,
+                               transform, reg)
+        return result
 
-            elif isinstance(boolean, Intersection):
-                result = g4.solid.Intersection(boolean_name,
-                                               result, other_solid,
-                                               transform, reg)
+    def _geant4MultiUnionSubtraction(self, body0, start, reg, aabb):
+        solids = []
+        transforms = []
+        for sub in self.subtractions:
+            body = sub.body
+            solids.append(self._getSolidFromBoolean(sub, reg, aabb))
+            transforms.append([body.tbxyz(), list(body.centre(aabb=aabb))])
+
+        union = g4.solid.MultiUnion(f"{self.name}_munion_{_randomName()}",
+                                    solids,
+                                    transforms,
+                                    registry=reg)
+        rotation = matrix2tbxyz(body0.rotation().T)
+        translation = list(-1 * body0.centre(aabb=aabb))
+        result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
+                                      start, union,
+                                      [rotation, translation], reg)
         return result
 
     def flukaFreeString(self):
