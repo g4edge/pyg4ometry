@@ -379,7 +379,10 @@ class Region(object):
         self.zones.append(zone)
 
     def centre(self, aabb=None):
-        return self.zones[0].centre(aabb=aabb)
+        if len(self.zones) == 1:
+            return self.zones[0].centre(aabb=aabb)
+        else:
+            return [0, 0, 0]
 
     def tbxyz(self):
         return self.zones[0].tbxyz()
