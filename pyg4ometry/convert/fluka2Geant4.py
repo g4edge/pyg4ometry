@@ -26,7 +26,7 @@ WORLD_DIMENSIONS = [10000, 10000, 10000]
 def fluka2Geant4(flukareg,
                  regions=None,
                  withLengthSafety=True,
-                 splitDisjointUnions=True,
+                 splitDisjointUnions=False,
                  minimiseSolids=True,
                  worldMaterial="G4_Galactic",
                  worldDimensions=None,
