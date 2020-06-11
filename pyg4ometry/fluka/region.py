@@ -11,6 +11,7 @@ import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, Extent, areExtentsOverlapping
+from . import boolean_algebra
 from pyg4ometry.transformation import tbxyz2axisangle
 
 import pyg4ometry.config as _config
@@ -386,6 +387,11 @@ class Zone(object):
     def isNull(self, aabb=None):
         return self.mesh(aabb=aabb).isNull()
 
+    def toDNF(self, name):
+        r = Region(name)
+        r.zones = boolean_algebra.zoneToDNFZones(self)
+        return r
+
 
 class Region(object):
     """Represents a region which consists of a region name, one or more
@@ -624,6 +630,12 @@ class Region(object):
 
     def isNull(self, aabb=None):
         return all(z.mesh(aabb=aabb).isNull() for z in self.zones)
+
+    def toDNF(self, name):
+        result = Region(name)
+        for zone in self.zones:
+            result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
+        return result
 
 
 def _get_relative_rot_matrix(first, second):
