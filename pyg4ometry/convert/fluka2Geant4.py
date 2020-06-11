@@ -263,10 +263,8 @@ def _getMaximalOfTwoAABBs(aabb1, aabb2):
     :type aabb2: AABB
 
     """
-    # Get combined aabbs which are greatest
-    lower = [min(a, b) for a, b in zip(aabb1.lower, aabb2.lower)]
-    upper = [max(a, b) for a, b in zip(aabb1.upper, aabb2.upper)]
-    return fluka.AABB(lower, upper)
+    return aabb1.union(aabb2)
+
 
 def _filterBlackHoleRegions(flukareg, regions):
     """Returns a new FlukaRegistry instance with all regions with
