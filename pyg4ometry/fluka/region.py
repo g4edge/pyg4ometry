@@ -383,6 +383,9 @@ class Zone(object):
                     raise ValueError("Unknown Boolean type")
         return result
 
+    def isNull(self, aabb=None):
+        return self.mesh(aabb=aabb).isNull()
+
 
 class Region(object):
     """Represents a region which consists of a region name, one or more
@@ -620,6 +623,10 @@ class Region(object):
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
                                            nameSuffix=nameSuffix))
         return result
+
+    def isNull(self, aabb=None):
+        return all(z.mesh(aabb=aabb).isNull() for z in self.zones)
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
