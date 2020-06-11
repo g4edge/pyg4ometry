@@ -562,8 +562,7 @@ class Region(object):
             try:
                 zone_solid = zone.geant4Solid(reg=greg, aabb=aabb)
             except FLUKAError as e:
-                raise FLUKAError("Error in region {}: {}".format(self.name,
-                                                                 e.message))
+                raise FLUKAError(f"Error in region {self.name}: {e.message}")
 
             try:
                 zoneLV = g4.LogicalVolume(zone_solid,
@@ -571,9 +570,8 @@ class Region(object):
                                           _randomName(),
                                           greg)
             except NullMeshError as e:
-                raise NullMeshError("Null zone in region {}: {}.".format(
-                    self.name,
-                    e.message))
+                raise NullMeshError(
+                    f"Null zone in region {self.name}: {e.message}.")
 
             lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
                                                       zone.centre())
