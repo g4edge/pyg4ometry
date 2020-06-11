@@ -637,6 +637,8 @@ class Region(object):
             result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
         return result
 
+    def prune(self):
+        self.zones = [z for z in self.zones if not z.isNull()]
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
