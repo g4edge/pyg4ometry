@@ -9,7 +9,7 @@ import vtk
 
 from .vector import Three, pointOnLineClosestToPoint
 from .directive import Transform
-from .vector import Extent as _Extent
+from .vector import AABB as _AABB
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
@@ -994,7 +994,7 @@ class ARB(BodyMixin):
         x = vertices[...,0]
         y = vertices[...,1]
         z = vertices[...,2]
-        return _Extent([min(x), min(y), min(z)], [max(x), max(y), max(z)])
+        return _AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
     def geant4Solid(self, greg, aabb=None):
         verticesAndPolygons = self._getVerticesAndPolygons()

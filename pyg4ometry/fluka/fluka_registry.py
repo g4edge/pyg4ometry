@@ -75,22 +75,22 @@ class FlukaRegistry(object):
         print("latticeDict = {}".format(self.latticeDict))
         print("cardDict = {}".format(self.cardDict))
 
-    def regionExtents(self, write=None):
-        regionExtents = {}
+    def regionAABBs(self, write=None):
+        regionAABBs = {}
         for regionName, region in self.regionDict.items():
-            regionExtents[regionName] = region.extent()
+            regionAABBs[regionName] = region.extent()
 
         if write:
             with open(write, "wb") as f:
-                pickle.dump(regionExtents, f)
+                pickle.dump(regionAABBs, f)
 
-        return regionExtents
+        return regionAABBs
 
-    def latticeExtents(self):
-        latticeCellExtents = {}
+    def latticeAABBs(self):
+        latticeCellAABBs = {}
         for cellName, lattice in self.latticeDict.items():
-            latticeCellExtents[cellName] = lattice.cellRegion.extent()
-        return latticeCellExtents
+            latticeCellAABBs[cellName] = lattice.cellRegion.extent()
+        return latticeCellAABBs
 
     def addMaterial(self, material):
         name = material.name

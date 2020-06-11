@@ -136,7 +136,7 @@ class Three(_np.ndarray):
         return self
 
 
-class Extent(object):
+class AABB(object):
     def __init__(self, lower, upper):
         self.lower = Three(lower)
         self.upper = Three(upper)
@@ -148,7 +148,7 @@ class Extent(object):
                 raise ValueError("Lower extent must be less than upper.")
 
     def __repr__(self):
-        return ("<Extent: Lower({lower.x}, {lower.y}, {lower.z}),"
+        return ("<AABB: Lower({lower.x}, {lower.y}, {lower.z}),"
                 " Upper({upper.x}, {upper.y}, {upper.z})>".format(
                     upper=self.upper, lower=self.lower))
 
@@ -161,8 +161,8 @@ class Extent(object):
         return ((0.5 * size.x)**2 + (0.5 * size.y)**2 + (0.5 * size.z)**2)**0.5
 
 
-def areExtentsOverlapping(first, second):
-    """Check if two Extent instances are overlapping."""
+def areAABBsOverlapping(first, second):
+    """Check if two AABB instances are overlapping."""
     return not (first.upper.x < second.lower.x
                 or first.lower.x > second.upper.x
                 or first.upper.y < second.lower.y

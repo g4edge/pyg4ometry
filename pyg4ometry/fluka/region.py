@@ -10,7 +10,7 @@ from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
 from pyg4ometry.fluka.body import BodyMixin
-from .vector import Three, Extent, areExtentsOverlapping
+from .vector import Three, AABB, areAABBsOverlapping
 from . import boolean_algebra
 from pyg4ometry.transformation import tbxyz2axisangle
 
@@ -150,11 +150,11 @@ class Zone(object):
         :param reg:  The Registry (geant4) instance to which the
         resulting Geant4 definitions should be added.
         :type reg: Registry
-        :param aabb: Optional reference Extent or
-        dictionary of body name to Extent instances with which the
+        :param aabb: Optional reference AABB or
+        dictionary of body name to AABB instances with which the
         geant4 solid should be evaluated with respect to.  This is the
         entry point to which solid minimisation can be performed.
-        :type reg: Extent or dict
+        :type reg: AABB or dict
 
         """
 
@@ -502,7 +502,7 @@ class Region(object):
         for zone in self.zones:
             zone.allBodiesToRegistry(registry)
 
-    def zoneGraph(self, zoneExtents=None, aabb=None):
+    def zoneGraph(self, zoneAABBs=None, aabb=None):
         if _config.meshing == _config.meshingType.cgal_sm:
             return self._zoneGraphPycgal()
 
@@ -516,11 +516,11 @@ class Region(object):
         if n_zones == 1: # return here if there's only one zone.
             return nx.connected_components(graph)
 
-        # We allow the user to provide a list of zoneExtents as an
+        # We allow the user to provide a list of zoneAABBs as an
         # optimisation, but if they have not been provided, then we
         # will generate them here
-        if zoneExtents is None:
-            zoneExtents = self.zoneExtents(aabb=aabb)
+        if zoneAABBs is None:
+            zoneAABBs = self.zoneAABBs(aabb=aabb)
 
         # Loop over all combinations of zone numbers within this region
         for i, j in itertools.product(range(n_zones), range(n_zones)):
@@ -530,7 +530,7 @@ class Region(object):
             tried.append({i, j})
 
             # Check if the bounding boxes overlap.  Cheaper than intersecting.
-            if not areExtentsOverlapping(zoneExtents[i], zoneExtents[j]):
+            if not areAABBsOverlapping(zoneAABBs[i], zoneAABBs[j]):
                 continue
 
             # Check if a path already exists.  Not sure how often this
@@ -554,11 +554,11 @@ class Region(object):
         graph.add_edges_from(intersections)
         return graph
 
-    def connectedZones(self, zoneExtents=None, aabb=None):
+    def connectedZones(self, zoneAABBs=None, aabb=None):
         return list(nx.connected_components(
-            self.zoneGraph(zoneExtents=zoneExtents, aabb=aabb)))
+            self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
 
-    def zoneExtents(self, aabb=None):
+    def zoneAABBs(self, aabb=None):
         material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
@@ -582,7 +582,7 @@ class Region(object):
             lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
                                                       zone.centre())
 
-            extents.append(Extent(lower, upper))
+            extents.append(AABB(lower, upper))
         return extents
 
     def extent(self, aabb=None):
@@ -601,7 +601,7 @@ class Region(object):
             self.rotation(),
             self.centre(aabb=aabb))
 
-        return Extent(lower, upper)
+        return AABB(lower, upper)
 
     def removeBody(self, name):
         """Remove a body from this region by name.
@@ -687,7 +687,7 @@ def _makeWorldLogicalVolume(reg):
 
 def areOverlapping(first, second, aabb=None):
     """Determine if two Region, Zone, or Body instances are
-    overlapping, with the option to provide a reference Extent with
+    overlapping, with the option to provide a reference AABB with
     which the two operands may be evaluated with respect to.
 
     :param first: The first Body, Zone, or Region instance with which
@@ -696,10 +696,10 @@ def areOverlapping(first, second, aabb=None):
     :param second: The second Body, Zone, or Region instance with which
     we check for overlaps with the first.
     :type second: Body or Zone or Region
-    :param aabb: An Extent or dictionary of Extent
+    :param aabb: An AABB or dictionary of AABB
     instances with which the two operands should be evaluated with
     respect to.
-    :type aabb: Extent or dict
+    :type aabb: AABB or dict
 
     """
     greg = g4.Registry()
