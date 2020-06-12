@@ -32,7 +32,7 @@ def MaterialPredefined(name, registry=None):
     Inputs:
         name          - string
     """
-    if name not in _makeNISTCompoundList() and not bdsimMaterial :
+    if name not in _makeNISTCompoundList():
         raise ValueError("{} is not a NIST compound".format(name))
     return Material(**locals())
 
