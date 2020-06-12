@@ -392,6 +392,14 @@ class Zone(object):
         r.zones = boolean_algebra.zoneToDNFZones(self)
         return r
 
+    def nPrimitives(self):
+        total = 0
+        for b in self.intersections + self.subtractions:
+            if isinstance(b, Zone):
+                total += b.nPrimitives()
+            else:
+                b += 1
+
 
 class Region(object):
     """Represents a region which consists of a region name, one or more
@@ -639,6 +647,9 @@ class Region(object):
 
     def prune(self):
         self.zones = [z for z in self.zones if not z.isNull()]
+
+    def nPrimitives(self):
+        return sum(z.nPrimitives() for z in self.zones)
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
