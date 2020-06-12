@@ -1280,8 +1280,6 @@ class Writer(object):
             cse = self.doc.createElement("solid")
             cse.setAttribute("ref", solid.name)
             ce.appendChild(cse)
-            print(f"position = {trans[1]}")
-            print(f"rotation = {trans[0]}")
             self.writeVectorVariable(ce, trans[1]) # position
             self.writeVectorVariable(ce, trans[0]) # rotation
 
