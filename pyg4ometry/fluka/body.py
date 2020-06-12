@@ -1,3 +1,4 @@
+from math import degrees
 from contextlib import contextmanager
 from copy import deepcopy
 import logging
@@ -8,19 +9,20 @@ import vtk
 
 from .vector import Three, pointOnLineClosestToPoint
 from .directive import Transform
-from .vector import Extent as _Extent
+from .vector import AABB as _AABB
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
 from pyg4ometry.meshutils import MeshShrink
 
 import pyg4ometry.config as _config
-if _config.meshing == _config.meshingType.pycsg :
+
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
@@ -56,6 +58,7 @@ class BodyMixin(object):
     """
     Base class representing a body as defined in FLUKA
     """
+
     def addToRegistry(self, flukaregistry):
         if flukaregistry is not None:
             flukaregistry.addBody(self)
@@ -73,30 +76,36 @@ class BodyMixin(object):
     def safetyShrunk(self, reg=None):
         return self._withLengthSafety(-LENGTH_SAFETY, reg)
 
-    def _set_transform(self, transform):
-        if transform is None: # identity transform
+    def _setTransform(self, transform):
+        if transform is None:  # identity transform
             return Transform()
         return transform
 
-    def _referenceExtent_to_scale_factor(self, referenceExtent):
-        if referenceExtent is None: # if no referenceExtent then just
-                                    # use the global constant.
+    def _aabbToScaleFactor(self, aabb):
+        #  if no aabb then just use the global constant.
+        if aabb is None:
             return INFINITY
         else:
             # This should be used as a FULL LENGTH.
-            return np.sqrt((referenceExtent.size.x**2
-                            + referenceExtent.size.y**2
-                            + referenceExtent.size.z**2)) * 1.1
+            return np.sqrt((aabb.size.x**2
+                            + aabb.size.y**2
+                            + aabb.size.z**2)) * 1.1
 
-    def _referenceExtent_to_offset(self, referenceExtent):
-        if referenceExtent is None:
+    def _aabb_to_offset(self, aabb):
+        if aabb is None:
             offset = Three(0, 0, 0)
-        elif referenceExtent is not None:
-            offset = referenceExtent.centre
+        elif aabb is not None:
+            offset = aabb.centre
         else:
-            raise TypeError(
-                "Unknown type of referenceExtent {}".format(referenceExtent))
+            raise TypeError(f"Unknown type of aabb {aabb}")
         return offset
+
+    def mesh(self, aabb=None):
+        mesh = self.geant4Solid(g4.Registry(), aabb=aabb).mesh()
+        axis, angle = trans.tbxyz2axisangle(self.tbxyz())
+        mesh.rotate(axis, -degrees(angle))
+        mesh.translate(self.centre())
+        return mesh
 
 
 class _HalfSpaceMixin(BodyMixin):
@@ -104,26 +113,22 @@ class _HalfSpaceMixin(BodyMixin):
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, registry, referenceExtent=None):
-        boxsize = self._boxFullSize(referenceExtent)
-        return g4.solid.Box(self.name,
-                            boxsize,
-                            boxsize,
-                            boxsize,
-                            registry)
+    def geant4Solid(self, registry, aabb=None):
+        boxsize = self._boxFullSize(aabb)
+        return g4.solid.Box(self.name, boxsize, boxsize, boxsize, registry)
 
-    def _boxFullSize(self, referenceExtent):
-        if referenceExtent is None:
+    def _boxFullSize(self, aabb):
+        if aabb is None:
             return INFINITY
         else:
-            # This should be used as a FULL LENGTH.
-            return np.sqrt((referenceExtent.size.x**2
-                            + referenceExtent.size.y**2
-                            + referenceExtent.size.z**2)) * 1.1
+            # Should be used as a full length.  This is a very sensitive
+            # value.  The solid minimisation step will be harmed resulting
+            # in faulty meshes/GDML if this is incorrectly set.
+            return max(aabb.size * 1.1 * np.sqrt(3))
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
-        return "{} {} {}".format(typename, self.name, coordinate)
+        return f"{typename} {self.name} {coordinate}"
 
     def pointOnPlaneClosestTo(self, point):
         """Get point on plane which is closest to point not on the plane."""
@@ -132,11 +137,11 @@ class _HalfSpaceMixin(BodyMixin):
         closest_point = point + distance * normal.unit()
         return closest_point
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         normal, pointOnPlane = self.toPlane()
         referencePoint = pointOnPlane
-        try: # Try using the centre of the extent as a reference point
-            referencePoint = referenceExtent.centre
+        try:  # Try using the centre of the extent as a reference point
+            referencePoint = aabb.centre
         except AttributeError:
             pass
 
@@ -145,16 +150,16 @@ class _HalfSpaceMixin(BodyMixin):
         # Use reference point and normal to shift the box backwards by
         # half the box size.
         shiftedCentre = (closestPointOnFace
-                         - normal * 0.5 * self._boxFullSize(referenceExtent))
+                         - normal * 0.5 * self._boxFullSize(aabb))
 
         return shiftedCentre
 
 
 class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
-    def geant4Solid(self, registry, referenceExtent=None):
+    def geant4Solid(self, registry, aabb=None):
         exp = self.transform.netExpansion()
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        scale = self._aabbToScaleFactor(aabb)
         return g4.solid.Tubs(self.name,
                              0.0,
                              exp * self.radius,
@@ -165,19 +170,18 @@ class _InfiniteCylinderMixin(BodyMixin):
 
     def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
-        return "{} {} {} {} {}".format(typename, self.name,
-                                       coord1, coord2, coord3)
+        return f"{typename} {self.name} {coord1} {coord2} {coord3}"
 
 
 class _ShiftableCylinderMixin(object):
-    def _shiftInfiniteCylinderCentre(self, referenceExtent, initialDirection,
+    def _shiftInfiniteCylinderCentre(self, aabb, initialDirection,
                                      initialCentre):
         transformedDirection = self.transform.leftMultiplyRotation(
             initialDirection)
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
         # Shift the ZEC along its infinite axis to the point closest
-        # to the referenceExtent centre.
-        shiftedCentre = pointOnLineClosestToPoint(referenceExtent.centre,
+        # to the aabb centre.
+        shiftedCentre = pointOnLineClosestToPoint(aabb.centre,
                                                   transformedCentre,
                                                   transformedDirection)
 
@@ -199,18 +203,20 @@ class RPP(BodyMixin):
     :type ymax: float
     :param zmin: lower z coordinate of RPP
     :type zmin: float
-    :param zmax: upper z coordinate of RPP
+    :param zmax: upper z coordinate of RPP)
     :type zmax: float
 
     """
     def __init__(self, name,
                  xmin, xmax, ymin, ymax, zmin, zmax,
-                 transform=None, flukaregistry=None, addRegistry=True, comment = ""):
+                 transform=None, flukaregistry=None,
+                 addRegistry=True,
+                 comment=""):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -219,17 +225,20 @@ class RPP(BodyMixin):
                              " smaller than the corresponding"
                              " xmax, ymax, zmax.")
 
-        if addRegistry :
+        if addRegistry:
             self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(0.5 * (self.lower
                                                         + self.upper))
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def lengths(self):
+        return self.upper - self.lower
+
+    def geant4Solid(self, reg, aabb=None):
         v = self.transform.netExpansion() * (self.upper - self.lower)
         return g4.solid.Box(self.name,
                             v.x, v.y, v.z,
@@ -239,10 +248,8 @@ class RPP(BodyMixin):
     def __repr__(self):
         l = self.lower
         u = self.upper
-        return ("<RPP: {},"
-                " x0={l.x}, x1={u.x},"
-                " y0={l.y}, y1={u.y},"
-                " z0={l.z}, z1={u.z}>").format(self.name, l=l, u=u)
+        return (f"<RPP: {self.name},"
+                f" x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>")
 
     def _withLengthSafety(self, safety, reg):
         lower = self.lower - [safety, safety, safety]
@@ -283,14 +290,14 @@ class BOX(BodyMixin):
 
     """
     def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None, comment = ""):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)
         self.edge2 = Three(edge2)
         self.edge3 = Three(edge3)
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -300,7 +307,7 @@ class BOX(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector((self.vertex
                                                   + 0.5 * (self.edge1
                                                            + self.edge2
@@ -309,7 +316,11 @@ class BOX(BodyMixin):
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, greg, referenceExtent=None):
+    def lengths(self):
+        n = np.linalg.norm
+        return Three(n(self.edge1), n(self.edge2), n(self.edge3))
+
+    def geant4Solid(self, greg, aabb=None):
         exp = self.transform.netExpansion()
         return g4.solid.Box(self.name,
                             exp * self.edge1.length(),
@@ -322,7 +333,10 @@ class BOX(BodyMixin):
         return ("<BOX: {}, v={}, e1={}, e2={}, e3={}>").format(
             self.name,
             list(self.vertex),
-            list(self.edge1), list(self.edge2), list(self.edge3))
+            list(self.edge1),
+            list(self.edge2),
+            list(self.edge3),
+        )
 
     def _withLengthSafety(self, safety, reg):
         u1 = self.edge1.unit()
@@ -361,33 +375,31 @@ class SPH(BodyMixin):
 
     """
     def __init__(self, name, point, radius, transform=None, flukaregistry=None,
-                 comment = ""):
+                 comment=""):
         self.name = name
         self.point = Three(point)
         self.radius = radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(self.point)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         return g4.solid.Orb(self.name,
                             self.transform.netExpansion() * self.radius,
                             reg,
                             lunit="mm")
 
     def __repr__(self):
-        return "<SPH: {}, centre={}, r={})>".format(self.name,
-                                                    list(self.centre()),
-                                                    self.radius)
+        return f"<SPH: {self.name}, point={list(self.point)}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg):
         return SPH(self.name, self.point, self.radius + safety,
@@ -421,21 +433,20 @@ class RCC(BodyMixin):
 
     """
     def __init__(self, name, face, direction, radius, transform=None,
-                 flukaregistry=None, comment = ""):
+                 flukaregistry=None, comment=""):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
         self.radius = radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
-        return self.transform.leftMultiplyVector(self.face
-                                                 + 0.5 * self.direction)
+    def centre(self, aabb=None):
+        return self.transform.leftMultiplyVector(self.face + 0.5 * self.direction)
 
     def rotation(self):
         initial = [0, 0, 1]
@@ -443,7 +454,7 @@ class RCC(BodyMixin):
         rotation = trans.matrix_from(initial, final)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
         return g4.solid.Tubs(self.name,
                              0.0,
@@ -455,8 +466,9 @@ class RCC(BodyMixin):
                              lunit="mm")
 
     def __repr__(self):
-        return ("<RCC: {}, face={}, dir={}, r={}>").format(
-            self.name, list(self.face), list(self.direction), self.radius)
+        f = list(self.face)
+        d = list(self.direction)
+        return f"<RCC: {self.name}, face={f}, dir={d}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
@@ -502,14 +514,14 @@ class REC(BodyMixin):
     def __init__(self, name, face, direction, semiminor, semimajor,
                  transform=None,
                  flukaregistry=None,
-                 comment = "" ):
+                 comment=""):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
         self.semiminor = Three(semiminor)
         self.semimajor = Three(semimajor)
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -520,7 +532,7 @@ class REC(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(self.face
                                                  + 0.5 * self.direction)
 
@@ -536,7 +548,7 @@ class REC(BodyMixin):
                                               final_semiminor)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
         return g4.solid.EllipticalTube(self.name,
                                        2 * exp * self.semiminor.length(),
@@ -607,15 +619,16 @@ class TRC(BodyMixin):
         self.major_radius = major_radius
         self.minor_radius = minor_radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
-        return self.transform.leftMultiplyVector(self.major_centre
-                                                 + 0.5 * self.direction)
+    def centre(self, aabb=None):
+        return self.transform.leftMultiplyVector(
+            self.major_centre + 0.5 * self.direction
+        )
 
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
@@ -623,7 +636,7 @@ class TRC(BodyMixin):
         rotation = trans.matrix_from([0, 0, 1], self.direction)
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, registry, referenceExtent=None):
+    def geant4Solid(self, registry, aabb=None):
         # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         exp = self.transform.netExpansion()
@@ -688,20 +701,20 @@ class ELL(BodyMixin):
         self.focus2 = Three(focus2)
         self.length = length # major axis length
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         # semi-major axis should be greater than the distances to the
         # foci from the centre (aka the linear eccentricity).
         semimajor = 0.5 * self.transform.netExpansion() * self.length
-        if (semimajor <= self._linearEccentricity()):
+        if semimajor <= self._linearEccentricity():
             raise ValueError("Distance from foci to centre must be"
                              " smaller than the semi-major axis length.")
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(0.5 * (self.focus1
                                                         + self.focus2))
 
@@ -722,7 +735,7 @@ class ELL(BodyMixin):
         return np.sqrt((0.5 * self.transform.netExpansion() * self.length)**2 -
                        self._linearEccentricity()**2)
 
-    def geant4Solid(self, greg, referenceExtent=None):
+    def geant4Solid(self, greg, aabb=None):
         semiminor = self._semiminor()
         expansion = self.transform.netExpansion()
         return g4.solid.Ellipsoid(self.name,
@@ -736,8 +749,9 @@ class ELL(BodyMixin):
                                   greg)
 
     def __repr__(self):
-        return "<ELL: {}, f1={}, f2={}, length={}>".format(
-            self.name, list(self.focus1), list(self.focus2), self.length)
+        f1 = list(self.focus1)
+        f2 = list(self.focus2)
+        return f"<ELL: {self.name}, f1={f1}, f2={f2}, length={self.length}>"
 
     def _withLengthSafety(self, safety, reg):
         centre = (self.focus1 + self.focus2) * 0.5
@@ -755,7 +769,7 @@ class ELL(BodyMixin):
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
+        if self.comment != "":
             prefix = "* "+self.comment+"\n"
         return prefix+\
                "ELL {} {} {}".format(self.name,
@@ -775,7 +789,7 @@ class _WED_RAW(BodyMixin):
         self.edge2 = Three(edge2)  # direction of the triangular face.
         self.edge3 = Three(edge3)  # direction of length of the prism.
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -784,7 +798,7 @@ class _WED_RAW(BodyMixin):
             "Edges are not all mutually perpendicular.")
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         exp = self.transform.netExpansion()
         # need to determine the handedness of the three direction
         # vectors to get the correct vertex to use.
@@ -805,7 +819,7 @@ class _WED_RAW(BodyMixin):
                                                initial2, self.edge2.unit())
         return self.transform.leftMultiplyRotation(rotation)
 
-    def geant4Solid(self, greg, referenceExtent=None):
+    def geant4Solid(self, greg, aabb=None):
         exp = self.transform.netExpansion()
         face = [[0, 0],
                 [exp * self.edge1.length(), 0],
@@ -900,7 +914,7 @@ class ARB(BodyMixin):
         self.vertices = [Three(v) for v in vertices]
         self.facenumbers = facenumbers
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -937,7 +951,7 @@ class ARB(BodyMixin):
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(Three([0, 0, 0]))
 
     def rotation(self):
@@ -980,9 +994,9 @@ class ARB(BodyMixin):
         x = vertices[...,0]
         y = vertices[...,1]
         z = vertices[...,2]
-        return _Extent([min(x), min(y), min(z)], [max(x), max(y), max(z)])
+        return _AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
-    def geant4Solid(self, greg, referenceExtent=None):
+    def geant4Solid(self, greg, aabb=None):
         verticesAndPolygons = self._getVerticesAndPolygons()
         return self._toTesselatedSolid(verticesAndPolygons,
                                        greg,
@@ -1111,14 +1125,14 @@ class XYP(_HalfSpaceMixin):
         self.name = name
         self.z = z
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<XYP: {}, z={}>".format(self.name, self.z)
+        return f"<XYP: {self.name}, z={self.z}>"
 
     def _withLengthSafety(self, safety, reg):
         return XYP(self.name,
@@ -1158,12 +1172,12 @@ class XZP(_HalfSpaceMixin):
         self.name = name
         self.y = y
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<XZP: {}, y={}>".format(self.name, self.y)
+        return f"<XZP: {self.name}, y={self.y}>"
 
     def _withLengthSafety(self, safety, reg):
         return XZP(self.name,
@@ -1203,14 +1217,14 @@ class YZP(_HalfSpaceMixin):
         self.name = name
         self.x = x
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
-        return "<YZP: {}, x={}>".format(self.name, self.x)
+        return f"<YZP: {self.name}, x={self.x}>"
 
     def _withLengthSafety(self, safety, reg):
         return YZP(self.name,
@@ -1253,7 +1267,7 @@ class PLA(_HalfSpaceMixin):
         self.normal = Three(normal)
         self.point = Three(point)
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -1313,17 +1327,17 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         self.z = z
         self.radius = radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(0, self.y, self.z)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [1, 0, 0],
                                                  initialCentre)
 
@@ -1367,17 +1381,17 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         self.x = x
         self.radius = radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(self.x, 0, self.z)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 1, 0],
                                                  initialCentre)
 
@@ -1421,17 +1435,17 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         self.y = y
         self.radius = radius
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(self.x, self.y, 0)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 0, 1],
                                                  initialCentre)
 
@@ -1477,17 +1491,17 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         self.ysemi = ysemi
         self.zsemi = zsemi
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(0, self.y, self.z)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [1, 0, 0],
                                                  initialCentre)
 
@@ -1496,9 +1510,9 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
                                                              [0, 1, 0],
                                                              [1, 0, 0]]))
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi:
                                        2 * exp * self.zsemi,
@@ -1553,17 +1567,17 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         self.zsemi = zsemi
         self.xsemi = xsemi
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(self.x, 0, self.z)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 1, 0],
                                                  initialCentre)
 
@@ -1572,9 +1586,9 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
                                                              [0, 0, 1],
                                                              [0, -1, 0]]))
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
@@ -1629,26 +1643,26 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         self.xsemi = xsemi
         self.ysemi = ysemi
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
         self.addToRegistry(flukaregistry)
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         initialCentre = Three(self.x, self.y, 0)
-        if referenceExtent is None:
+        if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(referenceExtent,
+        return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 0, 1],
                                                  initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
-    def geant4Solid(self, reg, referenceExtent=None):
+    def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
+        scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(self.name,
                                        # full width, not semi
                                        2 * exp * self.xsemi,
@@ -1726,7 +1740,7 @@ class QUA(BodyMixin):
         self.cz  = cz
         self.c  = c
 
-        self.transform = self._set_transform(transform)
+        self.transform = self._setTransform(transform)
 
         self.comment = comment
 
@@ -1737,7 +1751,7 @@ class QUA(BodyMixin):
         else:
             self.safety = None
 
-    def centre(self, referenceExtent=None):
+    def centre(self, aabb=None):
         return Three(0, 0, 0)
 
     def rotation(self):
@@ -1821,7 +1835,7 @@ class QUA(BodyMixin):
 
         pd = cleaner.GetOutput()
 
-        mesh  = []
+        mesh = []
         verts = []
         facet = []
 
@@ -1844,23 +1858,23 @@ class QUA(BodyMixin):
                 f"Failed to generate a mesh for QUA {self.name}"
                 f" with bounds {lower} {upper}.")
 
-        polygon_list = []
+        polygons = []
         for f in facet:
             # This allows for both triangular and quadrilateral facets
             polygon = _Polygon([_Vertex(verts[facet_vertex])
                                 for facet_vertex in f])
-            polygon_list.append(polygon)
+            polygons.append(polygon)
 
-        return _CSG.fromPolygons(polygon_list)
+        return _CSG.fromPolygons(polygons)
 
 
-    def geant4Solid(self, reg, referenceExtent=None):
-        if referenceExtent is None:
-            raise ValueError("QUA must be evaluated with respect to an extent.")
+    def geant4Solid(self, reg, aabb=None):
+        if aabb is None:
+            raise ValueError("QUA must be evaluated with respect to an AABB.")
 
-        scale = self._referenceExtent_to_scale_factor(referenceExtent)
-        lower = referenceExtent.lower - scale
-        upper = referenceExtent.upper + scale
+        scale = self._aabbToScaleFactor(aabb)
+        lower = aabb.lower - scale
+        upper = aabb.upper + scale
 
         m = self.mesh(lower, upper)
 
@@ -1889,13 +1903,10 @@ class QUA(BodyMixin):
                    safety=safety)
 
     def __repr__(self):
-        return ("<QUA: {} xx={}, yy={}, zz={}, xy={}, "
-                "xz={}, yz={}, x={}, y={}, z={}, c={}>").format(
-                    self.name,
-                    self.cxx, self.cyy, self.czz,
-                    self.cxy, self.cxz, self.cyz,
-                    self.cx, self.cy, self.cz,
-                    self.c)
+        s = self
+        return (f"<QUA: {s.name} xx={s.cxx}, yy={s.cyy}, zz={s.czz},"
+                f" xy={s.cxy}, xz={s.cxz}, yz={s.cyz}, x={s.cx},"
+                f" y={s.cy}, z={s.cz}, c={s.c}>")
 
     def flukaFreeString(self):
         prefix = ""

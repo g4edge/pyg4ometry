@@ -299,7 +299,6 @@ class Reader(object):
                 stop = start
             else:
                 stop = int(region_upper)
-            stop += 1
 
             # WHAT4 is the step length in assigning indices
             if step is None or step == 0.0:

@@ -265,6 +265,26 @@ int CSG::polygonCount() {
   return _surfacemesh->number_of_faces();
 }
 
+bool do_intersect(CSG const &csg1, CSG const &csg2 ){
+  auto sm1 = *(csg1._surfacemesh->_surfacemesh);
+  auto sm2 = *(csg2._surfacemesh->_surfacemesh);
+  return CGAL::Polygon_mesh_processing::do_intersect(sm1, sm2);
+}
+
+std::vector<std::pair<std::size_t, std::size_t>>
+intersecting_meshes(py::list const &objects) {
+  std::vector<Surface_mesh> surface_meshes;
+  surface_meshes.reserve(objects.size());
+  for (auto &obj : objects) { // get underlying cgal surface_mesh instances
+    CSG *csg = obj.cast<CSG *>();
+    surface_meshes.push_back(*(csg->_surfacemesh->_surfacemesh));
+  }
+  std::vector<std::pair<std::size_t, std::size_t>> output;
+  CGAL::Polygon_mesh_processing::intersecting_meshes(
+      surface_meshes, std::back_inserter(output));
+  return output;
+}
+
 /*********************************************
 PYBIND
 *********************************************/
@@ -295,4 +315,7 @@ PYBIND11_MODULE(core, m) {
     .def("vertexCount",&CSG::vertexCount)
     .def("polygonCount",&CSG::polygonCount)
     .def("isNull",&CSG::isNull);
+
+  m.def("do_intersect", &do_intersect, "Check intersection for two meshes");
+  m.def("intersecting_meshes", &intersecting_meshes, "Find all connections between pairs of meshes");
 }
