@@ -1,5 +1,4 @@
 import sympy
-
 import antlr4
 
 from . import vector
@@ -45,30 +44,54 @@ def toAlgebraicExpression(regzone): # region or zone
     namespace = {name: sympy.Symbol(name) for name in bodyNames}
     return sympy.sympify(s, locals=namespace)
 
-def pruneZone(zone, aabb=None):
-    from IPython import embed; embed()
-    mesh0 = zone.intersections[0].body.mesh()
-    aabb0 = vector.AABB.fromMesh(mesh0)
-    result = aabb0
+def _getaabb(body, aabb=None):
+    mesh = body.mesh(aabb=aabb)
+    return vector.AABB.fromMesh(mesh)
 
-    filtered_intersections = []
-    for body in zone.intersections[1:]:
-        mesh = body.body.mesh(aabb=aabb)
-        if mesh.isNull():
-            from IPython import embed; embed()
-            continue
-        bodyAABB = vector.AABB.fromMesh(mesh)
-        if result.intersects(bodyAABB):
-            filtered_intersections.append(body)
+def _getMeshAndAABB(body, aabb=None):
+    mesh = body.mesh(aabb=aabb)
+    return mesh, vector.AABB.fromMesh(mesh)
+
+
+def pruneRegion(reg, aabb=None):
+    result = region.Region(reg.name)
+    for zone in reg.zones:
+        prunedZone = pruneZone(zone)
+        if prunedZone.intersections: # and not prunedZone.isNull(aabb=aabb):
+            result.addZone(prunedZone)
+    return result
+
+
+def pruneZone(zone, aabb0=None, aabb=None):
+    intersections = zone.intersections
+    if aabb0 is None:
+        aabb0 = vector.AABB.fromMesh(intersections[0].body.mesh())
+        intersections = intersections[1:]
+
+    result = region.Zone()
+    for intersect in intersections:
+        contents = intersect.body
+        if isinstance(contents, region.Zone):
+            prunedSubZone = pruneZone(contents, aabb0=aabb0, aabb=aabb)
+            result.addIntersection(prunedSubZone)
         else:
-            from IPython import embed; embed()
+            thisAABB = _getaabb(contents, aabb=aabb)
+            if thisAABB.intersects(aabb0):
+                aabb0 = thisAABB.intersect(aabb0)
+                result.addIntersection(contents)
+            else:
+                result.intersections = []
+                return result
 
-    filtered_subtractions = []
-    for body in zone.subtractions:
-        mesh = body.body.mesh(aabb=aabb)
-        if mesh.isNull():
-            from IPython import embed; embed()
-        bodyAABB = vector.AABB.fromMesh(mesh)
-        if result.intersects(bodyAABB):
-            filtered_subtractions.append(body)
-    from IPython import embed; embed()
+    for sub in zone.subtractions:
+        contents = sub.body
+        if isinstance(contents, region.Zone):
+            prunedSubZone = pruneZone(contents, aabb0=aabb0, aabb=aabb)
+            if not prunedSubZone.isNull():
+                result.addSubtraction(prunedSubZone)
+        else: # it's a body
+            thisAABB = _getaabb(contents)
+            if thisAABB.intersects(aabb0):
+                result.addSubtraction(contents)
+
+    return result
