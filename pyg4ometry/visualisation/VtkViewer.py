@@ -380,15 +380,49 @@ class VtkViewer:
                                  visOptions = pv.visOptions, overlap = False)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False, cutters = True):
+                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False,
+                cutters = True, clippers = True):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
         if solid_name in localmeshes:
             vtkPD = localmeshes[solid_name]
-        else : 
-            vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
-            localmeshes[solid_name] = vtkPD
+        else :
+            if clippers :
+                clipper_min_x =  0
+                clipper_min_y =  0
+                clipper_min_z = -1e6
+
+                clipper_max_x = 1e6
+                clipper_max_y = 1e6
+                clipper_max_z = 1e6
+
+                clipper_d_x = clipper_max_x - clipper_min_x
+                clipper_d_y = clipper_max_y - clipper_min_y
+                clipper_d_z = clipper_max_z - clipper_min_z
+
+                clipper_c_x = (clipper_max_x + clipper_min_x)/2.0
+                clipper_c_y = (clipper_max_y + clipper_min_y)/2.0
+                clipper_c_z = (clipper_max_z + clipper_min_z)/2.0
+
+                import pyg4ometry
+
+                reg = pyg4ometry.geant4.Registry()
+                b = pyg4ometry.geant4.solid.Box("b",clipper_d_x, clipper_d_y, clipper_d_z,reg,"mm",False)
+                bm = b.mesh()
+                bm.translate([clipper_c_x,clipper_c_y,clipper_c_z])
+                aa = pyg4ometry.transformation.matrix2axisangle(mtra)
+                meshclone = mesh.clone()
+                meshclone.rotate(aa[0],-aa[1]/_np.pi*180.)
+                meshclone.translate([tra[0],tra[1],tra[2]])
+                meshclone = meshclone.subtract(bm)
+                meshclone.translate([-tra[0],-tra[1],-tra[2]])
+                meshclone.rotate(aa[0],aa[1]/_np.pi*180.)
+                vtkPD = _Convert.pycsgMeshToVtkPolyData(meshclone)
+
+            else :
+                vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
+                localmeshes[solid_name] = vtkPD
 
         if self.interpolation is not "none":
             normal_generator = _vtk.vtkPolyDataNormals()
@@ -508,7 +542,7 @@ class VtkViewer:
             clipperActor =_vtk.vtkActor()
             clipperActor.SetMapper(clipperMapper)
             clipperActor.GetProperty().SetColor(1.0, 1.0, 1.0)
-            clipperActor.GetProperty().SetOpacity(1.0)
+            clipperActor.GetProperty().SetOpacity(0.5)
             clipperActor.SetScale(1, 1, 1)
 
             vtkActor.GetProperty().SetOpacity(0.0)
@@ -519,9 +553,10 @@ class VtkViewer:
             makeCutterPlane([0,1,0],[0,1,0])
             makeCutterPlane([0,0,1],[0,0,1])
 
-        #makeClipperPlane([1,0,0])
-        #makeClipperPlane([0,1,0])
-        #makeClipperPlane([0,0,1])
+        #if clippers :
+        #    makeClipperPlane([1,0,0])
+        #    makeClipperPlane([0,1,0])
+        #    makeClipperPlane([0,0,1])
 
         if overlap :
             overlapText = _vtk.vtkVectorText()
@@ -571,7 +606,7 @@ class VtkViewer:
         self.iren.Initialize()
 
         # Camera setup
-        self.ren.ResetCamera()
+        # self.ren.ResetCamera()
 
         # Render
         self.renWin.Render()
