@@ -363,8 +363,18 @@ class Reader(object):
                 mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry)
 
                 for comp in material["components"]:
+                    ref = str(comp.get("ref", ""))
+                    if ref not in self._registry.materialDict:
+                        # If it is pre-defined material, no declaration would have been encountered
+                        # Try to register the material as predefined
+                        try:
+                            _g4.MaterialPredefined(ref, registry=self._registry)
+
+                        except ValueError:
+                            raise ValueError("Component {} not defined"
+                                             "for composite material {}".format(ref, name))
+
                     if comp_type == "fraction":
-                        ref = str(comp.get("ref", ""))
                         abundance = float(comp.get("n", 0.0))
 
                         target = self._registry.materialDict[ref]
@@ -374,7 +384,6 @@ class Reader(object):
                             mat.add_element_massfraction(target, abundance)
 
                     elif comp_type == "composite":
-                        ref = comp.get("ref", "")
                         natoms = int(comp.get("n", 0))
                         mat.add_element_natoms(self._registry.materialDict[ref], natoms)
 
