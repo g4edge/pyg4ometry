@@ -1272,15 +1272,16 @@ class Writer(object):
         oe.setAttribute('name',self.prepend + instance.name)        
 
         # loop over objects
-        for solid, trans, i in zip(instance.objects, instance.transformations , range(0,len(instance.objects))) : 
-            ce = self.doc.createElement('multiUnionNode')
-            ce.setAttribute('name',self.prepend + 'node-' +str(i+1)) # One-counted
-            cse = self.doc.createElement('solid')
-            cse.setAttribute('ref',solid.name)
+        for i, (solid, trans) in enumerate(zip(instance.objects,
+                                               instance.transformations),
+                                           start=1):
+            ce = self.doc.createElement("multiUnionNode")
+            ce.setAttribute("name", f"{self.prepend}{instance.name}-node-{i}")
+            cse = self.doc.createElement("solid")
+            cse.setAttribute("ref", solid.name)
             ce.appendChild(cse)
-
-            self.writeVectorVariable(ce, trans[1]) # postion
-            self.writeVectorVariable(ce, trans[1]) # rotation
+            self.writeVectorVariable(ce, trans[1]) # position
+            self.writeVectorVariable(ce, trans[0]) # rotation
 
             oe.appendChild(ce)
 
