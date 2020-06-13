@@ -727,6 +727,9 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
 
+        #_plt.figure()
+        #_plt.plot(pZ,pR,"*-")
+
         # loop over zr convex polygons
         ibody = 0
 
@@ -752,6 +755,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         for i in range(0, len(zrListConvex), 1):
 
+            #zConv = [zr[0] for zr in zrListConvex[i]]
+            #rConv = [zr[1] for zr in zrListConvex[i]]
+            #_plt.plot(zConv,rConv)
+
             posBodies = []
             negBodies = []
 
@@ -772,7 +779,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
                 if dz == 0:
                     pass
 
-                elif dz > 0:
+                elif dz > 0 and r1 != 0 and r2 != 0:
                     body = _fluka.TRC("B" + name + "_" + format(ibody, '02'),
                                       [0,0,z1],
                                       [0,0,dz],
@@ -783,7 +790,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
                     negBodies.append(body)
                     ibody += 1
 
-                elif  dz < 0:
+                elif  dz < 0 and r1 != 0 and r2 != 0:
                     body = _fluka.TRC("B" + name + "_" + format(ibody, '02'),
                                       [0,0,z1],
                                       [0,0,dz],
