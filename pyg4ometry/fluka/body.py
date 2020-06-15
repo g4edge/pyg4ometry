@@ -159,6 +159,17 @@ class _HalfSpaceMixin(BodyMixin):
 
         return shiftedCentre
 
+    def _toPlaneHelper(self, normal, point):
+        normal = Three(self.transform.leftMultiplyRotation(normal))
+        point = self.transform.leftMultiplyVector(point)
+        point = vector.pointOnPlaneClosestToPoint(normal, point, [0, 0, 0])
+        return normal, point
+
+    def toTransformedPLA(self, name=None, flukaregistry=None):
+        normal, point = self.toPlane()
+        name = self.name if name is None else name
+        return PLA(name, normal, point, flukaregistry=flukaregistry)
+
 
 class _InfiniteCylinderMixin(BodyMixin):
     # Base class for XCC, YCC, ZCC.
