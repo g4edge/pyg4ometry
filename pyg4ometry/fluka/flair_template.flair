@@ -4,10 +4,14 @@ Mode: fluka
 md5: b1165f4a3f8dc908bbd24e2dcb35ab08
 Input: _FLUKA_INPUT_FILENAME_
 Page: Flair
+
 # Run information
 Run: <default>
 	Last:     5
 End
+
+# Custom materials information
+_FLUKA_CUSTOM_MATERIAL_INFORMATION_
 
 # Plots information
 Plot: Red

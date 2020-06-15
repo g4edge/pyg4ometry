@@ -7,7 +7,11 @@ def _getClassVariables(obj):
 
 
 def _makeNISTCompoundList():
-    nist_compound_list = []
+
+    return loadNISTMaterialDict().keys()
+
+def loadNISTMaterialDict():
+    nist_materials_dict = {}
 
     here = _os.path.dirname(_os.path.abspath(__file__))
     nist_data = _os.path.join(here, "bdsim_materials.txt")
@@ -15,13 +19,57 @@ def _makeNISTCompoundList():
     with open(nist_data,"r") as f:
         line  = f.readline()
         while line:
+            if line[0] == '#' :
+                line = f.readline()
+                continue
+
             line_data = line.split()
-            if line_data:
-                nist_compound_list.append(line_data[1])
+            if line_data[0] == "element":
+                type = line_data[0]
+                z    = int(line_data[1])
+                name = line_data[2]
+                rho  = float(line_data[3])
+                ion  = float(line_data[4])
+
+                nist_materials_dict[name] = {'type':type, 'z':z, 'name':name, 'density':rho, 'ionisation':ion}
+            elif line_data[0] == "compatom":
+                type = line_data[0]
+                ncom = int(line_data[1])
+                name = line_data[2]
+                rho  = float(line_data[3])
+                ion  = float(line_data[4])
+
+                components = []
+                for i in range(0,ncom,1) :
+                    comLine = f.readline()
+                    comLineSplit = comLine.split()
+                    z = int(comLineSplit[0])
+                    n = int(comLineSplit[1])
+                    components.append([z,n])
+                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
+
+            elif line_data[0] == "compmass":
+                type = line_data[0]
+                ncom = int(line_data[1])
+                name = line_data[2]
+                rho  = float(line_data[3])
+                ion  = float(line_data[4])
+
+                components = []
+                for i in range(0,ncom,1) :
+                    comLine = f.readline()
+                    comLineSplit = comLine.split()
+                    z    = int(comLineSplit[0])
+                    frac = float(comLineSplit[1])
+                    components.append([z,frac])
+                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
+
             line =f.readline()
 
-    return nist_compound_list
+    return nist_materials_dict
 
+nist_materials_dict = loadNISTMaterialDict()
+nist_materials_list = nist_materials_dict.keys()
 
 def MaterialPredefined(name, registry=None):
     """
@@ -32,7 +80,7 @@ def MaterialPredefined(name, registry=None):
     Inputs:
         name          - string
     """
-    if name not in _makeNISTCompoundList():
+    if name not in nist_materials_list:
         raise ValueError("{} is not a NIST compound".format(name))
     return Material(**locals())
 
@@ -165,7 +213,7 @@ class Material(MaterialBase):
                        "pressure": None,
                        "pressure_unit": None}
 
-        self.NIST_compounds =  _makeNISTCompoundList()
+        self.NIST_compounds =  nist_materials_list
 
         if not any(_getClassVariables(self)):
             self.type = "none"

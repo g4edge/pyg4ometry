@@ -1,3 +1,5 @@
+from pyg4ometry.fluka import material as _material
+
 class Writer :
 
     def __init__(self):
@@ -44,9 +46,17 @@ class Writer :
         f.write("GEOEND\n")
 
         # loop over materials
+        f.write("FREE\n")
+
+        predefinedNames = _material.predefinedMaterialNames()
+        for mk in self.flukaRegistry.materials.keys() :
+            # check if material/compound is already defined
+            if mk in predefinedNames :
+                pass
+            else :
+                f.write(self.flukaRegistry.materials[mk].flukaFreeString()+"\n")
 
         # loop over rotdefis
-        f.write("FREE\n")
         for k in rotdefi.keys() :
             for r in rotdefi[k].flukaFreeString("xyzt") :
                 # print k, r

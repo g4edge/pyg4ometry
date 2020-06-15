@@ -1,4 +1,5 @@
 import pyg4ometry.transformation as _transformation
+import pyg4ometry.geant4 as _geant4
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.pycgal as _pycgal
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
@@ -7,11 +8,22 @@ import copy as _copy
 
 # import matplotlib.pyplot as _plt
 
-def geant4Logical2Fluka(logicalVolume) :
+def geant4Reg2FlukaReg(greg) :
+
+    freg = _fluka.FlukaRegistry()
+    logi = greg.getWorldVolume()
+    matr = greg.materialDict
+    freg = geant4Logical2Fluka(logi, freg)
+    freg = geant4MaterialDict2Fluka(matr, freg)
+
+    return freg
+
+def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
     tra  = _np.array([0,0,0])
 
-    flukaRegistry = _fluka.FlukaRegistry()
+    if not flukaRegistry :
+        flukaRegistry = _fluka.FlukaRegistry()
 
     flukaNameCount = 0
 
@@ -1469,6 +1481,50 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     return fregion, flukaNameCount
 
 
+def geant4MaterialDict2Fluka(matr, freg):
+    for material in matr.items() :
+        materialName      = material[0]
+
+        if materialName.find("0x") != -1 :
+            materialNameStrip = materialName[0:materialName.find("0x")]
+        else :
+            materialNameStrip = materialName
+        materialNameShort = materialName[0:8]
+
+        materialInstance  = material[1]
+
+        # print(materialNameStrip,type(materialInstance))
+
+        if isinstance(materialInstance,_geant4.Isotope) :
+            # MATERIAL
+
+            mat = _fluka.Element(materialInstance.name,
+                                 materialInstance.Z,
+                                 0.1,
+                                 massNumber=materialInstance.N,
+                                 flukaregistry=freg)
+        elif isinstance(materialInstance,_geant4.Element):
+            if materialInstance.type == "simple" :
+                # MATERIAL
+                pass
+            elif materialInstance.type == "composite" :
+                # COMPOUND
+                pass
+        elif isinstance(materialInstance,_geant4.Material) :
+            if materialInstance.type == 'simple' :
+                # MATERIAL
+                pass
+            elif materialInstance.type == 'nist' :
+                # MATERIAL/Compound
+
+
+                pass
+            elif materialInstance.type == 'composite' :
+                # COMPOUND
+                pass
+    return freg
+
+
 def geant4Material2FlukaMaterial(g4registry = None) :
     for material in g4registry.materialDict.items() :
         materialName      = material[0]
@@ -1478,9 +1534,10 @@ def geant4Material2FlukaMaterial(g4registry = None) :
             materialNameStrip = materialName
         materialInstance  = material[1]
 
-        print(materialName, materialNameStrip, materialInstance,\
-            materialInstance.density,materialInstance.atomic_number, \
-            materialInstance.atomic_weight,materialInstance.number_of_components)
+        print(materialName)
+        #print(materialName, materialNameStrip, materialInstance,\
+        #    materialInstance.density,materialInstance.atomic_number, \
+        #    materialInstance.atomic_weight,materialInstance.number_of_components)
 
         if materialInstance.number_of_components == 0 :
             pass
