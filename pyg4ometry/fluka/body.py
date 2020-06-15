@@ -1,3 +1,9 @@
+"""Set of classes for FLUKA bodies."""
+
+__all__ = ["RPP", "BOX", "SPH", "RCC", "REC", "TRC", "ELL",
+           "WED", "RAW", "ARB", "XYP", "XZP", "YZP", "PLA",
+           "XCC", "YCC", "ZCC", "XEC", "YEC", "ZEC", "QUA"]
+
 from math import degrees
 from contextlib import contextmanager
 from copy import deepcopy
