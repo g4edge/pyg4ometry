@@ -1163,12 +1163,8 @@ class XYP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.z)
 
     def toPlane(self):
-        normal = Three(0, 0, 1)
-        point = Three(0, 0, self.z)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
+        return self._toPlaneHelper([0, 0, 1], [0, 0, self.z])
 
-        return normal, point
 
 class XZP(_HalfSpaceMixin):
     """
@@ -1208,11 +1204,8 @@ class XZP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.y)
 
     def toPlane(self):
-        normal = Three(0, 1, 0)
-        point = Three(0, self.y, 0)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
-        return normal, point
+        return self._toPlaneHelper([0, 1, 0], [0, self.y, 0])
+
 
 
 class YZP(_HalfSpaceMixin):
@@ -1255,12 +1248,7 @@ class YZP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.x)
 
     def toPlane(self):
-        normal = Three(1, 0, 0)
-        point = Three(self.x, 0, 0)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
-
-        return normal, point
+        return self._toPlaneHelper([1, 0, 0], [self.x, 0, 0])
 
 
 class PLA(_HalfSpaceMixin):
@@ -1316,10 +1304,8 @@ class PLA(_HalfSpaceMixin):
                                                          self.point))
 
     def toPlane(self):
-        normal = Three(self.transform.leftMultiplyRotation(self.normal))
-        point = Three(self.transform.leftMultiplyVector(self.point))
+        return self._toPlaneHelper(self.normal, self.point)
 
-        return normal, point
 
 
 
