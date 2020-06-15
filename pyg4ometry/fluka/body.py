@@ -13,10 +13,9 @@ from itertools import chain
 import numpy as np
 import vtk
 
-from .vector import Three, pointOnLineClosestToPoint
+from .vector import Three
 from . import vector
 from .directive import Transform
-from .vector import AABB as _AABB
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
@@ -197,9 +196,9 @@ class _ShiftableCylinderMixin(object):
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
         # Shift the ZEC along its infinite axis to the point closest
         # to the aabb centre.
-        shiftedCentre = pointOnLineClosestToPoint(aabb.centre,
-                                                  transformedCentre,
-                                                  transformedDirection)
+        shiftedCentre = vector.pointOnLineClosestToPoint(aabb.centre,
+                                                         transformedCentre,
+                                                         transformedDirection)
 
         return Three(shiftedCentre)
 
@@ -1010,7 +1009,7 @@ class ARB(BodyMixin):
         x = vertices[...,0]
         y = vertices[...,1]
         z = vertices[...,2]
-        return _AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
+        return vector.AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
     def geant4Solid(self, greg, aabb=None):
         verticesAndPolygons = self._getVerticesAndPolygons()
