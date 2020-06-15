@@ -8,6 +8,7 @@ import numpy as np
 import vtk
 
 from .vector import Three, pointOnLineClosestToPoint
+from . import vector
 from .directive import Transform
 from .vector import AABB as _AABB
 import pyg4ometry.transformation as trans
@@ -130,12 +131,10 @@ class _HalfSpaceMixin(BodyMixin):
         typename = type(self).__name__
         return f"{typename} {self.name} {coordinate}"
 
-    def pointOnPlaneClosestTo(self, point):
+    def pointOnPlaneClosestToPoint(self, point):
         """Get point on plane which is closest to point not on the plane."""
         normal, pointOnPlane = self.toPlane()
-        distance = np.dot((pointOnPlane - point), normal.unit())
-        closest_point = point + distance * normal.unit()
-        return closest_point
+        return vector.pointOnPlaneClosestToPoint(normal, pointOnPlane, point)
 
     def centre(self, aabb=None):
         normal, pointOnPlane = self.toPlane()
@@ -146,7 +145,7 @@ class _HalfSpaceMixin(BodyMixin):
             pass
 
         # Get point on plane closest to the reference point
-        closestPointOnFace = self.pointOnPlaneClosestTo(referencePoint)
+        closestPointOnFace = self.pointOnPlaneClosestToPoint(referencePoint)
         # Use reference point and normal to shift the box backwards by
         # half the box size.
         shiftedCentre = (closestPointOnFace
