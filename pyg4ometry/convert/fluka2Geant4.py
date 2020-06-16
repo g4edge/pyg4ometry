@@ -83,8 +83,7 @@ def fluka2Geant4(flukareg,
         timer.add("length safety")
 
     if minimiseSolids:
-        regionZoneAABBs = _getRegionZoneAABBs(fr, regions,
-                                                  quadricRegionAABBs)
+        regionZoneAABBs = _getRegionZoneAABBs(fr, regions, quadricRegionAABBs)
         timer.add("zone aabbs")
 
     aabbMap = None
