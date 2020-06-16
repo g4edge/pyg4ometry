@@ -91,7 +91,7 @@ class Three(np.ndarray):
             return Three(self.x + other[0],
                          self.y + other[1],
                          self.z + other[2])
-        except (AttributeError, IndexError):
+        except (AttributeError, IndexError, TypeError):
             pass
         return Three(self.x + other,
                      self.y + other,
