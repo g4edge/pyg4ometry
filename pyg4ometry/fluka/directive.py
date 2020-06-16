@@ -23,7 +23,7 @@ class Transform(object):
         self.invertRotoTranslation = invertRotoTranslation
 
     def leftMultiplyVector(self, vector):
-        vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
+        vector4d = [*vector, 1] # [x, y, z, 1]
         matrix = self.to4DMatrix()
         return Three(matrix.dot(vector4d)[0:3])
 
@@ -284,6 +284,12 @@ class RecursiveRotoTranslation(MutableSequence):
     def to4DMatrix(self):
         matrices = [mat.to4DMatrix() for mat in self]
         return _rightMultiplyMatrices(matrices)
+
+    def leftMultiplyVector(self, vector):
+        return self.to4DMatrix().dot([*vector, 1])[0:3]
+
+    def leftMultiplyRotation(self, matrix):
+        return self.to4DMatrix()[:3, :3].dot(matrix)
 
     def flukaFreeString(self, order="xyzt"):
         out = []
