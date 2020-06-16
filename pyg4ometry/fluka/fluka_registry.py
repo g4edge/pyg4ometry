@@ -3,6 +3,8 @@ from collections import OrderedDict, MutableMapping
 from itertools import count
 import logging
 
+import numpy as np
+import pandas as pd
 import pyg4ometry.geant4 as _g4
 from .region import Region
 from .directive import RecursiveRotoTranslation, RotoTranslation
@@ -10,12 +12,12 @@ from pyg4ometry.exceptions import IdenticalNameError
 from .material import (defineBuiltInFlukaMaterials,
                        BuiltIn,
                        predefinedMaterialNames)
+from . import body as _body
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 class FlukaRegistry(object):
-
     '''
     Object to store geometry for FLUKA input and output. All of the FLUKA classes \
     can be used without storing them in the Registry. The registry is used to write \
@@ -23,7 +25,7 @@ class FlukaRegistry(object):
     '''
 
     def __init__(self) :
-        self.bodyDict = OrderedDict()
+        self.bodyDict = FlukaBodyStore()
         self.rotoTranslations = RotoTranslationStore()
         self.regionDict = OrderedDict()
         self.materials = OrderedDict()
@@ -42,6 +44,9 @@ class FlukaRegistry(object):
             raise IdenticalNameError(body.name)
         logger.debug("%s", body)
         self.bodyDict[body.name] = body
+
+    def makeBody(self, *args, **kwargs):
+        return self.bodyDict.make(*args, **kwargs)
 
     def addRotoTranslation(self, rototrans):
         self.rotoTranslations.addRotoTranslation(rototrans)
@@ -194,3 +199,89 @@ class RotoTranslationStore(MutableMapping):
 
     def flukaFreeString(self):
         return "\n".join([r.flukaFreeString() for r in self.values()])
+
+
+class FlukaBodyStore(MutableMapping):
+    def __init__(self):
+        self._bodies = {} # bodies that aren't half spaces.
+        self._df = pd.DataFrame({"name": [],
+                                 "body": []
+                                 "planeNormal": [],
+                                 "pointOnPlane": []})
+
+    def make(self, clas, *args, **kwargs):
+        try:
+            del kwargs["flukaregistry"] # Prevent infinite recursion
+        except KeyError:
+            pass
+
+        if clas in {_body.XZP, _body.YZP, _body.XYP, _body.PLA}:
+            return self._makeHalfSpace(clas, *args, **kwargs)
+        else:
+            body = clas(*args, **kwargs)
+            self._bodies[_body.name] = body
+            return body
+
+    def _makeHalfSpace(self, clas, *args, **kwargs):
+        body = clas(*args, **kwargs)
+        normal, point = body.toPlane()
+
+        if not self:
+            self[body.name] = body
+            return body
+
+        mask = self._getMaskHalfSpace(body)
+        if sum(mask) == 0: # I.e. this half space has not been defined before.
+            return body
+
+        return self._df[mask]["body"].item()
+
+    def _getMaskHalfSpace(self, body):
+        normal, point = body.toPlane()
+        return self._maskHelper(["planeNormal", "pointOnPlane"],
+                                [normal, point])
+
+    def _maskHelper(self, columns, values):
+        mask = np.full_like(self._df["name"], True, dtype=bool)
+        for col, value in zip(columns, values):
+            mask &= self._df[col].apply(
+                    lambda x, value=value: np.isclose(x, value).all())
+        return mask
+
+    def _addHalfSpaceToDF(self, body):
+        name = body.name
+        normal, point = body.toPlane()
+        df = pd.DataFrame(
+            [[name, np.array(normal), np.array(point), body]],
+            columns=["name", "planeNormal",
+                     "pointOnPlane", "body"]
+        )
+        self._df.loc[len(self._df.index)] = df.iloc[0]
+
+    def addBody(self, body):
+        s = self._getStore(body)
+        s[body.name] = body
+
+    def __setitem__(self, key, value):
+        self._bodies[key] = value
+        if isinstance(value, (_body.XZP, _body.YZP, _body.XYP, _body.PLA)):
+            self._addHalfSpaceToDF(value)
+
+    def __getitem__(self, key):
+        return self._bodies[key]
+
+    def __delitem__(self, key):
+        del self._bodies[key]
+        if key in self._df["name"]:
+            from IPython import embed; embed()
+            rowIndex = df[df["name"] == key].index
+            self._df.drop(rowIndex, inplace=True)
+
+    def __len__(self):
+        return len(self._bodies)
+
+    def __contains__(self, key):
+        return key in self._bodies
+
+    def __iter__(self):
+        return iter(self._bodies)
