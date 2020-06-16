@@ -123,12 +123,14 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, boolean, reg, aabb):
+    @staticmethod
+    def _getSolidFromBoolean(boolean, reg, aabb):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
             aabb = _getAxisAlignedBoundingBox(aabb, boolean)
             return boolean.body.geant4Solid(reg, aabb=aabb)
+
 
     def mesh(self, aabb=None):
         result = self.intersections[0].body.mesh(aabb=aabb)
@@ -200,14 +202,16 @@ class Zone(object):
         for sub in self.subtractions:
             body = sub.body
             solids.append(self._getSolidFromBoolean(sub, reg, aabb))
-            transforms.append([body.tbxyz(), list(body.centre(aabb=aabb))])
+            thisAABB = _getAxisAlignedBoundingBox(aabb, sub)
+            transforms.append([body.tbxyz(), list(body.centre(aabb=thisAABB))])
 
         union = g4.solid.MultiUnion(f"{self.name}_munion_{_randomName()}",
                                     solids,
                                     transforms,
                                     registry=reg)
+        aabb0 = _getAxisAlignedBoundingBox(aabb, body0)
         rotation = matrix2tbxyz(body0.rotation().T)
-        translation = list(-1 * body0.centre(aabb=aabb))
+        translation = list(-1 * body0.centre(aabb=aabb0))
         result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
                                       start, union,
                                       [rotation, translation], reg)
