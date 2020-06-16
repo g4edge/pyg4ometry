@@ -381,7 +381,7 @@ class VtkViewer:
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
                 mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False,
-                cutters = True, clippers = True):
+                cutters = True, clippers = False):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
