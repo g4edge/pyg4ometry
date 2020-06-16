@@ -294,7 +294,21 @@ class VtkViewer:
                          self.physicalActorMap,visOptions=visOptions, overlap=False, cutters=False)
 
 
-    def addMeshSimple(self, csgMesh, visOptions = _VisOptions()):
+    def addMeshSimple(self, csgMesh, visOptions = _VisOptions(), clip=False):
+        if clip:
+            csgMesh = csgMesh.clone()
+            verts, _, _ = csgMesh.toVerticesAndPolygons()
+            x = _np.array([v[0] for v in verts])
+            y = _np.array([v[1] for v in verts])
+            z = _np.array([v[2] for v in verts])
+            xsize = max(x) - min(x)
+            ysize = max(y) - min(y)
+            zsize = max(z) - min(z)
+            t = -_np.array([min(x) + xsize/2.,
+                            min(y) + ysize/2.,
+                            min(z) + ysize/2.])
+            csgMesh.translate(t)
+
         self.addMesh("mesh", "mesh", csgMesh,
                      _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                      _np.array([0, 0, 0]),
