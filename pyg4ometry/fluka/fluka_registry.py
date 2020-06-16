@@ -205,7 +205,7 @@ class FlukaBodyStore(MutableMapping):
     def __init__(self):
         self._bodies = {} # bodies that aren't half spaces.
         self._df = pd.DataFrame({"name": [],
-                                 "body": []
+                                 "body": [],
                                  "planeNormal": [],
                                  "pointOnPlane": []})
 
