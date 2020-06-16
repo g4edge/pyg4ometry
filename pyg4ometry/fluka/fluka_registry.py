@@ -206,6 +206,7 @@ class FlukaBodyStore(MutableMapping):
         self._bodies = {} # bodies that aren't half spaces.
         self._df = pd.DataFrame({"name": [],
                                  "body": [],
+                                 "typename": [],
                                  "planeNormal": [],
                                  "pointOnPlane": []})
 
@@ -222,16 +223,32 @@ class FlukaBodyStore(MutableMapping):
             self._bodies[_body.name] = body
             return body
 
+    def getDegenerateBody(self, body):
+        if not self:
+            self.addBody(body)
+            return body
+
+        if not isinstance(body, (_body.XZP, _body.YZP, _body.XYP, _body.PLA)):
+            self.addBody(body)
+            return body
+
+        mask = self._getMaskHalfSpace(body)
+        if not mask.any():
+            self.addBody(body)
+            return body
+        print("DEGENERATE::::")
+
+        return self._df[mask]["body"].item()
+
     def _makeHalfSpace(self, clas, *args, **kwargs):
         body = clas(*args, **kwargs)
-        normal, point = body.toPlane()
 
         if not self:
             self[body.name] = body
             return body
 
         mask = self._getMaskHalfSpace(body)
-        if sum(mask) == 0: # I.e. this half space has not been defined before.
+        if not mask.any():  # I.e. this half space has not been defined before.
             return body
 
         return self._df[mask]["body"].item()
@@ -242,30 +259,41 @@ class FlukaBodyStore(MutableMapping):
                                 [normal, point])
 
     def _maskHelper(self, columns, values):
+        if not self:
+            return np.array([], dtype=bool)
         mask = np.full_like(self._df["name"], True, dtype=bool)
         for col, value in zip(columns, values):
             mask &= self._df[col].apply(
-                    lambda x, value=value: np.isclose(x, value).all())
+                lambda x, value=value: np.isclose(x, np.array(value)).all())
         return mask
 
     def _addHalfSpaceToDF(self, body):
         name = body.name
         normal, point = body.toPlane()
+        typename = type(body).__name__
         df = pd.DataFrame(
-            [[name, np.array(normal), np.array(point), body]],
-            columns=["name", "planeNormal",
-                     "pointOnPlane", "body"]
+            [[name, body, typename, np.array(normal), np.array(point)]],
+            columns=["name",
+                     "body",
+                     "typename",
+                     "planeNormal",
+                     "pointOnPlane"]
         )
         self._df.loc[len(self._df.index)] = df.iloc[0]
 
+    def _addBodyToDF(self, body):
+        name = body.name
+        df = pd.DataFrame([[name, body]], columns=["name", "body"])
+        self._df.loc[len(self._df.index)] = df.iloc[0]
+
     def addBody(self, body):
-        s = self._getStore(body)
-        s[body.name] = body
+        self[body.name] = body
 
     def __setitem__(self, key, value):
         self._bodies[key] = value
         if isinstance(value, (_body.XZP, _body.YZP, _body.XYP, _body.PLA)):
             self._addHalfSpaceToDF(value)
+        else: self._addBodyToDF(value)
 
     def __getitem__(self, key):
         return self._bodies[key]
@@ -285,3 +313,6 @@ class FlukaBodyStore(MutableMapping):
 
     def __iter__(self):
         return iter(self._bodies)
+
+    def __repr__(self):
+        return repr(self._bodies)
