@@ -398,12 +398,13 @@ class Zone(object):
 
     def leafCount(self):
         total = 0
-        for b in self.intersections + self.subtractions:
+        for body in self.intersections + self.subtractions:
+            b = body.body
             if isinstance(b, Zone):
                 total += b.leafCount()
             else:
-                b += 1
-
+                total += 1
+        return total
 
 class Region(object):
     """Represents a region which consists of a region name, one or more
