@@ -95,3 +95,27 @@ def pruneZone(zone, aabb0=None, aabb=None):
                 result.addSubtraction(contents)
 
     return result
+
+def squashDegenerateBodies(zone, bodystore=None):
+    if bodystore is None:
+        bodystore = fluka_registry.FlukaBodyStore()
+    result = region.Zone()
+    for b in zone.intersections:
+        body = b.body
+        if isinstance(body, region.Zone):
+            result.addIntersection(
+                squashDegenerateBodies(body, bodystore=bodystore)
+            )
+        else:
+            result.addIntersection(bodystore.getDegenerateBody(body))
+
+    for b in zone.subtractions:
+        body = b.body
+        if isinstance(body, region.Zone):
+            result.addSubtraction(
+                squashDegenerateBodies(body, bodystore=bodystore)
+            )
+        else:
+            result.addSubtraction(bodystore.getDegenerateBody(body))
+
+    return result
