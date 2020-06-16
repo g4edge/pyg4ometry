@@ -1,11 +1,10 @@
 from functools import reduce
-from collections import MutableSequence, OrderedDict
+from collections.abc import MutableSequence
 import numbers
 from operator import mul
 
 import numpy as np
 
-from pyg4ometry.transformation import reverse
 from pyg4ometry.exceptions import FLUKAError
 from .vector import Three
 from .card import Card
@@ -65,7 +64,7 @@ class Transform(object):
                 invertThis = self.invertRotoTranslation[0]
             except (IndexError, TypeError):
                 invertThis = bool(self.invertRotoTranslation)
-            if invertThis :
+            if invertThis:
                 matrix = np.linalg.inv(matrix)
             return [matrix]
         except AttributeError:
@@ -173,7 +172,13 @@ class RotoTranslation(object):
                 self.axis)
             raise ValueError(msg)
 
-        return r1.dot(r2)
+        return r1 @ r2
+
+    def leftMultiplyVector(self, vector):
+        return self.to4DMatrix().dot([*vector, 1])[0:3]
+
+    def leftMultiplyRotation(self, matrix):
+        return self.to4DMatrix()[:3, :3].dot(matrix)
 
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
@@ -312,10 +317,6 @@ class RecursiveRotoTranslation(MutableSequence):
                 seen.append(flag)
 
         return [c.toCard().toFreeString() for c in out]
-
-
-    def transformationIndex(self):
-        pass
 
     def _transformationIndices(self):
         return [rtrans.index for rtrans in self]
