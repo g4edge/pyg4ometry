@@ -85,6 +85,9 @@ class Transform(object):
 
             return matrices
 
+    def netTranslation(self):
+        return self.to4DMatrix()[0:,3]
+
     def to4DMatrix(self):
         matrices = []
         matrices.extend(self._expansionsTo4DMatrices())
