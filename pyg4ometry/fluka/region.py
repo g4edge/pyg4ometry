@@ -558,7 +558,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if areOverlapping(zones[i], zones[j], aabb=aabb):
+            if do_intersect(zones[i].mesh(aabb=aabb), zones[j].mesh(aabb=aabb)):
                 graph.add_edge(i, j)
 
         return graph
@@ -692,38 +692,6 @@ def _makeWorldLogicalVolume(reg):
     world_material = g4.MaterialPredefined("G4_Galactic")
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
-
-def areOverlapping(first, second, aabb=None):
-    """Determine if two Region, Zone, or Body instances are
-    overlapping, with the option to provide a reference AABB with
-    which the two operands may be evaluated with respect to.
-
-    :param first: The first Body, Zone, or Region instance with which
-    we check for overlaps with the second.
-    :type first: Body or Zone or Region
-    :param second: The second Body, Zone, or Region instance with which
-    we check for overlaps with the first.
-    :type second: Body or Zone or Region
-    :param aabb: An AABB or dictionary of AABB
-    instances with which the two operands should be evaluated with
-    respect to.
-    :type aabb: AABB or dict
-
-    """
-    greg = g4.Registry()
-
-    solid1 = first.geant4Solid(greg, aabb=aabb)
-    solid2 = second.geant4Solid(greg, aabb=aabb)
-
-    tbxyz, tra = _getRelativeTransform(first, second, aabb)
-    rot = tbxyz2axisangle(tbxyz)
-
-    mesh1 = solid1.mesh()
-    mesh2 = solid2.mesh()
-
-    mesh2.rotate(rot[0], -degrees(rot[1]))
-    mesh2.translate(tra)
-    return do_intersect(mesh1, mesh2)
 
 def _getAxisAlignedBoundingBox(aabb, boolean):
     """aabb should really be a dictionary of

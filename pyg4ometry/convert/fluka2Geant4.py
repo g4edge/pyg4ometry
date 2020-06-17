@@ -10,13 +10,17 @@ import numpy as np
 from .fluka2g4materials import makeFlukaToG4MaterialsMap
 from pyg4ometry import exceptions
 from pyg4ometry.fluka import Transform
-from pyg4ometry.fluka.region import areOverlapping
 from pyg4ometry.fluka.vector import (AABB, areAABBsOverlapping)
 from pyg4ometry.exceptions import FLUKAError
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
 from pyg4ometry.utils import Timer
+
+if _config.meshing == _config.meshingType.pycgal:
+    from pyg4ometry.pycgal.core import do_intersect
+elif _config.meshing == _config.meshingType.pycsg:
+    from pyg4ometry.pycsg.core import do_intersect
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -358,7 +362,7 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     cellRegion.rotation = types.MethodType(rotation, cellRegion)
     cellRegion.centre = types.MethodType(centre, cellRegion)
 
-    return areOverlapping(cellRegion, region)
+    return do_intersect(cellRegion.mesh(), region.mesh())
 
 def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """Loop over the regions looking for quadrics and for any quadrics we
