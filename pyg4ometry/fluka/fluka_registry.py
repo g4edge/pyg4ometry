@@ -219,11 +219,8 @@ class FlukaBodyStore(MutableMapping):
         }
         self._basecacher = BaseCacher(self._df)
 
-    def _getCacherFromBody(body):
-        try:
-            return self._cacher[type(body)]
-        except KeyError:
-            return self._basecacher
+    def _getCacherFromBody(self, body):
+        return self._cachers.get(type(body), self._basecacher)
 
     def make(self, clas, *args, **kwargs):
         try:
@@ -245,8 +242,8 @@ class FlukaBodyStore(MutableMapping):
 
     def __setitem__(self, key, value):
         self._bodies[key] = value
-        c = self._getCacherFromBody[type(value)]
-        c.append(body)
+        c = self._getCacherFromBody(value)
+        c.append(value)
 
     def __getitem__(self, key):
         return self._bodies[key]
@@ -299,7 +296,7 @@ class BaseCacher:
     def append(self, body):
         name = body.name
         df = pd.DataFrame([[name, body]], columns=["name", "body"])
-        self._df.loc[len(self._df.index)] = df.iloc[0]
+        self.df.loc[len(self.df.index)] = df.iloc[0]
 
     def addBody(self, body):
         name = body.name
