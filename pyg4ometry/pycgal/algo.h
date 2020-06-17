@@ -38,6 +38,12 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 
+#include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/tags.h>
+
+
+
+
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef Kernel::Vector_3                                    Vector_3;
@@ -144,7 +150,25 @@ class SurfaceMesh {
   int number_of_vertices();
 
   std::string toString();
-}; 
+};
+
+double haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
+  auto s1 = m1._surfacemesh;
+  auto s2 = m2._surfacemesh;
+  return CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<
+      CGAL::Sequential_tag>(
+      *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+double symmetric_haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
+  auto s1 = m1._surfacemesh;
+  auto s2 = m2._surfacemesh;
+  return CGAL::Polygon_mesh_processing::
+      approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
+          *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
+          CGAL::Polygon_mesh_processing::parameters::all_default());
+}
 
 class NefPolyhedron {
  public:
