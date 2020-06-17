@@ -406,6 +406,10 @@ class Zone(object):
                 total += 1
         return total
 
+    def isDNF(self):
+        parts = self.intersections + self.subtractions
+        return not any(isinstance(b, Zone) for b in parts)
+
 class Region(object):
     """Represents a region which consists of a region name, one or more
     zones, and a single material.  Metadata may be provided with the
@@ -655,6 +659,9 @@ class Region(object):
 
     def leafCount(self):
         return sum(z.leafCount() for z in self.zones)
+
+    def isDNF(self):
+        return all(z.isDNF() for z in self.zones)
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
