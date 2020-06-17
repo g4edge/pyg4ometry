@@ -631,7 +631,7 @@ class Region(object):
         return result
 
     def isNull(self, aabb=None):
-        return all(z.mesh(aabb=aabb).isNull() for z in self.zones)
+        return all(z.isNull(aabb=aabb) for z in self.zones)
 
     def toDNF(self, name):
         result = Region(name)
