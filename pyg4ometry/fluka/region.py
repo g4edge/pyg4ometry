@@ -602,23 +602,8 @@ class Region(object):
             extents.append(AABB(lower, upper))
         return extents
 
-    def extent(self, aabb=None):
-        greg = g4.Registry()
-        world_solid = g4.solid.Box("world_solid", 1e4, 1e4, 1e4, greg, "mm")
-        wlv = g4.LogicalVolume(world_solid,
-                               g4.MaterialPredefined("G4_Galactic"),
-                               "wl", greg)
-        solid = self.geant4Solid(greg, aabb=aabb)
-        regionLV = g4.LogicalVolume(solid,
-                                    g4.MaterialPredefined("G4_Galactic"),
-                                    "{}_lv".format(self.name),
-                                    greg)
-
-        lower, upper = regionLV.mesh.getBoundingBox(
-            self.rotation(),
-            self.centre(aabb=aabb))
-
-        return AABB(lower, upper)
+    def aabb(self, aabb=None):
+        return AABB.fromMesh(self.mesh(aabb=aabb))
 
     def removeBody(self, name):
         """Remove a body from this region by name.
