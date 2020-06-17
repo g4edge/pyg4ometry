@@ -13,6 +13,7 @@ from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, AABB, areAABBsOverlapping
 from . import boolean_algebra
 from pyg4ometry.transformation import tbxyz2axisangle
+from . import boolean_algebra
 
 import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.pycsg:
@@ -652,6 +653,12 @@ class Region(object):
 
     def isDNF(self):
         return all(z.isDNF() for z in self.zones)
+    def simplify(self):
+        if not self.isDNF():
+            raise ValueError("Must be DNF to simplify")
+        expr = boolean_algebra.regionToAlgebraicExpression(self)
+        self.zones = [boolean_algebra.expressionToZone(self, e)
+                      for e in expr.args]
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
