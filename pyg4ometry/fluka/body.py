@@ -1322,7 +1322,9 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, y, z, radius, transform=None, flukaregistry=None,comment=""):
+
+    def __init__(self, name, y, z, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.y = y
         self.z = z
@@ -1376,7 +1378,8 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, z, x, radius, transform=None, flukaregistry=None, comment=""):
+    def __init__(self, name, z, x, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
@@ -1430,7 +1433,8 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, x, y, radius, transform=None, flukaregistry=None, comment=""):
+    def __init__(self, name, x, y, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.x = x
         self.y = y
