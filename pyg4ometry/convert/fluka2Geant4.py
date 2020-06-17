@@ -17,7 +17,8 @@ import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
 from pyg4ometry.utils import Timer
 
-if _config.meshing == _config.meshingType.pycgal:
+import pyg4ometry.config as _config
+if _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import do_intersect
 elif _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import do_intersect
