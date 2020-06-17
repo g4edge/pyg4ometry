@@ -217,7 +217,7 @@ class Zone(object):
                                       [rotation, translation], reg)
         return result
 
-    def flukaFreeString(self):
+    def dumps(self):
         """Returns a string of this Zone innstance in the equivalent
         FLUKA syntax."""
         fs = ""
@@ -226,12 +226,12 @@ class Zone(object):
         for s in booleans:
             if isinstance(s,Intersection) :
                 if isinstance(s.body,Zone) :
-                    fs += " +({})".format(s.body.flukaFreeString())
+                    fs += " +({})".format(s.body.dumps())
                 else:
                     fs += " +{}".format(s.body.name)
             elif isinstance(s,Subtraction) :
                 if isinstance(s.body,Zone) :
-                    fs += " -({})".format(s.body.flukaFreeString())
+                    fs += " -({})".format(s.body.dumps())
                 else :
                     fs += " -{}".format(s.body.name)
 
@@ -486,12 +486,17 @@ class Region(object):
                                    transforms,
                                    registry=reg)
 
+    def dumps(self):
+        fs = ""
+        for z in self.zones :
+            fs=fs+" | "+z.dumps()
+        return fs
+
     def flukaFreeString(self):
         #fs = "region "+self.name
         fs = self.name+" "+str(5)
 
-        for z in self.zones :
-            fs=fs+" | "+z.flukaFreeString()
+        fs += self.dumps()
 
         if self.comment != "" :
             fs = "* "+self.comment+"\n"+fs
