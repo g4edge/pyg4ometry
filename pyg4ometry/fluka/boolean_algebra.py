@@ -7,44 +7,53 @@ from . import reader
 from .RegionExpression import RegionParserVisitor, RegionParser, RegionLexer
 from . import fluka_registry
 
+def expressionToZone(zone, zoneExpr):
+    zoneExpr = str(zoneExpr)
+    zoneExpr = zoneExpr.replace("& ~", "-")
+    zoneExpr = zoneExpr.replace("& ", "+")
+
+    # Hack to use the existing region parser...  fix this.
+    expr = f"dummy 5 {zoneExpr}"
+
+    istream = antlr4.InputStream(expr)
+    lexed_input = RegionLexer(istream)
+    tokens = antlr4.CommonTokenStream(lexed_input)
+    parser = RegionParser(tokens)
+    tree = parser.region()
+    freg = fluka_registry.FlukaRegistry()
+    zone.allBodiesToRegistry(freg)
+    vis = reader.RegionVisitor(freg)
+    vis.visit(tree)
+
+    return freg.regionDict["dummy"].zones[0]
+
+
 def zoneToDNFZones(zone):
-    dnf = sympy.to_dnf(toAlgebraicExpression(zone))
+    dnf = sympy.to_dnf(zoneToAlgebraicExpression(zone))
 
     zones = []
     for arg in dnf.args:
         arg = sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
         if not arg:
             continue
-
-        arg = str(arg)
-        arg = arg.replace("& ~", "-")
-        arg = arg.replace("& ", "+")
-
-        # Hack to use the existing region parser...  fix this.
-        expr = f"dummy 5 {arg}"
-
-        istream = antlr4.InputStream(expr)
-        lexed_input = RegionLexer(istream)
-        tokens = antlr4.CommonTokenStream(lexed_input)
-        parser = RegionParser(tokens)
-        tree = parser.region()
-        freg = fluka_registry.FlukaRegistry()
-        zone.allBodiesToRegistry(freg)
-        vis = reader.RegionVisitor(freg)
-        vis.visit(tree)
-
-        zones.append(freg.regionDict["dummy"].zones[0])
+        zones.append(expressionToZone(zone, arg))
 
     return zones
 
-def toAlgebraicExpression(regzone): # region or zone
-    s = regzone.flukaFreeString()
+def regionToAlgebraicExpression(region): # region or zone
+    result = []
+    for z in region.zones:
+        result.append(zoneToAlgebraicExpression(z))
+    return sympy.Or(*result)
+
+def zoneToAlgebraicExpression(zone):
+    s = zone.dumps()
     s = s.strip()
     s = s.lstrip("+")
     s = s.replace("-", "& ~")
     s = s.replace("( +", "(")
     s = s.replace(" +", " & ")
-    bodyNames = set(b.name for b in regzone.bodies())
+    bodyNames = set(b.name for b in zone.bodies())
     namespace = {name: sympy.Symbol(name) for name in bodyNames}
     return sympy.sympify(s, locals=namespace)
 
