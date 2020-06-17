@@ -1348,7 +1348,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                                                              [1, 0, 0]]))
 
     def __repr__(self):
-        return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}"
+        return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return XCC(self.name, self.y, self.z, self.radius + safety,
@@ -1402,7 +1402,7 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                                                              [0, -1, 0]]))
 
     def __repr__(self):
-        return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}"
+        return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return YCC(self.name, self.z, self.x, self.radius + safety,
@@ -1454,7 +1454,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
     def __repr__(self):
-        return f"<ZCC: {self.name}, x={self.x}, y={self.y}, r={self.radius}"
+        return f"<ZCC: {self.name}, x={self.x}, y={self.y}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return ZCC(self.name, self.x, self.y, self.radius + safety,
