@@ -1364,6 +1364,13 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return prefix+\
                self._infCylinderFreestringHelper(self.y, self.z)
 
+    def point(self):
+        return self.transform.leftMultiplyRotation([0, self.y, self.z])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([1, 0, 0])
+        return v / np.linalg.norm(v)
+
 
 class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the y-axis
@@ -1419,6 +1426,13 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return prefix+\
                self._infCylinderFreestringHelper(self.z, self.x)
 
+    def point(self):
+        return self.transform.leftMultiplyVector([self.x, 0, self.z])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([0, 1, 0])
+        return v / np.linalg.norm(v)
+
 
 class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the z-axis
@@ -1471,6 +1485,13 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.x, self.y, self.radius)
+
+    def point(self):
+        return self.transform.leftMultiplyVector([self.x, self.y, 0])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([0, 0, 1])
+        return v / np.linalg.norm(v)
 
 
 class XEC(BodyMixin, _ShiftableCylinderMixin):
