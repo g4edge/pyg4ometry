@@ -645,14 +645,15 @@ class Region(object):
             result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
         return result
 
+    def isDNF(self):
+        return all(z.isDNF() for z in self.zones)
+
     def filterNull(self, aabb=None):
         self.zones = [z for z in self.zones if not z.isNull(aabb=aabb)]
 
     def leafCount(self):
         return sum(z.leafCount() for z in self.zones)
 
-    def isDNF(self):
-        return all(z.isDNF() for z in self.zones)
     def simplify(self):
         if not self.isDNF():
             raise ValueError("Must be DNF to simplify")
