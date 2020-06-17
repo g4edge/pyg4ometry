@@ -12,6 +12,10 @@ def zoneToDNFZones(zone):
 
     zones = []
     for arg in dnf.args:
+        arg = sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
+        if not arg:
+            continue
+
         arg = str(arg)
         arg = arg.replace("& ~", "-")
         arg = arg.replace("& ", "+")
