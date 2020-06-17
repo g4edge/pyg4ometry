@@ -295,7 +295,7 @@ class BaseCacher:
     def appendData(self, columns, variables):
         df = pd.DataFrame([variables], columns=columns)
         self.df.loc[len(self.df.index)] = df.iloc[0]
-
+            
     def append(self, body):
         name = body.name
         df = pd.DataFrame([[name, body]], columns=["name", "body"])
@@ -358,3 +358,4 @@ class InfiniteCylinderCacher(BaseCacher):
         return vector.pointOnLineClosestToPoint([0, 0, 0],
                                                 body.point(),
                                                 body.direction())
+
