@@ -68,11 +68,14 @@ def pruneRegion(reg, aabb=None):
 
 def pruneZone(zone, aabb0=None, aabb=None):
     intersections = zone.intersections
-    if aabb0 is None:
-        aabb0 = vector.AABB.fromMesh(intersections[0].body.mesh())
-        intersections = intersections[1:]
 
     result = region.Zone()
+    if aabb0 is None:
+        first = intersections[0].body
+        aabb0 = vector.AABB.fromMesh(first.mesh())
+        intersections = intersections[1:]
+        result.addIntersection(first)
+
     for intersect in intersections:
         contents = intersect.body
         if isinstance(contents, region.Zone):
