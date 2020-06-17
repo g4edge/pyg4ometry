@@ -639,8 +639,8 @@ class Region(object):
             result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
         return result
 
-    def filterNull(self):
-        self.zones = [z for z in self.zones if not z.isNull()]
+    def filterNull(self, aabb=None):
+        self.zones = [z for z in self.zones if not z.isNull(aabb=aabb)]
 
     def leafCount(self):
         return sum(z.leafCount() for z in self.zones)
