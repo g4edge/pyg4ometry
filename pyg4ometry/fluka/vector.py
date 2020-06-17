@@ -224,3 +224,8 @@ def pointOnPlaneClosestToPoint(planeNormal, planePoint, point):
     planeNormal = planeNormal / np.linalg.norm(planeNormal)
     distance = np.dot((planePoint - point), planeNormal)
     return point + distance * planeNormal
+
+def areParallelOrAntiParallel(v1, v2):
+    v1 = v1 / np.linalg.norm(v1)
+    v2 = v2 / np.linalg.norm(v2)
+    return np.isclose(v1, v2).all() or np.isclose(v1, -v2).all()

@@ -13,6 +13,7 @@ from .material import (defineBuiltInFlukaMaterials,
                        BuiltIn,
                        predefinedMaterialNames)
 from . import body as _body
+from . import vector
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -204,106 +205,58 @@ class RotoTranslationStore(MutableMapping):
 class FlukaBodyStore(MutableMapping):
     def __init__(self):
         self._bodies = {} # bodies that aren't half spaces.
-        self._df = pd.DataFrame({"name": [],
-                                 "body": [],
-                                 "typename": [],
-                                 "planeNormal": [],
-                                 "pointOnPlane": []})
+        self._df = pd.DataFrame()
+
+        hscacher = HalfSpaceCacher(self._df)
+        infCylCacher = InfiniteCylinderCacher(self._df)
+        self._cachers = {_body.XZP: hscacher,
+                         _body.YZP: hscacher,
+                         _body.XYP: hscacher,
+                         _body.PLA: hscacher,
+                         _body.XCC: infCylCacher,
+                         _body.YCC: infCylCacher,
+                         _body.ZCC: infCylCacher
+        }
+        self._basecacher = BaseCacher(self._df)
+
+    def _getCacherFromBody(body):
+        try:
+            return self._cacher[type(body)]
+        except KeyError:
+            return self._basecacher
 
     def make(self, clas, *args, **kwargs):
         try:
             del kwargs["flukaregistry"] # Prevent infinite recursion
         except KeyError:
             pass
-
-        if clas in {_body.XZP, _body.YZP, _body.XYP, _body.PLA}:
-            return self._makeHalfSpace(clas, *args, **kwargs)
-        else:
-            body = clas(*args, **kwargs)
-            self._bodies[_body.name] = body
-            return body
+        return self._cachers[clas].make(clas, *args, **kwargs)
 
     def getDegenerateBody(self, body):
         if not self:
             self.addBody(body)
             return body
 
-        if not isinstance(body, (_body.XZP, _body.YZP, _body.XYP, _body.PLA)):
-            self.addBody(body)
-            return body
-
-        mask = self._getMaskHalfSpace(body)
-        if not mask.any():
-            self.addBody(body)
-            return body
-        print("DEGENERATE::::")
-
-        return self._df[mask]["body"].item()
-
-    def _makeHalfSpace(self, clas, *args, **kwargs):
-        body = clas(*args, **kwargs)
-
-        if not self:
-            self[body.name] = body
-            return body
-
-        mask = self._getMaskHalfSpace(body)
-        if not mask.any():  # I.e. this half space has not been defined before.
-            return body
-
-        return self._df[mask]["body"].item()
-
-    def _getMaskHalfSpace(self, body):
-        normal, point = body.toPlane()
-        return self._maskHelper(["planeNormal", "pointOnPlane"],
-                                [normal, point])
-
-    def _maskHelper(self, columns, values):
-        if not self:
-            return np.array([], dtype=bool)
-        mask = np.full_like(self._df["name"], True, dtype=bool)
-        for col, value in zip(columns, values):
-            mask &= self._df[col].apply(
-                lambda x, value=value: np.isclose(x, np.array(value)).all())
-        return mask
-
-    def _addHalfSpaceToDF(self, body):
-        name = body.name
-        normal, point = body.toPlane()
-        typename = type(body).__name__
-        df = pd.DataFrame(
-            [[name, body, typename, np.array(normal), np.array(point)]],
-            columns=["name",
-                     "body",
-                     "typename",
-                     "planeNormal",
-                     "pointOnPlane"]
-        )
-        self._df.loc[len(self._df.index)] = df.iloc[0]
-
-    def _addBodyToDF(self, body):
-        name = body.name
-        df = pd.DataFrame([[name, body]], columns=["name", "body"])
-        self._df.loc[len(self._df.index)] = df.iloc[0]
+        c = self._getCacherFromBody(body)
+        return c.getDegenerateBody(body)
 
     def addBody(self, body):
         self[body.name] = body
 
     def __setitem__(self, key, value):
         self._bodies[key] = value
-        if isinstance(value, (_body.XZP, _body.YZP, _body.XYP, _body.PLA)):
-            self._addHalfSpaceToDF(value)
-        else: self._addBodyToDF(value)
+        c = self._getCacherFromBody[type(value)]
+        c.append(body)
 
     def __getitem__(self, key):
         return self._bodies[key]
 
     def __delitem__(self, key):
+        if key not in self._bodies:
+            raise KeyError
+        body = self[key]
+        self._getCacherFromBody(body).remove(key)
         del self._bodies[key]
-        if key in self._df["name"]:
-            from IPython import embed; embed()
-            rowIndex = df[df["name"] == key].index
-            self._df.drop(rowIndex, inplace=True)
 
     def __len__(self):
         return len(self._bodies)
@@ -316,3 +269,92 @@ class FlukaBodyStore(MutableMapping):
 
     def __repr__(self):
         return repr(self._bodies)
+
+class BaseCacher:
+    COLUMNS =  ["name", "body"]
+    def __init__(self, df):
+        self.df = df
+        for column in self.COLUMNS:
+            try:
+                self.df.insert(len(self.df), column, [])
+            except ValueError: # already added the column maybe
+                pass
+
+    def getMask(self, columns, values, predicates):
+        if self.df.empty:
+            return np.array([], dtype=bool)
+        mask = np.full_like(self.df["name"], True, dtype=bool)
+        for column, value, predicate in zip(columns, values, predicates):
+            mask &= self.df[column].apply(
+                lambda x, value=value, predicate=predicate: predicate(
+                    x, np.array(value)
+                ).all()
+            )
+        return mask
+
+    def appendData(self, columns, variables):
+        df = pd.DataFrame([variables], columns=columns)
+        self.df.loc[len(self.df.index)] = df.iloc[0]
+
+    def append(self, body):
+        name = body.name
+        df = pd.DataFrame([[name, body]], columns=["name", "body"])
+        self._df.loc[len(self._df.index)] = df.iloc[0]
+
+    def addBody(self, body):
+        name = body.name
+        df = pd.DataFrame([[name, body]], columns=["name", "body"])
+        self.df.loc[len(self.df.index)] = df.iloc[0]
+
+    def remove(self, key):
+        rowIndex = self.df[self.df["name"] == key].index
+        self.df.drop(rowIndex, inplace=True)
+
+    def make(self, clas, *args, **kwargs):
+        body = clas(*args, **kwargs)
+        return self.getDegenerateBody(body)
+
+    def getDegenerateBody(self, body):
+        mask = self.mask(body)
+        if not mask.any(): # i.e. this half space has not been defined before.
+            self.append(body)
+            return body
+        return self.df[mask]["body"].item()
+
+    def __repr__(self):
+        return f"<{type(self).__name__}>"
+
+
+class HalfSpaceCacher(BaseCacher):
+    COLUMNS = ["name", "body", "planeNormal", "pointOnPlane"]
+    def append(self, body):
+        name = body.name
+        normal, point = body.toPlane()
+        super().appendData(self.COLUMNS,
+                           [name, body,np.array(normal), np.array(point)])
+
+    def mask(self, body):
+        normal, point = body.toPlane()
+        return self.getMask(["planeNormal", "pointOnPlane"],
+                            [normal, point],
+                            [np.isclose, np.isclose])
+
+class InfiniteCylinderCacher(BaseCacher):
+    COLUMNS = ["name", "body", "direction", "pointOnLine", "radius"]
+    def append(self, body):
+        super().appendData(
+            self.COLUMNS,
+            [body.name, body, body.direction(),
+             self._cylinderPoint(body), body.radius])
+
+    def mask(self, body):
+        return self.getMask(
+            ["direction", "pointOnLine", "radius"],
+            [body.direction(), self._cylinderPoint(body), body.radius],
+            [vector.areParallelOrAntiParallel, np.isclose, np.isclose])
+
+    @staticmethod
+    def _cylinderPoint(body):
+        return vector.pointOnLineClosestToPoint([0, 0, 0],
+                                                body.point(),
+                                                body.direction())
