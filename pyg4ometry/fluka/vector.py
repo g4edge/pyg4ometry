@@ -193,7 +193,7 @@ class AABB(object):
 
 def areAABBsOverlapping(first, second):
     """Check if two AABB instances are overlapping."""
-    return first.intersects(other)
+    return first.intersects(second)
 
 def pointOnLineClosestToPoint(point, point_on_line, direction):
     """
