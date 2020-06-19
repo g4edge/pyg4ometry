@@ -13,6 +13,7 @@ from itertools import chain
 import numpy as np
 import vtk
 
+from . import vis
 from .vector import Three
 from . import vector
 from .directive import Transform
@@ -60,7 +61,7 @@ def infinity(inf):
         INFINITY = _DEFAULT_INFINITY
 
 
-class BodyMixin(object):
+class BodyMixin(vis.ViewableMixin):
     """
     Base class representing a body as defined in FLUKA
     """
