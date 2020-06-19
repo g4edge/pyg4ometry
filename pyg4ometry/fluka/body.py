@@ -111,7 +111,7 @@ class BodyMixin(vis.ViewableMixin):
         mesh = self.geant4Solid(g4.Registry(), aabb=aabb).mesh()
         axis, angle = trans.tbxyz2axisangle(self.tbxyz())
         mesh.rotate(axis, -degrees(angle))
-        mesh.translate(self.centre())
+        mesh.translate(self.centre(aabb=aabb))
         return mesh
 
 
