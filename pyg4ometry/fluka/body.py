@@ -162,6 +162,7 @@ class _HalfSpaceMixin(BodyMixin):
         normal = Three(self.transform.leftMultiplyRotation(normal))
         point = self.transform.leftMultiplyVector(point)
         point = vector.pointOnPlaneClosestToPoint(normal, point, [0, 0, 0])
+        normal = normal / np.linalg.norm(normal)
         return normal, point
 
     def toTransformedPLA(self, name=None, flukaregistry=None):
