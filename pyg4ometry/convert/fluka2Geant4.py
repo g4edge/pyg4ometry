@@ -138,7 +138,10 @@ def fluka2Geant4(flukareg,
             wlv, greg)
     timer.add("main loop")
     timer.updateTotal()
-    _convertLatticeCells(greg, fr, wlv, regionZoneAABBs, regionNamesToLVs)
+    try:
+        _convertLatticeCells(greg, fr, wlv, regionZoneAABBs, regionNamesToLVs)
+    except UnboundLocalError:
+        pass
     greg.setWorld(wlv.name)
 
     return greg
