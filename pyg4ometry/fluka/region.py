@@ -78,7 +78,6 @@ class Union(_Boolean):
         self.body = body
         self._typestring = "uni"
 
-class Zone(object):
 class Zone(vis.ViewableMixin):
     """Represents a zone which consists of one or more body intersections
     and zero or more body subtractions.  May also be used to represent
