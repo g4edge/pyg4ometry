@@ -6,6 +6,7 @@ from math import degrees
 
 import networkx as nx
 
+from . import vis
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
@@ -78,6 +79,7 @@ class Union(_Boolean):
         self._typestring = "uni"
 
 class Zone(object):
+class Zone(vis.ViewableMixin):
     """Represents a zone which consists of one or more body intersections
     and zero or more body subtractions.  May also be used to represent
     subzones, which are zones nested within zones, for example the form
@@ -411,7 +413,7 @@ class Zone(object):
         parts = self.intersections + self.subtractions
         return not any(isinstance(b, Zone) for b in parts)
 
-class Region(object):
+class Region(vis.ViewableMixin):
     """Represents a region which consists of a region name, one or more
     zones, and a single material.  Metadata may be provided with the
     comment kwarg, which is used when writing to FLUKA to provide
