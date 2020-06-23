@@ -48,6 +48,8 @@ public:
   int vertexCount();
   int polygonCount();
   bool isNull() { return getNumberPolys() == 0; }
+  double volume() const;
+  double area() const;
 };
 
 bool do_intersect(CSG const &m1, CSG const &m2);
