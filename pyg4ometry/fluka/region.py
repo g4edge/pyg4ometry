@@ -489,20 +489,12 @@ class Region(vis.ViewableMixin):
                                    registry=reg)
 
     def dumps(self):
-        fs = ""
-        for z in self.zones :
-            fs=fs+" | "+z.dumps()
-        return fs
+        return "\n".join([f"|{z.dumps()}" for z in self.zones])
 
     def flukaFreeString(self):
-        #fs = "region "+self.name
-        fs = self.name+" "+str(5)
-
-        fs += self.dumps()
-
-        if self.comment != "" :
-            fs = "* "+self.comment+"\n"+fs
-
+        fs = f"{self.name} 5 {self.dumps()}"
+        if self.comment:
+            fs = f"* {self.comment}\n{fs}"
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
