@@ -267,12 +267,12 @@ int CSG::polygonCount() {
 
 double CSG::volume() const {
   auto sm = *(_surfacemesh->_surfacemesh);
-  return CGAL::Polygon_mesh_processing::volume(sm);
+  return CGAL::to_double(CGAL::Polygon_mesh_processing::volume(sm));
 }
 
 double CSG::area() const {
   auto sm = *(_surfacemesh->_surfacemesh);
-  return CGAL::Polygon_mesh_processing::area(sm);
+  return CGAL::to_double(CGAL::Polygon_mesh_processing::area(sm));
 }
 
 bool do_intersect(CSG const &csg1, CSG const &csg2 ){
