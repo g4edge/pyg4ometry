@@ -241,6 +241,9 @@ class RotoTranslation(object):
     def isPureTranslation(self):
         return (self.polar == 0) and (self.azimuth == 0)
 
+    def netExpansion(self):
+        return 1.0
+
 class RecursiveRotoTranslation(MutableSequence):
     """container for dealing with a recursively defined
     rototranslation.  they must also refer to the same rototrans,
@@ -298,6 +301,9 @@ class RecursiveRotoTranslation(MutableSequence):
 
     def leftMultiplyRotation(self, matrix):
         return self.to4DMatrix()[:3, :3].dot(matrix)
+
+    def netExpansion(self):
+        return 1.0
 
     def flukaFreeString(self, order="xyzt"):
         out = []
