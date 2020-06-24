@@ -14,7 +14,7 @@ class Transform(object):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
     RotoTranslation and RecursiveRotoTranslation"""
-    def __init__(self, expansion=None, translation=None,
+    def __init__(self, *, expansion=None, translation=None,
                  rotoTranslation=None, invertRotoTranslation=None):
         self.expansion = expansion
         self.translation = translation
