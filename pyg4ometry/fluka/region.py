@@ -4,6 +4,7 @@ from copy import deepcopy
 from uuid import uuid4
 from math import degrees
 
+import numpy as np
 import networkx as nx
 
 from . import vis
@@ -14,19 +15,13 @@ from pyg4ometry.fluka.body import BodyMixin
 from .vector import Three, AABB, areAABBsOverlapping
 from . import boolean_algebra
 from pyg4ometry.transformation import tbxyz2axisangle
-from . import boolean_algebra
 
 import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG, do_intersect
-    # from pyg4ometry.pycsg.geom import Vector as _Vector
-    # from pyg4ometry.pycsg.geom import Vertex as _Vertex
-    # from pyg4ometry.pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
-    # from pyg4ometry.pycgal.geom import Vector as _Vector
-    # from pyg4ometry.pycgal.geom import Vertex as _Vertex
-    # from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 
 
 logger = logging.getLogger(__name__)
@@ -465,10 +460,7 @@ class Region(vis.ViewableMixin):
         for zone in self.zones[1:]:
             mesh = zone.mesh(aabb=aabb)
             result = result.union(mesh)
-
         return result
-
-
 
     def geant4Solid(self, reg, aabb=None):
         """Get the geant4Solid instance corresponding to this Region."""
@@ -641,18 +633,16 @@ class Region(vis.ViewableMixin):
     def isDNF(self):
         return all(z.isDNF() for z in self.zones)
 
-    def filterNull(self, aabb=None):
+    def filterNullZones(self, aabb=None):
         self.zones = [z for z in self.zones if not z.isNull(aabb=aabb)]
 
     def leafCount(self):
         return sum(z.leafCount() for z in self.zones)
 
     def simplify(self):
-        if not self.isDNF():
-            raise ValueError("Must be DNF to simplify")
-        expr = boolean_algebra.regionToAlgebraicExpression(self)
-        self.zones = [boolean_algebra.expressionToZone(self, e)
-                      for e in expr.args]
+        boolean_algebra.pruneRegion(self)
+        boolean_algebra.simplifyRegion(self)
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
