@@ -1,5 +1,8 @@
-import sympy
+from collections import namedtuple
+
 import antlr4
+import numpy as np
+import sympy
 
 from . import vector
 from . import region
@@ -26,7 +29,6 @@ def expressionToZone(zone, zoneExpr):
     vis.visit(tree)
 
     return freg.regionDict["dummy"].zones[0]
-
 
 def zoneToDNFZones(zone):
     dnf = sympy.to_dnf(zoneToAlgebraicExpression(zone))
@@ -57,14 +59,9 @@ def zoneToAlgebraicExpression(zone):
     namespace = {name: sympy.Symbol(name) for name in bodyNames}
     return sympy.sympify(s, locals=namespace)
 
-def _getaabb(body, aabb=None):
-    mesh = body.mesh(aabb=aabb)
-    return vector.AABB.fromMesh(mesh)
-
 def _getMeshAndAABB(body, aabb=None):
     mesh = body.mesh(aabb=aabb)
     return mesh, vector.AABB.fromMesh(mesh)
-
 
 def pruneRegion(reg, aabb=None):
     result = region.Region(reg.name)
@@ -74,41 +71,45 @@ def pruneRegion(reg, aabb=None):
             result.addZone(prunedZone)
     return result
 
+def isZoneContradiction(zone):
+    intNames = {b.body.name for b in zone.intersections}
+    subNames = {b.body.name for b in zone.subtractions}
+    return bool(intNames.intersection(subNames))
 
 def pruneZone(zone, aabb0=None, aabb=None):
+    if not zone.isDNF():
+        raise ValueError("Zone must be in DNF")
+
     intersections = zone.intersections
 
     result = region.Zone()
+
+    if isZoneContradiction(zone):
+        return result
+
     if aabb0 is None:
         first = intersections[0].body
-        aabb0 = vector.AABB.fromMesh(first.mesh())
+        mesh0 = first.mesh()
+        aabb0 = vector.AABB.fromMesh(mesh0)
         intersections = intersections[1:]
         result.addIntersection(first)
 
     for intersect in intersections:
-        contents = intersect.body
-        if isinstance(contents, region.Zone):
-            prunedSubZone = pruneZone(contents, aabb0=aabb0, aabb=aabb)
-            result.addIntersection(prunedSubZone)
+        body = intersect.body
+
+        _, thisAABB = _getMeshAndAABB(body, aabb=aabb)
+        if thisAABB.intersects(aabb0):
+            aabb0 = thisAABB.intersect(aabb0)
+            result.addIntersection(body)
         else:
-            thisAABB = _getaabb(contents, aabb=aabb)
-            if thisAABB.intersects(aabb0):
-                aabb0 = thisAABB.intersect(aabb0)
-                result.addIntersection(contents)
-            else:
-                result.intersections = []
-                return result
+            result.intersections = []
+            return result
 
     for sub in zone.subtractions:
-        contents = sub.body
-        if isinstance(contents, region.Zone):
-            prunedSubZone = pruneZone(contents, aabb0=aabb0, aabb=aabb)
-            if not prunedSubZone.isNull():
-                result.addSubtraction(prunedSubZone)
-        else: # it's a body
-            thisAABB = _getaabb(contents)
-            if thisAABB.intersects(aabb0):
-                result.addSubtraction(contents)
+        body = sub.body
+        _, thisAABB = _getMeshAndAABB(body, aabb=aabb)
+        if thisAABB.intersects(aabb0):
+            result.addSubtraction(body)
 
     return result
 
@@ -135,3 +136,73 @@ def squashDegenerateBodies(zone, bodystore=None):
             result.addSubtraction(bodystore.getDegenerateBody(body))
 
     return result
+
+
+_MeshedZoneInfo = namedtuple("MeshedZoneInfo", ["zone", "mesh", "volume"])
+
+def simplifyRegion(region):
+    if not region.isDNF():
+        raise ValueError("Must be DNF to simplify region")
+
+    zoneData = []
+    for zone in region.zones:
+        mesh = zone.mesh()
+        zoneInfo = _MeshedZoneInfo(zone, mesh, mesh.volume())
+        zoneData.append(zoneInfo)
+
+    zoneData = _filterRedunantZonesSymbollicaly(zoneData)
+    zoneData = _filterRedundantZonesMetricCheck(zoneData)
+
+    region.zones = [zd.zone for zd in zoneData]
+
+def _filterRedunantZonesSymbollicaly(zoneData):
+    zoneData.sort(key=lambda x: x.volume, reverse=True)
+
+    largestZone = zoneData[0].zone
+    intersectionNamesLargestZone = set(b.body.name
+                                       for b in largestZone.intersections)
+    subtractionNamesLargestZone = set(b.body.name
+                                      for b in largestZone.subtractions)
+
+    resultZoneData = [zoneData[0]]
+    for zone, mesh, volume in zoneData[1:]:
+        zoneIntersectionNames = set(b.body.name for b in zone.intersections)
+        zoneSubtractionNames = set(b.body.name for b in zone.subtractions)
+
+        # Filter trivial "A & ~A"
+        if isZoneContradiction(zone):
+            continue
+
+        # This zone is a subset of the larger zone.
+        if zoneIntersectionNames.issuperset(
+            intersectionNamesLargestZone
+        ) and zoneSubtractionNames.issuperset(subtractionNamesLargestZone):
+            continue
+
+        resultZoneData.append(_MeshedZoneInfo(zone, mesh, volume))
+
+    return resultZoneData
+
+def _filterRedundantZonesMetricCheck(zoneData):
+    largestZoneData = zoneData[0]
+    runningRegionMesh = largestZoneData.mesh
+    runningRegionVolume = largestZoneData.volume
+
+    resultZoneData = [largestZoneData]
+    for zone, mesh, volume in zoneData[1:]:
+        if np.isclose(volume, 0.0):
+            continue
+        # clone to prevent possible excessive corefinement on the
+        # reference mesh resulting in huge slowdown.
+        mesh0 = runningRegionMesh.clone()
+        unionMesh = mesh0.union(mesh)
+        unionVolume = unionMesh.volume()
+        if np.isclose(runningRegionVolume, unionVolume):
+            continue
+        else:
+            runningRegionMesh = unionMesh
+            runningRegionVolume = unionVolume
+
+        result.append(_MeshedZoneInfo(zone, mesh, volume))
+
+    return resultZoneData
