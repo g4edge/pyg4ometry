@@ -46,8 +46,11 @@ class FlukaRegistry(object):
         logger.debug("%s", body)
         self.bodyDict[body.name] = body
 
-    def makeBody(self, *args, **kwargs):
-        return self.bodyDict.make(*args, **kwargs)
+    def makeBody(self, clas, *args, **kwargs):
+        return self.bodyDict.make(clas, *args, **kwargs)
+
+    def getDegenerateBody(self, body):
+        return self.bodyDict.getDegenerateBody(body)
 
     def addRotoTranslation(self, rototrans):
         self.rotoTranslations.addRotoTranslation(rototrans)
@@ -204,11 +207,10 @@ class RotoTranslationStore(MutableMapping):
 
 class FlukaBodyStore(MutableMapping):
     def __init__(self):
-        self._bodies = {} # bodies that aren't half spaces.
         self._df = pd.DataFrame()
-
         hscacher = HalfSpaceCacher(self._df)
         infCylCacher = InfiniteCylinderCacher(self._df)
+
         self._cachers = {_body.XZP: hscacher,
                          _body.YZP: hscacher,
                          _body.XYP: hscacher,
@@ -219,6 +221,9 @@ class FlukaBodyStore(MutableMapping):
         }
         self._basecacher = BaseCacher(self._df)
 
+    def _bodyNames(self):
+        return self._df["name"]
+
     def _getCacherFromBody(self, body):
         return self._cachers.get(type(body), self._basecacher)
 
@@ -227,42 +232,42 @@ class FlukaBodyStore(MutableMapping):
             del kwargs["flukaregistry"] # Prevent infinite recursion
         except KeyError:
             pass
-        return self._cachers[clas].make(clas, *args, **kwargs)
+        try:
+            result =  self._cachers[clas].make(clas, *args, **kwargs)
+            return result
+
+        except KeyError:
+            return self._basecacher.make(clas, *args, **kwargs)
 
     def getDegenerateBody(self, body):
-        if not self:
-            self.addBody(body)
-            return body
-
-        c = self._getCacherFromBody(body)
-        return c.getDegenerateBody(body)
+        return self._getCacherFromBody(body).getDegenerateBody(body)
 
     def addBody(self, body):
         self[body.name] = body
 
     def __setitem__(self, key, value):
-        self._bodies[key] = value
+        assert key == value.name
         c = self._getCacherFromBody(value)
-        c.append(value)
+        c.setBody(value)
 
     def __getitem__(self, key):
-        return self._bodies[key]
+        return self._df[self._df["name"] == key]["body"].item()
 
     def __delitem__(self, key):
-        if key not in self._bodies:
-            raise KeyError
+        if key not in self._bodyNames():
+            raise KeyError(f"Missing body name: {key}")
+
         body = self[key]
         self._getCacherFromBody(body).remove(key)
-        del self._bodies[key]
 
     def __len__(self):
-        return len(self._bodies)
+        return len(self._df)
 
     def __contains__(self, key):
-        return key in self._bodies
+        return key in self._bodyNames()
 
     def __iter__(self):
-        return iter(self._bodies)
+        return iter(self._bodyNames())
 
     def __repr__(self):
         return repr(self._bodies)
@@ -277,6 +282,54 @@ class BaseCacher:
             except ValueError: # already added the column maybe
                 pass
 
+    def appendData(self, variables):
+        df = pd.DataFrame([variables], columns=self.COLUMNS)
+        self.df.loc[len(self.df.index)] = df.iloc[0]
+
+    def append(self, body):
+        name = body.name
+        df = pd.DataFrame([[name, body]], columns=self.COLUMNS)
+        self.df.loc[len(self.df.index)] = df.iloc[0]
+
+    def setBody(self, body):
+        name = body.name
+        if name not in self.df["name"]:
+            self.append(body)
+        else:
+            rowIndex= self.df[self.df["name"] == name].index
+            raise NotImplementedError("operation not implemented")
+
+    def addBody(self, body):
+        name = body.name
+        df = pd.DataFrame([[name, body]], columns=self.COLUMNS)
+        self.df.loc[len(self.df.index)] = df.iloc[0]
+
+    def remove(self, key):
+        rowIndex = self.df[self.df["name"] == key].index
+        self.df.drop(rowIndex, inplace=True)
+
+    def make(self, clas, *args, **kwargs):
+        body = clas(*args, **kwargs)
+        return self.getDegenerateBody(body)
+
+    def getDegenerateBody(self, body):
+        self.append(body)
+        return body
+
+    def __repr__(self):
+        return f"<{type(self).__name__}>"
+
+# ZCC caching WORKS!!!!!!!!!
+
+class Cacheable(BaseCacher):
+    def getDegenerateBody(self, body):
+        mask = self.mask(body)
+        if not mask.any(): # i.e. this half space has not been defined before.
+            self.append(body)
+            return body
+        result = self.df[mask]["body"].item()
+        return result # self.df[mask]["body"].item()
+
     def getMask(self, columns, values, predicates):
         if self.df.empty:
             return np.array([], dtype=bool)
@@ -289,46 +342,13 @@ class BaseCacher:
             )
         return mask
 
-    def appendData(self, columns, variables):
-        df = pd.DataFrame([variables], columns=columns)
-        self.df.loc[len(self.df.index)] = df.iloc[0]
-            
-    def append(self, body):
-        name = body.name
-        df = pd.DataFrame([[name, body]], columns=["name", "body"])
-        self.df.loc[len(self.df.index)] = df.iloc[0]
 
-    def addBody(self, body):
-        name = body.name
-        df = pd.DataFrame([[name, body]], columns=["name", "body"])
-        self.df.loc[len(self.df.index)] = df.iloc[0]
-
-    def remove(self, key):
-        rowIndex = self.df[self.df["name"] == key].index
-        self.df.drop(rowIndex, inplace=True)
-
-    def make(self, clas, *args, **kwargs):
-        body = clas(*args, **kwargs)
-        return self.getDegenerateBody(body)
-
-    def getDegenerateBody(self, body):
-        mask = self.mask(body)
-        if not mask.any(): # i.e. this half space has not been defined before.
-            self.append(body)
-            return body
-        return self.df[mask]["body"].item()
-
-    def __repr__(self):
-        return f"<{type(self).__name__}>"
-
-
-class HalfSpaceCacher(BaseCacher):
+class HalfSpaceCacher(Cacheable):
     COLUMNS = ["name", "body", "planeNormal", "pointOnPlane"]
     def append(self, body):
         name = body.name
         normal, point = body.toPlane()
-        super().appendData(self.COLUMNS,
-                           [name, body,np.array(normal), np.array(point)])
+        super().appendData([name, body, np.array(normal), np.array(point)])
 
     def mask(self, body):
         normal, point = body.toPlane()
@@ -336,13 +356,17 @@ class HalfSpaceCacher(BaseCacher):
                             [normal, point],
                             [np.isclose, np.isclose])
 
-class InfiniteCylinderCacher(BaseCacher):
+
+class InfiniteCylinderCacher(Cacheable):
     COLUMNS = ["name", "body", "direction", "pointOnLine", "radius"]
     def append(self, body):
         super().appendData(
-            self.COLUMNS,
-            [body.name, body, body.direction(),
-             self._cylinderPoint(body), body.radius])
+            [body.name,
+             body,
+             body.direction(),
+             self._cylinderPoint(body),
+             body.radius]
+        )
 
     def mask(self, body):
         return self.getMask(
@@ -355,4 +379,3 @@ class InfiniteCylinderCacher(BaseCacher):
         return vector.pointOnLineClosestToPoint([0, 0, 0],
                                                 body.point(),
                                                 body.direction())
-
