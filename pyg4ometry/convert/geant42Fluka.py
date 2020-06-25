@@ -5,6 +5,7 @@ import pyg4ometry.pycgal as _pycgal
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
 import numpy as _np
 import copy as _copy
+from pyg4ometry.fluka.body import *
 
 # import matplotlib.pyplot as _plt
 
@@ -179,10 +180,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pRMax = solid.evaluateParameter(solid.pRMax)*uval
 
         # main cylinder
-        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,pRMax,
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
+        fbody1 = flukaRegistry.makeBody(ZCC, "B"+name+"_01",0,0,pRMax,
+                                        transform=transform,
+                                        flukaregistry=flukaRegistry,
+                                        comment=commentName)
 
         # low z cut
         fbody2 = _fluka.XYP("B"+name+"_02",-pDz/2,
@@ -197,10 +198,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         # inner cylinder
         if pRMin != 0 :
-            fbody4 = _fluka.ZCC("B"+name+"_04",0,0,pRMin,
-                                transform=transform,
-                                flukaregistry=flukaRegistry,
-                                comment=commentName)
+            fbody4 = flukaRegistry.makeBody(ZCC, "B"+name+"_04",0,0,pRMin,
+                                            transform=transform,
+                                            flukaregistry=flukaRegistry,
+                                            comment=commentName)
 
         # phi cuts
         if pDPhi != 2*_np.pi :
@@ -263,10 +264,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         pHighNorm2 = solid.evaluateParameter(solid.pHighNorm[2])
 
         # main cylinder
-        fbody1 = _fluka.ZCC("B"+name+"_01",0,0,pRMax,
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
+        fbody1 = flukaRegistry.makeBody(ZCC, "B"+name+"_01",0,0,pRMax,
+                                        transform=transform,
+                                        flukaregistry=flukaRegistry,
+                                        comment=commentName)
 
         # low z cut
         fbody2 = _fluka.PLA("B"+name+"_02",
@@ -286,10 +287,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
         if pRMin != 0 :
             # inner cylinder
-            fbody4 = _fluka.ZCC("B"+name+"_04",0,0,pRMin,
-                                transform=transform,
-                                flukaregistry=flukaRegistry,
-                                comment=commentName)
+            fbody4 = flukaRegistry.makeBody(ZCC, "B"+name+"_04",0,0,pRMin,
+                                            transform=transform,
+                                            flukaregistry=flukaRegistry,
+                                            comment=commentName)
 
         # phi cuts
         if pDPhi != 2*_np.pi :
