@@ -224,6 +224,9 @@ class FlukaBodyStore(MutableMapping):
     def _bodyNames(self):
         return list(self._df["name"])
 
+    def _bodies(self):
+        return list(self._df["body"])
+
     def _getCacherFromBody(self, body):
         return self._cachers.get(type(body), self._basecacher)
 
@@ -270,7 +273,7 @@ class FlukaBodyStore(MutableMapping):
         return iter(self._bodyNames())
 
     def __repr__(self):
-        return repr(self._bodies)
+        return repr(dict(zip(self._bodyNames(), self._bodies())))
 
 class BaseCacher:
     COLUMNS =  ["name", "body"]
