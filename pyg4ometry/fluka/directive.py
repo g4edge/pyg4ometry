@@ -290,7 +290,7 @@ class RecursiveRotoTranslation(MutableSequence):
         self._rtransList.insert(i, obj)
 
     def to4DMatrix(self):
-        matrices = [mat.to4DMatrix() for mat in self]
+        matrices = list(reversed([mat.to4DMatrix() for mat in self]))
         return _rightMultiplyMatrices(matrices)
 
     def leftMultiplyVector(self, vector):
