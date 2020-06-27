@@ -35,6 +35,10 @@ class MatrixConvertibleMixin:
         mtra[:, 0] /= scale[0, 0]
         return mtra
 
+    def netTranslation(self):
+        return self.to4DMatrix()[0:,3][:3]
+
+
 class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
@@ -109,9 +113,6 @@ class Transform(MatrixConvertibleMixin):
                 matrices.append(matrix)
 
             return matrices
-
-    def netTranslation(self):
-        return self.to4DMatrix()[0:,3]
 
     def to4DMatrix(self):
         matrices = []
@@ -274,7 +275,7 @@ class RotoTranslation(MatrixConvertibleMixin):
     def isPureTranslation(self):
         return (self.polar == 0) and (self.azimuth == 0)
 
-class RecursiveRotoTranslation(MutableSequence):
+
 class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
     """container for dealing with a recursively defined
     rototranslation.  they must also refer to the same rototrans,
