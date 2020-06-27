@@ -264,6 +264,12 @@ class RotoTranslation(MatrixConvertibleMixin):
 
         return cls(card.sdum, axis, card.what2, card.what3, [tx, ty, tz])
 
+    def hasTranslation(self):
+        return any(self.translation)
+
+    def hasRotation(self):
+        return self.polar or self.azimuth
+
     def isPureTranslation(self):
         return (self.polar == 0) and (self.azimuth == 0)
 
