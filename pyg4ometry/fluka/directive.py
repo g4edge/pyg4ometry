@@ -300,31 +300,8 @@ class RecursiveRotoTranslation(MutableSequence):
     def leftMultiplyRotation(self, matrix):
         return self.to4DMatrix()[:3, :3].dot(matrix)
 
-    def flukaFreeString(self, order="xyzt"):
-        out = []
-        s = self
-        seen = []
-        for flag in order:
-            if flag in seen:
-                continue
-            if flag == "t":
-                out.extend([rot for rot in s
-                            if rot.isPureTranslation() and rot not in out])
-                seen.append(flag)
-            elif flag == "x":
-                out.extend([rot for rot in s
-                            if rot.axis == "x" and rot not in out])
-                seen.append(flag)
-            elif flag == "y":
-                out.extend([rot for rot in s
-                            if rot.axis == "y" and rot not in out])
-                seen.append(flag)
-            elif flag == "z":
-                out.extend([rot for rot in s
-                            if rot.axis == "z" and rot not in out])
-                seen.append(flag)
-
-        return [c.toCard().toFreeString() for c in out]
+    def flukaFreeString(self):
+        return "\n".join([c.toCard().toFreeString() for c in self])
 
     def _transformationIndices(self):
         return [rtrans.index for rtrans in self]

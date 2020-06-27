@@ -57,10 +57,9 @@ class Writer :
                 f.write(self.flukaRegistry.materials[mk].flukaFreeString()+"\n")
 
         # loop over rotdefis
-        for k in rotdefi.keys() :
-            for r in rotdefi[k].flukaFreeString("xyzt") :
-                # print k, r
-                f.write(r+"\n")
+        for rotdefi in rotdefi.values():
+            rotstr = rotdefi.flukaFreeString()
+            f.write(f"{rotstr}\n")
         f.write("END\n")
         f.close()
 
