@@ -393,6 +393,10 @@ class Zone(vis.ViewableMixin):
         r.zones = boolean_algebra.zoneToDNFZones(self)
         return r
 
+    def isDNF(self):
+        parts = self.intersections + self.subtractions
+        return not any(isinstance(b, Zone) for b in parts)
+
     def leafCount(self):
         total = 0
         for body in self.intersections + self.subtractions:
@@ -403,9 +407,6 @@ class Zone(vis.ViewableMixin):
                 total += 1
         return total
 
-    def isDNF(self):
-        parts = self.intersections + self.subtractions
-        return not any(isinstance(b, Zone) for b in parts)
 
 class Region(vis.ViewableMixin):
     """Represents a region which consists of a region name, one or more
