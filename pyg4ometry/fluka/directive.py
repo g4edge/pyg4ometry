@@ -10,7 +10,31 @@ from .vector import Three
 from .card import Card
 
 
-class Transform(object):
+class MatrixConvertibleMixin:
+    def toScaleMatrix(self):
+        mtra = self.to4DMatrix()
+        result = np.identity(4)
+        result[0, 0] = np.linalg.norm(mtra[:,0])
+        result[1, 1] = np.linalg.norm(mtra[:,1])
+        result[2, 2] = np.linalg.norm(mtra[:,2])
+        return result
+
+    def toTranslationMatrix(self):
+        mtra = self.to4DMatrix()
+        result = np.identity(4)
+        result[:3, 3] = mtra[:3, 3]
+        return result
+
+    def toRotationMatrix(self):
+        mtra = self.to4DMatrix()
+        mtra[:3, 3]  = 0.0
+        scale = self.toScaleMatrix()
+        mtra[:, 2] /= scale[2, 2]
+        mtra[:, 1] /= scale[1, 1]
+        mtra[:, 0] /= scale[0, 0]
+        return mtra
+
+class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
     RotoTranslation and RecursiveRotoTranslation"""
@@ -96,7 +120,7 @@ class Transform(object):
         return _rightMultiplyMatrices(matrices)
 
 
-class RotoTranslation(object):
+class RotoTranslation(MatrixConvertibleMixin):
     """translation in mm, angles in degrees"""
     def __init__(self, name, axis=None, polar=0., azimuth=0.,
                  translation=None, transformationIndex=None, flukaregistry=None):
@@ -244,6 +268,7 @@ class RotoTranslation(object):
         return (self.polar == 0) and (self.azimuth == 0)
 
 class RecursiveRotoTranslation(MutableSequence):
+class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
     """container for dealing with a recursively defined
     rototranslation.  they must also refer to the same rototrans,
     i.e., have the same name.  for a list of rototranslations supplied:
