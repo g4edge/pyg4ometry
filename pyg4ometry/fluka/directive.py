@@ -43,6 +43,14 @@ class MatrixConvertibleMixin:
         assert (factors[0] == factors).all()
         return factors[0]
 
+    def leftMultiplyVector(self, vector):
+        vector4d = [*vector, 1] # [x, y, z, 1]
+        matrix = self.to4DMatrix()
+        return Three(matrix.dot(vector4d)[0:3])
+
+    def leftMultiplyRotation(self, matrix):
+        return self.toRotationMatrix()[:3, :3] @ matrix
+
 
 class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
@@ -54,16 +62,6 @@ class Transform(MatrixConvertibleMixin):
         self.translation = translation
         self.rotoTranslation = rotoTranslation
         self.invertRotoTranslation = invertRotoTranslation
-
-    def leftMultiplyVector(self, vector):
-        vector4d = [*vector, 1] # [x, y, z, 1]
-        matrix = self.to4DMatrix()
-        return Three(matrix.dot(vector4d)[0:3])
-
-    def leftMultiplyRotation(self, matrix):
-        matrices = self._rotoTranslationsTo4DMatrices()
-        combinedMatrix = _rightMultiplyMatrices(matrices)
-        return combinedMatrix[:3, :3].dot(matrix)
 
     def _expansionsTo4DMatrices(self):
         if not self.expansion:
@@ -205,12 +203,6 @@ class RotoTranslation(MatrixConvertibleMixin):
 
         return r1 @ r2
 
-    def leftMultiplyVector(self, vector):
-        return self.to4DMatrix().dot([*vector, 1])[0:3]
-
-    def leftMultiplyRotation(self, matrix):
-        return self.toRotationMatrix()[:3, :3] @ matrix
-
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
         try:
@@ -324,12 +316,6 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
     def to4DMatrix(self):
         matrices = [mat.to4DMatrix() for mat in self]
         return _rightMultiplyMatrices(matrices)
-
-    def leftMultiplyVector(self, vector):
-        return self.to4DMatrix().dot([*vector, 1])[0:3]
-
-    def leftMultiplyRotation(self, matrix):
-        return self.to4DMatrix()[:3, :3].dot(matrix)
 
     def flukaFreeString(self):
         return "\n".join([c.toCard().toFreeString() for c in self])
