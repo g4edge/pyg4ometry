@@ -38,6 +38,11 @@ class MatrixConvertibleMixin:
     def netTranslation(self):
         return self.to4DMatrix()[0:,3][:3]
 
+    def netExpansion(self):
+        factors = np.diagonal(self.toScaleMatrix())[:3]
+        assert (factors[0] == factors).all()
+        return factors[0]
+
 
 class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
@@ -59,13 +64,6 @@ class Transform(MatrixConvertibleMixin):
         matrices = self._rotoTranslationsTo4DMatrices()
         combinedMatrix = _rightMultiplyMatrices(matrices)
         return combinedMatrix[:3, :3].dot(matrix)
-
-    def netExpansion(self):
-        if not self.expansion:
-            return 1.0
-        elif isinstance(self.expansion, numbers.Number):
-            return self.expansion
-        return reduce(mul, self.expansion, 1.)
 
     def _expansionsTo4DMatrices(self):
         if not self.expansion:
@@ -360,7 +358,6 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
     def transformationIndex(self):
         for rtrans in self:
             del rtrans.transformationIndex
-
 
 def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     """tbxyz = trait bryan angles in radians"""
