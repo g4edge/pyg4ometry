@@ -114,14 +114,11 @@ class RotoTranslation(object):
             flukaregistry.addRotoTranslation(self)
 
         if len(name) > 10:
-            raise ValueError(
-                "Name {} is too long.  Max length = 10.".format(name))
+            raise ValueError(f"Name {name} is too long.  Max length = 10.")
         if polar < 0 or polar > 180.:
-            raise ValueError(
-                "Polar angle must be between 0 and +180 deg: {}".format(polar))
+            raise ValueError( f"Polar must be between 0 and +180°: {polar}")
         if azimuth < -180. or azimuth > 180.:
-            raise ValueError(
-                "Azimuth must be between -180 and +180 deg: {}".format(azimuth))
+            raise ValueError(f"Azimuth must be between ±180°: {azimuth}")
         if translation is None:
             self.translation = Three([0, 0, 0])
 
@@ -171,8 +168,7 @@ class RotoTranslation(object):
                            [  0,  0, 1,            tz],
                            [  0,  0, 0,             1]])
         else:
-            msg = "Unable to determine rotation matrix axis: {}.".format(
-                self.axis)
+            msg = f"Unable to determine rotation matrix axis: {self.axis}."
             raise ValueError(msg)
 
         return r1 @ r2
@@ -221,14 +217,12 @@ class RotoTranslation(object):
             # i = what1
             j = 0
         else:
-            raise ValueError(
-                "Unable to parse ROT-DEFI WHAT1: {}.".format(what1))
+            raise ValueError(f"Unable to parse ROT-DEFI WHAT1: {what1}.")
 
         try:
             axis = ["z", "x", "y", "z"][j] # j = 0, 1, 2, 3
         except IndexError:
-            raise FLUKAError(
-                "Unable to determine axis for WHAT1={}.".format(what1))
+            raise FLUKAError(f"Unable to determine axis for WHAT1={what1}.")
 
         tx, ty, tz = card.what4, card.what5, card.what6
         # CONVERTING TO MILLIMETRES!!
@@ -255,13 +249,12 @@ class RecursiveRotoTranslation(MutableSequence):
         names = [rtrans.name for rtrans in rotoTranslations]
         for name in names:
             if name != self.name:
-                msg = "Appended RotoTranslation does not match name: {}".format(
-                    self.name)
+                msg = f"RotoTranslation doesn't match name: {self.name}"
                 raise ValueError(msg)
 
     def __repr__(self):
-        return "<RecursiveRTrans: {}, {} element(s)>".format(self.name,
-                                                             len(self))
+        return f"<RecursiveRTrans: {self.name}, {len(self)} element(s)>"
+
     def __getitem__(self, i):
         return self._rtransList[i]
 
