@@ -123,7 +123,15 @@ class RotoTranslation(object):
             self.translation = Three([0, 0, 0])
 
     def __repr__(self):
-        return "<RotoTranslation: {}>".format(self.name)
+        strs = [f"<RTrans: {self.name}",
+                f"t={self.translation}" if self.hasTranslation() else "",
+                f"ax={self.axis}" if self.hasRotation() else "",
+                f"theta={self.polar}°" if self.polar else "",
+                f"phi={self.azimuth}°" if self.hasTranslation else ""]
+        strs = [s for s in strs if s]
+        result = ", ".join(strs)
+        return result + ">"
+
 
     def to4DMatrix(self):
         theta = self.polar * np.pi / 180.
