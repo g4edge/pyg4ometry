@@ -210,7 +210,7 @@ class RotoTranslation(MatrixConvertibleMixin):
         return self.to4DMatrix().dot([*vector, 1])[0:3]
 
     def leftMultiplyRotation(self, matrix):
-        return self.to4DMatrix()[:3, :3].dot(matrix)
+        return self.toRotationMatrix()[:3, :3] @ matrix
 
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
