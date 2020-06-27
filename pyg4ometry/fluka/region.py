@@ -641,8 +641,9 @@ class Region(vis.ViewableMixin):
         return sum(z.leafCount() for z in self.zones)
 
     def simplify(self):
-        boolean_algebra.pruneRegion(self)
-        boolean_algebra.simplifyRegion(self)
+        reg = boolean_algebra.pruneRegion(self)
+        boolean_algebra.simplifyRegion(reg)
+        self.zones = reg.zones
 
 
 def _get_relative_rot_matrix(first, second):
