@@ -203,6 +203,6 @@ def _filterRedundantZonesMetricCheck(zoneData):
             runningRegionMesh = unionMesh
             runningRegionVolume = unionVolume
 
-        result.append(_MeshedZoneInfo(zone, mesh, volume))
+        resultZoneData.append(_MeshedZoneInfo(zone, mesh, volume))
 
     return resultZoneData
