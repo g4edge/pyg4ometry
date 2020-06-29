@@ -628,7 +628,10 @@ class Region(vis.ViewableMixin):
     def toDNF(self, name):
         result = Region(name)
         for zone in self.zones:
-            result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
+            if zone.isDNF():
+                result.zones.append(zone)
+            else:
+                result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
         return result
 
     def isDNF(self):
