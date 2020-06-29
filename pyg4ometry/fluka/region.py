@@ -645,6 +645,8 @@ class Region(vis.ViewableMixin):
 
     def simplify(self):
         reg = boolean_algebra.pruneRegion(self)
+        if not reg.zones:
+            raise NullMeshError(f"Pruned region {self.name} is null.")
         boolean_algebra.simplifyRegion(reg)
         self.zones = reg.zones
 
