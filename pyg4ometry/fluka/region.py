@@ -395,7 +395,7 @@ class Zone(vis.ViewableMixin):
 
     def isDNF(self):
         parts = self.intersections + self.subtractions
-        return not any(isinstance(b, Zone) for b in parts)
+        return not any(isinstance(b.body, Zone) for b in parts)
 
     def leafCount(self):
         total = 0
