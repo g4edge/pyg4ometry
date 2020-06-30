@@ -32,8 +32,13 @@ def expressionToZone(zone, zoneExpr):
 
 def zoneToDNFZones(zone):
     dnf = sympy.to_dnf(zoneToAlgebraicExpression(zone))
-
     zones = []
+    if isinstance(dnf, sympy.And):
+        zones.append(expressionToZone(zone, dnf))
+        return zones
+
+    assert isinstance(dnf, sympy.Or)
+
     for arg in dnf.args:
         arg = sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
         if not arg:
