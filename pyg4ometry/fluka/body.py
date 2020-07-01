@@ -1465,7 +1465,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     def centre(self, aabb=None):
         initialCentre = Three(self.x, self.y, 0)
         if aabb is None:
-            return initialCentre
+            return self.transform.leftMultiplyVector(initialCentre)
         return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 0, 1],
                                                  initialCentre)
