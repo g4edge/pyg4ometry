@@ -8,7 +8,7 @@ import pandas as pd
 import pyg4ometry.geant4 as _g4
 from .region import Region
 from .directive import RecursiveRotoTranslation, RotoTranslation
-from pyg4ometry.exceptions import IdenticalNameError
+from pyg4ometry.exceptions import IdenticalNameError, FLUKAError
 from .material import (defineBuiltInFlukaMaterials,
                        BuiltIn,
                        predefinedMaterialNames)
@@ -254,6 +254,8 @@ class FlukaBodyStore(MutableMapping):
         c.setBody(value)
 
     def __getitem__(self, key):
+        if key not in self._bodyNames():
+            raise FLUKAError(f"Undefined body: {key}")
         return self._df[self._df["name"] == key]["body"].item()
 
     def __delitem__(self, key):
