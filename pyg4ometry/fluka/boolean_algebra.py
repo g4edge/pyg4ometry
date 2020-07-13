@@ -103,7 +103,7 @@ def pruneZone(zone, aabb0=None, aabb=None):
         body = intersect.body
 
         _, thisAABB = _getMeshAndAABB(body, aabb=aabb)
-        if thisAABB.intersects(aabb0):
+        if thisAABB.coplanarIntersects(aabb0):
             aabb0 = thisAABB.intersect(aabb0)
             result.addIntersection(body)
         else:
@@ -113,7 +113,7 @@ def pruneZone(zone, aabb0=None, aabb=None):
     for sub in zone.subtractions:
         body = sub.body
         _, thisAABB = _getMeshAndAABB(body, aabb=aabb)
-        if thisAABB.intersects(aabb0):
+        if thisAABB.coplanarIntersects(aabb0):
             result.addSubtraction(body)
 
     return result

@@ -170,6 +170,14 @@ class AABB(object):
                    [max(x), max(y), max(z)])
 
     def intersects(self, other):
+        return not (self.upper.x < other.lower.x
+                        or self.lower.x > other.upper.x
+                        or self.upper.y < other.lower.y
+                        or self.lower.y > other.upper.y
+                        or self.upper.z < other.lower.z
+                        or self.lower.z > other.upper.z)
+
+    def coplanarIntersects(self, other):
         return not (self.upper.x <= other.lower.x
                         or self.lower.x >= other.upper.x
                         or self.upper.y <= other.lower.y
