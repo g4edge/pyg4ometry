@@ -6,6 +6,7 @@ from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random
+from . import colour
 
 class VtkViewer:
     def __init__(self,size=(2048,1536), interpolation="none"):
@@ -347,9 +348,10 @@ class VtkViewer:
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
                     # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
-                    if self.materialVisualisationOptions :
-                        visOptions = self.materialVisualisationOptions[pv.logicalVolume.material.name]
-                    else :
+                    if self.materialVisualisationOptions:
+                        visOptions = self.getMaterialVisOptions(
+                            pv.logicalVolume.material.name)
+                    else:
                         visOptions = pv.visOptions
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
@@ -641,6 +643,28 @@ class VtkViewer:
             visOptions.alpha = 1.0
 
         return visOptions
+
+    def getMaterialVisOptions(self, name):
+        return self.materialVisualisationOptions[pv.logicalVolume.material.name]
+
+
+class PubViewer(VtkViewer):
+    def __init__(self, *args, **kwargs):
+        kwargs["interpolation"] = kwargs.get("interpolation", "flat")
+        super().__init__(*args, **kwargs)
+        cmap = kwargs.pop("colourmap", colour.ColourMap.fromPredefined())
+        materialVisualisationOptions = {}
+        for name, rgba in cmap.items():
+            vopt = _VisOptions()
+            vopt.color = rgba[:3]
+            vopt.alpha = rgba[3]
+            materialVisualisationOptions[name] = vopt
+        self.materialVisualisationOptions = materialVisualisationOptions
+
+    def getMaterialVisOptions(self, materialName):
+        return self.materialVisualisationOptions.get(materialName,
+                                                     colour.randomColour())
+
 
 def axesFromExtents(extent) :
     low  = _np.array(extent[0])
