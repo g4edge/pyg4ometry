@@ -211,3 +211,19 @@ def _filterRedundantZonesMetricCheck(zoneData):
         resultZoneData.append(_MeshedZoneInfo(zone, mesh, volume))
 
     return resultZoneData
+
+def nTermsDNF(expr):
+    # expr is a Zone instance or a Region instance
+    try:
+        return sum(_nTermsDNFZone(e) for e in expr.zones)
+    except AttributeError:
+        return _nTermsDNFZone(expr)
+
+def _nTermsDNFZone(zone):
+    total = 1
+    for arg in zone.subtractions:
+        if not isinstance(arg.body, region.Zone):
+            continue
+        total *= len(zone.intersections + zone.subtractions)
+
+    return total
