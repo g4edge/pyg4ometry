@@ -177,6 +177,14 @@ class AABB(object):
                         or self.upper.z <= other.lower.z
                         or self.lower.z >= other.upper.z)
 
+    def envelops(self, other):
+        return (self.upper.x > other.upper.x
+                    and self.lower.x < other.lower.x
+                    and self.upper.y > other.lower.y
+                    and self.lower.y < other.lower.y
+                    and self.upper.z > other.upper.z
+                    and self.lower.z < other.lower.z)
+
     def intersect(self, other):
         lower = [max(a, b) for a, b in zip(self.lower, other.lower)]
         upper = [min(a, b) for a, b in zip(self.upper, other.upper)]
