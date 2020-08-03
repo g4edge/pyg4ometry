@@ -234,7 +234,7 @@ class VtkViewer:
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
                              self.physicalActorMapOverlap,
-                             visOptions = visOptions, overlap = True)
+                             visOptions = visOptions, overlap = True, cutters=False)
 
         # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
@@ -606,7 +606,7 @@ class VtkViewer:
         self.iren.Initialize()
 
         # Camera setup
-        # self.ren.ResetCamera()
+        self.ren.ResetCamera()
 
         # Render
         self.renWin.Render()
