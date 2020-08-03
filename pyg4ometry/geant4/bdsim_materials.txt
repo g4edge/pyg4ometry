@@ -1,9 +1,33 @@
 # http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/ForApplicationDeveloper/html/Appendix/materialNames.html
 # element, (comp)ound (atom/mass)
 # bdsim --materials
-element   1 G4_H                            8.3748e-05     19.2       
-element   2 G4_He                           0.000166322    41.8       
-element   3 G4_Li                           0.534          40         
+# /material/nist/printElementZ 1 (for isotopes)
+element   1 G4_H                            8.3748e-05     19.2            6
+         1      0.999885
+         2      0.000115
+         3      0.0
+         4      0.0
+         5      0.0
+         6      0.0
+element   2 G4_He                           0.000166322    41.8            8
+         3      1.37e-06
+         4      0.999999
+         5      0.0
+         6      0.0
+         7      0.0
+         8      0.0
+         9      0.0
+         10     0.0
+element   3 G4_Li                           0.534          40              9
+         4      0.0
+         5      0.0
+         6      0.0759
+         7      0.9241
+         8      0.0
+         9      0.0
+         10     0.0
+         11     0.0
+         12     0.0
 element   4 G4_Be                           1.848          63.7       
 element   5 G4_B                            2.37           76         
 element   6 G4_C                            2              81         

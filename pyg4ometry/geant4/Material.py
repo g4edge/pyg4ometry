@@ -31,7 +31,21 @@ def loadNISTMaterialDict():
                 rho  = float(line_data[3])
                 ion  = float(line_data[4])
 
-                nist_materials_dict[name] = {'type':type, 'z':z, 'name':name, 'density':rho, 'ionisation':ion}
+                try :
+                    niso = int(line_data[5])
+                except(IndexError) :
+                    niso = 0
+
+                isotopes = []
+                for i in range(0,niso,1) :
+                    isoLine = f.readline()
+                    isoLineSplit = isoLine.split()
+
+                    n    = int(isoLineSplit[0])
+                    frac = float(isoLineSplit[1])
+                    isotopes.append([n,frac])
+
+                nist_materials_dict[name] = {'type':type, 'z':z, 'name':name, 'density':rho, 'ionisation':ion, 'isotopes':isotopes}
             elif line_data[0] == "compatom":
                 type = line_data[0]
                 ncom = int(line_data[1])
