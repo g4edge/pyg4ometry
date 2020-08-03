@@ -1,0 +1,4 @@
+mkdir cgal-install
+cd cgal-install 
+cmake ../cgal -DCMAKE_INSTALL_PREFIX=./
+make install
