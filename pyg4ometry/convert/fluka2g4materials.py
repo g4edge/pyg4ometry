@@ -1,5 +1,6 @@
+import pkg_resources
+
 import pandas as pd
-import os.path
 
 import pyg4ometry.geant4 as g4
 from pyg4ometry.fluka.material import BuiltIn, Element, Compound
@@ -203,10 +204,10 @@ def makeFlukaToG4MaterialsMap(freg, greg):
     return g.g4materials
 
 class _PeriodicTable(object):
-    THISDIR = os.path.dirname(os.path.abspath(__file__))
+
     def __init__(self):
-        self.table = pd.read_csv(
-            os.path.join(self.THISDIR, "periodic-table.csv"))
+        csv = pkg_resources.resource_filename(__name__, "periodic-table.csv")
+        self.table = pd.read_csv(csv)
 
     def massNumberFromZ(self, z):
         t = self.table

@@ -1,5 +1,7 @@
 import sys as _sys
 import os as _os
+import pkg_resources
+
 
 def _getClassVariables(obj):
     var_dict = {key:value for key, value in obj.__dict__.items() if not key.startswith('__') and not callable(key)}
@@ -13,8 +15,7 @@ def _makeNISTCompoundList():
 def loadNISTMaterialDict():
     nist_materials_dict = {}
 
-    here = _os.path.dirname(_os.path.abspath(__file__))
-    nist_data = _os.path.join(here, "bdsim_materials.txt")
+    nist_data = pkg_resources.resource_filename(__name__, "bdsim_materials.txt")
 
     with open(nist_data,"r") as f:
         line  = f.readline()

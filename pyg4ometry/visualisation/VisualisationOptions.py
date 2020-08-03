@@ -1,6 +1,6 @@
 import random as _random
 
-class VisualisationOptions(object) :
+class VisualisationOptions:
     
     def __init__(self) : 
         self.representation = "surface"
@@ -10,7 +10,10 @@ class VisualisationOptions(object) :
         self.lineWidth      = 1 
 
     def __repr__(self):
-        return "VisualisationOptions ["+self.representation+","+str(self.color)+","+str(self.alpha)+","+str(self.visible)+","+str(self.lineWidth)+"]"
+        s = self
+        rgba= [*self.color, self.alpha]
+        return (f"<VisOpt: rep={self.representation}, rgba={rgba}, "
+                f"vis={self.visible}, linewidth={self.lineWidth}>")
 
 def makeVisualisationOptionsDictFromMaterials(materials) :
 

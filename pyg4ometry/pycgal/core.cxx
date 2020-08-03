@@ -265,6 +265,16 @@ int CSG::polygonCount() {
   return _surfacemesh->number_of_faces();
 }
 
+double CSG::volume() const {
+  auto sm = *(_surfacemesh->_surfacemesh);
+  return CGAL::to_double(CGAL::Polygon_mesh_processing::volume(sm));
+}
+
+double CSG::area() const {
+  auto sm = *(_surfacemesh->_surfacemesh);
+  return CGAL::to_double(CGAL::Polygon_mesh_processing::area(sm));
+}
+
 bool do_intersect(CSG const &csg1, CSG const &csg2 ){
   auto sm1 = *(csg1._surfacemesh->_surfacemesh);
   auto sm2 = *(csg2._surfacemesh->_surfacemesh);
@@ -314,7 +324,9 @@ PYBIND11_MODULE(core, m) {
     .def("getNumberPolys",&CSG::getNumberPolys)
     .def("vertexCount",&CSG::vertexCount)
     .def("polygonCount",&CSG::polygonCount)
-    .def("isNull",&CSG::isNull);
+    .def("isNull",&CSG::isNull)
+    .def("volume", &CSG::volume, "Returns the volume of this mesh.")
+    .def("area", &CSG::area, "Returns the surface area of this mesh.");
 
   m.def("do_intersect", &do_intersect, "Check intersection for two meshes");
   m.def("intersecting_meshes", &intersecting_meshes, "Find all connections between pairs of meshes");

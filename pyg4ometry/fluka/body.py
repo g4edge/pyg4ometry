@@ -1,3 +1,9 @@
+"""Set of classes for FLUKA bodies."""
+
+__all__ = ["RPP", "BOX", "SPH", "RCC", "REC", "TRC", "ELL",
+           "WED", "RAW", "ARB", "XYP", "XZP", "YZP", "PLA",
+           "XCC", "YCC", "ZCC", "XEC", "YEC", "ZEC", "QUA"]
+
 from math import degrees
 from contextlib import contextmanager
 from copy import deepcopy
@@ -7,9 +13,10 @@ from itertools import chain
 import numpy as np
 import vtk
 
-from .vector import Three, pointOnLineClosestToPoint
+from . import vis
+from .vector import Three
+from . import vector
 from .directive import Transform
-from .vector import AABB as _AABB
 import pyg4ometry.transformation as trans
 import pyg4ometry.geant4 as g4
 import pyg4ometry.exceptions
@@ -54,7 +61,7 @@ def infinity(inf):
         INFINITY = _DEFAULT_INFINITY
 
 
-class BodyMixin(object):
+class BodyMixin(vis.ViewableMixin):
     """
     Base class representing a body as defined in FLUKA
     """
@@ -104,7 +111,7 @@ class BodyMixin(object):
         mesh = self.geant4Solid(g4.Registry(), aabb=aabb).mesh()
         axis, angle = trans.tbxyz2axisangle(self.tbxyz())
         mesh.rotate(axis, -degrees(angle))
-        mesh.translate(self.centre())
+        mesh.translate(self.centre(aabb=aabb))
         return mesh
 
 
@@ -130,12 +137,10 @@ class _HalfSpaceMixin(BodyMixin):
         typename = type(self).__name__
         return f"{typename} {self.name} {coordinate}"
 
-    def pointOnPlaneClosestTo(self, point):
+    def pointOnPlaneClosestToPoint(self, point):
         """Get point on plane which is closest to point not on the plane."""
         normal, pointOnPlane = self.toPlane()
-        distance = np.dot((pointOnPlane - point), normal.unit())
-        closest_point = point + distance * normal.unit()
-        return closest_point
+        return vector.pointOnPlaneClosestToPoint(normal, pointOnPlane, point)
 
     def centre(self, aabb=None):
         normal, pointOnPlane = self.toPlane()
@@ -146,13 +151,25 @@ class _HalfSpaceMixin(BodyMixin):
             pass
 
         # Get point on plane closest to the reference point
-        closestPointOnFace = self.pointOnPlaneClosestTo(referencePoint)
+        closestPointOnFace = self.pointOnPlaneClosestToPoint(referencePoint)
         # Use reference point and normal to shift the box backwards by
         # half the box size.
         shiftedCentre = (closestPointOnFace
                          - normal * 0.5 * self._boxFullSize(aabb))
 
         return shiftedCentre
+
+    def _toPlaneHelper(self, normal, point):
+        normal = Three(self.transform.leftMultiplyRotation(normal))
+        point = self.transform.leftMultiplyVector(point)
+        point = vector.pointOnPlaneClosestToPoint(normal, point, [0, 0, 0])
+        normal = normal / np.linalg.norm(normal)
+        return normal, point
+
+    def toTransformedPLA(self, name=None, flukaregistry=None):
+        normal, point = self.toPlane()
+        name = self.name if name is None else name
+        return PLA(name, normal, point, flukaregistry=flukaregistry)
 
 
 class _InfiniteCylinderMixin(BodyMixin):
@@ -181,9 +198,9 @@ class _ShiftableCylinderMixin(object):
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
         # Shift the ZEC along its infinite axis to the point closest
         # to the aabb centre.
-        shiftedCentre = pointOnLineClosestToPoint(aabb.centre,
-                                                  transformedCentre,
-                                                  transformedDirection)
+        shiftedCentre = vector.pointOnLineClosestToPoint(aabb.centre,
+                                                         transformedCentre,
+                                                         transformedDirection)
 
         return Three(shiftedCentre)
 
@@ -994,7 +1011,7 @@ class ARB(BodyMixin):
         x = vertices[...,0]
         y = vertices[...,1]
         z = vertices[...,2]
-        return _AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
+        return vector.AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
     def geant4Solid(self, greg, aabb=None):
         verticesAndPolygons = self._getVerticesAndPolygons()
@@ -1148,12 +1165,8 @@ class XYP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.z)
 
     def toPlane(self):
-        normal = Three(0, 0, 1)
-        point = Three(0, 0, self.z)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
+        return self._toPlaneHelper([0, 0, 1], [0, 0, self.z])
 
-        return normal, point
 
 class XZP(_HalfSpaceMixin):
     """
@@ -1193,11 +1206,8 @@ class XZP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.y)
 
     def toPlane(self):
-        normal = Three(0, 1, 0)
-        point = Three(0, self.y, 0)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
-        return normal, point
+        return self._toPlaneHelper([0, 1, 0], [0, self.y, 0])
+
 
 
 class YZP(_HalfSpaceMixin):
@@ -1240,12 +1250,7 @@ class YZP(_HalfSpaceMixin):
                self._halfspaceFreeStringHelper(self.x)
 
     def toPlane(self):
-        normal = Three(1, 0, 0)
-        point = Three(self.x, 0, 0)
-        normal = Three(self.transform.leftMultiplyRotation(normal))
-        point = self.transform.leftMultiplyVector(point)
-
-        return normal, point
+        return self._toPlaneHelper([1, 0, 0], [self.x, 0, 0])
 
 
 class PLA(_HalfSpaceMixin):
@@ -1301,10 +1306,8 @@ class PLA(_HalfSpaceMixin):
                                                          self.point))
 
     def toPlane(self):
-        normal = Three(self.transform.leftMultiplyRotation(self.normal))
-        point = Three(self.transform.leftMultiplyVector(self.point))
+        return self._toPlaneHelper(self.normal, self.point)
 
-        return normal, point
 
 
 
@@ -1321,7 +1324,9 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, y, z, radius, transform=None, flukaregistry=None,comment=""):
+
+    def __init__(self, name, y, z, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.y = y
         self.z = z
@@ -1347,7 +1352,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                                                              [1, 0, 0]]))
 
     def __repr__(self):
-        return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}"
+        return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return XCC(self.name, self.y, self.z, self.radius + safety,
@@ -1360,6 +1365,13 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.y, self.z)
+
+    def point(self):
+        return self.transform.leftMultiplyRotation([0, self.y, self.z])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([1, 0, 0])
+        return v / np.linalg.norm(v)
 
 
 class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
@@ -1375,7 +1387,8 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, z, x, radius, transform=None, flukaregistry=None, comment=""):
+    def __init__(self, name, z, x, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
@@ -1401,7 +1414,7 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
                                                              [0, -1, 0]]))
 
     def __repr__(self):
-        return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}"
+        return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return YCC(self.name, self.z, self.x, self.radius + safety,
@@ -1414,6 +1427,13 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.z, self.x)
+
+    def point(self):
+        return self.transform.leftMultiplyVector([self.x, 0, self.z])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([0, 1, 0])
+        return v / np.linalg.norm(v)
 
 
 class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
@@ -1429,7 +1449,8 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
 
     """
-    def __init__(self, name, x, y, radius, transform=None, flukaregistry=None, comment=""):
+    def __init__(self, name, x, y, radius, transform=None,
+                 flukaregistry=None, comment=""):
         self.name = name
         self.x = x
         self.y = y
@@ -1444,7 +1465,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     def centre(self, aabb=None):
         initialCentre = Three(self.x, self.y, 0)
         if aabb is None:
-            return initialCentre
+            return self.transform.leftMultiplyVector(initialCentre)
         return self._shiftInfiniteCylinderCentre(aabb,
                                                  [0, 0, 1],
                                                  initialCentre)
@@ -1453,7 +1474,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
     def __repr__(self):
-        return f"<ZCC: {self.name}, x={self.x}, y={self.y}, r={self.radius}"
+        return f"<ZCC: {self.name}, x={self.x}, y={self.y}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
         return ZCC(self.name, self.x, self.y, self.radius + safety,
@@ -1466,6 +1487,13 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.x, self.y, self.radius)
+
+    def point(self):
+        return self.transform.leftMultiplyVector([self.x, self.y, 0])
+
+    def direction(self):
+        v = self.transform.leftMultiplyRotation([0, 0, 1])
+        return v / np.linalg.norm(v)
 
 
 class XEC(BodyMixin, _ShiftableCylinderMixin):

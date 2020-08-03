@@ -10,13 +10,18 @@ import numpy as np
 from .fluka2g4materials import makeFlukaToG4MaterialsMap
 from pyg4ometry import exceptions
 from pyg4ometry.fluka import Transform
-from pyg4ometry.fluka.region import areOverlapping
 from pyg4ometry.fluka.vector import (AABB, areAABBsOverlapping)
 from pyg4ometry.exceptions import FLUKAError
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
 from pyg4ometry.utils import Timer
+
+import pyg4ometry.config as _config
+if _config.meshing == _config.meshingType.cgal_sm:
+    from pyg4ometry.pycgal.core import do_intersect
+elif _config.meshing == _config.meshingType.pycsg:
+    from pyg4ometry.pycsg.core import do_intersect
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -83,8 +88,7 @@ def fluka2Geant4(flukareg,
         timer.add("length safety")
 
     if minimiseSolids:
-        regionZoneAABBs = _getRegionZoneAABBs(fr, regions,
-                                                  quadricRegionAABBs)
+        regionZoneAABBs = _getRegionZoneAABBs(fr, regions, quadricRegionAABBs)
         timer.add("zone aabbs")
 
     aabbMap = None
@@ -134,7 +138,10 @@ def fluka2Geant4(flukareg,
             wlv, greg)
     timer.add("main loop")
     timer.updateTotal()
-    _convertLatticeCells(greg, fr, wlv, regionZoneAABBs, regionNamesToLVs)
+    try:
+        _convertLatticeCells(greg, fr, wlv, regionZoneAABBs, regionNamesToLVs)
+    except UnboundLocalError:
+        pass
     greg.setWorld(wlv.name)
 
     return greg
@@ -263,10 +270,8 @@ def _getMaximalOfTwoAABBs(aabb1, aabb2):
     :type aabb2: AABB
 
     """
-    # Get combined aabbs which are greatest
-    lower = [min(a, b) for a, b in zip(aabb1.lower, aabb2.lower)]
-    upper = [max(a, b) for a, b in zip(aabb1.upper, aabb2.upper)]
-    return fluka.AABB(lower, upper)
+    return aabb1.union(aabb2)
+
 
 def _filterBlackHoleRegions(flukareg, regions):
     """Returns a new FlukaRegistry instance with all regions with
@@ -361,7 +366,7 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     cellRegion.rotation = types.MethodType(rotation, cellRegion)
     cellRegion.centre = types.MethodType(centre, cellRegion)
 
-    return areOverlapping(cellRegion, region)
+    return do_intersect(cellRegion.mesh(), region.mesh())
 
 def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """Loop over the regions looking for quadrics and for any quadrics we

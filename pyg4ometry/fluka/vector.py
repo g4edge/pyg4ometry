@@ -1,14 +1,14 @@
-import numpy as _np
+import numpy as np
 
 import pyg4ometry.transformation as _trf
 
-class Three(_np.ndarray):
+class Three(np.ndarray):
     def __new__(cls, *coordinates):
         # If an array-like of 3:
-        if (_np.shape(coordinates) == (1, 3)):
-            obj = _np.asarray(coordinates[0], dtype=float).view(cls)
-        elif _np.shape(coordinates) == (3,): # If supplied as x, y, z
-            obj = _np.asarray(coordinates, dtype=float).view(cls)
+        if (np.shape(coordinates) == (1, 3)):
+            obj = np.asarray(coordinates[0], dtype=float).view(cls)
+        elif np.shape(coordinates) == (3,): # If supplied as x, y, z
+            obj = np.asarray(coordinates, dtype=float).view(cls)
         else:
             raise TypeError("Unknown construction: %s" % (coordinates,))
         return obj
@@ -41,26 +41,26 @@ class Three(_np.ndarray):
         """
         Check if instance is parallel to some other vector, v
         """
-        return _np.linalg.norm(_np.cross(self, other)) < tolerance
+        return np.linalg.norm(np.cross(self, other)) < tolerance
 
     def unit(self):
         """
         Get this as a unit vector.
         """
-        return self/_np.linalg.norm(self)
+        return self/np.linalg.norm(self)
 
     def length(self):
         """
         vector length (l2 norm)
 
         """
-        return _np.linalg.norm(self)
+        return np.linalg.norm(self)
 
     def dot(self, other):
-        return _np.dot(self,other)
+        return np.dot(self,other)
 
     def cross(self, other):
-        return _np.cross(self,other)
+        return np.cross(self,other)
 
     def __eq__(self, other):
         try:
@@ -91,7 +91,7 @@ class Three(_np.ndarray):
             return Three(self.x + other[0],
                          self.y + other[1],
                          self.z + other[2])
-        except (AttributeError, IndexError):
+        except (AttributeError, IndexError, TypeError):
             pass
         return Three(self.x + other,
                      self.y + other,
@@ -160,15 +160,56 @@ class AABB(object):
         size = self.size
         return ((0.5 * size.x)**2 + (0.5 * size.y)**2 + (0.5 * size.z)**2)**0.5
 
+    @classmethod
+    def fromMesh(cls, csgmesh):
+        vertices = csgmesh.toVerticesAndPolygons()[0]
+        x = [v[0] for v in vertices]
+        y = [v[1] for v in vertices]
+        z = [v[2] for v in vertices]
+        return cls([min(x), min(y), min(z)],
+                   [max(x), max(y), max(z)])
+
+    def intersects(self, other):
+        return not (self.upper.x < other.lower.x
+                        or self.lower.x > other.upper.x
+                        or self.upper.y < other.lower.y
+                        or self.lower.y > other.upper.y
+                        or self.upper.z < other.lower.z
+                        or self.lower.z > other.upper.z)
+
+    def coplanarIntersects(self, other):
+        return not (self.upper.x <= other.lower.x
+                        or self.lower.x >= other.upper.x
+                        or self.upper.y <= other.lower.y
+                        or self.lower.y >= other.upper.y
+                        or self.upper.z <= other.lower.z
+                        or self.lower.z >= other.upper.z)
+
+    def envelops(self, other):
+        return (self.upper.x > other.upper.x
+                    and self.lower.x < other.lower.x
+                    and self.upper.y > other.lower.y
+                    and self.lower.y < other.lower.y
+                    and self.upper.z > other.upper.z
+                    and self.lower.z < other.lower.z)
+
+    def intersect(self, other):
+        lower = [max(a, b) for a, b in zip(self.lower, other.lower)]
+        upper = [min(a, b) for a, b in zip(self.upper, other.upper)]
+        return AABB(lower, upper)
+
+    def union(self, other):
+        lower = [min(a, b) for a, b in zip(self.lower, other.lower)]
+        upper = [max(a, b) for a, b in zip(self.upper, other.upper)]
+        return AABB(lower, upper)
+
+    def isNull(self):
+        return any(self.lower > self.upper)
+
 
 def areAABBsOverlapping(first, second):
     """Check if two AABB instances are overlapping."""
-    return not (first.upper.x < second.lower.x
-                or first.lower.x > second.upper.x
-                or first.upper.y < second.lower.y
-                or first.lower.y > second.upper.y
-                or first.upper.z < second.lower.z
-                or first.lower.z > second.upper.z)
+    return first.intersects(second)
 
 def pointOnLineClosestToPoint(point, point_on_line, direction):
     """
@@ -193,3 +234,14 @@ def pointOnLineClosestToPoint(point, point_on_line, direction):
     pt = p1 + t * a
 
     return pt
+
+def pointOnPlaneClosestToPoint(planeNormal, planePoint, point):
+    """Get point on plane which is closest to point not on the plane."""
+    planeNormal = planeNormal / np.linalg.norm(planeNormal)
+    distance = np.dot((planePoint - point), planeNormal)
+    return point + distance * planeNormal
+
+def areParallelOrAntiParallel(v1, v2):
+    v1 = v1 / np.linalg.norm(v1)
+    v2 = v2 / np.linalg.norm(v2)
+    return np.isclose(v1, v2).all() or np.isclose(v1, -v2).all()

@@ -1,5 +1,5 @@
 from functools import reduce
-from collections import MutableSequence, OrderedDict
+from collections.abc import MutableSequence
 import numbers
 from operator import mul
 
@@ -11,33 +11,57 @@ from .vector import Three
 from .card import Card
 
 
-class Transform(object):
+class MatrixConvertibleMixin:
+    def toScaleMatrix(self):
+        mtra = self.to4DMatrix()
+        result = np.identity(4)
+        result[0, 0] = np.linalg.norm(mtra[:,0])
+        result[1, 1] = np.linalg.norm(mtra[:,1])
+        result[2, 2] = np.linalg.norm(mtra[:,2])
+        return result
+
+    def toTranslationMatrix(self):
+        mtra = self.to4DMatrix()
+        result = np.identity(4)
+        result[:3, 3] = mtra[:3, 3]
+        return result
+
+    def toRotationMatrix(self):
+        mtra = self.to4DMatrix()
+        mtra[:3, 3]  = 0.0
+        scale = self.toScaleMatrix()
+        mtra[:, 2] /= scale[2, 2]
+        mtra[:, 1] /= scale[1, 1]
+        mtra[:, 0] /= scale[0, 0]
+        return mtra
+
+    def netTranslation(self):
+        return self.to4DMatrix()[0:,3][:3]
+
+    def netExpansion(self):
+        factors = np.diagonal(self.toScaleMatrix())[:3]
+        assert (factors[0] == factors).all()
+        return factors[0]
+
+    def leftMultiplyVector(self, vector):
+        vector4d = [*vector, 1] # [x, y, z, 1]
+        matrix = self.to4DMatrix()
+        return Three(matrix.dot(vector4d)[0:3])
+
+    def leftMultiplyRotation(self, matrix):
+        return self.toRotationMatrix()[:3, :3] @ matrix
+
+
+class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
     RotoTranslation and RecursiveRotoTranslation"""
-    def __init__(self, expansion=None, translation=None,
+    def __init__(self, *, expansion=None, translation=None,
                  rotoTranslation=None, invertRotoTranslation=None):
         self.expansion = expansion
         self.translation = translation
         self.rotoTranslation = rotoTranslation
         self.invertRotoTranslation = invertRotoTranslation
-
-    def leftMultiplyVector(self, vector):
-        vector4d = [vector[0], vector[1], vector[2], 1] # [x, y, z, 1]
-        matrix = self.to4DMatrix()
-        return Three(matrix.dot(vector4d)[0:3])
-
-    def leftMultiplyRotation(self, matrix):
-        matrices = self._rotoTranslationsTo4DMatrices()
-        combinedMatrix = _rightMultiplyMatrices(matrices)
-        return combinedMatrix[:3, :3].dot(matrix)
-
-    def netExpansion(self):
-        if not self.expansion:
-            return 1.0
-        elif isinstance(self.expansion, numbers.Number):
-            return self.expansion
-        return reduce(mul, self.expansion, 1.)
 
     def _expansionsTo4DMatrices(self):
         if not self.expansion:
@@ -65,7 +89,7 @@ class Transform(object):
                 invertThis = self.invertRotoTranslation[0]
             except (IndexError, TypeError):
                 invertThis = bool(self.invertRotoTranslation)
-            if invertThis :
+            if invertThis:
                 matrix = np.linalg.inv(matrix)
             return [matrix]
         except AttributeError:
@@ -94,7 +118,7 @@ class Transform(object):
         return _rightMultiplyMatrices(matrices)
 
 
-class RotoTranslation(object):
+class RotoTranslation(MatrixConvertibleMixin):
     """translation in mm, angles in degrees"""
     def __init__(self, name, axis=None, polar=0., azimuth=0.,
                  translation=None, transformationIndex=None, flukaregistry=None):
@@ -112,19 +136,24 @@ class RotoTranslation(object):
             flukaregistry.addRotoTranslation(self)
 
         if len(name) > 10:
-            raise ValueError(
-                "Name {} is too long.  Max length = 10.".format(name))
+            raise ValueError(f"Name {name} is too long.  Max length = 10.")
         if polar < 0 or polar > 180.:
-            raise ValueError(
-                "Polar angle must be between 0 and +180 deg: {}".format(polar))
+            raise ValueError( f"Polar must be between 0 and +180°: {polar}")
         if azimuth < -180. or azimuth > 180.:
-            raise ValueError(
-                "Azimuth must be between -180 and +180 deg: {}".format(azimuth))
+            raise ValueError(f"Azimuth must be between ±180°: {azimuth}")
         if translation is None:
             self.translation = Three([0, 0, 0])
 
     def __repr__(self):
-        return "<RotoTranslation: {}>".format(self.name)
+        strs = [f"<RTrans: {self.name}",
+                f"t={self.translation}" if self.hasTranslation() else "",
+                f"ax={self.axis}" if self.hasRotation() else "",
+                f"theta={self.polar}°" if self.polar else "",
+                f"phi={self.azimuth}°" if self.hasTranslation else ""]
+        strs = [s for s in strs if s]
+        result = ", ".join(strs)
+        return result + ">"
+
 
     def to4DMatrix(self):
         theta = self.polar * np.pi / 180.
@@ -169,11 +198,10 @@ class RotoTranslation(object):
                            [  0,  0, 1,            tz],
                            [  0,  0, 0,             1]])
         else:
-            msg = "Unable to determine rotation matrix axis: {}.".format(
-                self.axis)
+            msg = f"Unable to determine rotation matrix axis: {self.axis}."
             raise ValueError(msg)
 
-        return r1.dot(r2)
+        return r1 @ r2
 
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
@@ -213,14 +241,12 @@ class RotoTranslation(object):
             # i = what1
             j = 0
         else:
-            raise ValueError(
-                "Unable to parse ROT-DEFI WHAT1: {}.".format(what1))
+            raise ValueError(f"Unable to parse ROT-DEFI WHAT1: {what1}.")
 
         try:
             axis = ["z", "x", "y", "z"][j] # j = 0, 1, 2, 3
         except IndexError:
-            raise FLUKAError(
-                "Unable to determine axis for WHAT1={}.".format(what1))
+            raise FLUKAError(f"Unable to determine axis for WHAT1={what1}.")
 
         tx, ty, tz = card.what4, card.what5, card.what6
         # CONVERTING TO MILLIMETRES!!
@@ -230,10 +256,17 @@ class RotoTranslation(object):
 
         return cls(card.sdum, axis, card.what2, card.what3, [tx, ty, tz])
 
+    def hasTranslation(self):
+        return any(self.translation)
+
+    def hasRotation(self):
+        return self.polar or self.azimuth
+
     def isPureTranslation(self):
         return (self.polar == 0) and (self.azimuth == 0)
 
-class RecursiveRotoTranslation(MutableSequence):
+
+class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
     """container for dealing with a recursively defined
     rototranslation.  they must also refer to the same rototrans,
     i.e., have the same name.  for a list of rototranslations supplied:
@@ -247,13 +280,12 @@ class RecursiveRotoTranslation(MutableSequence):
         names = [rtrans.name for rtrans in rotoTranslations]
         for name in names:
             if name != self.name:
-                msg = "Appended RotoTranslation does not match name: {}".format(
-                    self.name)
+                msg = f"RotoTranslation doesn't match name: {self.name}"
                 raise ValueError(msg)
 
     def __repr__(self):
-        return "<RecursiveRTrans: {}, {} element(s)>".format(self.name,
-                                                             len(self))
+        return f"<RecursiveRTrans: {self.name}, {len(self)} element(s)>"
+
     def __getitem__(self, i):
         return self._rtransList[i]
 
@@ -285,31 +317,8 @@ class RecursiveRotoTranslation(MutableSequence):
         matrices = [mat.to4DMatrix() for mat in self]
         return _rightMultiplyMatrices(matrices)
 
-    def flukaFreeString(self, order="xyzt"):
-        out = []
-        s = self
-        seen = []
-        for flag in order:
-            if flag in seen:
-                continue
-            if flag == "t":
-                out.extend([rot for rot in s if rot.isPureTranslation()])
-                seen.append(flag)
-            elif flag == "x":
-                out.extend([rot for rot in s if rot.axis == "x"])
-                seen.append(flag)
-            elif flag == "y":
-                out.extend([rot for rot in s if rot.axis == "y"])
-                seen.append(flag)
-            elif flag == "z":
-                out.extend([rot for rot in s if rot.axis == "z"])
-                seen.append(flag)
-
-        return [c.toCard().toFreeString() for c in out]
-
-
-    def transformationIndex(self):
-        pass
+    def flukaFreeString(self):
+        return "\n".join([c.toCard().toFreeString() for c in self])
 
     def _transformationIndices(self):
         return [rtrans.index for rtrans in self]
@@ -336,20 +345,18 @@ class RecursiveRotoTranslation(MutableSequence):
         for rtrans in self:
             del rtrans.transformationIndex
 
-
 def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     """tbxyz = trait bryan angles in radians"""
     # Reverse it's because different convention in FLUKA (passive vs
     # active angles).
-    # tbxyz = Three(reverse(tbxyz))
     tbxyz = Three(tbxyz)
     result = RecursiveRotoTranslation(name, [])
     # Don't append a RotoTranslation for 0-angle rotations.
     # Note that we are converting from radians to degrees here.
 
-    if tbxyz.z:
-        result.append(RotoTranslation(name, axis="z",
-                                      azimuth=-tbxyz[2]*180/np.pi,
+    if tbxyz.x:
+        result.append(RotoTranslation(name, axis="x",
+                                      azimuth=-tbxyz[0]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     if tbxyz.y:
@@ -357,9 +364,9 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
                                       azimuth=-tbxyz[1]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
-    if tbxyz.x:
-        result.append(RotoTranslation(name, axis="x",
-                                      azimuth=-tbxyz[0]*180/np.pi,
+    if tbxyz.z:
+        result.append(RotoTranslation(name, axis="z",
+                                      azimuth=-tbxyz[2]*180/np.pi,
                                       flukaregistry=flukaregistry))
 
     return result

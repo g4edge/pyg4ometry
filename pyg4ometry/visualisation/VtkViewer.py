@@ -6,6 +6,7 @@ from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random
+from . import colour
 
 class VtkViewer:
     def __init__(self,size=(2048,1536), interpolation="none"):
@@ -294,7 +295,21 @@ class VtkViewer:
                          self.physicalActorMap,visOptions=visOptions, overlap=False, cutters=False)
 
 
-    def addMeshSimple(self, csgMesh, visOptions = _VisOptions()):
+    def addMeshSimple(self, csgMesh, visOptions = _VisOptions(), clip=False):
+        if clip:
+            csgMesh = csgMesh.clone()
+            verts, _, _ = csgMesh.toVerticesAndPolygons()
+            x = _np.array([v[0] for v in verts])
+            y = _np.array([v[1] for v in verts])
+            z = _np.array([v[2] for v in verts])
+            xsize = max(x) - min(x)
+            ysize = max(y) - min(y)
+            zsize = max(z) - min(z)
+            t = -_np.array([min(x) + xsize/2.,
+                            min(y) + ysize/2.,
+                            min(z) + ysize/2.])
+            csgMesh.translate(t)
+
         self.addMesh("mesh", "mesh", csgMesh,
                      _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                      _np.array([0, 0, 0]),
@@ -333,9 +348,10 @@ class VtkViewer:
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
                     # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
-                    if self.materialVisualisationOptions :
-                        visOptions = self.materialVisualisationOptions[pv.logicalVolume.material.name]
-                    else :
+                    if self.materialVisualisationOptions:
+                        visOptions = self.getMaterialVisOptions(
+                            pv.logicalVolume.material.name)
+                    else:
                         visOptions = pv.visOptions
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
@@ -381,7 +397,7 @@ class VtkViewer:
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
                 mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False,
-                cutters = True, clippers = True):
+                cutters = True, clippers = False):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -627,6 +643,28 @@ class VtkViewer:
             visOptions.alpha = 1.0
 
         return visOptions
+
+    def getMaterialVisOptions(self, name):
+        return self.materialVisualisationOptions[pv.logicalVolume.material.name]
+
+
+class PubViewer(VtkViewer):
+    def __init__(self, *args, **kwargs):
+        kwargs["interpolation"] = kwargs.get("interpolation", "flat")
+        super().__init__(*args, **kwargs)
+        cmap = kwargs.pop("colourmap", colour.ColourMap.fromPredefined())
+        materialVisualisationOptions = {}
+        for name, rgba in cmap.items():
+            vopt = _VisOptions()
+            vopt.color = rgba[:3]
+            vopt.alpha = rgba[3]
+            materialVisualisationOptions[name] = vopt
+        self.materialVisualisationOptions = materialVisualisationOptions
+
+    def getMaterialVisOptions(self, materialName):
+        return self.materialVisualisationOptions.get(materialName,
+                                                     colour.randomColour())
+
 
 def axesFromExtents(extent) :
     low  = _np.array(extent[0])

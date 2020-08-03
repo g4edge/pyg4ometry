@@ -13,7 +13,8 @@ def _load_pickle(path):
 
 
 class Samples:
-    def __init__(self):
+    def __init__(self, **metadata):
+        self.metadata = metadata
         self.times = {}
 
     def add(self, name, time):
@@ -117,10 +118,11 @@ class Timer:
     std_step1 = timer.samples.stds()["step1"]
 
     """
-    def __init__(self):
+    def __init__(self, **metadata):
+        self.metadata = metadata
         self.time0 = time.process_time()
         self.last_time = self.time0
-        self.samples = Samples()
+        self.samples = Samples(**metadata)
 
     def add(self, name):
         assert name != "total", "use updateTotal"

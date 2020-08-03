@@ -4,8 +4,10 @@ from copy import deepcopy
 from uuid import uuid4
 from math import degrees
 
+import numpy as np
 import networkx as nx
 
+from . import vis
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 import pyg4ometry.geant4 as g4
 from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
@@ -17,14 +19,9 @@ from pyg4ometry.transformation import tbxyz2axisangle
 import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG, do_intersect
-    # from pyg4ometry.pycsg.geom import Vector as _Vector
-    # from pyg4ometry.pycsg.geom import Vertex as _Vertex
-    # from pyg4ometry.pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
-    # from pyg4ometry.pycgal.geom import Vector as _Vector
-    # from pyg4ometry.pycgal.geom import Vertex as _Vertex
-    # from pyg4ometry.pycgal.geom import Polygon as _Polygon
+
 
 
 logger = logging.getLogger(__name__)
@@ -76,7 +73,7 @@ class Union(_Boolean):
         self.body = body
         self._typestring = "uni"
 
-class Zone(object):
+class Zone(vis.ViewableMixin):
     """Represents a zone which consists of one or more body intersections
     and zero or more body subtractions.  May also be used to represent
     subzones, which are zones nested within zones, for example the form
@@ -123,12 +120,14 @@ class Zone(object):
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
 
-    def _getSolidFromBoolean(self, boolean, reg, aabb):
+    @staticmethod
+    def _getSolidFromBoolean(boolean, reg, aabb):
         try:
             return reg.solidDict[boolean.body.name]
         except KeyError:
             aabb = _getAxisAlignedBoundingBox(aabb, boolean)
             return boolean.body.geant4Solid(reg, aabb=aabb)
+
 
     def mesh(self, aabb=None):
         result = self.intersections[0].body.mesh(aabb=aabb)
@@ -200,20 +199,22 @@ class Zone(object):
         for sub in self.subtractions:
             body = sub.body
             solids.append(self._getSolidFromBoolean(sub, reg, aabb))
-            transforms.append([body.tbxyz(), list(body.centre(aabb=aabb))])
+            thisAABB = _getAxisAlignedBoundingBox(aabb, sub)
+            transforms.append([body.tbxyz(), list(body.centre(aabb=thisAABB))])
 
         union = g4.solid.MultiUnion(f"{self.name}_munion_{_randomName()}",
                                     solids,
                                     transforms,
                                     registry=reg)
+        aabb0 = _getAxisAlignedBoundingBox(aabb, body0)
         rotation = matrix2tbxyz(body0.rotation().T)
-        translation = list(-1 * body0.centre(aabb=aabb))
+        translation = list(-1 * body0.centre(aabb=aabb0))
         result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
                                       start, union,
                                       [rotation, translation], reg)
         return result
 
-    def flukaFreeString(self):
+    def dumps(self):
         """Returns a string of this Zone innstance in the equivalent
         FLUKA syntax."""
         fs = ""
@@ -222,12 +223,12 @@ class Zone(object):
         for s in booleans:
             if isinstance(s,Intersection) :
                 if isinstance(s.body,Zone) :
-                    fs += " +({})".format(s.body.flukaFreeString())
+                    fs += " +({})".format(s.body.dumps())
                 else:
                     fs += " +{}".format(s.body.name)
             elif isinstance(s,Subtraction) :
                 if isinstance(s.body,Zone) :
-                    fs += " -({})".format(s.body.flukaFreeString())
+                    fs += " -({})".format(s.body.dumps())
                 else :
                     fs += " -{}".format(s.body.name)
 
@@ -392,16 +393,22 @@ class Zone(object):
         r.zones = boolean_algebra.zoneToDNFZones(self)
         return r
 
-    def nPrimitives(self):
+    def isDNF(self):
+        parts = self.intersections + self.subtractions
+        return not any(isinstance(b.body, Zone) for b in parts)
+
+    def leafCount(self):
         total = 0
-        for b in self.intersections + self.subtractions:
+        for body in self.intersections + self.subtractions:
+            b = body.body
             if isinstance(b, Zone):
-                total += b.nPrimitives()
+                total += b.leafCount()
             else:
-                b += 1
+                total += 1
+        return total
 
 
-class Region(object):
+class Region(vis.ViewableMixin):
     """Represents a region which consists of a region name, one or more
     zones, and a single material.  Metadata may be provided with the
     comment kwarg, which is used when writing to FLUKA to provide
@@ -454,10 +461,7 @@ class Region(object):
         for zone in self.zones[1:]:
             mesh = zone.mesh(aabb=aabb)
             result = result.union(mesh)
-
         return result
-
-
 
     def geant4Solid(self, reg, aabb=None):
         """Get the geant4Solid instance corresponding to this Region."""
@@ -477,16 +481,13 @@ class Region(object):
                                    transforms,
                                    registry=reg)
 
+    def dumps(self):
+        return "\n".join([f"|{z.dumps()}" for z in self.zones])
+
     def flukaFreeString(self):
-        #fs = "region "+self.name
-        fs = self.name+" "+str(5)
-
-        for z in self.zones :
-            fs=fs+" | "+z.flukaFreeString()
-
-        if self.comment != "" :
-            fs = "* "+self.comment+"\n"+fs
-
+        fs = f"{self.name} 5 {self.dumps()}"
+        if self.comment:
+            fs = f"* {self.comment}\n{fs}"
         return fs
 
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
@@ -549,7 +550,7 @@ class Region(object):
 
             # Finally: we must do the intersection op.
             logger.debug("Region = %s, int zone %d with %d", self.name, i, j)
-            if areOverlapping(zones[i], zones[j], aabb=aabb):
+            if do_intersect(zones[i].mesh(aabb=aabb), zones[j].mesh(aabb=aabb)):
                 graph.add_edge(i, j)
 
         return graph
@@ -593,23 +594,8 @@ class Region(object):
             extents.append(AABB(lower, upper))
         return extents
 
-    def extent(self, aabb=None):
-        greg = g4.Registry()
-        world_solid = g4.solid.Box("world_solid", 1e4, 1e4, 1e4, greg, "mm")
-        wlv = g4.LogicalVolume(world_solid,
-                               g4.MaterialPredefined("G4_Galactic"),
-                               "wl", greg)
-        solid = self.geant4Solid(greg, aabb=aabb)
-        regionLV = g4.LogicalVolume(solid,
-                                    g4.MaterialPredefined("G4_Galactic"),
-                                    "{}_lv".format(self.name),
-                                    greg)
-
-        lower, upper = regionLV.mesh.getBoundingBox(
-            self.rotation(),
-            self.centre(aabb=aabb))
-
-        return AABB(lower, upper)
+    def aabb(self, aabb=None):
+        return AABB.fromMesh(self.mesh(aabb=aabb))
 
     def removeBody(self, name):
         """Remove a body from this region by name.
@@ -637,19 +623,33 @@ class Region(object):
         return result
 
     def isNull(self, aabb=None):
-        return all(z.mesh(aabb=aabb).isNull() for z in self.zones)
+        return all(z.isNull(aabb=aabb) for z in self.zones)
 
     def toDNF(self, name):
         result = Region(name)
         for zone in self.zones:
-            result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
+            if zone.isDNF():
+                result.zones.append(zone)
+            else:
+                result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
         return result
 
-    def prune(self):
-        self.zones = [z for z in self.zones if not z.isNull()]
+    def isDNF(self):
+        return all(z.isDNF() for z in self.zones)
 
-    def nPrimitives(self):
-        return sum(z.nPrimitives() for z in self.zones)
+    def filterNullZones(self, aabb=None):
+        self.zones = [z for z in self.zones if not z.isNull(aabb=aabb)]
+
+    def leafCount(self):
+        return sum(z.leafCount() for z in self.zones)
+
+    def simplify(self):
+        reg = boolean_algebra.pruneRegion(self)
+        if not reg.zones:
+            raise NullMeshError(f"Pruned region {self.name} is null.")
+        boolean_algebra.simplifyRegion(reg)
+        self.zones = reg.zones
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
@@ -695,38 +695,6 @@ def _makeWorldLogicalVolume(reg):
     world_material = g4.MaterialPredefined("G4_Galactic")
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
-
-def areOverlapping(first, second, aabb=None):
-    """Determine if two Region, Zone, or Body instances are
-    overlapping, with the option to provide a reference AABB with
-    which the two operands may be evaluated with respect to.
-
-    :param first: The first Body, Zone, or Region instance with which
-    we check for overlaps with the second.
-    :type first: Body or Zone or Region
-    :param second: The second Body, Zone, or Region instance with which
-    we check for overlaps with the first.
-    :type second: Body or Zone or Region
-    :param aabb: An AABB or dictionary of AABB
-    instances with which the two operands should be evaluated with
-    respect to.
-    :type aabb: AABB or dict
-
-    """
-    greg = g4.Registry()
-
-    solid1 = first.geant4Solid(greg, aabb=aabb)
-    solid2 = second.geant4Solid(greg, aabb=aabb)
-
-    tbxyz, tra = _getRelativeTransform(first, second, aabb)
-    rot = tbxyz2axisangle(tbxyz)
-
-    mesh1 = solid1.mesh()
-    mesh2 = solid2.mesh()
-
-    mesh2.rotate(rot[0], -degrees(rot[1]))
-    mesh2.translate(tra)
-    return do_intersect(mesh1, mesh2)
 
 def _getAxisAlignedBoundingBox(aabb, boolean):
     """aabb should really be a dictionary of

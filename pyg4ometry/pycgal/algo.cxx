@@ -16,16 +16,16 @@ Polyhedron::Polyhedron(const std::vector<std::vector<double>> &vertices,
   Build_Polygon_VertexFacet<HalfedgeDS_3> pvf(vertices, facets);
   _polyhedron->delegate(pvf);
 }
-		     
+
 
 Polyhedron::Polyhedron(const py::list vertices,
 		       const py::list facets) {
-  
+
 }
 
-Polyhedron::Polyhedron(const py::array_t<double> vertices, 
+Polyhedron::Polyhedron(const py::array_t<double> vertices,
 		       const py::array_t<int> facest) {
-  
+
 }
 
 Polyhedron::~Polyhedron() {
@@ -106,24 +106,24 @@ SurfaceMesh::SurfaceMesh(Surface_mesh *mesh) {
   _surfacemesh = mesh;
 }
 
-SurfaceMesh::SurfaceMesh(py::list vertices, 
+SurfaceMesh::SurfaceMesh(py::list vertices,
 			 py::list faces)    {
   _surfacemesh = new Surface_mesh();
-  
-  // loop over vertices 
+
+  // loop over vertices
   for (py::handle vHandle : vertices) {
     py::list vList = vHandle.cast<py::list>();
     add_vertex(vList[0].cast<double>(),
 	       vList[1].cast<double>(),
 	       vList[2].cast<double>());
   }
-  
-  // loop over faces 
+
+  // loop over faces
   for (py::handle fHandle : faces) {
     py::list fList = fHandle.cast<py::list>();
     add_face(fList[0].cast<int>(),
 	     fList[1].cast<int>(),
-	     fList[2].cast<int>());	    
+	     fList[2].cast<int>());
   }
 }
 
@@ -131,14 +131,14 @@ SurfaceMesh::SurfaceMesh(py::array_t<double> vertices,
 			 py::array_t<int>    faces)    {
   _surfacemesh = new Surface_mesh();
 
-  // loop over vertices 
+  // loop over vertices
 
-  // loop over faces 
+  // loop over faces
 }
 
 SurfaceMesh::SurfaceMesh(std::string &fileName) {
   _surfacemesh = new Surface_mesh();
-  std::ifstream ifstr(fileName); 
+  std::ifstream ifstr(fileName);
   ifstr >> *_surfacemesh;
   ifstr.close();
 }
@@ -153,7 +153,7 @@ std::size_t SurfaceMesh::add_vertex(double x, double y, double z) {
   #ifdef __DEBUG_PYIO__
   py::print("SurfaceMesh::add_vertex",x,y,z);
   py::print("SurfaceMesh::add_vertex",ret);
-  #endif 
+  #endif
 
   return ret;
 }
@@ -181,7 +181,7 @@ std::size_t SurfaceMesh::add_face(std::size_t i, std::size_t j, std::size_t k, s
   py::print("SurfaceMesh::add_face (quad)",ret);
   #endif
 
-  return ret;  
+  return ret;
 }
 
 std::size_t SurfaceMesh::add_face(const std::vector<unsigned int> &face) {
@@ -200,7 +200,7 @@ void SurfaceMesh::translate(double x, double y, double z) {
   py::print("SurfaceMesh::translate",x,y,z);
   #endif
 
-  Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(x, y, z));  
+  Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(x, y, z));
   CGAL::Polygon_mesh_processing::transform(transl,*_surfacemesh);
 }
 
@@ -209,13 +209,13 @@ void SurfaceMesh::transform(double m11, double m12, double m13,
 			    double m31, double m32, double m33) {
   Aff_transformation_3 tform(m11,m12,m13,
 			     m21,m22,m23,
-			     m31,m32,m33,1);  
+			     m31,m32,m33,1);
   CGAL::Polygon_mesh_processing::transform(tform,*_surfacemesh);
 }
 
 SurfaceMesh* SurfaceMesh::unioN(SurfaceMesh &mesh2) {
   Surface_mesh *out = new Surface_mesh();
-  
+
   #ifdef __DEBUG_PYIO__
   py::print("SurfaceMesh::unioN",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   #endif
@@ -299,14 +299,14 @@ py::list* SurfaceMesh::toVerticesAndPolygons() {
 
   //std::vector<std::vector<double>> verts;
   //std::vector<std::vector<int>>    polys;
-  
+
   Surface_mesh::Point p;
   for(Surface_mesh::Vertex_index vd : _surfacemesh->vertices()) {
     py::list *v = new py::list();
     p = _surfacemesh->point(vd);
     v->append(CGAL::to_double(p.x()));
     v->append(CGAL::to_double(p.y()));
-    v->append(CGAL::to_double(p.z()));    
+    v->append(CGAL::to_double(p.z()));
     verts->append(v);
   }
 
@@ -324,7 +324,7 @@ py::list* SurfaceMesh::toVerticesAndPolygons() {
   ret->append(verts);
   ret->append(polys);
   ret->append(iCount);
-  
+
   return ret;
 }
 
@@ -336,7 +336,7 @@ int SurfaceMesh::number_of_vertices() {
   return _surfacemesh->number_of_vertices();
 }
 
-std::string SurfaceMesh::toString() { 
+std::string SurfaceMesh::toString() {
   std::ostringstream sstream;
   sstream << *_surfacemesh;
   return sstream.str();
@@ -368,7 +368,7 @@ Polygon2::Polygon2(py::list &p) {
 Polygon2::Polygon2(py::list &x, py::list &y) {
   _polygon = new Polygon_2();
 
-  int i = 0; 
+  int i = 0;
   for (py::handle pHandle : x) {
     push_back(pHandle.cast<double>(), y[i].cast<double>());
     i++;
@@ -379,10 +379,10 @@ Polygon2::Polygon2(py::array_t<double> &array) {
   _polygon = new Polygon_2();
 
   py::buffer_info buf = array.request();
-  
+
   if (buf.ndim != 2)
     throw std::runtime_error("numpy.ndarray dims must be 2");
-  
+
   double *ptr = (double*)buf.ptr;
   int n1 = buf.shape[0];
   int n2 = buf.shape[1];
@@ -392,7 +392,7 @@ Polygon2::Polygon2(py::array_t<double> &array) {
   }
 }
 
-Polygon2::Polygon2(py::array_t<double> &array_x, 
+Polygon2::Polygon2(py::array_t<double> &array_x,
 		   py::array_t<double> &array_y) {
   _polygon = new Polygon_2();
 
@@ -426,11 +426,11 @@ void Polygon2::push_back(py::list &list) {
   push_back(x,y);
 }
 
-void Polygon2::push_back(py::array_t<double> &array) { 
+void Polygon2::push_back(py::array_t<double> &array) {
   py::buffer_info buf = array.request();
   double* ptr = (double*)buf.ptr;
   double x = ptr[0];
-  double y = ptr[1];  
+  double y = ptr[1];
   push_back(x,y);
 }
 
@@ -442,7 +442,7 @@ std::string Polygon2::toString() const {
   std::ostringstream sstream;
   sstream << "Polygon2[" << std::endl;
   for(auto vi = _polygon->vertices_begin(); vi != _polygon->vertices_end(); ++vi) {
-    sstream << *vi << std::endl;  
+    sstream << *vi << std::endl;
   }
   sstream << "]";
   return sstream.str();
@@ -485,7 +485,7 @@ std::list<Polygon2> Polygon2::optimal_convex_partition() {
   for(auto p : partition_polys_temp) {
     partition_polys.push_back(Polygon2(p));
   }
- 
+
   return partition_polys;
 }
 
@@ -521,6 +521,9 @@ PYBIND11_MODULE(algo, m) {
     .def("number_of_vertices",&SurfaceMesh::number_of_vertices)
     .def("__repr__",&SurfaceMesh::toString);
 
+  m.def("haussdorf_distance", &haussdorf_distance);
+  m.def("symmetric_haussdorf_distance", &symmetric_haussdorf_distance);
+
   py::class_<NefPolyhedron>(m,"NefPolyhedron")
     .def(py::init<>())
     .def(py::init<const Polyhedron &>())
@@ -546,5 +549,5 @@ PYBIND11_MODULE(algo, m) {
     .def("is_convex",&Polygon2::is_convex)
     .def("orientation",&Polygon2::orientation)
     .def("optimal_convex_partition",&Polygon2::optimal_convex_partition);
-}
 
+}
