@@ -1519,7 +1519,7 @@ def geant4MaterialDict2Fluka(matr, freg):
                 # MATERIAL/Compound
                 if materialInstance.name in _geant4.nist_materials_dict :
                     materialEntry = _geant4.nist_materials_dict[materialInstance.name]
-                    print(materialEntry)
+                    # print(materialEntry)
             elif materialInstance.type == 'composite' :
                 # COMPOUND
                 pass
