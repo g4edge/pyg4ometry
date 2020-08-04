@@ -76,7 +76,7 @@ class TwistedSolid(object):
         top = self.makeFaceFromLayer(l[0], reverse=True)
         allPolygons.append(top)
 
-        mesh = _CSG.fromPolygons(allPolygons)
+        mesh = _CSG.fromPolygons(allPolygons, False)
 
 
         return mesh

@@ -52,11 +52,11 @@ CSG* CSG::fromPolygons(py::list &polygons, bool cgalTest) {
   // checks on solid
   if(cgalTest) {
     int  i_number_of_border_halfedges = csg->_surfacemesh->number_of_border_halfedges(false);
-    bool b_is_closed                  = csg->_surfacemesh->is_closed();
-    bool b_does_self_intersect        = csg->_surfacemesh->does_self_intersect();
-    bool b_does_bound_a_volume        = csg->_surfacemesh->does_bound_a_volume();
-    bool b_is_outward_oriented        = csg->_surfacemesh->is_outward_oriented();
-    
+    bool b_is_closed                  = csg->_surfacemesh->is_closed();             // if(!b_is_closed) {py::print("CSG::fromPolygons(py::list &) not closed");}
+    bool b_does_self_intersect        = csg->_surfacemesh->does_self_intersect();   // if(b_does_self_intersect) {py::print("CSG::fromPolygons(py::list &) self intersect"); return csg;}
+    bool b_does_bound_a_volume        = csg->_surfacemesh->does_bound_a_volume();   // if(!b_does_bound_a_volume) {py::print("CSG::fromPolygons(py::list &) not bound volume");}
+    bool b_is_outward_oriented        = csg->_surfacemesh->is_outward_oriented();   // if(!b_is_outward_oriented) {py::print("CSG::fromPolygons(py::list &) not outward oriented");}
+
     #ifdef __DEBUG_PYIO__
     py::print("CSG::surfacemesh::number_of_border_halfedges",i_number_of_border_halfedges);
     py::print("CSG::surfacemesh::is_closed",b_is_closed);
