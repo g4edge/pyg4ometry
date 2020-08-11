@@ -662,8 +662,10 @@ class PubViewer(VtkViewer):
         self.materialVisualisationOptions = materialVisualisationOptions
 
     def getMaterialVisOptions(self, materialName):
-        return self.materialVisualisationOptions.get(materialName,
-                                                     colour.randomColour())
+        return self.materialVisualisationOptions.get(
+            materialName,
+            _VisOptions.withRandomColour()
+        )
 
 
 def axesFromExtents(extent) :

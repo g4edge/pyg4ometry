@@ -1,4 +1,5 @@
 import random as _random
+from .colour import randomColour
 
 class VisualisationOptions:
     
@@ -14,6 +15,13 @@ class VisualisationOptions:
         rgba= [*self.color, self.alpha]
         return (f"<VisOpt: rep={self.representation}, rgba={rgba}, "
                 f"vis={self.visible}, linewidth={self.lineWidth}>")
+
+    @classmethod
+    def withRandomColour(cls):
+        vopt = cls()
+        vopt.color = randomColour()
+        vopt.alpha = 1
+        return vopt
 
 def makeVisualisationOptionsDictFromMaterials(materials) :
 
