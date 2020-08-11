@@ -662,11 +662,12 @@ class PubViewer(VtkViewer):
         self.materialVisualisationOptions = materialVisualisationOptions
 
     def getMaterialVisOptions(self, materialName):
+        if "0x" in materialName: # Strip pointers
+            materialName = materialName[:materialName.find("0x")]
         return self.materialVisualisationOptions.get(
             materialName,
             _VisOptions.withRandomColour()
         )
-
 
 def axesFromExtents(extent) :
     low  = _np.array(extent[0])
