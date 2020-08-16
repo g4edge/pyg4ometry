@@ -8,7 +8,7 @@
 #include <functional>
 #include <cmath>
 
-std::ios_base::Init toEnsureInitialization;
+// std::ios_base::Init toEnsureInitialization;
 
 /*********************************************
 CSG

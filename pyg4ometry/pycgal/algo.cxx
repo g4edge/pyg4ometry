@@ -343,6 +343,28 @@ std::string SurfaceMesh::toString() {
 }
 
 /*********************************************
+Haussdorf
+*********************************************/
+
+double haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
+  auto s1 = m1._surfacemesh;
+  auto s2 = m2._surfacemesh;
+  return CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<
+      CGAL::Sequential_tag>(
+      *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+double symmetric_haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
+  auto s1 = m1._surfacemesh;
+  auto s2 = m2._surfacemesh;
+  return CGAL::Polygon_mesh_processing::
+      approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
+          *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
+          CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/*********************************************
 Polygon2
 *********************************************/
 Polygon2::Polygon2() {

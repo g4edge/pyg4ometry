@@ -41,9 +41,7 @@
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/tags.h>
 
-
-
-
+/* typedefs */
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef Kernel::Vector_3                                    Vector_3;
@@ -58,6 +56,7 @@ typedef CGAL::Partition_traits_2<Kernel>                    Partition_traits_2;
 typedef Partition_traits_2::Point_2                         Point_2;
 typedef Partition_traits_2::Polygon_2                       Polygon_2; 
 
+/* pybind */
 namespace py = pybind11;
 
 template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS> 
@@ -152,23 +151,8 @@ class SurfaceMesh {
   std::string toString();
 };
 
-double haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
-  auto s1 = m1._surfacemesh;
-  auto s2 = m2._surfacemesh;
-  return CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<
-      CGAL::Sequential_tag>(
-      *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-double symmetric_haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2) {
-  auto s1 = m1._surfacemesh;
-  auto s2 = m2._surfacemesh;
-  return CGAL::Polygon_mesh_processing::
-      approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
-          *s1, *s2, CGAL::Polygon_mesh_processing::parameters::all_default(),
-          CGAL::Polygon_mesh_processing::parameters::all_default());
-}
+double haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2);
+double symmetric_haussdorf_distance(SurfaceMesh &m1, SurfaceMesh &m2);
 
 class NefPolyhedron {
  public:

@@ -6,7 +6,7 @@
 #include <cmath>
 #include "geom.h"
 
-std::ios_base::Init toEnsureInitialization;
+// std::ios_base::Init toEnsureInitialization;
 
 /*********************************************
 Vector
