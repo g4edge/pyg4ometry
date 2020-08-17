@@ -14,8 +14,8 @@ def geant4Reg2FlukaReg(greg) :
     freg = _fluka.FlukaRegistry()
     logi = greg.getWorldVolume()
     matr = greg.materialDict
-    freg = geant4Logical2Fluka(logi, freg)
     freg = geant4MaterialDict2Fluka(matr, freg)
+    freg = geant4Logical2Fluka(logi, freg)
 
     return freg
 
@@ -74,7 +74,6 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
         for motherZones in flukaMotherRegion.zones :
             for daughterZones in flukaDaughterOuterRegion.zones :
                 motherZones.addSubtraction(daughterZones)
-
 
     # create black body region
     fregion = _fluka.Region("BLKHOLE")
@@ -1483,67 +1482,77 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
 
 
 def geant4MaterialDict2Fluka(matr, freg):
+
     for material in matr.items() :
-        materialName      = material[0]
+        if isinstance(material[1], _geant4.Material) :
+            geant4Material2Fluka(material[1], freg)
 
-        if materialName.find("0x") != -1 :
-            materialNameStrip = materialName[0:materialName.find("0x")]
-        else :
-            materialNameStrip = materialName
-        materialNameShort = materialName[0:8]
-
-        materialInstance  = material[1]
-
-        # print(materialNameStrip,type(materialInstance))
-
-        if isinstance(materialInstance,_geant4.Isotope) :
-            # MATERIAL
-
-            mat = _fluka.Element(materialInstance.name,
-                                 materialInstance.Z,
-                                 0.1,
-                                 massNumber=materialInstance.N,
-                                 flukaregistry=freg)
-        elif isinstance(materialInstance,_geant4.Element):
-            if materialInstance.type == "simple" :
-                # MATERIAL
-                pass
-            elif materialInstance.type == "composite" :
-                # COMPOUND
-                pass
-        elif isinstance(materialInstance,_geant4.Material) :
-            if materialInstance.type == 'simple' :
-                # MATERIAL
-                pass
-            elif materialInstance.type == 'nist' :
-                # MATERIAL/Compound
-                if materialInstance.name in _geant4.nist_materials_dict :
-                    materialEntry = _geant4.nist_materials_dict[materialInstance.name]
-                    # print(materialEntry)
-            elif materialInstance.type == 'composite' :
-                # COMPOUND
-                pass
     return freg
 
+def geant4Material2Fluka(material, freg) :
+    materialName = material.name
+    materialInstance = material
 
-def geant4Material2FlukaMaterial(g4registry = None) :
-    for material in g4registry.materialDict.items() :
-        materialName      = material[0]
-        if materialName.find("0x") != -1 :
-            materialNameStrip = materialName[0:materialName.find("0x")]
-        else :
-            materialNameStrip = materialName
-        materialInstance  = material[1]
+    if materialName.find("0x") != -1:
+        materialNameStrip = materialName[0:materialName.find("0x")]
+    else:
+        materialNameStrip = materialName
+    materialNameShort = materialName[0:8]
 
-        print(materialName)
-        #print(materialName, materialNameStrip, materialInstance,\
-        #    materialInstance.density,materialInstance.atomic_number, \
-        #    materialInstance.atomic_weight,materialInstance.number_of_components)
+    # Only want to use materials (FLUKA COMPOUND or MATERIAL)
+    if isinstance(materialInstance, _geant4.Material):
 
-        if materialInstance.number_of_components == 0 :
-            pass
-        else :
-            pass
+        # none, nist, arbitary, simple, composite
+        if materialInstance.type == "none":
+            raise Exception("Cannot have material with none type")
+        elif materialInstance.type == "nist":
+            print("material nist", materialInstance.name, materialNameStrip, materialNameShort)
+        elif materialInstance.type == "arbitrary":
+            raise Exception("Cannot have material with arbitrary type")
+        elif materialInstance.type == "simple":
+            print("material simple", materialInstance.name, materialNameStrip, materialNameShort)
+        elif materialInstance.type == "composite":
+            print("material composite", materialInstance.name, materialNameStrip, materialNameShort, materialInstance.number_of_components)
+
+            for comp in materialInstance.components:
+                fm = geant4Material2Fluka(comp[0], freg)
+
+
+    elif isinstance(materialInstance, _geant4.Element) :
+        if materialInstance.type == "simple" :
+            print("element simple", materialInstance.name)
+        elif materialInstance.type == "composite" :
+            print("element composite", materialInstance.name)
+            flukaComponentNames     = []
+            flukaComponents         = []
+            flukaComponentFractions = []
+            for iso in materialInstance.components :
+                fi = geant4Material2Fluka(iso[0], freg)
+
+                compFlukaName = iso[0].name[0:8]
+                compFraction  = iso[1]
+
+                flukaComponentNames.append(compFlukaName)
+                flukaComponents.append(fi)
+                flukaComponentFractions.append(compFraction)
+
+            flukaComposition = [(c,f) for c,f in zip(flukaComponents, flukaComponentFractions)]
+
+            if materialInstance.name in freg.materials:
+                return freg.materials[materialInstance.name]
+
+            mat = _fluka.Compound(materialInstance.name,0.1 , flukaComposition, fractionType="atomic", flukaregistry=freg)
+
+    elif isinstance(materialInstance, _geant4.Isotope) :
+        print("isotope",materialInstance.name)
+
+        if materialInstance.name  in freg.materials :
+            return freg.materials[materialInstance.name]
+
+        fi = _fluka.Element(materialInstance.name, materialInstance.Z, 0, flukaregistry=freg,
+                            atomicMass = materialInstance.a,
+                            massNumber = materialInstance.Z+materialInstance.N)
+        return fi
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
     import pyg4ometry.pycgal as pycgal
