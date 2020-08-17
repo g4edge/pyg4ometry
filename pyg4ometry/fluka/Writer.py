@@ -8,6 +8,21 @@ class Writer :
     def addDetector(self, flukaRegistry):
         self.flukaRegistry = flukaRegistry
 
+    def addDefaults(self):
+        pass
+
+    def addBeam(self):
+        pass
+
+    def addBeamPos(self):
+        pass
+
+    def addUserbin(self):
+        pass
+
+    def addStart(self):
+        pass
+
     def write(self, fileName):
         f = open(fileName,"w")
 
