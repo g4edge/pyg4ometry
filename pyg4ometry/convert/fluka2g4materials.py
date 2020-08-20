@@ -3,7 +3,7 @@ import pkg_resources
 import pandas as pd
 
 import pyg4ometry.geant4 as g4
-from pyg4ometry.fluka.material import BuiltIn, Element, Compound
+from pyg4ometry.fluka.material import BuiltIn, Material, Compound
 
 # http://www.fluka.org/content/manuals/online/5.2.html
 # See also fluka/material.py
@@ -100,7 +100,7 @@ class _FlukaToG4MaterialConverter:
         for name, material in self.freg.materials.items():
             if isinstance(material, BuiltIn):
                 self.convertBuiltin(name, material)
-            elif isinstance(material, Element):
+            elif isinstance(material, Material):
                 self.convertElement(name, material)
             elif isinstance(material, Compound):
                 self.convertCompound(material)

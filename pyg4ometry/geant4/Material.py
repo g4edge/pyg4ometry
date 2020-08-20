@@ -86,6 +86,30 @@ def loadNISTMaterialDict():
 nist_materials_dict = loadNISTMaterialDict()
 nist_materials_list = nist_materials_dict.keys()
 
+def nist_materials_name_lookup(name) :
+    return nist_materials_dict[name]
+
+def nist_materials_z_lookup(z) :
+    for k in nist_materials_dict :
+        if nist_materials_dict[k]['z'] == z :
+            return nist_materials_dict[k]
+
+def nist_material_2geant4Material(name) :
+    matDict = nist_materials_name_lookup(name)
+
+    print(matDict)
+
+    # loop over components of material
+    if matDict['type'] == "compatom" or matDict['type'] == "compmass" :
+        for c in matDict['components'] :
+            # loop over elements
+            e  = nist_materials_z_lookup(c[0])
+            print(e)
+    elif matDict['type'] == "element" :
+        for c in matDict['isotopes'] :
+            # loop over isotopes of elements
+            pass
+
 def MaterialPredefined(name, registry=None):
     """
     Proxy method to construct a NIST compund material - this is just a handle as nothing

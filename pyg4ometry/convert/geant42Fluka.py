@@ -31,11 +31,6 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     # find extent of logical
     extent = logicalVolume.extent(includeBoundingSolid = True)
 
-    #position = [(extent[1][0] - extent[0][0])/2,
-    #              (extent[1][1] - extent[0][1])/2,
-    #              (extent[1][2] - extent[0][2])/2]
-    # create black body body
-
     rotation = _transformation.matrix2tbxyz(mtra)
     position = tra
 
@@ -75,12 +70,33 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
             for daughterZones in flukaDaughterOuterRegion.zones :
                 motherZones.addSubtraction(daughterZones)
 
+    ###########################################
     # create black body region
+    ###########################################
     fregion = _fluka.Region("BLKHOLE")
     fregion.addZone(fzone)
     flukaRegistry.addRegion(fregion)
 
     flukaRegistry.addRegion(flukaMotherRegion)
+
+    ###########################################
+    # assign material to blckhole
+    ###########################################
+    flukaRegistry.addMaterialAssignments("BLCKHOLE",
+                                         "BLKHOLE")
+
+    ###########################################
+    # assign material to region
+    ###########################################
+    materialName = logicalVolume.material.name
+    materialNameShort = makeShortName(materialName)
+
+    try :
+        flukaMaterial = flukaRegistry.materials[materialNameShort]
+        flukaRegistry.addMaterialAssignments(flukaMaterial,
+                                             flukaMotherRegion)
+    except KeyError :
+        pass
 
     return flukaRegistry
 
@@ -89,7 +105,9 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
                                tra=_np.array([0, 0, 0]),
                                flukaRegistry=None,flukaNameCount=0) :
 
+    ###########################################
     # logical volume (outer and complete)
+    ###########################################
     geant4LvOuterSolid = physicalVolume.logicalVolume.solid
     # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
     flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,
@@ -101,7 +119,9 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaMotherRegion.comment = physicalVolume.name
 
+    ###########################################
     # loop over daughers and remove from mother region
+    ###########################################
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
         # placement information for daughter
@@ -121,6 +141,23 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
 
     flukaRegistry.addRegion(flukaMotherRegion)
 
+    ###########################################
+    # assign material to region
+    ###########################################
+    materialName = physicalVolume.logicalVolume.material.name
+    materialNameShort = makeShortName(materialName)
+
+    try :
+        flukaMaterial = flukaRegistry.materials[materialNameShort]
+        flukaRegistry.addMaterialAssignments(flukaMaterial,
+                                             flukaMotherRegion)
+    except KeyError :
+        pass
+
+
+    ###########################################
+    # return
+    ###########################################
     return flukaMotherOuterRegion, flukaNameCount
 
 def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
@@ -1493,11 +1530,9 @@ def geant4Material2Fluka(material, freg) :
     materialName = material.name
     materialInstance = material
 
-    if materialName.find("0x") != -1:
-        materialNameStrip = materialName[0:materialName.find("0x")]
-    else:
-        materialNameStrip = materialName
-    materialNameShort = materialName[0:8]
+    materialNameStrip = makeStripName(materialName)
+    materialNameShort = makeShortName(materialName)
+
 
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
@@ -1506,30 +1541,70 @@ def geant4Material2Fluka(material, freg) :
         if materialInstance.type == "none":
             raise Exception("Cannot have material with none type")
         elif materialInstance.type == "nist":
-            print("material nist", materialInstance.name, materialNameStrip, materialNameShort)
+            # print("material nist", materialInstance.name, materialNameStrip, materialNameShort)
+
+            # make material object from dictionary of information
+            nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
+
+            # call geant4Material2Fluka on material
+            # geant4Material2Fluka(nistMatInstance)
+
         elif materialInstance.type == "arbitrary":
             raise Exception("Cannot have material with arbitrary type")
         elif materialInstance.type == "simple":
-            print("material simple", materialInstance.name, materialNameStrip, materialNameShort)
+            print("material single element", materialInstance.name, materialNameStrip, materialNameShort)
+            print("material single element",materialInstance,type(materialInstance), materialInstance.atomic_number,materialInstance.density)
+
+            fe = _fluka.Material(materialNameShort,
+                                 materialInstance.atomic_number,
+                                 materialInstance.density,
+                                 flukaregistry=freg)
+
+
         elif materialInstance.type == "composite":
-            print("material composite", materialInstance.name, materialNameStrip, materialNameShort, materialInstance.number_of_components)
+            # print("material composite", materialInstance.name, materialNameStrip, materialNameShort, materialInstance.number_of_components)
+
+            flukaComposition = []
+            flukaFractionType = "atomic"
 
             for comp in materialInstance.components:
                 fm = geant4Material2Fluka(comp[0], freg)
 
+                compFraction     = comp[1]
+                compFractionType = comp[2]
+
+                if compFractionType == "natoms" :
+                    flukaFractionType = "atomic"
+                elif compFractionType == "massfraction" :
+                    flukaFractionType = "mass"
+
+                flukaComposition.append((fm,compFraction))
+
+            if materialNameShort in freg.materials:
+                return freg.materials[materialNameShort]
+
+            mat = _fluka.Compound(materialNameShort,
+                                  materialInstance.density,
+                                  flukaComposition,
+                                  fractionType=flukaFractionType,
+                                  flukaregistry=freg)
+            return mat
 
     elif isinstance(materialInstance, _geant4.Element) :
         if materialInstance.type == "simple" :
-            print("element simple", materialInstance.name)
+            pass
+            # print("element simple", materialInstance.name)
+
         elif materialInstance.type == "composite" :
-            print("element composite", materialInstance.name)
+            # print("element composite", materialInstance.name)
             flukaComponentNames     = []
             flukaComponents         = []
             flukaComponentFractions = []
+
             for iso in materialInstance.components :
                 fi = geant4Material2Fluka(iso[0], freg)
 
-                compFlukaName = iso[0].name[0:8]
+                compFlukaName = makeShortName(iso[0].name)
                 compFraction  = iso[1]
 
                 flukaComponentNames.append(compFlukaName)
@@ -1538,20 +1613,25 @@ def geant4Material2Fluka(material, freg) :
 
             flukaComposition = [(c,f) for c,f in zip(flukaComponents, flukaComponentFractions)]
 
-            if materialInstance.name in freg.materials:
-                return freg.materials[materialInstance.name]
+            if materialNameShort in freg.materials:
+                return freg.materials[materialNameShort]
 
-            mat = _fluka.Compound(materialInstance.name,0.1 , flukaComposition, fractionType="atomic", flukaregistry=freg)
+            mat = _fluka.Compound(materialNameShort,
+                                  0.1 ,
+                                  flukaComposition,
+                                  fractionType="atomic",
+                                  flukaregistry=freg)
+            return mat
 
     elif isinstance(materialInstance, _geant4.Isotope) :
-        print("isotope",materialInstance.name)
+        # print("isotope",materialInstance.name)
 
-        if materialInstance.name  in freg.materials :
-            return freg.materials[materialInstance.name]
+        if materialNameStrip  in freg.materials :
+            return freg.materials[materialNameStrip]
 
-        fi = _fluka.Element(materialInstance.name, materialInstance.Z, 0, flukaregistry=freg,
+        fi = _fluka.Material(materialNameShort, materialInstance.Z, 0, flukaregistry=freg,
                             atomicMass = materialInstance.a,
-                            massNumber = materialInstance.Z+materialInstance.N)
+                            massNumber = materialInstance.N)
         return fi
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
@@ -1599,3 +1679,21 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
         fregion.addZone(fzone)
 
     return fregion
+
+
+def makeStripName(mn) :
+    if mn.find("0x") != -1:
+       mnStrip = mn[0:mn.find("0x")]
+    else:
+        mntrip = mn
+
+    return mnStrip
+
+def makeShortName(mn) :
+
+    mn = makeStripName(mn)
+
+    if len(mn) > 8 :
+        return mn[0:8]
+    else :
+        return mn

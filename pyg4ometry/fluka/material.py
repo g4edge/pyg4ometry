@@ -83,14 +83,14 @@ def defineBuiltInFlukaMaterials(flukaregistry=None):
         out[name] = BuiltIn(name, density=density, flukaregistry=flukaregistry)
     return out
 
-class _GasMixin(object):
+class _MatProp(object):
     def isGas(self):
         return self.density < 0.01 or self.pressure
 
     def makeMatPropCard(self):
         return Card("MAT-PROP", what1=self.pressure, what4=self.name)
 
-class Element(_GasMixin):
+class Material(_MatProp):
     """A FLUKA material consisting of a single element.  This corresponds
     to the case in FLUKA of a single MATERIAL card with no associated
     COMPOUND cards, as well as a possible MAT-PROP card (only if a
@@ -147,7 +147,7 @@ class Element(_GasMixin):
         massNumber = ""
         if self.massNumber is not None:
             massNumber = ", A={}".format(self.massNumber)
-        return '<Element: "{}", Z={}, density={}*g/cm3{}>'.format(
+        return '<Material: "{}", Z={}, density={}*g/cm3{}>'.format(
             self.name,
             self.atomicNumber,
             self.density,
@@ -160,7 +160,7 @@ class Element(_GasMixin):
                    flukaregistry=flukaregistry)
 
 
-class Compound(_GasMixin):
+class Compound(_MatProp):
     """A FLUKA compound material.  This corresponds to the case in
     FLUKA of a single MATERIAL card with one or more associated
     COMPOUND cards.

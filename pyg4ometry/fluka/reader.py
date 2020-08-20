@@ -22,7 +22,7 @@ from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
                                                RegionLexer)
 from .vector import Three
 from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
-from .material import Element, Compound
+from .material import Material, Compound
 
 
 
@@ -378,7 +378,7 @@ class Reader(object):
         names = nx.topological_sort(g)
         for name in names:
             if name in singles:
-                m = Element.fromCard(singles[name], self.flukaregistry)
+                m = Material.fromCard(singles[name], self.flukaregistry)
             elif name in compounds:
                 Compound.fromCards(compounds[name], self.flukaregistry)
 

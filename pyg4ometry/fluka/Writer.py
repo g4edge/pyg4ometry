@@ -2,6 +2,8 @@ from pyg4ometry.fluka import material as _material
 
 class Writer :
 
+    _flukaFFString = "*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..."
+
     def __init__(self):
         pass
 
@@ -31,7 +33,10 @@ class Writer :
 
         f.write("GEOBEGIN                                                              COMBNAME\n")
         f.write("    0    0                                                                    \n")
+
+        ###########################################
         # loop over bodies
+        ###########################################
         for bk in self.flukaRegistry.bodyDict.keys() :
             #f.write("$Start_translat {} {} {}\n".format(self.flukaRegistry.bodyDict[bk].translation[0],
             #                                            self.flukaRegistry.bodyDict[bk].translation[1],
@@ -54,16 +59,23 @@ class Writer :
                     f.write("$End_transform\n")
         f.write("END\n")
 
+        ###########################################
         # loop over regions
+        ###########################################
         for rk in self.flukaRegistry.regionDict.keys() :
             f.write(self.flukaRegistry.regionDict[rk].flukaFreeString()+"\n")
         f.write("END\n")
         f.write("GEOEND\n")
 
+        ###########################################
         # loop over materials
+        ###########################################
         f.write("FREE\n")
 
         predefinedNames = _material.predefinedMaterialNames()
+
+        f.write(self._flukaFFString + "\n")
+
         for mk in self.flukaRegistry.materials.keys() :
             # check if material/compound is already defined
             if mk in predefinedNames :
@@ -71,7 +83,20 @@ class Writer :
             else :
                 f.write(self.flukaRegistry.materials[mk].flukaFreeString()+"\n")
 
+        ###########################################
+        # loop over material assignments
+        ###########################################
+        for rk in self.flukaRegistry.regionDict.keys() :
+            try :
+                # print(self.flukaRegistry.assignmas[rk])
+                assignmaString = "ASSIGNMA "+self.flukaRegistry.assignmas[rk]+" "+rk
+                f.write(assignmaString+"\n")
+            except KeyError :
+                print("Region does not have an assigned material",rk)
+
+        ###########################################
         # loop over rotdefis
+        ###########################################
         for rotdefi in rotdefi.values():
             rotstr = rotdefi.flukaFreeString()
             f.write(f"{rotstr}\n")

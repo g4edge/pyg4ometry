@@ -12,5 +12,5 @@ from .region import Zone, Region
 from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
 from .lattice import Lattice
 from .flair import Flair
-from .material import BuiltIn, Element, Compound
+from .material import BuiltIn, Material, Compound
 from . import boolean_algebra
