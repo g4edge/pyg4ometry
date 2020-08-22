@@ -108,13 +108,21 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     ###########################################
     # logical volume (outer and complete)
     ###########################################
-    geant4LvOuterSolid = physicalVolume.logicalVolume.solid
-    # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
-    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,
+    if physicalVolume.logicalVolume.type == "logical" :
+        geant4LvOuterSolid = physicalVolume.logicalVolume.solid
+        # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
+        flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,
                                                                      geant4LvOuterSolid,
                                                                      mtra,tra,
                                                                      flukaRegistry,
                                                                      commentName=physicalVolume.name)
+    elif physicalVolume.logicalVolume.type == "assembly" :
+        name = "R"+format(flukaNameCount, '04')
+        flukaMotherOuterRegion = _fluka.Region(name)
+        flukaNameCount += 1
+
+        # z = _fluka.Zone()
+        # flukaMotherOuterRegion.addZone(z)
 
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaMotherRegion.comment = physicalVolume.name
@@ -134,25 +142,31 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,
                                                                               flukaRegistry=flukaRegistry,
                                                                               flukaNameCount=flukaNameCount)
+        if physicalVolume.logicalVolume.type == "logical" :
+            for motherZones in flukaMotherRegion.zones:
+                for daughterZones in flukaDaughterOuterRegion.zones:
+                    motherZones.addSubtraction(daughterZones)
 
-        for motherZones in flukaMotherRegion.zones:
-            for daughterZones in flukaDaughterOuterRegion.zones:
-                motherZones.addSubtraction(daughterZones)
+        ###########################################
+        # If assembly the daughters form the outer
+        ###########################################
+        elif physicalVolume.logicalVolume.type == "assembly" :
+            for daughterZones in flukaDaughterOuterRegion.zones :
+                flukaMotherOuterRegion.addZone(daughterZones)
 
-    flukaRegistry.addRegion(flukaMotherRegion)
+    if physicalVolume.logicalVolume.type == "logical" :
+        flukaRegistry.addRegion(flukaMotherRegion)
 
-    ###########################################
-    # assign material to region
-    ###########################################
-    materialName = physicalVolume.logicalVolume.material.name
-    materialNameShort = makeShortName(materialName)
+    if physicalVolume.logicalVolume.type == "logical" :
+        materialName = physicalVolume.logicalVolume.material.name
+        materialNameShort = makeShortName(materialName)
 
-    try :
-        flukaMaterial = flukaRegistry.materials[materialNameShort]
-        flukaRegistry.addMaterialAssignments(flukaMaterial,
-                                             flukaMotherRegion)
-    except KeyError :
-        pass
+        try :
+            flukaMaterial = flukaRegistry.materials[materialNameShort]
+            flukaRegistry.addMaterialAssignments(flukaMaterial,
+                                                 flukaMotherRegion)
+        except KeyError :
+            pass
 
 
     ###########################################
@@ -160,8 +174,12 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     ###########################################
     return flukaMotherOuterRegion, flukaNameCount
 
-def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
-                            tra=_np.array([0, 0, 0]), flukaRegistry = None, addRegistry = True, commentName = "") :
+def geant4Solid2FlukaRegion(flukaNameCount,solid,
+                            mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                            tra=_np.array([0, 0, 0]),
+                            flukaRegistry = None,
+                            addRegistry = True,
+                            commentName = "") :
 
     import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
@@ -173,7 +191,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
     rotation = _transformation.matrix2tbxyz(mtra)
     position = tra
 
-    transform= _rotoTranslationFromTra2("T"+name,[rotation,tra],flukaregistry=flukaRegistry)
+    transform= _rotoTranslationFromTra2("T"+name,[rotation,tra],
+                                        flukaregistry=flukaRegistry)
 
     commentName = commentName + " " + solid.name
 
@@ -228,9 +247,10 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
                             comment=commentName)
 
         # high z cut
-        fbody3 = flukaRegistry.makeBody(XYP, "B"+name+"_03", pDz/2,transform=transform,
-                                     flukaregistry=flukaRegistry,
-                                     comment=commentName)
+        fbody3 = flukaRegistry.makeBody(XYP, "B"+name+"_03", pDz/2,
+                                        transform=transform,
+                                        flukaregistry=flukaRegistry,
+                                        comment=commentName)
 
         # inner cylinder
         if pRMin != 0 :
@@ -483,11 +503,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Trd" :
+        print('calling pycsgmesh2FlakaRegion trd')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
 
     elif solid.type == "Trap" :
+        print('calling pycsgmesh2FlakaRegion trap')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
 
         flukaNameCount += 1
@@ -1257,6 +1279,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "Tet" :
+        print('calling pycsgmesh2FlakaRegion tet')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
@@ -1382,22 +1405,27 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid, mtra=_np.matrix([[1, 0, 0], [0
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
+        print('calling pycsgmesh2FlakaRegion TwistedBox')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrap":
+        print('calling pycsgmesh2FlakaRegion TwistedTrap')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrd":
+        print('calling pycsgmesh2FlakaRegion TwistedTrd')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTubs":
+        print('calling pycsgmesh2FlakaRegion TwistedTubs')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
+        print('calling pycsgmesh2FlakaRegion GenericTrap')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
 
@@ -1685,7 +1713,7 @@ def makeStripName(mn) :
     if mn.find("0x") != -1:
        mnStrip = mn[0:mn.find("0x")]
     else:
-        mntrip = mn
+        mnStrip = mn
 
     return mnStrip
 
