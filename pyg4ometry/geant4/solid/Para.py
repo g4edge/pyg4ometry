@@ -77,14 +77,15 @@ class Para(_SolidBase):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pX     = self.evaluateParameter(self.pX)*luval
-        pY     = self.evaluateParameter(self.pY)*luval
-        pZ     = self.evaluateParameter(self.pZ)*luval
+        pX     = self.evaluateParameter(self.pX)*luval/2.0
+        pY     = self.evaluateParameter(self.pY)*luval/2.0
+        pZ     = self.evaluateParameter(self.pZ)*luval/2.0
         pAlpha = self.evaluateParameter(self.pAlpha)*auval
         pTheta = self.evaluateParameter(self.pTheta)*auval
         pPhi   = self.evaluateParameter(self.pPhi)*auval
 
         _log.info("para.pycsgmesh>")
+
         dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component
         dx_z   = pZ*_math.sin(pTheta)  #changes sign as the z component
         dy     = pZ*_math.sin(pPhi)
@@ -92,28 +93,28 @@ class Para(_SolidBase):
 
         mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
                                              _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz))]),
+                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz)),
+                                             _Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz))]),
                                    _Polygon([_Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz)),
+                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz)),
+                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
                                              _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz))]),
                                    _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz)),
+                                             _Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
+                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz)),
                                              _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz))]),
                                    _Polygon([_Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz)),
                                              _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz))]),
+                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
+                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz))]),
                                    _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
                                              _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz)),
                                              _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz)),
                                              _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz))]),
-                                   _Polygon([_Vertex(_Vector(pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(pX-dx_y+dx_z,-pY+dy, pZ-dz))])])
+                                   _Polygon([_Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
+                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz)),
+                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
+                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz))])])
 
 
         return mesh
