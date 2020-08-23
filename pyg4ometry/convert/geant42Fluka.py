@@ -9,10 +9,14 @@ from pyg4ometry.fluka.body import *
 
 # import matplotlib.pyplot as _plt
 
-def geant4Reg2FlukaReg(greg) :
+def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
 
     freg = _fluka.FlukaRegistry()
-    logi = greg.getWorldVolume()
+
+    if logicalVolumeName == '':
+        logi = greg.getWorldVolume()
+    else :
+        logi = greg.logicalVolumeDict[logicalVolumeName]
     matr = greg.materialDict
     freg = geant4MaterialDict2Fluka(matr, freg)
     freg = geant4Logical2Fluka(logi, freg)
@@ -46,8 +50,15 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     fzone.addIntersection(blackBody)
 
     # create top logical volume
-    flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,logicalVolume.solid,mtra,tra,
-                                                                     flukaRegistry, commentName=logicalVolume.name)
+    if logicalVolume.type == "logical" :
+        flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,logicalVolume.solid,mtra,tra,
+                                                                         flukaRegistry, commentName=logicalVolume.name)
+    elif logicalVolume.type == "assembly" :
+        e = logicalVolume.extent()
+        b = _geant4.solid.Box("ra",1.1*(e[1][0]-e[0][0]), 1.1*(e[1][1]-e[0][1]), 1.1*(e[1][2]-e[0][2]),logicalVolume.registry,"mm", False)
+        flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,b,mtra,tra,
+                                                                         flukaRegistry, commentName=logicalVolume.name)
+
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaNameCount += 1
 
@@ -88,15 +99,19 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     ###########################################
     # assign material to region
     ###########################################
-    materialName = logicalVolume.material.name
-    materialNameShort = makeShortName(materialName)
+    if logicalVolume.type == "logical" :
+        materialName = logicalVolume.material.name
+        materialNameShort = makeShortName(materialName)
 
-    try :
-        flukaMaterial = flukaRegistry.materials[materialNameShort]
-        flukaRegistry.addMaterialAssignments(flukaMaterial,
+        try :
+            flukaMaterial = flukaRegistry.materials[materialNameShort]
+            flukaRegistry.addMaterialAssignments(flukaMaterial,
                                              flukaMotherRegion)
-    except KeyError :
-        pass
+        except KeyError :
+            pass
+    elif logicalVolume.type == "assembly" :
+        flukaRegistry.addMaterialAssignments("AIR",
+                                             flukaMotherRegion)
 
     return flukaRegistry
 
@@ -456,7 +471,13 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         flukaNameCount += 1
 
     elif solid.type == "Para" :
-        luval = _Units.unit(solid.lunit)/10.0
+
+        '''
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
+        flukaNameCount += 1
+        ''' 
+
+        luval = _Units.unit(solid.lunit)/10.0/2.0
         auval = _Units.unit(solid.aunit)
 
         pX     = solid.evaluateParameter(solid.pX)*luval
@@ -466,8 +487,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         pTheta = solid.evaluateParameter(solid.pTheta)*auval
         pPhi   = solid.evaluateParameter(solid.pPhi)*auval
 
-        mTheta = _transformation.tbxyz2matrix([0,-pTheta,0])
-        mAlpha = _transformation.tbxyz2matrix([0,0,-pAlpha])
+        mTheta = _transformation.tbxyz2matrix([0,pTheta,0])
+        mAlpha = _transformation.tbxyz2matrix([0,0,pAlpha])
         n1     = mAlpha.dot(mTheta).dot(_np.array([-1,0,0]))
         n2     = mAlpha.dot(mTheta).dot(_np.array([1,0,0]))
         fbody1 = flukaRegistry.makeBody(PLA, "B"+name+"_01",n1,[-pX,0,0],
