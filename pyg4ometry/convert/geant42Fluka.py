@@ -472,7 +472,6 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
 
     elif solid.type == "Para" :
 
-        '''
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
         ''' 
@@ -522,6 +521,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         fregion.addZone(fzone)
 
         flukaNameCount += 1
+        '''
 
     elif solid.type == "Trd" :
         print('calling pycsgmesh2FlakaRegion trd')

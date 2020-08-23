@@ -15,6 +15,17 @@ elif _config.meshing == _config.meshingType.cgal_sm :
 
 import logging as _log
 
+
+def cubeNet(vecList):
+
+    return _CSG.fromPolygons([_Polygon([_Vertex(vecList[0]), _Vertex(vecList[1]), _Vertex(vecList[2]), _Vertex(vecList[3])]),
+                              _Polygon([_Vertex(vecList[4]), _Vertex(vecList[7]), _Vertex(vecList[6]), _Vertex(vecList[5])]),
+                              _Polygon([_Vertex(vecList[0]), _Vertex(vecList[4]), _Vertex(vecList[5]), _Vertex(vecList[1])]),
+                              _Polygon([_Vertex(vecList[2]), _Vertex(vecList[6]), _Vertex(vecList[7]), _Vertex(vecList[3])]),
+                              _Polygon([_Vertex(vecList[0]), _Vertex(vecList[3]), _Vertex(vecList[7]), _Vertex(vecList[4])]),
+                              _Polygon([_Vertex(vecList[1]), _Vertex(vecList[5]), _Vertex(vecList[6]), _Vertex(vecList[2])])])
+
+
 class Box(_SolidBase):
     """
     Constructs a box. Note the lengths are full lengths and not half lengths as in Geant4

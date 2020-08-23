@@ -1,6 +1,7 @@
 from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
+from .Box import cubeNet as _cubeNet
 
 if _config.meshing == _config.meshingType.pycsg :
     from pyg4ometry.pycsg.core import CSG as _CSG
@@ -15,7 +16,7 @@ elif _config.meshing == _config.meshingType.cgal_sm :
 
 import logging as _log
 import numpy as _np
-
+import math as _math
 
 class Trap(_SolidBase):
     def __init__(self, name, pDz,
@@ -81,24 +82,17 @@ class Trap(_SolidBase):
 
     def mesh(self):
 
-        def listSub(lista, listb):
-            result = [a_i - b_i for a_i, b_i in zip(lista, listb)]
-            return result
-
-        def listAdd(lista, listb):
-            result = [a_i + b_i for a_i, b_i in zip(lista, listb)]
-            return result
-
         _log.info("trap.antlr>")
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units # TODO move circular import
+
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
         pDz  = self.evaluateParameter(self.pDz)*luval/2.
 
-        pDx1   = self.evaluateParameter(self.pDx1)*luval/2. #at -pDz
+        pDx1   = self.evaluateParameter(self.pDx1)*luval/2.
         pDx2   = self.evaluateParameter(self.pDx2)*luval/2.
-        pDy1   = self.evaluateParameter(self.pDy1)*luval/2. #at -pDz
+        pDy1   = self.evaluateParameter(self.pDy1)*luval/2.
 
         pDy2   = self.evaluateParameter(self.pDy2)*luval/2.
         pDx3   = self.evaluateParameter(self.pDx3)*luval/2.
@@ -110,103 +104,24 @@ class Trap(_SolidBase):
         pAlp1  = self.evaluateParameter(self.pAlp1)*auval
         pAlp2  = self.evaluateParameter(self.pAlp2)*auval
 
-        _log.info("trap.pycsgmesh>")
-        dX  = 2*_np.sin(pTheta)*pDz
-        dY  = 2*_np.sin(pDPhi)*pDz
+        va1 = _Vector(pDx1, 0, 0)
+        va2 = _Vector(pDx2, 0, 0)
+        va3 = _Vector(pDx3, 0, 0)
+        va4 = _Vector(pDx4, 0, 0)
+        vb1 = pDy1/_math.cos(pAlp1) * _Vector(_math.sin(pAlp1), _math.cos(pAlp1), 0)
+        vb2 = pDy2/_math.cos(pAlp2) * _Vector(_math.sin(pAlp2), _math.cos(pAlp2), 0)
+        vg  = pDz/_math.cos(pTheta) * _Vector(_math.sin(pTheta)*_math.cos(pDPhi),
+                                              _math.sin(pTheta)*_math.sin(pDPhi),
+                                              _math.cos(pTheta))
 
-        poly0 = [[-pDx2,-pDy1,-pDz],[-pDx1,pDy1,-pDz],[pDx1,pDy1,-pDz],[pDx2,-pDy1,-pDz]]
-        poly1 = [[-pDx3,-pDy2,pDz],[-pDx4,pDy2,pDz],[pDx4,pDy2,pDz],[pDx3,-pDy2,pDz]]
-
-        A0=0.0
-        A1=0.0
-
-        # Accumulate signed area of top and bottom face quadrilaterals
-        for j in range(len(poly0)-1):
-            i0  = j
-            i1  = i0 + 1
-            A0 += (1./2.)*(poly0[i0][0]*poly0[i1][1]-poly0[i1][0]*poly0[i0][1])
-            A1 += (1./2.)*(poly1[i0][0]*poly1[i1][1]-poly1[i1][0]*poly1[i0][1])
-
-        Xc0 = 0.0
-        Yc0 = 0.0
-        Xc1 = 0.0
-        Yc1 = 0.0
-
-        # Obtain centroids of top and bottom quadrilaterals
-        for j in range(len(poly0)-1):
-            i0 = j
-            i1 = i0+1
-            Xc0   += (1/(6*A0))*(poly0[i0][0]+poly0[i1][0])*(poly0[i0][0]*poly0[i1][1]-poly0[i1][0]*poly0[i0][1])
-            Yc0   += (1/(6*A0))*(poly0[i0][1]+poly0[i1][1])*(poly0[i0][0]*poly0[i1][1]-poly0[i1][0]*poly0[i0][1])
-            Xc1   += (1/(6*A1))*(poly1[i0][0]+poly1[i1][0])*(poly1[i0][0]*poly1[i1][1]-poly1[i1][0]*poly1[i0][1])
-            Yc1   += (1/(6*A1))*(poly1[i0][1]+poly1[i1][1])*(poly1[i0][0]*poly1[i1][1]-poly1[i1][0]*poly1[i0][1])
-
-        C0  = [Xc0, Yc0, 0]
-        C1  = [Xc1, Yc1, 0]
-
-        #Center in X-Y plane
-        poly0  = [listSub(vert, C0) for vert in poly0]
-        poly1  = [listSub(vert, C1) for vert in poly1]
-
-
-        # Slant faces
-        for i in range(len(poly0)):
-            vert = poly0[i]
-            y    = vert[1]
-            z    = vert[2]
-            x = vert[0] + y*_np.tan(pAlp1)
-
-            poly0[i] = [x,y,z]
-
-        for i in range(len(poly1)):
-            vert = poly1[i]
-            y    = vert[1]
-            z    = vert[2]
-            x = vert[0] + y*_np.tan(pAlp2)
-
-            poly1[i] = [x,y,z]
-
-        # Translate to orginal coordinates
-        poly0  = [listAdd(vert, C0) for vert in poly0]
-        poly1  = [listAdd(vert, C1) for vert in poly1]
-
-        dXY    = [dX/2, dY/2, 0]
-        poly1  = [listAdd(vert, dXY) for vert in poly1]
-        poly0  = [listSub(vert, dXY) for vert in poly0]
-
-        polygons = []
-
-        # Top face
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2])),
-                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2])),
-                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2])),
-                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]))])])
-
-        # Bottom face
-        polygons.extend([_Polygon([_Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2]))])])
-
-        # Side faces
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2])),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
-                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
-                                   _Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2]))])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2])),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
-                                   _Vertex(_Vector(poly0[1][0], poly0[1][1], poly0[1][2])),
-                                   _Vertex(_Vector(poly1[1][0], poly1[1][1], poly1[1][2]))])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2])),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2])),
-                                   _Vertex(_Vector(poly0[2][0], poly0[2][1], poly0[2][2])),
-                                   _Vertex(_Vector(poly1[2][0], poly1[2][1], poly1[2][2]))])])
-        polygons.extend([_Polygon([_Vertex(_Vector(poly1[0][0], poly1[0][1], poly1[0][2])),
-                                   _Vertex(_Vector(poly0[0][0], poly0[0][1], poly0[0][2])),
-                                   _Vertex(_Vector(poly0[3][0], poly0[3][1], poly0[3][2])),
-                                   _Vertex(_Vector(poly1[3][0], poly1[3][1], poly1[3][2]))])])
-
-
-        mesh  = _CSG.fromPolygons(polygons)
+        return _cubeNet([-vg - va1 - vb1,
+                         -vg - va2 + vb1,
+                         -vg + va2 + vb1,
+                         -vg + va1 - vb1,
+                          vg - va3 - vb2,
+                          vg - va4 + vb2,
+                          vg + va4 + vb2,
+                          vg + va3 - vb2])
 
         return mesh
+

@@ -1,6 +1,7 @@
 from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
+from .Box import cubeNet as _cubeNet
 
 if _config.meshing == _config.meshingType.pycsg :
     from pyg4ometry.pycsg.core import CSG as _CSG
@@ -86,35 +87,17 @@ class Para(_SolidBase):
 
         _log.info("para.pycsgmesh>")
 
-        dx_y   = pY*_math.sin(pAlpha)  #changes sign as the y component
-        dx_z   = pZ*_math.sin(pTheta)  #changes sign as the z component
-        dy     = pZ*_math.sin(pPhi)
-        dz     = pZ-pZ*_math.cos(pPhi)
+        va =                        _Vector(pX, 0, 0)
+        vb = pY/_math.cos(pAlpha) * _Vector(_math.sin(pAlpha),_math.cos(pAlpha), 0)
+        vg = pZ/_math.cos(pTheta) * _Vector(_math.sin(pTheta)*_math.cos(pPhi),
+                                            _math.sin(pTheta)*_math.sin(pPhi),
+                                            _math.cos(pTheta))
 
-        mesh  = _CSG.fromPolygons([_Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz))]),
-                                   _Polygon([_Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz))]),
-                                   _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz))]),
-                                   _Polygon([_Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz))]),
-                                   _Polygon([_Vertex(_Vector(-pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector(-pX-dx_y+dx_z,-pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(-pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector(-pX+dx_y-dx_z, pY-dy,-pZ+dz))]),
-                                   _Polygon([_Vertex(_Vector( pX-dx_y-dx_z,-pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX+dx_y-dx_z, pY-dy,-pZ+dz)),
-                                             _Vertex(_Vector( pX+dx_y+dx_z, pY+dy, pZ-dz)),
-                                             _Vertex(_Vector( pX-dx_y+dx_z,-pY+dy, pZ-dz))])])
-
-
-        return mesh
+        return _cubeNet([-vg - va - vb,
+                         -vg - va + vb,
+                         -vg + va + vb,
+                         -vg + va - vb,
+                          vg - va - vb,
+                          vg - va + vb,
+                          vg + va + vb,
+                          vg + va - vb])

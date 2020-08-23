@@ -679,7 +679,17 @@ class Reader(object):
         alp1  = _defines.Expression(solid_name+"_pAlp1",node.attributes['alpha1'].value,self._registry)
         alp2  = _defines.Expression(solid_name+"_pAlp2",node.attributes['alpha2'].value,self._registry)
 
-        _g4.solid.Trap(solid_name,dz,theta,dphi,dy1,dx1,dx2,alp1,dy2,dx3,dx4,alp2,self._registry)
+        try :
+            lunit = node.attributes['lunit'].value
+        except KeyError :
+            lunit = "mm"
+
+        try :
+            aunit = node.attributes['aunit'].value
+        except KeyError :
+            aunit = "rad"
+
+        _g4.solid.Trap(solid_name,dz,theta,dphi,dy1,dx1,dx2,alp1,dy2,dx3,dx4,alp2,self._registry ,lunit, aunit)
 
     def parseSphere(self, node) : 
         solid_name = node.attributes['name'].value 

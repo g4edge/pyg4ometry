@@ -67,6 +67,9 @@ class Vector(object):
 
     def __mul__(self, a):
         return self.times(a)
+
+    def __rmul__(self, a):
+        return self.times(a)
             
     def dividedBy(self, a):
         """ Divide. """
