@@ -155,8 +155,7 @@ class Reader(object):
             elif in_body: # continue appending bits to the body_parts list.
                 body_parts.extend(line_parts)
             else:
-                raise RuntimeError(
-                    "Failed to parse FLUKA input line: {}".format(line))
+                raise RuntimeError(f"Failed to parse FLUKA input line: {line}")
         else: # we should always break out of the above loop with END.
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
@@ -250,7 +249,7 @@ class Reader(object):
         elif directive == "$end_transform":
             transform_stack.pop()
         else:
-            raise ValueError("Unknown geometry directive: {}.".format(directive))
+            raise ValueError(f"Unknown geometry directive: {directive}.")
 
     def _parseMaterialAssignments(self):
         material_assignments = dict()
@@ -291,8 +290,8 @@ class Reader(object):
                 if region_upper == "@LASTREG":
                     region_upper = regionlist[-1]
                 elif region_upper not in regionlist:
-                    msg = ("Region {} referred to in WHAT3 of ASSIGNMA"
-                           " has not been defined.".format(region_upper))
+                    msg = (f"Region {region_upper} referred to in WHAT3"
+                           " of ASSIGNMA has not been defined.")
                     raise ValueError(msg)
                 stop = regionlist.index(region_upper)
             elif region_upper is None:
@@ -535,7 +534,7 @@ def _make_body(body_parts,
         b = body.QUA(name, *quaParameters, flukaregistry=flukareg,
                      transform=transform)
     else:
-        raise TypeError("Body type {} not supported".format(body_type))
+        raise TypeError(f"Body type {body_type} not supported")
     return b
 
 
@@ -560,7 +559,7 @@ class RegionVisitor(RegionParserVisitor):
         region_defn = self.visitChildren(ctx)
         # Build a zone from the list of bodies or single body:
 
-        zone = Zone(name="{}_zone".format(self.region_name))
+        zone = Zone(name=f"{self.region_name}_zone")
         for operator, body in region_defn:
             if operator == "+":
                 zone.addIntersection(body)
@@ -582,7 +581,7 @@ class RegionVisitor(RegionParserVisitor):
 
         # Construct zones out of these nested lists.
         for i, z in enumerate(region_defn):
-            zone = Zone(name="{}_zone{}".format(self.region_name, i))
+            zone = Zone(name=f"{self.region_name}_zone{i}")
             for operator, body in z:
                 if operator == "+":
                     zone.addIntersection(body)
@@ -645,8 +644,7 @@ class RegionVisitor(RegionParserVisitor):
             operator = '+'
         self.subzone_counter += 1
         solids = self.visit(ctx.expr())
-        z = Zone(name="{}_subzone{}".format(self.region_name,
-                                            self.subzone_counter))
+        z = Zone(name=f"{self.region_name}_subzone{self.subzone_counter}")
 
         if ctx.BodyName():
             body = self.flukaregistry.bodyDict[ctx.BodyName().getText()]
@@ -698,8 +696,8 @@ class SensitiveErrorListener(ErrorListener.ErrorListener):
 
     """
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        msg = ("At ({}, {}), Error: {}.  Warning:  The provided line and"
-               " column numbers may be deceptive.").format(line, column, msg)
+        msg = (f"At ({line}, {column}), Error: {msg}.  Warning:"
+               "The provided line and column numbers may be deceptive.")
         raise antlr4.error.Errors.ParseCancellationException(msg)
 
 def main(filein):
