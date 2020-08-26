@@ -22,7 +22,7 @@ if _config.meshing == _config.meshingType.pycsg:
 elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
 
-
+from textwrap import wrap as _wrap
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -215,7 +215,7 @@ class Zone(vis.ViewableMixin):
         return result
 
     def dumps(self):
-        """Returns a string of this Zone innstance in the equivalent
+        """Returns a string of this Zone instance in the equivalent
         FLUKA syntax."""
         fs = ""
 
@@ -486,6 +486,19 @@ class Region(vis.ViewableMixin):
 
     def flukaFreeString(self):
         fs = f"{self.name} 5 {self.dumps()}"
+
+        # split line (132 characters)
+        linLen = 132-5
+        barPos = fs.find("|")
+        modLen = linLen-barPos
+
+        fsLines = _wrap(fs,modLen)
+
+        fsNew = fsLines[0]+"\n"
+        for l in fsLines[1:] :
+            fsNew = fsNew + barPos*" " + l + "\n"
+
+        fs = fsNew
         if self.comment:
             fs = f"* {self.comment}\n{fs}"
         return fs
