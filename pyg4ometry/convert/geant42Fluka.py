@@ -1678,7 +1678,7 @@ def geant4Material2Fluka(material, freg) :
         if materialNameStrip  in freg.materials :
             return freg.materials[materialNameStrip]
 
-        fi = _fluka.Material(materialNameShort, materialInstance.Z, 0, flukaregistry=freg,
+        fi = _fluka.Material(materialNameShort, materialInstance.Z, 10, flukaregistry=freg,
                             atomicMass = materialInstance.a,
                             massNumber = materialInstance.N)
         return fi
