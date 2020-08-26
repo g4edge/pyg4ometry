@@ -89,6 +89,9 @@ class LogicalVolume(object):
             registry.addLogicalVolume(self)
         self.registry = registry
 
+        # efficient overlap checking
+        self.overlapChecked = False
+
     def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
 
@@ -102,6 +105,10 @@ class LogicalVolume(object):
 
         # print 'LogicalVolume.checkOverlaps>'
 
+        # return if overlaps already checked
+        if self.overlapChecked :
+            return
+
         # local meshes
         transformedMeshes = []
         transformedBoundingMeshes = []
@@ -111,7 +118,11 @@ class LogicalVolume(object):
         for pv in self.daughterVolumes:
 
             # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement":
+            if  pv.type != "placement" :
+                continue
+
+            # cannot currently deal with assembly
+            if  pv.logicalVolume.type == "assembly" :
                 continue
 
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
@@ -225,14 +236,16 @@ class LogicalVolume(object):
         # recusively check entire tree
         if recursive :
             for d in self.daughterVolumes :
-                d.logicalVolume.checkOverlaps(recursive=True,
-                                              coplanar = coplanar,
-                                              debugIO = debugIO)
+                d.logicalVolume.checkOverlaps(recursive = recursive,
+                                              coplanar  = coplanar,
+                                              debugIO   = debugIO)
+
+        # ok this logical has been checked
+        self.overlapChecked = True
 
     def setSolid(self, solid) : 
         self.solid = solid 
         self.mesh  = _Mesh(self.solid)        
-
 
     def makeSolidTessellated(self):
         tesselated_lv_solid = _solid2tessellated(self.solid)

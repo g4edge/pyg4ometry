@@ -33,7 +33,7 @@ class AssemblyVolume(object) :
     def add(self, physicalVolume) :
         self.daughterVolumes.append(physicalVolume)
         
-    def checkOverlaps(self) : 
+    def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) : # TODO implement overlaps for assembly volumes
         pass
 
     def extent(self, includeBoundingSolid=True) :
