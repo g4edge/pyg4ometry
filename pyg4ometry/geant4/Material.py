@@ -215,7 +215,7 @@ class MaterialBase(object):
                 comp[0].set_registry(registry)
 
     def __repr__(self):
-        return "{}".format(self.name)
+        return f"<{type(self).__name__}: {self.name}>"
 
 
 class Material(MaterialBase):
