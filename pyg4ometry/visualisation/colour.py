@@ -18,53 +18,30 @@ def hexRGBAToRGBAQuad(value):
     except ValueError:
         raise RGBAHexFormatError(value)
 
-class ColourMap(MutableMapping):
-    def __init__(self, *args, **kwargs):
-        self._map = dict(*args, **kwargs)
+def defaultColourMap():
+    """Construct a ColorMap initialised with default colours for various
+    materials."""
+    config = configparser.ConfigParser(
+        allow_no_value=True,
+        interpolation=configparser.ExtendedInterpolation())
+    config.optionxform = str
 
-    @classmethod
-    def fromPredefined(cls):
-        """Construct a ColorMap initialised with default colours for various
-        materials."""
-        config = configparser.ConfigParser(
-            allow_no_value=True,
-            interpolation=configparser.ExtendedInterpolation())
-        config.optionxform = str
+    ini = pkg_resources.resource_filename(__name__, "colours.ini")
+    with open(ini, "r") as f:
+        config.read_file(f)
 
-        ini = pkg_resources.resource_filename(__name__, "colours.ini")
-        with open(ini, "r") as f:
-            config.read_file(f)
+    result = {}
+    alphas = config["alpha"]
+    sections = [config[s] for s in ["geant4", "bdsim", "fluka"]]
+    for section in sections:
+        for name in section:
+            hexrgb = section.get(name, None)
 
-        result = cls()
-        alphas = config["alpha"]
-        sections = [config[s] for s in ["geant4", "bdsim", "fluka"]]
-        for section in sections:
-            for name in section:
-                hexrgb = section.get(name, None)
+            if hexrgb is None:
+                continue
+            alpha = float(alphas.get(name, 1))
+            result[name] = (*hexRGBToRGBTriplet(hexrgb), alpha)
 
-                if hexrgb is None:
-                    continue
-                alpha = float(alphas.get(name, 1))
-                result[name] = (*hexRGBToRGBTriplet(hexrgb), alpha)
-
-        return result
-        
-    def __getitem__(self, key):
-        return self._map[key]
-
-    def __setitem__(self, key, value):
-        self._map[key] = value
-
-    def __delitem__(self, key):
-        del self._map[key]
-
-    def __iter__(self):
-        return iter(self._map)
-
-    def __len__(self):
-        return len(self._map)
-
-    def __repr__(self):
-        return repr(self._map)
+    return result
         
 
