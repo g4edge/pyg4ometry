@@ -2,7 +2,6 @@ import random as _random
 from .colour import randomColour
 
 class VisualisationOptions:
-    
     def __init__(self) : 
         self.representation = "surface"
         self.color          = [0.5,0.5,0.5]
@@ -19,8 +18,8 @@ class VisualisationOptions:
     @classmethod
     def withRandomColour(cls):
         vopt = cls()
-        vopt.color = randomColour()
-        vopt.alpha = 1
+        vopt.color = [x/255 for x in randomColour()]
+        vopt.alpha = 0.0
         return vopt
 
 def makeVisualisationOptionsDictFromMaterials(materials) :
