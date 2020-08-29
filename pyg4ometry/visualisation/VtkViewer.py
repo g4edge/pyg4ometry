@@ -9,8 +9,8 @@ import random
 from . import colour
 
 class VtkViewer:
-    def __init__(self,size=(2048,1536), interpolation="none"):
-        
+    # def __init__(self,size=(2048,1536), interpolation="none"):
+    def __init__(self, size=(1024, 1024), interpolation="none"):
         # create a renderer
         self.ren = _vtk.vtkRenderer()
         
@@ -132,9 +132,11 @@ class VtkViewer:
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToSurface()
 
-    def setRandomColours(self):
-        for a in self.actors:
+    def setRandomColours(self, seed = 0):
 
+        random.seed(seed)
+
+        for a in self.actors:
             a.GetProperty().SetColor(random.random(),
                                      random.random(),
                                      random.random())
@@ -617,12 +619,13 @@ class VtkViewer:
         actors.append(vtkActor)
         self.ren.AddActor(vtkActor)
 
-    def view(self, interactive = True):
+    def view(self, interactive = True, resetCamera = True ):
         # enable user interface interactor
         self.iren.Initialize()
 
         # Camera setup
-        self.ren.ResetCamera()
+        if resetCamera :
+            self.ren.ResetCamera()
 
         # Render
         self.renWin.Render()
