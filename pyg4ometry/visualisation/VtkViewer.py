@@ -23,7 +23,7 @@ class VtkViewer:
         self.iren.SetRenderWindow(self.renWin)
 
         self.ren.SetBackground(1.0, 1.0, 1.0)
-        self.renWin.SetSize(*size)
+        self.renWin.SetSize(size[0],size[1])
 
         # local meshes 
         self.localmeshes = {}
@@ -680,15 +680,6 @@ class VtkViewer:
 
                 _plt.plot(x, y, color='k')
 
-
-            # p = dsa.WrapDataObject(c.GetOutput()).Points
-            # if len(p) != 0 :
-            #     print(type(p),len(p),p)
-            #     x = [pp[0] for pp in p]
-            #     y = [pp[2] for pp in p]
-            #     _plt.plot(x,y)
-                #return x,y
-
     def setOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
         if overlaptype == _OverlapType.protrusion:
@@ -706,6 +697,12 @@ class VtkViewer:
     def getMaterialVisOptions(self, name):
         return self.materialVisualisationOptions[pv.logicalVolume.material.name]
 
+    def printViewParameters(self):
+        activeCamera = self.ren.GetActiveCamera()
+        print("Window size     ", self.renWin.GetSize())
+        print("Focal point     ", activeCamera.GetFocalPoint())
+        print("Camera position ", activeCamera.GetPosition())
+        print("Focal distance  ", activeCamera.GetDistance())
 
 class PubViewer(VtkViewer):
     def __init__(self, *args, **kwargs):
