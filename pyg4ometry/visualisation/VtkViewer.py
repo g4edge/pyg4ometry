@@ -45,6 +45,11 @@ class VtkViewer:
         self.actorsOverlap = [] 
         self.physicalActorMapOverlap = {}
 
+        # cutters
+        self.xcutters = []
+        self.ycutters = []
+        self.zcutters = []
+
         # axes
         self.axes = []
 
@@ -544,6 +549,8 @@ class VtkViewer:
             planeActor.GetProperty().SetRepresentationToSurface()
             self.ren.AddActor(planeActor)
 
+            return cutter
+
         def makeClipperPlane(normal) :
             plane = _vtk.vtkPlane()
             plane.SetOrigin(0, 0, 0)
@@ -567,9 +574,9 @@ class VtkViewer:
             self.ren.AddActor(clipperActor)  # selection part end
 
         if cutters :
-            makeCutterPlane([1,0,0],[1,0,0])
-            makeCutterPlane([0,1,0],[0,1,0])
-            makeCutterPlane([0,0,1],[0,0,1])
+            self.xcutters.append(makeCutterPlane([1,0,0],[1,0,0]))
+            self.ycutters.append(makeCutterPlane([0,1,0],[0,1,0]))
+            self.zcutters.append(makeCutterPlane([0,0,1],[0,0,1]))
 
         #if clippers :
         #    makeClipperPlane([1,0,0])
@@ -632,6 +639,55 @@ class VtkViewer:
 
         if interactive : 
             self.iren.Start()
+
+    def viewSection(self, dir = 'x'):
+        import matplotlib.pyplot as _plt
+        from vtk.numpy_interface import dataset_adapter as dsa
+        import pyg4ometry.pycgal.algo as algo
+        import random
+
+        if dir == 'x' :
+            cutters = self.xcutters
+        elif dir == 'y' :
+            cutters = self.ycutters
+        elif dir == 'z' :
+            cutters = self.zcutters
+
+        for c in cutters:
+            pd = c.GetOutput()
+
+            color = ()
+
+            for i in range(0,pd.GetNumberOfCells(),1) :
+                idl = _vtk.vtkIdList()
+                pd.GetCellPoints(i,idl)
+
+                x = []
+                y = []
+
+                for j in range(0,idl.GetNumberOfIds(),1) :
+                    p = pd.GetPoint(idl.GetId(j))
+
+                    if dir == 'x':
+                        x.append(p[1])
+                        y.append(p[2])
+                    elif dir == 'y':
+                        x.append(p[0])
+                        y.append(p[2])
+                    elif dir == 'z':
+                        x.append(p[0])
+                        y.append(p[1])
+
+                _plt.plot(x, y, color='k')
+
+
+            # p = dsa.WrapDataObject(c.GetOutput()).Points
+            # if len(p) != 0 :
+            #     print(type(p),len(p),p)
+            #     x = [pp[0] for pp in p]
+            #     y = [pp[2] for pp in p]
+            #     _plt.plot(x,y)
+                #return x,y
 
     def setOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
