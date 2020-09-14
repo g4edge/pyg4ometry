@@ -17,5 +17,17 @@ def part2Region(obj, trfm, fgreg, meshDeviation = 0.05) :
     ################################
     mesh = list(obj.Shape.tessellate(meshDeviation))
 
+    # create list of surfaces
+
+    # determine surfaces which are cut surfaces
+
+    # (set of surfaces strictly on one side of cut surface)
+
+    # optimize cut surfaces
+
+    # compile list output zones
+
+    # create region
+
 
 
