@@ -1,6 +1,7 @@
 from functools import reduce
 import logging
 from copy import deepcopy
+from collections import namedtuple
 import logging
 import types
 import warnings
@@ -9,9 +10,7 @@ import numpy as np
 
 from .fluka2g4materials import makeFlukaToG4MaterialsMap
 from pyg4ometry import exceptions
-from pyg4ometry.fluka import Transform
-from pyg4ometry.fluka.vector import (AABB, areAABBsOverlapping)
-from pyg4ometry.exceptions import FLUKAError
+from pyg4ometry.fluka.vector import areAABBsOverlapping
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
@@ -66,56 +65,65 @@ def fluka2Geant4(flukareg,
     :type quadricRegionAABBs: dict
 
     """
-    fr = flukareg # abbreviation
-
     timer = kwargs.get("timer", Timer())
     timer.update()
 
-    regions = _getSelectedRegions(fr, regions, omitRegions)
+    regions = _getSelectedRegions(flukareg, regions, omitRegions)
     if omitBlackholeRegions:
-        fr = _filterBlackHoleRegions(fr, regions)
+        flukareg = _filterBlackHoleRegions(flukareg, regions)
 
-    _checkQuadricRegionAABBs(fr, quadricRegionAABBs)
+    _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs)
 
     if quadricRegionAABBs:
-        fr = _makeUniqueQuadricRegions(fr, quadricRegionAABBs)
+        flukareg = _makeUniqueQuadricRegions(flukareg, quadricRegionAABBs)
     else:
         quadricRegionAABBs = {}
 
     if withLengthSafety:
         timer.update()
-        fr = _makeLengthSafetyRegistry(fr, regions)
+        flukareg = _makeLengthSafetyRegistry(flukareg, regions)
         timer.add("length safety")
 
     if minimiseSolids:
-        regionZoneAABBs = _getRegionZoneAABBs(fr, regions, quadricRegionAABBs)
+        regionZoneAABBs = _getRegionZoneAABBs(flukareg, regions,
+                                              quadricRegionAABBs)
         timer.add("zone aabbs")
 
     aabbMap = None
     if minimiseSolids:
-        aabbMap = _makeBodyMinimumAABBMap(fr, regionZoneAABBs, regions)
-        fr = _filterHalfSpaces(fr, regionZoneAABBs)
+        aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
+        flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
         timer.add("solid minimisation")
 
+    WorldInfo = namedtuple("WorldInfo", ["material", "dimensions"])
+    worldinfo = WorldInfo(worldMaterial, worldDimensions)
+
+    AABBInfo = namedtuple("AABBInfo", ["aabbMap", "regionZoneAABBs"])
+    aabbinfo = AABBInfo(aabbMap, regionZoneAABBs)
+
+    regions = _filteredRegions(flukareg, regions)
+
+    # After the several steps above transforming the fluka registry, we now
+    # take the transformed fluka registry and convert it to a g4 registry.
+    return _flukaRegistryToG4Registry(flukareg, regions,
+                                      worldinfo, aabbinfo,
+                                      timer)
+
+def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo, timer):
+    "Convert a transformed fluka registry to a geant4 registry."
     # This loop below do the main conversion
     greg = g4.Registry()
-    f2g4mat = makeFlukaToG4MaterialsMap(fr, greg)
+    f2g4mat = makeFlukaToG4MaterialsMap(flukareg, greg)
     timer.add("materials")
-    fluka_material_names_to_g4 = makeFlukaToG4MaterialsMap(fr, greg)
-    wlv = _makeWorldVolume(_getWorldDimensions(worldDimensions),
-                           worldMaterial, greg)
-    assignmas = fr.assignmas
+    wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions),
+                           worldinfo.material, greg)
     regionNamesToLVs = {}
-    for name, region in fr.regionDict.items():
-        if name not in regions:
-            continue
-
-        # print name
-        region = fr.regionDict[name]
-        region_solid = region.geant4Solid(greg, aabb=aabbMap)
+    for region in regions:
+        name = region.name
+        region_solid = region.geant4Solid(greg, aabb=aabbinfo.aabbMap)
 
         try:
-            materialName = assignmas[name]
+            materialName = flukareg.assignmas[name]
         except KeyError:
             warnings.warn(f"Setting region {name} with no material to IRON.")
             materialName = "IRON"
@@ -132,19 +140,25 @@ def fluka2Geant4(flukareg,
         rot = list(trans.reverse(region.tbxyz()))
         g4.PhysicalVolume(
             rot,
-            list(region.centre(aabb=aabbMap)),
+            list(region.centre(aabb=aabbinfo.aabbMap)),
             region_lv,
             f"{name}_pv",
             wlv, greg)
     timer.add("main loop")
     timer.updateTotal()
     try:
-        _convertLatticeCells(greg, fr, wlv, regionZoneAABBs, regionNamesToLVs)
+        _convertLatticeCells(greg, flukareg, wlv,
+                             aabbinfo.regionZoneAABBs, regionNamesToLVs)
     except UnboundLocalError:
         pass
     greg.setWorld(wlv.name)
 
     return greg
+
+def _filteredRegions(flukareg, regions):
+    for name, region in flukareg.regionDict.items():
+        if name in regions:
+            yield region
 
 def _makeWorldVolume(dimensions, material, g4registry):
     """Make a world solid and logical volume with the given dimensions,
