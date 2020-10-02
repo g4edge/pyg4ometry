@@ -40,7 +40,7 @@ class MatrixConvertibleMixin:
 
     def netExpansion(self):
         factors = np.diagonal(self.toScaleMatrix())[:3]
-        assert (factors[0] == factors).all()
+        assert np.isclose(factors[0], factors).all()
         return factors[0]
 
     def leftMultiplyVector(self, vector):
