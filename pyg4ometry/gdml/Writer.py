@@ -115,12 +115,13 @@ class Writer(object):
         with open(gmad, "w") as f:
             f.write(text)
 
-    def writeGmadTester(self, filenameGmad, filenameGDML, writeDefaultLattice=False, preprocessGDML=True):
+    def writeGmadTester(self, filenameGmad, filenameGDML,
+                        writeDefaultLattice=False,
+                        preprocessGDML=True):
         if writeDefaultLattice:
             self.writeDefaultLattice()
 
-        s = 'e1: element, geometry="gdml:'
-        s += str(filenameGDML)
+        s = f'e1: element, geometry="gdml:{filenameGDML}'
         if "GDML_Size_position_z" in self.registry.defineDict:
             s += '", l=' + str(self.registry.defineDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
@@ -131,14 +132,16 @@ class Writer(object):
                 s += '", l=' + str(dz) + '*mm;\n'
             except IndexError:
                 s += '", l=20*m;\n'
-        s += 'l1: line = (e1);\n'
-        s += 'use,period=l1;\n'
-        s += 'sample,all;\n'
-        s += 'beam, particle="e-",\n'
-        s += 'energy=250.0*GeV;\n'
-        s += 'option,physicsList="em";'
+        s += """l1: line = (e1);
+use, period=l1;
+
+sample, all;
+beam, particle="e-",
+      energy=250*GeV;
+option, physicsList="em";
+"""
         if not preprocessGDML:
-            s += "option, preprocessGDML=0;"
+            s += "option, preprocessGDML=0;\n"
         f = open(filenameGmad, 'w')
         f.write(s)
         f.close()
