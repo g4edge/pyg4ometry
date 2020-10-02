@@ -124,7 +124,8 @@ class _FlukaToG4MaterialConverter:
         # We make both an Element instance and a Material
         # instance in case the element is to be used as an atomic
         # fraction, or as a plain material.
-        g4element = g4.ElementSimple(name, name, atomicNumber,
+        elementName = self._mangleElementName(name)
+        g4element = g4.ElementSimple(elementName, elementName, atomicNumber,
                                      massNumber, registry=self.greg)
         g4material = g4.MaterialSingleElement(name, atomicNumber, atomicMass,
                                               density, registry=self.greg)
@@ -196,6 +197,10 @@ class _FlukaToG4MaterialConverter:
             total += (self.periodicTable.atomicMassFromZ(part.atomicNumber)
                       * fraction)
         return total
+
+    @staticmethod
+    def _mangleElementName(name):
+        return f"{name}_element"
 
 def makeFlukaToG4MaterialsMap(freg, greg):
     """Convert the materials defined in a FlukaRegistry, and populate
