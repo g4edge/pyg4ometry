@@ -1268,9 +1268,13 @@ class Reader(object):
                     if cn.tagName == "solid" : 
                         muNodeName = cn.attributes['ref'].value 
                         muNodeSolid = self._registry.solidDict[muNodeName]
+                    elif cn.tagName == "position" :
+                        position = self.parseVector(cn, "position", False)
                     elif cn.tagName == "positionref" :
                         positionName = cn.attributes['ref'].value
                         position     = self._registry.defineDict[positionName]
+                    elif cn.tagName == "rotation" :
+                        rotation = self.parseVector(cn, "rotation", False)
                     elif cn.tagName == "rotationref" : 
                         rotationName = cn.attributes['ref'].value
                         rotation     = self._registry.defineDict[rotationName]
