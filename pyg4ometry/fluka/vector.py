@@ -204,7 +204,7 @@ class AABB(object):
         return AABB(lower, upper)
 
     def isNull(self):
-        return any(self.lower > self.upper)
+        return any(self.lower >= self.upper)
 
 
 def areAABBsOverlapping(first, second):
