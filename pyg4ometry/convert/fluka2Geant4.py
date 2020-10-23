@@ -26,6 +26,8 @@ logger.setLevel(logging.INFO)
 
 WORLD_DIMENSIONS = [10000, 10000, 10000]
 
+class NullModel(Exception): pass
+
 def fluka2Geant4(flukareg,
                  regions=None,
                  withLengthSafety=True,
@@ -81,6 +83,11 @@ def fluka2Geant4(flukareg,
     if minimiseSolids:
         regionZoneAABBs = _getRegionZoneAABBs(flukareg, regions,
                                               quadricRegionAABBs)
+        flukareg, regionZoneAABBs = _filterRegistryNullZones(flukareg,
+                                                             regionZoneAABBs)
+        regions = [r for r in regions if r in regionZoneAABBs]
+        if not regions:
+            raise NullModel("Conversion result is null.")
 
     aabbMap = None
     if minimiseSolids:
@@ -234,6 +241,38 @@ def _getRegionZoneAABBs(flukareg, regions, quadricRegionAABBs):
         else:
             regionZoneAABBs[name] = region.zoneAABBs(aabb=None)
     return regionZoneAABBs
+
+def _filterRegistryNullZones(flukareg, regionZoneAABBs):
+    regout = deepcopy(flukareg)
+    for regionName, aabbs in regionZoneAABBs.items():
+        region = regout.regionDict[regionName]
+        region.zones = list(_filterRegionNullZones(region, aabbs))
+        if not region.zones:
+            logger.warn(f"Omitting null region {region.name} from conversion")
+            del regout.regionDict[regionName]
+            regout.assignmas.pop(regionName, None)
+
+    regionZoneAABBs = _filterNullAABBs(regionZoneAABBs)
+    return regout, regionZoneAABBs
+    # for name, region in flukareg.regionDict.items():
+    #     from IPython import embed; embed()
+
+def _filterRegionNullZones(region, aabbs):
+    for zone, aabb in zip(region.zones, aabbs):
+        if aabb is not None:
+            yield zone
+        else:
+            logger.warn(
+                f"Filtering null zone {zone.dumps()} in region "
+                f"{region.name} from conversion")
+
+def _filterNullAABBs(regionZoneAABBs):
+    out = {}
+    for regionName, aabbs in regionZoneAABBs.items():
+        aabbs = [a for a in aabbs if a is not None]
+        if aabbs:
+            out[regionName] = aabbs
+    return out
 
 def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()

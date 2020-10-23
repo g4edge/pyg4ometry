@@ -598,13 +598,12 @@ class Region(vis.ViewableMixin):
                                           _randomName(),
                                           greg)
             except NullMeshError as e:
-                raise NullMeshError(
-                    f"Null zone in region {self.name}: {e.message}.")
+                extents.append(None)
+            else:
+                lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
+                                                          zone.centre())
+                extents.append(AABB(lower, upper))
 
-            lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
-                                                      zone.centre())
-
-            extents.append(AABB(lower, upper))
         return extents
 
     def aabb(self, aabb=None):
