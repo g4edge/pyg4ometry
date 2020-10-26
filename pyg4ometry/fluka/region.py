@@ -121,13 +121,16 @@ class Zone(vis.ViewableMixin):
         return matrix2tbxyz(self.rotation())
 
     @staticmethod
-    def _getSolidFromBoolean(boolean, reg, aabb):
+    def _getSolidFromBoolean(boolean, g4reg, aabb):
+        # For given _Boolean instance, get the underlying fluka.Body
+        # instance as a GDML solid.  Either it has already been defined and
+        # get it from the Geant4 Registry or define it here w.r.t the
+        # provdided AABB and add it to the geant4 registry provided.
         try:
-            return reg.solidDict[boolean.body.name]
+            return g4reg.solidDict[boolean.body.name]
         except KeyError:
             aabb = _getAxisAlignedBoundingBox(aabb, boolean)
-            return boolean.body.geant4Solid(reg, aabb=aabb)
-
+            return boolean.body.geant4Solid(g4reg, aabb=aabb)
 
     def mesh(self, aabb=None):
         result = self.intersections[0].body.mesh(aabb=aabb)
@@ -207,8 +210,12 @@ class Zone(vis.ViewableMixin):
                                     transforms,
                                     registry=reg)
         aabb0 = _getAxisAlignedBoundingBox(aabb, body0)
-        rotation = matrix2tbxyz(body0.rotation().T)
-        translation = list(-1 * body0.centre(aabb=aabb0))
+
+        # Getting the correct relative rotation for the subtraction.
+        rotation = body0.rotation().T
+        translation = -1 * body0.centre(aabb=aabb0)
+        translation = list(rotation.dot(translation))
+        rotation = list(matrix2tbxyz(rotation))
         result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
                                       start, union,
                                       [rotation, translation], reg)
