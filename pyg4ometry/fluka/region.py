@@ -448,13 +448,16 @@ class Region(vis.ViewableMixin):
         if len(self.zones) == 1:
             return self.zones[0].centre(aabb=aabb)
         else:
-            return [0, 0, 0]
+            return [0, 0, 0] # Multi union origin is [0, 0, 0].
 
     def tbxyz(self):
-        return self.zones[0].tbxyz()
+        return matrix2tbxyz(self.rotation())
 
     def rotation(self):
-        return self.zones[0].rotation()
+        if len(self.zones) == 1:
+            return self.zones[0].rotation()
+        else:
+            return np.identity(3) # Multi union is already rotated.
 
     def bodies(self):
         "Return the set of unique bodies that constitute this Zone."
