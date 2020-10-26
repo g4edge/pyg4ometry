@@ -672,6 +672,9 @@ class Region(vis.ViewableMixin):
         boolean_algebra.simplifyRegion(reg)
         self.zones = reg.zones
 
+    def __repr__(self):
+        return f"<Region: {self.name}>"
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
