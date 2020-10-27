@@ -3,9 +3,17 @@ import os as _os
 import numpy as _np
 import copy as _copy
 
-_lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__),
-                                              "pyg4_cgal.cpython-37m-darwin.so")
-                                )
+# find pyg4_cgal....so library
+
+g = _os.walk(_os.path.dirname(__file__))
+
+for p in g :
+    if p[0].find("pycgal") != -1 :
+        f = p[2]
+        for fn in f :
+            if fn.find("pyg4_cgal.cpython") != -1 :
+                _lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__),
+                                                              fn))
 
 vertexfacet_to_polyhedron = _lib.pyg4_cgal_vertexfacet_to_polyhedron
 vertexfacet_to_polyhedron.argtypes = [_ctypes.c_int,
