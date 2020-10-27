@@ -200,6 +200,7 @@ option, physicsList="em";
                 vn.setAttribute('unit', vv.unit)
 
         node.appendChild(vn)
+        return vn
 
     def writeDefine(self, define):
         if isinstance(define, _Defines.Constant):
@@ -1279,12 +1280,28 @@ option, physicsList="em";
                                                instance.transformations),
                                            start=1):
             ce = self.doc.createElement("multiUnionNode")
-            ce.setAttribute("name", f"{self.prepend}{instance.name}-node-{i}")
+            nodename = f"{self.prepend}{instance.name}-node-{i}"
+            ce.setAttribute("name", nodename)
+
             cse = self.doc.createElement("solid")
             cse.setAttribute("ref", solid.name)
             ce.appendChild(cse)
-            self.writeVectorVariable(ce, trans[1]) # position
-            self.writeVectorVariable(ce, trans[0]) # rotation
+
+            position = trans[1]
+            rotation = trans[0]
+            positionElement = self.writeVectorVariable(ce, position) # position
+            rotationElement = self.writeVectorVariable(ce, rotation) # rotation
+
+            # her we provide default names if are none provided to satify
+            # the GDML schema which silences warnings in Geant4.
+            positionName = position.name
+            if positionElement and not position.name:
+                positionName = f"{nodename}-position"
+                positionElement.setAttribute("name", positionName)
+            rotationName = rotation.name
+            if rotationElement and not rotation.name:
+                rotationName = f"{nodename}-rotation"
+                rotationElement.setAttribute("name", rotationName)
 
             oe.appendChild(ce)
 
