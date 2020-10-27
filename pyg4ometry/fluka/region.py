@@ -121,13 +121,16 @@ class Zone(vis.ViewableMixin):
         return matrix2tbxyz(self.rotation())
 
     @staticmethod
-    def _getSolidFromBoolean(boolean, reg, aabb):
+    def _getSolidFromBoolean(boolean, g4reg, aabb):
+        # For given _Boolean instance, get the underlying fluka.Body
+        # instance as a GDML solid.  Either it has already been defined and
+        # get it from the Geant4 Registry or define it here w.r.t the
+        # provdided AABB and add it to the geant4 registry provided.
         try:
-            return reg.solidDict[boolean.body.name]
+            return g4reg.solidDict[boolean.body.name]
         except KeyError:
             aabb = _getAxisAlignedBoundingBox(aabb, boolean)
-            return boolean.body.geant4Solid(reg, aabb=aabb)
-
+            return boolean.body.geant4Solid(g4reg, aabb=aabb)
 
     def mesh(self, aabb=None):
         result = self.intersections[0].body.mesh(aabb=aabb)
@@ -207,8 +210,12 @@ class Zone(vis.ViewableMixin):
                                     transforms,
                                     registry=reg)
         aabb0 = _getAxisAlignedBoundingBox(aabb, body0)
-        rotation = matrix2tbxyz(body0.rotation().T)
-        translation = list(-1 * body0.centre(aabb=aabb0))
+
+        # Getting the correct relative rotation for the subtraction.
+        rotation = body0.rotation().T
+        translation = -1 * body0.centre(aabb=aabb0)
+        translation = list(rotation.dot(translation))
+        rotation = list(matrix2tbxyz(rotation))
         result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
                                       start, union,
                                       [rotation, translation], reg)
@@ -441,13 +448,16 @@ class Region(vis.ViewableMixin):
         if len(self.zones) == 1:
             return self.zones[0].centre(aabb=aabb)
         else:
-            return [0, 0, 0]
+            return [0, 0, 0] # Multi union origin is [0, 0, 0].
 
     def tbxyz(self):
-        return self.zones[0].tbxyz()
+        return matrix2tbxyz(self.rotation())
 
     def rotation(self):
-        return self.zones[0].rotation()
+        if len(self.zones) == 1:
+            return self.zones[0].rotation()
+        else:
+            return np.identity(3) # Multi union is already rotated.
 
     def bodies(self):
         "Return the set of unique bodies that constitute this Zone."
@@ -598,13 +608,12 @@ class Region(vis.ViewableMixin):
                                           _randomName(),
                                           greg)
             except NullMeshError as e:
-                raise NullMeshError(
-                    f"Null zone in region {self.name}: {e.message}.")
+                extents.append(None)
+            else:
+                lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
+                                                          zone.centre())
+                extents.append(AABB(lower, upper))
 
-            lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
-                                                      zone.centre())
-
-            extents.append(AABB(lower, upper))
         return extents
 
     def aabb(self, aabb=None):
@@ -662,6 +671,9 @@ class Region(vis.ViewableMixin):
             raise NullMeshError(f"Pruned region {self.name} is null.")
         boolean_algebra.simplifyRegion(reg)
         self.zones = reg.zones
+
+    def __repr__(self):
+        return f"<Region: {self.name}>"
 
 
 def _get_relative_rot_matrix(first, second):

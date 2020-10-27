@@ -14,7 +14,6 @@ from pyg4ometry.fluka.vector import areAABBsOverlapping
 import pyg4ometry.fluka as fluka
 import pyg4ometry.geant4 as g4
 import pyg4ometry.transformation as trans
-from pyg4ometry.utils import Timer
 
 import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.cgal_sm:
@@ -26,6 +25,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 WORLD_DIMENSIONS = [10000, 10000, 10000]
+
+class NullModel(Exception): pass
 
 def fluka2Geant4(flukareg,
                  regions=None,
@@ -65,9 +66,6 @@ def fluka2Geant4(flukareg,
     :type quadricRegionAABBs: dict
 
     """
-    timer = kwargs.get("timer", Timer())
-    timer.update()
-
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
     if omitBlackholeRegions:
         flukareg = _filterBlackHoleRegions(flukareg, regions)
@@ -80,20 +78,21 @@ def fluka2Geant4(flukareg,
         quadricRegionAABBs = {}
 
     if withLengthSafety:
-        timer.update()
         flukareg = _makeLengthSafetyRegistry(flukareg, regions)
-        timer.add("length safety")
 
     if minimiseSolids:
         regionZoneAABBs = _getRegionZoneAABBs(flukareg, regions,
                                               quadricRegionAABBs)
-        timer.add("zone aabbs")
+        flukareg, regionZoneAABBs = _filterRegistryNullZones(flukareg,
+                                                             regionZoneAABBs)
+        regions = [r for r in regions if r in regionZoneAABBs]
+        if not regions:
+            raise NullModel("Conversion result is null.")
 
     aabbMap = None
     if minimiseSolids:
         aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
         flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
-        timer.add("solid minimisation")
 
     WorldInfo = namedtuple("WorldInfo", ["material", "dimensions"])
     worldinfo = WorldInfo(worldMaterial, worldDimensions)
@@ -105,16 +104,13 @@ def fluka2Geant4(flukareg,
 
     # After the several steps above transforming the fluka registry, we now
     # take the transformed fluka registry and convert it to a g4 registry.
-    return _flukaRegistryToG4Registry(flukareg, regions,
-                                      worldinfo, aabbinfo,
-                                      timer)
+    return _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo)
 
-def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo, timer):
+def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
     "Convert a transformed fluka registry to a geant4 registry."
     # This loop below do the main conversion
     greg = g4.Registry()
     f2g4mat = makeFlukaToG4MaterialsMap(flukareg, greg)
-    timer.add("materials")
     wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions),
                            worldinfo.material, greg)
     regionNamesToLVs = {}
@@ -144,8 +140,6 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo, timer):
             region_lv,
             f"{name}_pv",
             wlv, greg)
-    timer.add("main loop")
-    timer.updateTotal()
     try:
         _convertLatticeCells(greg, flukareg, wlv,
                              aabbinfo.regionZoneAABBs, regionNamesToLVs)
@@ -247,6 +241,38 @@ def _getRegionZoneAABBs(flukareg, regions, quadricRegionAABBs):
         else:
             regionZoneAABBs[name] = region.zoneAABBs(aabb=None)
     return regionZoneAABBs
+
+def _filterRegistryNullZones(flukareg, regionZoneAABBs):
+    regout = deepcopy(flukareg)
+    for regionName, aabbs in regionZoneAABBs.items():
+        region = regout.regionDict[regionName]
+        region.zones = list(_filterRegionNullZones(region, aabbs))
+        if not region.zones:
+            logger.warn(f"Omitting null region {region.name} from conversion")
+            del regout.regionDict[regionName]
+            regout.assignmas.pop(regionName, None)
+
+    regionZoneAABBs = _filterNullAABBs(regionZoneAABBs)
+    return regout, regionZoneAABBs
+    # for name, region in flukareg.regionDict.items():
+    #     from IPython import embed; embed()
+
+def _filterRegionNullZones(region, aabbs):
+    for zone, aabb in zip(region.zones, aabbs):
+        if aabb is not None:
+            yield zone
+        else:
+            logger.warn(
+                f"Filtering null zone {zone.dumps()} in region "
+                f"{region.name} from conversion")
+
+def _filterNullAABBs(regionZoneAABBs):
+    out = {}
+    for regionName, aabbs in regionZoneAABBs.items():
+        aabbs = [a for a in aabbs if a is not None]
+        if aabbs:
+            out[regionName] = aabbs
+    return out
 
 def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
     bodies_to_regions = flukareg.getBodyToRegionsMap()
