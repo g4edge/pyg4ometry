@@ -30,12 +30,10 @@ class NullModel(Exception): pass
 
 def fluka2Geant4(flukareg,
                  regions=None,
-                 withLengthSafety=True,
-                 minimiseSolids=True,
+                 omitRegions=None,
                  worldMaterial="G4_Galactic",
                  worldDimensions=None,
                  omitBlackholeRegions=True,
-                 omitRegions=None,
                  quadricRegionAABBs=None,
                  **kwargs):
     """Convert a FLUKA registry to a Geant4 Registry.
@@ -45,27 +43,31 @@ def fluka2Geant4(flukareg,
     :param regions: Names of regions to be converted, by default \
     all are converted.  Mutually exclusive with omitRegions.
     :type regions: list
-    :param withLengthSafety: Whether or not to apply automatic length safety.
-    :type withLengthSafety: bool
-    :param minimiseSolids: Whether or not to minimise the boxes and tubes of \
-    Geant4 used to represent infinite solids in FLUKA.
-    :type minimiseSolids: bool
+    :param omitRegions: Names of regions to be omitted from the \
+    conversion.  This option is mutually exclusive with the kwarg regions.
+    :type omitRegions: list
     :param worldMaterial: name of world material to be used.
     :type worldMaterial: string
     :param worldDimensions: dimensions of world logical volume in \
     converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
     :type worldDimensions: list
     :param omitBlackholeRegions: whether or not to omit regions with
-    the FLUKA material BLCKHOLE from the conversion.
+    the FLUKA material BLCKHOLE from the conversion.  By default, true.
     :type omitBlackholeRegions: bool
-    :param omitRegions: Names of regions to be omitted from the \
-    conversion.  This option is mutually exclusive with the kwarg regions.
-    :type omitRegions: list
     :param quadricRegionAABBs: The axis-aligned aabbs of any regions \
     featuring QUA bodies, mapping region names to fluka.AABB instances.
     :type quadricRegionAABBs: dict
 
-    """
+    # """
+    # !!! Developer options (to kwargs)
+    # - withLengthSafety: Whether or not to apply automatic length safety.
+
+    # - minimiseSolids: Whether or not to minimise the boxes and tubes of
+    # Geant4 used to represent infinite solids in FLUKA. 
+
+    kwargs.setdefault("minimiseSolids", True)
+    kwargs.setdefault("withLengthSafety", True)
+
     regions = _getSelectedRegions(flukareg, regions, omitRegions)
     if omitBlackholeRegions:
         flukareg = _filterBlackHoleRegions(flukareg, regions)
@@ -77,10 +79,10 @@ def fluka2Geant4(flukareg,
     else:
         quadricRegionAABBs = {}
 
-    if withLengthSafety:
+    if kwargs["withLengthSafety"]:
         flukareg = _makeLengthSafetyRegistry(flukareg, regions)
 
-    if minimiseSolids:
+    if kwargs["minimiseSolids"]:
         regionZoneAABBs = _getRegionZoneAABBs(flukareg, regions,
                                               quadricRegionAABBs)
         flukareg, regionZoneAABBs = _filterRegistryNullZones(flukareg,
@@ -90,7 +92,7 @@ def fluka2Geant4(flukareg,
             raise NullModel("Conversion result is null.")
 
     aabbMap = None
-    if minimiseSolids:
+    if kwargs["minimiseSolids"]:
         aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
         flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
 
