@@ -22,6 +22,11 @@ class VtkViewer:
         self.iren = _vtk.vtkRenderWindowInteractor()
         self.iren.SetRenderWindow(self.renWin)
 
+        # add the custom style
+        style = MouseInteractorNamePhysicalVolume(self.ren, self)
+        style.SetDefaultRenderer(self.ren)
+        self.iren.SetInteractorStyle(style)
+
         self.ren.SetBackground(1.0, 1.0, 1.0)
         self.renWin.SetSize(size[0],size[1])
 
@@ -490,6 +495,7 @@ class VtkViewer:
         actorname = pv_name+"_actor"             
         vtkActor = _vtk.vtkActor() 
         vtkActor.SetMapper(vtkMAP)
+        vtkActor.name = actorname
 
         if self.interpolation is not "none":
             if self.interpolation == "gouraud":
@@ -724,6 +730,34 @@ class PubViewer(VtkViewer):
             materialName,
             _VisOptions.withRandomColour()
         )
+
+
+class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
+    def __init__(self, renderer, vtkviewer, parent=None):
+        self.AddObserver("RightButtonPressEvent", self.rightButtonPressEvent)
+
+        self.renderer = renderer
+        self.vtkviewer = vtkviewer
+
+    def rightButtonPressEvent(self, obj, event):
+        clickPos = self.GetInteractor().GetEventPosition()
+
+        picker = vtk.vtkPropPicker()
+        picker.Pick(clickPos[0], clickPos[1], 0, self.renderer)
+
+        # If an actor was right clicked
+        actor = picker.GetActor()
+        if actor:
+            actorMap = self.vtkviewer.physicalActorMap
+            self.vtkviewer.physicalActorMap.items()
+            try:
+                name = next((x[0] for x in actorMap.items() if x[1] is actor))
+            except StopIteration:
+                pass
+            else:
+                name = name[:name.find("_actor")]
+                print(name)
+
 
 def axesFromExtents(extent) :
     low  = _np.array(extent[0])
