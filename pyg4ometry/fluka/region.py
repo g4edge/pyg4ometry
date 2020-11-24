@@ -675,6 +675,13 @@ class Region(vis.ViewableMixin):
     def __repr__(self):
         return f"<Region: {self.name}>"
 
+    def removeZones(self, indices):
+        """Remove zones by index"""
+        for index in reversed(sorted(indices)):
+            # print(self.zones)
+            # print(index)
+            del self.zones[index]
+
 
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
