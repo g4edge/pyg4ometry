@@ -742,7 +742,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def rightButtonPressEvent(self, obj, event):
         clickPos = self.GetInteractor().GetEventPosition()
 
-        picker = vtk.vtkPropPicker()
+        picker = _vtk.vtkPropPicker()
         picker.Pick(clickPos[0], clickPos[1], 0, self.renderer)
 
         # If an actor was right clicked
