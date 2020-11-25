@@ -140,6 +140,7 @@ sample, all;
 beam, particle="e-",
       energy=250*GeV;
 option, physicsList="em";
+option, preprocessGDML=0;
 """
         if not preprocessGDML:
             s += "option, preprocessGDML=0;\n"
