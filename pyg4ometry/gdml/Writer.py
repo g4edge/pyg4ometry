@@ -110,6 +110,7 @@ class Writer(object):
         beam, particle="e-",
         energy=250*GeV;
         option, physicsList="em";
+        option, preprocessGDML=0;
         """.format(gdml)
 
         with open(gmad, "w") as f:
