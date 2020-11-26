@@ -113,6 +113,8 @@ def matrix2tbxyz(matrix):
 
     return [x, y, z]
 
+def axisangle2tbxyz(axis, angle):
+    return matrix2tbxyz(axisangle2matrix(axis, angle))
 
 def tbxyz2matrix(angles):
     """
