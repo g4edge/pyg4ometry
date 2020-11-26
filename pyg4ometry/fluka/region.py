@@ -591,28 +591,14 @@ class Region(vis.ViewableMixin):
             self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
 
     def zoneAABBs(self, aabb=None):
-        material = g4.MaterialPredefined("G4_Galactic")
         extents = []
         for zone in self.zones:
-            greg = g4.Registry()
-            wlv = _makeWorldLogicalVolume(greg)
-
             try:
-                zone_solid = zone.geant4Solid(reg=greg, aabb=aabb)
-            except FLUKAError as e:
-                raise FLUKAError(f"Error in region {self.name}: {e.message}")
-
-            try:
-                zoneLV = g4.LogicalVolume(zone_solid,
-                                          material,
-                                          _randomName(),
-                                          greg)
-            except NullMeshError as e:
-                extents.append(None)
-            else:
-                lower, upper = zoneLV.mesh.getBoundingBox(zone.rotation(),
-                                                          zone.centre())
-                extents.append(AABB(lower, upper))
+                zoneExtent = AABB.fromMesh(zone.mesh(aabb=aabb))
+            except ValueError:
+                print("Null extent...")
+                zoneExtent = None
+            extents.append(zoneExtent)
 
         return extents
 
