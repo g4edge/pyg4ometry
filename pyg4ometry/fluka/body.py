@@ -131,7 +131,7 @@ class _HalfSpaceMixin(BodyMixin):
             # Should be used as a full length.  This is a very sensitive
             # value.  The solid minimisation step will be harmed resulting
             # in faulty meshes/GDML if this is incorrectly set.
-            return max(aabb.size * 1.1 * np.sqrt(3))
+            return max(aabb.size * 10.1 * np.sqrt(3))
 
     def _halfspaceFreeStringHelper(self, coordinate):
         typename = type(self).__name__
@@ -242,7 +242,7 @@ class RPP(BodyMixin):
                              " smaller than the corresponding"
                              " xmax, ymax, zmax.")
 
-        if addRegistry:
+        if addRegistry and flukaregistry:
             self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
