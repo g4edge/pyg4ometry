@@ -197,17 +197,17 @@ class LogicalVolume(object):
                             print(f"\033[1mLogicalVolume.checkOverlaps> coplanar overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {coplanarMesh.vertexCount()}")
                         self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
-        # overlap with solid
+    
         for i in range(0,len(transformedMeshes)) :
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
 
-            cullIntersection = transformedBoundingMeshes[i].intersect(self.mesh.localboundingmesh
-                                                                      .inverse())
+            cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
+
             if cullIntersection.vertexCount() == 0 :
                 continue
 
-            interMesh = transformedMeshes[i].intersect(self.mesh.localmesh.inverse())
+            interMesh = transformedMeshes[i].subtract(self.mesh.localmesh)
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
 
             if interMesh.vertexCount() != 0 :
