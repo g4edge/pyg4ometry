@@ -733,7 +733,7 @@ class PubViewer(VtkViewer):
 
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
-    def __init__(self, renderer, vtkviewer, parent=None):
+    def __init__(self, renderer, vtkviewer):
         self.AddObserver("RightButtonPressEvent", self.rightButtonPressEvent)
 
         self.renderer = renderer
@@ -745,18 +745,19 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         picker = _vtk.vtkPropPicker()
         picker.Pick(clickPos[0], clickPos[1], 0, self.renderer)
 
-        # If an actor was right clicked
+
         actor = picker.GetActor()
+        # If an actor was right clicked
         if actor:
             actorMap = self.vtkviewer.physicalActorMap
-            self.vtkviewer.physicalActorMap.items()
             try:
                 name = next((x[0] for x in actorMap.items() if x[1] is actor))
+            # E.g. the axes actor or some other actor we don't wish to name.
             except StopIteration:
                 pass
             else:
                 name = name[:name.find("_actor")]
-                print(name)
+                print(f"{type(self.vtkviewer).__name__}> selected> {name}")
 
 
 def axesFromExtents(extent) :
