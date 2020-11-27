@@ -596,7 +596,6 @@ class Region(vis.ViewableMixin):
             try:
                 zoneExtent = AABB.fromMesh(zone.mesh(aabb=aabb))
             except ValueError:
-                print("Null extent...")
                 zoneExtent = None
             extents.append(zoneExtent)
 
