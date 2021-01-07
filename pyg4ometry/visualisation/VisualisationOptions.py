@@ -49,6 +49,29 @@ def makeVisualisationOptionsDictFromMaterials(materials) :
             matVisDict[material].color = [_random.random(),_random.random(),_random.random()]
     return matVisDict
 
+def makeVisualisationOptionsDictFromPredefined(ColourMap):
 
+    matVisDict = {}
+
+    for material in ColourMap.keys() :
+        # strip pointer from name
+
+        matVisDict[material] = VisualisationOptions()
+
+        if material.lower().find("galactic") != -1 :
+            matVisDict[material].visible = False
+
+        elif material.lower().find("air") != -1 :
+            matVisDict[material].visible = False
+
+        elif material.lower().find("vacuum") != -1 :
+            matVisDict[material].visible = False
+
+        else :
+            MaterialColor = ColourMap[material]
+            matVisDict[material].color = [MaterialColor[0],MaterialColor[1],MaterialColor[2]]
+            matVisDict[material].alpha = MaterialColor[3]
+
+    return matVisDict
 
 
