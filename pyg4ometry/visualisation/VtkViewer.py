@@ -701,7 +701,11 @@ class VtkViewer:
         return visOptions
 
     def getMaterialVisOptions(self, name):
-        return self.materialVisualisationOptions[pv.logicalVolume.material.name]
+        if name.find("0x") != -1 :
+            nameStrip = name[0:name.find("0x")]
+        else :
+            nameStrip = name
+        return self.materialVisualisationOptions[nameStrip]
 
     def printViewParameters(self):
         activeCamera = self.ren.GetActiveCamera()
