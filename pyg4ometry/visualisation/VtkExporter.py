@@ -102,6 +102,7 @@ class VtkExporter:
 
     def add_logical_volume(self,
                            lv,
+                           color_dico=None,
                            rotation=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                            translation=_np.array([0,0,0])
                            ):
@@ -116,7 +117,8 @@ class VtkExporter:
                              self.physicalActorMapOverlap,
                              visOptions = visOptions, overlap = True, cutters=False)
 
-        self._add_logical_volume_recursive(lv, rotation, translation)
+
+        self._add_logical_volume_recursive(lv, rotation, translation, color_dico)
 
     def addLogicalVolumeBounding(self, logical):
         # add logical solid as wireframe
@@ -134,7 +136,7 @@ class VtkExporter:
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
-    def _add_logical_volume_recursive(self, lv, rotation, translation):
+    def _add_logical_volume_recursive(self, lv, rotation, translation, color_dico):
         for pv in lv.daughterVolumes:
 
             if pv.logicalVolume.type != "assembly":
@@ -167,6 +169,13 @@ class VtkExporter:
                     else:
                         visOptions = pv.visOptions
 
+                    if pv.logicalVolume.name in color_dico['R'].keys():
+                        visOptions.color[0] = color_dico['R'][pv.logicalVolume.name]
+                        visOptions.color[1] = color_dico['G'][pv.logicalVolume.name]
+                        visOptions.color[2] = color_dico['B'][pv.logicalVolume.name]
+                    else:
+                        visOptions.color = [1, 0.98, 0.94]
+
 
                     self.addMesh(pv.name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
@@ -183,7 +192,7 @@ class VtkExporter:
                                      self.actorsOverlap,
                                      self.physicalActorMapOverlap, visOptions=visOptions, overlap=True)
 
-                self._add_logical_volume_recursive(pv.logicalVolume, new_mtra, new_tra)
+                self._add_logical_volume_recursive(pv.logicalVolume, new_mtra, new_tra, color_dico)
 
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
@@ -334,7 +343,7 @@ class VtkExporter:
             Colors.SetNumberOfComponents(3);
             Colors.SetName("Colors");
             for i in range(vtkPD.GetNumberOfPolys()):
-                Colors.InsertNextTuple3(visOptions.color[0]*255, visOptions.color[1]*255, visOptions.color[1]*255);
+                Colors.InsertNextTuple3(visOptions.color[0]*255, visOptions.color[1]*255, visOptions.color[2]*255);
 
             vtkPD.GetCellData().SetScalars(Colors)
             vtkPD.Modified()
@@ -349,8 +358,6 @@ class VtkExporter:
                 print(f"Trying to write file ./{pv_name}.vtp")
                 writer.SetFileName(f"./vtp_files/{pv_name}.vtp")
                 writer.Write()
-
-
 
 
     def setOverlapVisOptions(self, overlaptype):
