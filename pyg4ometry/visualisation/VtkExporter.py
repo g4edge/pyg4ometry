@@ -8,6 +8,7 @@ from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
 import logging as _log
 import random
 from . import colour
+import os,binascii
 
 class VtkExporter:
     def __init__(self, path='.'):
@@ -61,7 +62,7 @@ class VtkExporter:
                 visOptions.color[1] = color_dico['G'][pv.logicalVolume.name]
                 visOptions.color[2] = color_dico['B'][pv.logicalVolume.name]
 
-            self.addMesh(pv.name, solid_name, mesh, new_mtra, new_tra, self.localmeshes,
+            self.addMesh(pv.logicalVolume.name, solid_name, mesh, new_mtra, new_tra, self.localmeshes,
                          visOptions=visOptions)
 
             self._add_logical_volume_recursive(pv.logicalVolume, new_mtra, new_tra, color_dico)
@@ -113,8 +114,9 @@ class VtkExporter:
                 writer.SetDataModeToAscii()
                 writer.SetInputData(transformPD.GetOutput())
                 print(f"Trying to write file {self.path}/{pv_name}.vtp")
-                writer.SetFileName(f"{self.path}/{pv_name}.vtp")
+                writer.SetFileName(f"{self.path}/{pv_name}{binascii.b2a_hex(os.urandom(15)).decode('utf-8')}.vtp")
                 writer.Write()
+
 
     def getMaterialVisOptions(self, name):
         if name.find("0x") != -1 :
