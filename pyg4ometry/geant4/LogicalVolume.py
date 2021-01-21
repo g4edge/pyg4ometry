@@ -134,7 +134,7 @@ class LogicalVolume(object):
             mesh.translate(t)
 
             interMesh = mesh.intersect(self.mesh.localmesh)
-            if interMesh.polygonCount == self.mesh.localmesh.polygonCount :
+            if interMesh.polygonCount < mesh.polygonCount :
                 self.daugherVolumes.pop(interMesh)
 
     def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :

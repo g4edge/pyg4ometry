@@ -279,6 +279,32 @@ void SurfaceMesh::triangulate_faces() {
   CGAL::Polygon_mesh_processing::triangulate_faces(*_surfacemesh);
 }
 
+void SurfaceMesh::isotropic_remeshing() {
+
+  struct halfedge2edge
+  {
+    halfedge2edge(const Surface_mesh& m, std::vector<edge_descriptor>& edges) : m_mesh(m), m_edges(edges) {}
+    void operator()(const halfedge_descriptor& h) const
+    {
+      m_edges.push_back(edge(h, m_mesh));
+    }
+    const Surface_mesh& m_mesh;
+    std::vector<edge_descriptor>& m_edges;
+  };
+
+  std::vector<edge_descriptor> border;
+
+  //CGAL::Polygon_mesh_processing::border_halfedges(_surfacemesh->faces(),*_surfacemesh,
+  //                                                boost::make_function_output_iterator(halfedge2edge(*_surfacemesh, border)));
+
+  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0., *_surfacemesh);
+  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0.04, *_surfacemesh);
+  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0.03, *_surfacemesh);
+
+  //std::cout << border.size() << std::endl;
+  CGAL::Polygon_mesh_processing::isotropic_remeshing(_surfacemesh->faces(),0.1,*_surfacemesh,CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
+}
+
 int SurfaceMesh::number_of_border_halfedges(bool verbose) {
 
   int ihole = 0;
@@ -287,8 +313,8 @@ int SurfaceMesh::number_of_border_halfedges(bool verbose) {
       if(_surfacemesh->is_border(hei)) {
         ihole++;
         if(verbose)
-	  py::print(int(hei),"hole");
-      }
+	      py::print(int(hei),"hole");
+        }
     }
   return ihole;
 }
@@ -538,6 +564,7 @@ PYBIND11_MODULE(algo, m) {
     .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
     .def("number_of_border_halfedges",&SurfaceMesh::number_of_border_halfedges,"number of border halfedges ", py::arg("verbose") = false)
     .def("triangulate_faces",&SurfaceMesh::triangulate_faces)
+    .def("isotropic_remeshing",&SurfaceMesh::isotropic_remeshing)
     .def("toVerticesAndPolygons",&SurfaceMesh::toVerticesAndPolygons)
     .def("number_of_faces",&SurfaceMesh::number_of_faces)
     .def("number_of_vertices",&SurfaceMesh::number_of_vertices)

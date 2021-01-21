@@ -37,6 +37,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/tags.h>
@@ -55,6 +56,12 @@ typedef CGAL::Aff_transformation_3<Kernel>                  Aff_transformation_3
 typedef CGAL::Partition_traits_2<Kernel>                    Partition_traits_2;
 typedef Partition_traits_2::Point_2                         Point_2;
 typedef Partition_traits_2::Polygon_2                       Polygon_2; 
+
+#include <boost/function_output_iterator.hpp>
+#include <fstream>
+#include <vector>
+typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::edge_descriptor     edge_descriptor;
 
 /* pybind */
 namespace py = pybind11;
@@ -142,6 +149,7 @@ class SurfaceMesh {
   bool         does_self_intersect();
   bool         does_bound_a_volume();
   void         triangulate_faces();
+  void         isotropic_remeshing();
   int          number_of_border_halfedges(bool verbose = false);
 
   py::list* toVerticesAndPolygons();

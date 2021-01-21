@@ -69,6 +69,17 @@ CSG* CSG::fromPolygons(py::list &polygons, bool cgalTest) {
   return csg;
 }
 
+void CSG::read(std::string fileName) {
+  std::ifstream ifstr(fileName);
+  //ifstr >> *_surfacemesh;
+
+ }
+
+void CSG::write(std::string fileName) {
+  std::ofstream ofstr(fileName);
+  //ofstr << *_surfacemesh;
+}
+
 void CSG::translate(Vector &disp) {
   _surfacemesh->translate(disp._x, disp._y, disp._z);
 }

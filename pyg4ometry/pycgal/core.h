@@ -26,7 +26,10 @@ public:
   CSG* clone();
 
   static CSG* fromPolygons(py::list &polygons, bool cgalTest = true);
-  
+
+  void read(std::string fileName);
+  void write(std::string fileName);
+
   // py::list polygons();
   void translate(Vector &disp);
   void translate(py::list &disp);
