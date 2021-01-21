@@ -66,7 +66,8 @@ class RenderWriter :
             for instance in self.instances[ik] :
                 instanceName     = ik
                 instanceMaterial = str(self.materials[ik])
-                instanceTransformation = str(instance["transformation"]).replace("\n","").replace("[","").replace("]","")
+                # instanceTransformation = str(instance["transformation"]).replace("\n","").replace("[","").replace("]","")
+                instanceTransformation = str(_transformation.matrix2tbxyz(instance["transformation"])).replace("\n", "").replace("[", "").replace("]","")
                 instancePosition      = str(instance["translation"]).replace("\n","").replace("[","").replace("]","")
 
                 f.write(instanceName+" "+instanceMaterial+" "+instanceTransformation+" "+instancePosition+"\n")
