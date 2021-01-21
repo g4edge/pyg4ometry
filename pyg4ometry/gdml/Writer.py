@@ -247,6 +247,9 @@ option, preprocessGDML=0;
         if isinstance(material, _Material) :
             oe = self.doc.createElement('material')
             oe.setAttribute('name', material.name)
+            if material.state1 != "" and material.state1 != None :
+                oe.setAttribute('state', material.state1)
+
             de = self.doc.createElement('D')
             de.setAttribute('value', str(material.density))
             oe.appendChild(de)

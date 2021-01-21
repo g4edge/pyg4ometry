@@ -272,6 +272,11 @@ class Reader(object):
             elif mat_type == "material":
                 components = []
                 properties = {}
+
+                try :
+                    state = node.attributes["state"].value
+                except :
+                    state = None
                 for chNode in node.childNodes:
                     if chNode.nodeType != chNode.ELEMENT_NODE:
                         continue # comment
@@ -349,17 +354,20 @@ class Reader(object):
 
         for material in materials:
             name = str(material.get("name", ""))
+            state = str(material.get("state",""))
             density = float(material.get("density", 0.0))
 
             if not material["components"]:
                 Z    = float(material.get("Z", 0))
                 a    = float(material.get("a", 0.0))
                 mat = _g4.MaterialSingleElement(name, Z, a, density, registry=self._registry)
+                mat.set_state(state)
 
             else:
                 n_comp = len(material["components"])
                 comp_type = str(material["components"][0]["comp_type"])
                 mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry)
+                mat.set_state(state)
 
                 for comp in material["components"]:
                     ref = str(comp.get("ref", ""))

@@ -185,8 +185,9 @@ def ElementIsotopeMixture(name, symbol, n_comp, registry=None):
 
 
 class MaterialBase(object):
-    def __init__(self, name, registry=None):
+    def __init__(self, name, state = None, registry=None):
         self.name = name
+        self.state1 = state
         self.registry = registry
 
         if self.registry is not None:
@@ -214,6 +215,9 @@ class MaterialBase(object):
             for comp in self.components:
                 comp[0].set_registry(registry)
 
+    def set_state(self, state):
+        self.state1 = state
+
     def __repr__(self):
         return f"<{type(self).__name__}: {self.name}>"
 
@@ -238,7 +242,7 @@ class Material(MaterialBase):
     number_of_components - int
     """
     def __init__(self, **kwargs):
-        super(Material, self).__init__(kwargs.get("name", None), kwargs.get("registry", None))
+        super(Material, self).__init__(kwargs.get("name",None), state = kwargs.get("state", None), registry = kwargs.get("registry", None))
 
         self.density = kwargs.get("density", None)
         self.atomic_number = kwargs.get("atomic_number", None)
@@ -376,7 +380,7 @@ class Element(MaterialBase):
     n_comp               - int
     """
     def __init__(self, **kwargs):
-        super(Element, self).__init__(kwargs.get("name", None), kwargs.get("registry", None))
+        super(Element, self).__init__(kwargs.get("name", None), state = kwargs.get("state", None), registry=kwargs.get("registry", None))
 
         self.symbol = kwargs.get("symbol", None)
         self.n_comp = kwargs.get("n_comp", None)
@@ -418,7 +422,7 @@ class Isotope(MaterialBase):
         a    - float, molar weight in g/mole
     """
     def __init__(self, name, Z, N, a, registry=None):
-        super(Isotope, self).__init__(name, registry)
+        super(Isotope, self).__init__(name, state=None, registry= registry)
         self.Z    = Z
         self.N    = N
         self.a    = a
