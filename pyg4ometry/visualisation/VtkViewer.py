@@ -10,7 +10,7 @@ from . import colour
 
 class VtkViewer:
     # def __init__(self,size=(2048,1536), interpolation="none"):
-    def __init__(self, size=(1024, 1024), interpolation="none"):
+    def __init__(self, size=(1024, 1024), interpolation="none", **kwargs):
         # create a renderer
         self.ren = _vtk.vtkRenderer()
         
