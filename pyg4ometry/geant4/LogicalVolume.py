@@ -102,7 +102,7 @@ class LogicalVolume(object):
         self.bdsimObjects.append(bdsimobject)
 
     def clipDaughtersToSolid(self):
-
+        # comment
         for pv in self.daughterVolumes:
             # cannot currently deal with replica, division and parametrised
             if  pv.type != "placement" :
