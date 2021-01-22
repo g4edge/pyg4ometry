@@ -143,6 +143,7 @@ class LogicalVolume(object):
         '''
         # form temporary mesh of solid in the coordinate frame of this solid
         clipMesh = _Mesh(solid)
+        clipMesh = clipMesh.localmesh
         aa = _trans.tbxyz2axisangle(rotation.eval())
         if rotation:
             clipMesh.rotate(aa[0],_trans.rad2deg(aa[1]))
@@ -153,11 +154,12 @@ class LogicalVolume(object):
         for pv in self.daughterVolumes:
             pvmesh = self._getPhysicalDaughterMesh(pv)
             if pvmesh is None:
-                continue
+                continue # maybe unsupported type - skip
 
-            interMesh = mesh.intersect(clipMesh)
-            if interMesh.polygonCount < mesh.polygonCount :
-                self.daugherVolumes.pop(interMesh)
+            interMesh = clipMesh.intersect(clipMesh)
+            if interMesh.polygonCount < clipMesh.polygonCount:
+                if interMesh.polygonCount():
+                    self.daughterVolumes.pop(interMesh)
         
     def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :
 
