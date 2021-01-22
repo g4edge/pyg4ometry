@@ -26,27 +26,27 @@ class VtkExporter:
         # material options dict
         self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(colour.ColourMap().fromPredefined())
 
-    def export_to_Paraview(self, reg, df_model, df_color=None):
+    def export_to_Paraview(self, reg, model=True, df_model=None, df_color=None):
 
         world_volume = reg.getWorldVolume()
-        df_gdml = self.GDML_structure_analysis(reg, world_volume.name)
 
-        if df_color is not None:
+        if df_color is not None and df_model is not None:
 
+            df_gdml = self.GDML_structure_analysis(reg, world_volume.name)
             df_color.set_index('TYPE', inplace=True)
             color_dico = self.fill_color_dico(df_gdml, df_model, df_color)
-            self.add_logical_volume(world_volume, color_dico)
+            self.add_logical_volume(world_volume, model, color_dico)
 
         else:
-            self.add_logical_volume(world_volume)
+            self.add_logical_volume(world_volume, model)
 
-    def GDML_structure_analysis(self, reg, lvName, Print=False, first=True, level=0, df=None):
+    def GDML_structure_analysis(self, reg, lv_name, debug=False, level=0, df=None):
 
-        if first:
+        if df is None:
             reg.logicalVolumeList = []
             df = pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
 
-        mother_lv = reg.logicalVolumeDict[lvName]
+        mother_lv = reg.logicalVolumeDict[lv_name]
         mother = mother_lv.name
         daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
         daughters = [daughter.name for daughter in daughters_lv]
@@ -55,7 +55,7 @@ class VtkExporter:
         df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv
                            , 'daughters': daughters, 'material': material}, ignore_index=True)
 
-        if Print:
+        if debug:
             print("\nlevel:", level)
             print("mother:", mother)
             print("daughters: ", len(daughters), " ", daughters)
@@ -63,16 +63,17 @@ class VtkExporter:
         level += 1
 
         for daughters in mother_lv.daughterVolumes:
-            dlvName = daughters.logicalVolume.name
+            lv_name = daughters.logicalVolume.name
             try:
-                reg.logicalVolumeList.index(dlvName)
+                reg.logicalVolumeList.index(lv_name)
             except ValueError:
-                df = self.GDML_structure_analysis(reg, dlvName, Print, False, level, df)
-                reg.logicalVolumeList.append(dlvName)
+                df = self.GDML_structure_analysis(reg, lv_name, debug, level, df)
+                reg.logicalVolumeList.append(lv_name)
 
         return df
 
     def fill_color_dico(self, df_gdml, df_model, df_color):
+
         df_gdml.set_index('mother', inplace=True)
         df_model.reset_index(inplace=True)
         df_export_color = pd.DataFrame(columns=["R", "G", "B"])
@@ -93,12 +94,22 @@ class VtkExporter:
 
     def add_logical_volume(self,
                            lv,
+                           model,
                            color_dico={'R': {}, 'G': {}, 'B': {}},
                            rotation=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                            translation=_np.array([0,0,0])
                            ):
 
-        self._add_logical_world_volume(lv, rotation, translation, color_dico)
+        if model:
+            self._add_logical_world_volume(lv, rotation, translation, color_dico)
+        else:
+            self.element_name = self.getElementName(lv.name)
+
+            self.mbdico[self.element_name] = _vtk.vtkMultiBlockDataSet()
+            self.mbdico[self.element_name].SetNumberOfBlocks(self.countVisibleDaughters(lv, self.element_name, 0))
+            self.mbindexdico[self.element_name] = 0
+
+            self._add_logical_volume_recursive(lv, rotation, translation, color_dico)
 
         for element in self.mbdico.keys():
 
@@ -110,6 +121,7 @@ class VtkExporter:
             writer.Write()
 
     def _add_logical_world_volume(self, lv, rotation, translation, color_dico):
+
         for pv in lv.daughterVolumes:
 
             self.element_name = self.getElementName(pv.logicalVolume.name)
@@ -118,7 +130,6 @@ class VtkExporter:
 
                 self.mbdico[self.element_name] = _vtk.vtkMultiBlockDataSet()
                 self.mbdico[self.element_name].SetNumberOfBlocks(self.countVisibleDaughters(lv, self.element_name, 0))
-
                 self.mbindexdico[self.element_name] = 0
 
 
@@ -156,6 +167,7 @@ class VtkExporter:
             self._add_logical_volume_recursive(pv.logicalVolume, new_mtra, new_tra, color_dico)
 
     def _add_logical_volume_recursive(self, lv, rotation, translation, color_dico):
+
         for pv in lv.daughterVolumes:
 
             solid_name = pv.logicalVolume.solid.name
@@ -238,6 +250,7 @@ class VtkExporter:
                 self.mbindexdico[self.element_name] += 1
 
     def getMaterialVisOptions(self, name):
+
         if name.find("0x") != -1 :
             nameStrip = name[0:name.find("0x")]
         else :
@@ -246,16 +259,20 @@ class VtkExporter:
         if nameStrip in self.materialVisualisationOptions.keys():
             return self.materialVisualisationOptions[nameStrip]
         else:
-            print(f"Attention, missing {nameStrip} in materialVisualisationOptions")
+            print(f"Attention, missing {nameStrip} in materialVisualisationOptions, replace by default color")
             return self.materialVisualisationOptions['G4_C']
 
     def getElementName(self, logicalVolumeName):
+
         if "PREPENDworld_" in logicalVolumeName:
             return logicalVolumeName.split('PREPENDworld_')[1].split('0x')[0].split('_lv')[0]
+        if "PREPEND_" in logicalVolumeName:
+            return logicalVolumeName.split('PREPEND_')[1].split('0x')[0].split('_lv')[0]
         else:
             return logicalVolumeName.split('_container')[0].split('_e1')[0].split('_e2')[0].split('_even')[0].split('_outer')[0].split('_centre')[0]
 
     def countVisibleDaughters(self, lv, element_name, n):
+
         for pv in lv.daughterVolumes:
             lv_name = self.getElementName(pv.logicalVolume.name)
             if lv_name == element_name:
