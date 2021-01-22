@@ -101,6 +101,40 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
+    def _getPhysicalDaughterMesh(self, pv):
+        '''
+        return a (cloned from the lv) mesh of a given pv with rotation,scale,
+        translation evaluated.
+        '''
+        # cannot currently deal with replica, division and parametrised
+        if  pv.type != "placement" :
+            return None
+        # cannot currently deal with assembly
+        if  pv.logicalVolume.type == "assembly" :
+            return None
+
+        _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
+        mesh = pv.logicalVolume.mesh.localmesh.clone()
+
+        # rotate
+        aa = _trans.tbxyz2axisangle(pv.rotation.eval())
+        mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+
+        # scale
+        if pv.scale :
+            s = pv.scale.eval()
+            mesh.scale(s)
+            
+            if s[0]*s[1]*s[2] == 1 :
+                pass
+            elif s[0]*s[1]*s[2] == -1 :
+                mesh = mesh.inverse()
+                
+        # translate
+        t = pv.position.eval()
+        mesh.translate(t)
+        return mesh
+        
     def clipCullDaughtersToSolid(self, solid, rotation=None, position=None):
         '''
         Given a solid with a placement rotation and position inside this logical
@@ -115,33 +149,9 @@ class LogicalVolume(object):
         
 
         for pv in self.daughterVolumes:
-            # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement" :
+            pvmesh = self._getPhysicalDaughterMesh(pv)
+            if pvmesh is None:
                 continue
-            # cannot currently deal with assembly
-            if  pv.logicalVolume.type == "assembly" :
-                continue
-
-            _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
-            mesh = pv.logicalVolume.mesh.localmesh.clone()
-
-            # rotate
-            aa = _trans.tbxyz2axisangle(pv.rotation.eval())
-            mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-
-            # scale
-            if pv.scale :
-                s = pv.scale.eval()
-                mesh.scale(s)
-
-                if s[0]*s[1]*s[2] == 1 :
-                    pass
-                elif s[0]*s[1]*s[2] == -1 :
-                    mesh = mesh.inverse()
-
-            # translate
-            t = pv.position.eval()
-            mesh.translate(t)
 
             interMesh = mesh.intersect(clipMesh)
             if interMesh.polygonCount < mesh.polygonCount :
