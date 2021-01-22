@@ -101,13 +101,23 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
-    def clipDaughtersToSolid(self):
+    def clipCullDaughtersToSolid(self, solid, rotation=None, position=None):
+        '''
+        Given a solid with a placement rotation and position inside this logical
+        volume, remove any daughters that would not lie within this solid and also
+        clip any, by intersecting them, that would protrude.
+        '''
+        # form temporary mesh of solid in the coordinate frame of this solid
+        # create lv (no reg add)
+        # rotate,scale,translate mesh
+        # get mesh
+        clipMesh = self.mesh.localmesh # copy of this one for now (wrong)
+        
 
         for pv in self.daughterVolumes:
             # cannot currently deal with replica, division and parametrised
             if  pv.type != "placement" :
                 continue
-
             # cannot currently deal with assembly
             if  pv.logicalVolume.type == "assembly" :
                 continue
@@ -133,7 +143,7 @@ class LogicalVolume(object):
             t = pv.position.eval()
             mesh.translate(t)
 
-            interMesh = mesh.intersect(self.mesh.localmesh)
+            interMesh = mesh.intersect(clipMesh)
             if interMesh.polygonCount < mesh.polygonCount :
                 self.daugherVolumes.pop(interMesh)
         
