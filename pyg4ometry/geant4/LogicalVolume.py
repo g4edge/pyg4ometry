@@ -135,32 +135,46 @@ class LogicalVolume(object):
         mesh.translate(t)
         return mesh
         
-    def clipCullDaughtersToSolid(self, solid, rotation=None, position=None):
-        '''
+    def clipCullDaughtersToSolid(self, solid, cull=True, rotation=None, position=None):
+        """
         Given a solid with a placement rotation and position inside this logical
         volume, remove any daughters that would not lie within this solid and also
         clip any, by intersecting them, that would protrude.
-        '''
+        """
         # form temporary mesh of solid in the coordinate frame of this solid
         clipMesh = _Mesh(solid)
         clipMesh = clipMesh.localmesh
-        aa = _trans.tbxyz2axisangle(rotation.eval())
         if rotation:
+            aa = _trans.tbxyz2axisangle(rotation)
             clipMesh.rotate(aa[0],_trans.rad2deg(aa[1]))
         # no scale supported for this
         if position:
-            clipMesh.translate(position.eval())
+            clipMesh.translate(position)
 
+        toKeep = [] # build up list of bools - don't modify as we iterate on the list
         for pv in self.daughterVolumes:
             pvmesh = self._getPhysicalDaughterMesh(pv)
             if pvmesh is None:
+                toKeep.append(True)
                 continue # maybe unsupported type - skip
 
-            interMesh = clipMesh.intersect(clipMesh)
-            if interMesh.polygonCount < clipMesh.polygonCount:
-                if interMesh.polygonCount():
-                    self.daughterVolumes.pop(interMesh)
-        
+            interMesh = pvmesh.intersect(clipMesh)
+            if interMesh.polygonCount != pvmesh.polygonCount:
+                # either protruding or outside
+                if interMesh.polygonCount() == 0 and cull:
+                    toKeep.append(False) # outside
+                else:
+                    # intersect it to trim it
+                    toKeep.append(True)
+                    solidA = pv.logicalVolume.solid
+                    # put solidA first to retain validity of pv roto-translation
+                    pv.logicalVolume.solid = _solid.Intersection(solidA.name + "_clipped",
+                                                                 solidA, solid,
+                                                                 [[0,0,0],[0,0,0]], self.registry, True)
+                    pv.logicalVolume.mesh.remesh()
+
+        self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
+
     def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :
 
         # print 'LogicalVolume.checkOverlaps>'
