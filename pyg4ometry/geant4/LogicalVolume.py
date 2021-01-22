@@ -142,11 +142,13 @@ class LogicalVolume(object):
         clip any, by intersecting them, that would protrude.
         '''
         # form temporary mesh of solid in the coordinate frame of this solid
-        # create lv (no reg add)
-        # rotate,scale,translate mesh
-        # get mesh
-        clipMesh = self.mesh.localmesh # copy of this one for now (wrong)
-        
+        clipMesh = _Mesh(solid)
+        aa = _trans.tbxyz2axisangle(rotation.eval())
+        if rotation:
+            clipMesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+        # no scale supported for this
+        if position:
+            clipMesh.translate(position.eval())
 
         for pv in self.daughterVolumes:
             pvmesh = self._getPhysicalDaughterMesh(pv)
