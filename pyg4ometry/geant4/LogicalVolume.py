@@ -101,42 +101,6 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
-    def clipDaughtersToSolid(self):
-        # comment
-        for pv in self.daughterVolumes:
-            # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement" :
-                continue
-
-            # cannot currently deal with assembly
-            if  pv.logicalVolume.type == "assembly" :
-                continue
-
-            _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
-            mesh = pv.logicalVolume.mesh.localmesh.clone()
-
-            # rotate
-            aa = _trans.tbxyz2axisangle(pv.rotation.eval())
-            mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-
-            # scale
-            if pv.scale :
-                s = pv.scale.eval()
-                mesh.scale(s)
-
-                if s[0]*s[1]*s[2] == 1 :
-                    pass
-                elif s[0]*s[1]*s[2] == -1 :
-                    mesh = mesh.inverse()
-
-            # translate
-            t = pv.position.eval()
-            mesh.translate(t)
-
-            interMesh = mesh.intersect(self.mesh.localmesh)
-            if interMesh.polygonCount < mesh.polygonCount :
-                self.daugherVolumes.pop(interMesh)
-
     def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :
 
         # print 'LogicalVolume.checkOverlaps>'
