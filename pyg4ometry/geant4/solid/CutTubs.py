@@ -18,7 +18,8 @@ import logging as _log
 
 class CutTubs(_SolidBase):
     """
-    Constructs a cylindrical section with end face cuts. Note pLowNorm and pHighNorm can be lists of floats, Constants, Quantities or Variables.
+    Constructs a cylindrical section with end face cuts. Note pLowNorm and pHighNorm can be
+    lists of floats, Constants, Quantities or Variables.
 
     :param name: of solid for registry
     :type name: str
@@ -61,7 +62,7 @@ class CutTubs(_SolidBase):
 
 
     def __repr__(self):
-        # Low norm and high norm exlcluded as they are lists
+        # Low norm and high norm excluded as they are lists
         return "Cut tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                         self.pDz, self.pSPhi, self.pDPhi)
 

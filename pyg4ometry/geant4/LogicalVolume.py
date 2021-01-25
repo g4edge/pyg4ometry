@@ -233,7 +233,7 @@ class LogicalVolume(object):
                         print(f"\033[1mLogicalVolume.checkOverlaps> coplanar overlap between daughter and mother\033[0m {transformedMeshesNames[i]} {coplanarMesh.vertexCount()}")
                     self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
-        # recusively check entire tree
+        # recursively check entire tree
         if recursive :
             for d in self.daughterVolumes :
                 d.logicalVolume.checkOverlaps(recursive = recursive,
@@ -253,7 +253,7 @@ class LogicalVolume(object):
 
     def addAuxiliaryInfo(self, auxiliary):
         #if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):
-        #    raise ValueError("Auxiliary infromation must be a gdml.Defines.Auxiliary instance.")
+        #    raise ValueError("Auxiliary information must be a gdml.Defines.Auxiliary instance.")
         if isinstance(auxiliary, list) or isinstance(auxiliary, tuple):
             for aux in auxiliary:
                 self.addAuxiliaryInfo(aux)
