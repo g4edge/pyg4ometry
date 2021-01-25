@@ -706,6 +706,8 @@ class Position(VectorBase) :
         self.name = name
 
         if unit != None :
+            if not isinstance(unit, str):
+                raise ValueError("unit must be None or a string")
             self.unit = unit
         else :
             self.unit = "mm"
@@ -739,7 +741,9 @@ class Rotation(VectorBase) :
         super(Rotation, self).__init__()
 
         self.name = name
-        if unit != None : 
+        if unit != None :
+            if not isinstance(unit, str):
+                raise ValueError("unit must be None or a string")
             self.unit = unit
         else :
             self.unit = "rad"
@@ -773,6 +777,8 @@ class Scale(VectorBase) :
         super(Scale, self).__init__()
 
         self.name = name
+        if not isinstance(unit, str):
+            raise ValueError("unit must be None or a string")
         self.unit = unit
 
         self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
