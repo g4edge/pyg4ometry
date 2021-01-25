@@ -6,6 +6,9 @@ def rad2deg(rad) :
 def deg2rad(deg) :
     return _np.pi * (deg / 180.)
 
+def grad2rad(gradians) :
+    return _np.pi * (gradians / 200.)
+
 def tbxyz2axisangle(rv) :
     """
     Tait-Bryan x-y-z rotation to axis-angle representation
