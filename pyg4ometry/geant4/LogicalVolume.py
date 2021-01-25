@@ -135,11 +135,10 @@ class LogicalVolume(object):
         mesh.translate(t)
         return mesh
         
-    def clipCullDaughtersToSolid(self, solid, cull=True, rotation=None, position=None):
+    def cullDaughtersOutsideSolid(self, solid, rotation=None, position=None):
         """
         Given a solid with a placement rotation and position inside this logical
-        volume, remove any daughters that would not lie within this solid and also
-        clip any, by intersecting them, that would protrude.
+        volume, remove (cull) any daughters that would not lie entirely within it.
         """
         # form temporary mesh of solid in the coordinate frame of this solid
         clipMesh = _Mesh(solid)
@@ -161,17 +160,7 @@ class LogicalVolume(object):
             interMesh = pvmesh.intersect(clipMesh)
             if interMesh.polygonCount != pvmesh.polygonCount:
                 # either protruding or outside
-                if interMesh.polygonCount() == 0 and cull:
-                    toKeep.append(False) # outside
-                else:
-                    # intersect it to trim it
-                    toKeep.append(True)
-                    solidA = pv.logicalVolume.solid
-                    # put solidA first to retain validity of pv roto-translation
-                    pv.logicalVolume.solid = _solid.Intersection(solidA.name + "_clipped",
-                                                                 solidA, solid,
-                                                                 [[0,0,0],[0,0,0]], self.registry, True)
-                    pv.logicalVolume.mesh.remesh()
+                toKeep.append( interMesh.polygonCount() != 0)
 
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
 
