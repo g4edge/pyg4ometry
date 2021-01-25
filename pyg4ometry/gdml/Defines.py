@@ -78,7 +78,7 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
     Take a list [x,y,z] and create a vector 
 
     :param var: input list to create a position, rotation or scale
-    :type var: list of str, flaot, Constant, Quantity, Variable
+    :type var: list of str, float, Constant, Quantity, Variable
     :param reg: registry
     :type reg: Registry
     :param type: class type of vector (position, rotation, scale)
@@ -107,7 +107,7 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
     Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation [Rotation,Position]
 
     :param var: input list to create a transformation
-    :type var: list of str, flaot, Constant, Quantity, Variable
+    :type var: list of str, float, Constant, Quantity, Variable
     :param reg: registry
     :type reg: Registry
     :param type: class type of vector (position, rotation, scale)
@@ -360,7 +360,7 @@ def pow(arg,power) :
     :param arg: Argument of x**y
     :type  arg: Constant, Quantity, Variable or Expression
     :param power: y 
-    :type power: flaot
+    :type power: float
     """
 
     v1 = upgradeToStringExpression(arg.registry,arg)
@@ -706,6 +706,8 @@ class Position(VectorBase) :
         self.name = name
 
         if unit != None :
+            if not isinstance(unit, str):
+                raise ValueError("unit must be None or a string")
             self.unit = unit
         else :
             self.unit = "mm"
@@ -739,7 +741,9 @@ class Rotation(VectorBase) :
         super(Rotation, self).__init__()
 
         self.name = name
-        if unit != None : 
+        if unit != None :
+            if not isinstance(unit, str):
+                raise ValueError("unit must be None or a string")
             self.unit = unit
         else :
             self.unit = "rad"
@@ -773,6 +777,8 @@ class Scale(VectorBase) :
         super(Scale, self).__init__()
 
         self.name = name
+        if not isinstance(unit, str):
+            raise ValueError("unit must be None or a string")
         self.unit = unit
 
         self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
@@ -867,7 +873,7 @@ class Auxiliary(object) :
         """
         Add a sub-auxiliary inside the scope of the current auxiliary
 
-        :param aux: auxiliry definition
+        :param aux: auxiliary definition
         :type aux: object, gdml.Defines.Auxiliary
         """
         if not isinstance(aux, Auxiliary):

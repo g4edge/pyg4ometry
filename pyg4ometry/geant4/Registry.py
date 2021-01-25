@@ -256,7 +256,7 @@ class Registry:
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
-        elements = []  # istotope of isotopes or element of elements
+        elements = []  # isotope of isotopes or element of elements
         materials = []  # Material do need internal ordering as material of materials is possible
         for name, obj in self.materialDict.items():
             if isinstance(obj, _mat.Isotope):
@@ -407,7 +407,7 @@ class Registry:
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
             if var.name in self._registryOld.defineDict:    # check if variable is stored in registry, if so need to be transferred
-                var.name = self.addDefine(var, "reuse")           # probabably best to reuse here
+                var.name = self.addDefine(var, "reuse")           # probably best to reuse here
             var.setRegistry(self)
 
     def volumeTree(self, lvName):

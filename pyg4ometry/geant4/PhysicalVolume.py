@@ -10,7 +10,7 @@ class PhysicalVolume(object):
     def __init__(self, rotation, position, logicalVolume, name,
                  motherVolume, registry=None, addRegistry = True, scale = None):
         '''
-        PhysicalVolume : G4VPhysicalVolue, G4PVPlacement 
+        PhysicalVolume : G4VPhysicalVolume, G4PVPlacement
         :param rotation:  
         :param position:
         :param logicalVolume: pyg4ometry.geant4.LogicalVolume 
