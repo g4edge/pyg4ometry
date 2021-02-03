@@ -187,7 +187,7 @@ def ElementIsotopeMixture(name, symbol, n_comp, registry=None):
 class MaterialBase(object):
     def __init__(self, name, state = None, registry=None):
         self.name = name
-        self.state1 = state
+        self.state = state
         self.registry = registry
 
         if self.registry is not None:
@@ -216,7 +216,7 @@ class MaterialBase(object):
                 comp[0].set_registry(registry)
 
     def set_state(self, state):
-        self.state1 = state
+        self.state = state
 
     def __repr__(self):
         return f"<{type(self).__name__}: {self.name}>"
@@ -240,6 +240,11 @@ class Material(MaterialBase):
     atomic_number        - int
     atomic_weight        - float
     number_of_components - int
+    state                - string
+    pressure             - float
+    pressure_unit        - string
+    temperature          - float
+    temperature_unit     - string
     """
     def __init__(self, **kwargs):
         super(Material, self).__init__(kwargs.get("name",None), state = kwargs.get("state", None), registry = kwargs.get("registry", None))
@@ -251,7 +256,7 @@ class Material(MaterialBase):
         self.components = []
         self.properties = {}
 
-        self._state = {"temperature": None,
+        self._state_variables = {"temperature": None,
                        "temperature_unit": None,
                        "pressure": None,
                        "pressure_unit": None}
@@ -276,6 +281,17 @@ class Material(MaterialBase):
                 raise ValueError("Cannot use both atomic number/weight and number_of_components.")
         else:
             raise ValueError("Density must be specified for custom materials.")
+
+        # After thematerial type is determined, set the temperature and pressure if provided
+        if "temperature" in kwargs:
+            temperature = kwargs["temperature"]
+            temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
+            self.set_temperature(temperature, temperature_unit)
+
+        if "pressure" in kwargs:
+            pressure = kwargs["pressure"]
+            pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
+            self.set_pressure(pressure, pressure_unit)
 
     def add_property(self, name, value):
         if self.type == 'nist' or self.type == 'arbitraty':
@@ -345,18 +361,18 @@ class Material(MaterialBase):
         if self.type in ["predefined", "arbitrary"]:
             raise ValueError("Cannot set pressure for predefined or aribtrary materials.")
 
-        self._state["pressure"] = value
-        self._state["pressure_unit"] = unit
+        self._state_variables["pressure"] = value
+        self._state_variables["pressure_unit"] = unit
 
     def set_temperature(self, value, unit="K"):
         if self.type in ["nist", "arbitrary"]:
             raise ValueError("Cannot set temperature for predefined or aribtrary materials.")
-        self._state["temperature"] = value
-        self._state["temperature_unit"] = unit
+        self._state_variables["temperature"] = value
+        self._state_variables["temperature_unit"] = unit
 
     @property
-    def state(self):
-        return self._state
+    def state_variables(self):
+        return self._state_variables
 
     def __str__(self):
         return self.name
