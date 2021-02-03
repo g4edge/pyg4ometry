@@ -19,6 +19,9 @@ class VtkExporter:
         # local meshes
         self.localmeshes = {}
 
+        # list of elements
+        self.elements = []
+
         #multi block dictionary
         self.mbdico = {}
         self.mbindexdico = {}
@@ -27,50 +30,29 @@ class VtkExporter:
         self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(colour.ColourMap().fromPredefined())
 
     def export_to_Paraview(self, reg, model=True, df_model=None, df_color=None):
+        """
+
+        Args:
+            reg:
+            model:
+            df_model:
+            df_color:
+
+        Returns:
+
+        """
 
         world_volume = reg.getWorldVolume()
 
         if df_color is not None and df_model is not None:
 
-            df_gdml = self.GDML_structure_analysis(reg, world_volume.name)
+            df_gdml = reg.structureAnalysis(world_volume.name)
             df_color.set_index('TYPE', inplace=True)
             color_dico = self.fill_color_dico(df_gdml, df_model, df_color)
             self.add_logical_volume(world_volume, model, color_dico)
 
         else:
             self.add_logical_volume(world_volume, model)
-
-    def GDML_structure_analysis(self, reg, lv_name, debug=False, level=0, df=None):
-
-        if df is None:
-            reg.logicalVolumeList = []
-            df = pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
-
-        mother_lv = reg.logicalVolumeDict[lv_name]
-        mother = mother_lv.name
-        daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
-        daughters = [daughter.name for daughter in daughters_lv]
-        material = mother_lv.material.name.split('0')[0]
-
-        df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv
-                           , 'daughters': daughters, 'material': material}, ignore_index=True)
-
-        if debug:
-            print("\nlevel:", level)
-            print("mother:", mother)
-            print("daughters: ", len(daughters), " ", daughters)
-
-        level += 1
-
-        for daughters in mother_lv.daughterVolumes:
-            lv_name = daughters.logicalVolume.name
-            try:
-                reg.logicalVolumeList.index(lv_name)
-            except ValueError:
-                df = self.GDML_structure_analysis(reg, lv_name, debug, level, df)
-                reg.logicalVolumeList.append(lv_name)
-
-        return df
 
     def fill_color_dico(self, df_gdml, df_model, df_color):
 
@@ -112,6 +94,8 @@ class VtkExporter:
             self._add_logical_volume_recursive(lv, rotation, translation, color_dico)
 
         for element in self.mbdico.keys():
+
+            self.elements.append(element)
 
             writer = _vtk.vtkXMLMultiBlockDataWriter()
             writer.SetDataModeToAscii()
@@ -269,7 +253,7 @@ class VtkExporter:
         if "PREPEND_" in logicalVolumeName:
             return logicalVolumeName.split('PREPEND_')[1].split('0x')[0].split('_lv')[0]
         else:
-            return logicalVolumeName.split('_container')[0].split('_e1')[0].split('_e2')[0].split('_even')[0].split('_outer')[0].split('_centre')[0]
+            return logicalVolumeName.split('_container')[0].split('_e1')[0].split('_e2')[0].split('_even')[0].split('_outer')[0].split('_centre')[0].split('_collimator')[0].split('_beampipe')[0].split('0x')[0].split('_lv')[0].split('_bp')[0]
 
     def countVisibleDaughters(self, lv, element_name, n):
 
