@@ -284,6 +284,20 @@ class Reader(object):
                     if chNode.tagName == "D":
                         def_attrs["density"] = chNode.attributes["value"].value
 
+                    elif chNode.tagName == "T":
+                        def_attrs["temperature"] = chNode.attributes["value"].value
+                        try:
+                            def_attrs["temperature_unit"] = chNode.attributes["unit"].value
+                        except KeyError:
+                            def_attrs["temperature_unit"] = "K"
+
+                    elif chNode.tagName == "P":
+                        def_attrs["pressure"] = chNode.attributes["value"].value
+                        try:
+                            def_attrs["pressure_unit"] = chNode.attributes["unit"].value
+                        except KeyError:
+                            def_attrs["pressure_unit"] = "pascal"
+
                     elif chNode.tagName == "atom":
                         def_attrs["a"] = chNode.attributes["value"].value
 
@@ -396,6 +410,13 @@ class Reader(object):
 
                     else:
                         raise ValueError("Unrecognised material component type: {}".format(comp_type))
+
+            # Set the optional variables of state
+            if "temperature" in material:
+                mat.set_temperature(float(material["temperature"]), material["temperature_unit"])
+
+            if "pressure" in material:
+                mat.set_pressure(float(material["pressure"]), material["pressure_unit"])
 
             # Set the optional properties
             properties = material.get("properties")
