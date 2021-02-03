@@ -247,8 +247,8 @@ option, preprocessGDML=0;
         if isinstance(material, _Material) :
             oe = self.doc.createElement('material')
             oe.setAttribute('name', material.name)
-            if material.state1 != "" and material.state1 != None :
-                oe.setAttribute('state', material.state1)
+            if material.state != "" and material.state != None :
+                oe.setAttribute('state', material.state)
 
             de = self.doc.createElement('D')
             de.setAttribute('value', str(material.density))
@@ -281,7 +281,7 @@ option, preprocessGDML=0;
                 # materials which are simply names, so do not append child.
                 pass
 
-            for pname in material.state:
+            for pname in material.state_variables:
                 if pname == "temperature":
                     tagname = 'T'
                 elif pname == "pressure":
@@ -289,13 +289,13 @@ option, preprocessGDML=0;
                 else:
                     continue
 
-                value = material.state[pname]
+                value = material.state_variables[pname]
                 if value is None:
                     continue
 
                 de = self.doc.createElement(tagname)
                 de.setAttribute('value', str(value))
-                de.setAttribute('unit', material.state[pname+"_unit"])
+                de.setAttribute('unit', material.state_variables[pname + "_unit"])
                 oe.appendChild(de)
 
             for pname, pref in material.properties.items():
