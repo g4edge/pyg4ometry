@@ -277,6 +277,17 @@ class Material(MaterialBase):
         else:
             raise ValueError("Density must be specified for custom materials.")
 
+        # After thematerial type is determined, set the temperature and pressure if provided
+        if "temperature" in kwargs:
+            temperature = kwargs["temperature"]
+            temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
+            self.set_temperature(temperature, temperature_unit)
+
+        if "pressure" in kwargs:
+            pressure = kwargs["pressure"]
+            pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
+            self.set_pressure(pressure, pressure_unit)
+
     def add_property(self, name, value):
         if self.type == 'nist' or self.type == 'arbitraty':
             raise ValueError("Properties cannot be set of "
