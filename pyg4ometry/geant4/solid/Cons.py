@@ -50,7 +50,7 @@ class Cons(_SolidBase):
 
     def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
                  pSPhi, pDPhi, registry, lunit="mm", aunit="rad",
-                 nslice=16, addRegistry=True):
+                 nslice=None, addRegistry=True):
 
         self.name   = name
         self.type   = 'Cons'
@@ -61,7 +61,7 @@ class Cons(_SolidBase):
         self.pDz    = pDz
         self.pSPhi  = pSPhi
         self.pDPhi  = pDPhi
-        self.nslice = nslice
+        self.nslice = nslice if nslice else _config.SolidDefaults.Cons.nslice
         self.lunit  = lunit
         self.aunit  = aunit
 

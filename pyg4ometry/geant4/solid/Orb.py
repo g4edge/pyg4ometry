@@ -34,13 +34,15 @@ class Orb(_SolidBase):
     :type nstack: int     
     """
 
-    def __init__(self, name, pRMax, registry, lunit="mm", nslice=16, nstack=16, addRegistry=True):
+    def __init__(self, name, pRMax, registry, lunit="mm",
+                 nslice=None, nstack=None, addRegistry=True):
+
         self.type = 'Orb'
         self.name = name
         self.pRMax = pRMax
         self.lunit = lunit
-        self.nslice = nslice
-        self.nstack = nstack
+        self.nslice = nslice if nslice else _config.SolidDefaults.Orb.nslice
+        self.nstack = nstack if nslice else _config.SolidDefaults.Orb.nstack
 
         self.dependents = []
 

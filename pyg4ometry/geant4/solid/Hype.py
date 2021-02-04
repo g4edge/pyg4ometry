@@ -47,8 +47,9 @@ class Hype(_SolidBase):
 
 
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
-                 outerStereo, lenZ, registry, lunit="mm",
-                 aunit="rad",nslice=16, nstack=16, addRegistry=True):
+                 outerStereo, lenZ, registry, lunit="mm", aunit="rad",
+                 nslice=None, nstack=None, addRegistry=True):
+
         self.type        = 'Hype'
         self.name        = name
         self.innerRadius = innerRadius
@@ -58,8 +59,8 @@ class Hype(_SolidBase):
         self.lenZ        = lenZ
         self.lunit       = lunit
         self.aunit       = aunit
-        self.nslice      = nslice
-        self.nstack      = nstack
+        self.nslice      = nslice if nslice else _config.SolidDefaults.Hype.nslice
+        self.nstack      = nstack if nstack else _config.SolidDefaults.Hype.nstack
 
         self.dependents = []
 

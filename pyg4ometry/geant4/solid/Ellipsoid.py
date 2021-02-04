@@ -47,7 +47,7 @@ class Ellipsoid(_SolidBase):
 
     def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
                  pzBottomCut, pzTopCut, registry, lunit = "mm",
-                 nslice=8, nstack=8, addRegistry=True):
+                 nslice=None, nstack=None, addRegistry=True):
         self.type        = 'Ellipsoid'
         self.name        = name
         self.pxSemiAxis  = pxSemiAxis
@@ -56,8 +56,8 @@ class Ellipsoid(_SolidBase):
         self.pzBottomCut = pzBottomCut
         self.pzTopCut    = pzTopCut
         self.lunit       = lunit
-        self.nslice      = nslice
-        self.nstack      = nstack
+        self.nslice      = nslice if nslice else _config.SolidDefaults.Ellipsoid.nslice
+        self.nstack      = nstack if nstack else _config.SolidDefaults.Ellipsoid.nstack
 
         self.dependents = []
 

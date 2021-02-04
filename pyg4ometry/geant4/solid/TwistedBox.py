@@ -50,7 +50,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
     def __init__(self, name, twistedangle, pDx, pDy, pDz, registry,
                  lunit = "mm", aunit = "rad",
-                 nstack=20, refine=0, addRegistry=True):
+                 nstack=None, refine=0, addRegistry=True):
+
         self.type         = 'TwistedBox'
         self.name         = name
         self.twistedAngle = twistedangle
@@ -59,7 +60,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         self.pDz          = pDz
         self.lunit        = lunit
         self.aunit        = aunit
-        self.nstack       = nstack
+        self.nstack       = nstack if nstack else _config.SolidDefaults.TwistedBox.nstack
         self.refine       = refine
 
         self.dependents = []

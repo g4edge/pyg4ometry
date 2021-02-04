@@ -1,3 +1,5 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
 from .TwistedSolid import TwistedSolid as _TwistedSolid
 from .TwoVector import TwoVector as _TwoVector
@@ -45,7 +47,8 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
     def __init__(self, name, twistedAngle, pDz, pTheta, pDPhi, pDy1,
                  pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry,
-                 lunit = "mm", aunit = "rad", nstack=20, addRegistry=True):
+                 lunit = "mm", aunit = "rad", nstack=None, addRegistry=True):
+
         self.type         = 'TwistedTrap'
         self.name         = name
         self.twistedAngle = twistedAngle
@@ -61,7 +64,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.pAlp         = pAlp
         self.lunit        = lunit 
         self.aunit        = aunit
-        self.nstack       = nstack
+        self.nstack       = nstack if nstack else _config.SolidDefaults.TwistedTrap.nstack
 
         self.dependents = []
 
