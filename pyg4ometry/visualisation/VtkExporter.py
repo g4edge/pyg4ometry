@@ -9,11 +9,22 @@ import random
 from . import colour
 import os,binascii
 import pandas as pd
+import logging
+
+_WITH_PARAVIEW = True
+try:
+
+    import paraview.simple as paras
+
+except (ImportError, ImportWarning):
+    _WITH_PARAVIEW = False
+    logging.error("paraview is required for this module to have full functionalities.\n"
+                    "Not all methods will be available.")
 
 class VtkExporter:
     def __init__(self, path='.'):
 
-        #output directory path
+        # directory path
         self.path = path
 
         # local meshes
@@ -29,18 +40,30 @@ class VtkExporter:
         # material options dict
         self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(colour.ColourMap().fromPredefined())
 
-    def export_to_Paraview(self, reg, model=True, df_model=None, df_color=None):
-        """
+    def export_to_Paraview(self, reg, fileName='Paraview_model.pvsm', model=True, df_model=None, df_color=None):
 
-        Args:
-            reg:
-            model:
-            df_model:
-            df_color:
+        if _WITH_PARAVIEW:
+            self.export_to_VTK(reg, model, df_model, df_color)
 
-        Returns:
+            index = 0
 
-        """
+            for element in self.elements:
+                element_number = "0000" + str(index)
+                xml = paras.XMLMultiBlockDataReader(registrationName=element_number[-5:] + '_' + element,
+                                              FileName=self.path + element + '.vtm', PointArrayStatus="Colors")
+                paras.Show(xml, MapScalars=0)
+                index += 1
+                print((index / len(self.elements)) * 100, ' %')
+
+            paras.Render()
+
+            paras.AssignViewToLayout()
+
+            paras.SaveState(self.path + fileName)
+        else:
+            raise AttributeError("export_to_Paraview is not available as you are missing the paraview module.")
+
+    def export_to_VTK(self, reg, model=True, df_model=None, df_color=None):
 
         world_volume = reg.getWorldVolume()
 
