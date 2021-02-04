@@ -149,7 +149,7 @@ def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=
 
 def MaterialCompound(name, density, number_of_components, registry=None):
     """
-    Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
+    Proxy method to construct a composite material - can be any mixture of Elements and/or Materials
 
     Inputs:
         name                 - string
@@ -224,10 +224,10 @@ class MaterialBase(object):
 
 class Material(MaterialBase):
     """
-    This class provides an interface to GDML material definitions. Material definitions are.
+    This class provides an interface to GDML material definitions.
 
     Because of the different options for constructing a material instance the constructor is kwarg only.
-    Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
+    Proxy methods are provided to instantiate particular types of material. Those proxy methods are:
 
     MaterialSingleElement
     MaterialCompound
