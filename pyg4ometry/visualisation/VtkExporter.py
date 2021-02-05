@@ -80,6 +80,9 @@ class VtkExporter:
             paras.AssignViewToLayout()
 
             paras.SaveState(self.path + fileName)
+
+            for x in paras.GetSources().values():
+                paras.Delete(x)
         else:
             raise AttributeError("export_to_Paraview is not available as you are missing the paraview module.")
 
