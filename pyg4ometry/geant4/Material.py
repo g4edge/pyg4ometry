@@ -134,7 +134,7 @@ def MaterialArbitrary(name, registry=None):
     return Material(name=name, arbitrary=True, registry=registry)
 
 
-def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=None):
+def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=None, tolerateZeroDensity=False):
     """
     Proxy method to construct a simple material - full description of the element contained is contained in one definition
 
@@ -147,7 +147,7 @@ def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=
     return Material(**locals())
 
 
-def MaterialCompound(name, density, number_of_components, registry=None):
+def MaterialCompound(name, density, number_of_components, registry=None, tolerateZeroDensity=False):
     """
     Proxy method to construct a composite material - can be any mixture of Elements and/or Materials
 
@@ -280,7 +280,13 @@ class Material(MaterialBase):
             else:
                 raise ValueError("Material : '{}' Cannot use both atomic number/weight and number_of_components.".format(self.name))
         else:
-            raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
+            if kwargs.get("tolerateZeroDensity", False):
+                # this behaviour is to match Geant4's tolerance of 0 density which if forbids
+                # if loaded in geant4, it would enfore a minimum without an exception
+                print("Warning in Material : '{}' Density set to 0, ensuring minimum of 1e-20".format(self.name))
+                self.density = 1e-20
+            else:
+                raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
 
         # After the material type is determined, set the temperature and pressure if provided
         if "temperature" in kwargs:
