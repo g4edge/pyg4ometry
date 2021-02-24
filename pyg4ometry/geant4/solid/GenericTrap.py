@@ -80,7 +80,7 @@ class GenericTrap(_SolidBase):
         y = xy[1]
         signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
         if not signed_area:
-            raise ValueError("Zero area quadrilateral not allowed.")
+            raise ValueError("GenericTrap: '{}' Zero area quadrilateral not allowed.".format(self.name))
         return signed_area
 
     def get_vertex(self, index):
@@ -133,7 +133,7 @@ class GenericTrap(_SolidBase):
             else:
                 verts_top.append(vert)
 
-        # Correct ordering enures correct surface normals
+        # Correct ordering ensures correct surface normals
         if self.polygon_area(verts_top) > 0:
             verts_top = list(reversed(verts_top))
 

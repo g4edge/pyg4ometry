@@ -278,11 +278,11 @@ class Material(MaterialBase):
             elif self.atomic_number and self.atomic_weight and not self.number_of_components:
                 self.type = "simple"
             else:
-                raise ValueError("Cannot use both atomic number/weight and number_of_components.")
+                raise ValueError("Material : '{}' Cannot use both atomic number/weight and number_of_components.".format(self.name))
         else:
-            raise ValueError("Density must be specified for custom materials.")
+            raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
 
-        # After thematerial type is determined, set the temperature and pressure if provided
+        # After the material type is determined, set the temperature and pressure if provided
         if "temperature" in kwargs:
             temperature = kwargs["temperature"]
             temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
