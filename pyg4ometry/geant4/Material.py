@@ -285,6 +285,7 @@ class Material(MaterialBase):
                 # if loaded in Geant4, it would enforce a minimum without an exception
                 print("Warning in Material : '{}' density set to 0, ensuring minimum of 1e-20".format(self.name))
                 self.density = 1e-20
+                self.type = "simple"
             else:
                 raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
 
