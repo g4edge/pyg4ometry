@@ -1603,9 +1603,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None) :
         elif materialInstance.type == "nist":
             # make material object from dictionary of information
             nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
-
-            # call geant4Material2Fluka on material
-            # geant4Material2Fluka(nistMatInstance)
+            return geant4Material2Fluka(nistMatInstance)
 
         elif materialInstance.type == "arbitrary":
             raise Exception("Cannot have material with arbitrary type")
