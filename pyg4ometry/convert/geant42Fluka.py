@@ -1590,6 +1590,10 @@ def geant4Material2Fluka(material, freg) :
             materialNameStrip[-1] = str(i)
     materialNameShort = makeShortName(materialNameStrip)
 
+    # protect against multiply defining the same material
+    if materialNameShort in freg.materials:
+        return freg.materials[materialNameShort]
+
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
 
@@ -1636,9 +1640,6 @@ def geant4Material2Fluka(material, freg) :
 
                 flukaComposition.append((fm,compFraction))
 
-            if materialNameShort in freg.materials:
-                return freg.materials[materialNameShort]
-
             mat = _fluka.Compound(materialNameShort,
                                   materialInstance.density,
                                   flukaComposition,
@@ -1669,9 +1670,6 @@ def geant4Material2Fluka(material, freg) :
 
             flukaComposition = [(c,f) for c,f in zip(flukaComponents, flukaComponentFractions)]
 
-            if materialNameShort in freg.materials:
-                return freg.materials[materialNameShort]
-
             mat = _fluka.Compound(materialNameShort,
                                   0.1 ,
                                   flukaComposition,
@@ -1680,11 +1678,6 @@ def geant4Material2Fluka(material, freg) :
             return mat
 
     elif isinstance(materialInstance, _geant4.Isotope) :
-        # print("isotope",materialInstance.name)
-
-        if materialNameStrip  in freg.materials :
-            return freg.materials[materialNameStrip]
-
         fi = _fluka.Material(materialNameShort, materialInstance.Z, 10, flukaregistry=freg,
                             atomicMass = materialInstance.a,
                             massNumber = materialInstance.N)
