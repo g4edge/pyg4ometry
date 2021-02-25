@@ -282,8 +282,8 @@ class Material(MaterialBase):
         else:
             if kwargs.get("tolerateZeroDensity", False):
                 # this behaviour is to match Geant4's tolerance of 0 density which if forbids
-                # if loaded in geant4, it would enfore a minimum without an exception
-                print("Warning in Material : '{}' Density set to 0, ensuring minimum of 1e-20".format(self.name))
+                # if loaded in Geant4, it would enforce a minimum without an exception
+                print("Warning in Material : '{}' density set to 0, ensuring minimum of 1e-20".format(self.name))
                 self.density = 1e-20
             else:
                 raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
