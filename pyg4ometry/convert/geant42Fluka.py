@@ -1580,8 +1580,15 @@ def geant4Material2Fluka(material, freg) :
     materialInstance = material
 
     materialNameStrip = makeStripName(materialName)
-    materialNameShort = makeShortName(materialName)
 
+    # ensure this name is unique
+    i = 0
+    while materialNameStrip in freg.materials:
+        if i == 0:
+            materialNameStrip += str(i)
+        else:
+            materialNameStrip[-1] = str(i)
+    materialNameShort = makeShortName(materialNameStrip)
 
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
