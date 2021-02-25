@@ -91,7 +91,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     flukaRegistry.addRegion(flukaMotherRegion)
 
     ###########################################
-    # assign material to blckhole
+    # assign material to blackhole
     ###########################################
     flukaRegistry.addMaterialAssignments("BLCKHOLE",
                                          "BLKHOLE")
@@ -143,7 +143,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     flukaMotherRegion.comment = physicalVolume.name
 
     ###########################################
-    # loop over daughers and remove from mother region
+    # loop over daughters and remove from mother region
     ###########################################
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
