@@ -1575,7 +1575,7 @@ def geant4MaterialDict2Fluka(matr, freg):
 
     return freg
 
-def geant4Material2Fluka(material, freg) :
+def geant4Material2Fluka(material, freg, suggestedDensity=None) :
     materialName = material.name
     materialInstance = material
 
@@ -1622,7 +1622,7 @@ def geant4Material2Fluka(material, freg) :
             flukaFractionType = "atomic"
 
             for comp in materialInstance.components:
-                fm = geant4Material2Fluka(comp[0], freg)
+                fm = geant4Material2Fluka(comp[0], freg, materialInstance.density)
 
                 compFraction     = comp[1]
                 compFractionType = comp[2]
@@ -1643,8 +1643,12 @@ def geant4Material2Fluka(material, freg) :
 
     elif isinstance(materialInstance, _geant4.Element) :
         if materialInstance.type == "simple" :
-            pass
-            # print("element simple", materialInstance.name)
+            mat = _fluka.Material(materialNameShort,
+                                  materialInstance.Z,
+                                  suggestedDensity,
+                                  materialInstance.A,
+                                  flukaregistry=freg)
+            return mat
 
         elif materialInstance.type == "composite" :
             flukaComponentNames     = []
