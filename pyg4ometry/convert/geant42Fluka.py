@@ -1601,8 +1601,8 @@ def geant4Material2Fluka(material, freg) :
         elif materialInstance.type == "arbitrary":
             raise Exception("Cannot have material with arbitrary type")
         elif materialInstance.type == "simple":
-            print("material single element", materialInstance.name, materialNameStrip, materialNameShort)
-            print("material single element",materialInstance,type(materialInstance), materialInstance.atomic_number,materialInstance.density)
+            #print("material single element", materialInstance.name, materialNameStrip, materialNameShort)
+            #print("material single element",materialInstance,type(materialInstance), materialInstance.atomic_number,materialInstance.density)
 
             fe = _fluka.Material(materialNameShort,
                                  materialInstance.atomic_number,
@@ -1732,7 +1732,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
 def makeStripName(mn) :
     if mn.find("0x") != -1:
-       mnStrip = mn[0:mn.find("0x")]
+        mnStrip = mn[0:mn.find("0x")]
     else:
         mnStrip = mn
 
