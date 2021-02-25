@@ -80,7 +80,9 @@ class GenericTrap(_SolidBase):
         y = xy[1]
         signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
         if not signed_area:
-            raise ValueError("GenericTrap: '{}' Zero area quadrilateral not allowed.".format(self.name))
+            return 0
+            print("vertices: ",vertices)
+            raise ValueError("GenericTrap: '{}' Zero area quadrilateral not allowed.".format(self.name))        # TODO TODO
         return signed_area
 
     def get_vertex(self, index):
