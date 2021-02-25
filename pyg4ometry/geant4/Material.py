@@ -96,7 +96,7 @@ def nist_materials_z_lookup(z) :
 
 def nist_material_2geant4Material(name) :
     matDict = nist_materials_name_lookup(name)
-
+    # TODO - finish this function and return something
     print(matDict)
 
     # loop over components of material
