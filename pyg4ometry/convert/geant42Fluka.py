@@ -1596,13 +1596,11 @@ def geant4Material2Fluka(material, freg) :
 
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
-
         # none, nist, arbitary, simple, composite
         if materialInstance.type == "none":
             raise Exception("Cannot have material with none type")
-        elif materialInstance.type == "nist":
-            # print("material nist", materialInstance.name, materialNameStrip, materialNameShort)
 
+        elif materialInstance.type == "nist":
             # make material object from dictionary of information
             nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
 
@@ -1611,19 +1609,15 @@ def geant4Material2Fluka(material, freg) :
 
         elif materialInstance.type == "arbitrary":
             raise Exception("Cannot have material with arbitrary type")
-        elif materialInstance.type == "simple":
-            #print("material single element", materialInstance.name, materialNameStrip, materialNameShort)
-            #print("material single element",materialInstance,type(materialInstance), materialInstance.atomic_number,materialInstance.density)
 
+        elif materialInstance.type == "simple":
             fe = _fluka.Material(materialNameShort,
                                  materialInstance.atomic_number,
                                  materialInstance.density,
                                  flukaregistry=freg)
-
+            return fe
 
         elif materialInstance.type == "composite":
-            # print("material composite", materialInstance.name, materialNameStrip, materialNameShort, materialInstance.number_of_components)
-
             flukaComposition = []
             flukaFractionType = "atomic"
 
@@ -1653,7 +1647,6 @@ def geant4Material2Fluka(material, freg) :
             # print("element simple", materialInstance.name)
 
         elif materialInstance.type == "composite" :
-            # print("element composite", materialInstance.name)
             flukaComponentNames     = []
             flukaComponents         = []
             flukaComponentFractions = []
