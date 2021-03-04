@@ -51,6 +51,12 @@ class VtkViewer:
         self.physicalActorMapOverlap = {}
 
         # cutters
+        self._xCutterOrigin = [0,0,0]
+        self._yCutterOrigin = [0,0,0]
+        self._zCutterOrigin = [0,0,0]
+        self._xCutterNormal = [1,0,0]
+        self._yCutterNormal = [0,1,0]
+        self._zCutterNormal = [0,0,1]
         self.xcutters = []
         self.ycutters = []
         self.zcutters = []
@@ -150,6 +156,34 @@ class VtkViewer:
             a.GetProperty().SetColor(random.random(),
                                      random.random(),
                                      random.random())
+
+    def setCutterOrigin(self, dimension, origin):
+        """
+        dimension = 'x', 'y', or 'z'
+        origin    = list([x,y,z])
+        """
+        if dimension == 'x':
+            self._xCutterOrigin = origin
+        elif dimension == 'y':
+            self._yCutterOrigin = origin
+        elif dimension == 'z':
+            self._zCutterOrigin = origin
+        else:
+            raise ValueError("invalid dimension - x,y or z")
+
+    def setCutterNormal(self, dimension, normal):
+        """
+        dimension = 'x', 'y', or 'z'
+        normal    = list([x,y,z])   should be unit vector
+        """
+        if dimension == 'x':
+            self._xCutterNormal = normal
+        elif dimension == 'y':
+            self._yCutterNormal = normal
+        elif dimension == 'z':
+            self._zCutterNormal = normal
+        else:
+            raise ValueError("invalid dimension - x,y or z")                        
 
     def setMaterialVisualisationOptions(self, dict):
         self.materialVisualisationOptions = dict
@@ -528,11 +562,11 @@ class VtkViewer:
         vtkTransFLT.SetTransform(vtkTransform1)
         vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
 
-        def makeCutterPlane(normal,color) :
+        def makeCutterPlane(origin, normal, color) :
 
             plane = _vtk.vtkPlane()
-            plane.SetOrigin(0, 0, 0)
-            plane.SetNormal(normal[0], normal[1], normal[2])
+            plane.SetOrigin(*origin)
+            plane.SetNormal(*normal)
             vtkTransFLT = _vtk.vtkTransformFilter()
             vtkTransform1 = _vtk.vtkTransform()
             vtkTransform1.SetMatrix(vtkTransform)
@@ -551,7 +585,7 @@ class VtkViewer:
             planeActor = _vtk.vtkActor()
             planeActor.SetMapper(cutterMapper)
             planeActor.GetProperty().SetLineWidth(4)
-            planeActor.GetProperty().SetColor(color[0],color[1],color[2])
+            planeActor.GetProperty().SetColor(*color)
             planeActor.GetProperty().SetRepresentationToSurface()
             self.ren.AddActor(planeActor)
 
@@ -580,9 +614,9 @@ class VtkViewer:
             self.ren.AddActor(clipperActor)  # selection part end
 
         if cutters :
-            self.xcutters.append(makeCutterPlane([1,0,0],[1,0,0]))
-            self.ycutters.append(makeCutterPlane([0,1,0],[0,1,0]))
-            self.zcutters.append(makeCutterPlane([0,0,1],[0,0,1]))
+            self.xcutters.append(makeCutterPlane(self._xCutterOrigin, self._xCutterNormal, [1,0,0]))
+            self.ycutters.append(makeCutterPlane(self._yCutterOrigin, self._yCutterNormal, [0,1,0]))
+            self.zcutters.append(makeCutterPlane(self._zCutterOrigin, self._zCutterNormal, [0,0,1]))
 
         #if clippers :
         #    makeClipperPlane([1,0,0])
@@ -598,7 +632,7 @@ class VtkViewer:
 
             comFilter = _vtk.vtkCenterOfMass()
             comFilter.SetInputConnection(vtkTransFLT.GetOutputPort())
-            comFilter.SetUseScalarsAsWeights(False);
+            comFilter.SetUseScalarsAsWeights(False)
             comFilter.Update()
 
             overlapActor = _vtk.vtkFollower()
@@ -606,7 +640,7 @@ class VtkViewer:
             overlapActor.SetPosition(comFilter.GetCenter())
             overlapActor.SetMapper(overlapMapper)
             self.ren.ResetCameraClippingRange()
-            overlapActor.SetCamera(self.ren.GetActiveCamera());
+            overlapActor.SetCamera(self.ren.GetActiveCamera())
             self.ren.AddActor(overlapActor)
 
         if not actorname in actorMap:
@@ -646,6 +680,51 @@ class VtkViewer:
         if interactive : 
             self.iren.Start()
 
+    def _getCutterData(self, axis='x', scaling=1.0):
+        if axis == 'x':
+            cutters = self.xcutters
+        elif axis == 'y':
+            cutters = self.ycutters
+        elif axis == 'z':
+            cutters = self.zcutters
+
+        allX = []
+        allY = []
+        for c in cutters:
+            pd = c.GetOutput()
+            xs,ys = [],[]
+            for i in range(0,pd.GetNumberOfCells(),1) :
+                idl = _vtk.vtkIdList()
+                pd.GetCellPoints(i,idl)
+                x,y = [],[]
+                for j in range(0,idl.GetNumberOfIds(),1) :
+                    p = pd.GetPoint(idl.GetId(j))
+
+                    if axis == 'x':
+                        x.append(p[1]*scaling)
+                        y.append(p[2]*scaling)
+                    elif axis == 'y':
+                        x.append(p[0]*scaling)
+                        y.append(p[2]*scaling)
+                    elif axis == 'z':
+                        x.append(p[0]*scaling)
+                        y.append(p[1]*scaling)
+                if len(x) > 0 and len(y) > 0:
+                    allX.append(x)
+                    allY.append(y)
+        return allX,allY
+
+    def exportCutterSection(self, filename, normal='x', scaling=1.0):
+        """
+        Export the section lines in plane perpendicular to normal.
+        Exported as json text. normal is 'x','y' or 'z'
+        """
+        d = self._getCutterData(normal, scaling)
+        import json
+        f = open(filename, 'w')
+        json.dump(d,f)
+        f.close()
+
     def viewSection(self, dir = 'x'):
         import matplotlib.pyplot as _plt
         from vtk.numpy_interface import dataset_adapter as dsa
@@ -661,9 +740,6 @@ class VtkViewer:
 
         for c in cutters:
             pd = c.GetOutput()
-
-            color = ()
-
             for i in range(0,pd.GetNumberOfCells(),1) :
                 idl = _vtk.vtkIdList()
                 pd.GetCellPoints(i,idl)
