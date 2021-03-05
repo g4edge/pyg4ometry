@@ -1370,7 +1370,10 @@ class Reader(object):
                 if material in self._registry.materialDict:
                     mat = self._registry.materialDict[material]
                 else:
-                    mat = _g4.MaterialPredefined(material)
+                    try:
+                        mat = _g4.MaterialPredefined(material)
+                    except ValueError:
+                        mat = _g4.MaterialArbitrary(material)
 
                 aux_list = []
                 try:
