@@ -357,13 +357,13 @@ option, preprocessGDML=0;
                 self.writeAuxiliary(aux, parent=we)
 
         for dv in lv.daughterVolumes :
-            if dv.type is "placement":
+            if dv.type == "placement":
                 dve = self.writePhysicalVolume(dv)
-            elif dv.type is "parametrised":
+            elif dv.type == "parametrised":
                 dve = self.writeParametrisedVolume(dv)
-            elif dv.type is "replica":
+            elif dv.type == "replica":
                 dve = self.writeReplicaVolume(dv)
-            elif dv.type is "division":
+            elif dv.type == "division":
                 dve = self.writeDivisionVolume(dv)
             else:
                 raise ValueError("Unknown daughter volume type: {}".format(dv.type))
