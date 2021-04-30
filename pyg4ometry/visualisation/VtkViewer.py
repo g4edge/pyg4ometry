@@ -762,6 +762,40 @@ class VtkViewer:
 
                 _plt.plot(x, y, color='k')
 
+    def addCutterPlane(self, position, normal, color=None):
+        """
+        Add a cutting plane at position=[x,y,z] with normal [nx,ny,nz].
+
+        optional colour=[r,g,b] in range [0:1]
+        
+        Cutters are stored in self.usercutters.
+        """
+        if color is None:
+            color = [1, 0.6, 0.2]
+        plane = _vtk.vtkPlane()
+        plane.SetOrigin(*position)
+        plane.SetNormal(*normal)
+        vtkTransFLT = _vtk.vtkTransformFilter()
+        vtkTransform1 = _vtk.vtkTransform()
+        vtkTransFLT.SetTransform(vtkTransform1)
+
+        cutter = _vtk.vtkCutter()
+        cutter.SetCutFunction(plane)
+        cutter.SetInputConnection(vtkTransFLT.GetOutputPort())
+        cutter.Update()
+
+        cutterMapper = _vtk.vtkPolyDataMapper()
+        cutterMapper.ScalarVisibilityOff()
+        cutterMapper.SetInputConnection(cutter.GetOutputPort())
+
+        planeActor = _vtk.vtkActor()
+        planeActor.SetMapper(cutterMapper)
+        planeActor.GetProperty().SetLineWidth(4)
+        planeActor.GetProperty().SetColor(*color)
+        planeActor.GetProperty().SetRepresentationToSurface()
+        self.ren.AddActor(planeActor)
+        self.usercutters.append(cutter)
+
     def setOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
         if overlaptype == _OverlapType.protrusion:
