@@ -12,103 +12,99 @@ def _makeNISTCompoundList():
 
     return loadNISTMaterialDict().keys()
 
+def _safeName(name):
+    name = name.replace(',','_')
+    return name
+
 def loadNISTMaterialDict():
     nist_materials_dict = {}
+    
+    nist_elements  = pkg_resources.resource_filename(__name__, "nist_elements.txt")
+    nist_materials = pkg_resources.resource_filename(__name__, "nist_materials.txt")
 
-    nist_data = pkg_resources.resource_filename(__name__, "bdsim_materials.txt")
+    with open(nist_elements, "r") as f:
+        line = f.readline()
+        while line:
+            if line[0] == '#' :
+                line = f.readline()
+                continue            
+            
+            line_data = line.split()
+            if line_data[0] == "element":
+                tipe = line_data[0]
+                z    = int(line_data[1])
+                name = _safeName(line_data[2])
+                rho  = float(line_data[3])
+                ion  = float(line_data[4])
+                niso = int(line_data[5])
+                isotopes = []
+                if niso > 1:
+                    for i in range(niso):
+                        isoLine = f.readline()
+                        isoLineSplit = isoLine.split()
+                        n    = int(isoLineSplit[0])
+                        frac = float(isoLineSplit[1])
+                        isotopes.append([n,frac])
 
-    with open(nist_data,"r") as f:
-        line  = f.readline()
+                nist_materials_dict[name] = {'type':tipe, 'z':z, 'name':name, 'density':rho, 'ionisation':ion, 'isotopes':isotopes}
+
+            line = f.readline()
+
+    with open(nist_materials, "r") as f:
+        line = f.readline()
         while line:
             if line[0] == '#' :
                 line = f.readline()
                 continue
 
             line_data = line.split()
-            if line_data[0] == "element":
-                type = line_data[0]
-                z    = int(line_data[1])
-                name = line_data[2]
-                rho  = float(line_data[3])
-                ion  = float(line_data[4])
-
-                try :
-                    niso = int(line_data[5])
-                except(IndexError) :
-                    niso = 0
-
-                isotopes = []
-                for i in range(0,niso,1) :
-                    isoLine = f.readline()
-                    isoLineSplit = isoLine.split()
-
-                    n    = int(isoLineSplit[0])
-                    frac = float(isoLineSplit[1])
-                    isotopes.append([n,frac])
-
-                nist_materials_dict[name] = {'type':type, 'z':z, 'name':name, 'density':rho, 'ionisation':ion, 'isotopes':isotopes}
-            elif line_data[0] == "compatom":
-                type = line_data[0]
+            if line_data[0] == "material":
+                tipe = line_data[0]
                 ncom = int(line_data[1])
-                name = line_data[2]
+                name = _safeName(line_data[2])
                 rho  = float(line_data[3])
                 ion  = float(line_data[4])
 
-                components = []
-                for i in range(0,ncom,1) :
-                    comLine = f.readline()
-                    comLineSplit = comLine.split()
-                    z = int(comLineSplit[0])
-                    n = int(comLineSplit[1])
-                    components.append([z,n])
-                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
+                elements = []
+                for i in range(ncom):
+                    eleLine      = f.readline()
+                    eleLineSplit = eleLine.split()
+                    eleName      = eleLine[0]
+                    z            = int(eleLineSplit[1])
+                    nAtoms       = int(eleLineSplit[2])
+                    massFrac     = float(eleLineSplit[3])
+                    elements.append([z,massFrac])
+                nist_materials_dict[name] = {'type':tipe, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'elements':elements}
 
-            elif line_data[0] == "compmass":
-                type = line_data[0]
-                ncom = int(line_data[1])
-                name = line_data[2]
-                rho  = float(line_data[3])
-                ion  = float(line_data[4])
-
-                components = []
-                for i in range(0,ncom,1) :
-                    comLine = f.readline()
-                    comLineSplit = comLine.split()
-                    z    = int(comLineSplit[0])
-                    frac = float(comLineSplit[1])
-                    components.append([z,frac])
-                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
-
-            line =f.readline()
+            line = f.readline()
 
     return nist_materials_dict
 
 nist_materials_dict = loadNISTMaterialDict()
 nist_materials_list = nist_materials_dict.keys()
 
-def nist_materials_name_lookup(name) :
+def nist_materials_name_lookup(name):
     return nist_materials_dict[name]
 
-def nist_materials_z_lookup(z) :
-    for k in nist_materials_dict :
-        if nist_materials_dict[k]['z'] == z :
+def nist_materials_z_lookup(z):
+    for k in nist_materials_dict:
+        if nist_materials_dict[k]['z'] == z:
             return nist_materials_dict[k]
 
-def nist_material_2geant4Material(name) :
+def nist_material_2geant4Material(name):
     matDict = nist_materials_name_lookup(name)
-    # TODO - finish this function and return something
-    print(matDict)
 
     # loop over components of material
-    if matDict['type'] == "compatom" or matDict['type'] == "compmass" :
-        for c in matDict['components'] :
-            # loop over elements
+    if matDict['type'] == "material":
+        for c in matDict['components']:
             e  = nist_materials_z_lookup(c[0])
             print(e)
-    elif matDict['type'] == "element" :
-        for c in matDict['isotopes'] :
-            # loop over isotopes of elements
+    elif matDict['type'] == "element":
+        g4Name = "G4_"+name
+        #if g4Name in 
+        for c in matDict['isotopes']:
             pass
+    
 
 def MaterialPredefined(name, registry=None):
     """
@@ -260,8 +256,8 @@ class Material(MaterialBase):
                        "temperature_unit": None,
                        "pressure": None,
                        "pressure_unit": None}
-
-        self.NIST_compounds =  nist_materials_list
+        
+        self.NIST_compounds = nist_materials_list
 
         if not any(_getClassVariables(self)):
             self.type = "none"
