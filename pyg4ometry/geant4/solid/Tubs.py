@@ -19,7 +19,7 @@ import logging as _log
 class Tubs(_SolidBase):
     """
     Constructs a cylindrical section.
-`
+    
     :param name: of solid for registry
     :type name: str
     :param pRMin: inner radius
