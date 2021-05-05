@@ -117,7 +117,7 @@ def nist_material_2geant4Material(name, reg=None):
         else:
             singleIsotope = isotopes[0]
             nNucleons = singleIsotope[0]
-            result = ElementSimple(name, z, nNucleons, matDict, reg)
+            result = ElementSimple(name, name.replace("G4_", ""), z, nNucleons, reg)
             return result
     
 
