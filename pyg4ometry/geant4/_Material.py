@@ -109,7 +109,7 @@ def nist_material_2geant4Material(name, reg=None):
         name     = matDict["name"]
         z        = matDict["z"]
         if (len(isotopes) > 1):
-            result = ElementIsotopeMixture(name, name, len(isotopes), reg, state=matDict["state"])
+            result = ElementIsotopeMixture(name, name.replace("G4_", ""), len(isotopes), reg, state=matDict["state"])
             for (nNucleons,molarMass,massFraction) in isotopes:
                 ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
                 result.add_isotope(ele, massFraction)
@@ -117,7 +117,7 @@ def nist_material_2geant4Material(name, reg=None):
         else:
             singleIsotope = isotopes[0]
             nNucleons = singleIsotope[0]
-            result = ElementSimple(name, z, nNucleons, matDict, reg)
+            result = ElementSimple(name, name.replace("G4_", ""), z, nNucleons, reg)
             return result
     
 
