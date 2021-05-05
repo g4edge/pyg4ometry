@@ -1,6 +1,6 @@
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.exceptions as _exceptions
-from . import Material as _mat
+from . import _Material as _mat
 from . import solid
 
 

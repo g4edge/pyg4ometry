@@ -7,7 +7,7 @@ from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from . import solid                     as                 _solid
-from . import Material                  as                 _mat
+from . import _Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 import pyg4ometry.visualisation  as                 _vi
 import vtk                       as                 _vtk

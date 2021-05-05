@@ -1,8 +1,8 @@
 from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
-from ..geant4.Material import Material as _Material
-from ..geant4.Material import Element as _Element
-from ..geant4.Material import Isotope as _Isotope
+from ..geant4._Material import Material as _Material
+from ..geant4._Material import Element as _Element
+from ..geant4._Material import Isotope as _Isotope
 from ..gdml import Defines as _Defines
 from . import Expression as _Expression
 import pyg4ometry.geant4 as _g4
