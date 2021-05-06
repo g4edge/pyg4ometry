@@ -84,13 +84,35 @@ def loadNISTMaterialDict():
 
 nist_materials_dict = loadNISTMaterialDict()
 nist_materials_list = nist_materials_dict.keys()
-nist_elements_by_z  = {value["z"]:key for key,value in nist_materials_dict.items() if value["type"] == "element"}
+nist_element_z_to_name  = {value["z"]:key for key,value in nist_materials_dict.items() if value["type"] == "element"}
 
 def nist_materials_name_lookup(name):
     return nist_materials_dict[name]
 
 def nist_materials_z_lookup(z):
-    return nist_elements_by_z[z]
+    return nist_element_z_to_name[z]
+
+def nist_element_2geant4Element(name, reg=None):
+    """
+    This returns and instance of either ElementSimple or ElementIsotopeMixture.
+    """
+    matDict = nist_materials_name_lookup(name)
+    if not matDict["type"] == "element":
+        raise TypeError(name + " is not an element in NIST")
+    isotopes = matDict["isotopes"]
+    name     = matDict["name"]
+    z        = matDict["z"]
+    if (len(isotopes) > 1):
+        result = ElementIsotopeMixture(name, name.replace("G4_", ""), len(isotopes), reg, state=matDict["state"])
+        for (nNucleons,molarMass,massFraction) in isotopes:
+            ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
+            result.add_isotope(ele, massFraction)
+        return result
+    else:
+        singleIsotope = isotopes[0]
+        nNucleons = singleIsotope[0]
+        result = ElementSimple(name, name.replace("G4_", ""), z, nNucleons, reg)
+        return result
 
 def nist_material_2geant4Material(name, reg=None):
     matDict = nist_materials_name_lookup(name)
@@ -99,27 +121,16 @@ def nist_material_2geant4Material(name, reg=None):
         result = MaterialCompound(matDict["name"], matDict["density"], matDict["ncom"], reg, state=matDict["state"])
         d = matDict["elements"]
         for (z,nAtoms,massFraction) in matDict["elements"]:
-            elementDict = nist_materials_dict[nist_elements_by_z[z]]
-            elementMaterial = nist_material_2geant4Material(elementDict["name"], reg)
-            result.add_element_massfraction(elementMaterial, massFraction)
-        return result
-            
+            elementDict = nist_materials_dict[nist_element_z_to_name[z]]
+            element = nist_element_2geant4Element(elementDict["name"], reg)
+            result.add_element_massfraction(element, massFraction)
+        return result            
     elif matDict["type"] == "element":
-        isotopes = matDict["isotopes"]
-        name     = matDict["name"]
-        z        = matDict["z"]
-        if (len(isotopes) > 1):
-            result = ElementIsotopeMixture(name, name.replace("G4_", ""), len(isotopes), reg, state=matDict["state"])
-            for (nNucleons,molarMass,massFraction) in isotopes:
-                ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
-                result.add_isotope(ele, massFraction)
-            return result
-        else:
-            singleIsotope = isotopes[0]
-            nNucleons = singleIsotope[0]
-            result = ElementSimple(name, name.replace("G4_", ""), z, nNucleons, reg)
-            return result
-    
+        element = nist_element_2geant4Element(name, reg)
+        # we still have to run an 'element' into a 'material'
+        result = MaterialCompound(matDict["name"], matDict["density"], 1, reg, state=matDict["state"])
+        result.add_element_massfraction(element, 1.0)
+        return result
 
 def MaterialPredefined(name, registry=None):
     """
