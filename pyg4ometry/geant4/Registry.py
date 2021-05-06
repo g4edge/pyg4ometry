@@ -250,9 +250,9 @@ class Registry:
         '''Need to have a ordered list of all material entities for writing to
         GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
 
-        for name, obj in self.materialDict.items():  # Forces registered materials to
-            if isinstance(obj, _mat.Material):           # recursively register their components too
-                obj.set_registry(self)
+        for name in list(self.materialDict.keys()):  # Forces registered materials to
+            if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
+                self.materialDict[name].set_registry(self)
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
