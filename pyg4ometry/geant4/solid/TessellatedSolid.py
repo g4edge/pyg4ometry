@@ -130,3 +130,41 @@ class TessellatedSolid(_SolidBase):
         
         return _CSG.fromPolygons(polygon_list, False)
 
+
+def createTessellatedSolid(name, polygons, reg):
+    """
+
+    Args:
+        name: Name of the tessallated solid
+        polygons: list of polygons (list of points given in clockwise order). All polygons should have the same number of points.
+        reg: registry
+
+    Returns: TessellatedSolid
+
+    """
+
+    meshtess = []
+
+    for j in range(len(polygons) - 1):
+
+        p1 = polygons[j]
+        p2 = polygons[j + 1]
+
+        for i in range(1, len(p1) - 1):
+            meshtess.append([[p1[0], p1[i], p1[i + 1]]])
+
+        for i in range(len(p1)):
+            if i != len(p1) - 1:
+                meshtess.append([[p1[i], p2[i], p2[i + 1]]])
+                meshtess.append([[p1[i], p2[i + 1], p1[i + 1]]])
+            else:
+                meshtess.append([[p1[i], p2[i], p2[0]]])
+                meshtess.append([[p1[i], p2[0], p1[0]]])
+
+    p2 = polygons[-1]
+
+    for i in range(len(p2) - 1, 1, -1):
+        meshtess.append([[p2[0], p2[i], p2[i - 1]]])
+
+    return TessellatedSolid(name, meshtess, reg, TessellatedSolid.MeshType.Stl)
+
