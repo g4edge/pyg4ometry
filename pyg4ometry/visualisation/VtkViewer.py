@@ -6,7 +6,7 @@ from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random
-from . import colour
+from . import Colour
 
 class VtkViewer:
     """

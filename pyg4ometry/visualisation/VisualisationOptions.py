@@ -1,5 +1,5 @@
 import random as _random
-from .colour import randomColour
+from .Colour import randomColour
 
 class VisualisationOptions:
     def __init__(self) : 
