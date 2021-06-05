@@ -233,6 +233,11 @@ class Registry:
         return define.name
 
     def setWorld(self, worldIn):
+        """
+        The argument can either be the name of logical volume of the world
+        or the pyg4ometry.geant4.LogicalVolume instance of the world volume.
+        The term world is used to refer to the outermost volume of the hierarchy.
+        """
         if type(worldIn) is str:
             # assume it's the name of the world volume
             self.worldName = worldIn
