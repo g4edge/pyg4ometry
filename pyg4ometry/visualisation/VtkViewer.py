@@ -486,7 +486,7 @@ class VtkViewer:
                 vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
                 localmeshes[solid_name] = vtkPD
 
-        if self.interpolation is not "none":
+        if self.interpolation != "none":
             normal_generator = _vtk.vtkPolyDataNormals()
             normal_generator.SetInputData(vtkPD)
             # normal_generator.ComputePointNormalsOn()
@@ -531,7 +531,7 @@ class VtkViewer:
         vtkActor.SetMapper(vtkMAP)
         vtkActor.name = actorname
 
-        if self.interpolation is not "none":
+        if self.interpolation != "none":
             if self.interpolation == "gouraud":
                 vtkActor.GetProperty().SetInterpolationToGouraud()
             elif self.interpolation == "phong":
