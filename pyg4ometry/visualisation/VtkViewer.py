@@ -789,7 +789,7 @@ class VtkViewer:
 
                 _plt.plot(x, y, color='k')
 
-    def addCutterPlane(self, position, normal, color=None):
+    def addCutterPlane(self, position, normal, colour=None):
         """
         Add a cutting plane at position=[x,y,z] with normal [nx,ny,nz].
 
@@ -799,8 +799,8 @@ class VtkViewer:
         
         Cutters are stored in self.usercutters.
         """
-        if color is None:
-            color = [1, 0.6, 0.2]
+        if colour is None:
+            colour = [1, 0.6, 0.2]
         plane = _vtk.vtkPlane()
         plane.SetOrigin(*position)
         plane.SetNormal(*normal)
@@ -820,7 +820,7 @@ class VtkViewer:
         planeActor = _vtk.vtkActor()
         planeActor.SetMapper(cutterMapper)
         planeActor.GetProperty().SetLineWidth(4)
-        planeActor.GetProperty().SetColor(*color)
+        planeActor.GetProperty().SetColor(*colour)
         planeActor.GetProperty().SetRepresentationToSurface()
         self.ren.AddActor(planeActor)
         self.usercutters.append(cutter)
