@@ -18,11 +18,11 @@ class ColourMap(MutableMapping):
 
     @classmethod
     def fromPredefined(cls):
-        """Construct a ColorMap initialised with default colours for various
-        materials."""
-        config = configparser.ConfigParser(
-            allow_no_value=True,
-            interpolation=configparser.ExtendedInterpolation())
+        """
+        Construct a ColorMap initialised with default colours for various materials.
+        """
+        config = configparser.ConfigParser(allow_no_value=True,
+                                           interpolation=configparser.ExtendedInterpolation())
         config.optionxform = str
 
         ini = pkg_resources.resource_filename(__name__, "colours.ini")

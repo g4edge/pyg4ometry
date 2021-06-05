@@ -9,6 +9,19 @@ import random
 from . import colour
 
 class VtkViewer:
+    """
+    Visualiser.
+
+    :param size: (int,int) - (nPixelsHorizontal, nPixelsVeritcal), default (1024,1024)
+    :param interpolation: (str) - one of "none", "flat", "gouraud", "phong"
+
+    :Examples:
+
+    >>> v = VtkViewer()
+    >>> v.addLogicalVolume(someLV)
+    >>> v.view()
+
+    """
     # def __init__(self,size=(2048,1536), interpolation="none"):
     def __init__(self, size=(1024, 1024), interpolation="none", **kwargs):
         # create a renderer
@@ -78,6 +91,12 @@ class VtkViewer:
         self.interpolation = interpolation
 
     def addAxes(self, length = 20.0, origin = (0,0,0)):
+        """
+        Add x,y,z axis to the scene.
+        
+        :param length: float - length of each axis in mm
+        :param origin: (float,float,float) - (x,y,z) of origin in mm
+        """
         axes = _vtk.vtkAxesActor()
 
         # transform to move axes
@@ -717,7 +736,15 @@ class VtkViewer:
     def exportCutterSection(self, filename, normal='x', scaling=1.0):
         """
         Export the section lines in plane perpendicular to normal.
-        Exported as json text. normal is 'x','y' or 'z'
+        Exported as json text. 
+        
+        :param filename: (str) - name of file to export to
+        :param normal: (str) - one of "x", "y" or "z"
+        :param scaling: (float) - multiplier for all cutter line coordinates on export
+
+        :Examples:
+
+        >>> v.exportCutterSection("xz-section.dat", normal="y", scaling=1000)
         """
         d = self._getCutterData(normal, scaling)
         import json
@@ -766,7 +793,9 @@ class VtkViewer:
         """
         Add a cutting plane at position=[x,y,z] with normal [nx,ny,nz].
 
-        optional colour=[r,g,b] in range [0:1]
+        :param position: [float, float, float] - (x,y,z) poisition in scene (mm)
+        :param normal:   [float, float, float] - (nx,ny,z) normal unit vector
+        :param colour: None or [float, float, float] - [r,g,b] in range [0:1]
         
         Cutters are stored in self.usercutters.
         """
