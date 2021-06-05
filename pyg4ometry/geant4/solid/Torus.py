@@ -47,8 +47,8 @@ class Torus(_SolidBase):
     """
 
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
-                 registry, lunit="mm", aunit="rad", nslice=50, nstack=10,
-                 addRegistry=True):
+                 registry, lunit="mm", aunit="rad",
+                 nslice=None, nstack=None, addRegistry=True):
 
         self.type    = 'Torus'
         self.name    = name
@@ -57,8 +57,8 @@ class Torus(_SolidBase):
         self.pRtor   = pRtor
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
-        self.nslice  = nslice
-        self.nstack  = nstack
+        self.nslice  = nslice if nslice else _config.SolidDefaults.Torus.nslice
+        self.nstack  = nstack if nstack else _config.SolidDefaults.Torus.nstack
         self.lunit   = lunit
         self.aunit   = aunit
 

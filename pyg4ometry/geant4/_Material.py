@@ -12,103 +12,125 @@ def _makeNISTCompoundList():
 
     return loadNISTMaterialDict().keys()
 
+def _safeName(name):
+    name = name.replace(',','_')
+    return name
+
 def loadNISTMaterialDict():
     nist_materials_dict = {}
+    
+    nist_elements  = pkg_resources.resource_filename(__name__, "nist_elements.txt")
+    nist_materials = pkg_resources.resource_filename(__name__, "nist_materials.txt")
 
-    nist_data = pkg_resources.resource_filename(__name__, "bdsim_materials.txt")
+    with open(nist_elements, "r") as f:
+        line = f.readline()
+        while line:
+            if line[0] == '#' :
+                line = f.readline()
+                continue            
+            
+            line_data = line.split()
+            if line_data[0] == "element":
+                tipe  = line_data[0]
+                z     = int(line_data[1])
+                name  = _safeName(line_data[2])
+                rho   = float(line_data[3])
+                ion   = float(line_data[4])
+                niso  = int(line_data[5])
+                state = line_data[6]
+                isotopes = []
+                for i in range(niso):
+                    isoLine = f.readline()
+                    isoLineSplit = isoLine.split()
+                    n         = int(isoLineSplit[0])
+                    frac      = float(isoLineSplit[1])
+                    molarMass = float(isoLineSplit[2])
+                    isotopes.append([n,molarMass,frac])
 
-    with open(nist_data,"r") as f:
-        line  = f.readline()
+                nist_materials_dict[name] = {'type':tipe, 'z':z, 'name':name, 'density':rho, 'ionisation':ion, 'isotopes':isotopes, 'state':state}
+
+            line = f.readline()
+
+    with open(nist_materials, "r") as f:
+        line = f.readline()
         while line:
             if line[0] == '#' :
                 line = f.readline()
                 continue
 
             line_data = line.split()
-            if line_data[0] == "element":
-                type = line_data[0]
-                z    = int(line_data[1])
-                name = line_data[2]
-                rho  = float(line_data[3])
-                ion  = float(line_data[4])
+            if line_data[0] == "material":
+                tipe  = line_data[0]
+                ncom  = int(line_data[1])
+                name  = _safeName(line_data[2])
+                rho   = float(line_data[3])
+                ion   = float(line_data[4])
+                state = line_data[5]
 
-                try :
-                    niso = int(line_data[5])
-                except(IndexError) :
-                    niso = 0
+                elements = []
+                for i in range(ncom):
+                    eleLine      = f.readline()
+                    eleLineSplit = eleLine.split()
+                    eleName      = eleLine[0]
+                    z            = int(eleLineSplit[1])
+                    nAtoms       = int(eleLineSplit[2]) # may not be right from Geant4... don't trust
+                    massFrac     = float(eleLineSplit[3])
+                    elements.append([z,nAtoms,massFrac])
+                nist_materials_dict[name] = {'type':tipe, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'elements':elements, 'state':state}
 
-                isotopes = []
-                for i in range(0,niso,1) :
-                    isoLine = f.readline()
-                    isoLineSplit = isoLine.split()
-
-                    n    = int(isoLineSplit[0])
-                    frac = float(isoLineSplit[1])
-                    isotopes.append([n,frac])
-
-                nist_materials_dict[name] = {'type':type, 'z':z, 'name':name, 'density':rho, 'ionisation':ion, 'isotopes':isotopes}
-            elif line_data[0] == "compatom":
-                type = line_data[0]
-                ncom = int(line_data[1])
-                name = line_data[2]
-                rho  = float(line_data[3])
-                ion  = float(line_data[4])
-
-                components = []
-                for i in range(0,ncom,1) :
-                    comLine = f.readline()
-                    comLineSplit = comLine.split()
-                    z = int(comLineSplit[0])
-                    n = int(comLineSplit[1])
-                    components.append([z,n])
-                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
-
-            elif line_data[0] == "compmass":
-                type = line_data[0]
-                ncom = int(line_data[1])
-                name = line_data[2]
-                rho  = float(line_data[3])
-                ion  = float(line_data[4])
-
-                components = []
-                for i in range(0,ncom,1) :
-                    comLine = f.readline()
-                    comLineSplit = comLine.split()
-                    z    = int(comLineSplit[0])
-                    frac = float(comLineSplit[1])
-                    components.append([z,frac])
-                nist_materials_dict[name] = {'type':type, 'ncom':ncom, 'name':name, 'density':rho, 'ionisation':ion, 'components':components}
-
-            line =f.readline()
+            line = f.readline()
 
     return nist_materials_dict
 
 nist_materials_dict = loadNISTMaterialDict()
 nist_materials_list = nist_materials_dict.keys()
+nist_element_z_to_name  = {value["z"]:key for key,value in nist_materials_dict.items() if value["type"] == "element"}
 
-def nist_materials_name_lookup(name) :
+def nist_materials_name_lookup(name):
     return nist_materials_dict[name]
 
-def nist_materials_z_lookup(z) :
-    for k in nist_materials_dict :
-        if nist_materials_dict[k]['z'] == z :
-            return nist_materials_dict[k]
+def nist_materials_z_lookup(z):
+    return nist_element_z_to_name[z]
 
-def nist_material_2geant4Material(name) :
+def nist_element_2geant4Element(name, reg=None):
+    """
+    This returns and instance of either ElementSimple or ElementIsotopeMixture.
+    """
     matDict = nist_materials_name_lookup(name)
+    if not matDict["type"] == "element":
+        raise TypeError(name + " is not an element in NIST")
+    isotopes = matDict["isotopes"]
+    name     = matDict["name"]
+    z        = matDict["z"]
+    if (len(isotopes) > 1):
+        result = ElementIsotopeMixture(name, name.replace("G4_", ""), len(isotopes), reg, state=matDict["state"])
+        for (nNucleons,molarMass,massFraction) in isotopes:
+            ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
+            result.add_isotope(ele, massFraction)
+        return result
+    else:
+        singleIsotope = isotopes[0]
+        nNucleons = singleIsotope[0]
+        result = ElementSimple(name, name.replace("G4_", ""), z, nNucleons, reg)
+        return result
 
-    print(matDict)
-
-    # loop over components of material
-    if matDict['type'] == "compatom" or matDict['type'] == "compmass" :
-        for c in matDict['components'] :
-            # loop over elements
-            e  = nist_materials_z_lookup(c[0])
-            print(e)
-    elif matDict['type'] == "element" :
-        for c in matDict['isotopes'] :
-            # loop over isotopes of elements
-            pass
+def nist_material_2geant4Material(name, reg=None):
+    matDict = nist_materials_name_lookup(name)
+    
+    if matDict["type"] == "material":
+        result = MaterialCompound(matDict["name"], matDict["density"], matDict["ncom"], reg, state=matDict["state"])
+        d = matDict["elements"]
+        for (z,nAtoms,massFraction) in matDict["elements"]:
+            elementDict = nist_materials_dict[nist_element_z_to_name[z]]
+            element = nist_element_2geant4Element(elementDict["name"], reg)
+            result.add_element_massfraction(element, massFraction)
+        return result            
+    elif matDict["type"] == "element":
+        element = nist_element_2geant4Element(name, reg)
+        # we still have to run an 'element' into a 'material'
+        result = MaterialCompound(matDict["name"], matDict["density"], 1, reg, state=matDict["state"])
+        result.add_element_massfraction(element, 1.0)
+        return result
 
 def MaterialPredefined(name, registry=None):
     """
@@ -134,7 +156,7 @@ def MaterialArbitrary(name, registry=None):
     return Material(name=name, arbitrary=True, registry=registry)
 
 
-def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=None):
+def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=None, tolerateZeroDensity=False):
     """
     Proxy method to construct a simple material - full description of the element contained is contained in one definition
 
@@ -147,9 +169,9 @@ def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=
     return Material(**locals())
 
 
-def MaterialCompound(name, density, number_of_components, registry=None):
+def MaterialCompound(name, density, number_of_components, registry=None, tolerateZeroDensity=False, state=None):
     """
-    Proxy method to construct a composite material - can be any mixure of Elements and/or Materials
+    Proxy method to construct a composite material - can be any mixture of Elements and/or Materials
 
     Inputs:
         name                 - string
@@ -172,7 +194,7 @@ def ElementSimple(name, symbol, Z, A, registry=None):
     return Element(**locals())
 
 
-def ElementIsotopeMixture(name, symbol, n_comp, registry=None):
+def ElementIsotopeMixture(name, symbol, n_comp, registry=None, state=None):
     """
     Proxy method to construct a composite element - a mixture of predefined isotopes
 
@@ -187,7 +209,7 @@ def ElementIsotopeMixture(name, symbol, n_comp, registry=None):
 class MaterialBase(object):
     def __init__(self, name, state = None, registry=None):
         self.name = name
-        self.state1 = state
+        self.state = state
         self.registry = registry
 
         if self.registry is not None:
@@ -216,7 +238,7 @@ class MaterialBase(object):
                 comp[0].set_registry(registry)
 
     def set_state(self, state):
-        self.state1 = state
+        self.state = state
 
     def __repr__(self):
         return f"<{type(self).__name__}: {self.name}>"
@@ -224,10 +246,10 @@ class MaterialBase(object):
 
 class Material(MaterialBase):
     """
-    This class provides an interface to GDML material definitions. Material definitions are.
+    This class provides an interface to GDML material definitions.
 
     Because of the different options for constructing a material instance the constructor is kwarg only.
-    Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
+    Proxy methods are provided to instantiate particular types of material. Those proxy methods are:
 
     MaterialSingleElement
     MaterialCompound
@@ -240,6 +262,11 @@ class Material(MaterialBase):
     atomic_number        - int
     atomic_weight        - float
     number_of_components - int
+    state                - string
+    pressure             - float
+    pressure_unit        - string
+    temperature          - float
+    temperature_unit     - string
     """
     def __init__(self, **kwargs):
         super(Material, self).__init__(kwargs.get("name",None), state = kwargs.get("state", None), registry = kwargs.get("registry", None))
@@ -251,12 +278,12 @@ class Material(MaterialBase):
         self.components = []
         self.properties = {}
 
-        self._state = {"temperature": None,
-                       "temperature_unit": None,
-                       "pressure": None,
-                       "pressure_unit": None}
-
-        self.NIST_compounds =  nist_materials_list
+        self._state_variables = {"temperature": None,
+                                 "temperature_unit": None,
+                                 "pressure": None,
+                                 "pressure_unit": None}
+        
+        self.NIST_compounds = nist_materials_list
 
         if not any(_getClassVariables(self)):
             self.type = "none"
@@ -273,9 +300,27 @@ class Material(MaterialBase):
             elif self.atomic_number and self.atomic_weight and not self.number_of_components:
                 self.type = "simple"
             else:
-                raise ValueError("Cannot use both atomic number/weight and number_of_components.")
+                raise ValueError("Material : '{}' Cannot use both atomic number/weight and number_of_components.".format(self.name))
         else:
-            raise ValueError("Density must be specified for custom materials.")
+            if kwargs.get("tolerateZeroDensity", False):
+                # this behaviour is to match Geant4's tolerance of 0 density which if forbids
+                # if loaded in Geant4, it would enforce a minimum without an exception
+                print("Warning in Material : '{}' density set to 0, ensuring minimum of 1e-20".format(self.name))
+                self.density = 1e-20
+                self.type = "simple"
+            else:
+                raise ValueError("Material : '{}' Density must be specified for custom materials.".format(self.name))
+
+        # After the material type is determined, set the temperature and pressure if provided
+        if "temperature" in kwargs:
+            temperature = kwargs["temperature"]
+            temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
+            self.set_temperature(temperature, temperature_unit)
+
+        if "pressure" in kwargs:
+            pressure = kwargs["pressure"]
+            pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
+            self.set_pressure(pressure, pressure_unit)
 
     def add_property(self, name, value):
         if self.type == 'nist' or self.type == 'arbitraty':
@@ -345,18 +390,18 @@ class Material(MaterialBase):
         if self.type in ["predefined", "arbitrary"]:
             raise ValueError("Cannot set pressure for predefined or aribtrary materials.")
 
-        self._state["pressure"] = value
-        self._state["pressure_unit"] = unit
+        self._state_variables["pressure"] = value
+        self._state_variables["pressure_unit"] = unit
 
     def set_temperature(self, value, unit="K"):
         if self.type in ["nist", "arbitrary"]:
             raise ValueError("Cannot set temperature for predefined or aribtrary materials.")
-        self._state["temperature"] = value
-        self._state["temperature_unit"] = unit
+        self._state_variables["temperature"] = value
+        self._state_variables["temperature_unit"] = unit
 
     @property
-    def state(self):
-        return self._state
+    def state_variables(self):
+        return self._state_variables
 
     def __str__(self):
         return self.name
@@ -368,8 +413,8 @@ class Element(MaterialBase):
     for constructing a material instance the constructor is kwarg only.
     Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
 
-    Element.simple
-    Element.composite
+    ElementSimple
+    ElementIsotopeMixture
 
     It is possible to instantiate a material directly through kwargs.
     The possible kwargs are (but note some are mutually exclusive):

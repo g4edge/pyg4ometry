@@ -40,7 +40,7 @@ class CutTubs(_SolidBase):
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry, lunit="mm",
-                 aunit="rad", nslice=16, addRegistry = True):
+                 aunit="rad", nslice=None, addRegistry = True):
 
         self.type      = 'CutTubs'
         self.name      = name
@@ -49,7 +49,9 @@ class CutTubs(_SolidBase):
             registry.addSolid(self)
         self.registry = registry
 
-        self.nslice    = nslice
+        if not nslice:
+            nslice = _config.SolidDefaults.CutTubs.nslice
+
         self.lunit     = lunit
         self.aunit     = aunit
         self.dependents = []

@@ -1,3 +1,5 @@
+from ... import config as _config
+
 from .SolidBase             import SolidBase     as _SolidBase
 from .GenericPolyhedra import GenericPolyhedra   as  _GenericPolyhedra
 
@@ -35,8 +37,7 @@ class Polycone(_SolidBase):
 
 
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
-                 registry, lunit="mm", aunit="rad", nslice=16,
-                 addRegistry=True):
+                 registry, lunit="mm", aunit="rad", nslice=None, addRegistry=True):
 
         self.type    = 'Polycone'
         self.name    = name
@@ -47,7 +48,7 @@ class Polycone(_SolidBase):
         self.pRMax   = pRMax
         self.lunit   = lunit
         self.aunit   = aunit
-        self.nslice  = nslice
+        self.nslice  = nslice if nslice else _config.SolidDefaults.Polycone.nslice
 
         self.dependents = []
 

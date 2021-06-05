@@ -51,7 +51,7 @@ class Sphere(_SolidBase):
 
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
                  pDTheta, registry, lunit="mm", aunit="rad",
-                 nslice=10, nstack=10, addRegistry=True):
+                 nslice=None, nstack=None, addRegistry=True):
 
         self.type    = 'Sphere'
         self.name    = name
@@ -61,8 +61,8 @@ class Sphere(_SolidBase):
         self.pDPhi   = pDPhi
         self.pSTheta = pSTheta
         self.pDTheta = pDTheta    
-        self.nslice  = nslice
-        self.nstack  = nstack
+        self.nslice  = nslice if nslice else _config.SolidDefaults.Sphere.nslice
+        self.nstack  = nstack if nstack else _config.SolidDefaults.Sphere.nslice
         self.lunit   = lunit
         self.aunit   = aunit
 

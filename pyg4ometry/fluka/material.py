@@ -319,7 +319,7 @@ def _parseFraction(what1, what2):
 
 def _formatFlukaMaterialPair(pair, namePrefix, fractionPrefix):
     """Names and fractions maybe stored as "negative" numbers in the
-    FLUKA input, permuations between which mean different types of fractions."""
+    FLUKA input, permutations between which mean different types of fractions."""
     # pair is just an entry from the list of (material, fraction)
     # tuples.
     return (f"{fractionPrefix}{pair[1]}", f"{namePrefix}{pair[0].name}")

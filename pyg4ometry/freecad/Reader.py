@@ -9,7 +9,7 @@ import random             as _random
 
 import pyg4ometry.geant4                          as _g4
 import pyg4ometry.transformation                  as _trans
-from   pyg4ometry.geant4.Material import Material as _Material
+from   pyg4ometry.geant4._Material import Material as _Material
 from   pyg4ometry.meshutils import MeshShrink
 
 class Reader(object) : 

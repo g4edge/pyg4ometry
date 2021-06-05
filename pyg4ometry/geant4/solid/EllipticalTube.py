@@ -39,19 +39,17 @@ class EllipticalTube(_SolidBase):
     :type nstack: int     
     
     """
-    
 
-    def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",nstack=10,
-                 nslice=20, addRegistry=True):
-
+    def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
+                 nstack=None, nslice=None, addRegistry=True):
         self.type   = 'EllipticalTube'
         self.name   = name
         self.pDx    = pDx
         self.pDy    = pDy
         self.pDz    = pDz
         self.lunit  = lunit
-        self.nslice = nslice
-        self.nstack = nstack
+        self.nslice = nslice if nslice else _config.SolidDefaults.EllipticalTube.nslice
+        self.nstack = nstack if nstack else _config.SolidDefaults.EllipticalTube.nstack
 
         self.dependents = []
 

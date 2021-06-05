@@ -91,7 +91,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
     flukaRegistry.addRegion(flukaMotherRegion)
 
     ###########################################
-    # assign material to blckhole
+    # assign material to blackhole
     ###########################################
     flukaRegistry.addMaterialAssignments("BLCKHOLE",
                                          "BLKHOLE")
@@ -143,7 +143,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     flukaMotherRegion.comment = physicalVolume.name
 
     ###########################################
-    # loop over daughers and remove from mother region
+    # loop over daughters and remove from mother region
     ###########################################
     for dv in physicalVolume.logicalVolume.daughterVolumes :
 
@@ -1575,49 +1575,53 @@ def geant4MaterialDict2Fluka(matr, freg):
 
     return freg
 
-def geant4Material2Fluka(material, freg) :
+def geant4Material2Fluka(material, freg, suggestedDensity=None) :
     materialName = material.name
     materialInstance = material
 
     materialNameStrip = makeStripName(materialName)
-    materialNameShort = makeShortName(materialName)
 
+    # ensure this name is unique
+    i = 0
+    while materialNameStrip in freg.materials:
+        if i == 0:
+            materialNameStrip += str(i)
+        else:
+            materialNameStrip[-1] = str(i)
+    materialNameShort = makeShortName(materialNameStrip)
+
+    # protect against multiply defining the same material
+    if materialNameShort in freg.materials:
+        return freg.materials[materialNameShort]
 
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
-
         # none, nist, arbitary, simple, composite
         if materialInstance.type == "none":
             raise Exception("Cannot have material with none type")
-        elif materialInstance.type == "nist":
-            # print("material nist", materialInstance.name, materialNameStrip, materialNameShort)
 
+        elif materialInstance.type == "nist":
             # make material object from dictionary of information
             nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
-
-            # call geant4Material2Fluka on material
-            # geant4Material2Fluka(nistMatInstance)
+            nistMatInstance.type = "composite" # prevent recursion - Material internally decides if it's a nist material or not
+            return geant4Material2Fluka(nistMatInstance, freg)
 
         elif materialInstance.type == "arbitrary":
             raise Exception("Cannot have material with arbitrary type")
-        elif materialInstance.type == "simple":
-            print("material single element", materialInstance.name, materialNameStrip, materialNameShort)
-            print("material single element",materialInstance,type(materialInstance), materialInstance.atomic_number,materialInstance.density)
 
+        elif materialInstance.type == "simple":
             fe = _fluka.Material(materialNameShort,
                                  materialInstance.atomic_number,
                                  materialInstance.density,
                                  flukaregistry=freg)
-
+            return fe
 
         elif materialInstance.type == "composite":
-            # print("material composite", materialInstance.name, materialNameStrip, materialNameShort, materialInstance.number_of_components)
-
             flukaComposition = []
             flukaFractionType = "atomic"
 
             for comp in materialInstance.components:
-                fm = geant4Material2Fluka(comp[0], freg)
+                fm = geant4Material2Fluka(comp[0], freg, materialInstance.density)
 
                 compFraction     = comp[1]
                 compFractionType = comp[2]
@@ -1629,9 +1633,6 @@ def geant4Material2Fluka(material, freg) :
 
                 flukaComposition.append((fm,compFraction))
 
-            if materialNameShort in freg.materials:
-                return freg.materials[materialNameShort]
-
             mat = _fluka.Compound(materialNameShort,
                                   materialInstance.density,
                                   flukaComposition,
@@ -1641,11 +1642,14 @@ def geant4Material2Fluka(material, freg) :
 
     elif isinstance(materialInstance, _geant4.Element) :
         if materialInstance.type == "simple" :
-            pass
-            # print("element simple", materialInstance.name)
+            mat = _fluka.Material(materialNameShort,
+                                  materialInstance.Z,
+                                  suggestedDensity,
+                                  materialInstance.A,
+                                  flukaregistry=freg)
+            return mat
 
         elif materialInstance.type == "composite" :
-            # print("element composite", materialInstance.name)
             flukaComponentNames     = []
             flukaComponents         = []
             flukaComponentFractions = []
@@ -1662,9 +1666,6 @@ def geant4Material2Fluka(material, freg) :
 
             flukaComposition = [(c,f) for c,f in zip(flukaComponents, flukaComponentFractions)]
 
-            if materialNameShort in freg.materials:
-                return freg.materials[materialNameShort]
-
             mat = _fluka.Compound(materialNameShort,
                                   0.1 ,
                                   flukaComposition,
@@ -1673,11 +1674,6 @@ def geant4Material2Fluka(material, freg) :
             return mat
 
     elif isinstance(materialInstance, _geant4.Isotope) :
-        # print("isotope",materialInstance.name)
-
-        if materialNameStrip  in freg.materials :
-            return freg.materials[materialNameStrip]
-
         fi = _fluka.Material(materialNameShort, materialInstance.Z, 10, flukaregistry=freg,
                             atomicMass = materialInstance.a,
                             massNumber = materialInstance.N)
@@ -1732,7 +1728,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
 def makeStripName(mn) :
     if mn.find("0x") != -1:
-       mnStrip = mn[0:mn.find("0x")]
+        mnStrip = mn[0:mn.find("0x")]
     else:
         mnStrip = mn
 

@@ -19,7 +19,7 @@ import logging as _log
 class Tubs(_SolidBase):
     """
     Constructs a cylindrical section.
-`
+    
     :param name: of solid for registry
     :type name: str
     :param pRMin: inner radius
@@ -42,9 +42,12 @@ class Tubs(_SolidBase):
     :type nslice: int 
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry,
-                 lunit="mm", aunit="rad", nslice=16, addRegistry=True):
+                 lunit="mm", aunit="rad", nslice=None, addRegistry=True):
         self.name   = name
         self.type   = 'Tubs'
+
+        if not nslice:
+            nslice = _config.SolidDefaults.Tubs.nslice
 
         if addRegistry :
             registry.addSolid(self)

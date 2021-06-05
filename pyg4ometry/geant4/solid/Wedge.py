@@ -1,3 +1,5 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
 from ...pycsg.core import CSG as _CSG
 from ...pycsg.geom import Vertex as _Vertex
@@ -21,13 +23,14 @@ class Wedge(_SolidBase):
     :type zlength: float
     """
 
-    def __init__(self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000):
+    def __init__(self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000, nslice=None):
+
         self.name  = name
         self.pRMax = float(pRMax)
         self.pSPhi = float(pSPhi)
         self.pDPhi = float(pDPhi)
         self.pDz   = float(halfzlength)
-        self.nslice = 16
+        self.nslice = nslice if nslice else _config.SolidDefaults.Wedge.nslice
         self.mesh = None
 
     def __repr__(self):

@@ -7,7 +7,7 @@ from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from . import solid                     as                 _solid
-from . import Material                  as                 _mat
+from . import _Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 import pyg4ometry.visualisation  as                 _vi
 import vtk                       as                 _vtk
@@ -440,7 +440,9 @@ class LogicalVolume(object):
     def assemblyVolume(self):
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
-        av = _AssemblyVolume(self.name, self.registry, False)
+        # prepend the name because the name might have a pointer in it
+        # therefore geant4 will just strip off everything after 0x
+        av = _AssemblyVolume("assembly_"+self.name, self.registry, False)
 
         for dv in self.daughterVolumes :
             av.add(dv)

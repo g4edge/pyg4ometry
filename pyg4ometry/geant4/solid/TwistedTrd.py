@@ -1,3 +1,5 @@
+from ... import config as _config
+
 from .SolidBase import SolidBase as _SolidBase
 from .TwoVector import TwoVector as _TwoVector
 from .Layer import Layer as _Layer
@@ -39,7 +41,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
                  pDz, registry, lunit="mm", aunit="rad",
-                 nstack=20, refine=0, addRegistry=True):
+                 nstack=None, refine=0, addRegistry=True):
+
         self.type             = 'TwistedTrd'
         self.name             = name
         self.twistedAngle     = twistedangle
@@ -50,7 +53,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         self.pDz              = pDz
         self.lunit            = lunit
         self.aunit            = aunit
-        self.nstack           = nstack
+        self.nstack           = nstack if nstack else _config.SolidDefaults.TwistedTrap.nstack
         self.refine           = refine
 
         self.dependents = []

@@ -45,8 +45,9 @@ class TwistedTubs(_SolidBase):
     """
 
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
-                 registry, lunit="mm", aunit="rad", nslice=16, nstack=16,
-                 addRegistry=True):
+                 registry, lunit="mm", aunit="rad",
+                 nslice=None, nstack=None, addRegistry=True):
+
         self.type         = 'TwistedTubs'
         self.name         = name
         self.endinnerrad  = endinnerrad
@@ -56,8 +57,8 @@ class TwistedTubs(_SolidBase):
         self.twistedangle = twistedangle
         self.lunit        = lunit
         self.aunit        = aunit
-        self.nslice       = nslice
-        self.nstack       = nstack
+        self.nslice       = nslice if nslice else _config.SolidDefaults.TwistedTubs.nslice
+        self.nstack       = nstack if nstack else _config.SolidDefaults.TwistedTubs.nstack
 
         self.dependents = []
 
