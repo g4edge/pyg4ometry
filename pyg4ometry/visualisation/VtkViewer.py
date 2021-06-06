@@ -452,6 +452,7 @@ class VtkViewer:
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
+                    # TBC - should pv.visOptions be used exclusively?
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
                                  visOptions=pv.visOptions, overlap=False)
