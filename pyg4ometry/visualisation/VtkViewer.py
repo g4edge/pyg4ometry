@@ -293,7 +293,7 @@ class VtkViewer:
             self.addLogicalVolumeBounding(logical)
             for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
                                                      range(0, len(logical.mesh.overlapmeshes))):
-                visOptions = self.setOverlapVisOptions(overlaptype)
+                visOptions = self.getOverlapVisOptions(overlaptype)
                 self.addMesh(logical.name, logical.solid.name + "_overlap" + str(i), overlapmesh, mtra, tra,
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
@@ -420,7 +420,7 @@ class VtkViewer:
 
                     # overlap meshes
                     for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
-                        visOptions = self.setOverlapVisOptions(overlaptype)
+                        visOptions = self.getOverlapVisOptions(overlaptype)
 
                         self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap,
                                      self.filtersOverlap, self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
@@ -820,7 +820,7 @@ class VtkViewer:
         self.ren.AddActor(planeActor)
         self.usercutters.append(cutter)
 
-    def setOverlapVisOptions(self, overlaptype):
+    def getOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
         if overlaptype == _OverlapType.protrusion:
             visOptions.color = [1, 0, 0]
