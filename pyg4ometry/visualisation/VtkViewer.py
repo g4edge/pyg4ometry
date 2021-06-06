@@ -316,7 +316,7 @@ class VtkViewer:
                              self.localmeshesOverlap, self.filtersOverlap,
                              self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
                              self.physicalActorMapOverlap,
-                             visOptions = visOptions, overlap = True, cutters=False)
+                             visOptions=visOptions, overlap=True, cutters=False)
 
         # recurse down scene hierarchy
         self.addLogicalVolumeRecursive(logical, mtra, tra)
@@ -371,10 +371,10 @@ class VtkViewer:
             visOptions.color = [1,0,0]
             self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
                          self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                         self.physicalActorMap,visOptions=visOptions, overlap=False, cutters=False)
+                         self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
 
 
-    def addMeshSimple(self, csgMesh, visOptions = _VisOptions(), clip=False):
+    def addMeshSimple(self, csgMesh, visOptions=_VisOptions(), clip=False):
         if clip:
             csgMesh = csgMesh.clone()
             verts, _, _ = csgMesh.toVerticesAndPolygons()
@@ -430,7 +430,7 @@ class VtkViewer:
                     visOptions = self.getMaterialVisOptions(pv)
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions = visOptions, overlap = False)
+                                 visOptions=visOptions, overlap=False)
 
                     # overlap meshes
                     for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
@@ -438,7 +438,7 @@ class VtkViewer:
 
                         self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap,
                                      self.filtersOverlap, self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
-                                     self.physicalActorMapOverlap, visOptions = visOptions, overlap =True)
+                                     self.physicalActorMapOverlap, visOptions=visOptions, overlap=True)
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
 
@@ -454,7 +454,7 @@ class VtkViewer:
 
                     self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions = pv.visOptions, overlap = False)
+                                 visOptions=pv.visOptions, overlap=False)
             elif pv.type == "parametrised":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -465,14 +465,14 @@ class VtkViewer:
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes,
-                                 self.filters,
+                    # TBC - should pv.visOptions be used exclusively?
+                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions = pv.visOptions, overlap = False)
+                                 visOptions=pv.visOptions, overlap=False)
 
     def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions = None, overlap = False,
-                cutters = True, clippers = False):
+                mappers, mapperMap, actors, actorMap, visOptions=None, overlap=False,
+                cutters=True, clippers=False):
         # VtkPolyData : check if mesh is in localmeshes dict
         _log.info('VtkViewer.addLogicalVolume> vtkPD')
 
@@ -921,7 +921,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
                 print(f"{type(self.vtkviewer).__name__}> selected> {name}")
 
 
-def axesFromExtents(extent) :
+def axesFromExtents(extent):
     low  = _np.array(extent[0])
     high = _np.array(extent[1])
     diff = high-low
