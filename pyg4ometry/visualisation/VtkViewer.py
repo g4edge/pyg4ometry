@@ -870,28 +870,74 @@ class VtkViewer:
         print("Focal point     ", activeCamera.GetFocalPoint())
         print("Camera position ", activeCamera.GetPosition())
         print("Focal distance  ", activeCamera.GetDistance())
+        
+class VtkViewerColoured(VtkViewer):
+    """
+    Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours. 
+    
+    :Keyword Arguments:
+        * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
+        * **interpolation** (str): see :class:`VtkViewer`
+        * **defaultColour** (str): "random" or [r,g,b]
 
-class PubViewer(VtkViewer):
-    def __init__(self, *args, **kwargs):
+    :Examples:
+    
+    >>> vMaterialMap = VtkViewerColoured(materialVisOptions={"G4_WATER":[0,0,1]})
+    >>> vRandom = VtkViewerColoured(defaultColour="random")
+    >>> vColoured = VtkViewerColoured(defaultColour=[0.1,0.1,0.1])
+    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1,0.5])
+
+    of use visualisation options instances
+
+    >>> vo = pyg4ometry.visualisation.VisualisationOptions()
+    >>> vo.colour = [0.1,1.0,0.5]
+    >>> vo.alpha = 0.3
+    >>> options = {'G4_WATER':vo}
+    >>> vis = VtkViewerColoured(materialVisOptions=options)
+
+    If the value in the materialVisOptions is a list or a tuple, it will be upgraded
+    to a :class:`VisualisationOptions` instance.
+    """
+    def __init__(self, *args, defaultColour=None, materialVisOptions=None, **kwargs):
         kwargs["interpolation"] = kwargs.get("interpolation", "flat")
         super().__init__(*args, **kwargs)
-        cmap = kwargs.pop("colourmap", colour.ColourMap.fromPredefined())
-        materialVisualisationOptions = {}
-        for name, rgba in cmap.items():
-            vopt = _VisOptions()
-            vopt.color = rgba[:3]
-            vopt.alpha = rgba[3]
-            materialVisualisationOptions[name] = vopt
-        self.materialVisualisationOptions = materialVisualisationOptions
+        self.materialVisOptions = {}
 
-    def getMaterialVisOptions(self, materialName):
-        if "0x" in materialName: # Strip pointers
-            materialName = materialName[:materialName.find("0x")]
-        return self.materialVisualisationOptions.get(
-            materialName,
-            _VisOptions.withRandomColour()
-        )
+        self._defaultVis = _VisOptions()
+        self._defaultVis.randomColour = defaultColour == "random"
+        if type(defaultColour) is list:
+            self._defaultVis.colour = defaultColour
 
+        # loop over dictionary of material vis options - if value is list(rgba)
+        # convert to vis options instance, make invisible if alpha is 0
+        if materialVisOptions:
+            for k,v in materialVisOptions.items():
+                if type(v) is list or type(v) is tuple:
+                    vi = _VisOptions()
+                    vi.colour = v[:3]
+                    if any([i>1 for i in vi.colour]):
+                        vi.colour = [i/255.0 for i in vi.colour]
+                    if len(v) > 3:
+                        vi.alpha = v[3]
+                        vi.visible = vi.alpha != 0
+                    self.materialVisOptions[k] = vi
+                else:
+                    self.materialVisOptions[k] = v
+
+    def _getDefaultVis(self, pv):
+        return self._defaultVis
+
+# for backwards compatibility for old name
+PubViewer = VtkViewerColoured
+
+class VtkViewerColouredMaterial(PubViewer):
+    """
+    Extension of VtkViewerColoured that uses a default material dictionary for
+    several common materials. Material colours are in defined Colour.py for many
+    Geant4, FLUKA and BDSIM materials.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, materialVisOptions=_predefinedMaterialVisOptions, **kwargs)
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self, renderer, vtkviewer):
