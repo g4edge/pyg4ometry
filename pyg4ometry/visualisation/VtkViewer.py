@@ -665,7 +665,7 @@ class VtkViewer:
             comFilter.Update()
 
             overlapActor = _vtk.vtkFollower()
-            overlapActor.GetProperty().SetColor(visOptions.color)
+            overlapActor.GetProperty().SetColor(*visOptions.getColour())
             overlapActor.SetPosition(comFilter.GetCenter())
             overlapActor.SetMapper(overlapMapper)
             self.ren.ResetCameraClippingRange()
@@ -679,9 +679,7 @@ class VtkViewer:
 
         # set visualisation properties
         if visOptions :
-            vtkActor.GetProperty().SetColor(visOptions.color[0],
-                                            visOptions.color[1],
-                                            visOptions.color[2])
+            vtkActor.GetProperty().SetColor(*visOptions.getColour())
             vtkActor.GetProperty().SetOpacity(visOptions.alpha)
             if visOptions.representation == "surface" :
                 vtkActor.GetProperty().SetRepresentationToSurface()
