@@ -322,8 +322,6 @@ class VtkViewer:
         self.ren.AddActor(lvmActor)
 
     def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first = True) :
-
-
         if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection" :
 
             if first:
@@ -679,7 +677,6 @@ class VtkViewer:
                 vtkActor.GetProperty().SetRepresentationToWireframe()
         else : 
             vtkActor.GetProperty().SetColor(1,0,0)
-
 
         vtkActor.SetVisibility(visOptions.visible)
         actors.append(vtkActor)

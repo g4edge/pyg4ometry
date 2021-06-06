@@ -8,7 +8,7 @@ import logging as _log
 class PhysicalVolume(object):
 
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, registry=None, addRegistry = True, scale = None):
+                 motherVolume, registry=None, addRegistry=True, scale=None):
         '''
         PhysicalVolume : G4VPhysicalVolume, G4PVPlacement
         :param rotation:  
