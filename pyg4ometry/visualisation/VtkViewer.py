@@ -81,7 +81,7 @@ class VtkViewer:
         self.addAxesWidget()
 
         # material options dict
-        self.materialVisualisationOptions = None
+        self.materialVisOptions = None
 
         # interpolation for vertex shading
         interps = ("none", "flat", "gouraud", "phong")
@@ -202,10 +202,28 @@ class VtkViewer:
         elif dimension == 'z':
             self._zCutterNormal = normal
         else:
-            raise ValueError("invalid dimension - x,y or z")                        
+            raise ValueError("invalid dimension - x,y or z")
 
-    def setMaterialVisualisationOptions(self, dict):
-        self.materialVisualisationOptions = dict
+    def addMaterialVisOption(self, materialName, visOptionInstance):
+        """
+        Append a visualisation option instance to the dictionary of materials.
+
+        :param materialName: str - material name to match
+        :param visOptionInstance: :class:`VisualisationOptions` instance
+        """
+        if self.materialVisOptions is None:
+            self.materialVisOptions = {}
+
+        self.materialVisOptions[materialName] = visOptionInstance
+
+    def setMaterialVisOptions(self, materialDict):
+        """
+        Replace the (by default None) dictionary for materials to colours
+        :param materialDict: {"materialName": VisualisationOptions}
+
+        See also :class:`VisualisationOptions`.
+        """
+        self.materialVisOptions = materialDict
 
     def setCameraFocusPosition(self,focalPoint = [0,0,0], position = [100,100,100]):
         self.ren.GetActiveCamera().SetFocalPoint(focalPoint)
@@ -409,11 +427,7 @@ class VtkViewer:
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
                     # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
-                    if self.materialVisualisationOptions:
-                        visOptions = self.getMaterialVisOptions(
-                            pv.logicalVolume.material.name)
-                    else:
-                        visOptions = pv.visOptions
+                    visOptions = self.getMaterialVisOptions(pv)
                     self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
                                  self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
                                  visOptions = visOptions, overlap = False)
@@ -834,8 +848,21 @@ class VtkViewer:
 
         return visOptions
 
-    def getMaterialVisOptions(self, name):
-        return self.materialVisualisationOptions[pv.logicalVolume.material.name]
+    def getMaterialVisOptions(self, pv):
+        # a dict evaluates to True if not empty
+        if self.materialVisOptions:
+            materialName = pv.logicalVolume.material.name
+            # if 0x is in name, strip the appended pointer (common in exported GDML)
+            if "0x" in materialName:
+                materialName = materialName[0:materialName.find("0x")]
+            # get with default
+            v = self.materialVisOptions.get(materialName, pv.visOptions)
+        else:
+            v = self._getDefaultVis(pv)
+        return v
+
+    def _getDefaultVis(self, pv):
+        return pv.visOptions
 
     def printViewParameters(self):
         activeCamera = self.ren.GetActiveCamera()
