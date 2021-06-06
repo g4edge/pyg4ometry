@@ -178,8 +178,8 @@ class VtkViewer:
 
     def setCutterOrigin(self, dimension, origin):
         """
-        dimension = 'x', 'y', or 'z'
-        origin    = list([x,y,z])
+        :param dimension: str - 'x', 'y', or 'z'
+        :param origin: list([x,y,z])
         """
         if dimension == 'x':
             self._xCutterOrigin = origin
@@ -192,8 +192,8 @@ class VtkViewer:
 
     def setCutterNormal(self, dimension, normal):
         """
-        dimension = 'x', 'y', or 'z'
-        normal    = list([x,y,z])   should be unit vector
+        :param dimension: str - 'x', 'y', or 'z'
+        :param normal: list([x,y,z]) -  should be unit vector
         """
         if dimension == 'x':
             self._xCutterNormal = normal
@@ -234,7 +234,7 @@ class VtkViewer:
         exporter.Write()
 
     def exportScreenShot(self, fileName="screenshot.png", rgba=True):
-        '''
+        """
         Write the render window view to an image file.
 
         Image types supported are:
@@ -245,9 +245,7 @@ class VtkViewer:
         :param renWin: The render window.
         :param rgba: Used to set the buffer type.
         :return:
-
-        '''
-
+        """
         import os
 
         if fileName:
