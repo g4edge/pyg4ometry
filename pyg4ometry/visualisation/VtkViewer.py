@@ -3,10 +3,10 @@ import vtk as _vtk
 import pyg4ometry.transformation as _transformation
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from .VisualisationOptions import predefinedMaterialVisOptions as _predefinedMaterialVisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random
-from . import Colour
 
 class VtkViewer:
     """
