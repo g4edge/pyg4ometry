@@ -442,7 +442,7 @@ class LogicalVolume(object):
 
         # prepend the name because the name might have a pointer in it
         # therefore geant4 will just strip off everything after 0x
-        av = _AssemblyVolume("assembly_"+self.name, self.registry, False)
+        av = _AssemblyVolume("assembly_"+self.name, self.registry)
 
         for dv in self.daughterVolumes :
             av.add(dv)
