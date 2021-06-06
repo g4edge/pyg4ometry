@@ -771,6 +771,8 @@ class VtkViewer:
             cutters = self.ycutters
         elif dir == 'z' :
             cutters = self.zcutters
+        else:
+            raise ValueError("Unknown direction " + dir)
 
         for c in cutters:
             pd = c.GetOutput()
