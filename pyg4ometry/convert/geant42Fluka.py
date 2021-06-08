@@ -1731,11 +1731,13 @@ def makeStripName(mn) :
         mnStrip = mn
     return mnStrip
 
-def makeShortName(mn) :
-
+def makeShortName(mn):
     mn = makeStripName(mn)
-
-    if len(mn) > 8 :
-        return mn[0:8]
-    else :
+    if len(mn) > 8:
+        mn = mn.replace('_','') # first, remove '_'
+        if len(mn) > 8:
+            return mn[:8]
+        else:
+            return mn
+    else:
         return mn
