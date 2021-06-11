@@ -320,14 +320,14 @@ class VtkExporter:
         """
 
         if name.find("0x") != -1 :
-            nameStrip = name[0:name.find("0x")]
-        else :
-            nameStrip = name
-
-        if nameStrip in self.materialVisualisationOptions.keys():
-            return self.materialVisualisationOptions[nameStrip]
+            namestrip = name[0:name.find("0x")]
         else:
-            print(f"Attention, missing {nameStrip} in materialVisualisationOptions, replace by default color")
+            namestrip = name
+
+        if namestrip in self.materialVisualisationOptions.keys():
+            return self.materialVisualisationOptions[namestrip]
+        else:
+            print(f"Warning, missing {namestrip} in materialVisualisationOptions, replace by default color")
             return self.materialVisualisationOptions['G4_C']
 
     def getElementName(self, logicalVolumeName):
