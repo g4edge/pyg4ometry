@@ -68,8 +68,11 @@ class VtkExporter:
             index = 0
 
             for element in self.elements:
-                element_number = "0000" + str(index)
-                xml = paras.XMLMultiBlockDataReader(registrationName=element_number[-5:] + '_' + element,
+                if "PREPEND" in element:
+                    element_name = element[7:]
+                else:
+                    element_name = element
+                xml = paras.XMLMultiBlockDataReader(registrationName=element_name,
                                               FileName=self.path + element + '.vtm', PointArrayStatus="Colors")
                 paras.Show(xml, MapScalars=0)
                 index += 1
