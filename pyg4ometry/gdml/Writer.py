@@ -1,8 +1,8 @@
 from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
-from ..geant4.Material import Material as _Material
-from ..geant4.Material import Element as _Element
-from ..geant4.Material import Isotope as _Isotope
+from ..geant4._Material import Material as _Material
+from ..geant4._Material import Element as _Element
+from ..geant4._Material import Isotope as _Isotope
 from ..gdml import Defines as _Defines
 from . import Expression as _Expression
 import pyg4ometry.geant4 as _g4
@@ -357,13 +357,13 @@ option, preprocessGDML=0;
                 self.writeAuxiliary(aux, parent=we)
 
         for dv in lv.daughterVolumes :
-            if dv.type is "placement":
+            if dv.type == "placement":
                 dve = self.writePhysicalVolume(dv)
-            elif dv.type is "parametrised":
+            elif dv.type == "parametrised":
                 dve = self.writeParametrisedVolume(dv)
-            elif dv.type is "replica":
+            elif dv.type == "replica":
                 dve = self.writeReplicaVolume(dv)
-            elif dv.type is "division":
+            elif dv.type == "division":
                 dve = self.writeDivisionVolume(dv)
             else:
                 raise ValueError("Unknown daughter volume type: {}".format(dv.type))

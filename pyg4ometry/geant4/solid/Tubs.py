@@ -19,14 +19,14 @@ import logging as _log
 class Tubs(_SolidBase):
     """
     Constructs a cylindrical section.
-`
+    
     :param name: of solid for registry
     :type name: str
     :param pRMin: inner radius
     :type pRMin: float, Constant, Quantity, Variable
     :param pRMax: outer radius
     :type pRMax: float, Constant, Quantity, Variable
-    :param pDz: length along z
+    :param pDz: full length along z
     :type pDz: float, Constant, Quantity, Variable
     :param pSPhi: starting phi angle
     :type pSPhi: float, Constant, Quantity, Variable

@@ -773,13 +773,16 @@ class Scale(VectorBase) :
 
     '''
 
-    def __init__(self,name,sx,sy,sz, unit="none", registry = None, addRegistry = True) :
+    def __init__(self,name,sx,sy,sz, unit=None, registry = None, addRegistry = True) :
         super(Scale, self).__init__()
 
         self.name = name
-        if not isinstance(unit, str):
-            raise ValueError("unit must be None or a string")
-        self.unit = unit
+        if unit != None :
+            if not isinstance(unit, str):
+                raise ValueError("unit must be None or a string")
+            self.unit = unit
+        else :
+            self.unit = "none"
 
         self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
         self.y = _Expression("expr_{}_scl_y".format(name), upgradeToStringExpression(registry,sy), registry=registry)

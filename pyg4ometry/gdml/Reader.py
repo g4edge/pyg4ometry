@@ -374,13 +374,13 @@ class Reader(object):
             if not material["components"]:
                 Z    = float(material.get("Z", 0))
                 a    = float(material.get("a", 0.0))
-                mat = _g4.MaterialSingleElement(name, Z, a, density, registry=self._registry)
+                mat = _g4.MaterialSingleElement(name, Z, a, density, registry=self._registry, tolerateZeroDensity=True)
                 mat.set_state(state)
 
             else:
                 n_comp = len(material["components"])
                 comp_type = str(material["components"][0]["comp_type"])
-                mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry)
+                mat = _g4.MaterialCompound(name, density, n_comp, registry=self._registry, tolerateZeroDensity=True)
                 mat.set_state(state)
 
                 for comp in material["components"]:
@@ -1370,7 +1370,10 @@ class Reader(object):
                 if material in self._registry.materialDict:
                     mat = self._registry.materialDict[material]
                 else:
-                    mat = _g4.MaterialPredefined(material)
+                    try:
+                        mat = _g4.MaterialPredefined(material)
+                    except ValueError:
+                        mat = _g4.MaterialArbitrary(material)
 
                 aux_list = []
                 try:

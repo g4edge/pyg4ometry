@@ -6,24 +6,23 @@ import numpy as _np
 import logging as _log
 
 class PhysicalVolume(object):
-
+    """
+    PhysicalVolume : G4VPhysicalVolume, G4PVPlacement
+    
+    :param rotation: [float,float,float] - rotations about x,y,z axes of mother volume
+    :param position: [float,float,float] - translation with respect to mother volume
+    :param logicalVolume: :class:`pyg4ometry.geant4.LogicalVolume` - instance to place 
+    :param name: str - name of this placement
+    :param motherVolume: :class:`pyg4ometry.geant4.LogicalVolume` - mother volume to place into
+    :param registry: :class:`pyg4ometry.geant4.Registry` - registry to register to
+    :param addRegistry: bool - whether to add to the registry or not
+    """
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, registry=None, addRegistry = True, scale = None):
-        '''
-        PhysicalVolume : G4VPhysicalVolume, G4PVPlacement
-        :param rotation:  
-        :param position:
-        :param logicalVolume: pyg4ometry.geant4.LogicalVolume 
-        :param name:      
-        :param motherVolume: pyg4ometry.geant4.LogicalVolume
-        :param registry: pyg4ometry.geant4.Registry
-        :param addRegistry:
-        '''
-        
+                 motherVolume, registry=None, addRegistry=True, scale=None):    
         super(PhysicalVolume, self).__init__()
 
         # type 
-        self.type         = "placement"
+        self.type = "placement"
     
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines

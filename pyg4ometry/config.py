@@ -70,8 +70,8 @@ class SolidDefaults:
         nslice = 16
 
     class Sphere:
-        nslice = 16
-        nstack = 16
+        nslice = 10
+        nstack = 10
 
     class Torus:
         nslice = 50

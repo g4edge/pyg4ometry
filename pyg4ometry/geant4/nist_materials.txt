@@ -1,0 +1,897 @@
+# V1.0
+# NIST materials from BDSIM for pyg4ometry
+# Geant4 version: $Name: geant4-10-07-patch-01 $
+# NIST materials by # of atoms of each element - each element includes isotopes
+# of atoms per unit is only approximate from Geant4 so best to go by fraction of mass
+# material   # of elements	         name	                density(g/cm^3)	I(eV)		state
+# for each element
+# 	         name	Z	# atoms    fraction of mass
+material    3	                  G4_1,2-DICHLOROBENZENE	1.304800e+00	1.065000e+02	solid
+	           C	6	6	4.902297e-01
+	           H	1	7	2.742671e-02
+	          Cl	17	8	4.823436e-01
+material    3	                   G4_1,2-DICHLOROETHANE	1.235100e+00	1.119000e+02	solid
+	           C	6	2	2.427432e-01
+	           H	1	3	4.074201e-02
+	          Cl	17	4	7.165148e-01
+material    6	                         G4_A-150_TISSUE	1.127000e+00	6.510000e+01	solid
+	           H	1	1	1.013269e-01
+	           C	6	2	7.755002e-01
+	           N	7	3	3.505696e-02
+	           O	8	4	5.231595e-02
+	           F	9	5	1.742198e-02
+	          Ca	20	6	1.837798e-02
+material    3	                              G4_ACETONE	7.899000e-01	6.420000e+01	solid
+	           C	6	3	6.203974e-01
+	           H	1	4	1.041275e-01
+	           O	8	5	2.754752e-01
+material    2	                            G4_ACETYLENE	1.096700e-03	5.820000e+01	gas
+	           C	6	2	9.225773e-01
+	           H	1	3	7.742267e-02
+material    3	                              G4_ADENINE	1.600000e+00	7.140000e+01	solid
+	           C	6	5	4.444232e-01
+	           H	1	6	3.729599e-02
+	           N	7	7	5.182808e-01
+material    7	                  G4_ADIPOSE_TISSUE_ICRP	9.500000e-01	6.320000e+01	solid
+	           H	1	1	1.140000e-01
+	           C	6	2	5.980000e-01
+	           N	7	3	7.000000e-03
+	           O	8	4	2.780000e-01
+	          Na	11	5	1.000000e-03
+	           S	16	6	1.000000e-03
+	          Cl	17	7	1.000000e-03
+material    4	                                  G4_AIR	1.204790e-03	8.570000e+01	gas
+	           C	6	0	1.240001e-04
+	           N	7	1	7.552678e-01
+	           O	8	2	2.317812e-01
+	          Ar	18	3	1.282701e-02
+material    4	                              G4_ALANINE	1.420000e+00	7.190000e+01	solid
+	           C	6	3	4.044321e-01
+	           H	1	4	7.919318e-02
+	           N	7	5	1.572145e-01
+	           O	8	6	3.591602e-01
+material    2	                       G4_ALUMINUM_OXIDE	3.970000e+00	1.452000e+02	solid
+	          Al	13	2	5.292505e-01
+	           O	8	3	4.707495e-01
+material    3	                                G4_AMBER	1.100000e+00	6.320000e+01	solid
+	           H	1	1	1.059301e-01
+	           C	6	2	7.889738e-01
+	           O	8	3	1.050961e-01
+material    2	                              G4_AMMONIA	8.260190e-04	5.370000e+01	gas
+	           N	7	1	8.224476e-01
+	           H	1	2	1.775524e-01
+material    3	                              G4_ANILINE	1.023500e+00	6.620000e+01	solid
+	           C	6	6	7.738314e-01
+	           H	1	7	7.576323e-02
+	           N	7	8	1.504054e-01
+material    2	                           G4_ANTHRACENE	1.283000e+00	6.950000e+01	solid
+	           C	6	14	9.434471e-01
+	           H	1	15	5.655290e-02
+material    6	                           G4_B-100_BONE	1.450000e+00	8.590000e+01	solid
+	           H	1	1	6.547093e-02
+	           C	6	2	5.369445e-01
+	           N	7	3	2.149998e-02
+	           O	8	4	3.208497e-02
+	           F	9	5	1.674108e-01
+	          Ca	20	6	1.765888e-01
+material    3	                             G4_BAKELITE	1.250000e+00	7.240000e+01	solid
+	           H	1	1	5.744100e-02
+	           C	6	2	7.745910e-01
+	           O	8	3	1.679680e-01
+material    2	                      G4_BARIUM_FLUORIDE	4.890000e+00	3.759000e+02	solid
+	          Ba	56	1	7.832762e-01
+	           F	9	2	2.167238e-01
+material    3	                       G4_BARIUM_SULFATE	4.500000e+00	2.857000e+02	solid
+	          Ba	56	1	5.883993e-01
+	           S	16	2	1.373926e-01
+	           O	8	3	2.742081e-01
+material    2	                              G4_BENZENE	8.786500e-01	6.340000e+01	solid
+	           C	6	6	9.225773e-01
+	           H	1	7	7.742267e-02
+material    2	                      G4_BERYLLIUM_OXIDE	3.010000e+00	9.320000e+01	solid
+	          Be	4	1	3.603204e-01
+	           O	8	2	6.396796e-01
+material    3	                                  G4_BGO	7.130000e+00	5.341000e+02	solid
+	          Bi	83	4	6.710169e-01
+	          Ge	32	5	1.748651e-01
+	           O	8	6	1.541180e-01
+material   10	                           G4_BLOOD_ICRP	1.060000e+00	7.520000e+01	solid
+	           H	1	1	1.020000e-01
+	           C	6	2	1.100000e-01
+	           N	7	3	3.300000e-02
+	           O	8	4	7.450000e-01
+	          Na	11	5	1.000000e-03
+	           P	15	6	1.000000e-03
+	           S	16	7	2.000000e-03
+	          Cl	17	8	3.000000e-03
+	           K	19	9	2.000000e-03
+	          Fe	26	10	1.000000e-03
+material    8	                    G4_BONE_COMPACT_ICRU	1.850000e+00	9.190000e+01	solid
+	           H	1	1	6.400000e-02
+	           C	6	2	2.780000e-01
+	           N	7	3	2.700000e-02
+	           O	8	4	4.100000e-01
+	          Mg	12	5	2.000000e-03
+	           P	15	6	7.000000e-02
+	           S	16	7	2.000000e-03
+	          Ca	20	8	1.470000e-01
+material    9	                   G4_BONE_CORTICAL_ICRP	1.920000e+00	1.100000e+02	solid
+	           H	1	1	3.400000e-02
+	           C	6	2	1.550000e-01
+	           N	7	3	4.200000e-02
+	           O	8	4	4.350000e-01
+	          Na	11	5	1.000000e-03
+	          Mg	12	6	2.000000e-03
+	           P	15	7	1.030000e-01
+	           S	16	8	3.000000e-03
+	          Ca	20	9	2.250000e-01
+material    2	                        G4_BORON_CARBIDE	2.520000e+00	8.470000e+01	solid
+	           B	5	4	7.826300e-01
+	           C	6	5	2.173700e-01
+material    2	                          G4_BORON_OXIDE	1.812000e+00	9.960000e+01	solid
+	           B	5	2	3.105712e-01
+	           O	8	3	6.894288e-01
+material    9	                           G4_BRAIN_ICRP	1.040000e+00	7.330000e+01	solid
+	           H	1	1	1.070000e-01
+	           C	6	2	1.450000e-01
+	           N	7	3	2.200000e-02
+	           O	8	4	7.120000e-01
+	          Na	11	5	2.000000e-03
+	           P	15	6	4.000000e-03
+	           S	16	7	2.000000e-03
+	          Cl	17	8	3.000000e-03
+	           K	19	9	3.000000e-03
+material    3	                                G4_BRASS	8.520000e+00	0.000000e+00	solid
+	          Cu	29	62	5.751304e-01
+	          Zn	30	63	3.341219e-01
+	          Pb	82	64	9.074767e-02
+material    3	                               G4_BRONZE	8.820000e+00	0.000000e+00	solid
+	          Cu	29	89	8.493677e-01
+	          Zn	30	90	8.839149e-02
+	          Pb	82	91	6.224082e-02
+material    2	                               G4_BUTANE	2.493430e-03	4.830000e+01	gas
+	           C	6	4	8.265829e-01
+	           H	1	5	1.734171e-01
+material    5	                                G4_C-552	1.760000e+00	8.680000e+01	solid
+	           H	1	0	2.468002e-02
+	           C	6	1	5.016105e-01
+	           O	8	2	4.527005e-03
+	           F	9	3	4.652095e-01
+	          Si	14	4	3.973004e-03
+material    2	                    G4_CADMIUM_TELLURIDE	6.200000e+00	5.393000e+02	solid
+	          Cd	48	1	4.683532e-01
+	          Te	52	2	5.316468e-01
+material    3	                    G4_CADMIUM_TUNGSTATE	7.900000e+00	4.683000e+02	solid
+	          Cd	48	1	3.120368e-01
+	           W	74	2	5.103159e-01
+	           O	8	3	1.776473e-01
+material    3	                    G4_CALCIUM_CARBONATE	2.800000e+00	1.364000e+02	solid
+	          Ca	20	1	4.004322e-01
+	           C	6	2	1.200030e-01
+	           O	8	3	4.795648e-01
+material    2	                     G4_CALCIUM_FLUORIDE	3.180000e+00	1.660000e+02	solid
+	          Ca	20	1	5.133284e-01
+	           F	9	2	4.866716e-01
+material    2	                        G4_CALCIUM_OXIDE	3.300000e+00	1.761000e+02	solid
+	          Ca	20	1	7.146910e-01
+	           O	8	2	2.853090e-01
+material    3	                      G4_CALCIUM_SULFATE	2.960000e+00	1.523000e+02	solid
+	          Ca	20	1	2.943847e-01
+	           S	16	2	2.355348e-01
+	           O	8	3	4.700805e-01
+material    3	                    G4_CALCIUM_TUNGSTATE	6.062000e+00	3.950000e+02	solid
+	          Ca	20	1	1.391999e-01
+	           W	74	2	6.385225e-01
+	           O	8	3	2.222777e-01
+material    2	                       G4_CARBON_DIOXIDE	1.842120e-03	8.500000e+01	gas
+	           C	6	1	2.729123e-01
+	           O	8	2	7.270877e-01
+material    2	                 G4_CARBON_TETRACHLORIDE	1.594000e+00	1.663000e+02	solid
+	           C	6	1	7.808254e-02
+	          Cl	17	2	9.219175e-01
+material    3	                   G4_CELLULOSE_BUTYRATE	1.200000e+00	7.460000e+01	solid
+	           H	1	1	6.712500e-02
+	           C	6	2	5.454030e-01
+	           O	8	3	3.874720e-01
+material    3	                 G4_CELLULOSE_CELLOPHANE	1.420000e+00	7.760000e+01	solid
+	           C	6	6	4.444559e-01
+	           H	1	7	6.216454e-02
+	           O	8	8	4.933796e-01
+material    4	                    G4_CELLULOSE_NITRATE	1.490000e+00	8.700000e+01	solid
+	           H	1	0	2.921600e-02
+	           C	6	1	2.712960e-01
+	           N	7	2	1.212760e-01
+	           O	8	3	5.782120e-01
+material    5	                        G4_CERIC_SULFATE	1.030000e+00	7.670000e+01	solid
+	           H	1	2	1.075960e-01
+	           N	7	3	8.000000e-04
+	           O	8	4	8.749760e-01
+	           S	16	5	1.462700e-02
+	          Ce	58	6	2.001000e-03
+material    2	                      G4_CESIUM_FLUORIDE	4.115000e+00	4.407000e+02	solid
+	          Cs	55	1	8.749310e-01
+	           F	9	2	1.250690e-01
+material    2	                        G4_CESIUM_IODIDE	4.510000e+00	5.531000e+02	solid
+	          Cs	55	1	5.115489e-01
+	           I	53	2	4.884511e-01
+material    3	                        G4_CHLOROBENZENE	1.105800e+00	8.910000e+01	solid
+	           C	6	6	6.402499e-01
+	           H	1	7	4.477480e-02
+	          Cl	17	8	3.149753e-01
+material    3	                           G4_CHLOROFORM	1.483200e+00	1.560000e+02	solid
+	           C	6	1	1.006123e-01
+	           H	1	2	8.443384e-03
+	          Cl	17	3	8.909443e-01
+material   10	                             G4_CONCRETE	2.300000e+00	1.352000e+02	solid
+	           H	1	0	1.000000e-02
+	           C	6	1	1.000000e-03
+	           O	8	2	5.291070e-01
+	          Na	11	3	1.600000e-02
+	          Mg	12	4	2.000000e-03
+	          Al	13	5	3.387200e-02
+	          Si	14	6	3.370210e-01
+	           K	19	7	1.300000e-02
+	          Ca	20	8	4.400000e-02
+	          Fe	26	9	1.400000e-02
+material    3	                                 G4_CR39	1.320000e+00	0.000000e+00	solid
+	           H	1	18	6.615050e-02
+	           C	6	19	5.255046e-01
+	           O	8	20	4.083449e-01
+material    2	                          G4_CYCLOHEXANE	7.790000e-01	5.640000e+01	solid
+	           C	6	6	8.562817e-01
+	           H	1	7	1.437183e-01
+material    4	                             G4_CYTOSINE	1.550000e+00	7.200000e+01	solid
+	           H	1	5	4.536091e-02
+	           C	6	6	4.324206e-01
+	           N	7	7	3.782126e-01
+	           O	8	8	1.440059e-01
+material    3	                               G4_DACRON	1.400000e+00	0.000000e+00	solid
+	           C	6	10	6.250108e-01
+	           H	1	11	4.196072e-02
+	           O	8	12	3.330285e-01
+material    3	                          G4_DEOXYRIBOSE	1.000000e+00	7.200000e+01	solid
+	           H	1	10	8.532380e-02
+	           C	6	11	5.083640e-01
+	           O	8	12	4.063122e-01
+material    4	                G4_DICHLORODIETHYL_ETHER	1.219900e+00	1.033000e+02	solid
+	           C	6	4	3.359388e-01
+	           H	1	5	5.638395e-02
+	           O	8	6	1.118752e-01
+	          Cl	17	7	4.958020e-01
+material    3	                        G4_DIETHYL_ETHER	7.137800e-01	6.000000e+01	solid
+	           C	6	4	6.481626e-01
+	           H	1	5	1.359845e-01
+	           O	8	6	2.158529e-01
+material    4	                   G4_DIMETHYL_SULFOXIDE	1.101400e+00	9.860000e+01	solid
+	           C	6	2	3.074370e-01
+	           H	1	3	7.740032e-02
+	           O	8	4	2.047670e-01
+	           S	16	5	4.103957e-01
+material    3	                          G4_DNA_ADENINE	1.000000e+00	7.200000e+01	solid
+	           H	1	4	3.006102e-02
+	           C	6	5	4.477632e-01
+	           N	7	6	5.221758e-01
+material    4	                         G4_DNA_CYTOSINE	1.000000e+00	7.200000e+01	solid
+	           H	1	4	3.662096e-02
+	           C	6	5	4.363795e-01
+	           N	7	6	3.816752e-01
+	           O	8	7	1.453243e-01
+material    3	                      G4_DNA_DEOXYRIBOSE	1.000000e+00	7.200000e+01	solid
+	           H	1	7	8.489591e-02
+	           C	6	8	7.225924e-01
+	           O	8	9	1.925117e-01
+material    4	                          G4_DNA_GUANINE	1.000000e+00	7.200000e+01	solid
+	           H	1	4	2.685717e-02
+	           C	6	5	4.000414e-01
+	           N	7	6	4.665232e-01
+	           O	8	7	1.065783e-01
+material    2	                        G4_DNA_PHOSPHATE	1.000000e+00	7.200000e+01	solid
+	           P	15	1	3.261383e-01
+	           O	8	2	6.738617e-01
+material    4	                          G4_DNA_THYMINE	1.000000e+00	7.200000e+01	solid
+	           H	1	5	4.028356e-02
+	           C	6	6	4.800235e-01
+	           N	7	7	2.239189e-01
+	           O	8	8	2.557740e-01
+material    4	                           G4_DNA_URACIL	1.000000e+00	7.200000e+01	solid
+	           H	1	3	2.722225e-02
+	           C	6	4	4.325112e-01
+	           N	7	5	2.521945e-01
+	           O	8	6	2.880721e-01
+material    2	                               G4_ETHANE	1.253240e-03	4.540000e+01	gas
+	           C	6	2	7.988752e-01
+	           H	1	3	2.011248e-01
+material    2	                             G4_ETHYLENE	1.174970e-03	5.070000e+01	gas
+	           C	6	2	8.562817e-01
+	           H	1	3	1.437183e-01
+material    3	                        G4_ETHYL_ALCOHOL	7.893000e-01	6.290000e+01	solid
+	           C	6	2	5.214294e-01
+	           H	1	3	1.312750e-01
+	           O	8	4	3.472956e-01
+material    3	                      G4_ETHYL_CELLULOSE	1.130000e+00	6.930000e+01	solid
+	           H	1	1	9.002700e-02
+	           C	6	2	5.851820e-01
+	           O	8	3	3.247910e-01
+material    8	                        G4_EYE_LENS_ICRP	1.070000e+00	7.330000e+01	solid
+	           H	1	1	9.600000e-02
+	           C	6	2	1.950000e-01
+	           N	7	3	5.700000e-02
+	           O	8	4	6.460000e-01
+	          Na	11	5	1.000000e-03
+	           P	15	6	1.000000e-03
+	           S	16	7	3.000000e-03
+	          Cl	17	8	1.000000e-03
+material    2	                         G4_FERRIC_OXIDE	5.200000e+00	2.273000e+02	solid
+	          Fe	26	2	6.994260e-01
+	           O	8	3	3.005740e-01
+material    2	                          G4_FERROBORIDE	7.150000e+00	2.610000e+02	solid
+	          Fe	26	1	8.378091e-01
+	           B	5	2	1.621909e-01
+material    2	                        G4_FERROUS_OXIDE	5.700000e+00	2.486000e+02	solid
+	          Fe	26	1	7.773053e-01
+	           O	8	2	2.226947e-01
+material    7	                      G4_FERROUS_SULFATE	1.024000e+00	7.640000e+01	solid
+	           H	1	2	1.082590e-01
+	           N	7	3	2.700000e-05
+	           O	8	4	8.786360e-01
+	          Na	11	5	2.200000e-05
+	           S	16	6	1.296800e-02
+	          Cl	17	7	3.400000e-05
+	          Fe	26	8	5.400000e-05
+material    3	                             G4_FREON-12	1.120000e+00	1.430000e+02	solid
+	           C	6	0	9.933500e-02
+	           F	9	1	3.142470e-01
+	          Cl	17	2	5.864180e-01
+material    3	                           G4_FREON-12B2	1.800000e+00	2.849000e+02	solid
+	           C	6	0	5.724500e-02
+	           F	9	1	1.810960e-01
+	          Br	35	2	7.616590e-01
+material    3	                             G4_FREON-13	9.500000e-01	1.266000e+02	solid
+	           C	6	0	1.149829e-01
+	           F	9	1	5.456215e-01
+	          Cl	17	2	3.393957e-01
+material    3	                           G4_FREON-13B1	1.500000e+00	2.105000e+02	solid
+	           C	6	1	8.065799e-02
+	           F	9	2	3.827507e-01
+	          Br	35	3	5.365913e-01
+material    3	                           G4_FREON-13I1	1.800000e+00	2.935000e+02	solid
+	           C	6	0	6.130900e-02
+	           F	9	1	2.909240e-01
+	           I	53	2	6.477670e-01
+material    3	                G4_GADOLINIUM_OXYSULFIDE	7.440000e+00	4.933000e+02	solid
+	          Gd	64	2	8.307710e-01
+	           O	8	3	8.452559e-02
+	           S	16	4	8.470345e-02
+material    2	                     G4_GALLIUM_ARSENIDE	5.310000e+00	3.849000e+02	solid
+	          Ga	31	1	4.820300e-01
+	          As	33	2	5.179700e-01
+material    5	                   G4_GEL_PHOTO_EMULSION	1.291400e+00	7.480000e+01	solid
+	           H	1	1	8.118000e-02
+	           C	6	2	4.160600e-01
+	           N	7	3	1.112400e-01
+	           O	8	4	3.806400e-01
+	           S	16	5	1.088000e-02
+material    5	                           G4_GLASS_LEAD	6.220000e+00	5.264000e+02	solid
+	           O	8	2	1.564530e-01
+	          Si	14	3	8.086600e-02
+	          Ti	22	4	8.092000e-03
+	          As	33	5	2.651000e-03
+	          Pb	82	6	7.519380e-01
+material    4	                          G4_GLASS_PLATE	2.400000e+00	1.454000e+02	solid
+	           O	8	1	4.598005e-01
+	          Na	11	2	9.644110e-02
+	          Si	14	3	3.365533e-01
+	          Ca	20	4	1.072051e-01
+material    4	                            G4_GLUTAMINE	1.460000e+00	7.330000e+01	solid
+	           C	6	5	4.109191e-01
+	           H	1	6	6.896864e-02
+	           N	7	7	1.916834e-01
+	           O	8	8	3.284289e-01
+material    3	                             G4_GLYCEROL	1.261300e+00	7.260000e+01	solid
+	           C	6	3	3.912551e-01
+	           H	1	4	8.755765e-02
+	           O	8	5	5.211873e-01
+material    1	                             G4_GRAPHITE	2.210000e+00	7.800000e+01	solid
+	           C	6	1	1.000000e+00
+material    1	                      G4_GRAPHITE_POROUS	1.700000e+00	7.800000e+01	solid
+	           C	6	1	1.000000e+00
+material    4	                              G4_GUANINE	2.200000e+00	7.500000e+01	solid
+	           C	6	5	3.973733e-01
+	           H	1	6	3.334756e-02
+	           N	7	7	4.634117e-01
+	           O	8	8	1.058675e-01
+material    4	                               G4_GYPSUM	2.320000e+00	1.297000e+02	solid
+	          Ca	20	1	2.327787e-01
+	           S	16	2	1.862444e-01
+	           O	8	3	5.575599e-01
+	           H	1	4	2.341703e-02
+material    1	                             G4_Galactic	1.000000e-25	2.180000e+01	gas
+	           H	1	1	1.000000e+00
+material    4	                               G4_KAPTON	1.420000e+00	7.960000e+01	solid
+	           C	6	22	6.911278e-01
+	           H	1	23	2.636338e-02
+	           N	7	24	7.327132e-02
+	           O	8	25	2.092375e-01
+material    4	                               G4_KEVLAR	1.440000e+00	0.000000e+00	solid
+	           C	6	14	7.057961e-01
+	           H	1	15	4.230743e-02
+	           O	8	16	1.343121e-01
+	           N	7	17	1.175844e-01
+material    3	                 G4_LANTHANUM_OXYBROMIDE	6.280000e+00	4.397000e+02	solid
+	          La	57	1	5.915688e-01
+	          Br	35	2	3.402930e-01
+	           O	8	3	6.813818e-02
+material    3	                 G4_LANTHANUM_OXYSULFIDE	5.860000e+00	4.212000e+02	solid
+	          La	57	2	8.126073e-01
+	           O	8	3	9.359787e-02
+	           S	16	4	9.379482e-02
+material    2	                           G4_LEAD_OXIDE	9.530000e+00	7.667000e+02	solid
+	           O	8	1	7.168200e-02
+	          Pb	82	2	9.283180e-01
+material    3	                        G4_LITHIUM_AMIDE	1.178000e+00	5.550000e+01	solid
+	          Li	3	1	3.022309e-01
+	           N	7	2	6.099796e-01
+	           H	1	3	8.778946e-02
+material    3	                    G4_LITHIUM_CARBONATE	2.110000e+00	8.790000e+01	solid
+	          Li	3	2	1.878503e-01
+	           C	6	3	1.625511e-01
+	           O	8	4	6.495986e-01
+material    2	                     G4_LITHIUM_FLUORIDE	2.635000e+00	9.400000e+01	solid
+	          Li	3	1	2.675579e-01
+	           F	9	2	7.324421e-01
+material    2	                      G4_LITHIUM_HYDRIDE	8.200000e-01	3.650000e+01	solid
+	          Li	3	1	8.731827e-01
+	           H	1	2	1.268173e-01
+material    2	                       G4_LITHIUM_IODIDE	3.494000e+00	4.851000e+02	solid
+	          Li	3	1	5.185164e-02
+	           I	53	2	9.481484e-01
+material    2	                        G4_LITHIUM_OXIDE	2.013000e+00	7.360000e+01	solid
+	          Li	3	2	4.645354e-01
+	           O	8	3	5.354646e-01
+material    3	                  G4_LITHIUM_TETRABORATE	2.440000e+00	9.460000e+01	solid
+	          Li	3	2	8.207236e-02
+	           B	5	3	2.557007e-01
+	           O	8	4	6.622270e-01
+material    3	                               G4_LUCITE	1.190000e+00	7.400000e+01	solid
+	           H	1	1	8.053800e-02
+	           C	6	2	5.998480e-01
+	           O	8	3	3.196140e-01
+material    9	                            G4_LUNG_ICRP	1.040000e+00	7.530000e+01	solid
+	           H	1	1	1.050000e-01
+	           C	6	2	8.300000e-02
+	           N	7	3	2.300000e-02
+	           O	8	4	7.790000e-01
+	          Na	11	5	2.000000e-03
+	           P	15	6	1.000000e-03
+	           S	16	7	2.000000e-03
+	          Cl	17	8	3.000000e-03
+	           K	19	9	2.000000e-03
+material    5	                               G4_M3_WAX	1.050000e+00	6.790000e+01	solid
+	           H	1	1	1.143181e-01
+	           C	6	2	6.558237e-01
+	           O	8	3	9.218309e-02
+	          Mg	12	4	1.347921e-01
+	          Ca	20	5	2.883003e-03
+material    3	                  G4_MAGNESIUM_CARBONATE	2.958000e+00	1.180000e+02	solid
+	          Mg	12	1	2.882681e-01
+	           C	6	2	1.424526e-01
+	           O	8	3	5.692793e-01
+material    2	                   G4_MAGNESIUM_FLUORIDE	3.000000e+00	1.343000e+02	solid
+	          Mg	12	1	3.901173e-01
+	           F	9	2	6.098827e-01
+material    2	                      G4_MAGNESIUM_OXIDE	3.580000e+00	1.438000e+02	solid
+	          Mg	12	1	6.030362e-01
+	           O	8	2	3.969638e-01
+material    3	                G4_MAGNESIUM_TETRABORATE	2.530000e+00	1.083000e+02	solid
+	          Mg	12	1	1.353702e-01
+	           B	5	2	2.408539e-01
+	           O	8	3	6.237759e-01
+material    2	                      G4_MERCURIC_IODIDE	6.360000e+00	6.845000e+02	solid
+	          Hg	80	1	4.414524e-01
+	           I	53	2	5.585476e-01
+material    2	                              G4_METHANE	6.671510e-04	4.170000e+01	gas
+	           C	6	1	7.486824e-01
+	           H	1	2	2.513176e-01
+material    3	                             G4_METHANOL	7.914000e-01	6.760000e+01	solid
+	           C	6	1	3.748448e-01
+	           H	1	2	1.258279e-01
+	           O	8	3	4.993273e-01
+material    5	                            G4_MIX_D_WAX	9.900000e-01	6.090000e+01	solid
+	           H	1	2	1.340400e-01
+	           C	6	3	7.779600e-01
+	           O	8	4	3.502000e-02
+	          Mg	12	5	3.859400e-02
+	          Ti	22	6	1.438600e-02
+material    6	                          G4_MS20_TISSUE	1.000000e+00	7.510000e+01	solid
+	           H	1	1	8.119200e-02
+	           C	6	2	5.834420e-01
+	           N	7	3	1.779800e-02
+	           O	8	4	1.863810e-01
+	          Mg	12	5	1.302870e-01
+	          Cl	17	6	9.000000e-04
+material    9	                 G4_MUSCLE_SKELETAL_ICRP	1.050000e+00	7.530000e+01	solid
+	           H	1	1	1.020000e-01
+	           C	6	2	1.430000e-01
+	           N	7	3	3.400000e-02
+	           O	8	4	7.100000e-01
+	          Na	11	5	1.000000e-03
+	           P	15	6	2.000000e-03
+	           S	16	7	3.000000e-03
+	          Cl	17	8	1.000000e-03
+	           K	19	9	4.000000e-03
+material    8	                 G4_MUSCLE_STRIATED_ICRU	1.040000e+00	7.470000e+01	solid
+	           H	1	1	1.021021e-01
+	           C	6	2	1.231231e-01
+	           N	7	3	3.503504e-02
+	           O	8	4	7.297297e-01
+	          Na	11	5	1.001001e-03
+	           P	15	6	2.002002e-03
+	           S	16	7	4.004004e-03
+	           K	19	8	3.003003e-03
+material    4	               G4_MUSCLE_WITHOUT_SUCROSE	1.070000e+00	7.420000e+01	solid
+	           H	1	1	1.019690e-01
+	           C	6	2	1.200580e-01
+	           N	7	3	3.545100e-02
+	           O	8	4	7.425220e-01
+material    4	                  G4_MUSCLE_WITH_SUCROSE	1.110000e+00	7.430000e+01	solid
+	           H	1	1	9.823410e-02
+	           C	6	2	1.562142e-01
+	           N	7	3	3.545104e-02
+	           O	8	4	7.101007e-01
+material    3	                                G4_MYLAR	1.400000e+00	7.870000e+01	solid
+	           C	6	10	6.250108e-01
+	           H	1	11	4.196072e-02
+	           O	8	12	3.330285e-01
+material    4	               G4_N,N-DIMETHYL_FORMAMIDE	9.487000e-01	6.660000e+01	solid
+	           C	6	3	4.929575e-01
+	           H	1	4	9.652762e-02
+	           N	7	5	1.916269e-01
+	           O	8	6	2.188880e-01
+material    3	                      G4_N-BUTYL_ALCOHOL	8.098000e-01	5.990000e+01	solid
+	           C	6	4	6.481626e-01
+	           H	1	5	1.359845e-01
+	           O	8	6	2.158529e-01
+material    2	                            G4_N-HEPTANE	6.837600e-01	5.440000e+01	solid
+	           C	6	7	8.390549e-01
+	           H	1	8	1.609451e-01
+material    2	                             G4_N-HEXANE	6.603000e-01	5.400000e+01	solid
+	           C	6	6	8.362510e-01
+	           H	1	7	1.637490e-01
+material    2	                            G4_N-PENTANE	6.262000e-01	5.360000e+01	solid
+	           C	6	5	8.323567e-01
+	           H	1	6	1.676433e-01
+material    3	                     G4_N-PROPYL_ALCOHOL	8.035000e-01	6.110000e+01	solid
+	           C	6	3	5.995862e-01
+	           H	1	4	1.341794e-01
+	           O	8	5	2.662344e-01
+material    2	                          G4_NAPHTHALENE	1.145000e+00	6.840000e+01	solid
+	           C	6	10	9.370877e-01
+	           H	1	11	6.291230e-02
+material    3	                             G4_NEOPRENE	1.230000e+00	0.000000e+00	solid
+	           C	6	4	5.426422e-01
+	           H	1	5	5.692315e-02
+	          Cl	17	6	4.004347e-01
+material    4	                         G4_NITROBENZENE	1.198670e+00	7.580000e+01	solid
+	           C	6	6	5.853676e-01
+	           H	1	7	4.093670e-02
+	           N	7	8	1.137747e-01
+	           O	8	9	2.599209e-01
+material    2	                        G4_NITROUS_OXIDE	1.830940e-03	8.490000e+01	gas
+	           N	7	2	6.364843e-01
+	           O	8	3	3.635157e-01
+material    4	                      G4_NYLON-11_RILSAN	1.425000e+00	6.160000e+01	solid
+	           H	1	1	1.154759e-01
+	           C	6	2	7.208183e-01
+	           N	7	3	7.641692e-02
+	           O	8	4	8.728891e-02
+material    4	                           G4_NYLON-6-10	1.140000e+00	6.320000e+01	solid
+	           H	1	1	1.070620e-01
+	           C	6	2	6.804490e-01
+	           N	7	3	9.918900e-02
+	           O	8	4	1.133000e-01
+material    4	                            G4_NYLON-6-6	1.140000e+00	6.390000e+01	solid
+	           C	6	6	6.368482e-01
+	           H	1	7	9.798119e-02
+	           N	7	8	1.237807e-01
+	           O	8	9	1.413899e-01
+material    4	                           G4_NYLON-8062	1.080000e+00	6.430000e+01	solid
+	           H	1	1	1.035091e-01
+	           C	6	2	6.484156e-01
+	           N	7	3	9.953610e-02
+	           O	8	4	1.485391e-01
+material    3	                          G4_OCTADECANOL	8.120000e-01	0.000000e+00	solid
+	           H	1	38	1.415990e-01
+	           C	6	39	7.992523e-01
+	           O	8	40	5.914870e-02
+material    2	                               G4_OCTANE	7.026000e-01	5.470000e+01	solid
+	           C	6	8	8.411703e-01
+	           H	1	9	1.588297e-01
+material    2	                             G4_PARAFFIN	9.300000e-01	5.590000e+01	solid
+	           C	6	25	8.513873e-01
+	           H	1	26	1.486127e-01
+material    8	                       G4_PHOTO_EMULSION	3.815000e+00	3.310000e+02	solid
+	           H	1	1	1.410000e-02
+	           C	6	2	7.226100e-02
+	           N	7	3	1.932000e-02
+	           O	8	4	6.610100e-02
+	           S	16	5	1.890000e-03
+	          Br	35	6	3.491030e-01
+	          Ag	47	7	4.741050e-01
+	           I	53	8	3.120000e-03
+material    2	              G4_PLASTIC_SC_VINYLTOLUENE	1.032000e+00	6.470000e+01	solid
+	           C	6	9	9.147085e-01
+	           H	1	10	8.529147e-02
+material    3	                           G4_PLEXIGLASS	1.190000e+00	7.400000e+01	solid
+	           C	6	5	5.998411e-01
+	           H	1	6	8.054184e-02
+	           O	8	7	3.196171e-01
+material    2	                    G4_PLUTONIUM_DIOXIDE	1.146000e+01	7.465000e+02	solid
+	          Pu	94	1	8.840888e-01
+	           O	8	2	1.159112e-01
+material    3	                    G4_POLYACRYLONITRILE	1.170000e+00	6.960000e+01	solid
+	           C	6	3	6.790484e-01
+	           H	1	4	5.698573e-02
+	           N	7	5	2.639659e-01
+material    3	                        G4_POLYCARBONATE	1.200000e+00	7.310000e+01	solid
+	           C	6	16	7.557454e-01
+	           H	1	17	5.549437e-02
+	           O	8	18	1.887603e-01
+material    3	                    G4_POLYCHLOROSTYRENE	1.300000e+00	8.170000e+01	solid
+	           C	6	8	6.932902e-01
+	           H	1	9	5.090828e-02
+	          Cl	17	10	2.558016e-01
+material    2	                         G4_POLYETHYLENE	9.400000e-01	5.740000e+01	solid
+	           C	6	1	8.562817e-01
+	           H	1	2	1.437183e-01
+material    3	                     G4_POLYOXYMETHYLENE	1.425000e+00	7.740000e+01	solid
+	           C	6	1	4.000111e-01
+	           H	1	2	6.713785e-02
+	           O	8	3	5.328511e-01
+material    2	                        G4_POLYPROPYLENE	9.000000e-01	5.650000e+01	solid
+	           C	6	2	8.562817e-01
+	           H	1	3	1.437183e-01
+material    2	                          G4_POLYSTYRENE	1.060000e+00	6.870000e+01	solid
+	           C	6	8	9.225773e-01
+	           H	1	9	7.742267e-02
+material    3	          G4_POLYTRIFLUOROCHLOROETHYLENE	2.100000e+00	1.207000e+02	solid
+	           C	6	2	2.062473e-01
+	           F	9	3	4.893584e-01
+	          Cl	17	4	3.043943e-01
+material    3	              G4_POLYVINYLIDENE_CHLORIDE	1.700000e+00	1.343000e+02	solid
+	           C	6	2	2.477909e-01
+	           H	1	3	2.079461e-02
+	          Cl	17	4	7.314145e-01
+material    3	              G4_POLYVINYLIDENE_FLUORIDE	1.760000e+00	8.880000e+01	solid
+	           C	6	2	3.751353e-01
+	           H	1	3	3.148135e-02
+	           F	9	4	5.933833e-01
+material    3	                    G4_POLYVINYL_ACETATE	1.190000e+00	7.370000e+01	solid
+	           C	6	4	5.580590e-01
+	           H	1	5	7.024845e-02
+	           O	8	6	3.716926e-01
+material    3	                    G4_POLYVINYL_ALCOHOL	1.300000e+00	6.970000e+01	solid
+	           C	6	2	5.452904e-01
+	           H	1	3	9.152151e-02
+	           O	8	4	3.631881e-01
+material    3	                    G4_POLYVINYL_BUTYRAL	1.120000e+00	6.720000e+01	solid
+	           C	6	8	6.757293e-01
+	           H	1	9	9.923757e-02
+	           O	8	10	2.250332e-01
+material    3	                   G4_POLYVINYL_CHLORIDE	1.300000e+00	1.082000e+02	solid
+	           C	6	2	3.843567e-01
+	           H	1	3	4.838281e-02
+	          Cl	17	4	5.672605e-01
+material    4	                G4_POLYVINYL_PYRROLIDONE	1.250000e+00	6.770000e+01	solid
+	           C	6	6	6.483993e-01
+	           H	1	7	8.162048e-02
+	           N	7	8	1.260258e-01
+	           O	8	9	1.439544e-01
+material    2	                     G4_POTASSIUM_IODIDE	3.130000e+00	4.319000e+02	solid
+	           K	19	1	2.355286e-01
+	           I	53	2	7.644714e-01
+material    2	                      G4_POTASSIUM_OXIDE	2.320000e+00	1.899000e+02	solid
+	           K	19	2	8.301478e-01
+	           O	8	3	1.698522e-01
+material    2	                              G4_PROPANE	1.879390e-03	4.710000e+01	gas
+	           C	6	3	8.171359e-01
+	           H	1	4	1.828641e-01
+material    3	                             G4_PYRIDINE	9.819000e-01	6.620000e+01	solid
+	           C	6	5	7.592107e-01
+	           H	1	6	6.371294e-02
+	           N	7	7	1.770764e-01
+material    3	                                G4_PbWO4	8.280000e+00	0.000000e+00	solid
+	           O	8	4	1.406366e-01
+	          Pb	82	5	4.553658e-01
+	           W	74	6	4.039976e-01
+material    6	                          G4_Pyrex_Glass	2.230000e+00	1.340000e+02	solid
+	           B	5	0	4.006392e-02
+	           O	8	1	5.395609e-01
+	          Na	11	2	2.819094e-02
+	          Al	13	3	1.164398e-02
+	          Si	14	4	3.772192e-01
+	           K	19	5	3.320993e-03
+material    2	                         G4_RUBBER_BUTYL	9.200000e-01	5.650000e+01	solid
+	           H	1	1	1.437110e-01
+	           C	6	2	8.562890e-01
+material    2	                       G4_RUBBER_NATURAL	9.200000e-01	5.980000e+01	solid
+	           H	1	1	1.183710e-01
+	           C	6	2	8.816290e-01
+material    3	                      G4_RUBBER_NEOPRENE	1.230000e+00	9.300000e+01	solid
+	           H	1	1	5.692000e-02
+	           C	6	2	5.426460e-01
+	          Cl	17	3	4.004340e-01
+material    2	                      G4_SILICON_DIOXIDE	2.320000e+00	1.392000e+02	solid
+	          Si	14	1	4.674338e-01
+	           O	8	2	5.325662e-01
+material    2	                       G4_SILVER_BROMIDE	6.473000e+00	4.866000e+02	solid
+	          Ag	47	1	5.744646e-01
+	          Br	35	2	4.255354e-01
+material    2	                      G4_SILVER_CHLORIDE	5.560000e+00	3.984000e+02	solid
+	          Ag	47	1	7.526348e-01
+	          Cl	17	2	2.473652e-01
+material    3	                       G4_SILVER_HALIDES	6.470000e+00	4.871000e+02	solid
+	          Br	35	1	4.228950e-01
+	          Ag	47	2	5.737480e-01
+	           I	53	3	3.357000e-03
+material    2	                        G4_SILVER_IODIDE	6.010000e+00	5.435000e+02	solid
+	          Ag	47	1	4.594590e-01
+	           I	53	2	5.405410e-01
+material    9	                            G4_SKIN_ICRP	1.090000e+00	7.270000e+01	solid
+	           H	1	1	1.000000e-01
+	           C	6	2	2.040000e-01
+	           N	7	3	4.200000e-02
+	           O	8	4	6.450000e-01
+	          Na	11	5	2.000000e-03
+	           P	15	6	1.000000e-03
+	           S	16	7	2.000000e-03
+	          Cl	17	8	3.000000e-03
+	           K	19	9	1.000000e-03
+material    3	                     G4_SODIUM_CARBONATE	2.532000e+00	1.250000e+02	solid
+	          Na	11	2	4.338168e-01
+	           C	6	3	1.133211e-01
+	           O	8	4	4.528620e-01
+material    2	                        G4_SODIUM_IODIDE	3.667000e+00	4.520000e+02	solid
+	          Na	11	1	1.533739e-01
+	           I	53	2	8.466261e-01
+material    2	                      G4_SODIUM_MONOXIDE	2.270000e+00	1.488000e+02	solid
+	          Na	11	2	7.418578e-01
+	           O	8	3	2.581422e-01
+material    3	                       G4_SODIUM_NITRATE	2.261000e+00	1.146000e+02	solid
+	          Na	11	1	2.704850e-01
+	           N	7	2	1.647957e-01
+	           O	8	3	5.647193e-01
+material    3	                      G4_STAINLESS-STEEL	8.000000e+00	0.000000e+00	solid
+	          Fe	26	74	7.462129e-01
+	          Cr	24	75	1.690010e-01
+	          Ni	28	76	8.478608e-02
+material    2	                             G4_STILBENE	9.707000e-01	6.770000e+01	solid
+	           C	6	14	9.328955e-01
+	           H	1	15	6.710449e-02
+material    3	                              G4_SUCROSE	1.580500e+00	7.750000e+01	solid
+	           C	6	12	4.210639e-01
+	           H	1	13	6.478207e-02
+	           O	8	14	5.141540e-01
+material    2	                               G4_TEFLON	2.200000e+00	9.910000e+01	solid
+	           C	6	2	2.401785e-01
+	           F	9	3	7.598215e-01
+material    2	                            G4_TERPHENYL	1.240000e+00	7.170000e+01	solid
+	           C	6	18	9.387282e-01
+	           H	1	19	6.127182e-02
+material    9	                          G4_TESTIS_ICRP	1.040000e+00	7.500000e+01	solid
+	           H	1	1	1.060000e-01
+	           C	6	2	9.900000e-02
+	           N	7	3	2.000000e-02
+	           O	8	4	7.660000e-01
+	          Na	11	5	2.000000e-03
+	           P	15	6	1.000000e-03
+	           S	16	7	2.000000e-03
+	          Cl	17	8	2.000000e-03
+	           K	19	9	2.000000e-03
+material    2	                  G4_TETRACHLOROETHYLENE	1.625000e+00	1.592000e+02	solid
+	           C	6	2	1.448545e-01
+	          Cl	17	3	8.551455e-01
+material    2	                    G4_THALLIUM_CHLORIDE	7.004000e+00	6.903000e+02	solid
+	          Tl	81	1	8.521796e-01
+	          Cl	17	2	1.478204e-01
+material    4	                              G4_THYMINE	1.230000e+00	7.200000e+01	solid
+	           H	1	6	4.795393e-02
+	           C	6	7	4.761870e-01
+	           N	7	8	2.221293e-01
+	           O	8	9	2.537297e-01
+material    4	                       G4_TISSUE-METHANE	1.064090e-03	6.120000e+01	gas
+	           H	1	1	1.018690e-01
+	           C	6	2	4.561790e-01
+	           N	7	3	3.517200e-02
+	           O	8	4	4.067800e-01
+material    4	                       G4_TISSUE-PROPANE	1.826280e-03	5.950000e+01	gas
+	           H	1	1	1.026720e-01
+	           C	6	2	5.689400e-01
+	           N	7	3	3.502200e-02
+	           O	8	4	2.933660e-01
+material    9	                     G4_TISSUE_SOFT_ICRP	1.030000e+00	7.230000e+01	solid
+	           H	1	1	1.050000e-01
+	           C	6	2	2.560000e-01
+	           N	7	3	2.700000e-02
+	           O	8	4	6.020000e-01
+	          Na	11	5	1.000000e-03
+	           P	15	6	2.000000e-03
+	           S	16	7	3.000000e-03
+	          Cl	17	8	2.000000e-03
+	           K	19	9	2.000000e-03
+material    4	                   G4_TISSUE_SOFT_ICRU-4	1.000000e+00	7.490000e+01	solid
+	           H	1	1	1.010000e-01
+	           C	6	2	1.110000e-01
+	           N	7	3	2.600000e-02
+	           O	8	4	7.620000e-01
+material    2	                     G4_TITANIUM_DIOXIDE	4.260000e+00	1.795000e+02	solid
+	          Ti	22	1	5.993416e-01
+	           O	8	2	4.006584e-01
+material    2	                              G4_TOLUENE	8.669000e-01	6.250000e+01	solid
+	           C	6	7	9.124849e-01
+	           H	1	8	8.751510e-02
+material    3	                    G4_TRICHLOROETHYLENE	1.460000e+00	1.481000e+02	solid
+	           C	6	2	1.828297e-01
+	           H	1	3	7.671533e-03
+	          Cl	17	4	8.094987e-01
+material    4	                   G4_TRIETHYL_PHOSPHATE	1.070000e+00	8.120000e+01	solid
+	           C	6	6	3.956216e-01
+	           H	1	7	8.300140e-02
+	           O	8	8	3.513359e-01
+	           P	15	9	1.700410e-01
+material    2	                G4_TUNGSTEN_HEXAFLUORIDE	2.400000e+00	3.544000e+02	solid
+	           W	74	1	6.172661e-01
+	           F	9	2	3.827339e-01
+material    4	                               G4_URACIL	1.320000e+00	7.200000e+01	solid
+	           H	1	4	3.596993e-02
+	           C	6	5	4.286218e-01
+	           N	7	6	2.499267e-01
+	           O	8	7	2.854816e-01
+material    2	                    G4_URANIUM_DICARBIDE	1.128000e+01	7.520000e+02	solid
+	           U	92	1	9.083327e-01
+	           C	6	2	9.166731e-02
+material    2	                  G4_URANIUM_MONOCARBIDE	1.363000e+01	8.620000e+02	solid
+	           U	92	1	9.519647e-01
+	           C	6	2	4.803529e-02
+material    2	                        G4_URANIUM_OXIDE	1.096000e+01	7.206000e+02	solid
+	           U	92	1	8.814982e-01
+	           O	8	2	1.185018e-01
+material    4	                                 G4_UREA	1.323000e+00	7.280000e+01	solid
+	           C	6	1	1.999942e-01
+	           H	1	2	6.713403e-02
+	           N	7	3	4.664614e-01
+	           O	8	4	2.664104e-01
+material    4	                               G4_VALINE	1.230000e+00	6.770000e+01	solid
+	           C	6	5	5.126371e-01
+	           H	1	6	9.464509e-02
+	           N	7	7	1.195662e-01
+	           O	8	8	2.731516e-01
+material    3	                                G4_VITON	1.800000e+00	9.860000e+01	solid
+	           H	1	0	9.417000e-03
+	           C	6	1	2.805550e-01
+	           F	9	2	7.100280e-01
+material    2	                                G4_WATER	1.000000e+00	7.800000e+01	solid
+	           H	1	2	1.118985e-01
+	           O	8	3	8.881015e-01
+material    2	                          G4_WATER_VAPOR	7.561820e-04	7.160000e+01	gas
+	           H	1	2	1.118985e-01
+	           O	8	3	8.881015e-01
+material    2	                               G4_XYLENE	8.700000e-01	6.180000e+01	solid
+	           C	6	8	9.050593e-01
+	           H	1	9	9.494070e-02
+material    1	                                  G4_lAr	1.396000e+00	1.880000e+02	liquid
+	          Ar	18	1	1.000000e+00
+material    1	                                  G4_lBr	3.102800e+00	3.430000e+02	liquid
+	          Br	35	1	1.000000e+00
+material    1	                                  G4_lH2	7.080000e-02	2.180000e+01	liquid
+	           H	1	1	1.000000e+00
+material    1	                                  G4_lKr	2.418000e+00	3.520000e+02	liquid
+	          Kr	36	1	1.000000e+00
+material    1	                                  G4_lN2	8.070000e-01	8.200000e+01	liquid
+	           N	7	1	1.000000e+00
+material    1	                                  G4_lO2	1.141000e+00	9.500000e+01	liquid
+	           O	8	1	1.000000e+00
+material    2	                             G4_lPROPANE	4.300000e-01	5.200000e+01	solid
+	           C	6	3	8.171359e-01
+	           H	1	4	1.828641e-01
+material    1	                                  G4_lXe	2.953000e+00	4.820000e+02	liquid
+	          Xe	54	1	1.000000e+00

@@ -7,7 +7,7 @@ from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from . import solid                     as                 _solid
-from . import Material                  as                 _mat
+from . import _Material                  as                 _mat
 import pyg4ometry.transformation as                 _trans
 import pyg4ometry.visualisation  as                 _vi
 import vtk                       as                 _vtk
@@ -100,6 +100,69 @@ class LogicalVolume(object):
 
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
+
+    def _getPhysicalDaughterMesh(self, pv):
+        '''
+        return a (cloned from the lv) mesh of a given pv with rotation,scale,
+        translation evaluated.
+        '''
+        # cannot currently deal with replica, division and parametrised
+        if  pv.type != "placement" :
+            return None
+        # cannot currently deal with assembly
+        if  pv.logicalVolume.type == "assembly" :
+            return None
+
+        _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
+        mesh = pv.logicalVolume.mesh.localmesh.clone()
+
+        # rotate
+        aa = _trans.tbxyz2axisangle(pv.rotation.eval())
+        mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+
+        # scale
+        if pv.scale :
+            s = pv.scale.eval()
+            mesh.scale(s)
+            
+            if s[0]*s[1]*s[2] == 1 :
+                pass
+            elif s[0]*s[1]*s[2] == -1 :
+                mesh = mesh.inverse()
+                
+        # translate
+        t = pv.position.eval()
+        mesh.translate(t)
+        return mesh
+        
+    def cullDaughtersOutsideSolid(self, solid, rotation=None, position=None):
+        """
+        Given a solid with a placement rotation and position inside this logical
+        volume, remove (cull) any daughters that would not lie entirely within it.
+        """
+        # form temporary mesh of solid in the coordinate frame of this solid
+        clipMesh = _Mesh(solid)
+        clipMesh = clipMesh.localmesh
+        if rotation:
+            aa = _trans.tbxyz2axisangle(rotation)
+            clipMesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+        # no scale supported for this
+        if position:
+            clipMesh.translate(position)
+
+        toKeep = [] # build up list of bools - don't modify as we iterate on the list
+        for pv in self.daughterVolumes:
+            pvmesh = self._getPhysicalDaughterMesh(pv)
+            if pvmesh is None:
+                toKeep.append(True)
+                continue # maybe unsupported type - skip
+
+            interMesh = pvmesh.intersect(clipMesh)
+            if interMesh.polygonCount != pvmesh.polygonCount:
+                # either protruding or outside
+                toKeep.append( interMesh.polygonCount() != 0)
+
+        self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
 
     def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) :
 
@@ -377,7 +440,9 @@ class LogicalVolume(object):
     def assemblyVolume(self):
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
-        av = _AssemblyVolume(self.name, self.registry, False)
+        # prepend the name because the name might have a pointer in it
+        # therefore geant4 will just strip off everything after 0x
+        av = _AssemblyVolume("assembly_"+self.name, self.registry)
 
         for dv in self.daughterVolumes :
             av.add(dv)

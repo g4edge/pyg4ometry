@@ -10,6 +10,6 @@ from .DivisionVolume import *
 from .SkinSurface import *
 from .BorderSurface import *
 from .Registry import *
-from .Material import *
+from ._Material import *
 from .Expression import *
 from . import solid

@@ -1,7 +1,7 @@
 import pandas as _pd
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.exceptions as _exceptions
-from . import Material as _mat
+from . import _Material as _mat
 from . import solid
 
 
@@ -233,11 +233,24 @@ class Registry:
 
         return define.name
 
-    def setWorld(self, worldName):
-        self.worldName = worldName
-        self.worldVolume = self.logicalVolumeDict[self.worldName]
-        self.orderLogicalVolumes(worldName)
-        self.logicalVolumeList.append(worldName)
+    def setWorld(self, worldIn):
+        """
+        The argument can either be the name of logical volume of the world
+        or the pyg4ometry.geant4.LogicalVolume instance of the world volume.
+        The term world is used to refer to the outermost volume of the hierarchy.
+        """
+        if type(worldIn) is str:
+            # assume it's the name of the world volume
+            self.worldName = worldIn
+            self.worldVolume = self.logicalVolumeDict[worldIn]
+            self.orderLogicalVolumes(worldIn)
+            self.logicalVolumeList.append(worldIn)
+        else:
+            self.worldName = worldIn.name
+            self.worldVolume = worldIn
+            if worldIn not in self.logicalVolumeDict:
+                self.logicalVolumeDict[worldIn.name] = worldIn
+            self.logicalVolumeList.append(worldIn.name)
 
     def _orderMaterialList(self, materials, materials_ordered=[]):
         for mat in materials:
@@ -251,9 +264,9 @@ class Registry:
         '''Need to have a ordered list of all material entities for writing to
         GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
 
-        for name, obj in self.materialDict.items():  # Forces registered materials to
-            if isinstance(obj, _mat.Material):           # recursively register their components too
-                obj.set_registry(self)
+        for name in list(self.materialDict.keys()):  # Forces registered materials to
+            if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
+                self.materialDict[name].set_registry(self)
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
