@@ -5,8 +5,8 @@ from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
+from pyg4ometry.visualisation import loadPredefined
 import random
-from . import colour
 import os,binascii
 import pandas as pd
 import logging
@@ -43,7 +43,7 @@ class VtkExporter:
         self.mbindexdico = {}
 
         # material options dict
-        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(colour.ColourMap().fromPredefined())
+        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(loadPredefined())
 
     def export_to_Paraview(self, reg, fileName='Paraview_model.pvsm', model=True, df_model=None, df_color=None):
         """
@@ -240,9 +240,11 @@ class VtkExporter:
                 visOptions = pv.visOptions
 
             if pv.logicalVolume.name in color_dico['R'].keys():
-                visOptions.color[0] = color_dico['R'][pv.logicalVolume.name]
-                visOptions.color[1] = color_dico['G'][pv.logicalVolume.name]
-                visOptions.color[2] = color_dico['B'][pv.logicalVolume.name]
+                colour = list(visOptions.colour)
+                colour[0] = color_dico['R'][pv.logicalVolume.name]
+                colour[1] = color_dico['G'][pv.logicalVolume.name]
+                colour[2] = color_dico['B'][pv.logicalVolume.name]
+                visOptions.colour = tuple(colour)
 
             self.addMesh(solid_name, mesh, new_mtra, new_tra, visOptions=visOptions)
 
@@ -295,7 +297,7 @@ class VtkExporter:
             Colors.SetNumberOfComponents(3);
             Colors.SetName("Colors");
             for i in range(vtkPD.GetNumberOfPolys()):
-                Colors.InsertNextTuple3(visOptions.color[0]*255, visOptions.color[1]*255, visOptions.color[2]*255);
+                Colors.InsertNextTuple3(visOptions.colour[0]*255, visOptions.colour[1]*255, visOptions.colour[2]*255);
 
             vtkPD.GetCellData().SetScalars(Colors)
             vtkPD.Modified()
