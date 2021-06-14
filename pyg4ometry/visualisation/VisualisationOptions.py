@@ -72,47 +72,12 @@ def loadPredefined():
 
 predefinedMaterialVisOptions = loadPredefined()
 
-
-
-
-# this can be deprecated
-def makeVisualisationOptionsDictFromMaterials(materials):
-
-    matVisDict = {}
-
-    for material in materials :
-        # strip pointer from name
-
-        if material.find("0x") != -1 :
-            materialStrip = material[0:material.find("0x")]
-        else :
-            materialStrip = material
-
-        matVisDict[material] = VisualisationOptions()
-
-        if materialStrip.lower().find("galactic") != -1 :
-            matVisDict[material].visible = False
-
-        elif materialStrip.lower().find("air") != -1 :
-            matVisDict[material].visible = False
-
-        elif materialStrip.lower().find("vacuum") != -1 :
-            matVisDict[material].visible = False
-
-        else :
-            matVisDict[material].colour = [_random.random(),_random.random(),_random.random()]
-    return matVisDict
-
 def makeVisualisationOptionsDictFromPredefined(ColourMap):
-
-    for material in ColourMap.keys() :
-
+    for material in ColourMap.keys():
         if material.lower().find("galactic") != -1 :
             ColourMap[material].visible = False
-
         elif material.lower().find("air") != -1 :
             ColourMap[material].visible = False
-
         elif material.lower().find("vacuum") != -1 :
             ColourMap[material].visible = False
 

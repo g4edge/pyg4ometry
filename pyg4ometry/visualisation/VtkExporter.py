@@ -24,7 +24,6 @@ except (ImportError, ImportWarning):
 class VtkExporter:
     def __init__(self, path='.'):
         """
-
         Args:
             path: output repository path
         """
@@ -38,7 +37,7 @@ class VtkExporter:
         # list of elements
         self.elements = []
 
-        #multi block dictionary
+        # multi block dictionary
         self.mbdico = {}
         self.mbindexdico = {}
 
