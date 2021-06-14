@@ -165,6 +165,20 @@ class LogicalVolume(object):
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
 
     def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
+        """
+        Check based on the meshes in each logical volume if there are any geometrical overlaps. By
+        default, overlaps are checked between daughter volumes and with the mother volume itself (protrusion).
+        Coplanar overlaps may also be checked (default on).
+
+        Print out will be given for any overlaps detected and the visualiser will show the
+        colour coded overlaps.
+
+        :param recursive: bool - Whether to descend into the daughter volumes and check their contents also.
+        :param coplanar: bool - Whether to check for coplanar overlaps
+        :param debugIO: bool - Print out for every check made
+        :param printOut: bool - Whether to print out a summary of N overlaps detected
+        :param nOverlapsDetected: [int] - internal use only for recursion - ignore
+        """
         if printOut:
             print("LogicalVolume.checkOverlaps>")
 
