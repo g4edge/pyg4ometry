@@ -170,7 +170,8 @@ class LogicalVolume(object):
 
         # return if overlaps already checked
         if self.overlapChecked:
-            print("Overlaps already checked - skipping")
+            if debugIO:
+                print("Overlaps already checked - skipping")
             return
 
         # local meshes
