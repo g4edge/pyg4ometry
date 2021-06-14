@@ -179,7 +179,6 @@ class LogicalVolume(object):
 
         # transform meshes (and bounding meshes) into logical volume frame
         for pv in self.daughterVolumes:
-
             # cannot currently deal with replica, division and parametrised
             if  pv.type != "placement" :
                 continue
@@ -222,7 +221,6 @@ class LogicalVolume(object):
         # print "LogicalVolume.checkOverlaps> daughter overlaps"
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
-
                 if debugIO :
                     print(f"LogicalVolume.checkOverlaps> full daughter intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
@@ -244,7 +242,6 @@ class LogicalVolume(object):
         if coplanar :
             for i in range(0,len(transformedMeshes)) :
                 for j in range(i+1,len(transformedMeshes)) :
-
                     if debugIO :
                         print(f"LogicalVolume.checkOverlaps> full coplanar test between daughters {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
