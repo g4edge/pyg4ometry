@@ -251,6 +251,16 @@ class VtkViewer:
         exporter.SetFileName("./"+fileName)  # create mtl and obj file.
         exporter.Write()
 
+    def exportGLTFScene(self,fileName="scene.gltf"):
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkGLTFExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.InlineDataOn()
+        exporter.SetFileName("./"+fileName)
+        exporter.Write()
+
     def exportScreenShot(self, fileName="screenshot.png", rgba=True):
         """
         Write the render window view to an image file.
