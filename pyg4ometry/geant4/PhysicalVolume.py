@@ -21,6 +21,9 @@ class PhysicalVolume(object):
                  motherVolume, registry=None, addRegistry=True, scale=None):    
         super(PhysicalVolume, self).__init__()
 
+        if logicalVolume == motherVolume:
+            raise ValueError("Cannot place a volume inside itself -> recursive")
+
         # type 
         self.type = "placement"
     
