@@ -1645,6 +1645,9 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                 materialNameShort = materialNameShort[:6] + "EL"
             else:
                 materialNameShort += "EL"
+        # check again as we've just changed our short name
+        if materialNameShort in freg.materials:
+            return freg.materials[materialNameShort]
         if materialInstance.type == "simple" :
             mat = _fluka.Material(materialNameShort,
                                   materialInstance.Z,
