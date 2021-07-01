@@ -238,7 +238,7 @@ class LogicalVolume(object):
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
                 if debugIO :
-                    print(f"LogicalVolume.checkOverlaps> full daughter intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
+                    print(f"LogicalVolume.checkOverlaps> full daughter-daughter intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
                 # first check if bounding mesh intersects
                 cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
