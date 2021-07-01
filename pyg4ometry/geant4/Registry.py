@@ -1,5 +1,6 @@
 import pandas as _pd
 from collections import OrderedDict as _OrderedDict
+from collections import defaultdict as _defaultdict
 import pyg4ometry.exceptions as _exceptions
 from . import _Material as _mat
 from . import solid
@@ -497,3 +498,87 @@ class Registry:
                 self.logicalVolumeList.append(lv_name)
 
         return df
+
+
+class GeometryComplexityInformation:
+    def __init__(self):
+        self.solids            = _defaultdict(int)
+        self.nDaughtersPerLV   = _defaultdict(int)
+        self.nDaughters        = {}
+        self.booleanDepthCount = _defaultdict(int)
+        self.booleanDepth      = _defaultdict(int)
+
+    def printSummary(self, boolDepthLimit=3):
+        print("Types of solids")
+        solidsSorted = sorted(self.solids.items(),key=lambda x: x[1], reverse=True)
+        for solidName,number in solidsSorted:
+            print(solidName.ljust(20),':',number)
+        
+        print(" ")
+        print("# of daughters".ljust(20),"count")
+        for nDaughters in sorted(self.nDaughtersPerLV.keys()):
+            print(str(nDaughters).ljust(20), ':', self.nDaughtersPerLV[nDaughters])
+
+        print(" ")
+        print("Depth of booleans".ljust(20),"count")
+        for boolDepth in sorted(self.booleanDepthCount.keys()):
+            print(str(boolDepth).ljust(20), ':', self.booleanDepthCount[boolDepth])
+
+        print(" ")
+        print("Booleans width depth over ",boolDepthLimit)
+        print("Solid name".ljust(40),":","n Booleans")
+        boolDepthSorted = sorted(self.booleanDepth.items(),key=lambda x: x[1], reverse=True)
+        for solidName,boolDepth in boolDepthSorted:
+            if boolDepth > boolDepthLimit:
+                print(solidName.ljust(40),":",boolDepth)
+        
+
+def AnalyseGeometryComplexity(logicalVolume):
+    """
+    Analyse a geometry tree starting from a logical volume.
+    Produces an instance of :class:`GeometryComplexityInformation` with
+    summary information. Provides:
+    
+    * count per solid type
+    * number of daughters per logical volume
+    * dictionary of N daughters for each logical volume name
+    * depth count of Boolean solids
+
+    ie a Boolean of a Boolean returns 2, a Boolean of two primitives returns 1
+
+    * a dictionary of boolean depth for each logical volume name
+
+    Example: ::
+
+        info = AnalyseGeometryComplexity(lv)
+        info.printSummary()
+    """
+    result = GeometryComplexityInformation()
+    result = _UpdateComplexity(logicalVolume, result)
+    return result
+
+def _UpdateComplexity(lv, info):
+    info.solids[lv.solid.type] += 1
+    info.nDaughters[lv.name] = len(lv.daughterVolumes)
+    info.nDaughtersPerLV[len(lv.daughterVolumes)] +=1
+
+    booleanTypes = ['Union', 'Subtraction', 'Intersection']
+    
+    def _CountDaughterBooleanSolids(solid, number=0):
+        for solid in [solid.obj1, solid.obj2]:
+            if solid.type in booleanTypes:
+                number += 1
+                number = _CountDaughterBooleanSolids(solid, number)
+        return number           
+
+    if lv.solid.type in booleanTypes:
+        nBooleans = 1
+        nBooleans = _CountDaughterBooleanSolids(lv.solid, nBooleans)
+        info.booleanDepthCount[nBooleans] += 1
+        info.booleanDepth[lv.name] = nBooleans
+
+    # recurse
+    for pv in lv.daughterVolumes:
+        info = _UpdateComplexity(pv.logicalVolume, info)
+    
+    return info
