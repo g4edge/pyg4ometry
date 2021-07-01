@@ -1,5 +1,6 @@
 from .Mesh                 import Mesh
 from .Mesh                 import OverlapType
+from .ViewerBase           import ViewerBase
 from .VisualisationOptions import *
 from .VtkViewer            import *
 from .RenderWriter         import *
