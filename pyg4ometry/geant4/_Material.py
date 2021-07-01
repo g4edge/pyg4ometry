@@ -107,6 +107,7 @@ def nist_element_2geant4Element(name, reg=None):
         for (nNucleons,molarMass,massFraction) in isotopes:
             ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
             result.add_isotope(ele, massFraction)
+        result.Z = z
         return result
     else:
         singleIsotope = isotopes[0]

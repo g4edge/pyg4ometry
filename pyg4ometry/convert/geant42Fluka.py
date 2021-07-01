@@ -17,8 +17,7 @@ def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
         logi = greg.getWorldVolume()
     else :
         logi = greg.logicalVolumeDict[logicalVolumeName]
-    matr = greg.materialDict
-    freg = geant4MaterialDict2Fluka(matr, freg)
+    freg = geant4MaterialDict2Fluka(greg.materialDict, freg)
     freg = geant4Logical2Fluka(logi, freg)
 
     return freg
@@ -1575,7 +1574,7 @@ def geant4MaterialDict2Fluka(matr, freg):
 
     return freg
 
-def geant4Material2Fluka(material, freg, suggestedDensity=None) :
+def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=False) :
     materialName = material.name
     materialInstance = material
 
@@ -1596,7 +1595,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None) :
 
     # Only want to use materials (FLUKA COMPOUND or MATERIAL)
     if isinstance(materialInstance, _geant4.Material):
-        # none, nist, arbitary, simple, composite
+        # none, nist, arbitrary, simple, composite
         if materialInstance.type == "none":
             raise Exception("Cannot have material with none type")
 
@@ -1621,7 +1620,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None) :
             flukaFractionType = "atomic"
 
             for comp in materialInstance.components:
-                fm = geant4Material2Fluka(comp[0], freg, materialInstance.density)
+                fm = geant4Material2Fluka(comp[0], freg, materialInstance.density, elementSuffix=True)
 
                 compFraction     = comp[1]
                 compFractionType = comp[2]
@@ -1641,6 +1640,11 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None) :
             return mat
 
     elif isinstance(materialInstance, _geant4.Element) :
+        if elementSuffix:
+            if len(materialNameShort) >= 6:
+                materialNameShort = materialNameShort[:6] + "EL"
+            else:
+                materialNameShort += "EL"
         if materialInstance.type == "simple" :
             mat = _fluka.Material(materialNameShort,
                                   materialInstance.Z,
@@ -1676,7 +1680,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None) :
     elif isinstance(materialInstance, _geant4.Isotope) :
         fi = _fluka.Material(materialNameShort, materialInstance.Z, 10, flukaregistry=freg,
                             atomicMass = materialInstance.a,
-                            massNumber = materialInstance.N)
+                            massNumber = materialInstance.N,)
         return fi
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
@@ -1725,20 +1729,20 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 
     return fregion
 
-
 def makeStripName(mn) :
     if mn.find("0x") != -1:
         mnStrip = mn[0:mn.find("0x")]
     else:
         mnStrip = mn
-
     return mnStrip
 
-def makeShortName(mn) :
-
+def makeShortName(mn):
     mn = makeStripName(mn)
-
-    if len(mn) > 8 :
-        return mn[0:8]
-    else :
+    if len(mn) > 8:
+        mn = mn.replace('_','') # first, remove '_'
+        if len(mn) > 8:
+            return mn[:8]
+        else:
+            return mn
+    else:
         return mn

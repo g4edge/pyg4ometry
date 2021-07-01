@@ -4,6 +4,7 @@ from .VisualisationOptions import *
 from .VtkViewer            import *
 from .RenderWriter         import *
 from .Convert              import *
+from .VtkExporter          import *
 
 # from Viewer import viewLogicalVolume, viewWorld, Viewer
 #from Viewer import Viewer

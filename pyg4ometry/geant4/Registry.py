@@ -1,3 +1,4 @@
+import pandas as _pd
 from collections import OrderedDict as _OrderedDict
 import pyg4ometry.exceptions as _exceptions
 from . import _Material as _mat
@@ -232,11 +233,24 @@ class Registry:
 
         return define.name
 
-    def setWorld(self, worldName):
-        self.worldName = worldName
-        self.worldVolume = self.logicalVolumeDict[self.worldName]
-        self.orderLogicalVolumes(worldName)
-        self.logicalVolumeList.append(worldName)
+    def setWorld(self, worldIn):
+        """
+        The argument can either be the name of logical volume of the world
+        or the pyg4ometry.geant4.LogicalVolume instance of the world volume.
+        The term world is used to refer to the outermost volume of the hierarchy.
+        """
+        if type(worldIn) is str:
+            # assume it's the name of the world volume
+            self.worldName = worldIn
+            self.worldVolume = self.logicalVolumeDict[worldIn]
+            self.orderLogicalVolumes(worldIn)
+            self.logicalVolumeList.append(worldIn)
+        else:
+            self.worldName = worldIn.name
+            self.worldVolume = worldIn
+            if worldIn not in self.logicalVolumeDict:
+                self.logicalVolumeDict[worldIn.name] = worldIn
+            self.logicalVolumeList.append(worldIn.name)
 
     def _orderMaterialList(self, materials, materials_ordered=[]):
         for mat in materials:
@@ -448,3 +462,38 @@ class Registry:
         import pyg4ometry.fluka as _f
 
         freg = _f.FlukaRegistry()
+
+    def structureAnalysis(self, lv_name=None, debug=False, level=0, df=None):
+
+        if lv_name is None:
+            lv_name = self.getWorldVolume().name
+
+        if df is None:
+            self.logicalVolumeList = []
+            df = _pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
+
+        mother_lv = self.logicalVolumeDict[lv_name]
+        mother = mother_lv.name
+        daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
+        daughters = [daughter.name for daughter in daughters_lv]
+        material = mother_lv.material.name.split('0')[0]
+
+        df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv,
+                        'daughters': daughters, 'material': material}, ignore_index=True)
+
+        if debug:
+            print("\nlevel:", level)
+            print("mother:", mother)
+            print("daughters: ", len(daughters), " ", daughters)
+
+        level += 1
+
+        for daughters in mother_lv.daughterVolumes:
+            lv_name = daughters.logicalVolume.name
+            try:
+                self.logicalVolumeList.index(lv_name)
+            except ValueError:
+                df = self.structureAnalysis(lv_name, debug, level, df)
+                self.logicalVolumeList.append(lv_name)
+
+        return df
