@@ -68,49 +68,48 @@ class ReplicaVolume(_PhysicalVolume) :
         width     = evaluateToFloat(self.registry,self.width)*_Units.unit(self.wunit)
 
         transforms = []
-        meshes     = [] 
+        meshes     = []
 
-        for v,i in zip(_np.arange(-width*(nreplicas-1)*0.5,  width*(nreplicas+1)*0.5, width),range(0,nreplicas,1)) :
+        if self.axis in [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]:
+            for v,i in zip(_np.arange(-width*(nreplicas-1)*0.5,  width*(nreplicas+1)*0.5, width),range(0,nreplicas,1)) :
+                rot   = [0,0,0]
+                trans = [0,0,0]
+                # use enum as index in list
+                if self.axis <= 3:
+                    trans[self.axis-1] = v
 
-            rot   = [0,0,0]
-            trans = [0,0,0]
-            # use enum as index in list
-            if self.axis <= 3:
-                trans[self.axis-1] = v
-
-            transforms.append([rot,trans])
-            meshes.append(self.logicalVolume.mesh)
-
-            # if daughter contains a replica
-            if len(self.logicalVolume.daughterVolumes) == 1 :
-                if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume) :
-                    [daughter_meshes,daughter_transforms] = self.logicalVolume.daughterVolumes[0].createReplicaMeshes()
-                    for m,t in zip(daughter_meshes,daughter_transforms) :
-                        meshes.append(m)
-                        transforms.append([rot,_np.array(trans)+_np.array(t[1])])
-
-        for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
-            if self.axis == self.Axis.kRho :
-
-                solid = _solid.Tubs(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
-                                    v,
-                                    v+width,
-                                    self.logicalVolume.solid.pDz,
-                                    self.logicalVolume.solid.pSPhi,
-                                    self.logicalVolume.solid.pDPhi,
-                                    self.logicalVolume.registry,
-                                    self.logicalVolume.solid.lunit,
-                                    self.logicalVolume.solid.aunit,
-                                    self.logicalVolume.solid.nslice,
-                                    False)
-                mesh   = _Mesh(solid)                                
-
-                meshes.append(mesh)
-                transforms.append([[0,0,0],[0,0,0]])
-
-            elif self.axis == self.Axis.kPhi : 
+                transforms.append([rot,trans])
                 meshes.append(self.logicalVolume.mesh)
-                transforms.append([[0,0,v],[0,0,0]])                
+
+                # if daughter contains a replica
+                if len(self.logicalVolume.daughterVolumes) == 1 :
+                    if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume) :
+                        [daughter_meshes,daughter_transforms] = self.logicalVolume.daughterVolumes[0].createReplicaMeshes()
+                        for m,t in zip(daughter_meshes,daughter_transforms) :
+                            meshes.append(m)
+                            transforms.append([rot,_np.array(trans)+_np.array(t[1])])  # TBC - t[0] ie daughter rotation is unused / not compounded
+        else:
+            # rotation type replica
+            for v,i in zip(_np.arange(offset, offset+nreplicas*width,width),range(0,nreplicas,1)) :
+                if self.axis == self.Axis.kRho:
+                    solid = _solid.Tubs(self.name+"_"+self.logicalVolume.solid.name+"_"+str(i),
+                                        v,
+                                        v+width,
+                                        self.logicalVolume.solid.pDz,
+                                        self.logicalVolume.solid.pSPhi,
+                                        self.logicalVolume.solid.pDPhi,
+                                        self.logicalVolume.registry,
+                                        self.logicalVolume.solid.lunit,
+                                        self.logicalVolume.solid.aunit,
+                                        self.logicalVolume.solid.nslice,
+                                        False)
+                    mesh   = _Mesh(solid)
+                    meshes.append(mesh)
+                    transforms.append([[0,0,0],[0,0,0]])
+
+                elif self.axis == self.Axis.kPhi :
+                    meshes.append(self.logicalVolume.mesh)
+                    transforms.append([[0,0,v],[0,0,0]])
             
         return [meshes,transforms]
 
