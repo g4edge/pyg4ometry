@@ -163,7 +163,7 @@ class ReplicaVolume(_PhysicalVolume) :
             # rotation type replica
             for v, i in zip(_np.arange(offset, offset + nreplicas * width, width), range(0, nreplicas, 1)):
                 # create a unique temporary solid and therefore logical volume
-                solid = _solid.Tubs(self.name + "_" + self.logicalVolume.solid.name + "_" + str(i),
+                solid = _solid.Tubs(self.name + "_" + self.logicalVolume.solid.name + "_replica_" + str(i),
                                     v,
                                     v + width,
                                     self.logicalVolume.solid.pDz,
@@ -173,11 +173,12 @@ class ReplicaVolume(_PhysicalVolume) :
                                     self.logicalVolume.solid.lunit,
                                     self.logicalVolume.solid.aunit,
                                     self.logicalVolume.solid.nslice,
-                                    False)
+                                    addRegistry=True) # we define a new unique solid, so we do need to store it
                 anLV = LogicalVolume(solid,
                                      self.logicalVolume.material,
                                      self.logicalVolume.name + "_replica_"+str(i),
-                                     addRegistry=False)
+                                     self.registry,
+                                     addRegistry=True) # unique LV - need ot add
                 rot, trans = [0, 0, 0], [0, 0, 0]
                 aPV = PhysicalVolume(rot, trans,
                                      anLV,
