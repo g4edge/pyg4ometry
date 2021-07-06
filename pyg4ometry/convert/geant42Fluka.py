@@ -178,8 +178,6 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
 
     if physicalVolume.logicalVolume.type == "logical" :
         flukaRegistry.addRegion(flukaMotherRegion)
-
-    if physicalVolume.logicalVolume.type == "logical" :
         materialName = physicalVolume.logicalVolume.material.name
         materialNameShort = makeShortName(materialName)
 
