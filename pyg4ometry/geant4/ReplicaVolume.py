@@ -113,6 +113,95 @@ class ReplicaVolume(_PhysicalVolume) :
             
         return [meshes,transforms]
 
+    def getPhysicalVolumes(self):
+        """
+        return a list of temporary (ie not added to the relevant registry) PhysicalVolume instances
+        with appropriate transforms including any daughter ReplicaVolumes.
+        """
+        result = []
+        transforms = []
+        import pyg4ometry.gdml.Units as _Units
+        from pyg4ometry.gdml.Defines import evaluateToFloat
+        from pyg4ometry.geant4 import PhysicalVolume
+        from pyg4ometry.geant4 import LogicalVolume
+
+        nreplicas = int(evaluateToFloat(self.registry, self.nreplicas))
+        offset = evaluateToFloat(self.registry, self.offset) * _Units.unit(self.ounit)
+        width = evaluateToFloat(self.registry, self.width) * _Units.unit(self.wunit)
+
+        if self.axis in [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]:
+            for v, i in zip(_np.arange(-width * (nreplicas - 1) * 0.5, width * (nreplicas + 1) * 0.5, width), range(0, nreplicas, 1)):
+                rot = [0, 0, 0]
+                trans = [0, 0, 0]
+                # use enum as index in list
+                if self.axis <= 3:
+                    trans[self.axis - 1] = v
+
+                aPV = PhysicalVolume(rot, trans,
+                                 self.logicalVolume,
+                                 self.name + "_replica_"+str(i),
+                                 self.motherVolume,
+                                 self.registry,
+                                 addRegistry=False)
+                result.append(aPV)
+                transforms.append([rot, trans])
+
+                # if daughter contains a replica
+                if len(self.logicalVolume.daughterVolumes) == 1:
+                    if isinstance(self.logicalVolume.daughterVolumes[0], ReplicaVolume):
+                        daughterPVs,daughterTransforms = self.logicalVolume.daughterVolumes[0].getPhysicalVolumes()
+                        for pv, t in zip(daughterPVs, daughterTransforms):
+                            # compound transform to mother's frame
+                            compoundRot = _np.array(rot)*_np.array(t[0])
+                            compoundTra = _np.array(trans) + _np.array(t[1])
+                            pv.rotation = compoundRot
+                            pv.position = compoundTra
+                            result.append(pv)
+                            transforms.append([compoundRot, compoundTra])
+
+        elif self.axis == self.Axis.kRho:
+            # rotation type replica
+            for v, i in zip(_np.arange(offset, offset + nreplicas * width, width), range(0, nreplicas, 1)):
+                # create a unique temporary solid and therefore logical volume
+                solid = _solid.Tubs(self.name + "_" + self.logicalVolume.solid.name + "_" + str(i),
+                                    v,
+                                    v + width,
+                                    self.logicalVolume.solid.pDz,
+                                    self.logicalVolume.solid.pSPhi,
+                                    self.logicalVolume.solid.pDPhi,
+                                    self.logicalVolume.registry,
+                                    self.logicalVolume.solid.lunit,
+                                    self.logicalVolume.solid.aunit,
+                                    self.logicalVolume.solid.nslice,
+                                    False)
+                anLV = LogicalVolume(solid,
+                                     self.logicalVolume.material,
+                                     self.logicalVolume.name + "_replica_"+str(i),
+                                     addRegistry=False)
+                rot, trans = [0, 0, 0], [0, 0, 0]
+                aPV = PhysicalVolume(rot, trans,
+                                     anLV,
+                                     self.name + "_replica_" + str(i),
+                                     self.motherVolume,
+                                     self.registry,
+                                     addRegistry=False)
+                result.append(aPV)
+                transforms.append([rot,trans])
+
+        elif self.axis == self.Axis.kPhi:
+            for v, i in zip(_np.arange(offset, offset + nreplicas * width, width), range(0, nreplicas, 1)):
+                rot, trans = [0,0,v], [0,0,0]
+                aPV = PhysicalVolume(rot, trans,
+                                     self.logicalVolume,
+                                     self.name + "_replica_" + str(i),
+                                     self.motherVolume,
+                                     self.registry,
+                                     addRegistry=False)
+                result.append(aPV)
+                transforms.append([rot, trans])
+
+        return result,transforms
+
     def __repr__(self) :
         return 'Replica volume : '+self.name+' '+str(self.axis)+' '+str(self.nreplicas)+' '+str(self.offset)+' '+str(self.width)
 

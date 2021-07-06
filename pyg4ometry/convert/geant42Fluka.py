@@ -144,8 +144,19 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     ###########################################
     # loop over daughters and remove from mother region
     ###########################################
-    for dv in physicalVolume.logicalVolume.daughterVolumes :
 
+    # check for any replica volumes - if there are, 'expand' these using temporary
+    # pvs that we can then convert
+    _daugterVolumes = physicalVolume.logicalVolume.daughterVolumes
+    _daugterVolumesExpanded = []
+    for dv in _daugterVolumes:
+        if type(dv) is _geant4.ReplicaVolume:
+            pvs,transforms = dv.getPhysicalVolumes()
+            _daugterVolumesExpanded.extend(pvs)
+        else:
+            _daugterVolumesExpanded.append(dv)
+
+    for dv in _daugterVolumesExpanded:
         # placement information for daughter
         pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
         pvtra  = _np.array(dv.position.eval())
