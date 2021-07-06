@@ -132,6 +132,10 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
         name = "R"+format(flukaNameCount, '04')
         flukaMotherOuterRegion = _fluka.Region(name)
         flukaNameCount += 1
+    else:
+        # avoid warning about flukaMotherOuterRegion being used without assignment
+        print("Type (",physicalVolume.logicalVolume.type,") cannot be converted - skipping: ",physicalVolume.name)
+        return
 
         # z = _fluka.Zone()
         # flukaMotherOuterRegion.addZone(z)
