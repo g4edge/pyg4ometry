@@ -119,9 +119,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
                                tra=_np.array([0, 0, 0]),
                                flukaRegistry=None,flukaNameCount=0) :
 
-    ###########################################
     # logical volume (outer and complete)
-    ###########################################
     if physicalVolume.logicalVolume.type == "logical" :
         geant4LvOuterSolid = physicalVolume.logicalVolume.solid
         # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
@@ -141,9 +139,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaMotherRegion.comment = physicalVolume.name
 
-    ###########################################
     # loop over daughters and remove from mother region
-    ###########################################
 
     # check for any replica volumes - if there are, 'expand' these using temporary
     # pvs that we can then convert
@@ -171,11 +167,8 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
             for motherZones in flukaMotherRegion.zones:
                 for daughterZones in flukaDaughterOuterRegion.zones:
                     motherZones.addSubtraction(daughterZones)
-
-        ###########################################
-        # If assembly the daughters form the outer
-        ###########################################
         elif physicalVolume.logicalVolume.type == "assembly" :
+            # If assembly the daughters form the outer
             for daughterZones in flukaDaughterOuterRegion.zones :
                 flukaMotherOuterRegion.addZone(daughterZones)
 
@@ -193,10 +186,6 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
         except KeyError :
             pass
 
-
-    ###########################################
-    # return
-    ###########################################
     return flukaMotherOuterRegion, flukaNameCount
 
 def geant4Solid2FlukaRegion(flukaNameCount,solid,
