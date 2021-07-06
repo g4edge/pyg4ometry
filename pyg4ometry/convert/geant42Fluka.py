@@ -61,7 +61,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
         # avoid warning about flukaMotherOuterRegion being used without assignment
         print("Type (",logicalVolume.type,") cannot be converted - skipping: ",logicalVolume.name)
         return
-    
+
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaNameCount += 1
 
@@ -126,7 +126,6 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     # logical volume (outer and complete)
     if physicalVolume.logicalVolume.type == "logical" :
         geant4LvOuterSolid = physicalVolume.logicalVolume.solid
-        # print 'g2fPhysicalVolume',physicalVolume.name, flukaName, flukaNameCount, rotation, position, scale
         flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,
                                                                      geant4LvOuterSolid,
                                                                      mtra,tra,
@@ -144,53 +143,71 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
         # z = _fluka.Zone()
         # flukaMotherOuterRegion.addZone(z)
 
-    flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
+    flukaMotherRegion = _copy.deepcopy(flukaMotherOuterRegion)
     flukaMotherRegion.comment = physicalVolume.name
 
-    # loop over daughters and remove from mother region
+    # Check if we have a replica - a replica is a special case where we have an in-effect dummy mother
+    # volume that the replica by-construction should entirely fill. Therefore, we cut out the pv shape
+    # from the parent but we don't create it itself and just place the daughters from the replica in it.
+    # A replica is detectable by there only being 1 daughter and it being a ReplicaVolume instance
+    replicaCondition1 = len(physicalVolume.logicalVolume.daughterVolumes) == 1
+    replicaCondition2 = False
+    if replicaCondition1: # can only do this if len > 0
+        replicaCondition2 = type(physicalVolume.logicalVolume.daughterVolumes[0]) is _geant4.ReplicaVolume
+    itsAReplica = replicaCondition1 and replicaCondition2
+    if itsAReplica:
+        replica = physicalVolume.logicalVolume.daughterVolumes[0]
+        # this unintentionally adds the PVs to the mother LV
+        daughterVolumes, transforms = replica.getPhysicalVolumes()
+        for dv in daughterVolumes:
+            pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
+            pvtra = _np.array(dv.position.eval())
+            new_mtra = mtra * pvmrot
+            new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+            flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv, new_mtra, new_tra,
+                                                                                  flukaRegistry=flukaRegistry,
+                                                                                  flukaNameCount=flukaNameCount)
 
-    # check for any replica volumes - if there are, 'expand' these using temporary
-    # pvs that we can then convert
-    _daugterVolumes = physicalVolume.logicalVolume.daughterVolumes
-    _daugterVolumesExpanded = []
-    for dv in _daugterVolumes:
-        if type(dv) is _geant4.ReplicaVolume:
-            pvs,transforms = dv.getPhysicalVolumes()
-            _daugterVolumesExpanded.extend(pvs)
-        else:
-            _daugterVolumesExpanded.append(dv)
-
-    for dv in _daugterVolumesExpanded:
-        # placement information for daughter
-        pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
-        pvtra  = _np.array(dv.position.eval())
-
-        new_mtra = mtra * pvmrot
-        new_tra  = (_np.array(mtra.dot(pvtra)) + tra)[0]
-
-        flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,
-                                                                              flukaRegistry=flukaRegistry,
-                                                                              flukaNameCount=flukaNameCount)
-        if physicalVolume.logicalVolume.type == "logical" :
-            for motherZones in flukaMotherRegion.zones:
-                for daughterZones in flukaDaughterOuterRegion.zones:
-                    motherZones.addSubtraction(daughterZones)
-        elif physicalVolume.logicalVolume.type == "assembly" :
-            # If assembly the daughters form the outer
-            for daughterZones in flukaDaughterOuterRegion.zones :
-                flukaMotherOuterRegion.addZone(daughterZones)
-
-    if physicalVolume.logicalVolume.type == "logical" :
-        flukaRegistry.addRegion(flukaMotherRegion)
-        materialName = physicalVolume.logicalVolume.material.name
+        materialName = daughterVolumes[0].logicalVolume.material.name
         materialNameShort = makeShortName(materialName)
 
-        try :
+        try:
             flukaMaterial = flukaRegistry.materials[materialNameShort]
-            flukaRegistry.addMaterialAssignments(flukaMaterial,
-                                                 flukaMotherRegion)
-        except KeyError :
+            flukaRegistry.addMaterialAssignments(flukaMaterial, flukaMotherRegion)
+        except KeyError:
             pass
+    else:
+        # loop over daughters and remove from mother region
+        for dv in physicalVolume.logicalVolume.daughterVolumes:
+            # placement information for daughter
+            pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
+            pvtra  = _np.array(dv.position.eval())
+
+            new_mtra = mtra * pvmrot
+            new_tra  = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+            flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,
+                                                                                  flukaRegistry=flukaRegistry,
+                                                                                  flukaNameCount=flukaNameCount)
+            if physicalVolume.logicalVolume.type == "logical" :
+                for motherZones in flukaMotherRegion.zones:
+                    for daughterZones in flukaDaughterOuterRegion.zones:
+                        motherZones.addSubtraction(daughterZones)
+            elif physicalVolume.logicalVolume.type == "assembly" :
+                # If assembly the daughters form the outer
+                for daughterZones in flukaDaughterOuterRegion.zones :
+                    flukaMotherOuterRegion.addZone(daughterZones)
+
+        if physicalVolume.logicalVolume.type == "logical" :
+            flukaRegistry.addRegion(flukaMotherRegion)
+            materialName = physicalVolume.logicalVolume.material.name
+            materialNameShort = makeShortName(materialName)
+
+            try:
+                flukaMaterial = flukaRegistry.materials[materialNameShort]
+                flukaRegistry.addMaterialAssignments(flukaMaterial, flukaMotherRegion)
+            except KeyError :
+                pass
 
     return flukaMotherOuterRegion, flukaNameCount
 
