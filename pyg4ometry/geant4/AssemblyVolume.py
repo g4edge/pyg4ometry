@@ -32,8 +32,8 @@ class AssemblyVolume(object) :
 
     def add(self, physicalVolume) :
         self.daughterVolumes.append(physicalVolume)
-        
-    def checkOverlaps(self, recursive = False, coplanar = True, debugIO = True) : # TODO implement overlaps for assembly volumes
+
+    def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
         print("OVERLAPS NOT CHECKED FOR ASSEMBLIES")
         pass
 
