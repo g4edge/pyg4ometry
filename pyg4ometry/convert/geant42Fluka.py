@@ -57,7 +57,11 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
         b = _geant4.solid.Box("ra",1.1*(e[1][0]-e[0][0]), 1.1*(e[1][1]-e[0][1]), 1.1*(e[1][2]-e[0][2]),logicalVolume.registry,"mm", False)
         flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,b,mtra,tra,
                                                                          flukaRegistry, commentName=logicalVolume.name)
-
+    else:
+        # avoid warning about flukaMotherOuterRegion being used without assignment
+        print("Type (",logicalVolume.type,") cannot be converted - skipping: ",logicalVolume.name)
+        return
+    
     flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
     flukaNameCount += 1
 
