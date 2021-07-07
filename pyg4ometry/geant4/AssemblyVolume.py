@@ -31,6 +31,56 @@ class AssemblyVolume(object) :
     def add(self, physicalVolume) :
         self.daughterVolumes.append(physicalVolume)
 
+    def _getDaughterMeshes(self):
+        """
+        Get daughter meshes for overlap checking.
+        return [daughterMesh,..],[daughterBoundingMesh,..][daughterName,...]
+        """
+        transformedMeshes = []
+        transformedBoundingMeshes = []
+        transformedMeshesNames = []
+        for pv in self.daughterVolumes:
+            # daughter could be one LV or could in turn be another assembly - either use a list
+            m,bm,nm = [],[],[]
+            dlv = pv.logicalVolume
+            if type(dlv) is AssemblyVolume:
+                m,bm,nm = dlv._getDaughterMeshes()
+            else:
+                # assume type is LogicalVolume
+                m  = [dlv.mesh.localmesh.clone()]
+                bm = [dlv.mesh.localboundingmesh.clone()]
+                nm = [self.name + "_" + pv.name]
+
+            aa = _trans.tbxyz2axisangle(pv.rotation.eval())
+            s = None
+            if pv.scale:
+                s = pv.scale.eval()
+            t = pv.position.eval()
+            for mesh, boundingmesh, name in zip(m, bm, nm):
+                # rotate
+                mesh.rotate(aa[0], _trans.rad2deg(aa[1]))
+                boundingmesh.rotate(aa[0], _trans.rad2deg(aa[1]))
+
+                # scale
+                if s:
+                    mesh.scale(s)
+                    boundingmesh.scale(s)
+
+                    if s[0] * s[1] * s[2] == 1:
+                        pass
+                    elif s[0] * s[1] * s[2] == -1:
+                        mesh = mesh.inverse()
+                        boundingmesh.inverse()
+
+                # translate
+                mesh.translate(t)
+                boundingmesh.translate(t)
+
+                transformedMeshes.append(mesh)
+                transformedBoundingMeshes.append(boundingmesh)
+                transformedMeshesNames.append(name)
+
+        return transformedMeshes, transformedBoundingMeshes, transformedMeshesNames
 
     def extent(self, includeBoundingSolid=True) :
         _log.info('AssemblyVolume.extent> %s ' % (self.name))
