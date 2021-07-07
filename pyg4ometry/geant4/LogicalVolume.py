@@ -181,7 +181,7 @@ class LogicalVolume(object):
         """
         from pyg4ometry.geant4 import IsAReplica as _IsAReplica
         if printOut:
-            print("LogicalVolume.checkOverlaps>")
+            print("LogicalVolume.checkOverlaps> ",self.name)
 
         # return if overlaps already checked
         if self.overlapChecked:
@@ -244,15 +244,16 @@ class LogicalVolume(object):
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
                 if debugIO :
-                    print(f"LogicalVolume.checkOverlaps> full daughter-daughter intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
+                    print(f"LogicalVolume.checkOverlaps> daughter-daughter bounding mesh intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
                 # first check if bounding mesh intersects
                 cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
                 if cullIntersection.vertexCount() == 0 :
                     continue
 
+                # bounding meshes collide, so check full mesh properly
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
-                _log.info('LogicalVolume.checkOverlaps> full inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
+                _log.info('LogicalVolume.checkOverlaps> full daughter-daughter intersection test: %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
                     print(f"\033[1mOVERLAP DETECTED> overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {interMesh.vertexCount()}")
@@ -279,7 +280,7 @@ class LogicalVolume(object):
                         print(f"\033[1mOVERLAP DETECTED> coplanar overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {coplanarMesh.vertexCount()}")
                         self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
-        # Protude from mother solid
+        # protrusion from mother solid
         for i in range(0,len(transformedMeshes)) :
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
