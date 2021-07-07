@@ -179,6 +179,7 @@ class LogicalVolume(object):
         :param printOut: bool - Whether to print out a summary of N overlaps detected
         :param nOverlapsDetected: [int] - internal use only for recursion - ignore
         """
+        from pyg4ometry.geant4 import IsAReplica as _IsAReplica
         if printOut:
             print("LogicalVolume.checkOverlaps>")
 
@@ -186,6 +187,11 @@ class LogicalVolume(object):
         if self.overlapChecked:
             if debugIO:
                 print("Overlaps already checked - skipping")
+            return
+
+        if _IsAReplica(self):
+            self.daughterVolumes[0]._checkInternalOverlaps(debugIO)
+            self.overlapChecked = True
             return
 
         # local meshes

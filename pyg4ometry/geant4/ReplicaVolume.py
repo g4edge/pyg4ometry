@@ -58,6 +58,14 @@ class ReplicaVolume(_PhysicalVolume) :
         # Create replica meshes
         [self.meshes,self.transforms] = self.createReplicaMeshes()
 
+    def _checkInternalOverlaps(self, debugIO=False):
+        """
+        Check if there are overlaps with the nominal mother volume. ie it possible to provide
+        an incorrect mother volume / logical volume and parameterisation.
+        """
+        # TBC
+        pass
+
     def createReplicaMeshes(self) :
 
         import pyg4ometry.gdml.Units as _Units
@@ -117,6 +125,9 @@ class ReplicaVolume(_PhysicalVolume) :
         """
         return a list of temporary (ie not added to the relevant registry) PhysicalVolume instances
         with appropriate transforms including any daughter ReplicaVolumes.
+
+        The exception is for kRho axis where new unique solids and logical volumes are required.
+        Therefore, these are added to the registry and inadvertently to the mother LV as PVS.
         """
         result = []
         transforms = []
