@@ -1,6 +1,7 @@
 from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
 import pyg4ometry.geant4.solid as _solid
-from   pyg4ometry.visualisation  import Mesh as _Mesh
+from   pyg4ometry.visualisation import Mesh as _Mesh
+from   pyg4ometry.visualisation import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 import pyg4ometry.transformation as _trans
 
@@ -8,7 +9,7 @@ import numpy as _np
 import copy as _copy
 import logging as _log
 
-class ReplicaVolume(_PhysicalVolume) :
+class ReplicaVolume(_PhysicalVolume):
     '''
     ReplicaVolume: G4PVReplica
 
@@ -58,13 +59,30 @@ class ReplicaVolume(_PhysicalVolume) :
         # Create replica meshes
         [self.meshes,self.transforms] = self.createReplicaMeshes()
 
-    def _checkInternalOverlaps(self, debugIO=False):
+    def _checkInternalOverlaps(self, debugIO=False, nOverlapsDetected=[0]):
         """
         Check if there are overlaps with the nominal mother volume. ie it possible to provide
         an incorrect mother volume / logical volume and parameterisation.
         """
-        # TBC
-        pass
+        # protrusion from mother solid
+        tempMeshes = [m.localboundingmesh.clone() for m in self.meshes]
+        for i in range(0, len(tempMeshes)):
+            if debugIO:
+                print(f"ReplicaVolume.checkOverlaps> full daughter-mother intersection test {self.meshes[i]}")
+
+            rot,tra = self.transforms[i]
+            aa = _trans.tbxyz2axisangle(rot)
+            tempMeshes[i].rotate(aa[0], _trans.rad2deg(aa[1]))
+            tempMeshes[i].translate(tra)
+
+            interMesh = tempMeshes[i].subtract(self.motherVolume.mesh.localboundingmesh)
+            _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (
+            i, interMesh.vertexCount(), interMesh.polygonCount()))
+
+            if interMesh.vertexCount() != 0:
+                nOverlapsDetected[0] += 1
+                print(f"\033[1mOVERLAP DETECTED> overlap with mother \033[0m {tempMeshes[i]} {interMesh.vertexCount()}")
+                self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.protrusion])
 
     def createReplicaMeshes(self) :
 

@@ -190,7 +190,7 @@ class LogicalVolume(object):
             return
 
         if _IsAReplica(self):
-            self.daughterVolumes[0]._checkInternalOverlaps(debugIO)
+            self.daughterVolumes[0]._checkInternalOverlaps(debugIO, nOverlapsDetected)
             self.overlapChecked = True
             return
 
@@ -202,7 +202,9 @@ class LogicalVolume(object):
         # transform meshes (and bounding meshes) into logical volume frame
         for pv in self.daughterVolumes:
             # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement" :
+            # but at least their mother will be checked for collisions with other ones at the same level
+            # in the case of say replicas
+            if  pv.type != "placement":
                 continue
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
 
@@ -250,7 +252,6 @@ class LogicalVolume(object):
                 transformedMeshesNames.append(name)
 
         # overlap daughter pv checks
-        # print "LogicalVolume.checkOverlaps> daughter overlaps"
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
                 if debugIO :
