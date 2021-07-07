@@ -45,6 +45,7 @@ class AssemblyVolume(object) :
             dlv = pv.logicalVolume
             if type(dlv) is AssemblyVolume:
                 m,bm,nm = dlv._getDaughterMeshes()
+                nm = [self.name + "_" + pv.name + "_" + n for n in nm]
             else:
                 # assume type is LogicalVolume
                 m  = [dlv.mesh.localmesh.clone()]

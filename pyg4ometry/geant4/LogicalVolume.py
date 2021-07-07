@@ -211,8 +211,9 @@ class LogicalVolume(object):
             tempMeshes         = []
             tempBoundingMeshes = []
             tempMeshesNames    = []
-            if  pv.logicalVolume.type == "assembly" :
+            if  pv.logicalVolume.type == "assembly":
                 tempMeshes,tempBoundingMeshes,tempMeshesNames = pv.logicalVolume._getDaughterMeshes()
+                tempMeshesNames = [pv.name+"_"+name for name in tempMeshesNames]
             else:
                 # must be of type LogicalVolume
                 tempMeshes         = [pv.logicalVolume.mesh.localmesh.clone()]
@@ -265,7 +266,7 @@ class LogicalVolume(object):
                 _log.info('LogicalVolume.checkOverlaps> full daughter-daughter intersection test: %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
-                    print(f"\033[1mOVERLAP DETECTED> overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {interMesh.vertexCount()}")
+                    print(f"\033[1mOVERLAP DETECTED> overlap between daughters of {self.name} \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {interMesh.vertexCount()}")
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
         # coplanar daughter pv checks
