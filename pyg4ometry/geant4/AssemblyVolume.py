@@ -1,6 +1,6 @@
-import pyg4ometry.transformation as                 _trans
+import pyg4ometry.transformation as _trans
+from   pyg4ometry.visualisation import OverlapType as _OverlapType
 
-import numpy   as   _np
 import logging as   _log
 
 class AssemblyVolume(object) : 
@@ -16,16 +16,14 @@ class AssemblyVolume(object) :
 
     def __init__(self, name, registry=None, addRegistry=True) :
         super(AssemblyVolume, self).__init__()
-
-        # type 
         self.type            = "assembly"
-        
         self.name            = name 
         self.daughterVolumes = []
-
         self.registry = registry
         if addRegistry :
-            registry.addLogicalVolume(self)                    
+            registry.addLogicalVolume(self)
+
+        self.overlapChecked = False
             
     def __repr__(self):
         return 'Logical volume : '+self.name

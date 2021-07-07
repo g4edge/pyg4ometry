@@ -1,4 +1,5 @@
-"""Geant4 classes. The classes mainly match those of Geant4
+"""
+Geant4 classes. The classes mainly match those of Geant4
 """
 
 from .LogicalVolume import *
