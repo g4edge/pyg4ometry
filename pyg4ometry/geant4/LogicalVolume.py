@@ -204,40 +204,49 @@ class LogicalVolume(object):
             # cannot currently deal with replica, division and parametrised
             if  pv.type != "placement" :
                 continue
-
-            # cannot currently deal with assembly
-            if  pv.logicalVolume.type == "assembly" :
-                continue
-
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
-            mesh = pv.logicalVolume.mesh.localmesh.clone()
-            boundingmesh = pv.logicalVolume.mesh.localboundingmesh.clone()
 
-            # rotate 
+            # an assembly will generate more than one mesh, but a regular LV just one - in either case
+            # use a list of meshes for applying transforms into this LV frame
+            tempMeshes         = []
+            tempBoundingMeshes = []
+            tempMeshesNames    = []
+            if  pv.logicalVolume.type == "assembly" :
+                tempMeshes,tempBoundingMeshes,tempMeshesNames = pv.logicalVolume._getDaughterMeshes()
+            else:
+                # must be of type LogicalVolume
+                tempMeshes         = [pv.logicalVolume.mesh.localmesh.clone()]
+                tempBoundingMeshes = [pv.logicalVolume.mesh.localboundingmesh.clone()]
+                tempMeshesNames    = [pv.name]
+
             aa = _trans.tbxyz2axisangle(pv.rotation.eval())
-            mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-            boundingmesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-
-            # scale
-            if pv.scale :
+            s = None
+            if pv.scale:
                 s = pv.scale.eval()
-                mesh.scale(s)
-                boundingmesh.scale(s)
-
-                if s[0]*s[1]*s[2] == 1 :
-                    pass
-                elif s[0]*s[1]*s[2] == -1 :
-                    mesh = mesh.inverse()
-                    boundingmesh.inverse()
-
-            # translate
             t = pv.position.eval()
-            mesh.translate(t)
-            boundingmesh.translate(t)
+            for mesh, boundingmesh, name in zip(tempMeshes, tempBoundingMeshes, tempMeshesNames):
+                # rotate
+                mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+                boundingmesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+
+                # scale
+                if s :
+                    mesh.scale(s)
+                    boundingmesh.scale(s)
+
+                    if s[0]*s[1]*s[2] == 1 :
+                        pass
+                    elif s[0]*s[1]*s[2] == -1 :
+                        mesh = mesh.inverse()
+                        boundingmesh.inverse()
+
+                # translate
+                mesh.translate(t)
+                boundingmesh.translate(t)
             
-            transformedMeshes.append(mesh)
-            transformedBoundingMeshes.append(boundingmesh)
-            transformedMeshesNames.append(pv.name)
+                transformedMeshes.append(mesh)
+                transformedBoundingMeshes.append(boundingmesh)
+                transformedMeshesNames.append(name)
 
         # overlap daughter pv checks
         # print "LogicalVolume.checkOverlaps> daughter overlaps"
