@@ -848,13 +848,13 @@ class VtkViewer:
     def getOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
         if overlaptype == _OverlapType.protrusion:
-            visOptions.color = [1, 0, 0]
+            visOptions.colour = [1, 0, 0]
             visOptions.alpha = 1.0
         elif overlaptype == _OverlapType.overlap:
-            visOptions.color = [0, 1, 0]
+            visOptions.colour = [0, 1, 0]
             visOptions.alpha = 1.0
         elif overlaptype == _OverlapType.coplanar:
-            visOptions.color = [0, 0, 1]
+            visOptions.colour = [0, 0, 1]
             visOptions.alpha = 1.0
 
         return visOptions
