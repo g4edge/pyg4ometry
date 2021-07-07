@@ -176,8 +176,8 @@ class LogicalVolume(object):
         :param recursive: bool - Whether to descend into the daughter volumes and check their contents also.
         :param coplanar: bool - Whether to check for coplanar overlaps
         :param debugIO: bool - Print out for every check made
-        :param printOut: bool - Whether to print out a summary of N overlaps detected
-        :param nOverlapsDetected: [int] - internal use only for recursion - ignore
+        :param printOut: bool - (internal) Whether to print out a summary of N overlaps detected
+        :param nOverlapsDetected: [int] - (internal) counter for recursion - ignore
         """
         from pyg4ometry.geant4 import IsAReplica as _IsAReplica
         if printOut:
