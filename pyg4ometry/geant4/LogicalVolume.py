@@ -318,6 +318,8 @@ class LogicalVolume(object):
         # recursively check entire tree
         if recursive :
             for d in self.daughterVolumes:
+                if type(d) is _pyg4ometry.geant4.AssemblyVolume:
+                    continue # no specific overlap check - handled by the PV of an assembly
                 # don't make any summary print out for a recursive call
                 d.logicalVolume.checkOverlaps(recursive = recursive,
                                               coplanar  = coplanar,
