@@ -5,6 +5,7 @@ from . import exceptions
 from . import fluka
 from . import freecad
 from . import gdml
+from . import io
 from . import geant4
 from . import pycgal
 #try:
