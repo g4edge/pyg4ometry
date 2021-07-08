@@ -176,16 +176,22 @@ class LogicalVolume(object):
         :param recursive: bool - Whether to descend into the daughter volumes and check their contents also.
         :param coplanar: bool - Whether to check for coplanar overlaps
         :param debugIO: bool - Print out for every check made
-        :param printOut: bool - Whether to print out a summary of N overlaps detected
-        :param nOverlapsDetected: [int] - internal use only for recursion - ignore
+        :param printOut: bool - (internal) Whether to print out a summary of N overlaps detected
+        :param nOverlapsDetected: [int] - (internal) counter for recursion - ignore
         """
+        from pyg4ometry.geant4 import IsAReplica as _IsAReplica
         if printOut:
-            print("LogicalVolume.checkOverlaps>")
+            print("LogicalVolume.checkOverlaps> ",self.name)
 
         # return if overlaps already checked
         if self.overlapChecked:
             if debugIO:
                 print("Overlaps already checked - skipping")
+            return
+
+        if _IsAReplica(self):
+            self.daughterVolumes[0]._checkInternalOverlaps(debugIO, nOverlapsDetected)
+            self.overlapChecked = True
             return
 
         # local meshes
@@ -196,60 +202,72 @@ class LogicalVolume(object):
         # transform meshes (and bounding meshes) into logical volume frame
         for pv in self.daughterVolumes:
             # cannot currently deal with replica, division and parametrised
-            if  pv.type != "placement" :
+            # but at least their mother will be checked for collisions with other ones at the same level
+            # in the case of say replicas
+            if  pv.type != "placement":
                 continue
-
-            # cannot currently deal with assembly
-            if  pv.logicalVolume.type == "assembly" :
-                continue
-
             _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
-            mesh = pv.logicalVolume.mesh.localmesh.clone()
-            boundingmesh = pv.logicalVolume.mesh.localboundingmesh.clone()
 
-            # rotate 
+            # an assembly will generate more than one mesh, but a regular LV just one - in either case
+            # use a list of meshes for applying transforms into this LV frame
+            tempMeshes         = []
+            tempBoundingMeshes = []
+            tempMeshesNames    = []
+            if  pv.logicalVolume.type == "assembly":
+                tempMeshes,tempBoundingMeshes,tempMeshesNames = pv.logicalVolume._getDaughterMeshes()
+                tempMeshesNames = [pv.name+"_"+name for name in tempMeshesNames]
+            else:
+                # must be of type LogicalVolume
+                tempMeshes         = [pv.logicalVolume.mesh.localmesh.clone()]
+                tempBoundingMeshes = [pv.logicalVolume.mesh.localboundingmesh.clone()]
+                tempMeshesNames    = [pv.name]
+
             aa = _trans.tbxyz2axisangle(pv.rotation.eval())
-            mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-            boundingmesh.rotate(aa[0],_trans.rad2deg(aa[1]))
-
-            # scale
-            if pv.scale :
+            s = None
+            if pv.scale:
                 s = pv.scale.eval()
-                mesh.scale(s)
-                boundingmesh.scale(s)
-
-                if s[0]*s[1]*s[2] == 1 :
-                    pass
-                elif s[0]*s[1]*s[2] == -1 :
-                    mesh = mesh.inverse()
-                    boundingmesh.inverse()
-
-            # translate
             t = pv.position.eval()
-            mesh.translate(t)
-            boundingmesh.translate(t)
+            for mesh, boundingmesh, name in zip(tempMeshes, tempBoundingMeshes, tempMeshesNames):
+                # rotate
+                mesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+                boundingmesh.rotate(aa[0],_trans.rad2deg(aa[1]))
+
+                # scale
+                if s :
+                    mesh.scale(s)
+                    boundingmesh.scale(s)
+
+                    if s[0]*s[1]*s[2] == 1 :
+                        pass
+                    elif s[0]*s[1]*s[2] == -1 :
+                        mesh = mesh.inverse()
+                        boundingmesh.inverse()
+
+                # translate
+                mesh.translate(t)
+                boundingmesh.translate(t)
             
-            transformedMeshes.append(mesh)
-            transformedBoundingMeshes.append(boundingmesh)
-            transformedMeshesNames.append(pv.name)
+                transformedMeshes.append(mesh)
+                transformedBoundingMeshes.append(boundingmesh)
+                transformedMeshesNames.append(name)
 
         # overlap daughter pv checks
-        # print "LogicalVolume.checkOverlaps> daughter overlaps"
         for i in range(0,len(transformedMeshes)) : 
             for j in range(i+1,len(transformedMeshes)) :
                 if debugIO :
-                    print(f"LogicalVolume.checkOverlaps> full daughter-daughter intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
+                    print(f"LogicalVolume.checkOverlaps> daughter-daughter bounding mesh intersection test: {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
                 # first check if bounding mesh intersects
                 cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
                 if cullIntersection.vertexCount() == 0 :
                     continue
 
+                # bounding meshes collide, so check full mesh properly
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
-                _log.info('LogicalVolume.checkOverlaps> full inter daughter %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
+                _log.info('LogicalVolume.checkOverlaps> full daughter-daughter intersection test: %d %d %d %d' % (i,j, interMesh.vertexCount(), interMesh.polygonCount()))
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
-                    print(f"\033[1mOVERLAP DETECTED> overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {interMesh.vertexCount()}")
+                    print(f"\033[1mOVERLAP DETECTED> overlap between daughters of {self.name} \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {interMesh.vertexCount()}")
                     self.mesh.addOverlapMesh([interMesh,_OverlapType.overlap])
 
         # coplanar daughter pv checks
@@ -273,7 +291,7 @@ class LogicalVolume(object):
                         print(f"\033[1mOVERLAP DETECTED> coplanar overlap between daughters \033[0m {transformedMeshesNames[i]} {transformedMeshesNames[j]} {coplanarMesh.vertexCount()}")
                         self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
-        # Protude from mother solid
+        # protrusion from mother solid
         for i in range(0,len(transformedMeshes)) :
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
@@ -311,6 +329,8 @@ class LogicalVolume(object):
         # recursively check entire tree
         if recursive :
             for d in self.daughterVolumes:
+                if type(d.logicalVolume) is _pyg4ometry.geant4.AssemblyVolume:
+                    continue # no specific overlap check - handled by the PV of an assembly
                 # don't make any summary print out for a recursive call
                 d.logicalVolume.checkOverlaps(recursive = recursive,
                                               coplanar  = coplanar,

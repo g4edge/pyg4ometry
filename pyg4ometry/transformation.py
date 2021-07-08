@@ -76,16 +76,12 @@ def axisangle2matrix(axis, angle):
 def matrix2tbxyz(matrix):
     """
     Convert rotation matrix to Tait-Bryan angles.
-
     Order of rotation is x -> y -> z.
 
-    Parameters
-    ----------
-
-    matrix : active (positive angle = anti-clockwise rotation about
+    :param matrix: active (positive angle = anti-clockwise rotation about
     that axis when looking at the axis) matrix.
 
-    Returns:  [x, y, z] Tait-Bryan angles in a list.
+    returns: [x, y, z] Tait-Bryan angles in a list.
     """
 
     a_11 = matrix[0,0]
@@ -121,12 +117,10 @@ def axisangle2tbxyz(axis, angle):
 
 def tbxyz2matrix(angles):
     """
-    convert tait bryan angles to a single passive rotation matrix.
+    Convert tait bryan angles to a single passive rotation matrix.
     rotation order = x -> y -> z.
-
-    parameters
-    ----------
-    angles : list of angles:  x, y, z
+    
+    :param angles: list of angles:  x, y, z
 
     returns: rotation matrix
     """
@@ -156,12 +150,10 @@ def tbxyz2matrix(angles):
 
 def tbzyx2matrix(angles):
     """
-    convert tait bryan angles to a single passive rotation matrix.
+    Convert tait bryan angles to a single passive rotation matrix.
     rotation order = x -> y -> z.
-
-    parameters
-    ----------
-    angles : list of angles:  x, y, z
+    
+    :param angles: list of angles:  x, y, z
 
     returns: rotation matrix
     """
