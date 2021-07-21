@@ -558,7 +558,9 @@ def AnalyseGeometryComplexity(logicalVolume):
     return result
 
 def _UpdateComplexity(lv, info):
-    info.solids[lv.solid.type] += 1
+    if lv.type != "assembly" :
+        info.solids[lv.solid.type] += 1
+
     info.nDaughters[lv.name] = len(lv.daughterVolumes)
     info.nDaughtersPerLV[len(lv.daughterVolumes)] +=1
 
@@ -571,7 +573,7 @@ def _UpdateComplexity(lv, info):
                 number = _CountDaughterBooleanSolids(solid, number)
         return number           
 
-    if lv.solid.type in booleanTypes:
+    if lv.type != "assembly" and lv.solid.type in booleanTypes:
         nBooleans = 1
         nBooleans = _CountDaughterBooleanSolids(lv.solid, nBooleans)
         info.booleanDepthCount[nBooleans] += 1
