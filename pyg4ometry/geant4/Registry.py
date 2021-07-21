@@ -20,7 +20,7 @@ class Registry:
     All of the pyg4ometry classes can be used without \
     storing them in the Registry. The registry is used \
     to write the GDML output file. A registry needs to \
-    be used in conjunction with gdml Define objects for \
+    be used in conjunction with GDML Define objects for \
     evaluation of expressions.
     """
 
@@ -211,7 +211,7 @@ class Registry:
 
     def addDefine(self, define, namePolicy = "none") :
         """
-        :param define: Defintion object for starage 
+        :param define: Definition object for storage
         :type define: Constant, Quantity, Variable, Matrix
         """
 
