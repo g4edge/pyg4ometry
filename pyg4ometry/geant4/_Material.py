@@ -135,8 +135,8 @@ def nist_material_2geant4Material(name, reg=None):
 
 def MaterialPredefined(name, registry=None):
     """
-    Proxy method to construct a NIST compund material - this is just a handle as nothing
-    needs to be additionaly defined for a NIST compund. A check is perfored on the name
+    Proxy method to construct a NIST compound material - this is just a handle as nothing
+    needs to be additionally defined for a NIST compound. A check is performed on the name
     to ensure it is a valid NIST specifier.
 
     Inputs:
@@ -412,7 +412,7 @@ class Element(MaterialBase):
     """
     This class provides an interface to GDML material definitions. Because of the different options
     for constructing a material instance the constructor is kwarg only.
-    Proxy methods are prodived to instantiate particular types of material. Those proxy methods are:
+    Proxy methods are provided to instantiate particular types of material. Those proxy methods are:
 
     ElementSimple
     ElementIsotopeMixture

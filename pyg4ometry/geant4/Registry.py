@@ -70,7 +70,7 @@ class Registry:
 
     def addMaterial(self, material, namePolicy = "reuse"):
         """
-        :param material: Material object for starage 
+        :param material: Material object for storage
         :type material: Material
         """        
 
@@ -91,7 +91,7 @@ class Registry:
 
     def addSolid(self, solid, namePolicy="none"):
         """
-        :param solid: Solid object for starage 
+        :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
 
@@ -116,7 +116,7 @@ class Registry:
 
     def addLogicalVolume(self,volume, namePolicy = "none"):
         """
-        :param volume: LogicalVolume object for starage 
+        :param volume: LogicalVolume object for storage
         :type volume: LogicalVolume
         """
 
@@ -142,7 +142,7 @@ class Registry:
 
     def addPhysicalVolume(self,volume, namePolicy = "increment"):
         """
-        :param volume: PhysicalVolume object for starage 
+        :param volume: PhysicalVolume object for storage
         :type volume: PhysicalVolume
         """
 
