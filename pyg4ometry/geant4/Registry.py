@@ -76,18 +76,29 @@ class Registry:
 
         if material.name in self.materialDict:
             if namePolicy == "none":
-                if material.name.find("G4") != -1 :
+                if material.type == "nist" :
                     return
                 raise _exceptions.IdenticalNameError(material.name, "material")
             elif namePolicy == "reuse" :
                 return
-            elif namePolicy == "increment" :
+            elif namePolicy == "increment" and material.type != "nist" :
                 self.materialNameCount[material.name] += 1
                 material.name = material.name + "_" + str(self.materialNameCount[material.name])
                 self.materialDict[material.name] = material
+
+                for component in material.components:
+                    self.addMaterial(component[0], namePolicy)
         else :
             self.materialDict[material.name] = material
             self.materialNameCount[material.name] = 0
+
+            try :
+                for component in material.components:
+                    self.addMaterial(component[0], namePolicy)
+            except AttributeError :
+                # think this is a simple element need to check TODO
+                pass
+
 
     def addSolid(self, solid, namePolicy="none"):
         """
