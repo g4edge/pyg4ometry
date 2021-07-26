@@ -357,7 +357,8 @@ class Registry:
 
             # add members from logical volume
             self.addLogicalVolume(volume,namePolicy)
-
+        else :
+            print("Volume type not supported yet for merging")
 
     def transferSolidDefines(self, solid, namePolicy):       # TODO make this work for all classes (using update variables method)
 
