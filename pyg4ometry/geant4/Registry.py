@@ -336,7 +336,7 @@ class Registry:
             # add members from logical volume
             self.transferSolidDefines(volume.solid, namePolicy)
             self.addSolid(volume.solid,namePolicy)
-            self.addMaterial(volume.material,"reuse")
+            self.addMaterial(volume.material, namePolicy)
             self.addLogicalVolume(volume,namePolicy)
 
         elif isinstance(volume, _AssemblyVolume) :
@@ -413,7 +413,7 @@ class Registry:
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
             if var.name in self._registryOld.defineDict:
-                var.name = self.addDefine(var,"reuse")
+                var.name = self.addDefine(var,namePolicy)
             var.setRegistry(self)
         # If a normal expression
         else :
@@ -422,7 +422,7 @@ class Registry:
                     self.transferDefines(self._registryOld.defineDict[v], namePolicy)
 
             if var.name in self._registryOld.defineDict:    # check if variable is stored in registry, if so need to be transferred
-                var.name = self.addDefine(var, "reuse")           # probably best to reuse here
+                var.name = self.addDefine(var, namePolicy)           # probably best to reuse here
             var.setRegistry(self)
 
     def volumeTree(self, lvName):
