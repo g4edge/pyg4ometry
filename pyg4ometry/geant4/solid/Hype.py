@@ -93,7 +93,7 @@ class Hype(_SolidBase):
         outerRadius = self.evaluateParameter(self.outerRadius)*luval
         innerStereo = self.evaluateParameter(self.innerStereo)*auval
         outerStereo = self.evaluateParameter(self.outerStereo)*auval
-        LenZ = self.evaluateParameter(self.lenZ)
+        LenZ = self.evaluateParameter(self.lenZ)*luval
         halfLenZ    = self.evaluateParameter(self.lenZ)/2.0*luval
 
         _log.info('hype.pycsgmesh> mesh')
