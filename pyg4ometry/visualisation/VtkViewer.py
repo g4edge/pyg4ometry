@@ -351,7 +351,7 @@ class VtkViewer:
         if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection" :
 
             if first:
-                mesh = solid.pycsgmesh()
+                mesh = solid.mesh()
                 visOptions = _VisOptions()
                 visOptions.representation = "surface"
                 visOptions.alpha = 1.0
@@ -374,7 +374,7 @@ class VtkViewer:
             self.addBooleanSolidRecursive(obj1, mtra, tra, first)
             self.addBooleanSolidRecursive(obj2, new_mtra, new_tra, first)
         else :
-            mesh = solid.pycsgmesh()
+            mesh = solid.mesh()
             visOptions = _VisOptions()
             visOptions.representation = "wireframe"
             visOptions.alpha = 0.5
