@@ -433,7 +433,7 @@ class VtkViewer:
                 new_mtra = mtra * pvmsca * pvmrot
                 new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                if pv.logicalVolume.type != "assembly" :
+                if pv.logicalVolume.type != "assembly" and pv.logicalVolume.mesh is not None :
                     mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
                     # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 

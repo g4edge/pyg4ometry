@@ -79,7 +79,11 @@ class LogicalVolume(object):
         self.bdsimObjects    = []
 
         # geometry mesh
-        self.mesh            = _Mesh(self.solid)
+        try :
+            self.mesh            = _Mesh(self.solid)
+        except :
+            self.mesh           = None
+            print("geant4.LogicalVolume> meshing error {}".format(self.name))
 
         self.auxiliary       = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
