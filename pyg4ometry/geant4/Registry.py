@@ -14,7 +14,6 @@ def solidName(var):
 
 
 class Registry:
-
     """
     Object to store geometry for input and output. \
     All of the pyg4ometry classes can be used without \
@@ -23,7 +22,6 @@ class Registry:
     be used in conjunction with GDML Define objects for \
     evaluation of expressions.
     """
-
     def __init__(self):
         self.materialList = []
         self.defineDict                   = _OrderedDict()
@@ -345,8 +343,9 @@ class Registry:
                 self.orderLogicalVolumes(dlvName,False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, namePolicy="increment", incrementRenameDict={}):
-
+    def addVolumeRecursive(self, volume, namePolicy="increment", incrementRenameDict=None):
+        if incrementRenameDict is None:
+            incrementRenameDict = {}
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
