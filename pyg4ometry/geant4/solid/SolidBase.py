@@ -43,6 +43,7 @@ class SolidBase(object):
 
     @name.setter
     def name(self, name):
+        '''
         non_alphanum = set([c for c in name if not c.isalnum()])
         non_alphanum = non_alphanum.difference('_')  # underscores are # OK.
         non_alphanum = non_alphanum.difference('.')  #
@@ -55,6 +56,7 @@ class SolidBase(object):
             msg = \
                 'First char of name "{}" must be a letter.'.format(name)
             raise ValueError(msg)
+        '''
         self._name = name
 
     #def mesh(self):
