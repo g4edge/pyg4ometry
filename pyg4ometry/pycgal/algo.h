@@ -129,8 +129,6 @@ class SurfaceMesh {
   SurfaceMesh(std::string &fileName);
   ~SurfaceMesh();
 
-  void write(std::string fileName);
-
   std::size_t add_vertex(double x, double y, double z);
   std::size_t add_face(std::size_t i, std::size_t j, std::size_t k);
   std::size_t add_face(std::size_t i, std::size_t j, std::size_t k, std::size_t l);
@@ -148,11 +146,10 @@ class SurfaceMesh {
   bool         is_valid();
   bool         is_outward_oriented();
   bool         is_closed();
-  bool         is_triangle_mesh();
   bool         does_self_intersect();
   bool         does_bound_a_volume();
   void         triangulate_faces();
-  void         isotropic_remeshing(double target_edge_length = 2);
+  void         isotropic_remeshing();
   int          number_of_border_halfedges(bool verbose = false);
 
   py::list* toVerticesAndPolygons();
