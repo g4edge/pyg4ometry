@@ -1,5 +1,5 @@
 try :
-    from . import ROOT as ROOT
+    from . import ROOTTGeo as ROOTTGeo
 except ImportError:
     pass
 
