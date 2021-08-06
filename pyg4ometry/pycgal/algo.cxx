@@ -147,6 +147,12 @@ SurfaceMesh::~SurfaceMesh() {
   delete _surfacemesh;
 }
 
+void SurfaceMesh::write(std::string fileName) {
+  std::ofstream ofstr(fileName.c_str());
+  ofstr << *_surfacemesh;
+  ofstr.close();
+}
+
 std::size_t SurfaceMesh::add_vertex(double x, double y, double z) {
   size_t ret = _surfacemesh->add_vertex(Point(x,y,z));
 
@@ -267,6 +273,9 @@ bool SurfaceMesh::is_outward_oriented() {
   return CGAL::Polygon_mesh_processing::is_outward_oriented(*_surfacemesh);
 }
 
+bool SurfaceMesh::is_triangle_mesh() {
+  return CGAL::is_triangle_mesh(*_surfacemesh);
+}
 bool SurfaceMesh::does_self_intersect() {
   return CGAL::Polygon_mesh_processing::does_self_intersect(*_surfacemesh);
 }
@@ -279,7 +288,9 @@ void SurfaceMesh::triangulate_faces() {
   CGAL::Polygon_mesh_processing::triangulate_faces(*_surfacemesh);
 }
 
-void SurfaceMesh::isotropic_remeshing() {
+void SurfaceMesh::isotropic_remeshing(double target_edge_length) {
+
+  py::print("SurfaceMesh::isotropic_remeshing()");
 
   struct halfedge2edge
   {
@@ -294,15 +305,28 @@ void SurfaceMesh::isotropic_remeshing() {
 
   std::vector<edge_descriptor> border;
 
-  //CGAL::Polygon_mesh_processing::border_halfedges(_surfacemesh->faces(),*_surfacemesh,
-  //                                                boost::make_function_output_iterator(halfedge2edge(*_surfacemesh, border)));
+  py::print("SurfaceMesh::isotropic_remeshing()> border_halfedges()");
+  CGAL::Polygon_mesh_processing::border_halfedges(faces(*_surfacemesh),
+                                                  *_surfacemesh,
+                                                  boost::make_function_output_iterator(halfedge2edge(*_surfacemesh, border)));
 
-  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0., *_surfacemesh);
-  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0.04, *_surfacemesh);
-  //CGAL::Polygon_mesh_processing::split_long_edges(_surfacemesh->edges(), 0.03, *_surfacemesh);
 
-  //std::cout << border.size() << std::endl;
-  CGAL::Polygon_mesh_processing::isotropic_remeshing(_surfacemesh->faces(),0.1,*_surfacemesh,CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
+  py::print("SurfaceMesh::isotropic_remeshing()> border.size()",border.size());
+
+  py::print("SurfaceMesh::isotropic_remeshing()> split_long_edges()");
+  CGAL::Polygon_mesh_processing::split_long_edges(edges(*_surfacemesh), //border
+                                                  target_edge_length,
+                                                  *_surfacemesh);
+
+  // CGAL::Polygon_mesh_processing::remove_isolated_vertices(*_surfacemesh);
+  // CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(*_surfacemesh);
+
+
+  py::print("SurfaceMesh::isotropic_remeshing()> border.size()",border.size());
+  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*_surfacemesh),
+                                                     target_edge_length,
+                                                     *_surfacemesh,
+                                                     CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3).protect_constraints(true));
 }
 
 int SurfaceMesh::number_of_border_halfedges(bool verbose) {
@@ -549,6 +573,7 @@ PYBIND11_MODULE(algo, m) {
     .def(py::init<>())
     .def(py::init<py::list &, py::list &>())
     .def(py::init<std::string &>())
+    .def("write",&SurfaceMesh::write)
     .def("add_vertex",&SurfaceMesh::add_vertex)
     .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
     .def("add_face",(std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t, std::size_t)) &SurfaceMesh::add_face)
@@ -560,6 +585,7 @@ PYBIND11_MODULE(algo, m) {
     .def("is_valid",&SurfaceMesh::is_valid)
     .def("is_closed",&SurfaceMesh::is_closed)
     .def("is_outward_oriented",&SurfaceMesh::is_outward_oriented)
+    .def("is_triangle_mesh",&SurfaceMesh::is_triangle_mesh)
     .def("does_self_intersect",&SurfaceMesh::does_self_intersect)
     .def("does_bound_a_volume",&SurfaceMesh::does_bound_a_volume)
     .def("number_of_border_halfedges",&SurfaceMesh::number_of_border_halfedges,"number of border halfedges ", py::arg("verbose") = false)
