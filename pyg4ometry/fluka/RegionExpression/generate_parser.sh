@@ -3,15 +3,15 @@
 # If you don't have /usr/local/lib/antlr-4.7-complete.jar then you
 # should get it via http://www.antlr.org.
 
-# Grep for string "language=Python2" -> it's a python2 target:
-grep -q 'language=Python2' *.g4
+ANTLRJAR=/usr/local/lib/antlr-4.9-complete.jar
+
+# Grep for string "language=Python3" -> it's a python3 target:
+grep -q 'language=Python3' *.g4
 if [ "$?" -eq 0 ]
 then
-    echo "Compiling parser with python2 as target."
-    java -jar /usr/local/lib/antlr-4.7-complete.jar RegionLexer.g4 \
-	 -Dlanguage=Python2 -visitor;
-    java -jar /usr/local/lib/antlr-4.7-complete.jar RegionParser.g4 \
-	 -Dlanguage=Python2 -visitor;
+    echo "Compiling parser with python3 as target."
+    java -jar $ANTLRJAR RegionLexer.g4 -Dlanguage=Python3 -visitor;
+    java -jar $ANTLRJAR RegionParser.g4 -Dlanguage=Python3 -visitor;
     exit 0;
 fi
 
@@ -20,10 +20,8 @@ grep -q 'language=Java' *.g4
 if [ "$?" -eq 0 ]
 then
     echo "Compiling parser with Java as target."
-    java -jar /usr/local/lib/antlr-4.7-complete.jar RegionLexer.g4 \
-	 -Dlanguage=Java -visitor;
-    java -jar /usr/local/lib/antlr-4.7-complete.jar RegionParser.g4 \
-	 -Dlanguage=Java -visitor;
+    java -jar $ANTLRJAR RegionLexer.g4 -Dlanguage=Java -visitor;
+    java -jar $ANTLRJAR RegionParser.g4 -Dlanguage=Java -visitor;
     javac *.java;
     exit 0;
 fi
