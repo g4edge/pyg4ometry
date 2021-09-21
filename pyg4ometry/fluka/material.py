@@ -1,8 +1,6 @@
 import os
 from itertools import zip_longest as _zip_longest
 
-import pandas as pd
-
 from .card import Card
 
 # http://www.fluka.org/content/manuals/online/5.2.html
