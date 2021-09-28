@@ -488,8 +488,8 @@ class Registry:
         solid = self.solidDict[solidName]
 
         if solid.type == 'union' or solid.type == 'intersecton' or solid.type == 'subtraction':
-            solidTree(solid.obj1.name)
-            solidTree(solid.obj2.name)
+            self.solidTree(solid.obj1.name)
+            self.solidTree(solid.obj2.name)
 
     def clear(self):
         '''Empty all internal structures'''
