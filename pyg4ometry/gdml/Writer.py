@@ -409,6 +409,9 @@ option, preprocessGDML=0;
         self.writeVectorVariable(pvol, pv.rotation)
         self.writeVectorVariable(pvol, pv.scale)
 
+        if pv.copyNumber != 0:
+            pvol.setAttribute('copynumber', str(int(float(pv.copyNumber))))
+
         return pvol
 
     def writeReplicaVolume(self, instance):

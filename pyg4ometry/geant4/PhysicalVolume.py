@@ -15,10 +15,11 @@ class PhysicalVolume(object):
     :param name: str - name of this placement
     :param motherVolume: :class:`pyg4ometry.geant4.LogicalVolume` - mother volume to place into
     :param registry: :class:`pyg4ometry.geant4.Registry` - registry to register to
+    :param copyNumber: int - copy number of the placement that can be used for sensitivity
     :param addRegistry: bool - whether to add to the registry or not
     """
     def __init__(self, rotation, position, logicalVolume, name,
-                 motherVolume, registry=None, addRegistry=True, scale=None):    
+                 motherVolume, registry=None, copyNumber=0, addRegistry=True, scale=None):
         super(PhysicalVolume, self).__init__()
 
         if logicalVolume == motherVolume:
@@ -66,6 +67,7 @@ class PhysicalVolume(object):
         self.name          = name
         self.motherVolume  = motherVolume
         self.motherVolume.add(self)
+        self.copyNumber    = copyNumber
         
         # physical visualisation options 
         self.visOptions    = _VisOptions()

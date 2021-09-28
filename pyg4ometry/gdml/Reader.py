@@ -1465,8 +1465,14 @@ class Reader(object):
                 # Create physical volume
                 _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
 
+                try :
+                    copyNumber = chNode.attributes["copynumber"].value
+                except KeyError :
+                    copyNumber = 0
+
                 physvol   = _g4.PhysicalVolume(rotation, position, self._registry.logicalVolumeDict[volref],
-                                               pvol_name, vol, registry=self._registry,scale=scale)
+                                               pvol_name, vol, registry=self._registry,
+                                               copyNumber=copyNumber, scale=scale)
                 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol":
                 nreplica  = chNode.attributes['number'].value
