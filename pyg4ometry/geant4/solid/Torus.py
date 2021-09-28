@@ -71,6 +71,8 @@ class Torus(_SolidBase):
 
         self.registry = registry
 
+        self._twoPiValueCheck("pDPhi", self.aunit)
+
     def __repr__(self):
         return "Torus : {} {} {} {} {} {}".format(self.name, self.pRmin,
                                                   self.pRmax, self.pRtor,

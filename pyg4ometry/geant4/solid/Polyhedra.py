@@ -56,6 +56,8 @@ class Polyhedra(_SolidBase):
 
         self.registry = registry
 
+        self._twoPiValueCheck("pDPhi", self.aunit)
+
     def __repr__(self):
         return "Polyhedra : {} {} {} {} {}".format(self.name, self.pSPhi,
                                                    self.pDPhi, self.numSide,

@@ -1,4 +1,5 @@
-import time as _time
+#import time as _time
+import numpy as _np
 
 class SolidBase(object):
     """
@@ -36,6 +37,11 @@ class SolidBase(object):
     def _getProperty(self, attribute):
         #print "Getting: %s" %str(attribute) # DEBUG
         return getattr(self, "_" + attribute)
+
+    def _twoPiValueCheck(self, attribute, aunit="rad"):
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        if self.evaluateParameter(getattr(self, attribute)) * (_Units.unit(aunit)) > 2 * _np.pi:
+            raise ValueError("pDPhi is strictly greater than 2 x pi in solid \"" + self.name + "\"")
 
     @property
     def name(self):

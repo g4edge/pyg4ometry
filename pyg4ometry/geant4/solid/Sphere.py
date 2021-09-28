@@ -84,8 +84,7 @@ class Sphere(_SolidBase):
             raise ValueError("Inner radius must be less than outer radius.")
         if self.evaluateParameter(self.pDTheta)*auval > _np.pi:
             raise ValueError("pDTheta must be less than pi")
-        if self.evaluateParameter(self.pDPhi)*auval > _np.pi*2:
-            raise ValueError("pDPhi must be less than 2 pi")
+        self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
         return "Sphere : {} {} {} {} {} {} {}".format(self.name, self.pRmin,

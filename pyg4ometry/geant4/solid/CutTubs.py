@@ -62,6 +62,8 @@ class CutTubs(_SolidBase):
             self._addProperty(varName)
             setattr(self, varName, locals()[varName])
 
+        self._twoPiValueCheck("pDPhi", self.aunit)
+
 
     def __repr__(self):
         # Low norm and high norm excluded as they are lists

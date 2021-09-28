@@ -78,16 +78,11 @@ class Cons(_SolidBase):
         self.checkParameters()
 
     def checkParameters(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
-
-        auval = _Units.unit(self.aunit)
-
         if self.evaluateParameter(self.pRmin1) > self.evaluateParameter(self.pRmax1) :
             raise ValueError("Inner radius must be less than outer radius.")
         if self.evaluateParameter(self.pRmin2) > self.evaluateParameter(self.pRmax2) :
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.evaluateParameter(self.pDPhi)*auval > _np.pi*2:
-            raise ValueError("pDPhi must be less than 2 pi")
+        self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
         return "Cons : {} {} {} {} {} {} {} {}".format(self.name, self.pRmin1, self.pRmax1,

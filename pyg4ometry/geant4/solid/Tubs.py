@@ -61,6 +61,7 @@ class Tubs(_SolidBase):
             self._addProperty(varName)
             setattr(self, varName, locals()[varName])
 
+        self._twoPiValueCheck("pDPhi", aunit)
 
     def __repr__(self):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,

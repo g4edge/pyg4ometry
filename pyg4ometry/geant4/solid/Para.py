@@ -67,6 +67,8 @@ class Para(_SolidBase):
 
         self.registry=registry
 
+        #TODO - parameter checking on angles
+
     def __repr__(self):
         return "Para : {} {} {} {} {} {}".format(self.pX, self.pY, self.pZ,
                                                  self.pAlpha, self.pTheta, self.pPhi)
