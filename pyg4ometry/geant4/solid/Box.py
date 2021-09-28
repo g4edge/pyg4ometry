@@ -55,9 +55,9 @@ class Box(_SolidBase):
         self.dependents = []
         self.varNames = ["pX", "pY", "pZ", "lunit"]
 
-        for name in self.varNames:
-            self._addProperty(name)
-            setattr(self, name, locals()[name])
+        for varName in self.varNames:
+            self._addProperty(varName)
+            setattr(self, varName, locals()[varName])
 
     def __repr__(self):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)

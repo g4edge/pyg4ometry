@@ -57,9 +57,9 @@ class Tubs(_SolidBase):
         self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi",
                          "pDPhi", "aunit", "lunit", "nslice"]
 
-        for name in self.varNames:
-            self._addProperty(name)
-            setattr(self, name, locals()[name])
+        for varName in self.varNames:
+            self._addProperty(varName)
+            setattr(self, varName, locals()[varName])
 
 
     def __repr__(self):

@@ -50,9 +50,9 @@ class ExtrudedSolid(_SolidBase):
         self.dependents = []
         self.varNames = ["pPolygon", "pZslices", "lunit"]
 
-        for name in self.varNames:
-            self._addProperty(name)
-            setattr(self, name, locals()[name])
+        for varName in self.varNames:
+            self._addProperty(varName)
+            setattr(self, varName, locals()[varName])
 
     def __repr__(self):
         return "Extruded solid: {}".format(self.name)
