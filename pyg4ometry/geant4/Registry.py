@@ -179,41 +179,32 @@ class Registry:
 
         self.volumeTypeCountDict["logicalVolume"] += 1
 
-    def addPhysicalVolume(self,volume, namePolicy="increment", incrementRenameDict={}):
+    def addPhysicalVolume(self, volume):
         """
         :param volume: PhysicalVolume object for storage
         :type volume: PhysicalVolume
         """
 
         if volume.name in self.physicalVolumeDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(volume.name,"physical volume")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if volume.name in incrementRenameDict:
-                    return
-                self.physicalVolumeNameCount[volume.name] += 1
-                newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
-                incrementRenameDict[newName] = volume.name
-                volume.name = newName
-                self.physicalVolumeDict[volume.name] = volume
-        else :
+            raise _exceptions.IdenticalNameError(volume.name,"physical volume")
+        else:
             self.physicalVolumeDict[volume.name] = volume
-            self.physicalVolumeNameCount[volume.name] = 0
-            incrementRenameDict[volume.name] = volume.name
 
-        # number of physical volumes
-        try:
-            self.volumeTypeCountDict["physicalVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["physicalVolume"] = 1
+        self.physicalVolumeNameCount[volume.name] += 1
+        self.volumeTypeCountDict["physicalVolume"] += 1
+        self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
-        # usage of logical volumes
-        try:
-            self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
-        except KeyError:
-            self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
+    def transferPhysicalVolume(self, volume, incrementRenameDict={}):
+        if volume.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if volume.name in self.physicalVolumeDict:
+            # we already have a PV called this, so uniquely name it by incrementing it
+            self.physicalVolumeNameCount[volume.name] += 1
+            newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
+            incrementRenameDict[newName] = volume.name
+            volume.name = newName
+        else:
+            incrementRenameDict[volume.name] = volume
 
     def addSurface(self, surface, namePolicy="none", incrementRenameDict={}):
         """
