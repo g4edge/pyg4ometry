@@ -495,13 +495,9 @@ class Registry:
 
             var = getattr(solid,varName)
 
-            if isinstance(var,int) :                          # int could not be in registry
+            if isinstance(var, (int, float, str)):  # int, float, str could not be in registry
                 continue
-            if isinstance(var,float) :                        # float  could not be in registry
-                continue
-            if isinstance(var,str) :                          # could be an expression
-                continue
-            if isinstance(var,list) :                         # list of variables
+            if isinstance(var,list):                         # list of variables
                 var = flatten(var)
             else:
                 var = [var]                                   # single variable upgraded to list
