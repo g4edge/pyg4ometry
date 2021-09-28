@@ -148,36 +148,36 @@ class Registry:
         self.solidTypeCountDict[solid.type] += 1
         self.solidNameCount[solid.name] += 1
 
-    def addLogicalVolume(self,volume, namePolicy="none", incrementRenameDict={}):
+    def addLogicalVolume(self, volume):
         """
         :param volume: LogicalVolume object for storage
         :type volume: LogicalVolume
         """
 
         if volume.name in self.logicalVolumeDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(volume.name,"logical volume")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if volume.name in incrementRenameDict:
-                    return
-                self.logicalVolumeNameCount[volume.name] += 1
-                newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
-                incrementRenameDict[newName] = volume.name
-                volume.name = newName
-                self.logicalVolumeDict[volume.name] = volume
-        else :
+            raise _exceptions.IdenticalNameError(volume.name,"logical volume")
+        else:
             self.logicalVolumeDict[volume.name] = volume
-            self.logicalVolumeNameCount[volume.name] = 0
+
+        self.logicalVolumeNameCount[volume.name]  += 1
+        self.volumeTypeCountDict["logicalVolume"] += 1
+
+    def transferLogicalVolume(self, volume, incrementRenameDict={}):
+        if volume.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if volume.name in self.logicalVolumeDict:
+            # we already have an LV called this, so uniquely name it by incrementing it
+            self.logicalVolumeNameCount[volume.name] += 1
+            newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
+            incrementRenameDict[newName] = volume.name
+            volume.name = newName
+        else:
             incrementRenameDict[volume.name] = volume.name
 
+        self.logicalVolumeDict[volume.name] = volume
+        volume.registry = self
 
-        # total number of logical volumes
-        try:
-            self.volumeTypeCountDict["logicalVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["logicalVolume"] = 1
+        self.volumeTypeCountDict["logicalVolume"] += 1
 
     def addPhysicalVolume(self,volume, namePolicy="increment", incrementRenameDict={}):
         """
