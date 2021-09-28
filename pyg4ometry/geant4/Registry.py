@@ -24,6 +24,7 @@ class Registry:
     """
     def __init__(self):
         self.materialList = []
+        
         self.defineDict                   = _OrderedDict()
         self.materialDict                 = _OrderedDict()
         self.solidDict                    = _OrderedDict()
@@ -35,21 +36,22 @@ class Registry:
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
-        self.solidUsageCountDict          = {}               # solidName1, solidName2
-        self.volumeTypeCountDict          = {}               # logical, physical
-        self.surfaceTypeCountDict         = {}               # border, skin
-        self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
-        self.userInfo                     = []               # Ordered list for the user info, which is not processed
+        self.solidUsageCountDict          = _defaultdict(int) # solidName1, solidName2
+        self.volumeTypeCountDict          = _defaultdict(int) # logical, physical
+        self.surfaceTypeCountDict         = _defaultdict(int) # border, skin
+        self.logicalVolumeMeshSkip        = []                # meshes to skip because they are inefficient
+        self.userInfo                     = []                # Ordered list for the user info, which is not processed
+        
+        self.defineNameCount              = _defaultdict(int)
+        self.materialNameCount            = _defaultdict(int)
+        self.solidNameCount               = _defaultdict(int)
+        self.logicalVolumeNameCount       = _defaultdict(int)
+        self.physicalVolumeNameCount      = _defaultdict(int)
+        self.surfaceNameCount             = _defaultdict(int)
 
-        self.solidNameCount               = {}
-        self.materialNameCount            = {}
-        self.logicalVolumeNameCount       = {}
-        self.physicalVolumeNameCount      = {}
-        self.surfaceNameCount             = {}
-        self.defineNameCount              = {}
 
-        self.solidTypeCountDict           = {}               # Box, Cons etc
-        self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
+        self.solidTypeCountDict           = _defaultdict(int) # Box, Cons etc
+        self.logicalVolumeUsageCountDict  = _defaultdict(int) # named logical usage in physical
 
         self.editedSolids                 = []               # Solids changed post-initialisation
 
