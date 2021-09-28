@@ -275,6 +275,38 @@ class Registry:
 
         return define.name
 
+    def transferDefines(self, var, namePolicy, incrementRenameDict={}):
+        '''Transfer defines from one registry to another recursively'''
+
+        import pyg4ometry.gdml.Defines as _Defines
+
+        # If the variable is a position, rotation or scale
+        if isinstance(var,_Defines.VectorBase) :
+            for v in var.x.variables() :
+                if v in self._registryOld.defineDict:      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+
+            for v in var.y.variables() :
+                if v in self._registryOld.defineDict:      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+
+            for v in var.z.variables() :
+                if v in self._registryOld.defineDict:      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+
+            if var.name in self._registryOld.defineDict:
+                var.name = self.addDefine(var, namePolicy, incrementRenameDict)
+            var.setRegistry(self)
+        # If a normal expression
+        else :
+            for v in var.expr.variables() :                # loop over all variables needed for an express
+                if v in self._registryOld.defineDict:      # it in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+
+            if var.name in self._registryOld.defineDict:                        # check if variable is stored in registry, if so need to be transferred
+                var.name = self.addDefine(var, namePolicy, incrementRenameDict) # probably best to reuse here
+            var.setRegistry(self)
+
     def setWorld(self, worldIn):
         """
         The argument can either be the name of logical volume of the world
@@ -436,38 +468,6 @@ class Registry:
 
             for v in var :                                    # loop over variables
                 self.transferDefines(v,namePolicy,incrementRenameDict)
-
-    def transferDefines(self, var, namePolicy, incrementRenameDict={}):
-        '''Transfer defines from one registry to another recursively'''
-
-        import pyg4ometry.gdml.Defines as _Defines
-
-        # If the variable is a position, rotation or scale
-        if isinstance(var,_Defines.VectorBase) :
-            for v in var.x.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.y.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.z.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            if var.name in self._registryOld.defineDict:
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict)
-            var.setRegistry(self)
-        # If a normal expression
-        else :
-            for v in var.expr.variables() :                # loop over all variables needed for an express
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            if var.name in self._registryOld.defineDict:                        # check if variable is stored in registry, if so need to be transferred
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict) # probably best to reuse here
-            var.setRegistry(self)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
