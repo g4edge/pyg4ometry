@@ -257,7 +257,7 @@ class Registry:
     def addAuxiliary(self, auxiliary):
             self.userInfo.append(auxiliary)
 
-    def addDefine(self, define, namePolicy="none", incrementRenameDict={}):
+    def addDefine(self, define):
         """
         :param define: Definition object for storage
         :type define: Constant, Quantity, Variable, Matrix
@@ -268,24 +268,29 @@ class Registry:
             raise ValueError("Redefinition of a constant unit : {}".format(define.name))
 
         if define.name in self.defineDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(define.name,"define")
-            elif namePolicy == "reuse" :
-                return define.name
-            elif namePolicy == "increment" :
-                if define.name in incrementRenameDict:
-                    return define.name
-                self.defineNameCount[define.name] += 1
-                newName = define.name + "_" + str(self.defineNameCount[define.name])
-                incrementRenameDict[newName] = newName
-                define.name = newName
-                self.defineDict[define.name] = define
-        else :
+            raise _exceptions.IdenticalNameError(define.name,"define")
+        else:
             self.defineDict[define.name] = define
-            self.defineNameCount[define.name] = 0
-            incrementRenameDict[define.name] = define.name
 
-        return define.name
+        self.defineNameCount[define.name] += 1
+
+        return define.name # why do we need this?
+
+    def transferDefine(self, define, incrementRenameDict={}):
+        if define.name in incrementRenameDict:
+            return  # it's already been transferred in this 'transfer' call, ignore
+        if define.name in self.defineDict:
+            self.defineNameCount[define.name] += 1
+            newName = define.name + "_" + str(self.defineNameCount[define.name])
+            incrementRenameDict[newName] = newName
+            define.name = newName
+        else:
+            incrementRenameDict[define.name] = define.name
+        
+        self.defineDict[define.name] = define
+        define.registry = self
+
+        self.defineNameCount[define.name] += 1
 
     def transferDefines(self, var, namePolicy, incrementRenameDict={}):
         '''Transfer defines from one registry to another recursively'''
