@@ -74,9 +74,9 @@ class Registry:
         :param material: Material object for storage
         :type material: Material
         """
+        if material.type == "nist":
+            return
         if material.name in self.materialDict:
-            if material.type == "nist":
-                return
             raise _exceptions.IdenticalNameError(material.name, "material")
         else:
             self.materialDict[material.name] = material
