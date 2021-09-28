@@ -394,7 +394,7 @@ class Registry:
                 self.orderLogicalVolumes(dlvName,False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, namePolicy="increment", incrementRenameDict=None):
+    def addVolumeRecursive(self, volume, incrementRenameDict=None):
         if incrementRenameDict is None:
             incrementRenameDict = {}
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
@@ -403,55 +403,49 @@ class Registry:
 
         self._registryOld = volume.registry
 
-        if isinstance(volume, _PhysicalVolume) :
-
-            # add its logical volume
-            self.addVolumeRecursive(volume.logicalVolume, namePolicy, incrementRenameDict)
+        if isinstance(volume, _PhysicalVolume):
+            self.addVolumeRecursive(volume.logicalVolume, incrementRenameDict)
 
             # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
-            self.transferDefines(volume.position ,namePolicy, incrementRenameDict)
-            self.addDefine(volume.position, namePolicy, incrementRenameDict)
-            self.transferDefines(volume.rotation, namePolicy, incrementRenameDict)
-            self.addDefine(volume.rotation, namePolicy, incrementRenameDict)
+            self.transferDefines(volume.position, incrementRenameDict)
+            self.transferDefines(volume.rotation, incrementRenameDict)
             if volume.scale:
-                self.transferDefines(volume.scale, namePolicy, incrementRenameDict)
-                self.addDefine(volume.scale, namePolicy, incrementRenameDict)
-            self.addPhysicalVolume(volume, namePolicy, incrementRenameDict)
+                self.transferDefines(volume.scale, incrementRenameDict)
+            self.transferPhysicalVolume(volume, incrementRenameDict)
 
         elif isinstance(volume, _LogicalVolume) :
             # loop over all daughters
             for dv in volume.daughterVolumes :
-                self.addVolumeRecursive(dv, namePolicy, incrementRenameDict)
+                self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
-            self.transferSolidDefines(volume.solid, namePolicy, incrementRenameDict)
-            self.addSolid(volume.solid, namePolicy, incrementRenameDict)
-            self.addMaterial(volume.material, namePolicy, incrementRenameDict)
-            self.addLogicalVolume(volume,namePolicy, incrementRenameDict)
+            self.transferSolidDefines(volume.solid, incrementRenameDict)
+            self.transferSolid(volume.solid, incrementRenameDict)
+            self.transferMaterial(volume.material, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict)
 
         elif isinstance(volume, _AssemblyVolume) :
             # loop over all daughters
             for dv in volume.daughterVolumes :
-                self.addVolumeRecursive(dv, namePolicy, incrementRenameDict)
+                self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
-            self.addLogicalVolume(volume, namePolicy, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict)
         else :
             print("Volume type not supported yet for merging")
 
         return incrementRenameDict
 
-    def transferSolidDefines(self, solid, namePolicy, incrementRenameDict={}):       # TODO make this work for all classes (using update variables method)
+    def transferSolidDefines(self, solid, incrementRenameDict={}):# TODO make this work for all classes (using update variables method)
 
         if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
-            self.transferSolidDefines(solid.obj1,namePolicy,incrementRenameDict)
-            self.transferSolidDefines(solid.obj2,namePolicy,incrementRenameDict)
+            self.transferSolidDefines(solid.obj1, incrementRenameDict)
+            self.transferSolidDefines(solid.obj2, incrementRenameDict)
         elif solid.type == "MultiUnion" :
             for object in solid.objects :
-                self.transferSolidDefines(object, namePolicy, incrementRenameDict)
+                self.transferSolidDefines(object, incrementRenameDict)
 
         for varName in solid.varNames :
-
             # skip unit variables
             if varName.find("unit") != -1:
                 continue
@@ -461,7 +455,6 @@ class Registry:
             # skip stack variables
             if varName.find("stack") != -1:
                 continue
-
 
             def flatten(S):
                 if S == []:
@@ -484,7 +477,7 @@ class Registry:
                 var = [var]                                   # single variable upgraded to list
 
             for v in var :                                    # loop over variables
-                self.transferDefines(v,namePolicy,incrementRenameDict)
+                self.transferDefines(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
