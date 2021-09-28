@@ -109,35 +109,44 @@ class Registry:
         self.materialDict[material.name] = material
         material.registry = self
 
-    def addSolid(self, solid, namePolicy="none", incrementRenameDict={}):
+    def addSolid(self, solid):
         """
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
 
         if solid.name in self.solidDict:
-            if namePolicy == "none":
-                raise _exceptions.IdenticalNameError(solid.name, "solid")
-            elif namePolicy == "reuse":
-                return
-            elif namePolicy == "increment" :
-                if solid.name in incrementRenameDict:
-                    return
-                self.solidNameCount[solid.name] += 1
-                newName = solid.name + "_"+str(self.solidNameCount[solid.name])
-                incrementRenameDict[newName] = solid.name
-                solid.name = newName
-                self.solidDict[solid.name] = solid
-
-        else :
+            raise _exceptions.IdenticalNameError(solid.name, "solid")
+        else:
             self.solidDict[solid.name] = solid
-            self.solidNameCount[solid.name] = 0
+
+        self.solidTypeCountDict[solid.type] += 1
+        self.solidNameCount[solid.name] += 1
+
+    def transferSolid(self, solid, incrementRenameDict={}):
+        """
+        Transfer a solid into this registry instance. Updates
+        the member solid.regsitry to be this registry.
+        
+        :param solid: Solid object for storage
+        :type solid: One of the geant4 solids
+        """
+        if solid.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if solid.name in self.solidDict:
+            # we already have a solid called this, so uniquely name it by incrementing it
+            self.solidNameCount[solid.name] += 1
+            newName = solid.name + "_" + str(self.solidNameCount[solid.name])
+            incrementRenameDict[newName] = solid.name
+            solid.name = newName
+        else:
             incrementRenameDict[solid.name] = solid.name
 
-        try:
-            self.solidTypeCountDict[solid.type] += 1
-        except KeyError:
-            self.solidTypeCountDict[solid.type] = 0
+        self.solidDict[solid.name] = solid
+        solid.registry = self
+            
+        self.solidTypeCountDict[solid.type] += 1
+        self.solidNameCount[solid.name] += 1
 
     def addLogicalVolume(self,volume, namePolicy="none", incrementRenameDict={}):
         """
