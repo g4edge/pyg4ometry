@@ -68,42 +68,46 @@ class Registry:
         if solid.name in self.solidDict:
             self.editedSolids.append(solid.name)
 
-    def addMaterial(self, material, namePolicy="reuse", incrementRenameDict={}):
+    def addMaterial(self, material):
         """
         :param material: Material object for storage
         :type material: Material
         """        
 
         if material.name in self.materialDict:
-            if namePolicy == "none":
-                if material.type == "nist" :
-                    return
-                raise _exceptions.IdenticalNameError(material.name, "material")
-            elif namePolicy == "reuse" :
+            if material.type == "nist":
                 return
-            elif namePolicy == "increment" and material.type != "nist" :
-                if material.name in incrementRenameDict:
-                    return
+            raise _exceptions.IdenticalNameError(material.name, "material")
+        else:
+            self.materialDict[material.name] = material
+            self.materialNameCount[material.name] = 0
+            try:
+                for component in material.components:
+                    self.addMaterial(component[0])
+            except AttributeError:
+                # think this is a simple element need to check TODO
+                pass
+
+    def transferMaterial(self, material, incrementRenameDict={}):
+        if material.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if material.name in self.materialDict:
+            if material.type == "nist":
+                return # nist ones generally aren't added and allowed to pass through
+            else:
                 self.materialNameCount[material.name] += 1
                 newName = material.name + "_" + str(self.materialNameCount[material.name])
                 incrementRenameDict[newName] = material.name
                 material.name = newName
-                self.materialDict[material.name] = material
-
                 for component in material.components:
-                    self.addMaterial(component[0], namePolicy)
-        else :
-            self.materialDict[material.name] = material
-            self.materialNameCount[material.name] = 0
+                    self.transferMaterial(component[0], incrementRenameDict)
+        else:
             incrementRenameDict[material.name] = material.name
+            for component in material.components:
+                self.transferMaterial(component[0], incrementRenameDict)
 
-            try :
-                for component in material.components:
-                    self.addMaterial(component[0], namePolicy)
-            except AttributeError :
-                # think this is a simple element need to check TODO
-                pass
-
+        self.materialDict[material.name] = material
+        material.registry = self
 
     def addSolid(self, solid, namePolicy="none", incrementRenameDict={}):
         """
