@@ -264,15 +264,6 @@ class Registry:
         self.surfaceTypeCountDict[surface.type] += 1
         self.surfaceNameCount[surface.name] += 1
 
-    def addParameter(self, parameter):
-        try:
-            self.parameterDict[parameter.name]
-            print(f'parameter replicated: {parameter.name}')
-            raise _exceptions.IdenticalNameError(parameter.name,
-                                                           "parameter")
-        except KeyError:
-            self.parameterDict[parameter.name] = parameter
-
     def addAuxiliary(self, auxiliary):
             self.userInfo.append(auxiliary)
 
