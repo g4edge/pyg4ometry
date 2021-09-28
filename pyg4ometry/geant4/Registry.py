@@ -1,5 +1,4 @@
 import pandas as _pd
-from collections import OrderedDict as _OrderedDict
 from collections import defaultdict as _defaultdict
 import pyg4ometry.exceptions as _exceptions
 from . import _Material as _mat
@@ -24,15 +23,15 @@ class Registry:
     """
     def __init__(self):
         self.materialList = []
-        
-        self.defineDict                   = _OrderedDict()
-        self.materialDict                 = _OrderedDict()
-        self.solidDict                    = _OrderedDict()
-        self.logicalVolumeDict            = _OrderedDict()
-        self.physicalVolumeDict           = _OrderedDict()
-        self.physicalVolumeCountDict      = _OrderedDict()
-        self.surfaceDict                  = _OrderedDict()
-        self.loopDict                     = _OrderedDict()
+        # note python3 dictionaries are ordered by default
+        self.defineDict                   = {}
+        self.materialDict                 = {}
+        self.solidDict                    = {}
+        self.logicalVolumeDict            = {}
+        self.physicalVolumeDict           = {}
+        self.physicalVolumeCountDict      = {}
+        self.surfaceDict                  = {}
+        self.loopDict                     = {}
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
