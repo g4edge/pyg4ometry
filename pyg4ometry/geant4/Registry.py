@@ -292,36 +292,28 @@ class Registry:
 
         self.defineNameCount[define.name] += 1
 
-    def transferDefines(self, var, namePolicy, incrementRenameDict={}):
+    def transferDefines(self, var, incrementRenameDict={}):
         '''Transfer defines from one registry to another recursively'''
-
         import pyg4ometry.gdml.Defines as _Defines
 
         # If the variable is a position, rotation or scale
-        if isinstance(var,_Defines.VectorBase) :
-            for v in var.x.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.y.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.z.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+        if isinstance(var,_Defines.VectorBase):
+            for vi in (var.x, var.y, var.z):
+                for v in vi.variables:
+                    if v in self._registryOld.defineDict: # only if its in the other registry
+                        self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
 
             if var.name in self._registryOld.defineDict:
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict)
-            var.setRegistry(self)
+                self.transferDefine(var, incrementRenameDict)
+            #var.setRegistry(self)
         # If a normal expression
-        else :
-            for v in var.expr.variables() :                # loop over all variables needed for an express
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
+        else:
+            for v in var.expr.variables():                 # loop over all variables needed for an expression
+                if v in self._registryOld.defineDict:      # only if its in the other registry
+                    self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
 
-            if var.name in self._registryOld.defineDict:                        # check if variable is stored in registry, if so need to be transferred
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict) # probably best to reuse here
+            if var.name in self._registryOld.defineDict:                 # check if variable is stored in registry, if so need to be transferred
+                var.name = self.transferDefine(var, incrementRenameDict) # probably best to reuse here
             var.setRegistry(self)
 
     def setWorld(self, worldIn):
