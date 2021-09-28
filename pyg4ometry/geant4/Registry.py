@@ -69,10 +69,11 @@ class Registry:
 
     def addMaterial(self, material):
         """
+        Register a material with this registry.
+
         :param material: Material object for storage
         :type material: Material
-        """        
-
+        """
         if material.name in self.materialDict:
             if material.type == "nist":
                 return
@@ -88,6 +89,10 @@ class Registry:
                 pass
 
     def transferMaterial(self, material, incrementRenameDict={}):
+        """
+        Transfer a material to this registry. Doesn't handle any members'
+        transferal - only the material itself.
+        """
         if material.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if material.name in self.materialDict:
@@ -110,10 +115,11 @@ class Registry:
 
     def addSolid(self, solid):
         """
+        Register a solid with this registry.
+
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
-
         if solid.name in self.solidDict:
             raise _exceptions.IdenticalNameError(solid.name, "solid")
         else:
@@ -124,8 +130,8 @@ class Registry:
 
     def transferSolid(self, solid, incrementRenameDict={}):
         """
-        Transfer a solid into this registry instance. Updates
-        the member solid.regsitry to be this registry.
+        Transfer a solid to this registry. Doesn't handle any members'
+        transferal - only the solid itself.
         
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
@@ -149,10 +155,11 @@ class Registry:
 
     def addLogicalVolume(self, volume):
         """
+        Register a logical volume with this registry.
+
         :param volume: LogicalVolume object for storage
         :type volume: LogicalVolume
         """
-
         if volume.name in self.logicalVolumeDict:
             raise _exceptions.IdenticalNameError(volume.name,"logical volume")
         else:
@@ -162,6 +169,10 @@ class Registry:
         self.volumeTypeCountDict["logicalVolume"] += 1
 
     def transferLogicalVolume(self, volume, incrementRenameDict={}):
+        """
+        Transfer a logical volume to this registry. Doesn't handle any members'
+        transferal - only the logical volume itself.
+        """
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.logicalVolumeDict:
@@ -180,10 +191,11 @@ class Registry:
 
     def addPhysicalVolume(self, volume):
         """
+        Registry a physical volume with this registry.
+
         :param volume: PhysicalVolume object for storage
         :type volume: PhysicalVolume
         """
-
         if volume.name in self.physicalVolumeDict:
             raise _exceptions.IdenticalNameError(volume.name,"physical volume")
         else:
@@ -194,6 +206,10 @@ class Registry:
         self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
     def transferPhysicalVolume(self, volume, incrementRenameDict={}):
+        """
+        Transfer a physical volume to this registry. Doesn't handle any members'
+        transferal - only the physical volume itself.
+        """
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.physicalVolumeDict:
@@ -214,10 +230,11 @@ class Registry:
 
     def addSurface(self, surface):
         """
+        Register a surface with this registry.
+
         :param surface: Surface
         :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
         """
-
         if surface.name in self.surfaceDict:
             raise _exceptions.IdenticalNameError(surface.name, "surface")
         else:
@@ -227,6 +244,9 @@ class Registry:
         self.surfaceNameCount[surface.name] += 1
 
     def transferSurface(self, surface, incrementRenameDict={}):
+        """
+        Transfer a surface to this registry.
+        """
         if surface.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
         if surface.name in self.surfaceDict:
@@ -258,10 +278,11 @@ class Registry:
 
     def addDefine(self, define):
         """
+        Register a define with this registry.
+
         :param define: Definition object for storage
         :type define: Constant, Quantity, Variable, Matrix
         """
-
         from pyg4ometry.gdml.Units import units as _units
         if define.name in _units:
             raise ValueError("Redefinition of a constant unit : {}".format(define.name))
@@ -276,6 +297,9 @@ class Registry:
         return define.name # why do we need this?
 
     def transferDefine(self, define, incrementRenameDict={}):
+        """
+        Transfer a single define from another registry to this one. No checking on previous registry or not.
+        """
         if define.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
         if define.name in self.defineDict:
@@ -292,7 +316,15 @@ class Registry:
         self.defineNameCount[define.name] += 1
 
     def transferDefines(self, var, incrementRenameDict={}):
-        '''Transfer defines from one registry to another recursively'''
+        """
+        This function tolerates all types of defines including vector ones.
+
+        Transfer defines from one registry to another recursively. A define may not be part of
+        the old registry so won't be added to this one. A define may be a vector or composite
+        and its 'bits' may be in the (old) registry so each part should be checked.
+
+        In "3x + 2", "x" would be a variable".  In "3.5*2" there would be no variables.
+        """
         import pyg4ometry.gdml.Defines as _Defines
 
         # If the variable is a position, rotation or scale
@@ -343,9 +375,10 @@ class Registry:
         return materials_ordered
 
     def orderMaterials(self):
-        '''Need to have a ordered list of all material entities for writing to
-        GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
-
+        """
+        Need to have a ordered list of all material entities for writing to
+        GDML. GDML needs to have the isotopes/elements/materials defined in use order
+        """
         for name in list(self.materialDict.keys()):  # Forces registered materials to
             if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
                 self.materialDict[name].set_registry(self)
@@ -366,18 +399,15 @@ class Registry:
         self.materialList = isotopes + elements + materials_ordered
 
     def orderLogicalVolumes(self, lvName, first = True):
-        '''Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
-        GDML. GDML needs to have the solids/booleans/volumes defined in order'''
-
+        """
+        Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
+        GDML. GDML needs to have the solids/booleans/volumes defined in order
+        """
         if first :
             self.logicalVolumeList = []
 
         lv = self.logicalVolumeDict[lvName]
-        
-        # print "mother> ",lv.name
         for daughters in lv.daughterVolumes:
-            # print "daughters> ",daughters.name
-
             dlvName = daughters.logicalVolume.name
             try:
                 self.logicalVolumeList.index(dlvName)
@@ -386,6 +416,15 @@ class Registry:
                 self.logicalVolumeList.append(dlvName)
 
     def addVolumeRecursive(self, volume, incrementRenameDict=None):
+        """
+        Transfer a volume hierarchy to this registry. Any objects that had a registry set to
+        another will be set to this one and will be owned by it effectively.
+        :param volume: PhysicalVolume or LogicalVolume or AssemblyVolume.
+        :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
+
+        In the case where some object or variable has a name (e.g. 'X') that already exists
+        in this registry, it will be incremented to 'X_1'.
+        """
         if incrementRenameDict is None:
             incrementRenameDict = {}
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
@@ -397,7 +436,7 @@ class Registry:
         if isinstance(volume, _PhysicalVolume):
             self.addVolumeRecursive(volume.logicalVolume, incrementRenameDict)
 
-            # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
+            # add members from physical volume
             self.transferDefines(volume.position, incrementRenameDict)
             self.transferDefines(volume.rotation, incrementRenameDict)
             if volume.scale:
@@ -464,10 +503,10 @@ class Registry:
                 continue
             if isinstance(var,list) :                         # list of variables
                 var = flatten(var)
-            else :
+            else:
                 var = [var]                                   # single variable upgraded to list
 
-            for v in var :                                    # loop over variables
+            for v in var:                                    # loop over variables
                 self.transferDefines(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
