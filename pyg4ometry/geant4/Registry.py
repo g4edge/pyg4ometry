@@ -329,23 +329,23 @@ class Registry:
 
         # If the variable is a position, rotation or scale
         if isinstance(var,_Defines.VectorBase):
+            # check and transfer components all called x,y,z for each type
             for vi in (var.x, var.y, var.z):
+                # any variables inside each component
                 for v in vi.variables:
                     if v in self._registryOld.defineDict: # only if its in the other registry
                         self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
 
             if var.name in self._registryOld.defineDict:
                 self.transferDefine(var, incrementRenameDict)
-            #var.setRegistry(self)
-        # If a normal expression
-        else:
+
+        else: # a normal expression
             for v in var.expr.variables():                 # loop over all variables needed for an expression
                 if v in self._registryOld.defineDict:      # only if its in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
+                    self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict)
 
             if var.name in self._registryOld.defineDict:                 # check if variable is stored in registry, if so need to be transferred
                 var.name = self.transferDefine(var, incrementRenameDict) # probably best to reuse here
-            var.setRegistry(self)
 
     def setWorld(self, worldIn):
         """
