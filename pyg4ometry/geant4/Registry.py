@@ -206,36 +206,44 @@ class Registry:
         else:
             incrementRenameDict[volume.name] = volume
 
-    def addSurface(self, surface, namePolicy="none", incrementRenameDict={}):
+        self.physicalVolumeDict[volume.name] = volume
+        volume.registry = self
+
+        self.physicalVolumeNameCount[volume.name] += 1
+        self.volumeTypeCountDict["physicalVolume"] += 1
+        self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
+
+    def addSurface(self, surface):
         """
         :param surface: Surface
         :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
         """
 
         if surface.name in self.surfaceDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(surface.name, "surface")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if surface.name in incrementRenameDict:
-                    return
-                self.surfaceNameCount[surface.name] += 1
-                newName = "{}_{}".format(surface.name, self.surfaceNameCount[surface.name])
-                incrementRenameDict[newName] = surface.name
-                surface.name = newName
-                self.surfaceDict[surface.name] = surface
-
-        else :
+            raise _exceptions.IdenticalNameError(surface.name, "surface")
+        else:
             self.surfaceDict[surface.name] = surface
-            self.surfaceNameCount[surface.name] = 0
+
+        self.surfaceTypeCountDict[surface.type] += 1
+        self.surfaceNameCount[surface.name] += 1
+
+    def transferSurface(self, surface, incrementRenameDict={}):
+        if surface.name in incrementRenameDict:
+            return  # it's already been transferred in this 'transfer' call, ignore
+        if surface.name in self.surfaceDict:
+            # we already have a solid called this, so uniquely name it by incrementing it
+            self.surfaceNameCount[surface.name] += 1
+            newName = surface.name + "_" + str(self.surfaceNameCount[surface.name])
+            incrementRenameDict[newName] = surface.name
+            surface.name = newName
+        else:
             incrementRenameDict[surface.name] = surface.name
 
+        self.surfaceDict[surface.name] = surface
+        surface.registry = self
 
-        try:
-            self.surfaceTypeCountDict[surface.type] += 1
-        except KeyError:
-            self.surfaceTypeCountDict[surface.type] = 0
+        self.surfaceTypeCountDict[surface.type] += 1
+        self.surfaceNameCount[surface.name] += 1
 
     def addParameter(self, parameter):
         try:
