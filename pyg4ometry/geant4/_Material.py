@@ -1,6 +1,7 @@
 import sys as _sys
 import os as _os
 import pkg_resources
+import pyg4ometry.exceptions as _exceptions
 
 
 def _getClassVariables(obj):
@@ -231,13 +232,19 @@ class MaterialBase(object):
 
         return material_obj
 
-    def set_registry(self, registry):  # Assign a registry post-construction
+    def set_registry(self, registry, dontWarnIfAlreadyAdded=False):  # Assign a registry post-construction
         self.registry = registry
-        self.registry.addMaterial(self)
+        try:
+            self.registry.addMaterial(self)
 
-        if hasattr(self, "components"):  # Recursively set the registry for all components
-            for comp in self.components:
-                comp[0].set_registry(registry)
+            if hasattr(self, "components"):  # Recursively set the registry for all components
+                for comp in self.components:
+                    comp[0].set_registry(registry)
+        except _exceptions.IdenticalNameError as err:
+            if dontWarnIfAlreadyAdded:
+                pass
+            else:
+                raise err
 
     def set_state(self, state):
         self.state = state

@@ -64,7 +64,7 @@ class LogicalVolume(object):
  
         if isinstance(material, _mat.Material):
             self.material = material
-            self.material.set_registry(registry)
+            self.material.set_registry(registry, dontWarnIfAlreadyAdded=True)
         elif isinstance(material, str):
             # If the material is registered already, use it
             if registry and material in registry.materialDict:
