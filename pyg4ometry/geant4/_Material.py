@@ -438,9 +438,9 @@ class Element(MaterialBase):
         self.components = []
 
         if self.n_comp and not self.Z and not self.A:
-            self.type = "composite"
+            self.type = "element-composite"
         elif self.Z and self.A and not self.n_comp:
-            self.type = "simple"
+            self.type = "element-simple"
         else:
             raise ValueError("Cannot use both atomic number/weight and number_of_components.")
 

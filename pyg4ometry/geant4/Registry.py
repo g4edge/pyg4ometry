@@ -80,13 +80,8 @@ class Registry:
             raise _exceptions.IdenticalNameError(material.name, "material")
         else:
             self.materialDict[material.name] = material
-            self.materialNameCount[material.name] = 0
-            try:
-                for component in material.components:
-                    self.addMaterial(component[0])
-            except AttributeError:
-                # think this is a simple element need to check TODO
-                pass
+            for component in material.components:
+                self.addMaterial(component[0])
 
     def transferMaterial(self, material, incrementRenameDict={}):
         """
