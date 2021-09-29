@@ -1708,6 +1708,8 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                             atomicMass = materialInstance.a,
                             massNumber = materialInstance.N,)
         return fi
+    else:
+        raise TypeError("Unknown material.type \""+str(material.type)+"\"")
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
     import pyg4ometry.pycgal as pycgal
@@ -1716,7 +1718,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
     nef = pycgal.pycsgmesh2NefPolyhedron(mesh)
 
     nconvex = ctypes.c_int(0)
-    vpArray = ctypes.c_void_p*10000;
+    vpArray = ctypes.c_void_p*10000
     polyhedra = vpArray()
 
     pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
