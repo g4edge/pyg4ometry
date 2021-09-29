@@ -468,7 +468,7 @@ class Registry:
 
     def transferSolidDefines(self, solid, incrementRenameDict={}):
         """
-        For each parmaeter in a given solid (unique to each) check if it's
+        For each parameter in a given solid (unique to each) check if it's
         a define and transfer that over.
         """
         # TODO make this work for all classes (using update variables method)
