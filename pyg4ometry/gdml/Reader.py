@@ -1294,7 +1294,7 @@ class Reader(object):
 
                 # if not defined then need to define defaults
                 position = _defines.Position(mu_node_name.value+"_pos","0","0","0","mm",self._registry,False)
-                rotation = _defines.Rotation(mu_node_name.value+"_rot","0","0","0","mm",self._registry,False)     
+                rotation = _defines.Rotation(mu_node_name.value+"_rot","0","0","0","rad",self._registry,False)
 
                 # loop over child nodes 
                 for cn in n.childNodes :

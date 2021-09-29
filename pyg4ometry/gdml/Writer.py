@@ -934,7 +934,6 @@ option, preprocessGDML=0;
         csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
 
-
         self.solids.appendChild(oe)
 
     def writeOpticalSurface(self, instance):
