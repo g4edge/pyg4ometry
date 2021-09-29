@@ -744,8 +744,9 @@ class Rotation(VectorBase) :
         if unit != None :
             if not isinstance(unit, str):
                 raise ValueError("unit must be None or a string")
-            if unit not in ['rad','mrad','deg']:
-                raise ValueError("Invalid unit \""+unit+"\" in define"+name+" - can be one of rad mrad deg")
+            acceptableUnits = ['rad', 'radian', 'mrad', 'milliradian', 'deg', 'degree']
+            if unit not in acceptableUnits:
+                raise ValueError("Invalid unit \""+unit+"\" in rotation define \""+name+"\" - can be one of:  "+", ".join(acceptableUnits))
             self.unit = unit
         else :
             self.unit = "rad"
