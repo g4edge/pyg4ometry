@@ -107,12 +107,16 @@ class Registry:
                 self.materialNameCount[material.name] += 1
                 incrementRenameDict[newName] = material.name
                 material.name = newName
-                for component in material.components:
-                    self.transferMaterial(component[0], incrementRenameDict)
+                # Material and Element have a member 'components' but Isotope doesn't
+                if hasattr(material, "components"):
+                    for component in material.components:
+                        self.transferMaterial(component[0], incrementRenameDict)
         else:
             incrementRenameDict[material.name] = material.name
-            for component in material.components:
-                self.transferMaterial(component[0], incrementRenameDict)
+            # Material and Element have a member 'components' but Isotope doesn't
+            if hasattr(material, "components"):
+                for component in material.components:
+                    self.transferMaterial(component[0], incrementRenameDict)
 
         self.materialDict[material.name] = material
         material.registry = self
