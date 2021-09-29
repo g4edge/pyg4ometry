@@ -85,8 +85,10 @@ class Registry:
                 raise _exceptions.IdenticalNameError(material.name, "material")
         else:
             self.materialDict[material.name] = material
-            for component in material.components:
-                self.addMaterial(component[0])
+            # Material and Element have a member 'components' but Isotope doesn't
+            if hasattr(material, "components"):
+                for component in material.components:
+                    self.addMaterial(component[0])
 
         self.materialNameCount[material.name] += 1
 
