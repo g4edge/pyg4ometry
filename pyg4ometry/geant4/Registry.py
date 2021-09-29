@@ -67,7 +67,7 @@ class Registry:
         if solid.name in self.solidDict:
             self.editedSolids.append(solid.name)
 
-    def addMaterial(self, material):
+    def addMaterial(self, material, dontWarnIfAlreadyAdded=False):
         """
         Register a material with this registry.
 
@@ -77,7 +77,12 @@ class Registry:
         if material.type == "nist":
             return
         if material.name in self.materialDict:
-            raise _exceptions.IdenticalNameError(material.name, "material")
+            # there is the possibility of composite materials reusing the same
+            # material or element, so we must tolerate this in this recursive function
+            if dontWarnIfAlreadyAdded:
+                pass
+            else:
+                raise _exceptions.IdenticalNameError(material.name, "material")
         else:
             self.materialDict[material.name] = material
             for component in material.components:
