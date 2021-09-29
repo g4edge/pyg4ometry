@@ -51,7 +51,7 @@ class Registry:
 
         self.solidTypeCountDict           = _defaultdict(int) # Box, Cons etc
         self.logicalVolumeUsageCountDict  = _defaultdict(int) # named logical usage in physical
-
+        
         self.editedSolids                 = []               # Solids changed post-initialisation
 
         self.expressionParser = None
@@ -82,6 +82,8 @@ class Registry:
             self.materialDict[material.name] = material
             for component in material.components:
                 self.addMaterial(component[0])
+
+        self.materialNameCount[material.name] += 1
 
     def transferMaterial(self, material, incrementRenameDict={}):
         """
@@ -318,7 +320,7 @@ class Registry:
             # check and transfer components all called x,y,z for each type
             for vi in (var.x, var.y, var.z):
                 # any variables inside each component
-                for v in vi.variables:
+                for v in vi.variables():
                     if v in self._registryOld.defineDict: # only if its in the other registry
                         self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
 
