@@ -491,13 +491,13 @@ class Registry:
 
             if isinstance(var, (int, float, str)):  # int, float, str could not be in registry
                 continue
-            if isinstance(var,list):                         # list of variables
+            elif isinstance(var,list):              # list of variables
                 var = flatten(var)
             else:
-                var = [var]                                   # single variable upgraded to list
+                var = [var]                         # single variable upgraded to list
 
-            for v in var:                                    # loop over variables
-                self.transferDefines(v, incrementRenameDict)
+            for v in var:                           # loop over variables
+                self.transferDefine(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
