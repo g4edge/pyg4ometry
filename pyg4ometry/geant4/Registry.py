@@ -74,9 +74,9 @@ class Registry:
         :param material: Material object for storage
         :type material: Material
         """
-        if material.type == "nist":
-            return
         if material.name in self.materialDict:
+            if material.type == "nist":
+                return
             # there is the possibility of composite materials reusing the same
             # material or element, so we must tolerate this in this recursive function
             if dontWarnIfAlreadyAdded:
