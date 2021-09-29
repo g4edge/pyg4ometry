@@ -454,7 +454,12 @@ class Registry:
 
         return incrementRenameDict
 
-    def transferSolidDefines(self, solid, incrementRenameDict={}):# TODO make this work for all classes (using update variables method)
+    def transferSolidDefines(self, solid, incrementRenameDict={}):
+        """
+        For each parmaeter in a given solid (unique to each) check if it's
+        a define and transfer that over.
+        """
+        # TODO make this work for all classes (using update variables method)
 
         if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
             self.transferSolidDefines(solid.obj1, incrementRenameDict)
