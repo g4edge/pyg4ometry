@@ -1,3 +1,4 @@
+from collections import defaultdict      as _defaultdict
 import numpy                             as _np
 import re                                as _re
 from   xml.dom import minidom            as _minidom
@@ -19,14 +20,17 @@ class Reader(object):
         self.registryOn = registryOn    
 
         if self.registryOn : 
-            self._registry = _g4.Registry() 
+            self._registry = _g4.Registry()
+
+        self._physVolumeNameCount = _defaultdict(int)
         
         # load file
         self.load()
 
     def load(self):
-
         _log.info('Reader.load>')
+        self._physVolumeNameCount.clear()
+
         # open file 
         data  = open(self.filename)
 
@@ -1427,8 +1431,13 @@ class Reader(object):
                 # Name 
                 try : 
                     pvol_name = chNode.attributes["name"].value
-                except KeyError : 
-                    pvol_name = volref+"_PV"
+                except KeyError:
+                    # no name given - in the Geant4 GDML reader it would be <lv name> + _PV
+                    # here we do the same but we truly require unique names, so we count them
+                    count = self._physVolumeNameCount[volref]
+                    suffix = '_'+str(count) if count > 0 else ''
+                    pvol_name = volref+suffix+"_PV"
+                    self._physVolumeNameCount[volref] += 1
                             
                 _log.info('Reader.extractStructureNodeData> %s' % (pvol_name))
                             
