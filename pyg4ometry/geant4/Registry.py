@@ -96,8 +96,8 @@ class Registry:
             if material.type == "nist":
                 return # nist ones generally aren't added and allowed to pass through
             else:
-                self.materialNameCount[material.name] += 1
                 newName = material.name + "_" + str(self.materialNameCount[material.name])
+                self.materialNameCount[material.name] += 1
                 incrementRenameDict[newName] = material.name
                 material.name = newName
                 for component in material.components:
@@ -137,8 +137,8 @@ class Registry:
             return # it's already been transferred in this 'transfer' call, ignore
         if solid.name in self.solidDict:
             # we already have a solid called this, so uniquely name it by incrementing it
-            self.solidNameCount[solid.name] += 1
             newName = solid.name + "_" + str(self.solidNameCount[solid.name])
+            self.solidNameCount[solid.name] += 1
             incrementRenameDict[newName] = solid.name
             solid.name = newName
         else:
@@ -174,8 +174,8 @@ class Registry:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.logicalVolumeDict:
             # we already have an LV called this, so uniquely name it by incrementing it
-            self.logicalVolumeNameCount[volume.name] += 1
             newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
+            self.logicalVolumeNameCount[volume.name] += 1
             incrementRenameDict[newName] = volume.name
             volume.name = newName
         else:
@@ -211,8 +211,8 @@ class Registry:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.physicalVolumeDict:
             # we already have a PV called this, so uniquely name it by incrementing it
-            self.physicalVolumeNameCount[volume.name] += 1
             newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
+            self.physicalVolumeNameCount[volume.name] += 1
             incrementRenameDict[newName] = volume.name
             volume.name = newName
         else:
@@ -248,8 +248,8 @@ class Registry:
             return  # it's already been transferred in this 'transfer' call, ignore
         if surface.name in self.surfaceDict:
             # we already have a solid called this, so uniquely name it by incrementing it
-            self.surfaceNameCount[surface.name] += 1
             newName = surface.name + "_" + str(self.surfaceNameCount[surface.name])
+            self.surfaceNameCount[surface.name] += 1
             incrementRenameDict[newName] = surface.name
             surface.name = newName
         else:
@@ -291,8 +291,8 @@ class Registry:
         if define.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
         if define.name in self.defineDict:
-            self.defineNameCount[define.name] += 1
             newName = define.name + "_" + str(self.defineNameCount[define.name])
+            self.defineNameCount[define.name] += 1
             incrementRenameDict[newName] = newName
             define.name = newName
         else:
