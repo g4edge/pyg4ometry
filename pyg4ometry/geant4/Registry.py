@@ -184,6 +184,7 @@ class Registry:
         self.logicalVolumeDict[volume.name] = volume
         volume.registry = self
 
+        self.logicalVolumeNameCount[volume.name] += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
 
     def addPhysicalVolume(self, volume):
