@@ -344,8 +344,8 @@ class Registry:
                 if v in self._registryOld.defineDict:      # only if its in the other registry
                     self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict)
 
-            if var.name in self._registryOld.defineDict:                 # check if variable is stored in registry, if so need to be transferred
-                var.name = self.transferDefine(var, incrementRenameDict) # probably best to reuse here
+            if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
+                self.transferDefine(var, incrementRenameDict) # probably best to reuse here
 
     def setWorld(self, worldIn):
         """
@@ -508,7 +508,7 @@ class Registry:
                 var = [var]                         # single variable upgraded to list
 
             for v in var:                           # loop over variables
-                self.transferDefine(v, incrementRenameDict)
+                self.transferDefines(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
