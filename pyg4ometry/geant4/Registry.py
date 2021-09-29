@@ -377,7 +377,7 @@ class Registry:
         """
         for name in list(self.materialDict.keys()):  # Forces registered materials to
             if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
-                self.materialDict[name].set_registry(self)
+                self.materialDict[name].set_registry(self, dontWarnIfAlreadyAdded=True)
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
