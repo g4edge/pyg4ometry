@@ -1671,7 +1671,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
         # check again as we've just changed our short name
         if materialNameShort in freg.materials:
             return freg.materials[materialNameShort]
-        if materialInstance.type == "simple" :
+        if materialInstance.type == "element-simple" :
             mat = _fluka.Material(materialNameShort,
                                   materialInstance.Z,
                                   suggestedDensity,
@@ -1679,7 +1679,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                                   flukaregistry=freg)
             return mat
 
-        elif materialInstance.type == "composite" :
+        elif materialInstance.type == "element-composite" :
             flukaComponentNames     = []
             flukaComponents         = []
             flukaComponentFractions = []
