@@ -80,12 +80,12 @@ class LogicalVolume(object):
 
         # geometry mesh
         try :
-            self.mesh            = _Mesh(self.solid)
+            self.mesh = _Mesh(self.solid)
         except :
-            self.mesh           = None
+            self.mesh = None
             print("geant4.LogicalVolume> meshing error {}".format(self.name))
 
-        self.auxiliary       = []
+        self.auxiliary = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 
         # registry logic
@@ -454,7 +454,7 @@ class LogicalVolume(object):
             physicalNames = physicalNames.union(pvn)
         return logicalNames, physicalNames
 
-    def findLogicalByName(self,name) : 
+    def findLogicalByName(self, name):
         lv = []
 
         if self.name.find(name) != -1 : 
@@ -491,7 +491,7 @@ class LogicalVolume(object):
 
         return av
 
-    def makeWorldVolume(self, worldMaterial = 'G4_Galactic'):
+    def makeWorldVolume(self, worldMaterial='G4_Galactic'):
 
         import pyg4ometry.geant4 as _g4
 
