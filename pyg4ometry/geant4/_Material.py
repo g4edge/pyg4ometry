@@ -275,7 +275,7 @@ class Material(MaterialBase):
         self.density = kwargs.get("density", None)
         self.atomic_number = kwargs.get("atomic_number", None)
         self.atomic_weight = kwargs.get("atomic_weight", None)
-        self.number_of_components = kwargs.get("number_of_components", None)
+        self.number_of_components = kwargs.get("number_of_components", 0)
         self.components = []
         self.properties = {}
 
