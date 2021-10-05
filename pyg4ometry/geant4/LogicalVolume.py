@@ -76,6 +76,7 @@ class LogicalVolume(object):
 
         self.name            = name
         self.daughterVolumes = []
+        self._daughterVolumesDict = {}
         self.bdsimObjects    = []
 
         # geometry mesh
@@ -101,6 +102,7 @@ class LogicalVolume(object):
 
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
+        self._daughterVolumesDict[physicalVolume.name] = physicalVolume
 
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
@@ -167,6 +169,7 @@ class LogicalVolume(object):
                 toKeep.append( interMesh.polygonCount() != 0)
 
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
+        self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
 
     def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
         """
