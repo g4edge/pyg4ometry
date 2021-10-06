@@ -296,7 +296,7 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
     # density
     dDensity = om.density - rm.density
     if dDensity != 0: # avoid zero division
-        if (dDensity / rm.density) > tests.toleranceMaterialDensityFraction:
+        if abs(dDensity / rm.density) > tests.toleranceMaterialDensityFraction:
             details = "density: (reference): "+str(rm.density)+", (other): "+str(om.density)
             result['materialDensity'] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
@@ -344,7 +344,7 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
                 # fractional float comparison
                 dFrac = oFrac - rFrac
                 if dFrac != 0: # avoid zero division
-                    if (dFrac / rFrac) > tests.toleranceMaterialMassFraction:
+                    if abs(dFrac / rFrac) > tests.toleranceMaterialMassFraction:
                         details =  "mass fraction: component (i): "+str(i)+", named: "+str(rc[0].name)
                         details += ": (reference): "+str(rFrac)+", (other): "+str(oFrac)
                         result['materialComponentMassFraction'] += [TestResultNamed(testName, TestResult.Failed, details)]
@@ -505,10 +505,10 @@ def _Vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
     tolerance = tols[vectortype]
     
     for v in ['x','y','z']:
-        rc, oc = float(getattr(r1,v)),float(getattr(r2,v))
+        rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
         drc = oc - rc
         if drc != 0:
-            if (drc / rc) > tolerance:
+            if abs((drc / rc)) > tolerance:
                 details = v+": (reference): "+str(rc)+", (other): "+str(oc)
                 result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
             elif includeAllTestResults:
@@ -541,13 +541,13 @@ def _Meshes(lvname, referenceMesh, otherMesh, tests):
             for i in range(3):
                 dMin = omMin[i] - rmMin[i]
                 if dMin != 0:
-                    if (dMin / rmMin[i]) > tests.toleranceSolidExtentFraction:
+                    if abs(dMin / rmMin[i]) > tests.toleranceSolidExtentFraction:
                         details =  "axis-aligned bounding box lower edge: component i: "+str(i)
                         details += ", (reference): "+str(omMin[i])+", (other): "+str(omMin[i])
                         result['shapeExtentBoundingBoxMin'] += [TestResultNamed(lvname, TestResult.Failed, details)]
                 dMax = omMax[i] - rmMax[i]
                 if dMax != 0:
-                    if (dMax / rmMax[i]) > tests.toleranceSolidExtentFraction:
+                    if abs(dMax / rmMax[i]) > tests.toleranceSolidExtentFraction:
                         details =  "axis-aligned bounding box upper edge: component i: "+str(i)
                         details += ", (reference): "+str(omMax[i])+", (other): "+str(omMax[i])
                         result['shapeExtentBoundingBoxMax'] += [TestResultNamed(lvname, TestResult.Failed, details)]
