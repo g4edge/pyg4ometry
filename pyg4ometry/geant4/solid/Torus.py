@@ -45,13 +45,11 @@ class Torus(_SolidBase):
     :type nstack: int         
 
     """
-
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,
                  registry, lunit="mm", aunit="rad",
                  nslice=None, nstack=None, addRegistry=True):
+        super(Torus, self).__init__(name, 'Torus', registry)
 
-        self.type    = 'Torus'
-        self.name    = name
         self.pRmin   = pRmin
         self.pRmax   = pRmax
         self.pRtor   = pRtor
@@ -66,12 +64,10 @@ class Torus(_SolidBase):
 
         self.varNames = ["pRmin", "pRmax", "pRtor","pSPhi","pDPhi","nslice","nstack","lunit","aunit"]
 
+        self._twoPiValueCheck("pDPhi", self.aunit)
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-
-        self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
         return "Torus : {} {} {} {} {} {}".format(self.name, self.pRmin,

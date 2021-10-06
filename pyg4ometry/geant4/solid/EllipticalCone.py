@@ -33,9 +33,8 @@ class EllipticalCone(_SolidBase):
           pzTopCut:   float, half length of the cut.
 
         """
+        super(EllipticalCone, self).__init__(name, 'EllipticalCone', registry)
 
-        self.type       = 'EllipticalCone'
-        self.name       = name
         self.pxSemiAxis = pxSemiAxis
         self.pySemiAxis = pySemiAxis
         self.zMax       = zMax
@@ -50,8 +49,6 @@ class EllipticalCone(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "EllipticalCone : {} {} {} {} {}".format(self.name, self.pxSemiAxis,

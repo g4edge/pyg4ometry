@@ -38,14 +38,8 @@ class ExtrudedSolid(_SolidBase):
     pPoligon = [[x1,y1],[x2,y2],[x3,v3]] - vertices of polygon in clockwise order
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
     """
-
     def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True):
-        self.type     = 'ExtrudedSolid'
-        self.name     = name
-
-        if addRegistry :
-            registry.addSolid(self)
-        self.registry = registry
+        super(ExtrudedSolid, self).__init__(name, 'ExtrudedSolid', registry)
 
         self.dependents = []
         self.varNames = ["pPolygon", "pZslices", "lunit"]
@@ -53,6 +47,9 @@ class ExtrudedSolid(_SolidBase):
         for varName in self.varNames:
             self._addProperty(varName)
             setattr(self, varName, locals()[varName])
+
+        if addRegistry:
+            registry.addSolid(self)
 
     def __repr__(self):
         return "Extruded solid: {}".format(self.name)

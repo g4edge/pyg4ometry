@@ -17,15 +17,13 @@ class MultiUnion(_SolidBase):
     :type registry: Registry
     :param addRegistry: Add solid to registry
     :type addRegitry: bool
-
     """
     def __init__(self, name, objects, transformations, registry, addRegistry=True):
+        super(MultiUnion, self).__init__(name, 'MultiUnion', registry)
         # circular import
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4       as _g4
 
-        self.type            = "MultiUnion"
-        self.name            = name
         self.objects         = objects
         self.transformations = [_defines.upgradeToTransformation(t,registry)
                                 for t in transformations]

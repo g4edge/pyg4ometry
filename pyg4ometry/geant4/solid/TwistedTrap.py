@@ -9,7 +9,6 @@ import logging as _log
 import numpy as _np
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
-
     """
     Constructs a general trapezoid with a twist around one axis.
     
@@ -44,13 +43,11 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     :param aunit:        angle unit (rad,deg) for solid
     :type aunit:         str
     """
-
     def __init__(self, name, twistedAngle, pDz, pTheta, pDPhi, pDy1,
                  pDx1, pDx2, pDy2, pDx3, pDx4, pAlp, registry,
                  lunit = "mm", aunit = "rad", nstack=None, addRegistry=True):
+        super(TwistedTrap, self).__init__(name, 'TwistedTrap', registry)
 
-        self.type         = 'TwistedTrap'
-        self.name         = name
         self.twistedAngle = twistedAngle
         self.pDz          = pDz
         self.pTheta       = pTheta
@@ -70,12 +67,10 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDz", "pTheta","pDPhi","pDy1","pDx1","pDx2","pDy2","pDx3","pDx4","pAlp"]
 
+        self.checkParameters()
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-
-        self.checkParameters()
 
     def checkParameters(self):
         if self.evaluateParameter(self.twistedAngle) > _np.pi:

@@ -7,7 +7,6 @@ import logging as _log
 import numpy as _np
 
 class GenericPolycone(_SolidBase):
-
     """
     Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
     
@@ -31,13 +30,11 @@ class GenericPolycone(_SolidBase):
     :type nslice: int  
     
     """
-
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
                  registry, lunit="mm", aunit="rad",
                  nslice=None, addRegistry=True):
+        super(GenericPolycone, self).__init__(name, 'GenericPolycone', registry)
 
-        self.type    = 'GenericPolycone'
-        self.name    = name
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.pR      = pR
@@ -54,8 +51,6 @@ class GenericPolycone(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def checkParameters(self):
         if len(self.pR) < 3:

@@ -46,9 +46,8 @@ class Trap(_SolidBase):
 
           pAlp2:  float, angle wrt the y axis from the centre of the side (upper endcap)
         """
+        super(Trap, self).__init__(name, 'Trap', registry)
 
-        self.type    = "Trap"
-        self.name    = name
         self.pDz     = pDz
         self.pTheta  = pTheta
         self.pDPhi   = pDPhi
@@ -69,8 +68,6 @@ class Trap(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Trap : {} {} {} {} {} {} {} {} {} {} {} {}".format(self.name, self.pDz,

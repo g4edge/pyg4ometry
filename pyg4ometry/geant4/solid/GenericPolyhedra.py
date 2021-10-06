@@ -32,9 +32,8 @@ class GenericPolyhedra(_SolidBase):
         pR = r coordinate list
 		pZ = z coordinate list
         """
+        super(GenericPolyhedra, self).__init__(name, 'GenericPolyhedra', registry)
 
-        self.type    = 'GenericPolyhedra'
-        self.name    = name
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.numSide = numSide
@@ -52,8 +51,6 @@ class GenericPolyhedra(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Generic Polyhedra : {} {} {} {}".format(self.name, self.pSPhi,
