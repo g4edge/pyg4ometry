@@ -167,7 +167,7 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
             # do custom type check
             if expectedType == "placement":
-                result += PhysicalVolumes(rDaughter, oDaughter, tests, r, rlv.name, iatr)
+                result += PhysicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr)
             elif expectedType == "assembly":
                 result += AssemblyVolumes(rDaughter, oDaughter, tests, r, iatr)
             elif expectedType == "replica":
@@ -210,8 +210,6 @@ def PhysicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     rpv = referencePV # shortcuts
     opv = otherPV
 
-    if len(lvName) > 0:
-        lvName = "(lv): " + lvName
     testName = ": ".join(list(filter(None, [lvName, "(pv)", rpv.name])))
 
     if tests.names:
@@ -273,8 +271,7 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
 
     rm = referenceMaterial
     om = otherMaterial
-    if len(lvName) > 0:
-        lvName = "(lv): " + lvName
+
     testName = ": ".join(list(filter(None, [lvName, "(material)", rm.name])))
 
     if tests.names:
