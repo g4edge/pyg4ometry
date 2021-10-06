@@ -127,19 +127,21 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     rlv = referenceLV  # shortcuts
     olv = otherLV
 
+    testName = ": ".join(["(lv)", rlv.name])
+
     if tests.names:
-        result += _Names("logicalVolumeName", rlv.name, olv.name, rlv.name, includeAllTestResults)
-    result += Solids(rlv.solid, olv.solid, tests, rlv.name, includeAllTestResults)
-    result += Materials(rlv.material, olv.material, tests, rlv.name, includeAllTestResults)
+        result += _Names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
+    result += Solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
+    result += Materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
 
     if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
         details =  "# daughters: ('"+rlv.name+"') : "+str(len(rlv.daughterVolumes))
         details += ", ('"+olv.name+"') : "+str(len(olv.daughterVolumes))
-        result['nDaughters'] += [TestResultNamed(rlv.name, TestResult.Failed, details)]
+        result['nDaughters'] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
-        result['nDaughters'] += [TestResultNamed(rlv.name, TestResult.Passed)]
+        result['nDaughters'] += [TestResultNamed(testName, TestResult.Passed)]
 
-    result += _Meshes(rlv.name, rlv.mesh, olv.mesh, tests)
+    result += _Meshes(testName, rlv.mesh, olv.mesh, tests)
 
     # if not recursive return now and don't loop over daughter physical volumes
     if not recursive:
@@ -159,9 +161,9 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
             if expectedType != oDaughter.type:
                 details =  "daughter types in '"+dName+"': (ref): "+str(expectedType)
                 details += ", (other): "+str(oDaughter.type)
-                result['daughterType'] += [TestResultNamed(rlv.name, TestResult.Failed, details)]
+                result['daughterType'] += [TestResultNamed(testName, TestResult.Failed, details)]
             elif includeAllTestResults:
-                result['daughterType'] += [TestResultNamed(rlv.name, TestResult.Passed)]
+                result['daughterType'] += [TestResultNamed(testName, TestResult.Passed)]
 
             # do custom type check
             if expectedType == "placement":
@@ -193,9 +195,9 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
         if len(extraNames) > 1:
             details += "s "
         details += "[" + ", ".join(extraNames) + "]"
-        result['extraDaughter'] += [TestResultNamed(rlv.name, TestResult.Failed, details)]
+        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
-        result['extraDaughter'] += [TestResultNamed(rlv.name, TestResult.Passed)]
+        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Passed)]
 
     return result
 
@@ -208,13 +210,27 @@ def PhysicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     rpv = referencePV # shortcuts
     opv = otherPV
 
+    if len(lvName) > 0:
+        lvName = "(lv): " + lvName
+    testName = ": ".join(list(filter(None, [lvName, "(pv)", rpv.name])))
+
     if tests.names:
-        result += _Names("placementName", rpv.name, opv.name, lvName, includeAllTestResults)
+        result += _Names("placementName", rpv.name, opv.name, testName, includeAllTestResults)
     if tests.placement:
-        result += _Vector("rotation", rpv.rotation, opv.rotation, tests, includeAllTestResults)
-        result += _Vector("position", rpv.position, opv.position, tests, includeAllTestResults)
-    result += _Vector("scale", rpv.scale, opv.scale, tests, includeAllTestResults)
-    result += _CopyNumber(rpv.name, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
+        result += _Vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
+        result += _Vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
+
+    if rpv.scale and opv.scale: # may be None
+        result += _Vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
+    elif rpv.scale or opv.scale:
+        rpvScale = str(rpv.scale) if rpv.scale else "None"
+        opvScale = str(opv.scale) if opv.scale else "None"
+        details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
+        result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
+
+    result += _CopyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     result += LogicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults)
     return result
 
@@ -257,11 +273,12 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
 
     rm = referenceMaterial
     om = otherMaterial
-
-    testName = ": ".join(list(filter(None, [lvName, rm.name])))
+    if len(lvName) > 0:
+        lvName = "(lv): " + lvName
+    testName = ": ".join(list(filter(None, [lvName, "(material)", rm.name])))
 
     if tests.names:
-        result += _Names("materialName", rm.name, om.name, lvName, includeAllTestResults)
+        result += _Names("materialName", rm.name, om.name, testName, includeAllTestResults)
 
     if tests.materialClassType:
         if type(om) != type(rm):
@@ -475,14 +492,14 @@ def _Names(testName, str1, str2, parentName="", includeAllTestResults=False):
     nameTest = str1 == str2
     if not nameTest:
         details = "'"+str1+"' != '"+str2+"'"
-        result[testName] = [TestResultNamed("_".join(list(filter(None, [parentName, str1]))), TestResult.Failed, details)]
+        result[testName] = [TestResultNamed(": ".join(list(filter(None, [parentName, str1]))), TestResult.Failed, details)]
     elif includeAllTestResults:
-        result[testName] = [TestResultNamed("_".join(list(filter(None, [parentName, str1]))), TestResult.Passed)]
+        result[testName] = [TestResultNamed(": ".join(list(filter(None, [parentName, str1]))), TestResult.Passed)]
 
     result.result = result.result | TestResult.Passed
     return result
 
-def _Vector(vectortype, r1, r2, tests, includeAllTestResults=False):
+def _Vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     tols = {'rotation' : tests.toleranceRotationFraction,
@@ -496,9 +513,9 @@ def _Vector(vectortype, r1, r2, tests, includeAllTestResults=False):
         if drc != 0:
             if (drc / rc) > tolerance:
                 details = v+": (reference): "+str(rc)+", (other): "+str(oc)
-                result[vectortype] += [TestResultNamed(r1.name, TestResult.Failed, details)]
+                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
             elif includeAllTestResults:
-                result[vectortype] += [TestResultNamed(r1.name, TestResult.Passed)]
+                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
     
     return result
 
@@ -538,6 +555,7 @@ def _Meshes(lvname, referenceMesh, otherMesh, tests):
                         details += ", (reference): "+str(omMax[i])+", (other): "+str(omMax[i])
                         result['shapeExtentBoundingBoxMax'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             # no include all tests here as just too many
+            result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
             result['shapeExtent'] += [TestResultNamed(lvname, TestResult.NotTested, "no meshes")]
@@ -546,6 +564,7 @@ def _Meshes(lvname, referenceMesh, otherMesh, tests):
         if rm and om:
             # can only compare if meshes exist
             # TODO can't see any method on meshes to calculate this
+            #result.result = result.result | TestResult.Passed
             pass
         else:
             # explicitly flag as we were meant to test but can't
