@@ -31,8 +31,8 @@ class MultiUnion(_SolidBase):
         self.varNames = ["transformations"]
         self.dependents = []
 
-        registry.addSolid(self)
-        self.registry = registry
+        if addRegistry:
+            registry.addSolid(self)
 
         for obj in objects :
             obj.dependents.append(self)
