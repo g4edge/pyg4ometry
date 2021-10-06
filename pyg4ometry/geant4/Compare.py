@@ -2,6 +2,7 @@ from collections import defaultdict as _defaultdict
 from copy import deepcopy as _deepcopy
 import enum as _enum
 
+from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
 from pyg4ometry.geant4 import Material as _Material
 from pyg4ometry.geant4 import Element as _Element
 
@@ -32,7 +33,7 @@ class TestResult(_enum.Enum):
     """
     A test result can be either pass, fail or not conducted.
     
-    Use 0,1 so we can also emplicitly construct this with a Boolean.
+    Use 0,1 so we can also implicitly construct this with a Boolean.
 
     Use the bitwise or operator | and not the keyword 'or'. This bitwise or
     operator returns Failed if either have failed. Only returns
@@ -397,34 +398,75 @@ def Solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     """
     result = ComparisonResult()
 
-    rs = referenceSolid
-    os = otherSolid
+    rso = referenceSolid
+    oso = otherSolid
 
-    testName = ": ".join(list(filter(None, [lvName, rs.name])))
+    testName = ": ".join(list(filter(None, [lvName, rso.name])))
     
     if tests.names:
-        result += _Names("solidName", rs.name, os.name, lvName, includeAllTestResults)
+        result += _Names("solidName", rso.name, oso.name, lvName, includeAllTestResults)
         
     if tests.solidExact:
         # solid type
-        if rs.type != os.type:
-            details = "solid type: (reference): "+str(rs.type)
+        if rso.type != oso.type:
+            details = "solid type: (reference): "+str(rso.type)
             result['solidExactType'] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result['solidExactType'] += [TestResultNamed(testName, TestResult.Passed)]
 
-        if rs.type == os.type:
+        if rso.type == oso.type:
             # can only compare variables if they're the same type
-            for var in rs.varNames:
-                rv, ov = float(getattr(rs,var)), float(getattr(os,var))
-                dv = ov - rv
-                if dv != 0:
-                    if (dv / rv) > tests.toleranceSolidParameterFraction:
-                        details = "solid parameter '"+var+"': (reference): "+str(rv)+", (other): "+str(ov)
+            for var in _ExcludeUnits(rso.varNames):
+                rv = _evaluateToFloat(rso.registry, getattr(rso, var))
+                ov = _evaluateToFloat(oso.registry, getattr(oso, var))
+                problem = False
+
+                def CheckDiff(v1,v2):
+                    """Compare two floats."""
+                    dv = v2 - v1
+                    nonlocal problem
+                    aDifference = dv != 0
+                    if aDifference:
+                        problem = problem or ((dv / v1) > tests.toleranceSolidParameterFraction)
+
+                def ProblemLength(v1,v2):
+                    """Report if length of iterable list or tuple is different."""
+                    nonlocal problem
+                    nonlocal result
+                    if len(v1) != len(v2):
+                        problem = True
+                        details = "solid parameter '" + var + "': (reference): " + str(rv) + ", (other): " + str(ov)
                         result['solidExactParameter'] += [TestResultNamed(testName, TestResult.Failed, details)]
-                    elif includeAllTestResults:
-                        result['solidExactParameter'] += [TestResultNamed(testName, TestResult.Passed)]
-    
+                        return True
+                    else:
+                        return False
+
+                def CheckVar(br,bo):
+                    """Recursively check values in list structures."""
+                    if type(br) in (float, int):
+                        CheckDiff(br, bo)
+                    elif type(br) in (list, tuple):
+                        if ProblemLength(rv, ov):
+                            return
+                        for bri, boi in zip(br, bo):
+                            CheckVar(bri, boi)
+                # do the check
+                CheckVar(rv, ov)
+
+                if problem:
+                    details = "solid parameter '"+var+"': (reference): "+str(rv)+", (other): "+str(ov)
+                    result['solidExactParameter'] += [TestResultNamed(testName, TestResult.Failed, details)]
+                elif includeAllTestResults:
+                    result['solidExactParameter'] += [TestResultNamed(testName, TestResult.Passed)]
+    elif includeAllTestResults:
+        result['solidExactType'] += [TestResultNamed(testName, TestResult.NotTested)]
+
+    result.result = result.result | TestResult.Passed
+    return result
+
+def _ExcludeUnits(varNamesList):
+    toExclude = ("lunit", "aunit")
+    result = [v for v in varNamesList if v not in toExclude]
     return result
 
 def _Names(testName, str1, str2, parentName="", includeAllTestResults=False):
