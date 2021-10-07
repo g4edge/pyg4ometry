@@ -72,7 +72,7 @@ class ComparisonResult:
 
     >>> cr = ComparisonResult()
     >>> cr['nDaughtersTest'] += [TestResultNamed('volume_1', TestResult.Failed, 'different number')]
-    >>> cr.Print()
+    >>> cr.print()
     """
     def __init__(self):
         self.test = _defaultdict(list)
@@ -103,7 +103,7 @@ class ComparisonResult:
     def __len__(self):
         return len(self.test)
 
-    def Print(self, testName=None):
+    def print(self, testName=None):
         print("Overal result> ",self.result)
         if testName is None:
             for tn,results in self.test.items():
@@ -117,11 +117,11 @@ class ComparisonResult:
         print(" ") # for a new line
                     
 
-def Geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
-    result = LogicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults)
+def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
+    result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults)
     return result                   
 
-def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False):
+def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False):
     result = ComparisonResult()
 
     rlv = referenceLV  # shortcuts
@@ -130,9 +130,9 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     testName = ": ".join(["(lv)", rlv.name])
 
     if tests.names:
-        result += _Names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
-    result += Solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
-    result += Materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
+        result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
+    result += solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
+    result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
 
     if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
         details =  "# daughters: ('"+rlv.name+"') : "+str(len(rlv.daughterVolumes))
@@ -141,7 +141,7 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     elif includeAllTestResults:
         result['nDaughters'] += [TestResultNamed(testName, TestResult.Passed)]
 
-    result += _Meshes(testName, rlv.mesh, olv.mesh, tests)
+    result += _meshes(testName, rlv.mesh, olv.mesh, tests)
 
     # if not recursive return now and don't loop over daughter physical volumes
     if not recursive:
@@ -167,15 +167,15 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
             # do custom type check
             if expectedType == "placement":
-                result += PhysicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr)
+                result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr)
             elif expectedType == "assembly":
-                result += AssemblyVolumes(rDaughter, oDaughter, tests, r, iatr)
+                result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr)
             elif expectedType == "replica":
-                result += ReplicaVolumes(rDaughter, oDaughter, tests, iatr)
+                result += replicaVolumes(rDaughter, oDaughter, tests, iatr)
             elif expectedType == "division":
-                result += DivisionVolumes(rDaughter, oDaughter, tests, iatr)
+                result += divisionVolumes(rDaughter, oDaughter, tests, iatr)
             elif expectedType == "parameterised":
-                result += ParameterisedVolumes(rDaughter, oDaughter, tests, iatr)
+                result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr)
             else:
                 # LN: don't know what to SkinSurface, BorderSurface and Loop
                 pass
@@ -201,7 +201,7 @@ def LogicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     return result
 
-def PhysicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", includeAllTestResults=False):
+def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", includeAllTestResults=False):
     """
     lvName is an optional parent object name to help in print out details decode where the placement is.
     """
@@ -213,13 +213,13 @@ def PhysicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     testName = ": ".join(list(filter(None, [lvName, "(pv)", rpv.name])))
 
     if tests.names:
-        result += _Names("placementName", rpv.name, opv.name, testName, includeAllTestResults)
+        result += _names("placementName", rpv.name, opv.name, testName, includeAllTestResults)
     if tests.placement:
-        result += _Vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
-        result += _Vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
+        result += _vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
+        result += _vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
 
     if rpv.scale and opv.scale: # may be None
-        result += _Vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
+        result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
     elif rpv.scale or opv.scale:
         rpvScale = str(rpv.scale) if rpv.scale else "None"
         opvScale = str(opv.scale) if opv.scale else "None"
@@ -228,18 +228,18 @@ def PhysicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     elif includeAllTestResults:
         result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
 
-    result += _CopyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
-    result += LogicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults)
+    result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
+    result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults)
     return result
 
-def AssemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTestResults=False):
+def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTestResults=False):
     result = ComparisonResult()
 
     rav = referenceAV
     oav = otherAV
 
     if tests.names:
-        result += _Names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
+        result += _names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
 
     # compare placements inside assembly
 
@@ -248,19 +248,19 @@ def AssemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
     result.result = result.result | TestResult.Passed
     return result
 
-def ReplicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def replicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
     result = ComparisonResult()
     return result
 
-def DivisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
     result = ComparisonResult()
     return result
 
-def ParameterisedVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def parameterisedVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
     result = ComparisonResult()
     return result
 
-def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTestResults=False):
+def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTestResults=False):
     """
     This tests assumes both referenceMaterial and otherMaterial are derived from the 
     type pyg4ometry.geant4._Material.Material.
@@ -275,7 +275,7 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
     testName = ": ".join(list(filter(None, [lvName, "(material)", rm.name])))
 
     if tests.names:
-        result += _Names("materialName", rm.name, om.name, testName, includeAllTestResults)
+        result += _names("materialName", rm.name, om.name, testName, includeAllTestResults)
 
     if tests.materialClassType:
         if type(om) != type(rm):
@@ -353,16 +353,16 @@ def Materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
 
             # components themselves
             if type(rc[0]) is _Material:
-                result += Materials(rc[0], oc[0], tests, lvName, includeAllTestResults)
+                result += materials(rc[0], oc[0], tests, lvName, includeAllTestResults)
             elif type(rc[0]) is _Element:
-                result += _Elements(rc[0], oc[0], tests, lvName, includeAllTestResults)
+                result += _elements(rc[0], oc[0], tests, lvName, includeAllTestResults)
             else:
                 print(type(rc))
 
     result.result = result.result | TestResult.Passed
     return result
 
-def _Elements(referenceElement, otherElement, tests, lvName="", includeAllTestResults=False):
+def _elements(referenceElement, otherElement, tests, lvName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     re = referenceElement
@@ -371,7 +371,7 @@ def _Elements(referenceElement, otherElement, tests, lvName="", includeAllTestRe
     testName = ": ".join(list(filter(None, [lvName, re.name])))
     
     if tests.names:
-        result += _Names("elementName", re.name, oe.name, lvName, includeAllTestResults)
+        result += _names("elementName", re.name, oe.name, lvName, includeAllTestResults)
 
     if re.type != oe.type:
         details = "element type: (reference): "+str(re.type)+", (other): "+str(oe.type)
@@ -407,7 +407,7 @@ def _Elements(referenceElement, otherElement, tests, lvName="", includeAllTestRe
     result.result = result.result | TestResult.Passed
     return result
 
-def Solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=False):
+def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=False):
     """
     """
     result = ComparisonResult()
@@ -418,7 +418,7 @@ def Solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     testName = ": ".join(list(filter(None, [lvName, rso.name])))
     
     if tests.names:
-        result += _Names("solidName", rso.name, oso.name, lvName, includeAllTestResults)
+        result += _names("solidName", rso.name, oso.name, lvName, includeAllTestResults)
         
     if tests.solidExact:
         # solid type
@@ -430,7 +430,7 @@ def Solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
 
         if rso.type == oso.type:
             # can only compare variables if they're the same type
-            for var in _ExcludeUnits(rso.varNames):
+            for var in _excludeUnits(rso.varNames):
                 rv = _evaluateToFloat(rso.registry, getattr(rso, var))
                 ov = _evaluateToFloat(oso.registry, getattr(oso, var))
                 problem = False
@@ -478,12 +478,12 @@ def Solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     result.result = result.result | TestResult.Passed
     return result
 
-def _ExcludeUnits(varNamesList):
+def _excludeUnits(varNamesList):
     toExclude = ("lunit", "aunit")
     result = [v for v in varNamesList if v not in toExclude]
     return result
 
-def _Names(testName, str1, str2, parentName="", includeAllTestResults=False):
+def _names(testName, str1, str2, parentName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     nameTest = str1 == str2
@@ -496,7 +496,7 @@ def _Names(testName, str1, str2, parentName="", includeAllTestResults=False):
     result.result = result.result | TestResult.Passed
     return result
 
-def _Vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=False):
+def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     tols = {'rotation' : tests.toleranceRotationFraction,
@@ -516,7 +516,7 @@ def _Vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
     
     return result
 
-def _CopyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
+def _copyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
     result = ComparisonResult()
 
     if c1 != c2:
@@ -527,7 +527,7 @@ def _CopyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
     
     return result
 
-def _Meshes(lvname, referenceMesh, otherMesh, tests):
+def _meshes(lvname, referenceMesh, otherMesh, tests):
     result = ComparisonResult()
 
     rm = referenceMesh
@@ -569,5 +569,5 @@ def _Meshes(lvname, referenceMesh, otherMesh, tests):
 
     return result
 
-def Registries(reference, other):
+def registries(reference, other):
     pass
