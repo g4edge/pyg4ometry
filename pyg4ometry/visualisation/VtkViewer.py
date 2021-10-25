@@ -1,12 +1,12 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
-from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from .VisualisationOptions import predefinedMaterialVisOptions as _predefinedMaterialVisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
-import random
+import random as _random
 
 class VtkViewer:
     """
@@ -169,12 +169,12 @@ class VtkViewer:
 
     def setRandomColours(self, seed = 0):
 
-        random.seed(seed)
+        _random.seed(seed)
 
         for a in self.actors:
-            a.GetProperty().SetColor(random.random(),
-                                     random.random(),
-                                     random.random())
+            a.GetProperty().SetColor(_random.random(),
+                                     _random.random(),
+                                     _random.random())
 
     def setCutterOrigin(self, dimension, origin):
         """
