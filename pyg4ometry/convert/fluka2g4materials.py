@@ -147,9 +147,7 @@ class _FlukaToG4MaterialConverter:
             g4element = self.g4elementKeysMangled[elementName]
         g4material = _g4.MaterialSingleElement(name, atomicNumber, atomicMass,
                                                density, registry=self.greg)
-        # we have to tolerate a predefined material (or element) being redefined
-        # the registry mixes elements and materials as both 'materials'
-        self.greg.transferMaterial(g4material) # this will increment the name
+        
         self.g4elements[name] = g4element
         self.g4materials[name] = g4material
 
