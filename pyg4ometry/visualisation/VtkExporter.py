@@ -1,15 +1,12 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
-from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
-from pyg4ometry.visualisation import loadPredefined
-import random
-import os,binascii
-import pandas as pd
-import logging
+from pyg4ometry.visualisation import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
+import logging as _logging
 
 _WITH_PARAVIEW = True
 try:
@@ -18,7 +15,8 @@ except (ImportError, ImportWarning):
     _WITH_PARAVIEW = False
     msg = "paraview is required for this module to have full functionalities.\n"
     msg += "Not all methods will be available."
-    logging.log(20, msg)
+    _logging.log(20, msg)
+
 
 class VtkExporter:
     def __init__(self, path='.'):
@@ -41,7 +39,7 @@ class VtkExporter:
         self.mbindexdico = {}
 
         # material options dict
-        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(loadPredefined())
+        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(_getPredefinedMaterialVisOptions())
 
     def export_to_Paraview(self, reg, fileName='Paraview_model.pvsm', model=True, df_model=None, df_color=None):
         """
@@ -126,7 +124,7 @@ class VtkExporter:
             with as keys the logical volumes names and as item the respective RGB value
 
         """
-
+        import pandas as pd
         df_color.set_index('TYPE', inplace=True)
         df_gdml.set_index('mother', inplace=True)
         df_model.reset_index(inplace=True)

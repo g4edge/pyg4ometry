@@ -3,7 +3,7 @@ import vtk as _vtk
 import pyg4ometry.transformation as _transformation
 from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-from .VisualisationOptions import predefinedMaterialVisOptions as _predefinedMaterialVisOptions
+from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random as _random
@@ -948,7 +948,7 @@ class VtkViewerColouredMaterial(PubViewer):
     Geant4, FLUKA and BDSIM materials.
     """
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, materialVisOptions=_predefinedMaterialVisOptions, **kwargs)
+        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self, renderer, vtkviewer):

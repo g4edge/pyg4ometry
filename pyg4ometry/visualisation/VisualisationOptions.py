@@ -2,6 +2,9 @@ import configparser as _configparser
 import random as _random
 import pkg_resources as _pkg_resources
 
+# instance of vis options loaded lazily as needed for faster import times
+_predefinedMaterialVisOptions = None
+
 def randomColour():
     """Return random RGB tuple"""
     return (_random.randint(0, 255), _random.randint(0, 255), _random.randint(0, 255))
@@ -70,7 +73,10 @@ def loadPredefined():
         result[k] = vi
     return result
 
-predefinedMaterialVisOptions = loadPredefined()
+def getPredefinedMaterialVisOptions():
+    if not _predefinedMaterialVisOptions:
+        _predefinedMaterialVisOptions = loadPredefined()
+    return _predefinedMaterialVisOptions
 
 def makeVisualisationOptionsDictFromPredefined(ColourMap):
     for material in ColourMap.keys():
