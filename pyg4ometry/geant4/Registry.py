@@ -1,4 +1,3 @@
-import pandas as _pd
 from collections import defaultdict as _defaultdict
 import pyg4ometry.exceptions as _exceptions
 from . import _Material as _mat
@@ -550,39 +549,7 @@ class Registry:
         freg = _f.FlukaRegistry()
 
     def structureAnalysis(self, lv_name=None, debug=False, level=0, df=None):
-
-        if lv_name is None:
-            lv_name = self.getWorldVolume().name
-
-        if df is None:
-            self.logicalVolumeList = []
-            df = _pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
-
-        mother_lv = self.logicalVolumeDict[lv_name]
-        mother = mother_lv.name
-        daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
-        daughters = [daughter.name for daughter in daughters_lv]
-        material = mother_lv.material.name.split('0')[0]
-
-        df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv,
-                        'daughters': daughters, 'material': material}, ignore_index=True)
-
-        if debug:
-            print("\nlevel:", level)
-            print("mother:", mother)
-            print("daughters: ", len(daughters), " ", daughters)
-
-        level += 1
-
-        for daughters in mother_lv.daughterVolumes:
-            lv_name = daughters.logicalVolume.name
-            try:
-                self.logicalVolumeList.index(lv_name)
-            except ValueError:
-                df = self.structureAnalysis(lv_name, debug, level, df)
-                self.logicalVolumeList.append(lv_name)
-
-        return df
+        return AnalyseGeometryStructure(self, lv_name, debug, level, df)
 
 
 class GeometryComplexityInformation:
@@ -669,3 +636,40 @@ def _UpdateComplexity(lv, info):
         info = _UpdateComplexity(pv.logicalVolume, info)
     
     return info
+
+def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=None):
+    # do the heavy import only in the function
+    import pandas as _pd
+    reg = registry #shortcut
+    if lv_name is None:
+        lv_name = reg.getWorldVolume().name
+
+    if df is None:
+        reg.logicalVolumeList = []
+        df = _pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
+
+    mother_lv = reg.logicalVolumeDict[lv_name]
+    mother = mother_lv.name
+    daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
+    daughters = [daughter.name for daughter in daughters_lv]
+    material = mother_lv.material.name.split('0')[0]
+
+    df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv,
+                    'daughters': daughters, 'material': material}, ignore_index=True)
+
+    if debug:
+        print("\nlevel:", level)
+        print("mother:", mother)
+        print("daughters: ", len(daughters), " ", daughters)
+
+    level += 1
+
+    for daughters in mother_lv.daughterVolumes:
+        lv_name = daughters.logicalVolume.name
+        try:
+            reg.logicalVolumeList.index(lv_name)
+        except ValueError:
+            df = reg.structureAnalysis(lv_name, debug, level, df)
+            reg.logicalVolumeList.append(lv_name)
+
+    return df

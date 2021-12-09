@@ -1,7 +1,7 @@
 import os
 from itertools import zip_longest as _zip_longest
 
-from .card import Card
+from .card import Card as _Card
 
 # http://www.fluka.org/content/manuals/online/5.2.html
 # name, atomic mass, atomic number, density in g/cm3
@@ -86,7 +86,7 @@ class _MatProp(object):
         return self.density < 0.01 or self.pressure
 
     def makeMatPropCard(self):
-        return Card("MAT-PROP", what1=self.pressure, what4=self.name)
+        return _Card("MAT-PROP", what1=self.pressure, what4=self.name)
 
 class Material(_MatProp):
     """A FLUKA material consisting of a single element.  This corresponds
@@ -128,7 +128,7 @@ class Material(_MatProp):
             flukaregistry.addMaterial(self)
 
     def toCards(self):
-        material = [Card("MATERIAL",
+        material = [_Card("MATERIAL",
                          what1=self.atomicNumber,
                          what2=self.atomicMass,
                          what3=self.density,
@@ -196,7 +196,7 @@ class Compound(_MatProp):
 
     def toCards(self):
         compoundName =self.name
-        material = Card(keyword="MATERIAL",
+        material = _Card(keyword="MATERIAL",
                         what3=self.density,
                         sdum=compoundName)
 
@@ -215,7 +215,7 @@ class Compound(_MatProp):
         for first, second, third in  _grouper(3, self.fractions):
             frac, name  = _formatFlukaMaterialPair(first, namePrefix,
                                                    fractionPrefix)
-            card = Card("COMPOUND", what1=frac, what2=name, sdum=compoundName)
+            card = _Card("COMPOUND", what1=frac, what2=name, sdum=compoundName)
             if second is not None:
                 frac, name  = _formatFlukaMaterialPair(second,
                                                        namePrefix,

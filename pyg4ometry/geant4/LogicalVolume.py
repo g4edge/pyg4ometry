@@ -6,14 +6,13 @@ import pyg4ometry as _pyg4ometry
 from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
-from . import solid                     as                 _solid
-from . import _Material                  as                 _mat
-import pyg4ometry.transformation as                 _trans
-import pyg4ometry.visualisation  as                 _vi
-import vtk                       as                 _vtk
+from . import solid as _solid
+from . import _Material as _mat
+import pyg4ometry.transformation as _trans
+import vtk as _vtk
 
-import numpy   as   _np
-import logging as   _log
+import numpy   as _np
+import logging as _log
 
 
 def _solid2tessellated(solid):
@@ -44,15 +43,14 @@ def _solid2tessellated(solid):
 
 
 class LogicalVolume(object):
-    '''
+    """
     LogicalVolume : G4LogicalVolume
     :param solid:  
     :param material:
     :param name: 
     :param registry:      
     :param addRegistry: 
-    '''
-
+    """
     def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super(LogicalVolume, self).__init__()
 

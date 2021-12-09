@@ -1,4 +1,4 @@
-'''
+"""
 GLOBAL        20000.       -1.        1.        0.        0.        0.
 DEFAULTS         0.0       0.0       0.0       0.0       0.0      0.0 EM-CASCA
 BEAM            17.5       0.0   10000.0       0.0       0.0      1.0 ELECTRON
@@ -15,16 +15,12 @@ RANDOMIZ  , 1.
 START     , 1000.
 STOP
 END
-
-'''
-
+"""
 
 from pyg4ometry.fluka import material as _material
 
-class Writer :
-
+class Writer:
     _flukaFFString = "*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..."
-
     def __init__(self):
         pass
 
@@ -36,9 +32,6 @@ class Writer :
 
     def addDetector(self, flukaRegistry):
         self.flukaRegistry = flukaRegistry
-
-    def addDefaults(self):
-        pass
 
     def addBeam(self):
         pass

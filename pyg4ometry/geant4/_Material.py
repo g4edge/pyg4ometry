@@ -1,16 +1,34 @@
-import sys as _sys
-import os as _os
-import pkg_resources
-import pyg4ometry.exceptions as _exceptions
+_nistMaterialDict = None
+_nistMaterialList = None
+_nistElementZToName = None
 
+def getNistMaterialDict():
+    global _nistMaterialDict
+    global _nistMaterialList
+    global _nistElementZToName
+    if _nistMaterialDict is None:
+        _nistMaterialDict = loadNISTMaterialDict()
+        _nistMaterialList = _nistMaterialDict.keys()
+        _nistElementZToName = {value["z"]:key for key,value in _nistMaterialDict.items() if value["type"] == "element"}
+    return _nistMaterialDict
+
+def getNistMaterialList():
+    global _nistMaterialList
+    if _nistMaterialList is None:
+        getNistMaterialDict()
+    return _nistMaterialList
+
+def getNistElementZToName():
+    global  _nistElementZToName
+    if _nistElementZToName is None:
+        getNistMaterialDict()
+    return _nistElementZToName
 
 def _getClassVariables(obj):
     var_dict = {key:value for key, value in obj.__dict__.items() if not key.startswith('__') and not callable(key)}
     return var_dict
 
-
 def _makeNISTCompoundList():
-
     return loadNISTMaterialDict().keys()
 
 def _safeName(name):
@@ -18,6 +36,7 @@ def _safeName(name):
     return name
 
 def loadNISTMaterialDict():
+    import pkg_resources
     nist_materials_dict = {}
     
     nist_elements  = pkg_resources.resource_filename(__name__, "nist_elements.txt")
@@ -83,15 +102,13 @@ def loadNISTMaterialDict():
 
     return nist_materials_dict
 
-nist_materials_dict = loadNISTMaterialDict()
-nist_materials_list = nist_materials_dict.keys()
-nist_element_z_to_name  = {value["z"]:key for key,value in nist_materials_dict.items() if value["type"] == "element"}
-
 def nist_materials_name_lookup(name):
-    return nist_materials_dict[name]
+    d = getNistMaterialDict()
+    return d[name]
 
 def nist_materials_z_lookup(z):
-    return nist_element_z_to_name[z]
+    d = getNistElementZToName()
+    return d[z]
 
 def nist_element_2geant4Element(name, reg=None):
     """
@@ -123,7 +140,7 @@ def nist_material_2geant4Material(name, reg=None):
         result = MaterialCompound(matDict["name"], matDict["density"], matDict["ncom"], reg, state=matDict["state"])
         d = matDict["elements"]
         for (z,nAtoms,massFraction) in matDict["elements"]:
-            elementDict = nist_materials_dict[nist_element_z_to_name[z]]
+            elementDict = getNistMaterialDict()[getNistElementZToName()[z]]
             element = nist_element_2geant4Element(elementDict["name"], reg)
             result.add_element_massfraction(element, massFraction)
         return result            
@@ -143,7 +160,7 @@ def MaterialPredefined(name, registry=None):
     Inputs:
         name          - string
     """
-    if name not in nist_materials_list:
+    if name not in getNistMaterialList():
         raise ValueError("{} is not a NIST compound".format(name))
     return Material(**locals())
 
@@ -292,17 +309,14 @@ class Material(MaterialBase):
                                  "pressure": None,
                                  "pressure_unit": None}
         
-        self.NIST_compounds = nist_materials_list
+        self._NIST_compounds = getNistMaterialList()
 
         if not any(_getClassVariables(self)):
             self.type = "none"
-
-        elif self.name in self.NIST_compounds:
+        elif self.name in self._NIST_compounds:
             self.type = "nist"
-
         elif "arbitrary" in kwargs:
             self.type = "arbitrary"
-
         elif self.density:
             if self.number_of_components and not self.atomic_number:
                 self.type = "composite"
