@@ -1,5 +1,5 @@
 from . import config
-
+from . import compare
 from . import convert
 from . import exceptions
 from . import fluka

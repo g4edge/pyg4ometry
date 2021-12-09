@@ -27,4 +27,3 @@ from .Registry import *
 from ._Material import *
 from .Expression import *
 from . import solid
-from . import Compare
