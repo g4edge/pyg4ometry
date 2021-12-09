@@ -39,6 +39,8 @@ class TestResult(_enum.Enum):
     operator returns Failed if either have failed. Only returns
     NotTested if both are not tested. Cannot use bitwise |= as we cannot
     update an Enum internally.
+
+    Use TestResult.All() for a list of all possible results - useful as an argument for printing.
     """
     Failed    = 0
     Passed    = 1
@@ -52,6 +54,13 @@ class TestResult(_enum.Enum):
 
     def __ior__(self, other):
         raise IOError("not implement")
+
+    @staticmethod
+    def All():
+        """
+        Utility function to get a list of all test types in one.
+        """
+        return [TestResult.Failed, TestResult.Passed, TestResult.NotTested]
 
 class TestResultNamed:
     def __init__(self, nameIn, testResultIn=TestResult.Failed, detailsIn=""):
@@ -73,6 +82,8 @@ class ComparisonResult:
     >>> cr = ComparisonResult()
     >>> cr['nDaughtersTest'] += [TestResultNamed('volume_1', TestResult.Failed, 'different number')]
     >>> cr.print()
+
+    print() can take a list of test result outcomes to print. e.g. TestResult.All()
     """
     def __init__(self):
         self.test = _defaultdict(list)
@@ -103,18 +114,36 @@ class ComparisonResult:
     def __len__(self):
         return len(self.test)
 
-    def print(self, testName=None):
-        print("Overal result> ",self.result)
+    def testNames(self):
+        return list(self.test.keys())
+
+    def print(self, testName=None, testResultsToPrint=[TestResult.Failed]):
+        """
+        :param testName: (optional) name of specific single test to print - see testNames()
+        :type  arg: str
+        :param testResultsToPrint: (optional) list of result outcomes to print
+
+        Print all types of tests (by default) or a specific one type.
+        Control level of print out with optional argument of list of test outcomes to print.
+
+        >>> cr.print()
+        >>> cr.print('solidName')
+        >>> cr.print(testResultsToPrint=[TestResult.All()])
+        """
+        print("Overall result> ", self.result)
         if testName is None:
-            for tn,results in self.test.items():
-                print('Test> ',tn)
+            for tn, results in self.test.items():
+                print('Test> ', tn)
                 for result in results:
-                    print(result)
+                    # only print if required
+                    if result.testResult in testResultsToPrint:
+                        print(result)
+                print(" ")
         else:
-            print('Test> ',testName)
+            print('Test> ', testName)
             for result in self.test[testName]:
                 print(result)
-        print(" ") # for a new line
+            print(" ") # for a new line
                     
 
 def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
@@ -570,4 +599,5 @@ def _meshes(lvname, referenceMesh, otherMesh, tests):
     return result
 
 def registries(reference, other):
+    print("not implemented yet")
     pass
