@@ -1,6 +1,5 @@
 import copy as _copy 
 
-from pyg4ometry.transformation import *
 import pyg4ometry.exceptions
 
 from pyg4ometry.pycsg.core import CSG as _CSG
