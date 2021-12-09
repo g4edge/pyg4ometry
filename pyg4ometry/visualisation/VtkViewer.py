@@ -770,11 +770,9 @@ class VtkViewer:
         json.dump(d,f)
         f.close()
 
-    def viewSection(self, dir = 'x'):
-        import matplotlib.pyplot as _plt
-        from vtk.numpy_interface import dataset_adapter as dsa
-        import pyg4ometry.pycgal.algo as algo
-        import random
+    def viewSection(self, dir='x'):
+        #import matplotlib.pyplot as _plt
+        #from vtk.numpy_interface import dataset_adapter as dsa
 
         if dir == 'x' :
             cutters = self.xcutters
