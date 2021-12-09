@@ -1,7 +1,6 @@
+import pyg4ometry.geant4 as _g4
+from pyg4ometry.exceptions import FLUKAError as _FLUKAError
 
-
-import pyg4ometry.geant4 as g4
-from pyg4ometry.fluka.material import BuiltIn, Material, Compound
 _periodicTable = None
 
 # http://www.fluka.org/content/manuals/online/5.2.html
@@ -101,23 +100,26 @@ class _FlukaToG4MaterialConverter:
         # whereas in FLUKA they can be used interchangeably.
         for flukaName, symbol in _FLUKA_ELEMENT_SYMBOLS.items():
             z, a = self.periodicTable.atomicNumberAndMassFromSymbol(symbol)
-            m = g4.ElementSimple(flukaName, symbol, z, a, registry=self.greg)
+            m = _g4.ElementSimple(flukaName, symbol, z, a, registry=self.greg)
             self.g4elements[flukaName] = m
 
     def convertAll(self):
+        # delayed import as possibly heavy
+        from pyg4ometry.fluka import material as _fluMat
+        
         for name, material in self.freg.materials.items():
-            if isinstance(material, BuiltIn):
+            if isinstance(material, _fluMat.BuiltIn):
                 self.convertBuiltin(name, material)
-            elif isinstance(material, Material):
+            elif isinstance(material, _fluMat.Material):
                 self.convertElement(name, material)
-            elif isinstance(material, Compound):
+            elif isinstance(material, _fluMat.Compound):
                 self.convertCompound(material)
             else:
                 raise TypeError(f"Unknown material type {material}")
 
     def convertBuiltin(self, name, flukaMaterial):
         assert name == flukaMaterial.name
-        g4material = g4.MaterialPredefined(
+        g4material = _g4.MaterialPredefined(
             FLUKA_BUILTIN_TO_G4_MATERIAL_MAP[name],
             registry=self.greg)
         self.g4materials[name] = g4material
@@ -133,9 +135,9 @@ class _FlukaToG4MaterialConverter:
         # instance in case the element is to be used as an atomic
         # fraction, or as a plain material.
         elementName = self._mangleElementName(name)
-        g4element = g4.ElementSimple(elementName, elementName, atomicNumber,
+        g4element = _g4.ElementSimple(elementName, elementName, atomicNumber,
                                      massNumber, registry=self.greg)
-        g4material = g4.MaterialSingleElement(name, atomicNumber, atomicMass,
+        g4material = _g4.MaterialSingleElement(name, atomicNumber, atomicMass,
                                               density, registry=self.greg)
         self.g4elements[name] = g4element
         self.g4materials[name] = g4material
@@ -152,7 +154,7 @@ class _FlukaToG4MaterialConverter:
 
     def _makeBaseCompoundMaterial(self, name, flukaCompound):
         assert name == flukaCompound.name
-        return g4.MaterialCompound(name,
+        return _g4.MaterialCompound(name,
                                    flukaCompound.density,
                                    len(flukaCompound.fractions),
                                    registry=self.greg)
@@ -224,8 +226,7 @@ class _PeriodicTable(object):
         t = self.table
         nNeutrons = t["NumberofNeutrons"][t["AtomicNumber"] == z].values
         if not nNeutrons:
-            raise FLUKAError(
-                "Unable to determine mass number for Z = {}".format(z))
+            raise _FLUKAError("Unable to determine mass number for Z = {}".format(z))
         return int(nNeutrons) + z
 
     def atomicMassFromZ(self, z):
