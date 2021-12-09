@@ -291,9 +291,9 @@ class VtkExporter:
         transformPD.SetTransform(transform)
 
         if visOptions:
-            Colors = _vtk.vtkUnsignedCharArray();
-            Colors.SetNumberOfComponents(3);
-            Colors.SetName("Colors");
+            Colors = _vtk.vtkUnsignedCharArray()
+            Colors.SetNumberOfComponents(3)
+            Colors.SetName("Colors")
             for i in range(vtkPD.GetNumberOfPolys()):
                 Colors.InsertNextTuple3(visOptions.colour[0]*255, visOptions.colour[1]*255, visOptions.colour[2]*255);
 

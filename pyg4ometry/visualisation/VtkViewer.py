@@ -109,7 +109,7 @@ class VtkViewer:
         self.ren.AddActor(axes)
 
     def addAxesWidget(self):
-        axesActor = _vtk.vtkAnnotatedCubeActor();
+        axesActor = _vtk.vtkAnnotatedCubeActor()
         axesActor.SetXPlusFaceText('+x')
         axesActor.SetXMinusFaceText('-x')
         axesActor.SetYPlusFaceText('+y')
