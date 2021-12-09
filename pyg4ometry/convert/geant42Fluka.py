@@ -5,6 +5,8 @@ import pyg4ometry.pycgal as _pycgal
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
 import numpy as _np
 import copy as _copy
+
+# this should be refactored to rename namespaced (privately)
 from pyg4ometry.fluka.body import *
 
 # import matplotlib.pyplot as _plt
