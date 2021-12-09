@@ -1,19 +1,12 @@
 from collections import defaultdict      as _defaultdict
-import numpy                             as _np
 import re                                as _re
 from   xml.dom import minidom            as _minidom
 import xml.parsers.expat                 as _expat
-import warnings                          as _warnings
-from   math import pi                    as _pi
-from . import Defines                           as _defines
+from . import Defines                    as _defines
 import logging                           as _log
-
 import pyg4ometry.geant4                          as _g4
-import pyg4ometry.visualisation                   as _vtk
-from   pyg4ometry.geant4 import Expression        as _Expression
 
 class Reader(object):
-
     def __init__(self, fileName, registryOn = True):
         super(Reader, self).__init__()
         self.filename   = fileName    

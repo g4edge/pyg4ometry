@@ -1,4 +1,3 @@
-from xml.dom import minidom as _minidom
 from xml.dom import getDOMImplementation
 from ..geant4._Material import Material as _Material
 from ..geant4._Material import Element as _Element
