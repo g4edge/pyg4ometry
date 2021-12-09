@@ -1,14 +1,14 @@
-import numpy as np
-
+import numpy as _np
 import pyg4ometry.transformation as _trf
 
-class Three(np.ndarray):
+
+class Three(_np.ndarray):
     def __new__(cls, *coordinates):
         # If an array-like of 3:
-        if (np.shape(coordinates) == (1, 3)):
-            obj = np.asarray(coordinates[0], dtype=float).view(cls)
-        elif np.shape(coordinates) == (3,): # If supplied as x, y, z
-            obj = np.asarray(coordinates, dtype=float).view(cls)
+        if (_np.shape(coordinates) == (1, 3)):
+            obj = _np.asarray(coordinates[0], dtype=float).view(cls)
+        elif _np.shape(coordinates) == (3,): # If supplied as x, y, z
+            obj = _np.asarray(coordinates, dtype=float).view(cls)
         else:
             raise TypeError("Unknown construction: %s" % (coordinates,))
         return obj
@@ -41,26 +41,26 @@ class Three(np.ndarray):
         """
         Check if instance is parallel to some other vector, v
         """
-        return np.linalg.norm(np.cross(self, other)) < tolerance
+        return _np.linalg.norm(_np.cross(self, other)) < tolerance
 
     def unit(self):
         """
         Get this as a unit vector.
         """
-        return self/np.linalg.norm(self)
+        return self/_np.linalg.norm(self)
 
     def length(self):
         """
         vector length (l2 norm)
 
         """
-        return np.linalg.norm(self)
+        return _np.linalg.norm(self)
 
     def dot(self, other):
-        return np.dot(self,other)
+        return _np.dot(self,other)
 
     def cross(self, other):
-        return np.cross(self,other)
+        return _np.cross(self,other)
 
     def __eq__(self, other):
         try:
@@ -237,11 +237,11 @@ def pointOnLineClosestToPoint(point, point_on_line, direction):
 
 def pointOnPlaneClosestToPoint(planeNormal, planePoint, point):
     """Get point on plane which is closest to point not on the plane."""
-    planeNormal = planeNormal / np.linalg.norm(planeNormal)
-    distance = np.dot((planePoint - point), planeNormal)
+    planeNormal = planeNormal / _np.linalg.norm(planeNormal)
+    distance = _np.dot((planePoint - point), planeNormal)
     return point + distance * planeNormal
 
 def areParallelOrAntiParallel(v1, v2):
-    v1 = v1 / np.linalg.norm(v1)
-    v2 = v2 / np.linalg.norm(v2)
-    return np.isclose(v1, v2).all() or np.isclose(v1, -v2).all()
+    v1 = v1 / _np.linalg.norm(v1)
+    v2 = v2 / _np.linalg.norm(v2)
+    return _np.isclose(v1, v2).all() or _np.isclose(v1, -v2).all()

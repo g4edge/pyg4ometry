@@ -1,15 +1,12 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
-from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
-from pyg4ometry.visualisation import loadPredefined
-import random
-import os,binascii
-import pandas as pd
-import logging
+from pyg4ometry.visualisation import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
+import logging as _logging
 
 _WITH_PARAVIEW = True
 try:
@@ -18,7 +15,8 @@ except (ImportError, ImportWarning):
     _WITH_PARAVIEW = False
     msg = "paraview is required for this module to have full functionalities.\n"
     msg += "Not all methods will be available."
-    logging.log(20, msg)
+    _logging.log(20, msg)
+
 
 class VtkExporter:
     def __init__(self, path='.'):
@@ -26,7 +24,6 @@ class VtkExporter:
         Args:
             path: output repository path
         """
-
         # directory path
         self.path = path
 
@@ -41,11 +38,11 @@ class VtkExporter:
         self.mbindexdico = {}
 
         # material options dict
-        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(loadPredefined())
+        self.materialVisualisationOptions = makeVisualisationOptionsDictFromPredefined(_getPredefinedMaterialVisOptions())
 
     def export_to_Paraview(self, reg, fileName='Paraview_model.pvsm', model=True, df_model=None, df_color=None):
         """
-        Method that exports the visible logical volumes of the registry reg into paraview VTK files (.vtm)
+        Method that exports the visible logical volumes of the registry reg into Paraview VTK files (.vtm)
         and creates a Paraview State file (.pvsm) for the Paraview Model.
 
         df_model and df_color are optional: if they are not given, the Paraview model will take the materials colors
@@ -53,12 +50,11 @@ class VtkExporter:
         Args:
             reg: Registry
             fileName: Name of the Paraview State file (.pvsm)
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             df_model: (optional) pandas.DataFrame linking the NAME of the element and their TYPE
             df_color: (optional) pandas.DataFrame linking the TYPE with its specific R G B color
-
         """
         if _WITH_PARAVIEW:
             self.export_to_VTK(reg, model, df_model, df_color)
@@ -89,18 +85,17 @@ class VtkExporter:
 
     def export_to_VTK(self, reg, model=True, df_model=None, df_color=None):
         """
-        Method that exports the visible logical volumes of the registry reg into paraview VTK files (.vtm).
+        Method that exports the visible logical volumes of the registry reg into Paraview VTK files (.vtm).
 
         Args:
             reg: Registry
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             df_model: (optional) pandas.DataFrame linking the NAME of the element and their TYPE
             df_color: (optional) pandas.DataFrame linking the TYPE with its specific R G B color
 
         """
-
         world_volume = reg.getWorldVolume()
 
         if df_color is not None and df_model is not None:
@@ -127,7 +122,7 @@ class VtkExporter:
             with as keys the logical volumes names and as item the respective RGB value
 
         """
-
+        import pandas as pd
         df_color.set_index('TYPE', inplace=True)
         df_gdml.set_index('mother', inplace=True)
         df_model.reset_index(inplace=True)
@@ -160,7 +155,7 @@ class VtkExporter:
 
         Args:
             lv: Logical world volume
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             color_dico: A dictionary with the keys R, G and B whose item is a dictionary
@@ -169,7 +164,6 @@ class VtkExporter:
             translation: (optional) numpy.array
 
         """
-
         if model:
             self.add_logical_volume_recursive(lv, rotation, translation, color_dico)
         else:
@@ -194,7 +188,6 @@ class VtkExporter:
 
 
     def add_logical_volume_recursive(self, lv, rotation, translation, color_dico, first_level=True):
-
         """
         Method that receives a logical volume and add calls addMesh() on its mesh.
         The method is recursive and will be called on all the daughter logical volumes of the logical volume.
@@ -208,7 +201,6 @@ class VtkExporter:
             first_level: Boolean indicating if we are at the first level of recursivity
 
         """
-
         for pv in lv.daughterVolumes:
 
             if first_level:
@@ -294,9 +286,9 @@ class VtkExporter:
         transformPD.SetTransform(transform)
 
         if visOptions:
-            Colors = _vtk.vtkUnsignedCharArray();
-            Colors.SetNumberOfComponents(3);
-            Colors.SetName("Colors");
+            Colors = _vtk.vtkUnsignedCharArray()
+            Colors.SetNumberOfComponents(3)
+            Colors.SetName("Colors")
             for i in range(vtkPD.GetNumberOfPolys()):
                 Colors.InsertNextTuple3(visOptions.colour[0]*255, visOptions.colour[1]*255, visOptions.colour[2]*255);
 
@@ -311,7 +303,6 @@ class VtkExporter:
                 self.mbindexdico[self.element_name] += 1
 
     def getMaterialVisOptions(self, name):
-
         """
         Method that "cleans" the logical volume material string.
 
@@ -319,9 +310,7 @@ class VtkExporter:
             name: raw name of the logical volume material
 
         Returns: clean name of the logical volume material
-
         """
-
         if name.find("0x") != -1 :
             namestrip = name[0:name.find("0x")]
         else:
@@ -334,17 +323,13 @@ class VtkExporter:
             return self.materialVisualisationOptions['G4_C']
 
     def getElementName(self, logicalVolumeName):
-
         """
         Method that "cleans" the logical volume name string.
-
         Args:
             logicalVolumeName: raw name of the logical volume
 
         Returns: clean name of the logical volume
-
         """
-
         if "PREPENDworld_" in logicalVolumeName:
             return logicalVolumeName.split('PREPENDworld_')[1].split('0x')[0].split('_lv')[0]
         if "PREPEND_" in logicalVolumeName:
@@ -353,19 +338,15 @@ class VtkExporter:
             return logicalVolumeName.split('_container')[0].split('_e1')[0].split('_e2')[0].split('_even')[0].split('_outer')[0].split('_centre')[0].split('_collimator')[0].split('_beampipe')[0].split('0x')[0].split('_lv')[0].split('_bp')[0]
 
     def countVisibleDaughters(self, lv, element_name, n=0):
-
         """
         Method that counts the number of "visible" daughter logical volumes of the mother logical volume lv.
-
         Args:
             lv: logical volume
             element_name: name of the element
             n: number of "visible" daughter volumes
 
         Returns: n
-
         """
-
         for pv in lv.daughterVolumes:
             lv_name = self.getElementName(pv.logicalVolume.name)
             if lv_name == element_name:
@@ -374,5 +355,3 @@ class VtkExporter:
                 else:
                     n = self.countVisibleDaughters(pv.logicalVolume, element_name, n)
         return n
-
-

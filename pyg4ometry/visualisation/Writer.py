@@ -2,9 +2,10 @@ import vtk as _vtk
 import itertools as _itertools
 
 def writeVtkPolyDataAsSTLFile(fileName, meshes):
-# Convert vtkPolyData to STL mesh
-    ''' meshes : list of triFilters '''
-
+    """
+    meshes : list of triFilters
+    """
+    # Convert vtkPolyData to STL mesh
     appendFilter = _vtk.vtkAppendPolyData()
 
     for m in meshes:

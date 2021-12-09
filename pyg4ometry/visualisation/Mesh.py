@@ -1,6 +1,5 @@
 import copy as _copy 
 
-from pyg4ometry.transformation import *
 import pyg4ometry.exceptions
 
 from pyg4ometry.pycsg.core import CSG as _CSG
@@ -13,13 +12,12 @@ class OverlapType:
     overlap    = 2
     coplanar   = 3
 
-class Mesh(object) : 
-
+class Mesh(object):
     def __init__(self, solid) : 
         parameters = [] 
         values     = {}
 
-        # Solid which contains the mesh
+        # solid which contains the mesh
         self.solid = solid 
 
         # mesh in local coordinates
@@ -28,10 +26,10 @@ class Mesh(object) :
         # bounding mesh in local coordinates
         self.localboundingmesh = self.getBoundingBoxMesh()
 
-        # overlap meshes (protusion, overlap, coplanar)
+        # overlap meshes (protrusion, overlap, coplanar)
         self.overlapmeshes = []
         
-    def remesh(self) :
+    def remesh(self):
         # existing overlaps become invalid
         self.overlapmeshes = []
 
@@ -41,16 +39,17 @@ class Mesh(object) :
         # recreate bounding mesh
         self.localboundingmesh = self.getBoundingBoxMesh()
 
-    def addOverlapMesh(self, mesh) :
+    def addOverlapMesh(self, mesh):
         self.overlapmeshes.append(mesh)
 
-    def getLocalMesh(self) :
+    def getLocalMesh(self):
         return self.localmesh
 
     def getBoundingBox(self, rotationMatrix=None, translation=None) :
-        '''Axes aligned bounding box.  Can also provide a rotation and
-        a translation (applied in that order) to the vertices.'''
-
+        """
+        Axes aligned bounding box. Can also provide a rotation and
+        a translation (applied in that order) to the vertices.
+        """
         vertices, _, _ = self.localmesh.toVerticesAndPolygons()
         if not vertices:
             raise pyg4ometry.exceptions.NullMeshError(self.solid)

@@ -1,28 +1,25 @@
-from functools import reduce
-import logging
-from copy import deepcopy
-from collections import namedtuple
-import logging
-import types
-import warnings
+from copy import deepcopy as _deepcopy
+from collections import namedtuple as _namedtuple
+from functools import reduce as _reduce
+import logging as _logging
+import numpy as _np
+import types as _types
+import warnings as _warnings
 
-import numpy as np
-
-from .fluka2g4materials import makeFlukaToG4MaterialsMap
-from pyg4ometry import exceptions
-from pyg4ometry.fluka.vector import areAABBsOverlapping
-import pyg4ometry.fluka as fluka
-import pyg4ometry.geant4 as g4
-import pyg4ometry.transformation as trans
+from .fluka2g4materials import makeFlukaToG4MaterialsMap as _makeFlukaToG4MaterialsMap
+from pyg4ometry.fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
+import pyg4ometry.fluka as _fluka
+import pyg4ometry.geant4 as _g4
+import pyg4ometry.transformation as _trans
 
 import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import do_intersect
+    from pyg4ometry.pycgal.core import do_intersect as _do_intersect
 elif _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import do_intersect
+    from pyg4ometry.pycsg.core import do_intersect as _do_intersect
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = _logging.getLogger(__name__)
+logger.setLevel(_logging.INFO)
 
 WORLD_DIMENSIONS = [10000, 10000, 10000]
 
@@ -96,10 +93,10 @@ def fluka2Geant4(flukareg,
         aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
         flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
 
-    WorldInfo = namedtuple("WorldInfo", ["material", "dimensions"])
+    WorldInfo = _namedtuple("WorldInfo", ["material", "dimensions"])
     worldinfo = WorldInfo(worldMaterial, worldDimensions)
 
-    AABBInfo = namedtuple("AABBInfo", ["aabbMap", "regionZoneAABBs"])
+    AABBInfo = _namedtuple("AABBInfo", ["aabbMap", "regionZoneAABBs"])
     aabbinfo = AABBInfo(aabbMap, regionZoneAABBs)
 
     regions = _filteredRegions(flukareg, regions)
@@ -111,8 +108,8 @@ def fluka2Geant4(flukareg,
 def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
     "Convert a transformed fluka registry to a geant4 registry."
     # This loop below do the main conversion
-    greg = g4.Registry()
-    f2g4mat = makeFlukaToG4MaterialsMap(flukareg, greg)
+    greg = _g4.Registry()
+    f2g4mat = _makeFlukaToG4MaterialsMap(flukareg, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions),
                            worldinfo.material, greg)
     regionNamesToLVs = {}
@@ -123,20 +120,20 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
         try:
             materialName = flukareg.assignmas[name]
         except KeyError:
-            warnings.warn(f"Setting region {name} with no material to IRON.")
+            _warnings.warn(f"Setting region {name} with no material to IRON.")
             materialName = "IRON"
 
         material = f2g4mat[materialName]
 
-        region_lv = g4.LogicalVolume(region_solid, material, f"{name}_lv", greg)
+        region_lv = _g4.LogicalVolume(region_solid, material, f"{name}_lv", greg)
 
         regionNamesToLVs[name] = region_lv
         # We reverse because rotations in the context of Booleans are
         # active, and that is the convention we have followed so far,
         # but volume rotations are passive, so we have to reverse the
         # rotation.
-        rot = list(trans.reverse(region.tbxyz()))
-        g4.PhysicalVolume(
+        rot = list(_trans.reverse(region.tbxyz()))
+        _g4.PhysicalVolume(
             rot,
             list(region.centre(aabb=aabbinfo.aabbMap)),
             region_lv,
@@ -169,13 +166,13 @@ def _makeWorldVolume(dimensions, material, g4registry):
     and logical volume is to be added to.
 
     """
-    worldMaterial = g4.MaterialPredefined(material)
+    worldMaterial = _g4.MaterialPredefined(material)
 
-    world_solid = g4.solid.Box("world_solid",
+    world_solid = _g4.solid.Box("world_solid",
                                dimensions[0],
                                dimensions[1],
                                dimensions[2], g4registry, "mm")
-    wlv = g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
+    wlv = _g4.LogicalVolume(world_solid, worldMaterial, "wl", g4registry)
     return wlv
 
 def _makeLengthSafetyRegistry(flukareg, regions):
@@ -191,15 +188,15 @@ def _makeLengthSafetyRegistry(flukareg, regions):
     # Why do I pass regions in as an argument?  Why don't I just
     # filter the FlukaRegistry instance early on and then just carry
     # on?
-    bigger = fluka.FlukaRegistry()
-    smaller = fluka.FlukaRegistry()
+    bigger = _fluka.FlukaRegistry()
+    smaller = _fluka.FlukaRegistry()
 
     for body in flukareg.bodyDict.values():
         bigger.addBody(body.safetyExpanded())
         smaller.addBody(body.safetyShrunk())
 
     # return bigger, smaller
-    fluka_reg_out = fluka.FlukaRegistry()
+    fluka_reg_out = _fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.items():
         if name not in regions:
             continue
@@ -245,7 +242,7 @@ def _getRegionZoneAABBs(flukareg, regions, quadricRegionAABBs):
     return regionZoneAABBs
 
 def _filterRegistryNullZones(flukareg, regionZoneAABBs):
-    regout = deepcopy(flukareg)
+    regout = _deepcopy(flukareg)
     for regionName, aabbs in regionZoneAABBs.items():
         region = regout.regionDict[regionName]
         region.zones = list(_filterRegionNullZones(region, aabbs))
@@ -293,7 +290,7 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
         if len(regionAABBs) == 1:
             aabb = list(regionAABBs.values())[0]
         elif len(regionAABBs) > 1:
-            aabb = reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
+            aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
             logger.debug("Minimum aabb = %s", aabb)
         else:
             raise ValueError("WHAT?")
@@ -327,7 +324,7 @@ def _filterBlackHoleRegions(flukareg, regions):
     :type regions: list
 
     """
-    freg_out = fluka.FlukaRegistry()
+    freg_out = _fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.items():
         if name not in flukareg.assignmas and name in regions:
             freg_out.addRegion(region) # add region even if no assigned material
@@ -345,7 +342,7 @@ def _filterBlackHoleRegions(flukareg, regions):
 def _getOverlappingAABBs(aabb, aabbs):
     overlappingAABBs = []
     for name, e in aabbs.items():
-        if areAABBsOverlapping(aabb, e):
+        if _areAABBsOverlapping(aabb, e):
             overlappingAABBs.append(name)
     return overlappingAABBs
 
@@ -371,29 +368,29 @@ def _getContentsOfLatticeCells(flukaregistry, regionAABBs):
 def _getTransformedCellRegionAABB(lattice):
     # Move the lattice cell region onto the prototype region.
     transform = lattice.getTransform()
-    cellRegion = deepcopy(lattice.cellRegion)
+    cellRegion = _deepcopy(lattice.cellRegion)
 
 
     cellRotation = transform.leftMultiplyRotation(cellRegion.rotation())
     cellCentre = list(transform.leftMultiplyVector(cellRegion.centre()))
     cellName = cellRegion.name
 
-    greg = g4.Registry()
+    greg = _g4.Registry()
     wlv = _makeWorldVolume(WORLD_DIMENSIONS, "G4_Galactic", greg)
 
 
     region_solid = cellRegion.geant4Solid(greg, aabb=None)
-    regionLV = g4.LogicalVolume(region_solid,
+    regionLV = _g4.LogicalVolume(region_solid,
                                  "G4_Galactic",
                                  f"{cellName}_lv",
                                  greg)
 
     lower, upper = regionLV.mesh.getBoundingBox(cellRotation,
                                                 cellCentre)
-    return fluka.AABB(lower, upper)
+    return _fluka.AABB(lower, upper)
 
 def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
-    cellRegion = deepcopy(lattice.cellRegion)
+    cellRegion = _deepcopy(lattice.cellRegion)
 
     transform = lattice.getTransform()
 
@@ -405,10 +402,10 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     # of work elsewhere.
     def rotation(self): return cellRotation
     def centre(self, aabb=None): return cellCentre
-    cellRegion.rotation = types.MethodType(rotation, cellRegion)
-    cellRegion.centre = types.MethodType(centre, cellRegion)
+    cellRegion.rotation = _types.MethodType(rotation, cellRegion)
+    cellRegion.centre = _types.MethodType(centre, cellRegion)
 
-    return do_intersect(cellRegion.mesh(), region.mesh())
+    return _do_intersect(cellRegion.mesh(), region.mesh())
 
 def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """Loop over the regions looking for quadrics and for any quadrics we
@@ -418,7 +415,7 @@ def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """
     for regionName, region in flukareg.regionDict.items():
         regionBodies = region.bodies()
-        quadrics = {r for r in regionBodies if isinstance(r, fluka.QUA)}
+        quadrics = {r for r in regionBodies if isinstance(r, _fluka.QUA)}
 
         # If this region has no Quadrics then all is well
         if not quadrics:
@@ -456,19 +453,19 @@ def _filterHalfSpaces(flukareg, regionZoneAABBs):
     """Filter redundant half spaces from the regions of the
     FlukaRegistry instance.  AABBs is a dictionary of region names
     to region aabbs."""
-    fout = fluka.FlukaRegistry()
+    fout = _fluka.FlukaRegistry()
     logger.debug("Filtering half spaces")
 
     regionAABBs = _regionZoneAABBsToRegionAABBs(regionZoneAABBs)
 
     for region_name, region in flukareg.regionDict.items():
-        regionOut = deepcopy(region)
+        regionOut = _deepcopy(region)
         regionAABB = regionAABBs[region_name]
         # Loop over the bodies of this region
         for body in regionOut.bodies():
             # Only potentially omit half spaces
-            if isinstance(body, (fluka.XYP, fluka.XZP,
-                                 fluka.YZP, fluka.PLA)):
+            if isinstance(body, (_fluka.XYP, _fluka.XZP,
+                                 _fluka.YZP, _fluka.PLA)):
                 normal, pointOnPlane = body.toPlane()
                 aabbCornerDistance = regionAABB.cornerDistance()
                 d = _distanceFromPointToPlane(normal, pointOnPlane,
@@ -495,8 +492,8 @@ def _filterHalfSpaces(flukareg, regionZoneAABBs):
     return fout
 
 def _distanceFromPointToPlane(normal, pointOnPlane, point):
-    normal = fluka.Three(normal).unit()
-    return abs(np.dot(normal, point - pointOnPlane))
+    normal = _fluka.Three(normal).unit()
+    return abs(_np.dot(normal, point - pointOnPlane))
 
 def _convertLatticeCells(greg, flukareg, wlv, regionZoneAABBs,
                          regionNamesToLVs):
@@ -510,11 +507,11 @@ def _convertLatticeCells(greg, flukareg, wlv, regionZoneAABBs,
         # rotation of the lattice cell.
         cellRegion = flukareg.latticeDict[latticeName].cellRegion
         cellCentre = list(cellRegion.centre())
-        cellRotation = list(trans.reverse(cellRegion.tbxyz()))
+        cellRotation = list(_trans.reverse(cellRegion.tbxyz()))
 
         for prototypeName in contents:
             prototypeLV = regionNamesToLVs[prototypeName]
-            g4.PhysicalVolume(cellRotation,
+            _g4.PhysicalVolume(cellRotation,
                               cellCentre,
                               prototypeLV,
                               f"{latticeName}_lattice_pv",
@@ -526,13 +523,13 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionAABBs):
         quadricRegionAABBs)
 
     bodiesToRegions = flukareg.getBodyToRegionsMap()
-    flukaRegOut = fluka.FlukaRegistry()
+    flukaRegOut = _fluka.FlukaRegistry()
     for regionName, region in flukareg.regionDict.items():
         if regionName in quadricRegionAABBs:
             uniqueRegion = region.makeUnique("_"+regionName, flukaRegOut)
             flukaRegOut.addRegion(uniqueRegion)
         else:
-            newRegion = deepcopy(region)
+            newRegion = _deepcopy(region)
             flukaRegOut.addRegion(newRegion)
             newRegion.allBodiesToRegistry(flukaRegOut)
 
@@ -566,7 +563,7 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
     for regionName, regionAABB in quadricRegionAABBs.items():
         region = freg.regionDict[regionName]
         for body in region.bodies():
-            if not isinstance(body, fluka.QUA):
+            if not isinstance(body, _fluka.QUA):
                 continue
 
             regionSharedAABBs[regionName] = regionAABB
@@ -584,14 +581,14 @@ def _regionZoneAABBsToRegionAABBs(regionZoneAABBs):
     region names to a total region aabb."""
     regionAABBs = {}
     for name, zoneAABBs in regionZoneAABBs.items():
-        regionAABB = reduce(_getMaximalOfTwoAABBs,
-                              zoneAABBs,
-                              zoneAABBs[0])
+        regionAABB = _reduce(_getMaximalOfTwoAABBs,
+                             zoneAABBs,
+                             zoneAABBs[0])
         regionAABBs[name] = regionAABB
     return regionAABBs
 
 
 def _copyStructureToNewFlukaRegistry(freg, fregtarget):
-    fregtarget.latticeDict = deepcopy(freg.latticeDict)
-    fregtarget.assignmas = deepcopy(freg.assignmas)
-    fregtarget.materials = deepcopy(freg.materials)
+    fregtarget.latticeDict = _deepcopy(freg.latticeDict)
+    fregtarget.assignmas = _deepcopy(freg.assignmas)
+    fregtarget.materials = _deepcopy(freg.materials)
