@@ -44,14 +44,11 @@ class Hype(_SolidBase):
     :param nstack:      number of theta elements for meshing
     :type nstack:       int             
     """
-
-
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
                  outerStereo, lenZ, registry, lunit="mm", aunit="rad",
                  nslice=None, nstack=None, addRegistry=True):
+        super(Hype, self).__init__(name, 'Hype', registry)
 
-        self.type        = 'Hype'
-        self.name        = name
         self.innerRadius = innerRadius
         self.outerRadius = outerRadius
         self.innerStereo = innerStereo
@@ -66,12 +63,10 @@ class Hype(_SolidBase):
 
         self.varNames = ["innerRadius", "outerRadius", "innerStereo","outerStereo","lenZ"]
 
+        self.checkParameters()
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-
-        self.checkParameters()
 
     def __repr__(self):
         return "Hype : {} {} {} {} {} {}".format(self.name, self.innerRadius, self.outerRadius,

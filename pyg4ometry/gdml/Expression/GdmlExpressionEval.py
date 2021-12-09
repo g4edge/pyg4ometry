@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-
-import sys
-
 from antlr4 import *
 
 from .GdmlExpressionLexer import GdmlExpressionLexer
@@ -13,8 +9,8 @@ from ..Units import units as _units
 import math
 import numpy
 
-from IPython import embed
-import traceback
+#from IPython import embed
+#import traceback
 
 class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
     def __init__(self):

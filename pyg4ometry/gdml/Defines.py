@@ -395,19 +395,19 @@ class Constant(ScalarBase) :
     :type addRegistry: bool
     """
 
-    def __init__(self, name, value, registry, addRegistry = True) :
+    def __init__(self, name, value, registry, addRegistry=True):
         super(Constant, self).__init__()
 
-        self.name  = name
+        self.name = name
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
-
+        
         if registry != None: 
             self.registry = registry
-            if addRegistry :
+            if addRegistry:
                 registry.addDefine(self)
 
-    def eval(self) : 
+    def eval(self):
         """ 
         Evaluate constant 
 
@@ -744,6 +744,9 @@ class Rotation(VectorBase) :
         if unit != None :
             if not isinstance(unit, str):
                 raise ValueError("unit must be None or a string")
+            acceptableUnits = ['rad', 'radian', 'mrad', 'milliradian', 'deg', 'degree']
+            if unit not in acceptableUnits:
+                raise ValueError("Invalid unit \""+unit+"\" in rotation define \""+name+"\" - can be one of:  "+", ".join(acceptableUnits))
             self.unit = unit
         else :
             self.unit = "rad"

@@ -42,13 +42,11 @@ class Para(_SolidBase):
     :type lunit: str
     :param aunit: angle unit (rad,deg) for solid
     :type aunit: str
-
     """
-
     def __init__(self,name,pDx,pDy,pDz,pAlpha,pTheta,pPhi, registry,
                  lunit="mm", aunit="rad", addRegistry=True):
-        self.type     = 'Para'
-        self.name   = name
+        super(Para, self).__init__(name, 'Para', registry)
+
         self.pX     = pDx
         self.pY     = pDy
         self.pZ     = pDz
@@ -64,8 +62,6 @@ class Para(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry=registry
 
         #TODO - parameter checking on angles
 

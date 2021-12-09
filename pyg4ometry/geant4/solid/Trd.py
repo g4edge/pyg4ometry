@@ -35,11 +35,10 @@ class Trd(_SolidBase):
     :type registry: Registry
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
-
     """
     def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry, lunit="mm", addRegistry=True):
-        self.type   = 'Trd'
-        self.name   = name
+        super(Trd, self).__init__(name, 'Trd', registry)
+
         self.pX1    = pDx1
         self.pX2    = pDx2
         self.pY1    = pDy1
@@ -53,8 +52,6 @@ class Trd(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def mesh(self):
         _log.info('trd.pycsgmesh> antlr')

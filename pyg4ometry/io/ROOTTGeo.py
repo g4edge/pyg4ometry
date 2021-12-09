@@ -174,8 +174,8 @@ def rootShape2pyg4ometry(shape, reader) :
                                        lunit="cm",
                                        aunit="deg")
     elif shapeClass == "TGeoPgon" :
-        nz    = shape.GetNz();
-        nSide = shape.GetNedges();
+        nz    = shape.GetNz()
+        nSide = shape.GetNedges()
         z    = _np.frombuffer(shape.GetZ(),dtype=_np.float64,count=nz)
         rmin = _np.frombuffer(shape.GetRmin(),dtype=_np.float64,count=nz)
         rmax = _np.frombuffer(shape.GetRmax(),dtype=_np.float64,count=nz)
@@ -322,7 +322,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                                registry)
         else :
             print("rootShape2pyg4ometry> Unknown boolean")
-            raise ValueError;
+            raise ValueError
     else:
         print("ROOT.Reader.rootShape2pyg4ometry> {} not implemented ".format(shape.Class_Name()))
         shape.ComputeBBox()
@@ -336,8 +336,7 @@ def rootShape2pyg4ometry(shape, reader) :
     reader.shapes[shapeAddress]['pyg4Obj'] = shapePyG4
     return shapePyG4
 
-class Reader :
-
+class Reader:
     def __init__(self, fileName):
         self.tgm = _ROOT.TGeoManager.Import(fileName)
 

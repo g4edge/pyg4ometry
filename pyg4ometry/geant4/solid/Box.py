@@ -45,12 +45,7 @@ class Box(_SolidBase):
     """
 
     def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry=True):
-        self.type = 'Box'
-        self.name = name
-
-        if addRegistry:
-            registry.addSolid(self)
-        self.registry = registry
+        super(Box, self).__init__(name, 'Box', registry)
 
         self.dependents = []
         self.varNames = ["pX", "pY", "pZ", "lunit"]
@@ -58,6 +53,9 @@ class Box(_SolidBase):
         for varName in self.varNames:
             self._addProperty(varName)
             setattr(self, varName, locals()[varName])
+
+        if addRegistry:
+            registry.addSolid(self)
 
     def __repr__(self):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)

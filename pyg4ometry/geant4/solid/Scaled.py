@@ -22,20 +22,18 @@ class Scaled(_SolidBase):
     """
 
     def __init__(self, name, solid, pX, pY, pZ, registry, addRegistry=True):
-        self.name = name
+        super(Scaled, self).__init__(name, 'Scaled', registry)
+
         self.solid = solid
         self.pX   = pX
         self.pY   = pY
         self.pZ   = pZ
-        self.type = 'Scaled'
 
         self.varNames = ["pX", "pY", "pZ"]
         self.dependents = []
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Scaled : {} {} {} {} {}".format(self.name, self.solid, self.pX, self.pY, self.pZ)

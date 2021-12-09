@@ -43,13 +43,11 @@ class TwistedTubs(_SolidBase):
     :type nstack:        int    
 
     """
-
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
                  registry, lunit="mm", aunit="rad",
                  nslice=None, nstack=None, addRegistry=True):
+        super(TwistedTubs, self).__init__(name, 'TwistedTubs', registry)
 
-        self.type         = 'TwistedTubs'
-        self.name         = name
         self.endinnerrad  = endinnerrad
         self.endouterrad  = endouterrad
         self.zlen         = zlen
@@ -64,9 +62,8 @@ class TwistedTubs(_SolidBase):
 
         self.varNames = ["endinnerrad", "endouterrad", "zlen","phi","twistedangle"]
 
-        if registry:
+        if addRegistry:
             registry.addSolid(self)
-        self.registry = registry
         # self.checkParameters()
 
     def __repr__(self):

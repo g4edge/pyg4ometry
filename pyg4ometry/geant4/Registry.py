@@ -1,4 +1,3 @@
-from collections import OrderedDict as _OrderedDict
 from collections import defaultdict as _defaultdict
 import pyg4ometry.exceptions as _exceptions
 from . import _Material as _mat
@@ -23,33 +22,35 @@ class Registry:
     """
     def __init__(self):
         self.materialList = []
-        self.defineDict                   = _OrderedDict()
-        self.materialDict                 = _OrderedDict()
-        self.solidDict                    = _OrderedDict()
-        self.logicalVolumeDict            = _OrderedDict()
-        self.physicalVolumeDict           = _OrderedDict()
-        self.physicalVolumeCountDict      = _OrderedDict()
-        self.surfaceDict                  = _OrderedDict()
-        self.loopDict                     = _OrderedDict()
+        # note python3 dictionaries are ordered by default
+        self.defineDict                   = {}
+        self.materialDict                 = {}
+        self.solidDict                    = {}
+        self.logicalVolumeDict            = {}
+        self.physicalVolumeDict           = {}
+        self.physicalVolumeCountDict      = {}
+        self.surfaceDict                  = {}
+        self.loopDict                     = {}
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
-        self.solidUsageCountDict          = {}               # solidName1, solidName2
-        self.volumeTypeCountDict          = {}               # logical, physical
-        self.surfaceTypeCountDict         = {}               # border, skin
-        self.logicalVolumeMeshSkip        = []               # meshes to skip because they are inefficient
-        self.userInfo                     = []               # Ordered list for the user info, which is not processed
+        self.solidUsageCountDict          = _defaultdict(int) # solidName1, solidName2
+        self.volumeTypeCountDict          = _defaultdict(int) # logical, physical
+        self.surfaceTypeCountDict         = _defaultdict(int) # border, skin
+        self.logicalVolumeMeshSkip        = []                # meshes to skip because they are inefficient
+        self.userInfo                     = []                # Ordered list for the user info, which is not processed
+        
+        self.defineNameCount              = _defaultdict(int)
+        self.materialNameCount            = _defaultdict(int)
+        self.solidNameCount               = _defaultdict(int)
+        self.logicalVolumeNameCount       = _defaultdict(int)
+        self.physicalVolumeNameCount      = _defaultdict(int)
+        self.surfaceNameCount             = _defaultdict(int)
 
-        self.solidNameCount               = {}
-        self.materialNameCount            = {}
-        self.logicalVolumeNameCount       = {}
-        self.physicalVolumeNameCount      = {}
-        self.surfaceNameCount             = {}
-        self.defineNameCount              = {}
 
-        self.solidTypeCountDict           = {}               # Box, Cons etc
-        self.logicalVolumeUsageCountDict  = {}               # named logical usage in physical
-
+        self.solidTypeCountDict           = _defaultdict(int) # Box, Cons etc
+        self.logicalVolumeUsageCountDict  = _defaultdict(int) # named logical usage in physical
+        
         self.editedSolids                 = []               # Solids changed post-initialisation
 
         self.expressionParser = None
@@ -65,212 +66,285 @@ class Registry:
         if solid.name in self.solidDict:
             self.editedSolids.append(solid.name)
 
-    def addMaterial(self, material, namePolicy="reuse", incrementRenameDict={}):
+    def addMaterial(self, material, dontWarnIfAlreadyAdded=False):
         """
+        Register a material with this registry.
+
         :param material: Material object for storage
         :type material: Material
-        """        
-
+        """
         if material.name in self.materialDict:
-            if namePolicy == "none":
-                if material.type == "nist" :
-                    return
-                raise _exceptions.IdenticalNameError(material.name, "material")
-            elif namePolicy == "reuse" :
+            if material.type == "nist":
                 return
-            elif namePolicy == "increment" and material.type != "nist" :
-                if material.name in incrementRenameDict:
-                    return
-                self.materialNameCount[material.name] += 1
+            # there is the possibility of composite materials reusing the same
+            # material or element, so we must tolerate this in this recursive function
+            if dontWarnIfAlreadyAdded:
+                pass
+            else:
+                raise _exceptions.IdenticalNameError(material.name, "material")
+        else:
+            self.materialDict[material.name] = material
+            # Material and Element have a member 'components' but Isotope doesn't
+            if hasattr(material, "components"):
+                for component in material.components:
+                    self.addMaterial(component[0])
+
+        self.materialNameCount[material.name] += 1
+
+    def transferMaterial(self, material, incrementRenameDict={}):
+        """
+        Transfer a material to this registry. Doesn't handle any members'
+        transferal - only the material itself.
+        """
+        if material.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if material.name in self.materialDict:
+            if material.type == "nist":
+                return # nist ones generally aren't added and allowed to pass through
+            else:
                 newName = material.name + "_" + str(self.materialNameCount[material.name])
+                self.materialNameCount[material.name] += 1
                 incrementRenameDict[newName] = material.name
                 material.name = newName
-                self.materialDict[material.name] = material
-
-                for component in material.components:
-                    self.addMaterial(component[0], namePolicy)
-        else :
-            self.materialDict[material.name] = material
-            self.materialNameCount[material.name] = 0
+                # Material and Element have a member 'components' but Isotope doesn't
+                if hasattr(material, "components"):
+                    for component in material.components:
+                        self.transferMaterial(component[0], incrementRenameDict)
+        else:
             incrementRenameDict[material.name] = material.name
-
-            try :
+            # Material and Element have a member 'components' but Isotope doesn't
+            if hasattr(material, "components"):
                 for component in material.components:
-                    self.addMaterial(component[0], namePolicy)
-            except AttributeError :
-                # think this is a simple element need to check TODO
-                pass
+                    self.transferMaterial(component[0], incrementRenameDict)
 
+        self.materialDict[material.name] = material
+        material.registry = self
 
-    def addSolid(self, solid, namePolicy="none", incrementRenameDict={}):
+    def addSolid(self, solid):
         """
+        Register a solid with this registry.
+
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
-
         if solid.name in self.solidDict:
-            if namePolicy == "none":
-                raise _exceptions.IdenticalNameError(solid.name, "solid")
-            elif namePolicy == "reuse":
-                return
-            elif namePolicy == "increment" :
-                if solid.name in incrementRenameDict:
-                    return
-                self.solidNameCount[solid.name] += 1
-                newName = solid.name + "_"+str(self.solidNameCount[solid.name])
-                incrementRenameDict[newName] = solid.name
-                solid.name = newName
-                self.solidDict[solid.name] = solid
-
-        else :
+            raise _exceptions.IdenticalNameError(solid.name, "solid")
+        else:
             self.solidDict[solid.name] = solid
-            self.solidNameCount[solid.name] = 0
+
+        self.solidTypeCountDict[solid.type] += 1
+        self.solidNameCount[solid.name] += 1
+
+    def transferSolid(self, solid, incrementRenameDict={}):
+        """
+        Transfer a solid to this registry. Doesn't handle any members'
+        transferal - only the solid itself.
+        
+        :param solid: Solid object for storage
+        :type solid: One of the geant4 solids
+        """
+        if solid.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if solid.name in self.solidDict:
+            # we already have a solid called this, so uniquely name it by incrementing it
+            newName = solid.name + "_" + str(self.solidNameCount[solid.name])
+            self.solidNameCount[solid.name] += 1
+            incrementRenameDict[newName] = solid.name
+            solid.name = newName
+        else:
             incrementRenameDict[solid.name] = solid.name
 
-        try:
-            self.solidTypeCountDict[solid.type] += 1
-        except KeyError:
-            self.solidTypeCountDict[solid.type] = 0
+        self.solidDict[solid.name] = solid
+        solid.registry = self
+            
+        self.solidTypeCountDict[solid.type] += 1
+        self.solidNameCount[solid.name] += 1
 
-    def addLogicalVolume(self,volume, namePolicy="none", incrementRenameDict={}):
+    def addLogicalVolume(self, volume):
         """
+        Register a logical volume with this registry.
+
         :param volume: LogicalVolume object for storage
         :type volume: LogicalVolume
         """
-
         if volume.name in self.logicalVolumeDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(volume.name,"logical volume")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if volume.name in incrementRenameDict:
-                    return
-                self.logicalVolumeNameCount[volume.name] += 1
-                newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
-                incrementRenameDict[newName] = volume.name
-                volume.name = newName
-                self.logicalVolumeDict[volume.name] = volume
-        else :
+            raise _exceptions.IdenticalNameError(volume.name,"logical volume")
+        else:
             self.logicalVolumeDict[volume.name] = volume
-            self.logicalVolumeNameCount[volume.name] = 0
+
+        self.logicalVolumeNameCount[volume.name]  += 1
+        self.volumeTypeCountDict["logicalVolume"] += 1
+
+    def transferLogicalVolume(self, volume, incrementRenameDict={}):
+        """
+        Transfer a logical volume to this registry. Doesn't handle any members'
+        transferal - only the logical volume itself.
+        """
+        if volume.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if volume.name in self.logicalVolumeDict:
+            # we already have an LV called this, so uniquely name it by incrementing it
+            newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
+            self.logicalVolumeNameCount[volume.name] += 1
+            incrementRenameDict[newName] = volume.name
+            volume.name = newName
+        else:
             incrementRenameDict[volume.name] = volume.name
 
+        self.logicalVolumeDict[volume.name] = volume
+        volume.registry = self
 
-        # total number of logical volumes
-        try:
-            self.volumeTypeCountDict["logicalVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["logicalVolume"] = 1
+        self.logicalVolumeNameCount[volume.name] += 1
+        self.volumeTypeCountDict["logicalVolume"] += 1
 
-    def addPhysicalVolume(self,volume, namePolicy="increment", incrementRenameDict={}):
+    def addPhysicalVolume(self, volume):
         """
+        Registry a physical volume with this registry.
+
         :param volume: PhysicalVolume object for storage
         :type volume: PhysicalVolume
         """
-
         if volume.name in self.physicalVolumeDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(volume.name,"physical volume")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if volume.name in incrementRenameDict:
-                    return
-                self.physicalVolumeNameCount[volume.name] += 1
-                newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
-                incrementRenameDict[newName] = volume.name
-                volume.name = newName
-                self.physicalVolumeDict[volume.name] = volume
-        else :
+            raise _exceptions.IdenticalNameError(volume.name,"physical volume")
+        else:
             self.physicalVolumeDict[volume.name] = volume
-            self.physicalVolumeNameCount[volume.name] = 0
-            incrementRenameDict[volume.name] = volume.name
 
-        # number of physical volumes
-        try:
-            self.volumeTypeCountDict["physicalVolume"] += 1
-        except KeyError:
-            self.volumeTypeCountDict["physicalVolume"] = 1
+        self.physicalVolumeNameCount[volume.name] += 1
+        self.volumeTypeCountDict["physicalVolume"] += 1
+        self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
-        # usage of logical volumes
-        try:
-            self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
-        except KeyError:
-            self.logicalVolumeUsageCountDict[volume.logicalVolume.name] = 1
-
-    def addSurface(self, surface, namePolicy="none", incrementRenameDict={}):
+    def transferPhysicalVolume(self, volume, incrementRenameDict={}):
         """
+        Transfer a physical volume to this registry. Doesn't handle any members'
+        transferal - only the physical volume itself.
+        """
+        if volume.name in incrementRenameDict:
+            return # it's already been transferred in this 'transfer' call, ignore
+        if volume.name in self.physicalVolumeDict:
+            # we already have a PV called this, so uniquely name it by incrementing it
+            newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
+            self.physicalVolumeNameCount[volume.name] += 1
+            incrementRenameDict[newName] = volume.name
+            volume.name = newName
+        else:
+            incrementRenameDict[volume.name] = volume
+
+        self.physicalVolumeDict[volume.name] = volume
+        volume.registry = self
+
+        self.physicalVolumeNameCount[volume.name] += 1
+        self.volumeTypeCountDict["physicalVolume"] += 1
+        self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
+
+    def addSurface(self, surface):
+        """
+        Register a surface with this registry.
+
         :param surface: Surface
         :type surface:  pyg4ometry.geant4.BorderSurface or pyg4ometry.geant4.SkinSurface
         """
-
         if surface.name in self.surfaceDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(surface.name, "surface")
-            elif namePolicy == "reuse" :
-                return
-            elif namePolicy == "increment" :
-                if surface.name in incrementRenameDict:
-                    return
-                self.surfaceNameCount[surface.name] += 1
-                newName = "{}_{}".format(surface.name, self.surfaceNameCount[surface.name])
-                incrementRenameDict[newName] = surface.name
-                surface.name = newName
-                self.surfaceDict[surface.name] = surface
-
-        else :
+            raise _exceptions.IdenticalNameError(surface.name, "surface")
+        else:
             self.surfaceDict[surface.name] = surface
-            self.surfaceNameCount[surface.name] = 0
+
+        self.surfaceTypeCountDict[surface.type] += 1
+        self.surfaceNameCount[surface.name] += 1
+
+    def transferSurface(self, surface, incrementRenameDict={}):
+        """
+        Transfer a surface to this registry.
+        """
+        if surface.name in incrementRenameDict:
+            return  # it's already been transferred in this 'transfer' call, ignore
+        if surface.name in self.surfaceDict:
+            # we already have a solid called this, so uniquely name it by incrementing it
+            newName = surface.name + "_" + str(self.surfaceNameCount[surface.name])
+            self.surfaceNameCount[surface.name] += 1
+            incrementRenameDict[newName] = surface.name
+            surface.name = newName
+        else:
             incrementRenameDict[surface.name] = surface.name
 
+        self.surfaceDict[surface.name] = surface
+        surface.registry = self
 
-        try:
-            self.surfaceTypeCountDict[surface.type] += 1
-        except KeyError:
-            self.surfaceTypeCountDict[surface.type] = 0
-
-    def addParameter(self, parameter):
-        try:
-            self.parameterDict[parameter.name]
-            print(f'parameter replicated: {parameter.name}')
-            raise _exceptions.IdenticalNameError(parameter.name,
-                                                           "parameter")
-        except KeyError:
-            self.parameterDict[parameter.name] = parameter
+        self.surfaceTypeCountDict[surface.type] += 1
+        self.surfaceNameCount[surface.name] += 1
 
     def addAuxiliary(self, auxiliary):
             self.userInfo.append(auxiliary)
 
-    def addDefine(self, define, namePolicy="none", incrementRenameDict={}):
+    def addDefine(self, define):
         """
+        Register a define with this registry.
+
         :param define: Definition object for storage
         :type define: Constant, Quantity, Variable, Matrix
         """
-
         from pyg4ometry.gdml.Units import units as _units
         if define.name in _units:
             raise ValueError("Redefinition of a constant unit : {}".format(define.name))
 
         if define.name in self.defineDict:
-            if namePolicy == "none" :
-                raise _exceptions.IdenticalNameError(define.name,"define")
-            elif namePolicy == "reuse" :
-                return define.name
-            elif namePolicy == "increment" :
-                if define.name in incrementRenameDict:
-                    return define.name
-                self.defineNameCount[define.name] += 1
-                newName = define.name + "_" + str(self.defineNameCount[define.name])
-                incrementRenameDict[newName] = newName
-                define.name = newName
-                self.defineDict[define.name] = define
-        else :
+            raise _exceptions.IdenticalNameError(define.name,"define")
+        else:
             self.defineDict[define.name] = define
-            self.defineNameCount[define.name] = 0
-            incrementRenameDict[define.name] = define.name
 
-        return define.name
+        self.defineNameCount[define.name] += 1
+
+        return define.name # why do we need this?
+
+    def transferDefine(self, define, incrementRenameDict={}):
+        """
+        Transfer a single define from another registry to this one. No checking on previous registry or not.
+        """
+        if define.name in incrementRenameDict:
+            return  # it's already been transferred in this 'transfer' call, ignore
+        if define.name in self.defineDict:
+            newName = define.name + "_" + str(self.defineNameCount[define.name])
+            self.defineNameCount[define.name] += 1
+            incrementRenameDict[newName] = newName
+            define.name = newName
+        else:
+            incrementRenameDict[define.name] = define.name
+        
+        self.defineDict[define.name] = define
+        define.registry = self
+
+        self.defineNameCount[define.name] += 1
+
+    def transferDefines(self, var, incrementRenameDict={}):
+        """
+        This function tolerates all types of defines including vector ones.
+
+        Transfer defines from one registry to another recursively. A define may not be part of
+        the old registry so won't be added to this one. A define may be a vector or composite
+        and its 'bits' may be in the (old) registry so each part should be checked.
+
+        In "3x + 2", "x" would be a variable".  In "3.5*2" there would be no variables.
+        """
+        import pyg4ometry.gdml.Defines as _Defines
+
+        # If the variable is a position, rotation or scale
+        if isinstance(var,_Defines.VectorBase):
+            # check and transfer components all called x,y,z for each type
+            for vi in (var.x, var.y, var.z):
+                # any variables inside each component
+                for v in vi.variables():
+                    if v in self._registryOld.defineDict: # only if its in the other registry
+                        self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
+
+            if var.name in self._registryOld.defineDict:
+                self.transferDefine(var, incrementRenameDict)
+
+        else: # a normal expression
+            for v in var.expr.variables():                 # loop over all variables needed for an expression
+                if v in self._registryOld.defineDict:      # only if its in the other registry
+                    self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict)
+
+            if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
+                self.transferDefine(var, incrementRenameDict) # probably best to reuse here
 
     def setWorld(self, worldIn):
         """
@@ -300,12 +374,13 @@ class Registry:
         return materials_ordered
 
     def orderMaterials(self):
-        '''Need to have a ordered list of all material entities for writing to
-        GDML. GDML needs to have the isotopes/elements/materials defined in use order'''
-
+        """
+        Need to have a ordered list of all material entities for writing to
+        GDML. GDML needs to have the isotopes/elements/materials defined in use order
+        """
         for name in list(self.materialDict.keys()):  # Forces registered materials to
             if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
-                self.materialDict[name].set_registry(self)
+                self.materialDict[name].set_registry(self, dontWarnIfAlreadyAdded=True)
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
@@ -323,18 +398,15 @@ class Registry:
         self.materialList = isotopes + elements + materials_ordered
 
     def orderLogicalVolumes(self, lvName, first = True):
-        '''Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
-        GDML. GDML needs to have the solids/booleans/volumes defined in order'''
-
+        """
+        Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
+        GDML. GDML needs to have the solids/booleans/volumes defined in order
+        """
         if first :
             self.logicalVolumeList = []
 
         lv = self.logicalVolumeDict[lvName]
-        
-        # print "mother> ",lv.name
         for daughters in lv.daughterVolumes:
-            # print "daughters> ",daughters.name
-
             dlvName = daughters.logicalVolume.name
             try:
                 self.logicalVolumeList.index(dlvName)
@@ -342,7 +414,16 @@ class Registry:
                 self.orderLogicalVolumes(dlvName,False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, namePolicy="increment", incrementRenameDict=None):
+    def addVolumeRecursive(self, volume, incrementRenameDict=None):
+        """
+        Transfer a volume hierarchy to this registry. Any objects that had a registry set to
+        another will be set to this one and will be owned by it effectively.
+        :param volume: PhysicalVolume or LogicalVolume or AssemblyVolume.
+        :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
+
+        In the case where some object or variable has a name (e.g. 'X') that already exists
+        in this registry, it will be incremented to 'X_1'.
+        """
         if incrementRenameDict is None:
             incrementRenameDict = {}
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
@@ -351,55 +432,54 @@ class Registry:
 
         self._registryOld = volume.registry
 
-        if isinstance(volume, _PhysicalVolume) :
+        if isinstance(volume, _PhysicalVolume):
+            self.addVolumeRecursive(volume.logicalVolume, incrementRenameDict)
 
-            # add its logical volume
-            self.addVolumeRecursive(volume.logicalVolume, namePolicy, incrementRenameDict)
-
-            # add members from physical volume (NEED TO CHECK IF THE POSITION/ROTATION/SCALE DEFINE IS IN THE REGISTRY)
-            self.transferDefines(volume.position ,namePolicy, incrementRenameDict)
-            self.addDefine(volume.position, namePolicy, incrementRenameDict)
-            self.transferDefines(volume.rotation, namePolicy, incrementRenameDict)
-            self.addDefine(volume.rotation, namePolicy, incrementRenameDict)
+            # add members from physical volume
+            self.transferDefines(volume.position, incrementRenameDict)
+            self.transferDefines(volume.rotation, incrementRenameDict)
             if volume.scale:
-                self.transferDefines(volume.scale, namePolicy, incrementRenameDict)
-                self.addDefine(volume.scale, namePolicy, incrementRenameDict)
-            self.addPhysicalVolume(volume, namePolicy, incrementRenameDict)
+                self.transferDefines(volume.scale, incrementRenameDict)
+            self.transferPhysicalVolume(volume, incrementRenameDict)
 
         elif isinstance(volume, _LogicalVolume) :
             # loop over all daughters
             for dv in volume.daughterVolumes :
-                self.addVolumeRecursive(dv, namePolicy, incrementRenameDict)
+                self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
-            self.transferSolidDefines(volume.solid, namePolicy, incrementRenameDict)
-            self.addSolid(volume.solid, namePolicy, incrementRenameDict)
-            self.addMaterial(volume.material, namePolicy, incrementRenameDict)
-            self.addLogicalVolume(volume,namePolicy, incrementRenameDict)
+            self.transferSolidDefines(volume.solid, incrementRenameDict)
+            self.transferSolid(volume.solid, incrementRenameDict)
+            self.transferMaterial(volume.material, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict)
 
         elif isinstance(volume, _AssemblyVolume) :
             # loop over all daughters
             for dv in volume.daughterVolumes :
-                self.addVolumeRecursive(dv, namePolicy, incrementRenameDict)
+                self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
-            self.addLogicalVolume(volume, namePolicy, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict)
         else :
             print("Volume type not supported yet for merging")
 
         return incrementRenameDict
 
-    def transferSolidDefines(self, solid, namePolicy, incrementRenameDict={}):       # TODO make this work for all classes (using update variables method)
+    def transferSolidDefines(self, solid, incrementRenameDict={}):
+        """
+        For each parameter in a given solid (unique to each) check if it's
+        a define and transfer that over.
+        """
+        # TODO make this work for all classes (using update variables method)
 
         if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
-            self.transferSolidDefines(solid.obj1,namePolicy,incrementRenameDict)
-            self.transferSolidDefines(solid.obj2,namePolicy,incrementRenameDict)
+            self.transferSolidDefines(solid.obj1, incrementRenameDict)
+            self.transferSolidDefines(solid.obj2, incrementRenameDict)
         elif solid.type == "MultiUnion" :
             for object in solid.objects :
-                self.transferSolidDefines(object, namePolicy, incrementRenameDict)
+                self.transferSolidDefines(object, incrementRenameDict)
 
         for varName in solid.varNames :
-
             # skip unit variables
             if varName.find("unit") != -1:
                 continue
@@ -410,7 +490,6 @@ class Registry:
             if varName.find("stack") != -1:
                 continue
 
-
             def flatten(S):
                 if S == []:
                     return S
@@ -420,51 +499,15 @@ class Registry:
 
             var = getattr(solid,varName)
 
-            if isinstance(var,int) :                          # int could not be in registry
+            if isinstance(var, (int, float, str)):  # int, float, str could not be in registry
                 continue
-            if isinstance(var,float) :                        # float  could not be in registry
-                continue
-            if isinstance(var,str) :                          # could be an expression
-                continue
-            if isinstance(var,list) :                         # list of variables
+            elif isinstance(var,list):              # list of variables
                 var = flatten(var)
-            else :
-                var = [var]                                   # single variable upgraded to list
+            else:
+                var = [var]                         # single variable upgraded to list
 
-            for v in var :                                    # loop over variables
-                self.transferDefines(v,namePolicy,incrementRenameDict)
-
-    def transferDefines(self, var, namePolicy, incrementRenameDict={}):
-        '''Transfer defines from one registry to another recursively'''
-
-        import pyg4ometry.gdml.Defines as _Defines
-
-        # If the variable is a position, rotation or scale
-        if isinstance(var,_Defines.VectorBase) :
-            for v in var.x.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.y.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            for v in var.z.variables() :
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            if var.name in self._registryOld.defineDict:
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict)
-            var.setRegistry(self)
-        # If a normal expression
-        else :
-            for v in var.expr.variables() :                # loop over all variables needed for an express
-                if v in self._registryOld.defineDict:      # it in the other registry
-                    self.transferDefines(self._registryOld.defineDict[v], namePolicy, incrementRenameDict)
-
-            if var.name in self._registryOld.defineDict:                        # check if variable is stored in registry, if so need to be transferred
-                var.name = self.addDefine(var, namePolicy, incrementRenameDict) # probably best to reuse here
-            var.setRegistry(self)
+            for v in var:                           # loop over variables
+                self.transferDefines(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
         '''Not sure what this method is used for'''
@@ -475,8 +518,8 @@ class Registry:
         solid = self.solidDict[solidName]
 
         if solid.type == 'union' or solid.type == 'intersecton' or solid.type == 'subtraction':
-            solidTree(solid.obj1.name)
-            solidTree(solid.obj2.name)
+            self.solidTree(solid.obj1.name)
+            self.solidTree(solid.obj2.name)
 
     def clear(self):
         '''Empty all internal structures'''

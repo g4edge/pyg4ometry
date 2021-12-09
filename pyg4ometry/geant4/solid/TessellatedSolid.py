@@ -36,8 +36,7 @@ class TessellatedSolid(_SolidBase):
         Stl     = 3
 
     def __init__(self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True):
-        self.type        = 'TessellatedSolid'
-        self.name        = name
+        super(TessellatedSolid, self).__init__(name, 'TessellatedSolid', registry)
 
         self.meshtess    = meshTess
         self.meshtype    = meshtype
@@ -47,7 +46,6 @@ class TessellatedSolid(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-        self.registry = registry
 
         if self.type == TessellatedSolid.MeshType.Gdml:
             # In GDML, vertices are defines that are referred to by name.

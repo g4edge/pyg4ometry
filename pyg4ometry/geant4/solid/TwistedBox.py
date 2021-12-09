@@ -21,7 +21,6 @@ import numpy as _np
 import logging as _log
 
 class TwistedBox(_SolidBase, _TwistedSolid):
-
     """
     Constructs a box that is twisted though angle twisted angle
 
@@ -46,14 +45,11 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     :param nstack:       Not written
     :type nstack:        int
     """
-
-
     def __init__(self, name, twistedangle, pDx, pDy, pDz, registry,
                  lunit = "mm", aunit = "rad",
                  nstack=None, refine=0, addRegistry=True):
+        super(TwistedBox, self).__init__(name, 'TwistedBox', registry)
 
-        self.type         = 'TwistedBox'
-        self.name         = name
         self.twistedAngle = twistedangle
         self.pDx          = pDx
         self.pDy          = pDy
@@ -67,11 +63,10 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDx", "pDy","pDz"]
 
+        self.checkParameters()
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-        self.checkParameters()
 
     def __repr__(self):
         return "Twisted Box : {} {} {} {} {}".format(self.name, self.twistedAngle,

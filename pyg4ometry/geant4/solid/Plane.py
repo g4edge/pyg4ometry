@@ -18,8 +18,8 @@ class Plane(_SolidBase): # point on plane is on z-axis
     :type zlength: float
     """
     def __init__(self, name, normal, dist, zlength=10000):
+        super(Plane, self).__init__(name, 'Plane', None)
 
-        self.name   = name
         self.normal = _Vector(normal).unit()
         self.dist   = float(dist)
         self.pDz    = float(zlength)

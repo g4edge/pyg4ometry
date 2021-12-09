@@ -5,8 +5,9 @@ class SolidBase(object):
     """
     Base class for all solids
     """
-    def __init__(self, name="noname", registry=None):
+    def __init__(self, name, type, registry=None):
         self.name = name
+        self.type = type
         self.registry = registry
 
     def evaluateParameter(self, obj):

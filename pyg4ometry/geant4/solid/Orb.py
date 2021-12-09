@@ -33,12 +33,10 @@ class Orb(_SolidBase):
     :param nstack: number of theta elements for meshing
     :type nstack: int     
     """
-
     def __init__(self, name, pRMax, registry, lunit="mm",
                  nslice=None, nstack=None, addRegistry=True):
+        super(Orb, self).__init__(name, 'Orb', registry)
 
-        self.type = 'Orb'
-        self.name = name
         self.pRMax = pRMax
         self.lunit = lunit
         self.nslice = nslice if nslice else _config.SolidDefaults.Orb.nslice
@@ -50,8 +48,6 @@ class Orb(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Orb : {} {}".format(self.name, self.pRMax)

@@ -45,12 +45,11 @@ class GenericTrap(_SolidBase):
     :param registry: for storing solid
     :type registry:  Registry
     """
-
     def __init__(self, name, v1x, v1y, v2x, v2y, v3x, v3y, v4x, v4y,
                  v5x, v5y, v6x, v6y, v7x, v7y, v8x, v8y, dz,
                  registry, nstack=20, lunit="mm", addRegistry=True):
-        self.type = 'GenericTrap'
-        self.name = name
+        super(GenericTrap, self).__init__(name, 'GenericTrap', registry)
+
         self.dz = dz
         self.lunit = lunit
         self.nstack = nstack
@@ -67,8 +66,6 @@ class GenericTrap(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry=registry
 
     def __repr__(self):
         return "Generic Trapezoid : {}".format(self.name)

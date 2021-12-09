@@ -308,12 +308,12 @@ option, preprocessGDML=0;
             oe = self.doc.createElement('element')
             oe.setAttribute('name', material.name)
             oe.setAttribute('formula', material.symbol)
-            if material.type == 'simple':
+            if material.type == 'element-simple':
                 oe.setAttribute('Z', str(int(material.Z)))
                 se = self.doc.createElement('atom')
                 se.setAttribute('value', str(material.A))
                 oe.appendChild(se)
-            elif material.type == 'composite':
+            elif material.type == 'element-composite':
                 for comp_info in material.components:
                     name = comp_info[0].name
                     self.writeMaterial(comp_info[0])
@@ -933,7 +933,6 @@ option, preprocessGDML=0;
         csce1 = self.doc.createElement('rotationref')
         csce1.setAttribute('ref',self.prepend + instance.name+'_'+'rotation')
         oe.appendChild(csce1)
-
 
         self.solids.appendChild(oe)
 

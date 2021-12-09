@@ -1,3 +1,5 @@
+from pyg4ometry import exceptions as _exceptions
+
 _nistMaterialDict = None
 _nistMaterialList = None
 _nistElementZToName = None
@@ -226,11 +228,12 @@ def ElementIsotopeMixture(name, symbol, n_comp, registry=None, state=None):
 
 
 class MaterialBase(object):
-    def __init__(self, name, state = None, registry=None):
+    def __init__(self, name, state=None, registry=None):
         self.name = name
         self.state = state
         self.registry = registry
 
+    def _addToRegistry(self):
         if self.registry is not None:
             self.registry.addMaterial(self)
 
@@ -248,13 +251,19 @@ class MaterialBase(object):
 
         return material_obj
 
-    def set_registry(self, registry):  # Assign a registry post-construction
+    def set_registry(self, registry, dontWarnIfAlreadyAdded=False):  # Assign a registry post-construction
         self.registry = registry
-        self.registry.addMaterial(self)
+        try:
+            self.registry.addMaterial(self)
 
-        if hasattr(self, "components"):  # Recursively set the registry for all components
-            for comp in self.components:
-                comp[0].set_registry(registry)
+            if hasattr(self, "components"):  # Recursively set the registry for all components
+                for comp in self.components:
+                    comp[0].set_registry(registry)
+        except _exceptions.IdenticalNameError as err:
+            if dontWarnIfAlreadyAdded:
+                pass
+            else:
+                raise err
 
     def set_state(self, state):
         self.state = state
@@ -337,6 +346,8 @@ class Material(MaterialBase):
             pressure = kwargs["pressure"]
             pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
             self.set_pressure(pressure, pressure_unit)
+
+        self._addToRegistry()
 
     def add_property(self, name, value):
         if self.type == 'nist' or self.type == 'arbitraty':
@@ -441,7 +452,7 @@ class Element(MaterialBase):
     n_comp               - int
     """
     def __init__(self, **kwargs):
-        super(Element, self).__init__(kwargs.get("name", None), state = kwargs.get("state", None), registry=kwargs.get("registry", None))
+        super(Element, self).__init__(kwargs.get("name", None), state=kwargs.get("state", None), registry=kwargs.get("registry", None))
 
         self.symbol = kwargs.get("symbol", None)
         self.n_comp = kwargs.get("n_comp", None)
@@ -450,11 +461,13 @@ class Element(MaterialBase):
         self.components = []
 
         if self.n_comp and not self.Z and not self.A:
-            self.type = "composite"
+            self.type = "element-composite"
         elif self.Z and self.A and not self.n_comp:
-            self.type = "simple"
+            self.type = "element-simple"
         else:
             raise ValueError("Cannot use both atomic number/weight and number_of_components.")
+
+        self._addToRegistry()
 
     def add_isotope(self, isotope, abundance):
         """
@@ -483,7 +496,10 @@ class Isotope(MaterialBase):
         a    - float, molar weight in g/mole
     """
     def __init__(self, name, Z, N, a, registry=None):
-        super(Isotope, self).__init__(name, state=None, registry= registry)
+        super(Isotope, self).__init__(name, state=None, registry=registry)
         self.Z    = Z
         self.N    = N
         self.a    = a
+        self.type = "isotope"
+
+        self._addToRegistry()

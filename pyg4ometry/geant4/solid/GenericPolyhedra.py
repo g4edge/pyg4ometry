@@ -19,22 +19,26 @@ import logging as _log
 import numpy as _np
 
 class GenericPolyhedra(_SolidBase):
+    """
+    Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
+    
+    :param name:    name
+    :type name:     str
+    :param pSPhi:   angle Phi at start of rotation
+    :type pSPhi:    float, Constant, Quantity, Variable, Expression
+    :param pDPhi:   angle Phi at end of rotation
+    :type pDPhi:    float, Constant, Quantity, Variable, Expression
+    :param numSide: number of polygon sides
+    :type numSide:  float, Constant, Quantity, Variable, Expression
+    :param pR:      r coordinate list
+    :type pR:       list of float, Constant, Quantity, Variable, Expression
+    :param pZ:      z coordinate list
+    :type pZ:       list of float, Constant, Quantity, Variable, Expression
+    """
     def __init__(self, name, pSPhi, pDPhi, numSide, pR, pZ,
                  registry, lunit="mm", aunit="rad", addRegistry=True):
-        """
-        Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
+        super(GenericPolyhedra, self).__init__(name, 'GenericPolyhedra', registry)
 
-        Inputs:
-        name = name
-        pSPhi = Angle Phi at start of rotation
-        pDPhi = Angle Phi at end of rotation
-        numSide = number of polygon sides
-        pR = r coordinate list
-		pZ = z coordinate list
-        """
-
-        self.type    = 'GenericPolyhedra'
-        self.name    = name
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.numSide = numSide
@@ -52,8 +56,6 @@ class GenericPolyhedra(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Generic Polyhedra : {} {} {} {}".format(self.name, self.pSPhi,
