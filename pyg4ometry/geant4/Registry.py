@@ -42,6 +42,7 @@ class Registry:
         
         self.defineNameCount              = _defaultdict(int)
         self.materialNameCount            = _defaultdict(int)
+        self.materialUsageCount           = _defaultdict(int)
         self.solidNameCount               = _defaultdict(int)
         self.logicalVolumeNameCount       = _defaultdict(int)
         self.physicalVolumeNameCount      = _defaultdict(int)
@@ -174,6 +175,7 @@ class Registry:
 
         self.logicalVolumeNameCount[volume.name]  += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
+        self.materialUsageCount[volume.material.name] += 1
 
     def transferLogicalVolume(self, volume, incrementRenameDict={}):
         """
