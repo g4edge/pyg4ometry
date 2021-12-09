@@ -1,10 +1,10 @@
 import math as _math
 from pyg4ometry.geant4.Registry import Registry as _Registry
 
-try :
-    import sympy as _sympy
-except ImportError :
-    noSymPy = True
+#try:
+#    import sympy as _sympy
+#except ImportError :
+#    noSymPy = True
 
 class Expression(object) :
     def __init__(self, name, expression, registry=_Registry()) :

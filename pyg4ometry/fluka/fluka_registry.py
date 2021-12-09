@@ -1,38 +1,39 @@
-import pickle
-from collections import OrderedDict, MutableMapping
-from itertools import count
-import logging
+from collections import OrderedDict as _OrderedDict
+from collections import MutableMapping as _MutableMapping
+from itertools import count as _count
 
-import numpy as np
-import pandas as pd
+import numpy as _np
+import pandas as _pd
 import pyg4ometry.geant4 as _g4
-from .region import Region
-from .directive import RecursiveRotoTranslation, RotoTranslation
-from pyg4ometry.exceptions import IdenticalNameError, FLUKAError
+from .region import Region as _Region
+from .directive import RecursiveRotoTranslation as _RecursiveRotoTranslation
+from .directive import RotoTranslation as _RotoTranslation
+from pyg4ometry.exceptions import IdenticalNameError as _IdenticalNameError
+from pyg4ometry.exceptions import FLUKAError as _FLUKAError
 from .material import (defineBuiltInFlukaMaterials,
                        BuiltIn,
                        predefinedMaterialNames)
 from . import body as _body
-from . import vector
+from . import vector as _vector
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+import logging as _logging
+logger = _logging.getLogger(__name__)
+logger.setLevel(_logging.INFO)
 
 class FlukaRegistry(object):
-    '''
+    """
     Object to store geometry for FLUKA input and output. All of the FLUKA classes \
     can be used without storing them in the Registry. The registry is used to write \
     the FLUKA output file.
-    '''
-
-    def __init__(self) :
+    """
+    def __init__(self):
         self.bodyDict = FlukaBodyStore()
         self.rotoTranslations = RotoTranslationStore()
-        self.regionDict = OrderedDict()
-        self.materials = OrderedDict()
-        self.latticeDict = OrderedDict()
-        self.cardDict = OrderedDict()
-        self.assignmas = OrderedDict()
+        self.regionDict = _OrderedDict()
+        self.materials = _OrderedDict()
+        self.latticeDict = _OrderedDict()
+        self.cardDict = _OrderedDict()
+        self.assignmas = _OrderedDict()
         self._predefinedMaterialNames = set(predefinedMaterialNames())
 
         # Instantiate the predefined materials as BuiltIn instances
@@ -42,7 +43,7 @@ class FlukaRegistry(object):
 
     def addBody(self, body):
         if body.name in self.bodyDict:
-            raise IdenticalNameError(body.name)
+            raise _IdenticalNameError(body.name)
         logger.debug("%s", body)
         self.bodyDict[body.name] = body
 
@@ -90,6 +91,7 @@ class FlukaRegistry(object):
             regionAABBs[regionName] = region.extent()
 
         if write:
+            import pickle
             with open(write, "wb") as f:
                 pickle.dump(regionAABBs, f)
 
@@ -106,14 +108,14 @@ class FlukaRegistry(object):
         # Only allow redefinition of builtins..  anything else is
         # almost certainly not deliberate.
         if name in self.materials and name not in self._predefinedMaterialNames:
-            raise IdenticalNameError(name)
+            raise _IdenticalNameError(name)
         self.materials[material.name] = material
 
     def getMaterial(self, name):
         return self.materials[name]
 
     def addMaterialAssignments(self, mat, *regions):
-        if isinstance(mat, Region):
+        if isinstance(mat, _Region):
             raise TypeError("A Region instance has been provided as a material")
 
         try: # Element or Compound instance
@@ -127,7 +129,7 @@ class FlukaRegistry(object):
         elif mat not in self.materials.values():
             msg = ("Mismatch between provided FLUKA material \"{}\" for "
                    "assignment and existing found in registry".format(mat.name))
-            raise FLUKAError(msg)
+            raise _FLUKAError(msg)
 
         for region in regions:
             # Either region name or Region instance
@@ -142,13 +144,13 @@ class FlukaRegistry(object):
         return self.addMaterialAssignments(material, *regions)
 
 
-class RotoTranslationStore(MutableMapping):
+class RotoTranslationStore(_MutableMapping):
     """ only get by names."""
     def __init__(self):
-        self._nameMap = OrderedDict()
+        self._nameMap = _OrderedDict()
         # internal infinite counter generating new unique
         # transformation indices.
-        self._counter = count(start=2000, step=1000)
+        self._counter = _count(start=2000, step=1000)
 
     def __getitem__(self, name):
         return self._nameMap[name]
@@ -157,7 +159,7 @@ class RotoTranslationStore(MutableMapping):
     #     return repr(self._nameMap).replace
 
     def __setitem__(self, name, rtrans):
-        if not isinstance(rtrans, (RotoTranslation, RecursiveRotoTranslation)):
+        if not isinstance(rtrans, (_RotoTranslation, _RecursiveRotoTranslation)):
             msg = "Only store RotoTranslation or RecursiveRotoTranslation."
             raise TypeError(msg)
         if name != rtrans.name:
@@ -178,7 +180,7 @@ class RotoTranslationStore(MutableMapping):
         else:
             # Insert as a RecursiveRotoTranslation to make any future
             # adding of RotoTranslations easier.
-            recur = RecursiveRotoTranslation(name, [rtrans])
+            recur = _RecursiveRotoTranslation(name, [rtrans])
             if not rtrans.transformationIndex:
                 recur.transformationIndex = next(self._counter)
             elif rtrans.transformationIndex in self.allTransformationIndices():
@@ -205,9 +207,9 @@ class RotoTranslationStore(MutableMapping):
         return "\n".join([r.flukaFreeString() for r in self.values()])
 
 
-class FlukaBodyStore(MutableMapping):
+class FlukaBodyStore(_MutableMapping):
     def __init__(self):
-        self._df = pd.DataFrame()
+        self._df = _pd.DataFrame()
         hscacher = HalfSpaceCacher(self._df)
         infCylCacher = InfiniteCylinderCacher(self._df)
 
@@ -255,7 +257,7 @@ class FlukaBodyStore(MutableMapping):
 
     def __getitem__(self, key):
         if key not in self._bodyNames():
-            raise FLUKAError(f"Undefined body: {key}")
+            raise _FLUKAError(f"Undefined body: {key}")
         return self._df[self._df["name"] == key]["body"].item()
 
     def __delitem__(self, key):
@@ -288,12 +290,12 @@ class BaseCacher:
                 pass
 
     def appendData(self, variables):
-        df = pd.DataFrame([variables], columns=self.COLUMNS)
+        df = _pd.DataFrame([variables], columns=self.COLUMNS)
         self.df.loc[len(self.df.index)] = df.iloc[0]
 
     def append(self, body):
         name = body.name
-        df = pd.DataFrame([[name, body]], columns=self.COLUMNS)
+        df = _pd.DataFrame([[name, body]], columns=self.COLUMNS)
         self.df.loc[len(self.df.index)] = df.iloc[0]
 
     def setBody(self, body):
@@ -306,7 +308,7 @@ class BaseCacher:
 
     def addBody(self, body):
         name = body.name
-        df = pd.DataFrame([[name, body]], columns=self.COLUMNS)
+        df = _pd.DataFrame([[name, body]], columns=self.COLUMNS)
         self.df.loc[len(self.df.index)] = df.iloc[0]
 
     def remove(self, key):
@@ -336,12 +338,12 @@ class Cacheable(BaseCacher):
 
     def getMask(self, columns, values, predicates):
         if self.df.empty:
-            return np.array([], dtype=bool)
-        mask = np.full_like(self.df["name"], True, dtype=bool)
+            return _np.array([], dtype=bool)
+        mask = _np.full_like(self.df["name"], True, dtype=bool)
         for column, value, predicate in zip(columns, values, predicates):
             mask &= self.df[column].apply(
                 lambda x, value=value, predicate=predicate: predicate(
-                    x, np.array(value)
+                    x, _np.array(value)
                 ).all()
             )
         return mask
@@ -352,13 +354,13 @@ class HalfSpaceCacher(Cacheable):
     def append(self, body):
         name = body.name
         normal, point = body.toPlane()
-        super().appendData([name, body, np.array(normal), np.array(point)])
+        super().appendData([name, body, _np.array(normal), _np.array(point)])
 
     def mask(self, body):
         normal, point = body.toPlane()
         return self.getMask(["planeNormal", "pointOnPlane"],
                             [normal, point],
-                            [np.isclose, np.isclose])
+                            [_np.isclose, _np.isclose])
 
 
 class InfiniteCylinderCacher(Cacheable):
@@ -376,10 +378,10 @@ class InfiniteCylinderCacher(Cacheable):
         return self.getMask(
             ["direction", "pointOnLine", "radius"],
             [body.direction(), self._cylinderPoint(body), body.radius],
-            [vector.areParallelOrAntiParallel, np.isclose, np.isclose])
+            [_vector.areParallelOrAntiParallel, _np.isclose, _np.isclose])
 
     @staticmethod
     def _cylinderPoint(body):
-        return vector.pointOnLineClosestToPoint([0, 0, 0],
-                                                body.point(),
-                                                body.direction())
+        return _vector.pointOnLineClosestToPoint([0, 0, 0],
+                                                 body.point(),
+                                                 body.direction())

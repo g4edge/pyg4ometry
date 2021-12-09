@@ -1,12 +1,12 @@
-from collections import namedtuple
+from collections import namedtuple as _namedtuple
 
-import antlr4
-import numpy as np
-import sympy
+import antlr4 as _antlr4
+import numpy as _np
+import sympy as _sympy
 
-from . import vector
-from . import region
-from . import reader
+from . import vector as _vector
+from . import region as _region
+from . import reader as _reader
 from .RegionExpression import RegionParserVisitor, RegionParser, RegionLexer
 from . import fluka_registry
 
@@ -18,29 +18,29 @@ def expressionToZone(zone, zoneExpr):
     # Hack to use the existing region parser...  fix this.
     expr = f"dummy 5 {zoneExpr}"
 
-    istream = antlr4.InputStream(expr)
+    istream = _antlr4.InputStream(expr)
     lexed_input = RegionLexer(istream)
-    tokens = antlr4.CommonTokenStream(lexed_input)
+    tokens = _antlr4.CommonTokenStream(lexed_input)
     parser = RegionParser(tokens)
-    tree = parser.region()
+    tree = parser._region()
     freg = fluka_registry.FlukaRegistry()
     zone.allBodiesToRegistry(freg)
-    vis = reader.RegionVisitor(freg)
+    vis = _reader.RegionVisitor(freg)
     vis.visit(tree)
 
     return freg.regionDict["dummy"].zones[0]
 
 def zoneToDNFZones(zone):
-    dnf = sympy.to_dnf(zoneToAlgebraicExpression(zone))
+    dnf = _sympy.to_dnf(zoneToAlgebraicExpression(zone))
     zones = []
-    if isinstance(dnf, sympy.And):
+    if isinstance(dnf, _sympy.And):
         zones.append(expressionToZone(zone, dnf))
         return zones
 
-    assert isinstance(dnf, sympy.Or)
+    assert isinstance(dnf, _sympy.Or)
 
     for arg in dnf.args:
-        arg = sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
+        arg = _sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
         if not arg:
             continue
         zones.append(expressionToZone(zone, arg))
@@ -51,7 +51,7 @@ def regionToAlgebraicExpression(region): # region or zone
     result = []
     for z in region.zones:
         result.append(zoneToAlgebraicExpression(z))
-    return sympy.Or(*result)
+    return _sympy.Or(*result)
 
 def zoneToAlgebraicExpression(zone):
     s = zone.dumps()
@@ -61,15 +61,15 @@ def zoneToAlgebraicExpression(zone):
     s = s.replace("( +", "(")
     s = s.replace(" +", " & ")
     bodyNames = set(b.name for b in zone.bodies())
-    namespace = {name: sympy.Symbol(name) for name in bodyNames}
-    return sympy.sympify(s, locals=namespace)
+    namespace = {name: _sympy.Symbol(name) for name in bodyNames}
+    return _sympy.sympify(s, locals=namespace)
 
 def _getMeshAndAABB(body, aabb=None):
     mesh = body.mesh(aabb=aabb)
-    return mesh, vector.AABB.fromMesh(mesh)
+    return mesh, _vector.AABB.fromMesh(mesh)
 
 def pruneRegion(reg, aabb=None):
-    result = region.Region(reg.name)
+    result = _region.Region(reg.name)
     for zone in reg.zones:
         prunedZone = pruneZone(zone)
         if prunedZone.intersections: # and not prunedZone.isNull(aabb=aabb):
@@ -87,7 +87,7 @@ def pruneZone(zone, aabb0=None, aabb=None):
 
     intersections = zone.intersections
 
-    result = region.Zone()
+    result = _region.Zone()
 
     if isZoneContradiction(zone):
         return result
@@ -95,7 +95,7 @@ def pruneZone(zone, aabb0=None, aabb=None):
     if aabb0 is None:
         first = intersections[0].body
         mesh0 = first.mesh()
-        aabb0 = vector.AABB.fromMesh(mesh0)
+        aabb0 = _vector.AABB.fromMesh(mesh0)
         intersections = intersections[1:]
         result.addIntersection(first)
 
@@ -121,10 +121,10 @@ def pruneZone(zone, aabb0=None, aabb=None):
 def squashDegenerateBodies(zone, bodystore=None):
     if bodystore is None:
         bodystore = fluka_registry.FlukaBodyStore()
-    result = region.Zone()
+    result = _region.Zone()
     for b in zone.intersections:
         body = b.body
-        if isinstance(body, region.Zone):
+        if isinstance(body, _region.Zone):
             result.addIntersection(
                 squashDegenerateBodies(body, bodystore=bodystore)
             )
@@ -133,7 +133,7 @@ def squashDegenerateBodies(zone, bodystore=None):
 
     for b in zone.subtractions:
         body = b.body
-        if isinstance(body, region.Zone):
+        if isinstance(body, _region.Zone):
             result.addSubtraction(
                 squashDegenerateBodies(body, bodystore=bodystore)
             )
@@ -143,10 +143,10 @@ def squashDegenerateBodies(zone, bodystore=None):
     return result
 
 
-_MeshedZoneInfo = namedtuple("MeshedZoneInfo", ["zone", "mesh", "volume"])
+_MeshedZoneInfo = _namedtuple("MeshedZoneInfo", ["zone", "mesh", "volume"])
 
 def simplifyRegion(region):
-    if not region.isDNF():
+    if not _region.isDNF():
         raise ValueError("Must be DNF to simplify region")
 
     zoneData = []
@@ -195,14 +195,14 @@ def _filterRedundantZonesMetricCheck(zoneData):
 
     resultZoneData = [largestZoneData]
     for zone, mesh, volume in zoneData[1:]:
-        if np.isclose(volume, 0.0):
+        if _np.isclose(volume, 0.0):
             continue
         # clone to prevent possible excessive corefinement on the
         # reference mesh resulting in huge slowdown.
         mesh0 = runningRegionMesh.clone()
         unionMesh = mesh0.union(mesh)
         unionVolume = unionMesh.volume()
-        if np.isclose(runningRegionVolume, unionVolume):
+        if _np.isclose(runningRegionVolume, unionVolume):
             continue
         else:
             runningRegionMesh = unionMesh
@@ -222,7 +222,7 @@ def nTermsDNF(expr):
 def _nTermsDNFZone(zone):
     total = 1
     for arg in zone.subtractions:
-        if not isinstance(arg.body, region.Zone):
+        if not isinstance(arg.body, _region.Zone):
             continue
         total *= len(zone.intersections + zone.subtractions)
 

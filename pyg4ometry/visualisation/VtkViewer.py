@@ -1,12 +1,12 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
-from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-from .VisualisationOptions import predefinedMaterialVisOptions as _predefinedMaterialVisOptions
+from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
 from   pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
-import random
+import random as _random
 
 class VtkViewer:
     """
@@ -109,7 +109,7 @@ class VtkViewer:
         self.ren.AddActor(axes)
 
     def addAxesWidget(self):
-        axesActor = _vtk.vtkAnnotatedCubeActor();
+        axesActor = _vtk.vtkAnnotatedCubeActor()
         axesActor.SetXPlusFaceText('+x')
         axesActor.SetXMinusFaceText('-x')
         axesActor.SetYPlusFaceText('+y')
@@ -125,7 +125,7 @@ class VtkViewer:
         self.axesWidget.EnabledOn()
         self.axesWidget.InteractiveOn()
 
-    def setOpacity(self, v, iActor = -1):
+    def setOpacity(self, v, iActor=-1):
         for a, i in zip(self.actors,range(0,len(self.actors))):
             if i == iActor :
                 a.GetProperty().SetOpacity(v)
@@ -169,12 +169,12 @@ class VtkViewer:
 
     def setRandomColours(self, seed = 0):
 
-        random.seed(seed)
+        _random.seed(seed)
 
         for a in self.actors:
-            a.GetProperty().SetColor(random.random(),
-                                     random.random(),
-                                     random.random())
+            a.GetProperty().SetColor(_random.random(),
+                                     _random.random(),
+                                     _random.random())
 
     def setCutterOrigin(self, dimension, origin):
         """
@@ -689,32 +689,32 @@ class VtkViewer:
         # check if there is a material visualisation options
 
         # set visualisation properties
-        if visOptions :
+        if visOptions:
             vtkActor.GetProperty().SetColor(*visOptions.getColour())
             vtkActor.GetProperty().SetOpacity(visOptions.alpha)
-            if visOptions.representation == "surface" :
+            if visOptions.representation == "surface":
                 vtkActor.GetProperty().SetRepresentationToSurface()
-            elif visOptions.representation == "wireframe" :
+            elif visOptions.representation == "wireframe":
                 vtkActor.GetProperty().SetRepresentationToWireframe()
-        else : 
+        else:
             vtkActor.GetProperty().SetColor(1,0,0)
 
         vtkActor.SetVisibility(visOptions.visible)
         actors.append(vtkActor)
         self.ren.AddActor(vtkActor)
 
-    def view(self, interactive = True, resetCamera = True ):
+    def view(self, interactive=True, resetCamera=True ):
         # enable user interface interactor
         self.iren.Initialize()
 
         # Camera setup
-        if resetCamera :
+        if resetCamera:
             self.ren.ResetCamera()
 
         # Render
         self.renWin.Render()
 
-        if interactive : 
+        if interactive:
             self.iren.Start()
 
     def _getCutterData(self, axis='x', scaling=1.0):
@@ -724,6 +724,8 @@ class VtkViewer:
             cutters = self.ycutters
         elif axis == 'z':
             cutters = self.zcutters
+        else:
+            raise ValueError("axis is not one of x,y,z")
 
         allX = []
         allY = []
@@ -770,31 +772,29 @@ class VtkViewer:
         json.dump(d,f)
         f.close()
 
-    def viewSection(self, dir = 'x'):
-        import matplotlib.pyplot as _plt
-        from vtk.numpy_interface import dataset_adapter as dsa
-        import pyg4ometry.pycgal.algo as algo
-        import random
+    def viewSection(self, dir='x'):
+        #import matplotlib.pyplot as _plt
+        #from vtk.numpy_interface import dataset_adapter as dsa
 
-        if dir == 'x' :
+        if dir == 'x':
             cutters = self.xcutters
-        elif dir == 'y' :
+        elif dir == 'y':
             cutters = self.ycutters
-        elif dir == 'z' :
+        elif dir == 'z':
             cutters = self.zcutters
         else:
             raise ValueError("Unknown direction " + dir)
 
         for c in cutters:
             pd = c.GetOutput()
-            for i in range(0,pd.GetNumberOfCells(),1) :
+            for i in range(0, pd.GetNumberOfCells(), 1):
                 idl = _vtk.vtkIdList()
-                pd.GetCellPoints(i,idl)
+                pd.GetCellPoints(i, idl)
 
                 x = []
                 y = []
 
-                for j in range(0,idl.GetNumberOfIds(),1) :
+                for j in range(0, idl.GetNumberOfIds(), 1):
                     p = pd.GetPoint(idl.GetId(j))
 
                     if dir == 'x':
@@ -948,7 +948,7 @@ class VtkViewerColouredMaterial(PubViewer):
     Geant4, FLUKA and BDSIM materials.
     """
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, materialVisOptions=_predefinedMaterialVisOptions, **kwargs)
+        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self, renderer, vtkviewer):
