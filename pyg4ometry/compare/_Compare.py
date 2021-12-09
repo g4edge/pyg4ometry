@@ -146,6 +146,16 @@ class ComparisonResult:
             print(" ") # for a new line
                     
 
+def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=True):
+    import pyg4ometry.gdml as gd
+    referenceReader  = gd.Reader(referenceFile)
+    referenceReg     = referenceReader.getRegistry()
+    referenceWorldLV = referenceReg.getWorldVolume()
+    otherReader      = gd.Reader(otherFile)
+    otherReg         = otherReader.getRegistry()
+    otherWorldLV     = otherReg.getWorldVolume()
+    return geometry(referenceWorldLV, otherWorldLV, tests, includeAllTestResults)
+        
 def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
     result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults)
     return result                   
