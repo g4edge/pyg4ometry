@@ -1,4 +1,3 @@
-import os
 from itertools import zip_longest as _zip_longest
 
 from .card import Card as _Card
@@ -102,7 +101,7 @@ class Material(_MatProp):
     :type density: float
     :param massNumber: Optional mass number, will be inferred in FLUKA \
     based on atomicNumber.  Allows one to specify a specific isotope.
-    :type massNumber: int
+    :type massNumber: int, None
     :param atomicMass: The mass of the atom in g/mole.  Will be
     inferred in FLUKA based on atomicNumber.
     :type atomicMass: float
