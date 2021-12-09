@@ -1,9 +1,8 @@
-import pkg_resources
 
-import pandas as pd
 
 import pyg4ometry.geant4 as g4
 from pyg4ometry.fluka.material import BuiltIn, Material, Compound
+_periodicTable = None
 
 # http://www.fluka.org/content/manuals/online/5.2.html
 # See also fluka/material.py
@@ -75,6 +74,15 @@ _FLUKA_ELEMENT_SYMBOLS = {"HYDROGEN": "H",
                           "TITANIUM": "Ti",
                           "NICKEL": "Ni"}
 
+
+def _getPeriodicTable():
+    global _periodicTable
+    if _periodicTable is None:
+        import pandas as pd
+        import pkg_resources
+        csv = pkg_resources.resource_filename(__name__, "periodic-table.csv")
+        _periodicTable = pd.read_csv(csv)
+    return _periodicTable
 
 class _FlukaToG4MaterialConverter:
     def __init__(self, freg, greg):
@@ -209,10 +217,8 @@ def makeFlukaToG4MaterialsMap(freg, greg):
     return g.g4materials
 
 class _PeriodicTable(object):
-
     def __init__(self):
-        csv = pkg_resources.resource_filename(__name__, "periodic-table.csv")
-        self.table = pd.read_csv(csv)
+        self.table = _getPeriodicTable()
 
     def massNumberFromZ(self, z):
         t = self.table
