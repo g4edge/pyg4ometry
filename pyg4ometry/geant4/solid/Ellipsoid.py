@@ -48,8 +48,7 @@ class Ellipsoid(_SolidBase):
     def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
                  pzBottomCut, pzTopCut, registry, lunit = "mm",
                  nslice=None, nstack=None, addRegistry=True):
-        self.type        = 'Ellipsoid'
-        self.name        = name
+        super(Ellipsoid, self).__init__(name, 'Ellipsoid', registry)
         self.pxSemiAxis  = pxSemiAxis
         self.pySemiAxis  = pySemiAxis
         self.pzSemiAxis  = pzSemiAxis
@@ -65,8 +64,6 @@ class Ellipsoid(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Ellipsoid : {} {} {} {} {} {}".format(self.name, self.pxSemiAxis,

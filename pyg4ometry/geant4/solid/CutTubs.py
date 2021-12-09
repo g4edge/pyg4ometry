@@ -40,20 +40,14 @@ class CutTubs(_SolidBase):
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry, lunit="mm",
-                 aunit="rad", nslice=None, addRegistry = True):
-
-        self.type      = 'CutTubs'
-        self.name      = name
-
-        if addRegistry :
-            registry.addSolid(self)
-        self.registry = registry
+                 aunit="rad", nslice=None, addRegistry=True):
+        super(CutTubs, self).__init__(name, 'CutTubs', registry)
 
         if not nslice:
             nslice = _config.SolidDefaults.CutTubs.nslice
 
-        self.lunit     = lunit
-        self.aunit     = aunit
+        self.lunit = lunit
+        self.aunit = aunit
         self.dependents = []
         self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi", "pDPhi",
                          "pLowNorm", "pHighNorm", "lunit", "aunit", "nslice"]
@@ -64,6 +58,8 @@ class CutTubs(_SolidBase):
 
         self._twoPiValueCheck("pDPhi", self.aunit)
 
+        if addRegistry:
+            registry.addSolid(self)
 
     def __repr__(self):
         # Low norm and high norm excluded as they are lists

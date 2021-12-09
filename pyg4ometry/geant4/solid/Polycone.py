@@ -6,7 +6,6 @@ from .GenericPolyhedra import GenericPolyhedra   as  _GenericPolyhedra
 import logging as _log
 
 class Polycone(_SolidBase):
-    
     """
     Constructs a solid of rotation using an arbitrary 2D surface.
     
@@ -34,13 +33,10 @@ class Polycone(_SolidBase):
     Optional registration as this solid is used as a temporary solid
     in Polyhedra and needn't be always registered.
     """
-
-
     def __init__(self, name, pSPhi, pDPhi, pZpl, pRMin, pRMax,
                  registry, lunit="mm", aunit="rad", nslice=None, addRegistry=True):
+        super(Polycone, self).__init__(name, 'Polycone', registry)
 
-        self.type    = 'Polycone'
-        self.name    = name
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.pZpl    = pZpl
@@ -54,12 +50,10 @@ class Polycone(_SolidBase):
 
         self.varNames = ["pSPhi", "pDPhi", "pZpl","pRMin","pRMax"]
 
+        self._twoPiValueCheck("pDPhi", self.aunit)
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-
-        self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)

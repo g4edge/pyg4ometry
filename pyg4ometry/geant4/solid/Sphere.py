@@ -48,13 +48,11 @@ class Sphere(_SolidBase):
     :param nstack: number of theta elements for meshing
     :type nstack: int 
     """
-
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
                  pDTheta, registry, lunit="mm", aunit="rad",
                  nslice=None, nstack=None, addRegistry=True):
+        super(Sphere, self).__init__(name, 'Sphere', registry)
 
-        self.type    = 'Sphere'
-        self.name    = name
         self.pRmin   = pRmin
         self.pRmax   = pRmax
         self.pSPhi   = pSPhi
@@ -70,12 +68,10 @@ class Sphere(_SolidBase):
 
         self.varNames = ["pRmin", "pRmax", "pSPhi","pDPhi","pSTheta","pDTheta"]
 
+        self.checkParameters()
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-
-        self.checkParameters()
 
     def checkParameters(self):
         import pyg4ometry.gdml.Units as _Units #TODO move circular import

@@ -19,6 +19,34 @@ import numpy as _np
 import math as _math
 
 class Trap(_SolidBase):
+    """
+    Constructs a general trapezoid.
+
+    :param name:   name of the volume
+    :type name:    str
+    :param pDz:    half length along z
+    :type pDz:     float, Constant, Quantity, Variable, Expression
+    :param pTheta: polar angle of the line joining the centres of the faces at -/+pDz
+    :type pTheta:  float, Constant, Quantity, Variable, Expression
+    :param pPhi:   azimuthal angle of the line joining the centres of the faces at -/+pDz
+    :type pPhi:    float, Constant, Quantity, Variable, Expression
+    :param pDy1:   half-length at -pDz
+    :type pDy1:    float, Constant, Quantity, Variable, Expression
+    :param pDx1:   half length along x of the side at y=-pDy1
+    :type pDx1:    float, Constant, Quantity, Variable, Expression
+    :param pDx2:   half length along x of the side at y=+pDy1
+    :type pDx2:    float, Constant, Quantity, Variable, Expression
+    :param pAlp1:  angle wrt the y axis from the centre of the side (lower endcap)
+    :type pAlp1:   float, Constant, Quantity, Variable, Expression
+    :param pDy2:   half-length at +pDz
+    :type pDy2:    float, Constant, Quantity, Variable, Expression
+    :param pDx3:   half-length of the side at y=-pDy2 of the face at +pDz
+    :type pDx3:    float, Constant, Quantity, Variable, Expression
+    :param pDx4:   half-length of the side at y=+pDy2 of the face at +pDz
+    :type pDx4:    float, Constant, Quantity, Variable, Expression
+    :param pAlp2:  angle wrt the y axis from the centre of the side (upper endcap)
+    :type pAlp2:   float, Constant, Quantity, Variable, Expression
+    """
     def __init__(self, name, pDz,
                  pTheta, pDPhi,
                  pDy1, pDx1,
@@ -28,27 +56,8 @@ class Trap(_SolidBase):
                  registry,
                  lunit="mm", aunit="rad",
                  addRegistry=True):
-        """
-        Constructs a general trapezoid.
+        super(Trap, self).__init__(name, 'Trap', registry)
 
-        Inputs:
-          name:   string, name of the volume
-          pDz:    float, half length along z
-          pTheta: float, polar angle of the line joining the centres of the faces at -/+pDz
-          pPhi:   float, azimuthal angle of the line joining the centres of the faces at -/+pDz
-          pDy1:   float, half-length at -pDz
-          pDx1:   float, half length along x of the side at y=-pDy1
-          pDx2:   float, half length along x of the side at y=+pDy1
-          pAlp1:  float, angle wrt the y axis from the centre of the side (lower endcap)
-          pDy2:   float, half-length at +pDz
-          pDx3:   float, half-length of the side at y=-pDy2 of the face at +pDz
-          pDx4:   float, half-length of the side at y=+pDy2 of the face at +pDz
-
-          pAlp2:  float, angle wrt the y axis from the centre of the side (upper endcap)
-        """
-
-        self.type    = "Trap"
-        self.name    = name
         self.pDz     = pDz
         self.pTheta  = pTheta
         self.pDPhi   = pDPhi
@@ -69,8 +78,6 @@ class Trap(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Trap : {} {} {} {} {} {} {} {} {} {} {} {}".format(self.name, self.pDz,

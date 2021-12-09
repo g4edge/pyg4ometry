@@ -19,15 +19,13 @@ class Union(_SolidBase):
     :type tra2: list
     :param registry: for storing solid
     :type registry: Registry
-    
     """
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
+        super(Union, self).__init__(name, 'Union', registry)
         # circular import 
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
 
-        self.type = "Union"
-        self.name = name
         self.obj1 = obj1
         self.obj2 = obj2
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
@@ -35,7 +33,6 @@ class Union(_SolidBase):
         self.varNames = ["tra2"]
         self.dependents = []
 
-        self.registry = registry
         if addRegistry:
             registry.addSolid(self)
 

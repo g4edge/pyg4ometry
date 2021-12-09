@@ -7,16 +7,15 @@ class OpticalSurface(_SolidBase):
     allowed_finishes  = []
 
     def __init__(self, name, finish, model, surf_type, value, registry, addRegistry=True):
-        self.name   = name
-        self.type   = 'OpticalSurface'
+        super(OpticalSurface, self).__init__(name, 'OpticalSurface', registry)
         self.finish = finish
         self.model  = model
         self.osType = surf_type
         self.value  = value
+        self.properties = {}
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.properties = {}
 
     def __repr__(self):
         return 'OpticalSurface : '+str(self.name)

@@ -39,11 +39,10 @@ class EllipticalTube(_SolidBase):
     :type nstack: int     
     
     """
-
     def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
                  nstack=None, nslice=None, addRegistry=True):
-        self.type   = 'EllipticalTube'
-        self.name   = name
+        super(EllipticalTube, self).__init__(name, 'EllipticalTube', registry)
+
         self.pDx    = pDx
         self.pDy    = pDy
         self.pDz    = pDz
@@ -57,8 +56,6 @@ class EllipticalTube(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "EllipticalTube : {} {} {} {}".format(self.name, self.pDx,

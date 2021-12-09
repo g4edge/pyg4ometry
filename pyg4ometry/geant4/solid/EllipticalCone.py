@@ -18,24 +18,27 @@ import logging as _log
 import numpy as _np
 
 class EllipticalCone(_SolidBase):
+    """
+    Constructs a cone with elliptical cross-section and an
+    optional cut.  Both zMax and pzTopCut are half lengths
+    extending from the centre of the cone, at z=0.
+    
+    :param name:       name of the volume
+    :type name:         str
+    :param pxSemiAxis: semiaxis in x at z=0 as a fraction of zMax.
+    :type pxSemiAxis:  float, Constant, Quantity, Variable, Expression
+    :param pySemiAxis: semiaxis in y at z=0 as a fraction of zMax
+    :type pySemiAxis:  float, Constant, Quantity, Variable, Expression
+    :param zMax:       half length of the cone.
+    :type zMax:        float, Constant, Quantity, Variable, Expression
+    :param pzTopCut:   half length of the cut.
+    :type pzTopCut:    float, Constant, Quantity, Variable, Expression
+
+    """
     def __init__(self, name, pxSemiAxis, pySemiAxis, zMax, pzTopCut,
                  registry, lunit="mm", nslice=None, nstack=None, addRegistry=True):
-        """
-        Constructs a cone with elliptical cross-section and an
-        optional cut.  Both zMax and pzTopCut are half lengths
-        extending from the centre of the cone, at z=0.
+        super(EllipticalCone, self).__init__(name, 'EllipticalCone', registry)
 
-        Inputs:
-          name:       string, name of the volume
-          pxSemiAxis: float, semiaxis in x at z=0 as a fraction of zMax.
-          pySemiAxis: float, semiaxis in y at z=0 as a fraction of zMax
-          zMax:       float, half length of the cone.
-          pzTopCut:   float, half length of the cut.
-
-        """
-
-        self.type       = 'EllipticalCone'
-        self.name       = name
         self.pxSemiAxis = pxSemiAxis
         self.pySemiAxis = pySemiAxis
         self.zMax       = zMax
@@ -50,8 +53,6 @@ class EllipticalCone(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "EllipticalCone : {} {} {} {} {}".format(self.name, self.pxSemiAxis,

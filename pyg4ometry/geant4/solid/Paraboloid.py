@@ -38,12 +38,10 @@ class Paraboloid(_SolidBase):
     :type nstack:    int       
     
     """
-    
     def __init__(self, name, pDz, pR1, pR2, registry, lunit="mm",
-                 nslice=16, nstack=8, addRegistry=True) :
+                 nslice=16, nstack=8, addRegistry=True):
+        super(Paraboloid, self).__init__(name, 'Paraboloid', registry)
 
-        self.type   = 'Paraboloid'
-        self.name   = name
         self.pDz    = pDz
         self.pR1    = pR1
         self.pR2    = pR2
@@ -57,8 +55,6 @@ class Paraboloid(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
 
     def __repr__(self):
         return "Paraboloid : {} {} {} {}".format(self.name, self.pDz,

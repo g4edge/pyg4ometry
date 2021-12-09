@@ -9,7 +9,6 @@ import numpy as _np
 import logging as _log
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
-
     """
     Constructs a twisted general trapezoid.
     
@@ -38,13 +37,11 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
     :param nstack:          number of theta elements for meshing
     :type nstack:           int       
     """
-
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
                  pDz, registry, lunit="mm", aunit="rad",
                  nstack=None, refine=0, addRegistry=True):
+        super(TwistedTrd, self).__init__(name, 'TwistedTrd', registry)
 
-        self.type             = 'TwistedTrd'
-        self.name             = name
         self.twistedAngle     = twistedangle
         self.pDx1             = pDx1
         self.pDx2             = pDx2
@@ -60,11 +57,10 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
         self.varNames = ["twistedAngle", "pDx1", "pDx2","pDy1","pDy2","pDz"]
 
+        self.checkParameters()
+
         if addRegistry:
             registry.addSolid(self)
-
-        self.registry = registry
-        self.checkParameters()
 
     def __repr__(self):
         return "TwistedTrd : {} {} {} {} {} {} {}".format(self.name, self.twistedAngle,

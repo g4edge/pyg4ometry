@@ -37,12 +37,10 @@ class Tet(_SolidBase):
     
     :param degeneracyFlag: bool, indicates degeneracy of points
     """
-
-
     def __init__(self, name, anchor, p2, p3, p4, registry, lunit = "mm",
                  degeneracyFlag=False, addRegistry=True):
-        self.type    = 'Tet'
-        self.name    = name
+        super(Tet, self).__init__(name, 'Tet', registry)
+
         self.anchor  = anchor
         self.p2      = p2
         self.p3      = p3
@@ -56,9 +54,6 @@ class Tet(_SolidBase):
 
         if addRegistry:
             registry.addSolid(self) # Always need the registry
-
-        self.registry = registry
-
 
     def __repr__(self):
         return "Tet : {} Vertexes: {}, {}, {}, {}".format(self.name, 
