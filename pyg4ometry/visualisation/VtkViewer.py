@@ -724,6 +724,8 @@ class VtkViewer:
             cutters = self.ycutters
         elif axis == 'z':
             cutters = self.zcutters
+        else:
+            raise ValueError("axis is not one of x,y,z")
 
         allX = []
         allY = []
