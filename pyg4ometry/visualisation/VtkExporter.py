@@ -24,7 +24,6 @@ class VtkExporter:
         Args:
             path: output repository path
         """
-
         # directory path
         self.path = path
 
@@ -97,7 +96,6 @@ class VtkExporter:
             df_color: (optional) pandas.DataFrame linking the TYPE with its specific R G B color
 
         """
-
         world_volume = reg.getWorldVolume()
 
         if df_color is not None and df_model is not None:
@@ -166,7 +164,6 @@ class VtkExporter:
             translation: (optional) numpy.array
 
         """
-
         if model:
             self.add_logical_volume_recursive(lv, rotation, translation, color_dico)
         else:
@@ -191,7 +188,6 @@ class VtkExporter:
 
 
     def add_logical_volume_recursive(self, lv, rotation, translation, color_dico, first_level=True):
-
         """
         Method that receives a logical volume and add calls addMesh() on its mesh.
         The method is recursive and will be called on all the daughter logical volumes of the logical volume.
@@ -205,7 +201,6 @@ class VtkExporter:
             first_level: Boolean indicating if we are at the first level of recursivity
 
         """
-
         for pv in lv.daughterVolumes:
 
             if first_level:
@@ -308,7 +303,6 @@ class VtkExporter:
                 self.mbindexdico[self.element_name] += 1
 
     def getMaterialVisOptions(self, name):
-
         """
         Method that "cleans" the logical volume material string.
 
@@ -316,9 +310,7 @@ class VtkExporter:
             name: raw name of the logical volume material
 
         Returns: clean name of the logical volume material
-
         """
-
         if name.find("0x") != -1 :
             namestrip = name[0:name.find("0x")]
         else:
@@ -331,17 +323,13 @@ class VtkExporter:
             return self.materialVisualisationOptions['G4_C']
 
     def getElementName(self, logicalVolumeName):
-
         """
         Method that "cleans" the logical volume name string.
-
         Args:
             logicalVolumeName: raw name of the logical volume
 
         Returns: clean name of the logical volume
-
         """
-
         if "PREPENDworld_" in logicalVolumeName:
             return logicalVolumeName.split('PREPENDworld_')[1].split('0x')[0].split('_lv')[0]
         if "PREPEND_" in logicalVolumeName:
@@ -350,19 +338,15 @@ class VtkExporter:
             return logicalVolumeName.split('_container')[0].split('_e1')[0].split('_e2')[0].split('_even')[0].split('_outer')[0].split('_centre')[0].split('_collimator')[0].split('_beampipe')[0].split('0x')[0].split('_lv')[0].split('_bp')[0]
 
     def countVisibleDaughters(self, lv, element_name, n=0):
-
         """
         Method that counts the number of "visible" daughter logical volumes of the mother logical volume lv.
-
         Args:
             lv: logical volume
             element_name: name of the element
             n: number of "visible" daughter volumes
 
         Returns: n
-
         """
-
         for pv in lv.daughterVolumes:
             lv_name = self.getElementName(pv.logicalVolume.name)
             if lv_name == element_name:
@@ -371,5 +355,3 @@ class VtkExporter:
                 else:
                     n = self.countVisibleDaughters(pv.logicalVolume, element_name, n)
         return n
-
-

@@ -125,7 +125,7 @@ class VtkViewer:
         self.axesWidget.EnabledOn()
         self.axesWidget.InteractiveOn()
 
-    def setOpacity(self, v, iActor = -1):
+    def setOpacity(self, v, iActor=-1):
         for a, i in zip(self.actors,range(0,len(self.actors))):
             if i == iActor :
                 a.GetProperty().SetOpacity(v)
@@ -689,32 +689,32 @@ class VtkViewer:
         # check if there is a material visualisation options
 
         # set visualisation properties
-        if visOptions :
+        if visOptions:
             vtkActor.GetProperty().SetColor(*visOptions.getColour())
             vtkActor.GetProperty().SetOpacity(visOptions.alpha)
-            if visOptions.representation == "surface" :
+            if visOptions.representation == "surface":
                 vtkActor.GetProperty().SetRepresentationToSurface()
-            elif visOptions.representation == "wireframe" :
+            elif visOptions.representation == "wireframe":
                 vtkActor.GetProperty().SetRepresentationToWireframe()
-        else : 
+        else:
             vtkActor.GetProperty().SetColor(1,0,0)
 
         vtkActor.SetVisibility(visOptions.visible)
         actors.append(vtkActor)
         self.ren.AddActor(vtkActor)
 
-    def view(self, interactive = True, resetCamera = True ):
+    def view(self, interactive=True, resetCamera=True ):
         # enable user interface interactor
         self.iren.Initialize()
 
         # Camera setup
-        if resetCamera :
+        if resetCamera:
             self.ren.ResetCamera()
 
         # Render
         self.renWin.Render()
 
-        if interactive : 
+        if interactive:
             self.iren.Start()
 
     def _getCutterData(self, axis='x', scaling=1.0):
@@ -774,25 +774,25 @@ class VtkViewer:
         #import matplotlib.pyplot as _plt
         #from vtk.numpy_interface import dataset_adapter as dsa
 
-        if dir == 'x' :
+        if dir == 'x':
             cutters = self.xcutters
-        elif dir == 'y' :
+        elif dir == 'y':
             cutters = self.ycutters
-        elif dir == 'z' :
+        elif dir == 'z':
             cutters = self.zcutters
         else:
             raise ValueError("Unknown direction " + dir)
 
         for c in cutters:
             pd = c.GetOutput()
-            for i in range(0,pd.GetNumberOfCells(),1) :
+            for i in range(0, pd.GetNumberOfCells(), 1):
                 idl = _vtk.vtkIdList()
-                pd.GetCellPoints(i,idl)
+                pd.GetCellPoints(i, idl)
 
                 x = []
                 y = []
 
-                for j in range(0,idl.GetNumberOfIds(),1) :
+                for j in range(0, idl.GetNumberOfIds(), 1):
                     p = pd.GetPoint(idl.GetId(j))
 
                     if dir == 'x':
