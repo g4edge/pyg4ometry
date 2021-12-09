@@ -159,7 +159,8 @@ class Material(_MatProp):
 
 
 class Compound(_MatProp):
-    """A FLUKA compound material.  This corresponds to the case in
+    """
+    A FLUKA compound material. This corresponds to the case in
     FLUKA of a single MATERIAL card with one or more associated
     COMPOUND cards.
 
@@ -177,8 +178,6 @@ class Compound(_MatProp):
     :param flukaregistry: Optional FlukaRegistry instance the Compound \
     is to be added to.
     :type flukaregistry: FlukaRegistry
-
-
     """
     def __init__(self, name, density, fractions, fractionType,
                  pressure=None,
@@ -259,8 +258,7 @@ class Compound(_MatProp):
             raise TypeError("Mixed mass, volume, and fraction types"
                             f" are not supported for material={compoundName}")
 
-        # Map the material names to material/compound instances via
-        # the FlukaRegistry.
+        # Map the material names to material/compound instances via the FlukaRegistry.
         fractions = [(flukareg.getMaterial(name), f) for name, f in fractions]
 
         return cls(compoundName, density, fractions, fractionTypes[0],

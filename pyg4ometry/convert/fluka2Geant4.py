@@ -106,8 +106,9 @@ def fluka2Geant4(flukareg,
     return _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo)
 
 def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
-    "Convert a transformed fluka registry to a geant4 registry."
-    # This loop below do the main conversion
+    """
+    Convert a transformed fluka registry to a geant4 registry.
+    """
     greg = _g4.Registry()
     f2g4mat = _makeFlukaToG4MaterialsMap(flukareg, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions),
