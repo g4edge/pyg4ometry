@@ -77,7 +77,8 @@ def loadPredefined():
     return result
 
 def getPredefinedMaterialVisOptions():
-    if not _predefinedMaterialVisOptions:
+    global _predefinedMaterialVisOptions
+    if _predefinedMaterialVisOptions is None:
         _predefinedMaterialVisOptions = loadPredefined()
     return _predefinedMaterialVisOptions
 
