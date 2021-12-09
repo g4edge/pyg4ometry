@@ -1,10 +1,10 @@
-import numbers
+import numbers as _numbers
 from pyg4ometry.geant4 import Expression as _Expression
 from pyg4ometry.gdml import Units as _Units
 
 import numpy as _np
 
-def upgradeToStringExpression(reg, obj) : 
+def upgradeToStringExpression(reg, obj):
     """
     Take a float, str, ScalarBase and return string expression 
 
@@ -15,8 +15,7 @@ def upgradeToStringExpression(reg, obj) :
     :return: String expression
     :rtype: str
     """
-
-    if isinstance(obj, numbers.Number):
+    if isinstance(obj, _numbers.Number):
         # return str(obj)                  # number like so return string
         return "%.15f" % obj
 
@@ -47,7 +46,7 @@ def evaluateToFloat(reg, obj):
             raise AttributeError
         ans = [evaluateToFloat(reg, item) for item in obj.__iter__()]
     except (AttributeError, ):
-        if isinstance(obj, numbers.Number) or isinstance(obj, ScalarBase):
+        if isinstance(obj, _numbers.Number) or isinstance(obj, ScalarBase):
             evaluatable = obj
         elif isinstance(obj, VectorBase):
             return obj.eval()
