@@ -117,20 +117,26 @@ class ComparisonResult:
     def testNames(self):
         return list(self.test.keys())
 
-    def print(self, testName=None, testResultsToPrint=[TestResult.Failed]):
+    def print(self, testName=None, testResultsToPrint=[TestResult.Failed], allTests=False):
         """
         :param testName: (optional) name of specific single test to print - see testNames()
-        :type  arg: str
+        :type  testName: str
         :param testResultsToPrint: (optional) list of result outcomes to print
+        :type  testResultsToPrint: list(TestResult)
+        :poram allTests: (optional) print all tests irrespective of the result
+        :type  allTests: bool
 
         Print all types of tests (by default) or a specific one type.
         Control level of print out with optional argument of list of test outcomes to print.
 
         >>> cr.print()
         >>> cr.print('solidName')
-        >>> cr.print(testResultsToPrint=[TestResult.All()])
+        >>> cr.print(testResultsToPrint=TestResult.All())
+        >>> cr.print(allTests=True)
         """
         print("Overall result> ", self.result)
+        if allTests:
+            testResultsToPrint = TestResult.All()
         if testName is None:
             for tn, results in self.test.items():
                 print('Test> ', tn)
