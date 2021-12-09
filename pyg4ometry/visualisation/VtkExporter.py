@@ -45,7 +45,7 @@ class VtkExporter:
 
     def export_to_Paraview(self, reg, fileName='Paraview_model.pvsm', model=True, df_model=None, df_color=None):
         """
-        Method that exports the visible logical volumes of the registry reg into paraview VTK files (.vtm)
+        Method that exports the visible logical volumes of the registry reg into Paraview VTK files (.vtm)
         and creates a Paraview State file (.pvsm) for the Paraview Model.
 
         df_model and df_color are optional: if they are not given, the Paraview model will take the materials colors
@@ -53,12 +53,11 @@ class VtkExporter:
         Args:
             reg: Registry
             fileName: Name of the Paraview State file (.pvsm)
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             df_model: (optional) pandas.DataFrame linking the NAME of the element and their TYPE
             df_color: (optional) pandas.DataFrame linking the TYPE with its specific R G B color
-
         """
         if _WITH_PARAVIEW:
             self.export_to_VTK(reg, model, df_model, df_color)
@@ -89,11 +88,11 @@ class VtkExporter:
 
     def export_to_VTK(self, reg, model=True, df_model=None, df_color=None):
         """
-        Method that exports the visible logical volumes of the registry reg into paraview VTK files (.vtm).
+        Method that exports the visible logical volumes of the registry reg into Paraview VTK files (.vtm).
 
         Args:
             reg: Registry
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             df_model: (optional) pandas.DataFrame linking the NAME of the element and their TYPE
@@ -160,7 +159,7 @@ class VtkExporter:
 
         Args:
             lv: Logical world volume
-            model: Boolean informing wether we work with a "model" GDML or a "simple" GDML
+            model: Boolean informing whether we work with a "model" GDML or a "simple" GDML
                 True: it will consider that each daughter volume of the GDML world volume will need a .vtm file
                 False: it will create one .vtm file for the whole GDML
             color_dico: A dictionary with the keys R, G and B whose item is a dictionary

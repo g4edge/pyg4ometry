@@ -48,9 +48,10 @@ class Mesh(object) :
         return self.localmesh
 
     def getBoundingBox(self, rotationMatrix=None, translation=None) :
-        '''Axes aligned bounding box.  Can also provide a rotation and
-        a translation (applied in that order) to the vertices.'''
-
+        """
+        Axes aligned bounding box. Can also provide a rotation and
+        a translation (applied in that order) to the vertices.
+        """
         vertices, _, _ = self.localmesh.toVerticesAndPolygons()
         if not vertices:
             raise pyg4ometry.exceptions.NullMeshError(self.solid)
