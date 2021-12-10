@@ -58,6 +58,14 @@ class ReplicaVolume(_PhysicalVolume):
 
         # Create replica meshes
         [self.meshes,self.transforms] = self.createReplicaMeshes()
+        
+    def GetAxisName(self):
+        names = {1 : 'kXAxis',
+                 2 : 'kYAxis',
+                 3 : 'kZAxis',
+                 4 : 'kRho',
+                 5 : 'kPhi'}
+        return names[self.axis]
 
     def _checkInternalOverlaps(self, debugIO=False, nOverlapsDetected=[0]):
         """
