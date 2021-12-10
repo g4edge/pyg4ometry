@@ -161,12 +161,12 @@ def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=Tru
     otherReg         = otherReader.getRegistry()
     otherWorldLV     = otherReg.getWorldVolume()
     return geometry(referenceWorldLV, otherWorldLV, tests, includeAllTestResults)
-        
+
 def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
     result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults)
-    return result                   
+    return result
 
-def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False):
+def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
 
     rlv = referenceLV  # shortcuts
@@ -177,7 +177,9 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     if tests.names:
         result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
     result += solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
-    result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
+    if ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) not in testsAlreadyDone:
+        result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
+        testsAlreadyDone.append( ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) )
 
     if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
         details =  "# daughters: ('"+rlv.name+"') : "+str(len(rlv.daughterVolumes))
@@ -190,6 +192,7 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     # if not recursive return now and don't loop over daughter physical volumes
     if not recursive:
+        testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
         return result
     
     # shortcuts
@@ -200,6 +203,9 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     for dName,rDaughter in rlv._daughterVolumesDict.items():
         if dName in olv._daughterVolumesDict:
             oDaughter = olv._daughterVolumesDict[dName]
+
+            if ("daughter_test_"+rDaughter.name, "daughter_test_"+oDaughter.name) in testsAlreadyDone:
+                continue  # already done this test
 
             # check types
             expectedType = rDaughter.type
@@ -212,19 +218,19 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
             # do custom type check
             if expectedType == "placement":
-                result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr)
+                result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr, testsAlreadyDone)
             elif expectedType == "assembly":
-                result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr)
+                result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
             elif expectedType == "replica":
-                result += replicaVolumes(rDaughter, oDaughter, tests, iatr)
+                result += replicaVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
             elif expectedType == "division":
-                result += divisionVolumes(rDaughter, oDaughter, tests, iatr)
+                result += divisionVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
             elif expectedType == "parameterised":
-                result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr)
+                result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
             else:
                 # LN: don't know what to SkinSurface, BorderSurface and Loop
                 pass
-        
+            testsAlreadyDone.append( ("daughter_test_"+rDaughter.name, "daughter_test_"+oDaughter.name) )
         else:
             # missing daughter in other lv
             details = "dName found in lv: '"+rlv.name+"' but not in '"+olv.name+"'"
@@ -244,9 +250,10 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     elif includeAllTestResults:
         result['extraDaughter'] += [TestResultNamed(testName, TestResult.Passed)]
 
+    testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
     return result
 
-def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", includeAllTestResults=False):
+def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", includeAllTestResults=False, testsAlreadyDone=[]):
     """
     lvName is an optional parent object name to help in print out details decode where the placement is.
     """
@@ -274,10 +281,14 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
         result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
 
     result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
-    result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults)
+    if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
+        result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
+        testsAlreadyDone.append( ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) )
+
+    testsAlreadyDone.append( ("pv_test_"+referencePV.name, "pv_test_"+otherPV.name) )
     return result
 
-def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTestResults=False):
+def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
 
     rav = referenceAV
@@ -291,21 +302,23 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
     # compare meshes as we would do for a logical?
 
     result.result = result.result | TestResult.Passed
+
+    testsAlreadyDone.append( (referenceAV, otherAV) )
     return result
 
-def replicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def replicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
     return result
 
-def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
     return result
 
-def parameterisedVolumes(referenceRV, otherRV, tests, includeAllTestResults=False):
+def parameterisedVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
     return result
 
-def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTestResults=False):
+def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTestResults=False, testsAlreadyDone=[]):
     """
     This tests assumes both referenceMaterial and otherMaterial are derived from the 
     type pyg4ometry.geant4._Material.Material.
