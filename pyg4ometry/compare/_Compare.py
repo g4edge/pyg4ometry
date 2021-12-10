@@ -298,12 +298,9 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
         result += _names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
 
     # compare placements inside assembly
+    
 
-    # compare meshes as we would do for a logical?
-
-    result.result = result.result | TestResult.Passed
-
-    testsAlreadyDone.append( (referenceAV, otherAV) )
+    testsAlreadyDone.append( ("av_test_"+referenceAV.name, "av_test_"+otherAV.name) )
     return result
 
 def replicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
