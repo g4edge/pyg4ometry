@@ -20,7 +20,7 @@ class AssemblyVolume(object) :
         self.name            = name 
         self.daughterVolumes = []
         self.registry = registry
-        if addRegistry :
+        if addRegistry:
             registry.addLogicalVolume(self)
 
         self.overlapChecked = False

@@ -22,15 +22,15 @@ class ReplicaVolume(_PhysicalVolume):
     :param offset: of grid
     '''
 
-    class Axis :
+    class Axis:
         kXAxis = 1
         kYAxis = 2
         kZAxis = 3
         kRho   = 4
         kPhi   = 5
-
+        
     def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
-                 width, offset = 0, registry = None, addRegistry=True, wunit = "mm", ounit= "mm") :
+                 width, offset=0, registry=None, addRegistry=True, wunit="mm", ounit="mm"):
 
         # TBC - doesn't call super() so doesn't have PV objects
         
