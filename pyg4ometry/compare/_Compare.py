@@ -18,7 +18,8 @@ class Tests:
         self.shapeVolume       = True
         self.placement         = True # i.e. position and rotation
         self.materialClassType = True
-        self.materialCompositionType = True # i.e. natoms or mass fraction
+        self.materialCompositionType = True # i.e. N atoms or mass fraction
+        self.testDaughtersByName = True # if true, match up daughters by name, otherwise just iterate over in sequence
 
         self.toleranceSolidParameterFraction  = 1e-3
         self.toleranceSolidExtentFraction     = 1e-6
@@ -194,61 +195,39 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     if not recursive:
         testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
         return result
-    
-    # shortcuts
-    r = recursive
-    iatr = includeAllTestResults
+
+    # test daughters are the same - could even be same number but different
+    # we rely here on unique names in pyg4ometry as that's true in GDML
+    rNameToObject = {d.name : d for d in rlv.daughterVolumes}
+    oNameToObject = {d.name : d for d in olv.daughterVolumes}
+    rSet = set([d.name for d in rlv.daughterVolumes])
+    oSet = set([d.name for d in olv.daughterVolumes])
 
     # iterate over daughters
-    for dName,rDaughter in rlv._daughterVolumesDict.items():
-        if dName in olv._daughterVolumesDict:
-            oDaughter = olv._daughterVolumesDict[dName]
-
-            if ("daughter_test_"+rDaughter.name, "daughter_test_"+oDaughter.name) in testsAlreadyDone:
+    # if we assume there's some mismatch, we use the intersection set of names - ie the ones
+    # that exist in both.
+    if tests.testDaughtersByName:
+        # work out names that exist in both sets of daughter names
+        overlapSet = rSet.intersection(oSet)
+        for daugtherName in overlapSet:
+            i_rDaughter = rNameToObject[daugtherName]
+            i_oDaughter = oNameToObject[daugtherName]
+            if ("daughter_test_"+i_rDaughter.name, "daughter_test_"+i_oDaughter.name) in testsAlreadyDone:
                 continue  # already done this test
 
-            # check types
-            expectedType = rDaughter.type
-            if expectedType != oDaughter.type:
-                details =  "daughter types in '"+dName+"': (ref): "+str(expectedType)
-                details += ", (other): "+str(oDaughter.type)
-                result['daughterType'] += [TestResultNamed(testName, TestResult.Failed, details)]
-            elif includeAllTestResults:
-                result['daughterType'] += [TestResultNamed(testName, TestResult.Passed)]
+            result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rlv.name, testName,
+                                           result, recursive, includeAllTestResults, testsAlreadyDone)
+    else:
+        for i in range(min(len(rlv.daughterVolumes), len(olv.daughterVolumes))):
+            i_rDaughter = rlv.daughterVolumes[i]
+            i_oDaughter = olv.daughterVolumes[i]
+            if ("daughter_test_"+i_rDaughter.name, "daughter_test_"+i_oDaughter.name) in testsAlreadyDone:
+                continue  # already done this test
 
-            # do custom type check
-            if expectedType == "placement":
-                result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr, testsAlreadyDone)
-            elif expectedType == "assembly":
-                result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
-            elif expectedType == "replica":
-                result += replicaVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
-            elif expectedType == "division":
-                result += divisionVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
-            elif expectedType == "parameterised":
-                result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
-            else:
-                # LN: don't know what to SkinSurface, BorderSurface and Loop
-                pass
-            testsAlreadyDone.append( ("daughter_test_"+rDaughter.name, "daughter_test_"+oDaughter.name) )
-        else:
-            # missing daughter in other lv
-            details = "dName found in lv: '"+rlv.name+"' but not in '"+olv.name+"'"
-            result['missingDaughter'] += [TestResultNamed(dName, TestResult.Failed, details)]
-    
-    # test if more daughters in other                                       
-    if len(olv.daughterVolumes) > len(rlv.daughterVolumes):
-        rSet = set([d.name for d in rlv.daughterVolumes])
-        oSet = set([d.name for d in olv.daughterVolumes])
-        extraNames = oSet - rSet # ones in oSet but not in rSet
-        # extra daughters in other lv                                   
-        details = "extra daughter"
-        if len(extraNames) > 1:
-            details += "s "
-        details += "[" + ", ".join(extraNames) + "]"
-        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Failed, details)]
-    elif includeAllTestResults:
-        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Passed)]
+            result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rlv.name, testName,
+                                           result, recursive, includeAllTestResults, testsAlreadyDone)
+
+    result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 
     testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
     return result
@@ -294,17 +273,184 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
     rav = referenceAV
     oav = otherAV
 
+    testName = ": ".join(["(av)", rav.name])
+
     if tests.names:
         result += _names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
 
     # compare placements inside assembly
-    
+    rDaughters = rav.daughterVolumes
+    oDaughters = oav.daughterVolumes
+
+    # test daughters are the same - could even be same number but different
+    # we rely here on unique names in pyg4ometry as that's true in GDML
+    rNameToObject = {d.name : d for d in rDaughters}
+    oNameToObject = {d.name : d for d in oDaughters}
+    rSet = set([d.name for d in rDaughters])
+    oSet = set([d.name for d in oDaughters])
+
+    result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
+
+    # iterate over daughters
+    # if we assume there's some mismatch, we use the intersection set of names - ie the ones
+    # that exist in both.
+    if tests.testDaughtersByName:
+        # work out names that exist in both sets of daughter names
+        overlapSet = rSet.intersection(oSet)
+        for daugtherName in overlapSet:
+            i_rDaughter = rNameToObject[daugtherName]
+            i_oDaughter = oNameToObject[daugtherName]
+            if ("daughter_test_"+i_rDaughter.name, "daughter_test_"+i_oDaughter.name) in testsAlreadyDone:
+                continue  # already done this test
+
+            result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rav.name, testName,
+                                           result, recursive, includeAllTestResults, testsAlreadyDone)
+    else:
+        for i in range(min(len(rDaughters), len(oDaughters))):
+            i_rDaughter = rDaughters[i]
+            i_oDaughter = oDaughters[i]
+            if ("daughter_test_"+i_rDaughter.name, "daughter_test_"+i_oDaughter.name) in testsAlreadyDone:
+                continue  # already done this test
+
+            result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rav.name, testName,
+                                           result, recursive, includeAllTestResults, testsAlreadyDone)
 
     testsAlreadyDone.append( ("av_test_"+referenceAV.name, "av_test_"+otherAV.name) )
     return result
 
-def replicaVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
+def _checkPVLikeDaughters(referencePVLikeObject, otherPVLikeObject, tests, parentName, testName, result,
+                          recursive=True, includeAllTestResults=True, testsAlreadyDone=[]):
+    rDaughter = referencePVLikeObject
+    oDaughter = otherPVLikeObject
+    r = recursive
+    iatr = includeAllTestResults
+
+    # check types
+    expectedType = rDaughter.type
+    if expectedType != oDaughter.type:
+        details = "daughter types in '" + parentName + "': (ref): " + str(expectedType)
+        details += ", (other): " + str(oDaughter.type)
+        result['daughterType'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['daughterType'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # do custom type check
+    if expectedType == "placement":
+        result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr, testsAlreadyDone)
+    elif expectedType == "assembly":
+        result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
+    elif expectedType == "replica":
+        result += replicaVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
+    elif expectedType == "division":
+        result += divisionVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
+    elif expectedType == "parameterised":
+        result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
+    else:
+        # LN: don't know what to SkinSurface, BorderSurface and Loop
+        pass
+    testsAlreadyDone.append(("daughter_test_" + rDaughter.name, "daughter_test_" + oDaughter.name))
+
+    return result
+
+def _testDaughterNameSets(referenceDaughterNameSet, otherDaughterNameSet, result, testName, includeAllTestResults):
+    rSet = referenceDaughterNameSet
+    oSet = otherDaughterNameSet
+    # test the number and identity of the daughters matches
+    # we rely here on unique names in pyg4ometry as that's true in GDML
+    extraNames = oSet - rSet  # ones in oSet but not in rSet
+    if len(extraNames) > 0:
+        details = "extra daughter"
+        if len(extraNames) > 1:
+            details += "s "
+        details += "[" + ", ".join(extraNames) + "]"
+        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['extraDaughter'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    missingNames = rSet - oSet  # ones in rSet but not in oSet
+    if len(missingNames) > 0:
+        details = "missing daughter"
+        if len(missingNames) > 1:
+            details += "s "
+        details += "[" + ", ".join(missingNames) + "]"
+        result['missingDaughter'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['missingDaughter'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    return result
+
+def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestResults=False, testsAlreadyDone=[]):
     result = ComparisonResult()
+
+    rrv = referenceRV
+    orv = otherRV
+
+    testName = ": ".join(["(rv)", rrv.name])
+
+    if tests.names:
+        result += _names("replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults)
+
+    # check type
+    if rrv.type != orv.type:
+        details = "replica types in '" + rrv.name + "': (ref): " + str(rrv.type)
+        details += ", (other): " + str(orv.type)
+        result['replicaType'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaType'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # replica's logical volume
+    result += logicalVolumes(rrv.logicalVolume, orv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
+
+    # axis of replication
+    if rrv.axis != orv.axis:
+        details = "replica axis in '" + rrv.name + "': (ref): " + str(rrv.GetAxisName())
+        details += ", (other): " + str(orv.GetAxisName())
+        result['replicaAxis'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaAxis'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # n replicas
+    if rrv.nreplicas != orv.nreplicas:
+        details = "replica N replicas in '" + rrv.name + "': (ref): " + str(rrv.nreplicas)
+        details += ", (other): " + str(orv.nreplicas)
+        result['replicaNReplicas'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaNReplicas'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # width
+    if rrv.width != orv.width:
+        details = "replica width in '" + rrv.name + "': (ref): " + str(rrv.width)
+        details += ", (other): " + str(orv.width)
+        result['replicaWidth'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaWidth'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # offset
+    if rrv.offset != orv.offset:
+        details = "replica offset in '" + rrv.name + "': (ref): " + str(rrv.offset)
+        details += ", (other): " + str(orv.offset)
+        result['replicaOffset'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaOffset'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # w unit
+    if rrv.wunit != orv.wunit:
+        details = "replicaWUnit in '" + rrv.name + "': (ref): " + str(rrv.wunit)
+        details += ", (other): " + str(orv.wunit)
+        result['replicaWUnit'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaWUnit'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    # o unit
+    if rrv.ounit != orv.ounit:
+        details = "replicaOUnit '" + rrv.name + "': (ref): " + str(rrv.ounit)
+        details += ", (other): " + str(orv.ounit)
+        result['replicaOUnit'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result['replicaOunit'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    testsAlreadyDone.append( ("rv_test_"+rrv.name, "rv_test_"+orv.name) )
+        
     return result
 
 def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
