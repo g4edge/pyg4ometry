@@ -29,14 +29,14 @@ class Registry:
         self.logicalVolumeDict            = {}
         self.assemblyVolumeDict           = {}
         self.physicalVolumeDict           = {}
-        self.physicalVolumeCountDict      = {}
         self.surfaceDict                  = {}
         self.loopDict                     = {}
 
         self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
 
         self.solidUsageCountDict          = _defaultdict(int) # solidName1, solidName2
-        self.volumeTypeCountDict          = _defaultdict(int) # logical, physical
+        self.volumeTypeCountDict          = _defaultdict(int) # logical, physical, assembly
+        self.physicalVolumeCountDict      = _defaultdict(int) #
         self.surfaceTypeCountDict         = _defaultdict(int) # border, skin
         self.logicalVolumeMeshSkip        = []                # meshes to skip because they are inefficient
         self.userInfo                     = []                # Ordered list for the user info, which is not processed
@@ -58,6 +58,41 @@ class Registry:
 
         self.expressionParser = None
 
+    def clear(self):
+        """Empty all internal structures"""
+        # to match constructor
+        self.defineDict.clear()
+        self.materialDict.clear()
+        self.solidDict.clear()
+        self.logicalVolumeDict.clear()
+        self.assemblyVolumeDict.clear()
+        self.physicalVolumeDict.clear()
+        self.surfaceDict.clear()
+        self.loopDict.clear()
+        
+        self.logicalVolumeList = []
+
+        self.solidUsageCountDict.clear()
+        self.volumeTypeCountDict.clear()
+        self.physicalVolumeCountDict.clear()
+        self.surfaceTypeCountDict.clear()
+        self.logicalVolumeMeshSkip = []
+        self.userInfo = []
+
+        self.definNameCount.clear()
+        self.materialNameCount.clear()
+        self.materialUsageCount.clear()
+        self.solidNameCount.clear()
+        self.logicalVolumeNameCount.clear()
+        self.assemblyVolumeNameCount.clear()
+        self.physicalVolumeNameCount.clear()
+        self.surfaceNameCount.clear()
+        
+        self.solidTypeCountDict.clear()
+        self.logicalVolumeUsageCountDict.clear()
+
+        self.editedSolids = []
+        
     def getExpressionParser(self):
         if not self.expressionParser:
             from pyg4ometry.gdml.Expression import ExpressionParser
@@ -561,21 +596,6 @@ class Registry:
         if solid.type == 'union' or solid.type == 'intersecton' or solid.type == 'subtraction':
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
-
-    def clear(self):
-        '''Empty all internal structures'''
-        self.defineDict.clear()
-        self.materialDict.clear()
-        self.solidDict.clear()
-        self.volumeTypeCountDict.clear()
-        self.logicalVolumeDict.clear()
-        self.physicalVolumeDict.clear()
-
-        self.logicalVolumeList = []
-        self.solidTypeCountDict.clear()
-        self.solidUsageCountDict.clear()
-        self.logicalVolumeUsageCountDict.clear()
-        self.logicalVolumeMeshSkip = []
 
     def getWorldVolume(self) :         
         return self.worldVolume
