@@ -212,7 +212,9 @@ class Registry:
 
         self.logicalVolumeNameCount[volume.name]  += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
-        self.materialUsageCount[volume.material.name] += 1
+        # material doesn't exist for an assembly volume, which this funciton is also used for
+        if volume.type == "logical":
+            self.materialUsageCount[volume.material.name] += 1
 
     def transferLogicalVolume(self, volume, incrementRenameDict={}):
         """
@@ -235,43 +237,6 @@ class Registry:
 
         self.logicalVolumeNameCount[volume.name] += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
-
-    def addAssemblyVolume(self, volume):
-        """
-        Register an assembly volume with this registry.
-
-        :param volume: AssemblyVolume object for storage
-        :type volume: AssemblyVolume
-        """
-        if volume.name in self.assemblyVolumeDict:
-            raise _exceptions.IdenticalNameError(volume.name, "assembly volume")
-        else:
-            self.assemblyVolumeDict[volume.name] = volume
-
-        self.assemblyVolumeNameCount[volume.name]  += 1
-        self.volumeTypeCountDict["assemblyVolume"] += 1
-
-    def transferAssemblyVolume(self, volume, incrementRenameDict={}):
-        """
-        Transfer an assembly volume to this registry. Doesn't handle any members'
-        transferal - only the assembly volume itself.
-        """
-        if volume.name in incrementRenameDict:
-            return # it's already been transferred in this 'transfer' call, ignore
-        if volume.name in self.assemblyVolumeDict:
-            # we already have an LV called this, so uniquely name it by incrementing it
-            newName =  volume.name + "_" + str(self.assemblyVolumeNameCount[volume.name])
-            self.assemblyVolumeNameCount[volume.name] += 1
-            incrementRenameDict[newName] = volume.name
-            volume.name = newName
-        else:
-            incrementRenameDict[volume.name] = volume.name
-
-        self.assemblyVolumeDict[volume.name] = volume
-        volume.registry = self
-
-        self.assemblyVolumeNameCount[volume.name] += 1
-        self.volumeTypeCountDict["assemblyVolume"] += 1
 
     def addPhysicalVolume(self, volume):
         """
@@ -535,7 +500,7 @@ class Registry:
                 self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
-            self.transferAssemblyVolume(volume, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict)
         else:
             print("Volume type not supported yet for merging")
 
