@@ -483,9 +483,9 @@ class Registry:
                 self.transferDefines(volume.scale, incrementRenameDict)
             self.transferPhysicalVolume(volume, incrementRenameDict)
 
-        elif isinstance(volume, _LogicalVolume) :
+        elif isinstance(volume, _LogicalVolume):
             # loop over all daughters
-            for dv in volume.daughterVolumes :
+            for dv in volume.daughterVolumes:
                 self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
@@ -494,9 +494,9 @@ class Registry:
             self.transferMaterial(volume.material, incrementRenameDict)
             self.transferLogicalVolume(volume, incrementRenameDict)
 
-        elif isinstance(volume, _AssemblyVolume) :
+        elif isinstance(volume, _AssemblyVolume):
             # loop over all daughters
-            for dv in volume.daughterVolumes :
+            for dv in volume.daughterVolumes:
                 self.addVolumeRecursive(dv, incrementRenameDict)
 
             # add members from logical volume
@@ -551,11 +551,11 @@ class Registry:
                 self.transferDefines(v, incrementRenameDict)
 
     def volumeTree(self, lvName):
-        '''Not sure what this method is used for'''
+        """Not sure what this method is used for"""
         lv = self.logicalVolumeDict[lvName]
 
     def solidTree(self, solidName):
-        '''Not sure what this method is used for'''
+        """Not sure what this method is used for"""
         solid = self.solidDict[solidName]
 
         if solid.type == 'union' or solid.type == 'intersecton' or solid.type == 'subtraction':
