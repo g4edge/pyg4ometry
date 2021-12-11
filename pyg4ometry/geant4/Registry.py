@@ -447,12 +447,12 @@ class Registry:
             self.logicalVolumeList = []
 
         lv = self.logicalVolumeDict[lvName]
-        for daughters in lv.daughterVolumes:
-            dlvName = daughters.logicalVolume.name
+        for daughter in lv.daughterVolumes:
+            dlvName = daughter.logicalVolume.name
             try:
                 self.logicalVolumeList.index(dlvName)
             except ValueError:
-                self.orderLogicalVolumes(dlvName,False)
+                self.orderLogicalVolumes(dlvName, False)
                 self.logicalVolumeList.append(dlvName)
 
     def addVolumeRecursive(self, volume, incrementRenameDict=None):
