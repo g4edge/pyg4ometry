@@ -1,19 +1,18 @@
 import pyg4ometry.transformation as _trans
-from   pyg4ometry.visualisation import OverlapType as _OverlapType
 
-import logging as   _log
+import logging as _log
 
-class AssemblyVolume(object) : 
-    '''AssemblyVolume : similar to a logical volume but does not have a sense of 
+class AssemblyVolume(object):
+    """
+    AssemblyVolume : similar to a logical volume but does not have a sense of
     shape, material or field
     :param name: of assembly volume
-    :type name:        
+    :type name: str
     :param registry: 
     :type registry: 
     :param addRegistry: 
     :type addRegistry: bool
-    '''
-
+    """
     def __init__(self, name, registry=None, addRegistry=True) :
         super(AssemblyVolume, self).__init__()
         self.type            = "assembly"

@@ -32,7 +32,7 @@ class Registry:
         self.surfaceDict                  = {}
         self.loopDict                     = {}
 
-        self.logicalVolumeList            = []               # Ordered list of logical volumes from world down to bottom
+        self.logicalVolumeList            = [] # Ordered list of logical volumes (and assemblies) from world down to bottom
 
         self.solidUsageCountDict          = _defaultdict(int) # solidName1, solidName2
         self.volumeTypeCountDict          = _defaultdict(int) # logical, physical, assembly
@@ -200,13 +200,13 @@ class Registry:
 
     def addLogicalVolume(self, volume):
         """
-        Register a logical volume with this registry.
+        Register a logical volume with this registry. Also accepts Assembly Volumes.
 
         :param volume: LogicalVolume object for storage
         :type volume: LogicalVolume
         """
         if volume.name in self.logicalVolumeDict:
-            raise _exceptions.IdenticalNameError(volume.name,"logical volume")
+            raise _exceptions.IdenticalNameError(volume.name, "logical volume")
         else:
             self.logicalVolumeDict[volume.name] = volume
 
@@ -438,12 +438,12 @@ class Registry:
         materials_ordered = self._orderMaterialList(materials)
         self.materialList = isotopes + elements + materials_ordered
 
-    def orderLogicalVolumes(self, lvName, first = True):
+    def orderLogicalVolumes(self, lvName, first=True):
         """
-        Need to have a ordered list from most basic (solid) object upto physical/logical volumes for writing to
+        Need to have an ordered list from most basic (solid) object upto physical/logical volumes for writing to
         GDML. GDML needs to have the solids/booleans/volumes defined in order
         """
-        if first :
+        if first:
             self.logicalVolumeList = []
 
         lv = self.logicalVolumeDict[lvName]

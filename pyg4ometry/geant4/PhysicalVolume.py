@@ -1,5 +1,4 @@
 import pyg4ometry.transformation as _trans
-
 from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
 import numpy as _np

@@ -69,7 +69,7 @@ class Writer(object):
             self.writeSolid(solid)
 
         # loop over logical volumes
-        for logicalName in registry.logicalVolumeList  :
+        for logicalName in registry.logicalVolumeList:
             _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
             if logical.type == "logical" : 
@@ -79,12 +79,12 @@ class Writer(object):
                 self.writeAssemblyVolume(logical)
 
         # loop over surfaces
-        for surfaceName in registry.surfaceDict :
+        for surfaceName in registry.surfaceDict:
             _log.info('gdml.Writer.addDetector> surface '+surfaceName)
             surface = registry.surfaceDict[surfaceName]
-            if surface.type == "bordersurface" :
+            if surface.type == "bordersurface":
                 self.writeBorderSurface(surface)
-            elif surface.type == "skinsurface" :
+            elif surface.type == "skinsurface":
                 self.writeSkinSurface(surface)
 
         for auxiliary in registry.userInfo:
