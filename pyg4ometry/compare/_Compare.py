@@ -199,6 +199,9 @@ def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=False):
     return result
 
 def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False, testsAlreadyDone=[]):
+    """
+    Compare two LogicalVolume instances with a set of tests.
+    """
     result = ComparisonResult()
 
     rlv = referenceLV  # shortcuts
@@ -509,15 +512,23 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
     return result
 
 def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
+    """
+    Compare two DivisionVolume instances with a set of tests.
+    """
     result = ComparisonResult()
     return result
 
 def parameterisedVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
+    """
+    Compare two ParameterisedVolume instances with a set of tests.
+    """
     result = ComparisonResult()
     return result
 
 def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTestResults=False, testsAlreadyDone=[]):
     """
+    Compare two materials with a set of tests.
+
     This tests assumes both referenceMaterial and otherMaterial are derived from the 
     type pyg4ometry.geant4._Material.Material.
 
@@ -665,6 +676,7 @@ def _elements(referenceElement, otherElement, tests, lvName="", includeAllTestRe
 
 def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=False):
     """
+    Compare any two solids with a set of tests.
     """
     result = ComparisonResult()
 
@@ -803,17 +815,18 @@ def _meshes(lvname, referenceMesh, otherMesh, tests):
             # can only compare if meshes exist
             [rmMin, rmMax] = _getBoundingBox(rm)
             [omMin, omMax] = _getBoundingBox(om)
+            labels = ['x','y','z']
             for i in range(3):
                 dMin = omMin[i] - rmMin[i]
                 if dMin != 0:
                     if abs(dMin / rmMin[i]) > tests.toleranceSolidExtentFraction:
-                        details =  "axis-aligned bounding box lower edge: component i: "+str(i)
+                        details =  "axis-aligned bounding box lower edge: dimension: "+labels[i]
                         details += ", (reference): "+str(rmMin[i])+", (other): "+str(omMin[i])
                         result['shapeExtentBoundingBoxMin'] += [TestResultNamed(lvname, TestResult.Failed, details)]
                 dMax = omMax[i] - rmMax[i]
                 if dMax != 0:
                     if abs(dMax / rmMax[i]) > tests.toleranceSolidExtentFraction:
-                        details =  "axis-aligned bounding box upper edge: component i: "+str(i)
+                        details =  "axis-aligned bounding box upper edge: dimension: "+labels[i]
                         details += ", (reference): "+str(rmMax[i])+", (other): "+str(omMax[i])
                         result['shapeExtentBoundingBoxMax'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             # no include all tests here as just too many
