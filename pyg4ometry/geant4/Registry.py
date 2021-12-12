@@ -212,9 +212,12 @@ class Registry:
 
         self.logicalVolumeNameCount[volume.name]  += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
-        # material doesn't exist for an assembly volume, which this funciton is also used for
+        # material doesn't exist for an assembly volume, which this function is also used for
         if volume.type == "logical":
             self.materialUsageCount[volume.material.name] += 1
+        elif volume.type == 'assembly':
+            self.assemblyVolumeDict[volume.name] = volume
+            self.assemblyVolumeNameCount[volume.name] += 1
 
     def transferLogicalVolume(self, volume, incrementRenameDict={}):
         """
