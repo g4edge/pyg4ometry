@@ -489,8 +489,9 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
     elif includeAllTestResults:
         result['replicaType'] += [TestResultNamed(testName, TestResult.Passed)]
 
-    # replica's logical volume
+    # replica's logical volume and mother logical volume (but not recursive)
     result += logicalVolumes(rrv.logicalVolume, orv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
+    result += logicalVolumes(rrv.motherVolume, orv.motherVolume, tests, False, includeAllTestResults, testsAlreadyDone)
 
     # axis of replication
     if rrv.axis != orv.axis:
