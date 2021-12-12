@@ -804,7 +804,14 @@ def _getBoundingBox(obj):
     else:
         return  _vis._getBoundingBox(obj)
 
-def _meshes(lvname, referenceMesh, otherMesh, tests):
+def _getRawMesh(obj):
+    import pyg4ometry.visualisation as _vis
+    if type(obj) is _vis.Mesh:
+        return obj.localmesh
+    else:
+        return obj
+
+def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False):
     result = ComparisonResult()
 
     rm = referenceMesh
@@ -837,13 +844,39 @@ def _meshes(lvname, referenceMesh, otherMesh, tests):
 
     if tests.shapeVolume:
         if rm and om:
-            # can only compare if meshes exist
-            # TODO can't see any method on meshes to calculate this
-            #result.result = result.result | TestResult.Passed
-            pass
+            rmRawMesh = _getRawMesh(rm)
+            omRawMesh = _getRawMesh(om)
+            rVolume = rmRawMesh.volume()
+            oVolume = omRawMesh.volume()
+            dVolume = oVolume - rVolume
+            if (abs(dVolume)/rVolume > tests.toleranceVolumeFraction):
+                details =  "volume difference greater than fractional tolerance, (reference): "
+                details += str(rVolume) + ", (other): "+str(oVolume)
+                result['shapeVolume'] += [TestResultNamed(lvname, TestResult.Failed, details)]
+            elif includeAllTestResults:
+                result['shapeVolume'] += [TestResultNamed(lvname, TestResult.NotTested)]
         else:
             # explicitly flag as we were meant to test but can't
-            result['shapeVolume'] += [TestResultNamed(lvname, TestResult.NotTested, "no meshes")]
+            details = "one or both meshes unavailable for: " + lvname
+            result['shapeVolume'] += [TestResultNamed(lvname, TestResult.NotTested, details)]
+
+    if tests.shapeArea:
+        if rm and om:
+            rmRawMesh = _getRawMesh(rm)
+            omRawMesh = _getRawMesh(om)
+            rArea = rmRawMesh.area()
+            oArea = omRawMesh.area()
+            dArea = oArea - rArea
+            if (abs(dArea)/rArea > tests.toleranceAreaFraction):
+                details =  "surface area difference greater than fractional tolerance, (reference): "
+                details += str(rArea) + ", (other): "+str(oArea)
+                result['shapeArea'] += [TestResultNamed(lvname, TestResult.Failed, details)]
+            elif includeAllTestResults:
+                result['shapeArea'] += [TestResultNamed(lvname, TestResult.NotTested)]
+        else:
+            # explicitly flag as we were meant to test but can't
+            details = "one or both meshes unavailable for: " + lvname
+            result['shapeArea'] += [TestResultNamed(lvname, TestResult.NotTested, details)]
 
     return result
 
