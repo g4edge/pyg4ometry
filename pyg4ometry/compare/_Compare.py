@@ -56,6 +56,13 @@ class Tests:
         for name in self._testNames:
             setattr(self, name, False)
 
+    def __len__(self):
+        n = 0
+        for name in self._testNames:
+            if getattr(self, name):
+                n+=1
+        return n
+
 
 class TestResult(_enum.Enum):
     """
