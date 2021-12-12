@@ -154,7 +154,7 @@ class ComparisonResult:
             print(" ") # for a new line
                     
 
-def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=True):
+def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=False):
     import pyg4ometry.gdml as gd
     referenceReader  = gd.Reader(referenceFile)
     referenceReg     = referenceReader.getRegistry()
@@ -164,8 +164,9 @@ def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=Tru
     otherWorldLV     = otherReg.getWorldVolume()
     return geometry(referenceWorldLV, otherWorldLV, tests, includeAllTestResults)
 
-def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=True):
-    result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults)
+def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=False):
+    # note we should explicitly pass the empty list to overwrite the 1 definition python will have to this argument
+    result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults, testsAlreadyDone=[])
     return result
 
 def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False, testsAlreadyDone=[]):
