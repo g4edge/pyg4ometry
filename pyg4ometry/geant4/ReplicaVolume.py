@@ -114,8 +114,7 @@ class ReplicaVolume(_PhysicalVolume):
                     print(f"\033[1mOVERLAP DETECTED> overlap between daughters of {self.name} \033[0m #{i} #{j} {interMesh.vertexCount()}")
                     self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.overlap])
 
-    def createReplicaMeshes(self) :
-
+    def createReplicaMeshes(self):
         import pyg4ometry.gdml.Units as _Units
         from pyg4ometry.gdml.Defines import evaluateToFloat
 
