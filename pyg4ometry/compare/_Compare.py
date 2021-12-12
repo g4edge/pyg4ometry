@@ -29,6 +29,7 @@ class Tests:
         self.shapeVolume       = True
         self.shapeArea         = True
         self.placement         = True # i.e. position and rotation
+        self.materials         = True
         self.materialClassType = True
         self.materialCompositionType = True # i.e. N atoms or mass fraction
         self.testDaughtersByName = True # if true, match up daughters by name, otherwise just iterate over in sequence
@@ -247,16 +248,18 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
     if tests.names:
         result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
     result += solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
-    if ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) not in testsAlreadyDone:
-        result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
-        testsAlreadyDone.append( ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) )
+    if tests.materials:
+        if ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) not in testsAlreadyDone:
+            result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
+            testsAlreadyDone.append( ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) )
 
-    if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
-        details =  "# daughters: ('"+rlv.name+"') : "+str(len(rlv.daughterVolumes))
-        details += ", ('"+olv.name+"') : "+str(len(olv.daughterVolumes))
-        result['nDaughters'] += [TestResultNamed(testName, TestResult.Failed, details)]
-    elif includeAllTestResults:
-        result['nDaughters'] += [TestResultNamed(testName, TestResult.Passed)]
+    if tests.nDaughters:
+        if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
+            details =  "# daughters: ('"+rlv.name+"') : "+str(len(rlv.daughterVolumes))
+            details += ", ('"+olv.name+"') : "+str(len(olv.daughterVolumes))
+            result['nDaughters'] += [TestResultNamed(testName, TestResult.Failed, details)]
+        elif includeAllTestResults:
+            result['nDaughters'] += [TestResultNamed(testName, TestResult.Passed)]
 
     result += _meshes(testName, rlv.mesh, olv.mesh, tests)
 
@@ -350,6 +353,14 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
     # compare placements inside assembly
     rDaughters = rav.daughterVolumes
     oDaughters = oav.daughterVolumes
+
+    if tests.nDaughters:
+        if len(oDaughters) != len(rDaughters):
+            details =  "# daughters: ('"+rav.name+"') : "+str(len(rav.daughterVolumes))
+            details += ", ('"+oav.name+"') : "+str(len(oav.daughterVolumes))
+            result['nDaughters'] += [TestResultNamed(testName, TestResult.Failed, details)]
+        elif includeAllTestResults:
+            result['nDaughters'] += [TestResultNamed(testName, TestResult.Passed)]
 
     # test daughters are the same - could even be same number but different
     # we rely here on unique names in pyg4ometry as that's true in GDML
@@ -914,7 +925,3 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             result['shapeArea'] += [TestResultNamed(lvname, TestResult.NotTested, details)]
 
     return result
-
-def registries(reference, other):
-    print("not implemented yet")
-    pass
