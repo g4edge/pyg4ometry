@@ -108,10 +108,12 @@ class LogicalVolume(object):
         translation evaluated.
         """
         # cannot currently deal with replica, division and parametrised
-        if  pv.type != "placement" :
+        if  pv.type != "placement":
+            print("Cannot generate specific daughter mesh for replica, division, parameterised")
             return None
         # cannot currently deal with assembly
-        if  pv.logicalVolume.type == "assembly" :
+        if  pv.logicalVolume.type == "assembly":
+            print("Cannot generate specific daughter mesh for assembly")
             return None
 
         _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
