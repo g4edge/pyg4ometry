@@ -307,6 +307,12 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
 
             result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rav.name, testName,
                                            result, recursive, includeAllTestResults, testsAlreadyDone)
+
+            # even though one individual daughter, it itself might be an assembly and produce more than 1 mesh
+            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByName(daugtherName)
+            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByName(daugtherName)
+            for nameToUse, rMesh, oMesh in zip(i_rMeshName, i_rMeshes, i_oMeshes):
+                result += _meshes(nameToUse, rMesh, oMesh, tests)
     else:
         for i in range(min(len(rDaughters), len(oDaughters))):
             i_rDaughter = rDaughters[i]
@@ -316,6 +322,12 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
 
             result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rav.name, testName,
                                            result, recursive, includeAllTestResults, testsAlreadyDone)
+
+            # even though one individual daughter, it itself might be an assembly and produce more than 1 mesh
+            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByIndex(i)
+            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByIndex(i)
+            for nameToUse, rMesh, oMesh in zip(i_rMeshName, i_rMeshes, i_oMeshes):
+                result += _meshes(nameToUse, rMesh, oMesh, tests)
 
     testsAlreadyDone.append( ("av_test_"+referenceAV.name, "av_test_"+otherAV.name) )
     return result
@@ -450,6 +462,18 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
         result['replicaOUnit'] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result['replicaOunit'] += [TestResultNamed(testName, TestResult.Passed)]
+
+    if tests.shapeExtent:
+        # TBC
+        result["shapeExtent"] += [TestResultNamed(testName, TestResult.NotTested)]
+    elif includeAllTestResults:
+        result["shapeExtent"] += [TestResultNamed(testName, TestResult.NotTested)]
+
+    if tests.shapeVolume:
+        # TBC
+        result["shapeVolume"] += [TestResultNamed(testName, TestResult.NotTested)]
+    elif includeAllTestResults:
+        result["shapeVolume"] += [TestResultNamed(testName, TestResult.NotTested)]
 
     testsAlreadyDone.append( ("rv_test_"+rrv.name, "rv_test_"+orv.name) )
         
@@ -730,6 +754,15 @@ def _copyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
     
     return result
 
+def _getBoundingBox(obj):
+    # not the full actual path as Mesh is imported one level higher up...
+    # so not Mesh.Mesh as it actually exists
+    import pyg4ometry.visualisation as _vis
+    if type(obj) is _vis.Mesh:
+        return obj.getBoundingBox()
+    else:
+        return  _vis._getBoundingBox(obj)
+
 def _meshes(lvname, referenceMesh, otherMesh, tests):
     result = ComparisonResult()
 
@@ -739,8 +772,8 @@ def _meshes(lvname, referenceMesh, otherMesh, tests):
     if tests.shapeExtent:
         if rm and om:
             # can only compare if meshes exist
-            [rmMin, rmMax] = rm.getBoundingBox()
-            [omMin, omMax] = om.getBoundingBox()
+            [rmMin, rmMax] = _getBoundingBox(rm)
+            [omMin, omMax] = _getBoundingBox(om)
             for i in range(3):
                 dMin = omMin[i] - rmMin[i]
                 if dMin != 0:
