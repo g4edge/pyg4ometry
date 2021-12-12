@@ -50,45 +50,57 @@ class Mesh(object):
         Axes aligned bounding box. Can also provide a rotation and
         a translation (applied in that order) to the vertices.
         """
-        vertices, _, _ = self.localmesh.toVerticesAndPolygons()
-        if not vertices:
-            raise pyg4ometry.exceptions.NullMeshError(self.solid)
-
-        vertices = _np.vstack(vertices)
-
-        if rotationMatrix is not None:
-            vertices = rotationMatrix.dot(vertices.T).T
-        if translation is not None:
-            vertices[...,0] += translation[0]
-            vertices[...,1] += translation[1]
-            vertices[...,2] += translation[2]
-
-        vMin = [min(vertices[...,0]),
-                min(vertices[...,1]),
-                min(vertices[...,2])]
-        vMax = [max(vertices[...,0]),
-                max(vertices[...,1]),
-                max(vertices[...,2])]
-
-        _log.info('visualisation.Mesh.getBoundingBox> %s %s', vMin, vMax)
-
-        return [vMin, vMax]
+        return _getBoundingBox(self.localmesh, rotationMatrix, translation, self.solid)
 
     def getBoundingBoxMesh(self):
         bb = self.getBoundingBox()
-        x0 = (bb[1][0]+bb[0][0])/2.0
-        y0 = (bb[1][1]+bb[0][1])/2.0
-        z0 = (bb[1][2]+bb[0][2])/2.0
+        return _getBoundingBoxMesh(bb)
 
-        dx = bb[1][0]-bb[0][0]
-        dy = bb[1][1]-bb[0][1]
-        dz = bb[1][2]-bb[0][2]
 
-        pX = dx/2.0
-        pY = dy/2.0
-        pZ = dz/2.0
+def _getBoundingBox(aMesh, rotationMatrix=None, translation=None, nameForError=""):
+    """
+    Axes aligned bounding box. Can also provide a rotation and
+    a translation (applied in that order) to the vertices.
+    """
+    vertices, _, _ = aMesh.toVerticesAndPolygons()
+    if not vertices:
+        raise pyg4ometry.exceptions.NullMeshError(nameForError)
 
-        _log.info('box.pycsgmesh> getBoundingBoxMesh')
+    vertices = _np.vstack(vertices)
 
-        mesh = _CSG.cube(center=[x0,y0,z0], radius=[pX,pY,pZ])
-        return mesh
+    if rotationMatrix is not None:
+        vertices = rotationMatrix.dot(vertices.T).T
+    if translation is not None:
+        vertices[...,0] += translation[0]
+        vertices[...,1] += translation[1]
+        vertices[...,2] += translation[2]
+
+    vMin = [min(vertices[...,0]),
+            min(vertices[...,1]),
+            min(vertices[...,2])]
+    vMax = [max(vertices[...,0]),
+            max(vertices[...,1]),
+            max(vertices[...,2])]
+
+    _log.info('visualisation.Mesh.getBoundingBox> %s %s', vMin, vMax)
+
+    return [vMin, vMax]
+
+def _getBoundingBoxMesh(boundingBox):
+    bb = boundingBox
+    x0 = (bb[1][0]+bb[0][0])/2.0
+    y0 = (bb[1][1]+bb[0][1])/2.0
+    z0 = (bb[1][2]+bb[0][2])/2.0
+
+    dx = bb[1][0]-bb[0][0]
+    dy = bb[1][1]-bb[0][1]
+    dz = bb[1][2]-bb[0][2]
+
+    pX = dx/2.0
+    pY = dy/2.0
+    pZ = dz/2.0
+
+    _log.info('box.pycsgmesh> getBoundingBoxMesh')
+
+    mesh = _CSG.cube(center=[x0,y0,z0], radius=[pX,pY,pZ])
+    return mesh

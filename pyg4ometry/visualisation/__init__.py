@@ -1,5 +1,7 @@
 from .Mesh                 import Mesh
 from .Mesh                 import OverlapType
+from .Mesh                 import _getBoundingBox
+from .Mesh                 import _getBoundingBoxMesh
 from .ViewerBase           import ViewerBase
 from .VisualisationOptions import *
 from .VtkViewer            import *
