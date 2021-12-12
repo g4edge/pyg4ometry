@@ -340,7 +340,7 @@ def _checkPVLikeDaughters(referencePVLikeObject, otherPVLikeObject, tests, paren
     elif expectedType == "assembly":
         result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
     elif expectedType == "replica":
-        result += replicaVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
+        result += replicaVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
     elif expectedType == "division":
         result += divisionVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
     elif expectedType == "parameterised":
