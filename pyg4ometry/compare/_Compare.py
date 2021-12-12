@@ -6,16 +6,28 @@ from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
 from pyg4ometry.geant4 import Material as _Material
 from pyg4ometry.geant4 import Element as _Element
 
+
 class Tests:
     """
     Set of options of which tests to perform and potentially with what tolerance.
+
+    :param testsByNameToTurnOn: optional strings of tests to turn on. If any, all will be turned off first.
+    :type  testsByNameToTurnOn: str,  list of
+
+    >>> t = Tests()
+    >>> t = Tests("nDaughters") # only nDaughters will be tested
+    >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
-    def __init__(self):
+    def __init__(self, *testsByNameToTurnOn):
+        self._testNames = ['names', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
+                           'shapeArea', 'placement', 'materialClassType', 'materialCompositionType',
+                           'testDaughterByName']
         self.names             = True
         self.nDaughters        = True
         self.solidExact        = True
         self.shapeExtent       = True
         self.shapeVolume       = True
+        self.shapeArea         = True
         self.placement         = True # i.e. position and rotation
         self.materialClassType = True
         self.materialCompositionType = True # i.e. N atoms or mass fraction
@@ -24,11 +36,26 @@ class Tests:
         self.toleranceSolidParameterFraction  = 1e-3
         self.toleranceSolidExtentFraction     = 1e-6
         self.toleranceVolumeFraction          = 1e-2
+        self.toleranceAreaFraction            = 1e-2
         self.toleranceTranslationFraction     = 1e-6
         self.toleranceScaleFraction           = 1e-3
         self.toleranceRotationFraction        = 1e-6
         self.toleranceMaterialDensityFraction = 1e-4
         self.toleranceMaterialMassFraction    = 1e-4
+
+        # optional args
+        if len(testsByNameToTurnOn) > 0:
+            self.setAllFalse()
+            for name in testsByNameToTurnOn:
+                setattr(self, name, True)
+
+    def setAllFalse(self):
+        """
+        Utility to turn off all tests at once. Then can just turn on the one we want.
+        """
+        for name in self._testNames:
+            setattr(self, name, False)
+
 
 class TestResult(_enum.Enum):
     """
@@ -63,6 +90,7 @@ class TestResult(_enum.Enum):
         """
         return [TestResult.Failed, TestResult.Passed, TestResult.NotTested]
 
+
 class TestResultNamed:
     def __init__(self, nameIn, testResultIn=TestResult.Failed, detailsIn=""):
         self.testResult = testResultIn
@@ -71,6 +99,7 @@ class TestResultNamed:
 
     def __str__(self):
         return ": ".join([self.name, str(self.testResult), self.details])
+
 
 class ComparisonResult:
     """
