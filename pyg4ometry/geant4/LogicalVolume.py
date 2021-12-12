@@ -73,14 +73,7 @@ class LogicalVolume(object):
         self.daughterVolumes = []
         self._daughterVolumesDict = {}
         self.bdsimObjects    = []
-
-        # geometry mesh
-        try :
-            self.mesh = _Mesh(self.solid)
-        except :
-            self.mesh = None
-            print("geant4.LogicalVolume> meshing error {}".format(self.name))
-
+        self._reMesh()
         self.auxiliary = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 
@@ -94,6 +87,13 @@ class LogicalVolume(object):
 
     def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
+
+    def _reMesh(self):
+        try:
+            self.mesh = _Mesh(self.solid)
+        except:
+            self.mesh = None
+            print("geant4.LogicalVolume> meshing error {}".format(self.name))
 
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
