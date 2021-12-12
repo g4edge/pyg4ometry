@@ -36,7 +36,7 @@ class AssemblyVolume(object):
         pv = self.daughterVolumesDict[name]
         return self._getPVMeshes(pv)
 
-    def _getDaughterMeshByIndex(self, index):
+    def _getDaughterMeshesByIndex(self, index):
         pv = self.daughterVolumes[index]
         return self._getPVMeshes(pv)
 

@@ -21,7 +21,7 @@ class Tests:
     def __init__(self, *testsByNameToTurnOn):
         self._testNames = ['names', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
                            'shapeArea', 'placement', 'materialClassType', 'materialCompositionType',
-                           'testDaughterByName']
+                           'testDaughtersByName']
         self.names             = True
         self.nDaughters        = True
         self.solidExact        = True
