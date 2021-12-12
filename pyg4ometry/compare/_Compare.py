@@ -334,7 +334,6 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
         result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
-        testsAlreadyDone.append( ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) )
 
     testsAlreadyDone.append( ("pv_test_"+referencePV.name, "pv_test_"+otherPV.name) )
     return result
@@ -540,18 +539,6 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
         result['replicaOUnit'] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result['replicaOunit'] += [TestResultNamed(testName, TestResult.Passed)]
-
-    if tests.shapeExtent:
-        # TBC
-        result["shapeExtent"] += [TestResultNamed(testName, TestResult.NotTested)]
-    elif includeAllTestResults:
-        result["shapeExtent"] += [TestResultNamed(testName, TestResult.NotTested)]
-
-    if tests.shapeVolume:
-        # TBC
-        result["shapeVolume"] += [TestResultNamed(testName, TestResult.NotTested)]
-    elif includeAllTestResults:
-        result["shapeVolume"] += [TestResultNamed(testName, TestResult.NotTested)]
 
     testsAlreadyDone.append( ("rv_test_"+rrv.name, "rv_test_"+orv.name) )
         
