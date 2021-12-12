@@ -70,9 +70,9 @@ class TestResult(_enum.Enum):
     
     Use 0,1 so we can also implicitly construct this with a Boolean.
 
-    Use the bitwise or operator | and not the keyword 'or'. This bitwise or
+    Use the bitwise or operator `|` and not the keyword `or`. This bitwise or
     operator returns Failed if either have failed. Only returns
-    NotTested if both are not tested. Cannot use bitwise |= as we cannot
+    NotTested if both are not tested. Cannot use bitwise `|=` as we cannot
     update an Enum internally.
 
     Use TestResult.All() for a list of all possible results - useful as an argument for printing.
@@ -160,7 +160,7 @@ class ComparisonResult:
         :type  testName: str
         :param testResultsToPrint: (optional) list of result outcomes to print
         :type  testResultsToPrint: list(TestResult)
-        :poram allTests: (optional) print all tests irrespective of the result
+        :param allTests: (optional) print all tests irrespective of the result
         :type  allTests: bool
 
         Print failed tests and ones relevant but not implemented yet by default.
@@ -191,6 +191,16 @@ class ComparisonResult:
                     
 
 def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=False):
+    """
+    :param referenceFile: GDML file to use as a reference.
+    :type  referenceFile: str.
+    :param otherFile: GDML file to compare.
+    :type  otherFile: str.
+    :param tests: Tests instance to use.
+    :type  tests: pyg4ometry.compare._Compare.Tests.
+    :param includeAllTestResults: document all tests attempted in result.
+    :type  includeAllTestResults: bool.
+    """
     import pyg4ometry.gdml as gd
     referenceReader  = gd.Reader(referenceFile)
     referenceReg     = referenceReader.getRegistry()
@@ -201,6 +211,16 @@ def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=Fal
     return geometry(referenceWorldLV, otherWorldLV, tests, includeAllTestResults)
 
 def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=False):
+    """
+    :param referenceLV: LogicalVolume instance to compare against.
+    :type  referenceLV: LogicalVolume
+    :param otherLV: LogicalVolume instance to compare with referenceLV.
+    :type  otherLV: LogicalVolume
+    :param tests: Tests instance to use.
+    :type  tests: pyg4ometry.compare._Compare.Tests.
+    :param includeAllTestResults: document all tests attempted in result.
+    :type  includeAllTestResults: bool.
+    """
     # note we should explicitly pass the empty list to overwrite the 1 definition python will have to this argument
     result = logicalVolumes(referenceLV, otherLV, tests, True, includeAllTestResults, testsAlreadyDone=[])
     return result
@@ -208,6 +228,10 @@ def geometry(referenceLV, otherLV, tests=Tests(), includeAllTestResults=False):
 def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestResults=False, testsAlreadyDone=[]):
     """
     Compare two LogicalVolume instances with a set of tests.
+
+    testsAlreadyDone should be purposively given as an empty list if using more than once. This
+    is an artefact of the only way we can nicely pass by reference a set of tests while we use
+    these functions recursively. However, this is defined on import and must be updated if reused.
     """
     result = ComparisonResult()
 
@@ -698,7 +722,7 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     if tests.solidExact:
         # solid type
         if rso.type != oso.type:
-            details = "solid type: (reference): "+str(rso.type)
+            details = "solid type: (reference): "+str(rso.type) + ", (other): " + str(oso.type)
             result['solidExactType'] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result['solidExactType'] += [TestResultNamed(testName, TestResult.Passed)]
