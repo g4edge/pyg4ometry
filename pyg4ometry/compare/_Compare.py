@@ -18,10 +18,10 @@ class Tests:
     >>> t = Tests("nDaughters") # only nDaughters will be tested
     >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
-    def __init__(self, *testsByNameToTurnOn):
-        self._testNames = ['names', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
-                           'shapeArea', 'placement', 'materialClassType', 'materialCompositionType',
+    _testNames = ['names', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
+                           'shapeArea', 'placement', 'materials', 'materialClassType', 'materialCompositionType',
                            'testDaughtersByName']
+    def __init__(self, *testsByNameToTurnOn):
         self.names             = True
         self.nDaughters        = True
         self.solidExact        = True
@@ -63,6 +63,10 @@ class Tests:
                 n+=1
         return n
 
+    @classmethod
+    def printAllTestNames(cls):
+        for name in cls._testNames:
+            print('"' + name + '"')
 
 class TestResult(_enum.Enum):
     """
