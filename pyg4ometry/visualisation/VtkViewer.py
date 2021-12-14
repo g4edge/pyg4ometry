@@ -988,3 +988,60 @@ def axesFromExtents(extent):
     length = diff.max()/2
 
     return length,centre
+
+def viewLogicalVolumeDifference(referenceLV, otherLV, otherTranslation=[0,0,0], otherRotation=[0,0,0], viewDifference=True):
+    """
+    :param referenceLV: LogicalVolume instance to view viewed in red.
+    :type  referenceLV: pyg4ometry.geant4.LogicalVolume.
+    :param referenceLV: LogicalVolume instance to view viewed in blue.
+    :type  referenceLV: pyg4ometry.geant4.LogicalVolume.
+    :param otherTranslation: Translation (in native units, mm) of otherLV w.r.t. referenceLV
+    :type  otherTranslation: [float, float, float]
+    :param otherRotation: Rotation (in native units, rad) of other LV w.r.t. referenceLV.
+    :type  otherRotation: [float, float, float]
+
+    View the shapes of 2 logical volumes without their contents. The reference one will be red and
+    the 'other' one will be blue.
+
+    The other one may optionally be translated and rotated (Tait-Bryant x,y,z) relative to the reference.
+    """
+    lvr = referenceLV
+    lvo = otherLV
+    v = VtkViewer()
+
+    visOptions1 = _VisOptions()
+    visOptions1.colour = [1.0, 0.0, 0.0] # red
+    visOptions1.alpha = 0.4
+    mtra = _np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    v.addMesh("referenceLV", lvr.solid.name, lvr.mesh.localmesh, mtra, _np.array([0, 0, 0]),
+              v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
+              visOptions=visOptions1, overlap=False)
+
+    visOptions2 = _VisOptions()
+    visOptions2.colour = [0.0, 0.0, 1.0]  # blue
+    visOptions2.alpha = 0.4
+    oRotation = _transformation.tbxyz2matrix(otherRotation)
+    oTranslation = _np.array(otherTranslation)
+    v.addMesh("otherLV", lvo.solid.name, lvo.mesh.localmesh, oRotation, oTranslation,
+              v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
+              visOptions=visOptions2, overlap=False)
+
+    if viewDifference:
+        oMeshClone = lvo.mesh.localmesh.clone()
+        #aa = oRotation
+        import pyg4ometry
+        #print(pyg4ometry.pycgal.geom.Vector(aa[0]))
+        aa = _transformation.matrix2axisangle(oRotation)
+        tra = oTranslation
+        oMeshClone.rotate(aa[0], -aa[1] / _np.pi * 180.)
+        oMeshClone.translate([tra[0], tra[1], tra[2]])
+        differenceMesh = oMeshClone.subtract(lvr.mesh.localmesh.clone())
+        visOptions3 = _VisOptions()
+        visOptions3.colour = [0.0, 1.0, 0.0]  # blue
+        visOptions3.alpha = 0.8
+        v.addMesh("difference-mesh", "difference-solid", differenceMesh, mtra, _np.array([0, 0, 0]),
+                  v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
+                  visOptions=visOptions3, overlap=False)
+
+    v.view()
+    return v
