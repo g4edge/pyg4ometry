@@ -148,7 +148,7 @@ class ComparisonResult:
 
     def __add__(self, other):
         result = _deepcopy(self)
-        if not other:
+        if other is None:
             return result
         for testName,results in other.test:
             result.test[testName].extend(results)
@@ -157,7 +157,7 @@ class ComparisonResult:
         return result
 
     def __iadd__(self, other):
-        if not other:
+        if other is None:
             return self
         self.result = self.result | other.result # this should already be a product of all subtests
         for testName, results in other.test.items():
@@ -552,8 +552,8 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
     elif includeAllTestResults:
         result['replicaOunit'] += [TestResultNamed(testName, TestResult.Passed)]
 
+    result.result = result.result | TestResult.Passed
     testsAlreadyDone.append( ("rv_test_"+rrv.name, "rv_test_"+orv.name) )
-        
     return result
 
 def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
@@ -904,6 +904,7 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                 result['shapeVolume'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result['shapeVolume'] += [TestResultNamed(lvname, TestResult.NotTested)]
+            result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
             details = "one or both meshes unavailable for: " + lvname
@@ -923,6 +924,7 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                 result['shapeArea'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result['shapeArea'] += [TestResultNamed(lvname, TestResult.NotTested)]
+            result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
             details = "one or both meshes unavailable for: " + lvname
