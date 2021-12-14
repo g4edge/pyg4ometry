@@ -317,8 +317,8 @@ class VtkViewer:
             raise RuntimeError('Need a filename.')
 
 
-    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0])) :
-        if logical.type == "logical" :
+    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True):
+        if logical.type == "logical":
             self.addLogicalVolumeBounding(logical)
             for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
                                                      range(0, len(logical.mesh.overlapmeshes))):
@@ -329,8 +329,9 @@ class VtkViewer:
                              self.physicalActorMapOverlap,
                              visOptions=visOptions, overlap=True, cutters=False)
 
-        # recurse down scene hierarchy
-        self.addLogicalVolumeRecursive(logical, mtra, tra)
+        if recursive:
+            # recurse down scene hierarchy
+            self.addLogicalVolumeRecursive(logical, mtra, tra)
 
     def addLogicalVolumeBounding(self, logical):
         # add logical solid as wireframe 
