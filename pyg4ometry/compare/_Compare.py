@@ -598,6 +598,8 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
             result['materialType'] += [TestResultNamed(testName, TestResult.Passed)]
 
     if rm.type == "nist" or om.type == "nist":
+        # just because one of them's NIST, doesn't mean the other isn't a different (NIST) material.. check!
+        result += _names("materialNameNIST", rm.name, om.name, lvName, includeAllTestResults)
         if includeAllTestResults:
             result['materialDensity'] += [TestResultNamed(testName, TestResult.NotTested)]
             result['materialNComponents'] += [TestResultNamed(testName, TestResult.NotTested)]
