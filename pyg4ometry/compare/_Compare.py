@@ -310,7 +310,8 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
             result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rlv.name, testName,
                                            result, recursive, includeAllTestResults, testsAlreadyDone)
 
-    result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
+    if tests.names:
+        result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 
     testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
     return result
