@@ -69,6 +69,13 @@ class Tests:
         for name in cls._testNames:
             print('"' + name + '"')
 
+    def __repr__(self):
+        s = ""
+        for name in self._testNames:
+            s += name + ": " + str(getattr(self,name)) + "\n"
+        return s
+
+
 class TestResult(_enum.Enum):
     """
     A test result can be either pass, fail or not conducted.
