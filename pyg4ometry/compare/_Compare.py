@@ -251,7 +251,7 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     if tests.names:
         result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
-    result += solids(rlv.solid, olv.solid, tests,testName, includeAllTestResults)
+    result += solids(rlv.solid, olv.solid, tests, testName, includeAllTestResults)
     if tests.materials:
         if ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) not in testsAlreadyDone:
             result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
@@ -890,9 +890,10 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             rVolume = rmRawMesh.volume()
             oVolume = omRawMesh.volume()
             dVolume = oVolume - rVolume
-            if (abs(dVolume)/rVolume > tests.toleranceVolumeFraction):
+            dVolumeFraction = abs(dVolume)/rVolume
+            if (dVolumeFraction > tests.toleranceVolumeFraction):
                 details =  "volume difference greater than fractional tolerance, (reference): "
-                details += str(rVolume) + ", (other): "+str(oVolume)
+                details += str(rVolume) + ", (other): "+str(oVolume) + ", fractional difference is: " + str(dVolumeFraction)
                 result['shapeVolume'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result['shapeVolume'] += [TestResultNamed(lvname, TestResult.NotTested)]
@@ -908,9 +909,10 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             rArea = rmRawMesh.area()
             oArea = omRawMesh.area()
             dArea = oArea - rArea
-            if (abs(dArea)/rArea > tests.toleranceAreaFraction):
+            dAreaFraction = abs(dArea)/rArea
+            if (dAreaFraction > tests.toleranceAreaFraction):
                 details =  "surface area difference greater than fractional tolerance, (reference): "
-                details += str(rArea) + ", (other): "+str(oArea)
+                details += str(rArea) + ", (other): " + str(oArea) + ", fractional difference is: " + str(dAreaFraction)
                 result['shapeArea'] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result['shapeArea'] += [TestResultNamed(lvname, TestResult.NotTested)]
