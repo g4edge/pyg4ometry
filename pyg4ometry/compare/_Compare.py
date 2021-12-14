@@ -726,9 +726,6 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     """
     Compare any two solids with a set of tests.
     """
-
-    if not (tests.names and tests.solidExact):
-        return
     result = ComparisonResult()
 
     rso = referenceSolid
