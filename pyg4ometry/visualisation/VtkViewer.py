@@ -775,7 +775,7 @@ class VtkViewer:
         f.close()
 
     def viewSection(self, dir='x'):
-        #import matplotlib.pyplot as _plt
+        import matplotlib.pyplot as _plt
         #from vtk.numpy_interface import dataset_adapter as dsa
 
         if dir == 'x':
@@ -815,7 +815,7 @@ class VtkViewer:
         """
         Add a cutting plane at position=[x,y,z] with normal [nx,ny,nz].
 
-        :param position: [float, float, float] - (x,y,z) poisition in scene (mm)
+        :param position: [float, float, float] - (x,y,z) position in scene (mm)
         :param normal:   [float, float, float] - (nx,ny,z) normal unit vector
         :param colour: None or [float, float, float] - [r,g,b] in range [0:1]
         
