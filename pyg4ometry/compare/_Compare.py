@@ -141,6 +141,8 @@ class ComparisonResult:
 
     def __add__(self, other):
         result = _deepcopy(self)
+        if not other:
+            return result
         for testName,results in other.test:
             result.test[testName].extend(results)
             for v in results:
@@ -148,6 +150,8 @@ class ComparisonResult:
         return result
 
     def __iadd__(self, other):
+        if not other:
+            return self
         self.result = self.result | other.result # this should already be a product of all subtests
         for testName, results in other.test.items():
             self.test[testName].extend(results)
@@ -712,6 +716,9 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     """
     Compare any two solids with a set of tests.
     """
+
+    if not (tests.names and tests.solidExact):
+        return
     result = ComparisonResult()
 
     rso = referenceSolid
