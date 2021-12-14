@@ -73,6 +73,7 @@ class VtkViewer:
         self.xcutters = []
         self.ycutters = []
         self.zcutters = []
+        self.usercutters = []
 
         # axes
         self.axes = []
