@@ -145,12 +145,14 @@ def nist_material_2geant4Material(name, reg=None):
             elementDict = getNistMaterialDict()[getNistElementZToName()[z]]
             element = nist_element_2geant4Element(elementDict["name"], reg)
             result.add_element_massfraction(element, massFraction)
-        return result            
+        result.type = "composite"
+        return result
     elif matDict["type"] == "element":
         element = nist_element_2geant4Element(name, reg)
         # we still have to run an 'element' into a 'material'
-        result = MaterialCompound(matDict["name"], matDict["density"], 1, reg, state=matDict["state"])
+        result = MaterialCompound("Material_"+matDict["name"], matDict["density"], 1, reg, state=matDict["state"])
         result.add_element_massfraction(element, 1.0)
+        result.type = "composite"
         return result
 
 def MaterialPredefined(name, registry=None):
