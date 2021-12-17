@@ -1584,6 +1584,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
             fregion.addZone(zone1)
 
     else :
+        fregion = _fluka.Region("R"+name)
         print(solid.type)
 
     # print solid.name, name, solid.type, len(fregion.zones)
