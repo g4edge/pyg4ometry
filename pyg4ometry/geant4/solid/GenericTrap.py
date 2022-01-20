@@ -89,15 +89,18 @@ class GenericTrap(_SolidBase):
         sign_z = -1 if index <= 4 else 1
         vertex = (self.evaluateParameter(getattr(self, "v{}x".format(index))*uval),
                   self.evaluateParameter(getattr(self, "v{}y".format(index))*uval),
-                  sign_z*float(self.dz))
+                  sign_z*float(self.dz)*uval)
         return vertex
 
     def makeLayers(self, verts_bot, verts_top):
 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        uval = _Units.unit(self.lunit)
+
         layers = []
 
-        z1 = 2*float(self.dz)
-        z0 = -float(self.dz)
+        z1 = 2*float(self.dz)*uval
+        z0 = -float(self.dz)*uval
 
         for i in range(self.nstack+1):
             z = z0 + i*z1/self.nstack
