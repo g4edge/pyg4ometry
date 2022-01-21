@@ -1054,6 +1054,9 @@ option, preprocessGDML=0;
         oe.setAttribute('v8x',self.getValueOrExprFromInstance(instance,'v8x'))
         oe.setAttribute('v8y',self.getValueOrExprFromInstance(instance,'v8y'))
         oe.setAttribute('dz',self.getValueOrExprFromInstance(instance,'dz'))
+
+        oe.setAttribute("lunit",instance.lunit)
+
         self.solids.appendChild(oe)
         
     def createPosition(self,name, x, y, z):
