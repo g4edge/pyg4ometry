@@ -72,7 +72,7 @@ def upgradeToExpression(reg, obj):
     except ValueError:
         return as_string
 
-def upgradeToVector(var, reg, type = "position", addRegistry = False) : 
+def upgradeToVector(var, reg, type = "position", unit = "", addRegistry = False) :
     """
     Take a list [x,y,z] and create a vector 
 
@@ -85,6 +85,11 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
     :param addRegistry: flag to add to registry
     :type addRegistry: bool
     """
+    # check units
+    if type == "position" and unit == "":
+        unit = "mm"
+    elif type == "rotation" and unit == "":
+        unit = "rad"
 
     # check if already a vector type 
     if isinstance(var,VectorBase) : 
@@ -93,9 +98,9 @@ def upgradeToVector(var, reg, type = "position", addRegistry = False) :
     # create appropriate vector type
     if isinstance(var,list) or isinstance(var,_np.ndarray):
         if type == "position" :
-            return Position("",var[0],var[1],var[2],"mm",reg, addRegistry)
+            return Position("",var[0],var[1],var[2],unit,reg, addRegistry)
         elif type == "rotation" : 
-            return Rotation("",var[0],var[1],var[2],"rad",reg, addRegistry)
+            return Rotation("",var[0],var[1],var[2],unit,reg, addRegistry)
         elif type == "scale" : 
             return Scale("",var[0],var[1],var[2],"none",reg, addRegistry)
         else : 
@@ -116,17 +121,26 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
     """
 
 
+
     if isinstance(var[0],VectorBase):
         rot = var[0]
     elif isinstance(var[0],list):
-        rot = upgradeToVector(var[0],reg,"rotation",addRegistry)
+        try:
+            aunit = var[0][3]
+        except:
+            aunit = ""
+        rot = upgradeToVector(var[0],reg,"rotation",aunit,addRegistry)
     else:
         raise TypeError("Unknown rotation type: {}".format(type(var[0])))
 
     if isinstance(var[1],VectorBase):
         tra = var[1]
     elif isinstance(var[1],list):
-        tra = upgradeToVector(var[1],reg,"position",addRegistry)
+        try:
+            lunit = var[1][3]
+        except:
+            lunit = ""
+        tra = upgradeToVector(var[1],reg,"position",lunit,addRegistry)
     else:
         raise TypeError("Unknown position type: {}".format(type(var[1])))
 
@@ -578,7 +592,7 @@ class VectorBase(object) :
 
     def __sub__(self,other) :
 
-        other = upgradeToVector(other,self.registry,"position",False)
+        other = upgradeToVector(other,self.registry,"position","", False)
 
         p  = Position("vec_{}_sub_{}".format(self.name,other.name),
                       '({})-({})'.format(self.x.expression,other.x.expression),
