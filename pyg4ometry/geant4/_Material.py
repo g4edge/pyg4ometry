@@ -185,9 +185,9 @@ def MaterialSingleElement(name, atomic_number, atomic_weight, density, registry=
 
     Inputs:
         name          - string
-        density       - float, material density in g/cm3
         atomic_number - int, number of protons, commonly known as 'Z'
-        atomic_weight  - molar weight in g/mole, commonly known as 'A'
+        atomic_weight - molar weight in g/mole, commonly known as 'A'
+        density       - float, material density in g/cm3
     """
     return Material(**locals())
 
