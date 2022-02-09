@@ -1,6 +1,7 @@
 from collections import defaultdict as _defaultdict
 from copy import deepcopy as _deepcopy
 import enum as _enum
+import re as _re
 
 from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
 from pyg4ometry.geant4 import Material as _Material
@@ -18,11 +19,12 @@ class Tests:
     >>> t = Tests("nDaughters") # only nDaughters will be tested
     >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
-    _testNames = ['names', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
+    _testNames = ['names', 'namesIgnorePointer', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
                            'shapeArea', 'placement', 'materials', 'materialClassType', 'materialCompositionType',
                            'testDaughtersByName']
     def __init__(self, *testsByNameToTurnOn):
         self.names             = True
+        self.namesIgnorePointer = True
         self.nDaughters        = True
         self.solidExact        = True
         self.shapeExtent       = True
@@ -258,6 +260,8 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     if tests.names:
         result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
     result += solids(rlv.solid, olv.solid, tests, testName, includeAllTestResults)
     if tests.materials:
         if ("mat_test_"+rlv.material.name, "mat_test_"+olv.material.name) not in testsAlreadyDone:
@@ -329,6 +333,8 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
 
     if tests.names:
         result += _names("placementName", rpv.name, opv.name, testName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("placementName", rpv.name, opv.name, testName, includeAllTestResults)
     if tests.placement:
         result += _vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
         result += _vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
@@ -364,6 +370,8 @@ def assemblyVolumes(referenceAV, otherAV, tests, recursive=False, includeAllTest
 
     if tests.names:
         result += _names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
 
     # compare placements inside assembly
     rDaughters = rav.daughterVolumes
@@ -496,6 +504,8 @@ def replicaVolumes(referenceRV, otherRV, tests, recursive=True, includeAllTestRe
 
     if tests.names:
         result += _names("replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults)
 
     # check type
     if rrv.type != orv.type:
@@ -593,6 +603,8 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
 
     if tests.names:
         result += _names("materialName", rm.name, om.name, testName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("materialName", rm.name, om.name, testName, includeAllTestResults)
 
     if tests.materialClassType:
         if type(om) != type(rm):
@@ -691,6 +703,8 @@ def _elements(referenceElement, otherElement, tests, lvName="", includeAllTestRe
     
     if tests.names:
         result += _names("elementName", re.name, oe.name, lvName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("elementNames", re.name, oe.name, lvName, includeAllTestResults)
 
     if re.type != oe.type:
         details = "element type: (reference): "+str(re.type)+", (other): "+str(oe.type)
@@ -739,6 +753,8 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     
     if tests.names:
         result += _names("solidName", rso.name, oso.name, lvName, includeAllTestResults)
+    if tests.namesIgnorePointer:
+        result += _namesIgnorePointer("solidName", rso.name, oso.name, lvName, includeAllTestResults)
         
     if tests.solidExact:
         # solid type
@@ -815,6 +831,25 @@ def _names(testName, str1, str2, parentName="", includeAllTestResults=False):
 
     result.result = result.result | TestResult.Passed
     return result
+
+def _namesIgnorePointer(testName, str1, str2, parentName="", includeAllTestResults=False):
+    result = ComparisonResult()
+
+    testName += "IgnorePointer"
+    pattern = r'(0x\w{7})'
+    strippedStr1 = _re.sub(pattern, '', str1)
+    strippedStr2 = _re.sub(pattern, '', str2)
+    nameTest = strippedStr1 == strippedStr2
+    if not nameTest:
+        details = "'"+strippedStr1+"' != '"+strippedStr2+"'"
+        result[testName] = [TestResultNamed(": ".join(list(filter(None, [parentName, strippedStr1]))), TestResult.Failed, details)]
+    elif includeAllTestResults:
+        result[testName] = [TestResultNamed(": ".join(list(filter(None, [parentName, strippedStr1]))), TestResult.Passed)]
+
+    result.result = result.result | TestResult.Passed
+    return result
+
+
 
 def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=False):
     result = ComparisonResult()
