@@ -1468,7 +1468,7 @@ class Reader(object):
                 _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
 
                 try :
-                    copyNumber = chNode.attributes["copynumber"].value
+                    copyNumber = int(chNode.attributes["copynumber"].value)
                 except KeyError :
                     copyNumber = 0
 
