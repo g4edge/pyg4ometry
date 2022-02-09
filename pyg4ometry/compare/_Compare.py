@@ -59,6 +59,18 @@ class Tests:
         for name in self._testNames:
             setattr(self, name, False)
 
+    def setFalse(self, testName):
+        """
+        Safely set a test by name to False.
+        """
+        if testName not in self._testNames:
+            print("Invalid test name. Available test names are:")
+            for name in self._testNames:
+                print(name)
+            raise ValueError("invalid test name")
+        else:
+            setattr(self, testName, False)
+
     def __len__(self):
         n = 0
         for name in self._testNames:
