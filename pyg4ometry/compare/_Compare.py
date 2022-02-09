@@ -344,8 +344,12 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
         result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
 
     result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
-    if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
-        result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
+    if rpv.logicalVolume.type == "logical":
+        if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
+            result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
+    elif rpv.logicalVolume.type == "assembly":
+        if ("av_test_"+rpv.logicalVolume.name, "av_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
+            result += assemblyVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
 
     testsAlreadyDone.append( ("pv_test_"+referencePV.name, "pv_test_"+otherPV.name) )
     return result
