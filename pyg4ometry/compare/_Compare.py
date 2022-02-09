@@ -878,13 +878,15 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             for i in range(3):
                 dMin = omMin[i] - rmMin[i]
                 if dMin != 0:
-                    if abs(dMin / rmMin[i]) > tests.toleranceSolidExtentFraction:
+                    tv = abs(dMin / rmMin[i]) if rmMin[i] != 0 else abs(dMin)  # rmMax[i] may be 0 -> zero division error
+                    if tv > tests.toleranceSolidExtentFraction:
                         details =  "axis-aligned bounding box lower edge: dimension: "+labels[i]
                         details += ", (reference): "+str(rmMin[i])+", (other): "+str(omMin[i])
                         result['shapeExtentBoundingBoxMin'] += [TestResultNamed(lvname, TestResult.Failed, details)]
                 dMax = omMax[i] - rmMax[i]
                 if dMax != 0:
-                    if abs(dMax / rmMax[i]) > tests.toleranceSolidExtentFraction:
+                    tv = abs(dMax / rmMax[i]) if rmMax[i] != 0 else abs(dMax) # rmMax[i] may be 0 -> zero division error
+                    if tv > tests.toleranceSolidExtentFraction:
                         details =  "axis-aligned bounding box upper edge: dimension: "+labels[i]
                         details += ", (reference): "+str(rmMax[i])+", (other): "+str(omMax[i])
                         result['shapeExtentBoundingBoxMax'] += [TestResultNamed(lvname, TestResult.Failed, details)]
