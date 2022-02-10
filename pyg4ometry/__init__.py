@@ -19,3 +19,5 @@ from . import test
 from . import transformation
 from . import visualisation
 from . import bdsim
+
+__version__ = "1.0.1"
