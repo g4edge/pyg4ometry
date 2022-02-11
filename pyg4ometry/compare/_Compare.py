@@ -6,6 +6,7 @@ import re as _re
 from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
 from pyg4ometry.geant4 import Material as _Material
 from pyg4ometry.geant4 import Element as _Element
+from pyg4ometry.gdml import Units as _Units
 
 
 class Tests:
@@ -873,6 +874,8 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
     
     for v in ['x','y','z']:
         rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
+        rc *= _Units.unit(getattr(r1,'unit'))
+        oc *= _Units.unit(getattr(r2,'unit'))
         drc = oc - rc
         if drc != 0:
             if abs((drc / rc)) > tolerance:
