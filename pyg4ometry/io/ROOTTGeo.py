@@ -402,7 +402,7 @@ class Reader:
                 matrix = node.GetMatrix()
 
                 [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
-                nodeTraPyG4 = list(_np.linalg.inv(matROOT).dot(nodeTraPyG4))
+                nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
 
 
                 daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
