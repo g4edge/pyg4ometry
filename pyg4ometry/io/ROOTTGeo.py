@@ -414,7 +414,8 @@ class Reader:
                                               daughterVolumePyG4,
                                               node.GetName(),
                                               volumePyG4,
-                                              self._registry)
+                                              self._registry,
+                                              node.GetNumber())
 
 
             if self.first:
