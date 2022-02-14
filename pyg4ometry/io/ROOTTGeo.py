@@ -70,7 +70,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    shape.GetRmax(),
                                    shape.GetDz()*2,
                                    shape.GetPhi1(),
-                                   shape.GetPhi2(),
+                                   shape.GetPhi2()-shape.GetPhi1(),
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
@@ -83,7 +83,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                       shape.GetRmax(),
                                       shape.GetDz()*2,
                                       shape.GetPhi1(),
-                                      shape.GetPhi2(),
+                                      shape.GetPhi2()-shape.GetPhi1(),
                                       [nlow[0],nlow[1],nlow[2]],
                                       [nhigh[0],nhigh[1],nhigh[2]],
                                       registry,
@@ -97,7 +97,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    shape.GetRmax2(),
                                    shape.GetDz()*2,
                                    shape.GetPhi1(),
-                                   shape.GetPhi2(),
+                                   shape.GetPhi2()-shape.GetPhi1(),
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
@@ -142,9 +142,9 @@ def rootShape2pyg4ometry(shape, reader) :
                                      shape.GetRmin(),
                                      shape.GetRmax(),
                                      shape.GetPhi1(),
-                                     shape.GetPhi2(),
+                                     shape.GetPhi2()-shape.GetPhi1(),
                                      shape.GetTheta1(),
-                                     shape.GetTheta2(),
+                                     shape.GetTheta2()-shape.GetTheta1(),
                                      registry,
                                      lunit="cm",
                                      aunit="deg")
