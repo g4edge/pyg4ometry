@@ -878,7 +878,7 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
         oc *= _Units.unit(getattr(r2,'unit'))
         drc = oc - rc
         if drc != 0:
-            if abs((drc / rc)) > tolerance:
+            if ( rc != 0 and abs((drc / rc)) > tolerance ) or ( oc != 0 and abs((drc / oc)) > tolerance ):
                 details = v+": (reference): "+str(rc)+", (other): "+str(oc)
                 result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
             elif includeAllTestResults:
