@@ -656,6 +656,9 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
             
     # components and fractions
     if om.number_of_components == rm.number_of_components:
+        getCompName = lambda tup : tup[0].name
+        rm.components.sort(key=getCompName)
+        om.components.sort(key=getCompName)
         for i in range(rm.number_of_components):
             rc, oc = rm.components[i], om.components[i]
             # we expect these each to be a tuple of (object, number, "type of fraction"
