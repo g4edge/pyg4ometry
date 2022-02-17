@@ -406,8 +406,18 @@ class Reader:
         self.topVolume = self.tgm.GetTopVolume()
         self.recurseVolumeTree(self.topVolume)
 
-    def loadMaterials(self) :
+    def _ROOTMatStateToGeant4MatState(self, rootMaterialState):
+        """
+        Based on https://root.cern.ch/doc/master/classTGeoMaterial.html#a8b69c72f90711a29726087e029e39c61
+        enum TGeoMaterial::EGeoMaterialState
+        """
+        states = {0 : "undefined",
+                  1 : "solid",
+                  2 : "liquid",
+                  3 : "gas"}
+        return states[rootMaterialState]
 
+    def loadMaterials(self):
         materialList = self.tgm.GetListOfMaterials()
 
         for iMat in range(0,materialList.GetEntries(),1) :
@@ -434,6 +444,7 @@ class Reader:
             properties = {}
 
             state = material.GetState()
+            stateStr = self._ROOTMatStateToGeant4MatState(state)
             density = material.GetDensity()
 
             n_comp = material.GetNelements()
@@ -441,11 +452,11 @@ class Reader:
                 Z = material.GetZ()
                 A = material.GetA()
                 g4Mat = _g4.MaterialSingleElement(materialName, Z, A, density, registry=self._registry, tolerateZeroDensity=True)
-                g4Mat.set_state(state)
+                g4Mat.set_state(stateStr)
 
             else :
                 g4Mat = _g4.MaterialCompound(materialName, density, n_comp, registry=self._registry, tolerateZeroDensity=True)
-                g4Mat.set_state(state)
+                g4Mat.set_state(stateStr)
 
                 for iComp in range(0,n_comp,1) :
                     elem = material.GetElement(iComp)
