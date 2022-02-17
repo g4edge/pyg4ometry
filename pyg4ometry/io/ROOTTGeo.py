@@ -38,7 +38,7 @@ def rootShape2pyg4ometry(shape, reader) :
     shapeClass   = shape.Class_Name()
 
     if reader.shapeNames[shapeName] > 0:
-        suffix = "0x" + str(reader.shapeNames[shapeName])
+        suffix = "_" + str(reader.shapeNames[shapeName])
         reader.shapeNames[shapeName] += 1
         shapeName = shapeName + suffix
     else:
@@ -432,7 +432,7 @@ class Reader:
                 print("vacuum")
 
             if self.materialNames[materialName] > 0:
-                suffix = "0x"+str(self.materialNames[materialName])
+                suffix = "_"+str(self.materialNames[materialName])
                 self.materialNames[materialName] += 1
                 materialName = materialName + suffix
             else:
@@ -518,7 +518,7 @@ class Reader:
         volumeClass   = volume.Class_Name()
 
         if self.logicalVolumeNames[volumeName] > 0:
-            suffix = "0x" + str(self.logicalVolumeNames[volumeName])
+            suffix = "_" + str(self.logicalVolumeNames[volumeName])
             self.logicalVolumeNames[volumeName] += 1
             volumeName = volumeName + suffix
         else:
@@ -574,7 +574,7 @@ class Reader:
 
                 pvName = node.GetName()
                 if self.physicalVolumeNames[pvName] > 0:
-                    suffix = "0x" + str(self.physicalVolumeNames[pvName])
+                    suffix = "_" + str(self.physicalVolumeNames[pvName])
                     self.physicalVolumeNames[pvName] += 1
                     pvName = pvName + suffix
                 else:
