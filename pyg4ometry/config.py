@@ -14,6 +14,9 @@ def backendName():
     if meshing == 3:
         return "cgal_np"
 
+# whether to generate meshes during the construction of each logical volume
+# note this is required for a lot of functionality
+doMeshing = False
 
 # Global settings for default meshing settings for solids
 # nslice and and nstacks determine the discretisation of curved solids.
