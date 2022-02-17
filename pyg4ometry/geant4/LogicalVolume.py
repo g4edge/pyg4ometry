@@ -3,6 +3,7 @@ from   pyg4ometry.pycsg.core import CSG    as _CSG
 #from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
 import pyg4ometry as _pyg4ometry
+from   pyg4ometry.config import doMeshing as _doMeshing
 from   pyg4ometry.visualisation  import Mesh            as _Mesh
 from   pyg4ometry.visualisation  import Convert         as _Convert
 from   pyg4ometry.visualisation  import OverlapType     as _OverlapType
@@ -73,7 +74,9 @@ class LogicalVolume(object):
         self.daughterVolumes = []
         self._daughterVolumesDict = {}
         self.bdsimObjects    = []
-        self._reMesh()
+        global _doMeshing
+        if _doMeshing:
+            self._reMesh()
         self.auxiliary = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 

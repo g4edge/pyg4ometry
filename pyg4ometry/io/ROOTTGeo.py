@@ -83,7 +83,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
-    elif shapeClass == "TGeoCtub" :
+    elif shapeClass == "TGeoCtub":
         nlow  = shape.GetNlow()
         nhigh = shape.GetNhigh()
 
@@ -140,6 +140,9 @@ def rootShape2pyg4ometry(shape, reader) :
                                   registry,
                                   lunit="cm")
     elif shapeClass == "TGeoTrap":
+        h1 = shape.GetH1()
+        if h1 == 0:
+            return None # sometimes it's a totally emtpy TGeoTrap... this is the first would-be 0 parameter in that case
         shapePyG4 = _g4.solid.Trap(shapeName,
                                    shape.GetDZ(),
                                    shape.GetTheta(),
@@ -371,7 +374,7 @@ def rootShape2pyg4ometry(shape, reader) :
     return shapePyG4
 
 class Reader:
-    def __init__(self, fileName):
+    def __init__(self, fileName, upgradeVacuumToG4Galactic=True):
         self.tgm = _ROOT.TGeoManager.Import(fileName)
 
         self.first = True
@@ -393,7 +396,7 @@ class Reader:
         self.isotopes            = {}
         self.isotopeNames        = _defaultdict(int)
 
-        self.load()
+        self.load(upgradeVacuumToG4Galactic)
 
         tv = self.tgm.GetTopVolume()
         self._registry.setWorld(tv.GetName())
@@ -401,8 +404,8 @@ class Reader:
     def getRegistry(self):
         return self._registry
 
-    def load(self):
-        self.loadMaterials()
+    def load(self, upgradeVacuumToG4Galactic=True):
+        self.loadMaterials(upgradeVacuumToG4Galactic)
         self.topVolume = self.tgm.GetTopVolume()
         self.recurseVolumeTree(self.topVolume)
 
@@ -411,14 +414,16 @@ class Reader:
         Based on https://root.cern.ch/doc/master/classTGeoMaterial.html#a8b69c72f90711a29726087e029e39c61
         enum TGeoMaterial::EGeoMaterialState
         """
-        states = {0 : "undefined",
+        states = {0 : None, # as per hthe default in MaterialBase
                   1 : "solid",
                   2 : "liquid",
                   3 : "gas"}
         return states[rootMaterialState]
 
-    def loadMaterials(self):
+    def loadMaterials(self, upgradeVacuumToG4Galactic):
         materialList = self.tgm.GetListOfMaterials()
+
+        g4galactic = _g4.MaterialPredefined("G4_Galactic", self._registry)
 
         for iMat in range(0,materialList.GetEntries(),1) :
 
@@ -446,6 +451,11 @@ class Reader:
             state = material.GetState()
             stateStr = self._ROOTMatStateToGeant4MatState(state)
             density = material.GetDensity()
+
+            if density == 0 and upgradeVacuumToG4Galactic:
+                self.materialSubstitutions[materialName] = g4galactic
+                self.materials[materialAddress] = g4galactic
+                continue # don't build a new material
 
             n_comp = material.GetNelements()
             if n_comp == 1:
@@ -533,7 +543,9 @@ class Reader:
             shapeName    = shape.GetName()
             shapeClass   = shape.Class_Name()
 
-            shapePyG4 = rootShape2pyg4ometry(shape,self)
+            shapePyG4 = rootShape2pyg4ometry(shape, self)
+            if shapePyG4 is None:
+                return None # unable to make the shape.. or poorly defined
 
             # material
             material = volume.GetMaterial()
@@ -546,7 +558,7 @@ class Reader:
             # Already have the volume so increment counter
             self.logicalVolumes[volumeAddress]["count"] += 1
             return self.logicalVolumes[volumeAddress]["pyg4Obj"]
-        else :
+        else:
             if volumeClass == "TGeoVolume":
                 # make logical volume
                 volumePyG4 = _g4.LogicalVolume(shapePyG4, thisMaterial, volumeName, self._registry)
@@ -568,9 +580,10 @@ class Reader:
 
 
                 daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
-
-                if daughterVolumePyG4 is None :
-                    print("daugher is none {}".format(node.GetVolume().Class_Name()))
+                if daughterVolumePyG4 is None:
+                    vol = node.GetVolume()
+                    print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
+                    continue
 
                 pvName = node.GetName()
                 if self.physicalVolumeNames[pvName] > 0:
