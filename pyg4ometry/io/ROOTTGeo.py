@@ -393,7 +393,7 @@ class Reader:
         Based on https://root.cern.ch/doc/master/classTGeoMaterial.html#a8b69c72f90711a29726087e029e39c61
         enum TGeoMaterial::EGeoMaterialState
         """
-        states = {0 : "undefined",
+        states = {0 : None, # as per hthe default in MaterialBase
                   1 : "solid",
                   2 : "liquid",
                   3 : "gas"}
