@@ -5,8 +5,7 @@ import numpy as _np
 
 from collections import defaultdict as _defaultdict
 
-def rootMatrix2pyg4ometry(matrix, reader) :
-
+def rootMatrix2pyg4ometry(matrix, reader):
     if _ROOT.addressof(matrix) in reader.matrices:
         boolRotPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4RotObj']
         boolTraPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4TraObj']
@@ -28,14 +27,15 @@ def rootMatrix2pyg4ometry(matrix, reader) :
                                                     "rootObj": matrix}
         return [rotPyG4, traPyG4, rotation, translation]
 
-def rootShape2pyg4ometry(shape, reader) :
-
+def rootShape2pyg4ometry(shape, reader):
     registry = reader._registry
 
     shapePyG4    = None
     shapeName    = shape.GetName()
     shapeAddress = _ROOT.addressof(shape)
     shapeClass   = shape.Class_Name()
+
+    shouldTessellate = shapeName in reader.solidsToTessellate
 
     if reader.shapeNames[shapeName] > 0:
         suffix = "_" + str(reader.shapeNames[shapeName])
@@ -370,15 +370,20 @@ def rootShape2pyg4ometry(shape, reader) :
                                   registry,
                                   lunit="cm")
 
+    if shouldTessellate:
+        shapePyG4 = shapePyG4.conver2Tessellated()
+
     reader.shapes[shapeAddress]['pyg4Obj'] = shapePyG4
     return shapePyG4
 
 class Reader:
-    def __init__(self, fileName, upgradeVacuumToG4Galactic=True):
+    def __init__(self, fileName, upgradeVacuumToG4Galactic=True, solidsToTessellate=None):
+        if solidsToTessellate is None:
+            solidsToTessellate = []
+        self.solidsToTessellate = solidsToTessellate
+
         self.tgm = _ROOT.TGeoManager.Import(fileName)
-
         self.first = True
-
         self._registry = _g4.Registry()
 
         self.shapes              = {}

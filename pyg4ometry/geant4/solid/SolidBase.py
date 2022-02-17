@@ -66,6 +66,38 @@ class SolidBase(object):
         '''
         self._name = name
 
+    def conver2Tessellated(self):
+        """
+        return a TessellatedSolid instance based on the mesh of this solid.
+        """
+        pycsg_mesh = self.mesh()
+
+        from pyg4ometry.geant4.solid import TessellatedSolid
+        from pyg4ometry.visualisation import Convert as _Convert
+        import vtk as _vtk
+        # Use VTK to reduce all polygons to triangles
+        # as CSG operations can produce arbitrary polygons
+        # which cannot be used in Tessellated Solid
+        meshVTKPD = _Convert.pycsgMeshToVtkPolyData(pycsg_mesh)
+        vtkFLT = _vtk.vtkTriangleFilter()
+        vtkFLT.AddInputData(meshVTKPD)
+        vtkFLT.Update()
+        triangular = vtkFLT.GetOutput()
+
+        meshTriangular = []
+        for i in range(triangular.GetNumberOfCells()):
+            pts = triangular.GetCell(i).GetPoints()
+            vertices = [pts.GetPoint(i) for i in range(pts.GetNumberOfPoints())]
+            # The last 3-tuple is a dummy normal to make it look like STL data
+            meshTriangular.append((vertices, (None, None, None)))
+
+        newName = self.name + "_asTesselated"
+        reg = self.registry
+        mesh_type = TessellatedSolid.MeshType.Stl
+        tesselated_solid = TessellatedSolid(newName, meshTriangular, reg, meshtype=mesh_type)
+
+        return tesselated_solid
+
     #def mesh(self):
     #    start = _time.time()
     #   m = self.pycsgmesh()
