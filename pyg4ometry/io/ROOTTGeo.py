@@ -362,7 +362,7 @@ def rootShape2pyg4ometry(shape, reader) :
     return shapePyG4
 
 class Reader:
-    def __init__(self, fileName):
+    def __init__(self, fileName, upgradeVacuumToG4Galactic=True):
         self.tgm = _ROOT.TGeoManager.Import(fileName)
 
         self.first = True
@@ -375,7 +375,7 @@ class Reader:
         self.physicalVolumes = {}
         self.materials       = {}
 
-        self.load()
+        self.load(upgradeVacuumToG4Galactic)
 
         tv = self.tgm.GetTopVolume()
         self._registry.setWorld(tv.GetName())
@@ -383,8 +383,8 @@ class Reader:
     def getRegistry(self):
         return self._registry
 
-    def load(self):
-        self.loadMaterials()
+    def load(self, upgradeVacuumToG4Galactic=True):
+        self.loadMaterials(upgradeVacuumToG4Galactic)
         self.topVolume = self.tgm.GetTopVolume()
         self.recurseVolumeTree(self.topVolume)
 
@@ -399,8 +399,10 @@ class Reader:
                   3 : "gas"}
         return states[rootMaterialState]
 
-    def loadMaterials(self):
+    def loadMaterials(self, upgradeVacuumToG4Galactic):
         materialList = self.tgm.GetListOfMaterials()
+
+        g4galactic = _g4.MaterialPredefined("G4_Galactic", self._registry)
 
         for iMat in range(0,materialList.GetEntries(),1) :
 
@@ -418,6 +420,11 @@ class Reader:
             state = material.GetState()
             stateStr = self._ROOTMatStateToGeant4MatState(state)
             density = material.GetDensity()
+
+            if density == 0 and upgradeVacuumToG4Galactic:
+                self.materialSubstitutions[materialName] = g4galactic
+                self.materials[materialAddress] = g4galactic
+                continue # don't build a new material
 
             n_comp = material.GetNelements()
             if n_comp == 1:
