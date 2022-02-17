@@ -3,6 +3,8 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.transformation as _transformation
 import numpy as _np
 
+from collections import defaultdict as _defaultdict
+
 def rootMatrix2pyg4ometry(matrix, reader) :
 
     if _ROOT.addressof(matrix) in reader.matrices:
@@ -35,14 +37,21 @@ def rootShape2pyg4ometry(shape, reader) :
     shapeAddress = _ROOT.addressof(shape)
     shapeClass   = shape.Class_Name()
 
-    if shapeAddress in reader.shapes :
+    if reader.shapeNames[shapeName] > 0:
+        suffix = "0x" + str(reader.shapeNames[shapeName])
+        reader.shapeNames[shapeName] += 1
+        shapeName = shapeName + suffix
+    else:
+        reader.shapeNames[shapeName] += 1
+
+    if shapeAddress in reader.shapes:
         reader.shapes[shapeAddress]["count"] += 1
         return reader.shapes[shapeAddress]["pyg4Obj"]
 
     # check for name clashes (so degenerate shape names)
-    if shapeName in reader._registry.solidDict:
-        shapeName += "_"
-        shapeName += str(shapeAddress)
+    #if shapeName in reader._registry.solidDict:
+    #    shapeName += "_"
+    #    shapeName += str(shapeAddress)
 
     reader.shapes[shapeAddress] = {"name": shapeName, "class": shapeClass, "count": 1, "pyg4Obj": None,
                                  "rootObj": shape}
@@ -369,11 +378,20 @@ class Reader:
 
         self._registry = _g4.Registry()
 
-        self.shapes          = {}
-        self.logicalVolumes  = {}
-        self.matrices        = {} # map to rotations and translations in defines
-        self.physicalVolumes = {}
-        self.materials       = {}
+        self.shapes              = {}
+        self.shapeNames          = _defaultdict(int)
+        self.logicalVolumes      = {}
+        self.logicalVolumeNames  = _defaultdict(int)
+        self.matrices            = {} # map to rotations and translations in defines
+        self.matriceNames        = _defaultdict(int)
+        self.physicalVolumes     = {}
+        self.physicalVolumeNames = _defaultdict(int)
+        self.materials           = {}
+        self.materialNames       = _defaultdict(int)
+        self.elements            = {}
+        self.elementNames        = _defaultdict(int)
+        self.isotopes            = {}
+        self.isotopeNames        = _defaultdict(int)
 
         self.load()
 
@@ -396,9 +414,19 @@ class Reader:
 
             material = materialList.At(iMat)
             materialAddress = _ROOT.addressof(material)
-            materialName = material.GetName()
+            materialName = str(material.GetName())
             materialName = materialName.replace(':','')
             materialClass = material.Class_Name()
+
+            if materialName == "VACUUM":
+                print("vacuum")
+
+            if self.materialNames[materialName] > 0:
+                suffix = "0x"+str(self.materialNames[materialName])
+                self.materialNames[materialName] += 1
+                materialName = materialName + suffix
+            else:
+                self.materialNames[materialName] += 1
 
             #print(f'ROOT.Reader.loadMaterials class={materialClass} name={materialName}')
 
@@ -432,6 +460,7 @@ class Reader:
 
             # TODO add properties (a la lines 418-421 gdml/Reader.py)
 
+            self.materials[materialAddress] = g4Mat
 
     def _makeG4Element(self, rootElement):
         elemFormula = rootElement.GetName()
@@ -477,6 +506,14 @@ class Reader:
         volumeName    = volume.GetName()
         volumeClass   = volume.Class_Name()
 
+        if self.logicalVolumeNames[volumeName] > 0:
+            suffix = "0x" + str(self.logicalVolumeNames[volumeName])
+            self.logicalVolumeNames[volumeName] += 1
+            volumeName = volumeName + suffix
+        else:
+            self.logicalVolumeNames[volumeName] += 1
+
+
         if volumeClass != "TGeoVolumeAssembly" :
 
             # shape
@@ -491,6 +528,8 @@ class Reader:
             material = volume.GetMaterial()
             materialName = material.GetName()
             materialName = materialName.replace(':','')
+            materialAddress = _ROOT.addressof(material)
+            thisMaterial = self.materials[materialAddress]
 
         if volumeAddress in self.logicalVolumes:
             # Already have the volume so increment counter
@@ -499,7 +538,7 @@ class Reader:
         else :
             if volumeClass == "TGeoVolume":
                 # make logical volume
-                volumePyG4 = _g4.LogicalVolume(shapePyG4,materialName,volumeName,self._registry)
+                volumePyG4 = _g4.LogicalVolume(shapePyG4, thisMaterial, volumeName, self._registry)
             elif volumeClass == "TGeoVolumeAssembly":
                 volumePyG4 = _g4.AssemblyVolume(volumeName,self._registry)
             else :
@@ -521,10 +560,19 @@ class Reader:
 
                 if daughterVolumePyG4 is None :
                     print("daugher is none {}".format(node.GetVolume().Class_Name()))
+
+                pvName = node.GetName()
+                if self.physicalVolumeNames[pvName] > 0:
+                    suffix = "0x" + str(self.physicalVolumeNames[pvName])
+                    self.physicalVolumeNames[pvName] += 1
+                    pvName = pvName + suffix
+                else:
+                    self.physicalVolumeNames[pvName] += 1
+
                 nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
                                               nodeTraPyG4,
                                               daughterVolumePyG4,
-                                              node.GetName(),
+                                              pvName,
                                               volumePyG4,
                                               self._registry,
                                               node.GetNumber())
