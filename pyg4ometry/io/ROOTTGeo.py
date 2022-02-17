@@ -406,6 +406,7 @@ class Reader:
         materialList = self.tgm.GetListOfMaterials()
 
         g4galactic = _g4.MaterialPredefined("G4_Galactic", self._registry)
+        nistMaterials = _g4.getNistMaterialDict()
 
         for iMat in range(0,materialList.GetEntries(),1) :
 
@@ -414,6 +415,11 @@ class Reader:
             materialName = material.GetName()
             materialName = materialName.replace(':','')
             materialClass = material.Class_Name()
+
+            # check for NIST material
+            if materialName in nistMaterials.keys() :
+                g4Mat = _g4.getNistMaterialDict()[materialName]
+                continue
 
             #print(f'ROOT.Reader.loadMaterials class={materialClass} name={materialName}')
 
@@ -514,6 +520,11 @@ class Reader:
             material = volume.GetMaterial()
             materialName = material.GetName()
             materialName = materialName.replace(':','')
+
+            # ROOT dummy materials (if material is nist defined on LV gdml tag)
+            if materialName == "dummy" :
+                # print("ROOT.Reader> found dummy material for {}".format(volumeName))
+                materialName = "G4_Galactic"
 
         if volumeAddress in self.logicalVolumes:
             # Already have the volume so increment counter
