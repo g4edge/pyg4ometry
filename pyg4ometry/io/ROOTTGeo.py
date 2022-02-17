@@ -112,6 +112,15 @@ def rootShape2pyg4ometry(shape, reader) :
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
+    elif shapeClass == "TGeoTrd1":
+        shapePyG4 = _g4.solid.Trd(shapeName,
+                                  shape.GetDx1()*2,
+                                  shape.GetDx2()*2,
+                                  shape.GetDy()*2,
+                                  shape.GetDy()*2,
+                                  shape.GetDz()*2,
+                                  registry,
+                                  lunit="cm")
     elif shapeClass == "TGeoTrd2":
         shapePyG4 = _g4.solid.Trd(shapeName,
                                   shape.GetDx1()*2,
