@@ -183,7 +183,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                     registry,
                                     lunit="cm",
                                     aunit="deg")
-    elif shapeClass == "TGeoPcon" :
+    elif shapeClass == "TGeoPcon":
         nz   = shape.GetNz()
         z    = _np.frombuffer(shape.GetZ(),dtype=_np.float64,count=nz)
         rmin = _np.frombuffer(shape.GetRmin(),dtype=_np.float64,count=nz)
@@ -198,7 +198,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                        registry,
                                        lunit="cm",
                                        aunit="deg")
-    elif shapeClass == "TGeoPgon" :
+    elif shapeClass == "TGeoPgon":
         nz    = shape.GetNz()
         nSide = shape.GetNedges()
         z    = _np.frombuffer(shape.GetZ(),dtype=_np.float64,count=nz)
@@ -327,19 +327,19 @@ def rootShape2pyg4ometry(shape, reader) :
             shapeName += "_"
             shapeName += str(shapeAddress)
 
-        if boolNode.Class_Name() == "TGeoUnion" :
+        if boolNode.Class_Name() == "TGeoUnion":
             shapePyG4 = _g4.solid.Union(shapeName,
                                         boolLeftShapePyG4,
                                         boolRightShapePyG4,
                                         [boolNodeRightRotPyG4,boolNodeRightTraPyG4],
                                         registry)
-        elif boolNode.Class_Name() == "TGeoSubtraction" :
+        elif boolNode.Class_Name() == "TGeoSubtraction":
             shapePyG4 = _g4.solid.Subtraction(shapeName,
                                               boolLeftShapePyG4,
                                               boolRightShapePyG4,
                                               [boolNodeRightRotPyG4,boolNodeRightTraPyG4],
                                               registry)
-        elif boolNode.Class_Name() == "TGeoIntersection" :
+        elif boolNode.Class_Name() == "TGeoIntersection":
             shapePyG4 = _g4.solid.Intersection(shapeName,
                                                boolLeftShapePyG4,
                                                boolRightShapePyG4,
@@ -380,6 +380,9 @@ class Reader:
         tv = self.tgm.GetTopVolume()
         self._registry.setWorld(tv.GetName())
 
+    def getRegistry(self):
+        return self._registry
+
     def load(self):
         self.loadMaterials()
         self.topVolume = self.tgm.GetTopVolume()
@@ -406,7 +409,7 @@ class Reader:
             density = material.GetDensity()
 
             n_comp = material.GetNelements()
-            if n_comp == 1 :
+            if n_comp == 1:
                 Z = material.GetZ()
                 A = material.GetA()
                 g4Mat = _g4.MaterialSingleElement(materialName, Z, A, density, registry=self._registry, tolerateZeroDensity=True)
@@ -480,7 +483,7 @@ class Reader:
             shape        = volume.GetShape()
             shapeAddress = _ROOT.addressof(shape)
             shapeName    = shape.GetName()
-            shapeClass   = shape.Class_Name();
+            shapeClass   = shape.Class_Name()
 
             shapePyG4 = rootShape2pyg4ometry(shape,self)
 
@@ -489,7 +492,7 @@ class Reader:
             materialName = material.GetName()
             materialName = materialName.replace(':','')
 
-        if volumeAddress in self.logicalVolumes :
+        if volumeAddress in self.logicalVolumes:
             # Already have the volume so increment counter
             self.logicalVolumes[volumeAddress]["count"] += 1
             return self.logicalVolumes[volumeAddress]["pyg4Obj"]
@@ -532,6 +535,3 @@ class Reader:
                 self.first = False
 
             return volumePyG4
-
-    def getRegistry(self):
-        return self._registry
