@@ -131,6 +131,9 @@ def rootShape2pyg4ometry(shape, reader) :
                                   registry,
                                   lunit="cm")
     elif shapeClass == "TGeoTrap":
+        h1 = shape.GetH1()
+        if h1 == 0:
+            return None # sometimes it's a totally emtpy TGeoTrap... this is the first would-be 0 parameter in that case
         shapePyG4 = _g4.solid.Trap(shapeName,
                                    shape.GetDZ(),
                                    shape.GetTheta(),
@@ -503,7 +506,9 @@ class Reader:
             shapeName    = shape.GetName()
             shapeClass   = shape.Class_Name()
 
-            shapePyG4 = rootShape2pyg4ometry(shape,self)
+            shapePyG4 = rootShape2pyg4ometry(shape, self)
+            if shapePyG4 is None:
+                return None # unable to make the shape.. or poorly defined
 
             # material
             material = volume.GetMaterial()
@@ -536,9 +541,11 @@ class Reader:
 
 
                 daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
+                if daughterVolumePyG4 is None:
+                    vol = node.GetVolume()
+                    print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
+                    continue
 
-                if daughterVolumePyG4 is None :
-                    print("daugher is none {}".format(node.GetVolume().Class_Name()))
                 nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
                                               nodeTraPyG4,
                                               daughterVolumePyG4,
