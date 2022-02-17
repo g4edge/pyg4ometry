@@ -146,6 +146,22 @@ def rootShape2pyg4ometry(shape, reader) :
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
+    elif shapeClass == "TGeoGtra":
+        shapePyG4 = _g4.solid.TwistedTrap(shapeName,
+                                          shape.GetTwistAngle(),
+                                          shape.GetDZ(),
+                                          shape.GetTheta(),
+                                          shape.GetPhi(),
+                                          shape.GetH1(),  #pDy1
+                                          shape.GetTl1(), #pDx1
+                                          shape.GetBl1(), #pDx2
+                                          shape.GetH2(),  #pDy2
+                                          shape.GetTl2(), #pDx3
+                                          shape.GetBl2(), #pDx4
+                                          shape.GetAlpha2(),
+                                          registry,
+                                          lunit="cm",
+                                          aunit="deg")
     elif shapeClass == "TGeoSphere":
         shapePyG4 = _g4.solid.Sphere(shapeName,
                                      shape.GetRmin(),
