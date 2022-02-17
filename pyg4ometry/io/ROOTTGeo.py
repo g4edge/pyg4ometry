@@ -391,6 +391,7 @@ class Reader:
         self.physicalVolumeNames = _defaultdict(int)
         self.materials           = {}
         self.materialNames       = _defaultdict(int)
+        self.materialSubstitutions = {}
         self.elements            = {}
         self.elementNames        = _defaultdict(int)
         self.isotopes            = {}
@@ -432,9 +433,6 @@ class Reader:
             materialName = str(material.GetName())
             materialName = materialName.replace(':','')
             materialClass = material.Class_Name()
-
-            if materialName == "VACUUM":
-                print("vacuum")
 
             if self.materialNames[materialName] > 0:
                 suffix = "_"+str(self.materialNames[materialName])
