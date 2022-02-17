@@ -74,7 +74,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
-    elif shapeClass == "TGeoCtub" :
+    elif shapeClass == "TGeoCtub":
         nlow  = shape.GetNlow()
         nhigh = shape.GetNhigh()
 
@@ -488,7 +488,7 @@ class Reader:
         volumeName    = volume.GetName()
         volumeClass   = volume.Class_Name()
 
-        if volumeClass != "TGeoVolumeAssembly" :
+        if volumeClass != "TGeoVolumeAssembly":
 
             # shape
             shape        = volume.GetShape()
@@ -507,7 +507,7 @@ class Reader:
             # Already have the volume so increment counter
             self.logicalVolumes[volumeAddress]["count"] += 1
             return self.logicalVolumes[volumeAddress]["pyg4Obj"]
-        else :
+        else:
             if volumeClass == "TGeoVolume":
                 # make logical volume
                 volumePyG4 = _g4.LogicalVolume(shapePyG4,materialName,volumeName,self._registry)
