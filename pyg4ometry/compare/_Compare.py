@@ -6,6 +6,7 @@ import re as _re
 from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
 from pyg4ometry.geant4 import Material as _Material
 from pyg4ometry.geant4 import Element as _Element
+from pyg4ometry.gdml import Units as _Units
 
 
 class Tests:
@@ -655,6 +656,9 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
             
     # components and fractions
     if om.number_of_components == rm.number_of_components:
+        getCompName = lambda tup : tup[0].name
+        rm.components.sort(key=getCompName)
+        om.components.sort(key=getCompName)
         for i in range(rm.number_of_components):
             rc, oc = rm.components[i], om.components[i]
             # we expect these each to be a tuple of (object, number, "type of fraction"
@@ -873,9 +877,11 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
     
     for v in ['x','y','z']:
         rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
+        rc *= _Units.unit(getattr(r1,'unit'))
+        oc *= _Units.unit(getattr(r2,'unit'))
         drc = oc - rc
         if drc != 0:
-            if abs((drc / rc)) > tolerance:
+            if ( rc != 0 and abs((drc / rc)) > tolerance ) or ( oc != 0 and abs((drc / oc)) > tolerance ):
                 details = v+": (reference): "+str(rc)+", (other): "+str(oc)
                 result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
             elif includeAllTestResults:

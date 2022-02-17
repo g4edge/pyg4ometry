@@ -70,7 +70,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    shape.GetRmax(),
                                    shape.GetDz()*2,
                                    shape.GetPhi1(),
-                                   shape.GetPhi2(),
+                                   shape.GetPhi2()-shape.GetPhi1(),
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
@@ -83,7 +83,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                       shape.GetRmax(),
                                       shape.GetDz()*2,
                                       shape.GetPhi1(),
-                                      shape.GetPhi2(),
+                                      shape.GetPhi2()-shape.GetPhi1(),
                                       [nlow[0],nlow[1],nlow[2]],
                                       [nhigh[0],nhigh[1],nhigh[2]],
                                       registry,
@@ -97,7 +97,7 @@ def rootShape2pyg4ometry(shape, reader) :
                                    shape.GetRmax2(),
                                    shape.GetDz()*2,
                                    shape.GetPhi1(),
-                                   shape.GetPhi2(),
+                                   shape.GetPhi2()-shape.GetPhi1(),
                                    registry,
                                    lunit="cm",
                                    aunit="deg")
@@ -142,9 +142,9 @@ def rootShape2pyg4ometry(shape, reader) :
                                      shape.GetRmin(),
                                      shape.GetRmax(),
                                      shape.GetPhi1(),
-                                     shape.GetPhi2(),
+                                     shape.GetPhi2()-shape.GetPhi1(),
                                      shape.GetTheta1(),
-                                     shape.GetTheta2(),
+                                     shape.GetTheta2()-shape.GetTheta1(),
                                      registry,
                                      lunit="cm",
                                      aunit="deg")
@@ -356,8 +356,90 @@ class Reader:
         self._registry.setWorld(tv.GetName())
 
     def load(self):
+        self.loadMaterials()
         self.topVolume = self.tgm.GetTopVolume()
         self.recurseVolumeTree(self.topVolume)
+
+    def loadMaterials(self) :
+
+        materialList = self.tgm.GetListOfMaterials()
+
+        for iMat in range(0,materialList.GetEntries(),1) :
+
+            material = materialList.At(iMat)
+            materialAddress = _ROOT.addressof(material)
+            materialName = material.GetName()
+            materialName = materialName.replace(':','')
+            materialClass = material.Class_Name()
+
+            #print(f'ROOT.Reader.loadMaterials class={materialClass} name={materialName}')
+
+            components = []
+            properties = {}
+
+            state = material.GetState()
+            density = material.GetDensity()
+
+            n_comp = material.GetNelements()
+            if n_comp == 1 :
+                Z = material.GetZ()
+                A = material.GetA()
+                g4Mat = _g4.MaterialSingleElement(materialName, Z, A, density, registry=self._registry, tolerateZeroDensity=True)
+                g4Mat.set_state(state)
+
+            else :
+                g4Mat = _g4.MaterialCompound(materialName, density, n_comp, registry=self._registry, tolerateZeroDensity=True)
+                g4Mat.set_state(state)
+
+                for iComp in range(0,n_comp,1) :
+                    elem = material.GetElement(iComp)
+                    fraction = material.GetWmixt()[iComp]
+                    g4Mat.add_element_massfraction(self._makeG4Element(elem), fraction)
+
+            temperature = material.GetTemperature()
+            pressure = material.GetPressure()
+
+            g4Mat.set_temperature( temperature )
+            g4Mat.set_pressure( pressure )
+
+            # TODO add properties (a la lines 418-421 gdml/Reader.py)
+
+
+    def _makeG4Element(self, rootElement):
+        elemFormula = rootElement.GetName()
+        elemFormula = elemFormula.replace(':','')
+        elemName = elemFormula + '_elm'
+
+        if elemName in self._registry.materialDict :
+            return self._registry.materialDict[elemName]
+
+        if not rootElement.HasIsotopes() :
+            Z = rootElement.Z()
+            A = rootElement.A()
+            return _g4.ElementSimple(elemName, elemFormula, Z, A, registry=self._registry)
+
+        elemNisotopes = rootElement.GetNisotopes()
+
+        elemMat = _g4.ElementIsotopeMixture(elemName, elemFormula, elemNisotopes, registry=self._registry)
+
+        for iIsotope in range(0,elemNisotopes,1) :
+            isotope = rootElement.GetIsotope(iIsotope)
+            abundance = rootElement.GetRelativeAbundance(iIsotope)
+            elemMat.add_isotope(self._makeG4Isotope(isotope), abundance)
+
+        return elemMat
+
+    def _makeG4Isotope(self, rootIsotope):
+        isotopeName = rootIsotope.GetName()
+        isotopeName = isotopeName.replace(':','')
+
+        if isotopeName in self._registry.materialDict :
+            return self._registry.materialDict[isotopeName]
+
+        Z = rootIsotope.GetZ()
+        N = rootIsotope.GetN()
+        A = rootIsotope.GetA()
+        return _g4.Isotope(isotopeName, Z, N, A, registry=self._registry)
 
     def recurseVolumeTree(self, volume):
 
@@ -379,6 +461,8 @@ class Reader:
 
             # material
             material = volume.GetMaterial()
+            materialName = material.GetName()
+            materialName = materialName.replace(':','')
 
         if volumeAddress in self.logicalVolumes :
             # Already have the volume so increment counter
@@ -387,7 +471,7 @@ class Reader:
         else :
             if volumeClass == "TGeoVolume":
                 # make logical volume
-                volumePyG4 = _g4.LogicalVolume(shapePyG4,"G4_Galactic",volumeName,self._registry)
+                volumePyG4 = _g4.LogicalVolume(shapePyG4,materialName,volumeName,self._registry)
             elif volumeClass == "TGeoVolumeAssembly":
                 volumePyG4 = _g4.AssemblyVolume(volumeName,self._registry)
             else :
@@ -402,7 +486,7 @@ class Reader:
                 matrix = node.GetMatrix()
 
                 [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
-                nodeTraPyG4 = list(_np.linalg.inv(matROOT).dot(nodeTraPyG4))
+                nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
 
 
                 daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
@@ -414,7 +498,8 @@ class Reader:
                                               daughterVolumePyG4,
                                               node.GetName(),
                                               volumePyG4,
-                                              self._registry)
+                                              self._registry,
+                                              node.GetNumber())
 
 
             if self.first:
