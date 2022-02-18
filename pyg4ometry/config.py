@@ -7,11 +7,11 @@ meshing = meshingType.cgal_sm
 # meshing = meshingType.pycsg
 
 def backendName():
-    if meshing == 1:
+    if meshing == meshingType.pycsg:
         return "pycsg"
-    if meshing == 2:
+    if meshing == meshingType.cgal_sm:
         return "cgal_sm"
-    if meshing == 3:
+    if meshing == meshingType.cgal_np:
         return "cgal_np"
 
 # whether to generate meshes during the construction of each logical volume
