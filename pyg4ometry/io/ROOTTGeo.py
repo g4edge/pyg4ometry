@@ -446,7 +446,7 @@ def rootShape2pyg4ometry(shape, reader):
     return shapePyG4
 
 class Reader:
-    def __init__(self, fileName, upgradeVacuumToG4Galactic=True, solidsToTessellate=None, suffixSeparator="__"):
+    def __init__(self, fileName, upgradeVacuumToG4Galactic=True, solidsToTessellate=None, suffixSeparator="__", warnAboutBadShapes=True):
         if solidsToTessellate is None:
             solidsToTessellate = []
         self.solidsToTessellate = solidsToTessellate
@@ -467,7 +467,7 @@ class Reader:
         self.elements            = {}
         self.isotopes            = {}
 
-        self.load(upgradeVacuumToG4Galactic)
+        self.load(upgradeVacuumToG4Galactic, warnAboutBadShapes)
 
         tv = self.tgm.GetTopVolume()
         self._registry.setWorld(tv.GetName())
@@ -475,10 +475,10 @@ class Reader:
     def getRegistry(self):
         return self._registry
 
-    def load(self, upgradeVacuumToG4Galactic=True):
+    def load(self, upgradeVacuumToG4Galactic=True, warnAboutBadShapes=True):
         self.loadMaterials(upgradeVacuumToG4Galactic)
         self.topVolume = self.tgm.GetTopVolume()
-        self.recurseVolumeTree(self.topVolume)
+        self.recurseVolumeTree(self.topVolume, warnAboutBadShapes)
 
     def _ROOTMatStateToGeant4MatState(self, rootMaterialState):
         """
@@ -593,7 +593,7 @@ class Reader:
         A = rootIsotope.GetA()
         return _g4.Isotope(isotopeName, Z, N, A, registry=self._registry)
 
-    def recurseVolumeTree(self, volume):
+    def recurseVolumeTree(self, volume, warnAboutBadShapes=True):
 
         #print("ROOT.Reader.recurseVolumeTree class={} name={}".format(volume.GetName(),
         #                                                              volume.Class_Name()))
@@ -661,7 +661,8 @@ class Reader:
                 daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
                 if daughterVolumePyG4 is None:
                     vol = node.GetVolume()
-                    print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
+                    if warnAboutBadShapes:
+                        print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
                     continue
 
                 pvName = node.GetName()
