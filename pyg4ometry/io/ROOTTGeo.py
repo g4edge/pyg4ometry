@@ -569,14 +569,14 @@ class Reader:
                 self.materials[materialAddress] = g4galactic
                 continue # don't build a new material
 
-            n_comp = material.GetNelements()
-            if n_comp == 1:
+            if not material.IsMixture() :
                 Z = material.GetZ()
                 A = material.GetA()
                 g4Mat = _g4.MaterialSingleElement(materialName, Z, A, density, registry=self._registry, tolerateZeroDensity=True)
                 g4Mat.set_state(stateStr)
 
             else :
+                n_comp = material.GetNelements()
                 g4Mat = _g4.MaterialCompound(materialName, density, n_comp, registry=self._registry, tolerateZeroDensity=True)
                 g4Mat.set_state(stateStr)
 
