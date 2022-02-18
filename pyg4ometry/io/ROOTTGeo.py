@@ -457,7 +457,26 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
     return shapePyG4
 
 class Reader:
-    def __init__(self, fileName, upgradeVacuumToG4Galactic=True, solidsToTessellate=None, suffixSeparator="__", warnAboutBadShapes=True):
+    def __init__(self, fileName,
+                 upgradeVacuumToG4Galactic=True,
+                 solidsToTessellate=None,
+                 suffixSeparator="__",
+                 warnAboutBadShapes=True):
+        """
+        :param fileName: Name of root file to load as Geometry.
+        :type  fileName: str
+        :param upgradeVacuumToG4Galactic: If true, 'upgrade' any illegal 0 density materials to valid G4_Galactic.
+        :type  upgradeVacuumToG4Galactic: bool
+        :param solidsToTessellate: List of solids ('shapes') by name that should be replaced by a tessellated version.
+        :type  solidsToTessellate: list(str)
+        :param suffixSeparator: String to go between the object name and the counter for duplicate names (e.g. NAME__1).
+        :type  suffixSeparator: str
+        :param warnAboutBadShapes: Print a warning if true, about any shapes we can't successfully convert.
+        :type  warnAboutBadShapes: bool
+
+        Be careful the suffixSeparator doesn't match up with a typical name. e.g. NAME and NAME_1 might already exist
+        so we can't choose '_' as this would produce a degenerate name.
+        """
         if solidsToTessellate is None:
             solidsToTessellate = []
         self.solidsToTessellate = solidsToTessellate
