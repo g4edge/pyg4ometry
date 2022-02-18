@@ -225,18 +225,19 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             if warnAboutBadShapes:
                 if not _isClose(shape.GetAlpha1(), shape.GetAlpha2()):
                     print("warning: Alpha2 != Alpha1 and GDML doesn't include Alpha2 for TGeoGtra in shape '",shape.GetName,"'")
+            # see https://root.cern/doc/master/classTGDMLWrite.html#a4ce496683e55300ec3de53a43d707427
             shapePyG4 = _g4.solid.TwistedTrap(shapeName,
                                               shape.GetTwistAngle(),
                                               shape.GetDZ(),
                                               shape.GetTheta(),
                                               shape.GetPhi(),
                                               shape.GetH1(),  #pDy1
-                                              shape.GetTl1(), #pDx1
-                                              shape.GetBl1(), #pDx2
+                                              shape.GetBl1(), #pDx1
+                                              shape.GetTl1(), #pDx2
                                               shape.GetH2(),  #pDy2
-                                              shape.GetTl2(), #pDx3
-                                              shape.GetBl2(), #pDx4
-                                              shape.GetAlpha2(),
+                                              shape.GetBl2(), #pDx3
+                                              shape.GetTl2(), #pDx4
+                                              shape.GetAlpha1(),
                                               registry,
                                               lunit="cm",
                                               aunit="deg")
