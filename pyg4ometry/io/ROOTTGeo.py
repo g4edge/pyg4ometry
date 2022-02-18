@@ -461,7 +461,8 @@ class Reader:
                  upgradeVacuumToG4Galactic=True,
                  solidsToTessellate=None,
                  suffixSeparator="__",
-                 warnAboutBadShapes=True):
+                 warnAboutBadShapes=True,
+                 maximumDepth=1e6):
         """
         :param fileName: Name of root file to load as Geometry.
         :type  fileName: str
@@ -473,6 +474,8 @@ class Reader:
         :type  suffixSeparator: str
         :param warnAboutBadShapes: Print a warning if true, about any shapes we can't successfully convert.
         :type  warnAboutBadShapes: bool
+        :param maximumDepth: Maximum depth to load, 0=world, 1=1st daughter. Must be > 0.
+        :type  maximumDepth: int
 
         Be careful the suffixSeparator doesn't match up with a typical name. e.g. NAME and NAME_1 might already exist
         so we can't choose '_' as this would produce a degenerate name.
@@ -482,6 +485,7 @@ class Reader:
         self.solidsToTessellate = solidsToTessellate
 
         self.suffixSeparator = suffixSeparator
+        self.maximumDepth    = maximumDepth
 
         self.tgm = _ROOT.TGeoManager.Import(fileName)
         self.first = True
@@ -508,7 +512,7 @@ class Reader:
     def load(self, upgradeVacuumToG4Galactic=True, warnAboutBadShapes=True):
         self.loadMaterials(upgradeVacuumToG4Galactic)
         self.topVolume = self.tgm.GetTopVolume()
-        self.recurseVolumeTree(self.topVolume, warnAboutBadShapes)
+        self.recurseVolumeTree(self.topVolume, 0, self.maximumDepth, warnAboutBadShapes)
 
     def _ROOTMatStateToGeant4MatState(self, rootMaterialState):
         """
@@ -627,7 +631,7 @@ class Reader:
         A = rootIsotope.GetA()
         return _g4.Isotope(isotopeName, Z, N, A, registry=self._registry)
 
-    def recurseVolumeTree(self, volume, warnAboutBadShapes=True):
+    def recurseVolumeTree(self, volume, thisDepth, maximumDepth, warnAboutBadShapes=True):
 
         #print("ROOT.Reader.recurseVolumeTree class={} name={}".format(volume.GetName(),
         #                                                              volume.Class_Name()))
@@ -679,36 +683,36 @@ class Reader:
             self.logicalVolumes[volumeAddress] = {"name":volumeName,"class":volumeClass,"count":1,"pyg4Obj":volumePyG4,"rootObj":volume}
 
             # create and add daughters
-            for iDaughter in range(0,volume.GetNdaughters(),1) :
-                node   = volume.GetNode(iDaughter)
-                matrix = node.GetMatrix()
+            if thisDepth < maximumDepth:
+                for iDaughter in range(0,volume.GetNdaughters(),1):
+                    node   = volume.GetNode(iDaughter)
+                    matrix = node.GetMatrix()
 
-                [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
-                nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
+                    [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
+                    nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
 
+                    daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth, warnAboutBadShapes)
+                    if daughterVolumePyG4 is None:
+                        vol = node.GetVolume()
+                        if warnAboutBadShapes:
+                            print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
+                        continue
 
-                daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume())
-                if daughterVolumePyG4 is None:
-                    vol = node.GetVolume()
-                    if warnAboutBadShapes:
-                        print("unable to form daughter ({}) shape: {}".format(node.GetName(), vol.GetShape().GetName()))
-                    continue
+                    pvName = node.GetName()
+                    if self.objectNames[pvName] > 0:
+                        suffix = self.suffixSeparator + str(self.objectNames[pvName])
+                        self.objectNames[pvName] += 1
+                        pvName = pvName + suffix
+                    else:
+                        self.objectNames[pvName] += 1
 
-                pvName = node.GetName()
-                if self.objectNames[pvName] > 0:
-                    suffix = self.suffixSeparator + str(self.objectNames[pvName])
-                    self.objectNames[pvName] += 1
-                    pvName = pvName + suffix
-                else:
-                    self.objectNames[pvName] += 1
-
-                nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
-                                              nodeTraPyG4,
-                                              daughterVolumePyG4,
-                                              pvName,
-                                              volumePyG4,
-                                              self._registry,
-                                              node.GetNumber())
+                    nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
+                                                nodeTraPyG4,
+                                                daughterVolumePyG4,
+                                                pvName,
+                                                volumePyG4,
+                                                self._registry,
+                                                node.GetNumber())
 
 
             if self.first:
