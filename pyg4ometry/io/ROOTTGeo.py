@@ -39,12 +39,12 @@ def rootShape2pyg4ometry(shape, reader):
 
     shouldTessellate = shapeName in reader.solidsToTessellate
 
-    if reader.shapeNames[shapeName] > 0:
-        suffix = suffixSeparator + str(reader.shapeNames[shapeName])
-        reader.shapeNames[shapeName] += 1
+    if reader.objectNames[shapeName] > 0:
+        suffix = suffixSeparator + str(reader.objectNames[shapeName])
+        reader.objectNames[shapeName] += 1
         shapeName = shapeName + suffix
     else:
-        reader.shapeNames[shapeName] += 1
+        reader.objectNames[shapeName] += 1
 
     if shapeAddress in reader.shapes:
         reader.shapes[shapeAddress]["count"] += 1
@@ -390,20 +390,15 @@ class Reader:
         self.first = True
         self._registry = _g4.Registry()
 
+        self.objectNames         = _defaultdict(int)
         self.shapes              = {}
-        self.shapeNames          = _defaultdict(int)
         self.logicalVolumes      = {}
         self.matrices            = {} # map to rotations and translations in defines
-        self.matriceNames        = _defaultdict(int)
         self.physicalVolumes     = {}
-        self.volumeNames         = _defaultdict(int) # for both lvs and pvs
         self.materials           = {}
-        self.materialNames       = _defaultdict(int)
         self.materialSubstitutions = {}
         self.elements            = {}
-        self.elementNames        = _defaultdict(int)
         self.isotopes            = {}
-        self.isotopeNames        = _defaultdict(int)
 
         self.load(upgradeVacuumToG4Galactic)
 
@@ -448,12 +443,12 @@ class Reader:
                 g4Mat = _g4.getNistMaterialDict()[materialName]
                 continue
 
-            if self.materialNames[materialName] > 0:
-                suffix = self.suffixSeparator+str(self.materialNames[materialName])
-                self.materialNames[materialName] += 1
+            if self.objectNames[materialName] > 0:
+                suffix = self.suffixSeparator+str(self.objectNames[materialName])
+                self.objectNames[materialName] += 1
                 materialName = materialName + suffix
             else:
-                self.materialNames[materialName] += 1
+                self.objectNames[materialName] += 1
 
             #print(f'ROOT.Reader.loadMaterials class={materialClass} name={materialName}')
 
@@ -539,12 +534,12 @@ class Reader:
         volumeName    = volume.GetName()
         volumeClass   = volume.Class_Name()
 
-        if self.volumeNames[volumeName] > 0:
-            suffix = self.suffixSeparator + str(self.volumeNames[volumeName])
-            self.volumeNames[volumeName] += 1
+        if self.objectNames[volumeName] > 0:
+            suffix = self.suffixSeparator + str(self.objectNames[volumeName])
+            self.objectNames[volumeName] += 1
             volumeName = volumeName + suffix
         else:
-            self.volumeNames[volumeName] += 1
+            self.objectNames[volumeName] += 1
 
 
         if volumeClass != "TGeoVolumeAssembly" :
@@ -603,12 +598,12 @@ class Reader:
                     continue
 
                 pvName = node.GetName()
-                if self.volumeNames[pvName] > 0:
-                    suffix = self.suffixSeparator + str(self.volumeNames[pvName])
-                    self.volumeNames[pvName] += 1
+                if self.objectNames[pvName] > 0:
+                    suffix = self.suffixSeparator + str(self.objectNames[pvName])
+                    self.objectNames[pvName] += 1
                     pvName = pvName + suffix
                 else:
-                    self.volumeNames[pvName] += 1
+                    self.objectNames[pvName] += 1
 
                 nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
                                               nodeTraPyG4,
