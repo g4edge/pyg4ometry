@@ -39,7 +39,10 @@ CSG::~CSG() {
   delete _surfacemesh;
 }
 
-CSG *CSG::clone() { return new CSG(*this); }
+CSG *CSG::clone() {
+  // py::print("CSG::clone()");
+  return new CSG(*this);
+}
 
 CSG* CSG::fromPolygons(py::list &polygons, bool cgalTest) {
 
@@ -201,8 +204,8 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
       
       // check if not in in map
       if (vertexIndexMap.find(posHash) == vertexIndexMap.end()) {
-	vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,verts.size()));
-	verts.push_back(vert->pos());
+	    vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,verts.size()));
+	    verts.push_back(vert->pos());
       }
       
       cell.push_back(vertexIndexMap.find(posHash)->second);
