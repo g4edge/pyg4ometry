@@ -96,6 +96,9 @@ class LogicalVolume(object):
         """
         try:
             self.mesh = _Mesh(self.solid)
+            if recursive:
+                for d in self.daughterVolumes:
+                    d.logicalVolume.reMesh(recursive)
         except:
             self.mesh = None
             print("geant4.LogicalVolume> meshing error {}".format(self.name))
