@@ -505,8 +505,12 @@ class Reader:
             materialName = materialName.replace(':','')
             materialClass = material.Class_Name()
 
+            if materialName.lower() == "dummy":
+                self.materialSubstitutions[materialName] = g4galactic
+                self.materials[materialAddress] = g4galactic
+
             # check for NIST material
-            if materialName in nistMaterials.keys() :
+            if materialName in nistMaterials.keys():
                 g4Mat = _g4.getNistMaterialDict()[materialName]
                 continue
 
@@ -609,7 +613,7 @@ class Reader:
             self.objectNames[volumeName] += 1
 
 
-        if volumeClass != "TGeoVolumeAssembly" :
+        if volumeClass != "TGeoVolumeAssembly":
 
             # shape
             shape        = volume.GetShape()
@@ -627,11 +631,6 @@ class Reader:
             materialName = materialName.replace(':','')
             materialAddress = _ROOT.addressof(material)
             thisMaterial = self.materials[materialAddress]
-
-            # ROOT dummy materials (if material is nist defined on LV gdml tag)
-            if materialName == "dummy" :
-                # print("ROOT.Reader> found dummy material for {}".format(volumeName))
-                materialName = "G4_Galactic"
 
         if volumeAddress in self.logicalVolumes:
             # Already have the volume so increment counter
