@@ -59,6 +59,8 @@ def rootShape2pyg4ometry(shape, reader):
                                  "rootObj": shape}
 
     if shapeClass == "TGeoBBox":
+        if shape.GetDX() <= 0 or shape.GetDY() <= 0 or shape.GetDZ() <= 0:
+            return None
         shapePyG4 = _g4.solid.Box(shapeName,
                                   shape.GetDX()*2,
                                   shape.GetDY()*2,
@@ -66,6 +68,8 @@ def rootShape2pyg4ometry(shape, reader):
                                   registry,
                                   lunit="cm")
     elif shapeClass == "TGeoTube":
+        if shape.GetDz() <= 0 or shape.GetRmax() <= 0:
+            return None
         shapePyG4 = _g4.solid.Tubs(shapeName,
                                    shape.GetRmin(),
                                    shape.GetRmax(),
@@ -76,6 +80,8 @@ def rootShape2pyg4ometry(shape, reader):
                                    lunit="cm",
                                    aunit="deg")
     elif shapeClass == "TGeoTubeSeg":
+        if shape.GetDz() <= 0 or shape.GetRmax() <= 0:
+            return None
         shapePyG4 = _g4.solid.Tubs(shapeName,
                                    shape.GetRmin(),
                                    shape.GetRmax(),
@@ -86,9 +92,10 @@ def rootShape2pyg4ometry(shape, reader):
                                    lunit="cm",
                                    aunit="deg")
     elif shapeClass == "TGeoCtub":
+        if shape.GetDz() <= 0 or shape.GetRmax() <= 0:
+            return None
         nlow  = shape.GetNlow()
         nhigh = shape.GetNhigh()
-
         shapePyG4 = _g4.solid.CutTubs(shapeName,
                                       shape.GetRmin(),
                                       shape.GetRmax(),
@@ -101,6 +108,8 @@ def rootShape2pyg4ometry(shape, reader):
                                       lunit="cm",
                                       aunit="deg")
     elif shapeClass == "TGeoConeSeg":
+        if shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.Cons(shapeName,
                                    shape.GetRmin1(),
                                    shape.GetRmax1(),
@@ -124,6 +133,8 @@ def rootShape2pyg4ometry(shape, reader):
                                    lunit="cm",
                                    aunit="deg")
     elif shapeClass == "TGeoTrd1":
+        if shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.Trd(shapeName,
                                   shape.GetDx1()*2,
                                   shape.GetDx2()*2,
@@ -133,6 +144,8 @@ def rootShape2pyg4ometry(shape, reader):
                                   registry,
                                   lunit="cm")
     elif shapeClass == "TGeoTrd2":
+        if shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.Trd(shapeName,
                                   shape.GetDx1()*2,
                                   shape.GetDx2()*2,
@@ -177,6 +190,8 @@ def rootShape2pyg4ometry(shape, reader):
                                           lunit="cm",
                                           aunit="deg")
     elif shapeClass == "TGeoSphere":
+        if shape.GetRmax() <= 0 or shape.GetRmax() <= 0:
+            return None
         shapePyG4 = _g4.solid.Sphere(shapeName,
                                      shape.GetRmin(),
                                      shape.GetRmax(),
@@ -188,6 +203,8 @@ def rootShape2pyg4ometry(shape, reader):
                                      lunit="cm",
                                      aunit="deg")
     elif shapeClass == "TGeoTorus":
+        if shape.GetRmax() <= 0:
+            return None
         shapePyG4 = _g4.solid.Torus(shapeName,
                                     shape.GetRmin(),
                                     shape.GetRmax(),
@@ -231,6 +248,8 @@ def rootShape2pyg4ometry(shape, reader):
                                         lunit="cm",
                                         aunit="deg")
     elif shapeClass == "TGeoEltu":
+        if shape.GetA() <= 0 or shape.GetB() <= 0 or shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.EllipticalTube(shapeName,
                                              shape.GetA()*2,
                                              shape.GetB()*2,
@@ -238,6 +257,8 @@ def rootShape2pyg4ometry(shape, reader):
                                              registry,
                                              lunit="cm")
     elif shapeClass == "TGeoCone":
+        if shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.Cons(shapeName,
                                    shape.GetRmin1(),
                                    shape.GetRmax1(),
@@ -249,6 +270,8 @@ def rootShape2pyg4ometry(shape, reader):
                                    registry,
                                    lunit="cm")
     elif shapeClass == "TGeoParaboloid":
+        if shape.GetDz() <= 0 or shape.GetRhi() <= 0:
+            return None
         shapePyG4 = _g4.solid.Paraboloid(shapeName,
                                          shape.GetDz()*2,
                                          shape.GetRlo(),
@@ -256,6 +279,8 @@ def rootShape2pyg4ometry(shape, reader):
                                          registry,
                                          lunit="cm")
     elif shapeClass == "TGeoHype":
+        if shape.GetDz() <= 0:
+            return None
         shapePyG4 = _g4.solid.Hype(shapeName,
                                    shape.GetRmin(),
                                    shape.GetRmax(),
@@ -288,12 +313,12 @@ def rootShape2pyg4ometry(shape, reader):
         scale = shape.GetScale().GetScale()
         shapePyG4Unscaled = rootShape2pyg4ometry(shape.GetShape(),
                                                  reader)
-        shapePyG4         = _g4.solid.Scaled(shapeName,
-                                             shapePyG4Unscaled,
-                                             scale[0],
-                                             scale[1],
-                                             scale[2],
-                                             registry)
+        shapePyG4 = _g4.solid.Scaled(shapeName,
+                                     shapePyG4Unscaled,
+                                     scale[0],
+                                     scale[1],
+                                     scale[2],
+                                     registry)
     elif shapeClass == "TGeoTessellated":
         nVert   = shape.GetNvertices()
         nFacet  = shape.GetNfacets()
@@ -372,7 +397,8 @@ def rootShape2pyg4ometry(shape, reader):
                                   registry,
                                   lunit="cm")
 
-    if shouldTessellate:
+    # shapePyG4 could be None here
+    if shouldTessellate and shapePyG4 is not None:
         shapePyG4 = shapePyG4.conver2Tessellated()
         del registry.solidDict[shapeName]
 
