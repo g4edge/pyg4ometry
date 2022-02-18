@@ -374,6 +374,7 @@ def rootShape2pyg4ometry(shape, reader):
 
     if shouldTessellate:
         shapePyG4 = shapePyG4.conver2Tessellated()
+        del registry.solidDict[shapeName]
 
     reader.shapes[shapeAddress]['pyg4Obj'] = shapePyG4
     return shapePyG4
