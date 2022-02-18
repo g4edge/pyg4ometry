@@ -5,6 +5,14 @@ import numpy as _np
 
 from collections import defaultdict as _defaultdict
 
+def _isClose(a, b, relativeTolerance=1e-5, absoluteTolerance=0.0):
+    """
+    return True if values are close to each other. As judged by the
+    absolute difference between a and b is greater than relative_tolerance
+    times that difference. Implementation from PEP 485 (python > 3.5)
+    """
+    return abs(a-b) <= max(relativeTolerance * max(abs(a), abs(b)), absoluteTolerance)
+
 def rootMatrix2pyg4ometry(matrix, reader):
     if _ROOT.addressof(matrix) in reader.matrices:
         boolRotPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4RotObj']
@@ -27,7 +35,7 @@ def rootMatrix2pyg4ometry(matrix, reader):
                                                     "rootObj": matrix}
         return [rotPyG4, traPyG4, rotation, translation]
 
-def rootShape2pyg4ometry(shape, reader):
+def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
     registry = reader._registry
 
     suffixSeparator = reader.suffixSeparator
@@ -214,6 +222,9 @@ def rootShape2pyg4ometry(shape, reader):
         elif shape.GetDz() <= 0:
             return None
         else:
+            if warnAboutBadShapes:
+                if not _isClose(shape.GetAlpha1(), shape.GetAlpha2()):
+                    print("warning: Alpha2 != Alpha1 and GDML doesn't include Alpha2 for TGeoGtra in shape '",shape.GetName,"'")
             shapePyG4 = _g4.solid.TwistedTrap(shapeName,
                                               shape.GetTwistAngle(),
                                               shape.GetDZ(),
@@ -351,8 +362,7 @@ def rootShape2pyg4ometry(shape, reader):
                                             lunit="cm")
     elif shapeClass == "TGeoScaledShape":
         scale = shape.GetScale().GetScale()
-        shapePyG4Unscaled = rootShape2pyg4ometry(shape.GetShape(),
-                                                 reader)
+        shapePyG4Unscaled = rootShape2pyg4ometry(shape.GetShape(), reader, warnAboutBadShapes)
         shapePyG4 = _g4.solid.Scaled(shapeName,
                                      shapePyG4Unscaled,
                                      scale[0],
@@ -395,8 +405,8 @@ def rootShape2pyg4ometry(shape, reader):
         boolNodeLeftMatrix  = boolNode.GetLeftMatrix()
         boolNodeRightMatrix = boolNode.GetRightMatrix()
 
-        boolLeftShapePyG4   = rootShape2pyg4ometry(boolNodeLeftShape, reader)
-        boolRightShapePyG4  = rootShape2pyg4ometry(boolNodeRightShape, reader)
+        boolLeftShapePyG4   = rootShape2pyg4ometry(boolNodeLeftShape, reader, warnAboutBadShapes)
+        boolRightShapePyG4  = rootShape2pyg4ometry(boolNodeRightShape, reader, warnAboutBadShapes)
 
         [boolNodeLeftRotPyG4, boolNodeLeftTraPyG4, matROOT, traROOT ]   = rootMatrix2pyg4ometry(boolNodeLeftMatrix,  reader)
         [boolNodeRightRotPyG4, boolNodeRightTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(boolNodeRightMatrix, reader)
@@ -621,7 +631,7 @@ class Reader:
             shapeName    = shape.GetName()
             shapeClass   = shape.Class_Name()
 
-            shapePyG4 = rootShape2pyg4ometry(shape, self)
+            shapePyG4 = rootShape2pyg4ometry(shape, self, warnAboutBadShapes)
             if shapePyG4 is None:
                 return None # unable to make the shape.. or poorly defined
 
