@@ -58,6 +58,50 @@ def rootShape2pyg4ometry(shape, reader):
     reader.shapes[shapeAddress] = {"name": shapeName, "class": shapeClass, "count": 1, "pyg4Obj": None,
                                  "rootObj": shape}
 
+    def Arb8(aShape, aShapeName, aRegistry):
+        if aShape.GetDz() <= 0:
+            return None
+        vertices = aShape.GetVertices()
+        result = _g4.solid.GenericTrap(aShapeName,
+                                          vertices[0],  vertices[1],
+                                          vertices[2],  vertices[3],
+                                          vertices[4],  vertices[5],
+                                          vertices[6],  vertices[7],
+                                          vertices[8],  vertices[9],
+                                          vertices[10], vertices[11],
+                                          vertices[12], vertices[13],
+                                          vertices[14], vertices[15],
+                                          aShape.GetDz(),
+                                          aRegistry, lunit="cm")
+        return result
+
+    def Trap(aShape, aShapeName, aRegistry):
+        c1 = aShape.GetBl1() <= 0 or aShape.GetTl1() <= 0 or aShape.GetH1() <= 0
+        c2 = aShape.GetBl2() <= 0 or aShape.GetTl2() <= 0 or aShape.GetH2() <= 0
+        if c1 or c2:
+            result = Arb8(aShape, aShapeName, aRegistry)
+        elif aShape.IsTwisted():
+            result = Arb8(aShape, aShapeName, aRegistry)
+        elif aShape.GetDz() <= 0:
+            return None
+        else:
+            result = _g4.solid.Trap(aShapeName,
+                                    aShape.GetDZ(),
+                                    aShape.GetTheta(),
+                                    aShape.GetPhi(),
+                                    aShape.GetH1(),
+                                    aShape.GetTl1(),
+                                    aShape.GetBl1(),
+                                    aShape.GetAlpha1(),
+                                    aShape.GetH2(),
+                                    aShape.GetTl2(),
+                                    aShape.GetBl2(),
+                                    aShape.GetAlpha2(),
+                                    aRegistry,
+                                    lunit="cm",
+                                    aunit="deg")
+        return result
+
     if shapeClass == "TGeoBBox":
         if shape.GetDX() <= 0 or shape.GetDY() <= 0 or shape.GetDZ() <= 0:
             return None
@@ -67,6 +111,8 @@ def rootShape2pyg4ometry(shape, reader):
                                   shape.GetDZ()*2,
                                   registry,
                                   lunit="cm")
+    elif shapeClass == "TGeoArb8":
+        shapePyG4 = Arb8(shape, shapeName, registry)
     elif shapeClass == "TGeoTube":
         if shape.GetDz() <= 0 or shape.GetRmax() <= 0:
             return None
@@ -155,40 +201,34 @@ def rootShape2pyg4ometry(shape, reader):
                                   registry,
                                   lunit="cm")
     elif shapeClass == "TGeoTrap":
-        h1 = shape.GetH1()
-        if h1 == 0:
-            return None # sometimes it's a totally emtpy TGeoTrap... this is the first would-be 0 parameter in that case
-        shapePyG4 = _g4.solid.Trap(shapeName,
-                                   shape.GetDZ(),
-                                   shape.GetTheta(),
-                                   shape.GetPhi(),
-                                   shape.GetH1(),
-                                   shape.GetTl1(),
-                                   shape.GetBl1(),
-                                   shape.GetAlpha1(),
-                                   shape.GetH2(),
-                                   shape.GetTl2(),
-                                   shape.GetBl2(),
-                                   shape.GetAlpha2(),
-                                   registry,
-                                   lunit="cm",
-                                   aunit="deg")
+        shapePyG4 = Trap(shape, shapeName, registry)
     elif shapeClass == "TGeoGtra":
-        shapePyG4 = _g4.solid.TwistedTrap(shapeName,
-                                          shape.GetTwistAngle(),
-                                          shape.GetDZ(),
-                                          shape.GetTheta(),
-                                          shape.GetPhi(),
-                                          shape.GetH1(),  #pDy1
-                                          shape.GetTl1(), #pDx1
-                                          shape.GetBl1(), #pDx2
-                                          shape.GetH2(),  #pDy2
-                                          shape.GetTl2(), #pDx3
-                                          shape.GetBl2(), #pDx4
-                                          shape.GetAlpha2(),
-                                          registry,
-                                          lunit="cm",
-                                          aunit="deg")
+        c1 = shape.GetBl1() <= 0 or shape.GetTl1() <= 0 or shape.GetH1() <= 0
+        c2 = shape.GetBl2() <= 0 or shape.GetTl2() <= 0 or shape.GetH2() <= 0
+        if c1 or c2:
+            shapePyG4 = Arb8(shape, shapeName, registry)
+        elif shape.IsTwisted():
+            shapePyG4 = Arb8(shape, shapeName, registry)
+        elif shape.GetTwistAngle() == 0:
+            shapePyG4 = Trap(shape, shapeName, registry)
+        elif shape.GetDz() <= 0:
+            return None
+        else:
+            shapePyG4 = _g4.solid.TwistedTrap(shapeName,
+                                              shape.GetTwistAngle(),
+                                              shape.GetDZ(),
+                                              shape.GetTheta(),
+                                              shape.GetPhi(),
+                                              shape.GetH1(),  #pDy1
+                                              shape.GetTl1(), #pDx1
+                                              shape.GetBl1(), #pDx2
+                                              shape.GetH2(),  #pDy2
+                                              shape.GetTl2(), #pDx3
+                                              shape.GetBl2(), #pDx4
+                                              shape.GetAlpha2(),
+                                              registry,
+                                              lunit="cm",
+                                              aunit="deg")
     elif shapeClass == "TGeoSphere":
         if shape.GetRmax() <= 0 or shape.GetRmax() <= 0:
             return None
