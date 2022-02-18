@@ -71,16 +71,16 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             return None
         vertices = aShape.GetVertices()
         result = _g4.solid.GenericTrap(aShapeName,
-                                          vertices[0],  vertices[1],
-                                          vertices[2],  vertices[3],
-                                          vertices[4],  vertices[5],
-                                          vertices[6],  vertices[7],
-                                          vertices[8],  vertices[9],
-                                          vertices[10], vertices[11],
-                                          vertices[12], vertices[13],
-                                          vertices[14], vertices[15],
-                                          aShape.GetDz(),
-                                          aRegistry, lunit="cm")
+                                       vertices[0],  vertices[1],
+                                       vertices[2],  vertices[3],
+                                       vertices[4],  vertices[5],
+                                       vertices[6],  vertices[7],
+                                       vertices[8],  vertices[9],
+                                       vertices[10], vertices[11],
+                                       vertices[12], vertices[13],
+                                       vertices[14], vertices[15],
+                                       aShape.GetDz(),
+                                       aRegistry, lunit="cm")
         return result
 
     def Trap(aShape, aShapeName, aRegistry):
@@ -94,16 +94,16 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             return None
         else:
             result = _g4.solid.Trap(aShapeName,
-                                    aShape.GetDZ(),
+                                    aShape.GetDZ()*2,
                                     aShape.GetTheta(),
                                     aShape.GetPhi(),
-                                    aShape.GetH1(),
-                                    aShape.GetTl1(),
-                                    aShape.GetBl1(),
+                                    aShape.GetH1()*2,
+                                    aShape.GetTl1()*2,
+                                    aShape.GetBl1()*2,
                                     aShape.GetAlpha1(),
-                                    aShape.GetH2(),
-                                    aShape.GetTl2(),
-                                    aShape.GetBl2(),
+                                    aShape.GetH2()*2,
+                                    aShape.GetTl2()*2,
+                                    aShape.GetBl2()*2,
                                     aShape.GetAlpha2(),
                                     aRegistry,
                                     lunit="cm",
