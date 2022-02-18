@@ -75,7 +75,7 @@ class LogicalVolume(object):
         self._daughterVolumesDict = {}
         self.bdsimObjects    = []
         if _config.doMeshing:
-            self._reMesh()
+            self.reMesh()
         self.auxiliary = []
         self.addAuxiliaryInfo(kwargs.get("auxiliary", None))
 
@@ -90,7 +90,10 @@ class LogicalVolume(object):
     def __repr__(self):
         return 'Logical volume : '+self.name+' '+str(self.solid)+' '+str(self.material)
 
-    def _reMesh(self):
+    def reMesh(self, recursive=False):
+        """
+        Regenerate the visualisation for this logical volume.
+        """
         try:
             self.mesh = _Mesh(self.solid)
         except:
