@@ -462,7 +462,8 @@ class Reader:
                  solidsToTessellate=None,
                  suffixSeparator="__",
                  warnAboutBadShapes=True,
-                 maximumDepth=1e6):
+                 maximumDepth=1e6,
+                 dontLoadOverlapNodes=True):
         """
         :param fileName: Name of root file to load as Geometry.
         :type  fileName: str
@@ -476,6 +477,8 @@ class Reader:
         :type  warnAboutBadShapes: bool
         :param maximumDepth: Maximum depth to load, 0=world, 1=1st daughter. Must be > 0.
         :type  maximumDepth: int
+        :param dontLoadOverlapNodes: ROOT allows purposively overlapping geometry nodes. We don't load these by default.
+        :type  dontLoadOverlapNodes: bool
 
         Be careful the suffixSeparator doesn't match up with a typical name. e.g. NAME and NAME_1 might already exist
         so we can't choose '_' as this would produce a degenerate name.
@@ -501,7 +504,7 @@ class Reader:
         self.elements            = {}
         self.isotopes            = {}
 
-        self.load(upgradeVacuumToG4Galactic, warnAboutBadShapes)
+        self.load(upgradeVacuumToG4Galactic, warnAboutBadShapes, dontLoadOverlapNodes)
 
         tv = self.tgm.GetTopVolume()
         self._registry.setWorld(tv.GetName())
@@ -509,10 +512,10 @@ class Reader:
     def getRegistry(self):
         return self._registry
 
-    def load(self, upgradeVacuumToG4Galactic=True, warnAboutBadShapes=True):
+    def load(self, upgradeVacuumToG4Galactic=True, warnAboutBadShapes=True, dontLoadOverlapNodes=True):
         self.loadMaterials(upgradeVacuumToG4Galactic)
         self.topVolume = self.tgm.GetTopVolume()
-        self.recurseVolumeTree(self.topVolume, 0, self.maximumDepth, warnAboutBadShapes)
+        self.recurseVolumeTree(self.topVolume, 0, self.maximumDepth, warnAboutBadShapes, dontLoadOverlapNodes)
 
     def _ROOTMatStateToGeant4MatState(self, rootMaterialState):
         """
@@ -631,7 +634,7 @@ class Reader:
         A = rootIsotope.GetA()
         return _g4.Isotope(isotopeName, Z, N, A, registry=self._registry)
 
-    def recurseVolumeTree(self, volume, thisDepth, maximumDepth, warnAboutBadShapes=True):
+    def recurseVolumeTree(self, volume, thisDepth, maximumDepth, warnAboutBadShapes=True, dontLoadOverlapNodes=True):
 
         #print("ROOT.Reader.recurseVolumeTree class={} name={}".format(volume.GetName(),
         #                                                              volume.Class_Name()))
@@ -686,12 +689,20 @@ class Reader:
             if thisDepth < maximumDepth:
                 for iDaughter in range(0,volume.GetNdaughters(),1):
                     node   = volume.GetNode(iDaughter)
+
+                    # root has it's own layered geometry where it allows overlaps
+                    if node.IsOverlapping() and dontLoadOverlapNodes:
+                        if warnAboutBadShapes:
+                            print("ROOT overlap node named {}, not building".format(node.GetName()))
+                        continue # to next node / volume
+
                     matrix = node.GetMatrix()
 
                     [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
                     nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
 
-                    daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth, warnAboutBadShapes)
+                    daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth,
+                                                                warnAboutBadShapes, dontLoadOverlapNodes)
                     if daughterVolumePyG4 is None:
                         vol = node.GetVolume()
                         if warnAboutBadShapes:
