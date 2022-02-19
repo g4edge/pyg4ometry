@@ -17,23 +17,42 @@ def rootMatrix2pyg4ometry(matrix, reader):
     if _ROOT.addressof(matrix) in reader.matrices:
         boolRotPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4RotObj']
         boolTraPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4TraObj']
+        boolScaPyG4 = reader.matrices[_ROOT.addressof(matrix)]['pyg4ScaObj']
         rotation    = _np.frombuffer(reader.matrices[_ROOT.addressof(matrix)]['rootObj'].GetRotationMatrix(),dtype=_np.float64,count=9).reshape((3,3))
         translation = _np.frombuffer(reader.matrices[_ROOT.addressof(matrix)]['rootObj'].GetTranslation(),dtype=_np.float64,count=3)
         reader.matrices[_ROOT.addressof(matrix)]['count'] += 1
-        return [boolRotPyG4, boolTraPyG4, rotation, translation]
+        return [boolRotPyG4, boolTraPyG4, boolScaPyG4, rotation, translation]
     else:
         rotation    = _np.frombuffer(matrix.GetRotationMatrix(),dtype=_np.float64,count=9).reshape((3,3))
         translation = _np.frombuffer(matrix.GetTranslation(),dtype=_np.float64,count=3)
+        scale       = [1,1,1]
+        if matrix.IsReflection() :
+            q, r = _np.linalg.qr(rotation)
+            print("matrix")
+            print("m ", rotation[0][0],rotation[0][1],rotation[0][2])
+            print("m ",rotation[1][0],rotation[1][1],rotation[1][2])
+            print("m ",rotation[2][0],rotation[2][1],rotation[2][2])
+            print("IsScale({}), IsReflection({}), IsCombi({}), IsGeneral({}), Det({})".format(matrix.IsScale(), matrix.IsReflection(),matrix.IsCombi(),matrix.IsGeneral(),_np.linalg.det(rotation)))
+            q,r = _np.linalg.qr(rotation)
+            print("Scale : ",matrix.GetScale()[0],matrix.GetScale()[1],matrix.GetScale()[2])
+            print(q)
+            print(r)
+            scale[0] = r[0][0]
+            scale[1] = r[1][1]
+            scale[2] = r[2][2]
+            rotation = q
 
         rotPyG4 = list(_transformation.matrix2tbxyz(rotation))
         traPyG4 = list(translation*10) # TODO check units on booleans
+        scaPyG4 = list(scale)
 
         reader.matrices[_ROOT.addressof(matrix)] = {"name": matrix.GetName(),
                                                     "count": 1,
                                                     "pyg4RotObj": rotPyG4,
                                                     "pyg4TraObj": traPyG4,
+                                                    "pyg4ScaObj": scaPyG4,
                                                     "rootObj": matrix}
-        return [rotPyG4, traPyG4, rotation, translation]
+        return [rotPyG4, traPyG4, scaPyG4,rotation, translation]
 
 def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
     registry = reader._registry
@@ -409,8 +428,8 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
         boolLeftShapePyG4   = rootShape2pyg4ometry(boolNodeLeftShape, reader, warnAboutBadShapes)
         boolRightShapePyG4  = rootShape2pyg4ometry(boolNodeRightShape, reader, warnAboutBadShapes)
 
-        [boolNodeLeftRotPyG4, boolNodeLeftTraPyG4, matROOT, traROOT ]  = rootMatrix2pyg4ometry(boolNodeLeftMatrix,  reader)
-        [boolNodeRightRotPyG4, boolNodeRightTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(boolNodeRightMatrix, reader)
+        [boolNodeLeftRotPyG4, boolNodeLeftTraPyG4, boolNodeLeftScaPyG4, matROOT, traROOT ]  = rootMatrix2pyg4ometry(boolNodeLeftMatrix,  reader)
+        [boolNodeRightRotPyG4, boolNodeRightTraPyG4, boolNodeRightScaPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(boolNodeRightMatrix, reader)
 
         # needed for nested booleans solids
         if shapeName in reader._registry.solidDict:
@@ -698,7 +717,7 @@ class Reader:
 
                     matrix = node.GetMatrix()
 
-                    [nodeRotPyG4, nodeTraPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
+                    [nodeRotPyG4, nodeTraPyG4, nodeScaPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
                     nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
 
                     daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth,
@@ -723,7 +742,9 @@ class Reader:
                                                 pvName,
                                                 volumePyG4,
                                                 self._registry,
-                                                node.GetNumber())
+                                                node.GetNumber(),
+                                                True,
+                                                nodeScaPyG4)
 
 
             if self.first:
