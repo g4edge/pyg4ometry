@@ -98,12 +98,12 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
                                     aShape.GetTheta(),
                                     aShape.GetPhi(),
                                     aShape.GetH1()*2,
-                                    aShape.GetTl1()*2,
                                     aShape.GetBl1()*2,
+                                    aShape.GetTl1()*2,
                                     aShape.GetAlpha1(),
                                     aShape.GetH2()*2,
-                                    aShape.GetTl2()*2,
                                     aShape.GetBl2()*2,
+                                    aShape.GetTl2()*2,
                                     aShape.GetAlpha2(),
                                     aRegistry,
                                     lunit="cm",
@@ -569,14 +569,14 @@ class Reader:
                 self.materials[materialAddress] = g4galactic
                 continue # don't build a new material
 
-            n_comp = material.GetNelements()
-            if n_comp == 1:
+            if not material.IsMixture() :
                 Z = material.GetZ()
                 A = material.GetA()
                 g4Mat = _g4.MaterialSingleElement(materialName, Z, A, density, registry=self._registry, tolerateZeroDensity=True)
                 g4Mat.set_state(stateStr)
 
             else :
+                n_comp = material.GetNelements()
                 g4Mat = _g4.MaterialCompound(materialName, density, n_comp, registry=self._registry, tolerateZeroDensity=True)
                 g4Mat.set_state(stateStr)
 
