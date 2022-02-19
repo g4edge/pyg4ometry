@@ -793,7 +793,7 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
                     nonlocal problem
                     aDifference = dv != 0
                     if aDifference:
-                        problem = problem or ((dv / v1) > tests.toleranceSolidParameterFraction)
+                        problem = problem or (abs(dv / v1) > tests.toleranceSolidParameterFraction)
 
                 def ProblemLength(v1,v2):
                     """Report if length of iterable list or tuple is different."""
