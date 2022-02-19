@@ -228,15 +228,15 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             # see https://root.cern/doc/master/classTGDMLWrite.html#a4ce496683e55300ec3de53a43d707427
             shapePyG4 = _g4.solid.TwistedTrap(shapeName,
                                               shape.GetTwistAngle(),
-                                              shape.GetDZ(),
+                                              shape.GetDZ()*2,
                                               shape.GetTheta(),
                                               shape.GetPhi(),
-                                              shape.GetH1(),  #pDy1
-                                              shape.GetBl1(), #pDx1
-                                              shape.GetTl1(), #pDx2
-                                              shape.GetH2(),  #pDy2
-                                              shape.GetBl2(), #pDx3
-                                              shape.GetTl2(), #pDx4
+                                              shape.GetH1()*2,  #pDy1
+                                              shape.GetBl1()*2, #pDx1
+                                              shape.GetTl1()*2, #pDx2
+                                              shape.GetH2()*2,  #pDy2
+                                              shape.GetBl2()*2, #pDx3
+                                              shape.GetTl2()*2, #pDx4
                                               shape.GetAlpha1(),
                                               registry,
                                               lunit="cm",
