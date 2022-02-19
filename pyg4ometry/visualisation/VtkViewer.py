@@ -351,6 +351,15 @@ class VtkViewer:
         self.ren.AddActor(lvmActor)
 
     def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
+        """
+        :param solid: pyg4ometry.geant4.solid instance.
+        :type  solid: pyg4ometry.geant4.solid.SolidBase
+        Other parameters are for internal recursion and don't need to be provided.
+
+        Render only a Boolean solid. If one of the constituent solids is also a Boolean, visualise those too. The
+        resultant Boolean is shown in solid form and each constituent in a wireframe. In the case of a null mesh,
+        only the constituents can be shown.
+        """
         if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection":
 
             if first:
