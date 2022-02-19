@@ -84,7 +84,7 @@ class SolidDefaults:
         nstack = 20
 
     class TwistedTrap:
-        nstack = 20
+        nstack = 3
 
     class TwistedTrd:
         nstack = 20
