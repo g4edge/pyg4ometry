@@ -1,5 +1,6 @@
 import numpy as _np
 import vtk as _vtk
+import pyg4ometry.exceptions as _exceptions
 import pyg4ometry.transformation as _transformation
 from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
@@ -349,19 +350,22 @@ class VtkViewer:
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
-    def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first = True) :
-        if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection" :
+    def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
+        if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection":
 
             if first:
-                mesh = solid.mesh()
-                visOptions = _VisOptions()
-                visOptions.representation = "surface"
-                visOptions.alpha = 1.0
-                visOptions.color = [0.5, 0.5, 0.5]
-                self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
-                             self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                             self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
-                first = False
+                try:
+                    mesh = solid.mesh()
+                    visOptions = _VisOptions()
+                    visOptions.representation = "surface"
+                    visOptions.alpha = 1.0
+                    visOptions.color = [0.5, 0.5, 0.5]
+                    self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
+                                self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                                self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+                    first = False
+                except _exceptions.NullMeshError:
+                    print(solid.name,"> null mesh... continuing")
 
             obj1 = solid.object1()
             obj2 = solid.object2()
@@ -375,7 +379,7 @@ class VtkViewer:
 
             self.addBooleanSolidRecursive(obj1, mtra, tra, first)
             self.addBooleanSolidRecursive(obj2, new_mtra, new_tra, first)
-        else :
+        else:
             mesh = solid.mesh()
             visOptions = _VisOptions()
             visOptions.representation = "wireframe"
