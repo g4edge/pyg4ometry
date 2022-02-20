@@ -28,14 +28,16 @@ def rootMatrix2pyg4ometry(matrix, reader):
         scale       = [1,1,1]
         if matrix.IsReflection() :
             q, r = _np.linalg.qr(rotation)
-            print("matrix")
-            print("m ", rotation[0][0],rotation[0][1],rotation[0][2])
-            print("m ",rotation[1][0],rotation[1][1],rotation[1][2])
-            print("m ",rotation[2][0],rotation[2][1],rotation[2][2])
-            print("IsScale({}), IsReflection({}), IsCombi({}), IsGeneral({}), Det({})".format(matrix.IsScale(), matrix.IsReflection(),matrix.IsCombi(),matrix.IsGeneral(),_np.linalg.det(rotation)))
+            print("matrix {}".format(matrix.GetName()))
+            print("matrix ", rotation[0][0],rotation[0][1],rotation[0][2])
+            print("matrix ",rotation[1][0],rotation[1][1],rotation[1][2])
+            print("matrix ",rotation[2][0],rotation[2][1],rotation[2][2])
+            print("matrix IsScale({}), IsReflection({}), IsCombi({}), IsGeneral({}), Det({})".format(matrix.IsScale(), matrix.IsReflection(),matrix.IsCombi(),matrix.IsGeneral(),_np.linalg.det(rotation)))
             q,r = _np.linalg.qr(rotation)
-            print("Scale : ",matrix.GetScale()[0],matrix.GetScale()[1],matrix.GetScale()[2])
+            print("matrix scale : ",matrix.GetScale()[0],matrix.GetScale()[1],matrix.GetScale()[2])
+            print("matrix Q")
             print(q)
+            print("matrix R")
             print(r)
             scale[0] = r[0][0]
             scale[1] = r[1][1]
@@ -45,6 +47,10 @@ def rootMatrix2pyg4ometry(matrix, reader):
         rotPyG4 = list(_transformation.matrix2tbxyz(rotation))
         traPyG4 = list(translation*10) # TODO check units on booleans
         scaPyG4 = list(scale)
+
+        print('g4 rot', rotPyG4)
+        print('g4 tra', traPyG4)
+        print('g4 sca', scaPyG4)
 
         reader.matrices[_ROOT.addressof(matrix)] = {"name": matrix.GetName(),
                                                     "count": 1,
@@ -718,7 +724,8 @@ class Reader:
                     matrix = node.GetMatrix()
 
                     [nodeRotPyG4, nodeTraPyG4, nodeScaPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
-                    nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
+                    # nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
+                    nodeTraPyG4 = list(-1*_np.linalg.inv(_transformation.tbxyz2matrix(nodeRotPyG4)).dot(nodeTraPyG4)*_np.array(nodeScaPyG4))
 
                     daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth,
                                                                 warnAboutBadShapes, dontLoadOverlapNodes)
@@ -736,15 +743,16 @@ class Reader:
                     else:
                         self.objectNames[pvName] += 1
 
+                    print("daughter", nodeScaPyG4)
                     nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
-                                                nodeTraPyG4,
-                                                daughterVolumePyG4,
-                                                pvName,
-                                                volumePyG4,
-                                                self._registry,
-                                                node.GetNumber(),
-                                                True,
-                                                nodeScaPyG4)
+                                                  nodeTraPyG4,
+                                                  daughterVolumePyG4,
+                                                  pvName,
+                                                  volumePyG4,
+                                                  self._registry,
+                                                  node.GetNumber(),
+                                                  True,
+                                                  nodeScaPyG4)
 
 
             if self.first:
