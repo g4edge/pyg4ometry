@@ -723,9 +723,8 @@ class Reader:
 
                     matrix = node.GetMatrix()
 
-                    [nodeRotPyG4, nodeTraPyG4, nodeScaPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix.Inverse(), self)
-                    # nodeTraPyG4 = list(-1*_np.linalg.inv(matROOT).dot(nodeTraPyG4))
-                    nodeTraPyG4 = list(-1*_np.linalg.inv(_transformation.tbxyz2matrix(nodeRotPyG4)).dot(nodeTraPyG4)*_np.array(nodeScaPyG4))
+                    [nodeRotPyG4, nodeTraPyG4, nodeScaPyG4, matROOT, traROOT] = rootMatrix2pyg4ometry(matrix, self)
+                    nodeRotPyG4 = _transformation.matrix2tbxyz(_np.linalg.inv(_transformation.tbxyz2matrix(nodeRotPyG4)))
 
                     daughterVolumePyG4 = self.recurseVolumeTree(node.GetVolume(), thisDepth+1, maximumDepth,
                                                                 warnAboutBadShapes, dontLoadOverlapNodes)
@@ -743,7 +742,7 @@ class Reader:
                     else:
                         self.objectNames[pvName] += 1
 
-                    print("daughter", nodeScaPyG4)
+                    print("daughter", pvName, nodeRotPyG4,nodeTraPyG4,nodeScaPyG4)
                     nodePyG4 = _g4.PhysicalVolume(nodeRotPyG4,
                                                   nodeTraPyG4,
                                                   daughterVolumePyG4,
