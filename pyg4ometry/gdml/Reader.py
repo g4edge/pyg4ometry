@@ -1187,8 +1187,13 @@ class Reader(object):
                                      self._registry)
             args.extend([vx, vy])
 
+        try :
+            lunit = node.attributes['lunit'].value
+        except KeyError :
+            lunit = "mm"
+
         dz = _defines.Expression(solid_name+"_dz",node.attributes["dz"].value,self._registry)
-        args.extend([dz, self._registry])
+        args.extend([dz, self._registry, True, lunit])
 
         _g4.solid.GenericTrap(*args)
 
@@ -1466,6 +1471,7 @@ class Reader(object):
 
                 # Create physical volume
                 _log.info('Reader.extractStructureNodeData> construct % s' % (pvol_name))
+                print(scale)
 
                 try :
                     copyNumber = int(chNode.attributes["copynumber"].value)
