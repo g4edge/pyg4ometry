@@ -46,6 +46,9 @@ def rootMatrix2pyg4ometry(matrix, reader):
             scale[2] = r[2][2]
             rotation = q
 
+        # compensate for precision problems with repeated calculations
+        scale = [round(s,4) for s in scale]
+
         rotPyG4 = list(_transformation.matrix2tbxyz(rotation))
         traPyG4 = list(translation*10) # TODO check units on booleans
         scaPyG4 = list(scale)
