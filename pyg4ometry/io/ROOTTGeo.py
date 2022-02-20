@@ -2,6 +2,7 @@ import ROOT as _ROOT
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.transformation as _transformation
 import numpy as _np
+import scipy.linalg as _la
 
 from collections import defaultdict as _defaultdict
 
@@ -33,7 +34,8 @@ def rootMatrix2pyg4ometry(matrix, reader):
             #print("matrix ",rotation[1][0],rotation[1][1],rotation[1][2])
             #print("matrix ",rotation[2][0],rotation[2][1],rotation[2][2])
             #print("matrix IsScale({}), IsReflection({}), IsCombi({}), IsGeneral({}), Det({})".format(matrix.IsScale(), matrix.IsReflection(),matrix.IsCombi(),matrix.IsGeneral(),_np.linalg.det(rotation)))
-            q,r = _np.linalg.qr(rotation)
+            # q,r = _np.linalg.qr(rotation)
+            r,q = _la.rq(rotation)
             #print("matrix scale : ",matrix.GetScale()[0],matrix.GetScale()[1],matrix.GetScale()[2])
             #print("matrix Q")
             #print(q)
