@@ -72,7 +72,7 @@ def upgradeToExpression(reg, obj):
     except ValueError:
         return as_string
 
-def upgradeToVector(var, reg, type = "position", unit = "", addRegistry = False) :
+def upgradeToVector(var, reg, type="position", unit="", addRegistry=False):
     """
     Take a list [x,y,z] and create a vector 
 
@@ -92,16 +92,16 @@ def upgradeToVector(var, reg, type = "position", unit = "", addRegistry = False)
         unit = "rad"
 
     # check if already a vector type 
-    if isinstance(var,VectorBase) : 
+    if isinstance(var, VectorBase):
         return var 
 
     # create appropriate vector type
     if isinstance(var,list) or isinstance(var,_np.ndarray):
-        if type == "position" :
+        if type == "position":
             return Position("",var[0],var[1],var[2],unit,reg, addRegistry)
-        elif type == "rotation" : 
+        elif type == "rotation":
             return Rotation("",var[0],var[1],var[2],unit,reg, addRegistry)
-        elif type == "scale" : 
+        elif type == "scale":
             return Scale("",var[0],var[1],var[2],"none",reg, addRegistry)
         else : 
             print('type not defined')
@@ -713,7 +713,7 @@ class Position(VectorBase) :
 
     '''
 
-    def __init__(self,name,x,y,z, unit="mm", registry = None, addRegistry = True) :
+    def __init__(self, name, x, y, z, unit="mm", registry=None, addRegistry=True):
         super(Position, self).__init__()
 
         self.name = name
