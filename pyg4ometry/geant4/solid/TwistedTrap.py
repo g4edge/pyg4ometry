@@ -8,7 +8,7 @@ from .Layer import Layer as _Layer
 import logging as _log
 import numpy as _np
 
-from memory_profiler import profile as _profile
+# from memory_profiler import profile as _profile
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
     """
