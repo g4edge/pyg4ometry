@@ -8,6 +8,8 @@ from .Layer import Layer as _Layer
 import logging as _log
 import numpy as _np
 
+from memory_profiler import profile as _profile
+
 class TwistedTrap(_SolidBase, _TwistedSolid):
     """
     Constructs a general trapezoid with a twist around one axis.
@@ -118,7 +120,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
         return layers
 
-
+    # @_profile
     def mesh(self):
         _log.info('twistedtrap.pycsgmesh> antlr')
 

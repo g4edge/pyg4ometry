@@ -19,6 +19,9 @@ from   copy import deepcopy as _dc
 import numpy as _np
 import logging as _log
 
+from memory_profiler import profile as _profile
+import resource as _resource
+
 class Sphere(_SolidBase):
     """
     Constructs a section of a spherical shell.
@@ -270,5 +273,8 @@ class Sphere(_SolidBase):
                         # print "theta low end ", len(polygons)
                         polygons.append(_Polygon(vEnd))
 
+        #mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         mesh = _CSG.fromPolygons(polygons)
+        #mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        #print(mAfter-mBefore,mesh.getNumberPolys())
         return mesh
