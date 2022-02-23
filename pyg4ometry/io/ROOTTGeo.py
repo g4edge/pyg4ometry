@@ -581,10 +581,10 @@ class Reader:
                 self.materials[materialAddress] = g4galactic
 
             # check for NIST material
-            if materialName in nistMaterials.keys():
-                g4Mat = _g4.getNistMaterialDict()[materialName]
-                self.materials[materialAddress] = g4Mat
-                continue
+            #if materialName in nistMaterials.keys() :
+            #    g4Mat = _g4.getNistMaterialDict()[materialName]
+            #    self.materials[materialAddress] = g4Mat
+            #    continue
 
             if self.objectNames[materialName] > 0:
                 suffix = self.suffixSeparator+str(self.objectNames[materialName])
@@ -626,8 +626,10 @@ class Reader:
             temperature = material.GetTemperature()
             pressure = material.GetPressure()
 
-            g4Mat.set_temperature( temperature )
-            g4Mat.set_pressure( pressure )
+
+            if g4Mat.type != "nist" :
+                g4Mat.set_temperature( temperature )
+                g4Mat.set_pressure( pressure )
 
             # TODO add properties (a la lines 418-421 gdml/Reader.py)
 
