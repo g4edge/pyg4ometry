@@ -1187,8 +1187,13 @@ class Reader(object):
                                      self._registry)
             args.extend([vx, vy])
 
+        try :
+            lunit = node.attributes['lunit'].value
+        except KeyError :
+            lunit = "mm"
+
         dz = _defines.Expression(solid_name+"_dz",node.attributes["dz"].value,self._registry)
-        args.extend([dz, self._registry])
+        args.extend([dz, self._registry, True, lunit])
 
         _g4.solid.GenericTrap(*args)
 
