@@ -493,6 +493,7 @@ class Reader:
         self.tgm = _ROOT.TGeoManager.Import(fileName)
         self.first = True
         self._registry = _g4.Registry()
+        self._g4Galactic = None # fall back material
 
         self.objectNames         = _defaultdict(int)
         self.shapes              = {}
@@ -532,7 +533,11 @@ class Reader:
         materialList = self.tgm.GetListOfMaterials()
 
         g4galactic = _g4.MaterialPredefined("G4_Galactic", self._registry)
+        self._g4Galactic = g4galactic
         nistMaterials = _g4.getNistMaterialDict()
+
+        # dummy may apparently always exist and no material be defined
+        self.materialSubstitutions["dummy"] = g4galactic
 
         for iMat in range(0,materialList.GetEntries(),1) :
 
@@ -543,12 +548,12 @@ class Reader:
             materialClass = material.Class_Name()
 
             if materialName.lower() == "dummy":
-                self.materialSubstitutions[materialName] = g4galactic
                 self.materials[materialAddress] = g4galactic
 
             # check for NIST material
             if materialName in nistMaterials.keys():
                 g4Mat = _g4.getNistMaterialDict()[materialName]
+                self.materials[materialAddress] = g4Mat
                 continue
 
             if self.objectNames[materialName] > 0:
@@ -666,8 +671,15 @@ class Reader:
             material = volume.GetMaterial()
             materialName = material.GetName()
             materialName = materialName.replace(':','')
-            materialAddress = _ROOT.addressof(material)
-            thisMaterial = self.materials[materialAddress]
+            if materialName in self.materialSubstitutions:
+                thisMaterial = self.materialSubstitutions[materialName]
+            else:
+                materialAddress = _ROOT.addressof(material)
+                try:
+                    thisMaterial = self.materials[materialAddress]
+                except KeyError:
+                    print("Material '",materialName,"' is used in geometry but not defined in list of materials - using G4_Galactic")
+                    thisMaterial = self._g4Galactic
 
         if volumeAddress in self.logicalVolumes:
             # Already have the volume so increment counter
