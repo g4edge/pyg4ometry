@@ -564,7 +564,7 @@ class Reader:
 
         g4galactic = _g4.MaterialPredefined("G4_Galactic", self._registry)
         self._g4Galactic = g4galactic
-        nistMaterials = _g4.getNistMaterialDict()
+        #nistMaterials = _g4.getNistMaterialDict()
 
         # dummy may apparently always exist and no material be defined
         self.materialSubstitutions["dummy"] = g4galactic
@@ -575,7 +575,7 @@ class Reader:
             materialAddress = _ROOT.addressof(material)
             materialName = str(material.GetName())
             materialName = materialName.replace(':','')
-            materialClass = material.Class_Name()
+            #materialClass = material.Class_Name()
 
             if materialName.lower() == "dummy":
                 self.materials[materialAddress] = g4galactic
