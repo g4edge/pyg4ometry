@@ -458,26 +458,30 @@ class Registry:
                 self.orderLogicalVolumes(dlvName, False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, incrementRenameDict=None):
+    def addVolumeRecursive(self, volume, collapseAssemblies=False, incrementRenameDict=None):
         """
         Transfer a volume hierarchy to this registry. Any objects that had a registry set to
         another will be set to this one and will be owned by it effectively.
         :param volume: PhysicalVolume or LogicalVolume or AssemblyVolume.
+        :param collapseAssemblies: if True, daughters of AssemblyVolume's will be attached directly to the mother of the assembly and the AssemblyVolume itself will be eliminated from the geometry tree
         :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
 
         In the case where some object or variable has a name (e.g. 'X') that already exists
         in this registry, it will be incremented to 'X_1'.
         """
-        if incrementRenameDict is None:
-            incrementRenameDict = {}
         import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
+        if incrementRenameDict is None and collapseAssemblies == True and isinstance(volume, _AssemblyVolume) :
+            raise RuntimeError('Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume')
+
+        if incrementRenameDict is None:
+            incrementRenameDict = {}
         self._registryOld = volume.registry
 
         if isinstance(volume, _PhysicalVolume):
-            self.addVolumeRecursive(volume.logicalVolume, incrementRenameDict)
+            self.addVolumeRecursive(volume.logicalVolume, collapseAssemblies, incrementRenameDict)
 
             # add members from physical volume
             self.transferDefines(volume.position, incrementRenameDict)
@@ -488,8 +492,18 @@ class Registry:
 
         elif isinstance(volume, _LogicalVolume):
             # loop over all daughters
+            assembliesToRemove = []
             for dv in volume.daughterVolumes:
-                self.addVolumeRecursive(dv, incrementRenameDict)
+                if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume) :
+                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict)
+                    assembliesToRemove.append( dv.name )
+                else :
+                    self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict)
+
+            # if we're collapsing assembly volumes, prune any assembly daughters
+            for assemblyName in assembliesToRemove :
+                assembly = volume._daughterVolumesDict.pop(assemblyName)
+                volume.daughterVolumes.remove(assembly)
 
             # add members from logical volume
             self.transferSolidDefines(volume.solid, incrementRenameDict)
@@ -500,7 +514,7 @@ class Registry:
         elif isinstance(volume, _AssemblyVolume):
             # loop over all daughters
             for dv in volume.daughterVolumes:
-                self.addVolumeRecursive(dv, incrementRenameDict)
+                self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict)
 
             # add members from logical volume
             self.transferLogicalVolume(volume, incrementRenameDict)
@@ -508,6 +522,32 @@ class Registry:
             print("Volume type not supported yet for merging")
 
         return incrementRenameDict
+
+    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scale=[], incrementRenameDict={}):
+        """
+        """
+        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
+
+        assemblyLV = assemblyPV.logicalVolume
+
+        positions.append( assemblyPV.position )
+        rotations.append( assemblyPV.rotation )
+        scales.append( assemblyPV.scale )
+
+        for dv in assemblyLV.daughterVolumes:
+            if isinstance(dv.logicalVolume, _AssemblyVolume) :
+                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, positions, rotations, scales, incrementRenameDict)
+            else :
+                # TODO manipulate the position, rotation and scale (do we need to do scale?  I would have thought assemblies can't be scaled?)
+                #dv.position = 
+
+                # reset the mother volume to be the mother of the highest-level assembly
+                # and add this PV to that mother
+                dv.motherVolume = motherVol
+                motherVol.add(dv)
+
+                # add this volume recursively to the registry
+                self.addVolumeRecursive(dv, True, incrementRenameDict)
 
     def transferSolidDefines(self, solid, incrementRenameDict={}):
         """
