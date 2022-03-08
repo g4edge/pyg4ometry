@@ -393,7 +393,8 @@ class Reader(object):
                                              "for composite material {}".format(ref, name))
 
                     if comp_type == "fraction":
-                        abundance = float(comp.get("n", 0.0))
+                        # abundance = float(comp.get("n", 0.0))
+                        abundance = _defines.Expression("n", comp.get("n", 0.0),self._registry,False)
 
                         target = self._registry.materialDict[ref]
                         if isinstance(target, _g4.Material):

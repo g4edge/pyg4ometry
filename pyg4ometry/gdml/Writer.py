@@ -267,7 +267,7 @@ option, preprocessGDML=0;
                     if frac_type == "massfraction":
                         se = self.doc.createElement('fraction')
                         se.setAttribute('ref', name)
-                        se.setAttribute('n', str(comp_info[1]))
+                        se.setAttribute('n', self.getValueOrExpr(comp_info[1]))
                         oe.appendChild(se)
                     if frac_type == "natoms":
                         se = self.doc.createElement('composite')
@@ -318,7 +318,7 @@ option, preprocessGDML=0;
                     self.writeMaterial(comp_info[0])
                     se = self.doc.createElement('fraction')
                     se.setAttribute('ref', name)
-                    se.setAttribute('n', str(comp_info[1]))
+                    se.setAttribute('n', self.getValueOrExpr(comp_info[1]))
                     oe.appendChild(se)
             self.materials.appendChild(oe)
 
