@@ -382,6 +382,9 @@ class Registry:
             if var.name in self._registryOld.defineDict:
                 self.transferDefine(var, incrementRenameDict)
 
+        elif isinstance(var, (int, float, str)):  # int, float, str could not be in registry
+            return
+
         else: # a normal expression
             for v in var.expr.variables():                 # loop over all variables needed for an expression
                 if v in self._registryOld.defineDict:      # only if its in the other registry
@@ -495,7 +498,7 @@ class Registry:
             assembliesToRemove = []
             for dv in volume.daughterVolumes:
                 if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume) :
-                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict)
+                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict=incrementRenameDict)
                     assembliesToRemove.append( dv.name )
                 else :
                     self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict)
@@ -523,10 +526,13 @@ class Registry:
 
         return incrementRenameDict
 
-    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scale=[], incrementRenameDict={}):
+    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], incrementRenameDict={}):
         """
         """
+        import numpy as _np
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
+        import pyg4ometry.transformation as _transformation
+        import pyg4ometry.gdml.Defines as _Defines
 
         assemblyLV = assemblyPV.logicalVolume
 
@@ -534,12 +540,57 @@ class Registry:
         rotations.append( assemblyPV.rotation )
         scales.append( assemblyPV.scale )
 
+        # find the transformations for this assembly in the reference frame of the mother
+        # start with identity transformations and then aggregate the placement
+        # info of the assemblies
+        mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
+        tra = _np.array([0,0,0])
+        for pos, rot, sca in zip(positions, rotations, scales) :
+            assembly_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rot.eval()))
+            assembly_pos = _np.array(pos.eval())
+            if sca :
+                assembly_sca = _np.diag(sca.eval())
+            else :
+                assembly_sca = _np.diag([1,1,1])
+
+            new_mtra = mtra * assembly_sca * assembly_mrot
+            new_tra = (_np.array(mtra.dot(assembly_pos)) + tra)[0]
+
+            mtra = new_mtra
+            tra = new_tra
+
+        #print(f'Collapsing assembly {assemblyLV.name}, which has position {assemblyPV.position.eval()} and rotation {assemblyPV.rotation.eval()} wrt {assemblyPV.motherVolume.name}')
+        #print(f'This results in the following position vector and rotation matrix wrt the top level volume {motherVol.name}:')
+        #print(tra)
+        #print(mtra)
+        #print('')
+
+        # loop through the daughter volumes and either recurse (if it is also
+        # an assembly) or deal properly with an actual solid placement
         for dv in assemblyLV.daughterVolumes:
             if isinstance(dv.logicalVolume, _AssemblyVolume) :
-                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, positions, rotations, scales, incrementRenameDict)
+                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), incrementRenameDict)
             else :
-                # TODO manipulate the position, rotation and scale (do we need to do scale?  I would have thought assemblies can't be scaled?)
-                #dv.position = 
+                # redefine the position and rotation of the daughter volume to
+                # be in the reference frame of the new mother volume, using the
+                # aggregated assembly transforms calculated above and the
+                # transforms of the pv itself
+                dv_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
+                dv_pos = _np.array(dv.position.eval())
+                if dv.scale :
+                    dv_sca = _np.diag(dv.scale.eval())
+                else :
+                    dv_sca = _np.diag([1,1,1])
+
+                new_mtra = mtra * dv_sca * dv_mrot
+                new_tra = (_np.array(mtra.dot(dv_pos)) + tra)[0]
+
+                new_rot = _transformation.matrix2tbxyz(_np.linalg.inv(new_mtra))
+                new_pos = new_tra.tolist()
+
+                # update the position and rotation information
+                dv.position = _Defines.Position( dv.position.name, new_pos[0], new_pos[1], new_pos[2],  "mm", self, False )
+                dv.rotation = _Defines.Rotation( dv.rotation.name, new_rot[0], new_rot[1], new_rot[2], "rad", self, False )
 
                 # reset the mother volume to be the mother of the highest-level assembly
                 # and add this PV to that mother
