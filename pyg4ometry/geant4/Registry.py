@@ -529,7 +529,11 @@ class Registry:
             assembliesToRemove = []
             for dv in volume.daughterVolumes:
                 if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume) :
-                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict=incrementRenameDict, userRenameDict=userRenameDict)
+                    positions = []
+                    rotations = []
+                    scales = []
+                    names = []
+                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, positions, rotations, scales, names, incrementRenameDict, userRenameDict)
                     assembliesToRemove.append( dv.name )
                 else :
                     self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
@@ -557,7 +561,7 @@ class Registry:
 
         return incrementRenameDict
 
-    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], names=[], incrementRenameDict={}, userRenameDict=None):
+    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions, rotations, scales, names, incrementRenameDict, userRenameDict):
         """
         """
         import numpy as _np
@@ -618,11 +622,10 @@ class Registry:
                 dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv.name, motherVol, None, dv.copyNumber, False, dv.scale)
                 names_copy = list(names)
                 names_copy.reverse()
-                #print(names_copy)
-                #print(dv_copy.name)
+                #print(f'Prepending {names_copy} to {dv_copy.name}')
                 for name in names_copy :
                     dv_copy.name =  name + '_' + dv_copy.name
-                #print(dv_copy.name)
+                #print(f'Result: {dv_copy.name}')
 
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
