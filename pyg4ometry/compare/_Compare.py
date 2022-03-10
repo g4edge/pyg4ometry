@@ -298,10 +298,17 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     # test daughters are the same - could even be same number but different
     # we rely here on unique names in pyg4ometry as that's true in GDML
-    rNameToObject = {d.name : d for d in rlv.daughterVolumes}
-    oNameToObject = {d.name : d for d in olv.daughterVolumes}
-    rSet = set([d.name for d in rlv.daughterVolumes])
-    oSet = set([d.name for d in olv.daughterVolumes])
+    if tests.namesIgnorePointer :
+        pattern = r'(0x\w{7})'
+        rNameToObject = {_re.sub(pattern, '', d.name) : d for d in rlv.daughterVolumes}
+        oNameToObject = {_re.sub(pattern, '', d.name) : d for d in olv.daughterVolumes}
+        rSet = set([_re.sub(pattern, '', d.name) for d in rlv.daughterVolumes])
+        oSet = set([_re.sub(pattern, '', d.name) for d in olv.daughterVolumes])
+    else :
+        rNameToObject = {d.name : d for d in rlv.daughterVolumes}
+        oNameToObject = {d.name : d for d in olv.daughterVolumes}
+        rSet = set([d.name for d in rlv.daughterVolumes])
+        oSet = set([d.name for d in olv.daughterVolumes])
 
     # iterate over daughters
     # if we assume there's some mismatch, we use the intersection set of names - ie the ones
@@ -327,7 +334,7 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
             result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rlv.name, testName,
                                            result, recursive, includeAllTestResults, testsAlreadyDone)
 
-    if tests.names:
+    if tests.names or tests.namesIgnorePointer:
         result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 
     testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
