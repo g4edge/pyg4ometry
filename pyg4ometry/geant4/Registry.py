@@ -129,11 +129,16 @@ class Registry:
 
         self.materialNameCount[material.name] += 1
 
-    def transferMaterial(self, material, incrementRenameDict={}):
+    def transferMaterial(self, material, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a material to this registry. Doesn't handle any members'
         transferal - only the material itself.
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in material.name :
+                    material.name = material.name.replace( renameStr, userRenameDict[renameStr] )
+
         if material.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if material.name in self.materialDict:
@@ -147,13 +152,13 @@ class Registry:
                 # Material and Element have a member 'components' but Isotope doesn't
                 if hasattr(material, "components"):
                     for component in material.components:
-                        self.transferMaterial(component[0], incrementRenameDict)
+                        self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
         else:
             incrementRenameDict[material.name] = material.name
             # Material and Element have a member 'components' but Isotope doesn't
             if hasattr(material, "components"):
                 for component in material.components:
-                    self.transferMaterial(component[0], incrementRenameDict)
+                    self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
 
         self.materialDict[material.name] = material
         material.registry = self
@@ -173,7 +178,7 @@ class Registry:
         self.solidTypeCountDict[solid.type] += 1
         self.solidNameCount[solid.name] += 1
 
-    def transferSolid(self, solid, incrementRenameDict={}):
+    def transferSolid(self, solid, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a solid to this registry. Doesn't handle any members'
         transferal - only the solid itself.
@@ -181,6 +186,11 @@ class Registry:
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in solid.name :
+                    solid.name = solid.name.replace( renameStr, userRenameDict[renameStr] )
+
         if solid.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if solid.name in self.solidDict:
@@ -219,11 +229,16 @@ class Registry:
             self.assemblyVolumeDict[volume.name] = volume
             self.assemblyVolumeNameCount[volume.name] += 1
 
-    def transferLogicalVolume(self, volume, incrementRenameDict={}):
+    def transferLogicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a logical volume to this registry. Doesn't handle any members'
         transferal - only the logical volume itself.
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in volume.name :
+                    volume.name = volume.name.replace( renameStr, userRenameDict[renameStr] )
+
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.logicalVolumeDict:
@@ -257,11 +272,16 @@ class Registry:
         self.volumeTypeCountDict["physicalVolume"] += 1
         self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
-    def transferPhysicalVolume(self, volume, incrementRenameDict={}):
+    def transferPhysicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a physical volume to this registry. Doesn't handle any members'
         transferal - only the physical volume itself.
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in volume.name :
+                    volume.name = volume.name.replace( renameStr, userRenameDict[renameStr] )
+
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.physicalVolumeDict:
@@ -295,10 +315,15 @@ class Registry:
         self.surfaceTypeCountDict[surface.type] += 1
         self.surfaceNameCount[surface.name] += 1
 
-    def transferSurface(self, surface, incrementRenameDict={}):
+    def transferSurface(self, surface, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a surface to this registry.
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in surface.name :
+                    surface.name = surface.name.replace( renameStr, userRenameDict[renameStr] )
+
         if surface.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
         if surface.name in self.surfaceDict:
@@ -339,10 +364,15 @@ class Registry:
 
         return define.name # why do we need this?
 
-    def transferDefine(self, define, incrementRenameDict={}):
+    def transferDefine(self, define, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a single define from another registry to this one. No checking on previous registry or not.
         """
+        if userRenameDict :
+            for renameStr in userRenameDict :
+                if renameStr in define.name :
+                    define.name = define.name.replace( renameStr, userRenameDict[renameStr] )
+
         if define.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
         if define.name in self.defineDict:
@@ -358,7 +388,7 @@ class Registry:
 
         self.defineNameCount[define.name] += 1
 
-    def transferDefines(self, var, incrementRenameDict={}):
+    def transferDefines(self, var, incrementRenameDict={}, userRenameDict=None):
         """
         This function tolerates all types of defines including vector ones.
 
@@ -369,6 +399,7 @@ class Registry:
         In "3x + 2", "x" would be a variable".  In "3.5*2" there would be no variables.
         """
         import pyg4ometry.gdml.Defines as _Defines
+        import numpy as _np
 
         # If the variable is a position, rotation or scale
         if isinstance(var,_Defines.VectorBase):
@@ -377,21 +408,21 @@ class Registry:
                 # any variables inside each component
                 for v in vi.variables():
                     if v in self._registryOld.defineDict: # only if its in the other registry
-                        self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict)
+                        self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
 
             if var.name in self._registryOld.defineDict:
-                self.transferDefine(var, incrementRenameDict)
+                self.transferDefine(var, incrementRenameDict, userRenameDict)
 
-        elif isinstance(var, (int, float, str)):  # int, float, str could not be in registry
-            return
-
-        else: # a normal expression
+        elif isinstance(var,_Defines.ScalarBase): # a normal expression
             for v in var.expr.variables():                 # loop over all variables needed for an expression
                 if v in self._registryOld.defineDict:      # only if its in the other registry
-                    self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict)
+                    self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
 
             if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
-                self.transferDefine(var, incrementRenameDict) # probably best to reuse here
+                self.transferDefine(var, incrementRenameDict, userRenameDict) # probably best to reuse here
+
+        else:
+            return
 
     def setWorld(self, worldIn):
         """
@@ -461,7 +492,7 @@ class Registry:
                 self.orderLogicalVolumes(dlvName, False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, collapseAssemblies=False, incrementRenameDict=None):
+    def addVolumeRecursive(self, volume, collapseAssemblies=False, incrementRenameDict=None, userRenameDict=None):
         """
         Transfer a volume hierarchy to this registry. Any objects that had a registry set to
         another will be set to this one and will be owned by it effectively.
@@ -484,24 +515,24 @@ class Registry:
         self._registryOld = volume.registry
 
         if isinstance(volume, _PhysicalVolume):
-            self.addVolumeRecursive(volume.logicalVolume, collapseAssemblies, incrementRenameDict)
+            self.addVolumeRecursive(volume.logicalVolume, collapseAssemblies, incrementRenameDict, userRenameDict)
 
             # add members from physical volume
-            self.transferDefines(volume.position, incrementRenameDict)
-            self.transferDefines(volume.rotation, incrementRenameDict)
+            self.transferDefines(volume.position, incrementRenameDict, userRenameDict)
+            self.transferDefines(volume.rotation, incrementRenameDict, userRenameDict)
             if volume.scale:
-                self.transferDefines(volume.scale, incrementRenameDict)
-            self.transferPhysicalVolume(volume, incrementRenameDict)
+                self.transferDefines(volume.scale, incrementRenameDict, userRenameDict)
+            self.transferPhysicalVolume(volume, incrementRenameDict, userRenameDict)
 
         elif isinstance(volume, _LogicalVolume):
             # loop over all daughters
             assembliesToRemove = []
             for dv in volume.daughterVolumes:
                 if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume) :
-                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict=incrementRenameDict)
+                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, incrementRenameDict=incrementRenameDict, userRenameDict=userRenameDict)
                     assembliesToRemove.append( dv.name )
                 else :
-                    self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict)
+                    self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
 
             # if we're collapsing assembly volumes, prune any assembly daughters
             for assemblyName in assembliesToRemove :
@@ -509,24 +540,24 @@ class Registry:
                 volume.daughterVolumes.remove(assembly)
 
             # add members from logical volume
-            self.transferSolidDefines(volume.solid, incrementRenameDict)
-            self.transferSolid(volume.solid, incrementRenameDict)
-            self.transferMaterial(volume.material, incrementRenameDict)
-            self.transferLogicalVolume(volume, incrementRenameDict)
+            self.transferSolidDefines(volume.solid, incrementRenameDict, userRenameDict)
+            self.transferSolid(volume.solid, incrementRenameDict, userRenameDict)
+            self.transferMaterial(volume.material, incrementRenameDict, userRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
 
         elif isinstance(volume, _AssemblyVolume):
             # loop over all daughters
             for dv in volume.daughterVolumes:
-                self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict)
+                self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
 
             # add members from logical volume
-            self.transferLogicalVolume(volume, incrementRenameDict)
+            self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
         else:
             print("Volume type not supported yet for merging")
 
         return incrementRenameDict
 
-    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], incrementRenameDict={}):
+    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], incrementRenameDict={}, userRenameDict=None):
         """
         """
         import numpy as _np
@@ -569,7 +600,7 @@ class Registry:
         # an assembly) or deal properly with an actual solid placement
         for dv in assemblyLV.daughterVolumes:
             if isinstance(dv.logicalVolume, _AssemblyVolume) :
-                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), incrementRenameDict)
+                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), incrementRenameDict, userRenameDict)
             else :
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
@@ -598,9 +629,9 @@ class Registry:
                 motherVol.add(dv)
 
                 # add this volume recursively to the registry
-                self.addVolumeRecursive(dv, True, incrementRenameDict)
+                self.addVolumeRecursive(dv, True, incrementRenameDict, userRenameDict)
 
-    def transferSolidDefines(self, solid, incrementRenameDict={}):
+    def transferSolidDefines(self, solid, incrementRenameDict={}, userRenameDict=None):
         """
         For each parameter in a given solid (unique to each) check if it's
         a define and transfer that over.
@@ -608,11 +639,11 @@ class Registry:
         # TODO make this work for all classes (using update variables method)
 
         if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
-            self.transferSolidDefines(solid.obj1, incrementRenameDict)
-            self.transferSolidDefines(solid.obj2, incrementRenameDict)
+            self.transferSolidDefines(solid.obj1, incrementRenameDict, userRenameDict)
+            self.transferSolidDefines(solid.obj2, incrementRenameDict, userRenameDict)
         elif solid.type == "MultiUnion" :
             for object in solid.objects :
-                self.transferSolidDefines(object, incrementRenameDict)
+                self.transferSolidDefines(object, incrementRenameDict, userRenameDict)
 
         for varName in solid.varNames :
             # skip unit variables
@@ -642,7 +673,7 @@ class Registry:
                 var = [var]                         # single variable upgraded to list
 
             for v in var:                           # loop over variables
-                self.transferDefines(v, incrementRenameDict)
+                self.transferDefines(v, incrementRenameDict, userRenameDict)
 
     def volumeTree(self, lvName):
         """Not sure what this method is used for"""
