@@ -557,10 +557,11 @@ class Registry:
 
         return incrementRenameDict
 
-    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], incrementRenameDict={}, userRenameDict=None):
+    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions=[], rotations=[], scales=[], names=[], incrementRenameDict={}, userRenameDict=None):
         """
         """
         import numpy as _np
+        import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
         import pyg4ometry.transformation as _transformation
         import pyg4ometry.gdml.Defines as _Defines
@@ -570,6 +571,8 @@ class Registry:
         positions.append( assemblyPV.position )
         rotations.append( assemblyPV.rotation )
         scales.append( assemblyPV.scale )
+        names.append( assemblyPV.name )
+        #print(names)
 
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
@@ -598,18 +601,37 @@ class Registry:
 
         # loop through the daughter volumes and either recurse (if it is also
         # an assembly) or deal properly with an actual solid placement
+        #print(f'{assemblyLV.name} has {len(assemblyLV.daughterVolumes)} daughter volumes:')
+        #for dv in assemblyLV.daughterVolumes:
+            #print(dv.name)
         for dv in assemblyLV.daughterVolumes:
+            #print(f'Examining {dv.name}...')
             if isinstance(dv.logicalVolume, _AssemblyVolume) :
-                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), incrementRenameDict, userRenameDict)
+                #print(f'{dv.name} is an AssemblyVolume, recursing...')
+                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), list(names), incrementRenameDict, userRenameDict)
             else :
+                #print(f'{dv.name} is a simple placement...')
+                # we need to copy and rename the volume since we could
+                # potentially end up with many of the same pv (now with
+                # different positions) being attached to the mother volume
+                # NB we already set here the mother volume to be the new one
+                dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv.name, motherVol, None, dv.copyNumber, False, dv.scale)
+                names_copy = list(names)
+                names_copy.reverse()
+                #print(names_copy)
+                #print(dv_copy.name)
+                for name in names_copy :
+                    dv_copy.name =  name + '_' + dv_copy.name
+                #print(dv_copy.name)
+
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
                 # aggregated assembly transforms calculated above and the
                 # transforms of the pv itself
-                dv_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv.rotation.eval()))
-                dv_pos = _np.array(dv.position.eval())
-                if dv.scale :
-                    dv_sca = _np.diag(dv.scale.eval())
+                dv_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv_copy.rotation.eval()))
+                dv_pos = _np.array(dv_copy.position.eval())
+                if dv_copy.scale :
+                    dv_sca = _np.diag(dv_copy.scale.eval())
                 else :
                     dv_sca = _np.diag([1,1,1])
 
@@ -620,16 +642,11 @@ class Registry:
                 new_pos = new_tra.tolist()
 
                 # update the position and rotation information
-                dv.position = _Defines.Position( dv.position.name, new_pos[0], new_pos[1], new_pos[2],  "mm", self, False )
-                dv.rotation = _Defines.Rotation( dv.rotation.name, new_rot[0], new_rot[1], new_rot[2], "rad", self, False )
-
-                # reset the mother volume to be the mother of the highest-level assembly
-                # and add this PV to that mother
-                dv.motherVolume = motherVol
-                motherVol.add(dv)
+                dv_copy.position = _Defines.Position( dv_copy.name + dv_copy.position.name.removeprefix(dv.name), new_pos[0], new_pos[1], new_pos[2],  "mm", self, False )
+                dv_copy.rotation = _Defines.Rotation( dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name), new_rot[0], new_rot[1], new_rot[2], "rad", self, False )
 
                 # add this volume recursively to the registry
-                self.addVolumeRecursive(dv, True, incrementRenameDict, userRenameDict)
+                self.addVolumeRecursive(dv_copy, True, incrementRenameDict, userRenameDict)
 
     def transferSolidDefines(self, solid, incrementRenameDict={}, userRenameDict=None):
         """
