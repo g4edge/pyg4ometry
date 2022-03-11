@@ -362,12 +362,17 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     if rpv.scale and opv.scale: # may be None
         result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
     elif rpv.scale or opv.scale:
-        rpvScale = str(rpv.scale) if rpv.scale else "None"
-        opvScale = str(opv.scale) if opv.scale else "None"
-        details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
-        result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+        rpvScaleNumeric = rpv.scale.eval() if rpv.scale else [1.0,1.0,1.0]
+        opvScaleNumeric = opv.scale.eval() if opv.scale else [1.0,1.0,1.0]
+        if rpvScaleNumeric != opvScaleNumeric :
+            rpvScale = str(rpv.scale) if rpv.scale else "None"
+            opvScale = str(opv.scale) if opv.scale else "None"
+            details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
+            result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+        elif includeAllTestResults:
+            result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
     elif includeAllTestResults:
-        result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
+        result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
 
     result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     if rpv.logicalVolume.type == "logical":
