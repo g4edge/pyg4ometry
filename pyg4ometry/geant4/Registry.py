@@ -134,10 +134,10 @@ class Registry:
         Transfer a material to this registry. Doesn't handle any members'
         transferal - only the material itself.
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in material.name :
-                    material.name = material.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                material.name = _re.sub(find, replace, material.name)
 
         if material.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
@@ -186,10 +186,10 @@ class Registry:
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in solid.name :
-                    solid.name = solid.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                solid.name = _re.sub(find, replace, solid.name)
 
         if solid.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
@@ -234,10 +234,10 @@ class Registry:
         Transfer a logical volume to this registry. Doesn't handle any members'
         transferal - only the logical volume itself.
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in volume.name :
-                    volume.name = volume.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                volume.name = _re.sub(find, replace, volume.name)
 
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
@@ -277,10 +277,10 @@ class Registry:
         Transfer a physical volume to this registry. Doesn't handle any members'
         transferal - only the physical volume itself.
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in volume.name :
-                    volume.name = volume.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                volume.name = _re.sub(find, replace, volume.name)
 
         if volume.name in incrementRenameDict:
             return # it's already been transferred in this 'transfer' call, ignore
@@ -319,10 +319,10 @@ class Registry:
         """
         Transfer a surface to this registry.
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in surface.name :
-                    surface.name = surface.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                surface.name = _re.sub(find, replace, surface.name)
 
         if surface.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
@@ -368,10 +368,10 @@ class Registry:
         """
         Transfer a single define from another registry to this one. No checking on previous registry or not.
         """
+        import re as _re
         if userRenameDict :
-            for renameStr in userRenameDict :
-                if renameStr in define.name :
-                    define.name = define.name.replace( renameStr, userRenameDict[renameStr] )
+            for find, replace in userRenameDict.items() :
+                define.name = _re.sub(find, replace, define.name)
 
         if define.name in incrementRenameDict:
             return  # it's already been transferred in this 'transfer' call, ignore
