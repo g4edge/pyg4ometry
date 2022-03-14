@@ -893,13 +893,27 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
         rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
         rc *= _Units.unit(getattr(r1,'unit'))
         oc *= _Units.unit(getattr(r2,'unit'))
-        drc = oc - rc
-        if drc != 0:
-            if ( rc != 0 and abs((drc / rc)) > tolerance ) or ( oc != 0 and abs((drc / oc)) > tolerance ):
-                details = v+": (reference): "+str(rc)+", (other): "+str(oc)
-                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
-            elif includeAllTestResults:
-                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
+        drc = abs(oc - rc)
+
+        if vectortype == 'rotation':
+            # in the case of rotations we need to check against 2pi and zero
+            drc2pi = abs(drc - 360.0*_Units.unit('deg'))
+            if drc != 0 and drc2pi != 0:
+                if ( (( rc != 0 and (drc / rc) > tolerance ) or ( oc != 0 and (drc / oc) > tolerance )) and
+                     (( rc != 0 and (drc2pi / rc) > tolerance ) or ( oc != 0 and (drc2pi / oc) > tolerance )) ):
+                    details = v+": (reference): "+str(rc)+", (other): "+str(oc)
+                    result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
+                    continue
+        else:
+            # otherwise we just check against zero
+            if drc != 0:
+                if ( rc != 0 and (drc / rc) > tolerance ) or ( oc != 0 and (drc / oc) > tolerance ):
+                    details = v+": (reference): "+str(rc)+", (other): "+str(oc)
+                    result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
+                    continue
+
+        if includeAllTestResults:
+            result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
     
     return result
 
