@@ -21,7 +21,7 @@ class Tests:
     >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
     _testNames = ['names', 'namesIgnorePointer', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
-                           'shapeArea', 'placement', 'materials', 'materialClassType', 'materialCompositionType',
+                           'shapeArea', 'placement', 'scale', 'copyNumber', 'materials', 'materialClassType', 'materialCompositionType',
                            'testDaughtersByName']
     def __init__(self, *testsByNameToTurnOn):
         self.names             = True
@@ -32,6 +32,8 @@ class Tests:
         self.shapeVolume       = True
         self.shapeArea         = True
         self.placement         = True # i.e. position and rotation
+        self.scale             = True
+        self.copyNumber        = True
         self.materials         = True
         self.materialClassType = True
         self.materialCompositionType = True # i.e. N atoms or mass fraction
@@ -358,23 +360,23 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     if tests.placement:
         result += _vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
         result += _vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
-
-    if rpv.scale and opv.scale: # may be None
-        result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
-    elif rpv.scale or opv.scale:
-        rpvScaleNumeric = rpv.scale.eval() if rpv.scale else [1.0,1.0,1.0]
-        opvScaleNumeric = opv.scale.eval() if opv.scale else [1.0,1.0,1.0]
-        if rpvScaleNumeric != opvScaleNumeric :
-            rpvScale = str(rpv.scale) if rpv.scale else "None"
-            opvScale = str(opv.scale) if opv.scale else "None"
-            details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
-            result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+    if tests.scale:
+        if rpv.scale and opv.scale: # may be None
+            result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
+        elif rpv.scale or opv.scale:
+            rpvScaleNumeric = rpv.scale.eval() if rpv.scale else [1.0,1.0,1.0]
+            opvScaleNumeric = opv.scale.eval() if opv.scale else [1.0,1.0,1.0]
+            if rpvScaleNumeric != opvScaleNumeric :
+                rpvScale = str(rpv.scale) if rpv.scale else "None"
+                opvScale = str(opv.scale) if opv.scale else "None"
+                details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
+                result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+            elif includeAllTestResults:
+                result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
         elif includeAllTestResults:
             result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
-    elif includeAllTestResults:
-        result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
-
-    result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
+    if tests.copyNumber :
+        result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     if rpv.logicalVolume.type == "logical":
         if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
             result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
