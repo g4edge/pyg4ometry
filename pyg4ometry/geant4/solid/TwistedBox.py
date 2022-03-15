@@ -61,7 +61,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
         self.dependents = []
 
-        self.varNames = ["twistedAngle", "pDx", "pDy","pDz"]
+        self.varNames = ["twistedAngle", "pDx", "pDy", "pDz"]
+        self.varUnits = ["aunit", "lunit", "lunit", "lunit"]
 
         self.checkParameters()
 

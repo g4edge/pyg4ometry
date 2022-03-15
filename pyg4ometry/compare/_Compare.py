@@ -797,8 +797,8 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
         if rso.type == oso.type:
             # can only compare variables if they're the same type
             for var in _excludeUnits(rso.varNames):
-                rv = _evaluateToFloat(rso.registry, getattr(rso, var))
-                ov = _evaluateToFloat(oso.registry, getattr(oso, var))
+                rv = rso.evaluateParameterWithUnits(var)
+                ov = oso.evaluateParameterWithUnits(var)
                 problem = False
 
                 def CheckDiff(v1,v2):

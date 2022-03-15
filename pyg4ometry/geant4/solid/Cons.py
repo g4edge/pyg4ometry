@@ -66,8 +66,8 @@ class Cons(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pRmin1", "pRmin2", "pRmax1","pRmax2","pDz","pSPhi","pDPhi",
-                         "nslice","lunit","aunit"]
+        self.varNames = ["pRmin1", "pRmin2", "pRmax1", "pRmax2", "pDz", "pSPhi", "pDPhi", "nslice"]
+        self.varUnits = ["lunit", "lunit", "lunit", "lunit", "lunit", "aunit", "aunit", None]
 
         if addRegistry:
             registry.addSolid(self)

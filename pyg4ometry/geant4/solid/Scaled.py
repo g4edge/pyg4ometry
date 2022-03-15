@@ -30,6 +30,7 @@ class Scaled(_SolidBase):
         self.pZ   = pZ
 
         self.varNames = ["pX", "pY", "pZ"]
+        self.varUnits = [None, None, None]
         self.dependents = []
 
         if addRegistry:

@@ -62,7 +62,8 @@ class Torus(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pRmin", "pRmax", "pRtor","pSPhi","pDPhi","nslice","nstack","lunit","aunit"]
+        self.varNames = ["pRmin", "pRmax", "pRtor", "pSPhi", "pDPhi", "nslice", "nstack"]
+        self.varUnits = ["lunit", "lunit", "lunit", "aunit", "aunit", None, None]
 
         self._twoPiValueCheck("pDPhi", self.aunit)
 

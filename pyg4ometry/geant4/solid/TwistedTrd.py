@@ -55,7 +55,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
         self.dependents = []
 
-        self.varNames = ["twistedAngle", "pDx1", "pDx2","pDy1","pDy2","pDz"]
+        self.varNames = ["twistedAngle", "pDx1", "pDx2", "pDy1", "pDy2", "pDz"]
+        self.varUnits = ["aunit", "lunit", "lunit", "lunit", "lunit", "lunit"]
 
         self.checkParameters()
 
@@ -105,12 +106,12 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit) 
 
-        twistedAngle = self.evaluateParameter(self.twistedAngle)
-        pDx1 = self.evaluateParameter(self.pDx1)/2.
-        pDx2 = self.evaluateParameter(self.pDx2)/2.
-        pDy1 = self.evaluateParameter(self.pDy1)/2.
-        pDy2 = self.evaluateParameter(self.pDy2)/2.
-        pDz = self.evaluateParameter(self.pDz)/2.
+        twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
+        pDx1 = self.evaluateParameter(self.pDx1)/2.*luval
+        pDx2 = self.evaluateParameter(self.pDx2)/2.*luval
+        pDy1 = self.evaluateParameter(self.pDy1)/2.*luval
+        pDy2 = self.evaluateParameter(self.pDy2)/2.*luval
+        pDz = self.evaluateParameter(self.pDz)/2.*luval
 
         _log.info('twistedtrd.mesh> mesh')
         pl1 = _TwoVector(-pDx1, -pDy1)#, pDz]

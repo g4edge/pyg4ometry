@@ -61,8 +61,9 @@ class GenericTrap(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["v1x", "v1y", "v2x","v2y","v3x","v3y","v4x","v4y",
-                         "v5x","v5y","v6x","v6y","v7x","v7y","v8x","v8y","dz"]
+        self.varNames = ["v1x", "v1y", "v2x", "v2y", "v3x", "v3y", "v4x", "v4y",
+                         "v5x", "v5y", "v6x", "v6y", "v7x", "v7y", "v8x", "v8y", "dz"]
+        self.varUnits = ["lunit" for _ in self.VarNames]
 
         if addRegistry:
             registry.addSolid(self)

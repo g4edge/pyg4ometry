@@ -48,7 +48,8 @@ class Trd(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pX1", "pX2", "pY1","pY2","pZ"]
+        self.varNames = ["pX1", "pX2", "pY1", "pY2", "pZ"]
+        self.varUnits = ["lunit", "lunit", "lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)

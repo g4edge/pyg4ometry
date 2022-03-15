@@ -48,9 +48,12 @@ class Tubs(_SolidBase):
         if not nslice:
             nslice = _config.SolidDefaults.Tubs.nslice
 
+        self.lunit = lunit
+        self.aunit = aunit
+
         self.dependents = []
-        self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi",
-                         "pDPhi", "aunit", "lunit", "nslice"]
+        self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi", "pDPhi", "nslice"]
+        self.varUnits = ["lunit", "lunit", "lunit", "aunit", "aunit", None]
 
         for varName in self.varNames:
             self._addProperty(varName)
