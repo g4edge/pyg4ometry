@@ -499,6 +499,7 @@ class Registry:
         :param volume: PhysicalVolume or LogicalVolume or AssemblyVolume.
         :param collapseAssemblies: if True, daughters of AssemblyVolume's will be attached directly to the mother of the assembly and the AssemblyVolume itself will be eliminated from the geometry tree
         :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
+        :param userRenameDict: a dictionary of find/replace regex strings to be used to rename volumes/materials/etc.
 
         In the case where some object or variable has a name (e.g. 'X') that already exists
         in this registry, it will be incremented to 'X_1'.
@@ -563,6 +564,19 @@ class Registry:
 
     def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions, rotations, scales, names, incrementRenameDict, userRenameDict):
         """
+        Transfer and collapse an AssemblyVolume hierarchy to this registry.
+        Daughter volumes are copied, renamed, and attached to the supplied
+        mother LogicalVolume with the correct position/rotation.
+        Any objects that had a registry set to another will be set to this one
+        and will be owned by it effectively.
+        :param assemblyPV: the PhysicalVolume that places an AssemblyVolume
+        :param motherVol: the LogicalVolume to which all daughters of the AssemblyVolume (including any daughters of nested AssemblyVolume's) should be attached
+        :param positions: a list (initially empty) to hold position objects for each AssemblyVolume in a hierarchy of nested assemblies (used to correctly set the transformation of daughters within the motherVol)
+        :param rotations: a list (initially empty) to hold rotation objects for each AssemblyVolume in a hierarchy of nested assemblies (used to correctly set the transformation of daughters within the motherVol)
+        :param scales: a list (initially empty) to hold scale objects for each AssemblyVolume in a hierarchy of nested assemblies (used to correctly set the transformation of daughters within the motherVol)
+        :param names: a list (initially empty) to hold the names of each AssemblyVolume in a hierarchy of nested assemblies (used to set unique names for the daughters within the motherVol)
+        :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
+        :param userRenameDict: a dictionary of find/replace regex strings to be used to rename volumes/materials/etc.
         """
         import numpy as _np
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
@@ -570,13 +584,10 @@ class Registry:
         import pyg4ometry.transformation as _transformation
         import pyg4ometry.gdml.Defines as _Defines
 
-        assemblyLV = assemblyPV.logicalVolume
-
         positions.append( assemblyPV.position )
         rotations.append( assemblyPV.rotation )
         scales.append( assemblyPV.scale )
         names.append( assemblyPV.name )
-        #print(names)
 
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
@@ -597,24 +608,13 @@ class Registry:
             mtra = new_mtra
             tra = new_tra
 
-        #print(f'Collapsing assembly {assemblyLV.name}, which has position {assemblyPV.position.eval()} and rotation {assemblyPV.rotation.eval()} wrt {assemblyPV.motherVolume.name}')
-        #print(f'This results in the following position vector and rotation matrix wrt the top level volume {motherVol.name}:')
-        #print(tra)
-        #print(mtra)
-        #print('')
-
         # loop through the daughter volumes and either recurse (if it is also
         # an assembly) or deal properly with an actual solid placement
-        #print(f'{assemblyLV.name} has {len(assemblyLV.daughterVolumes)} daughter volumes:')
-        #for dv in assemblyLV.daughterVolumes:
-            #print(dv.name)
+        assemblyLV = assemblyPV.logicalVolume
         for dv in assemblyLV.daughterVolumes:
-            #print(f'Examining {dv.name}...')
             if isinstance(dv.logicalVolume, _AssemblyVolume) :
-                #print(f'{dv.name} is an AssemblyVolume, recursing...')
                 self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), list(names), incrementRenameDict, userRenameDict)
             else :
-                #print(f'{dv.name} is a simple placement...')
                 # we need to copy and rename the volume since we could
                 # potentially end up with many of the same pv (now with
                 # different positions) being attached to the mother volume
@@ -622,10 +622,8 @@ class Registry:
                 dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv.name, motherVol, None, dv.copyNumber, False, dv.scale)
                 names_copy = list(names)
                 names_copy.reverse()
-                #print(f'Prepending {names_copy} to {dv_copy.name}')
                 for name in names_copy :
                     dv_copy.name =  name + '_' + dv_copy.name
-                #print(f'Result: {dv_copy.name}')
 
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
