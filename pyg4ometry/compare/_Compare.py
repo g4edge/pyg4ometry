@@ -796,7 +796,7 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
 
         if rso.type == oso.type:
             # can only compare variables if they're the same type
-            for var in _excludeUnits(rso.varNames):
+            for var in rso.varNames:
                 rv = rso.evaluateParameterWithUnits(var)
                 ov = oso.evaluateParameterWithUnits(var)
                 problem = False
@@ -842,11 +842,6 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
         result['solidExactType'] += [TestResultNamed(testName, TestResult.NotTested)]
 
     result.result = result.result | TestResult.Passed
-    return result
-
-def _excludeUnits(varNamesList):
-    toExclude = ("lunit", "aunit")
-    result = [v for v in varNamesList if v not in toExclude]
     return result
 
 def _names(testName, str1, str2, parentName="", includeAllTestResults=False):
