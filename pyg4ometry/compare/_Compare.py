@@ -374,7 +374,7 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
             elif includeAllTestResults:
                 result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
         elif includeAllTestResults:
-            result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
+            result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
     if tests.copyNumber :
         result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     if rpv.logicalVolume.type == "logical":
