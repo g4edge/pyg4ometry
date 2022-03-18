@@ -619,11 +619,12 @@ class Registry:
                 # potentially end up with many of the same pv (now with
                 # different positions) being attached to the mother volume
                 # NB we already set here the mother volume to be the new one
-                dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv.name, motherVol, None, dv.copyNumber, False, dv.scale)
                 names_copy = list(names)
                 names_copy.reverse()
+                dv_copy_name = dv.name
                 for name in names_copy :
-                    dv_copy.name =  name + '_' + dv_copy.name
+                    dv_copy_name =  name + '_' + dv_copy_name
+                dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv_copy_name, motherVol, None, dv.copyNumber, False, dv.scale)
 
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
