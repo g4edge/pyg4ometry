@@ -76,7 +76,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
             registry.addSolid(self)
 
     def checkParameters(self):
-        if self.evaluateParameter(self.twistedAngle) > _np.pi:
+        if self.evaluateParameterWithUnits('twistedAngle') > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
     def __repr__(self):

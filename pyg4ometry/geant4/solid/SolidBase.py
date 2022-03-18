@@ -20,8 +20,6 @@ class SolidBase(object):
         var = getattr(self, varName)
         varVal = self.evaluateParameter(var)
 
-        #print(f'Variable {varName} in {self.name} has type {type(var)} and value {var}, and evaluates to type {type(varVal)} with value {varVal}')
-
         whichUnit = self.varUnits[self.varNames.index(varName)]
         if whichUnit:
             unitVal = _Units.unit(getattr(self, whichUnit))
