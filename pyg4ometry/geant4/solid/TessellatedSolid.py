@@ -43,6 +43,7 @@ class TessellatedSolid(_SolidBase):
 
         self.dependents = []
         self.varNames = []
+        self.varUnits = []
 
         if addRegistry:
             registry.addSolid(self)

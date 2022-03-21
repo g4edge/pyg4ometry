@@ -60,7 +60,8 @@ class Ellipsoid(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pxSemiAxis", "pySemiAxis", "pzSemiAxis","pzBottomCut","pzTopCut"]
+        self.varNames = ["pxSemiAxis", "pySemiAxis", "pzSemiAxis", "pzBottomCut", "pzTopCut"]
+        self.varUnits = ["lunit", "lunit", "lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)

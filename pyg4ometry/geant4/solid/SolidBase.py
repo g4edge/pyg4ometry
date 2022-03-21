@@ -14,6 +14,28 @@ class SolidBase(object):
         from pyg4ometry.gdml.Defines import evaluateToFloat
         return evaluateToFloat(self.registry, obj)
 
+    def evaluateParameterWithUnits(self, varName):
+        import pyg4ometry.gdml.Units as _Units
+
+        var = getattr(self, varName)
+        varVal = self.evaluateParameter(var)
+
+        whichUnit = self.varUnits[self.varNames.index(varName)]
+        if whichUnit:
+            unitVal = _Units.unit(getattr(self, whichUnit))
+        else:
+            unitVal = 1
+
+        if isinstance(varVal,float):
+            return unitVal * varVal
+        elif isinstance(varVal,list):
+            return [ unitVal * val for val in varVal ]
+        else:
+            # we just deal with the straightforward cases here
+            # solids that are more complicated should override this function
+            # for now, just return the value without dealing with units
+            return varVal
+
     def _addProperty(self, attribute):
         #create local setter and getter with a particular attribute name
         if hasattr(self.__class__, attribute):

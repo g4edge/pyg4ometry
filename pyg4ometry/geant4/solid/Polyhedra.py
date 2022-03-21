@@ -45,7 +45,8 @@ class Polyhedra(_SolidBase):
         self.lunit      = lunit
         self.aunit      = aunit
 
-        self.varNames = ["pSPhi", "pDPhi", "numSide", "numZPlanes","zPlane","rInner","rOuter"]
+        self.varNames = ["pSPhi", "pDPhi", "numSide", "numZPlanes", "zPlane", "rInner", "rOuter"]
+        self.varUnits = ["aunit", "aunit", None, None, "lunit", "lunit", "lunit"]
 
         self.dependents = []
 

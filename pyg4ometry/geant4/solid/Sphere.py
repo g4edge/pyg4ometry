@@ -68,7 +68,8 @@ class Sphere(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pRmin", "pRmax", "pSPhi","pDPhi","pSTheta","pDTheta"]
+        self.varNames = ["pRmin", "pRmax", "pSPhi", "pDPhi", "pSTheta", "pDTheta"]
+        self.varUnits = ["lunit", "lunit", "aunit", "aunit", "aunit", "aunit"]
 
         self.checkParameters()
 

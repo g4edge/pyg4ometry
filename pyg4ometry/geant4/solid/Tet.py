@@ -50,7 +50,8 @@ class Tet(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["anchor", "p2", "p3","p4","lunit"]
+        self.varNames = ["anchor", "p2", "p3", "p4"]
+        self.varUnits = ["lunit", "lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self) # Always need the registry

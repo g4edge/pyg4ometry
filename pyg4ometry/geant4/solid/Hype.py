@@ -61,7 +61,8 @@ class Hype(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["innerRadius", "outerRadius", "innerStereo","outerStereo","lenZ"]
+        self.varNames = ["innerRadius", "outerRadius", "innerStereo", "outerStereo", "lenZ"]
+        self.varUnits = ["lunit", "lunit", "aunit", "aunit", "lunit"]
 
         self.checkParameters()
 

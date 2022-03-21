@@ -47,8 +47,12 @@ class Box(_SolidBase):
     def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry=True):
         super(Box, self).__init__(name, 'Box', registry)
 
+        self.lunit = lunit
+
         self.dependents = []
-        self.varNames = ["pX", "pY", "pZ", "lunit"]
+
+        self.varNames = ["pX", "pY", "pZ"]
+        self.varUnits = ["lunit", "lunit", "lunit"]
 
         for varName in self.varNames:
             self._addProperty(varName)

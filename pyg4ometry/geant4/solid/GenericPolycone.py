@@ -44,6 +44,7 @@ class GenericPolycone(_SolidBase):
         self.nslice  = nslice if nslice else _config.SolidDefaults.GenericPolycone.nslice
 
         self.varNames = ["pSPhi", "pDPhi", "pR", "pZ"]
+        self.varUnits = ["aunit", "aunit", "lunit", "lunit"]
 
         self.dependents = []
 

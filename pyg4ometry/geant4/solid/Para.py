@@ -58,7 +58,8 @@ class Para(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pX", "pY", "pZ","pAlpha","pPhi"]
+        self.varNames = ["pX", "pY", "pZ", "pAlpha", "pPhi", "pTheta"]
+        self.varUnits = ["lunit", "lunit", "lunit", "aunit", "aunit", "aunit"]
 
         if addRegistry:
             registry.addSolid(self)
