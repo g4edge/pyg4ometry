@@ -83,6 +83,9 @@ class Tests:
 
     @classmethod
     def printAllTestNames(cls):
+        """
+        Print all tests names - the exact strings that can be used to turn them off or on.
+        """
         for name in cls._testNames:
             print('"' + name + '"')
 
