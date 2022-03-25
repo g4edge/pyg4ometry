@@ -53,6 +53,7 @@ class EllipticalTube(_SolidBase):
         self.dependents = []
 
         self.varNames = ["pDx", "pDy", "pDz"]
+        self.varUnits = ["lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)

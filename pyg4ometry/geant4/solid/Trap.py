@@ -74,7 +74,8 @@ class Trap(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pDz", "pTheta", "pDPhi","pDy1","pDx1","pDx2","pAlp1","pDy2","pDx3","pDx4","pAlp2","lunit","aunit"]
+        self.varNames = ["pDz", "pTheta", "pDPhi", "pDy1", "pDx1", "pDx2", "pAlp1", "pDy2", "pDx3", "pDx4", "pAlp2"]
+        self.varUnits = ["lunit", "aunit", "aunit", "lunit", "lunit", "lunit", "aunit", "lunit", "lunit", "lunit", "aunit"]
 
         if addRegistry:
             registry.addSolid(self)

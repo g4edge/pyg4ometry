@@ -60,7 +60,8 @@ class TwistedTubs(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["endinnerrad", "endouterrad", "zlen","phi","twistedangle"]
+        self.varNames = ["endinnerrad", "endouterrad", "zlen", "phi", "twistedangle"]
+        self.varUnits = ["lunit", "lunit", "lunit", "aunit", "aunit"]
 
         if addRegistry:
             registry.addSolid(self)

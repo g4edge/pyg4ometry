@@ -21,7 +21,7 @@ class Tests:
     >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
     _testNames = ['names', 'namesIgnorePointer', 'nDaughters', 'solidExact', 'solidExtent', 'shapeExtent', 'shapeVolume',
-                           'shapeArea', 'placement', 'materials', 'materialClassType', 'materialCompositionType',
+                           'shapeArea', 'placement', 'scale', 'copyNumber', 'materials', 'materialClassType', 'materialCompositionType',
                            'testDaughtersByName']
     def __init__(self, *testsByNameToTurnOn):
         self.names             = True
@@ -32,6 +32,8 @@ class Tests:
         self.shapeVolume       = True
         self.shapeArea         = True
         self.placement         = True # i.e. position and rotation
+        self.scale             = True
+        self.copyNumber        = True
         self.materials         = True
         self.materialClassType = True
         self.materialCompositionType = True # i.e. N atoms or mass fraction
@@ -81,6 +83,9 @@ class Tests:
 
     @classmethod
     def printAllTestNames(cls):
+        """
+        Print all tests names - the exact strings that can be used to turn them off or on.
+        """
         for name in cls._testNames:
             print('"' + name + '"')
 
@@ -298,10 +303,17 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
 
     # test daughters are the same - could even be same number but different
     # we rely here on unique names in pyg4ometry as that's true in GDML
-    rNameToObject = {d.name : d for d in rlv.daughterVolumes}
-    oNameToObject = {d.name : d for d in olv.daughterVolumes}
-    rSet = set([d.name for d in rlv.daughterVolumes])
-    oSet = set([d.name for d in olv.daughterVolumes])
+    if tests.namesIgnorePointer :
+        pattern = r'(0x\w{7})'
+        rNameToObject = {_re.sub(pattern, '', d.name) : d for d in rlv.daughterVolumes}
+        oNameToObject = {_re.sub(pattern, '', d.name) : d for d in olv.daughterVolumes}
+        rSet = set([_re.sub(pattern, '', d.name) for d in rlv.daughterVolumes])
+        oSet = set([_re.sub(pattern, '', d.name) for d in olv.daughterVolumes])
+    else :
+        rNameToObject = {d.name : d for d in rlv.daughterVolumes}
+        oNameToObject = {d.name : d for d in olv.daughterVolumes}
+        rSet = set([d.name for d in rlv.daughterVolumes])
+        oSet = set([d.name for d in olv.daughterVolumes])
 
     # iterate over daughters
     # if we assume there's some mismatch, we use the intersection set of names - ie the ones
@@ -327,7 +339,7 @@ def logicalVolumes(referenceLV, otherLV, tests, recursive=False, includeAllTestR
             result = _checkPVLikeDaughters(i_rDaughter, i_oDaughter, tests, rlv.name, testName,
                                            result, recursive, includeAllTestResults, testsAlreadyDone)
 
-    if tests.names:
+    if tests.names or tests.namesIgnorePointer:
         result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 
     testsAlreadyDone.append( ("lv_test_"+referenceLV.name, "lv_test_"+otherLV.name) )
@@ -351,18 +363,23 @@ def physicalVolumes(referencePV, otherPV, tests, recursive=False, lvName="", inc
     if tests.placement:
         result += _vector("rotation", rpv.rotation, opv.rotation, tests, testName, includeAllTestResults)
         result += _vector("position", rpv.position, opv.position, tests, testName, includeAllTestResults)
-
-    if rpv.scale and opv.scale: # may be None
-        result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
-    elif rpv.scale or opv.scale:
-        rpvScale = str(rpv.scale) if rpv.scale else "None"
-        opvScale = str(opv.scale) if opv.scale else "None"
-        details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
-        result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
-    elif includeAllTestResults:
-        result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
-
-    result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
+    if tests.scale:
+        if rpv.scale and opv.scale: # may be None
+            result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
+        elif rpv.scale or opv.scale:
+            rpvScaleNumeric = rpv.scale.eval() if rpv.scale else [1.0,1.0,1.0]
+            opvScaleNumeric = opv.scale.eval() if opv.scale else [1.0,1.0,1.0]
+            if rpvScaleNumeric != opvScaleNumeric :
+                rpvScale = str(rpv.scale) if rpv.scale else "None"
+                opvScale = str(opv.scale) if opv.scale else "None"
+                details = "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
+                result['pvScale'] += [TestResultNamed(testName, TestResult.Failed, details)]
+            elif includeAllTestResults:
+                result['pvScale'] += [TestResultNamed(testName, TestResult.Passed)]
+        elif includeAllTestResults:
+            result['pvScale'] += [TestResultNamed(testName, TestResult.NotTested)]
+    if tests.copyNumber :
+        result += _copyNumber(testName, rpv.copyNumber, opv.copyNumber, tests, includeAllTestResults)
     if rpv.logicalVolume.type == "logical":
         if ("lv_test_"+rpv.logicalVolume.name, "lv_test_"+opv.logicalVolume.name) not in testsAlreadyDone:
             result += logicalVolumes(rpv.logicalVolume, opv.logicalVolume, tests, recursive, includeAllTestResults, testsAlreadyDone)
@@ -782,9 +799,9 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
 
         if rso.type == oso.type:
             # can only compare variables if they're the same type
-            for var in _excludeUnits(rso.varNames):
-                rv = _evaluateToFloat(rso.registry, getattr(rso, var))
-                ov = _evaluateToFloat(oso.registry, getattr(oso, var))
+            for var in rso.varNames:
+                rv = rso.evaluateParameterWithUnits(var)
+                ov = oso.evaluateParameterWithUnits(var)
                 problem = False
 
                 def CheckDiff(v1,v2):
@@ -828,11 +845,6 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
         result['solidExactType'] += [TestResultNamed(testName, TestResult.NotTested)]
 
     result.result = result.result | TestResult.Passed
-    return result
-
-def _excludeUnits(varNamesList):
-    toExclude = ("lunit", "aunit")
-    result = [v for v in varNamesList if v not in toExclude]
     return result
 
 def _names(testName, str1, str2, parentName="", includeAllTestResults=False):
@@ -879,13 +891,27 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
         rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
         rc *= _Units.unit(getattr(r1,'unit'))
         oc *= _Units.unit(getattr(r2,'unit'))
-        drc = oc - rc
-        if drc != 0:
-            if ( rc != 0 and abs((drc / rc)) > tolerance ) or ( oc != 0 and abs((drc / oc)) > tolerance ):
-                details = v+": (reference): "+str(rc)+", (other): "+str(oc)
-                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
-            elif includeAllTestResults:
-                result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
+        drc = abs(oc - rc)
+
+        if vectortype == 'rotation':
+            # in the case of rotations we need to check against 2pi and zero
+            drc2pi = abs(drc - 360.0*_Units.unit('deg'))
+            if drc != 0 and drc2pi != 0:
+                if ( (( rc != 0 and (drc / rc) > tolerance ) or ( oc != 0 and (drc / oc) > tolerance )) and
+                     (( rc != 0 and (drc2pi / rc) > tolerance ) or ( oc != 0 and (drc2pi / oc) > tolerance )) ):
+                    details = v+": (reference): "+str(rc)+", (other): "+str(oc)
+                    result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
+                    continue
+        else:
+            # otherwise we just check against zero
+            if drc != 0:
+                if ( rc != 0 and (drc / rc) > tolerance ) or ( oc != 0 and (drc / oc) > tolerance ):
+                    details = v+": (reference): "+str(rc)+", (other): "+str(oc)
+                    result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Failed, details)]
+                    continue
+
+        if includeAllTestResults:
+            result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
     
     return result
 

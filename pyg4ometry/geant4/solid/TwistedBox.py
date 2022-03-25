@@ -61,7 +61,8 @@ class TwistedBox(_SolidBase, _TwistedSolid):
 
         self.dependents = []
 
-        self.varNames = ["twistedAngle", "pDx", "pDy","pDz"]
+        self.varNames = ["twistedAngle", "pDx", "pDy", "pDz"]
+        self.varUnits = ["aunit", "lunit", "lunit", "lunit"]
 
         self.checkParameters()
 
@@ -72,7 +73,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         return "Twisted Box : {} {} {} {} {}".format(self.name, self.twistedAngle,
                                                      self.pDx, self.pDy, self.pDz)
     def checkParameters(self):
-        if self.evaluateParameter(self.twistedAngle) > _np.pi:
+        if self.evaluateParameterWithUnits('twistedAngle') > _np.pi:
             raise ValueError("Twisted Angle must be less than 0.5*pi")
 
 

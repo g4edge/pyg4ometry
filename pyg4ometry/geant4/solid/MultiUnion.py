@@ -29,6 +29,7 @@ class MultiUnion(_SolidBase):
                                 for t in transformations]
 
         self.varNames = ["transformations"]
+        self.varUnits = [None]
         self.dependents = []
 
         if addRegistry:

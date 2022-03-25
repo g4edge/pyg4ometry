@@ -48,7 +48,8 @@ class Polycone(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pSPhi", "pDPhi", "pZpl","pRMin","pRMax"]
+        self.varNames = ["pSPhi", "pDPhi", "pZpl", "pRMin", "pRMax"]
+        self.varUnits = ["aunit", "aunit", "lunit", "lunit", "lunit"]
 
         self._twoPiValueCheck("pDPhi", self.aunit)
 

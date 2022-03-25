@@ -225,7 +225,6 @@ class ScalarBase(object) :
                      addRegistry=False)
         return v
 
-
     def __abs__(self):
         return abs(self)
 
@@ -429,6 +428,42 @@ class Constant(ScalarBase) :
 
         """
         return self.expr.eval()
+
+    def __eq__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() == other.eval()
+        else :
+            return self.eval() == other
+
+    def __ne__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() != other.eval()
+        else :
+            return self.eval() != other
+
+    def __lt__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() < other.eval()
+        else :
+            return self.eval() < other
+
+    def __gt__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() > other.eval()
+        else :
+            return self.eval() > other
+
+    def __le__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() <= other.eval()
+        else :
+            return self.eval() <= other
+
+    def __ge__(self, other):
+        if isinstance(other, Constant):
+            return self.eval() >= other.eval()
+        else :
+            return self.eval() >= other
 
     def __float__(self) :
         return self.expr.eval()

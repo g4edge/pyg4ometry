@@ -35,14 +35,18 @@ class ExtrudedSolid(_SolidBase):
     :type lunit:           str
     
     Example: Triangular prism with 2 slices
-    pPoligon = [[x1,y1],[x2,y2],[x3,v3]] - vertices of polygon in clockwise order
+    pPoligon = [[x1,y1],[x2,y2],[x3,y3]] - vertices of polygon in clockwise order
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
     """
     def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True):
         super(ExtrudedSolid, self).__init__(name, 'ExtrudedSolid', registry)
 
+        self.lunit = lunit
+
         self.dependents = []
-        self.varNames = ["pPolygon", "pZslices", "lunit"]
+
+        self.varNames = ["pPolygon", "pZslices"]
+        self.varUnits = ["lunit", "lunit"]
 
         for varName in self.varNames:
             self._addProperty(varName)
@@ -61,6 +65,21 @@ class ExtrudedSolid(_SolidBase):
         y = xy[1]
         signed_area = 0.5*(_np.dot(x,_np.roll(y,1))-_np.dot(y,_np.roll(x,1)))
         return signed_area
+
+    def evaluateParameterWithUnits(self, varName):
+        import pyg4ometry.gdml.Units as _Units
+        luval = _Units.unit(self.lunit)
+
+        if varName == 'pPolygon' :
+            pPolygons = self.evaluateParameter(self.pPolygon)
+            vertices  = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygons]
+            return vertices
+        elif varName == 'pZslices' :
+            pZslices = self.evaluateParameter(self.pZslices)
+            slices = [ [zslice[0]*luval, [zslice[1][0]*luval, zslice[1][1]*luval], zslice[2]] for zslice in pZslices ]
+            return slices
+        else :
+            raise RuntimeError(f'ExtrudedSolid.evaluateParameterWithUnits : unknown variable: {varName}')
 
     def mesh(self):
         _log.info('xtru.pycsgmesh> antlr')

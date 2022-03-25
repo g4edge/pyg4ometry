@@ -31,6 +31,7 @@ class Union(_SolidBase):
         self.tra2 = _defines.upgradeToTransformation(tra2,registry)
 
         self.varNames = ["tra2"]
+        self.varUnits = [None]
         self.dependents = []
 
         if addRegistry:

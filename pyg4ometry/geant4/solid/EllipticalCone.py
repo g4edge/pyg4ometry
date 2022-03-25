@@ -49,7 +49,8 @@ class EllipticalCone(_SolidBase):
 
         self.dependents = []
 
-        self.varNames = ["pxSemiAxis", "pySemiAxis", "zMax","pzTopCut"]
+        self.varNames = ["pxSemiAxis", "pySemiAxis", "zMax", "pzTopCut"]
+        self.varUnits = ["lunit", "lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)

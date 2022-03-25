@@ -52,6 +52,7 @@ class Paraboloid(_SolidBase):
         self.dependents = []
 
         self.varNames = ["pDz", "pR1", "pR2"]
+        self.varUnits = ["lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)

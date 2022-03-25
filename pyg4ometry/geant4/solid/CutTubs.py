@@ -50,7 +50,9 @@ class CutTubs(_SolidBase):
         self.aunit = aunit
         self.dependents = []
         self.varNames = ["pRMin", "pRMax", "pDz", "pSPhi", "pDPhi",
-                         "pLowNorm", "pHighNorm", "lunit", "aunit", "nslice"]
+                         "pLowNorm", "pHighNorm", "nslice"]
+        self.varUnits = ["lunit", "lunit", "lunit", "aunit", "aunit",
+                         "lunit", "lunit", None]
 
         for varName in self.varNames:
             self._addProperty(varName)
