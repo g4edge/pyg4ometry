@@ -406,6 +406,11 @@ class LogicalVolume(object):
         return [vMin, vMax]
 
     def clipSolid(self, lengthSafety=1e-6):
+        """
+        Assuming the solid of this LV is a Box, reduce its dimensions and re-placement all daughters
+        to reduce the box to the minimum (axis-aligned) bounding box. This updates the dimensions of the
+        box and the translation of each daughter physical volume.
+        """
         # loop over daughter volumes to find centres
 
         eMin = [1e99, 1e99, 1e99]
@@ -443,6 +448,8 @@ class LogicalVolume(object):
             self.solid.pX = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
             self.solid.pY = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
             self.solid.pZ = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
+        else:
+            print("Warning: only Box container volume supported: all daughter placements have been recentred but container solid has not")
 
         self.mesh.remesh()
         return centre
