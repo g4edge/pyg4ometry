@@ -93,7 +93,7 @@ class CSG(object):
         return len(self.polygons)
 
     def vertexCount(self):
-        '''Return number of verticies in CSG solid'''
+        '''Return number of vertices in CSG solid'''
         vCount = 0
         for p in self.polygons :
             vCount += len(p.vertices)
@@ -153,7 +153,7 @@ class CSG(object):
     def scale(self, scale):
         """
         Translate Geometry.
-           disp: displacement (array of floats)
+           scale: displacement (array of floats)
         """
         d = Vector(scale[0], scale[1], scale[2])
         for poly in self.polygons:
