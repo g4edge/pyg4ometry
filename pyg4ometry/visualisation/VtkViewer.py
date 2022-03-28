@@ -350,6 +350,34 @@ class VtkViewer:
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
+    def addSolid(self, solid, rotation=[0,0,0], position=[0,0,0], representation="surface", colour=[0.5,0.5,0.5], opacity=0.2):
+        """
+        Add a solid to the view with an optional rotation and translation.
+
+        :param solid: solid to add to the view
+        :type  solid: any solid in pyg4ometry.geant4.solid
+        :param rotation: list of TB rotation angles in radians
+        :type  rotation: list(float, float, float) - 3 values
+        :param position: translation in global from from centre in mm
+        :type  position: list(float, float, float) - 3 values
+        :param representation: the way to visualise it, e.g. 'surface' or 'wireframe'
+        :type  representation: str
+        :param colour: normalised rgb colour to use for the solid mesh
+        :type  colour: list(float, float, float) - 3 values ranging from 0 - 1
+        :param opacity: the opacity of the solid if surface style
+        :type  opacity: float, from 0 to 1
+        """
+        mesh = solid.mesh()
+        visOptions = _VisOptions()
+        visOptions.representation = representation
+        visOptions.alpha = opacity
+        visOptions.color = colour
+        mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rotation))
+        mtra = _np.array(position)
+        self.addMesh(solid.name, solid.name, mesh, mrot, mtra, self.localmeshes,
+                     self.filters, self.mappers, self.physicalMapperMap, self.actors,
+                     self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+
     def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
         """
         :param solid: pyg4ometry.geant4.solid instance.
