@@ -20,6 +20,7 @@ import numpy as _np
 import logging as _log
 
 import resource as _resource
+import time as _time
 
 class Sphere(_SolidBase):
     """
@@ -97,6 +98,9 @@ class Sphere(_SolidBase):
         0 < phi < 2pi
         0 < theta < pi
         """
+
+        tBefore = _time.process_time()
+
         _log.info("sphere.antlr>")
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
@@ -272,9 +276,10 @@ class Sphere(_SolidBase):
                         vEnd.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
                         # print "theta low end ", len(polygons)
                         polygons.append(_Polygon(vEnd))
+        tAfter = _time.process_time()
 
-        #mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         mesh = _CSG.fromPolygons(polygons)
-        #mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
-        #print(mAfter-mBefore,mesh.getNumberPolys())
+        mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        _log.info('Sphere.pycsgmesh> profile {} {} {} {} {}'.format(self.nstack, self.nslice, mesh.getNumberPolys(),mAfter-mBefore,tAfter-tBefore))
         return mesh
