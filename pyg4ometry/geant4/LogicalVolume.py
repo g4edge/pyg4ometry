@@ -110,18 +110,20 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
-    def _getPhysicalDaughterMesh(self, pv):
+    def _getPhysicalDaughterMesh(self, pv, warn=True):
         """
         Return a (cloned from the lv) mesh of a given pv with rotation,scale,
         translation evaluated.
         """
         # cannot currently deal with replica, division and parametrised
         if  pv.type != "placement":
-            print("Cannot generate specific daughter mesh for replica, division, parameterised")
+            if warn:
+                print("Cannot generate specific daughter mesh for replica, division, parameterised")
             return None
         # cannot currently deal with assembly
         if  pv.logicalVolume.type == "assembly":
-            print("Cannot generate specific daughter mesh for assembly")
+            if warn:
+                print("Cannot generate specific daughter mesh for assembly")
             return None
 
         _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
