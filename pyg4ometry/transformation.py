@@ -16,9 +16,7 @@ def tbxyz2axisangle(rv) :
 
     For converting rotation angles to an active axis/angle pair for
     use in pycsg.  Order of rotation:  x->y->z.
-
     """
-
     matrix = tbxyz2matrix(rv)
     return matrix2axisangle(matrix)
 
@@ -150,7 +148,7 @@ def tbxyz2matrix(angles):
 
 def tbzyx2matrix(angles):
     """
-    Convert tait bryan angles to a single passive rotation matrix.
+    Convert Tait-Bryan angles to a single passive rotation matrix.
     rotation order = x -> y -> z.
     
     :param angles: list of angles:  x, y, z

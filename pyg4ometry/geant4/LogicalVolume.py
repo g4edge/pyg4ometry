@@ -150,6 +150,13 @@ class LogicalVolume(object):
         """
         Given a solid with a placement rotation and position inside this logical
         volume, remove (cull) any daughters that would not lie entirely within it.
+        The rotation and position are applied to the solid w.r.t. the frame of this
+        logical volume.
+
+        :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation of the solid w.r.t. this lv
+        :type  position: list(float, float, float) or None - 3 values in mm
         """
         # form temporary mesh of solid in the coordinate frame of this solid
         clipMesh = _Mesh(solid)
