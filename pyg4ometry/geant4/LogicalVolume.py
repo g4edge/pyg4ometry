@@ -176,7 +176,7 @@ class LogicalVolume(object):
                 continue # maybe unsupported type - skip
 
             interMesh = pvmesh.intersect(clipMesh)
-            if interMesh.polygonCount != pvmesh.polygonCount:
+            if interMesh.polygonCount() != pvmesh.polygonCount():
                 # either protruding or outside
                 toKeep.append( interMesh.polygonCount() != 0)
 
