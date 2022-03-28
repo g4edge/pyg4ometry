@@ -177,13 +177,105 @@ class LogicalVolume(object):
                 toKeep.append(True)
                 continue # maybe unsupported type - skip
 
-            interMesh = pvmesh.intersect(clipMesh)
-            if interMesh.polygonCount() != pvmesh.polygonCount():
+            intersectionMesh = pvmesh.intersect(clipMesh)
+            if intersectionMesh.polygonCount() != pvmesh.polygonCount():
                 # either protruding or outside
-                toKeep.append( interMesh.polygonCount() != 0)
+                toKeep.append(intersectionMesh.polygonCount() != 0)
 
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
+
+    def changeSolidAndTrimGeometry(self, newSolid, rotation=(0,0,0), position=(0,0,0), runit="rad", punit="mm"):
+        """
+        Change the solid of this logical volume, remove any daughters that will lie outside
+        it, and form new Boolean intersection solids for any daughters that cross the boundary
+        (intersect) it. The rotation and translation are with respect to the original frame and
+        all daughters will now be replaced with respect to the new frame. Therefore, that same
+        rotation and translation should be use to re-place this logical volume if desired. The
+        default is none though, so the frame would nominally remain the same.
+
+        :param newSolid: new solid to use for this logical volume
+        :type  newSolid: any of pyg4ometry.geant4.solid
+        :param rotation: Tait-Bryan rotation for the new solid w.r.t. old frame (i.e. current lv)
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation for the new solid w.r.t. old frame (i.e. current lv)
+        :type  position: list(float, float, float) or None - 3 values in mm
+        """
+        # first cull anything entirely outside
+        self.cullDaughtersOutsideSolid(newSolid, rotation, position)
+        if len(self.daughterVolumes) == 0:
+            print("Warning> no remaining daughters")
+            # if there are no daughters remaining, then there's no need to update
+            # the placement transforms
+            self.solid = newSolid
+            return
+        # else some daughters remain - check them - if they intersect (judged by the mesh intersection)
+        # then reform their solids to include that intersection
+
+        from pyg4ometry.gdml.Defines import Position, Rotation, upgradeToVector
+        from pyg4ometry.geant4.solid import Intersection
+
+        # prepare clipping mesh from the newSolid
+        clipMesh = _Mesh(newSolid)
+        clipMesh = clipMesh.localmesh
+        if rotation:
+            aa = _trans.tbxyz2axisangle(rotation)
+            clipMesh.rotate(aa[0], _trans.rad2deg(aa[1]))
+        if position:
+            clipMesh.translate(position)
+
+        p = position
+        r = rotation
+        extraTranslation = Position(newSolid.name+"_tra", -p[0], -p[1], -p[2], punit, self.registry)
+        extraRotation    = Rotation(newSolid.name+"_rot", -r[0], -r[1], -r[2], runit, self.registry)
+        def _updateRotoTranslation(pv):
+            origTra = upgradeToVector(pv.position, self.registry, type="position")
+            newTra = origTra + extraTranslation
+            origRot = upgradeToVector(pv.rotation, self.registry, type="rotation")
+            newRot = origRot * extraRotation
+            pv.rotation = newRot
+            pv.position = newTra
+
+        def _getInverseRotoTranslation(pv):
+            invTra = -1 * upgradeToVector(pv.position, self.registry, type="position")
+            invRot = -1 * upgradeToVector(pv.rotation, self.registry, type="rotation")
+            return invRot, invTra
+
+        daughterAssemblies = []
+        for pv in self.daughterVolumes:
+            pvmesh = self._getPhysicalDaughterMesh(pv, warn=False)
+            if pvmesh is None:
+                if pv.logicalVolume.type == "assembly":
+                    daughterAssemblies.append(pv)
+                continue  # maybe unsupported type - skip
+
+            intersectionMesh = pvmesh.intersect(clipMesh)
+            if intersectionMesh.polygonCount() == 0:
+                continue # shouldn't happen as we've already culled daughters entirely outside, but nonetheless
+            elif intersectionMesh.polygonCount() == pvmesh.polygonCount():
+                # intersection mesh exactly the same as pvmesh, so pv lies entirely
+                # inside the solid - just update placement transform
+                _updateRotoTranslation(pv)
+            else:
+                # by elimination it's protruding
+                _updateRotoTranslation(pv)
+                # We keep the 1st object in the intersection the original so its frame
+                # is preserved. We therefore use the inverse of the (new and updated)
+                # placement transform of this daughter
+                invRot, invTra = _getInverseRotoTranslation(pv)
+                dSolid = pv.logicalVolume.solid
+                newDSolid = Intersection(dSolid.name+"_inters_"+newSolid,
+                                         dSolid,
+                                         newSolid,
+                                         [invRot, invTra],
+                                         self.registry)
+                pv.logicalVolume.solid = newDSolid
+
+        # now go back to the assemblies...
+
+        # finally update the solid
+        self.solid = newSolid
+
 
     def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
         """
