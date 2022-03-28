@@ -1,5 +1,6 @@
 #import time as _time
 import numpy as _np
+from pyg4ometry import config as _config
 
 class SolidBase(object):
     """
@@ -62,8 +63,13 @@ class SolidBase(object):
         return getattr(self, "_" + attribute)
 
     def _twoPiValueCheck(self, attribute, aunit="rad"):
+        """
+        Raises a ValueError if the attribute is over pyg4ometry.config.twoPiComparisonTolerance **over** 2 x pi.
+        """
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        if self.evaluateParameter(getattr(self, attribute)) * (_Units.unit(aunit)) > 2 * _np.pi:
+        v = self.evaluateParameter(getattr(self, attribute)) * (_Units.unit(aunit))
+        # note no abs() on this check on purpose
+        if (v - 2 * _np.pi) > _config.twoPiComparisonTolerance:
             raise ValueError("pDPhi is strictly greater than 2 x pi in solid \"" + self.name + "\"")
 
     @property
