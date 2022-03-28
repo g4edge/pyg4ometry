@@ -308,8 +308,7 @@ class LogicalVolume(object):
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
 
-            cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
-
+            #cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
             #if cullIntersection.vertexCount() == 0 :
             #    continue
 
