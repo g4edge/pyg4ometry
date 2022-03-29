@@ -1,6 +1,13 @@
 #import logging as _logging
 #_logging.basicConfig(filename='logging.log', encoding='utf-8', level=_logging.INFO)
 
+
+"""
+We check that sweep angles aren't greater than 2 pi. This is the tolerance for rounding
+errors. The default is around float precision.
+"""
+twoPiComparisonTolerance = 1e-7
+
 class meshingType :
     pycsg    = 1
     cgal_sm  = 2

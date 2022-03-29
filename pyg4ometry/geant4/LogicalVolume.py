@@ -110,18 +110,20 @@ class LogicalVolume(object):
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
-    def _getPhysicalDaughterMesh(self, pv):
+    def _getPhysicalDaughterMesh(self, pv, warn=True):
         """
         Return a (cloned from the lv) mesh of a given pv with rotation,scale,
         translation evaluated.
         """
         # cannot currently deal with replica, division and parametrised
         if  pv.type != "placement":
-            print("Cannot generate specific daughter mesh for replica, division, parameterised")
+            if warn:
+                print("Cannot generate specific daughter mesh for replica, division, parameterised")
             return None
         # cannot currently deal with assembly
         if  pv.logicalVolume.type == "assembly":
-            print("Cannot generate specific daughter mesh for assembly")
+            if warn:
+                print("Cannot generate specific daughter mesh for assembly")
             return None
 
         _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
@@ -150,6 +152,13 @@ class LogicalVolume(object):
         """
         Given a solid with a placement rotation and position inside this logical
         volume, remove (cull) any daughters that would not lie entirely within it.
+        The rotation and position are applied to the solid w.r.t. the frame of this
+        logical volume.
+
+        :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation of the solid w.r.t. this lv
+        :type  position: list(float, float, float) or None - 3 values in mm
         """
         # form temporary mesh of solid in the coordinate frame of this solid
         clipMesh = _Mesh(solid)
@@ -168,10 +177,15 @@ class LogicalVolume(object):
                 toKeep.append(True)
                 continue # maybe unsupported type - skip
 
-            interMesh = pvmesh.intersect(clipMesh)
-            if interMesh.polygonCount != pvmesh.polygonCount:
-                # either protruding or outside
-                toKeep.append( interMesh.polygonCount() != 0)
+            intersectionMesh = pvmesh.intersect(clipMesh)
+            countIM = intersectionMesh.polygonCount()
+            countPV = pvmesh.polygonCount()
+            if countIM != countPV:
+                # either protruding (count!=0) or outside (count==0)
+                # keep only ones that are protruding
+                toKeep.append(intersectionMesh.polygonCount() != 0)
+            else:
+                toKeep.append(True)
 
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
@@ -308,8 +322,7 @@ class LogicalVolume(object):
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
 
-            cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
-
+            #cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
             #if cullIntersection.vertexCount() == 0 :
             #    continue
 
@@ -406,6 +419,11 @@ class LogicalVolume(object):
         return [vMin, vMax]
 
     def clipSolid(self, lengthSafety=1e-6):
+        """
+        Assuming the solid of this LV is a Box, reduce its dimensions and re-placement all daughters
+        to reduce the box to the minimum (axis-aligned) bounding box. This updates the dimensions of the
+        box and the translation of each daughter physical volume.
+        """
         # loop over daughter volumes to find centres
 
         eMin = [1e99, 1e99, 1e99]
@@ -443,6 +461,8 @@ class LogicalVolume(object):
             self.solid.pX = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_x",diff[0],self.registry,True)
             self.solid.pY = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_y",diff[1],self.registry,True)
             self.solid.pZ = _pyg4ometry.gdml.Constant(self.solid.name+"_rescaled_z",diff[2],self.registry,True)
+        else:
+            print("Warning: only Box container volume supported: all daughter placements have been recentred but container solid has not")
 
         self.mesh.remesh()
         return centre
