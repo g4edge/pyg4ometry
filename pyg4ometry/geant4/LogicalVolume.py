@@ -177,10 +177,15 @@ class LogicalVolume(object):
                 toKeep.append(True)
                 continue # maybe unsupported type - skip
 
-            interMesh = pvmesh.intersect(clipMesh)
-            if interMesh.polygonCount() != pvmesh.polygonCount():
-                # either protruding or outside
-                toKeep.append( interMesh.polygonCount() != 0)
+            intersectionMesh = pvmesh.intersect(clipMesh)
+            countIM = intersectionMesh.polygonCount()
+            countPV = pvmesh.polygonCount()
+            if countIM != countPV:
+                # either protruding (count!=0) or outside (count==0)
+                # keep only ones that are protruding
+                toKeep.append(intersectionMesh.polygonCount() != 0)
+            else:
+                toKeep.append(True)
 
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
