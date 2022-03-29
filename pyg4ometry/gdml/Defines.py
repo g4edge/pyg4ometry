@@ -40,6 +40,9 @@ def upgradeToStringExpression(reg, obj):
         else : 
             return obj.expr.expression  # so a scalar expression not in registry
 
+    else:
+        raise ValueError("upgradeToStringExpression> unsupported type ("+str(type(obj))+")")
+
 def evaluateToFloat(reg, obj):
     try:
         if isinstance(obj, str):
