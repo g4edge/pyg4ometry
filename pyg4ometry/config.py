@@ -1,3 +1,6 @@
+#import logging as _logging
+#_logging.basicConfig(filename='logging.log', encoding='utf-8', level=_logging.INFO)
+
 class meshingType :
     pycsg    = 1
     cgal_sm  = 2
