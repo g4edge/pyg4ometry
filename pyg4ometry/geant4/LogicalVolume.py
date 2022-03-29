@@ -234,7 +234,8 @@ class LogicalVolume(object):
             if countIM != countPV:
                 # either protruding (count!=0) or outside (count==0)
                 # keep only ones that are protruding
-                toKeep.append(intersectionMesh.polygonCount() != 0)
+                #toKeep.append(intersectionMesh.polygonCount() != 0)
+                toKeep.append(True)
             else:
                 toKeep.append(True)
             # cache the intersection mesh for ones we're keeping
@@ -258,25 +259,71 @@ class LogicalVolume(object):
         from pyg4ometry import transformation as _transformation
 
         p, r = position, rotation
-        extraTranslation = Position(newSolid.name+"_tra", -p[0], -p[1], -p[2], punit, self.registry)
-        extraRotation    = Rotation(newSolid.name+"_rot", -r[0], -r[1], -r[2], runit, self.registry)
+        #extraTranslation = Position(newSolid.name+"_tra", -p[0], -p[1], -p[2], punit, self.registry)
+        #extraRotation    = Rotation(newSolid.name+"_rot", r[0], r[1], r[2], runit, self.registry)
         def _updateRotoTranslation(pv):
-            origTra = upgradeToVector(pv.position, self.registry, type="position")
-            newTra = origTra + extraTranslation
-            origRot = upgradeToVector(pv.rotation, self.registry, type="rotation")
-            origRotMatrix = _transformation.tbxyz2matrix(origRot.eval())
-            extraRotMatrix = _transformation.tbxyz2matrix(extraRotation.eval())
-            newRotMat = origRotMatrix * extraRotMatrix
+            mtraInv = _transformation.tbxyz2matrix(r)
+            mtra    = _np.linalg.inv(mtraInv)
+            tra     = _np.array(p)
+
+            pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
+            if pv.scale:
+                print("Warning> this does not work with scale")
+                pvmsca = _np.diag(pv.scale.eval())
+            else:
+                pvmsca = _np.diag([1, 1, 1])
+            pvtra = _np.array(pv.position.eval())
+
+            # pv compound transform
+            new_mtra = mtra.dot(pvmrot)
+            new_tra = (_np.array(mtraInv.dot(pvtra)) + tra)
+            new_mtra_tb = _transformation.matrix2tbxyz(new_mtra)
+            pv.rotation = Rotation(newSolid.name + "_" + pv.name + "_rot",
+                                   new_mtra_tb[0], new_mtra_tb[1], new_mtra_tb[2],
+                                   "rad", pv.registry)
+            pv.position = Position(newSolid.name + "_" + pv.name + "_pos",
+                                   new_tra[0], new_tra[1], new_tra[2],
+                                   "mm", pv.registry)
+            return
+
+            #origTra = upgradeToVector(pv.position, self.registry, type="position")
+            origTra = pv.position.eval()
+            #newTra = origTra + extraTranslation
+            #origRot = upgradeToVector(pv.rotation, self.registry, type="rotation")
+            origRot = pv.rotation.eval()
+            origRotMatrix  = _transformation.tbxyz2matrix(origRot)
+            extraRotMatrix = _np.linalg.inv(_transformation.tbxyz2matrix(r))
+            newRotMat = origRotMatrix.dot(extraRotMatrix)
             newRot = _transformation.matrix2tbxyz(newRotMat)
             pv.rotation = Rotation(newSolid.name+"_"+pv.name+"_rot",
                                    newRot[0], newRot[1], newRot[2],
                                    "rad", pv.registry) # rad as eval will reduce ot radians
-            pv.position = newTra
+            #pv.position = newTra
+            #t = (_np.array(newRotMat.dot(_np.array(p))) + origTra)
+            t = origTra + _np.array(extraRotMatrix.dot(_np.array(p)))
+            pv.position = Position(newSolid.name+"_"+pv.name+"_pos",
+                                   t[0], t[1], t[2],
+                                   "mm", pv.registry)
+            print(t)
 
         def _getInverseRotoTranslation(pv):
-            invTra = -1 * upgradeToVector(pv.position, self.registry, type="position")
-            invRot = -1 * upgradeToVector(pv.rotation, self.registry, type="rotation")
+            invTra = -1 * _np.array(pv.position.eval())
+            mtra = _transformation.tbxyz2matrix(pv.rotation.eval())
+            invRotMatrix = _np.linalg.inv(mtra)
+            #invTra = list(invRotMatrix.dot(_np.array(pv.position.eval())))
+            #a = invRotMatrix.dot(invTra)
+            b = mtra.dot(invTra)
+            #invTra = list(invRotMatrix.dot(-1.0*_np.array(pv.position.eval())) + _np.array(p))
+            invRot = _transformation.matrix2tbxyz(invRotMatrix)
+            invTra = list(b)
+            #invTra = list(_np.array(invRot).dot(invTra))
+            #invRot = -1 * upgradeToVector(pv.rotation, self.registry, type="rotation")
             return invRot, invTra
+        def _getInverseTranslation(pv):
+            invTra = -1 * _np.array(pv.position.eval())
+            mtra = _transformation.tbxyz2matrix(pv.rotation.eval())
+            result = list(mtra.dot(invTra))
+            return result
 
         daughterAssemblies = []
         lvUsageCount = _defaultdict(int)
@@ -298,10 +345,12 @@ class LogicalVolume(object):
             else:
                 # by elimination it's protruding
                 _updateRotoTranslation(pv)
+                #continue
                 # We keep the 1st object in the intersection the original so its frame
                 # is preserved. We therefore use the inverse of the (new and updated)
                 # placement transform of this daughter
-                invRot, invTra = _getInverseRotoTranslation(pv)
+                #invRot, invTra = _getInverseRotoTranslation(pv)
+                invTra = _getInverseTranslation(pv)
                 oldLV = pv.logicalVolume
                 oldLVSolid = oldLV.solid
                 solidUsageCount[oldLVSolid] += 1
@@ -309,7 +358,7 @@ class LogicalVolume(object):
                 newDSolid = Intersection(newSolidName,
                                          oldLVSolid,
                                          newSolid,
-                                         [invRot, invTra],
+                                         [pv.rotation.eval(), invTra],
                                          self.registry)
                 # prepare a new lv as we are changing the solid in this pv only
                 lvUsageCount[oldLV] += 1

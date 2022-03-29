@@ -13,7 +13,7 @@ class Intersection(_SolidBase):
     :type name: str
     :param obj1: unrotated, untranslated solid
     :type obj1: pyg4ometry.geant4.solid
-    :param obj2: solid rotated and translated according to tra2
+    :param obj2: solid rotated and translated according to tra
     :type obj2: pyg4ometry.geant4.solid
     :param tra2: [rot,tra] = [[a,b,g],[dx,dy,dz]]
     :type tra2: list
