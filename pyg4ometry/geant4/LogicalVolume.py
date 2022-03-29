@@ -207,7 +207,42 @@ class LogicalVolume(object):
         :type  position: list(float, float, float) or None - 3 values in mm
         """
         # first cull anything entirely outside
-        self.cullDaughtersOutsideSolid(newSolid, rotation, position)
+
+        # prepare clipping mesh from the newSolid
+        clipMesh = _Mesh(newSolid)
+        clipMesh = clipMesh.localmesh
+        if rotation:
+            aa = _trans.tbxyz2axisangle(rotation)
+            clipMesh.rotate(aa[0], _trans.rad2deg(aa[1]))
+        if position:
+            clipMesh.translate(position)
+
+        # this is reproduced from cullDaughters, but only a small amount - we benefit by not having
+        # to regenerate the meshes again for subsequent operations (< memory, < time)
+        toKeep = []  # build up list of bools - don't modify as we iterate on the list
+        intersectionMeshes = {}
+        for pv in self.daughterVolumes:
+            pvmesh = self._getPhysicalDaughterMesh(pv)
+            if pvmesh is None:
+                toKeep.append(True)
+                continue  # maybe unsupported type - skip
+
+            intersectionMesh = pvmesh.intersect(clipMesh)
+            countIM = intersectionMesh.polygonCount()
+            countPV = pvmesh.polygonCount()
+            if countIM != countPV:
+                # either protruding (count!=0) or outside (count==0)
+                # keep only ones that are protruding
+                toKeep.append(intersectionMesh.polygonCount() != 0)
+            else:
+                toKeep.append(True)
+            # cache the intersection mesh for ones we're keeping
+            if toKeep[-1]:
+                intersectionMeshes[pv] = intersectionMesh
+        # do the culling
+        self.daughterVolumes = [pv for pv, keep in zip(self.daughterVolumes, toKeep) if keep]
+        self._daughterVolumesDict = {pv.name: pv for pv in self.daughterVolumes}
+
         if len(self.daughterVolumes) == 0:
             print("Warning> no remaining daughters")
             # if there are no daughters remaining, then there's no need to update
@@ -220,17 +255,7 @@ class LogicalVolume(object):
         from pyg4ometry.gdml.Defines import Position, Rotation, upgradeToVector
         from pyg4ometry.geant4.solid import Intersection
 
-        # prepare clipping mesh from the newSolid
-        clipMesh = _Mesh(newSolid)
-        clipMesh = clipMesh.localmesh
-        if rotation:
-            aa = _trans.tbxyz2axisangle(rotation)
-            clipMesh.rotate(aa[0], _trans.rad2deg(aa[1]))
-        if position:
-            clipMesh.translate(position)
-
-        p = position
-        r = rotation
+        p, r = position, rotation
         extraTranslation = Position(newSolid.name+"_tra", -p[0], -p[1], -p[2], punit, self.registry)
         extraRotation    = Rotation(newSolid.name+"_rot", -r[0], -r[1], -r[2], runit, self.registry)
         def _updateRotoTranslation(pv):
@@ -254,7 +279,7 @@ class LogicalVolume(object):
                     daughterAssemblies.append(pv)
                 continue  # maybe unsupported type - skip
 
-            intersectionMesh = pvmesh.intersect(clipMesh)
+            intersectionMesh = intersectionMeshes[pv]
             if intersectionMesh.polygonCount() == 0:
                 continue # shouldn't happen as we've already culled daughters entirely outside, but nonetheless
             elif intersectionMesh.polygonCount() == pvmesh.polygonCount():
