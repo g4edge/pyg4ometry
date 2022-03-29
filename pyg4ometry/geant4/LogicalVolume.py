@@ -12,6 +12,7 @@ from . import _Material as _mat
 import pyg4ometry.transformation as _trans
 import vtk as _vtk
 
+from collections import defaultdict as _defaultdict
 import numpy   as _np
 import logging as _log
 
@@ -254,6 +255,7 @@ class LogicalVolume(object):
 
         from pyg4ometry.gdml.Defines import Position, Rotation, upgradeToVector
         from pyg4ometry.geant4.solid import Intersection
+        from pyg4ometry import transformation as _transformation
 
         p, r = position, rotation
         extraTranslation = Position(newSolid.name+"_tra", -p[0], -p[1], -p[2], punit, self.registry)
@@ -262,8 +264,13 @@ class LogicalVolume(object):
             origTra = upgradeToVector(pv.position, self.registry, type="position")
             newTra = origTra + extraTranslation
             origRot = upgradeToVector(pv.rotation, self.registry, type="rotation")
-            newRot = origRot * extraRotation
-            pv.rotation = newRot
+            origRotMatrix = _transformation.tbxyz2matrix(origRot.eval())
+            extraRotMatrix = _transformation.tbxyz2matrix(extraRotation.eval())
+            newRotMat = origRotMatrix * extraRotMatrix
+            newRot = _transformation.matrix2tbxyz(newRotMat)
+            pv.rotation = Rotation(newSolid.name+"_"+pv.name+"_rot",
+                                   newRot[0], newRot[1], newRot[2],
+                                   "rad", pv.registry) # rad as eval will reduce ot radians
             pv.position = newTra
 
         def _getInverseRotoTranslation(pv):
@@ -272,6 +279,8 @@ class LogicalVolume(object):
             return invRot, invTra
 
         daughterAssemblies = []
+        lvUsageCount = _defaultdict(int)
+        solidUsageCount = _defaultdict(int)
         for pv in self.daughterVolumes:
             pvmesh = self._getPhysicalDaughterMesh(pv, warn=False)
             if pvmesh is None:
@@ -293,18 +302,32 @@ class LogicalVolume(object):
                 # is preserved. We therefore use the inverse of the (new and updated)
                 # placement transform of this daughter
                 invRot, invTra = _getInverseRotoTranslation(pv)
-                dSolid = pv.logicalVolume.solid
-                newDSolid = Intersection(dSolid.name+"_inters_"+newSolid,
-                                         dSolid,
+                oldLV = pv.logicalVolume
+                oldLVSolid = oldLV.solid
+                solidUsageCount[oldLVSolid] += 1
+                newSolidName = oldLVSolid.name + "_n_" + newSolid.name + "_" + str(solidUsageCount[oldLVSolid])
+                newDSolid = Intersection(newSolidName,
+                                         oldLVSolid,
                                          newSolid,
                                          [invRot, invTra],
                                          self.registry)
-                pv.logicalVolume.solid = newDSolid
+                # prepare a new lv as we are changing the solid in this pv only
+                lvUsageCount[oldLV] += 1
+                newLVName = oldLV.name + "_n_" + str(lvUsageCount[oldLV])
+                newLV = LogicalVolume(newDSolid, oldLV.material, newLVName, pv.registry)
+                newLV.daughterVolumes      = oldLV.daughterVolumes
+                newLV.overlapChecked       = oldLV.overlapChecked
+                newLV._daughterVolumesDict = oldLV._daughterVolumesDict
+                newLV.bdsimObjects         = oldLV.bdsimObjects
+                newLV.auxiliary = oldLV.auxiliary
+
+                pv.logicalVolume = newLV
 
         # now go back to the assemblies...
 
         # finally update the solid
         self.solid = newSolid
+        self.reMesh(False)
 
 
     def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
