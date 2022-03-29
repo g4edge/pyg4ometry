@@ -650,7 +650,7 @@ class VectorBase(object) :
     __rmul__ = __mul__
 
     def __truediv__(self,other) :
-        v1 = upgradeToStringExpression(self.registry,self)
+        #v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
         
         p = Position("vec_{}_div_{}".format(self.name,v2),
