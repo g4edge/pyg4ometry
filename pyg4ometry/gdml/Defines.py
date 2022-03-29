@@ -122,9 +122,6 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
     :param addRegistry: flag to add to registry
     :type addRegistry: bool
     """
-
-
-
     if isinstance(var[0],VectorBase):
         rot = var[0]
     elif isinstance(var[0],list):
@@ -154,7 +151,6 @@ class ScalarBase(object) :
     """
     Base class for all scalars (Constants, Quantity, Variable and Expression)
     """
-
     def __init__(self) : 
         pass
 
@@ -167,7 +163,6 @@ class ScalarBase(object) :
                      registry=self.registry,
                      addRegistry=False)
         return v
-
 
     def __sub__(self, other) :
         v1 = upgradeToStringExpression(self.registry,self)
@@ -186,7 +181,6 @@ class ScalarBase(object) :
                      registry=self.registry,
                      addRegistry=False)
         return v        
-
 
     def __mul__(self, other):
         
@@ -388,9 +382,7 @@ def abs(arg) :
 
     :param arg: Argument of abs(arg)
     :type  arg: Constant, Quantity, Variable or Expression
-
     """
-
     v1 = upgradeToStringExpression(arg.registry,arg)
     v = Constant("abs_{}".format(v1), 'abs({})'.format(v1),registry=arg.registry, addRegistry=False)
     return v
@@ -409,7 +401,6 @@ class Constant(ScalarBase) :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-
     def __init__(self, name, value, registry, addRegistry=True):
         super(Constant, self).__init__()
 
@@ -492,7 +483,6 @@ class Quantity(ScalarBase) :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-
     def __init__(self, name, value, unit, type, registry, addRegistry = True) :
         super(Quantity, self).__init__()
         
@@ -513,9 +503,7 @@ class Quantity(ScalarBase) :
 
         :return: numerical evaluation of Quantity
         :rtype: float
-
         """
-
         return self.expr.eval()
 
     def __float__(self) :
@@ -536,7 +524,6 @@ class Variable(ScalarBase) :
     :param registry: for storing define
     :type registry: Registry
     """
-
     def __init__(self, name, value, registry, addRegistry = True) :
         super(Variable, self).__init__()
  
@@ -555,7 +542,6 @@ class Variable(ScalarBase) :
 
         :return: numerical evaluation of Constant
         :rtype: float
-
         """
         return self.expr.eval()
 
@@ -597,7 +583,6 @@ class Expression(ScalarBase) :
 
         :return: numerical evaluation of Constant
         :rtype: float
-
         """
         return self.expr.eval()
 
@@ -703,9 +688,7 @@ class VectorBase(object) :
 
         :return: numerical evaluation of vector
         :rtype: list of floats
-
         """
-
         u = _Units.unit(self.unit)
         return [self.x.eval()*u, self.y.eval()*u, self.z.eval()*u]
 
@@ -715,7 +698,6 @@ class VectorBase(object) :
 
         :return: Check if the vector is trivial (all elements zero)
         :rtype: bool
-
         """
         return any(self.eval())
 
@@ -729,7 +711,6 @@ class VectorBase(object) :
         else :
             raise IndexError
 
-
     def setRegistry(self, registry):
         self.registry = registry
         self.x.registry    = self.registry
@@ -737,8 +718,8 @@ class VectorBase(object) :
         self.z.registry    = self.registry
 
 
-class Position(VectorBase) :
-    '''
+class Position(VectorBase):
+    """
     GDML position define wrapper object
  
     :param x: x component of position 
@@ -747,9 +728,7 @@ class Position(VectorBase) :
     :type y: float, Constant, Quantity, Variable
     :param z: z component of position 
     :type z: float, Constant, Quantity, Variable
-
-    '''
-
+    """
     def __init__(self, name, x, y, z, unit="mm", registry=None, addRegistry=True):
         super(Position, self).__init__()
 
@@ -774,8 +753,8 @@ class Position(VectorBase) :
     def __repr__(self) :
         return "Position : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
-class Rotation(VectorBase) : 
-    '''
+class Rotation(VectorBase):
+    """
     GDML rotation define wrapper object
  
     :param rx: rotation around x axis
@@ -784,9 +763,7 @@ class Rotation(VectorBase) :
     :type ry: float, Constant, Quantity, Variable
     :param rz: rotation around z axis
     :type rz: float, Constant, Quantity, Variable
-
-    '''
-
+    """
     def __init__(self,name,rx,ry,rz, unit="rad", registry = None, addRegistry = True) :
         super(Rotation, self).__init__()
 
@@ -814,7 +791,7 @@ class Rotation(VectorBase) :
         return "Rotation : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Scale(VectorBase) : 
-    '''
+    """
     GDML scale define wrapper object
  
     :param sx: x component of scale 
@@ -823,9 +800,7 @@ class Scale(VectorBase) :
     :type sy: float, Constant, Quantity, Variable
     :param sz: z component of scale
     :type sz: float, Constant, Quantity, Variable
-
-    '''
-
+    """
     def __init__(self,name,sx,sy,sz, unit=None, registry = None, addRegistry = True) :
         super(Scale, self).__init__()
 
@@ -864,7 +839,6 @@ class Matrix :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-
     def __init__(self,name, coldim, values, registry, addRegistry = True) :
         self.name = name
         self.coldim = int(coldim)
@@ -888,7 +862,6 @@ class Matrix :
 
         :return: numerical evaluation of matrix
         :rtype: numpy.array
-
         """
         a  = _np.array([ e.eval() for e in self.values ])
         a  = a.reshape(self.coldim,int(len(a)/self.coldim))
@@ -915,7 +888,6 @@ class Auxiliary(object) :
     :param registry: for storing define
     :type registry: Registry
     """
-
     # Note that no interpreting or processing is done for auxiliary information
     def __init__(self, auxtype, auxvalue, registry=None, unit="") :
         self.auxtype = str(auxtype)
