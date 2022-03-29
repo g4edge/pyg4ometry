@@ -645,10 +645,9 @@ class VectorBase(object) :
         p.z.registry    = self.registry
         return p
 
-    def __mul__(self,other) : 
-        print(type(self),type(other))
-        v1 = upgradeToStringExpression(self.registry,self)
-        v2 = upgradeToStringExpression(self.registry,other)
+    def __mul__(self, other):
+        #v1 = upgradeToStringExpression(self.registry, self)
+        v2 = upgradeToStringExpression(self.registry, other)
         
         p = Position("vec_{}_mul_{}".format(self.name,v2),
                      '({})*({})'.format(self.x.expression,v2),
