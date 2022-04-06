@@ -1,5 +1,7 @@
 import pyg4ometry.transformation as _trans
 from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+import pyg4ometry.geant4.solid as _solid
+from   pyg4ometry.visualisation  import Mesh as _Mesh
 
 import numpy as _np
 import logging as _log
@@ -96,3 +98,18 @@ class PhysicalVolume(object):
         vmax = [max(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
 
         return [vmin, vmax]
+
+    def getAABBMesh(self):
+        '''return CSG.core (symmetric around the origin) axis aligned bounding box mesh'''
+
+        extent = self.extent()
+
+        x = max(abs(extent[0][0]),extent[1][0])
+        y = max(abs(extent[0][1]),extent[1][1])
+        z = max(abs(extent[0][2]),extent[1][2])
+
+        bs = _solid.Box(self.name+"_aabb",x,y,z,self.registry,"mm",False)
+
+        bm = _Mesh(bs)
+
+        return bm.localmesh
