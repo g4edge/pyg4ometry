@@ -166,6 +166,7 @@ class ParameterisedVolume(_ReplicaVolume):
 
         if addRegistry:
             registry.addPhysicalVolume(self)
+        self.registry = registry
 
         # physical visualisation options
         self.visOptions    = _VisOptions()
