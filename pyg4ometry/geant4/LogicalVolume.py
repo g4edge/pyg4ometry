@@ -48,11 +48,18 @@ def _solid2tessellated(solid):
 class LogicalVolume(object):
     """
     LogicalVolume : G4LogicalVolume
-    :param solid:  
+
+    :param solid:
+    :type solid:
     :param material:
-    :param name: 
-    :param registry:      
-    :param addRegistry: 
+    :type material:
+    :param name:
+    :type name: str
+    :param registry:
+    :type registry:
+    :param addRegistry:
+    :type addRegistry: bool
+
     """
     def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super(LogicalVolume, self).__init__()
@@ -106,6 +113,12 @@ class LogicalVolume(object):
             print("geant4.LogicalVolume> meshing error {}".format(self.name))
 
     def add(self, physicalVolume):
+        """
+        Add physical volume to this logicalVolume
+
+        :param physicalVolume: physical volume to add
+        :type physicalVolume: PhysicalVolume, ReplicaVolume, ParameterisedVolume, DivisionVolume
+        """
         self.daughterVolumes.append(physicalVolume)
         self._daughterVolumesDict[physicalVolume.name] = physicalVolume
 
@@ -193,6 +206,17 @@ class LogicalVolume(object):
 
         """
         Replace the outer solid with optional position and rotation
+
+        :param newSolid: object to clip the geometry to
+        :type newSolid: pyg4ometry.geant4.solid
+        :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation of the solid w.r.t. this lv
+        :type  position: list(float, float, float) or None - 3 values in mm
+        :param runit: angular unit for rotation (rad,deg)
+        :type runit: str
+        :param punit: length unit for position (m,mm,km)
+        :type punit: str
         """
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
@@ -218,6 +242,25 @@ class LogicalVolume(object):
                      lvUsageCount    = _defaultdict(int)):
         """
         Clip the geometry to newSolid, placed with rotation and position.
+
+        :param newSolid: object to clip the geometry to
+        :type newSolid: pyg4ometry.geant4.solid
+        :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation of the solid w.r.t. this lv
+        :type  position: list(float, float, float) or None - 3 values in mm
+        :param runit: angular unit for rotation (rad,deg)
+        :type runit: str
+        :param punit: length unit for position (m,mm,km)
+        :type punit: str
+        :param replace: replace the outer solid or not
+        :type replace: bool
+        :param depth: recursion depth (DO NOT USE)
+        :type depth: int
+        :param solidUsageCount: solid name dictionary for replacement recursion (DO NOT USE)
+        :type solidUsageCount: defaultdict
+        :param lvUsageCount: lv name dictionary for replacement recursion (DO NOT USE)
+        :type lvUsageCount: defaultdict
         """
 
         # increment the recursion depth
@@ -643,15 +686,27 @@ class LogicalVolume(object):
         if printOut:
             print(nOverlapsDetected[0]," overlaps detected")
 
-    def setSolid(self, solid) : 
+    def setSolid(self, solid) :
+        """
+        Set (replace) the outer solid. Does not change the placement of the daughters in the volume. If there is a
+        transformation then use replaceSolid
+        """
         self.solid = solid 
         self.mesh  = _Mesh(self.solid)        
 
     def makeSolidTessellated(self):
+        """
+        Make solid tesselated. Sometimes useful when a boolean cannot be visualised in Geant4
+        """
         tesselated_lv_solid = _solid2tessellated(self.solid)
         self.setSolid(tesselated_lv_solid)
 
     def addAuxiliaryInfo(self, auxiliary):
+        """
+        Add auxilary information to logical volume
+        :param auxiliary: auxiliary information for the logical volume
+        :type auxiliary: tuple or list
+        """
         #if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):
         #    raise ValueError("Auxiliary information must be a gdml.Defines.Auxiliary instance.")
         if isinstance(auxiliary, list) or isinstance(auxiliary, tuple):
@@ -662,6 +717,12 @@ class LogicalVolume(object):
                 self.auxiliary.append(auxiliary)
 
     def extent(self,includeBoundingSolid = False) :
+        """
+        Compute the axis aligned extent of the logical volume.
+
+        :param includeBoundingSolid: Include the bounding solid or not
+        :type includeBoundingSolid: bool
+        """
         _log.info('LogicalVolume.extent> %s ' % (self.name))
 
         if includeBoundingSolid :
@@ -697,6 +758,9 @@ class LogicalVolume(object):
         Assuming the solid of this LV is a Box, reduce its dimensions and re-placement all daughters
         to reduce the box to the minimum (axis-aligned) bounding box. This updates the dimensions of the
         box and the translation of each daughter physical volume.
+
+        :param lengthSafety: safety length
+        :type lengthSafety: float
         """
         # loop over daughter volumes to find centres
 
@@ -742,6 +806,10 @@ class LogicalVolume(object):
         return centre
 
     def makeLogicalPhysicalNameSets(self):
+        """
+        Return a set of logical names and physical names used in this logical volume and any daughters.
+        This is built up recursively by checking all daughters etc etc.
+        """
 
         logicalNames = set([])
         physicalNames = set([])
@@ -760,6 +828,10 @@ class LogicalVolume(object):
         """
         Return a list of LogicalVolume instances used inside this logical volume
         as daughters (at any level inside) with the given name.
+
+        :param name: lv name
+        :type name: str
+
         """
         lv = []
         if self.name.find(name) != -1:
