@@ -2,6 +2,45 @@
 
 #include <sstream>
 
+namespace std
+{
+  inline void hash_combine(std::size_t) {}
+
+  template <typename T, typename... Rest>
+  inline void hash_combine(std::size_t &seed, const T &v, Rest... rest) {
+    std::hash<T> hasher;
+    seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    std::hash_combine(seed, rest...);
+  }
+
+  template<> struct hash<Surface_mesh*> {
+    std::size_t operator()(const Surface_mesh *sm) const {
+      using std::size_t;
+      using std::hash;
+
+      std::size_t h = 0;
+
+      // loop over vertices
+      Surface_mesh::Point p;
+      for(Surface_mesh::Vertex_index vd : sm->vertices()) {
+        p = sm->point(vd);
+        std::hash_combine(h,std::hash<double>()(CGAL::to_double(p.x())));
+        std::hash_combine(h,std::hash<double>()(CGAL::to_double(p.y())));
+        std::hash_combine(h,std::hash<double>()(CGAL::to_double(p.z())));
+      }
+
+      // loop over faces
+      for(Surface_mesh::Face_index fd : sm->faces()) {
+        for(Surface_mesh::Halfedge_index hd :  CGAL::halfedges_around_face(sm->halfedge(fd),*sm)) {
+          // std::hash_combine(h,std::hash<int>()((int)sm->source(hd)));
+        }
+      }
+
+      return h;
+    }
+  };
+}
+
 /*********************************************
 Polyhedron
 *********************************************/
@@ -360,6 +399,10 @@ int SurfaceMesh::number_of_faces() {
 
 int SurfaceMesh::number_of_vertices() {
   return _surfacemesh->number_of_vertices();
+}
+
+std::size_t SurfaceMesh::hash() {
+  return std::hash<Surface_mesh*>{}(_surfacemesh);
 }
 
 std::string SurfaceMesh::toString() {

@@ -1,6 +1,12 @@
+import pyg4ometry as _pyg4ometry
 import pyg4ometry.transformation as _trans
+import pyg4ometry.geant4.solid as _solid
+from   pyg4ometry.visualisation  import Mesh as _Mesh
 
+import numpy as _np
 import logging as _log
+from collections import defaultdict as _defaultdict
+import copy as _copy
 
 class AssemblyVolume(object):
     """
@@ -18,7 +24,7 @@ class AssemblyVolume(object):
         self.type            = "assembly"
         self.name            = name 
         self.daughterVolumes = []
-        self.daughterVolumesDict = {}
+        self._daughterVolumesDict = {}
         self.registry = registry
         if addRegistry:
             registry.addLogicalVolume(self)
@@ -30,10 +36,10 @@ class AssemblyVolume(object):
 
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
-        self.daughterVolumesDict[physicalVolume.name] = physicalVolume
+        self._daughterVolumesDict[physicalVolume.name] = physicalVolume
 
     def _getDaughterMeshesByName(self, name):
-        pv = self.daughterVolumesDict[name]
+        pv = self._daughterVolumesDict[name]
         return self._getPVMeshes(pv)
 
     def _getDaughterMeshesByIndex(self, index):
@@ -105,6 +111,115 @@ class AssemblyVolume(object):
 
         return transformedMeshes, transformedBoundingMeshes, transformedMeshesNames
 
+    def _getPhysicalDaughterMesh(self, pv, warn=True):
+        """
+        Return a (cloned from the lv) mesh of a given pv with rotation,scale,
+        translation evaluated.
+        """
+        # cannot currently deal with replica, division and parametrised
+        if pv.type != "placement":
+            if warn:
+                print("Cannot generate specific daughter mesh for replica, division, parameterised")
+            return None
+        if pv.logicalVolume.type == "assembly":
+            mesh = pv.logicalVolume.getAABBMesh()
+        else:
+            mesh = pv.logicalVolume.mesh.localmesh.clone()
+
+        # rotate
+        aa = _trans.tbxyz2axisangle(pv.rotation.eval())
+        mesh.rotate(aa[0], _trans.rad2deg(aa[1]))
+
+        # scale
+        if pv.scale:
+            s = pv.scale.eval()
+            mesh.scale(s)
+
+            if s[0] * s[1] * s[2] == 1:
+                pass
+            elif s[0] * s[1] * s[2] == -1:
+                mesh = mesh.inverse()
+
+        # translate
+        t = pv.position.eval()
+        mesh.translate(t)
+        return mesh
+
+    def clipGeometry(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm", replace=False, depth=0,
+                     solidUsageCount = _defaultdict(int),
+                     lvUsageCount    = _defaultdict(int)):
+
+        """
+        Clip the geometry to newSolid, placed with rotation and position.
+        """
+
+        # increment the recursion depth
+        depth += 1
+
+        clipMesh = _Mesh(newSolid).localmesh
+
+        outside =[]
+        intersections = []
+        inside = []
+
+        intersectionsPV = []
+        insidePV = []
+
+        for pv in self.daughterVolumes:
+            pvmesh      = self._getPhysicalDaughterMesh(pv)
+
+            pvInterMesh = pvmesh.intersect(clipMesh)
+            pvDiffMesh  = pvmesh.subtract(pvInterMesh)
+
+            # print(i,pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash())
+            # check intersection mesh (completely outside, intersects, completely inside)
+            if pvInterMesh.isNull() :
+                # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is outside")
+                outside.append(pvmesh)
+            elif not pvInterMesh.isNull() : # intersection of new solid and existing solid
+                # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is intersecting")
+                intersections.append(pvInterMesh)
+                intersectionsPV.append(pv)
+                if pvDiffMesh.isNull()  : # completely inside
+                    # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is inside")
+                    inside.append(pvmesh)
+                    insidePV.append(pv)
+
+
+        self.daughterVolumes = insidePV
+        self._daughterVolumesDict = {pvi.name:pvi for pvi in insidePV}
+
+        for pvi in intersectionsPV :
+            mat      = _trans.tbxyz2matrix(rotation)
+            matInv    = _np.linalg.inv(mat)
+            matPV    = _trans.tbxyz2matrix(pvi.rotation.eval())
+            matPVInv = _np.linalg.inv(matPV)
+
+            newRotation = _trans.matrix2tbxyz(mat.dot(matPVInv))
+            newPosition = list(matPV.dot(pvi.position.eval()) + position)
+
+            lvUsageCount[pvi.name] += 1
+            pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
+
+            if pvi.logicalVolume.type == "assembly" :
+                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName,pvi.logicalVolume.registry)
+            else :
+                lvNew = _pyg4ometry.geant4.LogicalVolume(pvi.logicalVolume.solid,
+                                                         pvi.logicalVolume.material,
+                                                         pvNewName,
+                                                         pvi.logicalVolume.registry)
+            for dv in pvi.logicalVolume.daughterVolumes :
+                lvNew.daughterVolumes.append(_copy.copy(dv))
+
+            lvNew.clipGeometry(newSolid,newRotation,newPosition, runit, punit, True, depth, lvUsageCount, solidUsageCount)
+
+            pvi.logicalVolume = lvNew
+            self.daughterVolumes.append(pvi)
+            self._daughterVolumesDict[pvi.name] = pvi
+
+
+        return
+
     def extent(self, includeBoundingSolid=True) :
         _log.info('AssemblyVolume.extent> %s ' % (self.name))
 
@@ -129,3 +244,17 @@ class AssemblyVolume(object):
                 vMin[2] = vMinDaughter[2]
 
         return [vMin, vMax]
+
+    def getAABBMesh(self):
+        '''return CSG.core (symmetric around the origin) axis aligned bounding box mesh'''
+        extent = self.extent()
+
+        x = max(abs(extent[0][0]),extent[1][0])
+        y = max(abs(extent[0][1]),extent[1][1])
+        z = max(abs(extent[0][2]),extent[1][2])
+
+        bs = _solid.Box(self.name+"_aabb",x,y,z,self.registry,"mm",False)
+
+        bm = _Mesh(bs)
+
+        return bm.localmesh
