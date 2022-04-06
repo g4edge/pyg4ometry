@@ -53,6 +53,7 @@ public:
   bool isNull() { return getNumberPolys() == 0; }
   double volume() const;
   double area() const;
+  std::size_t hash() const;
 };
 
 bool do_intersect(CSG const &m1, CSG const &m2);

@@ -156,6 +156,8 @@ class SurfaceMesh {
   int number_of_faces();
   int number_of_vertices();
 
+  std::size_t hash();
+
   std::string toString();
 };
 
