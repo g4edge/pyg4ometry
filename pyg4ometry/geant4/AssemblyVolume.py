@@ -24,7 +24,7 @@ class AssemblyVolume(object):
         self.type            = "assembly"
         self.name            = name 
         self.daughterVolumes = []
-        self.daughterVolumesDict = {}
+        self._daughterVolumesDict = {}
         self.registry = registry
         if addRegistry:
             registry.addLogicalVolume(self)
@@ -36,10 +36,10 @@ class AssemblyVolume(object):
 
     def add(self, physicalVolume):
         self.daughterVolumes.append(physicalVolume)
-        self.daughterVolumesDict[physicalVolume.name] = physicalVolume
+        self._daughterVolumesDict[physicalVolume.name] = physicalVolume
 
     def _getDaughterMeshesByName(self, name):
-        pv = self.daughterVolumesDict[name]
+        pv = self._daughterVolumesDict[name]
         return self._getPVMeshes(pv)
 
     def _getDaughterMeshesByIndex(self, index):
