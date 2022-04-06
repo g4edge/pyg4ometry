@@ -289,10 +289,11 @@ class LogicalVolume(object):
                                                          pvi.logicalVolume.material,
                                                          pvNewName,
                                                          pvi.logicalVolume.registry)
-            #for dv in pvi.logicalVolume.daughterVolumes :
-            #    dv = _copy.copy(dv)
-            #    dv.name = pvNewName+"_"+dv.name
-            #    lvNew.daughterVolumes.append(dv)
+            for dv in pvi.logicalVolume.daughterVolumes :
+                dv = _copy.copy(dv)
+                dv.name = pvNewName+"_"+dv.name
+                lvNew.daughterVolumes.append(dv)
+                lvNew._daughterVolumesDict[dv.name] = dv
 
             lvNew.clipGeometry(newSolid,newRotation,newPosition, runit, punit, True, depth, lvUsageCount, solidUsageCount)
 
