@@ -149,6 +149,10 @@ class AssemblyVolume(object):
                      solidUsageCount = _defaultdict(int),
                      lvUsageCount    = _defaultdict(int)):
 
+        """
+        Clip the geometry to newSolid, placed with rotation and position.
+        """
+
         # increment the recursion depth
         depth += 1
 

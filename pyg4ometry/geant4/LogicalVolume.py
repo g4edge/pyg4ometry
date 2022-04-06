@@ -191,6 +191,9 @@ class LogicalVolume(object):
 
     def replaceSolid(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm") :
 
+        """
+        Replace the outer solid with optional position and rotation
+        """
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
@@ -213,6 +216,9 @@ class LogicalVolume(object):
     def clipGeometry(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm", replace=False, depth=0,
                      solidUsageCount = _defaultdict(int),
                      lvUsageCount    = _defaultdict(int)):
+        """
+        Clip the geometry to newSolid, placed with rotation and position.
+        """
 
         # increment the recursion depth
         depth += 1
