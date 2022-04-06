@@ -15,6 +15,7 @@ import vtk as _vtk
 from collections import defaultdict as _defaultdict
 import numpy   as _np
 import logging as _log
+import copy as _copy
 
 
 def _solid2tessellated(solid):
@@ -123,12 +124,9 @@ class LogicalVolume(object):
             return None
         # cannot currently deal with assembly
         if  pv.logicalVolume.type == "assembly":
-            if warn:
-                print("Cannot generate specific daughter mesh for assembly")
-            return None
-
-        _log.info('LogicalVolume.checkOverlaps> %s' % (pv.name))
-        mesh = pv.logicalVolume.mesh.localmesh.clone()
+            mesh = pv.logicalVolume.getAABBMesh()
+        else :
+            mesh = pv.logicalVolume.mesh.localmesh.clone()
 
         # rotate
         aa = _trans.tbxyz2axisangle(pv.rotation.eval())
@@ -191,6 +189,120 @@ class LogicalVolume(object):
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
 
+    def replaceSolid(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm") :
+
+        # need to determine type or rotation and position, as should be Position or Rotation type
+        from pyg4ometry.gdml import Defines as _Defines
+
+        self.solid = newSolid
+        self.reMesh(False)
+
+        matNew = _np.linalg.inv(_trans.tbxyz2matrix(rotation))
+        posNew = position
+
+        for pv in self.daughterVolumes:
+            matDaughter = _trans.tbxyz2matrix(pv.rotation.eval())
+            posDaughter = pv.position.eval()
+
+            newRotation = _trans.matrix2tbxyz(matNew.dot(matDaughter))
+            newPosition = _trans.tbxyz2matrix(rotation).dot(posDaughter) - _np.array(posNew)
+
+            pv.position = _Defines.Position(pv.name+"_ReplaceSolidPos",newPosition[0],newPosition[1],newPosition[2],punit,self.registry,False)
+            pv.rotation = _Defines.Rotation(pv.name+"_ReplaceSolidRot",newRotation[0],newRotation[1],newRotation[2],runit,self.registry,False)
+
+    def clipGeometry(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm", replace=False, depth=0,
+                     solidUsageCount = _defaultdict(int),
+                     lvUsageCount    = _defaultdict(int)):
+
+        # increment the recursion depth
+        depth += 1
+
+        clipMesh = _Mesh(newSolid).localmesh
+
+        if replace :
+            # Replace LV solid
+            solid1 = self.solid
+            solid2 = newSolid
+
+            solidUsageCount[solid1.name] += 1
+            solidNewName = solid1.name + "_n_" + str(solidUsageCount[solid1.name])
+
+            rotationInv = _trans.matrix2tbxyz(_np.linalg.inv(_trans.tbxyz2matrix(rotation)))
+            positionInv = list(-_np.array(position))
+
+            _trans.matrix2tbxyz(_np.linalg.inv(_trans.tbxyz2matrix(rotation)))
+            solidIntersection = _pyg4ometry.geant4.solid.Intersection(solidNewName,
+                                                                      solid1,
+                                                                      solid2,
+                                                                      [rotationInv,positionInv],
+                                                                      self.registry,True)
+
+            self.solid = solidIntersection
+            self.reMesh(False)
+
+        outside =[]
+        intersections = []
+        inside = []
+
+        intersectionsPV = []
+        insidePV = []
+
+        for pv in self.daughterVolumes:
+            pvmesh      = self._getPhysicalDaughterMesh(pv)
+
+            pvInterMesh = pvmesh.intersect(clipMesh)
+            pvDiffMesh  = pvmesh.subtract(pvInterMesh)
+
+            # print(i,pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash())
+            # check intersection mesh (completely outside, intersects, completely inside)
+            if pvInterMesh.isNull() :
+                # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is outside")
+                outside.append(pvmesh)
+            elif not pvInterMesh.isNull() : # intersection of new solid and existing solid
+                # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is intersecting")
+                intersections.append(pvInterMesh)
+                intersectionsPV.append(pv)
+                if pvDiffMesh.isNull()  : # completely inside
+                    # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is inside")
+                    inside.append(pvmesh)
+                    insidePV.append(pv)
+
+        self.daughterVolumes = insidePV
+        self._daughterVolumesDict = {pvi.name:pvi for pvi in insidePV}
+
+        for pvi in intersectionsPV :
+            mat      = _trans.tbxyz2matrix(rotation)
+            matInv    = _np.linalg.inv(mat)
+            matPV    = _trans.tbxyz2matrix(pvi.rotation.eval())
+            matPVInv = _np.linalg.inv(matPV)
+
+            newRotation = _trans.matrix2tbxyz(mat.dot(matPVInv))
+            newPosition = list(matPV.dot(pvi.position.eval()) + position)
+
+            lvUsageCount[pvi.name] += 1
+            pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
+
+            if pvi.logicalVolume.type == "assembly" :
+                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName,pvi.logicalVolume.registry)
+            else :
+                lvNew = _pyg4ometry.geant4.LogicalVolume(pvi.logicalVolume.solid,
+                                                         pvi.logicalVolume.material,
+                                                         pvNewName,
+                                                         pvi.logicalVolume.registry)
+            #for dv in pvi.logicalVolume.daughterVolumes :
+            #    dv = _copy.copy(dv)
+            #    dv.name = pvNewName+"_"+dv.name
+            #    lvNew.daughterVolumes.append(dv)
+
+            lvNew.clipGeometry(newSolid,newRotation,newPosition, runit, punit, True, depth, lvUsageCount, solidUsageCount)
+
+            pvi.logicalVolume = lvNew
+            self.daughterVolumes.append(pvi)
+            self._daughterVolumesDict[pvi.name] = pvi
+
+
+        return
+
     def changeSolidAndTrimGeometry(self, newSolid, rotation=(0,0,0), position=(0,0,0), runit="rad", punit="mm"):
         """
         Change the solid of this logical volume, remove any daughters that will lie outside
@@ -217,6 +329,8 @@ class LogicalVolume(object):
             clipMesh.rotate(aa[0], _trans.rad2deg(aa[1]))
         if position:
             clipMesh.translate(position)
+
+        # form intersection between existing lv solid and new solid
 
         # this is reproduced from cullDaughters, but only a small amount - we benefit by not having
         # to regenerate the meshes again for subsequent operations (< memory, < time)
@@ -252,7 +366,7 @@ class LogicalVolume(object):
             self.solid = newSolid
             return
         # else some daughters remain - check them - if they intersect (judged by the mesh intersection)
-        # then reform their solids to include that intersection
+        # then reform their solids to  include that intersection
 
         from pyg4ometry.gdml.Defines import Position, Rotation, upgradeToVector
         from pyg4ometry.geant4.solid import Intersection
