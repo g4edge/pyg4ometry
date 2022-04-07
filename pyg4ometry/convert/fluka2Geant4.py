@@ -48,14 +48,13 @@ def fluka2Geant4(flukareg,
     :param worldDimensions: dimensions of world logical volume in \
     converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
     :type worldDimensions: list
-    :param omitBlackholeRegions: whether or not to omit regions with
-    the FLUKA material BLCKHOLE from the conversion.  By default, true.
+    :param omitBlackholeRegions: whether or not to omit regions with the FLUKA material BLCKHOLE from the conversion.  By default, true.
     :type omitBlackholeRegions: bool
     :param quadricRegionAABBs: The axis-aligned aabbs of any regions \
     featuring QUA bodies, mapping region names to fluka.AABB instances.
     :type quadricRegionAABBs: dict
+    """
 
-    # """
     # !!! Developer options (to kwargs)
     # - withLengthSafety: Whether or not to apply automatic length safety.
 
