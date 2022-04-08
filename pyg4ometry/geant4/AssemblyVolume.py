@@ -245,6 +245,19 @@ class AssemblyVolume(object):
 
         return [vMin, vMax]
 
+    def depth(self, depth=0):
+        '''
+        Depth for LV-PV tree
+        '''
+
+        depth = depth + 1
+
+        depthList = [depth]
+        for dv in self.daughterVolumes :
+            depthList.append(dv.logicalVolume.depth(depth))
+
+        return max(depthList)
+
     def getAABBMesh(self):
         '''return CSG.core (symmetric around the origin) axis aligned bounding box mesh'''
         extent = self.extent()

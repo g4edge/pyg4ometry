@@ -753,6 +753,19 @@ class LogicalVolume(object):
 
         return [vMin, vMax]
 
+    def depth(self, depth = 0):
+        '''
+        Depth for LV-PV tree
+        '''
+
+        depth = depth + 1
+
+        depthList = [depth]
+        for dv in self.daughterVolumes :
+            depthList.append(dv.logicalVolume.depth(depth))
+
+        return max(depthList)
+
     def clipSolid(self, lengthSafety=1e-6):
         """
         Assuming the solid of this LV is a Box, reduce its dimensions and re-placement all daughters
