@@ -156,6 +156,13 @@ class AssemblyVolume(object):
         # increment the recursion depth
         depth += 1
 
+        import pyg4ometry.gdml.Units as _Units
+        puval = _Units.unit(punit)
+        ruval = _Units.unit(runit)
+        if depth == 1:
+            position = [puval*e for e in position]
+            rotation = [ruval*e for e in rotation]
+
         clipMesh = _Mesh(newSolid[depth-1]).localmesh
 
         outside =[]

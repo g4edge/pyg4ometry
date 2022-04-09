@@ -221,21 +221,25 @@ class LogicalVolume(object):
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
+        import pyg4ometry.gdml.Units as _Units
+        puval = _Units.unit(punit)
+        ruval = _Units.unit(runit)
+
         self.solid = newSolid
         self.reMesh(False)
 
-        matNew = _np.linalg.inv(_trans.tbxyz2matrix(rotation))
-        posNew = position
+        matNew = _np.linalg.inv(_trans.tbxyz2matrix(_np.array(rotation)*ruval))
+        posNew = _np.array(position)*puval
 
         for pv in self.daughterVolumes:
             matDaughter = _trans.tbxyz2matrix(pv.rotation.eval())
             posDaughter = pv.position.eval()
 
             newRotation = _trans.matrix2tbxyz(matNew.dot(matDaughter))
-            newPosition = _trans.tbxyz2matrix(rotation).dot(posDaughter) - _np.array(posNew)
+            newPosition = _trans.tbxyz2matrix(_np.array(rotation)*ruval).dot(posDaughter) - _np.array(posNew)
 
-            pv.position = _Defines.Position(pv.name+"_ReplaceSolidPos",newPosition[0],newPosition[1],newPosition[2],punit,self.registry,False)
-            pv.rotation = _Defines.Rotation(pv.name+"_ReplaceSolidRot",newRotation[0],newRotation[1],newRotation[2],runit,self.registry,False)
+            pv.position = _Defines.Position(pv.name+"_ReplaceSolidPos",newPosition[0],newPosition[1],newPosition[2],"mm",self.registry,False)
+            pv.rotation = _Defines.Rotation(pv.name+"_ReplaceSolidRot",newRotation[0],newRotation[1],newRotation[2],"rad",self.registry,False)
 
     def clipGeometry(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm", replace=False, depth=0,
                      solidUsageCount = _defaultdict(int),
@@ -267,6 +271,13 @@ class LogicalVolume(object):
         depth += 1
 
         clipMesh = _Mesh(newSolid[depth-1]).localmesh
+
+        import pyg4ometry.gdml.Units as _Units
+        puval = _Units.unit(punit)
+        ruval = _Units.unit(runit)
+        if depth == 1:
+            position = [puval*e for e in position]
+            rotation = [ruval*e for e in rotation]
 
         if replace :
             # Replace LV solid
