@@ -266,12 +266,12 @@ class LogicalVolume(object):
         # increment the recursion depth
         depth += 1
 
-        clipMesh = _Mesh(newSolid).localmesh
+        clipMesh = _Mesh(newSolid[depth-1]).localmesh
 
         if replace :
             # Replace LV solid
             solid1 = self.solid
-            solid2 = newSolid
+            solid2 = newSolid[depth-1]
 
             solidUsageCount[solid1.name] += 1
             solidNewName = solid1.name + "_n_" + str(solidUsageCount[solid1.name])

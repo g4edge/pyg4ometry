@@ -156,7 +156,7 @@ class AssemblyVolume(object):
         # increment the recursion depth
         depth += 1
 
-        clipMesh = _Mesh(newSolid).localmesh
+        clipMesh = _Mesh(newSolid[depth-1]).localmesh
 
         outside =[]
         intersections = []
