@@ -1,3 +1,6 @@
+#import logging as _logging
+#_logging.basicConfig(filename='logging.log', encoding='utf-8', level=_logging.INFO)
+
 
 """
 We check that sweep angles aren't greater than 2 pi. This is the tolerance for rounding
