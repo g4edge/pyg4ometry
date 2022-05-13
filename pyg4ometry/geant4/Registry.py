@@ -436,12 +436,14 @@ class Registry:
             self.worldVolume = self.logicalVolumeDict[worldIn]
             self.orderLogicalVolumes(worldIn)
             self.logicalVolumeList.append(worldIn)
-        else:
+        elif worldIn.__class__.__name__ == "LogicalVolume": # way to test without importing it
             self.worldName = worldIn.name
             self.worldVolume = worldIn
             if worldIn not in self.logicalVolumeDict:
                 self.logicalVolumeDict[worldIn.name] = worldIn
             self.logicalVolumeList.append(worldIn.name)
+        else:
+            raise TypeError("Invalid type ", worldIn.__class__.__name__," - must be str or LogicalVolume")
 
     def _orderMaterialList(self, materials, materials_ordered=[]):
         for mat in materials:
