@@ -20,7 +20,7 @@ Template for modern Python package GitHub repositories.
    $ sed -i 's|pkgplaceholder|<your package name>|g' -- $(find . -type f -not -path "./.git/*")
    ```
 1. Provide all the required information in `setup.cfg`
-1. Choose a license and save it as `LICENSE` (edit `setup.cfg` accordingly)
+1. Choose a license and save its statement in `LICENSE` (edit `setup.cfg` accordingly)
 1. Activate https://pre-commit.ci, https://codecov.io, GitHub pages (in the
    repo settings, configure it to doploy from the `gh-pages` branch), GitHub
    actions (repo settings)
