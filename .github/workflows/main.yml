@@ -81,7 +81,7 @@ jobs:
           make allver
       - if: ${{ github.event_name == 'push' }}
         name: Deploy to GitHub pages
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages
           folder: docs/build/allver/html
