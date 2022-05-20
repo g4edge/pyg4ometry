@@ -17,7 +17,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx_rtd_theme',
     'sphinx_multiversion',
-    'myst_parser'
+    'myst_parser',
 ]
 
 source_suffix = {
