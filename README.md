@@ -45,7 +45,7 @@ Template for modern Python package GitHub repositories.
 * Release a new version:
   ```console
   $ git tag v0.1.0
-  $ git branch -b releases/v0.1.0
+  $ git checkout -b releases/v0.1.0
   $ git push --tags
   ```
 
