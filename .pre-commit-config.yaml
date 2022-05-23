@@ -22,6 +22,12 @@ repos:
   - id: requirements-txt-fixer
   - id: trailing-whitespace
 
+- repo: https://github.com/Carreau/velin.git
+  rev: "0.0.12"
+  hooks:
+    - id: velin
+      args: ["--check", "--write"]
+
 - repo: https://github.com/asottile/setup-cfg-fmt
   rev: "v1.20.1"
   hooks:
@@ -54,7 +60,14 @@ repos:
   rev: "4.0.1"
   hooks:
   - id: flake8
-    additional_dependencies: [flake8-bugbear, pep8-naming]
+    additional_dependencies: [flake8-bugbear, flake8-print]
+
+- repo: https://github.com/kynan/nbstripout
+  rev: "0.5.0"
+  hooks:
+    - id: nbstripout
+      args: ["--strip-empty-cells",
+             "--extra-keys", "metadata.kernelspec metadata.language_info"]
 
 - repo: https://github.com/mgedmin/check-manifest
   rev: "0.48"

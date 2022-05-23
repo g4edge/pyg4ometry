@@ -14,9 +14,9 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.autosectionlabel',
     'sphinx_rtd_theme',
     'sphinx_multiversion',
+    'sphinx_copybutton',
     'myst_parser',
 ]
 
@@ -38,14 +38,14 @@ html_theme = 'sphinx_rtd_theme'
 # could be unmet at build time
 autodoc_mock_imports = [
     'pandas',
-    'numpy',
+    # 'numpy',
     'matplotlib',
     'mplhep',
     'scipy',
     'scimath',
     'pytest',
     'pint',
-]
+]  # add new packages here
 
 # sphinx-napoleon
 # enforce consistent usage of NumPy-style docstrings
@@ -59,7 +59,7 @@ intersphinx_mapping = {
     'scipy': ('http://docs.scipy.org/doc/scipy/reference', None),
     'pandas': ('https://pandas.pydata.org/docs', None),
     'matplotlib': ('http://matplotlib.org/stable', None),
-}
+}  # add new intersphinx mappings here
 
 # sphinx-autodoc
 # Include __init__() docstring in class docstring
