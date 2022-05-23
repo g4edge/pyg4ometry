@@ -7,6 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/ghuserplaceholder/pkgplaceholder?logo=github)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/ghuserplaceholder/pkgplaceholder?logo=github)
 ![License](https://img.shields.io/github/license/ghuserplaceholder/pkgplaceholder)
+[![Documentation](https://img.shields.io/badge/documentation-online-purple?logo=readthedocs)](https://ghuserplaceholder.github.io/pkgplaceholder)
 
 Template for modern Python package GitHub repositories.
 
@@ -27,6 +28,7 @@ Template for modern Python package GitHub repositories.
     * https://codecov.io
     * GitHub pages (in the repository settings, configure it to deploy from the `gh-pages` branch)
     * GitHub actions (in the repository settings)
+1. 
 
 ## Quick start
 
