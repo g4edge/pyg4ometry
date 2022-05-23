@@ -9,7 +9,7 @@ BUILDDIRALL = $(BUILDDIR)/allver/html
 PY_SOURCE_EXCLUDE = $(shell cat source/.py_api_exclude)
 
 all: apidoc
-	sphinx-build -M html "$(SOURCEDIR)" "$(BUILDDIR)"
+	sphinx-build -M html "$(SOURCEDIR)" "$(BUILDDIR)" -W --keep-going
 
 allver:
 	sphinx-multiversion "$(SOURCEDIR)" "$(BUILDDIRALL)"
