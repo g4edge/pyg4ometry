@@ -28,7 +28,7 @@ Template for modern Python package GitHub repositories.
     * https://codecov.io
     * GitHub pages (in the repository settings, configure it to deploy from the `gh-pages` branch)
     * GitHub actions (in the repository settings)
-1. 
+1.
 
 ## Quick start
 
