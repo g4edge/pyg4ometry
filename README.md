@@ -1,4 +1,4 @@
-# Easy Python packaging
+# pyproject template
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/ghuserplaceholder/pkgplaceholder?logo=git)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ghuserplaceholder/pkgplaceholder/pkgplaceholder/main?label=main%20branch&logo=github)](https://github.com/ghuserplaceholder/pkgplaceholder/actions)
@@ -22,9 +22,11 @@ Template for modern Python package GitHub repositories.
    ```
 1. Provide all the required information in `setup.cfg`
 1. Choose a license and save its statement in `LICENSE` (edit `setup.cfg` accordingly)
-1. Activate https://pre-commit.ci, https://codecov.io, GitHub pages (in the
-   repo settings, configure it to doploy from the `gh-pages` branch), GitHub
-   actions (repo settings)
+1. Activate
+    * https://pre-commit.ci
+    * https://codecov.io
+    * GitHub pages (in the repository settings, configure it to deploy from the `gh-pages` branch)
+    * GitHub actions (in the repository settings)
 
 ## Quick start
 
