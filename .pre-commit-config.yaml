@@ -39,7 +39,7 @@ repos:
   - id: isort
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: "v2.32.0"
+  rev: "v2.32.1"
   hooks:
   - id: pyupgrade
     args: ["--py36-plus"]
@@ -51,7 +51,7 @@ repos:
     args: ["--skip-string-normalization"]
 
 - repo: https://github.com/hadialqattan/pycln
-  rev: "v1.3.2"
+  rev: "v1.3.3"
   hooks:
   - id: pycln
     args: ["--all"]
