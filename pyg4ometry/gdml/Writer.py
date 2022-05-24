@@ -249,6 +249,7 @@ option, preprocessGDML=0;
             if not ( pref.name in self.registry.defineDict ):
                 raise RuntimeError("Invalid ref!")
             prop.setAttribute('ref', str(pref.name))
+        oe.appendChild(prop)
 
     def writeMaterial(self, material):
         if material.name in self.materials_written:
