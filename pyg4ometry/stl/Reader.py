@@ -19,7 +19,7 @@ class _Facet():
         return (tuple(self.vertices), self.normal)
 
 class Reader(object):
-    def __init__(self, filename, solidname="stl_tessellated", scale=1, registry=None):
+    def __init__(self, filename, solidname="stl_tessellated", scale=1, centre = False, registry=None):
         if registry is None:  # If a registry is not supplied, make an empty one
             registry = _g4.Registry()
 
@@ -36,6 +36,11 @@ class Reader(object):
 
         # load file
         self.load()
+
+        # centre model if requested
+        if centre :
+            self.extentCentre()
+
 
         self.solid = _g4.solid.TessellatedSolid(self.solidname, self.facet_list, self._registry,
                                                 _g4.solid.TessellatedSolid.MeshType.Stl)
@@ -65,6 +70,53 @@ class Reader(object):
 
                 line = f.readline()
                 cnt += 1
+
+    def extent(self):
+        xmin =  1e9
+        ymin =  1e9
+        zmin =  1e9
+        xmax = -1e9
+        ymax = -1e9
+        zmax = -1e9
+
+        for f in self.facet_list :
+            for v in f[0] :
+                if v[0] < xmin :
+                    xmin = v[0]
+                if v[1] < ymin :
+                    ymin = v[1]
+                if v[2] < zmin :
+                    zmin = v[2]
+
+                if v[0] > xmax :
+                    xmax = v[0]
+                if v[1] > ymax :
+                    ymax = v[1]
+                if v[2] > zmax :
+                    zmax = v[2]
+
+        return [[xmin,ymin,zmin],[xmax,ymax,zmax]]
+
+    def extentCentre(self):
+        e  = _np.array(self.extent())
+        de = e[1] - e[0]
+        c  = (e[1] + e[0])/2.0
+        self.translate(-c)
+
+    def translate(self, translation = [0,0,0]):
+
+        facet_list = []
+
+        for f in self.facet_list :
+            vl = []
+            n = f[1]
+            for v in f[0] :
+                vt = list(_np.array(v) + _np.array(translation))
+                vl.append(vt)
+
+            facet_list.append([vl,n])
+
+        self.facet_list = facet_list
 
     def getSolid(self):
         return self.solid
