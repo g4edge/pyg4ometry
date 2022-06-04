@@ -4,31 +4,65 @@ import scipy.linalg as _la
 import matplotlib.pyplot as _plt
 
 class Line :
+    '''Line class taking a point and dir(ection)
+
+    :param dir: direction
+    :type  dir: list or array - 3 values
+    '''
+
     def __init__(self, point, dir):
         self.point = point
         self.dir   = dir
 
     def intersectPlane(self, plane):
+        '''Intersection of line (self) with plane (unimplemented)
+
+        :param plane: plane object
+        :type plane: Plane
+
+        :return: Point of intersection between plane and line
+        :rtype: list or array
+
+        '''
+
         pass
 
     def __repr__(self):
         return "p0: "+repr(self.point)+" d: "+repr(self.dir)
 
 class Plane :
+    '''Plane class taking a point on plane and normal
+
+    :param point: point on plane
+    :type point: list, array
+    :param normal: vector of normal
+    :type normal: list, array
+    '''
+
     def __init__(self, point, normal, e2 = None, e3=None):
         self.point = point
         self.normal = normal
 
     def intersect(self, object):
+        '''Intersection between Line or Plane
+
+        :param object: Object to intersect with Plane (either Line or Plane)
+        :type object: Line or Plane
+
+        '''
+
         if type(object) == Line:
             self.intersectLine(object)
         elif type(object) == Plane:
             self.intersectLine(object)
 
     def intersectLine(self,line):
+        '''Intersection between plane (self) and line'''
+
         pass
 
     def intersectPlane(self,plane):
+        '''Compute intersection between two planes self and plane'''
         n1 = self.normal
         n2 = plane.normal
 
@@ -51,6 +85,14 @@ class Plane :
         return l
 
     def angleBetween(self, plane):
+        '''Compute angle between two planes (self and plane)
+
+        :param plane: Plane to intersect with self
+        :type plane: Plane
+        :return: angle between two planes
+        :rtype: float
+        '''
+
         n1 = self.normal
         n2 = plane.normal
 
@@ -60,6 +102,12 @@ class Plane :
         return "p0: "+repr(self.point)+" n: "+repr(self.normal)
 
 class vtkViewer :
+
+    '''
+    Simple visualiser for feature extraction only
+    '''
+
+
     def __init__(self):
         self.polydataD = {}
         self.mapperD   = {}
@@ -141,6 +189,13 @@ def vtkPolydataToActor(polydata) :
     return actor
 
 def vtkPolydataToConnectedEdges(polydata, angle = 89) :
+    '''Feature extract from polydata given an angular cut
+
+    :param angle: Angle between plane > angle is returned
+    :type angle: float
+    :return: Connected boundaries with > angle
+    :rtype: list of vtkPolydata
+    '''
 
     if angle > 0 :
         featureEdges = _vtk.vtkFeatureEdges()
@@ -172,6 +227,15 @@ def vtkPolydataToConnectedEdges(polydata, angle = 89) :
     return connectedEdges
 
 def vtkPolydataEdgeInformation(polydata, bPlot = False) :
+    '''Calculate path information for 2D vtkPolydata lines
+
+    :param polydata: Geometry to extract information
+    :type polydata: vtkPlydata or list of vtkPolydata
+    :return: Information on each boundary
+    :rtype: list of information dict
+
+    '''
+
     if type(polydata) == list :
         rL = []
         for e in polydata :
@@ -182,6 +246,8 @@ def vtkPolydataEdgeInformation(polydata, bPlot = False) :
         return _vtkPolydataEdgeInformation(polydata, bPlot)
 
 def _vtkPolydataEdgeInformation(polydata, bPlot = False) :
+    '''Calculate path information for 2D vtkPolydata lines'''
+
     info = {}
 
     points = []
@@ -277,12 +343,16 @@ def _vtkPolydataEdgeInformation(polydata, bPlot = False) :
     return info
 
 def pyg4PlaneToVtkPlane(pyg4Plane) :
+    '''Convert Plane to vtkPlane '''
+
     vtkPlane = _vtk.vtkPlane()
     vtkPlane.SetNormal(pyg4Plane.normal)
     vtkPlane.SetOrigin(pyg4Plane.position)
     return vtkPlane
 
 def pyg4ArrayToVtkPolydataLine(pyg4Array) :
+    '''Convert data array to vtkPolydata '''
+
     vtkPoints = _vtk.vtkPoints()
     for p in pyg4Array :
         vtkPoints.InsertNextPoint(p[0],p[1],p[2])
@@ -299,6 +369,8 @@ def pyg4ArrayToVtkPolydataLine(pyg4Array) :
     return vtkPolydata
 
 def cutterPlane(plane, polydata) :
+    '''Cutter plane on polydata'''
+
     cutter = _vtk.vtkCutter()
     cutter.SetInputData(polydata)
     cutter.SetCutFunction(plane)
@@ -306,9 +378,13 @@ def cutterPlane(plane, polydata) :
     return cutter.GetOutput()
 
 def circular(s) :
+    '''Create planes from circular path (unimplemented)'''
+
     pass
 
 def planeFromCurvilinearPath(pathFnc, s) :
+    '''Create planes from curvilinear path (unimplemented)'''
+
     pass
 
 def test(fileName, featureIndexList = [], planeQuality = 0.1, circumference = 300, bPlotRadii = False) :
