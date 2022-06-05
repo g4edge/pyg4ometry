@@ -59,3 +59,21 @@ def pycsgMeshToObj(mesh, fileName):
     exporter.SetRenderWindow(rw)
     exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
     exporter.Write()
+
+def pyg42VtkTransformation(mtra, tra) :
+    vtkTransform = _vtk.vtkMatrix4x4()
+    vtkTransform.SetElement(0, 0, mtra[0, 0])
+    vtkTransform.SetElement(0, 1, mtra[0, 1])
+    vtkTransform.SetElement(0, 2, mtra[0, 2])
+    vtkTransform.SetElement(1, 0, mtra[1, 0])
+    vtkTransform.SetElement(1, 1, mtra[1, 1])
+    vtkTransform.SetElement(1, 2, mtra[1, 2])
+    vtkTransform.SetElement(2, 0, mtra[2, 0])
+    vtkTransform.SetElement(2, 1, mtra[2, 1])
+    vtkTransform.SetElement(2, 2, mtra[2, 2])
+    vtkTransform.SetElement(0, 3, tra[0])
+    vtkTransform.SetElement(1, 3, tra[1])
+    vtkTransform.SetElement(2, 3, tra[2])
+    vtkTransform.SetElement(3, 3, 1)
+
+    return vtkTransform

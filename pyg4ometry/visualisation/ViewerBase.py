@@ -2,16 +2,28 @@ import numpy as _np
 import pyg4ometry.transformation as _transformation
 
 class ViewerBase :
+    '''
+    Base class for all viewers and exporters. Handles unique meshes and their instances
+    '''
+
     def __init__(self):
-        self.localmeshes        = {}
-        self.localmeshesoverlap = {}
-        self.instancePlacements = {}
-        self.instanceVisOptions = {}
-        self.instancePbrOptions = {}
+        self.localmeshes        = {} # unique meshes in scene
+        self.localmeshesoverlap = {} # unique overlap meshes in scene
+        self.instancePlacements = {} # instance placements
+        self.instanceVisOptions = {} # instance vis options
+        self.instancePbrOptions = {} # instqnce pbr options
 
     def addLogicalVolume(self, lv,
                          mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                          tra  = _np.array([0,0,0])):
+        '''
+        Add a logical volume to viewer (recursively)
+
+        :param mtra: Transformation matrix for logical volume
+        :type mtra: matrix(3,3)
+        :param tra: Displacement for logical volume
+        :type tra: array(3)
+        '''
 
         if lv.type == "logical" :
             self.addMesh(lv.name, lv.mesh)
@@ -39,27 +51,69 @@ class ViewerBase :
                 self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new)
                 self.addVisOptions(pv.logicalVolume.name, pv.visOptions)
 
-    def addMesh(self, lvname, mesh):
-        if lvname in self.instancePlacements :
+    def addMesh(self, name, mesh):
+
+        '''
+        Add a single mesh
+
+        :param name: Name of mesh (e.g logical volume name)
+        :type name: str
+        :param mesh: Mesh to be added
+        :type mesh: CSG
+        '''
+
+        if name in self.instancePlacements :
             pass
         else :
-            self.localmeshes[lvname] = mesh
+            self.localmeshes[name] = mesh.localmesh
 
-    def addInstance(self, lvname, transformation, translation):
-        if lvname in self.instancePlacements:
-            self.instancePlacements[lvname].append({"transformation":transformation,
+    def addInstance(self, name, transformation, translation):
+        '''
+        Add a new instance for mesh with name
+
+        :param name: name of mesh to add instance
+        :type name: str
+        :param transformation: Transformation matrix for instance
+        :type transformation: matrix(3,3)
+        :param translation: Translation for instance
+        :type translation: array(3)
+
+        '''
+
+
+        if name in self.instancePlacements:
+            self.instancePlacements[name].append({"transformation":transformation,
                                                     "translation":translation})
         else :
-            self.instancePlacements[lvname] = [{"transformation":transformation,
+            self.instancePlacements[name] = [{"transformation":transformation,
                                                 "translation":translation}]
 
-    def addVisOptions(self, lvname, visOptions):
-        if lvname in self.instanceVisOptions:
-            self.instanceVisOptions[lvname].append(visOptions)
-        else :
-            self.instanceVisOptions[lvname] = [visOptions]
+    def addVisOptions(self, name, visOptions):
+        '''
+        Add vis options to mesh with name
 
-    def addPbrOptions(self, lvname, pbrOptions):
+        :param name: name of mesh
+        :type name: str
+        :param visOptions:
+        :type visOptions: VisualisationOptions
+
+        '''
+        if name in self.instanceVisOptions:
+            self.instanceVisOptions[name].append(visOptions)
+        else :
+            self.instanceVisOptions[name] = [visOptions]
+
+    def addPbrOptions(self, name, pbrOptions):
+        '''
+        Add pbr options to mesh with name
+
+        :param name: name of mesh
+        :type name: str
+        :param pbrOptions:
+        :type pbrOptions: PbrOptions
+
+        '''
+
         pass
 
     def __repr__(self):
