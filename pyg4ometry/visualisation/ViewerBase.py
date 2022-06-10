@@ -1,5 +1,6 @@
 import numpy as _np
 import pyg4ometry.transformation as _transformation
+from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
 
 class ViewerBase :
     '''
@@ -15,7 +16,8 @@ class ViewerBase :
 
     def addLogicalVolume(self, lv,
                          mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
-                         tra  = _np.array([0,0,0])):
+                         tra  = _np.array([0,0,0]),
+                         visOptions = _VisOptions(representation="wireframe")):
         '''
         Add a logical volume to viewer (recursively)
 
@@ -25,13 +27,15 @@ class ViewerBase :
         :type tra: array(3)
         '''
 
-        if lv.type == "logical" :
+        if lv.type == "logical" and lv.mesh is not None:
             self.addMesh(lv.name, lv.mesh)
             self.addInstance(lv.name, mtra, tra)
+            self.addVisOptions(lv.name, visOptions)
         elif lv.type == "assembly" :
             pass
+
         else :
-            print("Unknown logical volume type")
+            print("Unknown logical volume type or null mesh")
 
         for pv in lv.daughterVolumes :
             if pv.type == "placement":
@@ -48,8 +52,8 @@ class ViewerBase :
                 mtra_new = mtra * pvmsca * pvmrot
                 tra_new  = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new)
-                self.addVisOptions(pv.logicalVolume.name, pv.visOptions)
+                pv.visOptions.alpha = 0.1
+                self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions)
 
     def addMesh(self, name, mesh):
 
