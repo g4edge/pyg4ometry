@@ -1,6 +1,8 @@
 import vtk as _vtk
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
-import   pyg4ometry.visualisation.Convert as _Convert
+import pyg4ometry.visualisation.Convert as _Convert
+from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
+from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
 
 class VtkViewerNew(_ViewerBase) :
     def __init__(self):
@@ -11,6 +13,10 @@ class VtkViewerNew(_ViewerBase) :
 
         self.cutterOrigins = {}
         self.cutterNormals = {}
+
+        self.bClipper = False
+        self.clipperOrigin = None
+        self.clipperNormal = None
 
     def initVtk(self):
         # create a renderer
@@ -29,7 +35,7 @@ class VtkViewerNew(_ViewerBase) :
         self.polydata = {}
         self.actors = {}
         self.cutters = {}
-        self.cuttersPolyData = {}
+        self.clippers = []
 
     def addCutter(self, name, origin, normal):
         self.cutterOrigins[name] = origin
@@ -43,6 +49,17 @@ class VtkViewerNew(_ViewerBase) :
 
     def exportCutter(self, name, fileName):
         pass
+
+    def addClipper(self, origin, normal):
+        self.bClipper = True
+        self.clipperOrigin = origin
+        self.clipperNormal = normal
+
+    def setClipper(self, origin, normal):
+        for c in self.clippers :
+            p = c.GetClipFunction()
+            p.SetOrigin(*origin)
+            p.SetNormal(*normal)
 
     def _polydata2Actor(self, polydata):
         pass
@@ -120,8 +137,10 @@ class VtkViewerNew(_ViewerBase) :
 
         for k in appFltDict :
             normFlt = _vtk.vtkPolyDataNormals() #
-            normFlt.SetFeatureAngle(90)
+            normFlt.SetFeatureAngle(179)
             normFlt.SetInputConnection(appFltDict[k].GetOutputPort())
+
+            normFlt = appFltDict[k] # bypass the normal filter
 
             # Add cutters
             for ck in self.cutterOrigins :
@@ -142,10 +161,6 @@ class VtkViewerNew(_ViewerBase) :
                     self.cutters[ck] = []
                     self.cutters[ck].append(cutFilt)
 
-                map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
-                map.ScalarVisibilityOff()
-                map.SetInputConnection(normFlt.GetOutputPort())
-
                 cutMap = _vtk.vtkPolyDataMapper()
                 cutMap.ScalarVisibilityOff()
                 cutMap.SetInputConnection(cutFilt.GetOutputPort())
@@ -159,13 +174,72 @@ class VtkViewerNew(_ViewerBase) :
                 self.ren.AddActor(cutActor)
 
             # Add clippers
+            if self.clipperNormal is not None :
+                p = self.clipperOrigin
+                n = self.clipperNormal
 
+                plane = _vtk.vtkPlane()
+                plane.SetOrigin(*p)
+                plane.SetNormal(*n)
+
+                cliFlt = _vtk.vtkClipPolyData()
+                cliFlt.SetInputConnection(normFlt.GetOutputPort())
+                cliFlt.SetClipFunction(plane)
+                cliFlt.GenerateClipScalarsOn()
+                cliFlt.GenerateClippedOutputOn()
+
+                edgFlt = _vtk.vtkFeatureEdges()
+                edgFlt.SetInputConnection(cliFlt.GetOutputPort())
+                edgFlt.BoundaryEdgesOn()
+                edgFlt.FeatureEdgesOff()
+                edgFlt.NonManifoldEdgesOff()
+                edgFlt.ManifoldEdgesOff()
+
+                strFlt = _vtk.vtkStripper()
+                strFlt.SetInputConnection(edgFlt.GetOutputPort())
+
+                cleFlt = _vtk.vtkContourLoopExtraction()
+                cleFlt.SetInputConnection(strFlt.GetOutputPort())
+
+                visOpt = visOptDict[k]
+
+                edgMap = _vtk.vtkPolyDataMapper()
+                edgMap.SetInputConnection(cleFlt.GetOutputPort())
+                # edgMap.SetResolveCoincidentTopologyToShiftZBuffer()
+                edgMap.SetResolveCoincidentTopologyToPolygonOffset()
+                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-10*visOpt.depth)
+                edgMap.ScalarVisibilityOff()
+                edgActor = _vtk.vtkActor()
+                edgActor.SetMapper(edgMap)
+
+                if visOpt.representation == "wireframe":
+                    edgActor.GetProperty().SetRepresentationToWireframe()
+
+                edgActor.GetProperty().SetOpacity(visOpt.alpha)
+                edgActor.GetProperty().SetColor(*visOpt.colour)
+
+                self.actors[k+"_clipper"] = edgActor
+                self.ren.AddActor(edgActor)
+
+                self.clippers.append(cliFlt)
+
+            visOpt = visOptDict[k]
+
+            map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
+            map.ScalarVisibilityOff()
+            map.SetResolveCoincidentTopologyToPolygonOffset()
+            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 10 * visOpt.depth)
+
+            if not self.bClipper :
+                map.SetInputConnection(normFlt.GetOutputPort())
+            else :
+                map.SetInputConnection(cliFlt.GetClippedOutputPort())
+                self.ren.GetActiveCamera().SetFocalPoint(0,0,0)
 
             actor = _vtk.vtkActor()  # vtk(Actor)
             actor.SetMapper(map)
             self.actors[k] = actor
 
-            visOpt = visOptDict[k]
             if visOpt.representation == "wireframe" :
                 actor.GetProperty().SetRepresentationToWireframe()
 
@@ -196,3 +270,68 @@ class VtkViewerNew(_ViewerBase) :
         if interactive:
             self.iren.Start()
 
+
+class VtkViewerColouredNew(VtkViewerNew):
+    """
+    Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
+
+    :Keyword Arguments:
+        * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
+        * **interpolation** (str): see :class:`VtkViewer`
+        * **defaultColour** (str): "random" or [r,g,b]
+
+    :Examples:
+
+    >>> vMaterialMap = VtkViewerColoured(materialVisOptions={"G4_WATER":[0,0,1]})
+    >>> vRandom = VtkViewerColoured(defaultColour="random")
+    >>> vColoured = VtkViewerColoured(defaultColour=[0.1,0.1,0.1])
+    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1,0.5])
+
+    of use visualisation options instances
+
+    >>> vo = pyg4ometry.visualisation.VisualisationOptions()
+    >>> vo.colour = [0.1,1.0,0.5]
+    >>> vo.alpha = 0.3
+    >>> options = {'G4_WATER':vo}
+    >>> vis = VtkViewerColoured(materialVisOptions=options)
+
+    If the value in the materialVisOptions is a list or a tuple, it will be upgraded
+    to a :class:`VisualisationOptions` instance.
+    """
+
+    def __init__(self, *args, defaultColour=None, materialVisOptions=None, **kwargs):
+        kwargs["interpolation"] = kwargs.get("interpolation", "flat")
+        super().__init__()
+
+        self._defaultVis = _VisOptions()
+        self._defaultVis.randomColour = defaultColour == "random"
+        if type(defaultColour) is list:
+            self._defaultVis.colour = defaultColour
+
+        # loop over dictionary of material vis options - if value is list(rgba)
+        # convert to vis options instance, make invisible if alpha is 0
+        if materialVisOptions:
+            for k, v in materialVisOptions.items():
+                if type(v) is list or type(v) is tuple:
+                    vi = _VisOptions()
+                    vi.colour = v[:3]
+                    if any([i > 1 for i in vi.colour]):
+                        vi.colour = [i / 255.0 for i in vi.colour]
+                    if len(v) > 3:
+                        vi.alpha = v[3]
+                        vi.visible = vi.alpha != 0
+                    self.materialVisOptions[k] = vi
+                else:
+                    self.materialVisOptions[k] = v
+
+    def _getDefaultVis(self, pv):
+        return self._defaultVis
+
+class VtkViewerColouredMaterialNew(VtkViewerColouredNew):
+    """
+    Extension of VtkViewerColoured that uses a default material dictionary for
+    several common materials. Material colours are in defined Colour.py for many
+    Geant4, FLUKA and BDSIM materials.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)

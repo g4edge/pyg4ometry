@@ -23,18 +23,20 @@ class VisualisationOptions:
                  alpha = 0.5,
                  visible = True,
                  lineWidth = 1,
-                 randomColour = False):
+                 randomColour = False,
+                 depth=0):
         self.representation = representation
         self.colour         = colour
         self.alpha          = alpha
         self.visible        = visible
         self.lineWidth      = lineWidth
         self.randomColour   = randomColour
+        self.depth          = depth
 
     def __repr__(self):
         rgba= [*self.getColour(), self.alpha]
         return (f"<VisOpt: rep={self.representation}, rgba={rgba}, "
-                f"vis={self.visible}, linewidth={self.lineWidth}>")
+                f"vis={self.visible}, linewidth={self.lineWidth}, depth={self.depth}>")
 
     def getColour(self):
         """
