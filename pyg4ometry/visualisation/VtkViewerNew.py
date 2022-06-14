@@ -207,7 +207,7 @@ class VtkViewerNew(_ViewerBase) :
                 edgMap.SetInputConnection(cleFlt.GetOutputPort())
                 # edgMap.SetResolveCoincidentTopologyToShiftZBuffer()
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
-                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-10*visOpt.depth)
+                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-2*visOpt.depth)
                 edgMap.ScalarVisibilityOff()
                 edgActor = _vtk.vtkActor()
                 edgActor.SetMapper(edgMap)
@@ -228,7 +228,7 @@ class VtkViewerNew(_ViewerBase) :
             map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
             map.ScalarVisibilityOff()
             map.SetResolveCoincidentTopologyToPolygonOffset()
-            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 10 * visOpt.depth)
+            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 2*visOpt.depth)
 
             if not self.bClipper :
                 map.SetInputConnection(normFlt.GetOutputPort())

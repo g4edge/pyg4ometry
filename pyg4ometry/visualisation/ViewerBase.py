@@ -2,8 +2,7 @@ import numpy as _np
 import random as _random
 import pyg4ometry.transformation as _transformation
 from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
-from pyg4ometry.visualisation.Mesh import Mesh as _Mesh
-
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 
 def _daughterSubtractedMesh(lv) :
     mm = lv.mesh.localmesh.clone() # mother mesh
@@ -70,16 +69,20 @@ class ViewerBase :
         '''
 
         if lv.type == "logical" and lv.mesh is not None:
+
+            # add mesh
             if not self.bSubtractDaughters :
                 self.addMesh(lv.name, lv.mesh.localmesh)
             else :
                 self.addMesh(lv.name, _daughterSubtractedMesh(lv))
 
+            # add instance
             self.addInstance(lv.name, mtra, tra)
 
             materialName = lv.material.name
             materialName = materialName[0:materialName.find("0x")]
 
+            # add vis options
             if materialName in self.materialVisOptions :
                 visOptions = self.materialVisOptions[materialName]
                 visOptions.depth = depth
@@ -87,6 +90,19 @@ class ViewerBase :
             else :
                 visOptions.depth = depth
                 self.addVisOptions(lv.name, visOptions)
+
+            # add overlap meshes
+            for [overlapmesh, overlaptype], i in zip(lv.mesh.overlapmeshes,
+                                                     range(0, len(lv.mesh.overlapmeshes))):
+                visOptions = self.getOverlapVisOptions(overlaptype)
+                print(visOptions)
+                visOptions.depth = depth
+
+                overlapName = lv.name+"_overlap_"+str(i)
+                self.addMesh(overlapName, overlapmesh)
+                self.addInstance(overlapName,  mtra, tra)
+                self.addVisOptions(overlapName, visOptions)
+
         elif lv.type == "assembly" :
             pass
 
@@ -108,7 +124,6 @@ class ViewerBase :
                 mtra_new = mtra * pvmsca * pvmrot
                 tra_new  = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                #pv.visOptions.alpha = 1.0
                 #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1)
 
@@ -205,6 +220,20 @@ class ViewerBase :
             self.materialVisOptions = {}
 
         self.materialVisOptions[materialName] = visOptionInstance
+
+    def getOverlapVisOptions(self, overlaptype):
+        visOptions = _VisOptions()
+        if overlaptype == _OverlapType.protrusion:
+            visOptions.colour = [1, 0, 0]
+            visOptions.alpha = 1.0
+        elif overlaptype == _OverlapType.overlap:
+            visOptions.colour = [0, 1, 0]
+            visOptions.alpha = 1.0
+        elif overlaptype == _OverlapType.coplanar:
+            visOptions.colour = [0, 0, 1]
+            visOptions.alpha = 1.0
+
+        return visOptions
 
     def __repr__(self):
         pass
