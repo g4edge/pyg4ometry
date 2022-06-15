@@ -15,8 +15,11 @@ class VtkViewerNew(_ViewerBase) :
         self.cutterNormals = {}
 
         self.bClipper = False
+        self.bClipperCutter = False
         self.clipperOrigin = None
         self.clipperNormal = None
+
+        self.clipperPlaneWidget = None
 
     def initVtk(self):
         # create a renderer
@@ -34,8 +37,48 @@ class VtkViewerNew(_ViewerBase) :
     def clear(self):
         self.polydata = {}
         self.actors = {}
-        self.cutters = {}
-        self.clippers = []
+        self.cutters = {}    # cut filters
+        self.clippers = []   # clip filters
+        self.axes = []       # axes actors
+
+    def addAxes(self, length=20.0, origin=(0, 0, 0)):
+        """
+        Add x,y,z axis to the scene.
+
+        :param length: float - length of each axis in mm
+        :param origin: (float,float,float) - (x,y,z) of origin in mm
+        """
+        axes = _vtk.vtkAxesActor()
+
+        # transform to move axes
+        tran = _vtk.vtkTransform()
+        tran.Translate(origin[0], origin[1], origin[2])
+        axes.SetUserTransform(tran)
+
+        self.axes.append(axes)
+
+        axes.SetTotalLength(length, length, length)
+        self.ren.AddActor(axes)
+
+    def setAxes(self, iAxes, length, origin):
+        aa = self.axes[iAxes]
+
+    def addAxesWidget(self):
+        axesActor = _vtk.vtkAnnotatedCubeActor()
+        axesActor.SetXPlusFaceText('+x')
+        axesActor.SetXMinusFaceText('-x')
+        axesActor.SetYPlusFaceText('+y')
+        axesActor.SetYMinusFaceText('-y')
+        axesActor.SetZPlusFaceText('+z')
+        axesActor.SetZMinusFaceText('-z')
+        axesActor.GetTextEdgesProperty().SetColor(1, 1, 1)
+        axesActor.GetTextEdgesProperty().SetLineWidth(2)
+        axesActor.GetCubeProperty().SetColor(0.4, 0.4, 0.4)
+        self.axesWidget = _vtk.vtkOrientationMarkerWidget()
+        self.axesWidget.SetOrientationMarker(axesActor)
+        self.axesWidget.SetInteractor(self.iren)
+        self.axesWidget.EnabledOn()
+        self.axesWidget.InteractiveOn()
 
     def addCutter(self, name, origin, normal):
         self.cutterOrigins[name] = origin
@@ -47,19 +90,60 @@ class VtkViewerNew(_ViewerBase) :
             p.SetOrigin(*origin)
             p.SetNormal(*normal)
 
+    def addCutterWidget(self):
+        pass
+
     def exportCutter(self, name, fileName):
         pass
 
-    def addClipper(self, origin, normal):
-        self.bClipper = True
-        self.clipperOrigin = origin
-        self.clipperNormal = normal
+    def addClipper(self, origin, normal, bClipperCutter = False):
+        self.bClipper       = True
+        self.bClipperCutter = bClipperCutter
+        self.clipperOrigin  = origin
+        self.clipperNormal  = normal
+
+        if self.bClipperCutter :
+            self.addCutter("clipperCutter", origin, normal)
 
     def setClipper(self, origin, normal):
         for c in self.clippers :
             p = c.GetClipFunction()
             p.SetOrigin(*origin)
             p.SetNormal(*normal)
+
+        if self.bClipperCutter :
+            self.setCutter("clipperCutter",origin,normal)
+
+    def addClipperWidget(self):
+
+        plaRep = _vtk.vtkImplicitPlaneRepresentation()
+        # plaRep.SetPlaceFactor(1.25)
+        plaRep.PlaceWidget(list(self.actors.values())[0].GetBounds())
+        plaRep.SetNormal(self.clippers[0].GetClipFunction().GetNormal())
+        plaRep.SetOrigin(self.clippers[0].GetClipFunction().GetOrigin())
+
+        self.clipperPlaneWidget = _vtk.vtkImplicitPlaneWidget2()
+        self.clipperPlaneWidget.SetInteractor(self.iren)
+        self.clipperPlaneWidget.SetRepresentation(plaRep)
+
+        self.clipperPlaneWidget.AddObserver("InteractionEvent", self.test)
+
+        #planeWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
+
+        #self.planeWidget = _vtk.vtkImplicitPlaneWidget()
+        #self.planeWidget.SetInteractor(self.iren)
+
+        #self.planeWidget.On()
+
+    def test(self, obj, event):
+        #print("obj",obj)
+        print("evt",event)
+        rep = obj.GetRepresentation()
+
+        plane = _vtk.vtkPlane()
+        rep.GetPlane(plane)
+        print(plane)
+        self.setClipper(plane.GetOrigin(), plane.GetNormal())
 
     def _polydata2Actor(self, polydata):
         pass
@@ -205,7 +289,6 @@ class VtkViewerNew(_ViewerBase) :
 
                 edgMap = _vtk.vtkPolyDataMapper()
                 edgMap.SetInputConnection(cleFlt.GetOutputPort())
-                # edgMap.SetResolveCoincidentTopologyToShiftZBuffer()
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
                 edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-2*visOpt.depth)
                 edgMap.ScalarVisibilityOff()
@@ -266,6 +349,9 @@ class VtkViewerNew(_ViewerBase) :
 
         # Render
         self.renWin.Render()
+
+        if self.clipperPlaneWidget :
+            self.clipperPlaneWidget.On()
 
         if interactive:
             self.iren.Start()

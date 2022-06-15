@@ -28,7 +28,6 @@ def _daughterSubtractedMesh(lv) :
 
         mm = mm.subtract(dm)
 
-
     return mm
 
 class ViewerBase :
@@ -42,14 +41,23 @@ class ViewerBase :
         self.localmeshesoverlap = {} # unique overlap meshes in scene
         self.instancePlacements = {} # instance placements
         self.instanceVisOptions = {} # instance vis options
-        self.instancePbrOptions = {} # instqnce pbr options
+        self.instancePbrOptions = {} # instance pbr options
 
         # subtract daughters of lv mesh
         self.bSubtractDaughters = False
 
         # material options dict
-        self.materialVisOptions = {}
-        self.materialPbrOptions = {}
+        self.materialVisOptions = {} # dictionary for material vis options
+        self.materialPbrOptions = {} # dictionary for material pbr options
+
+        # default vis options
+        self.defaultVisOptions = None
+        self.defaultOverlapVisOptions = None
+        self.defaultCoplanarVisOptions = None
+        self.defaultProtusionVisOptions = None
+
+        # default pbr options
+
 
     def setSubtractDaughters(self, subtractDaughters = True):
         self.bSubtractDaughters = subtractDaughters
@@ -66,6 +74,8 @@ class ViewerBase :
         :type mtra: matrix(3,3)
         :param tra: Displacement for logical volume
         :type tra: array(3)
+        :param visOptions: VisualisationOptions for the lv mesh
+        :type visOptions: VisualisationOptions
         '''
 
         if lv.type == "logical" and lv.mesh is not None:
@@ -185,7 +195,6 @@ class ViewerBase :
 
         '''
 
-
         if name in self.instancePlacements:
             self.instancePlacements[name].append({"transformation":transformation,
                                                     "translation":translation})
@@ -193,7 +202,7 @@ class ViewerBase :
             self.instancePlacements[name] = [{"transformation":transformation,
                                                 "translation":translation}]
 
-    def addVisOptions(self, name, visOptions):
+    def addVisOptions(self, name, visOption):
         '''
         Add vis options to mesh with name
 
@@ -204,11 +213,11 @@ class ViewerBase :
 
         '''
         if name in self.instanceVisOptions:
-            self.instanceVisOptions[name].append(visOptions)
+            self.instanceVisOptions[name].append(visOption)
         else :
-            self.instanceVisOptions[name] = [visOptions]
+            self.instanceVisOptions[name] = [visOption]
 
-    def addPbrOptions(self, name, pbrOptions):
+    def addPbrOptions(self, name, pbrOption):
         '''
         Add pbr options to mesh with name
 
@@ -221,34 +230,52 @@ class ViewerBase :
 
         pass
 
-    def addMaterialVisOption(self, materialName, visOptionInstance):
+    def addMaterialVisOption(self, materialName, visOption):
         """
         Append a visualisation option instance to the dictionary of materials.
 
         :param materialName: material name to match
         :type materialName: str
-        :param visOptionInstance: instance
-        :type visOptionInstance: :class:`VisualisationOptions`
+        :param visOption: instance
+        :type visOption: :class:`VisualisationOptions`
         """
         if self.materialVisOptions is None:
             self.materialVisOptions = {}
 
-        self.materialVisOptions[materialName] = visOptionInstance
+        self.materialVisOptions[materialName] = visOption
 
-    def addMaterialPbrOption(self, materialName, visOptionInstance):
+    def addMaterialPbrOption(self, materialName, visOption):
         """
         Append a visualisation option instance to the dictionary of materials.
 
         :param materialName: material name to match
         :type materialName: str
-        :param visOptionInstance: instance
-        :type visOptionInstance: :class:`VisualisationOptions`
+        :param visOption: instance
+        :type visOption: :class:`VisualisationOptions`
 
         """
         if self.materialVisOptions is None:
             self.materialVisOptions = {}
 
-        self.materialVisOptions[materialName] = visOptionInstance
+        self.materialVisOptions[materialName] = visOption
+
+    def setDefaultVisOptions(self, visOption):
+        self.defaultVisOptions = visOption
+
+    def getDefaultVisOptions(self):
+        return self.defaultVisOptions
+
+    def getMaterialVisOptions(self, material):
+        pass
+
+    def setOverlapVisOption(self, visOption):
+        self.defaultOverlapVisOptions = visOption
+
+    def setCoplanarVisOption(self, visOption):
+        self.defaultCoplanarVisOptions = visOption
+
+    def setProtusionVisOption(self, visOption):
+        self.defaultProtusionVisOptions = visOption
 
     def getOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
