@@ -126,6 +126,35 @@ class ViewerBase :
 
                 #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1)
+            elif pv.type == "replica" or pv.type == "division":
+                for mesh, trans in zip(pv.meshes, pv.transforms):
+                    # pv transform
+                    pvmrot = _transformation.tbxyz2matrix(trans[0])
+                    pvtra = _np.array(trans[1])
+
+                    # pv compound transform
+                    new_mtra = mtra * pvmrot
+                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+                    self.addMesh(pv.name,mesh.localmesh)
+                    self.addInstance(pv.name,new_mtra,new_tra)
+                    self.addVisOptions(pv.name,pv.visOptions)
+            elif pv.type == "parametrised":
+                for mesh, trans, i  in zip(pv.meshes, pv.transforms, range(0,len(pv.meshes),1)):
+
+                    pv_name = pv.name+"_param_"+str(i)
+
+                    # pv transform
+                    pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
+                    pvtra = _np.array(trans[1].eval())
+
+                    # pv compound transform
+                    new_mtra = mtra * pvmrot
+                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+                    self.addMesh(pv_name,mesh.localmesh)
+                    self.addInstance(pv_name,new_mtra,new_tra)
+                    self.addVisOptions(pv_name,pv.visOptions)
 
     def addMesh(self, name, mesh):
 
