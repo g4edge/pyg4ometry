@@ -8,8 +8,8 @@ class VtkViewerNew(_ViewerBase) :
     def __init__(self):
         super(VtkViewerNew, self).__init__()
 
-        self.clear()
         self.initVtk()
+        self.clear()
 
         self.cutterOrigins = {}
         self.cutterNormals = {}
@@ -35,11 +35,19 @@ class VtkViewerNew(_ViewerBase) :
         self.iren.SetRenderWindow(self.renWin)
 
     def clear(self):
+
+        super(VtkViewerNew, self).clear()
+
         self.polydata = {}
         self.actors = {}
         self.cutters = {}    # cut filters
         self.clippers = []   # clip filters
         self.axes = []       # axes actors
+
+        self.bBuiltPipelines = False
+
+        for a in self.ren.GetActors() :
+            self.ren.RemoveActor(a)
 
     def addAxes(self, length=20.0, origin=(0, 0, 0)):
         """
@@ -96,11 +104,12 @@ class VtkViewerNew(_ViewerBase) :
     def exportCutter(self, name, fileName):
         pass
 
-    def addClipper(self, origin, normal, bClipperCutter = False):
-        self.bClipper       = True
-        self.bClipperCutter = bClipperCutter
-        self.clipperOrigin  = origin
-        self.clipperNormal  = normal
+    def addClipper(self, origin, normal, bClipperCutter = False, bClipperCloseCuts = True):
+        self.bClipper          = True
+        self.clipperOrigin     = origin
+        self.clipperNormal     = normal
+        self.bClipperCutter    = bClipperCutter
+        self.bClipperCloseCuts = bClipperCloseCuts
 
         if self.bClipperCutter :
             self.addCutter("clipperCutter", origin, normal)
@@ -114,7 +123,20 @@ class VtkViewerNew(_ViewerBase) :
         if self.bClipperCutter :
             self.setCutter("clipperCutter",origin,normal)
 
+        if self.clipperPlaneWidget :
+            self.clipperPlaneWidget.GetRepresentation().SetNormal(*normal)
+            self.clipperPlaneWidget.GetRepresentation().SetOrigin(*origin)
+
+
     def addClipperWidget(self):
+
+        if not self.bBuiltPipelines :
+            print("Need to build pipelines before adding clipper widget e.g. v.bulidPipelinesAppend()")
+            return
+
+        if len(self.clippers) == 0 :
+            print("Need to add a clipping plane adding clipper widget e.g. v.addClipper([0, 0, 0], [0, 0, 1], True")
+            return
 
         plaRep = _vtk.vtkImplicitPlaneRepresentation()
         # plaRep.SetPlaceFactor(1.25)
@@ -126,23 +148,13 @@ class VtkViewerNew(_ViewerBase) :
         self.clipperPlaneWidget.SetInteractor(self.iren)
         self.clipperPlaneWidget.SetRepresentation(plaRep)
 
-        self.clipperPlaneWidget.AddObserver("InteractionEvent", self.test)
+        self.clipperPlaneWidget.AddObserver("InteractionEvent", self.updateClipperPlaneCallback)
 
-        #planeWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
-
-        #self.planeWidget = _vtk.vtkImplicitPlaneWidget()
-        #self.planeWidget.SetInteractor(self.iren)
-
-        #self.planeWidget.On()
-
-    def test(self, obj, event):
-        #print("obj",obj)
-        print("evt",event)
+    def updateClipperPlaneCallback(self, obj, event):
         rep = obj.GetRepresentation()
 
         plane = _vtk.vtkPlane()
         rep.GetPlane(plane)
-        print(plane)
         self.setClipper(plane.GetOrigin(), plane.GetNormal())
 
     def _polydata2Actor(self, polydata):
@@ -301,8 +313,9 @@ class VtkViewerNew(_ViewerBase) :
                 edgActor.GetProperty().SetOpacity(visOpt.alpha)
                 edgActor.GetProperty().SetColor(*visOpt.colour)
 
-                self.actors[k+"_clipper"] = edgActor
-                self.ren.AddActor(edgActor)
+                if self.bClipperCloseCuts :
+                    self.actors[k+"_clipper"] = edgActor
+                    self.ren.AddActor(edgActor)
 
                 self.clippers.append(cliFlt)
 
@@ -331,6 +344,7 @@ class VtkViewerNew(_ViewerBase) :
 
             self.ren.AddActor(actor)
 
+        self.bBuiltPipelines = True
 
     def buildPipelinesTransformed(self):
         pass

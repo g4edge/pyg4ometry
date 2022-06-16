@@ -20,8 +20,6 @@ def _daughterSubtractedMesh(lv) :
             ds = [1,1,1]
         dm = d.logicalVolume.mesh.localmesh.clone()
 
-        print(dp,dr)
-
         daa = _transformation.tbxyz2axisangle(dr)
         dm.rotate(daa[0], _transformation.rad2deg(daa[1]))
         dm.translate(dp)
@@ -36,19 +34,11 @@ class ViewerBase :
     '''
 
     def __init__(self):
-        # basic instancing structure
-        self.localmeshes        = {} # unique meshes in scene
-        self.localmeshesoverlap = {} # unique overlap meshes in scene
-        self.instancePlacements = {} # instance placements
-        self.instanceVisOptions = {} # instance vis options
-        self.instancePbrOptions = {} # instance pbr options
+        # init/clear structures
+        ViewerBase.clear(self)
 
         # subtract daughters of lv mesh
         self.bSubtractDaughters = False
-
-        # material options dict
-        self.materialVisOptions = {} # dictionary for material vis options
-        self.materialPbrOptions = {} # dictionary for material pbr options
 
         # default vis options
         self.defaultVisOptions = None
@@ -58,6 +48,17 @@ class ViewerBase :
 
         # default pbr options
 
+        # material options dict
+        self.materialVisOptions = {} # dictionary for material vis options
+        self.materialPbrOptions = {} # dictionary for material pbr options
+
+    def clear(self):
+        # basic instancing structure
+        self.localmeshes        = {} # unique meshes in scene
+        self.localmeshesoverlap = {} # unique overlap meshes in scene
+        self.instancePlacements = {} # instance placements
+        self.instanceVisOptions = {} # instance vis options
+        self.instancePbrOptions = {} # instance pbr options
 
     def setSubtractDaughters(self, subtractDaughters = True):
         self.bSubtractDaughters = subtractDaughters
@@ -105,8 +106,7 @@ class ViewerBase :
             for [overlapmesh, overlaptype], i in zip(lv.mesh.overlapmeshes,
                                                      range(0, len(lv.mesh.overlapmeshes))):
                 visOptions = self.getOverlapVisOptions(overlaptype)
-                print(visOptions)
-                visOptions.depth = depth
+                visOptions.depth = depth+10
 
                 overlapName = lv.name+"_overlap_"+str(i)
                 self.addMesh(overlapName, overlapmesh)
