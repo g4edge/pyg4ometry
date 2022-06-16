@@ -102,7 +102,16 @@ class VtkViewerNew(_ViewerBase) :
         pass
 
     def exportCutter(self, name, fileName):
-        pass
+
+        self.cuttersAppFlt = _vtk.vtkAppendPolyData()
+
+        for c in self.cutters[name] :
+            self.cuttersAppFlt.AddInputConnection(c.GetOutputPort())
+
+        w = _vtk.vtkPolyDataWriter()
+        w.SetFileName(fileName)
+        w.SetInputConnection(self.cuttersAppFlt.GetOutputPort())
+        w.Write()
 
     def addClipper(self, origin, normal, bClipperCutter = False, bClipperCloseCuts = True):
         self.bClipper          = True
