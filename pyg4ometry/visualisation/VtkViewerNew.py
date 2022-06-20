@@ -34,6 +34,11 @@ class VtkViewerNew(_ViewerBase) :
         self.iren = _vtk.vtkRenderWindowInteractor()
         self.iren.SetRenderWindow(self.renWin)
 
+        # add the custom style
+        style = MouseInteractorNamePhysicalVolume(self.ren, self)
+        style.SetDefaultRenderer(self.ren)
+        self.iren.SetInteractorStyle(style)
+
     def clear(self):
 
         super(VtkViewerNew, self).clear()
@@ -89,6 +94,9 @@ class VtkViewerNew(_ViewerBase) :
         self.axesWidget.InteractiveOn()
 
     def addCutter(self, name, origin, normal):
+        if self.bBuiltPipelines :
+            print("Need to add cutter before pipelines are built")
+
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
 
@@ -114,6 +122,9 @@ class VtkViewerNew(_ViewerBase) :
         w.Write()
 
     def addClipper(self, origin, normal, bClipperCutter = False, bClipperCloseCuts = True):
+        if self.bBuiltPipelines :
+            print("Need to add clipper before pipelines are built")
+
         self.bClipper          = True
         self.clipperOrigin     = origin
         self.clipperNormal     = normal
@@ -300,16 +311,22 @@ class VtkViewerNew(_ViewerBase) :
                 edgFlt.NonManifoldEdgesOff()
                 edgFlt.ManifoldEdgesOff()
 
-                strFlt = _vtk.vtkStripper()
-                strFlt.SetInputConnection(edgFlt.GetOutputPort())
+                edgTriFlt = _vtk.vtkTriangleFilter()
+                edgTriFlt.SetInputConnection(edgFlt.GetOutputPort())
 
                 cleFlt = _vtk.vtkContourLoopExtraction()
-                cleFlt.SetInputConnection(strFlt.GetOutputPort())
+                cleFlt.SetInputConnection(edgTriFlt.GetOutputPort())
+                #cleFlt.SetLoopClosureToBoundary()
+                #cleFlt.SetLoopClosureToOff()
+
+
+                strFlt = _vtk.vtkStripper()
+                strFlt.SetInputConnection(cleFlt.GetOutputPort())
 
                 visOpt = visOptDict[k]
 
                 edgMap = _vtk.vtkPolyDataMapper()
-                edgMap.SetInputConnection(cleFlt.GetOutputPort())
+                edgMap.SetInputConnection(strFlt.GetOutputPort())
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
                 edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-2*visOpt.depth)
                 edgMap.ScalarVisibilityOff()
@@ -359,10 +376,18 @@ class VtkViewerNew(_ViewerBase) :
         pass
 
     def render(self):
+        if not self.bBuiltPipelines :
+            print("Not built pipelines")
+            return
+
         # Render
         self.renWin.Render()
 
     def view(self, interactive = True, resetCamera = False):
+        if not self.bBuiltPipelines :
+            print("Not built pipelines")
+            return
+
         # enable user interface interactor
         self.iren.Initialize()
 
@@ -444,3 +469,64 @@ class VtkViewerColouredMaterialNew(VtkViewerColouredNew):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
+
+class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
+    def __init__(self, renderer, vtkviewer):
+        self.AddObserver("RightButtonPressEvent", self.rightButtonPressEvent)
+
+        self.ren       = renderer
+        self.vtkviewer = vtkviewer
+
+        self.highLightActor = None
+
+    def rightButtonPressEvent(self, obj, event):
+        clickPos = self.GetInteractor().GetEventPosition()
+        print("clickPos> ",clickPos)
+
+        picker = _vtk.vtkPropPicker()
+        picker.Pick(clickPos[0], clickPos[1], 0, self.ren)
+        actor = picker.GetActor()
+
+        pointPicker = _vtk.vtkPointPicker()
+        pointPicker.Pick(clickPos[0], clickPos[1], 0, self.ren)
+        print("pointId>", pointPicker.GetPointId())
+
+        map   = actor.GetMapper()
+        inflt = map.GetInputAlgorithm()
+
+        point = inflt.GetOutput().GetPoint(pointPicker.GetPointId())
+        print("pointPos>",point)
+
+        # loop over inflt appendPolyData and find closest
+        dmin = 1e99
+        di   = -1
+        for ipd in range(0,inflt.GetNumberOfInputConnections(0),1) :
+            pd = inflt.GetInput(ipd) # polydata
+            pdd = _vtk.vtkImplicitPolyDataDistance()
+            pdd.SetInput(pd)
+            dist = pdd.EvaluateFunction(*point)
+            if dist < dmin :
+                di = ipd
+                dmin = dist
+        print("pd", di,dmin)
+
+        if self.highLightActor :
+            self.ren.RemoveActor(self.highLightActor)
+
+        highLightMapper = _vtk.vtkPolyDataMapper()
+        highLightMapper.SetInputData(inflt.GetInput(di))
+
+        self.highLightActor = _vtk.vtkActor()
+        self.highLightActor.SetMapper(highLightMapper)
+        self.highLightActor.GetProperty().SetColor(0,1,0)
+        self.highLightActor.GetProperty().SetOpacity(0.5)
+
+        self.ren.AddActor(self.highLightActor)
+
+        # update rendering
+        self.ren.GetRenderWindow().Render()
+
+        #print(actor)
+        #print(map)
+        #print(inflt)
+        #print(pointPicker.GetPointId())
