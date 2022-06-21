@@ -1,5 +1,6 @@
 import vtk as _vtk
 import copy as _copy
+import numpy as _np
 
 # python iterable to vtkIdList
 def mkVtkIdList(it):
@@ -77,3 +78,12 @@ def pyg42VtkTransformation(mtra, tra) :
     vtkTransform.SetElement(3, 3, 1)
 
     return vtkTransform
+
+def vtkTransformation2PyG4(vt) :
+    mat = vt.GetMatrix()
+    mtra = _np.array([[mat.GetElement(0,0), mat.GetElement(0,1), mat.GetElement(0,2)],
+                      [mat.GetElement(1,0), mat.GetElement(1,1), mat.GetElement(1,2)],
+                      [mat.GetElement(2,0), mat.GetElement(2,1), mat.GetElement(2,2)]])
+    tra  = _np.array([mat.GetElement(0,3),mat.GetElement(1,3),mat.GetElement(2,3)])
+
+    return [mtra, tra]

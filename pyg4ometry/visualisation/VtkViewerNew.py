@@ -1,4 +1,5 @@
 import vtk as _vtk
+import pyg4ometry.transformation as _transformation
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
 import pyg4ometry.visualisation.Convert as _Convert
 from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
@@ -35,22 +36,26 @@ class VtkViewerNew(_ViewerBase) :
         self.iren.SetRenderWindow(self.renWin)
 
         # add the custom style
-        style = MouseInteractorNamePhysicalVolume(self.ren, self)
-        style.SetDefaultRenderer(self.ren)
-        self.iren.SetInteractorStyle(style)
+        self.interactorStyle = MouseInteractorNamePhysicalVolume(self.ren, self)
+        self.interactorStyle.SetDefaultRenderer(self.ren)
+        self.iren.SetInteractorStyle(self.interactorStyle)
 
     def clear(self):
 
         super(VtkViewerNew, self).clear()
 
         self.polydata = {}
-        self.actors = {}
-        self.cutters = {}    # cut filters
+        self.actors   = {}
+        self.cutters  = {}   # cut filters
         self.clippers = []   # clip filters
-        self.axes = []       # axes actors
+        self.axes     = []   # axes actors
+
+        self.pdNameDict       = {} # polydata to LV name
+        self.instanceNameDict = {} # instance transformation to PV name
 
         self.bBuiltPipelines = False
 
+        # remove all actors
         for a in self.ren.GetActors() :
             self.ren.RemoveActor(a)
 
@@ -219,7 +224,9 @@ class VtkViewerNew(_ViewerBase) :
         # loop over meshes and create polydata
         for k in self.localmeshes :
             pd = _Convert.pycsgMeshToVtkPolyData(self.localmeshes[k])
+            # pd.SetObjectName(k)
             self.polydata[k] = pd
+            self.pdNameDict[pd] = k
 
         appFltDict  = {}
         visOptDict  = {}
@@ -250,6 +257,8 @@ class VtkViewerNew(_ViewerBase) :
                 traFlt.SetTransform(vtra)
 
                 appFlt.AddInputConnection(traFlt.GetOutputPort())
+
+                self.instanceNameDict[traFlt] = ip['name']
 
         for k in appFltDict :
             normFlt = _vtk.vtkPolyDataNormals() #
@@ -318,7 +327,6 @@ class VtkViewerNew(_ViewerBase) :
                 cleFlt.SetInputConnection(edgTriFlt.GetOutputPort())
                 #cleFlt.SetLoopClosureToBoundary()
                 #cleFlt.SetLoopClosureToOff()
-
 
                 strFlt = _vtk.vtkStripper()
                 strFlt.SetInputConnection(cleFlt.GetOutputPort())
@@ -478,6 +486,17 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         self.vtkviewer = vtkviewer
 
         self.highLightActor = None
+        self.highLightTextActor = None
+
+    def removeHighLight(self):
+        if self.highLightActor :
+            self.ren.RemoveActor(self.highLightActor)
+            self.ren.GetRenderWindow().Render()
+
+    def removeHighLightText(self):
+        if self.highLighTextActor :
+            self.ren.RemoveActor(self.highLightTextActor)
+            self.ren.GetRenderWindow().Render()
 
     def rightButtonPressEvent(self, obj, event):
         clickPos = self.GetInteractor().GetEventPosition()
@@ -491,30 +510,63 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         pointPicker.Pick(clickPos[0], clickPos[1], 0, self.ren)
         print("pointId>", pointPicker.GetPointId())
 
-        map   = actor.GetMapper()
-        inflt = map.GetInputAlgorithm()
+        cellPicker = _vtk.vtkCellPicker()
+        cellPicker.SetPickClippingPlanes(False)
+        cellPicker.Pick(clickPos[0], clickPos[1], 0, self.ren)
+        actor = cellPicker.GetActor()
 
-        point = inflt.GetOutput().GetPoint(pointPicker.GetPointId())
+        # possible we don't hit an actor
+        if actor is None :
+            return
+
+        map   = actor.GetMapper()
+        self.inalgo = map.GetInputAlgorithm()
+
+        if self.inalgo.GetClassName() == "vtkClipPolyData" :
+            appPolyData = self.inalgo.GetInputAlgorithm()
+        elif self.inalgo.GetClassName() == "vtkAppendPolyData" :
+            appPolyData = self.inalgo
+        else :
+            appPolyData = self.inalgo.GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm()
+
+            print(self.inalgo.GetClassName(),appPolyData.GetClassName())
+
+        point = self.inalgo.GetOutput().GetPoint(cellPicker.GetPointId())
         print("pointPos>",point)
 
-        # loop over inflt appendPolyData and find closest
+        # loop over appendPolyData and find closest
         dmin = 1e99
         di   = -1
-        for ipd in range(0,inflt.GetNumberOfInputConnections(0),1) :
-            pd = inflt.GetInput(ipd) # polydata
+        pdmin  = None
+        pdamin = None
+        for ipd in range(0,appPolyData.GetNumberOfInputConnections(0),1) :
+            pd = appPolyData.GetInput(ipd)              # polydata
+            pda = appPolyData.GetInputAlgorithm(0,ipd)  # polydata algorithm
             pdd = _vtk.vtkImplicitPolyDataDistance()
             pdd.SetInput(pd)
             dist = pdd.EvaluateFunction(*point)
             if dist < dmin :
                 di = ipd
                 dmin = dist
-        print("pd", di,dmin)
+                pdmin  = pd
+                pdamin = pda
+
+        lvName  = self.vtkviewer.pdNameDict[pdamin.GetInputAlgorithm().GetInput()]
+        pvName  = self.vtkviewer.instanceNameDict[pdamin]
+        pvTrans = pdamin.GetTransform()
+        [mtra, tra] = _Convert.vtkTransformation2PyG4(pvTrans.GetConcatenatedTransform(0))
+        globalExtent = pdmin.GetBounds()
+        localExtent  = pdamin.GetInput().GetBounds()
+
+        tba = _transformation.matrix2tbxyz(mtra)
+
+        print("minimum pd>", di,dmin, lvName, pvName,tba,tra, localExtent, globalExtent)
 
         if self.highLightActor :
             self.ren.RemoveActor(self.highLightActor)
 
         highLightMapper = _vtk.vtkPolyDataMapper()
-        highLightMapper.SetInputData(inflt.GetInput(di))
+        highLightMapper.SetInputData(appPolyData.GetInput(di))
 
         self.highLightActor = _vtk.vtkActor()
         self.highLightActor.SetMapper(highLightMapper)
@@ -523,10 +575,20 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
 
         self.ren.AddActor(self.highLightActor)
 
+        if self.highLightTextActor :
+            self.ren.RemoveActor(self.highLightTextActor)
+
+        self.highLightTextActor = _vtk.vtkTextActor()
+        self.highLightTextActor.GetTextProperty().SetFontSize(40);
+        self.highLightTextActor.GetTextProperty().SetColor(0,0,0)
+        self.highLightTextActor.SetInput("lv   : "+lvName+"\n"+
+                                         "pv   : "+pvName+"\n"+
+                                         "tbr  :"+str(tba)+"\n"+
+                                         "tra  :"+str(tra)+"\n"+
+                                         "local aabb :"+str(localExtent)+"\n"+
+                                         "global aabb :"+str(globalExtent))
+        self.highLightTextActor.SetDisplayPosition(20, 30)
+        self.ren.AddActor(self.highLightTextActor)
+
         # update rendering
         self.ren.GetRenderWindow().Render()
-
-        #print(actor)
-        #print(map)
-        #print(inflt)
-        #print(pointPicker.GetPointId())

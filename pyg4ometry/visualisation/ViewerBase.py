@@ -67,7 +67,8 @@ class ViewerBase :
                          mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                          tra  = _np.array([0,0,0]),
                          visOptions = _VisOptions(representation="wireframe"),
-                         depth=0):
+                         depth=0,
+                         name = None):
         '''
         Add a logical volume to viewer (recursively)
 
@@ -88,7 +89,9 @@ class ViewerBase :
                 self.addMesh(lv.name, _daughterSubtractedMesh(lv))
 
             # add instance
-            self.addInstance(lv.name, mtra, tra)
+            if name is None :
+                name = "world"
+            self.addInstance(lv.name, mtra, tra, name)
 
             materialName = lv.material.name
             materialName = materialName[0:materialName.find("0x")]
@@ -135,7 +138,7 @@ class ViewerBase :
                 tra_new  = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                 #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
-                self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1)
+                self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1, pv.name)
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -147,7 +150,7 @@ class ViewerBase :
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                     self.addMesh(pv.name,mesh.localmesh)
-                    self.addInstance(pv.name,new_mtra,new_tra)
+                    self.addInstance(pv.name,new_mtra,new_tra, pv.name)
                     self.addVisOptions(pv.name,pv.visOptions)
             elif pv.type == "parametrised":
                 for mesh, trans, i  in zip(pv.meshes, pv.transforms, range(0,len(pv.meshes),1)):
@@ -163,7 +166,7 @@ class ViewerBase :
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                     self.addMesh(pv_name,mesh.localmesh)
-                    self.addInstance(pv_name,new_mtra,new_tra)
+                    self.addInstance(pv_name,new_mtra,new_tra,pv_name)
                     self.addVisOptions(pv_name,pv.visOptions)
 
     def addMesh(self, name, mesh):
@@ -182,7 +185,7 @@ class ViewerBase :
         else :
             self.localmeshes[name] = mesh
 
-    def addInstance(self, name, transformation, translation):
+    def addInstance(self, name, transformation, translation, instanceName = ""):
         '''
         Add a new instance for mesh with name
 
@@ -192,15 +195,19 @@ class ViewerBase :
         :type transformation: matrix(3,3)
         :param translation: Translation for instance
         :type translation: array(3)
+        :param instanceName: Name of the instance e.g PV
+        :type instanceName: str
 
         '''
 
         if name in self.instancePlacements:
             self.instancePlacements[name].append({"transformation":transformation,
-                                                    "translation":translation})
+                                                  "translation":translation,
+                                                  "name":instanceName})
         else :
             self.instancePlacements[name] = [{"transformation":transformation,
-                                                "translation":translation}]
+                                              "translation":translation,
+                                              "name":instanceName}]
 
     def addVisOptions(self, name, visOption):
         '''
