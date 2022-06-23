@@ -336,7 +336,7 @@ class VtkViewerNew(_ViewerBase) :
                 edgMap = _vtk.vtkPolyDataMapper()
                 edgMap.SetInputConnection(strFlt.GetOutputPort())
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
-                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-2*visOpt.depth)
+                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-3*visOpt.depth)
                 edgMap.ScalarVisibilityOff()
                 edgActor = _vtk.vtkActor()
                 edgActor.SetMapper(edgMap)
@@ -358,7 +358,7 @@ class VtkViewerNew(_ViewerBase) :
             map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
             map.ScalarVisibilityOff()
             map.SetResolveCoincidentTopologyToPolygonOffset()
-            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 2*visOpt.depth)
+            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 3*visOpt.depth)
 
             if not self.bClipper :
                 map.SetInputConnection(normFlt.GetOutputPort())
@@ -499,6 +499,10 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             self.ren.GetRenderWindow().Render()
 
     def rightButtonPressEvent(self, obj, event):
+
+        if self.highLightActor :
+            self.ren.RemoveActor(self.highLightActor)
+
         clickPos = self.GetInteractor().GetEventPosition()
         print("clickPos> ",clickPos)
 
@@ -522,6 +526,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         map   = actor.GetMapper()
         self.inalgo = map.GetInputAlgorithm()
 
+
         if self.inalgo.GetClassName() == "vtkClipPolyData" :
             appPolyData = self.inalgo.GetInputAlgorithm()
         elif self.inalgo.GetClassName() == "vtkAppendPolyData" :
@@ -529,7 +534,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         else :
             appPolyData = self.inalgo.GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm()
 
-            print(self.inalgo.GetClassName(),appPolyData.GetClassName())
+        print(self.inalgo.GetClassName(), appPolyData.GetClassName())
 
         point = self.inalgo.GetOutput().GetPoint(cellPicker.GetPointId())
         print("pointPos>",point)
