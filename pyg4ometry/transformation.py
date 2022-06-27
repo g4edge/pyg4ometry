@@ -1,27 +1,71 @@
 import numpy as _np
 
 def rad2deg(rad) :
+    '''Convert rad in radians into degrees
+
+    :param rad: Input in radians
+    :type rad: float
+    :return: rad in degrees
+    :rtype: float
+
+    '''
+
     return 180 * (rad / _np.pi)
 
 def deg2rad(deg) :
+    '''Convert deg in degrees into radians
+
+    :param deg: Input in degrees
+    :type deg: float
+    :return: deg in radians
+    :rtype: float
+
+    '''
+
     return _np.pi * (deg / 180.)
 
 def grad2rad(gradians) :
+    '''Convert rad in gradians into radians
+
+    :param gradians: Input in gradians
+    :type gradians: float
+    :return: gradians in radians
+    :rtype: float
+
+    '''
+
     return _np.pi * (gradians / 200.)
 
 def tbxyz2axisangle(rv) :
-    """
+    '''
     Tait-Bryan x-y-z rotation to axis-angle representation
     Algorithm from http://www.sedris.org/wg8home/Documents/WG80485.pdf
 
     For converting rotation angles to an active axis/angle pair for
     use in pycsg.  Order of rotation:  x->y->z.
-    """
+
+    :param rv: rotation angles
+    :type rv: float(3)
+    :returns: [axis,angle]
+    :rtype: list(list(3),float)
+
+    '''
     matrix = tbxyz2matrix(rv)
     return matrix2axisangle(matrix)
 
 
 def matrix2axisangle(matrix):
+
+    '''
+    Convert 3x3 transformation matrix to axis angle representation
+
+    :param matrix: 3x3 rotation matrix array
+    :type matrix: array(3,3)
+    :returns: [axis,angle]
+    :rtype: list(list(3),float)
+
+    '''
+
     m = matrix
     # angle of rotation
     ang = _np.arccos((float(m.trace())-1)/2.0)
@@ -46,6 +90,18 @@ def matrix2axisangle(matrix):
     return [list(axi),ang]
 
 def axisangle2matrix(axis, angle):
+
+    '''
+    Convert axis angle to transformation matrix
+
+    :param axis: axis for rotation
+    :type axis: list/array(3)
+    :param angle: rotation angle
+    :type angle: float
+    :returns: transformation matrix
+    :rtype: array(3,3)
+
+    '''
 
     axis = [i/_np.linalg.norm(axis) for i in axis]
     cos = _np.cos(angle)
@@ -76,10 +132,10 @@ def matrix2tbxyz(matrix):
     Convert rotation matrix to Tait-Bryan angles.
     Order of rotation is x -> y -> z.
 
-    :param matrix: active (positive angle = anti-clockwise rotation about
-    that axis when looking at the axis) matrix.
+    :param matrix: active (positive angle = anti-clockwise rotation about that axis when looking at the axis) matrix.
 
-    returns: [x, y, z] Tait-Bryan angles in a list.
+    :return: [x, y, z] Tait-Bryan angles in a list.
+    :rtype: list(3)
     """
 
     a_11 = matrix[0,0]
@@ -111,6 +167,19 @@ def matrix2tbxyz(matrix):
     return [x, y, z]
 
 def axisangle2tbxyz(axis, angle):
+    """
+    Convert axis and angle to tait bryan angles
+
+    :param axis: axis for rotation
+    :type axis: list/array(3)
+    :param angle: rotation angle
+    :type angle: float
+    :returns: tait bryan angles (x-y-z)
+    :rtype: array(3)
+
+    """
+
+
     return matrix2tbxyz(axisangle2matrix(axis, angle))
 
 def tbxyz2matrix(angles):
@@ -120,7 +189,8 @@ def tbxyz2matrix(angles):
     
     :param angles: list of angles:  x, y, z
 
-    returns: rotation matrix
+    :return: rotation matrix
+    :rtype: array(3,3)
     """
     x = angles[0]
     y = angles[1]
@@ -153,7 +223,9 @@ def tbzyx2matrix(angles):
     
     :param angles: list of angles:  x, y, z
 
-    returns: rotation matrix
+    :return: rotation matrix
+    :rtype: array(3,3)
+
     """
     x = angles[0]
     y = angles[1]
@@ -275,6 +347,15 @@ def are_parallel(vector_1, vector_2, tolerance=1e-10):
     Check if vector vector_1 is parallel to vector vector_2 down to
     some tolerance.
 
+    :param vector_1: First input vector
+    :type vector_1: array
+    :param vector_2: Second input vector
+    :type vector_2: array
+    :param tolerance: Tolerance for calculation
+    :type tolerance: float
+    :returns: if vectors are parallel
+    :rtype: bool
+
     """
     return (_np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1)
                                            * _np.linalg.norm(vector_2))
@@ -285,6 +366,14 @@ def are_anti_parallel(vector_1, vector_2, tolerance=1e-10):
     Check if vector vector_1 is parallel to vector vector_2 down to
     some tolerance.
 
+    :param vector_1: First input vector
+    :type vector_1: array
+    :param vector_2: Second input vector
+    :type vector_2: array
+    :param tolerance: Tolerance for calculation
+    :type tolerance: float
+    :returns: if vectors are antiparallel
+    :rtype: bool
     """
     return (_np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1)
                                           * _np.linalg.norm(vector_2))

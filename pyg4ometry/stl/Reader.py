@@ -19,6 +19,23 @@ class _Facet():
         return (tuple(self.vertices), self.normal)
 
 class Reader(object):
+
+    '''
+    STL file reader
+
+    :param filename: Input STL filename
+    :type filename: str
+    :param solidname: Name of the solid to be created
+    :type solidname: str
+    :param scale: Scaling of STL (e.g. for units)
+    :type scale: float
+    :param centre: Flag to centre STL solid
+    :type centre: boolean
+    :param registry: Registry to add solid to
+    :type registry: Registry
+
+    '''
+
     def __init__(self, filename, solidname="stl_tessellated", scale=1, centre = False, registry=None):
         if registry is None:  # If a registry is not supplied, make an empty one
             registry = _g4.Registry()
@@ -35,7 +52,7 @@ class Reader(object):
         self.scale = float(scale)
 
         # load file
-        self.load()
+        self._load()
 
         # centre model if requested
         if centre :
@@ -45,7 +62,11 @@ class Reader(object):
         self.solid = _g4.solid.TessellatedSolid(self.solidname, self.facet_list, self._registry,
                                                 _g4.solid.TessellatedSolid.MeshType.Stl)
 
-    def load(self):
+    def _load(self):
+        '''
+        Load GDML file self.filename
+        '''
+
         def extractXYZ(string):
             # The scaling here is a bit cheeky, but the scale parameter in
             # GDML seems to be ignored by Geanr4 for Tessellated Solids
@@ -72,6 +93,13 @@ class Reader(object):
                 cnt += 1
 
     def extent(self):
+        '''
+        Compute the axis aligned extent of the STL solid.
+
+        :returns: list of minima and maxima in 3 axes
+        :rtype: [[xmin,ymin,zmin],[xmax, ymax, zmax]]
+        '''
+
         xmin =  1e9
         ymin =  1e9
         zmin =  1e9
@@ -98,12 +126,23 @@ class Reader(object):
         return [[xmin,ymin,zmin],[xmax,ymax,zmax]]
 
     def extentCentre(self):
+        '''
+        Translate STL mesh to centre of the extent
+        '''
+
         e  = _np.array(self.extent())
         de = e[1] - e[0]
         c  = (e[1] + e[0])/2.0
         self.translate(-c)
 
     def translate(self, translation = [0,0,0]):
+        '''
+        Translate STL mesh by translation
+
+        :param translation: Vector to translate mesh
+        :type translation: list(3) or array(3)
+
+        '''
 
         facet_list = []
 
@@ -119,9 +158,20 @@ class Reader(object):
         self.facet_list = facet_list
 
     def getSolid(self):
+        '''
+        Get geant4.solid
+
+        :return: G4Tesselated for STL
+        :rtype: TessellatedSolid
+        '''
+
         return self.solid
 
     def getRegistry(self):
+        '''
+        Return registry
+        '''
+
         return self._registry
 
     def visualise(self):
@@ -145,6 +195,13 @@ class Reader(object):
         """
         Write the tessellated solid loaded from STL to GDML. The placement has no
         rotation or translation. The world material is G4_Galactic, the solid material is G4_Fe.
+
+        :param filename: Output file name
+        :type filename: str
+        :param gmad_tester: Flag for writing BDSIM gmad tester
+        :type gmad_tester: boolean
+
+
         """
 
         if filename == "default":
