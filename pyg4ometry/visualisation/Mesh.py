@@ -1,7 +1,7 @@
 import copy as _copy 
 
+from .. import config as _config
 import pyg4ometry.exceptions
-
 from pyg4ometry.pycsg.core import CSG as _CSG
 
 import logging as _log
@@ -64,8 +64,11 @@ def _getBoundingBox(aMesh, rotationMatrix=None, translation=None, nameForError="
     """
     vertices, _, _ = aMesh.toVerticesAndPolygons()
     if not vertices:
-        raise pyg4ometry.exceptions.NullMeshError(nameForError)
-
+        print("Warning> getBoundingBox null mesh error : ", nameForError)
+        if _config.meshingNullException :
+            raise pyg4ometry.exceptions.NullMeshError(nameForError)
+        else :
+            return [[-1e-9,-1e-9,-1e-9],[1e9,1e9,1e9]]
     vertices = _np.vstack(vertices)
 
     if rotationMatrix is not None:
