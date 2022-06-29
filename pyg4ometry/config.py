@@ -15,6 +15,7 @@ class meshingType :
 
 meshing = meshingType.cgal_sm
 # meshing = meshingType.pycsg
+meshingNullException = True
 
 def backendName():
     if meshing == meshingType.pycsg:
