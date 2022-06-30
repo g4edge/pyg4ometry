@@ -22,6 +22,8 @@ class StepFile {
 
   Handle(XCAFDoc_ShapeTool) aShapeTool;
   Handle(XCAFDoc_ColorTool) aColorTool;
+
+  void loadShapes();
 };
 
 
