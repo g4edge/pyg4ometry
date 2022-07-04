@@ -20,5 +20,6 @@ from . import transformation
 from . import visualisation
 from . import features
 from . import bdsim
+from . import cli
 
 __version__ = "1.0.1"
