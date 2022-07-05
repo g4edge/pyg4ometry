@@ -51,6 +51,7 @@ autodoc_mock_imports = [
 # enforce consistent usage of NumPy-style docstrings
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
+napoleon_use_rtype = False
 
 # intersphinx
 intersphinx_mapping = {
@@ -64,6 +65,9 @@ intersphinx_mapping = {
 # sphinx-autodoc
 # Include __init__() docstring in class docstring
 autoclass_content = 'both'
+autodoc_typehints = 'both'
+autodoc_typehints_description_target = 'documented_params'
+autodoc_typehints_format = 'short'
 
 # sphinx-multiversion
 
