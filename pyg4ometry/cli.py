@@ -49,13 +49,12 @@ def _writeFile(fileName, reg) :
     elif fileName.find(".usd") != -1 :
         pass
 
-
-
 def cli(inputFileName = None,
         view = False,
         bounding = False,
         checkOverlaps = False,
         analysis = False,
+        nullMeshException = False,
         compareFileName = None,
         outputFileName = None):
 
@@ -71,6 +70,9 @@ def cli(inputFileName = None,
         print("pyg4> input file not found")
         return
 
+    if nullMeshException :
+        _pyg4.config.meshingNullException = not nullMeshException
+
     reg, wl = _loadFile(inputFileName)
 
     if bounding :
@@ -78,9 +80,11 @@ def cli(inputFileName = None,
         print("pyg4> extent",bbExtent)
 
     if checkOverlaps :
+        print("pyg4> checkoverlaps")
         wl.checkOverlaps(True)
 
     if analysis :
+        print("pyg4> analysis")
         a = _pyg4.geant4.AnalyseGeometryComplexity(reg.getWorldVolume())
         a.printSummary()
 
@@ -105,22 +109,27 @@ if __name__ == "__main__":
     parser.add_option("-b", "--bounding", help="calculate bounding box", action = "store_true", dest = "bounding")
     parser.add_option("-a", "--analysis", help="geometry information", action = "store_true", dest="analysis")
     parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action = "store_true")
-    parser.add_option("-n", "--nullmesh", help="disable null mesh exception", dest="nullmesh")
+    parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
     parser.add_option("-f", "--file", dest="inputFileName",help="input file (gdml, stl, inp, step)", metavar="INFILE")
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
-    parser.add_option("-m","--compare", help="co(m)pare geometry", dest="compareFileName", metavar="COMPAREFILE")
+    parser.add_option("-m", "--compare", help="co(m)pare geometry", dest="compareFileName", metavar="COMPAREFILE")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
     parser.add_option("-e", "--append", help="add(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
+
+    # solid, position, rotation
     # parser.add_option("")
 
     # features
     (options, args) = parser.parse_args()
+
+    print(options)
 
     cli(inputFileName=options.__dict__['inputFileName'],
         view=options.__dict__['view'],
         bounding=options.__dict__['bounding'],
         checkOverlaps=options.__dict__['checkOverlaps'],
         analysis=options.__dict__['analysis'],
+        nullMeshException=options.__dict__['nullmesh'],
         compareFileName=options.__dict__['compareFileName'],
         outputFileName=options.__dict__['outputFileName'])
     
