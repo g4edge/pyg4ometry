@@ -54,6 +54,10 @@ class Reader(object):
 
         self._load()
 
+    def getRegistry(self):
+        """Get the fluka registry"""
+        return self.flukaregistry
+
     def _load(self):
         """Load the FLUKA input file"""
 
