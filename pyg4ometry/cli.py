@@ -49,6 +49,12 @@ def _writeFile(fileName, reg) :
     elif fileName.find(".usd") != -1 :
         pass
 
+def parseStrTripletAsFloat(strTriplet) :
+    pass
+
+def parseStrPythonAsSolid(strPython) :
+    pass
+
 def cli(inputFileName = None,
         view = False,
         bounding = False,
@@ -56,6 +62,7 @@ def cli(inputFileName = None,
         analysis = False,
         nullMeshException = False,
         compareFileName = None,
+        appendFileName = None,
         outputFileName = None):
 
     print("pyg4 - command line interface")
@@ -93,6 +100,11 @@ def cli(inputFileName = None,
         comparision = _pyg4.compare.geometry(wl, cwl, _pyg4.compare.Tests(), False)
         comparision.print()
 
+    if appendFileName is not None :
+        reg1, wl1 = _loadFile(appendFileName)
+        wp1 = _pyg4.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], wl1, "l1_pv", wl, reg)
+        reg.addVolumeRecursive(wp1)
+
     if outputFileName is not None :
         _writeFile(outputFileName, reg)
 
@@ -114,10 +126,11 @@ if __name__ == "__main__":
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
     parser.add_option("-m", "--compare", help="co(m)pare geometry", dest="compareFileName", metavar="COMPAREFILE")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
-    parser.add_option("-e", "--append", help="add(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
-
-    # solid, position, rotation
-    # parser.add_option("")
+    parser.add_option("-e", "--append", help="app(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
+    parser.add_option("-x", "--exchange", help="replace solid for logical volume, LVNAME is logical volume name", dest="exchangeLvName", metavar="LVNAME")
+    parser.add_option("-s", "--solid", help="solid in python constructor syntax (used with exchange)", dest="solidCode", metavar="PYTHONSOLID")
+    parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
+    parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
 
     # features
     (options, args) = parser.parse_args()
@@ -131,5 +144,6 @@ if __name__ == "__main__":
         analysis=options.__dict__['analysis'],
         nullMeshException=options.__dict__['nullmesh'],
         compareFileName=options.__dict__['compareFileName'],
+        appendFileName=options.__dict__['appendFileName'],
         outputFileName=options.__dict__['outputFileName'])
     
