@@ -78,7 +78,8 @@ def cli(inputFileName = None,
         translation = None,
         rotation = None,
         materials = None,
-        outputFileName = None):
+        outputFileName = None,
+        verbose = None):
 
     print("pyg4 - command line interface")
 
@@ -111,7 +112,9 @@ def cli(inputFileName = None,
         bbDExtent = bbExtent[1]-bbExtent[0]
         bbCentre  = (bbExtent[0]+bbExtent[1])
 
-        print("pyg4> extent",bbExtent, bbDExtent, bbCentre)
+        print("pyg4> extent        ",bbExtent)
+        print("pyg4> extent size   ",bbDExtent)
+        print("pyg4> extent centre ",bbCentre)
 
     if checkOverlaps :
         print("pyg4> checkoverlaps")
@@ -161,29 +164,40 @@ if __name__ == "__main__":
     parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
     parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
     parser.add_option("-m", "--material", help='material dictionary ("lvname":"nist")', dest="material")
+    parser.add_option("-V", "--verbose", help='verbose script', dest="verbose",action = "store_true")
 
     # features
     (options, args) = parser.parse_args()
 
-    print(options)
+    verbose = options.__dict__['verbose']
+    if verbose :
+        print("pyg4> options")
+        print(options)
+
+    # absolutely need a file name
+    if options.__dict__['inputFileName'] is None :
+        print("pyg4> need an input file")
+        exit(1)
 
     # parse plane
     planeData = options.__dict__['planeCutter']
     if planeData is not None :
         planeData = _parseStrMultipletAsFloat(planeData)
-        print(planeData)
+        print("pyg4> clipper plane data", planeData)
 
     # parse translation
     translation = options.__dict__['translation']
     if translation is not None :
         translation = _parseStrMultipletAsFloat(translation)
-        print(translation)
+        if verbose :
+            print("pyg4> translation ",translation)
 
     # parse rotation
     rotation = options.__dict__['rotation']
     if rotation is not None :
         rotation = _parseStrMultipletAsFloat(rotation)
-        print(rotation)
+        if verbose :
+            print("pyg4> rotation ",rotation)
 
     # parse solid
     # this must be done when we have a registry
@@ -197,5 +211,6 @@ if __name__ == "__main__":
         lvName=options.__dict__['lvName'],
         compareFileName=options.__dict__['compareFileName'],
         appendFileName=options.__dict__['appendFileName'],
-        outputFileName=options.__dict__['outputFileName'])
+        outputFileName=options.__dict__['outputFileName'],
+        verbose=verbose)
     
