@@ -49,7 +49,7 @@ def _writeFile(fileName, reg) :
     elif fileName.find(".usd") != -1 :
         pass
 
-def _parseStrTripletAsFloat(strTriplet) :
+def _parseStrMultipletAsFloat(strTriplet) :
     return list(map(float, strTriplet.split(",")))
 
 def _parseStrPythonAsSolid(reg, strPython) :
@@ -73,6 +73,7 @@ def cli(inputFileName = None,
         nullMeshException = False,
         compareFileName = None,
         appendFileName = None,
+        lvName = None,
         solid=None,
         translation = None,
         rotation = None,
@@ -96,9 +97,21 @@ def cli(inputFileName = None,
 
     reg, wl = _loadFile(inputFileName)
 
+    # extract lv in new registry etc
+    if lvName is not None :
+        lv = reg.logicalVolumeDict[lvName]
+        reg1 = _pyg4.geant4.Registry()
+        reg1.addVolumeRecursive(lv)
+        reg = reg1
+        reg.setWorld(lv)
+        lw = reg.getWorldVolume()
+
     if bounding :
-        bbExtent = wl.extent()
-        print("pyg4> extent",bbExtent)
+        bbExtent = _np.array(wl.extent())
+        bbDExtent = bbExtent[1]-bbExtent[0]
+        bbCentre  = (bbExtent[0]+bbExtent[1])
+
+        print("pyg4> extent",bbExtent, bbDExtent, bbCentre)
 
     if checkOverlaps :
         print("pyg4> checkoverlaps")
@@ -137,6 +150,7 @@ if __name__ == "__main__":
     parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action = "store_true")
     parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
+    parser.add_option("-i", "--info", help='information on geometry (tree, reg, instance)', dest="info")
     parser.add_option("-f", "--file", dest="inputFileName",help="input file (gdml, stl, inp, step)", metavar="INFILE")
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
     parser.add_option("-d", "--compare", help="comp(a)re geometry", dest="compareFileName", metavar="COMPAREFILE")
@@ -153,16 +167,22 @@ if __name__ == "__main__":
 
     print(options)
 
+    # parse plane
+    planeData = options.__dict__['planeCutter']
+    if planeData is not None :
+        planeData = _parseStrMultipletAsFloat(planeData)
+        print(planeData)
+
     # parse translation
     translation = options.__dict__['translation']
     if translation is not None :
-        translation = _parseStrTripletAsFloat(translation)
+        translation = _parseStrMultipletAsFloat(translation)
         print(translation)
 
     # parse rotation
     rotation = options.__dict__['rotation']
     if rotation is not None :
-        rotation = _parseStrTripletAsFloat(rotation)
+        rotation = _parseStrMultipletAsFloat(rotation)
         print(rotation)
 
     # parse solid
@@ -174,6 +194,7 @@ if __name__ == "__main__":
         checkOverlaps=options.__dict__['checkOverlaps'],
         analysis=options.__dict__['analysis'],
         nullMeshException=options.__dict__['nullmesh'],
+        lvName=options.__dict__['lvName'],
         compareFileName=options.__dict__['compareFileName'],
         appendFileName=options.__dict__['appendFileName'],
         outputFileName=options.__dict__['outputFileName'])
