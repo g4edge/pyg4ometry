@@ -49,11 +49,21 @@ def _writeFile(fileName, reg) :
     elif fileName.find(".usd") != -1 :
         pass
 
-def parseStrTripletAsFloat(strTriplet) :
-    pass
+def _parseStrTripletAsFloat(strTriplet) :
+    return list(map(float, strTriplet.split(",")))
 
-def parseStrPythonAsSolid(strPython) :
-    pass
+def _parseStrPythonAsSolid(reg, strPython) :
+    locals = {}
+    solid = exec("s = _pyg4.geant4.solid."+strPython,{"reg":reg,"_pyg4":_pyg4,"_np":_np},locals)
+
+    # get solid name
+    # solidName = str(strPython.split("(")[1].split(",")[0]).replace("'", "")
+    return locals['s']
+
+def _parseStrPythonAsDict(strPython) :
+    locals = {}
+    exec("d= "+strPython,globals(),locals)
+    return locals['d']
 
 def cli(inputFileName = None,
         view = False,
@@ -63,6 +73,10 @@ def cli(inputFileName = None,
         nullMeshException = False,
         compareFileName = None,
         appendFileName = None,
+        solid=None,
+        translation = None,
+        rotation = None,
+        materials = None,
         outputFileName = None):
 
     print("pyg4 - command line interface")
@@ -122,20 +136,37 @@ if __name__ == "__main__":
     parser.add_option("-a", "--analysis", help="geometry information", action = "store_true", dest="analysis")
     parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action = "store_true")
     parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
+    parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
     parser.add_option("-f", "--file", dest="inputFileName",help="input file (gdml, stl, inp, step)", metavar="INFILE")
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
-    parser.add_option("-m", "--compare", help="co(m)pare geometry", dest="compareFileName", metavar="COMPAREFILE")
-    parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
+    parser.add_option("-d", "--compare", help="comp(a)re geometry", dest="compareFileName", metavar="COMPAREFILE")
+    parser.add_option("-l", "--logical", help="extract logical LVNAME", dest="lvName", metavar="LVNAME")
     parser.add_option("-e", "--append", help="app(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
     parser.add_option("-x", "--exchange", help="replace solid for logical volume, LVNAME is logical volume name", dest="exchangeLvName", metavar="LVNAME")
-    parser.add_option("-s", "--solid", help="solid in python constructor syntax (used with exchange)", dest="solidCode", metavar="PYTHONSOLID")
+    parser.add_option("-s", "--solid", help="solid in python constructor syntax (used with exchange). Registry must be reg and _np used for numpy", dest="solidCode", metavar="PYTHONSOLID")
     parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
     parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
+    parser.add_option("-m", "--material", help='material dictionary ("lvname":"nist")', dest="material")
 
     # features
     (options, args) = parser.parse_args()
 
     print(options)
+
+    # parse translation
+    translation = options.__dict__['translation']
+    if translation is not None :
+        translation = _parseStrTripletAsFloat(translation)
+        print(translation)
+
+    # parse rotation
+    rotation = options.__dict__['rotation']
+    if rotation is not None :
+        rotation = _parseStrTripletAsFloat(rotation)
+        print(rotation)
+
+    # parse solid
+    # this must be done when we have a registry
 
     cli(inputFileName=options.__dict__['inputFileName'],
         view=options.__dict__['view'],
