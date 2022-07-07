@@ -74,6 +74,8 @@ def cli(inputFileName = None,
         compareFileName = None,
         appendFileName = None,
         lvName = None,
+        info = None,
+        exchangeLvName = None,
         solid=None,
         translation = None,
         rotation = None,
@@ -116,6 +118,27 @@ def cli(inputFileName = None,
         print("pyg4> extent size   ",bbDExtent)
         print("pyg4> extent centre ",bbCentre)
 
+    if info :
+        if info == 'reg' :
+            print('pyg4> registry defines')
+            print(list(reg.defineDict.keys()))
+            print('pyg4> registry materials')
+            print(list(reg.materialDict.keys()))
+            print('pyg4> registry solids')
+            print(list(reg.solidDict.keys()))
+            print('pyg4> registry logical volumes')
+            print(list(reg.logicalVolumeDict.keys()))
+            print('pyg4> registry assembly volumes')
+            print(list(reg.assemblyVolumeDict.keys()))
+            print('pyg4> registry physical volumes')
+            print(list(reg.physicalVolumeDict.keys()))
+            print('pyg4> registry optical surfaces')
+            print(list(reg.surfaceDict.keys()))
+        elif info == "tree" :
+            pass
+        elif info == "instances" :
+            print("pyg4> Not yet implemented")
+
     if checkOverlaps :
         print("pyg4> checkoverlaps")
         wl.checkOverlaps(True)
@@ -132,8 +155,18 @@ def cli(inputFileName = None,
 
     if appendFileName is not None :
         reg1, wl1 = _loadFile(appendFileName)
-        wp1 = _pyg4.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], wl1, "l1_pv", wl, reg)
+        wp1 = _pyg4.geant4.PhysicalVolume(rotation, translation, wl1, "l1_pv", wl, reg)
         reg.addVolumeRecursive(wp1)
+
+    # parse solid
+    newSolid = None
+    if solid is not None :
+        newSolid = _parseStrPythonAsSolid(reg,solid)
+
+    if exchangeLvName is not None :
+        lvToChange = reg.logicalVolumeDict[exchangeLvName]
+        lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
+        lvToChange.reMesh()
 
     if outputFileName is not None :
         _writeFile(outputFileName, reg)
@@ -208,9 +241,14 @@ if __name__ == "__main__":
         checkOverlaps=options.__dict__['checkOverlaps'],
         analysis=options.__dict__['analysis'],
         nullMeshException=options.__dict__['nullmesh'],
+        info=options.__dict__['info'],
         lvName=options.__dict__['lvName'],
         compareFileName=options.__dict__['compareFileName'],
         appendFileName=options.__dict__['appendFileName'],
+        solid=options.__dict__['solidCode'],
+        exchangeLvName=options.__dict__['exchangeLvName'],
+        translation = translation,
+        rotation = rotation,
         outputFileName=options.__dict__['outputFileName'],
         verbose=verbose)
     
