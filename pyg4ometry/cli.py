@@ -136,7 +136,7 @@ def cli(inputFileName = None,
             print('pyg4> registry optical surfaces')
             print(list(reg.surfaceDict.keys()))
         elif info == "tree" :
-            pass
+            _pyg4.geant4.DumpGeometryStructureTree(wl,0)
         elif info == "instances" :
             print("pyg4> Not yet implemented")
 

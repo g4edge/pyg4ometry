@@ -845,3 +845,11 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
             reg.logicalVolumeList.append(lv_name)
 
     return df
+
+def DumpGeometryStructureTree(lv, depth=0) :
+    print(4*(depth-1)*' '+4*'-'+'>'+lv.name)
+
+    for dv in lv.daughterVolumes :
+        print(4*(depth+1)*' '+4*'-'+'>' + dv.name+" (pv)")
+
+        DumpGeometryStructureTree(dv.logicalVolume, depth+3)
