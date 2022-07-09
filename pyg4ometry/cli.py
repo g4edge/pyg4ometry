@@ -76,6 +76,7 @@ def cli(inputFileName = None,
         lvName = None,
         info = None,
         exchangeLvName = None,
+        clip = None,
         solid=None,
         translation = None,
         rotation = None,
@@ -168,6 +169,9 @@ def cli(inputFileName = None,
         lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
         lvToChange.reMesh()
 
+    if clip is not None :
+        wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
+
     if outputFileName is not None :
         _writeFile(outputFileName, reg)
 
@@ -193,6 +197,7 @@ if __name__ == "__main__":
     parser.add_option("-l", "--logical", help="extract logical LVNAME", dest="lvName", metavar="LVNAME")
     parser.add_option("-e", "--append", help="app(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
     parser.add_option("-x", "--exchange", help="replace solid for logical volume, LVNAME is logical volume name", dest="exchangeLvName", metavar="LVNAME")
+    parser.add_option("-C", "--clip", help="clip to mother world solid. Or exchanged solid if specified", action = "store_true", dest="clip")
     parser.add_option("-s", "--solid", help="solid in python constructor syntax (used with exchange). Registry must be reg and _np used for numpy", dest="solidCode", metavar="PYTHONSOLID")
     parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
     parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
@@ -247,6 +252,7 @@ if __name__ == "__main__":
         appendFileName=options.__dict__['appendFileName'],
         solid=options.__dict__['solidCode'],
         exchangeLvName=options.__dict__['exchangeLvName'],
+        clip=options.__dict__['clip'],
         translation = translation,
         rotation = rotation,
         outputFileName=options.__dict__['outputFileName'],
