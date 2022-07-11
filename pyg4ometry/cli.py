@@ -151,11 +151,13 @@ def cli(inputFileName = None,
     if compareFileName is not None :
         creg, cwl = _loadFile(compareFileName)
         comparision = _pyg4.compare.geometry(wl, cwl, _pyg4.compare.Tests(), False)
+        print("pyg4> compare")
         comparision.print()
 
     if appendFileName is not None :
         reg1, wl1 = _loadFile(appendFileName)
         wp1 = _pyg4.geant4.PhysicalVolume(rotation, translation, wl1, "l1_pv", wl, reg)
+        print("pyg4> append")
         reg.addVolumeRecursive(wp1)
 
     # parse solid
@@ -167,6 +169,9 @@ def cli(inputFileName = None,
         lvToChange = reg.logicalVolumeDict[exchangeLvName]
         lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
         lvToChange.reMesh()
+
+    if materials is not None :
+        pass
 
     if outputFileName is not None :
         _writeFile(outputFileName, reg)
