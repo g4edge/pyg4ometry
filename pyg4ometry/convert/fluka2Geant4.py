@@ -33,33 +33,29 @@ def fluka2Geant4(flukareg,
                  omitBlackholeRegions=True,
                  quadricRegionAABBs=None,
                  **kwargs):
-    """Convert a FLUKA registry to a Geant4 Registry.
+    """
+    Convert a FLUKA registry to a Geant4 Registry.
 
     :param flukareg: FlukaRegistry instance to be converted.
     :type flukareg: FlukaRegistry
-    :param regions: Names of regions to be converted, by default \
-    all are converted.  Mutually exclusive with omitRegions.
+    :param regions: Names of regions to be converted, by default all are converted.  Mutually exclusive with omitRegions.
     :type regions: list
-    :param omitRegions: Names of regions to be omitted from the \
-    conversion.  This option is mutually exclusive with the kwarg regions.
+    :param omitRegions: Names of regions to be omitted from the conversion.  This option is mutually exclusive with the kwarg regions.
     :type omitRegions: list
     :param worldMaterial: name of world material to be used.
     :type worldMaterial: string
-    :param worldDimensions: dimensions of world logical volume in \
-    converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
+    :param worldDimensions: dimensions of world logical volume in converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
     :type worldDimensions: list
     :param omitBlackholeRegions: whether or not to omit regions with the FLUKA material BLCKHOLE from the conversion.  By default, true.
     :type omitBlackholeRegions: bool
-    :param quadricRegionAABBs: The axis-aligned aabbs of any regions \
-    featuring QUA bodies, mapping region names to fluka.AABB instances.
+    :param quadricRegionAABBs: The axis-aligned aabbs of any regions featuring QUA bodies, mapping region names to fluka.AABB instances.
     :type quadricRegionAABBs: dict
+
+    Developer options (to kwargs) withLengthSafety: Whether or not to apply automatic length safety.
+
+    minimiseSolids: Whether or not to minimise the boxes and tubes of Geant4 used to represent infinite solids in FLUKA.
+
     """
-
-    # !!! Developer options (to kwargs)
-    # - withLengthSafety: Whether or not to apply automatic length safety.
-
-    # - minimiseSolids: Whether or not to minimise the boxes and tubes of
-    # Geant4 used to represent infinite solids in FLUKA. 
 
     kwargs.setdefault("minimiseSolids", True)
     kwargs.setdefault("withLengthSafety", True)
