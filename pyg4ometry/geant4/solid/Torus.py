@@ -127,8 +127,8 @@ class Torus(_SolidBase):
                 vertices_outer.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
                 vertices_outer.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
                 vertices_outer.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1]))
+                vertices_outer.reverse()
                 polygons.append(_Polygon(vertices_outer))
-
 
                 xRMinP1T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.cos(pSPhi + dPhi * j1)
                 yRMinP1T1 = (pRtor + (pRmin * _np.cos(dTheta * i1))) * _np.sin(pSPhi + dPhi * j1)
@@ -152,7 +152,7 @@ class Torus(_SolidBase):
                     vertices_inner.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2]))
                     vertices_inner.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2]))
                     vertices_inner.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1]))
-                    vertices_inner.reverse()
+                    # vertices_inner.reverse()
                     polygons.append(_Polygon(vertices_inner))
 
                 if pDPhi != 2*_np.pi :
@@ -163,6 +163,7 @@ class Torus(_SolidBase):
                         end.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2]))
                         end.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
                         end.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1]))
+                        end.reverse()
                         polygons.append(_Polygon(end))
 
                     if j1 == nslice-1 :
@@ -172,7 +173,7 @@ class Torus(_SolidBase):
                         end.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2]))
                         end.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
                         end.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1]))
-                        end.reverse()
+                        #end.reverse()
                         polygons.append(_Polygon(end))
 
 
