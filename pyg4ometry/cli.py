@@ -82,6 +82,8 @@ def cli(inputFileName = None,
         rotation = None,
         materials = None,
         outputFileName = None,
+        planeCutterData = None,
+        planeCutterOutputFileName = None,
         verbose = None):
 
     print("pyg4 - command line interface")
@@ -195,6 +197,7 @@ if __name__ == "__main__":
     parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action = "store_true")
     parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
+    parser.add_option("-P", "--planeCutterOutput", help="plane cutter output file", dest="planeCutterOutputFileName", metavar="CUTTERFILE")
     parser.add_option("-i", "--info", help='information on geometry (tree, reg, instance)', dest="info")
     parser.add_option("-f", "--file", dest="inputFileName",help="input file (gdml, stl, inp, step)", metavar="INFILE")
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
@@ -207,6 +210,7 @@ if __name__ == "__main__":
     parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
     parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
     parser.add_option("-m", "--material", help='material dictionary ("lvname":"nist")', dest="material")
+    parser.add_option("-F", "--feature", help='feature extraction from simple geometry ()', dest="featureData")
     parser.add_option("-V", "--verbose", help='verbose script', dest="verbose",action = "store_true")
 
     # features
@@ -261,5 +265,7 @@ if __name__ == "__main__":
         translation = translation,
         rotation = rotation,
         outputFileName=options.__dict__['outputFileName'],
+        planeCutterData=planeData,
+        planeCutterOutputFileName=options.__dict__['planeCutterOutputFileName'],
         verbose=verbose)
     
