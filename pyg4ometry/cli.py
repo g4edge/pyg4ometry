@@ -84,6 +84,8 @@ def cli(inputFileName = None,
         outputFileName = None,
         planeCutterData = None,
         planeCutterOutputFileName = None,
+        featureData = None,
+        featureDataOutputFileName = None,
         verbose = None):
 
     print("pyg4 - command line interface")
@@ -198,8 +200,8 @@ if __name__ == "__main__":
     parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
     parser.add_option("-P", "--planeCutterOutput", help="plane cutter output file", dest="planeCutterOutputFileName", metavar="CUTTERFILE")
-    parser.add_option("-i", "--info", help='information on geometry (tree, reg, instance)', dest="info")
-    parser.add_option("-f", "--file", dest="inputFileName",help="input file (gdml, stl, inp, step)", metavar="INFILE")
+    parser.add_option("-I", "--info", help='information on geometry (tree, reg, instance)', dest="info")
+    parser.add_option("-i", "--file", dest="inputFileName",help="(i)nput file (gdml, stl, inp, step)", metavar="INFILE")
     parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
     parser.add_option("-d", "--compare", help="comp(a)re geometry", dest="compareFileName", metavar="COMPAREFILE")
     parser.add_option("-l", "--logical", help="extract logical LVNAME", dest="lvName", metavar="LVNAME")
@@ -210,7 +212,8 @@ if __name__ == "__main__":
     parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
     parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
     parser.add_option("-m", "--material", help='material dictionary ("lvname":"nist")', dest="material")
-    parser.add_option("-F", "--feature", help='feature extraction from simple geometry ()', dest="featureData")
+    parser.add_option("-f", "--feature", help='feature extraction from simple geometry (planeQuality,circumference)', dest="featureData")
+    parser.add_option("-F", "--featureExtractOutput", help="feature extract output", dest="featureExtactOutputFileName", metavar="FEATUREFILE")
     parser.add_option("-V", "--verbose", help='verbose script', dest="verbose",action = "store_true")
 
     # features
@@ -249,6 +252,13 @@ if __name__ == "__main__":
     # parse solid
     # this must be done when we have a registry
 
+    # parse feature data
+    featureData = options.__dict__['featureData']
+    if featureData is not None :
+        featureData = _parseStrMultipletAsFloat(featureData)
+        if verbose :
+            print("pyg4> feature data", featureData)
+
     cli(inputFileName=options.__dict__['inputFileName'],
         view=options.__dict__['view'],
         bounding=options.__dict__['bounding'],
@@ -267,5 +277,7 @@ if __name__ == "__main__":
         outputFileName=options.__dict__['outputFileName'],
         planeCutterData=planeData,
         planeCutterOutputFileName=options.__dict__['planeCutterOutputFileName'],
+        featureData=featureData,
+        featureDataOutputFileName=options.__dict__['featureDataOutputFileName'],
         verbose=verbose)
     
