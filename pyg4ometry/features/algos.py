@@ -30,6 +30,22 @@ class Line :
     def __repr__(self):
         return "p0: "+repr(self.point)+" d: "+repr(self.dir)
 
+    def __iter__(self):
+        self.i = -1
+        return self
+
+    def __next__(self):
+        self.i += 1
+        if self.i < 3 :
+            return self.point[self.i]
+        elif self.i >= 3 and self.i < 6 :
+            return self.dir[self.i-3]
+        else:
+            raise StopIteration
+
+    def flatten(self):
+        return iter(self)
+
 class Plane :
     '''Plane class taking a point on plane and normal
 
@@ -101,6 +117,22 @@ class Plane :
     def __repr__(self):
         return "p0: "+repr(self.point)+" n: "+repr(self.normal)
 
+    def __iter__(self):
+        self.i = -1
+        return self
+
+    def __next__(self):
+        self.i += 1
+        if self.i < 3 :
+            return self.point[self.i]
+        elif self.i >= 3 and self.i < 6 :
+            return self.normal[self.i-3]
+        else:
+            raise StopIteration
+
+    def flatten(self):
+        return iter(self)
+
 class vtkViewer :
 
     '''
@@ -116,6 +148,7 @@ class vtkViewer :
         # Create a rendering window and renderer
         self.ren = _vtk.vtkRenderer()
         self.renWin = _vtk.vtkRenderWindow()
+        self.renWin.SetSize(1024, 1024)
         self.renWin.AddRenderer(self.ren)
         # Create a RenderWindowInteractor to permit manipulating the camera
         self.iren = _vtk.vtkRenderWindowInteractor()
@@ -347,7 +380,7 @@ def pyg4PlaneToVtkPlane(pyg4Plane) :
 
     vtkPlane = _vtk.vtkPlane()
     vtkPlane.SetNormal(pyg4Plane.normal)
-    vtkPlane.SetOrigin(pyg4Plane.position)
+    vtkPlane.SetOrigin(pyg4Plane.point)
     return vtkPlane
 
 def pyg4ArrayToVtkPolydataLine(pyg4Array) :
@@ -368,24 +401,96 @@ def pyg4ArrayToVtkPolydataLine(pyg4Array) :
 
     return vtkPolydata
 
-def cutterPlane(plane, polydata) :
+def vtkCutterPlane(plane, polydata) :
+    '''Calculate path information for 2D vtkPolydata lines
+
+    :param polydata: Geometry to extract information
+    :type polydata: vtkPlydata or list of vtkPolydata
+    :return: Information on each boundary
+    :rtype: list of information dict
+
+    '''
+
+    if type(plane) == list :
+        rL = []
+        for p in plane :
+            i = _vtkCutterPlane(p, polydata)
+            rL.append(i)
+        return rL
+    else :
+        return _vtkCutterPlane(plane, polydata)
+
+def _vtkCutterPlane(plane, polydata) :
     '''Cutter plane on polydata'''
 
     cutter = _vtk.vtkCutter()
     cutter.SetInputData(polydata)
-    cutter.SetCutFunction(plane)
+    cutter.SetCutFunction(pyg4PlaneToVtkPlane(plane))
     cutter.Update()
     return cutter.GetOutput()
 
-def circular(s) :
-    '''Create planes from circular path (unimplemented)'''
+def extract(inputFileName,
+            angle = 89,
+            planeQuality = 0.1,
+            circumference = 300,
+            outputFileName = None ,
+            planes = [],
+            bViewer= False) :
 
-    pass
+    p = vtkLoadStl(inputFileName)
+    e = vtkPolydataToConnectedEdges(p, angle)
+    i = vtkPolydataEdgeInformation(e)
+    cpd = vtkCutterPlane(planes,p)
+    c = vtkPolydataEdgeInformation(cpd)
 
-def planeFromCurvilinearPath(pathFnc, s) :
-    '''Create planes from curvilinear path (unimplemented)'''
+    if outputFileName is not None :
 
-    pass
+        def iterToStr(iterable) :
+            s = ''
+
+            if iterable is None :
+                return s
+
+            for i in iterable.flatten() :
+                s+= str(i) + " "
+
+            return s
+
+        of = open(outputFileName,"w")
+        for io in i :
+            if io["planeQuality"] < planeQuality and io["circumference"] > circumference :
+                of.write("feature\n")
+                for k in io :
+                    of.write(k+": "+iterToStr(io[k])+"\n")
+
+        for ci,pi in zip(planes,c) :
+            of.write("cutter\n")
+            for k in pi:
+                of.write(k + ": " + iterToStr(pi[k]) + "\n")
+
+        of.close()
+
+    if not bViewer :
+        return
+
+    v = vtkViewer()
+    v.addPolydata(p,p,[0,0,1,0.1])
+    #v.addAxis([0,0,0],[200,200,200])
+
+    for edge,info,id in zip(e,i,range(0,len(i),1)) :
+        if info["planeQuality"] < planeQuality:
+            if info["circumference"] > circumference :
+                v.addPolydata(edge, edge, [0,0,1,1])
+                v.addAxis(info["centre"],info["range"])
+            else :
+                v.addPolydata(edge,edge, [0,1,0,1])
+        else :
+            v.addPolydata(edge,edge, [1,0,0,1])
+
+    for cut in cpd :
+        v.addPolydata(cut, cut, [0, 0, 0, 1])
+
+    v.view()
 
 def test(fileName, featureIndexList = [], planeQuality = 0.1, circumference = 300, bPlotRadii = False) :
     p = vtkLoadStl(fileName)
