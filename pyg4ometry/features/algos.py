@@ -14,6 +14,9 @@ class Line :
         self.point = point
         self.dir   = dir
 
+    def eval(self, par):
+        return par*_np.array(self.dir)+_np.array(self.point)
+
     def intersectPlane(self, plane):
         '''Intersection of line (self) with plane (unimplemented)
 
@@ -25,7 +28,7 @@ class Line :
 
         '''
 
-        pass
+        return plane.intersectLine(self)
 
     def __repr__(self):
         return "p0: "+repr(self.point)+" d: "+repr(self.dir)
@@ -68,14 +71,15 @@ class Plane :
         '''
 
         if type(object) == Line:
-            self.intersectLine(object)
+            return self.intersectLine(object)
         elif type(object) == Plane:
-            self.intersectLine(object)
+            return self.intersectPlane(object)
 
     def intersectLine(self,line):
         '''Intersection between plane (self) and line'''
 
-        pass
+        par = _np.dot(self.normal,_np.array(self.point) - _np.array(line.point))/_np.dot(self.normal, line.dir)
+        return line.eval(par)
 
     def intersectPlane(self,plane):
         '''Compute intersection between two planes self and plane'''
@@ -91,11 +95,10 @@ class Plane :
         d1 = _np.dot(n1,p1)
         d2 = _np.dot(n2,p2)
 
-        dv = _np.array([d1,d2])
-        m  = _np.array([[n1[0],n1[1]],[n2[0],n2[1]]])
-
-        p0xy = _np.dot(_np.linalg.inv(m),dv)
-        p = _np.array([p0xy[0],p0xy[1],0])
+        # https://mathworld.wolfram.com/Plane-PlaneIntersection.html
+        m = _np.vstack([n1,n2])
+        b = -_np.array([d1,d2])
+        p = _np.dot(_np.linalg.pinv(m),b)
 
         l = Line(p,d)
         return l
@@ -132,6 +135,65 @@ class Plane :
 
     def flatten(self):
         return iter(self)
+
+class CoordinateSystem :
+    def __init__(self, origin = [0,0,0], e1 = [1,0,0], e2 = [0,1,0]):
+        self.origin = _np.array(origin)
+        self.e1 = _np.array(e1)
+        self.e2 = _np.array(e2)
+        self._commonInit()
+
+    def _commonInit(self):
+        self.e3 = _np.cross(self.e1,self.e2)
+
+        if not _np.isclose(_np.dot(self.e1,self.e2),0) :
+            raise Exception("CoorindateSystem","Not orthogonal")
+
+        self.rot = _np.vstack([self.e1,self.e2,self.e3])
+
+    def makeFromPlanes(self, p1, p2, p3):
+        l1 = p2.intersect(p1)
+        l2 = p1.intersect(p3)
+        e1 = l1.dir
+        e2 = l2.dir
+
+        o = p3.intersect(l1)
+
+        self.e1 = _np.array(e1)
+        self.e2 = _np.array(e2)
+
+        self._commonInit()
+
+        print(e1)
+        print(e2)
+        print(o)
+
+    def plane(self, **kwargs) :
+        if "theta" in kwargs :
+            nx = _np.sin(kwargs["theta"])*_np.cos(kwargs["phi"])
+            ny = _np.sin(kwargs["theta"])*_np.sin(kwargs["phi"])
+            nz = _np.cos(kwargs["theta"])
+            print("polar plane")
+        elif "phi" in kwargs :
+            print("cylindical plane")
+
+            nz = 0
+        elif "nx" in kwargs :
+            print("cartesian plane")
+            nx = kwargs["nx"]
+            ny = kwargs["ny"]
+            nz = kwargs["nz"]
+
+        n = _np.array([nx,ny,nz])
+        np = _np.dot(self.rot, n)
+
+        o = kwargs["point"]
+        op = o + self.origin
+
+        return Plane(op, np)
+
+    def __repr__(self):
+        return "origin="+str(self.origin)+" e1="+str(self.e1)+" e2="+str(self.e2)+" e3="+str(self.e3)
 
 class vtkViewer :
 
@@ -196,6 +258,12 @@ class vtkViewer :
         axes.SetUserTransform(tran)
         self.ren.AddActor(axes)
 
+    def addPlane(self, plane):
+        pass
+
+    def addLine(self, line):
+        pass
+
     def view(self):
         self.iren.Initialize()
         self.renWin.Render()
@@ -222,6 +290,16 @@ def vtkPolydataToActor(polydata) :
     return actor
 
 def vtkPolydataToConnectedEdges(polydata, angle = 89) :
+    if type(polydata) == list :
+        rL = []
+        for e in polydata :
+            i = _vtkPolydataToConnectedEdges(e, angle)
+            rL.extend(i)
+        return rL
+    else :
+        return _vtkPolydataToConnectedEdges(polydata, angle)
+
+def _vtkPolydataToConnectedEdges(polydata, angle = 89) :
     '''Feature extract from polydata given an angular cut
 
     :param angle: Angle between plane > angle is returned
@@ -441,7 +519,9 @@ def extract(inputFileName,
     e = vtkPolydataToConnectedEdges(p, angle)
     i = vtkPolydataEdgeInformation(e)
     cpd = vtkCutterPlane(planes,p)
-    c = vtkPolydataEdgeInformation(cpd)
+    ce = vtkPolydataToConnectedEdges(cpd,0)
+    c = vtkPolydataEdgeInformation(ce)
+    ci = vtkPolydataEdgeInformation(cpd)
 
     if outputFileName is not None :
 
@@ -463,10 +543,15 @@ def extract(inputFileName,
                 for k in io :
                     of.write(k+": "+iterToStr(io[k])+"\n")
 
-        for ci,pi in zip(planes,c) :
+        for pi,ci in zip(planes,c) :
             of.write("cutter\n")
-            for k in pi:
-                of.write(k + ": " + iterToStr(pi[k]) + "\n")
+            for k in ci:
+                of.write(k + ": " + iterToStr(ci[k]) + "\n")
+
+        for ic in c :
+            of.write("cutter-feature \n")
+            for k in ic :
+                of.write(k + ": " + iterToStr(ic[k]) + "\n")
 
         of.close()
 
@@ -491,6 +576,45 @@ def extract(inputFileName,
         v.addPolydata(cut, cut, [0, 0, 0, 1])
 
     v.view()
+
+class FeatureData :
+
+    def __init__(self):
+        self.features = []
+        self.cutters  = []
+
+    def readFile(self, fileName):
+        f = open(fileName,'r')
+
+        def readInfo(f) :
+            d = {}
+            # center
+            d['centre'] = _np.array(list(map(float,f.readline().split()[1:])))
+            d['plane'] = _np.array(list(map(float,f.readline().split()[1:])))
+            d['planeQuality'] = float(f.readline().split()[1])
+            d['circumference'] = float(f.readline().split()[1])
+            d['max'] = _np.array(list(map(float, f.readline().split()[1:])))
+            d['min'] = _np.array(list(map(float, f.readline().split()[1:])))
+            d['range'] = _np.array(list(map(float, f.readline().split()[1:])))
+            d['uniquepoints'] = _np.reshape(_np.array(list(map(float, f.readline().split()[1:]))),(-1,3))
+            d['uniquepointsxy'] = _np.reshape(_np.array(list(map(float, f.readline().split()[1:]))),(-1,3))
+
+            return d
+
+        while True :
+            l = f.readline()
+            if l.rfind("cutter-feature") != -1 :
+                d = readInfo(f)
+                self.cutters[-1]["features"].append(d)
+            elif l.rfind("feature") != -1 :
+                d = readInfo(f)
+                self.features.append(d)
+            elif l.rfind("cutter") != -1:
+                d = readInfo(f)
+                d["features"] = []
+                self.cutters.append(d)
+            elif l == '' :
+                break
 
 def test(fileName, featureIndexList = [], planeQuality = 0.1, circumference = 300, bPlotRadii = False) :
     p = vtkLoadStl(fileName)

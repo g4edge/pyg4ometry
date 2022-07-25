@@ -59,3 +59,11 @@ def pycsgMeshToObj(mesh, fileName):
     exporter.SetRenderWindow(rw)
     exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
     exporter.Write()
+
+def pycsgMeshToStl(mesh, fileName):
+    vtkPD = pycsgMeshToVtkPolyData(mesh)
+
+    w = _vtk.vtkSTLWriter()
+    w.SetFileName(fileName)
+    w.SetInputData(vtkPD)
+    w.Write()
