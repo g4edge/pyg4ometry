@@ -518,10 +518,19 @@ def extract(inputFileName,
     p = vtkLoadStl(inputFileName)
     e = vtkPolydataToConnectedEdges(p, angle)
     i = vtkPolydataEdgeInformation(e)
-    cpd = vtkCutterPlane(planes,p)
-    ce = vtkPolydataToConnectedEdges(cpd,0)
-    c = vtkPolydataEdgeInformation(ce)
-    ci = vtkPolydataEdgeInformation(cpd)
+
+    cpdList = []
+    cpdiList = []
+    ciList = []
+    for plane in planes :
+        cpd = vtkCutterPlane(plane,p)
+        cpdi = vtkPolydataEdgeInformation(cpd)
+        ce = vtkPolydataToConnectedEdges(cpd,0)
+        ci = vtkPolydataEdgeInformation(ce)
+
+        cpdList.append(cpd)
+        cpdiList.append(cpdi)
+        ciList.append(ci)
 
     if outputFileName is not None :
 
@@ -543,15 +552,15 @@ def extract(inputFileName,
                 for k in io :
                     of.write(k+": "+iterToStr(io[k])+"\n")
 
-        for pi,ci in zip(planes,c) :
+        for j, pi, ic in zip(range(0,len(planes),1),planes,cpdiList) :
             of.write("cutter\n")
-            for k in ci:
-                of.write(k + ": " + iterToStr(ci[k]) + "\n")
-
-        for ic in c :
-            of.write("cutter-feature \n")
-            for k in ic :
+            for k in ic:
                 of.write(k + ": " + iterToStr(ic[k]) + "\n")
+
+            for ic in ciList[j] :
+                of.write("cutter-feature \n")
+                for k in ic :
+                    of.write(k + ": " + iterToStr(ic[k]) + "\n")
 
         of.close()
 
@@ -572,7 +581,7 @@ def extract(inputFileName,
         else :
             v.addPolydata(edge,edge, [1,0,0,1])
 
-    for cut in cpd :
+    for cut in cpdList :
         v.addPolydata(cut, cut, [0, 0, 0, 1])
 
     v.view()
@@ -615,6 +624,29 @@ class FeatureData :
                 self.cutters.append(d)
             elif l == '' :
                 break
+
+    def plotFeature(self, iFeature):
+        f = _plt.figure(1)
+
+        featureData = self.features[iFeature]
+        featureUXY      = featureData["uniquepointsxy"]
+
+        _plt.plot(featureUXY[:,0],featureUXY[:,1],"+")
+
+    def plotCutter(self, iCutter):
+        f = _plt.figure(1)
+
+        cutData = self.cutters[iCutter]
+        cutDataUXY      = cutData["uniquepointsxy"]
+        cutDataFeatures = cutData["features"]
+
+        #_plt.plot(cutDataUXY[:,0],cutDataUXY[:,1],"-")
+
+        for feature in cutDataFeatures :
+            featureUXY = feature["uniquepointsxy"]
+            _plt.plot(featureUXY[:, 0], featureUXY[:, 1], "+")
+
+
 
 def test(fileName, featureIndexList = [], planeQuality = 0.1, circumference = 300, bPlotRadii = False) :
     p = vtkLoadStl(fileName)
