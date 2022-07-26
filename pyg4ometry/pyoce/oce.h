@@ -15,6 +15,7 @@ class StepFile {
   StepFile();
   ~StepFile();
   void loadFile(std::string fileName);
+  void loadShapes();
 
  protected :
   Handle(TDocStd_Document)    hDoc;
@@ -22,8 +23,6 @@ class StepFile {
 
   Handle(XCAFDoc_ShapeTool) aShapeTool;
   Handle(XCAFDoc_ColorTool) aColorTool;
-
-  void loadShapes();
 };
 
 
