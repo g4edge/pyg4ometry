@@ -11,6 +11,8 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Face.hxx>
 
+#include <StlAPI_Writer.hxx>
+
 StepFile::StepFile() {
 
   hApp = XCAFApp_Application::GetApplication();
@@ -42,8 +44,8 @@ void StepFile::loadShapes() {
     std::cout << label << std::endl;
     std::cout << shape.ShapeType() << std::endl;
 
-    const Standard_Real aLinearDeflection   = 0.01;
-    const Standard_Real anAngularDeflection = 0.5;
+    const Standard_Real aLinearDeflection   = 0.001;
+    const Standard_Real anAngularDeflection = 0.05;
     BRepMesh_IncrementalMesh aMesher (shape, aLinearDeflection, Standard_False, anAngularDeflection, Standard_True);
     const Standard_Integer aStatus = aMesher.GetStatusFlags();
     aMesher.Perform();
@@ -57,6 +59,9 @@ void StepFile::loadShapes() {
       i++;
     }
     std::cout << "faces " << i << std::endl;
+
+    auto stlWriter = StlAPI_Writer ();
+    stlWriter.Write(shape,"test.stl");
 
   }
 }
