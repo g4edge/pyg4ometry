@@ -13,6 +13,37 @@
 
 #include <StlAPI_Writer.hxx>
 
+XCAF::XCAF() {
+  hApp = XCAFApp_Application::GetApplication();
+  hApp->NewDocument(TCollection_ExtendedString("MDTV-CAF"), hDoc);
+}
+
+XCAF::~XCAF() {}
+
+void XCAF::createNewDocument() {
+}
+
+void XCAF::loadStepFile(std::string fileName) {
+  STEPCAFControl_Reader aReader;
+  aReader.SetColorMode(true);
+  aReader.SetNameMode(true);
+  aReader.SetLayerMode(true);
+
+  aReader.ReadFile(fileName.c_str());
+
+  aReader.Transfer(hDoc);
+
+  aShapeTool = XCAFDoc_DocumentTool::ShapeTool(hDoc->Main());
+  aColorTool = XCAFDoc_DocumentTool::ColorTool(hDoc->Main());
+}
+
+void XCAF::loadSTLFile(std::string fileName) {}
+void XCAF::loadIGESFile(std::string fileName) {}
+
+void XCAF::shapeTool_Dump() {
+    aShapeTool->Dump(std::cout);
+}
+
 StepFile::StepFile() {
 
   hApp = XCAFApp_Application::GetApplication();
@@ -44,8 +75,8 @@ void StepFile::loadShapes() {
     std::cout << label << std::endl;
     std::cout << shape.ShapeType() << std::endl;
 
-    const Standard_Real aLinearDeflection   = 0.001;
-    const Standard_Real anAngularDeflection = 0.05;
+    const Standard_Real aLinearDeflection   = 0.01;
+    const Standard_Real anAngularDeflection = 0.5;
     BRepMesh_IncrementalMesh aMesher (shape, aLinearDeflection, Standard_False, anAngularDeflection, Standard_True);
     const Standard_Integer aStatus = aMesher.GetStatusFlags();
     aMesher.Perform();
@@ -70,9 +101,15 @@ void StepFile::loadShapes() {
 PYBIND
 *********************************************/
 PYBIND11_MODULE(oce, m) {
+  py::class_<XCAF>(m,"XCAF")
+    .def(py::init<>())
+    .def("loadStepFile", &XCAF::loadStepFile)
+    .def("loadIGESFile", &XCAF::loadIGESFile)
+    .def("loadSTLFile", &XCAF::loadSTLFile)
+    .def("shapeTool_Dump", &XCAF::shapeTool_Dump);
+
   py::class_<StepFile>(m,"StepFile")
     .def(py::init<>())
     .def("loadFile", &StepFile::loadFile)
     .def("loadShapes", &StepFile::loadShapes);
-
 }

@@ -10,6 +10,26 @@ namespace py = pybind11;
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 
+class XCAF {
+ public:
+  XCAF();
+  ~XCAF();
+  void createNewDocument();
+  void loadStepFile(std::string fileName);
+  void loadSTLFile(std::string fileName);
+  void loadIGESFile(std::string fileName);
+
+  void shapeTool_Dump();
+
+ protected :
+  Handle(TDocStd_Document)    hDoc;
+  Handle(XCAFApp_Application) hApp;
+
+  Handle(XCAFDoc_ShapeTool) aShapeTool;
+  Handle(XCAFDoc_ColorTool) aColorTool;
+
+};
+
 class StepFile {
  public :
   StepFile();
