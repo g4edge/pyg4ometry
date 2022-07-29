@@ -19,7 +19,10 @@ class XCAF {
   void loadSTLFile(std::string fileName);
   void loadIGESFile(std::string fileName);
 
+  Handle(XCAFDoc_ShapeTool) shapeTool();
+
   void shapeTool_Dump();
+  TDF_Label shapeTool_BaseLabel();
 
  protected :
   Handle(TDocStd_Document)    hDoc;
