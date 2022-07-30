@@ -3,15 +3,12 @@
 #include <NCollection_Vector.hxx>
 #include <STEPCAFControl_Reader.hxx>
 #include <TDataStd_Name.hxx>
-
 #include <TDF_Label.hxx>
 #include <NCollection_Sequence.hxx>
-
 #include <BRepMesh_IncrementalMesh.hxx>
-
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Face.hxx>
-
+#include <Message_ProgressRange.hxx>
 #include <StlAPI_Writer.hxx>
 
 XCAF::XCAF() {
@@ -115,12 +112,16 @@ PYBIND11_MODULE(oce, m) {
 
   py::class_<TDocStd_Document>(m,"TDocStd_Document");
 
+  py::class_<Message_ProgressRange>(m,"Message_ProgressRange")
+    .def(py::init<>());
+
   py::class_<TCollection_ExtendedString>(m,"TCollection_ExtendedString")
     .def("Print",[](TCollection_ExtendedString string) {string.Print(std::cout);});
 
   py::class_<Standard_GUID>(m,"Standard_GUID");
 
   py::class_<TDF_Attribute>(m,"TDF_Attribute");
+
 
   py::class_<TDataStd_Name>(m, "TDataStd_Name")
     .def(py::init<>())
@@ -182,11 +183,37 @@ PYBIND11_MODULE(oce, m) {
     .value("TopAbs_SHAPE", TopAbs_ShapeEnum::TopAbs_SHAPE)
     .export_values();
 
+  py::enum_<TopAbs_Orientation>(m,"TopAbs_Orientation")
+    .value("TopAbs_FORWARD", TopAbs_Orientation::TopAbs_FORWARD)
+    .value("TopAbs_REVERSED", TopAbs_Orientation::TopAbs_REVERSED)
+    .value("TopAbs_INTERNAL", TopAbs_Orientation::TopAbs_INTERNAL)
+    .value("TopAbs_EXTERNAL", TopAbs_Orientation::TopAbs_EXTERNAL)
+    .export_values();
+
+  py::class_<TopLoc_Location>(m,"TopLoc_Location");
+  py::class_<Handle(TopoDS_TShape)>(m,"Handle_TopoDS_TShape");
+
   py::class_<TopoDS_Shape>(m,"TopoDS_Shape")
     .def(py::init<>())
+    .def("IsNull",&TopoDS_Shape::IsNull)
     .def("NbChildren",&TopoDS_Shape::NbChildren)
+    .def("Nullify", &TopoDS_Shape::Nullify)
+    .def("Location", [](TopoDS_Shape &shape) {return shape.Location();})
+    .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc, const Standard_Boolean theRaiseExc) {return shape.Location(loc,theRaiseExc);})
     .def("ShapeType",&TopoDS_Shape::ShapeType);
-    //.def("Closed",&TopoDS_Shape::Closed);
+
+  py::class_<TopExp_Explorer>(m,"TopExp_Explorer")
+    .def(py::init<>())
+    .def(py::init<const TopoDS_Shape &, const TopAbs_ShapeEnum, const TopAbs_ShapeEnum>())
+    .def("Init",&TopExp_Explorer::Init)
+    .def("More",&TopExp_Explorer::More)
+    .def("Next",&TopExp_Explorer::Next)
+    .def("Value",&TopExp_Explorer::Value)
+    .def("Current",&TopExp_Explorer::Current)
+    .def("ReInit",&TopExp_Explorer::ReInit)
+    .def("ExploredShape",&TopExp_Explorer::ExploredShape)
+    .def("Depth",&TopExp_Explorer::Depth)
+    .def("Clear",&TopExp_Explorer::Clear);
 
   py::class_<Handle(XCAFDoc_ShapeTool)>(m,"XCAFDoc_ShapeTool")
     .def("BaseLabel", [](Handle(XCAFDoc_ShapeTool) &st) { return st->BaseLabel();})
@@ -195,11 +222,15 @@ PYBIND11_MODULE(oce, m) {
                         const TopoDS_Shape &shape,
                         TDF_Label &label,
                         const Standard_Boolean findInstance) {return st->FindShape(shape,label,findInstance);})
+    .def("FindShape",[](Handle(XCAFDoc_ShapeTool) &st,
+                        const TopoDS_Shape &shape,
+                        const Standard_Boolean findInstance) {return st->FindShape(shape,findInstance);})
     .def("GetComponents",[](Handle(XCAFDoc_ShapeTool) &st, const TDF_Label &label,TDF_LabelSequence &labelSeq) {return st->GetComponents(label,labelSeq);})
     .def("GetShape",[](Handle(XCAFDoc_ShapeTool) &st,const TDF_Label &label, TopoDS_Shape &shape ) {return st->GetShape(label,shape);})
     .def("GetShape",[](Handle(XCAFDoc_ShapeTool) &st,const TDF_Label &label) {return st->GetShape(label);})
     .def("GetShapes", [](Handle(XCAFDoc_ShapeTool) &st, TDF_LabelSequence &labelSeq) {return st->GetShapes(labelSeq);})
     .def("GetSubShapes",[](Handle(XCAFDoc_ShapeTool) &st, const TDF_Label &label,TDF_LabelSequence &labelSeq) {return st->GetSubShapes(label,labelSeq);})
+    .def("GetUsers",[](Handle(XCAFDoc_ShapeTool) &st, const TDF_Label &label,TDF_LabelSequence &labelSeq) {return st->GetUsers(label,labelSeq);})
     .def("IsAssembly", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsAssembly(label);})
     .def("IsComponent", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsComponent(label);})
     .def("IsCompound", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsCompound(label);})
@@ -208,7 +239,29 @@ PYBIND11_MODULE(oce, m) {
     .def("IsShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsShape(label);})
     .def("IsSimpleShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsSimpleShape(label);})
     .def("IsSubShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsSubShape(label);})
-    .def("IsTopLevel", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) { return st->IsTopLevel(label);});
+    .def("IsTopLevel", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) { return st->IsTopLevel(label);})
+    .def("Search",[](Handle(XCAFDoc_ShapeTool) &st,
+                     const TopoDS_Shape & shape,
+                     TDF_Label & label,
+                     const Standard_Boolean findInstance = Standard_True,
+                     const Standard_Boolean findComponent = Standard_True,
+                     const Standard_Boolean findSubshape = Standard_True) {return st->Search(shape,label,findInstance,findComponent,findSubshape);})
+    .def("SearchUsingMap", [](Handle(XCAFDoc_ShapeTool) &st,
+                              const TopoDS_Shape &shape,
+                              TDF_Label &label,
+                              const Standard_Boolean findWithoutLoc,
+                              const Standard_Boolean findSubshape) {return st->SearchUsingMap(shape,label,findWithoutLoc,findSubshape);});
+
+  py::class_<BRepMesh_IncrementalMesh>(m,"BRepMesh_IncrementalMesh")
+    .def(py::init<>())
+    .def(py::init<const TopoDS_Shape &,
+                  const Standard_Real,
+                  const Standard_Boolean,
+                  const Standard_Real,
+                  const Standard_Boolean>())
+    .def(py::init<const TopoDS_Shape &,
+                  const IMeshTools_Parameters,
+                  const Message_ProgressRange>());
 
   py::class_<XCAF>(m,"XCAF")
     .def(py::init<>())
@@ -218,6 +271,14 @@ PYBIND11_MODULE(oce, m) {
     .def("shapeTool", &XCAF::shapeTool)
     .def("shapeTool_BaseLabel", &XCAF::shapeTool_BaseLabel)
     .def("shapeTool_Dump", &XCAF::shapeTool_Dump);
+
+  py::class_<StlAPI_Writer>(m,"StlAPI_Writer")
+    .def(py::init<>())
+    .def("Write",[](StlAPI_Writer &stlw,
+                    const TopoDS_Shape &shape,
+                    const Standard_CString fileName,
+                    const Message_ProgressRange &processRange) {std::cout << fileName << std::endl;
+                                                                stlw.Write(shape,fileName);});
 
   py::class_<StepFile>(m,"StepFile")
     .def(py::init<>())
