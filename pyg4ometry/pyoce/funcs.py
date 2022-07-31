@@ -41,8 +41,8 @@ def test(fileName) :
 
 
     aMesher = _pyg4.pyoce.BRepMesh_IncrementalMesh(s, 0.01, False, 0.01, True);
-    print(l5,s5)
+    print(l,s)
 
     mpr = _pyg4.pyoce.Message_ProgressRange()
     stlW = _pyg4.pyoce.StlAPI_Writer()
-    stlW.Write(s5,"PleaseFindMe.stl",mpr)
+    stlW.Write(s,"PleaseFindMe.stl",mpr)
