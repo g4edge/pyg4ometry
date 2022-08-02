@@ -4,8 +4,15 @@
 #include <STEPCAFControl_Reader.hxx>
 #include <TDataStd_Name.hxx>
 #include <TNaming_NamedShape.hxx>
+#include <TDataStd_TreeNode.hxx>
+#include <TDataStd_UAttribute.hxx>
+#include <XCAFDoc_ShapeMapTool.hxx>
+#include <XCAFDoc_Location.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>
+#include <gp_Trsf.hxx>
+#include <TopLoc_Location.hxx>
+#include <TopLoc_Datum3D.hxx>
 #include <NCollection_Sequence.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <TopExp_Explorer.hxx>
@@ -134,7 +141,7 @@ PYBIND11_MODULE(oce, m) {
     .def(py::init<const TCollection_ExtendedString>())
     .def(py::init<const TCollection_AsciiString &>())
     .def("Length",&TCollection_ExtendedString::Length)
-    .def("Print",[](TCollection_ExtendedString &string) {string.Print(std::cout);})
+    .def("Print",[](TCollection_ExtendedString &string) {py::scoped_ostream_redirect output; string.Print(std::cout);})
     .def("ToExtString",&TCollection_ExtendedString::ToExtString);
 
   py::class_<Standard_GUID> (m,"Standard_GUID");
@@ -151,27 +158,45 @@ PYBIND11_MODULE(oce, m) {
   py::class_<TNaming_NamedShape, opencascade::handle<TNaming_NamedShape>, TDF_Attribute>(m,"TNaming_NamedShape")
     .def(py::init([](){return opencascade::handle<TNaming_NamedShape>(new TNaming_NamedShape());}))
     .def("ID", &TNaming_NamedShape::ID)
-    .def("Dump",[](TNaming_NamedShape &name) { name.Dump(std::cout);})
+    .def("Dump",[](TNaming_NamedShape &name) { py::scoped_ostream_redirect output; name.Dump(std::cout);})
+    .def("Get",&TNaming_NamedShape::Get)
     .def_static("GetID",&TNaming_NamedShape::GetID);
 
   py::class_<TDF_TagSource, opencascade::handle<TDF_TagSource>, TDF_Attribute>(m,"TDF_TagSource")
     .def(py::init<>())
     .def("Get",&TDF_TagSource::Get)
-    .def_static("GetID",&TDF_TagSource::GetID);;
+    .def_static("GetID",&TDF_TagSource::GetID);
+
+  py::class_<TDataStd_TreeNode, opencascade::handle<TDataStd_TreeNode>, TDF_Attribute>(m,"TDataStd_TreeNode")
+    .def(py::init<>())
+    .def("ID",&TDataStd_TreeNode::ID);
+
+  py::class_<TDataStd_UAttribute, opencascade::handle<TDataStd_UAttribute>, TDF_Attribute>(m,"TDataStd_UAttribute")
+    .def(py::init<>())
+    .def("ID",&TDataStd_UAttribute::ID);
+
+  py::class_<XCAFDoc_ShapeMapTool, opencascade::handle<XCAFDoc_ShapeMapTool>, TDF_Attribute>(m,"XCAFDoc_ShapeMapTool")
+    .def(py::init<>())
+    .def_static("GetID", &XCAFDoc_ShapeMapTool::GetID);
+
+  py::class_<XCAFDoc_Location, opencascade::handle<XCAFDoc_Location>, TDF_Attribute>(m, "XCAFDoc_Location")
+    .def(py::init<>())
+    .def("Get",&XCAFDoc_Location::Get)
+    .def_static("GetID", &XCAFDoc_Location::GetID);
 
   py::class_<TDataStd_Name,opencascade::handle<TDataStd_Name>, TDataStd_GenericExtString>(m, "TDataStd_Name")
     .def(py::init([](){return opencascade::handle<TDataStd_Name>(new TDataStd_Name());}))
     .def("ID", &TDataStd_Name::ID)
-    .def("Dump",[](TDataStd_Name &name) { name.Dump(std::cout);})
+    .def("Dump",[](TDataStd_Name &name) { py::scoped_ostream_redirect output; name.Dump(std::cout);})
     .def_static("GetID",&TDataStd_Name::GetID);
 
   py::class_<TDF_Label> (m,"TDF_Label")
      .def(py::init<>())
     .def("Depth", &TDF_Label::Depth)
     .def("Father", &TDF_Label::Father)
-    .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { std::cout << "TDF_Attribute " << &attribute << " "  << attribute.get() << std::endl; label.FindAttribute(guid,attribute); return attribute;})
-    .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, const Standard_Integer aTransaction, opencascade::handle<TDataStd_Name> &attribute) { return label.FindAttribute(guid,aTransaction,attribute);})
-    .def("FindChild", &TDF_Label::FindChild)
+    .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { auto ret = label.FindAttribute(guid,attribute); return py::make_tuple(ret, attribute);})
+    .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, const Standard_Integer aTransaction, opencascade::handle<TDataStd_Name> &attribute) { auto ret =  label.FindAttribute(guid,aTransaction,attribute); return py::make_tuple(ret,attribute);})
+    .def("FindChild", [](TDF_Label &label, const Standard_Integer tag, const Standard_Boolean create) {auto ret = label.FindChild(tag,create); py::scoped_ostream_redirect output; std::cout<< ret << std::endl; return py::make_tuple(ret,!ret.IsNull());})
     .def("HasAttribute", &TDF_Label::HasAttribute)
     .def("HasChild", &TDF_Label::HasChild)
     .def("IsDifferent", &TDF_Label::IsDifferent)
@@ -186,8 +211,8 @@ PYBIND11_MODULE(oce, m) {
     .def("Root", &TDF_Label::Root)
     .def("Tag", &TDF_Label::Tag)
     .def("Transaction", &TDF_Label::Transaction)
-    .def("Dump",[](TDF_Label &label) { label.Dump(std::cout);})
-    .def("EntryDump",[](TDF_Label &label) { label.EntryDump(std::cout);});
+    .def("Dump",[](TDF_Label &label) { py::scoped_ostream_redirect output; label.Dump(std::cout);})
+    .def("EntryDump",[](TDF_Label &label) { py::scoped_ostream_redirect output; label.EntryDump(std::cout);});
 
   py::class_<NCollection_Sequence<TDF_Label>::iterator>(m,"TDF_LabelSequence_Iterator");
 
@@ -223,7 +248,24 @@ PYBIND11_MODULE(oce, m) {
     .value("TopAbs_EXTERNAL", TopAbs_Orientation::TopAbs_EXTERNAL)
     .export_values();
 
-  py::class_<TopLoc_Location> (m,"TopLoc_Location");
+  py::class_<gp_XYZ>(m,"gp_XYZ")
+    .def(py::init<>())
+    .def("DumpJson",[](gp_XYZ &gpxyz) {py::scoped_ostream_redirect output; gpxyz.DumpJson(std::cout);});
+
+  py::class_<gp_Trsf>(m,"gp_Trsf")
+    .def(py::init<>())
+    .def("TranslationPart",&gp_Trsf::TranslationPart)
+    .def("DumpJson",[](gp_Trsf &gpt) {py::scoped_ostream_redirect output; gpt.DumpJson(std::cout);});
+
+  py::class_<TopLoc_Location>(m,"TopLoc_Location")
+    .def(py::init<>())
+    .def("FirstDatum",[](TopLoc_Location &location) {return location.FirstDatum();})
+    .def("ShallowDump",[](TopLoc_Location &location) {py::scoped_ostream_redirect output; location.ShallowDump(std::cout);})
+    .def("Transformation",[](TopLoc_Location &location) {return location.Transformation();});
+
+  py::class_<TopLoc_Datum3D, opencascade::handle<TopLoc_Datum3D>, Standard_Transient>(m,"TopLoc_Datum3D")
+    .def(py::init<>())
+    .def("ShallowDump",[](TopLoc_Location &location) {py::scoped_ostream_redirect output; location.ShallowDump(std::cout);});
 
   py::class_<TopoDS_Shape> (m,"TopoDS_Shape")
     .def(py::init<>())
@@ -232,7 +274,8 @@ PYBIND11_MODULE(oce, m) {
     .def("Nullify", &TopoDS_Shape::Nullify)
     .def("Location", [](TopoDS_Shape &shape) {return shape.Location();})
     .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc, const Standard_Boolean theRaiseExc) {return shape.Location(loc,theRaiseExc);})
-    .def("ShapeType",&TopoDS_Shape::ShapeType);
+    .def("ShapeType",&TopoDS_Shape::ShapeType)
+    .def("DumpJson", [](TopoDS_Shape &shape) {py::scoped_ostream_redirect output; shape.DumpJson(std::cout);});
 
   py::class_<TopExp_Explorer> (m,"TopExp_Explorer")
     .def(py::init<>())
@@ -250,7 +293,7 @@ PYBIND11_MODULE(oce, m) {
   py::class_<XCAFDoc_ShapeTool, opencascade::handle<XCAFDoc_ShapeTool>>(m,"XCAFDoc_ShapeTool")
     .def(py::init<>())
     .def("BaseLabel", &XCAFDoc_ShapeTool::BaseLabel)
-    .def("Dump",[](XCAFDoc_ShapeTool &st) { st.Dump(std::cout);})
+    .def("Dump",[](XCAFDoc_ShapeTool &st) { py::scoped_ostream_redirect output; st.Dump(std::cout);})
     .def("FindShape",[](XCAFDoc_ShapeTool &st,
                         const TopoDS_Shape &shape,
                         TDF_Label &label,
@@ -261,31 +304,20 @@ PYBIND11_MODULE(oce, m) {
     .def("GetComponents", &XCAFDoc_ShapeTool::GetComponents)
     .def("GetShape",[](XCAFDoc_ShapeTool &st,const TDF_Label &label, TopoDS_Shape &shape ) {return st.GetShape(label,shape);})
     .def("GetShape",[](XCAFDoc_ShapeTool &st,const TDF_Label &label) {return st.GetShape(label);})
-    .def("GetShapes", &XCAFDoc_ShapeTool::GetShapes);
-    /*
-    .def("GetSubShapes",[](Handle(XCAFDoc_ShapeTool) &st, const TDF_Label &label,TDF_LabelSequence &labelSeq) {return st->GetSubShapes(label,labelSeq);})
-    .def("GetUsers",[](Handle(XCAFDoc_ShapeTool) &st, const TDF_Label &label,TDF_LabelSequence &labelSeq) {return st->GetUsers(label,labelSeq);})
-    .def("IsAssembly", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsAssembly(label);})
-    .def("IsComponent", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsComponent(label);})
-    .def("IsCompound", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsCompound(label);})
-    .def("IsFree", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsFree(label);})
-    .def("IsReference", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsReference(label);})
-    .def("IsShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsShape(label);})
-    .def("IsSimpleShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsSimpleShape(label);})
-    .def("IsSubShape", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) {return st->IsSubShape(label);})
-    .def("IsTopLevel", [](Handle(XCAFDoc_ShapeTool) &st, TDF_Label &label) { return st->IsTopLevel(label);})
-    .def("Search",[](Handle(XCAFDoc_ShapeTool) &st,
-                     const TopoDS_Shape & shape,
-                     TDF_Label & label,
-                     const Standard_Boolean findInstance = Standard_True,
-                     const Standard_Boolean findComponent = Standard_True,
-                     const Standard_Boolean findSubshape = Standard_True) {return st->Search(shape,label,findInstance,findComponent,findSubshape);})
-    .def("SearchUsingMap", [](Handle(XCAFDoc_ShapeTool) &st,
-                              const TopoDS_Shape &shape,
-                              TDF_Label &label,
-                              const Standard_Boolean findWithoutLoc,
-                              const Standard_Boolean findSubshape) {return st->SearchUsingMap(shape,label,findWithoutLoc,findSubshape);});
-  */
+    .def("GetShapes", &XCAFDoc_ShapeTool::GetShapes)
+    .def("GetSubShapes",&XCAFDoc_ShapeTool::GetSubShapes)
+    .def("GetUsers",&XCAFDoc_ShapeTool::GetUsers)
+    .def("IsAssembly", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsAssembly(label);})
+    .def("IsComponent", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsComponent(label);})
+    .def("IsCompound", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsCompound(label);})
+    .def("IsFree", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsFree(label);})
+    .def("IsReference", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsReference(label);})
+    .def("IsShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsShape(label);})
+    .def("IsSimpleShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsSimpleShape(label);})
+    .def("IsSubShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsSubShape(label);})
+    .def("IsTopLevel", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsTopLevel(label);})
+    .def("Search",&XCAFDoc_ShapeTool::Search)
+    .def("SearchUsingMap", &XCAFDoc_ShapeTool::SearchUsingMap);
 
   py::class_<BRepMesh_IncrementalMesh, opencascade::handle<BRepMesh_IncrementalMesh>> (m,"BRepMesh_IncrementalMesh")
     .def(py::init<>())
@@ -312,7 +344,8 @@ PYBIND11_MODULE(oce, m) {
     .def("Write",[](StlAPI_Writer &stlw,
                     const TopoDS_Shape &shape,
                     const Standard_CString fileName,
-                    const Message_ProgressRange &processRange) {std::cout << fileName << std::endl;
+                    const Message_ProgressRange &processRange) {py::scoped_ostream_redirect output;
+                                                                std::cout << fileName << std::endl;
                                                                 stlw.Write(shape,fileName);});
 
   py::class_<StepFile>(m,"StepFile")
