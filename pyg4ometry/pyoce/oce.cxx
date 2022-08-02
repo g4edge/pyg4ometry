@@ -196,7 +196,7 @@ PYBIND11_MODULE(oce, m) {
     .def("Father", &TDF_Label::Father)
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { auto ret = label.FindAttribute(guid,attribute); return py::make_tuple(ret, attribute);})
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, const Standard_Integer aTransaction, opencascade::handle<TDataStd_Name> &attribute) { auto ret =  label.FindAttribute(guid,aTransaction,attribute); return py::make_tuple(ret,attribute);})
-    .def("FindChild", [](TDF_Label &label, const Standard_Integer tag, const Standard_Boolean create) {auto ret = label.FindChild(tag,create); py::scoped_ostream_redirect output; std::cout<< ret << std::endl; return py::make_tuple(ret,!ret.IsNull());})
+    .def("FindChild", [](TDF_Label &label, const Standard_Integer tag, const Standard_Boolean create) {auto label = label.FindChild(tag,create); py::scoped_ostream_redirect output; std::cout<< ret << std::endl; return py::make_tuple(!ret.IsNull(), label);})
     .def("HasAttribute", &TDF_Label::HasAttribute)
     .def("HasChild", &TDF_Label::HasChild)
     .def("IsDifferent", &TDF_Label::IsDifferent)
