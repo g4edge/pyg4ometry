@@ -14,9 +14,13 @@
 #include <TopLoc_Location.hxx>
 #include <TopLoc_Datum3D.hxx>
 #include <NCollection_Sequence.hxx>
+#include <BRep_Tool.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Face.hxx>
+// #include <Poly_MeshPurpose.hxx>
+#include <Poly_Triangulation.hxx>
+#include <gp_Dir.hxx>
 #include <Message_ProgressRange.hxx>
 #include <StlAPI_Writer.hxx>
 
@@ -51,66 +55,7 @@ Handle(XCAFDoc_ShapeTool) XCAF::shapeTool() {
   return aShapeTool;
 }
 
-TDF_Label XCAF::shapeTool_BaseLabel() {
-  return aShapeTool->BaseLabel();
-}
 
-void XCAF::shapeTool_Dump() {
-    aShapeTool->Dump(std::cout);
-}
-
-StepFile::StepFile() {
-
-  hApp = XCAFApp_Application::GetApplication();
-  hApp->NewDocument(TCollection_ExtendedString("MDTV-CAF"), hDoc);
-}
-
-StepFile::~StepFile() {}
-
-void StepFile::loadFile(std::string fileName) {
-  STEPCAFControl_Reader aReader;
-  aReader.SetColorMode(true);
-  aReader.SetNameMode(true);
-  aReader.SetLayerMode(true);
-
-  aReader.ReadFile(fileName.c_str());
-
-  aReader.Transfer(hDoc);
-
-  aShapeTool = XCAFDoc_DocumentTool::ShapeTool(hDoc->Main());
-  aColorTool = XCAFDoc_DocumentTool::ColorTool(hDoc->Main());
-}
-
-void StepFile::loadShapes() {
-  TDF_LabelSequence labels;
-  //aShapeTool->Dump(std::cout);
-  aShapeTool->GetShapes(labels);
-  for(auto label : labels) {
-    auto shape = aShapeTool->GetShape(label);
-    std::cout << label << std::endl;
-    std::cout << shape.ShapeType() << std::endl;
-
-    const Standard_Real aLinearDeflection   = 0.01;
-    const Standard_Real anAngularDeflection = 0.5;
-    BRepMesh_IncrementalMesh aMesher (shape, aLinearDeflection, Standard_False, anAngularDeflection, Standard_True);
-    const Standard_Integer aStatus = aMesher.GetStatusFlags();
-    aMesher.Perform();
-    std::cout << aStatus << std::endl;
-
-    TopExp_Explorer exFace;
-    int i = 0;
-    for (exFace.Init(shape, TopAbs_FACE); exFace.More(); exFace.Next()) {
-      const TopoDS_Face& faceref = static_cast<const TopoDS_Face &>(exFace.Current());
-      //mesh->extractFaceMesh(faceref);
-      i++;
-    }
-    std::cout << "faces " << i << std::endl;
-
-    auto stlWriter = StlAPI_Writer ();
-    stlWriter.Write(shape,"test.stl");
-
-  }
-}
 
 /*********************************************
 PYBIND
@@ -169,7 +114,8 @@ PYBIND11_MODULE(oce, m) {
 
   py::class_<TDataStd_TreeNode, opencascade::handle<TDataStd_TreeNode>, TDF_Attribute>(m,"TDataStd_TreeNode")
     .def(py::init<>())
-    .def("ID",&TDataStd_TreeNode::ID);
+    .def("ID",&TDataStd_TreeNode::ID)
+    .def("DumpJson",[](TDataStd_TreeNode &treeNode) {treeNode.DumpJson(std::cout);});
 
   py::class_<TDataStd_UAttribute, opencascade::handle<TDataStd_UAttribute>, TDF_Attribute>(m,"TDataStd_UAttribute")
     .def(py::init<>())
@@ -196,7 +142,7 @@ PYBIND11_MODULE(oce, m) {
     .def("Father", &TDF_Label::Father)
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { auto ret = label.FindAttribute(guid,attribute); return py::make_tuple(ret, attribute);})
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, const Standard_Integer aTransaction, opencascade::handle<TDataStd_Name> &attribute) { auto ret =  label.FindAttribute(guid,aTransaction,attribute); return py::make_tuple(ret,attribute);})
-    .def("FindChild", [](TDF_Label &label, const Standard_Integer tag, const Standard_Boolean create) {auto label = label.FindChild(tag,create); py::scoped_ostream_redirect output; std::cout<< ret << std::endl; return py::make_tuple(!ret.IsNull(), label);})
+    .def("FindChild", [](TDF_Label &label, const Standard_Integer tag, const Standard_Boolean create) {auto retLabel = label.FindChild(tag,create); return py::make_tuple(!retLabel.IsNull(), retLabel);})
     .def("HasAttribute", &TDF_Label::HasAttribute)
     .def("HasChild", &TDF_Label::HasChild)
     .def("IsDifferent", &TDF_Label::IsDifferent)
@@ -294,6 +240,7 @@ PYBIND11_MODULE(oce, m) {
     .def(py::init<>())
     .def("BaseLabel", &XCAFDoc_ShapeTool::BaseLabel)
     .def("Dump",[](XCAFDoc_ShapeTool &st) { py::scoped_ostream_redirect output; st.Dump(std::cout);})
+    .def("FindComponent",&XCAFDoc_ShapeTool::FindComponent)
     .def("FindShape",[](XCAFDoc_ShapeTool &st,
                         const TopoDS_Shape &shape,
                         TDF_Label &label,
@@ -301,12 +248,15 @@ PYBIND11_MODULE(oce, m) {
     .def("FindShape",[](XCAFDoc_ShapeTool &st,
                         const TopoDS_Shape &shape,
                         const Standard_Boolean findInstance) {return st.FindShape(shape,findInstance);})
-    .def("GetComponents", &XCAFDoc_ShapeTool::GetComponents)
+    .def("GetComponents", [](XCAFDoc_ShapeTool &st, const TDF_Label &label, TDF_LabelSequence &labels, const Standard_Boolean getsubchilds) {st.GetComponents(label,labels,getsubchilds);})
+    .def("GetReferredShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label1, TDF_Label &label2) {st.GetReferredShape(label1,label2);})
     .def("GetShape",[](XCAFDoc_ShapeTool &st,const TDF_Label &label, TopoDS_Shape &shape ) {return st.GetShape(label,shape);})
     .def("GetShape",[](XCAFDoc_ShapeTool &st,const TDF_Label &label) {return st.GetShape(label);})
     .def("GetShapes", &XCAFDoc_ShapeTool::GetShapes)
+    .def("GetFreeShapes", &XCAFDoc_ShapeTool::GetFreeShapes)
     .def("GetSubShapes",&XCAFDoc_ShapeTool::GetSubShapes)
     .def("GetUsers",&XCAFDoc_ShapeTool::GetUsers)
+    .def("ID",&XCAFDoc_ShapeTool::ID)
     .def("IsAssembly", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsAssembly(label);})
     .def("IsComponent", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsComponent(label);})
     .def("IsCompound", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsCompound(label);})
@@ -316,8 +266,10 @@ PYBIND11_MODULE(oce, m) {
     .def("IsSimpleShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsSimpleShape(label);})
     .def("IsSubShape", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsSubShape(label);})
     .def("IsTopLevel", [](XCAFDoc_ShapeTool &st, const TDF_Label &label) {return st.IsTopLevel(label);})
+    .def("NewShape",&XCAFDoc_ShapeTool::NewShape)
     .def("Search",&XCAFDoc_ShapeTool::Search)
-    .def("SearchUsingMap", &XCAFDoc_ShapeTool::SearchUsingMap);
+    .def("SearchUsingMap", &XCAFDoc_ShapeTool::SearchUsingMap)
+    .def("SetShape",&XCAFDoc_ShapeTool::SetShape);
 
   py::class_<BRepMesh_IncrementalMesh, opencascade::handle<BRepMesh_IncrementalMesh>> (m,"BRepMesh_IncrementalMesh")
     .def(py::init<>())
@@ -330,14 +282,39 @@ PYBIND11_MODULE(oce, m) {
                   const IMeshTools_Parameters,
                   const Message_ProgressRange>());
 
-  py::class_<XCAF>(m,"XCAF")
-    .def(py::init<>())
-    .def("loadStepFile", &XCAF::loadStepFile)
-    .def("loadIGESFile", &XCAF::loadIGESFile)
-    .def("loadSTLFile", &XCAF::loadSTLFile)
-    .def("shapeTool", &XCAF::shapeTool)
-    .def("shapeTool_BaseLabel", &XCAF::shapeTool_BaseLabel)
-    .def("shapeTool_Dump", &XCAF::shapeTool_Dump);
+  py::class_<gp_Dir>(m,"gp_Dir")
+    .def(py::init<>());
+
+  py::class_<Poly_Triangulation, opencascade::handle<Poly_Triangulation>, Standard_Transient>(m, "Poly_Triangulation")
+    .def("Deflection",[](Poly_Triangulation &pt){return pt.Deflection();})
+    .def("HasGeometry",&Poly_Triangulation::HasGeometry)
+    .def("HasNormals",&Poly_Triangulation::HasNormals)
+    .def("HasUVNodes",&Poly_Triangulation::HasUVNodes)
+    .def("NbNodes",&Poly_Triangulation::NbNodes)
+    .def("NbTriangles",&Poly_Triangulation::NbTriangles)
+    .def("Node",&Poly_Triangulation::Node)
+    .def("Normal",[](Poly_Triangulation &pt, Standard_Integer i) {return pt.Normal(i);})
+    .def("Triangle",&Poly_Triangulation::Triangle)
+    .def("UVNode",&Poly_Triangulation::Node);
+
+  // Copied from Poly_MeshPurpose.hxx
+  enum Poly_MeshPurpose {
+    Poly_MeshPurpose_NONE = 0 , Poly_MeshPurpose_Calculation = 0x0001 , Poly_MeshPurpose_Presentation = 0x0002 , Poly_MeshPurpose_Active = 0x0004 ,
+    Poly_MeshPurpose_Loaded = 0x0008 , Poly_MeshPurpose_AnyFallback = 0x0010 , Poly_MeshPurpose_USER = 0x0020
+  };
+
+  py::enum_<Poly_MeshPurpose>(m,"Poly_MeshPurpose")
+    .value("Poly_MeshPurpose_NONE", Poly_MeshPurpose::Poly_MeshPurpose_NONE)
+    .value("Poly_MeshPurpose_Calculation", Poly_MeshPurpose::Poly_MeshPurpose_Calculation)
+    .value("Poly_MeshPurpose_Presentation", Poly_MeshPurpose::Poly_MeshPurpose_Presentation)
+    .value("Poly_MeshPurpose_Active", Poly_MeshPurpose::Poly_MeshPurpose_Active)
+    .value("Poly_MeshPurpose_Loaded", Poly_MeshPurpose::Poly_MeshPurpose_Loaded)
+    .value("Poly_MeshPurpose_AnyFallback", Poly_MeshPurpose::Poly_MeshPurpose_AnyFallback)
+    .value("Poly_MeshPurpose_USER", Poly_MeshPurpose::Poly_MeshPurpose_USER)
+    .export_values();
+
+  py::class_<BRep_Tool>(m,"BRep_Tool")
+    .def_static("Triangulation",&BRep_Tool::Triangulation);
 
   py::class_<StlAPI_Writer>(m,"StlAPI_Writer")
     .def(py::init<>())
@@ -348,8 +325,10 @@ PYBIND11_MODULE(oce, m) {
                                                                 std::cout << fileName << std::endl;
                                                                 stlw.Write(shape,fileName);});
 
-  py::class_<StepFile>(m,"StepFile")
+  py::class_<XCAF>(m,"XCAF")
     .def(py::init<>())
-    .def("loadFile", &StepFile::loadFile)
-    .def("loadShapes", &StepFile::loadShapes);
+    .def("loadStepFile", &XCAF::loadStepFile)
+    .def("loadIGESFile", &XCAF::loadIGESFile)
+    .def("loadSTLFile", &XCAF::loadSTLFile)
+    .def("shapeTool", &XCAF::shapeTool);
 }

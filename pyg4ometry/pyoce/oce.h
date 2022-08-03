@@ -22,9 +22,6 @@ class XCAF {
 
   Handle(XCAFDoc_ShapeTool) shapeTool();
 
-  void shapeTool_Dump();
-  TDF_Label shapeTool_BaseLabel();
-
  protected :
   Handle(TDocStd_Document)    hDoc;
   Handle(XCAFApp_Application) hApp;
@@ -34,20 +31,6 @@ class XCAF {
 
 };
 
-class StepFile {
- public :
-  StepFile();
-  ~StepFile();
-  void loadFile(std::string fileName);
-  void loadShapes();
-
- protected :
-  Handle(TDocStd_Document)    hDoc;
-  Handle(XCAFApp_Application) hApp;
-
-  Handle(XCAFDoc_ShapeTool) aShapeTool;
-  Handle(XCAFDoc_ColorTool) aColorTool;
-};
 
 
 

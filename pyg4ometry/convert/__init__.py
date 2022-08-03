@@ -3,4 +3,4 @@ from pyg4ometry.convert.geant42Fluka import *
 from pyg4ometry.convert.freecad2Fluka import *
 from pyg4ometry.convert.stl2gdml import *
 from pyg4ometry.convert.geant42Geant4 import *
-
+from pyg4ometry.convert.oce2Geant4 import *

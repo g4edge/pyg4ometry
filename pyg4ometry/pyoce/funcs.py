@@ -1,14 +1,48 @@
-import pyg4ometry as _pyg4
+from .oce import *
+
+def findOCCShapeByName(shapeTool, shapeName):
+    ls = TDF_LabelSequence()
+    shapeTool.GetShapes(ls)
+
+    for l in ls:
+        nameGUID = TDataStd_Name.GetID()
+        name = TDataStd_Name()
+        b, name = l.FindAttribute(nameGUID, name)
+        if name.Get().ToExtString() == shapeName:
+            # print(name)
+            return l
+
+    return None
+
+def find_XCAFDoc_Location_From_Label(label) :
+    locGUID = XCAFDoc_Location.GetID()
+    loc = XCAFDoc_Location()
+    b, loc = label.FindAttribute(locGUID, loc)
+
+    if b :
+        return loc
+    else :
+        return None
+
+def find_TDataStd_Name_From_Label(label) :
+    nameGUID = TDataStd_Name.GetID()
+    name = TDataStd_Name()
+    b, name = label.FindAttribute(nameGUID, name)
+
+    if b :
+        return name.Get().ToExtString()
+    else :
+        return None
 
 def test(fileName) :
 
-    x = _pyg4.pyoce.XCAF()
+    x = XCAF()
     x.loadStepFile(fileName)
 
     st = x.shapeTool()
     st.Dump()
 
-    ls = _pyg4.pyoce.TDF_LabelSequence()
+    ls = TDF_LabelSequence()
     st.GetShapes(ls)
 
     for l in ls :
@@ -26,12 +60,12 @@ def test(fileName) :
         bNull          = l.IsNull()
 
         # label attributes
-        name     = _pyg4.pyoce.TDataStd_Name()
-        nameGUID = _pyg4.pyoce.TDataStd_Name.GetID()
+        name     = TDataStd_Name()
+        nameGUID = TDataStd_Name.GetID()
         found, name = l.FindAttribute(nameGUID,name)
 
-        solidName     = _pyg4.pyoce.TNaming_NamedShape()
-        solidNameGUID = _pyg4.pyoce.TNaming_NamedShape.GetID()
+        solidName     = TNaming_NamedShape()
+        solidNameGUID = TNaming_NamedShape.GetID()
         found, solidName = l.FindAttribute(solidNameGUID,solidName)
 
         print(name.Get().ToExtString(),solidName.Get().ShapeType(),l.Depth(),l.Father(),bHasAttribute, NbAttributes, NbChildren)
@@ -68,8 +102,8 @@ def test(fileName) :
     l = ls(1)
     s = st.GetShape(l)
 
-    aMesher = _pyg4.pyoce.BRepMesh_IncrementalMesh(s, 0.1, False, 0.1, True);
+    aMesher = BRepMesh_IncrementalMesh(s, 0.1, False, 0.1, True);
 
-    mpr = _pyg4.pyoce.Message_ProgressRange()
-    stlW = _pyg4.pyoce.StlAPI_Writer()
+    mpr = Message_ProgressRange()
+    stlW = StlAPI_Writer()
     stlW.Write(s,"PleaseFindMe.stl",mpr)

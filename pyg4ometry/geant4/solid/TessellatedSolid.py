@@ -38,7 +38,12 @@ class TessellatedSolid(_SolidBase):
     def __init__(self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True):
         super(TessellatedSolid, self).__init__(name, 'TessellatedSolid', registry)
 
-        self.meshtess    = meshTess
+        if meshTess is None :
+            self.mesh = []
+            self.meshtess.append([])
+            self.meshtess.append([])
+        else :
+            self.meshtess    = meshTess
         self.meshtype    = meshtype
 
         self.dependents = []
@@ -59,7 +64,13 @@ class TessellatedSolid(_SolidBase):
 
     def __repr__(self):
         return self.type
-    
+
+    def addVertex(self,vertex):
+        self.messtess[0].append(vertex)
+
+    def addTriangle(self,triangle):
+        self.messtess[1].append(triangle)
+
     def mesh(self) :
 
         #############################################
