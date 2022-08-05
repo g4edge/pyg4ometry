@@ -17,6 +17,7 @@
 #include <BRep_Tool.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
 // #include <Poly_MeshPurpose.hxx>
 #include <Poly_Triangulation.hxx>
@@ -54,8 +55,6 @@ void XCAF::loadIGESFile(std::string fileName) {}
 Handle(XCAFDoc_ShapeTool) XCAF::shapeTool() {
   return aShapeTool;
 }
-
-
 
 /*********************************************
 PYBIND
@@ -213,6 +212,9 @@ PYBIND11_MODULE(oce, m) {
     .def(py::init<>())
     .def("ShallowDump",[](TopLoc_Location &location) {py::scoped_ostream_redirect output; location.ShallowDump(std::cout);});
 
+  py::class_<TopoDS>(m,"TopoDS")
+    .def_static("Face",[](TopoDS_Shape &shape) {return TopoDS::Face(shape);});
+
   py::class_<TopoDS_Shape> (m,"TopoDS_Shape")
     .def(py::init<>())
     .def("IsNull",&TopoDS_Shape::IsNull)
@@ -222,6 +224,9 @@ PYBIND11_MODULE(oce, m) {
     .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc, const Standard_Boolean theRaiseExc) {return shape.Location(loc,theRaiseExc);})
     .def("ShapeType",&TopoDS_Shape::ShapeType)
     .def("DumpJson", [](TopoDS_Shape &shape) {py::scoped_ostream_redirect output; shape.DumpJson(std::cout);});
+
+  py::class_<TopoDS_Face, TopoDS_Shape>(m,"TopoDS_Face")
+    .def(py::init<>());
 
   py::class_<TopExp_Explorer> (m,"TopExp_Explorer")
     .def(py::init<>())
@@ -285,7 +290,24 @@ PYBIND11_MODULE(oce, m) {
   py::class_<gp_Dir>(m,"gp_Dir")
     .def(py::init<>());
 
+  py::class_<gp_Pnt>(m,"gp_Pnt")
+    .def(py::init<>())
+    .def("X",&gp_Pnt::X)
+    .def("Y",&gp_Pnt::Y)
+    .def("Z",&gp_Pnt::Z);
+
+  py::class_<Poly_Triangle>(m,"Poly_Triangle")
+    .def(py::init<>())
+    .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Integer>())
+    .def("Set",[](Poly_Triangle &tri, const Standard_Integer n1, const Standard_Integer n2, const Standard_Integer n3) {tri.Set(n1,n2,n3);})
+    .def("Set",[](Poly_Triangle &tri, const Standard_Integer index, const Standard_Integer node) {tri.Set(index,node);})
+    .def("Get",[](Poly_Triangle &tri) {Standard_Integer n1, n2, n3; tri.Get(n1,n2,n3); return py::make_tuple(n1,n2,n3);})
+    .def("Value", &Poly_Triangle::Value)
+    .def("__call__",[](Poly_Triangle &tri, const Standard_Integer index) {return tri(index);});
+
   py::class_<Poly_Triangulation, opencascade::handle<Poly_Triangulation>, Standard_Transient>(m, "Poly_Triangulation")
+    .def(py::init<>())
+    .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Boolean, const Standard_Boolean>())
     .def("Deflection",[](Poly_Triangulation &pt){return pt.Deflection();})
     .def("HasGeometry",&Poly_Triangulation::HasGeometry)
     .def("HasNormals",&Poly_Triangulation::HasNormals)
@@ -294,6 +316,8 @@ PYBIND11_MODULE(oce, m) {
     .def("NbTriangles",&Poly_Triangulation::NbTriangles)
     .def("Node",&Poly_Triangulation::Node)
     .def("Normal",[](Poly_Triangulation &pt, Standard_Integer i) {return pt.Normal(i);})
+    .def("SetNode",&Poly_Triangulation::SetNode)
+    .def("SetTriangle",&Poly_Triangulation::SetTriangle)
     .def("Triangle",&Poly_Triangulation::Triangle)
     .def("UVNode",&Poly_Triangulation::Node);
 

@@ -34,6 +34,23 @@ def find_TDataStd_Name_From_Label(label) :
     else :
         return None
 
+def shapeTypeString(st, label) :
+    retString = ""
+    if st.IsShape(label) :
+        retString += "Shape "
+    if st.IsSimpleShape(label) :
+        retString += "SimpleShape "
+    if st.IsAssembly(label) :
+        retString += "Assembly "
+    if st.IsComponent(label) :
+        retString += "Component "
+    if st.IsCompound(label) :
+        retString += "Compound"
+
+    return retString
+
+
+
 def test(fileName) :
 
     x = XCAF()

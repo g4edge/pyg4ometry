@@ -39,7 +39,7 @@ class TessellatedSolid(_SolidBase):
         super(TessellatedSolid, self).__init__(name, 'TessellatedSolid', registry)
 
         if meshTess is None :
-            self.mesh = []
+            self.meshtess = []
             self.meshtess.append([])
             self.meshtess.append([])
         else :
@@ -66,10 +66,47 @@ class TessellatedSolid(_SolidBase):
         return self.type
 
     def addVertex(self,vertex):
-        self.messtess[0].append(vertex)
+        self.meshtess[0].append(vertex)
 
     def addTriangle(self,triangle):
-        self.messtess[1].append(triangle)
+        self.meshtess[1].append(triangle)
+
+    def removeDuplicateVertices(self):
+        print("removeDuplicateVertices")
+        if self.meshtype != TessellatedSolid.MeshType.Freecad :
+            print("Cannot run on this mesh type")
+            return
+
+        vertexmap = {}
+
+        meshtess0 = []
+        meshtess1 = []
+
+        # Loop over triangles (polygons) in mesh
+        ivertexmap = 0
+        for t in self.meshtess[1] :
+
+            vinew_list = []
+            for vi in t :
+                v = self.meshtess[0][vi]
+                vr = (round(v[0], 10), round(v[1], 10), round(v[2], 10))
+                vrhash = hash(vr)
+
+                try :
+                    vinew = vertexmap[vrhash]
+                except KeyError :
+                    vertexmap[vrhash] = ivertexmap
+                    meshtess0.append(v)
+                    vinew = ivertexmap
+                    ivertexmap += 1
+
+                vinew_list.append(vinew)
+
+            meshtess1.append(vinew_list)
+
+        print(vertexmap)
+        print(meshtess0)
+        print(meshtess1)
 
     def mesh(self) :
 
