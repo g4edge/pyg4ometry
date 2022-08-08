@@ -8,6 +8,7 @@ from . import gdml
 from . import io
 from . import geant4
 from . import pycgal
+from . import pyoce
 #try:
 #    from . import gui
 #except ImportError:

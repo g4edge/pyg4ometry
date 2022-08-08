@@ -92,8 +92,8 @@ class Plane :
         d = _np.cross(n1,n2)
         d = d/_np.sqrt((d**2).sum())
 
-        d1 = _np.dot(n1,p1)
-        d2 = _np.dot(n2,p2)
+        d1 = -_np.dot(n1,p1)
+        d2 = -_np.dot(n2,p2)
 
         # https://mathworld.wolfram.com/Plane-PlaneIntersection.html
         m = _np.vstack([n1,n2])
@@ -146,27 +146,30 @@ class CoordinateSystem :
     def _commonInit(self):
         self.e3 = _np.cross(self.e1,self.e2)
 
-        if not _np.isclose(_np.dot(self.e1,self.e2),0) :
-            raise Exception("CoorindateSystem","Not orthogonal")
+        #if not _np.isclose(_np.dot(self.e1,self.e2),0) :
+        #    raise Exception("CoorindateSystem","Not orthogonal")
 
-        self.rot = _np.vstack([self.e1,self.e2,self.e3])
+        self.rot = _np.vstack([self.e3,self.e1,self.e2])
 
     def makeFromPlanes(self, p1, p2, p3):
-        l1 = p2.intersect(p1)
-        l2 = p1.intersect(p3)
-        e1 = l1.dir
-        e2 = l2.dir
+        l1 = p1.intersect(p2)
 
         o = p3.intersect(l1)
+        e1 = p1.point - o
+        e1 = e1/_np.linalg.norm(e1)
+
+        e2 = l1.dir
 
         self.e1 = _np.array(e1)
         self.e2 = _np.array(e2)
+        self.origin = o
 
         self._commonInit()
 
-        print(e1)
-        print(e2)
-        print(o)
+        print('intersection line',l1)
+        print('axis1 ',e1)
+        print('axis2 ',e2)
+        print('origin ',o)
 
     def plane(self, **kwargs) :
         if "theta" in kwargs :
