@@ -104,9 +104,9 @@ class TessellatedSolid(_SolidBase):
 
             meshtess1.append(vinew_list)
 
-        print(vertexmap)
-        print(meshtess0)
-        print(meshtess1)
+        #print(vertexmap)
+        #print(meshtess0)
+        #print(meshtess1)
 
     def mesh(self) :
 
