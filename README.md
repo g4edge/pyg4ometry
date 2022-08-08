@@ -3,11 +3,12 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/ghuserplaceholder/pkgplaceholder?logo=git)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ghuserplaceholder/pkgplaceholder/pkgplaceholder/main?label=main%20branch&logo=github)](https://github.com/ghuserplaceholder/pkgplaceholder/actions)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Codecov](https://img.shields.io/codecov/c/github/ghuserplaceholder/pkgplaceholder?logo=codecov)](https://app.codecov.io/gh/ghuserplaceholder/pkgplaceholder)
 ![GitHub issues](https://img.shields.io/github/issues/ghuserplaceholder/pkgplaceholder?logo=github)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/ghuserplaceholder/pkgplaceholder?logo=github)
 ![License](https://img.shields.io/github/license/ghuserplaceholder/pkgplaceholder)
-[![Documentation](https://img.shields.io/badge/documentation-online-purple?logo=readthedocs)](https://ghuserplaceholder.github.io/pkgplaceholder)
+[![Read the Docs](https://img.shields.io/readthedocs/pkgplaceholder?logo=readthedocs)](https://pkgplaceholder.readthedocs.io)
 
 Template for modern Python package GitHub repositories.
 
@@ -26,9 +27,8 @@ Template for modern Python package GitHub repositories.
 1. Activate
     * https://pre-commit.ci
     * https://codecov.io
-    * GitHub pages (in the repository settings, configure it to deploy from the `gh-pages` branch)
+    * https://readthedocs.io (activate versions for which you want docs to be build)
     * GitHub actions (in the repository settings)
-1.
 
 ## Quick start
 
