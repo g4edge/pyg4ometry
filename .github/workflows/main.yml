@@ -53,7 +53,7 @@ jobs:
       - name: Upload Coverage to codecov.io
         uses: codecov/codecov-action@v3
 
-  deploy-docs:
+  build-docs:
     name: Build documentation
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -73,15 +73,3 @@ jobs:
           cd docs
           make clean
           make
-      - name: Build docs for selected versions (GitHub pages)
-        run: |
-          cd docs
-          make clean
-          make allver-info
-          make allver
-      - if: ${{ github.event_name == 'push' }}
-        name: Deploy to GitHub pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.4
-        with:
-          branch: gh-pages
-          folder: docs/build/allver/html
