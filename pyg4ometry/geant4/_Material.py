@@ -1,4 +1,8 @@
 from pyg4ometry import exceptions as _exceptions
+from ..gdml.Defines import (
+    Matrix as _Matrix,
+    MatrixFromVectors as _MatrixFromVectors
+)
 
 _nistMaterialDict = None
 _nistMaterialList = None
@@ -280,7 +284,42 @@ class WithPropertiesBase:
 
     A function self.add_property(self, name, value) and a property self.regsitry are expected to exist on the class.
     """
-    pass
+    def add_vec_property(self, name, e, v, eunit='eV', vunit=''):
+        """
+        Add a property from an energy and a value vector to this object.
+
+        :param name: key of property
+        :type name: str
+        :param e: energy list/vector in units of eunit
+        :type e: list or numpy.array - shape (1,)
+        :param v: value list/vector in units of vunit
+        :type v: list or numpy.array - shape (1,)
+        :param eunit: unit for the energy vector (default: eV)
+        :type eunit: str
+        :param vunit: unit for the value vector (default: unitless)
+        :type vunit: str
+        """
+        matrix_name = self.name + '_' + name
+        m = _MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
+        self.add_property(name, m)
+        return m
+
+    def add_const_property(self, name, value, vunit=''):
+        """
+        Add a constant scalar property to this object.
+
+        :param name: key of property
+        :type name: str
+        :param value: constant value for this property
+        :type value: str,float,int
+        :param vunit: unit for the value vector (default: unitless)
+        :type vunit: str
+        """
+        vunit = '*'+vunit if vunit != '' else ''
+        matrix_name = self.name + '_' + name
+        m = _Matrix(matrix_name, 1, [ str(value)+vunit ], self.registry)
+        self.add_property(name, m)
+        return m
 
 
 class Material(MaterialBase, WithPropertiesBase):
