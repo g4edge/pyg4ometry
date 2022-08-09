@@ -274,7 +274,16 @@ class MaterialBase(object):
         return f"<{type(self).__name__}: {self.name}>"
 
 
-class Material(MaterialBase):
+class WithPropertiesBase:
+    """
+    This is an abstract base class to all objects that implement "material" properties
+
+    A function self.add_property(self, name, value) and a property self.regsitry are expected to exist on the class.
+    """
+    pass
+
+
+class Material(MaterialBase, WithPropertiesBase):
     """
     This class provides an interface to GDML material definitions.
 
@@ -352,6 +361,14 @@ class Material(MaterialBase):
         self._addToRegistry()
 
     def add_property(self, name, value):
+        """
+        Add a material property from a matrix.
+
+        :param name: key of the material property
+        :type name: str
+        :param value: matrix defining the value(s) of the property
+        :type value: Matrix
+        """
         if self.type == 'nist' or self.type == 'arbitraty':
             raise ValueError("Properties cannot be set of "
                              "predefined or arbitrary materials")
