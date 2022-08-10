@@ -896,12 +896,12 @@ def MatrixFromVectors(self, e, v, name, registry, eunit='eV', vunit=''):
     :param vunit: unit for the value vector (default: unitless)
     :type vunit: str
     """
-    assert(len(e) == len(r))
+    assert(len(e) == len(v))
     eunit = '*'+eunit if eunit != '' else ''
     vunit = '*'+vunit if vunit != '' else ''
 
     e = [ str(x)+eunit for x in e ]
-    r = [ str(x)+vunit for x in v ]
+    v = [ str(x)+vunit for x in v ]
 
     res = e+v
     res[::2] = e
