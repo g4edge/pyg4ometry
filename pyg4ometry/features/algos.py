@@ -3,6 +3,7 @@ import numpy as _np
 import scipy.linalg as _la
 import matplotlib.pyplot as _plt
 import random as _rand
+from scipy.spatial.transform import Rotation as _Rotation
 
 class Line :
     '''Line class taking a point and dir(ection)
@@ -150,13 +151,16 @@ class CoordinateSystem :
         #if not _np.isclose(_np.dot(self.e1,self.e2),0) :
         #    raise Exception("CoorindateSystem","Not orthogonal")
 
-        self.rot = _np.vstack([self.e3,self.e1,self.e2])
+        #self.rot = _np.vstack([self.e1,self.e2,self.e3])
+
+        self.rot = _Rotation.align_vectors(_np.vstack([self.e1,self.e2,self.e3]), [[1,0,0],[0,1,0],[0,0,1]])[0].as_matrix()
 
     def makeFromPlanes(self, p1, p2, p3):
         l1 = p1.intersect(p2)
 
         o = p3.intersect(l1)
         e1 = p1.point - o
+        self.dist = _np.linalg.norm(e1)
         e1 = e1/_np.linalg.norm(e1)
 
         e2 = l1.dir
@@ -167,10 +171,26 @@ class CoordinateSystem :
 
         self._commonInit()
 
-        print('intersection line',l1)
-        print('axis1 ',e1)
-        print('axis2 ',e2)
-        print('origin ',o)
+        print('CoordinateSystem.makeFromPlanes intersection line',l1)
+        print('CoordinateSystem.makeFromPlanes axis1            ',e1)
+        print('CoordinateSystem.makeFromPlanes axis2            ',e2)
+        print('CoordinateSystem.makeFromPlanes origin           ',o)
+
+    def coordinateSystem(self, rotX = 0.0, rotY = 0.0, rotZ = 0.0):
+        r1 = _Rotation.from_euler("xyz",[rotX,rotY,rotZ])
+        r2 = _Rotation.from_matrix(self.rot)
+
+        rTotal = _np.dot(r2, r1)
+
+        xp = _np.dot(rTotal.as_matrix(),[1,0,0])
+        yp = _np.dot(rTotal.as_matrix(),[0,1,0])
+
+        cs = CoordinateSystem(self.origin, xp,yp)
+
+        return cs
+
+
+
 
     def plane(self, **kwargs) :
         if "theta" in kwargs :
@@ -251,7 +271,7 @@ class vtkViewer :
         self.actorD[key]     = actor
         self.ren.AddActor(actor)
 
-        print(label,labelPos)
+        print("vtkViewer.addPolydata ",label,labelPos)
 
         if label is not None :
             atext = _vtk.vtkVectorText()
@@ -265,27 +285,55 @@ class vtkViewer :
             textActor.SetScale(20,20,20)
             self.ren.AddActor(textActor)
 
-    def addAxis(self, origin, length = [1,1,1], label = None):
+    def addAxis(self, origin, length = [1,1,1], rotation = [[1,0,0],[0,1,0],[0,0,1]],  label = False, disableCone = False):
         axes = _vtk.vtkAxesActor()
-        # axes.SetAxisLabels(False)
+        axes.SetAxisLabels(label)
 
         # transform to move axes
         tran = _vtk.vtkTransform()
-        tran.Translate(origin[0],origin[1], origin[2])
+        # tran.Translate(origin[0],origin[1], origin[2])
+        tran.SetMatrix([rotation[0][0],rotation[0][1],rotation[0][2],origin[0],
+                        rotation[1][0],rotation[1][1],rotation[1][2],origin[1],
+                        rotation[2][0],rotation[2][1],rotation[2][2],origin[2],
+                                     0,             0,             0,       1])
         axes.SetTotalLength(length[0], length[1], length[2])
         axes.SetUserTransform(tran)
+        if disableCone :
+            axes.SetConeRadius(0)
+            axes.SetTotalLength(length[0]*(1+axes.GetNormalizedTipLength()[0]),
+                                length[1]*(1+axes.GetNormalizedTipLength()[1]),
+                                length[2]*(1+axes.GetNormalizedTipLength()[2]))
         self.ren.AddActor(axes)
 
-    def addPlane(self, plane):
-        pass
+    def addPlane(self, point, p1, p2, length=1):
+        print('vtkViewer.addPlane',point,p1,p2)
+        planeSource = _vtk.vtkPlaneSource()
+        planeSource.SetCenter(point)
+        planeSource.SetPoint1(point+p1*length)
+        planeSource.SetPoint2(point+p2*length)
+        planeSource.Update()
+
+        plane = planeSource.GetOutput()
+
+        # Create a mapper and actor
+        mapper = _vtk.vtkPolyDataMapper()
+        mapper.SetInputData(plane)
+
+        actor = _vtk.vtkActor()
+        actor.SetMapper(mapper)
+        actor.GetProperty().SetColor(1,1,1)
+        actor.GetProperty().SetOpacity(0.5)
+
+        self.ren.AddActor(actor)
 
     def addLine(self, line):
         pass
 
-    def view(self):
+    def view(self, interactive = True):
         self.iren.Initialize()
         self.renWin.Render()
-        self.iren.Start()
+        if interactive :
+            self.iren.Start()
 
 def vtkLoadStl(fname):
     """Load the given STL file, and return a vtkPolyData object for it."""
@@ -531,7 +579,8 @@ def extract(inputFileName,
             circumference = 300,
             outputFileName = None ,
             planes = [],
-            bViewer= False) :
+            bViewer= False,
+            bViewerInteractive = False) :
 
     p = vtkLoadStl(inputFileName)
     e = vtkPolydataToConnectedEdges(p, angle)
@@ -603,7 +652,9 @@ def extract(inputFileName,
         v.addPolydata(cut, cut, [0, 0, 0, 1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
 
     v.addAxis([0,0,0],[250,250,250])
-    v.view()
+    v.view(interactive=bViewerInteractive)
+
+    return v
 
 class FeatureData :
 
