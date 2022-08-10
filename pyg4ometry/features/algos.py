@@ -2,6 +2,7 @@ import vtk as _vtk
 import numpy as _np
 import scipy.linalg as _la
 import matplotlib.pyplot as _plt
+import random as _rand
 
 class Line :
     '''Line class taking a point and dir(ection)
@@ -176,13 +177,13 @@ class CoordinateSystem :
             nx = _np.sin(kwargs["theta"])*_np.cos(kwargs["phi"])
             ny = _np.sin(kwargs["theta"])*_np.sin(kwargs["phi"])
             nz = _np.cos(kwargs["theta"])
-            print("polar plane")
+            # print("polar plane")
         elif "phi" in kwargs :
-            print("cylindical plane")
+            # print("cylindical plane")
 
             nz = 0
         elif "nx" in kwargs :
-            print("cartesian plane")
+            # print("cartesian plane")
             nx = kwargs["nx"]
             ny = kwargs["ny"]
             nz = kwargs["nz"]
@@ -242,17 +243,31 @@ class vtkViewer :
         actor.GetProperty().SetLineWidth(lineWidth)
         return [mapper,actor]
 
-    def addPolydata(self, key, polydata, colour = [0,0,0,1], lineWidth = 5):
+    def addPolydata(self, key, polydata, colour = [0,0,0,1], lineWidth = 5, label = None, labelPos = [0,0,0]):
 
-        self.polydataD[key] = polydata
-        mapper, actor = self._polyDataToActor(polydata,colour, lineWidth)
+        self.polydataD[key]  = polydata
+        mapper, actor        = self._polyDataToActor(polydata,colour, lineWidth)
         self.mapperD[key]    = mapper
         self.actorD[key]     = actor
         self.ren.AddActor(actor)
 
-    def addAxis(self, origin, length = [1,1,1]):
+        print(label,labelPos)
+
+        if label is not None :
+            atext = _vtk.vtkVectorText()
+            atext.SetText(label)
+            textMapper = _vtk.vtkPolyDataMapper()
+            textMapper.SetInputConnection(atext.GetOutputPort())
+            textActor = _vtk.vtkFollower()
+            textActor.SetMapper(textMapper)
+            textActor.AddPosition(labelPos)
+            textActor.GetProperty().SetColor(colour[0:3])
+            textActor.SetScale(20,20,20)
+            self.ren.AddActor(textActor)
+
+    def addAxis(self, origin, length = [1,1,1], label = None):
         axes = _vtk.vtkAxesActor()
-        axes.SetAxisLabels(False)
+        # axes.SetAxisLabels(False)
 
         # transform to move axes
         tran = _vtk.vtkTransform()
@@ -550,10 +565,10 @@ def extract(inputFileName,
 
         of = open(outputFileName,"w")
         for io in i :
-            if io["planeQuality"] < planeQuality and io["circumference"] > circumference :
-                of.write("feature\n")
-                for k in io :
-                    of.write(k+": "+iterToStr(io[k])+"\n")
+            # if io["planeQuality"] < planeQuality and io["circumference"] > circumference :
+            of.write("feature\n")
+            for k in io :
+                of.write(k+": "+iterToStr(io[k])+"\n")
 
         for j, pi, ic in zip(range(0,len(planes),1),planes,cpdiList) :
             of.write("cutter\n")
@@ -577,16 +592,17 @@ def extract(inputFileName,
     for edge,info,id in zip(e,i,range(0,len(i),1)) :
         if info["planeQuality"] < planeQuality:
             if info["circumference"] > circumference :
-                v.addPolydata(edge, edge, [0,0,1,1])
+                v.addPolydata(edge, edge, [0,0,1,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
                 v.addAxis(info["centre"],info["range"])
             else :
-                v.addPolydata(edge,edge, [0,1,0,1])
+                v.addPolydata(edge,edge, [0,1,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
         else :
-            v.addPolydata(edge,edge, [1,0,0,1])
+            v.addPolydata(edge,edge, [1,0,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
 
-    for cut in cpdList :
-        v.addPolydata(cut, cut, [0, 0, 0, 1])
+    for cut,info,id in zip(cpdList, cpdiList, range(0,len(cpdList),1)) :
+        v.addPolydata(cut, cut, [0, 0, 0, 1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
 
+    v.addAxis([0,0,0],[250,250,250])
     v.view()
 
 class FeatureData :
@@ -647,7 +663,7 @@ class FeatureData :
 
         for feature in cutDataFeatures :
             featureUXY = feature["uniquepointsxy"]
-            _plt.plot(featureUXY[:, 0], featureUXY[:, 1], "+")
+            _plt.plot(featureUXY[:, 0]-featureUXY[:,0].mean(), featureUXY[:, 1]-featureUXY[:,1].mean(), "+")
 
 
 
