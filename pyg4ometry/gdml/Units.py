@@ -19,10 +19,19 @@ units = {
 
     # Energy units
     "eV" : 1.e-3,
-    
+    "keV": 1,
+    "MeV": 1.e3,
+    "GeV": 1.e6,
+
     # Other
     "none" : 1.0,
-    }
+
+    # Time units
+    "ns"   : 1.e-9,
+    "us"   : 1.e-6,
+    "ms"   : 1.e-3,
+    "s"    : 1.,
+}
 
 def unit(unitString) :
     return units.get(unitString, None)
