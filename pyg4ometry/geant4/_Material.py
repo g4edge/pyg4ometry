@@ -299,7 +299,7 @@ class WithPropertiesBase:
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import ..gdml.Defines as defines
+        import pyg4ometry.gdml.Defines as defines
         matrix_name = self.name + '_' + name
         m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
         self.addProperty(name, m)
@@ -316,7 +316,7 @@ class WithPropertiesBase:
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import ..gdml.Defines as defines
+        import pyg4ometry.gdml.Defines as defines
         vunit = '*'+vunit if vunit != '' else ''
         matrix_name = self.name + '_' + name
         m = defines.Matrix(matrix_name, 1, [ str(value)+vunit ], self.registry)

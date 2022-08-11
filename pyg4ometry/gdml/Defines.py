@@ -879,7 +879,7 @@ class Matrix :
             return self.values_asarray[key]
 
 
-def MatrixFromVectors(self, e, v, name, registry, eunit='eV', vunit=''):
+def MatrixFromVectors(e, v, name, registry, eunit='eV', vunit=''):
     """
     Creates a GDML Matrix from an energy and a value vector
 
