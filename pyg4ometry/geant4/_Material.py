@@ -1,8 +1,4 @@
 from pyg4ometry import exceptions as _exceptions
-from ..gdml.Defines import (
-    Matrix as _Matrix,
-    MatrixFromVectors as _MatrixFromVectors
-)
 
 _nistMaterialDict = None
 _nistMaterialList = None
@@ -282,9 +278,13 @@ class WithPropertiesBase:
     """
     This is an abstract base class to all objects that implement "material" properties
 
-    A function self.add_property(self, name, value) and a property self.regsitry are expected to exist on the class.
+    A function self.addProperty(self, name, value) and a property self.regsitry are expected to exist on the class.
     """
-    def add_vec_property(self, name, e, v, eunit='eV', vunit=''):
+    def add_property(self, name, value): # deprecated
+        """Alias for addProperty"""
+        self.addProperty(name, value)
+
+    def addVecProperty(self, name, e, v, eunit='eV', vunit=''):
         """
         Add a property from an energy and a value vector to this object.
 
@@ -299,12 +299,13 @@ class WithPropertiesBase:
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
+        import ..gdml.Defines as defines
         matrix_name = self.name + '_' + name
-        m = _MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
-        self.add_property(name, m)
+        m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
+        self.addProperty(name, m)
         return m
 
-    def add_const_property(self, name, value, vunit=''):
+    def addConstProperty(self, name, value, vunit=''):
         """
         Add a constant scalar property to this object.
 
@@ -315,10 +316,11 @@ class WithPropertiesBase:
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
+        import ..gdml.Defines as defines
         vunit = '*'+vunit if vunit != '' else ''
         matrix_name = self.name + '_' + name
-        m = _Matrix(matrix_name, 1, [ str(value)+vunit ], self.registry)
-        self.add_property(name, m)
+        m = defines.Matrix(matrix_name, 1, [ str(value)+vunit ], self.registry)
+        self.addProperty(name, m)
         return m
 
 
@@ -399,7 +401,7 @@ class Material(MaterialBase, WithPropertiesBase):
 
         self._addToRegistry()
 
-    def add_property(self, name, value):
+    def addProperty(self, name, value):
         """
         Add a material property from a matrix.
 

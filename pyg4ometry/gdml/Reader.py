@@ -421,7 +421,7 @@ class Reader(object):
             for pname, pref in properties.items():
                 if pref not in self._registry.defineDict or not isinstance( self._registry.defineDict[pref], _defines.Matrix ):
                     raise ValueError("Referenced matrix {} not defined for property {} on material {}".format(pref, pname, name))
-                mat.add_property(pname, self._registry.defineDict[pref])
+                mat.addProperty(pname, self._registry.defineDict[pref])
 
     def parseUserInfo(self,xmldoc):
         try:
