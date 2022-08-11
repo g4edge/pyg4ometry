@@ -828,7 +828,7 @@ class Matrix :
     """
     GDML matrix define wrapper object
     
-    :param name: of constant for registry
+    :param name: of matrix for registry
     :type name: str
     :param coldim: is number of columns
     :param coldim: int
@@ -836,7 +836,7 @@ class Matrix :
     :type values: list of float, str, Constant, Quantity, Variable
     :param registry: for storing define
     :type registry: Registry
-    :param addRegistry: add constant to registry
+    :param addRegistry: add matrix to registry
     :type addRegistry: bool
     """
     def __init__(self,name, coldim, values, registry, addRegistry = True) :
@@ -877,6 +877,36 @@ class Matrix :
             return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
         else :
             return self.values_asarray[key]
+
+
+def MatrixFromVectors(e, v, name, registry, eunit='eV', vunit=''):
+    """
+    Creates a GDML Matrix from an energy and a value vector
+
+    :param name: of matrix of registry
+    :type  name: str
+    :param e: energy list/vector in units of eunit
+    :type e: list or numpy.array - shape (1,)
+    :param v: value list/vector in units of vunit
+    :type v: list or numpy.array - shape (1,)
+    :param registry: for storing define
+    :type registry: Registry
+    :param eunit: unit for the energy vector (default: eV)
+    :type eunit: str
+    :param vunit: unit for the value vector (default: unitless)
+    :type vunit: str
+    """
+    assert(len(e) == len(v))
+    eunit = '*'+eunit if eunit != '' else ''
+    vunit = '*'+vunit if vunit != '' else ''
+
+    e = [ str(x)+eunit for x in e ]
+    v = [ str(x)+vunit for x in v ]
+
+    res = e+v
+    res[::2] = e
+    res[1::2] = v
+    return Matrix(name, 2, res, registry)
 
 
 class Auxiliary(object) :

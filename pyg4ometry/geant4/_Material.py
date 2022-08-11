@@ -274,7 +274,57 @@ class MaterialBase(object):
         return f"<{type(self).__name__}: {self.name}>"
 
 
-class Material(MaterialBase):
+class WithPropertiesBase:
+    """
+    This is an abstract base class to all objects that implement "material" properties
+
+    A function self.addProperty(self, name, value) and a property self.regsitry are expected to exist on the class.
+    """
+    def add_property(self, name, value): # deprecated
+        """Alias for addProperty"""
+        self.addProperty(name, value)
+
+    def addVecProperty(self, name, e, v, eunit='eV', vunit=''):
+        """
+        Add a property from an energy and a value vector to this object.
+
+        :param name: key of property
+        :type name: str
+        :param e: energy list/vector in units of eunit
+        :type e: list or numpy.array - shape (1,)
+        :param v: value list/vector in units of vunit
+        :type v: list or numpy.array - shape (1,)
+        :param eunit: unit for the energy vector (default: eV)
+        :type eunit: str
+        :param vunit: unit for the value vector (default: unitless)
+        :type vunit: str
+        """
+        import pyg4ometry.gdml.Defines as defines
+        matrix_name = self.name + '_' + name
+        m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
+        self.addProperty(name, m)
+        return m
+
+    def addConstProperty(self, name, value, vunit=''):
+        """
+        Add a constant scalar property to this object.
+
+        :param name: key of property
+        :type name: str
+        :param value: constant value for this property
+        :type value: str,float,int
+        :param vunit: unit for the value vector (default: unitless)
+        :type vunit: str
+        """
+        import pyg4ometry.gdml.Defines as defines
+        vunit = '*'+vunit if vunit != '' else ''
+        matrix_name = self.name + '_' + name
+        m = defines.Matrix(matrix_name, 1, [ str(value)+vunit ], self.registry)
+        self.addProperty(name, m)
+        return m
+
+
+class Material(MaterialBase, WithPropertiesBase):
     """
     This class provides an interface to GDML material definitions.
 
@@ -351,7 +401,15 @@ class Material(MaterialBase):
 
         self._addToRegistry()
 
-    def add_property(self, name, value):
+    def addProperty(self, name, value):
+        """
+        Add a material property from a matrix.
+
+        :param name: key of the material property
+        :type name: str
+        :param value: matrix defining the value(s) of the property
+        :type value: Matrix
+        """
         if self.type == 'nist' or self.type == 'arbitraty':
             raise ValueError("Properties cannot be set of "
                              "predefined or arbitrary materials")
