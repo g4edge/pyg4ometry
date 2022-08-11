@@ -189,32 +189,19 @@ class CoordinateSystem :
 
         return cs
 
+    def plane(self, rotX = 0.0, rotY = 0.0, rotZ = 0.0):
+        r1 = _Rotation.from_euler("xyz",[rotX,rotY,rotZ])
+        r2 = _Rotation.from_matrix(self.rot)
 
+        rTotal = _np.dot(r2, r1)
 
+        np = _np.dot(rTotal.as_matrix(), [0, 0, 1])
 
-    def plane(self, **kwargs) :
-        if "theta" in kwargs :
-            nx = _np.sin(kwargs["theta"])*_np.cos(kwargs["phi"])
-            ny = _np.sin(kwargs["theta"])*_np.sin(kwargs["phi"])
-            nz = _np.cos(kwargs["theta"])
-            # print("polar plane")
-        elif "phi" in kwargs :
-            # print("cylindical plane")
+        return Plane(self.origin, np)
 
-            nz = 0
-        elif "nx" in kwargs :
-            # print("cartesian plane")
-            nx = kwargs["nx"]
-            ny = kwargs["ny"]
-            nz = kwargs["nz"]
-
-        n = _np.array([nx,ny,nz])
-        np = _np.dot(self.rot, n)
-
-        o = kwargs["point"]
-        op = o + self.origin
-
-        return Plane(op, np)
+    def transform(self, points):
+        pointsPrime = _np.dot(self.rot,(points+self.origin).transpose())
+        return pointsPrime
 
     def __repr__(self):
         return "origin="+str(self.origin)+" e1="+str(self.e1)+" e2="+str(self.e2)+" e3="+str(self.e3)
@@ -282,7 +269,7 @@ class vtkViewer :
             textActor.SetMapper(textMapper)
             textActor.AddPosition(labelPos)
             textActor.GetProperty().SetColor(colour[0:3])
-            textActor.SetScale(20,20,20)
+            textActor.SetScale(100,100,100)
             self.ren.AddActor(textActor)
 
     def addAxis(self, origin, length = [1,1,1], rotation = [[1,0,0],[0,1,0],[0,0,1]],  label = False, disableCone = False):
@@ -457,10 +444,10 @@ def _vtkPolydataEdgeInformation(polydata, bPlot = False) :
     centre = upa.mean(0)
 
     # remove centre
-    upa = upa - centre
+    upacs = upa - centre
 
     # svd
-    [u,s,vh] = _la.svd(upa.transpose())
+    [u,s,vh] = _la.svd(upacs.transpose())
 
     # normal
     n = u[:,2]
@@ -488,7 +475,7 @@ def _vtkPolydataEdgeInformation(polydata, bPlot = False) :
     pt.RotateWXYZ(ar/_np.pi*180,er[0],er[1],er[2])
 
     upaxy = []
-    for up in upa :
+    for up in upacs :
         upxy = pt.TransformPoint(up[0],up[1],up[2])
         upaxy.append(upxy)
 
@@ -496,10 +483,10 @@ def _vtkPolydataEdgeInformation(polydata, bPlot = False) :
 
     info["centre"]        = centre
     info["plane"]         = plane
-    info["planeQuality"]  = _np.fabs(upa.dot(n)).sum()
+    info["planeQuality"]  = _np.fabs(upacs.dot(n)).sum()
     info["circumference"] = circum
-    info["max"]           = upa.max(0)
-    info["min"]           = upa.min(0)
+    info["max"]           = upacs.max(0)
+    info["min"]           = upacs.min(0)
     info["range"]         = info["max"] - info["min"]
     info["uniquepoints"]  = upa
     info["uniquepointsxy"]= _np.array(upaxy)
@@ -590,11 +577,13 @@ def extract(inputFileName,
     cpdiList = []
     ciList = []
     for plane in planes :
-        cpd = vtkCutterPlane(plane,p)
+
+        cpd = vtkCutterPlane(plane.plane(),p)
         cpdi = vtkPolydataEdgeInformation(cpd)
         ce = vtkPolydataToConnectedEdges(cpd,0)
         ci = vtkPolydataEdgeInformation(ce)
 
+        # cpdi["uniquepointsxy"] = plane.transform(cpdi["uniquepoints"])
         cpdList.append(cpd)
         cpdiList.append(cpdi)
         ciList.append(ci)
@@ -641,15 +630,15 @@ def extract(inputFileName,
     for edge,info,id in zip(e,i,range(0,len(i),1)) :
         if info["planeQuality"] < planeQuality:
             if info["circumference"] > circumference :
-                v.addPolydata(edge, edge, [0,0,1,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
+                v.addPolydata(edge, edge, [0,0,1,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))])
                 v.addAxis(info["centre"],info["range"])
             else :
-                v.addPolydata(edge,edge, [0,1,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
+                v.addPolydata(edge,edge, [0,1,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))])
         else :
-            v.addPolydata(edge,edge, [1,0,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
+            v.addPolydata(edge,edge, [1,0,0,1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))])
 
     for cut,info,id in zip(cpdList, cpdiList, range(0,len(cpdList),1)) :
-        v.addPolydata(cut, cut, [0, 0, 0, 1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))]+info["centre"])
+        v.addPolydata(cut, cut, [0, 0, 0, 1],label=str(id), labelPos=info["uniquepoints"][_rand.randrange(0,len(info["uniquepoints"]))])
 
     v.addAxis([0,0,0],[250,250,250])
     v.view(interactive=bViewerInteractive)
@@ -710,11 +699,13 @@ class FeatureData :
         cutDataUXY      = cutData["uniquepointsxy"]
         cutDataFeatures = cutData["features"]
 
-        #_plt.plot(cutDataUXY[:,0],cutDataUXY[:,1],"-")
 
-        for feature in cutDataFeatures :
-            featureUXY = feature["uniquepointsxy"]
-            _plt.plot(featureUXY[:, 0]-featureUXY[:,0].mean(), featureUXY[:, 1]-featureUXY[:,1].mean(), "+")
+        _plt.plot(cutDataUXY[:,0]-(cutDataUXY[:,0].max()+cutDataUXY[:,0].min())/2.0,
+                  cutDataUXY[:,1]-(cutDataUXY[:,1].max()+cutDataUXY[:,1].min())/2.0,"+")
+
+        #for feature in cutDataFeatures :
+        #    featureUXY = feature["uniquepointsxy"]
+        #    _plt.plot(featureUXY[:, 0]-featureUXY[:,0].mean(), featureUXY[:, 1]-featureUXY[:,1].mean(), "+")
 
 
 
