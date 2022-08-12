@@ -200,7 +200,7 @@ class CoordinateSystem :
         return Plane(self.origin, np)
 
     def transform(self, points):
-        pointsPrime = _np.dot(self.rot,(points+self.origin).transpose())
+        pointsPrime = _np.dot(_la.inv(self.rot),points.transpose()).transpose()+self.origin
         return pointsPrime
 
     def __repr__(self):
@@ -583,7 +583,7 @@ def extract(inputFileName,
         ce = vtkPolydataToConnectedEdges(cpd,0)
         ci = vtkPolydataEdgeInformation(ce)
 
-        # cpdi["uniquepointsxy"] = plane.transform(cpdi["uniquepoints"])
+        cpdi["uniquepointsxy"] = plane.transform(cpdi["uniquepoints"])
         cpdList.append(cpd)
         cpdiList.append(cpdi)
         ciList.append(ci)
