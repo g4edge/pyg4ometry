@@ -1,3 +1,7 @@
+// Older manual a little hard to track down so included here
+// https://old.opencascade.com/doc/occt-7.5.0/overview/html/index.html
+// https://old.opencascade.com/doc/occt-7.5.0/refman/html/index.html
+
 #include "oce.h"
 
 #include <NCollection_Vector.hxx>
@@ -221,7 +225,11 @@ PYBIND11_MODULE(oce, m) {
     .def("NbChildren",&TopoDS_Shape::NbChildren)
     .def("Nullify", &TopoDS_Shape::Nullify)
     .def("Location", [](TopoDS_Shape &shape) {return shape.Location();})
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc, const Standard_Boolean theRaiseExc) {return shape.Location(loc,theRaiseExc);})
+#else
+    .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc) {return shape.Location(loc);})
+#endif
     .def("ShapeType",&TopoDS_Shape::ShapeType)
     .def("DumpJson", [](TopoDS_Shape &shape) {py::scoped_ostream_redirect output; shape.DumpJson(std::cout);});
 
@@ -237,7 +245,9 @@ PYBIND11_MODULE(oce, m) {
     .def("Value",&TopExp_Explorer::Value)
     .def("Current",&TopExp_Explorer::Current)
     .def("ReInit",&TopExp_Explorer::ReInit)
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def("ExploredShape",&TopExp_Explorer::ExploredShape)
+#endif
     .def("Depth",&TopExp_Explorer::Depth)
     .def("Clear",&TopExp_Explorer::Clear);
 
@@ -306,18 +316,27 @@ PYBIND11_MODULE(oce, m) {
     .def("__call__",[](Poly_Triangle &tri, const Standard_Integer index) {return tri(index);});
 
   py::class_<Poly_Triangulation, opencascade::handle<Poly_Triangulation>, Standard_Transient>(m, "Poly_Triangulation")
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def(py::init<>())
     .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Boolean, const Standard_Boolean>())
+#else
+    .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Boolean>())
+#endif
+
     .def("Deflection",[](Poly_Triangulation &pt){return pt.Deflection();})
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def("HasGeometry",&Poly_Triangulation::HasGeometry)
+#endif
     .def("HasNormals",&Poly_Triangulation::HasNormals)
     .def("HasUVNodes",&Poly_Triangulation::HasUVNodes)
     .def("NbNodes",&Poly_Triangulation::NbNodes)
     .def("NbTriangles",&Poly_Triangulation::NbTriangles)
     .def("Node",&Poly_Triangulation::Node)
     .def("Normal",[](Poly_Triangulation &pt, Standard_Integer i) {return pt.Normal(i);})
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def("SetNode",&Poly_Triangulation::SetNode)
     .def("SetTriangle",&Poly_Triangulation::SetTriangle)
+#endif
     .def("Triangle",&Poly_Triangulation::Triangle)
     .def("UVNode",&Poly_Triangulation::Node);
 
