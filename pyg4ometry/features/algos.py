@@ -586,6 +586,8 @@ def extract(inputFileName,
         cpdi["uniquepointsxy"] = plane.transform(cpdi["uniquepoints"])
         cpdList.append(cpd)
         cpdiList.append(cpdi)
+        for ci_i in range(0,len(ci),1) :
+            ci[ci_i]["uniquepointsxy"] = plane.transform(ci[ci_i]["uniquepoints"])
         ciList.append(ci)
 
     if outputFileName is not None :
@@ -701,11 +703,12 @@ class FeatureData :
 
 
         _plt.plot(cutDataUXY[:,0]-(cutDataUXY[:,0].max()+cutDataUXY[:,0].min())/2.0,
-                  cutDataUXY[:,1]-(cutDataUXY[:,1].max()+cutDataUXY[:,1].min())/2.0,"+")
+                                     cutDataUXY[:,1]-(cutDataUXY[:,1].max()+cutDataUXY[:,1].min())/2.0,"+")
 
-        #for feature in cutDataFeatures :
-        #    featureUXY = feature["uniquepointsxy"]
-        #    _plt.plot(featureUXY[:, 0]-featureUXY[:,0].mean(), featureUXY[:, 1]-featureUXY[:,1].mean(), "+")
+        for feature in cutDataFeatures :
+            featureUXY = feature["uniquepointsxy"]
+            _plt.plot(featureUXY[:, 0]-(featureUXY[:,0].max()+featureUXY[:,0].min())/2.0,
+                      featureUXY[:, 1]-(featureUXY[:,1].max()+featureUXY[:,1].min())/2.0, "+")
 
 
 
