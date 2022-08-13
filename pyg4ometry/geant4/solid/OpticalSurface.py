@@ -44,13 +44,13 @@ class OpticalSurface(_SolidBase, WithPropertiesBase):
     def __repr__(self):
         return 'OpticalSurface : '+str(self.name)
 
-    def addProperty(self, name, value):
+    def addProperty(self, name, matrix):
         """
         Add a property to this surface from a matrix.
 
         :param name: key of the surface property
         :type name: str
-        :param value: matrix defining the value(s) of the property
-        :type value: Matrix
+        :param matrix: matrix defining the value(s) of the property
+        :type matrix: Matrix
         """
-        self.properties[name] = value
+        self.properties[name] = matrix
