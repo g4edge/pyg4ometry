@@ -4,6 +4,7 @@
 
 #include "oce.h"
 
+#include "Standard_Version.hxx"
 #include <NCollection_Vector.hxx>
 #include <STEPCAFControl_Reader.hxx>
 #include <TDataStd_Name.hxx>
