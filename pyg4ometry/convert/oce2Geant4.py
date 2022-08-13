@@ -14,7 +14,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
     ##############################################
     # create triangulation
     ##############################################
-    aMesher = _oce.BRepMesh_IncrementalMesh(shape, 0.01, False, 0.01, True);
+    aMesher = _oce.BRepMesh_IncrementalMesh(shape, 0.05, False, 0.05, True);
 
     ##############################################
     # Count total number of nodes and triangles
