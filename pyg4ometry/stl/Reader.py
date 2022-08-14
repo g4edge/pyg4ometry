@@ -1,4 +1,4 @@
-import numpy             as _np
+import numpy as _np
 import re as _re
 import warnings as _warnings
 import struct
@@ -55,8 +55,13 @@ class Reader(object):
         with open(self.filename, 'rb') as f:
             data = f.read()
             # this detection is not good, there might be binary STL files that start with 'solid'.
-            is_binary = forcebinary or struct.unpack('5s', data[0:6])[0] != b'solid'
-            self.facet_list = list(self._load_binary(data) if is_binary else self._load_ascii(data))
+            is_binary = forcebinary or struct.unpack('5s', data[0:5])[0] != b'solid'
+            try:
+                self.facet_list = list(self._load_binary(data) if is_binary else self._load_ascii(data))
+            except Exception as e:
+                raise RuntimeError(f'Failed reading STL file {self.filename}. Either the file is corrupt, uses non-standard '
+                    + f'extensions, or file type has been detected wrongly. Trying to load a binary file?: {is_binary}'
+                    + (' - binary loading can be forced by setting forcebinary=True' if not is_binary else '')) from e
 
         # centre model if requested
         if centre:
