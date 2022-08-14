@@ -1,21 +1,19 @@
+from .LogicalVolume import LogicalVolume
+from .SurfaceBase import SurfaceBase
 
-class SkinSurface:
+class SkinSurface(SurfaceBase):
     def __init__(self, name, volumeref, surface_property, registry, addRegistry=True):
         """
         :param name: of the skin surface
         :type name: str
-        :param volumeref: name of the enclosed logical volume
-        :type volumeref: str
-        :param surface_property: name of the referenced :code:`pyg4ometry.solid.OpticalSurface`
-        :type surface_property: str
+        :param volumeref: the enclosed logical volume
+        :type volumeref: str,LogicalVolume
+        :param surface_property: the referenced :code:`pyg4ometry.solid.OpticalSurface`
+        :type surface_property: str,OpticalSurface
         """
-        self.name = name
-        self.type = 'skinsurface'
-        self.volumeref = volumeref
-        self.surface_property = surface_property
+        super(SkinSurface, self).__init__(name, 'skinsurface', surface_property, registry, addRegistry)
 
-        if addRegistry:
-            registry.addSurface(self)
+        self.volumeref = self._chkType(volumeref, LogicalVolume, 'volumeref')
 
     def __repr__(self):
         return 'SkinSurface {} : volref {}'.format(self.name, self.volumeref)

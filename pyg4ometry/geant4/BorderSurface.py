@@ -1,24 +1,22 @@
+from .PhysicalVolume import PhysicalVolume
+from .SurfaceBase import SurfaceBase
 
-class BorderSurface:
+class BorderSurface(SurfaceBase):
     def __init__(self, name, physref1, physref2, surface_property, registry, addRegistry=True):
         """
         :param name: of the border surface
         :type name: str
-        :param physref1: name of the first physical volume of this surface
-        :type physref1: str
-        :param physref2: name of the second physical volume of this surface
-        :type physref2: str
-        :param surface_property: name of the referenced :code:`pyg4ometry.solid.OpticalSurface`
-        :type surface_property: str
+        :param physref1: the first physical volume of this surface
+        :type physref1: str,PhysicalVolume
+        :param physref2: the second physical volume of this surface
+        :type physref2: str,PhysicalVolume
+        :param surface_property: the referenced :class:`pyg4ometry.solid.OpticalSurface`
+        :type surface_property: str,OpticalSurface
         """
-        self.name = name
-        self.type = 'bordersurface'
-        self.surface_property  = surface_property
-        self.physref1 = physref1
-        self.physref2 = physref2
+        super(BorderSurface, self).__init__(name, 'bordersurface', surface_property, registry, addRegistry)
 
-        if addRegistry:
-            registry.addSurface(self)
+        self.physref1 = self._chkType(physref1, PhysicalVolume, 'physref1')
+        self.physref2 = self._chkType(physref2, PhysicalVolume, 'physref2')
 
     def __repr__(self):
         return 'BorderSurface {} : physvol  {}, {}'.format(self.name, self.physref1, self.physref2)
