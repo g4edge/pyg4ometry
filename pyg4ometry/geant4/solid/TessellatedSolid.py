@@ -72,7 +72,8 @@ class TessellatedSolid(_SolidBase):
         self.meshtess[1].append(triangle)
 
     def removeDuplicateVertices(self):
-        print("removeDuplicateVertices")
+        # print("removeDuplicateVertices")
+
         if self.meshtype != TessellatedSolid.MeshType.Freecad :
             print("Cannot run on this mesh type")
             return
@@ -89,7 +90,7 @@ class TessellatedSolid(_SolidBase):
             vinew_list = []
             for vi in t :
                 v = self.meshtess[0][vi]
-                vr = (round(v[0], 10), round(v[1], 10), round(v[2], 10))
+                vr = (round(v[0]+1.23456789, 10), round(v[1]+1.23456789, 10), round(v[2]+1.23456789, 10))
                 vrhash = hash(vr)
 
                 try :
@@ -103,6 +104,9 @@ class TessellatedSolid(_SolidBase):
                 vinew_list.append(vinew)
 
             meshtess1.append(vinew_list)
+
+        self.meshtess[0] = meshtess0
+        self.meshtess[1] = meshtess1
 
         #print(vertexmap)
         #print(meshtess0)
@@ -174,7 +178,7 @@ class TessellatedSolid(_SolidBase):
             # This allows for both triangular and quadrilateral facets
             polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygon_list.append(polygon)            
-        
+
         return _CSG.fromPolygons(polygon_list, False)
 
 
