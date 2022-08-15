@@ -1,6 +1,8 @@
-import numpy             as _np
+import numpy as _np
 import re as _re
 import warnings as _warnings
+import struct
+import io
 
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.geant4 as _g4
@@ -19,8 +21,7 @@ class _Facet():
         return (tuple(self.vertices), self.normal)
 
 class Reader(object):
-
-    '''
+    """
     STL file reader
 
     :param filename: Input STL filename
@@ -33,10 +34,11 @@ class Reader(object):
     :type centre: boolean
     :param registry: Registry to add solid to
     :type registry: Registry
+    :param forcebinary: Forces to load this STL file in binary format, otherwise the file format is determined from whether it starts with the string 'solid'
+    :type forcebinary: boolean
+    """
 
-    '''
-
-    def __init__(self, filename, solidname="stl_tessellated", scale=1, centre = False, registry=None):
+    def __init__(self, filename, solidname="stl_tessellated", scale=1, centre = False, registry=None, forcebinary = False):
         if registry is None:  # If a registry is not supplied, make an empty one
             registry = _g4.Registry()
 
@@ -46,51 +48,87 @@ class Reader(object):
 
         self.worldVolumeName  = str()
         self.facet_list = []
-        # Compile re to match numbers
-        self.num_re = _re.compile(r"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$")
 
         self.scale = float(scale)
 
         # load file
-        self._load()
+        with open(self.filename, 'rb') as f:
+            data = f.read()
+            # this detection is not good, there might be binary STL files that start with 'solid'.
+            is_binary = forcebinary or struct.unpack('5s', data[0:5])[0] != b'solid'
+            try:
+                self.facet_list = list(self._load_binary(data) if is_binary else self._load_ascii(data))
+            except Exception as e:
+                raise RuntimeError(f'Failed reading STL file {self.filename}. Either the file is corrupt, uses non-standard '
+                    + f'extensions, or file type has been detected wrongly. Trying to load a binary file?: {is_binary}'
+                    + (' - binary loading can be forced by setting forcebinary=True' if not is_binary else '')) from e
 
         # centre model if requested
-        if centre :
+        if centre:
             self.extentCentre()
 
 
         self.solid = _g4.solid.TessellatedSolid(self.solidname, self.facet_list, self._registry,
                                                 _g4.solid.TessellatedSolid.MeshType.Stl)
 
-    def _load(self):
-        '''
-        Load GDML file self.filename
-        '''
+    def _load_ascii(self, data):
+        """
+        Load ASCII STL file from bytes instance
+
+        :type data: bytes
+        """
+        # Compile re to match numbers
+        num_re = _re.compile(r"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$")
 
         def extractXYZ(string):
             # The scaling here is a bit cheeky, but the scale parameter in
-            # GDML seems to be ignored by Geanr4 for Tessellated Solids
-            return tuple([self.scale*float(v) for v in string.split() if self.num_re.match(v)])
+            # GDML seems to be ignored by Geant4 for Tessellated Solids
+            return tuple([self.scale*float(v) for v in string.split() if num_re.match(v)])
 
-        with open(self.filename) as f:
+        f = io.TextIOWrapper(io.BytesIO(data))
+        line = f.readline()
+        facet = None
+        while line:
+            sline = line.strip()
+            if sline.startswith("facet"):  # Indicates a facet, only first char comparison
+                assert(facet == None)
+                normal = extractXYZ(sline)
+                facet = _Facet(normal)
+
+            elif sline.startswith("vertex"):
+                assert(facet != None)
+                vertex = extractXYZ(sline)
+                facet.add_vertex(vertex)
+
+            elif sline.startswith("endfacet"):
+                yield facet.dump()
+                facet = None
+
             line = f.readline()
-            cnt=1
-            while line:
-                sline = line.strip()
-                if sline.startswith("facet"):  # Indicates a facet, only first char comaprison
-                    normal = extractXYZ(sline)
-                    facet = _Facet(normal)
 
-                elif sline.startswith("vertex"):
-                    vertex = extractXYZ(sline)
-                    facet.add_vertex(vertex)
+    def _load_binary(self, data):
+        """
+        Load binary STL file from bytes instance
 
-                elif sline.startswith("endfacet"):
-                    self.facet_list.append(facet.dump())
-                    del facet
+        :type data: bytes
+        """
+        # ignore the first 80 bytes of data, as this is the header.
+        faces = struct.unpack('<I', data[80:84])[0]
 
-                line = f.readline()
-                cnt += 1
+        def extractVector(d):
+            vec = struct.unpack('<fff', d)
+            return tuple([self.scale*v for v in vec])
+
+        for fc in range(0, faces):
+            fo = 84 + fc*50 # offset of the current facet
+            facet = _Facet(extractVector(data[fo:fo+12]))
+            for v in range(1, 4):
+                vo = fo + v*12
+                facet.add_vertex(extractVector(data[vo:vo+12]))
+            # ignore last 2 bytes of facet definition - this might break if the additional byte count
+            # _actually_ refers to an additional byte count, but it not always does (some application
+            # directly store metadata in those two bytes).
+            yield facet.dump()
 
     def extent(self):
         '''
