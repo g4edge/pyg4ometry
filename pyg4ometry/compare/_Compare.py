@@ -92,7 +92,11 @@ class Tests:
     def __repr__(self):
         s = ""
         for name in self._testNames:
-            s += name + ": " + str(getattr(self,name)) + "\n"
+            try :
+                s += name + ": " + str(getattr(self,name)) + "\n"
+            except AttributeError :
+                pass
+
         return s
 
 
