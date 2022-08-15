@@ -1951,9 +1951,9 @@ class QUA(BodyMixin):
 
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
-    if (first.dot(second) != 0.0
-            or first.dot(third) != 0
-            or second.dot(third) != 0.0):
+    if (not np.isclose(first.dot(second),0) or
+        not np.isclose(first.dot(third),0) or
+        not np.isclose(second.dot(third),0)):
         raise ValueError(message)
 
 def _iterablesToFreeString(*iterables):
