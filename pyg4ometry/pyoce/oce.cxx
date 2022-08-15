@@ -141,7 +141,7 @@ PYBIND11_MODULE(oce, m) {
     .def_static("GetID",&TDataStd_Name::GetID);
 
   py::class_<TDF_Label> (m,"TDF_Label")
-     .def(py::init<>())
+    .def(py::init<>())
     .def("Depth", &TDF_Label::Depth)
     .def("Father", &TDF_Label::Father)
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { auto ret = label.FindAttribute(guid,attribute); return py::make_tuple(ret, attribute);})
