@@ -14,10 +14,13 @@ class SurfaceBase:
 
     def _chkType(self, x, t, p):
         if isinstance(x, t):
-            if t == OpticalSurface: assert(x in self.registry.solidDict.values())
-            if t == LogicalVolume:  assert(x in self.registry.logicalVolumeDict.values())
-            if t == PhysicalVolume: assert(x in self.registry.physicalVolumeDict.values())
-            return x.name
-        elif isinstance(x, str):
             return x
+        elif isinstance(x, str):
+            y = None
+            if t == OpticalSurface: y = self.registry.solidDict[x]
+            if t == LogicalVolume:  y = self.registry.logicalVolumeDict[x]
+            if t == PhysicalVolume: y = self.registry.physicalVolumeDict[x]
+            if y == None:
+                raise ValueError(f"{str(t)} not found in the registry!")
+            return y
         raise ValueError(f"Unsupported type for {p}: {type(x)}")
