@@ -45,9 +45,8 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
     triangleCounter = 0
 
     while(topoExp.More()) :
-        triangulation = _oce.BRep_Tool.Triangulation(_oce.TopoDS.Face(topoExp.Current()), location, _oce.Poly_MeshPurpose_NONE)
-        topoExp.Next()
 
+        triangulation = _oce.BRep_Tool.Triangulation(_oce.TopoDS.Face(topoExp.Current()), location, _oce.Poly_MeshPurpose_NONE)
 
         for i in range(1,triangulation.NbNodes()+1,1) :
             aPnt = triangulation.Node(i);
@@ -57,11 +56,11 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
             #aMesh->SetNode(aNodeIter + aNodeOffset, aPnt);
             g4t.addVertex([aPnt.X(), aPnt.Y(), aPnt.Z()])
 
+        orientation = topoExp.Current().Orientation();
         for i in range(1,triangulation.NbTriangles()+1,1) :
             aTri = triangulation.Triangle(i);
-            i1 = aTri.Value(1)
-            i2 = aTri.Value(2)
-            i3 = aTri.Value(3)
+            i1, i2, i3 = aTri.Get()
+
             #print('tri',i1,i2,i3)
 
             i1 += nodeCounter
@@ -70,18 +69,21 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
 
             #print('tri', i1, i2, i3)
 
-            aTri.Set(i1,i2,i3)
+            if orientation == _oce.TopAbs_Orientation.TopAbs_REVERSED :
+                aTri.Set(i2,i1,i3)
+                g4t.addTriangle([i2 - 1, i1 - 1, i3 - 1])
+            else :
+                aTri.Set(i1,i2,i3)
+                g4t.addTriangle([i1 - 1, i2 - 1, i3 - 1])
 
             mergedMesh.SetTriangle(i+triangleCounter, aTri)
-            g4t.addTriangle([i1-1,i2-1,i3-1])
 
         nodeCounter += triangulation.NbNodes()
         triangleCounter += triangulation.NbTriangles()
 
+        topoExp.Next()
+
     g4t.removeDuplicateVertices()
-
-
-
 
 def _oce2Geant4_traverse(xcaf,label,greg, addBoundingSolids = False) :
     name  = _oce.find_TDataStd_Name_From_Label(label)
