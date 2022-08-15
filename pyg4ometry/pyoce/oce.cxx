@@ -231,6 +231,7 @@ PYBIND11_MODULE(oce, m) {
 #else
     .def("Location", [](TopoDS_Shape &shape,const TopLoc_Location &loc) {return shape.Location(loc);})
 #endif
+    .def("Orientation",[](TopoDS_Shape &shape) {return shape.Orientation();})
     .def("ShapeType",&TopoDS_Shape::ShapeType)
     .def("DumpJson", [](TopoDS_Shape &shape) {py::scoped_ostream_redirect output; shape.DumpJson(std::cout);});
 
