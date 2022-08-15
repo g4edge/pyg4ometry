@@ -33,9 +33,7 @@ class Reader :
         name = find_TDataStd_Name_From_Label(label)
         loc  = find_XCAFDoc_Location_From_Label(label)
 
-        print(name)
-        if loc is not None :
-            loc.Get().ShallowDump()
+        print(name, shapeTypeString(self.shapeTool,label),loc)
 
         for i in range(1,label.NbChildren()+1,1) :
             b, child = label.FindChild(i,False)
