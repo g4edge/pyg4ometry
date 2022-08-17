@@ -280,9 +280,9 @@ class WithPropertiesBase:
 
     A function self.addProperty(self, name, value) and a property self.regsitry are expected to exist on the class.
     """
-    def add_property(self, name, value): # deprecated
+    def add_property(self, name, matrix): # deprecated
         """Alias for addProperty"""
-        self.addProperty(name, value)
+        self.addProperty(name, matrix)
 
     def addVecProperty(self, name, e, v, eunit='eV', vunit=''):
         """
@@ -401,19 +401,19 @@ class Material(MaterialBase, WithPropertiesBase):
 
         self._addToRegistry()
 
-    def addProperty(self, name, value):
+    def addProperty(self, name, matrix):
         """
         Add a material property from a matrix.
 
         :param name: key of the material property
         :type name: str
-        :param value: matrix defining the value(s) of the property
-        :type value: Matrix
+        :param matrix: matrix defining the value(s) of the property
+        :type matrix: Matrix
         """
-        if self.type == 'nist' or self.type == 'arbitraty':
+        if self.type == 'nist' or self.type == 'arbitrary':
             raise ValueError("Properties cannot be set of "
                              "predefined or arbitrary materials")
-        self.properties[name] = value
+        self.properties[name] = matrix
 
     def add_element_massfraction(self, element, massfraction):
         """

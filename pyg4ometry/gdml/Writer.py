@@ -619,10 +619,10 @@ option, preprocessGDML=0;
     def writeSkinSurface(self, instance):
         surf = self.doc.createElement('skinsurface')
         surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
-        surf.setAttribute('surfaceproperty', instance.surface_property)
+        surf.setAttribute('surfaceproperty', instance.surface_property.name)
 
         vr = self.doc.createElement('volumeref')
-        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.volumeref))
+        vr.setAttribute('ref',"{}{}".format(self.prepend, instance.volumeref.name))
         surf.appendChild(vr)
 
         self.structure.appendChild(surf)
@@ -630,13 +630,13 @@ option, preprocessGDML=0;
     def writeBorderSurface(self, instance):
         surf = self.doc.createElement('bordersurface')
         surf.setAttribute('name', "{}{}".format(self.prepend, instance.name))
-        surf.setAttribute('surfaceproperty', instance.surface_property)
+        surf.setAttribute('surfaceproperty', instance.surface_property.name)
 
         pvr1 = self.doc.createElement('physvolref')
-        pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1))
+        pvr1.setAttribute('ref',"{}{}".format(self.prepend, instance.physref1.name))
         surf.appendChild(pvr1)
         pvr2 = self.doc.createElement('physvolref')
-        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref2))
+        pvr2.setAttribute('ref',"{}{}".format(self.prepend, instance.physref2.name))
         surf.appendChild(pvr2)
 
         self.structure.appendChild(surf)
