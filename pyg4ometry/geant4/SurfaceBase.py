@@ -12,15 +12,15 @@ class SurfaceBase:
         if addRegistry:
             registry.addSurface(self)
 
-    def _chkType(self, x, t, p):
-        if isinstance(x, t):
-            return x
-        elif isinstance(x, str):
-            y = None
-            if t == OpticalSurface: y = self.registry.solidDict[x]
-            if t == LogicalVolume:  y = self.registry.logicalVolumeDict[x]
-            if t == PhysicalVolume: y = self.registry.physicalVolumeDict[x]
-            if y == None:
-                raise ValueError(f"{str(t)} not found in the registry!")
-            return y
-        raise ValueError(f"Unsupported type for {p}: {type(x)}")
+    def _chkType(self, obj, t, prop):
+        if isinstance(obj, t):
+            return obj
+        elif isinstance(obj, str):
+            instance = None
+            if t == OpticalSurface: instance = self.registry.solidDict[obj]
+            if t == LogicalVolume:  instance = self.registry.logicalVolumeDict[obj]
+            if t == PhysicalVolume: instance = self.registry.physicalVolumeDict[obj]
+            if instance == None:
+                raise ValueError(f"{str(t)} {x} not found in the registry!")
+            return instance
+        raise ValueError(f"Unsupported type for {prop}: {type(obj)}")

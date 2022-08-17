@@ -410,7 +410,7 @@ class Material(MaterialBase, WithPropertiesBase):
         :param matrix: matrix defining the value(s) of the property
         :type matrix: Matrix
         """
-        if self.type == 'nist' or self.type == 'arbitraty':
+        if self.type == 'nist' or self.type == 'arbitrary':
             raise ValueError("Properties cannot be set of "
                              "predefined or arbitrary materials")
         self.properties[name] = matrix
