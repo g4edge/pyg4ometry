@@ -25,6 +25,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_TFace.hxx>
 #include <TopoDS_TWire.hxx>
 // #include <Poly_MeshPurpose.hxx>
@@ -70,6 +71,10 @@ PYBIND
 PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(oce, m) {
+
+  py::class_<Geom_Geometry, opencascade::handle<Geom_Geometry>>(m,"Geom_Geometry");
+  py::class_<Geom_Curve, opencascade::handle<Geom_Curve>, Geom_Geometry>(m,"Geom_Curve")
+    .def("Value",&Geom_Curve::Value);
 
   py::class_<XCAFApp_Application, opencascade::handle<XCAFApp_Application>>(m,"XCAFApp_Application");
 
@@ -221,8 +226,9 @@ PYBIND11_MODULE(oce, m) {
     .def("ShallowDump",[](TopLoc_Location &location) {py::scoped_ostream_redirect output; location.ShallowDump(std::cout);});
 
   py::class_<TopoDS>(m,"TopoDS")
-    .def_static("Wire",[](TopoDS_Shape &shape) {return TopoDS::Wire(shape);})
-    .def_static("Face",[](TopoDS_Shape &shape) {return TopoDS::Face(shape);});
+    .def_static("Edge",[](TopoDS_Shape &shape) {return TopoDS::Edge(shape);})
+    .def_static("Face",[](TopoDS_Shape &shape) {return TopoDS::Face(shape);})
+    .def_static("Wire",[](TopoDS_Shape &shape) {return TopoDS::Wire(shape);});
 
   py::class_<TopoDS_Shape> (m,"TopoDS_Shape")
     .def(py::init<>())
@@ -243,6 +249,9 @@ PYBIND11_MODULE(oce, m) {
     .def(py::init<>());
 
   py::class_<TopoDS_Wire, TopoDS_Shape>(m,"TopoDS_Wire")
+    .def(py::init<>());
+
+  py::class_<TopoDS_Edge, TopoDS_Shape>(m,"TopoDS_Edge")
     .def(py::init<>());
 
   py::class_<TopoDS_TShape>(m,"TopoDS_TShape");
@@ -370,6 +379,12 @@ PYBIND11_MODULE(oce, m) {
     .export_values();
 
   py::class_<BRep_Tool>(m,"BRep_Tool")
+    .def_static("Curve",[](const TopoDS_Edge &E, TopLoc_Location &L,
+                           Standard_Real &First, Standard_Real &Last)
+        {
+            auto ret = BRep_Tool::Curve(E,L,First,Last);
+            return py::make_tuple(ret,L,First,Last);
+        })
     .def_static("Triangulation",&BRep_Tool::Triangulation);
 
   py::class_<StlAPI_Writer>(m,"StlAPI_Writer")

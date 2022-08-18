@@ -4,13 +4,37 @@ import pyg4ometry.pyoce as _oce
 
 def beamPipeCADFeature(shape) :
 
+    wirePnts = []
+
     topoExp  = _oce.TopExp_Explorer(shape, _oce.TopAbs_WIRE, _oce.TopAbs_VERTEX)
     location = _oce.TopLoc_Location()
 
     while(topoExp.More()) :
         wire = _oce.TopoDS.Wire(topoExp.Current())
-        print(wire)
+        #print(wire)
+        topoExpWire = _oce.TopExp_Explorer(wire, _oce.TopAbs_EDGE, _oce.TopAbs_VERTEX)
+
+        edgePnts = []
+        while(topoExpWire.More()):
+            edge = _oce.TopoDS.Edge(topoExpWire.Current())
+            edgeLocation = _oce.TopLoc_Location()
+            start = 0
+            end = 0
+            curve, l, s, e = _oce.BRep_Tool.Curve(edge, edgeLocation, start, end)
+
+            for par in _np.linspace(s,e,20) :
+                pnt = curve.Value(par)
+                edgePnts.append([pnt.X(), pnt.Y(), pnt.Z()])
+            #print(edge,curve,l,s,e)
+
+            topoExpWire.Next()
+
+        wirePnts.append(edgePnts)
         topoExp.Next()
+
+    return wirePnts
+
+
 
 
 def beamPipe(stlFileName, feature1 = -1, feature2 = -1, planeAngles = [[0,0,0]], vis=True, interactive=True) :
