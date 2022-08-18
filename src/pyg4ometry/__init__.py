@@ -16,10 +16,10 @@ from . import pyoce
 #    warnings.warn("Failed to import pyg4ometry.gui subpackage.")
 #    del warnings
 from . import stl
-from . import test
 from . import transformation
 from . import visualisation
 from . import features
 from . import bdsim
+from . import commontest
 
 __version__ = "1.0.1"

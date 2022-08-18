@@ -264,8 +264,6 @@ PYBIND11_MODULE(oce, m) {
     .def("Depth",&TopExp_Explorer::Depth)
     .def("Clear",&TopExp_Explorer::Clear);
 
-  py::class_<BRep_Tool>(m,"BRep_Tool");
-
   py::class_<XCAFDoc_ShapeTool, opencascade::handle<XCAFDoc_ShapeTool>>(m,"XCAFDoc_ShapeTool")
     .def(py::init<>())
     .def("BaseLabel", &XCAFDoc_ShapeTool::BaseLabel)
