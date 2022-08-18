@@ -24,6 +24,9 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
+#include <TopoDS_Wire.hxx>
+#include <TopoDS_TFace.hxx>
+#include <TopoDS_TWire.hxx>
 // #include <Poly_MeshPurpose.hxx>
 #include <Poly_Triangulation.hxx>
 #include <gp_Dir.hxx>
@@ -218,6 +221,7 @@ PYBIND11_MODULE(oce, m) {
     .def("ShallowDump",[](TopLoc_Location &location) {py::scoped_ostream_redirect output; location.ShallowDump(std::cout);});
 
   py::class_<TopoDS>(m,"TopoDS")
+    .def_static("Wire",[](TopoDS_Shape &shape) {return TopoDS::Wire(shape);})
     .def_static("Face",[](TopoDS_Shape &shape) {return TopoDS::Face(shape);});
 
   py::class_<TopoDS_Shape> (m,"TopoDS_Shape")
@@ -238,6 +242,13 @@ PYBIND11_MODULE(oce, m) {
   py::class_<TopoDS_Face, TopoDS_Shape>(m,"TopoDS_Face")
     .def(py::init<>());
 
+  py::class_<TopoDS_Wire, TopoDS_Shape>(m,"TopoDS_Wire")
+    .def(py::init<>());
+
+  py::class_<TopoDS_TShape>(m,"TopoDS_TShape");
+  py::class_<TopoDS_TFace, TopoDS_TShape>(m,"TopoDS_TFace");
+  py::class_<TopoDS_TWire, TopoDS_TShape>(m,"TopoDS_TWire");
+
   py::class_<TopExp_Explorer> (m,"TopExp_Explorer")
     .def(py::init<>())
     .def(py::init<const TopoDS_Shape &, const TopAbs_ShapeEnum, const TopAbs_ShapeEnum>())
@@ -252,6 +263,8 @@ PYBIND11_MODULE(oce, m) {
 #endif
     .def("Depth",&TopExp_Explorer::Depth)
     .def("Clear",&TopExp_Explorer::Clear);
+
+  py::class_<BRep_Tool>(m,"BRep_Tool");
 
   py::class_<XCAFDoc_ShapeTool, opencascade::handle<XCAFDoc_ShapeTool>>(m,"XCAFDoc_ShapeTool")
     .def(py::init<>())

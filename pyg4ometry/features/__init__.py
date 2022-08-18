@@ -3,3 +3,5 @@ from .algos import Plane
 from .algos import extract as extract
 from .algos import FeatureData as FeatureData
 from ._accelerator import beamPipe as beamPipe
+from ._accelerator import beamPipeCADFeature as beamPipeCADFeature
+

@@ -1,5 +1,17 @@
 import numpy as _np
 import pyg4ometry as _pyg4
+import pyg4ometry.pyoce as _oce
+
+def beamPipeCADFeature(shape) :
+
+    topoExp  = _oce.TopExp_Explorer(shape, _oce.TopAbs_WIRE, _oce.TopAbs_VERTEX)
+    location = _oce.TopLoc_Location()
+
+    while(topoExp.More()) :
+        wire = _oce.TopoDS.Wire(topoExp.Current())
+        print(wire)
+        topoExp.Next()
+
 
 def beamPipe(stlFileName, feature1 = -1, feature2 = -1, planeAngles = [[0,0,0]], vis=True, interactive=True) :
 
