@@ -35,14 +35,15 @@ def beamPipe(stlFileName, feature1 = -1, feature2 = -1, planeAngles = [[0,0,0]],
 
     csa  = [cs.coordinateSystem(ang[0],ang[1],ang[2]) for ang in planeAngles]
 
-    v.addPlane(cs.origin, cs.e1, cs.e2, cs.dist)
-    v.addAxis(cs.origin,[cs.dist,cs.dist,cs.dist],cs.rot,label=True,disableCone=True)
-    v.view(interactive=True)
+    if vis :
+        v.addPlane(cs.origin, cs.e1, cs.e2, cs.dist)
+        v.addAxis(cs.origin,[cs.dist,cs.dist,cs.dist],cs.rot,label=True,disableCone=True)
+        v.view(interactive=True)
 
     v = _pyg4.features.extract(stlFileName,
                                angle = 46,
                                circumference=2*_np.pi*8,
                                planes=csa,
                                outputFileName=datFileName,
-                               bViewer=True,
-                               bViewerInteractive=True)
+                               bViewer=vis,
+                               bViewerInteractive=interactive)
