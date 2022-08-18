@@ -251,14 +251,13 @@ class vtkViewer :
         return [mapper,actor]
 
     def addPolydata(self, key, polydata, colour = [0,0,0,1], lineWidth = 5, label = None, labelPos = [0,0,0]):
+        # print("vtkViewer.addPolydata ",label,labelPos)
 
         self.polydataD[key]  = polydata
         mapper, actor        = self._polyDataToActor(polydata,colour, lineWidth)
         self.mapperD[key]    = mapper
         self.actorD[key]     = actor
         self.ren.AddActor(actor)
-
-        print("vtkViewer.addPolydata ",label,labelPos)
 
         if label is not None :
             atext = _vtk.vtkVectorText()
@@ -293,7 +292,8 @@ class vtkViewer :
         self.ren.AddActor(axes)
 
     def addPlane(self, point, p1, p2, length=1):
-        print('vtkViewer.addPlane',point,p1,p2)
+        # print('vtkViewer.addPlane',point,p1,p2)
+
         planeSource = _vtk.vtkPlaneSource()
         planeSource.SetCenter(point)
         planeSource.SetPoint1(point+p1*length)
