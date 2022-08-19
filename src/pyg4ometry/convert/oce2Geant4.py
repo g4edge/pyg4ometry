@@ -14,7 +14,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
     ##############################################
     # create triangulation
     ##############################################
-    aMesher = _oce.BRepMesh_IncrementalMesh(shape, 0.05, False, 0.05, True);
+    aMesher = _oce.BRepMesh_IncrementalMesh(shape, 0.5, False, 0.5, True);
 
     ##############################################
     # Count total number of nodes and triangles
@@ -48,8 +48,10 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
 
         triangulation = _oce.BRep_Tool.Triangulation(_oce.TopoDS.Face(topoExp.Current()), location, _oce.Poly_MeshPurpose_NONE)
 
+        aTrsf = location.Transformation()
         for i in range(1,triangulation.NbNodes()+1,1) :
-            aPnt = triangulation.Node(i);
+            aPnt = triangulation.Node(i)
+            aPnt.Transform(aTrsf)
             #print('pnt',aPnt.X(), aPnt.Y(), aPnt.Z())
             #aPnt.Transform(aTrsf);
             mergedMesh.SetNode(i+nodeCounter, aPnt)

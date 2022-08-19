@@ -324,6 +324,7 @@ PYBIND11_MODULE(oce, m) {
 
   py::class_<gp_Pnt>(m,"gp_Pnt")
     .def(py::init<>())
+    .def("Transform",&gp_Pnt::Transform)
     .def("X",&gp_Pnt::X)
     .def("Y",&gp_Pnt::Y)
     .def("Z",&gp_Pnt::Z);
