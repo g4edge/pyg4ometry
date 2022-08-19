@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 
 # import matplotlib.pyplot as _plt
 
@@ -186,7 +187,7 @@ def electrode_profile():
 
 
 def make_lhc_blm(vis=False, interactive=False, n_slice=16):
-    import numpy as _np
+
     import math as _math
     import pyg4ometry.gdml as _gd
     import pyg4ometry.geant4 as _g4
