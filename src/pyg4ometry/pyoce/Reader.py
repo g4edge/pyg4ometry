@@ -11,18 +11,6 @@ class Reader :
         self.xcaf.loadStepFile(self.fileName)
         self.shapeTool = self.xcaf.shapeTool()
 
-    def findOCCShapeByName(self, shapeName):
-        ls = TDF_LabelSequence()
-        self.shapeTool.GetShapes(ls)
-
-        for l in ls :
-            nameGUID = TDataStd_Name.GetID()
-            name = TDataStd_Name()
-            b, name = l.FindAttribute(nameGUID, name)
-            if name.Get().ToExtString() == shapeName :
-                # print(name)
-                return l
-
     def freeShapes(self):
         ls = TDF_LabelSequence()
         self.shapeTool.GetFreeShapes(ls)
