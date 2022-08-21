@@ -1,30 +1,26 @@
 from .oce import *
+from .TCollection import *
+from .TDF import *
 
 def findOCCShapeByName(shapeTool, shapeName):
     ls = TDF_LabelSequence()
     shapeTool.GetShapes(ls)
 
     for l in ls:
-        nameGUID = TDataStd_Name.GetID()
-        name = TDataStd_Name()
-        b, name = l.FindAttribute(nameGUID, name)
-        if name.Get().ToExtString() == shapeName:
-            # print(name)
+        name = get_TDataStd_Name_From_Label(l)
+        if name == shapeName:
             return l
 
-    return None
+    raise KeyError(shapeName)
 
-def find_XCAFDoc_Location_From_Label(label) :
-    locGUID = XCAFDoc_Location.GetID()
-    loc = XCAFDoc_Location()
-    b, loc = label.FindAttribute(locGUID, loc)
+def findOCCShapeByTreeNode(label, shapeTreeNode):
+    newLabel = TDF_Label()
+    aShapeTreeNode = TCollection_AsciiString(shapeTreeNode)
+    TDF_Tool.Label(label.Data(), aShapeTreeNode, newLabel, False)
 
-    if b :
-        return loc
-    else :
-        return None
+    return newLabel
 
-def find_TDataStd_Name_From_Label(label) :
+def get_TDataStd_Name_From_Label(label) :
     nameGUID = TDataStd_Name.GetID()
     name = TDataStd_Name()
     b, name = label.FindAttribute(nameGUID, name)
@@ -34,7 +30,30 @@ def find_TDataStd_Name_From_Label(label) :
     else :
         return None
 
-def shapeTypeString(st, label) :
+def get_TDataStd_TreeNode_From_Label(label) :
+    treeNode     = TDataStd_TreeNode()
+    treeNodeGUID = XCAFDoc.AssemblyGUID()
+
+    b, treeNode = label.FindAttribute(treeNodeGUID, treeNode)
+
+    # a = TCollection.TCollection_AsciiString()
+    # TDF_Tool.Entry(l, a)
+    if b :
+        return treeNode
+    else :
+        return None
+
+def get_XCAFDoc_Location_From_Label(label) :
+    locGUID = XCAFDoc_Location.GetID()
+    loc = XCAFDoc_Location()
+    b, loc = label.FindAttribute(locGUID, loc)
+
+    if b :
+        return loc
+    else :
+        return None
+
+def get_shapeTypeString(st, label) :
     retString = ""
     if st.IsShape(label) :
         retString += "Shape "
@@ -48,8 +67,6 @@ def shapeTypeString(st, label) :
         retString += "Compound"
 
     return retString
-
-
 
 def test(fileName) :
 

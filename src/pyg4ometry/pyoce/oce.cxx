@@ -5,12 +5,15 @@
 #include "oce.h"
 
 #include "Standard_Version.hxx"
+#include "Standard_Type.hxx"
 #include <NCollection_Vector.hxx>
 #include <STEPCAFControl_Reader.hxx>
 #include <TDataStd_Name.hxx>
 #include <TNaming_NamedShape.hxx>
 #include <TDataStd_TreeNode.hxx>
 #include <TDataStd_UAttribute.hxx>
+#include <TDF_AttributeIterator.hxx>
+#include <XCAFDoc.hxx>
 #include <XCAFDoc_ShapeMapTool.hxx>
 #include <XCAFDoc_Location.hxx>
 #include <TDF_Label.hxx>
@@ -72,6 +75,16 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(oce, m) {
 
+  py::class_<Standard_Transient, opencascade::handle<Standard_Transient>> (m,"Standard_Transient")
+    .def("DynamicType",&Standard_Transient::DynamicType)
+    .def_static("get_type_name", &Standard_Transient::get_type_name);
+
+  py::class_<Standard_GUID> (m,"Standard_GUID");
+
+  py::class_<Standard_Type, opencascade::handle<Standard_Type>, Standard_Transient>(m,"Standard_Type")
+    .def("Name",&Standard_Type::Name)
+    .def("SystemName",&Standard_Type::SystemName);
+
   py::class_<Geom_Geometry, opencascade::handle<Geom_Geometry>>(m,"Geom_Geometry");
   py::class_<Geom_Curve, opencascade::handle<Geom_Curve>, Geom_Geometry>(m,"Geom_Curve")
     .def("Value",&Geom_Curve::Value);
@@ -83,29 +96,8 @@ PYBIND11_MODULE(oce, m) {
   py::class_<Message_ProgressRange> (m,"Message_ProgressRange")
     .def(py::init<>());
 
-  py::class_<TCollection_AsciiString>(m,"TCollection_AsciiString")
-    .def(py::init<>());
-
-  py::class_<TCollection_ExtendedString>(m,"TCollection_ExtendedString")
-    .def(py::init<>())
-    .def(py::init<const Standard_CString, const Standard_Boolean>())
-    .def(py::init<const Standard_ExtString>())
-    .def(py::init<const Standard_Character>())
-    .def(py::init<const Standard_ExtCharacter>())
-    .def(py::init<const Standard_Integer, const Standard_ExtCharacter>())
-    .def(py::init<const Standard_Integer>())
-    .def(py::init<const Standard_Real>())
-    .def(py::init<const TCollection_ExtendedString>())
-    .def(py::init<const TCollection_AsciiString &>())
-    .def("Length",&TCollection_ExtendedString::Length)
-    .def("Print",[](TCollection_ExtendedString &string) {py::scoped_ostream_redirect output; string.Print(std::cout);})
-    .def("ToExtString",&TCollection_ExtendedString::ToExtString);
-
-  py::class_<Standard_GUID> (m,"Standard_GUID");
-
-  py::class_<Standard_Transient, opencascade::handle<Standard_Transient>> (m,"Standard_Transient");
-
-  py::class_<TDF_Attribute, opencascade::handle<TDF_Attribute>, Standard_Transient> (m,"TDF_Attribute");
+  py::class_<TDF_Attribute, opencascade::handle<TDF_Attribute>, Standard_Transient> (m,"TDF_Attribute")
+    .def("Label",&TDF_Attribute::Label);
 
   py::class_<TDataStd_GenericExtString, opencascade::handle<TDataStd_GenericExtString>, TDF_Attribute>(m,"TDataStd_GenericExtString")
     .def("ID", &TDataStd_GenericExtString::ID)
@@ -126,12 +118,25 @@ PYBIND11_MODULE(oce, m) {
 
   py::class_<TDataStd_TreeNode, opencascade::handle<TDataStd_TreeNode>, TDF_Attribute>(m,"TDataStd_TreeNode")
     .def(py::init<>())
-    .def("ID",&TDataStd_TreeNode::ID)
-    .def("DumpJson",[](TDataStd_TreeNode &treeNode) {treeNode.DumpJson(std::cout);});
+    .def("Dump",[](TDataStd_TreeNode &treeNode) {treeNode.Dump(std::cout);})
+    .def("DumpJson",[](TDataStd_TreeNode &treeNode) {treeNode.DumpJson(std::cout);})
+    .def_static("GetDefaultTreeID",TDataStd_TreeNode::GetDefaultTreeID)
+    .def("ID",&TDataStd_TreeNode::ID);
 
   py::class_<TDataStd_UAttribute, opencascade::handle<TDataStd_UAttribute>, TDF_Attribute>(m,"TDataStd_UAttribute")
     .def(py::init<>())
+    .def("Dump",[](TDataStd_UAttribute &uattribute) {uattribute.Dump(std::cout);})
+    .def("DumpJson",[](TDataStd_UAttribute &uattribute) {uattribute.DumpJson(std::cout);})
     .def("ID",&TDataStd_UAttribute::ID);
+
+  py::class_<XCAFDoc>(m, "XCAFDoc")
+    .def_static("AssemblyGUID",&XCAFDoc::AssemblyGUID)
+    .def_static("ShapeRefGUID",&XCAFDoc::ShapeRefGUID)
+    .def_static("ColorRefGUID",&XCAFDoc::ColorRefGUID)
+    .def_static("DimTolRefGUID",&XCAFDoc::DimTolRefGUID)
+    .def_static("DimensionRefFirstGUID",&XCAFDoc::DimensionRefFirstGUID)
+    .def_static("DimensionRefSecondGUID", &XCAFDoc::DimensionRefSecondGUID)
+    .def_static("GeomToleranceRefGUID",&XCAFDoc::GeomToleranceRefGUID);
 
   py::class_<XCAFDoc_ShapeMapTool, opencascade::handle<XCAFDoc_ShapeMapTool>, TDF_Attribute>(m,"XCAFDoc_ShapeMapTool")
     .def(py::init<>())
@@ -148,8 +153,19 @@ PYBIND11_MODULE(oce, m) {
     .def("Dump",[](TDataStd_Name &name) { py::scoped_ostream_redirect output; name.Dump(std::cout);})
     .def_static("GetID",&TDataStd_Name::GetID);
 
+  py::class_<TDF_AttributeIterator>(m, "TDF_AttributeIterator")
+    .def(py::init<>())
+    .def(py::init<const TDF_Label &, const Standard_Boolean>())
+    .def(py::init<const TDF_LabelNodePtr , const Standard_Boolean>())
+    .def("Initialize",&TDF_AttributeIterator::Initialize)
+    .def("More",&TDF_AttributeIterator::More)
+    .def("Next",&TDF_AttributeIterator::Next)
+    .def("Value",&TDF_AttributeIterator::Value)
+    .def("PtrValue",&TDF_AttributeIterator::PtrValue);
+
   py::class_<TDF_Label> (m,"TDF_Label")
     .def(py::init<>())
+    .def("Data", &TDF_Label::Data)
     .def("Depth", &TDF_Label::Depth)
     .def("Father", &TDF_Label::Father)
     .def("FindAttribute", [](TDF_Label &label, const Standard_GUID & guid, opencascade::handle<TDF_Attribute> &attribute) { auto ret = label.FindAttribute(guid,attribute); return py::make_tuple(ret, attribute);})
@@ -184,8 +200,6 @@ PYBIND11_MODULE(oce, m) {
     .def("__iter__",[](const TDF_LabelSequence &s) { return py::make_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
     .def("__call__",[](TDF_LabelSequence &ls, Standard_Integer i) { return ls(i);});
 
-  py::class_<TDF_Tool>(m,"TDF_Tool")
-    .def_static("Entry",&TDF_Tool::Entry);
 
   py::enum_<TopAbs_ShapeEnum>(m,"TopAbs_ShapeEnum")
     .value("TopAbs_COMPOUND", TopAbs_ShapeEnum::TopAbs_COMPOUND)

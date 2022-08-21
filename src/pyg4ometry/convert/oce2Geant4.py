@@ -52,10 +52,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
         for i in range(1,triangulation.NbNodes()+1,1) :
             aPnt = triangulation.Node(i)
             aPnt.Transform(aTrsf)
-            #print('pnt',aPnt.X(), aPnt.Y(), aPnt.Z())
-            #aPnt.Transform(aTrsf);
             mergedMesh.SetNode(i+nodeCounter, aPnt)
-            #aMesh->SetNode(aNodeIter + aNodeOffset, aPnt);
             g4t.addVertex([aPnt.X(), aPnt.Y(), aPnt.Z()])
 
         orientation = topoExp.Current().Orientation();
@@ -63,13 +60,9 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
             aTri = triangulation.Triangle(i);
             i1, i2, i3 = aTri.Get()
 
-            #print('tri',i1,i2,i3)
-
             i1 += nodeCounter
             i2 += nodeCounter
             i3 += nodeCounter
-
-            #print('tri', i1, i2, i3)
 
             if orientation == _oce.TopAbs_Orientation.TopAbs_REVERSED :
                 aTri.Set(i2,i1,i3)
@@ -88,13 +81,17 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
     g4t.removeDuplicateVertices()
 
 def _oce2Geant4_traverse(xcaf,label,greg, addBoundingSolids = False) :
-    name  = _oce.find_TDataStd_Name_From_Label(label)
-    loc   = _oce.find_XCAFDoc_Location_From_Label(label)
+    name  = _oce.get_TDataStd_Name_From_Label(label)
+    loc   = _oce.get_XCAFDoc_Location_From_Label(label)
     shape = xcaf.shapeTool().GetShape(label)
     locShape = shape.Location()
+    node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
+    _oce.TDF.TDF_Tool.Entry(label,node)
+    if name is None :
+        name = node.ToCString()
 
     # determine if shape is assembly, compound or simple shape
-    print(name+" | "+_oce.shapeTypeString(xcaf.shapeTool(), label))
+    print(name+" | "+node.ToCString()+" | "+_oce.get_shapeTypeString(xcaf.shapeTool(), label))
 
     # if simple add solid and return solid
 
@@ -125,7 +122,7 @@ def oce2Geant4(xcaf, shapeName) :
         return
 
     # find name of shape
-    name = _oce.find_TDataStd_Name_From_Label(label)
+    name = _oce.get_TDataStd_Name_From_Label(label)
 
     # traverse cad and make geant4 geometry
     _oce2Geant4_traverse(xcaf, label, greg)

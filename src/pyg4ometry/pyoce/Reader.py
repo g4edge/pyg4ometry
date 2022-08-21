@@ -20,6 +20,7 @@ class Reader :
 
         name = find_TDataStd_Name_From_Label(label)
         loc  = find_XCAFDoc_Location_From_Label(label)
+        node = find_TDataStd_TreeNode_From_Label(label)
 
         print(name, shapeTypeString(self.shapeTool,label),loc)
 
