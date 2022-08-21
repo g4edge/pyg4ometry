@@ -2,6 +2,7 @@ import numpy as _np
 import pyg4ometry as _pyg4
 import pyg4ometry.pyoce as _oce
 
+
 def beamPipeCADFeature(shape) :
 
     wirePnts = []
@@ -33,9 +34,6 @@ def beamPipeCADFeature(shape) :
         topoExp.Next()
 
     return wirePnts
-
-
-
 
 def beamPipe(stlFileName, feature1 = -1, feature2 = -1, planeAngles = [[0,0,0]], vis=True, interactive=True) :
 
