@@ -64,6 +64,12 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
     print('total : nodes, triangles',mergedNbNodes,mergedNbTriangles)
 
     ##############################################
+    # Empty tesselation
+    ##############################################
+    if mergedNbNodes == 0 or mergedNbTriangles == 0 :
+        return None
+
+    ##############################################
     # Merge triangles from faces
     ##############################################
     mergedMesh = _oce.Poly.Poly_Triangulation(mergedNbNodes, mergedNbTriangles, False,False)
@@ -139,8 +145,9 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
             component = _oce2Geant4_traverse(shapeTool, child, greg)
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
-            component.motherVolume = assembly
-            assembly.add(component)
+            if component :
+                component.motherVolume = assembly
+                assembly.add(component)
 
         return assembly
 
@@ -153,6 +160,9 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         # Create solid
         logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg)
 
+        if not logicalVolume :
+            return
+
         ax = _pyg4.pyoce.gp.gp_XYZ()
         an = 0
 
@@ -164,7 +174,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
 
         trans = _oce.pythonHelpers.gp_XYZ_numpy(trans)
         ax    = _oce.pythonHelpers.gp_XYZ_numpy(ax)
-        rot = _pyg4.transformation.axisangle2tbxyz(ax, an)
+        rot = _pyg4.transformation.axisangle2tbxyz(ax,an)
 
         # make physical volume
         physicalVolume = _pyg4.geant4.PhysicalVolume(list(rot),list(trans),logicalVolume,name,None,greg)
@@ -176,6 +186,9 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
 
         # make solid
         solid =  oceShape_Geant4_Tessellated(name, shape, greg)
+
+        if not solid :
+            return None
 
         # make logicalVolume
         logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,"G4_Fe",greg)
