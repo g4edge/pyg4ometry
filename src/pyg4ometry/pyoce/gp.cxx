@@ -27,10 +27,19 @@ PYBIND11_MODULE(gp, m) {
 
   py::class_<gp_XYZ>(m,"gp_XYZ")
     .def(py::init<>())
+    .def("X",&gp_XYZ::X)
+    .def("Y",&gp_XYZ::Y)
+    .def("Z",&gp_XYZ::Z)
     .def("DumpJson",[](gp_XYZ &gpxyz) {py::scoped_ostream_redirect output; gpxyz.DumpJson(std::cout);});
 
   py::class_<gp_Trsf>(m,"gp_Trsf")
     .def(py::init<>())
+    .def("GetRotation",[](gp_Trsf &trsf, gp_XYZ &axis, Standard_Real angle)
+                         {
+                            auto b = trsf.GetRotation(axis,angle);
+                            return py::make_tuple(b,axis,angle);
+                         })
+    .def("ScaleFactor",&gp_Trsf::ScaleFactor)
     .def("TranslationPart",&gp_Trsf::TranslationPart)
     .def("DumpJson",[](gp_Trsf &gpt) {py::scoped_ostream_redirect output; gpt.DumpJson(std::cout);});
 }

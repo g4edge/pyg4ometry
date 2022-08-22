@@ -65,7 +65,8 @@ class PhysicalVolume(object):
         self.logicalVolume = logicalVolume
         self.name          = name
         self.motherVolume  = motherVolume
-        self.motherVolume.add(self)
+        if self.motherVolume :
+            self.motherVolume.add(self)
         self.copyNumber    = copyNumber
         
         # physical visualisation options 
