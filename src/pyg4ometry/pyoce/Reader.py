@@ -1,34 +1,44 @@
-from .oce import *
-from .funcs import *
+from . import XCAFApp as _XCAFApp
+from . import XCAFDoc as _XCAFDoc
+from . import TCollection as _TCollection
+from . import STEPCAFControl as _STEPCAFControl
+from . import Message as _Message
+from . import TDF as _TDF
+from . import pythonHelpers as _ph
 
 class Reader :
     def __init__(self, fileName):
-        self.xcaf = XCAF()
-        self.readFile(fileName)
+        self.app = _XCAFApp.XCAFApp_Application.GetApplication();
+        self.doc = self.app.NewDocument(_TCollection.TCollection_ExtendedString("MDTV-CAF"))
 
-    def readFile(self,fileName):
-        self.fileName = fileName
-        self.xcaf.loadStepFile(self.fileName)
-        self.shapeTool = self.xcaf.shapeTool()
+        self.readStepFile(fileName)
+
+        self.shapeTool = _XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(self.doc.Main())
+
+    def readStepFile(self,fileName):
+        stepReader = _STEPCAFControl.STEPCAFControl_Reader()
+        mpr = _Message.Message_ProgressRange()
+        stepReader.ReadFile(fileName)
+        stepReader.Transfer(self.doc, mpr)
 
     def freeShapes(self):
-        ls = TDF_LabelSequence()
+        ls = _TDF.TDF_LabelSequence()
         self.shapeTool.GetFreeShapes(ls)
         return ls
 
     def traverse(self,label = None):
 
-        name = find_TDataStd_Name_From_Label(label)
-        loc  = find_XCAFDoc_Location_From_Label(label)
-        node = find_TDataStd_TreeNode_From_Label(label)
+        name = _ph.get_TDataStd_Name_From_Label(label)
+        loc  = _ph.get_XCAFDoc_Location_From_Label(label)
+        node = _ph.get_TDataStd_TreeNode_From_Label(label)
 
-        print(name, shapeTypeString(self.shapeTool,label),loc)
+        print(name, _ph.get_shapeTypeString(self.shapeTool,label),loc)
 
         for i in range(1,label.NbChildren()+1,1) :
             b, child = label.FindChild(i,False)
             self.traverse(child)
 
-        rlabel = TDF_Label()
+        rlabel = _TDF.TDF_Label()
         self.shapeTool.GetReferredShape(label, rlabel)
         if not rlabel.IsNull() :
             self.traverse(rlabel)
