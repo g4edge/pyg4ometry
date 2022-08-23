@@ -13,7 +13,8 @@ class Reader :
 
         self.readStepFile(fileName)
 
-        self.shapeTool = _XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(self.doc.Main())
+        self.main = self.doc.Main()
+        self.shapeTool = _XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(self.main)
 
     def readStepFile(self,fileName):
         stepReader = _STEPCAFControl.STEPCAFControl_Reader()
