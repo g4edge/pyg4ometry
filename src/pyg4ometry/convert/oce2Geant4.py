@@ -129,10 +129,8 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
 
     shape = shapeTool.GetShape(label)
     locShape = shape.Location()
-    # locShape.ShallowDump()
 
     if shapeTool.IsAssembly(label) :
-        # print(name,"assembly",label.NbChildren())
 
         # make assembly
         try :
@@ -155,8 +153,6 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
     elif shapeTool.IsComponent(label) :
         rlabel = _oce.TDF.TDF_Label()
         shapeTool.GetReferredShape(label, rlabel)
-
-        #print(name,"component",label.NbChildren(),rlabel)
 
         # Create solid
         logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg)
