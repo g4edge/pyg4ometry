@@ -123,7 +123,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
     name  = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
     _oce.TDF.TDF_Tool.Entry(label,node)
-    if name is None :
+    if name is None or name == "SOLID" or name == "COMPOUND" : # TODO must be a better way of finding these generic names
         name = node.ToCString()
     loc   = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
 
@@ -171,26 +171,68 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
 
         trans = _oce.pythonHelpers.gp_XYZ_numpy(trans)
         ax    = _oce.pythonHelpers.gp_XYZ_numpy(ax)
-        rot = _pyg4.transformation.axisangle2tbxyz(ax,an)
+        rot = _pyg4.transformation.axisangle2tbxyz(ax,-an)
 
         # make physical volume
-        physicalVolume = _pyg4.geant4.PhysicalVolume(list(rot),list(trans),logicalVolume,name,None,greg)
+        physicalVolume = _pyg4.geant4.PhysicalVolume(rot,trans,logicalVolume,name,None,greg)
 
         return physicalVolume
 
-    elif shapeTool.IsShape(label) :
-        # print(name, "shape",label.NbChildren())
+    elif shapeTool.IsShape(label) and label.NbChildren() == 0 :
 
         # make solid
         solid =  oceShape_Geant4_Tessellated(name, shape, greg)
 
-        if not solid :
+        if solid is None :
             return None
+        else :
+            # make logicalVolume
+            logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,"G4_Fe",greg)
 
-        # make logicalVolume
-        logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,"G4_Fe",greg)
+            return logicalVolume
 
-        return logicalVolume
+    elif shapeTool.IsShape(label) and label.NbChildren() != 0 :
+
+        # make assembly (TODO might require multi union if overlapping)
+
+        try :
+            return greg.logicalVolumeDict[name]
+        except :
+            assembly = oceShape_Geant4_Assembly(name,shape,greg)
+
+        # Loop over children
+        for i in range(1, label.NbChildren() + 1, 1):
+            b, child = label.FindChild(i, False)
+            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg)
+
+            ax = _pyg4.pyoce.gp.gp_XYZ()
+            an = 0
+
+            childShape = shapeTool.GetShape(child)
+            childLoc   = childShape.Location()
+
+            trsf = childLoc.Transformation()
+
+            scale = trsf.ScaleFactor()
+            trans = trsf.TranslationPart()
+            b, ax, an = trsf.GetRotation(ax, an)
+
+            trans = _oce.pythonHelpers.gp_XYZ_numpy(trans)
+            ax = _oce.pythonHelpers.gp_XYZ_numpy(ax)
+            rot = _pyg4.transformation.axisangle2tbxyz(ax, -an)
+
+            physicalVolume = _pyg4.geant4.PhysicalVolume(list(rot),
+                                                         list(trans),
+                                                         logicalVolume,
+                                                         logicalVolume.name+"_pv",
+                                                         assembly,
+                                                         greg)
+
+        return assembly
+
+
+    else :
+        print(name,"missing compound 2")
 
 
 def oce2Geant4(shapeTool, shapeName) :
