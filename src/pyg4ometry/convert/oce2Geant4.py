@@ -1,7 +1,6 @@
 import pyg4ometry as _pyg4
 import pyg4ometry.pyoce as _oce
 
-
 def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
     try :
         return greg.logicalVolumeDict[name]
@@ -117,16 +116,31 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
 
     return g4t
 
-def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addBoundingSolids = False) :
+def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, addBoundingSolids = False) :
     name  = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
     _oce.TDF.TDF_Tool.Entry(label,node)
+
     if name is None or name == "SOLID" or name == "COMPOUND" : # TODO must be a better way of finding these generic names
         name = node.ToCString()
+
     loc   = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
+
+    try :
+        labelToSkipList.index(name)
+        print("skipping",name)
+        return None
+    except ValueError :
+        pass
+
+
 
     shape = shapeTool.GetShape(label)
     locShape = shape.Location()
+    try :
+        material = materialMap[name]
+    except KeyError :
+        material = "G4_Galactic"
 
     if shapeTool.IsAssembly(label) :
 
@@ -139,7 +153,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addB
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            component = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipMap, addBoundingSolids)
+            component = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, addBoundingSolids)
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
             if component :
@@ -153,7 +167,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addB
         shapeTool.GetReferredShape(label, rlabel)
 
         # Create solid
-        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg, materialMap, labelToSkipMap, addBoundingSolids)
+        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg, materialMap, labelToSkipList, addBoundingSolids)
 
         if not logicalVolume :
             return
@@ -185,7 +199,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addB
             return None
         else :
             # make logicalVolume
-            logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,"G4_Fe",greg)
+            logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,material,greg)
 
             return logicalVolume
 
@@ -201,7 +215,10 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addB
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipMap, addBoundingSolids)
+            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, addBoundingSolids)
+
+            if not logicalVolume : # logical could be None
+                continue
 
             ax = _pyg4.pyoce.gp.gp_XYZ()
             an = 0
@@ -233,7 +250,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addB
         print(name,"missing compound 2")
 
 
-def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelSkipMap = {}) :
+def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = []) :
     greg = _pyg4.geant4.Registry()
 
     label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
@@ -245,6 +262,6 @@ def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelSkipMap = {}) :
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
 
     # traverse cad and make geant4 geometry
-    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelSkipMap)
+    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelToSkipList)
 
     return greg
