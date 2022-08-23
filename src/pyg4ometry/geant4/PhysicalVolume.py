@@ -30,7 +30,7 @@ class PhysicalVolume(object):
         # need to determine type or rotation and position, as should be Position or Rotation type
         from pyg4ometry.gdml import Defines as _Defines
 
-        if isinstance(position,list) :
+        if isinstance(position,list) or isinstance(position,_np.ndarray):
             if len(position) == 3:
                 unit = "mm"
             elif len(position) == 4:
@@ -40,7 +40,7 @@ class PhysicalVolume(object):
                                  " [px, py, pz] or [px, py, pz, unit]")
 
             position = _Defines.Position(name+"_pos",position[0],position[1],position[2],unit,registry,False)
-        if isinstance(rotation,list) :
+        if isinstance(rotation,list) or isinstance(position,_np.ndarray):
             if len(rotation) == 3:
                 unit = "rad"
             elif len(rotation) == 4:
