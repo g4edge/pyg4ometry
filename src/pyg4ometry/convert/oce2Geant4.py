@@ -117,7 +117,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
 
     return g4t
 
-def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
+def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipMap, addBoundingSolids = False) :
     name  = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
     _oce.TDF.TDF_Tool.Entry(label,node)
@@ -139,7 +139,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            component = _oce2Geant4_traverse(shapeTool, child, greg)
+            component = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipMap, addBoundingSolids)
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
             if component :
@@ -153,7 +153,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         shapeTool.GetReferredShape(label, rlabel)
 
         # Create solid
-        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg)
+        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg, materialMap, labelToSkipMap, addBoundingSolids)
 
         if not logicalVolume :
             return
@@ -201,7 +201,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg)
+            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipMap, addBoundingSolids)
 
             ax = _pyg4.pyoce.gp.gp_XYZ()
             an = 0
@@ -233,7 +233,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         print(name,"missing compound 2")
 
 
-def oce2Geant4(shapeTool, shapeName) :
+def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelSkipMap = {}) :
     greg = _pyg4.geant4.Registry()
 
     label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
@@ -245,6 +245,6 @@ def oce2Geant4(shapeTool, shapeName) :
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
 
     # traverse cad and make geant4 geometry
-    _oce2Geant4_traverse(shapeTool, label, greg)
+    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelSkipMap)
 
     return greg
