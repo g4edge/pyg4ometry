@@ -61,7 +61,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg) :
         mergedNbNodes += triangulation.NbNodes()
         mergedNbTriangles += triangulation.NbTriangles()
 
-    print('total : nodes, triangles',mergedNbNodes,mergedNbTriangles)
+    # print('total : nodes, triangles',mergedNbNodes,mergedNbTriangles)
 
     ##############################################
     # Empty tesselation
@@ -132,7 +132,8 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
     # locShape.ShallowDump()
 
     if shapeTool.IsAssembly(label) :
-        print(name,"assembly",label.NbChildren())
+        # print(name,"assembly",label.NbChildren())
+
         # make assembly
         try :
             return greg.logicalVolumeDict[name]
@@ -155,7 +156,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         rlabel = _oce.TDF.TDF_Label()
         shapeTool.GetReferredShape(label, rlabel)
 
-        print(name,"component",label.NbChildren(),rlabel)
+        #print(name,"component",label.NbChildren(),rlabel)
 
         # Create solid
         logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg)
@@ -182,7 +183,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         return physicalVolume
 
     elif shapeTool.IsShape(label) :
-        print(name, "shape",label.NbChildren())
+        # print(name, "shape",label.NbChildren())
 
         # make solid
         solid =  oceShape_Geant4_Tessellated(name, shape, greg)
