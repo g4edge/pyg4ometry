@@ -1,8 +1,6 @@
 import pyg4ometry as _pyg4
 import pyg4ometry.pyoce as _oce
 
-def oceShape_Geant4_PhysicalVolume(name, logicalVolume, pos, rot, greg):
-    pass
 
 def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
     try :
@@ -12,7 +10,7 @@ def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
 
     return _pyg4.geant4.LogicalVolume(solid,material,name,greg)
 
-def oceShape_Geant4_Assembly(name, shape, greg) :
+def oceShape_Geant4_Assembly(name, greg) :
     try :
         return greg.logicalVolumeDict[name]
     except :
@@ -136,7 +134,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         try :
             return greg.logicalVolumeDict[name]
         except :
-            assembly = oceShape_Geant4_Assembly(name,shape,greg)
+            assembly = oceShape_Geant4_Assembly(name,greg)
 
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
@@ -198,7 +196,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, addBoundingSolids = False) :
         try :
             return greg.logicalVolumeDict[name]
         except :
-            assembly = oceShape_Geant4_Assembly(name,shape,greg)
+            assembly = oceShape_Geant4_Assembly(name,greg)
 
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
