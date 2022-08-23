@@ -61,3 +61,5 @@ Template for modern Python package GitHub repositories.
 * Edit the pre-commit hook configuration in `.pre-commit-config.yaml`. A long
   list of hooks can be found [here](https://pre-commit.com/hooks.html)
 * Adapt the Sphinx configuration in `docs/source/conf.py`
+
+<sub>*This Python package layout is based on [pyproject-template](https://github.com/gipert/pyproject-template).*</sub>
