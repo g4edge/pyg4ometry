@@ -119,29 +119,27 @@ def oceShape_Geant4_Tessellated(name, shape, greg ,linDef = 0.5, angDef = 0.5) :
 
     return g4t
 
-def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, meshQualityMap, addBoundingSolids = False) :
+def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels,addBoundingSolids = False) :
     name  = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
     _oce.TDF.TDF_Tool.Entry(label,node)
 
-    if name is None or name == "SOLID" or name == "COMPOUND" : # TODO must be a better way of finding these generic names
+    if name is None or name in badCADLabels : # TODO must be a better way of finding these generic names
         name = node.ToCString()
+        name = 'l_'+name.replace(":","_")
 
     loc   = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
 
-    try :
+    if name in meshQualityMap:
         meshQuality = meshQualityMap[name]
-    except KeyError :
+    else :
         meshQuality = (defaultLinDef,deftaulAngDef)
 
-    try :
-        labelToSkipList.index(name)
+    if name in labelToSkipList:
         print("skipping",name)
         return None
-    except ValueError :
+    else:
         pass
-
-
 
     shape = shapeTool.GetShape(label)
     locShape = shape.Location()
@@ -161,7 +159,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            component = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, meshQualityMap, addBoundingSolids)
+            component = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, meshQualityMap,badCADLabels, addBoundingSolids)
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
             if component :
@@ -175,7 +173,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
         shapeTool.GetReferredShape(label, rlabel)
 
         # Create solid
-        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg, materialMap, labelToSkipList, meshQualityMap, addBoundingSolids)
+        logicalVolume = _oce2Geant4_traverse(shapeTool, rlabel, greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels, addBoundingSolids)
 
         if not logicalVolume :
             return
@@ -223,7 +221,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
             b, child = label.FindChild(i, False)
-            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, meshQualityMap, addBoundingSolids)
+            logicalVolume = _oce2Geant4_traverse(shapeTool, child, greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels, addBoundingSolids)
 
             if not logicalVolume : # logical could be None
                 continue
@@ -270,6 +268,6 @@ def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = [], mes
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
 
     # traverse cad and make geant4 geometry
-    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelToSkipList, meshQualityMap)
+    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels = ["COMPOUND","SOLID"])
 
     return greg
