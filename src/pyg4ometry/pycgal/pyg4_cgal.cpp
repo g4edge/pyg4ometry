@@ -227,7 +227,7 @@ extern "C" int pyg4_cgal_nefpolyhedron_print(void *nefIn)
 {
   printf("pyg4_cgal_nefpolyhedron_print>\n");  
 
-  Nef_polyhedron *nef = (Nef_polyhedron*)nefIn;
+  //Nef_polyhedron *nef = (Nef_polyhedron*)nefIn;
 
   return SUCCESS;    
 }
@@ -238,10 +238,9 @@ extern "C" int pyg4_cgal_surfacemesh_print(void *meshIn)
 
   Surface_mesh *mesh = (Surface_mesh*)meshIn;
 
-  Surface_mesh::Vertex_range r = mesh->vertices();
-  Surface_mesh::Vertex_range::iterator vb = r.begin();
-  Surface_mesh::Vertex_range::iterator ve = r.end();
-
+  //Surface_mesh::Vertex_range r = mesh->vertices();
+  //Surface_mesh::Vertex_range::iterator vb = r.begin();
+  //Surface_mesh::Vertex_range::iterator ve = r.end();
 
   // Loop over vertices
   printf("pyg4_cgal_surfacemesh_print> vertices\n");
