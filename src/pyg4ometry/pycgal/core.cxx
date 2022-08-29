@@ -66,6 +66,13 @@ CSG* CSG::fromPolygons(py::list &polygons, bool cgalTest) {
     py::print("CSG::surfacemesh::does_self_intersect",b_does_self_intersect);
     py::print("CSG::surfacemesh::does_bound_a_volume",b_does_bound_a_volume);
     py::print("CSG::surfacemesh::is_outward_oriented",b_is_outward_oriented);
+    #else
+    // these are totally unnecessary but allow us to avoid compiler warnings
+    i_number_of_border_halfedges = 0;
+    b_is_closed = false;
+    b_does_self_intersect = false;
+    b_does_bound_a_volume = false;
+    b_is_outward_oriented = false;
     #endif
   }
 
