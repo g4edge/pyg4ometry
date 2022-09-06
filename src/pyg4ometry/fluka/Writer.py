@@ -24,32 +24,22 @@ class Writer:
     def __init__(self):
         pass
 
-    def addGlobal(self):
-        pass
-
-    def addDefaults(self):
-        pass
-
     def addDetector(self, flukaRegistry):
         self.flukaRegistry = flukaRegistry
-
-    def addBeam(self):
-        pass
-
-    def addBeamPos(self):
-        pass
-
-    def addUserbin(self):
-        pass
-
-    def addStart(self):
-        pass
 
     def write(self, fileName):
         f = open(fileName,"w")
 
         # actually used rot-defi directives
         rotdefi = {}
+
+        ###########################################
+        # loop over (init cards)
+        ###########################################
+        for c in self.flukaRegistry.cardDict.keys() :
+            if c == "TITLE" or c == "DEFAULTS" or c == "BEAMPOS" :
+                cardstr = self.flukaRegistry.cardDict[c].toFreeString()
+                f.write(f"{cardstr}\n")
 
         f.write("GEOBEGIN                                                              COMBNAME\n")
         f.write("    0    0                                                                    \n")
@@ -120,6 +110,18 @@ class Writer:
         for rotdefi in rotdefi.values():
             rotstr = rotdefi.flukaFreeString()
             f.write(f"{rotstr}\n")
+
+        ###########################################
+        # loop over (non init cards)
+        ###########################################
+        for c in self.flukaRegistry.cardDict.keys() :
+            if c != "TITLE" or c != "DEFAULTS" or c != "BEAMPOS" :
+                for card in self.flukaRegistry.cardDict[c] :
+                    cardstr = card.toFreeString()
+                    f.write(f"{cardstr}\n")
+
+        ###########################################
+        # Close file (TODO use with)
+        ###########################################
         f.write("END\n")
         f.close()
-
