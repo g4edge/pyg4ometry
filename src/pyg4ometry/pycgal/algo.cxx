@@ -30,11 +30,13 @@ namespace std
       }
 
       // loop over faces
+      /*
       for(Surface_mesh::Face_index fd : sm->faces()) {
         for(Surface_mesh::Halfedge_index hd :  CGAL::halfedges_around_face(sm->halfedge(fd),*sm)) {
           // std::hash_combine(h,std::hash<int>()((int)sm->source(hd)));
         }
       }
+      */
 
       return h;
     }
@@ -259,7 +261,7 @@ SurfaceMesh* SurfaceMesh::unioN(SurfaceMesh &mesh2) {
   py::print("SurfaceMesh::unioN",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   #endif
 
-  bool valid_union = CGAL::Polygon_mesh_processing::corefine_and_compute_union(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  /*bool valid_union = */CGAL::Polygon_mesh_processing::corefine_and_compute_union(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
@@ -270,7 +272,7 @@ SurfaceMesh* SurfaceMesh::intersect(SurfaceMesh &mesh2) {
   py::print("SurfaceMesh::intersect",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   #endif
 
-  bool valid_intersection = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  /*bool valid_intersection = */CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 
@@ -281,7 +283,7 @@ SurfaceMesh* SurfaceMesh::subtract(SurfaceMesh &mesh2) {
   py::print("SurfaceMesh::intersect",(void*)_surfacemesh,(void*)mesh2._surfacemesh,(void*)out);
   #endif
 
-  bool valid_difference = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(*_surfacemesh,*(mesh2._surfacemesh), *out);
+  /*bool valid_difference = */CGAL::Polygon_mesh_processing::corefine_and_compute_difference(*_surfacemesh,*(mesh2._surfacemesh), *out);
   return new SurfaceMesh(out);
 }
 

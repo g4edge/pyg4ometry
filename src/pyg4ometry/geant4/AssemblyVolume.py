@@ -292,3 +292,9 @@ class AssemblyVolume(object):
         self.registry.setWorld(wl.name)
 
         return wl
+    def dumpStructure(self, depth=0):
+        print(depth*"-"+self.name+" (lv)")
+
+        for d in self.daughterVolumes :
+            print(2*depth*"-"+d.name+" (pv)")
+            d.logicalVolume.dumpStructure(depth+2)

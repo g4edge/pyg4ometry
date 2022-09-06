@@ -20,6 +20,7 @@ from .material import (defineBuiltInFlukaMaterials,
                        predefinedMaterialNames)
 from . import body as _body
 from . import vector as _vector
+from . import card as _card
 
 import logging as _logging
 logger = _logging.getLogger(__name__)
@@ -148,6 +149,55 @@ class FlukaRegistry(object):
     def assignma(self, material, *regions):
         return self.addMaterialAssignments(material, *regions)
 
+    def addCard(self, card):
+        if card.keyword in self.cardDict:
+            self.cardDict[card.keyword].append(card)
+        else :
+            self.cardDict[card.keyword] = [card]
+
+    def addGlobal(self):
+        pass
+
+    def addDefaults(self):
+        pass
+
+    def addBeam(self):
+        pass
+
+    def addBeamPos(self):
+        pass
+
+    def addUserBin(self):
+        pass
+
+    def addUsrBdx(self, binning, scoringDir, scoringType, type, lunOutput, reg1, reg2, area, name,
+                   maxKE = None,minKE = None, nKEbin = None, maxSA = None, minSA = None, nSEbin = None):
+        c1 = _card.Card("USRBDX",binning + 10*scoringDir + 100*scoringType, type, lunOutput, reg1, reg2, area, name)
+        c2 = _card.Card("USRBDX",maxKE, minKE, nKEbin, maxSa, minSA, nSEbin, "&")
+
+        self.addCard(c1)
+        self.addCard(c2)
+
+    def addUsricall(self):
+        pass
+
+    def addUsrocall(self):
+        pass
+
+    def addUserDump(self, mgdrawOpt = 100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
+        if not sdum :
+            c = _card.Card("USERDUMP",mgdrawOpt, lun, mgdrawOpt, sdum=sdum)
+            self.addCard(c)
+        elif sdum == "UDQUENCH" :
+            c1 = _card.Card()
+
+    def assddRandomiz(self, seedLun =1, seed=54217137):
+        c = _card.Card("RANDOMIZ", seedLun, seed)
+        self.addCard(c)
+
+    def addStart(self, maxPrimHistories, timeTermSec= None, coreDump = None, eachHistoryOutput = None):
+        c = _card.Card("START", maxPrimHistories,None,timeTermSec,coreDump,eachHistoryOutput)
+        self.addCard(c)
 
 class RotoTranslationStore(_MutableMapping):
     """ only get by names."""

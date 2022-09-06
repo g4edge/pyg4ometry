@@ -1,6 +1,6 @@
 import numpy as _np
 import pyg4ometry as _pyg4
-import pyg4ometry.pyoce as _oce
+# import pyg4ometry.pyoce as _oce
 
 
 def beamPipeCADFeature(shape) :
