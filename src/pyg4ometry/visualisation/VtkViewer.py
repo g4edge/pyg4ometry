@@ -890,6 +890,9 @@ class VtkViewer:
         self.ren.AddActor(planeActor)
         self.usercutters.append(cutter)
 
+    def addActor(self, actor):
+        self.ren.AddActor(actor)
+
     def getOverlapVisOptions(self, overlaptype):
         visOptions = _VisOptions()
         if overlaptype == _OverlapType.protrusion:
