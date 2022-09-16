@@ -184,9 +184,9 @@ class FlukaRegistry(object):
     def addUsrocall(self):
         pass
 
-    def addUserDump(self, mgdrawOpt = 100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
+    def addUserDump(self, mgdraw = 100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
         if not sdum :
-            c = _card.Card("USERDUMP",mgdrawOpt, lun, mgdrawOpt, sdum=sdum)
+            c = _card.Card("USERDUMP",mgdraw, lun, mgdrawOpt, sdum=sdum)
             self.addCard(c)
         elif sdum == "UDQUENCH" :
             c1 = _card.Card()
