@@ -15,6 +15,7 @@ endif()
 
 find_package(pybind11 2.6 CONFIG REQUIRED)
 find_package(CGAL REQUIRED)  # TODO: version?
+find_package(Boost REQUIRED)
 
 # Create the pybind11 library
 add_library(${CMAKE_PROJECT_NAME} MODULE algo.cxx algo.h core.cxx core.h geom.cxx geom.h)
