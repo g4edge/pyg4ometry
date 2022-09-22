@@ -4,7 +4,6 @@
 namespace py = pybind11;
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
