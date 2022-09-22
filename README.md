@@ -29,6 +29,8 @@ Template for modern Python package GitHub repositories.
     * https://codecov.io
     * https://readthedocs.io (activate versions for which you want docs to be build)
     * GitHub actions (in the repository settings)
+1. [Optional] Get a PyPI token and add it as a repository secret on GitHub
+   (name it `PYPI_PASSWORD`) to enable publishing the package.
 
 ## Quick start
 
@@ -61,5 +63,9 @@ Template for modern Python package GitHub repositories.
 * Edit the pre-commit hook configuration in `.pre-commit-config.yaml`. A long
   list of hooks can be found [here](https://pre-commit.com/hooks.html)
 * Adapt the Sphinx configuration in `docs/source/conf.py`
+* Building wheels with GitHub actions currently assumes pure Python wheels.
+  Have a look at [this Scikit-HEP
+  documentation](https://scikit-hep.org/developer/gha_wheels) to learn how to
+  configure building of binary wheels.
 
 <sub>*This Python package layout is based on [pyproject-template](https://github.com/gipert/pyproject-template).*</sub>
