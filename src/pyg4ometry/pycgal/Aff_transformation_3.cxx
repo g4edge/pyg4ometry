@@ -29,6 +29,9 @@ PYBIND11_MODULE(Aff_transformation_3, m) {
 
   py::class_<Aff_transformation_3_EPECK>(m,"Aff_transformation_3_EPECK")
     .def(py::init<const CGAL::Identity_transformation &>())
-    .def(py::init<const CGAL::Translation&, const Vector_3_EPECK &>());
+    .def(py::init<const CGAL::Translation&, const Vector_3_EPECK &>())
+    .def(py::init<double, double, double,
+                  double, double, double,
+                  double, double, double, double>());
 
 }

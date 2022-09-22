@@ -9,12 +9,12 @@ import numpy as _np
 
 class CSG :
     def __init__(self):
-        self.sm = Surface_mesh.Surface_mesh_EPICK()
+        self.sm = Surface_mesh.Surface_mesh_EPECK()
 
     @classmethod
     def fromPolygons(cls, polygons, **kwargs):
         csg = CSG()
-        csg.sm = Surface_mesh.Surface_mesh_EPICK()
+        csg.sm = Surface_mesh.Surface_mesh_EPECK()
         Surface_mesh.toCGALSurfaceMesh(csg.sm, polygons)
         Polygon_mesh_processing.triangulate_faces(csg.sm)
         return csg
@@ -51,7 +51,7 @@ class CSG :
         rot[2][1] = (verSin * z * y) + (x * sinAngle)
         rot[2][2] = (verSin * z * z) + cosAngle
 
-        rotn = Aff_transformation_3.Aff_transformation_3_EPICK(rot[0][0], rot[0][1], rot[0][2],
+        rotn = Aff_transformation_3.Aff_transformation_3_EPECK(rot[0][0], rot[0][1], rot[0][2],
                                                                rot[1][0], rot[1][1], rot[1][2],
                                                                rot[2][0], rot[2][1], rot[2][2],1);
         Polygon_mesh_processing.transform(rotn, self.sm)
@@ -59,8 +59,8 @@ class CSG :
     def translate(self,disp):
         vIn = geom.Vector(disp)
         # TODO tidy vector usage (i.e conversion in geom?)
-        v = Vector_3.Vector_3_EPICK(vIn[0],vIn[1],vIn[2])
-        transl = Aff_transformation_3.Aff_transformation_3_EPICK(CGAL.Translation(), v)
+        v = Vector_3.Vector_3_EPECK(vIn[0],vIn[1],vIn[2])
+        transl = Aff_transformation_3.Aff_transformation_3_EPECK(CGAL.Translation(), v)
         Polygon_mesh_processing.transform(transl, self.sm)
 
     # TODO need to finish and check signatures
@@ -82,7 +82,7 @@ class CSG :
             x = 1
             y = 1
             z = 1
-        scal = Aff_transformation_3.Aff_transformation_3_EPICK(x, 0, 0,
+        scal = Aff_transformation_3.Aff_transformation_3_EPECK(x, 0, 0,
                                                                0, y, 0,
                                                                0, 0, z,1)
         Polygon_mesh_processing.transform(scal, self.sm)
@@ -100,21 +100,21 @@ class CSG :
         return self.sm.number_of_faces()
 
     def intersect(self, csg2):
-        out = Surface_mesh.Surface_mesh_EPICK()
+        out = Surface_mesh.Surface_mesh_EPECK()
         Polygon_mesh_processing.corefine_and_compute_intersection(self.sm,csg2.sm,out)
         csg = CSG()
         csg.sm = out
         return csg
 
     def union(self, csg2):
-        out = Surface_mesh.Surface_mesh_EPICK()
+        out = Surface_mesh.Surface_mesh_EPECK()
         Polygon_mesh_processing.corefine_and_compute_union(self.sm,csg2.sm,out)
         csg = CSG()
         csg.sm = out
         return csg
 
     def subtract(self, csg2):
-        out = Surface_mesh.Surface_mesh_EPICK()
+        out = Surface_mesh.Surface_mesh_EPECK()
         Polygon_mesh_processing.corefine_and_compute_difference(self.sm,csg2.sm,out)
         csg = CSG()
         csg.sm = out
