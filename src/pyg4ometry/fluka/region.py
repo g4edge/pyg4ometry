@@ -20,7 +20,8 @@ import pyg4ometry.config as _config
 if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG, do_intersect
 elif _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
+    pass
+    #from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
 
 from textwrap import wrap as _wrap
 

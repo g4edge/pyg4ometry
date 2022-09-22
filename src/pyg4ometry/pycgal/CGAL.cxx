@@ -15,6 +15,18 @@ typedef CGAL::Surface_mesh<Kernel::Point_3>                   Surface_mesh;
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/aff_transformation_tags.h>
+
 PYBIND11_MODULE(CGAL, m) {
-   m.def("is_closed",[](Surface_mesh &pm) { return CGAL::is_closed(pm);},"Is the surface closed", py::arg("Surface_mesh"));
+
+  py::class_<CGAL::Translation>(m,"Translation")
+    .def(py::init<>());
+  py::class_<CGAL::Rotation>(m,"Rotation")
+    .def(py::init<>());
+  py::class_<CGAL::Scaling>(m,"Scaling")
+    .def(py::init<>());
+  py::class_<CGAL::Identity_transformation>(m,"Identity_transformation")
+    .def(py::init<>());
+
+  m.def("is_closed",[](Surface_mesh &pm) { return CGAL::is_closed(pm);},"Is the surface closed", py::arg("Surface_mesh"));
 }
