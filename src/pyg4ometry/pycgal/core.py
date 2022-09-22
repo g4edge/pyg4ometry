@@ -4,6 +4,7 @@ from . import Polygon_mesh_processing
 from . import geom
 from . import Aff_transformation_3
 from . import Vector_3
+from . import Polygon_2
 
 import numpy as _np
 
@@ -31,8 +32,8 @@ class CSG :
 
         normAxis = axis / axis.length()
 
-        cosAngle = _np.cos(angleDeg / 180.0 * _np.pi)
-        sinAngle = _np.sin(angleDeg / 180.0 * _np.pi)
+        cosAngle = _np.cos(-angleDeg / 180.0 * _np.pi)
+        sinAngle = _np.sin(-angleDeg / 180.0 * _np.pi)
         verSin   = 1 - cosAngle
 
         x = normAxis.x
@@ -133,5 +134,13 @@ class CSG :
     def area(self) :
         return Polygon_mesh_processing.area(self.sm)
 
+def decomposePolygon2d(pgon) :
+    poly2 = Polygon_2.Polygon_2_EPECK()
+    for p in pgon :
+        poly2.push_back(p[0],p[1])
+
 def do_intersect(m1, m2) :
     return Polygon_mesh_processing.do_intersect(m1,m2)
+
+
+

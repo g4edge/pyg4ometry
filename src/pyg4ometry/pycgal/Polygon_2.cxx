@@ -21,10 +21,14 @@ PYBIND11_MODULE(Polygon_2, m) {
   py::class_<Polygon_2_EPICK>(m,"Polygon_2_EPICK")
     .def(py::init<>())
     .def("size",&Polygon_2_EPICK::size)
-    .def("push_back",&Polygon_2_EPICK::push_back);
+    .def("push_back",&Polygon_2_EPICK::push_back)
+    .def("vertices_begin",&Polygon_2_EPICK::vertices_begin)
+    .def("vertices_end",&Polygon_2_EPICK::vertices_end);
 
   py::class_<Polygon_2_EPECK>(m,"Polygon_2_EPECK")
     .def(py::init<>())
     .def("size",&Polygon_2_EPECK::size)
-    .def("push_back",&Polygon_2_EPECK::push_back);
+    .def("push_back",&Polygon_2_EPECK::push_back)
+    .def("vertices_begin",&Polygon_2_EPECK::vertices_begin)
+    .def("vertices_end",&Polygon_2_EPECK::vertices_end);
 }
