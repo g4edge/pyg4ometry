@@ -125,7 +125,85 @@ class CSG :
 
     # TODO finish coplanar intersection
     def coplanarIntersection(self, csg) :
+        # print('core coplanarIntersection : has bugs for cgal meshing, switch to pycsg in config')
         return CSG()
+
+        from ..pycsg import core as _core
+        from ..pycsg import geom as _geom
+
+        def convertFromLists(vpl):
+            polyList = []
+            for p in vpl[1]:
+                v1 = _geom.Vertex(vpl[0][p[0]])
+                v2 = _geom.Vertex(vpl[0][p[1]])
+                v3 = _geom.Vertex(vpl[0][p[2]])
+                poly = _geom.Polygon([v1, v2, v3])
+                polyList.append(poly)
+            return polyList
+
+
+        vpl1 = self.toVerticesAndPolygons()
+        vpl2 = csg.toVerticesAndPolygons()
+
+        csg1 = _core.CSG.fromPolygons(convertFromLists(vpl1))
+        csg2 = _core.CSG.fromPolygons(convertFromLists(vpl2))
+
+        #print(vpl1)
+        #print(csg1.polygons)
+
+        # print(csg1.polygons)
+        print('before coplanar call',type(csg1),type(csg2))
+        inter = csg1.coplanarIntersection(csg2)
+        print('after coplanar call',type(inter),inter.polygons)
+
+        c = CSG()
+        out = Surface_mesh.Surface_mesh_EPECK()
+
+        #for p in inter.polygons :
+        #    print(p)
+        #    for v in p.vertices :
+        #        print(v)
+
+        # Surface_mesh.toCGALSurfaceMesh(out,list(inter.toVerticesAndPolygons()))
+        return c
+
+    @classmethod
+    def cube(cls, center=[0, 0, 0], radius=[1, 1, 1]):
+        """
+        Construct an axis-aligned solid cuboid. Optional parameters are `center` and
+        `radius`, which default to `[0, 0, 0]` and `[1, 1, 1]`. The radius can be
+        specified using a single number or a list of three numbers, one for each axis.
+
+        Example code::
+
+            cube = CSG.cube(
+              center=[0, 0, 0],
+              radius=1
+            )
+        """
+        c = geom.Vector(0, 0, 0)
+        r = [1, 1, 1]
+        if isinstance(center, list): c = geom.Vector(center)
+        if isinstance(radius, list):
+            r = radius
+        else:
+            r = [radius, radius, radius]
+
+        polygons = list([geom.Polygon(
+            list([geom.Vertex(
+                geom.Vector(
+                    c.x + r[0] * (2 * bool(i & 1) - 1),
+                    c.y + r[1] * (2 * bool(i & 2) - 1),
+                    c.z + r[2] * (2 * bool(i & 4) - 1)
+                )) for i in v[0]])) for v in [
+            [[0, 4, 6, 2], [-1, 0, 0]],
+            [[1, 3, 7, 5], [+1, 0, 0]],
+            [[0, 1, 5, 4], [0, -1, 0]],
+            [[2, 6, 7, 3], [0, +1, 0]],
+            [[0, 2, 3, 1], [0, 0, -1]],
+            [[4, 5, 7, 6], [0, 0, +1]]
+        ]])
+        return CSG.fromPolygons(polygons)
 
     def isNull(self):
         return self.sm.number_of_faces() == 0
