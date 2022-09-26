@@ -2,6 +2,7 @@ import pyg4ometry.transformation as _transformation
 import pyg4ometry.geant4 as _geant4
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.pycgal as _pycgal
+from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
 import numpy as _np
 import copy as _copy
@@ -841,7 +842,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         zrList.reverse()
         zrArray = _np.array(zrList)
 
-        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+        zrListConvex = _PolygonProcessing.decomposePolygon2d(zrArray)
 
         #_plt.figure()
         #_plt.plot(pZ,pR,"*-")
@@ -990,7 +991,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         zrList.reverse()
         zrArray = _np.array(zrList)
 
-        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+        zrListConvex = _PolygonProcessing.decomposePolygon2d(zrArray)
 
         fregion = _fluka.Region("R"+name)
 
@@ -1345,7 +1346,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         nslices  = len(pZslices)
 
         vertices = list(reversed(vertices))
-        polyListConvex = _pycgal.numpyPolygonConvex(_np.array(vertices))
+        polyListConvex = _PolygonProcessing.decomposePolygon2d(vertices)
 
 
         fregion = _fluka.Region("R"+name)
@@ -1715,41 +1716,27 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
         raise TypeError("Unknown material.type \""+str(material.type)+"\"")
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
-    import pyg4ometry.pycgal as pycgal
-    import ctypes as ctypes
 
-    nef = pycgal.pycsgmesh2NefPolyhedron(mesh)
-
-    nconvex = ctypes.c_int(0)
-    vpArray = ctypes.c_void_p*10000
-    polyhedra = vpArray()
-
-    pycgal.nefpolyhedron_to_convexpolyhedra(nef,polyhedra,ctypes.byref(nconvex))
-
-    print('pycsgmesh2FlukaRegion> nconvex=',nconvex.value)
+    polyhedron = _pycgal.Polyhedron_3.Polyhedron_3_EPECK()
+    _pycgal.CGAL.copy_face_graph(mesh.sm, polyhedron)
+    nef = _pycgal.Nef_polyhedron_3.Nef_polyhedron_3_EPECK(polyhedron)
+    convex_polyhedra = _pycgal.PolyhedronProcessing.nefPolyhedron_to_convexPolyhedra(nef)
 
     fregion = _fluka.Region("R" + name)
 
     ibody = 0
 
-    for i in range(0,nconvex.value,1) :
+    for convex_polyhedron in convex_polyhedra :
 
-        nplanes = ctypes.c_int(0)
-
-        planes = _np.zeros((1000, 6))
-        planespp = (planes.__array_interface__['data'][0] +
-                   _np.arange(planes.shape[0]) * planes.strides[0]).astype(_np.uintp)
-
-        pycgal.convexpolyhedron_to_planes(polyhedra[i], ctypes.byref(nplanes), planespp)
-
-        print('pycsgmesh2FlukaRegion> iconvex=',i,polyhedra[i],nplanes.value)
+        planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(convex_polyhedron)
 
         fzone = _fluka.Zone()
 
-        for j in range(0,nplanes.value) :
+        for plane in planes :
+            print(plane)
             fbody = flukaRegistry.makeBody(PLA, "B" + name +format(ibody,'02'),
-                              -planes[j][3:],
-                               planes[j][0:3]/10.0,
+                               -plane[3:],
+                               plane[0:3]/10.0,
                                transform=transform,
                                flukaregistry=flukaRegistry,
                                comment=commentName)

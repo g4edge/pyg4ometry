@@ -18,10 +18,16 @@ PYBIND11_MODULE(Vector_3, m) {
   py::class_<Vector_3_EPICK>(m,"Vector_3_EPICK")
     .def(py::init<>())
     .def(py::init<int, int, int>())
-    .def(py::init<double,double,double>());
+    .def(py::init<double,double,double>())
+    .def("x",[](Vector_3_EPICK &p3) {return CGAL::to_double(p3.x());})
+    .def("y",[](Vector_3_EPICK &p3) {return CGAL::to_double(p3.y());})
+    .def("z",[](Vector_3_EPICK &p3) {return CGAL::to_double(p3.z());});
 
   py::class_<Vector_3_EPECK>(m,"Vector_3_EPECK")
     .def(py::init<>())
     .def(py::init<int, int, int>())
-    .def(py::init<double,double,double>());
+    .def(py::init<double,double,double>())
+    .def("x",[](Vector_3_EPECK &p3) {return CGAL::to_double(p3.x());})
+    .def("y",[](Vector_3_EPECK &p3) {return CGAL::to_double(p3.y());})
+    .def("z",[](Vector_3_EPECK &p3) {return CGAL::to_double(p3.z());});
 }

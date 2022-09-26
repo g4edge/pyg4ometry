@@ -9,6 +9,7 @@ if _config.meshing == _config.meshingType.pycsg :
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm :
     from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
@@ -111,7 +112,7 @@ class ExtrudedSolid(_SolidBase):
                         scale[-1]*vert[1]+y_offs[-1]] for vert in list(reversed(vertices))]
 
 
-        topPolyListConvex = _pycgal.numpyPolygonConvex(_np.array(topPolyList))
+        topPolyListConvex = _PolygonProcessing.decomposePolygon2d(topPolyList)
 
         for topPoly in topPolyListConvex :
             topPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[-1])) for vert in topPoly])
@@ -121,9 +122,7 @@ class ExtrudedSolid(_SolidBase):
         bottomPolyList = [[scale[0]*vert[0]+x_offs[0],
                            scale[0]*vert[1]+y_offs[0]] for vert in list(reversed(vertices))]
 
-
-        bottomPolyListConvex = _pycgal.numpyPolygonConvex(_np.array(bottomPolyList))
-
+        bottomPolyListConvex = _PolygonProcessing.decomposePolygon2d(bottomPolyList)
 
         for bottomPoly in bottomPolyListConvex :
             bottomPoly = list(bottomPoly) # TODO reversed here because of needing counterclockwise in 2D convex decomp in CGAL

@@ -4,7 +4,9 @@ from . import Polygon_mesh_processing
 from . import geom
 from . import Aff_transformation_3
 from . import Vector_3
+from . import Point_2
 from . import Polygon_2
+from . import Polyhedron_3
 
 import numpy as _np
 
@@ -19,6 +21,9 @@ class CSG :
         Surface_mesh.toCGALSurfaceMesh(csg.sm, polygons)
         Polygon_mesh_processing.triangulate_faces(csg.sm)
         return csg
+
+    def toVerticesAndPolygons(self):
+        return Surface_mesh.toVerticesAndPolygons(self.sm)
 
     def clone(self):
         csg = CSG()
@@ -88,9 +93,6 @@ class CSG :
                                                                0, 0, z,1)
         Polygon_mesh_processing.transform(scal, self.sm)
 
-    def toVerticesAndPolygons(self):
-        return Surface_mesh.toVerticesAndPolygons(self.sm)
-
     def getNumberPolys(self) :
         return self.sm.number_of_faces()
 
@@ -134,13 +136,88 @@ class CSG :
     def area(self) :
         return Polygon_mesh_processing.area(self.sm)
 
-def decomposePolygon2d(pgon) :
-    poly2 = Polygon_2.Polygon_2_EPECK()
-    for p in pgon :
-        poly2.push_back(p[0],p[1])
+def do_intersect(csg1, csg2) :
+    return Polygon_mesh_processing.do_intersect(csg1.sm,csg2.sm)
 
-def do_intersect(m1, m2) :
-    return Polygon_mesh_processing.do_intersect(m1,m2)
+def intersecting_meshes(csgList) :
 
+    smList = [c.sm for c in csgList]
+    print(smList)
 
+class PolygonProcessing :
 
+    @classmethod
+    def decomposePolygon2d(cls, pgon) :
+        poly2 = Polygon_2.Polygon_2_EPECK()
+        for p in pgon :
+            poly2.push_back(Point_2.Point_2_EPECK(p[0],p[1]))
+
+        partPoly = Polygon_2.List_Polygon_2_EPECK()
+        # TODO change function name (test)
+        Polygon_2.test(poly2, partPoly)
+
+        partPolyList = []
+
+        for pp in partPoly :
+
+            partPolyCoords = []
+            for ppi in range(0,pp.size()) :
+                pnt = pp.vertex(ppi)
+                partPolyCoords.append([pnt.x(),pnt.y()])
+
+            partPolyList.append(partPolyCoords)
+        return partPolyList
+
+class PolyhedronProcessing :
+
+    @classmethod
+    def surfaceMesh_to_Polyhedron(cls, sm):
+        vf = Surface_mesh.toVerticesAndPolygons(sm)
+
+        p = Polyhedron_3.Polyhedron_3_EPECK()
+        p.buildFromVertsAndFaces(vf[0], vf[1])
+
+        return p
+
+    @classmethod
+    def nefPolyhedron_to_convexPolyhedra(cls, np):
+
+        CGAL.convex_decomposition_3(np)
+        vi = np.volume_begin()
+        ve = np.volume_end()
+        pList = []
+        while vi != ve :
+            si = vi.shells_begin()
+            se = vi.shells_end()
+            if vi.mark() :
+                while si != se :
+                    p = Polyhedron_3.Polyhedron_3_EPECK()
+                    np.convert_inner_shell_to_polyhedron(si,p)
+                    pList.append(p)
+                    si.next()
+            vi.next()
+
+        return pList
+
+    @classmethod
+    def polyhedron_to_numpyArrayPlanes(cls, p):
+
+        return _np.array(p.convertToPlanes())
+
+        # Following does not work, maybe because not triangles
+        planes = []
+        fi = p.facets_begin()
+        fe = p.facets_end()
+        while fi != fe :
+
+            plane = fi.plane()
+            print(plane)
+            # point = plane.point()
+            print(plane.a(),plane.b(),plane.c(),plane.d())
+            orthvec = plane.orthogonal_vector()
+
+            #print(plane.point(), plane.orthogonal_vector())
+            #planes.append([point.x(),point.y(),point.z(), orthvec.x(), orthvec.y(), orthvec.z()])
+            fi.next()
+
+        return _np.array(planes)

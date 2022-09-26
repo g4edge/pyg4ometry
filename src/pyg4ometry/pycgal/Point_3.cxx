@@ -18,10 +18,16 @@ PYBIND11_MODULE(Point_3, m) {
   py::class_<Point_3_EPICK>(m,"Point_3_EPICK")
     .def(py::init<>())
     .def(py::init<int, int, int>())
-    .def(py::init<double,double,double>());
+    .def(py::init<double,double,double>())
+    .def("x",[](Point_3_EPICK &p3) {return CGAL::to_double(p3.x());})
+    .def("y",[](Point_3_EPICK &p3) {return CGAL::to_double(p3.y());})
+    .def("z",[](Point_3_EPICK &p3) {return CGAL::to_double(p3.z());});
 
   py::class_<Point_3_EPECK>(m,"Point_3_EPECK")
     .def(py::init<>())
     .def(py::init<int, int, int>())
-    .def(py::init<double,double,double>());
+    .def(py::init<double,double,double>())
+    .def("x",[](Point_3_EPECK &p3) {return CGAL::to_double(p3.x());})
+    .def("y",[](Point_3_EPECK &p3) {return CGAL::to_double(p3.y());})
+    .def("z",[](Point_3_EPECK &p3) {return CGAL::to_double(p3.z());});
 }
