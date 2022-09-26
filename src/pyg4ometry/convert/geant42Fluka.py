@@ -1733,9 +1733,8 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
         fzone = _fluka.Zone()
 
         for plane in planes :
-            print(plane)
             fbody = flukaRegistry.makeBody(PLA, "B" + name +format(ibody,'02'),
-                               -plane[3:],
+                               -plane[3:]/_np.sqrt((plane[3:]**2).sum()),
                                plane[0:3]/10.0,
                                transform=transform,
                                flukaregistry=flukaRegistry,
