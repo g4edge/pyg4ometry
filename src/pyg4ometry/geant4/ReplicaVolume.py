@@ -33,8 +33,8 @@ class ReplicaVolume(_PhysicalVolume):
                  width, offset=0, registry=None, addRegistry=True, wunit="mm", ounit="mm"):
 
         # TBC - doesn't call super() so doesn't have PV objects
-        
-        self.type                = "replica"        
+
+        self.type                = "replica"
         self.name                = name
         self.logicalVolume       = logicalVolume
         self.motherVolume        = motherVolume
@@ -49,7 +49,7 @@ class ReplicaVolume(_PhysicalVolume):
 
         self.visOptions          = _VisOptions()
 
-        if addRegistry : 
+        if addRegistry :
             registry.addPhysicalVolume(self)
         self.registry = registry
 
@@ -277,8 +277,8 @@ class ReplicaVolume(_PhysicalVolume):
 
             [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
 
-            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)[0, :])[0]
-            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)[0, :])[0]
+            vMinDaughter = (dvmrot.dot(vMinDaughter) + dvtra)
+            vMaxDaughter = (dvmrot.dot(vMaxDaughter) + dvtra)
 
 
             if vMaxDaughter[0] > vMax[0] :

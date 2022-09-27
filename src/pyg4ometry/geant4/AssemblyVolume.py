@@ -156,7 +156,14 @@ class AssemblyVolume(object):
         # increment the recursion depth
         depth += 1
 
-        clipMesh = _Mesh(newSolid).localmesh
+        import pyg4ometry.gdml.Units as _Units
+        puval = _Units.unit(punit)
+        ruval = _Units.unit(runit)
+        if depth == 1:
+            position = [puval*e for e in position]
+            rotation = [ruval*e for e in rotation]
+
+        clipMesh = _Mesh(newSolid[depth-1]).localmesh
 
         outside =[]
         intersections = []
@@ -244,6 +251,19 @@ class AssemblyVolume(object):
                 vMin[2] = vMinDaughter[2]
 
         return [vMin, vMax]
+
+    def depth(self, depth=0):
+        '''
+        Depth for LV-PV tree
+        '''
+
+        depth = depth + 1
+
+        depthList = [depth]
+        for dv in self.daughterVolumes :
+            depthList.append(dv.logicalVolume.depth(depth))
+
+        return max(depthList)
 
     def getAABBMesh(self):
         '''return CSG.core (symmetric around the origin) axis aligned bounding box mesh'''
