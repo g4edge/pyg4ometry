@@ -17,18 +17,26 @@ class VisualisationOptions:
     Basic holder for visualisation parameters, i.e. colour and opacity.
     Construct an instance then modify members.
     """
-    def __init__(self):
-        self.representation = "surface"
-        self.colour         = [0.5,0.5,0.5]
-        self.alpha          = 0.5
-        self.visible        = True
-        self.lineWidth      = 1
-        self.randomColour   = False
+    def __init__(self,
+                 representation = "surface",
+                 colour = [0.5, 0.5, 0.5],
+                 alpha = 0.5,
+                 visible = True,
+                 lineWidth = 1,
+                 randomColour = False,
+                 depth=0):
+        self.representation = representation
+        self.colour         = colour
+        self.alpha          = alpha
+        self.visible        = visible
+        self.lineWidth      = lineWidth
+        self.randomColour   = randomColour
+        self.depth          = depth
 
     def __repr__(self):
         rgba= [*self.getColour(), self.alpha]
         return (f"<VisOpt: rep={self.representation}, rgba={rgba}, "
-                f"vis={self.visible}, linewidth={self.lineWidth}>")
+                f"vis={self.visible}, linewidth={self.lineWidth}, depth={self.depth}>")
 
     def getColour(self):
         """

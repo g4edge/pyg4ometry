@@ -5,6 +5,7 @@ from .Mesh                 import _getBoundingBoxMesh
 from .ViewerBase           import ViewerBase
 from .VisualisationOptions import *
 from .VtkViewer            import *
+from .VtkViewerNew         import *
 from .RenderWriter         import *
 from .Convert              import *
 from .VtkExporter          import *

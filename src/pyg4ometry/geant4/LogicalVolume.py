@@ -108,6 +108,9 @@ class LogicalVolume(object):
             if recursive:
                 for d in self.daughterVolumes:
                     d.logicalVolume.reMesh(recursive)
+        except _pyg4ometry.exceptions.NullMeshError:
+            self.mesh = None
+            print("geant4.LogicalVolume> meshing error {}".format(self.name))
         except ValueError:
             self.mesh = None
             print("geant4.LogicalVolume> meshing error {}".format(self.name))
