@@ -259,6 +259,39 @@ class AssemblyVolume(object):
 
         return bm.localmesh
 
+    def logicalVolume(self, material = "G4_Galactic", solidName = "worldSolid"):
+        """
+        Return an logical volume of this this assembly volume, in effect
+        adding a cuboid solid and material of this logical volume, retaining
+        all of the relative daughter placements.
+        """
+
+        import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
+
+
+        extent = self.extent(True)
+
+        # create world box
+        solid = _pyg4ometry.geant4.solid.Box("worldSolid",
+                           2.1 * max([abs(extent[1][0]),abs(extent[0][0])]),
+                           2.1 * max([abs(extent[1][1]),abs(extent[0][1])]),
+                           2.1 * max([abs(extent[1][2]),abs(extent[0][2])]),
+                           self.registry, "mm")
+
+        lv = _LogicalVolume(solid, material,"logical_"+self.name, self.registry )
+
+        for dv in self.daughterVolumes:
+            lv.add(dv)
+
+        return lv
+
+    def makeWorldVolume(self, material = "G4_Galactic"):
+
+        wl = self.logicalVolume(material, "worldSolid")
+
+        self.registry.setWorld(wl.name)
+
+        return wl
     def dumpStructure(self, depth=0):
         print(depth*"-"+self.name+" (lv)")
 

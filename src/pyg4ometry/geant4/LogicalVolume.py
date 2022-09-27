@@ -623,10 +623,10 @@ class LogicalVolume(object):
                         print(f"LogicalVolume.checkOverlaps> full coplanar test between daughters {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
                     # first check if bounding mesh intersects
-                    cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
-                    cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
-                    if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
-                         continue
+                    #cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
+                    #cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
+                    #if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
+                    #     continue
 
                     coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
                     if coplanarMesh.vertexCount() != 0:
@@ -639,9 +639,9 @@ class LogicalVolume(object):
             if debugIO :
                 print(f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}")
 
-            #cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
-            #if cullIntersection.vertexCount() == 0 :
-            #    continue
+            cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
+            if cullIntersection.vertexCount() == 0 :
+                continue
 
             interMesh = transformedMeshes[i].subtract(self.mesh.localmesh)
             _log.info('LogicalVolume.checkOverlaps> daughter container %d %d %d' % (i, interMesh.vertexCount(), interMesh.polygonCount()))
@@ -658,9 +658,9 @@ class LogicalVolume(object):
                 if debugIO :
                     print(f"LogicalVolume.checkOverlaps> full daughter-mother coplanar test {transformedMeshesNames[i]}"),
 
-                cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
-                if cullCoplanar.vertexCount() == 0 :
-                    continue
+                #cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
+                #if cullCoplanar.vertexCount() == 0 :
+                #    continue
 
                 coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
                 if coplanarMesh.vertexCount() != 0:

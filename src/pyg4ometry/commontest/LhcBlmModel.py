@@ -1,5 +1,6 @@
 import os as _os
 import numpy as _np
+import pyg4ometry.gdml as _gd
 
 # import matplotlib.pyplot as _plt
 

@@ -10,10 +10,10 @@ from . import geant4
 from . import pycgal
 
 # this will also cause a ModuleNotFoundError exception
-#try :
-#    from . import pyoce
-#except ImportError:
-#    print("Failed to import open cascade")
+try :
+    from . import pyoce
+except ImportError:
+    print("Failed to import open cascade")
 #try:
 #    from . import gui
 #except ImportError:

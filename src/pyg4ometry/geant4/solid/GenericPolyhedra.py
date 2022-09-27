@@ -9,6 +9,7 @@ if _config.meshing == _config.meshingType.pycsg :
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm :
     from pyg4ometry.pycgal.core import CSG as _CSG
+    from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
@@ -85,7 +86,7 @@ class GenericPolyhedra(_SolidBase):
         zrList.reverse()
         zrArray = _np.array(zrList)
 
-        zrListConvex = _pycgal.numpyPolygonConvex(zrArray)
+        zrListConvex = _PolygonProcessing.decomposePolygon2d(zrArray)
 
         # def plotConvex() :
         #     import matplotlib.pyplot as _plt
