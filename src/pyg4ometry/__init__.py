@@ -21,7 +21,6 @@ except ImportError:
 #    warnings.warn("Failed to import pyg4ometry.gui subpackage.")
 #    del warnings
 from . import stl
-from . import test
 from . import transformation
 from . import visualisation
 from . import features
