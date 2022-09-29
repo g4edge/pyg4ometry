@@ -11,7 +11,7 @@ PYBIND
 *********************************************/
 PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
-PYBIND11_MODULE(Geom, m) {
+PYBIND11_MODULE(StlAPI, m) {
   py::class_<StlAPI_Writer>(m,"StlAPI_Writer")
     .def(py::init<>())
     .def("Write",[](StlAPI_Writer &stlw,
