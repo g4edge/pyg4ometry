@@ -303,7 +303,8 @@ PYBIND11_MODULE(Surface_mesh, m) {
     .def("number_of_edges",[](Surface_mesh_EPICK &sm){return sm.number_of_edges();})
     .def("number_of_faces",[](Surface_mesh_EPICK &sm){return sm.number_of_faces();})
     .def("is_empty",[](Surface_mesh_EPICK &sm){return sm.is_empty();})
-    .def("clear_without_removing_property_maps",[](Surface_mesh_EPICK &sm) {sm.clear_without_removing_property_maps();})
+    // TODO CGAL version
+    //.def("clear_without_removing_property_maps",[](Surface_mesh_EPICK &sm) {sm.clear_without_removing_property_maps();})
     .def("clear",[](Surface_mesh_EPICK &sm) {sm.clear();});
 
     /* Validity checks */
@@ -335,7 +336,8 @@ PYBIND11_MODULE(Surface_mesh, m) {
     .def("number_of_edges",[](Surface_mesh_EPECK &sm){return sm.number_of_edges();})
     .def("number_of_faces",[](Surface_mesh_EPECK &sm){return sm.number_of_faces();})
     .def("is_empty",[](Surface_mesh_EPECK &sm){return sm.is_empty();})
-    .def("clear_without_removing_property_maps",[](Surface_mesh_EPECK &sm) {sm.clear_without_removing_property_maps();})
+    // TODO CGAL version
+    //.def("clear_without_removing_property_maps",[](Surface_mesh_EPECK &sm) {sm.clear_without_removing_property_maps();})
     .def("clear",[](Surface_mesh_EPECK &sm) {sm.clear();});
 
     /* Validity checks */
