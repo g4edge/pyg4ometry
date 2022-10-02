@@ -27,7 +27,9 @@ PYBIND11_MODULE(Poly, m) {
     .def(py::init<>())
     .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Boolean, const Standard_Boolean>())
 #else
-    .def(py::init<const Standard_Integer, const Standard_Integer, const Standard_Boolean>())
+    .def(py::init([](const Standard_Integer a1, const Standard_Integer a2, const Standard_Boolean a3, const Standard_Boolean a4) {
+        return new Poly_Triangulation(a1,a2,a3);
+    }))
 #endif
     .def("Deflection",[](Poly_Triangulation &pt){return pt.Deflection();})
 #if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
