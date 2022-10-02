@@ -48,6 +48,9 @@ PYBIND11_MODULE(Poly, m) {
     .def("SetNode",[](Poly_Triangulation &pt, Standard_Integer theIndex, const gp_Pnt &thePnt) {
         pt.ChangeNode(theIndex) = thePnt;
     })
+    .def("SetTriangle",[](Poly_Triangulation &pt, Standard_Integer theIndex, const Poly_Triangle &theTri) {
+        pt.ChangeTriangle(theIndex) = theTri;
+    })
 #endif
     .def("Triangle",&Poly_Triangulation::Triangle)
     .def("UVNode",&Poly_Triangulation::Node);
