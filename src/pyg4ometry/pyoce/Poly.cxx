@@ -44,6 +44,13 @@ PYBIND11_MODULE(Poly, m) {
 #if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def("SetNode",&Poly_Triangulation::SetNode)
     .def("SetTriangle",&Poly_Triangulation::SetTriangle)
+#else
+    .def("SetNode",[](Poly_Triangulation &pt, Standard_Integer theIndex, const gp_Pnt &thePnt) {
+        pt.ChangeNode(theIndex) = thePnt;
+    })
+    .def("SetTriangle",[](Poly_Triangulation &pt, Standard_Integer theIndex, const Poly_Triangle &theTri) {
+        pt.ChangeTriangle(theIndex) = theTri;
+    })
 #endif
     .def("Triangle",&Poly_Triangulation::Triangle)
     .def("UVNode",&Poly_Triangulation::Node);
