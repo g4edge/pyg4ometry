@@ -3,11 +3,11 @@
 
 namespace py = pybind11;
 
+#include <Standard_Version.hxx>
 #include <BRep_Tool.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopLoc_Location.hxx>
-#include <Poly_MeshPurpose.hxx>
 
 /*********************************************
 PYBIND
@@ -25,6 +25,6 @@ PYBIND11_MODULE(BRep, m) {
 #if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
     .def_static("Triangulation",&BRep_Tool::Triangulation);
 #else
-    .def_static("Triangulation",[](TopoDS_Face &fac, TopLoc_Location &loc, Poly_MeshPurpose) {BRep_Tool::Triangulation(fac,loc,Poly_MeshPurpose_NONE);});
+    .def_static("Triangulation",[](TopoDS_Face &fac, TopLoc_Location &loc, unsigned int) {return BRep_Tool::Triangulation(fac,loc);});
 #endif
 }
