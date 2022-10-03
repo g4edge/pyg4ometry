@@ -34,18 +34,18 @@ repos:
   - id: isort
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: "v2.37.3"
+  rev: "v2.38.2"
   hooks:
   - id: pyupgrade
     args: ["--py36-plus"]
 
 - repo: https://github.com/psf/black
-  rev: "22.6.0"
+  rev: "22.8.0"
   hooks:
   - id: black
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: "v0.971"
+  rev: "v0.981"
   hooks:
     - id: mypy
       files: src
@@ -70,7 +70,7 @@ repos:
     args: ["--docstring-convention", "numpy"]  # or google, change me
 
 - repo: https://github.com/kynan/nbstripout
-  rev: "0.6.0"
+  rev: "0.6.1"
   hooks:
     - id: nbstripout
       args: ["--strip-empty-cells",
@@ -83,7 +83,7 @@ repos:
     stages: [manual]
 
 - repo: https://github.com/codespell-project/codespell
-  rev: "v2.1.0"
+  rev: "v2.2.1"
   hooks:
   - id: codespell
     args: ["-L", "nd,unparseable,compiletime"]
@@ -102,7 +102,7 @@ repos:
   - id: rst-inline-touching-normal
 
 - repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v2.7.1"
+  rev: "v3.0.0-alpha.0"
   hooks:
     - id: prettier
       types_or: [json]
