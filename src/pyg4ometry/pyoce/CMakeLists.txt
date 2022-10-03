@@ -34,58 +34,45 @@ endif()
 # Create the pybind11 library
 # https://pybind11.readthedocs.io/en/stable/compiling.html#building-with-cmake
 # https://pybind11.readthedocs.io/en/stable/compiling.html#advanced-interface-library-targets
-add_library(temp_TCollection MODULE TCollection.cxx)
-add_library(temp_TKernel MODULE TKernel.cxx)
 
-target_link_libraries(temp_TCollection
-    PRIVATE
+set(extnSources TCollection.cxx TKernel.cxx  TDocStd.cxx TDataStd.cxx
+                TNaming.cxx TDF.cxx TopoDS.cxx gp.cxx Geom.cxx Poly.cxx
+                XCAFDoc.cxx TopAbs.cxx TopLoc.cxx TopExp.cxx Message.cxx
+                BRep.cxx BRepMesh.cxx StlAPI.cxx XCAFApp.cxx STEPCAFControl.cxx)
+
+foreach(extnSource ${extnSources})
+    string(REPLACE .cxx "" extnName ${extnSource})
+    set(extnName temp_${extnName})
+    message(STATUS "pybind extension " ${extnName} " " ${extnSource})
+    add_library(${extnName} MODULE ${extnSource})
+
+    target_link_libraries(${extnName}
+        PRIVATE
         pybind11::module
         pybind11::lto
         ${OpenCASCADE_DataExchange_LIBRARIES})
 
-target_link_libraries(temp_TKernel
-    PRIVATE
-        pybind11::module
-        pybind11::lto
-        ${OpenCASCADE_DataExchange_LIBRARIES})
+    target_include_directories(${extnName}
+        PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}"
+        PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
 
-target_include_directories(
-  temp_TCollection
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}"
-    PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
+    pybind11_extension(${extnName})
 
-target_include_directories(
-  temp_TKernel
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}"
-    PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
+    if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
+        # Strip unnecessary sections of the binary on Linux/macOS
+        pybind11_strip(${extnName})
+    endif()
 
-pybind11_extension(temp_TCollection)
-pybind11_extension(temp_TKernel)
-
-if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
-  # Strip unnecessary sections of the binary on Linux/macOS
-  pybind11_strip(temp_TCollection)
-  pybind11_strip(temp_TKernel)
-endif()
-
-set_target_properties(temp_TCollection
-    PROPERTIES
+    set_target_properties(${extnName}
+        PROPERTIES
         CXX_VISIBILITY_PRESET "hidden"
         CUDA_VISIBILITY_PRESET "hidden")
 
-set_target_properties(temp_TKernel
-    PROPERTIES
-        CXX_VISIBILITY_PRESET "hidden"
-        CUDA_VISIBILITY_PRESET "hidden")
+    # PYG4OMETRY_VERSION_INFO is defined by setup.py and passed into the C++ code
+    # as a define (VERSION_INFO) here.
+    target_compile_definitions(${extnName}
+        PRIVATE VERSION_INFO=${PYG4OMETRY_VERSION_INFO})
 
+    install(TARGETS ${extnName} DESTINATION .)
 
-# PYG4OMETRY_VERSION_INFO is defined by setup.py and passed into the C++ code
-# as a define (VERSION_INFO) here.
-target_compile_definitions(temp_TCollection
-    PRIVATE VERSION_INFO=${PYG4OMETRY_VERSION_INFO})
-
-target_compile_definitions(temp_TKernel
-    PRIVATE VERSION_INFO=${PYG4OMETRY_VERSION_INFO})
-
-
-install(TARGETS temp_TCollection temp_TKernel DESTINATION .)
+endforeach()
