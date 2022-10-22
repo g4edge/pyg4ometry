@@ -1,5 +1,5 @@
-import pkgplaceholder
+import pyg4ometry
 
 
 def test_core():
-    assert pkgplaceholder.hello_world() == "Hello World!"
+    assert pyg4ometry.hello_world() == "Hello World!"

@@ -1,4 +1,4 @@
-Welcome to pkgplaceholder's documentation!
+Welcome to pyg4ometry's documentation!
 ==========================================
 
 Table of Contents
