@@ -8,7 +8,7 @@ all: apidoc
 apidoc: clean-apidoc
 	sphinx-apidoc --private --module-first --force \
       --output-dir "$(SOURCEDIR)/generated" \
-      ../src/pkgplaceholder ../src/pkgplaceholder/_version.py
+      ../src/pyg4ometry ../src/pyg4ometry/_version.py
 
 clean-apidoc:
 	rm -rf "$(SOURCEDIR)/generated"

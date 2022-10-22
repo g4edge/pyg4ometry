@@ -15,8 +15,8 @@ build:
         --module-first
         --force
         --output-dir docs/source/generated
-        src/pkgplaceholder
-        src/pkgplaceholder/_version.py
+        src/pyg4ometry
+        src/pyg4ometry/_version.py
 
 python:
   install:
