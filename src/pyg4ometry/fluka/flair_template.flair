@@ -1,0 +1,52 @@
+# flair project file
+Version: 300
+Mode: fluka
+md5: b1165f4a3f8dc908bbd24e2dcb35ab08
+Input: _FLUKA_INPUT_FILENAME_
+Page: Flair
+
+# Run information
+Run: <default>
+	Last:     5
+End
+
+# Custom materials information
+_FLUKA_CUSTOM_MATERIAL_INFORMATION_
+
+# Plots information
+Plot: Red
+	Type: Geometry
+	basisu: 0 0 1
+	basisv: 1 0 0
+	coord: Z-X
+	extends: 100 75
+	layer: Media
+	subtype: Material
+	title: GeoViewer Red plot
+End
+Plot: Green
+	Type: Geometry
+	basisu: 0.836516 0.0173376 0.547668
+	basisv: 0.224144 0.901221 -0.370891
+	extends: 100 75
+	layer: 3D
+	subtype: Material
+	title: GeoViewer Green plot
+End
+Plot: Blue
+	Type: Geometry
+	basisu: 0 0 1
+	coord: Z-Y
+	extends: 100 75
+	layer: Media
+	subtype: Material
+	title: GeoViewer Blue plot
+End
+Plot: Magenta
+	Type: Geometry
+	coord: X-Y
+	extends: 100 75
+	layer: Media
+	subtype: Material
+	title: GeoViewer Magenta plot
+End
