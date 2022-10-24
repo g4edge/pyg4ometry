@@ -1,0 +1,55 @@
+-+- Generating the grammar and other useful actions.
+  - These instructions generally assume you have installed antlr4
+    according to the installation instructions found at
+    http://www.antlr.org.
+
+-+--+- Useful aliases
+   alias antlr4='java -jar /usr/local/lib/antlr-4.7-complete.jar'
+   alias grun='java org.antlr.v4.gui.TestRig'
+
+-+--+- Generating the parser
+
+-+--+--+- In Java
+
+java -jar /usr/local/lib/antlr-4.7-complete.jar FlukaLexer.g4;
+java -jar /usr/local/lib/antlr-4.7-complete.jar FlukaParser.g4;
+javac Fluka-+-.java;
+
+
+-+--+--+- In Python
+- Run the following (perhaps make yourself a bash function):
+
+  java -jar /usr/local/lib/antlr-4.7-complete.jar FlukaLexer.g4 -Dlanguage=Python2 -visitor;
+  java -jar /usr/local/lib/antlr-4.7-complete.jar FlukaParser.g4 -Dlanguage=Python2 -visitor;
+
+- Note that this will automatically  generate  the AST visitor (via -visitor).
+
+-+--+- Testing the grammar
+   - The testing functionality only supports the Java target, meaning
+     any embedded source within the grammar must also be converted to Java.
+   - NOTE!  One thing to be aware of when testing the grammar is that
+     it is ONLY designed to parse FLUKA /geometry/ input..  This means
+     it can't parse GEOBEGIN and above or GEOEND and below.  If you
+     include that it will not work.
+
+-+--+--+- Tokens
+    grun Fluka geocards ../tests/test_input/grammar/union_fence_posts_min.inp -tokens
+-+--+--+- Gui
+    grun Fluka geocards ../tests/test_input/grammar/union_fence_posts_min.inp -gui
+-+--+- Useful scripts / misc.
+
+-+--+--+- Converting the grammar between Python and Java.
+    - Use the switch-java-and-python.sh script to do this.  If it's
+      not working you may have mixed the grammar up between python and
+      java, so trash any changes and retry
+
+      ./switch-java.and-python.sh
+
+    - If you want to add any embedded python to the grammar then you
+      will have to edit this script, as it is all hardcoded on a
+      case-by-case basis.
+      E.g. getCharPositionInLine (java) --> self.column (python)
+
+    - ./generate_parser.sh should then automatically be able to
+      determine which is the appopriate target for building the
+      lexer + parser.
