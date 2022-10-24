@@ -1,10 +1,39 @@
-Welcome to pyg4ometry's documentation!
-==========================================
+pyg4ometry Documentation
+========================
 
-Table of Contents
------------------
+pyg4ometry is a package to create, load, write and visualise solid geometry for particle tracking simulations.
+
+.. figure:: figures/banner2.png
+	    :align: center
+
+	    Example accelerator tunnel complex at CERN.
+
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   Package API reference <generated/modules>
+   licence
+   authorship
+   citation
+   installation
+   introduction
+   loading
+   viewing
+   validating
+   exporting
+   creating
+   converting
+   combining
+   comparing
+   analysing
+   moduledocs
+   developer
+   version_history
+   
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
