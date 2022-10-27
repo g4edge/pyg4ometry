@@ -15,7 +15,8 @@ def findOCCShapeByName(shapeTool, shapeName):
         if name == shapeName:
             return l
 
-    raise KeyError(shapeName)
+    return None
+    # raise KeyError(shapeName)
 
 def findOCCShapeByTreeNode(label, shapeTreeNode):
     newLabel = _TDF.TDF_Label()
