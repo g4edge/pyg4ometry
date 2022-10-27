@@ -261,13 +261,17 @@ def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = [], mes
 
     label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
     if label is None :
-        print("Cannot find shape, exiting")
-        return
 
-    # find name of shape
-    name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
+        fsl = _oce.TDF.TDF_LabelSequence()
+        shapeTool.GetFreeShapes(fsl)
+
+        freeShapeLabel = fsl.Value(1)
+        label = _oce.pythonHelpers.findOCCShapeByTreeNode(freeShapeLabel,shapeName)
 
     # traverse cad and make geant4 geometry
-    _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels = ["COMPOUND","SOLID"])
+    av = _oce2Geant4_traverse(shapeTool, label, greg, materialMap, labelToSkipList, meshQualityMap, badCADLabels = ["COMPOUND","SOLID"])
+
+    # convert to LV and make world
+    av.makeWorldVolume()
 
     return greg
