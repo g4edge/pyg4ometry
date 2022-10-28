@@ -7,6 +7,16 @@ from . import gp as _gp
 import numpy as _np
 
 def findOCCShapeByName(shapeTool, shapeName):
+
+    '''
+    Find a shape by its name
+
+    :param shapeTool: OpenCascade ShapeTool
+    :type shapeTool: ShapeTool
+    :param shapeName: Name of the shape
+    :type shapeName: str
+    '''
+
     ls = _TDF.TDF_LabelSequence()
     shapeTool.GetShapes(ls)
 
