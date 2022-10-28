@@ -5,6 +5,20 @@ defaultLinDef = 0.5
 deftaulAngDef = 0.5
 
 def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
+
+    '''
+    Make a logical volume from input or get from registry
+
+    :param name: Name of logical volume
+    :type name: str
+    :param solid: Geant4 solid
+    :type solid: SolidBase
+    :param material: Material for logical volume
+    :type material: str or Material
+    :param greg: Geant4 registry
+    :type greg: geant4.Registry
+    '''
+
     try :
         return greg.logicalVolumeDict[name]
     except :
@@ -13,6 +27,17 @@ def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
     return _pyg4.geant4.LogicalVolume(solid,material,name,greg)
 
 def oceShape_Geant4_Assembly(name, greg) :
+
+    '''
+    Make a assembly volume from input or get from registry
+
+    :param name: Name of logical volume
+    :type name: str
+    :param greg: Geant4 registry
+    :type greg: geant4.Registry
+    '''
+
+
     try :
         return greg.logicalVolumeDict[name]
     except :
@@ -21,6 +46,17 @@ def oceShape_Geant4_Assembly(name, greg) :
     return _pyg4.geant4.AssemblyVolume(name, greg, True)
 
 def oceShape_Geant4_Tessellated(name, shape, greg ,linDef = 0.5, angDef = 0.5) :
+
+    '''
+    Make a tesselated solid from a OpenCascade shape
+
+    :param name: Name of logical volume
+    :type name: str
+    :param shape: OpenCascade shape
+    :type shape: TopoDS_Shape
+    :param greg: Geant4 registry
+    :type greg: geant4.Registry
+    '''
 
     ##############################################
     # Check if already in registry
@@ -257,6 +293,20 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
 
 
 def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = [], meshQualityMap = {}) :
+    '''
+    Convert CAD geometry starting from shapeName
+
+    :param shapeTool: OpenCascade TopoDS_Shape
+    :type shapeTool: pyoce.TopoDS_Shape
+    :param shapeName: Name of the shape in the CAD file
+    :type shapeName: str
+    :param materialMap: dictionary to map shape name to material shapeName:materialName or shapeName:Material
+    :type materialMap: dict
+    :param meshQualityMap: dictionary to map shape name to meshing quality str:[LinDef,AngDef]
+    :type meshQualityMap: dict
+    '''
+
+
     greg = _pyg4.geant4.Registry()
 
     label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
