@@ -21,7 +21,7 @@ class _Facet():
         return (tuple(self.vertices), self.normal)
 
 class Reader(object):
-    """
+    '''
     STL file reader
 
     :param filename: Input STL filename
@@ -36,7 +36,7 @@ class Reader(object):
     :type registry: Registry
     :param forcebinary: Forces to load this STL file in binary format, otherwise the file format is determined from whether it starts with the string 'solid'
     :type forcebinary: boolean
-    """
+    '''
 
     def __init__(self, filename, solidname="stl_tessellated", scale=1, centre = False, registry=None, forcebinary = False):
         if registry is None:  # If a registry is not supplied, make an empty one
