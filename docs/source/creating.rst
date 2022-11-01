@@ -84,7 +84,7 @@ This defines a box with the default units (none specified), so mm. We can specif
 Geant4 Python Scripting
 -----------------------
 
-Making use of pyg4ometry requires the following modules 
+Making use of pyg4ometry requires the following modules
 
 .. code-block :: python
 
@@ -125,20 +125,20 @@ Here is the vtk visualiser output of the above example
 GDML Defines
 ------------
 
-In GDML there are multiple ``define`` objects that can be used parameterise 
+In GDML there are multiple ``define`` objects that can be used parameterise
 geometry, materials etc. These can be used as variables or definitions and
 mean that any equations used will be retained in GDML output. For example a
-GDML constant can be created in the following way 
+GDML constant can be created in the following way
 
 .. code-block :: python
 
    # registry to store gdml data
    reg = pyg4ometry.geant4.Registry()
 
-   # constant called x 
+   # constant called x
    x = pyg4ometry.gdml.Constant("x",10,reg)
 
-The normal set of mathematical operations in python can be performed and 
+The normal set of mathematical operations in python can be performed and
 evaluated
 
 .. code-block :: python
@@ -151,7 +151,7 @@ evaluated
    >> 30
 
 The constant ``x`` can of course be changed and ``y`` re-evaluated
-   
+
 .. code-block :: python
 
    x.setExpression(5)
@@ -162,19 +162,19 @@ The constant ``x`` can of course be changed and ``y`` re-evaluated
    >> 20
 
 .. note::
-   Standard mathematical functions can be used with GDML defines (Constant, Variable, etc). So sin, cos, tan, 
+   Standard mathematical functions can be used with GDML defines (Constant, Variable, etc). So sin, cos, tan,
    exp and so on, but pyg4ometry functions have to be used
 
 .. code-block :: python
    :linenos:
-   
+
    x  = pyg4ometry.gdml.Constant("x",10,reg)
    cx = pyg4ometry.gdml.cos(x)
-   
+
 So the box example above can be rewritten using constants
 
 .. code-block :: python
-   :linenos:     
+   :linenos:
    :emphasize-lines: 7-9,16
 
    # load pyg4ometry
@@ -203,11 +203,11 @@ So the box example above can be rewritten using constants
    v.view()
 
 .. note::
-   All GDML defines (Constant, Variable, etc) can be used in the construction of other pyg4ometry classes 
+   All GDML defines (Constant, Variable, etc) can be used in the construction of other pyg4ometry classes
    interchangeably instead of floats or strings (where strings are either numbers or a GDML expression)
 
 .. warning::
-   Avoid reassigning variables used as defines, this can have unexpected consequences so for example 
+   Avoid reassigning variables used as defines, this can have unexpected consequences so for example
 
    .. code-block:: python
       :linenos:
@@ -238,10 +238,10 @@ Materials
 ---------
 
 As with solids materials are defined in a similar way to Geant4 C++. Python
-does not have overloaded constructors, so unique signatures are needed, in 
-contrast to Geant4.  
+does not have overloaded constructors, so unique signatures are needed, in
+contrast to Geant4.
 
-To define a material from the Geant4 predefined (e.g. NIST) materials 
+To define a material from the Geant4 predefined (e.g. NIST) materials
 
 .. code-block :: python
    :emphasize-lines: 2-3
@@ -276,7 +276,7 @@ To define a compound two elements using the mass fraction
    wm.add_element_massfraction(oe,0.3)
    bm = _g4.MaterialSingleElement("iron",26,55.8452,7.874,reg)    # iron at near room temp
 
-To define a compound using number of atoms 
+To define a compound using number of atoms
 
 .. code-block :: python
    :emphasize-lines: 2
@@ -291,7 +291,7 @@ To define a compound using number of atoms
    bm.add_element_natoms(ce,10)
    bm.add_element_natoms(oe,4)
 
-Material as a mixture of materials 
+Material as a mixture of materials
 
 .. code-block :: python
    :emphasize-lines: 2
@@ -403,7 +403,7 @@ is shown here.
 
 This creates a box of water inside a box of vacuum. The box of water is 10 x 20 x 50 mm long
 (note mm are the default length units), and it is placed with no offset and no rotation (i.e.
-at the centre) of the world volume. Alternatively: 
+at the centre) of the world volume. Alternatively:
 
 .. code-block:: python
    :linenos:
@@ -478,8 +478,8 @@ Units can be specified by setting the parameters ``eunit`` for the energy vector
 FLUKA Geometry Creation
 -----------------------
 
-In a very similar way to geant4 geometry authoring it is possible to 
-use pyg4ometry to create fluka output. To create a simple region consisting 
+In a very similar way to geant4 geometry authoring it is possible to
+use pyg4ometry to create fluka output. To create a simple region consisting
 of a single body
 
 .. code-block :: python

@@ -167,7 +167,7 @@ If overlap checking has been used, this produces overlap meshes (if any) and the
 be visualised automatically when visualising a LogicalVolume instance as they are associated
 with that instance.
 
-	  
+
 Solid
 -----
 
@@ -200,7 +200,7 @@ to the scene with a rotation and translation.
 		)
 
 This uses Tait-Bryan angles for the rotation.
-		
+
 Boolean Solid
 -------------
 

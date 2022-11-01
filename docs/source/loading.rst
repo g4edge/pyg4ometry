@@ -40,13 +40,13 @@ used for visualisation or other operations.
 
       .. code-block:: python
 	    :linenos:
-	       
+
 	    import pyg4ometry
 	    r = pyg4ometry.fluka.Reader("corrector-dipole2.inp")
 	    flukaRegistry = r.flukaregistry
 
 	    geantRegistry = pyg4ometry.convert.fluka2Geant4(flukaRegistry)
-	    
+
 	    l = geantRegsitry.getWorldVolume()
 	    v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
 	    v.addLogicalVolume(l)
@@ -61,7 +61,7 @@ used for visualisation or other operations.
    .. tab:: ROOT
 
       In directory :code:`pyg4ometry/test/root2Gdml`
-	    
+
       .. code-block:: python
 	    :linenos:
 
@@ -78,7 +78,7 @@ used for visualisation or other operations.
 
 		  ROOT example of Geant4's LHT geometry.
 
-   
+
    .. tab:: STL
 
       In directory :code:`pyg4ometry/test/stl`
@@ -102,7 +102,7 @@ used for visualisation or other operations.
       .. figure:: tutorials/tutorial2.png
 	 :alt: Example of STL loading in pyg4ometry
 
-   
+
    .. tab:: STEP
 
 
@@ -122,4 +122,3 @@ used for visualisation or other operations.
 
       .. figure:: tutorials/tutorial3.png
 		  :alt: Example of STEP loading in pyg4ometry
-

@@ -4,7 +4,7 @@ Developer
 Unit tests
 ----------
 
-.. code-block :: console 
+.. code-block :: console
 
    cd pyg4ometry/pyg4ometry/test
    python2.7 runTests.py
@@ -16,7 +16,7 @@ Coverage
 
    cd pyg4ometry/coverage
    ./runCoverage.sh
- 
+
 Profiling
 ---------
 
@@ -48,4 +48,3 @@ Update the year in the following files:
 * `README.md`
 * `docs/source/conf.py`
 * `docs/source/licence.rst`
-

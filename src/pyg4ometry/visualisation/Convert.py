@@ -1,6 +1,7 @@
-import vtk as _vtk
-import copy as _copy
+
 import numpy as _np
+import vtk as _vtk
+
 
 # python iterable to vtkIdList
 def mkVtkIdList(it):
@@ -8,6 +9,7 @@ def mkVtkIdList(it):
     for i in it:
         vil.InsertNextId(int(i))
     return vil
+
 
 # convert pycsh mesh to vtkPolyData
 def pycsgMeshToVtkPolyData(mesh):
@@ -39,6 +41,7 @@ def pycsgMeshToVtkPolyData(mesh):
 
     return meshPolyData
 
+
 def pycsgMeshToObj(mesh, fileName):
 
     vtkPD = pycsgMeshToVtkPolyData(mesh)
@@ -61,7 +64,8 @@ def pycsgMeshToObj(mesh, fileName):
     exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
     exporter.Write()
 
-def pyg42VtkTransformation(mtra, tra) :
+
+def pyg42VtkTransformation(mtra, tra):
     vtkTransform = _vtk.vtkMatrix4x4()
     vtkTransform.SetElement(0, 0, mtra[0, 0])
     vtkTransform.SetElement(0, 1, mtra[0, 1])
@@ -79,14 +83,20 @@ def pyg42VtkTransformation(mtra, tra) :
 
     return vtkTransform
 
-def vtkTransformation2PyG4(vt) :
+
+def vtkTransformation2PyG4(vt):
     mat = vt.GetMatrix()
-    mtra = _np.array([[mat.GetElement(0,0), mat.GetElement(0,1), mat.GetElement(0,2)],
-                      [mat.GetElement(1,0), mat.GetElement(1,1), mat.GetElement(1,2)],
-                      [mat.GetElement(2,0), mat.GetElement(2,1), mat.GetElement(2,2)]])
-    tra  = _np.array([mat.GetElement(0,3),mat.GetElement(1,3),mat.GetElement(2,3)])
+    mtra = _np.array(
+        [
+            [mat.GetElement(0, 0), mat.GetElement(0, 1), mat.GetElement(0, 2)],
+            [mat.GetElement(1, 0), mat.GetElement(1, 1), mat.GetElement(1, 2)],
+            [mat.GetElement(2, 0), mat.GetElement(2, 1), mat.GetElement(2, 2)],
+        ]
+    )
+    tra = _np.array([mat.GetElement(0, 3), mat.GetElement(1, 3), mat.GetElement(2, 3)])
 
     return [mtra, tra]
+
 
 def pycsgMeshToStl(mesh, fileName):
     vtkPD = pycsgMeshToVtkPolyData(mesh)

@@ -79,10 +79,10 @@ This defines a box with the default units (none specifed), so mm. We can specify
   boxSolid = pyg4ometry.genat4.solid.Box("aBox", 10, 20, 30, reg, "cm")
 
 
-Geant4 Python Scripting 
+Geant4 Python Scripting
 -----------------------
 
-Making use of pyg4ometry requires the following modules 
+Making use of pyg4ometry requires the following modules
 
 .. code-block :: python
 
@@ -123,20 +123,20 @@ Here is the vtk visualiser output of the above example
 GDML Defines
 ------------
 
-In GDML there are multiple ``define`` objects that can be used parameterise 
+In GDML there are multiple ``define`` objects that can be used parameterise
 geometry, materials etc. These can be used as variables or definitions and
 mean that any equations used will be retained in GDML output. For example a
-GDML constant can be created in the following way 
+GDML constant can be created in the following way
 
 .. code-block :: python
 
    # registry to store gdml data
    reg = pyg4ometry.geant4.Registry()
 
-   # constant called x 
+   # constant called x
    x = pyg4ometry.gdml.Constant("x",10,reg)
 
-The normal set of mathematical operations in python can be performed and 
+The normal set of mathematical operations in python can be performed and
 evaluated
 
 .. code-block :: python
@@ -149,7 +149,7 @@ evaluated
    >> 30
 
 The constant ``x`` can of course be changed and ``y`` re-evaluated
-   
+
 .. code-block :: python
 
    x.setExpression(5)
@@ -160,19 +160,19 @@ The constant ``x`` can of course be changed and ``y`` re-evaluated
    >> 20
 
 .. note::
-   Standard mathematical functions can be used with GDML defines (Constant, Variable, etc). So sin, cos, tan, 
+   Standard mathematical functions can be used with GDML defines (Constant, Variable, etc). So sin, cos, tan,
    exp and so on, but pyg4ometry functions have to be used
 
 .. code-block :: python
    :linenos:
-   
+
    x  = pyg4ometry.gdml.Constant("x",10,reg)
    cx = pyg4ometry.gdml.cos(x)
-   
+
 So the box example above can be rewritten using constants
 
 .. code-block :: python
-   :linenos:     
+   :linenos:
    :emphasize-lines: 7-9,16
 
    # load pyg4ometry
@@ -201,11 +201,11 @@ So the box example above can be rewritten using constants
    v.view()
 
 .. note::
-   All GDML defines (Constant, Variable, etc) can be used in the construction of other pyg4ometry classes 
+   All GDML defines (Constant, Variable, etc) can be used in the construction of other pyg4ometry classes
    interchangeably instead of floats or strings (where strings are either numbers or a GDML expression)
 
 .. warning::
-   Avoid reassigning variables used as defines, this can have unexpected consequences so for example 
+   Avoid reassigning variables used as defines, this can have unexpected consequences so for example
 
    .. code-block:: python
       :linenos:
@@ -236,10 +236,10 @@ Materials
 ---------
 
 As with solids materials are defined in a similar way to Geant4 C++. Python
-does not have overloaded constructors, so unique signatures are needed, in 
-contrast to Geant4.  
+does not have overloaded constructors, so unique signatures are needed, in
+contrast to Geant4.
 
-To define a material from the Geant4 predefined (e.g. NIST) materials 
+To define a material from the Geant4 predefined (e.g. NIST) materials
 
 .. code-block :: python
    :emphasize-lines: 2-3
@@ -274,7 +274,7 @@ To define a compound two elements using the mass fraction
    wm.add_element_massfraction(oe,0.3)
    bm = _g4.MaterialSingleElement("iron",26,55.8452,7.874,reg)    # iron at near room temp
 
-To define a compound using number of atoms 
+To define a compound using number of atoms
 
 .. code-block :: python
    :emphasize-lines: 2
@@ -289,7 +289,7 @@ To define a compound using number of atoms
    bm.add_element_natoms(ce,10)
    bm.add_element_natoms(oe,4)
 
-Material as a mixture of materials 
+Material as a mixture of materials
 
 .. code-block :: python
    :emphasize-lines: 2
@@ -401,7 +401,7 @@ is shown here.
 
 This creates a box of water inside a box of vacuum. The box of water is 10 x 20 x 50 mm long
 (note mm are the default length units), and it is placed with no offset and no rotation (i.e.
-at the centre) of the world volume. Alternatively: 
+at the centre) of the world volume. Alternatively:
 
 .. code-block:: python
    :linenos:
@@ -475,17 +475,17 @@ Units can be specified by setting the parameters ``eunit`` for the energy vector
 Registry and GDML Output
 ------------------------
 
-Strictly speaking a registry class to store all of the GDML is not required. 
-As with normal Geant4 given a ``lv`` pointer it should possible to form an aggregation 
+Strictly speaking a registry class to store all of the GDML is not required.
+As with normal Geant4 given a ``lv`` pointer it should possible to form an aggregation
 hierarchy that contains all necessary objects. Now GDML breaks this as the
-structure is built up using ``name`` tags. For example a placement requires 
-a position. In Geant4 this would just be a pointer to an transformation object, but GDML 
-has two mechanisms to represent this, firstly child nodes of a PhysicalVolume tag 
+structure is built up using ``name`` tags. For example a placement requires
+a position. In Geant4 this would just be a pointer to an transformation object, but GDML
+has two mechanisms to represent this, firstly child nodes of a PhysicalVolume tag
 or secondly a position define, see below
 
 The registry class is a storage class for a complete GDML file. At the
-construction stage of almost all objects a registry is required. If the 
-object is added to the registry then it will appear explicitly in the GDML 
+construction stage of almost all objects a registry is required. If the
+object is added to the registry then it will appear explicitly in the GDML
 output
 
 Visualisation
@@ -501,23 +501,23 @@ Any logical volume ``lv`` can be visualised using:
     v.addAxes(20)
     v.view()
 
-which will open a Vtk render window. The render window now receives keyboard and mouse commands. 
-To exit render window ``q``, to restart interaction with the visualiser 
+which will open a Vtk render window. The render window now receives keyboard and mouse commands.
+To exit render window ``q``, to restart interaction with the visualiser
 
 .. code-block :: python
    :linenos:
 
     v.start()
 
-There are also convenience methods of ``pyg4ometry.visualisation.VtkViewer()`` the allow changing 
-of the viewing parameters. So if the viewer is active then render window needs to be stopped ``q`` 
-and then commands can be typed into the terminal, for example  
+There are also convenience methods of ``pyg4ometry.visualisation.VtkViewer()`` the allow changing
+of the viewing parameters. So if the viewer is active then render window needs to be stopped ``q``
+and then commands can be typed into the terminal, for example
 
 .. code-block :: python
    :linenos:
 
     v.setOpactity(0.1)
-    v.setWirefrace()   
+    v.setWirefrace()
     v.start()
 
 
@@ -556,8 +556,8 @@ complete example is:
    import pyg4ometry
    r  = pyg4ometry.freecad.Reader("./T103_overlap_copl.gdml")
    l = r.getRegistry().getWorldVolume()
-   l.checkOverlaps(recursive=False,coplanar=True,debugIO=False)   
-   v = pyg4ometry.visualisation.VtkViewer() 
+   l.checkOverlaps(recursive=False,coplanar=True,debugIO=False)
+   v = pyg4ometry.visualisation.VtkViewer()
    v.addLogicalVolume(l)
    v.view()
 
@@ -611,7 +611,7 @@ all other daughters and the mother at the higher level in which they are placed.
 GDML Output
 -----------
 
-To write an GDML file file given a :code:`pyg4ometry.geant4.registy` instance  :code:`reg`.   
+To write an GDML file file given a :code:`pyg4ometry.geant4.registy` instance  :code:`reg`.
 
 .. code-block :: python
    :emphasize-lines: 3
@@ -623,7 +623,3 @@ To write an GDML file file given a :code:`pyg4ometry.geant4.registy` instance  :
    w.write('file.gdml')
    # make a quick bdsim job for the one component in a beam line
    w.writeGmadTester('file.gmad', 'file.gdml')
-
-
-
-
