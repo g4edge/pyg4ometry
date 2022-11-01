@@ -10,17 +10,32 @@ namespace py = pybind11;
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Partition_traits_2.h>
+#include <CGAL/partition_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel_EPICK;
-typedef Kernel_EPICK::Point_3                                 Point_EPICK;
+typedef CGAL::Partition_traits_2<Kernel_EPICK>                Partition_traits_2_EPICK;
+typedef Partition_traits_2_EPICK::Point_2                     Partition_traits_2_Point_2_EPICK;
+typedef Partition_traits_2_EPICK::Polygon_2                   Partition_traits_2_Polygon_2_EPICK;
+typedef Kernel_EPICK::Point_2                                 Point_2_EPICK;
+typedef Kernel_EPICK::Point_3                                 Point_3_EPICK;
 typedef Kernel_EPICK::Vector_3                                Vector_3_EPICK;
+typedef CGAL::Polygon_2<Kernel_EPICK>                         Polygon_2_EPICK;
+typedef CGAL::Polygon_with_holes_2<Kernel_EPICK>              Polygon_with_holes_2_EPICK;
 typedef CGAL::Polyhedron_3<Kernel_EPICK>                      Polyhedron_3_EPICK;
 typedef CGAL::Surface_mesh<Kernel_EPICK::Point_3>             Surface_mesh_EPICK;
 typedef CGAL::Nef_polyhedron_3<Kernel_EPICK>                  Nef_polyhedron_3_EPICK;
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel_EPECK;
-typedef Kernel_EPECK::Point_3                                 Point_EPECK;
+typedef CGAL::Partition_traits_2<Kernel_EPECK>                Partition_traits_2_EPECK;
+typedef Partition_traits_2_EPECK::Point_2                     Partition_traits_2_Point_2_EPECK;
+typedef Partition_traits_2_EPECK::Polygon_2                   Partition_traits_2_Polygon_2_EPECK;
+typedef Kernel_EPECK::Point_2                                 Point_2_EPECK;
+typedef Kernel_EPECK::Point_3                                 Point_3_EPECK;
 typedef Kernel_EPECK::Vector_3                                Vector_3_EPECK;
+typedef CGAL::Polygon_2<Kernel_EPECK>                         Polygon_2_EPECK;
+typedef CGAL::Polygon_with_holes_2<Kernel_EPECK>              Polygon_with_holes_2_EPECK;
 typedef CGAL::Polyhedron_3<Kernel_EPECK>                      Polyhedron_3_EPECK;
 typedef CGAL::Surface_mesh<Kernel_EPECK::Point_3>             Surface_mesh_EPECK;
 typedef CGAL::Nef_polyhedron_3<Kernel_EPECK>                  Nef_polyhedron_3_EPECK;
@@ -35,6 +50,8 @@ typedef CGAL::Nef_polyhedron_3<Kernel_EPECK>                  Nef_polyhedron_3_E
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
+
+#include <CGAL/Boolean_set_operations_2.h>
 
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron_3_EPECK,Kernel_EPECK>  Polyhedral_mesh_domain_3_EPECK;
 typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain_3_EPECK,CGAL::Default,CGAL::Sequential_tag>::type Tr_EPECK;
@@ -75,6 +92,33 @@ PYBIND11_MODULE(CGAL, m) {
   m.def("copy_face_graph",[](Surface_mesh_EPECK &sm1, Surface_mesh_EPICK &sm2) {return CGAL::copy_face_graph(sm1,sm2);});
   m.def("copy_face_graph",[](Polyhedron_3_EPICK &p1, Polyhedron_3_EPECK &p2) {return CGAL::copy_face_graph(p1,p2);});
   m.def("copy_face_graph",[](Polyhedron_3_EPECK &p1, Polyhedron_3_EPICK &p2) {return CGAL::copy_face_graph(p1,p2);});
+
+  /* 2D boolean */
+  m.def("do_intersect",[](Polygon_2_EPECK &p1, Polygon_2_EPECK &p2) {return CGAL::do_intersect(p1,p2);});
+  m.def("do_intersect",[](Polygon_2_EPICK &p1, Polygon_2_EPICK &p2) {return CGAL::do_intersect(p1,p2);});
+  m.def("join",[](Polygon_2_EPICK &p1, Polygon_2_EPICK &p2, Polygon_with_holes_2_EPICK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_2_EPECK &p1, Polygon_2_EPECK &p2, Polygon_with_holes_2_EPECK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("intersection",[](Polygon_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+  m.def("intersection",[](Polygon_2_EPECK &p1,Polygon_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+  m.def("difference",[](Polygon_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+  m.def("difference",[](Polygon_2_EPECK &p1,Polygon_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+
 
   /* TODO Boolean operations on Nef polyhedra */
 

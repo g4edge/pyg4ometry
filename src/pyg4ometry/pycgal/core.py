@@ -5,6 +5,7 @@ from . import geom
 from . import Aff_transformation_3
 from . import Vector_3
 from . import Point_2
+from . import Partition_traits_2_Polygon_2
 from . import Polygon_2
 from . import Polyhedron_3
 
@@ -226,13 +227,13 @@ class PolygonProcessing :
 
     @classmethod
     def decomposePolygon2d(cls, pgon) :
-        poly2 = Polygon_2.Polygon_2_EPECK()
+        poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
         for p in pgon :
             poly2.push_back(Point_2.Point_2_EPECK(p[0],p[1]))
 
-        partPoly = Polygon_2.List_Polygon_2_EPECK()
-        # TODO change function name (test)
-        Polygon_2.test(poly2, partPoly)
+        partPoly = Partition_traits_2_Polygon_2.List_Polygon_2_EPECK()
+
+        Partition_traits_2_Polygon_2.optimal_convex_partition_2(poly2, partPoly)
 
         partPolyList = []
 
