@@ -23,14 +23,20 @@ typedef CGAL::Polygon_2<Kernel_EPECK>                       Polygon_2_EPECK;
 typedef CGAL::Polygon_with_holes_2<Kernel_EPECK>            Polygon_with_holes_2_EPECK;
 typedef CGAL::General_polygon_with_holes_2<Kernel_EPECK>    General_polygon_with_holes_2_EPECK;
 
+PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPICK>);
+PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPECK>);
+
 PYBIND11_MODULE(Polygon_with_holes_2, m) {
   py::class_<Polygon_with_holes_2_EPICK>(m,"Polygon_with_holes_2_EPICK")
     .def(py::init<>())
     .def("outer_boundary",[](Polygon_with_holes_2_EPICK &p) {return p.outer_boundary();})
     .def("holes",[](Polygon_with_holes_2_EPICK &p) {return p.holes();});
+  py::bind_vector<std::vector<Polygon_with_holes_2_EPICK>>(m, "List_Polygon_with_holes_2_EPICK");
 
   py::class_<Polygon_with_holes_2_EPECK>(m,"Polygon_with_holes_2_EPECK")
     .def(py::init<>())
     .def("outer_boundary",[](Polygon_with_holes_2_EPECK &p) {return p.outer_boundary();})
     .def("holes",[](Polygon_with_holes_2_EPECK &p) {return p.holes();});
+  py::bind_vector<std::vector<Polygon_with_holes_2_EPECK>>(m, "List_Polygon_with_holes_2_EPECK");
+
 }

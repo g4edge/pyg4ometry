@@ -63,6 +63,9 @@ typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain_3_EPICK,CGAL::Default,
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr_EPICK> Mesh_complex_3_in_triangulation_3_EPICK;
 typedef CGAL::Mesh_criteria_3<Tr_EPICK> Mesh_criteria_3_EPICK;
 
+PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPICK>);
+PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPECK>);
+
 PYBIND11_MODULE(CGAL, m) {
 
   py::class_<CGAL::Translation>(m,"Translation")

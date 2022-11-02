@@ -11,11 +11,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_EPICK;
 typedef CGAL::Partition_traits_2<Kernel_EPICK>              Partition_traits_2_EPICK;
 typedef Partition_traits_2_EPICK::Point_2                   Partition_traits_2_Point_2_EPICK;
 typedef Kernel_EPICK::Point_2                               Point_2_EPICK;
+typedef Kernel_EPICK::Vector_2                              Vector_2_EPICK;
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel_EPECK;
 typedef CGAL::Partition_traits_2<Kernel_EPECK>              Partition_traits_2_EPECK;
 typedef Partition_traits_2_EPECK::Point_2                   Partition_traits_2_Point_2_EPECK;
 typedef Kernel_EPECK::Point_2                               Point_2_EPECK;
+typedef Kernel_EPECK::Vector_2                              Vector_2_EPECK;
 
 
 PYBIND11_MODULE(Point_2, m) {
@@ -27,7 +29,11 @@ PYBIND11_MODULE(Point_2, m) {
 
     /* Coordinate access */
     .def("x",[](Point_2_EPICK &p2) {return CGAL::to_double(p2.x());})
-    .def("y",[](Point_2_EPICK &p2) {return CGAL::to_double(p2.y());});
+    .def("y",[](Point_2_EPICK &p2) {return CGAL::to_double(p2.y());})
+
+    /* operations */
+    .def("__add__",[](Point_2_EPICK &p1, Vector_2_EPICK &p2){return p1+p2;})
+    .def("__sub__",[](Point_2_EPICK &p1, Vector_2_EPICK &p2){return p1-p2;});
 
   py::class_<Point_2_EPECK>(m,"Point_2_EPECK")
     .def(py::init<>())
@@ -36,6 +42,10 @@ PYBIND11_MODULE(Point_2, m) {
 
     /* Coordinate access */
     .def("x",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.x());})
-    .def("y",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.y());});
+    .def("y",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.y());})
+
+     /* operations */
+    .def("__add__",[](Point_2_EPECK &p1, Vector_2_EPECK &p2){return p1+p2;})
+    .def("__sub__",[](Point_2_EPECK &p1, Vector_2_EPECK &p2){return p1-p2;});
 }
 
