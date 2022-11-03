@@ -105,6 +105,25 @@ PYBIND11_MODULE(CGAL, m) {
   m.def("join",[](Polygon_2_EPECK &p1, Polygon_2_EPECK &p2, Polygon_with_holes_2_EPECK &pr) {
     CGAL::join(p1,p2,pr);
   });
+  m.def("join",[](Polygon_with_holes_2_EPICK &p1, Polygon_2_EPICK &p2, Polygon_with_holes_2_EPICK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_with_holes_2_EPECK &p1, Polygon_2_EPECK &p2, Polygon_with_holes_2_EPECK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_2_EPICK &p1, Polygon_with_holes_2_EPICK &p2, Polygon_with_holes_2_EPICK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_2_EPECK &p1, Polygon_with_holes_2_EPECK &p2, Polygon_with_holes_2_EPECK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_with_holes_2_EPICK &p1, Polygon_with_holes_2_EPICK &p2, Polygon_with_holes_2_EPICK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+  m.def("join",[](Polygon_with_holes_2_EPECK &p1, Polygon_with_holes_2_EPECK &p2, Polygon_with_holes_2_EPECK &pr) {
+    CGAL::join(p1,p2,pr);
+  });
+
   m.def("intersection",[](Polygon_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &inter)
   {
     CGAL::intersection(p1,p2,std::back_inserter(inter));
@@ -113,6 +132,34 @@ PYBIND11_MODULE(CGAL, m) {
   {
     CGAL::intersection(p1,p2,std::back_inserter(inter));
   });
+
+  m.def("intersection",[](Polygon_with_holes_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+  m.def("intersection",[](Polygon_with_holes_2_EPECK &p1,Polygon_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+
+  m.def("intersection",[](Polygon_2_EPICK &p1,Polygon_with_holes_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+  m.def("intersection",[](Polygon_2_EPECK &p1,Polygon_with_holes_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+
+  m.def("intersection",[](Polygon_with_holes_2_EPICK &p1,Polygon_with_holes_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+  m.def("intersection",[](Polygon_with_holes_2_EPECK &p1,Polygon_with_holes_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &inter)
+  {
+    CGAL::intersection(p1,p2,std::back_inserter(inter));
+  });
+
   m.def("difference",[](Polygon_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &diff)
   {
     CGAL::difference(p1,p2,std::back_inserter(diff));
@@ -122,6 +169,32 @@ PYBIND11_MODULE(CGAL, m) {
     CGAL::difference(p1,p2,std::back_inserter(diff));
   });
 
+  m.def("difference",[](Polygon_with_holes_2_EPICK &p1,Polygon_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+  m.def("difference",[](Polygon_with_holes_2_EPECK &p1,Polygon_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+
+  m.def("difference",[](Polygon_2_EPICK &p1,Polygon_with_holes_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+  m.def("difference",[](Polygon_2_EPECK &p1,Polygon_with_holes_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+
+  m.def("difference",[](Polygon_with_holes_2_EPICK &p1,Polygon_with_holes_2_EPICK &p2, std::vector<Polygon_with_holes_2_EPICK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
+  m.def("difference",[](Polygon_with_holes_2_EPECK &p1,Polygon_with_holes_2_EPECK &p2, std::vector<Polygon_with_holes_2_EPECK> &diff)
+  {
+    CGAL::difference(p1,p2,std::back_inserter(diff));
+  });
 
   /* TODO Boolean operations on Nef polyhedra */
 

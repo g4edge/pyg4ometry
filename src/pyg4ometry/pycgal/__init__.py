@@ -15,5 +15,7 @@ from . import Polyhedron_3
 from . import Nef_polyhedron_3
 from . import Surface_mesh
 from . import Polygon_mesh_processing
+from . import pythonHelpers
+
 
 from .core import *
