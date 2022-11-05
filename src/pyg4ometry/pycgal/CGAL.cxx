@@ -80,6 +80,12 @@ PYBIND11_MODULE(CGAL, m) {
   m.def("is_closed",[](Surface_mesh_EPICK &pm) { return CGAL::is_closed(pm);},"Is the surface closed", py::arg("Surface_mesh_EPICK"));
   m.def("is_closed",[](Surface_mesh_EPECK &pm) { return CGAL::is_closed(pm);},"Is the surface closed", py::arg("Surface_mesh_EPECK"));
 
+  /* Iterators and circulators */
+  m.def("halfedges_around_face",[](Surface_mesh_EPECK::Halfedge_index &hi, Surface_mesh_EPECK &pm) {
+    auto it = CGAL::halfedges_around_face(hi,pm);
+    return py::make_iterator(it.begin(), it.end());
+  },py::keep_alive<0, 1>());
+
   /* Boost graph library */
 
   /* Helper functions */

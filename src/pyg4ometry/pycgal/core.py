@@ -126,6 +126,41 @@ class CSG :
 
     # TODO finish coplanar intersection
     def coplanarIntersection(self, csg) :
+
+        sm1 = self.sm
+        sm2 = csg.sm
+
+        # triangle planes
+        tp1 = []
+        tp2 = []
+
+        # loop over sm1 faces and make planes
+        for f in sm1.faces():
+            he = sm1.halfedge(f)
+            print("face",f)
+            for he1 in CGAL.halfedges_around_face(he,sm1) :
+                vi = sm1.source(he1)
+                p  = sm1.point(vi)
+                print(p.x(),p.y(),p.z())
+
+            #tp1.append()
+
+        # loop over sm1 faces and make planes
+        for f2 in sm2.faces():
+            he = sm1.halfedge(f2)
+
+        # find coplanar triangles
+        cpt = []
+
+        # transform triangles to plane
+
+        # find 2d intersections
+
+
+
+
+
+
         # print('core coplanarIntersection : has bugs for cgal meshing, switch to pycsg in config')
         return CSG()
 
