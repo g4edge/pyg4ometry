@@ -192,7 +192,7 @@ class CSG :
 
         # return surface mesh
         c = CSG()
-        out = Surface_mesh.Surface_mesh_EPECK()
+        out = c.sm
 
         # close planes
         for tpl1i in tpl1:
@@ -223,12 +223,21 @@ class CSG :
                     pgon3 = Polygon_with_holes_2.List_Polygon_with_holes_2_EPECK()
                     CGAL.intersection(pgon1, pgon2, pgon3)
 
+                    for pwh in pgon3 :
+                        print(pwh.outer_boundary().size())
+                        obp = pwh.outer_boundary()
 
-                # print(bClose)
+                        # convert back to 3d
+                        v0 = tpl1i[0].to_3d(obp.vertex(0))
+                        v1 = tpl1i[0].to_3d(obp.vertex(1))
+                        v2 = tpl1i[0].to_3d(obp.vertex(2))
 
-                # convert back to 3d
+                        v0i = out.add_vertex(v0)
+                        v1i = out.add_vertex(v1)
+                        v2i = out.add_vertex(v2)
 
-                # add to return surface mesh
+                        out.add_face(v0i,v1i,v2i)
+
 
         return c
 
