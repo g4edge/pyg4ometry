@@ -24,6 +24,11 @@ PYBIND11_MODULE(Point_3, m) {
     .def("z",[](Point_3_EPICK &p3) {return CGAL::to_double(p3.z());});
 
   py::class_<Point_3_EPECK>(m,"Point_3_EPECK")
+
+     /* Related functions */
+    .def("__sub__",[](const Point_3_EPECK &p1, const Point_3_EPECK &p2){return p1-p2;})
+
+     /* Creation */
     .def(py::init<>())
     .def(py::init<int, int, int>())
     .def(py::init<double,double,double>())

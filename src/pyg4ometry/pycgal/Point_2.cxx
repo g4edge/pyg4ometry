@@ -39,6 +39,9 @@ PYBIND11_MODULE(Point_2, m) {
     .def(py::init<>())
     .def(py::init<int, int>())
     .def(py::init<double,double>())
+    .def(py::init<const Kernel_EPECK::RT,const Kernel_EPECK::RT,const Kernel_EPECK::RT>())
+    .def(py::init<const Kernel_EPECK::RT,const Kernel_EPECK::RT>())
+    .def(py::init<const Kernel_EPECK::Weighted_point_2>())
 
     /* Coordinate access */
     .def("x",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.x());})

@@ -53,6 +53,8 @@ typedef CGAL::Nef_polyhedron_3<Kernel_EPECK>                  Nef_polyhedron_3_E
 
 #include <CGAL/Boolean_set_operations_2.h>
 
+#include <CGAL/number_utils.h>
+
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron_3_EPECK,Kernel_EPECK>  Polyhedral_mesh_domain_3_EPECK;
 typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain_3_EPECK,CGAL::Default,CGAL::Sequential_tag>::type Tr_EPECK;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr_EPECK> Mesh_complex_3_in_triangulation_3_EPECK;
@@ -67,6 +69,17 @@ PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPICK>);
 PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPECK>);
 
 PYBIND11_MODULE(CGAL, m) {
+
+  py::class_<Kernel_EPICK::RT>(m,"EPICK_NT");
+  py::class_<Kernel_EPECK::RT>(m,"EPECK_NT");
+
+  //py::class_<Kernel_EPECK::RT>(m,"EPECK_NT");
+
+  /* Algebraic foundations */
+  m.def("to_double",[](Kernel_EPICK::RT &rt){return CGAL::to_double(rt);});
+  m.def("to_double",[](Kernel_EPICK::FT &ft){return CGAL::to_double(ft);});
+  m.def("to_double",[](Kernel_EPECK::RT &rt){return CGAL::to_double(rt);});
+  m.def("to_double",[](Kernel_EPECK::FT &ft){return CGAL::to_double(ft);});
 
   py::class_<CGAL::Translation>(m,"Translation")
     .def(py::init<>());

@@ -7,7 +7,10 @@ from . import Vector_3
 from . import Point_2
 from . import Partition_traits_2_Polygon_2
 from . import Polygon_2
+from . import Polygon_with_holes_2
 from . import Polyhedron_3
+from . import Triangle_3
+from . import Vector_3
 
 import numpy as _np
 
@@ -126,81 +129,107 @@ class CSG :
 
     # TODO finish coplanar intersection
     def coplanarIntersection(self, csg) :
+        """
+        Compute the coplanar surfaces between self and csg
+
+        """
+
+        print('cgal coplanar overlap')
 
         sm1 = self.sm
         sm2 = csg.sm
 
+        #######################################
         # triangle planes
-        tp1 = []
-        tp2 = []
+        #######################################
 
-        # loop over sm1 faces and make planes
-        for f in sm1.faces():
-            he = sm1.halfedge(f)
-            print("face",f)
-            for he1 in CGAL.halfedges_around_face(he,sm1) :
-                vi = sm1.source(he1)
-                p  = sm1.point(vi)
-                print(p.x(),p.y(),p.z())
+        def makePlaneList(sm):
 
-            #tp1.append()
+            # triangle plane list
+            tplanel = []
 
-        # loop over sm1 faces and make planes
-        for f2 in sm2.faces():
-            he = sm1.halfedge(f2)
+            # loop over sm1 faces and make planes
+            for f in sm.faces():
+                he = sm.halfedge(f)
 
-        # find coplanar triangles
-        cpt = []
+                tpl = []
 
-        # transform triangles to plane
+                for he1 in CGAL.halfedges_around_face(he,sm) :
+                    vi = sm.source(he1)
+                    p  = sm.point(vi)
+                    tpl.append(p)
 
-        # find 2d intersections
+                t = Triangle_3.Triangle_3_EPECK(tpl[0],tpl[1],tpl[2])
+                if t.is_degenerate() :
+                    print("degenerate triangle")
 
+                pl = t.supporting_plane()
+                tplanel.append([pl,t])
 
+            return tplanel
 
+        #######################################
+        # Are two planes close?
+        #######################################
+        def close(p1,p2):
+            p1dir = p1[0].orthogonal_direction()
+            p1poi = p1[0].point()
 
+            p2dir = p2[0].orthogonal_direction()
+            p2poi = p2[0].point()
 
+            # print(p1dir,p2dir,p1poi,p2poi)
+            pd = Vector_3.Vector_3_EPECK(p2poi,p1poi)
+            dd = p2dir.vector() - p1dir.vector()
 
-        # print('core coplanarIntersection : has bugs for cgal meshing, switch to pycsg in config')
-        return CSG()
+            if CGAL.to_double(pd.squared_length()) < 0.0001 and CGAL.to_double(dd.squared_length()) < 0.0001 :
+                return True
+            else :
+                return False
 
-        from ..pycsg import core as _core
-        from ..pycsg import geom as _geom
+        tpl1 = makePlaneList(sm1)
+        tpl2 = makePlaneList(sm2)
 
-        def convertFromLists(vpl):
-            polyList = []
-            for p in vpl[1]:
-                v1 = _geom.Vertex(vpl[0][p[0]])
-                v2 = _geom.Vertex(vpl[0][p[1]])
-                v3 = _geom.Vertex(vpl[0][p[2]])
-                poly = _geom.Polygon([v1, v2, v3])
-                polyList.append(poly)
-            return polyList
-
-
-        vpl1 = self.toVerticesAndPolygons()
-        vpl2 = csg.toVerticesAndPolygons()
-
-        csg1 = _core.CSG.fromPolygons(convertFromLists(vpl1))
-        csg2 = _core.CSG.fromPolygons(convertFromLists(vpl2))
-
-        #print(vpl1)
-        #print(csg1.polygons)
-
-        # print(csg1.polygons)
-        print('before coplanar call',type(csg1),type(csg2))
-        inter = csg1.coplanarIntersection(csg2)
-        print('after coplanar call',type(inter),inter.polygons)
-
+        # return surface mesh
         c = CSG()
         out = Surface_mesh.Surface_mesh_EPECK()
 
-        #for p in inter.polygons :
-        #    print(p)
-        #    for v in p.vertices :
-        #        print(v)
+        # close planes
+        for tpl1i in tpl1:
+            for tpl2i in tpl2:
+                # check if planes are close
+                bClose = close(tpl1i,tpl2i)
 
-        # Surface_mesh.toCGALSurfaceMesh(out,list(inter.toVerticesAndPolygons()))
+                # if close compute 2d intersection
+                if bClose :
+                    t1td0 = tpl1i[0].to_2d(tpl1i[1][0])
+                    t1td1 = tpl1i[0].to_2d(tpl1i[1][1])
+                    t1td2 = tpl1i[0].to_2d(tpl1i[1][2])
+
+                    t2td0 = tpl1i[0].to_2d(tpl2i[1][0])
+                    t2td1 = tpl1i[0].to_2d(tpl2i[1][1])
+                    t2td2 = tpl1i[0].to_2d(tpl2i[1][2])
+
+                    pgon1 = Polygon_2.Polygon_2_EPECK()
+                    pgon1.push_back(t1td0)
+                    pgon1.push_back(t1td1)
+                    pgon1.push_back(t1td2)
+
+                    pgon2 = Polygon_2.Polygon_2_EPECK()
+                    pgon2.push_back(t2td0)
+                    pgon2.push_back(t2td1)
+                    pgon2.push_back(t2td2)
+
+                    pgon3 = Polygon_with_holes_2.List_Polygon_with_holes_2_EPECK()
+                    CGAL.intersection(pgon1, pgon2, pgon3)
+
+
+                # print(bClose)
+
+                # convert back to 3d
+
+                # add to return surface mesh
+
         return c
 
     @classmethod
