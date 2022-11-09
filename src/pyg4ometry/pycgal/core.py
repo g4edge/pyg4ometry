@@ -134,8 +134,6 @@ class CSG :
 
         """
 
-        print('cgal coplanar overlap')
-
         sm1 = self.sm
         sm2 = csg.sm
 
@@ -179,13 +177,16 @@ class CSG :
             p2poi = p2[0].point()
 
             # print(p1dir,p2dir,p1poi,p2poi)
-            pd = Vector_3.Vector_3_EPECK(p2poi,p1poi)
-            dd = p2dir.vector() - p1dir.vector()
+            pd0 = Vector_3.Vector_3_EPECK(p2poi,p1poi)
+            dd0 = p2dir.vector() - p1dir.vector()
+            dd1 = p2dir.vector() + p1dir.vector()
 
-            if CGAL.to_double(pd.squared_length()) < 0.0001 and CGAL.to_double(dd.squared_length()) < 0.0001 :
+            if CGAL.to_double(pd0.squared_length()) < 0.0001 and (CGAL.to_double(dd0.squared_length()) < 0.0001 or \
+               CGAL.to_double(dd1.squared_length()) < 0.0001):
                 return True
             else :
                 return False
+
 
         tpl1 = makePlaneList(sm1)
         tpl2 = makePlaneList(sm2)
@@ -223,21 +224,76 @@ class CSG :
                     pgon3 = Polygon_with_holes_2.List_Polygon_with_holes_2_EPECK()
                     CGAL.intersection(pgon1, pgon2, pgon3)
 
+                    if len(pgon3) != 0 :
+                        v10 = out.add_vertex(tpl1i[1][0])
+                        v11 = out.add_vertex(tpl1i[1][1])
+                        v12 = out.add_vertex(tpl1i[1][2])
+
+                        v20 = out.add_vertex(tpl2i[1][0])
+                        v21 = out.add_vertex(tpl2i[1][1])
+                        v22 = out.add_vertex(tpl2i[1][2])
+
+                        out.add_face(v10, v11, v12)
+                        out.add_face(v20, v21, v22)
+
+                    '''
                     for pwh in pgon3 :
-                        print(pwh.outer_boundary().size())
-                        obp = pwh.outer_boundary()
+                        if pwh.outer_boundary().size() == 3 :
+                            obp = pwh.outer_boundary()
 
-                        # convert back to 3d
-                        v0 = tpl1i[0].to_3d(obp.vertex(0))
-                        v1 = tpl1i[0].to_3d(obp.vertex(1))
-                        v2 = tpl1i[0].to_3d(obp.vertex(2))
+                            # convert back to 3d
+                            v0 = tpl1i[0].to_3d(obp.vertex(0))
+                            v1 = tpl1i[0].to_3d(obp.vertex(1))
+                            v2 = tpl1i[0].to_3d(obp.vertex(2))
 
-                        v0i = out.add_vertex(v0)
-                        v1i = out.add_vertex(v1)
-                        v2i = out.add_vertex(v2)
+                            v0i = out.add_vertex(v0)
+                            v1i = out.add_vertex(v1)
+                            v2i = out.add_vertex(v2)
 
-                        out.add_face(v0i,v1i,v2i)
+                            out.add_face(v0i,v1i,v2i)
+                        elif pwh.outer_boundary().size() == 4 :
+                            obp = pwh.outer_boundary()
 
+                            # convert back to 3d
+                            v0 = tpl1i[0].to_3d(obp.vertex(0))
+                            v1 = tpl1i[0].to_3d(obp.vertex(1))
+                            v2 = tpl1i[0].to_3d(obp.vertex(2))
+                            v3 = tpl1i[0].to_3d(obp.vertex(3))
+
+                            v0i = out.add_vertex(v0)
+                            v1i = out.add_vertex(v1)
+                            v2i = out.add_vertex(v2)
+                            v3i = out.add_vertex(v3)
+
+                            out.add_face(v0i,v1i,v2i)
+                            out.add_face(v0i,v2i,v3i)
+                        elif pwh.outer_boundary().size() == 6 :
+                            obp = pwh.outer_boundary()
+
+                            # convert back to 3d
+                            v0 = tpl1i[0].to_3d(obp.vertex(0))
+                            v1 = tpl1i[0].to_3d(obp.vertex(1))
+                            v2 = tpl1i[0].to_3d(obp.vertex(2))
+                            v3 = tpl1i[0].to_3d(obp.vertex(3))
+                            v4 = tpl1i[0].to_3d(obp.vertex(4))
+                            v5 = tpl1i[0].to_3d(obp.vertex(5))
+
+
+                            v0i = out.add_vertex(v0)
+                            v1i = out.add_vertex(v1)
+                            v2i = out.add_vertex(v2)
+                            v3i = out.add_vertex(v3)
+                            v4i = out.add_vertex(v4)
+                            v5i = out.add_vertex(v5)
+
+                            out.add_face(v0i,v1i,v2i)
+                            out.add_face(v0i,v2i,v3i)
+                            out.add_face(v0i,v3i,v4i)
+                            out.add_face(v0i,v4i,v5i)
+
+                        else :
+                            print(pwh.outer_boundary().size())
+                    '''
 
         return c
 
