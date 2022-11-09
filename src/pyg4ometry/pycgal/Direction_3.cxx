@@ -33,7 +33,14 @@ PYBIND11_MODULE(Direction_3, m) {
     .def("__ne__",[](const Direction_3_EPICK &d1, const Direction_3_EPICK &d2){return d1 != d2;})
     .def("__neg__",[](const Direction_3_EPICK &d){return -d;})
     .def("vector",&Direction_3_EPICK::vector)
-    .def("transform",&Direction_3_EPICK::transform);
+    .def("transform",&Direction_3_EPICK::transform)
+
+    /* pbind11 only */
+    .def("__str__",[](Direction_3_EPICK &d1) {
+            std::stringstream ss;
+            ss << "Direction_3_EPECK : " << CGAL::to_double(d1.dx()) << " " << CGAL::to_double(d1.dy()) << " " << CGAL::to_double(d1.dz());
+            return ss.str();
+        });
 
   py::class_<Direction_3_EPECK>(m,"Direction_3_EPECK")
     /* Creation */
@@ -55,5 +62,13 @@ PYBIND11_MODULE(Direction_3, m) {
     .def("__ne__",[](const Direction_3_EPECK &d1, const Direction_3_EPECK &d2){return d1 != d2;})
     .def("__neg__",[](const Direction_3_EPECK &d){return -d;})
     .def("vector",&Direction_3_EPECK::vector)
-    .def("transform",&Direction_3_EPECK::transform);
+    .def("transform",&Direction_3_EPECK::transform)
+
+    /* pbind11 only */
+    .def("__str__",[](Direction_3_EPECK &d1) {
+            std::stringstream ss;
+            ss << "Direction_3_EPECK : " << CGAL::to_double(d1.dx()) << " " << CGAL::to_double(d1.dy()) << " " << CGAL::to_double(d1.dz());
+            return ss.str();
+        });
+
 }

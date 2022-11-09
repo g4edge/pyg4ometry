@@ -1,4 +1,5 @@
 #include <vector>
+#include <sstream>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
@@ -65,7 +66,14 @@ PYBIND11_MODULE(Vector_3, m) {
     .def("__div__",[](const Vector_3_EPICK &v1, const Kernel_EPICK::RT &s){return v1/s;})
     .def("__idiv__",[]( Vector_3_EPICK &v1, const Kernel_EPICK::RT &s){return v1/=s; return v1;})
     .def("__mul__",[](const Vector_3_EPICK &v1, const Vector_3_EPICK &v2){return v1*v2;})
-    .def("__imul__",[]( Vector_3_EPICK &v1, const Kernel_EPICK::FT &s){v1*=s; return v1;});
+    .def("__imul__",[]( Vector_3_EPICK &v1, const Kernel_EPICK::FT &s){v1*=s; return v1;})
+
+    /* pbind11 only */
+    .def("__str__",[](Vector_3_EPICK &v1) {
+            std::stringstream ss;
+            ss << "Vector_3_EPECK : " << CGAL::to_double(v1.x()) << " " << CGAL::to_double(v1.y()) << " " << CGAL::to_double(v1.y());
+            return ss.str();
+        });
 
   py::class_<Vector_3_EPECK>(m,"Vector_3_EPECK")
     /* Public member functions */
@@ -98,7 +106,7 @@ PYBIND11_MODULE(Vector_3, m) {
     /* Convenience Operations */
     .def("homogeneous",&Vector_3_EPECK::homogeneous)
     .def("cartesian",&Vector_3_EPECK::cartesian)
-    .def("",[](Vector_3_EPECK &v3, int i){return v3[i];})
+    .def("__getitem__",[](Vector_3_EPECK &v3, int i){return v3[i];})
     .def("cartesian_begin",[](Vector_3_EPECK &v3){std::cout << "use cartesian_iter\n";})
     .def("cartesian_end",[](Vector_3_EPECK &v3){std::cout << "use cartesian_iter\n";})
     .def("cartesian_iter",[](Vector_3_EPECK &v3){return py::make_iterator(v3.cartesian_begin(),v3.cartesian_end());}, py::keep_alive<0, 1>())
@@ -117,5 +125,12 @@ PYBIND11_MODULE(Vector_3, m) {
     .def("__div__",[](const Vector_3_EPECK &v1, const Kernel_EPECK::RT &s){return v1/s;})
     .def("__idiv__",[]( Vector_3_EPECK &v1, const Kernel_EPECK::RT &s){return v1/=s; return v1;})
     .def("__mul__",[](const Vector_3_EPECK &v1, const Vector_3_EPECK &v2){return v1*v2;})
-    .def("__imul__",[]( Vector_3_EPECK &v1, const Kernel_EPECK::FT &s){v1*=s; return v1;});
+    .def("__imul__",[]( Vector_3_EPECK &v1, const Kernel_EPECK::FT &s){v1*=s; return v1;})
+
+    /* pbind11 only */
+    .def("__str__",[](Vector_3_EPECK &v1) {
+            std::stringstream ss;
+            ss << "Vector_3_EPECK : " << CGAL::to_double(v1.x()) << " " << CGAL::to_double(v1.y()) << " " << CGAL::to_double(v1.y());
+            return ss.str();
+        });
 }
