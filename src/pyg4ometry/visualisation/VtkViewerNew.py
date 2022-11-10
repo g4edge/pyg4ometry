@@ -30,6 +30,7 @@ class VtkViewerNew(_ViewerBase) :
         # create a rendering window
         self.renWin = _vtk.vtkRenderWindow()
         self.renWin.AddRenderer(self.ren)
+        self.renWin.SetSize(1024, 1024)
 
         # create a rendering window interactor
         self.iren = _vtk.vtkRenderWindowInteractor()
