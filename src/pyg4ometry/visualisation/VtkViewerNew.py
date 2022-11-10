@@ -221,6 +221,8 @@ class VtkViewerNew(_ViewerBase) :
                 self.actors[k+str(i)] = actor
                 self.ren.AddActor(actor)
 
+        self.bBuiltPipelines = True
+
     def buildPipelinesAppend(self) :
         # loop over meshes and create polydata
         for k in self.localmeshes :
