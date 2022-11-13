@@ -35,4 +35,7 @@ PYBIND11_MODULE(Bbox_3, m) {
     .def("__add__",[](const Bbox_3 &b1, const Bbox_3 &b2) { return b1+b2;})
     .def("__iadd__",[](Bbox_3 &b1, const Bbox_3 &b2) {b1+=b2; return b1;})
     .def("dilate",&Bbox_3::dilate);
+
+    /* pbind11 only */
+    // TODO
 }

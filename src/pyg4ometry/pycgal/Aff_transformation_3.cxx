@@ -103,4 +103,7 @@ PYBIND11_MODULE(Aff_transformation_3, m) {
     .def("m",&Aff_transformation_3_EPECK::m)
     .def("m",&Aff_transformation_3_EPECK::homogeneous )
     .def("hm",&Aff_transformation_3_EPECK::hm);
+
+    /* pbind11 only */
+    // TODO
 }
