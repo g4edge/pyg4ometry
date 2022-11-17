@@ -549,15 +549,11 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         '''
 
     elif solid.type == "Trd" :
-        print('calling pycsgmesh2FlakaRegion trd')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
-
         flukaNameCount += 1
 
     elif solid.type == "Trap" :
-        print('calling pycsgmesh2FlakaRegion trap')
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
-
         flukaNameCount += 1
 
     elif solid.type == "Sphere" :
@@ -1749,6 +1745,7 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName) :
 def makeStripName(mn) :
     if mn.find("0x") != -1:
         mnStrip = mn[0:mn.find("0x")]
+        # mnStrip = mn[mn.find("0x")+2:]
     else:
         mnStrip = mn
     return mnStrip
