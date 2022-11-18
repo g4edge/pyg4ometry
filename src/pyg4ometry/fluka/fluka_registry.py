@@ -37,6 +37,8 @@ class FlukaRegistry(object):
         self.rotoTranslations = RotoTranslationStore()
         self.regionDict = _OrderedDict()
         self.materials = _OrderedDict()
+        self.iMaterials = 0
+        self.materialShortName = _OrderedDict()
         self.latticeDict = _OrderedDict()
         self.cardDict = _OrderedDict()
         self.assignmas = _OrderedDict()
