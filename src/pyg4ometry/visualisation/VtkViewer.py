@@ -318,9 +318,10 @@ class VtkViewer:
             raise RuntimeError('Need a filename.')
 
 
-    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True):
+    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True, addWorld = True):
         if logical.type == "logical":
-            self.addLogicalVolumeBounding(logical)
+            if addWorld:
+                self.addLogicalVolumeBounding(logical)
             for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
                                                      range(0, len(logical.mesh.overlapmeshes))):
                 visOptions = self.getOverlapVisOptions(overlaptype)
