@@ -4,9 +4,8 @@ import pyg4ometry.pyoce as _oce
 defaultLinDef = 0.5
 deftaulAngDef = 0.5
 
-def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
-
-    '''
+def oceShape_Geant4_LogicalVolume(name, solid, material, greg):
+    """
     Make a logical volume from input or get from registry
 
     :param name: Name of logical volume
@@ -17,8 +16,7 @@ def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
     :type material: str or Material
     :param greg: Geant4 registry
     :type greg: geant4.Registry
-    '''
-
+    """
     try :
         return greg.logicalVolumeDict[name]
     except :
@@ -27,28 +25,24 @@ def oceShpae_Geant4_LogicalVolume(name,solid,material,greg):
     return _pyg4.geant4.LogicalVolume(solid,material,name,greg)
 
 def oceShape_Geant4_Assembly(name, greg) :
-
-    '''
+    """
     Make a assembly volume from input or get from registry
 
     :param name: Name of logical volume
     :type name: str
     :param greg: Geant4 registry
     :type greg: geant4.Registry
-    '''
-
-
-    try :
+    """
+    try:
         return greg.logicalVolumeDict[name]
-    except :
+    except:
         pass
 
     return _pyg4.geant4.AssemblyVolume(name, greg, True)
 
 def oceShape_Geant4_Tessellated(name, shape, greg ,linDef = 0.5, angDef = 0.5) :
-
-    '''
-    Make a tesselated solid from a OpenCascade shape
+    """
+    Make a tessellated solid from a OpenCascade shape
 
     :param name: Name of logical volume
     :type name: str
@@ -56,8 +50,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg ,linDef = 0.5, angDef = 0.5) :
     :type shape: TopoDS_Shape
     :param greg: Geant4 registry
     :type greg: geant4.Registry
-    '''
-
+    """
     ##############################################
     # Check if already in registry
     ##############################################
@@ -241,7 +234,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
             return None
         else :
             # make logicalVolume
-            logicalVolume = oceShpae_Geant4_LogicalVolume(name,solid,material,greg)
+            logicalVolume = oceShape_Geant4_LogicalVolume(name, solid, material, greg)
 
             return logicalVolume
 
@@ -293,7 +286,7 @@ def _oce2Geant4_traverse(shapeTool,label,greg, materialMap, labelToSkipList, mes
 
 
 def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = [], meshQualityMap = {}) :
-    '''
+    """
     Convert CAD geometry starting from shapeName
 
     :param shapeTool: OpenCascade TopoDS_Shape
@@ -304,9 +297,7 @@ def oce2Geant4(shapeTool, shapeName, materialMap = {}, labelToSkipList = [], mes
     :type materialMap: dict
     :param meshQualityMap: dictionary to map shape name to meshing quality str:[LinDef,AngDef]
     :type meshQualityMap: dict
-    '''
-
-
+    """
     greg = _pyg4.geant4.Registry()
 
     label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
