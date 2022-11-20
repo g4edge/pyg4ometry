@@ -1665,7 +1665,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                                           elementSuffix=True,
                                           materialNameShort=materialNameShort+format(iComp,'02'))
 
-                compFraction     = comp[1].eval()
+                compFraction     = float(comp[1])
                 compFractionType = comp[2]
 
                 if compFractionType == "natoms" :
