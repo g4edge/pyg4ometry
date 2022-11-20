@@ -88,7 +88,8 @@ class _MatProp(object):
         return _Card("MAT-PROP", what1=self.pressure, what4=self.name)
 
 class Material(_MatProp):
-    """A FLUKA material consisting of a single element.  This corresponds
+    """
+    A FLUKA material consisting of a single element.  This corresponds
     to the case in FLUKA of a single MATERIAL card with no associated
     COMPOUND cards, as well as a possible MAT-PROP card (only if a
     pressure is provided, other options of MAT-PROP are unsupported).
@@ -99,17 +100,15 @@ class Material(_MatProp):
     :type atomicNumber: int
     :param density: the density in g/cm3 of the material.
     :type density: float
-    :param massNumber: Optional mass number, will be inferred in FLUKA \
-    based on atomicNumber.  Allows one to specify a specific isotope.
+    :param massNumber: Optional mass number, will be inferred in FLUKA based on atomicNumber. Allows one to specify a specific isotope.
     :type massNumber: int, None
-    :param atomicMass: The mass of the atom in g/mole.  Will be
-    inferred in FLUKA based on atomicNumber.
+    :param atomicMass: The mass of the atom in g/mole. Will be inferred in FLUKA based on atomicNumber.
     :type atomicMass: float
     :param pressure: Optional pressure if the material is a gas.
     :type pressure: float
-    :param flukaregistry: Optional FlukaRegistry instance the material is to be
-    added to.
+    :param flukaregistry: Optional FlukaRegistry instance the material is to be added to.
     :type flukaregistry: FlukaRegistry
+    
     """
     def __init__(self, name, atomicNumber, density,
                  massNumber=None,

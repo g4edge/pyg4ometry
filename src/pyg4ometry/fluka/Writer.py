@@ -23,10 +23,10 @@ class Writer:
     """
     Class to write FLUKA input files from a fluka registry object.
 
-    f = Writer()
-    f.addDetectro(flukaRegObject)
-    f.write("model.inp")
-    """
+    >>> f = Writer()
+    >>> f.addDetectro(flukaRegObject)
+    >>> f.write("model.inp")
+        """
     _flukaFFString = "*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..."
     def __init__(self):
         pass
