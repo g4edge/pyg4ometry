@@ -1594,7 +1594,7 @@ def geant4MaterialDict2Fluka(matr, freg):
     for material in matr.items():
         if isinstance(material[1], _geant4.Material):
             materialNameShort="M"+format(freg.iMaterials, '04')
-            print(material[1].name, materialNameShort)
+            #print(material[1].name, materialNameShort)
             geant4Material2Fluka(material[1], freg, materialNameShort=materialNameShort)
             freg.materialShortName[material[1].name] = materialNameShort
             freg.iMaterials += 1
