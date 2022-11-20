@@ -12,7 +12,16 @@ from pyg4ometry.fluka.body import *
 
 # import matplotlib.pyplot as _plt
 
-def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
+def geant4Reg2FlukaReg(greg, logicalVolumeName=''):
+    """
+    Convert a Geant4 model to a FLUKA one. This is done by handing over a complete
+    pyg4ometry.geant4.Registry instance.
+
+    :param greg: geant4 registry
+    :type greg: pyg4ometry.geant4.Registry
+
+    returns:  pyg4ometry.fluka.FlukaRegistry
+    """
 
     freg = _fluka.FlukaRegistry()
 
@@ -25,7 +34,10 @@ def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
 
     return freg
 
-def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
+def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
+    """
+    Convert a single logical volume - not the main entry point for the conversion.
+    """
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
     tra  = _np.array([0,0,0])
 
