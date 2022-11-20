@@ -13,7 +13,7 @@ def oceShape_Geant4_LogicalVolume(name, solid, material, greg):
     :param solid: Geant4 solid
     :type solid: SolidBase
     :param material: Material for logical volume
-    :type material: str or Material
+    :type material: str or pyg4ometry.geant4.Material
     :param greg: Geant4 registry
     :type greg: geant4.Registry
     """
