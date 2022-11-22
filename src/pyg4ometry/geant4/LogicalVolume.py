@@ -101,7 +101,8 @@ class LogicalVolume(object):
 
     def reMesh(self, recursive=False):
         """
-        Regenerate the visualisation for this logical volume.
+        Regenerate the visualisation for this logical volume. Required if the geometry is modified
+        and overlap checking is subsequently required or revisualisation.
         """
         try:
             self.mesh = _Mesh(self.solid)
