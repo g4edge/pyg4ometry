@@ -205,6 +205,23 @@ class LogicalVolume(object):
         self.daughterVolumes = [pv for pv,keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name:pv for pv in self.daughterVolumes}
 
+    def transformDaughters(self, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm"):
+        """
+        Transform the daugter volumes (without clipping)
+
+        :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
+        :type  rotation: list(float, float, float) or None - 3 values in radians
+        :param position: translation of the solid w.r.t. this lv
+        :type  position: list(float, float, float) or None - 3 values in mm
+        :param runit: angular unit for rotation (rad,deg)
+        :type runit: str
+        :param punit: length unit for position (m,mm,km)
+        :type punit: str
+
+        """
+
+        self.replaceSolid(self.solid,rotation, position, runit, punit)
+
     def replaceSolid(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm") :
 
         """
@@ -637,10 +654,11 @@ class LogicalVolume(object):
                         print(f"LogicalVolume.checkOverlaps> full coplanar test between daughters {transformedMeshesNames[i]} {transformedMeshesNames[j]}")
 
                     # first check if bounding mesh intersects
-                    #cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
-                    #cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
-                    #if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
-                    #     continue
+                    cullIntersection = transformedBoundingMeshes[i].intersect(transformedBoundingMeshes[j])
+                    cullCoplanar     = transformedBoundingMeshes[i].coplanarIntersection(transformedBoundingMeshes[j])
+                    print(cullIntersection.vertexCount(), cullCoplanar.vertexCount())
+                    if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
+                         continue
 
                     coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
                     if coplanarMesh.vertexCount() != 0:
@@ -672,10 +690,11 @@ class LogicalVolume(object):
                 if debugIO :
                     print(f"LogicalVolume.checkOverlaps> full daughter-mother coplanar test {transformedMeshesNames[i]}"),
 
+
                 #cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
                 #if cullCoplanar.vertexCount() == 0 :
                 #    continue
-
+                # print(self.mesh.localboundingmesh,transformedBoundingMeshes[i])
                 coplanarMesh = self.mesh.localmesh.coplanarIntersection(transformedMeshes[i]) # Need mother.coplanar(daughter) as typically mother is larger
                 if coplanarMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
