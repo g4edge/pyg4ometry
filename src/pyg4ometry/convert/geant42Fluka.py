@@ -12,7 +12,16 @@ from pyg4ometry.fluka.body import *
 
 # import matplotlib.pyplot as _plt
 
-def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
+def geant4Reg2FlukaReg(greg, logicalVolumeName=''):
+    """
+    Convert a Geant4 model to a FLUKA one. This is done by handing over a complete
+    pyg4ometry.geant4.Registry instance.
+
+    :param greg: geant4 registry
+    :type greg: pyg4ometry.geant4.Registry
+
+    returns:  pyg4ometry.fluka.FlukaRegistry
+    """
 
     freg = _fluka.FlukaRegistry()
 
@@ -25,7 +34,10 @@ def geant4Reg2FlukaReg(greg, logicalVolumeName = '') :
 
     return freg
 
-def geant4Logical2Fluka(logicalVolume, flukaRegistry = None) :
+def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
+    """
+    Convert a single logical volume - not the main entry point for the conversion.
+    """
     mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
     tra  = _np.array([0,0,0])
 
@@ -1593,8 +1605,8 @@ def geant4MaterialDict2Fluka(matr, freg):
 
     for material in matr.items():
         if isinstance(material[1], _geant4.Material):
-            materialNameShort="M"+format(freg.iMaterials, '04')
-            print(material[1].name, materialNameShort)
+            materialNameShort="M"+format(freg.iMaterials, '03')
+            #print(material[1].name, materialNameShort)
             geant4Material2Fluka(material[1], freg, materialNameShort=materialNameShort)
             freg.materialShortName[material[1].name] = materialNameShort
             freg.iMaterials += 1
@@ -1653,7 +1665,7 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                                           elementSuffix=True,
                                           materialNameShort=materialNameShort+format(iComp,'02'))
 
-                compFraction     = comp[1]
+                compFraction     = float(comp[1])
                 compFractionType = comp[2]
 
                 if compFractionType == "natoms" :

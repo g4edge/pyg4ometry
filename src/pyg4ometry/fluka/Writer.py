@@ -20,14 +20,27 @@ END
 from pyg4ometry.fluka import material as _material
 
 class Writer:
+    """
+    Class to write FLUKA input files from a fluka registry object.
+
+    >>> f = Writer()
+    >>> f.addDetectro(flukaRegObject)
+    >>> f.write("model.inp")
+        """
     _flukaFFString = "*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..."
     def __init__(self):
         pass
 
     def addDetector(self, flukaRegistry):
+        """
+        Set the fluka registry and therefore the model for this writer instance.
+        """
         self.flukaRegistry = flukaRegistry
 
     def write(self, fileName):
+        """
+        Write the output to a given filename. e.g. "model.inp".
+        """
         f = open(fileName,"w")
 
         # actually used rot-defi directives

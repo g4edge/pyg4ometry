@@ -76,15 +76,15 @@ class Union(_Boolean):
         self._typestring = "uni"
 
 class Zone(vis.ViewableMixin):
-    """Represents a zone which consists of one or more body intersections
+    """
+    Represents a zone which consists of one or more body intersections
     and zero or more body subtractions.  May also be used to represent
     subzones, which are zones nested within zones, for example the form
     +A -B -(+C -D).  Once instantiated, intersections and subtractions
     can be added to this instance with the addIntersection and
     addSubtraction method.
 
-    :param name: Optional name for the zone.  This is used to provide
-    more informative names in any resulting geant4solid.
+    :param name: Optional name for the zone.
     :type name: string
 
     """
@@ -146,18 +146,15 @@ class Zone(vis.ViewableMixin):
         return result
 
     def geant4Solid(self, reg, aabb=None):
-        """Translate this zone to a geant4solid, adding the
+        """
+        Translate this zone to a geant4solid, adding the
         constituent primitive solids and any Booleans to the Geant4
         registry.  Returns the geant4 solid equivalent in geometry to
         this Zone.
 
-        :param reg:  The Registry (geant4) instance to which the
-        resulting Geant4 definitions should be added.
+        :param reg:  The Registry (geant4) instance to which the resulting Geant4 definitions should be added.
         :type reg: Registry
-        :param aabb: Optional reference AABB or
-        dictionary of body name to AABB instances with which the
-        geant4 solid should be evaluated with respect to.  This is the
-        entry point to which solid minimisation can be performed.
+        :param aabb: Optional reference AABB or dictionary of body name to AABB instances with which the geant4 solid should be evaluated with respect to.  This is the entry point to which solid minimisation can be performed.
         :type reg: AABB or dict
 
         """
@@ -293,13 +290,12 @@ class Zone(vis.ViewableMixin):
         return zone_out
 
     def allBodiesToRegistry(self, flukaregistry):
-        """Add all the bodies that contitute this Zone to the provided
+        """
+        Add all the bodies that contitute this Zone to the provided
         FlukaRegistry instance.
 
-        :param flukaregistry: FlukaRegistry instance to which
-        constituent bodies will be added.
+        :param flukaregistry: FlukaRegistry instance to which constituent bodies will be added.
         :type flukaregistry: FlukaRegistry
-
         """
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
@@ -310,7 +306,9 @@ class Zone(vis.ViewableMixin):
                 flukaregistry.addBody(body)
 
     def bodies(self):
-        "Return the set of unique bodies that constitute this Zone."
+        """
+        Return the set of unique bodies that constitute this Zone.
+        """
         bodies = set()
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
@@ -322,7 +320,8 @@ class Zone(vis.ViewableMixin):
         return bodies
 
     def removeBody(self, name):
-        """Remove a body from this zone by name.
+        """
+        Remove a body from this zone by name.
 
         :param name: The name of the body to be removed.
         :type name: string
@@ -348,15 +347,13 @@ class Zone(vis.ViewableMixin):
         self.subtractions = newSubtractions
 
     def makeUnique(self, nameSuffix, flukaregistry):
-        """Get this zone with every constituent body recreated with a
+        """
+        Get this zone with every constituent body recreated with a
         unique name by appending nameSuffix.
 
-        :param nameSuffix: The string to append to the names of the
-        bodies.
-        :param flukaregistry: the FlukaRegisytr instance to add the
-        uniquely defined bodies to.
+        :param nameSuffix: The string to append to the names of the bodies.
+        :param flukaregistry: the FlukaRegisytr instance to add the uniquely defined bodies to.
         """
-
         result = Zone()
         nestedZoneCount = 0
         for boolean in self.intersections + self.subtractions:
@@ -418,7 +415,8 @@ class Zone(vis.ViewableMixin):
 
 
 class Region(vis.ViewableMixin):
-    """Represents a region which consists of a region name, one or more
+    """
+    Represents a region which consists of a region name, one or more
     zones, and a single material.  Metadata may be provided with the
     comment kwarg, which is used when writing to FLUKA to provide
     contextual information to the physicist.
@@ -431,18 +429,17 @@ class Region(vis.ViewableMixin):
     :type param: str
 
     """
-
     def __init__(self, name, comment = ""):
         self.name = name
         self.zones = []
         self.comment = comment
 
     def addZone(self,zone):
-        """Add a Zone instance to this region.
+        """
+        Add a Zone instance to this region.
 
         :param zone: The Zone instance to be added.
         :type zone: Zone
-
         """
         self.zones.append(zone)
 
@@ -476,7 +473,9 @@ class Region(vis.ViewableMixin):
         return result
 
     def geant4Solid(self, reg, aabb=None):
-        """Get the geant4Solid instance corresponding to this Region."""
+        """
+        Get the geant4Solid instance corresponding to this Region.
+        """
         if len(self.zones) == 0:
             raise FLUKAError("Region {} has no zones.".format(self.name))
         elif len(self.zones) == 1:
@@ -525,11 +524,11 @@ class Region(vis.ViewableMixin):
 
 
     def allBodiesToRegistry(self, registry):
-        """Add all the bodies that constitute this Region to the provided
+        """
+        Add all the bodies that constitute this Region to the provided
         FlukaRegistry instance.
 
-        :param flukaregistry: FlukaRegistry instance to which
-        constituent bodies will be added.
+        :param flukaregistry: FlukaRegistry instance to which constituent bodies will be added.
         :type flukaregistry: FlukaRegistry
 
         """
@@ -607,7 +606,8 @@ class Region(vis.ViewableMixin):
         return AABB.fromMesh(self.mesh(aabb=aabb))
 
     def removeBody(self, name):
-        """Remove a body from this region by name.
+        """
+        Remove a body from this region by name.
 
         :param name: The name of the body to be removed.
         :type name: string
@@ -617,14 +617,14 @@ class Region(vis.ViewableMixin):
             zone.removeBody(name)
 
     def makeUnique(self, nameSuffix, flukaregistry):
-        """Get this Region instance with every constituent body
+        """
+        Get this Region instance with every constituent body
         with a unique name by appending nameSuffix to each Body
         instance.
 
         :param nameSuffix: string to append to each Body instance.
-        :param flukaregistry: FlukaRegisty instance to add each
-        newly-defined body to."""
-
+        :param flukaregistry: FlukaRegisty instance to add each newly-defined body to.
+        """
         result = Region(self.name)
         for zone in self.zones:
             result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
@@ -707,7 +707,9 @@ def _getRelativeTransform(first, second, aabb):
     return relative_transformation
 
 def _randomName():
-    "Returns a random name that is syntactically correct for use in GDML."
+    """
+    Returns a random name that is syntactically correct for use in GDML.
+    """
     return "a{}".format(uuid4()).replace("-", "")
 
 def _makeWorldLogicalVolume(reg):
@@ -716,8 +718,10 @@ def _makeWorldLogicalVolume(reg):
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
 
 def _getAxisAlignedBoundingBox(aabb, boolean):
-    """aabb should really be a dictionary of
-    {bodyName: extentInstance}."""
+    """
+    aabb should really be a dictionary of
+    {bodyName: extentInstance}.
+    """
     if isinstance(boolean, (Zone, Region)):
         return aabb
     elif isinstance(boolean, _Boolean):

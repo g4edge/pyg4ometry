@@ -101,7 +101,8 @@ class LogicalVolume(object):
 
     def reMesh(self, recursive=False):
         """
-        Regenerate the visualisation for this logical volume.
+        Regenerate the visualisation for this logical volume. Required if the geometry is modified
+        and overlap checking is subsequently required or revisualisation.
         """
         try:
             self.mesh = _Mesh(self.solid)
@@ -538,7 +539,7 @@ class LogicalVolume(object):
         self.reMesh(False)
 
 
-    def checkOverlaps(self, recursive=False, coplanar=True, debugIO=False, printOut=True, nOverlapsDetected=[0]):
+    def checkOverlaps(self, recursive=False, coplanar=False, debugIO=False, printOut=True, nOverlapsDetected=[0]):
         """
         Check based on the meshes in each logical volume if there are any geometrical overlaps. By
         default, overlaps are checked between daughter volumes and with the mother volume itself (protrusion).
