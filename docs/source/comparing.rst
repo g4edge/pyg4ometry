@@ -184,10 +184,10 @@ For a test that failed the following is an example of output.
 
    Test>  shapeExtentBoundingBoxMin
    a_assembly_a_a_pv1: TestResult.Failed: axis-aligned bounding box lower edge: dimension: z, (reference): 85.0, (other): -115.0
- 
+
    Test>  shapeExtentBoundingBoxMax
    a_assembly_a_a_pv1: TestResult.Failed: axis-aligned bounding box upper edge: dimension: z, (reference): 115.0, (other): -85.0
-  
+
 Seeing the Results
 ------------------
 
@@ -208,7 +208,7 @@ Only Volume
 Here, two ways are shown for creating the set of tests.
 
 ::
-   
+
    >>> import pyg4ometry
    >>> t = pyg4ometry.compare.Tests()
    >>> pyg4ometry.compare.Tests.printAllTestNames()
@@ -231,7 +231,7 @@ Here, two ways are shown for creating the set of tests.
    >>> t.shapeVolume = True
    >>> comparison = pyg4ometry.compare.gdmlFiles("file1.gdml", "file2.gdml", t)
    >>> comparison.print()
-   
+
 or ::
 
   >>> import pyg4ometry
@@ -247,6 +247,3 @@ A test can be turned off by name: ::
    >>> import pyg4ometry
    >>> t = pyg4ometry.compare.Tests()
    >>> t.setFalse("names")
-
-
-

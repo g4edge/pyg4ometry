@@ -78,7 +78,7 @@ Polyhedron::~Polyhedron() {
 Nef Polyhedron
 *********************************************/
 NefPolyhedron::NefPolyhedron() {
-  _nef_polyhedron = new Nef_polyhedron_3();  
+  _nef_polyhedron = new Nef_polyhedron_3();
 }
 
 NefPolyhedron::NefPolyhedron(const Polyhedron &polyhedron) {
@@ -98,14 +98,14 @@ NefPolyhedron::~NefPolyhedron() {
 }
 
 std::vector<NefPolyhedron*> NefPolyhedron::convexDecomposition() {
-  std::vector<NefPolyhedron*> decomposed; 
+  std::vector<NefPolyhedron*> decomposed;
 
   py::print("starting decomposition");
   CGAL::convex_decomposition_3(*_nef_polyhedron);
   py::print("finished decomposition");
 
   Nef_polyhedron_3::Volume_const_iterator ci = ++(*_nef_polyhedron).volumes_begin();
-  for(int i=0 ; ci != (*_nef_polyhedron).volumes_end(); ++ci, ++i) {    
+  for(int i=0 ; ci != (*_nef_polyhedron).volumes_end(); ++ci, ++i) {
     if(ci->mark()) {
       py::print("volume");
       Polyhedron P = Polyhedron();
@@ -113,7 +113,7 @@ std::vector<NefPolyhedron*> NefPolyhedron::convexDecomposition() {
       decomposed.push_back(new NefPolyhedron(P));
     }
   }
-  
+
   return decomposed;
 }
 
@@ -122,10 +122,10 @@ void NefPolyhedron::print() {
   for(int i=0 ; vi != (*_nef_polyhedron).volumes_end(); ++vi, ++i) {
     Nef_polyhedron_3::Shell_entry_const_iterator si = vi->shells_begin();
     py::print("volume",i);
-    for(int j=0; si != vi->shells_end(); ++si, j++) {      
+    for(int j=0; si != vi->shells_end(); ++si, j++) {
       py::print("volume",i,"shell",j);
-    }    
-  }  
+    }
+  }
 }
 
 int NefPolyhedron::number_of_volumes() {
@@ -622,7 +622,7 @@ PYBIND11_MODULE(algo, m) {
     .def(py::init<>())
     .def(py::init<const Polyhedron &>())
     .def(py::init<const SurfaceMesh &>())
-    .def("convexDecomposition",&NefPolyhedron::convexDecomposition)  
+    .def("convexDecomposition",&NefPolyhedron::convexDecomposition)
     .def("print",&NefPolyhedron::print)
     .def("number_of_volumes",&NefPolyhedron::number_of_volumes);
 

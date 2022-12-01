@@ -1,21 +1,14 @@
 from ... import config as _config
-
 from .SolidBase import SolidBase as _SolidBase
 
-if _config.meshing == _config.meshingType.pycsg :
-    from pyg4ometry.pycsg.core import CSG as _CSG
-    from pyg4ometry.pycsg.geom import Vector as _Vector
-    from pyg4ometry.pycsg.geom import Vertex as _Vertex
-    from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
-    from pyg4ometry.pycgal.core import CSG as _CSG
-    from pyg4ometry.pycgal.geom import Vector as _Vector
-    from pyg4ometry.pycgal.geom import Vertex as _Vertex
-    from pyg4ometry.pycgal.geom import Polygon as _Polygon
-
-import numpy as _np
+if _config.meshing == _config.meshingType.pycsg:
+    pass
+elif _config.meshing == _config.meshingType.cgal_sm:
+    pass
 
 import logging as _log
+
+
 
 class Cons(_SolidBase):
     """
@@ -48,26 +41,57 @@ class Cons(_SolidBase):
 
     """
 
-    def __init__(self, name, pRmin1, pRmax1, pRmin2, pRmax2, pDz,
-                 pSPhi, pDPhi, registry, lunit="mm", aunit="rad",
-                 nslice=None, addRegistry=True):
-        super(Cons, self).__init__(name, 'Cons', registry)
+    def __init__(
+        self,
+        name,
+        pRmin1,
+        pRmax1,
+        pRmin2,
+        pRmax2,
+        pDz,
+        pSPhi,
+        pDPhi,
+        registry,
+        lunit="mm",
+        aunit="rad",
+        nslice=None,
+        addRegistry=True,
+    ):
+        super().__init__(name, "Cons", registry)
 
         self.pRmin1 = pRmin1
         self.pRmax1 = pRmax1
         self.pRmin2 = pRmin2
         self.pRmax2 = pRmax2
-        self.pDz    = pDz
-        self.pSPhi  = pSPhi
-        self.pDPhi  = pDPhi
+        self.pDz = pDz
+        self.pSPhi = pSPhi
+        self.pDPhi = pDPhi
         self.nslice = nslice if nslice else _config.SolidDefaults.Cons.nslice
-        self.lunit  = lunit
-        self.aunit  = aunit
+        self.lunit = lunit
+        self.aunit = aunit
 
         self.dependents = []
 
-        self.varNames = ["pRmin1", "pRmin2", "pRmax1", "pRmax2", "pDz", "pSPhi", "pDPhi", "nslice"]
-        self.varUnits = ["lunit", "lunit", "lunit", "lunit", "lunit", "aunit", "aunit", None]
+        self.varNames = [
+            "pRmin1",
+            "pRmin2",
+            "pRmax1",
+            "pRmax2",
+            "pDz",
+            "pSPhi",
+            "pDPhi",
+            "nslice",
+        ]
+        self.varUnits = [
+            "lunit",
+            "lunit",
+            "lunit",
+            "lunit",
+            "lunit",
+            "aunit",
+            "aunit",
+            None,
+        ]
 
         if addRegistry:
             registry.addSolid(self)
@@ -75,21 +99,29 @@ class Cons(_SolidBase):
         self.checkParameters()
 
     def checkParameters(self):
-        if self.evaluateParameter(self.pRmin1) > self.evaluateParameter(self.pRmax1) :
+        if self.evaluateParameter(self.pRmin1) > self.evaluateParameter(self.pRmax1):
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.evaluateParameter(self.pRmin2) > self.evaluateParameter(self.pRmax2) :
+        if self.evaluateParameter(self.pRmin2) > self.evaluateParameter(self.pRmax2):
             raise ValueError("Inner radius must be less than outer radius.")
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
-        return "Cons : {} {} {} {} {} {} {} {}".format(self.name, self.pRmin1, self.pRmax1,
-                                                       self.pRmin2, self.pRmax2, self.pDz,
-                                                       self.pSPhi, self.pDPhi)
+        return "Cons : {} {} {} {} {} {} {} {}".format(
+            self.name,
+            self.pRmin1,
+            self.pRmax1,
+            self.pRmin2,
+            self.pRmax2,
+            self.pDz,
+            self.pSPhi,
+            self.pDPhi,
+        )
 
     def mesh(self):
-        _log.info('cons.antlr>')
+        _log.info("cons.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
@@ -101,15 +133,25 @@ class Cons(_SolidBase):
         pSPhi = self.evaluateParameter(self.pSPhi) * auval
         pDPhi = self.evaluateParameter(self.pDPhi) * auval
 
-        _log.info('cons.pycsgmesh>')
+        _log.info("cons.pycsgmesh>")
 
-        from .GenericPolyhedra import GenericPolyhedra as  _GenericPolyhedra
+        from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 
-        pZ = [-pDz,    -pDz,   pDz,    pDz]
-        pR = [ pRmin1, pRmax1, pRmax2, pRmin2]
+        pZ = [-pDz, -pDz, pDz, pDz]
+        pR = [pRmin1, pRmax1, pRmax2, pRmin2]
 
-        ps = _GenericPolyhedra("ps", pSPhi, pDPhi, self.nslice, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
+        ps = _GenericPolyhedra(
+            "ps",
+            pSPhi,
+            pDPhi,
+            self.nslice,
+            pR,
+            pZ,
+            self.registry,
+            "mm",
+            "rad",
+            addRegistry=False,
+        )
         return ps.mesh()
 
         return mesh
-

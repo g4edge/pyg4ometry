@@ -12,7 +12,7 @@ Defines and variables
    :members: upgradeToStringExpression, sin, cos, tan, asin, acos, atan, exp, log, log10, sqrt, upgradeToVector, upgradeToTransformation
 
 .. autoclass:: pyg4ometry.gdml.Defines.ScalarBase
-   :members: 
+   :members:
    :undoc-members:
    :show-inheritance:
    :special-members: __add__, __sub__, __rsub__, __mul__, __div__, __rdiv__, __neg__
@@ -41,10 +41,10 @@ Defines and variables
    :members: sin, cos, tan, asin, acos, atan, exp, log, log10, sqrt
 
 .. autoclass:: pyg4ometry.gdml.Defines.VectorBase
-   :members: 
+   :members:
    :undoc-members:
    :show-inheritance:
-   :special-members: __add__, __sub__, __mul__, __rmul__, __div__ 
+   :special-members: __add__, __sub__, __mul__, __rmul__, __div__
 
 .. autoclass:: pyg4ometry.gdml.Position
    :members:
@@ -126,8 +126,8 @@ Geant4 solids
    :members:
 .. automodule:: pyg4ometry.geant4.solid.TwistedTubs
    :members:
-.. automodule:: pyg4ometry.geant4.solid.GenericTrap 
-   :members: 
+.. automodule:: pyg4ometry.geant4.solid.GenericTrap
+   :members:
 .. automodule:: pyg4ometry.geant4.solid.TessellatedSolid
    :members:
 .. automodule:: pyg4ometry.geant4.solid.Union
@@ -142,7 +142,7 @@ Geant4 solids
    :members:
 
 .. _g4-module:
-      
+
 Geant4 module
 -------------
 .. autoclass:: pyg4ometry.geant4.Registry
@@ -181,7 +181,7 @@ Geant4 module
    :show-inheritance:
 
 .. _module-docs-visualisation:
-      
+
 Visualisation module
 --------------------
 
@@ -195,7 +195,7 @@ Visualisation module
    :undoc-members:
    :show-inheritance:
 
-Freecad module 
+Freecad module
 --------------
 .. automodule:: pyg4ometry.freecad.Reader
    :members:
@@ -209,7 +209,7 @@ STL module
    :undoc-members:
    :show-inheritance:
 
-GDML module 
+GDML module
 -----------
 .. automodule:: pyg4ometry.gdml.Reader
    :members:
@@ -327,5 +327,3 @@ Features
 .. automodule:: pyg4ometry.features.algos
    :members:
    :undoc-members:
-
-

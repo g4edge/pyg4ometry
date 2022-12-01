@@ -39,5 +39,3 @@ PYBIND11_MODULE(TCollection, m) {
     .def("ToExtString",&TCollection_ExtendedString::ToExtString);
 
 }
-
-
