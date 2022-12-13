@@ -385,7 +385,6 @@ def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
     result = rotoTranslationFromTBxyz(name, rotation,
                                       flukaregistry=flukaregistry)
 
-    print('rotoTranslationFromTra2',translation,rotation)
     if any(translation): # Don't append a translation of zeros
         result.append(RotoTranslation(name,
                                       translation=translation,
