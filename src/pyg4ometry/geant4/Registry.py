@@ -718,6 +718,53 @@ class Registry:
     def structureAnalysis(self, lv_name=None, debug=False, level=0, df=None):
         return AnalyseGeometryStructure(self, lv_name, debug, level, df)
 
+    def _findDictByName(self, dic, nameFragment):
+        '''
+        Find a object which name matches (or partially matches) nameFragment,
+        returns a list of objects
+        '''
+
+        objs = []
+
+        for k in dic :
+            if k.find(nameFragment) != -1 :
+                objs.append(dic[k])
+
+        return objs
+
+    def findSolidByName(self, nameFragment = "box"):
+        '''
+        Find a solid  which name matches (or partially matches) nameFragment,
+        returns a list of solids
+        '''
+
+        return self._findDictByName(self.solidDict,nameFragment)
+
+    def findMaterialByName(self, nameFragment = "G4_AIR"):
+        '''
+        Find a material which name matches (or partially matches) nameFragment,
+        returns a list of materials
+        '''
+
+        return self._findDictByName(self.materialDict,nameFragment)
+
+
+    def findLogicalVolumeByName(self, nameFragment = "World"):
+        '''
+        Find a logical volume  which name matches (or partially matches) nameFragment,
+        returns a list of LogicalVolumes
+        '''
+
+        return self._findDictByName(self.logicalVolumeDict,nameFragment)
+
+
+    def findPhysicalVolumeByame(self,name):
+        '''
+        Find a physical volume  which name matches (or partially matches) nameFragment,
+        returns a list of LogicalVolumes
+        '''
+
+        return self._findDictByName(self.physicalVolumeDict,nameFragment)
 
 class GeometryComplexityInformation:
     def __init__(self):
