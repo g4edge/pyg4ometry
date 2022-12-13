@@ -1442,14 +1442,14 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
 
                     nx = dy1*dz2 - dz1*dy2
                     ny = dx2*dz1 - dx1*dz2
-                    nz = dx1*dy2 - dy1*dy2
+                    nz = dx1*dy2 - dy1*dx2
 
                     fbody = flukaRegistry.makeBody(PLA, "B" + name + format(ibody, '02'),
-                                       [-nx,-ny,-nz],
-                                       [x0,y0,z0],
-                                       transform=transform,
-                                       flukaregistry=flukaRegistry,
-                                       comment=commentName)
+                                                   [-nx,-ny,-nz],
+                                                   [x0,y0,z0],
+                                                   transform=transform,
+                                                   flukaregistry=flukaRegistry,
+                                                   comment=commentName)
                     ibody += 1
                     fzone.addIntersection(fbody)
                 fregion.addZone(fzone)
