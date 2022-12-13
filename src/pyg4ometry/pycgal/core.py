@@ -388,6 +388,14 @@ class PolygonProcessing :
 
         return partPolyList
 
+    @classmethod
+    def triangulatePolygon2d(cls, pgon) :
+        poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
+
+        for p in pgon :
+            poly2.push_back(Point_2.Point_2_EPECK(p[0],p[1]))
+
+        
 class PolyhedronProcessing :
 
     @classmethod

@@ -65,6 +65,11 @@ typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain_3_EPICK,CGAL::Default,
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr_EPICK> Mesh_complex_3_in_triangulation_3_EPICK;
 typedef CGAL::Mesh_criteria_3<Tr_EPICK> Mesh_criteria_3_EPICK;
 
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+typedef CGAL::Exact_predicates_tag                                                      tag_EP;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel_EPICK, CGAL::Default, tag_EP> CDT2_EPICK;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel_EPECK, CGAL::Default, tag_EP> CDT2_EPECK;
+
 PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPICK>);
 PYBIND11_MAKE_OPAQUE(std::vector<Polygon_with_holes_2_EPECK>);
 
@@ -237,4 +242,27 @@ PYBIND11_MODULE(CGAL, m) {
   //m.def("make_mesh_3",[](Polyhedral_mesh_domain_3_EPECK &d, Mesh_criteria_EPECK &c) {return CGAL::make_mesh_3<C3t3_EPECK>(d, c, CGAL::parameters::no_perturb(), CGAL::parameters::no_exclude());});
   m.def("make_mesh_3",[](Polyhedral_mesh_domain_3_EPICK &d, Mesh_criteria_3_EPICK &c) {return CGAL::make_mesh_3<Mesh_complex_3_in_triangulation_3_EPICK>(d, c, CGAL::parameters::no_perturb(), CGAL::parameters::no_exude());});
 
+  py::class_<CDT2_EPICK>(m,"CDT2_EPICK");
+
+  py::class_<CDT2_EPECK>(m,"CDT2_EPECK")
+  /* Creation */
+    .def(py::init<>())
+    .def(py::init<CDT2_EPECK &>())
+  /* Insertion and Removal */
+    .def("push_back",[](CDT2_EPECK &cdt, CDT2_EPECK::Point &p) {cdt.push_back(p);})
+
+  /* Triangulation_2 Access Functions */
+    .def("dimension",&CDT2_EPECK::dimension)
+    .def("number_of_vertices",&CDT2_EPECK::number_of_vertices)
+    .def("number_of_faces",&CDT2_EPECK::number_of_faces)
+
+  /* Triangulation_2 Finite Face, Edge and Vertex Iterators */
+    .def("finite_faces",[](CDT2_EPECK &cdt2) {
+      return py::make_iterator(cdt2.finite_faces_begin(), cdt2.finite_faces_end());
+     },py::keep_alive<0, 1>())
+
+  /* Triangulation_2 All Face, Edge and Vertex Iterators */
+    .def("all_faces",[](CDT2_EPECK &cdt2) {
+      return py::make_iterator(cdt2.all_faces_begin(), cdt2.all_faces_end());
+    },py::keep_alive<0, 1>());
 }
