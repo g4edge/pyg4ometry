@@ -117,11 +117,13 @@ class Writer(object):
 
     def writeGmadTester(self, filenameGmad, filenameGDML,
                         writeDefaultLattice=False,
-                        preprocessGDML=True):
+                        preprocessGDML=True,
+                        energy=250):
         if writeDefaultLattice:
             self.writeDefaultLattice()
 
-        s = f'e1: element, geometry="gdml:{filenameGDML}'
+        s = 'd1: drift, l=0.01*cm;\n'
+        s += f'e1: element, geometry="gdml:{filenameGDML}'
         if "GDML_Size_position_z" in self.registry.defineDict:
             s += '", l=' + str(self.registry.defineDict['GDML_Size_position_z'].value) + '*mm;\n'
         else:
@@ -137,10 +139,10 @@ use, period=l1;
 
 sample, all;
 beam, particle="e-",
-      energy=250*GeV;
+      energy={energy}*GeV;
 option, physicsList="em";
 option, preprocessGDML=0;
-"""
+""".format(energy=energy)
         if not preprocessGDML:
             s += "option, preprocessGDML=0;\n"
         f = open(filenameGmad, 'w')
