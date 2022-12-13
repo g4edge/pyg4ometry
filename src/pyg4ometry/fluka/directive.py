@@ -51,6 +51,13 @@ class MatrixConvertibleMixin:
     def leftMultiplyRotation(self, matrix):
         return self.toRotationMatrix()[:3, :3] @ matrix
 
+    def hash(self):
+        m4d = self.to4DMatrix()
+        return hash((m4d[0][0],m4d[0][1],m4d[0][2],m4d[0][3],
+                     m4d[1][0],m4d[1][1],m4d[1][2],m4d[1][3],
+                     m4d[2][0],m4d[2][1],m4d[2][2],m4d[2][3],
+                     m4d[3][0],m4d[3][1],m4d[3][2],m4d[3][3]))
+
 
 class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
@@ -116,7 +123,6 @@ class Transform(MatrixConvertibleMixin):
         matrices.extend(self._translationsTo4DMatrices())
         matrices.extend(self._rotoTranslationsTo4DMatrices())
         return _rightMultiplyMatrices(matrices)
-
 
 class RotoTranslation(MatrixConvertibleMixin):
     """translation in mm, angles in degrees"""
@@ -379,6 +385,7 @@ def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
     result = rotoTranslationFromTBxyz(name, rotation,
                                       flukaregistry=flukaregistry)
 
+    print('rotoTranslationFromTra2',translation,rotation)
     if any(translation): # Don't append a translation of zeros
         result.append(RotoTranslation(name,
                                       translation=translation,

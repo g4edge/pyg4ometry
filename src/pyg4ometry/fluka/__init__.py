@@ -7,6 +7,7 @@ from .body import (RPP, BOX, SPH, RCC, REC,
 from .reader import Reader
 from pyg4ometry.fluka.Writer import Writer
 from .fluka_registry import FlukaRegistry
+from .fluka_registry import FlukaBodyStoreExact
 from .vector import Three, AABB
 from .region import Zone, Region
 from .directive import Transform, RotoTranslation, RecursiveRotoTranslation

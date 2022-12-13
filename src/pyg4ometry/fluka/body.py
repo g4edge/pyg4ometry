@@ -291,6 +291,10 @@ class RPP(BodyMixin):
                                                  str(self.lower[2]),
                                                  str(self.upper[2]))
 
+    def hash(self):
+        return hash(("RPP",self.lower[0],self.lower[1],self.lower[2],
+                    self.upper[0],self.upper[1],self.upper[2])) ^ self.transform.hash()
+
 class BOX(BodyMixin):
     """General Rectangular Parallelepiped
 
@@ -379,6 +383,11 @@ class BOX(BodyMixin):
         return prefix+\
                "BOX {} {}".format(self.name, param_string)
 
+    def hash(self):
+        return hash(("BOX",self.vertex[0],self.vertex[1],self.vertex[2],
+                     self.edge1[0],self.edge1[1],self.edge1[2],
+                     self.edge2[0],self.edge2[1],self.edge2[2],
+                     self.edge3[0],self.edge3[1],self.edge3[2])) ^ self.transform.hash()
 
 class SPH(BodyMixin):
     """Sphere
@@ -431,6 +440,10 @@ class SPH(BodyMixin):
                "SPH {} {} {}".format(self.name,
                                      _iterablesToFreeString(self.point),
                                      self.radius)
+
+    def hash(self):
+        return hash(("SPH",self.point[0],self.point[1],self.point[2],
+                    self.radius)) ^ self.transform.hash()
 
 
 class RCC(BodyMixin):
@@ -509,6 +522,11 @@ class RCC(BodyMixin):
                                      _iterablesToFreeString(self.face),
                                      _iterablesToFreeString(self.direction),
                                      str(self.radius))
+
+    def hash(self):
+        return hash(("RCC",self.face[0],self.face[1],self.face[2],
+                           self.direction[0],self.direction[1],self.direction[2],
+                           self.radius)) ^ self.transform.hash()
 
 
 class REC(BodyMixin):
@@ -606,6 +624,11 @@ class REC(BodyMixin):
                                                          self.semiminor,
                                                          self.semimajor))
 
+    def hash(self):
+        return hash(("REC",self.direction[0],self.direction[1],self.direction[2],
+                           self.semiminor[0],self.semiminor[1],self.semiminor[2],
+                           self.semimajor[0],self.semimajor[1],self.semimajor[2])) ^ self.transform.hash()
+
 class TRC(BodyMixin):
     """
 
@@ -697,6 +720,10 @@ class TRC(BodyMixin):
                                         self.major_radius,
                                         self.minor_radius)
 
+    def hash(self):
+        return hash(("RPP",self.major_centre[0],self.major_centre[1],self.major_centre[2],
+                           self.direction[0],self.direction[1],self.direction[2],
+                           self.minor_radius,self.major_radius)) ^ self.transform.hash()
 
 class ELL(BodyMixin):
     """Ellipsoid of Revolution
@@ -794,6 +821,11 @@ class ELL(BodyMixin):
                                                             self.focus2),
                                      self.length)
 
+    def hash(self):
+        return hash(("ELL",self.focus1[0],self.focus1[1],self.focus1[2],
+                           self.focus2[0],self.focus2[1],self.focus2[2],
+                           self.length)) ^ self.transform.hash()
+
 class _WED_RAW(BodyMixin):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
@@ -883,6 +915,11 @@ class _WED_RAW(BodyMixin):
                                                            self.edge2,
                                                            self.edge3))
 
+    def hash(self):
+        return hash(("WED",self.vertex[0],self.vertex[1],self.vertex[2],
+                           self.edge1[0],self.edge1[1],self.edge1[2],
+                           self.edge2[0],self.edge2[1],self.edge2[2],
+                           self.edge3[0],self.edge3[1],self.edge3[2],)) ^ self.transform.hash()
 
 class WED(_WED_RAW):
     """Right Angle Wedge
@@ -1125,6 +1162,14 @@ class ARB(BodyMixin):
                                            itfs(line4),
                                            itfs(self.facenumbers))
 
+    def hash(self):
+
+        # TODO check this is all that is required
+        h = hash("ARB")
+        for v in self.vertices :
+            h ^= hash((v[0],v[1],v[2]))
+
+        h ^= self.transform.hash()
 
 class XYP(_HalfSpaceMixin):
     """
@@ -1163,6 +1208,9 @@ class XYP(_HalfSpaceMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._halfspaceFreeStringHelper(self.z)
+
+    def hash(self):
+        return hash(("ZXP",self.z)) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper([0, 0, 1], [0, 0, self.z])
@@ -1205,10 +1253,11 @@ class XZP(_HalfSpaceMixin):
         return prefix+\
                self._halfspaceFreeStringHelper(self.y)
 
+    def hash(self):
+        return hash(("XZP",self.y)) ^ self.transform.hash()
+
     def toPlane(self):
         return self._toPlaneHelper([0, 1, 0], [0, self.y, 0])
-
-
 
 class YZP(_HalfSpaceMixin):
     """
@@ -1248,6 +1297,9 @@ class YZP(_HalfSpaceMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._halfspaceFreeStringHelper(self.x)
+
+    def hash(self):
+        return hash(("YZP",self.x)) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper([1, 0, 0], [self.x, 0, 0])
@@ -1304,12 +1356,12 @@ class PLA(_HalfSpaceMixin):
                "PLA {} {}".format(self.name,
                                   _iterablesToFreeString(self.normal,
                                                          self.point))
+    def hash(self):
+        return hash(("PLA",self.normal[0],self.normal[1],self.normal[2],
+                    self.point[0],self.point[1],self.point[2])) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper(self.normal, self.point)
-
-
-
 
 class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """Infinite Circular Cylinder parallel to the x-axis
@@ -1365,6 +1417,9 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.y, self.z)
+
+    def hash(self):
+        return hash(("XCC",self.y,self.z,self.radius)) ^ self.transform.hash()
 
     def point(self):
         return self.transform.leftMultiplyRotation([0, self.y, self.z])
@@ -1428,6 +1483,9 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return prefix+\
                self._infCylinderFreestringHelper(self.z, self.x)
 
+    def hash(self):
+        return hash(("YCC",self.z,self.x,self.radius)) ^ self.transform.hash()
+
     def point(self):
         return self.transform.leftMultiplyVector([self.x, 0, self.z])
 
@@ -1487,6 +1545,9 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
             prefix = "* "+self.comment+"\n"
         return prefix+\
                self._infCylinderFreestringHelper(self.x, self.y, self.radius)
+
+    def hash(self):
+        return hash(("ZCC",self.x, self.y, self.radius)) ^ self.transform.hash()
 
     def point(self):
         return self.transform.leftMultiplyVector([self.x, self.y, 0])
@@ -1571,6 +1632,9 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
                                            self.y, self.z,
                                            self.ysemi, self.zsemi)
 
+    def hash(self):
+        return hash(("XEC",self.y,self.z,self.ysemi,self.zsemi)) ^ self.transform.hash()
+
 
 class YEC(BodyMixin, _ShiftableCylinderMixin):
     """Infinite Elliptical Cylinder parallel to the y-axis
@@ -1647,6 +1711,8 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
                                            self.z, self.x,
                                            self.zsemi, self.xsemi)
 
+    def hash(self):
+        return hash(("YEC",self.x,self.z,self.xsemi,self.zsemi)) ^ self.transform.hash()
 
 class ZEC(BodyMixin, _ShiftableCylinderMixin):
     """Infinite Elliptical Cylinder parallel to the z-axis
@@ -1720,6 +1786,9 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
                "ZEC {} {} {} {} {}".format(self.name,
                                            self.x, self.y,
                                            self.xsemi, self.ysemi)
+
+    def hash(self):
+        return hash(("ZEC",self.x,self.y,self.xsemi,self.ysemi)) ^ self.transform.hash()
 
 class QUA(BodyMixin):
     """
@@ -1947,7 +2016,10 @@ class QUA(BodyMixin):
                                     self.cxy, self.cxz, self.cyz,
                                     self.cx, self.cy, self.cz, self.c]))
 
-
+    def hash(self):
+        return hash(("QUA",self.cxx, self.cyy, self.czz, self.cxy,
+                           self.cxz, self.cyz, self.cx, self.cy,
+                           self.cz, self.c)) ^ self.transform.hash()
 
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
