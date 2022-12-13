@@ -647,8 +647,7 @@ def extract(inputFileName,
 
     return v
 
-class FeatureData :
-
+class FeatureData:
     def __init__(self):
         self.features = []
         self.cutters  = []
@@ -685,6 +684,7 @@ class FeatureData :
                 self.cutters.append(d)
             elif l == '' :
                 break
+        f.close()
 
     def plotFeature(self, iFeature):
         f = _plt.figure(1)

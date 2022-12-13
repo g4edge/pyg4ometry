@@ -75,6 +75,11 @@ class Torus(_SolidBase):
                                                   self.pRmax, self.pRtor,
                                                   self.pSPhi, self.pDPhi)
 
+    def __str__(self):
+        return "Torus : name={} rmin={} rmax={} rtor={} sphi={} dphi={}".format(self.name, float(self.pRmin),
+                                                                                float(self.pRmax), float(self.pRtor),
+                                                                                float(self.pSPhi), float(self.pDPhi))
+
     def mesh(self):
 
         _log.info("torus.antlr>")

@@ -34,6 +34,12 @@ class Card(object):
         entries = ["" if s is None else str(s) for s in self.toList()]
         return delim.join(entries)
 
+    def toFixedString(self):
+        # TODO finish fixed string
+        #*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+...
+        #PHOTONUC      1111.0       0.0       0.0      26.0     147.0       1.0ELECTNUC
+        pass
+
     def nonesToZero(self):
         """Return a class instance with same contents as this
         instance, but with all entries of None set to 0.0 instead."""

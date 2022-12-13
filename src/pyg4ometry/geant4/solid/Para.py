@@ -67,8 +67,12 @@ class Para(_SolidBase):
         #TODO - parameter checking on angles
 
     def __repr__(self):
-        return "Para : {} {} {} {} {} {}".format(self.pX, self.pY, self.pZ,
-                                                 self.pAlpha, self.pTheta, self.pPhi)
+        return "Para : {} {} {} {} {} {} {}".format(self.name,self.pX, self.pY, self.pZ,
+                                                    self.pAlpha, self.pTheta, self.pPhi)
+
+    def __str__(self):
+        return "Para : name={} x={} y={} z={} alpha={} theta={} phi={}".format(self.name,float(self.pX), float(self.pY), float(self.pZ),
+                                                                               float(self.pAlpha), float(self.pTheta), float(self.pPhi))
 
     def mesh(self):
 

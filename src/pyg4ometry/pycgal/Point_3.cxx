@@ -16,7 +16,6 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel_EPECK;
 typedef Kernel_EPECK::Point_3                                 Point_3_EPECK;
 typedef Kernel_EPECK::Vector_3                                Vector_3_EPECK;
 
-
 PYBIND11_MODULE(Point_3, m) {
 
   py::class_<Point_3_EPICK>(m,"Point_3_EPICK")

@@ -65,6 +65,9 @@ class TessellatedSolid(_SolidBase):
     def __repr__(self):
         return self.type
 
+    def __str__(self):
+        return "TessellatedSolid {}".format(self.type)
+
     def addVertex(self,vertex):
         self.meshtess[0].append(vertex)
 

@@ -57,6 +57,11 @@ class ExtrudedSolid(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
+        # TODO put a proper string in here
+        return "Extruded solid: {}".format(self.name)
+
+    def __str__(self):
+        # TODO put a proper string in here
         return "Extruded solid: {}".format(self.name)
 
     def polygon_area(self,vertices):

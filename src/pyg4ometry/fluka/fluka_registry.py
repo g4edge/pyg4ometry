@@ -33,10 +33,14 @@ class FlukaRegistry(object):
     the FLUKA output file.
     """
     def __init__(self):
-        self.bodyDict = FlukaBodyStore()
+        #self.bodyDict = FlukaBodyStore()
+        self.bodyDict = FlukaBodyStoreExact()
+
         self.rotoTranslations = RotoTranslationStore()
         self.regionDict = _OrderedDict()
         self.materials = _OrderedDict()
+        self.iMaterials = 0
+        self.materialShortName = _OrderedDict()
         self.latticeDict = _OrderedDict()
         self.cardDict = _OrderedDict()
         self.assignmas = _OrderedDict()
@@ -155,6 +159,9 @@ class FlukaRegistry(object):
         else :
             self.cardDict[card.keyword] = [card]
 
+    def addTitle(self):
+        pass
+
     def addGlobal(self):
         pass
 
@@ -167,7 +174,11 @@ class FlukaRegistry(object):
     def addBeamPos(self):
         pass
 
-    def addUserBin(self):
+    def addLowMat(self):
+        # https://flukafiles.web.cern.ch/manual/chapters/low_energy_neutrons/multigroup_neutron_transport/neutron_cross_section_library/available_cross_sections.html
+        pass
+
+    def addUserBnn(self):
         pass
 
     def addUsrBdx(self, binning, scoringDir, scoringType, type, lunOutput, reg1, reg2, area, name,
@@ -191,7 +202,7 @@ class FlukaRegistry(object):
         elif sdum == "UDQUENCH" :
             c1 = _card.Card()
 
-    def assddRandomiz(self, seedLun =1, seed=54217137):
+    def addRandomiz(self, seedLun =1, seed=54217137):
         c = _card.Card("RANDOMIZ", seedLun, seed)
         self.addCard(c)
 
@@ -440,3 +451,73 @@ class InfiniteCylinderCacher(Cacheable):
         return _vector.pointOnLineClosestToPoint([0, 0, 0],
                                                  body.point(),
                                                  body.direction())
+
+class FlukaBodyStoreExact:
+    def __init__(self):
+        self.nameBody = {}
+        self.hashBody = {}
+        self.hashName = {}
+
+    def _bodyNames(self):
+        return list(self.nameBody.keys())
+
+    def _bodies(self):
+        return list(self.nameBody.values())
+
+    def make(self, cls, *args, **kwargs):
+        body = cls(*args, **kwargs)
+        return self.getDegenerateBody(body)
+
+    def getDegenerateBody(self, body):
+        if body.hash() in self.hashBody:
+            return self.hashBody[body.hash()]
+        else :
+            self.addBody(body)
+            return body
+
+    def addBody(self, body):
+        if body.name in self.nameBody :
+            raise _IdenticalNameError(body.name)
+        logger.debug("%s", body)
+
+        self.nameBody[body.name] = body
+        self.hashBody[body.hash()] = body
+        self.hashName[body.hash()] = body.name
+
+    def keys(self):
+        return self._bodyNames()
+
+    def values(self):
+        return self.nameBody.values()
+
+    def __setitem__(self, key, value):
+        assert key == value.name
+        self.addBody(value)
+        #c = value.hash()
+        #c.setBody(value)
+
+    def __getitem__(self, key):
+        if key not in self._bodyNames():
+            raise _FLUKAError(f"Undefined body: {key}")
+        return self.nameBody[key]
+
+    def __delitem__(self, key):
+        if key not in self._bodyNames():
+            raise KeyError(f"Missing body name: {key}")
+
+        body = self[key]
+        b = self.nameBody.pop(key)
+        self.hashBody.pop(b.hash())
+        self.hashName.pop(b.hash())
+
+    def __len__(self):
+        return len(self.nameBody)
+
+    def __contains__(self, key):
+        return key in self._bodyNames()
+
+    def __iter__(self):
+        return iter(self._bodies())
+
+    def __repr__(self):
+        return repr(dict(zip(self._bodyNames(), self._bodies())))

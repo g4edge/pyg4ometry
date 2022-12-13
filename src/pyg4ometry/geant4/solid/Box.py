@@ -64,6 +64,9 @@ class Box(_SolidBase):
     def __repr__(self):
         return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
 
+    def __str__(self):
+        return "Box : name={} x={} y={} z={}".format(self.name, float(self.pX), float(self.pY), float(self.pZ))
+
     def mesh(self):
         _log.info('box.pycsgmesh> antlr')
         import pyg4ometry.gdml.Units as _Units #TODO move circular import

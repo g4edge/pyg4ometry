@@ -60,6 +60,11 @@ class Polyhedra(_SolidBase):
                                                    self.pDPhi, self.numSide,
                                                    self.numZPlanes)
 
+    def __str__(self):
+        return "Polyhedra : name={} sphi={} dphi={} numside={} numzplanes={}".format(self.name, str(self.pSPhi),
+                                                                                     str(self.pDPhi), str(self.numSide),
+                                                                                     str(self.numZPlanes))
+
     def mesh(self):
         _log.info("polyhedra.antlr>")
 

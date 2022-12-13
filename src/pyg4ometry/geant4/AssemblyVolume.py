@@ -76,9 +76,12 @@ class AssemblyVolume(object):
             nm = [self.name + "_" + pv.name + "_" + n for n in nm]
         else:
             # assume type is LogicalVolume
-            m  = [dlv.mesh.localmesh.clone()]
-            bm = [dlv.mesh.localboundingmesh.clone()]
-            nm = [self.name + "_" + pv.name]
+            try:
+                m  = [dlv.mesh.localmesh.clone()]
+                bm = [dlv.mesh.localboundingmesh.clone()]
+                nm = [self.name + "_" + pv.name]
+            except AttributeError:
+                raise AttributeError("Error with LV: "+dlv.name+" in PV: "+pv.name+" - no mesh available")
 
         aa = _trans.tbxyz2axisangle(pv.rotation.eval())
         s = None

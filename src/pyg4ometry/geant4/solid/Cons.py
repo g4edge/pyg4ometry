@@ -86,6 +86,11 @@ class Cons(_SolidBase):
                                                        self.pRmin2, self.pRmax2, self.pDz,
                                                        self.pSPhi, self.pDPhi)
 
+    def __str__(self):
+        return "Cons : name={} rmin1={} rmax1={} rmin2={} rmax2={} dz={} sphi={} dphi={}".format(self.name, float(self.pRmin1), float(self.pRmax1),
+                                                                                                 float(self.pRmin2), float(self.pRmax2), float(self.pDz),
+                                                                                                 float(self.pSPhi), float(self.pDPhi))
+
     def mesh(self):
         _log.info('cons.antlr>')
 

@@ -59,6 +59,10 @@ class Polycone(_SolidBase):
     def __repr__(self):
         return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
 
+    def __str__(self):
+        # TODO finish other polycone
+        return "Polycone : name={} sphi={} dphi={}".format(self.name, float(self.pSPhi), float(self.pDPhi))
+
     def mesh(self):
 
         _log.info("polycone.pycsgmesh>")

@@ -71,6 +71,11 @@ class Ellipsoid(_SolidBase):
                                                       self.pySemiAxis, self.pzSemiAxis,
                                                       self.pzBottomCut, self.pzTopCut)
 
+    def __str__(self):
+        return "Ellipsoid : name={} xSemiAxis={} ySemiAxis={} zSemiAxis={} zBottomCut={} zTopCut={}".format(self.name, float(self.pxSemiAxis),
+                                                                                                            float(self.pySemiAxis), float(self.pzSemiAxis),
+                                                                                                            float(self.pzBottomCut), float(self.pzTopCut))
+
     def mesh(self):
         _log.info("ellipsoid.antlr>")
 

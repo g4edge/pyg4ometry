@@ -39,7 +39,11 @@ class MultiUnion(_SolidBase):
             obj.dependents.append(self)
 
     def __repr__(self):
-        return 'Multi Union %s' % (self.name)
+        return 'Multi Union {}'.format(self.name)
+
+    def __str__(self):
+        # TODO put all information
+        return 'Multi Union {}'.format(self.name)
 
     def mesh(self):
 
