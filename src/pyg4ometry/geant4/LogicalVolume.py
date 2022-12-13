@@ -379,6 +379,8 @@ class LogicalVolume(object):
             lvNew.clipGeometry(newSolid,newRotation,newPosition, runit, punit, True, depth, lvUsageCount, solidUsageCount)
 
             pvi.logicalVolume = lvNew
+            if pvi in self.daughterVolumes :
+                self.daughterVolumes.remove(pvi)
             self.daughterVolumes.append(pvi)
             self._daughterVolumesDict[pvi.name] = pvi
 
