@@ -715,11 +715,6 @@ class Registry:
         print(self.solidTypeCountDict)
         print(self.logicalVolumeUsageCountDict)
 
-    def toFlukaRegistry(self):
-        import pyg4ometry.fluka as _f
-
-        freg = _f.FlukaRegistry()
-
     def structureAnalysis(self, lv_name=None, debug=False, level=0, df=None):
         return AnalyseGeometryStructure(self, lv_name, debug, level, df)
 
