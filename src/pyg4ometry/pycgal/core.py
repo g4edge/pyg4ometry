@@ -11,6 +11,7 @@ from . import Polygon_with_holes_2
 from . import Polyhedron_3
 from . import Triangle_3
 from . import Vector_3
+from . import pythonHelpers
 
 import numpy as _np
 
@@ -356,9 +357,13 @@ class PolygonProcessing :
 
     @classmethod
     def decomposePolygon2d(cls, pgon) :
+    
         poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
+
         for p in pgon :
             poly2.push_back(Point_2.Point_2_EPECK(p[0],p[1]))
+
+        #pythonHelpers.draw_polygon_2(poly2)
 
         partPoly = Partition_traits_2_Polygon_2.List_Polygon_2_EPECK()
 
@@ -373,7 +378,14 @@ class PolygonProcessing :
                 pnt = pp.vertex(ppi)
                 partPolyCoords.append([pnt.x(),pnt.y()])
 
+            # TODO check if needed
+            #pnt = pp.vertex(0)
+            #partPolyCoords.append([pnt.x(),pnt.y()])
+
             partPolyList.append(partPolyCoords)
+
+        # pythonHelpers.draw_polygon_2_list(partPolyList)
+
         return partPolyList
 
 class PolyhedronProcessing :
