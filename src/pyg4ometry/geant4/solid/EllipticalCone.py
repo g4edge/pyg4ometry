@@ -60,6 +60,11 @@ class EllipticalCone(_SolidBase):
                                                         self.pySemiAxis, self.zMax,
                                                         self.pzTopCut)
 
+    def __str__(self):
+        return "EllipticalCone : name={} xSemiAxis={} ySemiAxis={} zMax={} zTopCut={}".format(self.name, float(self.pxSemiAxis),
+                                                                                              float(self.pySemiAxis), float(self.zMax),
+                                                                                              float(self.pzTopCut))
+
     def mesh(self):
         _log.info("ellipticalcone.antlr>")
 

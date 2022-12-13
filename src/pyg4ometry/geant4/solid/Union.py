@@ -45,6 +45,9 @@ class Union(_SolidBase):
     def __repr__(self):
         return 'Union %s(%s %s)' % (self.name, self.obj1.name, self.obj2.name)
 
+    def __str__(self):
+        return 'Union {} {} {}'.format(self.name, self.obj1.name, self.obj2.name)
+
     def mesh(self):
         _log.info('union.pycsgmesh>')
 

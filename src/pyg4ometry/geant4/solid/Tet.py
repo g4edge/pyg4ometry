@@ -63,6 +63,13 @@ class Tet(_SolidBase):
                                                           str(self.p3), 
                                                           str(self.p4))
 
+    def __str__(self):
+        return "Tet : name={} Vertexes: a={}, p2={}, p3={}, p4={}".format(self.name,
+                                                                          str(self.anchor),
+                                                                          str(self.p2),
+                                                                          str(self.p3),
+                                                                          str(self.p4))
+
     def mesh(self):
         _log.info('tet.pycsgmesh> antlr')
 

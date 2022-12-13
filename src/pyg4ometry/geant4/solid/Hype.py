@@ -73,6 +73,10 @@ class Hype(_SolidBase):
         return "Hype : {} {} {} {} {} {}".format(self.name, self.innerRadius, self.outerRadius,
                                                  self.innerStereo, self.outerStereo, self.lenZ)
 
+    def __str__(self):
+        return "Hype : name={} innerRadius={} outerRadius={} innerStereo={} outerStereo={} lenZ={}".format(self.name, float(self.innerRadius), float(self.outerRadius),
+                                                                                                           float(self.innerStereo), float(self.outerStereo), float(self.lenZ))
+
     def checkParameters(self):
         if float(self.innerRadius) > float(self.outerRadius):
             raise ValueError("Inner radius must be less than outer radius.")

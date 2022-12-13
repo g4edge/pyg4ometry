@@ -53,6 +53,9 @@ class Orb(_SolidBase):
     def __repr__(self):
         return "Orb : {} {}".format(self.name, self.pRMax)
 
+    def __str__(self):
+        return "Orb : name={} rmax={}".format(self.name, float(self.pRMax))
+
     ''''
     def pycsgmeshOld(self):
         _log.info("orb.antlr>")

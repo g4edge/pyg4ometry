@@ -68,6 +68,11 @@ class CutTubs(_SolidBase):
         return "Cut tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                         self.pDz, self.pSPhi, self.pDPhi)
 
+    def __str__(self):
+        # Low norm and high norm excluded as they are lists
+        return "Cut tubs : name={} rmin={} rmax={} dz={} sphi={} dphi={}".format(self.name, float(self.pRMin), float(self.pRMax),
+                                                                                 float(self.pDz), float(self.pSPhi), float(self.pDPhi))
+
     def mesh(self):
         # 0.00943803787231 66
         _log.info('tubs.pycsgmesh> antlr')

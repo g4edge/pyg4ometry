@@ -63,6 +63,10 @@ class GenericPolyhedra(_SolidBase):
         return "Generic Polyhedra : {} {} {} {}".format(self.name, self.pSPhi,
                                                         self.pDPhi, self.numSide)
 
+    def __str__(self):
+        return "Generic Polyhedra : name={} sphi={} dphi={} numside={}".format(self.name, float(self.pSPhi),
+                                                        float(self.pDPhi), float(self.numSide))
+
     def checkParameters(self):
         if len(self.pR) < 3:
             raise ValueError("Generic Polyhedra must have at least 3 R-Z points defined")

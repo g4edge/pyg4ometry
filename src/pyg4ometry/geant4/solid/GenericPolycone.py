@@ -53,6 +53,14 @@ class GenericPolycone(_SolidBase):
         if addRegistry:
             registry.addSolid(self)
 
+    def __repr__(self):
+        # TODO put a proper string in here
+        return "GenericPolycone solid: {}".format(self.name)
+
+    def __str__(self):
+        # TODO put a proper string in here
+        return "GenericPolycone solid: name={}".format(self.name)
+
     def checkParameters(self):
         if len(self.pR) < 3:
             raise ValueError("Generic Polycone must have at least 3 R-Z points defined")

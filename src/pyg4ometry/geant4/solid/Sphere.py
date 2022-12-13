@@ -92,6 +92,12 @@ class Sphere(_SolidBase):
                                                       self.pDPhi, self.pSTheta,
                                                       self.pDTheta)
 
+    def __str__(self):
+        return "Sphere : name={} rmin={} rmax={} sphi={} dphi={} stheta={} dtheta={}".format(self.name, float(self.pRmin),
+                                                                                             float(self.pRmax), float(self.pSPhi),
+                                                                                             float(self.pDPhi), float(self.pSTheta),
+                                                                                             float(self.pDTheta))
+
     def mesh(self):
         """
         working off

@@ -44,6 +44,9 @@ class Intersection(_SolidBase):
     def __repr__(self):
         return 'Intersection '+self.name+': ('+str(self.obj1.name)+') with ('+str(self.obj2.name)+')'
 
+    def __str__(self):
+        return 'Intersection {} {} {}'.format(self.name,str(self.obj1.name),str(self.obj2.name), repr(self.tra2))
+
     def mesh(self):
         import pyg4ometry.geant4 as _g4
 

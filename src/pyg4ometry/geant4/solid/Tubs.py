@@ -68,6 +68,10 @@ class Tubs(_SolidBase):
         return "Tubs : {} {} {} {} {} {}".format(self.name, self.pRMin, self.pRMax,
                                                  self.pDz, self.pSPhi, self.pDPhi)
 
+    def __str__(self):
+        return "Tubs : {} rmin={} rmax={} dz={} sphi={} dphi={} lunit={} aunit={}".format(self.name, float(self.pRMin), float(self.pRMax),
+                                                 float(self.pDz), float(self.pSPhi), float(self.pDPhi),self.lunit,self.aunit)
+
     def mesh(self):
         _log.info('tubs.pycsgmesh> antlr')
 

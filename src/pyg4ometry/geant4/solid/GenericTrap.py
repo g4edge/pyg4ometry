@@ -71,6 +71,9 @@ class GenericTrap(_SolidBase):
     def __repr__(self):
         return "Generic Trapezoid : {}".format(self.name)
 
+    def __str__(self):
+        return "Generic Trapezoid : name={}".format(self.name)
+
     def polygon_area(self,vertices):
         # Using the shoelace formula
         xy = _np.array(vertices).T
