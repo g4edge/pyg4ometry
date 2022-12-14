@@ -117,7 +117,7 @@ class ExtrudedSolid(_SolidBase):
                         scale[-1]*vert[1]+y_offs[-1]] for vert in list(reversed(vertices))]
 
 
-        topPolyListConvex = _PolygonProcessing.decomposePolygon2d(topPolyList)
+        topPolyListConvex = _PolygonProcessing.triangulatePolygon2d(topPolyList)
 
         for topPoly in topPolyListConvex :
             topPolyPolygon = _Polygon([_Vertex(_Vector(vert[0],vert[1],zpos[-1])) for vert in topPoly])
@@ -127,7 +127,7 @@ class ExtrudedSolid(_SolidBase):
         bottomPolyList = [[scale[0]*vert[0]+x_offs[0],
                            scale[0]*vert[1]+y_offs[0]] for vert in list(reversed(vertices))]
 
-        bottomPolyListConvex = _PolygonProcessing.decomposePolygon2d(bottomPolyList)
+        bottomPolyListConvex = _PolygonProcessing.triangulatePolygon2d(bottomPolyList)
 
         for bottomPoly in bottomPolyListConvex :
             bottomPoly = list(bottomPoly) # TODO reversed here because of needing counterclockwise in 2D convex decomp in CGAL

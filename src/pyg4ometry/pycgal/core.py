@@ -11,6 +11,7 @@ from . import Polygon_with_holes_2
 from . import Polyhedron_3
 from . import Triangle_3
 from . import Vector_3
+from . import CGAL
 from . import pythonHelpers
 
 import numpy as _np
@@ -390,12 +391,30 @@ class PolygonProcessing :
 
     @classmethod
     def triangulatePolygon2d(cls, pgon) :
-        poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
+        # first decompose as triangulation only works on convex hulls
+        partPolyList = cls.decomposePolygon2d(pgon)
+        triList = []
 
-        for p in pgon :
-            poly2.push_back(Point_2.Point_2_EPECK(p[0],p[1]))
+        # print('triangulatePolygon2d ndecom={}'.format(len(partPolyList)))
 
-        
+        # Loop over convex polygons and triangulate
+        for partPoly in partPolyList :
+            cdt = CGAL.CDT2_EPECK()
+
+            for vert in partPoly :
+                cdt.push_back(Point_2.Point_2_EPECK(vert[0],vert[1]))
+
+            for f in cdt.all_face_handles() :
+                if not cdt.is_infinite(f) :
+                    t = cdt.triangle(f)
+                    tvl = []
+                    for i in [0,1,2] :
+                        v = [t.vertex(i).x(), t.vertex(i).y()]
+                        tvl.append(v)
+                    triList.append(tvl)
+
+        return triList
+
 class PolyhedronProcessing :
 
     @classmethod

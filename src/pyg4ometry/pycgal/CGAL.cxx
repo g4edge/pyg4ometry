@@ -251,6 +251,9 @@ PYBIND11_MODULE(CGAL, m) {
   /* Insertion and Removal */
     .def("push_back",[](CDT2_EPECK &cdt, CDT2_EPECK::Point &p) {cdt.push_back(p);})
 
+  /* Triangulation_2 Predicates */
+    .def("is_infinite",[](CDT2_EPECK &cdt,CDT2_EPECK::Face_handle fh) {return cdt.is_infinite(fh);})
+
   /* Triangulation_2 Access Functions */
     .def("dimension",&CDT2_EPECK::dimension)
     .def("number_of_vertices",&CDT2_EPECK::number_of_vertices)
@@ -260,9 +263,27 @@ PYBIND11_MODULE(CGAL, m) {
     .def("finite_faces",[](CDT2_EPECK &cdt2) {
       return py::make_iterator(cdt2.finite_faces_begin(), cdt2.finite_faces_end());
      },py::keep_alive<0, 1>())
+    // TODO understand why this does not work (cf all_face_handles)
+    .def("finite_face_handles",[](CDT2_EPECK &cdt2) {
+      auto ri = cdt2.finite_face_handles();
+      return py::make_iterator(ri.begin(), ri.end());
+    },py::keep_alive<0, 1>())
 
   /* Triangulation_2 All Face, Edge and Vertex Iterators */
     .def("all_faces",[](CDT2_EPECK &cdt2) {
       return py::make_iterator(cdt2.all_faces_begin(), cdt2.all_faces_end());
-    },py::keep_alive<0, 1>());
+    },py::keep_alive<0, 1>())
+    .def("all_face_handles",[](CDT2_EPECK &cdt2) {
+      auto ri = cdt2.all_face_handles();
+      return py::make_iterator(ri.begin(), ri.end());
+    },py::keep_alive<0, 1>())
+
+  /* Miscellaneous */
+    .def("triangle",&CDT2_EPECK::triangle);
+
+  py::class_<CDT2_EPECK::Face>(m,"CDT2_EPECK_Face");
+  py::class_<CDT2_EPECK::Face_handle>(m,"CDT2_EPECK_Face_handle");
+  py::class_<CDT2_EPECK::Vertex>(m,"CDT2_EPECK_Vertex");
+  py::class_<CDT2_EPECK::Vertex_handle>(m,"CDT2_EPECK_Vertex_handle");
+
 }
