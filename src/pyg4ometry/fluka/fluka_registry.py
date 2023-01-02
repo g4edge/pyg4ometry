@@ -159,17 +159,20 @@ class FlukaRegistry(object):
         else :
             self.cardDict[card.keyword] = [card]
 
-    def addTitle(self):
-        pass
+    def addTitle(self, title = "FLUKA simulation"):
+        c = _card.Card("TITLE",sdum="\n"+title)
+        self.addCard(c)
+
+    def addDefaults(self, default="EM-CASCA"):
+        c = _card.Card("DEFAULTS",sdum=default)
+        self.addCard(c)
 
     def addGlobal(self):
         pass
 
-    def addDefaults(self):
-        pass
-
-    def addBeam(self):
-        pass
+    def addBeam(self, energy):
+        c = _card.Card("BEAM",energy,0.1,0,0.1,0.,-1,"ELECTRON")
+        self.addCard(c)
 
     def addBeamPos(self):
         pass
@@ -190,10 +193,12 @@ class FlukaRegistry(object):
         self.addCard(c2)
 
     def addUsricall(self):
-        pass
+        c = _card.Card("USRICALL")
+        self.addCard(c)
 
     def addUsrocall(self):
-        pass
+        c = _card.Card("USROCALL")
+        self.addCard(c)
 
     def addUserDump(self, mgdraw = 100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
         if not sdum :
@@ -206,7 +211,7 @@ class FlukaRegistry(object):
         c = _card.Card("RANDOMIZ", seedLun, seed)
         self.addCard(c)
 
-    def addStart(self, maxPrimHistories, timeTermSec= None, coreDump = None, eachHistoryOutput = None):
+    def addStart(self, maxPrimHistories = 1, timeTermSec= None, coreDump = None, eachHistoryOutput = None):
         c = _card.Card("START", maxPrimHistories,None,timeTermSec,coreDump,eachHistoryOutput)
         self.addCard(c)
 

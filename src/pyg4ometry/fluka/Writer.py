@@ -43,6 +43,8 @@ class Writer:
         """
         f = open(fileName,"w")
 
+        f.write("FREE\n")
+
         # actually used rot-defi directives
         rotdefi = {}
 
@@ -50,12 +52,17 @@ class Writer:
         # loop over (init cards)
         ###########################################
         for c in self.flukaRegistry.cardDict.keys() :
-            if c == "TITLE" or c == "DEFAULTS" or c == "BEAMPOS" :
-                cardstr = self.flukaRegistry.cardDict[c].toFreeString()
-                f.write(f"{cardstr}\n")
+            if c == "TITLE" or c == "DEFAULTS" or c == "BEAM" or c == "BEAMPOS" or c == "" :
+                print(self.flukaRegistry.cardDict[c])
+                if type(self.flukaRegistry.cardDict[c]) is list :
+                    for cc in self.flukaRegistry.cardDict[c]:
+                        cardstr = cc.toFreeString()
+                        f.write(f"{cardstr}\n")
+                else :
+                    cardstr = self.flukaRegistry.cardDict[c].toFreeString()
 
-        f.write("GEOBEGIN                                                              COMBNAME\n")
-        f.write("    0    0                                                                    \n")
+        f.write("GEOBEGIN , , , , , , , COMBNAME\n")
+        f.write("    0    0\n")
 
         ###########################################
         # loop over bodies
@@ -128,7 +135,7 @@ class Writer:
         # loop over (non init cards)
         ###########################################
         for c in self.flukaRegistry.cardDict.keys() :
-            if c != "TITLE" or c != "DEFAULTS" or c != "BEAMPOS" :
+            if c != "TITLE" and c != "DEFAULTS" and c != "BEAM" and c != "BEAMPOS" and c!= "":
                 for card in self.flukaRegistry.cardDict[c] :
                     cardstr = card.toFreeString()
                     f.write(f"{cardstr}\n")
@@ -136,5 +143,5 @@ class Writer:
         ###########################################
         # Close file (TODO use with)
         ###########################################
-        f.write("END\n")
+        # f.write("END\n")
         f.close()

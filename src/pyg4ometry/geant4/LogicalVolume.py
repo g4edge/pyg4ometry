@@ -907,7 +907,7 @@ class LogicalVolume(object):
 
         return materialNames
 
-    def assemblyVolume(self):
+    def assemblyVolume(self, materialName = "G4_AIR0x7f8441173ac0"):
         """
         Return an assembly volume of this this logical volume, in effect
         removing the solid and material of this logical volume, but retaining
@@ -920,6 +920,8 @@ class LogicalVolume(object):
         av = _AssemblyVolume("assembly_"+self.name, self.registry)
 
         for dv in self.daughterVolumes:
+            #if dv.logicalVolume.material.name !=  materialName:
+            #    dv.logicalVolume = _AssemblyVolume("assembly_"+dv.logicalVolume.name, self.registry)
             av.add(dv)
 
         return av
