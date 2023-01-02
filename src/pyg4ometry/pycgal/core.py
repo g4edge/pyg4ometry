@@ -458,7 +458,7 @@ class PolyhedronProcessing :
         while fi != fe :
 
             plane = fi.plane()
-            print(plane)
+            # print(plane)
             # point = plane.point()
             print(plane.a(),plane.b(),plane.c(),plane.d())
             orthvec = plane.orthogonal_vector()
