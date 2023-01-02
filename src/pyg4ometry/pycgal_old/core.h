@@ -12,12 +12,12 @@
 namespace py = pybind11;
 
 class CSG {
-protected : 
- 
+protected :
+
 public:
   SurfaceMesh *_surfacemesh;
   int count;
-  
+
   CSG();
   CSG(py::list &polygons);
   CSG(CSG &csg);

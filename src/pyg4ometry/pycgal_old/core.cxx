@@ -1,7 +1,7 @@
 #include "core.h"
 
 #include <vector>
-#include <map> 
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -127,8 +127,8 @@ void CSG::rotate(Vector &axis, double angleDeg) {
 
   rot[2][0] = (verSin * z * x) - (y * sinAngle);
   rot[2][1] = (verSin * z * y) + (x * sinAngle);
-  rot[2][2] = (verSin * z * z) + cosAngle;  
-  
+  rot[2][2] = (verSin * z * z) + cosAngle;
+
   _surfacemesh->transform(rot[0][0],rot[0][1],rot[0][2],
 			  rot[1][0],rot[1][1],rot[1][2],
 			  rot[2][0],rot[2][1],rot[2][2]);
@@ -154,7 +154,7 @@ void CSG::scale(Vector &scale) {
 void CSG::scale(py::list &scale) {
   double xs = scale[0].cast<double>();
   double ys = scale[1].cast<double>();
-  double zs = scale[2].cast<double>();  
+  double zs = scale[2].cast<double>();
   this->scale(xs,ys,zs);
 }
 
@@ -163,22 +163,22 @@ py::list* CSG::toVerticesAndPolygons() {
 }
 
 void CSG::toCGALSurfaceMesh(py::list &polygons) {
-  
+
   #ifdef __DEBUG_PYIO__
   py::print("CSG::toCGALSurfaceMesh>");
   #endif
 
   std::vector<Vector> verts;
   std::vector<std::vector<unsigned int>> polys;
-   
+
   /////////////////////////////////////////////////////////////
   std::hash<std::string> hash;
   std::map<size_t, unsigned int> vertexIndexMap;
-  
+
   unsigned int count = 0;
 
   //  std::ofstream fout("ra.txt");
-  
+
   double offset = 1.234567890; // gives unique key
 
   #ifdef __DEBUG_PYIO__
@@ -187,10 +187,10 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
 
   for(auto polyHandle : polygons) {
     Polygon *poly = polyHandle.cast<Polygon*>();
-    
-    std::vector<unsigned int> cell; 
+
+    std::vector<unsigned int> cell;
     for (auto vertHandle : poly->vertices()) {
-      Vertex *vert = vertHandle.cast<Vertex*>(); 
+      Vertex *vert = vertHandle.cast<Vertex*>();
 
       // coordinates of vertex
       double x = vert->pos().x();
@@ -201,20 +201,20 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
       if(fabs(x) < 1e-11) x = 0;
       if(fabs(y) < 1e-11) y = 0;
       if(fabs(z) < 1e-11) z = 0;
-      
+
       // create "unique" hash
       std::ostringstream sstream;
       sstream.precision(11);
       sstream << std::fixed;
       sstream << x+offset << " " << y+offset << " " << z+offset;
       size_t posHash = hash(sstream.str());
-      
+
       // check if not in in map
       if (vertexIndexMap.find(posHash) == vertexIndexMap.end()) {
 	    vertexIndexMap.insert(std::pair<size_t, unsigned int>(posHash,verts.size()));
 	    verts.push_back(vert->pos());
       }
-      
+
       cell.push_back(vertexIndexMap.find(posHash)->second);
       count++;
     }
@@ -230,14 +230,14 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
     #endif
     _surfacemesh->add_vertex(v._x,v._y, v._z);
   }
-  
+
   #ifdef __DEBUG_PYIO__
   py::print("CSG::toCGALSurfaceMesh> add faces");
   #endif
 
   for(auto f : polys) {
 
-    if(f.size() == 3) {      
+    if(f.size() == 3) {
       _surfacemesh->add_face((size_t)f[0],(size_t)f[1], (size_t)f[2]);
     }
     else if(f.size() == 4) {
@@ -246,8 +246,8 @@ void CSG::toCGALSurfaceMesh(py::list &polygons) {
     else {
       _surfacemesh->add_face(f);
     }
-      
-  }   
+
+  }
 }
 
 CSG* CSG::unioN(CSG &csg) {
@@ -279,7 +279,7 @@ int CSG::getNumberPolys() {
 }
 
 int CSG::vertexCount() {
-  return _surfacemesh->number_of_vertices();  
+  return _surfacemesh->number_of_vertices();
 }
 
 int CSG::polygonCount() {

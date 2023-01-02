@@ -1,5 +1,5 @@
 #ifndef __ALGO_H
-#define __ALGO_H 
+#define __ALGO_H
 
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
@@ -18,7 +18,7 @@
 #include <CGAL/Surface_mesh.h>
 
 /* 3D algorithms */
-#include <CGAL/convex_decomposition_3.h> 
+#include <CGAL/convex_decomposition_3.h>
 
 /* 2D Objects */
 #include <CGAL/Partition_traits_2.h>
@@ -55,7 +55,7 @@ typedef CGAL::Aff_transformation_3<Kernel>                  Aff_transformation_3
 
 typedef CGAL::Partition_traits_2<Kernel>                    Partition_traits_2;
 typedef Partition_traits_2::Point_2                         Point_2;
-typedef Partition_traits_2::Polygon_2                       Polygon_2; 
+typedef Partition_traits_2::Polygon_2                       Polygon_2;
 
 #include <boost/function_output_iterator.hpp>
 #include <fstream>
@@ -66,59 +66,59 @@ typedef boost::graph_traits<Surface_mesh>::edge_descriptor     edge_descriptor;
 /* pybind */
 namespace py = pybind11;
 
-template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS> 
-{  
- private: 
+template <class HDS> class Build_Polygon_VertexFacet : public CGAL::Modifier_base<HDS>
+{
+ private:
   std::vector<std::vector<double>> _vertices;
   std::vector<std::vector<int>>    _facets;
-  
+
  public:
   Build_Polygon_VertexFacet(const std::vector<std::vector<double>> &vertices,
 			    const std::vector<std::vector<int>>    &facets) {
     _vertices = vertices;
     _facets    = facets;
   }
-  
+
   void operator()( HDS& hds) {
     // Postcondition: hds is a valid polyhedral surface.
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-    
+
     B.begin_surface(_vertices.size(), _facets.size(),0, CGAL::Polyhedron_incremental_builder_3<HDS>::RELATIVE_INDEXING);
-    
+
     typedef typename HDS::Vertex   Vertex;
     typedef typename Vertex::Point Point;
-    
+
     for(auto vert : _vertices) {
       B.add_vertex(Point(vert[0], vert[1], vert[2]));
     }
-    
-    for(auto facet : _facets) {      
+
+    for(auto facet : _facets) {
       B.begin_facet();
       for(auto ivert : facet) {
-	B.add_vertex_to_facet(ivert);	
+	B.add_vertex_to_facet(ivert);
       }
       B.end_facet();
     }
     B.end_surface();
   }
-};   
+};
 
 class Polyhedron {
  public :
-  Polyhedron_3 *_polyhedron; 
+  Polyhedron_3 *_polyhedron;
 
   Polyhedron();
-  Polyhedron(const std::vector<std::vector<double>> &vertices, 
+  Polyhedron(const std::vector<std::vector<double>> &vertices,
 	     const std::vector<std::vector<int>>    &facets);
-  Polyhedron(const py::list vertices, 
+  Polyhedron(const py::list vertices,
 	     const py::list facets);
-  Polyhedron(const py::array_t<double> vertices, 
+  Polyhedron(const py::array_t<double> vertices,
 	     const py::array_t<int> facets);
   ~Polyhedron();
 };
 
 class SurfaceMesh {
- public : 
+ public :
   Surface_mesh* _surfacemesh;
 
   SurfaceMesh();
@@ -168,12 +168,12 @@ class NefPolyhedron {
  public:
   Nef_polyhedron_3 *_nef_polyhedron;
 
-  NefPolyhedron(); 
+  NefPolyhedron();
   NefPolyhedron(const Polyhedron &polyhedron);
   NefPolyhedron(const SurfaceMesh &surfacemesh);
   NefPolyhedron(Nef_polyhedron_3 *nef_polyhedron);
   ~NefPolyhedron();
-  std::vector<NefPolyhedron*> convexDecomposition(); 
+  std::vector<NefPolyhedron*> convexDecomposition();
   void print();
   int number_of_volumes();
 };

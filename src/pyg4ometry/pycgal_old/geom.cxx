@@ -11,12 +11,12 @@
 /*********************************************
 Vector
 *********************************************/
-Vector::Vector() 
+Vector::Vector()
 {
   _x = _y = _z = 0;
 }
-  
-Vector::Vector(double x, double y, double z) 
+
+Vector::Vector(double x, double y, double z)
 {
   _x = x;
   _y = y;
@@ -37,22 +37,22 @@ Vector::Vector(py::tuple tuple)
   _z = tuple[2].cast<double>();
 }
 
-Vector::Vector(py::array_t<double> array) 
+Vector::Vector(py::array_t<double> array)
 {
   py::buffer_info buf = array.request();
-  
+
   if (buf.ndim != 1)
     throw std::runtime_error("numpy.ndarray dims must be 1");
-  
-  if (buf.shape[0] != 3) 
-    throw std::runtime_error("numpy.ndarray must be length 3");      
-  
+
+  if (buf.shape[0] != 3)
+    throw std::runtime_error("numpy.ndarray must be length 3");
+
   double* ptr = (double*)buf.ptr;
   _x = ptr[0];
   _y = ptr[1];
-  _z = ptr[2];    
+  _z = ptr[2];
 }
-  
+
 
 Vector::~Vector() {};
 
@@ -67,7 +67,7 @@ double Vector::y() const {
 
 double Vector::z() const {
   return _z;
-} 
+}
 
 double Vector::get(int i) const {
   switch (i) {
@@ -99,23 +99,23 @@ void Vector::set(int i, double value) {
 }
 
 
-Vector Vector::operator+(const Vector &v) const { 
-  return Vector(_x + v._x, 
+Vector Vector::operator+(const Vector &v) const {
+  return Vector(_x + v._x,
 		_y + v._y,
-		_z + v._z); 
+		_z + v._z);
 }
 
-Vector Vector::operator-(const Vector &v) const { 
-  return Vector(_x - v._x, 
+Vector Vector::operator-(const Vector &v) const {
+  return Vector(_x - v._x,
 		_y - v._y,
-		_z - v._z); 
-} 
-Vector Vector::operator*(double value) const { 
-  return Vector(_x * value, 
-		_y * value,
-		_z * value); 
+		_z - v._z);
 }
-  
+Vector Vector::operator*(double value) const {
+  return Vector(_x * value,
+		_y * value,
+		_z * value);
+}
+
 Vector operator*(double value, const Vector &v) {
   return Vector(value * v._x, value * v._y, value * v._z);
 }
@@ -125,9 +125,9 @@ Vector operator-(const Vector &v) {
 }
 
 Vector Vector::operator/(double value) const {
-  return Vector(_x / value, 
+  return Vector(_x / value,
 		_y / value,
-		_z / value); 
+		_z / value);
 }
 
 double Vector::dot(const Vector v) {
@@ -159,7 +159,7 @@ Vector Vector::cross(const Vector v) {
 Vector Vector::transform(const double m[3][3]) {
   return Vector(m[0][0] * _x+ m[0][1] * _y + m[0][2] * _z,
 		m[1][0] * _x+ m[1][1] * _y + m[1][2] * _z,
-		m[2][0] * _x+ m[2][1] * _y + m[2][2] * _z);		
+		m[2][0] * _x+ m[2][1] * _y + m[2][2] * _z);
 }
 
 int Vector::len() {
@@ -220,7 +220,7 @@ Plane::Plane() {
   _w      = 0;
 }
 
-Plane::Plane(Vector &a, Vector &b, Vector &c) {  
+Plane::Plane(Vector &a, Vector &b, Vector &c) {
   _normal = (b-a).cross(c-a).unit();
   _w  = _normal.dot(a);
 }
@@ -241,7 +241,7 @@ Polygon::Polygon(py::list &vertices) {
   _plane    = Plane(_vertices[0].cast<Vertex&>(),
 		    _vertices[1].cast<Vertex&>(),
 		    _vertices[2].cast<Vertex&>());
-} 
+}
 
 Polygon::~Polygon(){}
 
@@ -265,7 +265,7 @@ PYBIND11_MODULE(geom, m) {
     .def(py::self + py::self)
     .def(py::self - py::self)
     .def(py::self * double())
-    .def(double() * py::self)    
+    .def(double() * py::self)
     .def(-py::self)
     .def(py::self / double())
     .def("dot", &Vector::dot)
@@ -307,4 +307,3 @@ PYBIND11_MODULE(geom, m) {
     .def_readwrite("vertices",&Polygon::_vertices)
     .def_readwrite("plane",&Polygon::_plane);
 }
-
