@@ -63,15 +63,15 @@ type of solid used for an LV. To edit geometry a LV instance is required
 Complex geometry builder
 ------------------------
 
-Having access to geometry construction in python allows the rapid construction of 
-geometry using functions which return an appropriate LV. Examples of this available in 
+Having access to geometry construction in python allows the rapid construction of
+geometry using functions which return an appropriate LV. Examples of this available in
 ``pyg4ometry/pyg4ometry/test/pythonCompoundExamples``
 
 Fluka geometry scripting
 ------------------------
 
-In a very similar way to geant4 geometry authoring it is possible to 
-use pyg4ometry to create fluka output. To create a simple region consisting 
+In a very similar way to geant4 geometry authoring it is possible to
+use pyg4ometry to create fluka output. To create a simple region consisting
 of a single body
 
 .. code-block :: python
@@ -103,15 +103,15 @@ Export scene to paraview/vtk
 
 .. code-block :: python
    :linenos:
-   
+
    import pyg4ometry
-   
+
 
 Export scene to unity/unreal
 ----------------------------
 
-The quickest way to get geometry to Unity/Unreal is to use a standard asset 
-format. This takes a vtkRenderer and creates a OBJ file. The vtkRenderer 
+The quickest way to get geometry to Unity/Unreal is to use a standard asset
+format. This takes a vtkRenderer and creates a OBJ file. The vtkRenderer
 managed within pyg4ometry from the vtkViewer class, once a geometry is created
 (either from any source) then an OBJ file can be created. Taking the
 example in ``pyg4ometry/pyg4ometry/test/pythonCompoundExamples/``
@@ -129,7 +129,7 @@ example in ``pyg4ometry/pyg4ometry/test/pythonCompoundExamples/``
 
 ``obj`` files are written ``Chamber.obj`` and ``Chamber.mtl``.
 
-For a Fluka file, first it must be converted to geant4 and then the same process should be 
+For a Fluka file, first it must be converted to geant4 and then the same process should be
 followed.
 
 .. code-block :: python
@@ -144,13 +144,13 @@ followed.
    v.addLogicalVolume(l)
    v.exportOBJScene("Chamber")
 
-As the meshing might need to changed for the visualisation application, 
-the parameters for the meshing for each solid might need to changed. 
+As the meshing might need to changed for the visualisation application,
+the parameters for the meshing for each solid might need to changed.
 
 An ``obj`` file for an entire experiment does not help with work flows where meshes
-have to be UV-ed and textured. Tools like Blender and Gaffer can be used for this workload 
-but require meshes for each object and their placement. To enable there is a special 
-writer 
+have to be UV-ed and textured. Tools like Blender and Gaffer can be used for this workload
+but require meshes for each object and their placement. To enable there is a special
+writer
 
 .. code-block :: python
    :linenos:
@@ -161,10 +161,10 @@ writer
    l = r.getRegistry().getWorldVolume()
    w = pyg4ometry.visualisation.RenderWriter()
    w.addLogicalVolumeRecursive(l)
-   w.write("./SphericalChamber")   
+   w.write("./SphericalChamber")
 
 The directory ``SphericalChamber`` contains all the meshes in OBJ format along
-with an instance file ``0_instances.dat`` which contains a row for each 
-instance of a mesh.  
+with an instance file ``0_instances.dat`` which contains a row for each
+instance of a mesh.
 
- 
+

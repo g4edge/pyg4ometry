@@ -28,4 +28,3 @@ fi
 
 echo "Unable to decide correct target for parser!"
 exit(1)
-
