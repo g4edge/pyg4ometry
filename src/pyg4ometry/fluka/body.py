@@ -1205,7 +1205,7 @@ class ARB(BodyMixin):
         vs = map(list, self.vertices)
         vstrings = [f"v{i}={v}" for (i, v) in enumerate(vs, 1)]
         vstring = ", ".join(vstrings)
-        return "<ARB: {}, {}, faces={}>".format(self.name, vstring, self.facenumbers)
+        return f"<ARB: {self.name}, {vstring}, faces={self.facenumbers}>"
 
     def _withLengthSafety(self, safety, reg):
         arb = ARB(

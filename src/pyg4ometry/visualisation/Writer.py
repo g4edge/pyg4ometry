@@ -1,4 +1,3 @@
-
 import vtk as _vtk
 
 

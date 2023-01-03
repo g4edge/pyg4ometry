@@ -109,5 +109,3 @@ writer
 The directory ``SphericalChamber`` contains all the meshes in OBJ format along
 with an instance file ``0_instances.dat`` which contains a row for each
 instance of a mesh.
-
-

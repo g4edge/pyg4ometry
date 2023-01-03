@@ -1,4 +1,3 @@
-
 import numpy as _np
 
 import pyg4ometry.gdml as _gd

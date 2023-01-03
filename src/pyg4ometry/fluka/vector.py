@@ -1,7 +1,6 @@
 import numpy as _np
 
 
-
 class Three(_np.ndarray):
     def __new__(cls, *coordinates):
         # If an array-like of 3:
@@ -10,7 +9,7 @@ class Three(_np.ndarray):
         elif _np.shape(coordinates) == (3,):  # If supplied as x, y, z
             obj = _np.asarray(coordinates, dtype=float).view(cls)
         else:
-            raise TypeError("Unknown construction: {}".format(coordinates))
+            raise TypeError(f"Unknown construction: {coordinates}")
         return obj
 
     @property
