@@ -60,7 +60,7 @@ class MultiUnion(_SolidBase):
             # tranformation
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()
-            _log.info("MulUnion.mesh> rot={} tlate={}".format(str(rot), str(tlate)))
+            _log.info(f"MulUnion.mesh> rot={str(rot)} tlate={str(tlate)}")
 
             # get meshes
             _log.info("union.mesh> mesh %s" % str(idx))

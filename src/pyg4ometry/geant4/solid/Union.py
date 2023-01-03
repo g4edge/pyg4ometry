@@ -1,6 +1,5 @@
 import logging as _log
 
-
 from ...transformation import *
 from .SolidBase import SolidBase as _SolidBase
 
@@ -44,7 +43,7 @@ class Union(_SolidBase):
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return "Union {}({} {})".format(self.name, self.obj1.name, self.obj2.name)
+        return f"Union {self.name}({self.obj1.name} {self.obj2.name})"
 
     def mesh(self):
         _log.info("union.pycsgmesh>")
@@ -58,7 +57,7 @@ class Union(_SolidBase):
         # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        _log.info("Union.pycsgmesh> rot={} tlate={}".format(str(rot), str(tlate)))
+        _log.info(f"Union.pycsgmesh> rot={str(rot)} tlate={str(tlate)}")
 
         # get meshes
         _log.info("union.mesh> mesh1")
