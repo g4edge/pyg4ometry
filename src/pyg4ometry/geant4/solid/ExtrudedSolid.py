@@ -18,7 +18,6 @@ import logging as _log
 import numpy as _np
 
 
-
 class ExtrudedSolid(_SolidBase):
     """
     Construct an extruded solid

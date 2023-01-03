@@ -9,7 +9,6 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 
 
-
 class Cons(_SolidBase):
     """
     Constructs a conical section.
