@@ -21,7 +21,7 @@
       <xs:choice minOccurs="1">
 	<xs:element name="file" type="FileReferenceType"/>
 	<xs:element name="volumeref" type="ReferenceType"/>
-      </xs:choice>      
+      </xs:choice>
       <xs:choice minOccurs="0">
 	<xs:element name="position" type="positionType"/>
 	<xs:element name="positionref" type="ReferenceType"/>
@@ -64,8 +64,8 @@
       <xs:extension base="IdentifiableVolumeType">
 	<xs:sequence>
 	  <xs:element name="materialref" type="ReferenceType"/>
-	  <xs:element name="solidref" type="ReferenceType"/>	  
-	  <xs:choice minOccurs="0">	    
+	  <xs:element name="solidref" type="ReferenceType"/>
+	  <xs:choice minOccurs="0">
 	    <xs:element maxOccurs="unbounded" name="physvol" type="SinglePlacementType"/>
 	    <xs:element maxOccurs="1" minOccurs="1" name="divisionvol" type="DivisionPlacementType"/>
 	    <xs:element maxOccurs="1" minOccurs="1" ref="replicavol"/>
@@ -199,7 +199,7 @@
             allowed to refuse processing of such a
             document if this is using the more recent
             version of the GDML Schema then GDML Processor
-            understands 
+            understands
             Y - minor number, increased when incremental and
             backward compatible changes or improvements
             are made into the GDML Schema. GDML Processor

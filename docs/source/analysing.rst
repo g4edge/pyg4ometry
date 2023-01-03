@@ -74,21 +74,21 @@ returned that has a serious of dictionaries with information. ::
   Polyhedra            : 12
   Subtraction          : 6
   Box                  : 1
- 
+
   # of daughters       count
   0                    : 152
   2                    : 19
   4                    : 12
   13                   : 6
   25                   : 1
- 
+
   Depth of booleans    count
   1                    : 30
- 
+
   Booleans width depth over  3
   Solid name                               : n Booleans
 
   >>> info. <tab>
-  comp.booleanDepth      comp.nDaughtersPerLV  
-  comp.booleanDepthCount comp.printSummary     
+  comp.booleanDepth      comp.nDaughtersPerLV
+  comp.booleanDepthCount comp.printSummary
   comp.nDaughters        comp.solids

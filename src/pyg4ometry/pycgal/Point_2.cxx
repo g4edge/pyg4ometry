@@ -34,4 +34,3 @@ PYBIND11_MODULE(Point_2, m) {
     .def("x",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.x());})
     .def("y",[](Point_2_EPECK &p2) {return CGAL::to_double(p2.y());});
 }
-

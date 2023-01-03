@@ -41,8 +41,8 @@ complete example is:
    import pyg4ometry
    r  = pyg4ometry.freecad.Reader("./T103_overlap_copl.gdml")
    l = r.getRegistry().getWorldVolume()
-   l.checkOverlaps(recursive=False,coplanar=True,debugIO=False)   
-   v = pyg4ometry.visualisation.VtkViewer() 
+   l.checkOverlaps(recursive=False,coplanar=True,debugIO=False)
+   v = pyg4ometry.visualisation.VtkViewer()
    v.addLogicalVolume(l)
    v.view()
 

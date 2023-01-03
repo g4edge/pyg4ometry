@@ -2,27 +2,27 @@ import itertools
 import logging
 from copy import deepcopy
 from uuid import uuid4
-from math import degrees
 
-import numpy as np
 import networkx as nx
-
-from . import vis
-from pyg4ometry.exceptions import FLUKAError, NullMeshError
-import pyg4ometry.geant4 as g4
-from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
-from pyg4ometry.fluka.body import BodyMixin
-from .vector import Three, AABB, areAABBsOverlapping
-from . import boolean_algebra
-from pyg4ometry.transformation import tbxyz2axisangle
+import numpy as np
 
 import pyg4ometry.config as _config
+import pyg4ometry.geant4 as g4
+from pyg4ometry.exceptions import FLUKAError, NullMeshError
+from pyg4ometry.fluka.body import BodyMixin
+from pyg4ometry.transformation import (
+    matrix2tbxyz,
+)
+
+from . import boolean_algebra, vis
+from .vector import AABB, Three, areAABBsOverlapping
+
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG, do_intersect
+    from pyg4ometry.pycsg.core import do_intersect
 elif _config.meshing == _config.meshingType.cgal_sm:
     pass
     # TODO reinstate intersecting meshes
-    #from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
+    # from pyg4ometry.pycgal.core import CSG, do_intersect, intersecting_meshes
 
 from textwrap import wrap as _wrap
 
@@ -30,50 +30,44 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-
-def _generate_name(typename,index, name, isZone, rootname):
+def _generate_name(typename, index, name, isZone, rootname):
     """Try to generate a sensible name for intermediate
     Geant4 booleans which have no FLUKA analogue."""
     if rootname is None:
-        rootname = "a{}".format(uuid4()).replace("-", "")
-
+        rootname = f"a{uuid4()}".replace("-", "")
 
     if isZone:
-        return "{}{}_{}_{}".format(typename,
-                                   index,
-                                   "zone",
-                                   rootname)
+        return "{}{}_{}_{}".format(typename, index, "zone", rootname)
     else:
-        return "{}{}_{}_{}".format(typename,
-                                   index,
-                                   name,
-                                   rootname)
+        return "{}{}_{}_{}".format(typename, index, name, rootname)
 
 
-class _Boolean(object):
+class _Boolean:
     def generate_name(self, index, rootname=None):
         typename = type(self).__name__
         typename = typename[:3]
-        return _generate_name(typename,
-                              index,
-                              self.body.name,
-                              isinstance(self.body, Zone),
-                              rootname)
+        return _generate_name(
+            typename, index, self.body.name, isinstance(self.body, Zone), rootname
+        )
+
 
 class Subtraction(_Boolean):
     def __init__(self, body):
         self.body = body
         self._typestring = "sub"
 
+
 class Intersection(_Boolean):
     def __init__(self, body):
         self.body = body
         self._typestrin = "int"
 
+
 class Union(_Boolean):
     def __init__(self, body):
         self.body = body
         self._typestring = "uni"
+
 
 class Zone(vis.ViewableMixin):
     """Represents a zone which consists of one or more body intersections
@@ -88,6 +82,7 @@ class Zone(vis.ViewableMixin):
     :type name: string
 
     """
+
     def __init__(self, name=None):
         self.intersections = []
         self.subtractions = []
@@ -102,7 +97,7 @@ class Zone(vis.ViewableMixin):
         """
         self.subtractions.append(Subtraction(body))
 
-    def addIntersection(self,body):
+    def addIntersection(self, body):
         """Add a body or subzone as an intersection to this Zone
         instance.
 
@@ -168,22 +163,16 @@ class Zone(vis.ViewableMixin):
             raise FLUKAError("zone has no +.")
 
         result = self._getSolidFromBoolean(self.intersections[0], reg, aabb)
-        result = self._combine_booleans(body0,
-                                        result,
-                                        self.intersections[1:],
-                                        g4.solid.Intersection,
-                                        reg,
-                                        aabb)
+        result = self._combine_booleans(
+            body0, result, self.intersections[1:], g4.solid.Intersection, reg, aabb
+        )
 
         if not self.subtractions:
             return result
         elif len(self.subtractions) < 5:
-            return self._combine_booleans(body0,
-                                          result,
-                                          self.subtractions,
-                                          g4.solid.Subtraction,
-                                          reg,
-                                          aabb)
+            return self._combine_booleans(
+                body0, result, self.subtractions, g4.solid.Subtraction, reg, aabb
+            )
         else:
             return self._geant4MultiUnionSubtraction(body0, result, reg, aabb)
 
@@ -193,9 +182,7 @@ class Zone(vis.ViewableMixin):
             boolean_name = boolean.generate_name(i, rootname=self.name)
             transform = _getRelativeTransform(body0, boolean.body, aabb)
             other_solid = self._getSolidFromBoolean(boolean, reg, aabb)
-            result = operation(boolean_name,
-                               result, other_solid,
-                               transform, reg)
+            result = operation(boolean_name, result, other_solid, transform, reg)
         return result
 
     def _geant4MultiUnionSubtraction(self, body0, start, reg, aabb):
@@ -207,10 +194,9 @@ class Zone(vis.ViewableMixin):
             thisAABB = _getAxisAlignedBoundingBox(aabb, sub)
             transforms.append([body.tbxyz(), list(body.centre(aabb=thisAABB))])
 
-        union = g4.solid.MultiUnion(f"{self.name}_munion_{_randomName()}",
-                                    solids,
-                                    transforms,
-                                    registry=reg)
+        union = g4.solid.MultiUnion(
+            f"{self.name}_munion_{_randomName()}", solids, transforms, registry=reg
+        )
         aabb0 = _getAxisAlignedBoundingBox(aabb, body0)
 
         # Getting the correct relative rotation for the subtraction.
@@ -218,9 +204,13 @@ class Zone(vis.ViewableMixin):
         translation = -1 * body0.centre(aabb=aabb0)
         translation = list(rotation.dot(translation))
         rotation = list(matrix2tbxyz(rotation))
-        result = g4.solid.Subtraction(f"{self.name}_msub_{_randomName()}",
-                                      start, union,
-                                      [rotation, translation], reg)
+        result = g4.solid.Subtraction(
+            f"{self.name}_msub_{_randomName()}",
+            start,
+            union,
+            [rotation, translation],
+            reg,
+        )
         return result
 
     def dumps(self):
@@ -230,21 +220,20 @@ class Zone(vis.ViewableMixin):
 
         booleans = self.intersections + self.subtractions
         for s in booleans:
-            if isinstance(s,Intersection) :
-                if isinstance(s.body,Zone) :
-                    fs += " +({})".format(s.body.dumps())
+            if isinstance(s, Intersection):
+                if isinstance(s.body, Zone):
+                    fs += f" +({s.body.dumps()})"
                 else:
-                    fs += " +{}".format(s.body.name)
-            elif isinstance(s,Subtraction) :
-                if isinstance(s.body,Zone) :
-                    fs += " -({})".format(s.body.dumps())
-                else :
-                    fs += " -{}".format(s.body.name)
+                    fs += f" +{s.body.name}"
+            elif isinstance(s, Subtraction):
+                if isinstance(s.body, Zone):
+                    fs += f" -({s.body.dumps()})"
+                else:
+                    fs += f" -{s.body.name}"
 
         return fs
 
-    def withLengthSafety(self, bigger_flukareg, smaller_flukareg,
-                           shrink_intersections):
+    def withLengthSafety(self, bigger_flukareg, smaller_flukareg, shrink_intersections):
         zone_out = Zone(name=self.name)
         logger.debug("zone.name = %s", self.name)
         for boolean in self.intersections:
@@ -252,43 +241,43 @@ class Zone(vis.ViewableMixin):
             name = body.name
 
             if isinstance(body, Zone):
-                zone_out.addIntersection(body.withLengthSafety(
-                    bigger_flukareg,
-                    smaller_flukareg,
-                    shrink_intersections))
+                zone_out.addIntersection(
+                    body.withLengthSafety(
+                        bigger_flukareg, smaller_flukareg, shrink_intersections
+                    )
+                )
             elif shrink_intersections:
                 ls_body = deepcopy(smaller_flukareg.getBody(name))
                 ls_body.name += "_s"
-                logger.debug("Adding shrunk intersection %s to registry",
-                             ls_body.name)
+                logger.debug("Adding shrunk intersection %s to registry", ls_body.name)
                 zone_out.addIntersection(ls_body)
             else:
                 ls_body = deepcopy(bigger_flukareg.getBody(name))
                 ls_body.name += "_e"
-                logger.debug("Adding expanded intersection %s to registry",
-                             ls_body.name)
+                logger.debug(
+                    "Adding expanded intersection %s to registry", ls_body.name
+                )
                 zone_out.addIntersection(ls_body)
 
         for boolean in self.subtractions:
             body = boolean.body
             name = body.name
             if isinstance(body, Zone):
-                zone_out.addSubtraction(body.withLengthSafety(
-                    bigger_flukareg,
-                    smaller_flukareg,
-                    not shrink_intersections)) # flip length safety
+                zone_out.addSubtraction(
+                    body.withLengthSafety(
+                        bigger_flukareg, smaller_flukareg, not shrink_intersections
+                    )
+                )  # flip length safety
                 # convention if entering a subtracted subzone.
             elif shrink_intersections:
                 ls_body = deepcopy(bigger_flukareg.getBody(name))
                 ls_body.name += "_e"
-                logger.debug("Adding expanded subtraction %s to registry",
-                             ls_body.name)
+                logger.debug("Adding expanded subtraction %s to registry", ls_body.name)
                 zone_out.addSubtraction(ls_body)
             else:
                 ls_body = deepcopy(smaller_flukareg.getBody(name))
                 ls_body.name += "_s"
-                logger.debug("Adding shrunk subtraction %s to registry",
-                             ls_body.name)
+                logger.debug("Adding shrunk subtraction %s to registry", ls_body.name)
                 zone_out.addSubtraction(ls_body)
         return zone_out
 
@@ -361,8 +350,8 @@ class Zone(vis.ViewableMixin):
         nestedZoneCount = 0
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
-            if body.name is None: # e.g. a zone with no name
-                name = "zone{}_{}".format(nestedZoneCount, nameSuffix)
+            if body.name is None:  # e.g. a zone with no name
+                name = f"zone{nestedZoneCount}_{nameSuffix}"
                 nestedZoneCount += 1
             else:
                 name = body.name + nameSuffix
@@ -371,13 +360,17 @@ class Zone(vis.ViewableMixin):
 
             if isinstance(body, Zone):
                 if booleanType is Intersection:
-                    result.addIntersection(body.makeUnique(
-                        flukaregistry=flukaregistry,
-                        nameSuffix=nameSuffix))
+                    result.addIntersection(
+                        body.makeUnique(
+                            flukaregistry=flukaregistry, nameSuffix=nameSuffix
+                        )
+                    )
                 elif booleanType is Subtraction:
-                    result.addSubtraction(body.makeUnique(
-                        flukaregistry=flukaregistry,
-                        nameSuffix=nameSuffix))
+                    result.addSubtraction(
+                        body.makeUnique(
+                            flukaregistry=flukaregistry, nameSuffix=nameSuffix
+                        )
+                    )
             else:
                 if name in flukaregistry.bodyDict:
                     newBody = flukaregistry.getBody(name)
@@ -432,12 +425,12 @@ class Region(vis.ViewableMixin):
 
     """
 
-    def __init__(self, name, comment = ""):
+    def __init__(self, name, comment=""):
         self.name = name
         self.zones = []
         self.comment = comment
 
-    def addZone(self,zone):
+    def addZone(self, zone):
         """Add a Zone instance to this region.
 
         :param zone: The Zone instance to be added.
@@ -450,7 +443,7 @@ class Region(vis.ViewableMixin):
         if len(self.zones) == 1:
             return self.zones[0].centre(aabb=aabb)
         else:
-            return [0, 0, 0] # Multi union origin is [0, 0, 0].
+            return [0, 0, 0]  # Multi union origin is [0, 0, 0].
 
     def tbxyz(self):
         return matrix2tbxyz(self.rotation())
@@ -459,7 +452,7 @@ class Region(vis.ViewableMixin):
         if len(self.zones) == 1:
             return self.zones[0].rotation()
         else:
-            return np.identity(3) # Multi union is already rotated.
+            return np.identity(3)  # Multi union is already rotated.
 
     def bodies(self):
         "Return the set of unique bodies that constitute this Zone."
@@ -478,7 +471,7 @@ class Region(vis.ViewableMixin):
     def geant4Solid(self, reg, aabb=None):
         """Get the geant4Solid instance corresponding to this Region."""
         if len(self.zones) == 0:
-            raise FLUKAError("Region {} has no zones.".format(self.name))
+            raise FLUKAError(f"Region {self.name} has no zones.")
         elif len(self.zones) == 1:
             return self.zones[0].geant4Solid(reg, aabb=aabb)
         # Do multi-unions for everything else to support possible disjointedness.
@@ -488,10 +481,9 @@ class Region(vis.ViewableMixin):
             solids.append(zone.geant4Solid(reg, aabb=aabb))
             transforms.append([zone.tbxyz(), list(zone.centre(aabb=aabb))])
 
-        return g4.solid.MultiUnion(f"{self.name}_solid",
-                                   solids,
-                                   transforms,
-                                   registry=reg)
+        return g4.solid.MultiUnion(
+            f"{self.name}_solid", solids, transforms, registry=reg
+        )
 
     def dumps(self):
         return "\n".join([f"|{z.dumps()}" for z in self.zones])
@@ -500,15 +492,15 @@ class Region(vis.ViewableMixin):
         fs = f"{self.name} 5 {self.dumps()}"
 
         # split line (132 characters)
-        linLen = 132-5
+        linLen = 132 - 5
         barPos = fs.find("|")
-        modLen = linLen-barPos
+        modLen = linLen - barPos
 
-        fsLines = _wrap(fs,modLen)
+        fsLines = _wrap(fs, modLen)
 
-        fsNew = fsLines[0]+"\n"
-        for l in fsLines[1:] :
-            fsNew = fsNew + barPos*" " + l + "\n"
+        fsNew = fsLines[0] + "\n"
+        for l in fsLines[1:]:
+            fsNew = fsNew + barPos * " " + l + "\n"
 
         fs = fsNew
         if self.comment:
@@ -518,11 +510,12 @@ class Region(vis.ViewableMixin):
     def withLengthSafety(self, bigger_flukareg, smaller_flukareg):
         result = Region(self.name)
         for zone in self.zones:
-            result.addZone(zone.withLengthSafety(bigger_flukareg,
-                                                 smaller_flukareg,
-                                                 shrink_intersections=True))
+            result.addZone(
+                zone.withLengthSafety(
+                    bigger_flukareg, smaller_flukareg, shrink_intersections=True
+                )
+            )
         return result
-
 
     def allBodiesToRegistry(self, registry):
         """Add all the bodies that constitute this Region to the provided
@@ -547,7 +540,7 @@ class Region(vis.ViewableMixin):
         # Build undirected graph, and add nodes corresponding to each zone.
         graph = nx.Graph()
         graph.add_nodes_from(range(n_zones))
-        if n_zones == 1: # return here if there's only one zone.
+        if n_zones == 1:  # return here if there's only one zone.
             return nx.connected_components(graph)
 
         # We allow the user to provide a list of zoneAABBs as an
@@ -589,8 +582,9 @@ class Region(vis.ViewableMixin):
         return graph
 
     def connectedZones(self, zoneAABBs=None, aabb=None):
-        return list(nx.connected_components(
-            self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
+        return list(
+            nx.connected_components(self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb))
+        )
 
     def zoneAABBs(self, aabb=None):
         extents = []
@@ -627,8 +621,9 @@ class Region(vis.ViewableMixin):
 
         result = Region(self.name)
         for zone in self.zones:
-            result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
-                                           nameSuffix=nameSuffix))
+            result.addZone(
+                zone.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix)
+            )
         return result
 
     def isNull(self, aabb=None):
@@ -673,16 +668,18 @@ class Region(vis.ViewableMixin):
 def _get_relative_rot_matrix(first, second):
     return first.rotation().T.dot(second.rotation())
 
+
 def _get_relative_translation(first, second, aabb):
     # In a boolean rotation, the first solid is centred on zero,
     # so to get the correct offset, subtract from the second the
     # first, and then rotate this offset with the rotation matrix.
     aabb1 = _getAxisAlignedBoundingBox(aabb, first)
     aabb2 = _getAxisAlignedBoundingBox(aabb, second)
-    offset_vector = (second.centre(aabb=aabb2) - first.centre(aabb=aabb1))
+    offset_vector = second.centre(aabb=aabb2) - first.centre(aabb=aabb1)
     mat = first.rotation().T
     offset_vector = mat.dot(offset_vector).view(Three)
     return offset_vector
+
 
 def _get_relative_rotation(first, second):
     # The first solid is unrotated in a boolean operation, so it
@@ -691,10 +688,10 @@ def _get_relative_rotation(first, second):
     # rotation.
     return matrix2tbxyz(_get_relative_rot_matrix(first, second))
 
+
 def _getRelativeTransform(first, second, aabb):
     relative_angles = _get_relative_rotation(first, second)
-    relative_translation = _get_relative_translation(first, second,
-                                                     aabb)
+    relative_translation = _get_relative_translation(first, second, aabb)
     relative_transformation = [relative_angles, relative_translation]
     # convert to the tra2 format of a list of lists...
 
@@ -702,18 +699,23 @@ def _getRelativeTransform(first, second, aabb):
     logger.debug("relative_angles = %s", relative_angles)
     logger.debug("relative_translation = %s", relative_translation)
 
-    relative_transformation = [list(relative_transformation[0]),
-                               list(relative_transformation[1])]
+    relative_transformation = [
+        list(relative_transformation[0]),
+        list(relative_transformation[1]),
+    ]
     return relative_transformation
+
 
 def _randomName():
     "Returns a random name that is syntactically correct for use in GDML."
-    return "a{}".format(uuid4()).replace("-", "")
+    return f"a{uuid4()}".replace("-", "")
+
 
 def _makeWorldLogicalVolume(reg):
     world_material = g4.MaterialPredefined("G4_Galactic")
     world_solid = g4.solid.Box("world_box", 100, 100, 100, reg, "mm")
     return g4.LogicalVolume(world_solid, world_material, "world_lv", reg)
+
 
 def _getAxisAlignedBoundingBox(aabb, boolean):
     """aabb should really be a dictionary of
@@ -730,8 +732,9 @@ def _getAxisAlignedBoundingBox(aabb, boolean):
     if body_name is None:
         return aabb
 
-    if (isinstance(boolean, (Subtraction, Intersection))
-            and isinstance(boolean.body, Zone)):
+    if isinstance(boolean, (Subtraction, Intersection)) and isinstance(
+        boolean.body, Zone
+    ):
         return aabb
 
     if aabb is None:

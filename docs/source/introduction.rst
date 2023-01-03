@@ -2,10 +2,10 @@
 Introduction
 ============
 
-This package started as an internal tool for the BDSIM and machine backgrounds 
-group at Royal Holloway. BDSIM is a tool to rapidly create Geant4 models of 
-accelerator systems. Creation of geometry is a time consuming activity and 
-pyg4ometry hopefully will improve the time taken to create accurate reliable 
+This package started as an internal tool for the BDSIM and machine backgrounds
+group at Royal Holloway. BDSIM is a tool to rapidly create Geant4 models of
+accelerator systems. Creation of geometry is a time consuming activity and
+pyg4ometry hopefully will improve the time taken to create accurate reliable
 geometry flies.
 
 Need for programatic geometry generation
@@ -14,7 +14,7 @@ Need for programatic geometry generation
  * Non-expert user creation and maintenance of geometry
  * Reduce time spent creating geometry
  * Reproducibility
- * Lower number of errors 
+ * Lower number of errors
  * Parameterisation of geometry
  * Visualisation of geometry
  * Overlap checking
@@ -22,7 +22,7 @@ Need for programatic geometry generation
 
 Geant4 key concepts
 -------------------
- 
+
  * **solid** - describes shape only.
  * **logical volume** - a solid (shape) plus a material. Practically, in Geant4
    it can include fields, regions, visualisation attributes and user limits.

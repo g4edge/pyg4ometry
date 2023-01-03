@@ -2,6 +2,7 @@
 Geant4 classes. The classes mainly match those of Geant4
 """
 
+
 def IsAReplica(logicalVolume):
     """
     Utility function to test if an LV is really a replica volume. A replica is a special case
@@ -15,15 +16,16 @@ def IsAReplica(logicalVolume):
     itsAReplica = replicaCondition1 and replicaCondition2
     return itsAReplica
 
-from .LogicalVolume import *
-from .PhysicalVolume import *
-from .AssemblyVolume import *
-from .ReplicaVolume import *
-from .ParameterisedVolume import *
-from .DivisionVolume import *
-from .SkinSurface import *
-from .BorderSurface import *
-from .Registry import *
-from ._Material import *
-from .Expression import *
+
 from . import solid
+from ._Material import *
+from .AssemblyVolume import *
+from .BorderSurface import *
+from .DivisionVolume import *
+from .Expression import *
+from .LogicalVolume import *
+from .ParameterisedVolume import *
+from .PhysicalVolume import *
+from .Registry import *
+from .ReplicaVolume import *
+from .SkinSurface import *

@@ -1,13 +1,14 @@
-from . import CGAL
-from . import geom
-from . import Point_2
-from . import Point_3
-from . import Vector_3
-from . import Polygon_2
-from . import Aff_transformation_3
-from . import Polyhedron_3
-from . import Nef_polyhedron_3
-from . import Surface_mesh
-from . import Polygon_mesh_processing
-
+from . import (
+    CGAL,
+    Aff_transformation_3,
+    Nef_polyhedron_3,
+    Point_2,
+    Point_3,
+    Polygon_2,
+    Polygon_mesh_processing,
+    Polyhedron_3,
+    Surface_mesh,
+    Vector_3,
+    geom,
+)
 from .core import *
