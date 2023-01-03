@@ -15,7 +15,6 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 
 
-
 class Tet(_SolidBase):
     """
     Constructs a tetrahedra.

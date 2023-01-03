@@ -1,5 +1,3 @@
-
-
 def OverlapCoplTest(vis=False, interactive=False):
     import pyg4ometry.gdml as _gd
     import pyg4ometry.geant4 as _g4

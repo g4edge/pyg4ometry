@@ -11,7 +11,6 @@ import logging as _log
 import math as _math
 
 
-
 class Trap(_SolidBase):
     """
     Constructs a general trapezoid.

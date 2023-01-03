@@ -1,4 +1,3 @@
-
 from pyg4ometry.geant4.Registry import Registry as _Registry
 
 # try:

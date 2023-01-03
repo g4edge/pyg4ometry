@@ -1,6 +1,3 @@
-
-
-
 class Layer:
     def __init__(self, p1, p2, p3, p4, z):
         self.p1 = p1

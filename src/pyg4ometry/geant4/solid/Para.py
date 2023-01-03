@@ -11,7 +11,6 @@ import logging as _log
 import math as _math
 
 
-
 class Para(_SolidBase):
     """
     Constructs a parallelepiped.
