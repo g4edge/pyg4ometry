@@ -10,9 +10,7 @@ import pyg4ometry.config as _config
 import pyg4ometry.geant4 as g4
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
 from pyg4ometry.fluka.body import BodyMixin
-from pyg4ometry.transformation import (
-    matrix2tbxyz,
-)
+from pyg4ometry.transformation import matrix2tbxyz
 
 from . import boolean_algebra, vis
 from .vector import AABB, Three, areAABBsOverlapping
@@ -39,7 +37,7 @@ def _generate_name(typename, index, name, isZone, rootname):
     if isZone:
         return "{}{}_{}_{}".format(typename, index, "zone", rootname)
     else:
-        return "{}{}_{}_{}".format(typename, index, name, rootname)
+        return f"{typename}{index}_{name}_{rootname}"
 
 
 class _Boolean:

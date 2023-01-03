@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import (
     QTreeWidgetItem,
 )
 
-
 from .GeometryModel import GeometryModel
 from .QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 

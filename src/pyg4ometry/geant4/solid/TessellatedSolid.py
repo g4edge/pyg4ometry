@@ -7,9 +7,8 @@ if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
 elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
-    from pyg4ometry.pycgal.geom import Vertex as _Vertex
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
-
+    from pyg4ometry.pycgal.geom import Vertex as _Vertex
 
 
 class TessellatedSolid(_SolidBase):

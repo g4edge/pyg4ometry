@@ -247,7 +247,7 @@ class RotoTranslation(MatrixConvertibleMixin):
     @classmethod
     def fromCard(cls, card):
         if card.keyword != "ROT-DEFI":
-            raise ValueError("Not a ROT-DEFI card, keyword={}".format(card.keyword))
+            raise ValueError(f"Not a ROT-DEFI card, keyword={card.keyword}")
         card = card.nonesToZero()
 
         what1 = int(card.what1)

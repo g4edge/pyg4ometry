@@ -1,6 +1,5 @@
 import logging as _log
 
-
 from .SolidBase import SolidBase as _SolidBase
 
 

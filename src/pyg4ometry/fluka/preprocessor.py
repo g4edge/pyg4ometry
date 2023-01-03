@@ -140,7 +140,7 @@ def _parse_preprocessor_define(directive, split_line, defines):
         # remove name from defines if it has been defined.
         defines.pop(name, None)
     else:
-        raise ValueError("Unrecognised define directive: {}".format(directive))
+        raise ValueError(f"Unrecognised define directive: {directive}")
 
 
 def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
@@ -189,13 +189,9 @@ def _parse_preprocessor_include(directory, directive, split_line, line_stack):
             with open(filename) as f:
                 line_stack.extend(reversed(f.readlines()))  # read in # reverse
         except OSError:
-            raise FLUKAError(
-                "Included preprocessor file {} not found.".format(filename)
-            )
+            raise FLUKAError(f"Included preprocessor file {filename} not found.")
     else:
-        raise ValueError(
-            "Unknown include preprocessor directive: {}".format(split_line[1])
-        )
+        raise ValueError(f"Unknown include preprocessor directive: {split_line[1]}")
 
 
 class _Calc(ast.NodeVisitor):
@@ -250,7 +246,7 @@ class _Calc(ast.NodeVisitor):
         try:
             return _FLUKA_PREDEFINED_FUNCTIONS[name]
         except KeyError:
-            raise FLUKAError("Unknown name in preprocessor define: {}".format(name))
+            raise FLUKAError(f"Unknown name in preprocessor define: {name}")
 
     def visit_Call(self, node):
         function = self.visit(node.func)
