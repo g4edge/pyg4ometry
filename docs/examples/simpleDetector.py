@@ -1,6 +1,5 @@
 import math as _math
 
-
 import pyg4ometry as _pyg
 import pyg4ometry.gdml as _gdml
 import pyg4ometry.vtk as _vtk

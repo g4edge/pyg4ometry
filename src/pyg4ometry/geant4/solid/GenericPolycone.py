@@ -1,6 +1,5 @@
 import logging as _log
 
-
 from ... import config as _config
 from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 from .SolidBase import SolidBase as _SolidBase
