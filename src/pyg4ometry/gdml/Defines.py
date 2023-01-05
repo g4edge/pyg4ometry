@@ -847,7 +847,7 @@ class Matrix :
         for i, v in enumerate(values) :
             self.values.append(Expression("matrix_expr_{}_idx{}_val".format(name,i), upgradeToStringExpression(registry,v),registry=registry))
 
-        self.values_asarray = _np.array(self.values, dtype=_np.object)
+        self.values_asarray = _np.array(self.values, dtype=_np.object_)
         if self.coldim > 1:
             self.values_asarray = self.values_asarray.reshape(self.coldim, int(len(values)/self.coldim))
 

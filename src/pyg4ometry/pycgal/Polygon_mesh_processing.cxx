@@ -3,6 +3,8 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
+// #define CGAL_PMP_USE_CERES_SOLVER
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -27,6 +29,11 @@ typedef CGAL::Aff_transformation_3<Kernel_EPECK>              Aff_transformation
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 
 PYBIND11_MODULE(Polygon_mesh_processing, m) {
    m.doc() = "CGAL Polygon mesh processing";
@@ -39,6 +46,28 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
    m.def("do_intersect",[](Surface_mesh_EPICK &pm1, Surface_mesh_EPICK &pm2){return CGAL::Polygon_mesh_processing::do_intersect(pm1,pm2);});
    m.def("area",[](Surface_mesh_EPICK &pm1) {return CGAL::to_double(CGAL::Polygon_mesh_processing::area(pm1));});
    m.def("volume",[](Surface_mesh_EPICK &pm1) {return CGAL::to_double(CGAL::Polygon_mesh_processing::volume(pm1));});
+   m.def("isotropic_remeshing",[](Surface_mesh_EPICK &pm1, double target_mesh_length, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(pm1),
+                                                               target_mesh_length,
+                                                               pm1,
+                                                               CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(true));});
+   m.def("angle_and_area_smoothing", [](Surface_mesh_EPICK &pm1, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
+                                                                    CGAL::parameters::number_of_iterations(nb_iter)
+                                                                      .use_safety_constraints(false));
+   });
+   m.def("tangential_relaxation", [](Surface_mesh_EPICK &pm1, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
+                                                                 CGAL::parameters::number_of_iterations(nb_iter));
+   });
+   /*
+   m.def("smooth_shape", [](Surface_mesh_EPICK &pm1, double time, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::smooth_shape(face(pm1),
+                                                        pm1,
+                                                        time,
+                                                        CGAL::parameters::number_of_iterations(nb_iter));
+   });
+   */
 
    m.def("reverse_face_orientations",[](Surface_mesh_EPECK &pm){ CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);},"Reverse all face orientations", py::arg("Surface_mesh"));
    m.def("triangulate_faces",[](Surface_mesh_EPECK &pm) {CGAL::Polygon_mesh_processing::triangulate_faces(pm);});
@@ -49,5 +78,25 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
    m.def("do_intersect",[](Surface_mesh_EPECK &pm1, Surface_mesh_EPECK &pm2){return CGAL::Polygon_mesh_processing::do_intersect(pm1,pm2);});
    m.def("area",[](Surface_mesh_EPECK &pm1) {return CGAL::to_double(CGAL::Polygon_mesh_processing::area(pm1));});
    m.def("volume",[](Surface_mesh_EPECK &pm1) {return CGAL::to_double(CGAL::Polygon_mesh_processing::volume(pm1));});
-
+   m.def("isotropic_remeshing",[](Surface_mesh_EPECK &pm1, double target_mesh_length, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(pm1),
+                                                               target_mesh_length,
+                                                               pm1,
+                                                               CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(true));});
+   m.def("angle_and_area_smoothing", [](Surface_mesh_EPECK &pm1, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
+                                                                    CGAL::parameters::number_of_iterations(nb_iter));
+   });
+   m.def("tangential_relaxation", [](Surface_mesh_EPECK &pm1, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
+                                                                 CGAL::parameters::number_of_iterations(nb_iter));
+   });
+   /*
+   m.def("smooth_shape", [](Surface_mesh_EPECK &pm1, double time, int nb_iter) {
+     return CGAL::Polygon_mesh_processing::smooth_shape(faces(pm1),
+                                                        pm1,
+                                                        time,
+                                                        CGAL::parameters::number_of_iterations(nb_iter));
+   });
+   */
 }

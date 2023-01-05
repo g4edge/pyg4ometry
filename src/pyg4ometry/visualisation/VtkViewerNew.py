@@ -1,9 +1,13 @@
 import vtk as _vtk
+import numpy as _np
+import base64 as _base64
+
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
 import pyg4ometry.visualisation.Convert as _Convert
 from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
 from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
+
 
 class VtkViewerNew(_ViewerBase) :
     def __init__(self):
@@ -415,6 +419,107 @@ class VtkViewerNew(_ViewerBase) :
         if interactive:
             self.iren.Start()
 
+    def exportGLTFScene(self):
+        from pygltflib import GLTF2, Scene, Buffer, BufferView, Accessor, \
+                              Mesh, Attributes, Primitive, Node, \
+                              ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
+                              FLOAT, UNSIGNED_INT, SCALAR, VEC3
+
+        buffers     = []
+        bufferViews = []
+        accessors   = []
+        meshes      = []
+        nodes       = []
+        scenes      = []
+
+        binary_blob  = b''
+
+        # loop over meshes
+        iBuffer = 0
+        key_iBuffer = {}
+        for k in self.localmeshes :
+            print(k,self.localmeshes[k])
+
+            key_iBuffer[k] = iBuffer
+
+            # remesh and bevel
+
+            # compute normals
+
+            csg = self.localmeshes[k]
+            vAndPs = csg.toVerticesAndPolygons()
+            verts = vAndPs[0]
+            tris = vAndPs[1]
+
+            verts = _np.array(verts).astype(_np.float32)
+            tris = _np.array(tris).astype(_np.uint32)
+
+            verts_binary_blob = verts.flatten().tobytes()
+            tris_binary_blob = tris.flatten().tobytes()
+
+            buffers.append(Buffer(uri = 'data:application/octet-stream;base64,'+str(_base64.b64encode(tris_binary_blob+verts_binary_blob).decode("utf-8")),
+                                  byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
+
+            #buffers.append(Buffer(byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
+
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteLength=len(tris_binary_blob),
+                                          target=ELEMENT_ARRAY_BUFFER))
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteOffset=len(tris_binary_blob),
+                                          byteLength=len(verts_binary_blob),
+                                          target=ARRAY_BUFFER))
+            accessors.append(Accessor(bufferView=2*iBuffer,
+                                      componentType=UNSIGNED_INT,
+                                      count=tris.size,
+                                      type=SCALAR,
+                                      max=[int(tris.max())],
+                                      min=[int(tris.min())]))
+            accessors.append(Accessor(bufferView=2*iBuffer+1,
+                                      componentType=FLOAT,
+                                      count=verts.size/3,
+                                      type=VEC3,
+                                      max=verts.max(axis=0).tolist(),
+                                      min=verts.min(axis=0).tolist()))
+            meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1), indices=2*iBuffer)]))
+
+            binary_blob += tris_binary_blob
+            binary_blob += verts_binary_blob
+
+            iBuffer += 1
+
+        # loop over instances
+        iMesh = 0
+        for k in self.instancePlacements :
+            print(k,self.instancePlacements[k])
+            iInstance = 0
+            for p in self.instancePlacements[k] :
+                nodes.append(Node(name=k+"_"+str(iInstance),mesh=iMesh))
+                iInstance += 1
+
+            iMesh += 1
+
+        scene = Scene(nodes=list(range(0,len(nodes),1)))
+        scenes.append(scene)
+
+        gltf = GLTF2(scene=0,
+                     scenes=scenes,
+                     nodes=nodes,
+                     meshes=meshes,
+                     accessors=accessors,
+                     bufferViews=bufferViews,
+                     buffers=buffers)
+
+        #gltf.set_binary_blob(binary_blob)
+        #gltf.save_json("test.gltf")
+
+        glb = b"".join(gltf.save_to_bytes())
+        f = open("test.glb","wb")
+        f.write(glb)
+        f.close()
+
+    def __repr__(self):
+        return ''
 
 class VtkViewerColouredNew(VtkViewerNew):
     """
