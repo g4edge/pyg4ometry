@@ -494,8 +494,21 @@ class VtkViewerNew(_ViewerBase) :
             print(k,self.instancePlacements[k])
             iInstance = 0
             for p in self.instancePlacements[k] :
-                nodes.append(Node(name=k+"_"+str(iInstance),mesh=iMesh))
+                t = p['translation']
+                r = p['transformation']
+                aa = _transformation.matrix2axisangle(r)
+                axis = aa[0]
+                angle = aa[1]
+
+                nodes.append(Node(name=k+"_"+str(iInstance),
+                                  mesh=iMesh,
+                                  translation=[float(t[0]),float(t[1]),float(t[2])],
+                                  rotation=[axis[0]*_np.sin(angle/2),
+                                            axis[1]*_np.sin(angle/2),
+                                            axis[2]*_np.sin(angle/2),
+                                            _np.cos(angle/2)]))
                 iInstance += 1
+                print(list(p['translation']))
 
             iMesh += 1
 
@@ -510,7 +523,6 @@ class VtkViewerNew(_ViewerBase) :
                      bufferViews=bufferViews,
                      buffers=buffers)
 
-        #gltf.set_binary_blob(binary_blob)
         #gltf.save_json("test.gltf")
 
         glb = b"".join(gltf.save_to_bytes())
