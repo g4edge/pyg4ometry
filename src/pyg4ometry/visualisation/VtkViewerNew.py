@@ -1,6 +1,8 @@
+import base64 as _base64
+import random as _random
+
 import vtk as _vtk
 import numpy as _np
-import base64 as _base64
 
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
@@ -419,12 +421,17 @@ class VtkViewerNew(_ViewerBase) :
         if interactive:
             self.iren.Start()
 
-    def exportGLTFScene(self):
-        from pygltflib import GLTF2, Scene, Buffer, BufferView, Accessor, \
-                              Mesh, Attributes, Primitive, Node, \
-                              ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
-                              FLOAT, UNSIGNED_INT, SCALAR, VEC3
+    def exportGLTFScene(self, gltfFileName = 'test.gltf'):
+        try :
+            from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
+                                  Mesh, Attributes, Primitive, Node, \
+                                  ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
+                                  FLOAT, UNSIGNED_INT, SCALAR, VEC3
+        except ImportError :
+            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
+            return
 
+        materials   = []
         buffers     = []
         bufferViews = []
         accessors   = []
@@ -438,8 +445,6 @@ class VtkViewerNew(_ViewerBase) :
         iBuffer = 0
         key_iBuffer = {}
         for k in self.localmeshes :
-            print(k,self.localmeshes[k])
-
             key_iBuffer[k] = iBuffer
 
             # remesh and bevel
@@ -457,10 +462,13 @@ class VtkViewerNew(_ViewerBase) :
             verts_binary_blob = verts.flatten().tobytes()
             tris_binary_blob = tris.flatten().tobytes()
 
+            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random()],
+                                                        metallicFactor = _random.random(),
+                                                        roughnessFactor = _random.random())
+            materials.append(Material(pbrMetallicRoughness=pbrMetallicRoughness))
+
             buffers.append(Buffer(uri = 'data:application/octet-stream;base64,'+str(_base64.b64encode(tris_binary_blob+verts_binary_blob).decode("utf-8")),
                                   byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
-
-            #buffers.append(Buffer(byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
 
             bufferViews.append(BufferView(buffer=iBuffer,
                                           byteLength=len(tris_binary_blob),
@@ -481,7 +489,9 @@ class VtkViewerNew(_ViewerBase) :
                                       type=VEC3,
                                       max=verts.max(axis=0).tolist(),
                                       min=verts.min(axis=0).tolist()))
-            meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1), indices=2*iBuffer)]))
+            meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1),
+                                                     indices=2*iBuffer,
+                                                     material=iBuffer)]))
 
             binary_blob += tris_binary_blob
             binary_blob += verts_binary_blob
@@ -491,7 +501,6 @@ class VtkViewerNew(_ViewerBase) :
         # loop over instances
         iMesh = 0
         for k in self.instancePlacements :
-            print(k,self.instancePlacements[k])
             iInstance = 0
             for p in self.instancePlacements[k] :
                 t = p['translation']
@@ -508,7 +517,6 @@ class VtkViewerNew(_ViewerBase) :
                                             axis[2]*_np.sin(angle/2),
                                             _np.cos(angle/2)]))
                 iInstance += 1
-                print(list(p['translation']))
 
             iMesh += 1
 
@@ -521,14 +529,18 @@ class VtkViewerNew(_ViewerBase) :
                      meshes=meshes,
                      accessors=accessors,
                      bufferViews=bufferViews,
-                     buffers=buffers)
+                     buffers=buffers,
+                     materials=materials)
 
-        #gltf.save_json("test.gltf")
-
-        glb = b"".join(gltf.save_to_bytes())
-        f = open("test.glb","wb")
-        f.write(glb)
-        f.close()
+        if gltfFileName.find('gltf') != -1 :
+            gltf.save_json(gltfFileName)
+        elif gltfFileName.find('glb') != -1 :
+            glb = b"".join(gltf.save_to_bytes())
+            f = open(gltfFileName,"wb")
+            f.write(glb)
+            f.close()
+        else :
+            print("VtkViewerNew::exportGLTFScene> unknown gltf extension")
 
     def __repr__(self):
         return ''
