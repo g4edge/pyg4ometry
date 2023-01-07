@@ -9,7 +9,7 @@ import pyg4ometry.visualisation.ViewerBase as _ViewerBase
 import pyg4ometry.visualisation.Convert as _Convert
 from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
 from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
-
+from pyg4ometry.pycgal.Polygon_mesh_processing import isotropic_remeshing as _isotropic_remeshing
 
 class VtkViewerNew(_ViewerBase) :
     def __init__(self):
@@ -421,6 +421,21 @@ class VtkViewerNew(_ViewerBase) :
         if interactive:
             self.iren.Start()
 
+    def removeInvisible(self):
+        toRemove = []
+
+        for k in self.localmeshes:
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+            pyg4_rep   = pyg4VisOpt.representation
+
+            if pyg4_rep == "wireframe" :
+                toRemove.append(k)
+
+        for k in toRemove :
+            self.localmeshes.pop(k)
+            self.instancePlacements.pop(k)
+            self.instanceVisOptions.pop(k)
+
     def exportGLTFScene(self, gltfFileName = 'test.gltf'):
         try :
             from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
@@ -439,19 +454,21 @@ class VtkViewerNew(_ViewerBase) :
         nodes       = []
         scenes      = []
 
-        binary_blob  = b''
-
         # loop over meshes
         iBuffer = 0
         key_iBuffer = {}
         for k in self.localmeshes :
             key_iBuffer[k] = iBuffer
 
+            # get mesh
+            csg = self.localmeshes[k]
+
             # remesh and bevel
+
+            # _isotropic_remeshing(csg.sm,1,1)
 
             # compute normals
 
-            csg = self.localmeshes[k]
             vAndPs = csg.toVerticesAndPolygons()
             verts = vAndPs[0]
             tris = vAndPs[1]
@@ -462,9 +479,23 @@ class VtkViewerNew(_ViewerBase) :
             verts_binary_blob = verts.flatten().tobytes()
             tris_binary_blob = tris.flatten().tobytes()
 
-            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random()],
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+            print(k,pyg4VisOpt)
+
+            pyg4_color = pyg4VisOpt.colour
+            pyg4_alpha = pyg4VisOpt.alpha
+            pyg4_rep   = pyg4VisOpt.representation
+
+            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random(), _random.random()],
                                                         metallicFactor = _random.random(),
                                                         roughnessFactor = _random.random())
+            #alphaMode = "OPAQUE"
+
+
+            #if pyg4_rep == "wireframe" :
+            #    alphaMode = "BLEND"
+            #    alphaCutoff = pyg4_alpha
+
             materials.append(Material(pbrMetallicRoughness=pbrMetallicRoughness))
 
             buffers.append(Buffer(uri = 'data:application/octet-stream;base64,'+str(_base64.b64encode(tris_binary_blob+verts_binary_blob).decode("utf-8")),
@@ -485,16 +516,13 @@ class VtkViewerNew(_ViewerBase) :
                                       min=[int(tris.min())]))
             accessors.append(Accessor(bufferView=2*iBuffer+1,
                                       componentType=FLOAT,
-                                      count=verts.size/3,
+                                      count=int(verts.size/3),
                                       type=VEC3,
                                       max=verts.max(axis=0).tolist(),
                                       min=verts.min(axis=0).tolist()))
             meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1),
                                                      indices=2*iBuffer,
                                                      material=iBuffer)]))
-
-            binary_blob += tris_binary_blob
-            binary_blob += verts_binary_blob
 
             iBuffer += 1
 
