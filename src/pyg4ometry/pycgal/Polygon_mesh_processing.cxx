@@ -57,12 +57,10 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
                                                                     CGAL::parameters::number_of_iterations(nb_iter)
                                                                       .use_safety_constraints(false));
    });
-   */
    m.def("tangential_relaxation", [](Surface_mesh_EPICK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
                                                                  CGAL::parameters::number_of_iterations(nb_iter));
    });
-   /*
    m.def("smooth_shape", [](Surface_mesh_EPICK &pm1, double time, int nb_iter) {
      return CGAL::Polygon_mesh_processing::smooth_shape(face(pm1),
                                                         pm1,
@@ -90,12 +88,10 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
      return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
                                                                     CGAL::parameters::number_of_iterations(nb_iter));
    });
-   */
    m.def("tangential_relaxation", [](Surface_mesh_EPECK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
                                                                  CGAL::parameters::number_of_iterations(nb_iter));
    });
-   /*
    m.def("smooth_shape", [](Surface_mesh_EPECK &pm1, double time, int nb_iter) {
      return CGAL::Polygon_mesh_processing::smooth_shape(faces(pm1),
                                                         pm1,
