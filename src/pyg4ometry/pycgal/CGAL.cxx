@@ -10,6 +10,7 @@ namespace py = pybind11;
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Surface_mesh/IO/OFF.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -233,7 +234,8 @@ PYBIND11_MODULE(CGAL, m) {
     .def(py::init<double,double,double,double,double>());
   py::class_<Mesh_complex_3_in_triangulation_3_EPICK>(m,"Mesh_complex_3_in_triangulation_3_EPICK")
     .def("output_facets_in_complex_to_off",[](Mesh_complex_3_in_triangulation_3_EPICK &c3, std::string fileName) {
-      std::ofstream ofstr(fileName.c_str());
+      std::ofstream ofstr;
+      ofstr.open(fileName.c_str());
       c3.output_facets_in_complex_to_off(ofstr);
       ofstr.close();
     });
@@ -286,4 +288,34 @@ PYBIND11_MODULE(CGAL, m) {
   py::class_<CDT2_EPECK::Vertex>(m,"CDT2_EPECK_Vertex");
   py::class_<CDT2_EPECK::Vertex_handle>(m,"CDT2_EPECK_Vertex_handle");
 
+  /*******************************************************************
+  * IO submodule
+  *******************************************************************/
+
+  py::module io = m.def_submodule("IO", "IO submodule of CGAL");
+  io.def("write_OFF", [](Surface_mesh_EPICK &sm, std::string fileName) {
+    std::ofstream ofstr;
+    ofstr.open(fileName.c_str());
+    CGAL::IO::write_OFF(ofstr, sm);
+    ofstr.close();
+  }, "Write Surface_mesh_EPICK as OFF file");
+   io.def("write_OFF", [](Surface_mesh_EPECK &sm, std::string fileName) {
+    std::ofstream ofstr;
+    ofstr.open(fileName.c_str());
+    CGAL::IO::write_OFF(ofstr, sm);
+    ofstr.close();
+  }, "Write Surface_mesh_EPECK as OFF file");
+
+  io.def("write_PLY", [](Surface_mesh_EPICK &sm, std::string fileName) {
+    std::ofstream ofstr;
+    ofstr.open(fileName.c_str());
+    CGAL::IO::write_PLY(ofstr, sm);
+    ofstr.close();
+  }, "Write Surface_mesh_EPICK as OFF file");
+  io.def("write_PLY", [](Surface_mesh_EPECK &sm, std::string fileName) {
+    std::ofstream ofstr;
+    ofstr.open(fileName.c_str());
+    CGAL::IO::write_PLY(ofstr, sm);
+    ofstr.close();
+  }, "Write Surface_mesh_EPECK as OFF file");
 }
