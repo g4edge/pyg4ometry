@@ -31,7 +31,7 @@ typedef CGAL::Aff_transformation_3<Kernel_EPECK>              Aff_transformation
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
+// #include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 
@@ -51,11 +51,13 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
                                                                target_mesh_length,
                                                                pm1,
                                                                CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(true));});
+   /*
    m.def("angle_and_area_smoothing", [](Surface_mesh_EPICK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
                                                                     CGAL::parameters::number_of_iterations(nb_iter)
                                                                       .use_safety_constraints(false));
    });
+   */
    m.def("tangential_relaxation", [](Surface_mesh_EPICK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
                                                                  CGAL::parameters::number_of_iterations(nb_iter));
@@ -83,10 +85,12 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
                                                                target_mesh_length,
                                                                pm1,
                                                                CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(true));});
+   /*
    m.def("angle_and_area_smoothing", [](Surface_mesh_EPECK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
                                                                     CGAL::parameters::number_of_iterations(nb_iter));
    });
+   */
    m.def("tangential_relaxation", [](Surface_mesh_EPECK &pm1, int nb_iter) {
      return CGAL::Polygon_mesh_processing::tangential_relaxation(pm1,
                                                                  CGAL::parameters::number_of_iterations(nb_iter));
