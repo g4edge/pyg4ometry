@@ -463,11 +463,11 @@ class VtkViewerNew(_ViewerBase) :
             # get mesh
             csg = self.localmeshes[k]
 
+            inf = csg.info()
+
             # remesh and bevel
 
             # _isotropic_remeshing(csg.sm,1,1)
-
-            # compute normals
 
             vAndPs = csg.toVerticesAndPolygons()
             verts = vAndPs[0]
@@ -486,7 +486,7 @@ class VtkViewerNew(_ViewerBase) :
             pyg4_alpha = pyg4VisOpt.alpha
             pyg4_rep   = pyg4VisOpt.representation
 
-            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random(), _random.random()],
+            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random(), 1.0],
                                                         metallicFactor = _random.random(),
                                                         roughnessFactor = _random.random())
             #alphaMode = "OPAQUE"
