@@ -182,7 +182,15 @@ def cli(inputFileName = None,
         pass
 
     if outputFileName is not None :
-        _writeFile(outputFileName, reg)
+
+        if outputFileName.find(".gl") != -1 :
+            v = _pyg4.visualisation.VtkViewerNew()
+            v.addLogicalVolume(reg.getWorldVolume())
+            v.removeInvisible()
+            v.buildPipelinesAppend()
+            v.exportGLTFScene(outputFileName)
+        else :
+            _writeFile(outputFileName, reg)
 
     if view :
         v = _pyg4.visualisation.PubViewer()
@@ -191,72 +199,85 @@ def cli(inputFileName = None,
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)
 
-if __name__ == "__main__":
+
+
+def main() :
     parser = OptionParser()
-    parser.add_option("-v", "--view", help="view geometry", action = "store_true", dest = "view")
-    parser.add_option("-b", "--bounding", help="calculate bounding box", action = "store_true", dest = "bounding")
-    parser.add_option("-a", "--analysis", help="geometry information", action = "store_true", dest="analysis")
-    parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action = "store_true")
-    parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action = "store_true", dest="nullmesh")
+    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
+    parser.add_option("-b", "--bounding", help="calculate bounding box", action="store_true", dest="bounding")
+    parser.add_option("-a", "--analysis", help="geometry information", action="store_true", dest="analysis")
+    parser.add_option("-c", "--checkoverlaps", help="check overlaps", dest="checkOverlaps", action="store_true")
+    parser.add_option("-n", "--nullmesh", help="disable null mesh exception", action="store_true", dest="nullmesh")
     parser.add_option("-p", "--planeCutter", help="add (p)plane cutter -p x,y,z,nx,ny,nz", dest="planeCutter")
-    parser.add_option("-P", "--planeCutterOutput", help="plane cutter output file", dest="planeCutterOutputFileName", metavar="CUTTERFILE")
+    parser.add_option("-P", "--planeCutterOutput", help="plane cutter output file", dest="planeCutterOutputFileName",
+                      metavar="CUTTERFILE")
     parser.add_option("-I", "--info", help='information on geometry (tree, reg, instance)', dest="info")
-    parser.add_option("-i", "--file", dest="inputFileName",help="(i)nput file (gdml, stl, inp, step)", metavar="INFILE")
-    parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)", metavar="OUTFILE")
+    parser.add_option("-i", "--file", dest="inputFileName", help="(i)nput file (gdml, stl, inp, step)",
+                      metavar="INFILE")
+    parser.add_option("-o", "--output", dest="outputFileName", help="(o)utout file (gdml, inp, usd, vtp)",
+                      metavar="OUTFILE")
     parser.add_option("-d", "--compare", help="comp(a)re geometry", dest="compareFileName", metavar="COMPAREFILE")
     parser.add_option("-l", "--logical", help="extract logical LVNAME", dest="lvName", metavar="LVNAME")
     parser.add_option("-e", "--append", help="app(e)nd geometry", dest="appendFileName", metavar="APPENDFILE")
-    parser.add_option("-x", "--exchange", help="replace solid for logical volume, LVNAME is logical volume name", dest="exchangeLvName", metavar="LVNAME")
-    parser.add_option("-C", "--clip", help="clip to mother world solid. Or exchanged solid if specified", action = "store_true", dest="clip")
-    parser.add_option("-s", "--solid", help="solid in python constructor syntax (used with exchange). Registry must be reg and _np used for numpy", dest="solidCode", metavar="PYTHONSOLID")
-    parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation", metavar="X,Y,Z")
-    parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)", dest="rotation", metavar="TX,TY,TZ" )
+    parser.add_option("-x", "--exchange", help="replace solid for logical volume, LVNAME is logical volume name",
+                      dest="exchangeLvName", metavar="LVNAME")
+    parser.add_option("-C", "--clip", help="clip to mother world solid. Or exchanged solid if specified",
+                      action="store_true", dest="clip")
+    parser.add_option("-s", "--solid",
+                      help="solid in python constructor syntax (used with exchange). Registry must be reg and _np used for numpy",
+                      dest="solidCode", metavar="PYTHONSOLID")
+    parser.add_option("-t", "--translation", help="translation x,y,z (used with append/exchange)", dest="translation",
+                      metavar="X,Y,Z")
+    parser.add_option("-r", "--rotation", help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)",
+                      dest="rotation", metavar="TX,TY,TZ")
     parser.add_option("-m", "--material", help='material dictionary ("lvname":"nist")', dest="material")
-    parser.add_option("-f", "--feature", help='feature extraction from simple geometry (planeQuality,circumference)', dest="featureData")
-    parser.add_option("-F", "--featureExtractOutput", help="feature extract output", dest="featureExtactOutputFileName", metavar="FEATUREFILE")
-    parser.add_option("-V", "--verbose", help='verbose script', dest="verbose",action = "store_true")
+    parser.add_option("-f", "--feature", help='feature extraction from simple geometry (planeQuality,circumference)',
+                      dest="featureData")
+    parser.add_option("-F", "--featureExtractOutput", help="feature extract output", dest="featureExtactOutputFileName",
+                      metavar="FEATUREFILE")
+    parser.add_option("-V", "--verbose", help='verbose script', dest="verbose", action="store_true")
 
     # features
     (options, args) = parser.parse_args()
 
     verbose = options.__dict__['verbose']
-    if verbose :
+    if verbose:
         print("pyg4> options")
         print(options)
 
     # absolutely need a file name
-    if options.__dict__['inputFileName'] is None :
+    if options.__dict__['inputFileName'] is None:
         print("pyg4> need an input file")
         exit(1)
 
     # parse plane
     planeData = options.__dict__['planeCutter']
-    if planeData is not None :
+    if planeData is not None:
         planeData = _parseStrMultipletAsFloat(planeData)
         print("pyg4> clipper plane data", planeData)
 
     # parse translation
     translation = options.__dict__['translation']
-    if translation is not None :
+    if translation is not None:
         translation = _parseStrMultipletAsFloat(translation)
-        if verbose :
-            print("pyg4> translation ",translation)
+        if verbose:
+            print("pyg4> translation ", translation)
 
     # parse rotation
     rotation = options.__dict__['rotation']
-    if rotation is not None :
+    if rotation is not None:
         rotation = _parseStrMultipletAsFloat(rotation)
-        if verbose :
-            print("pyg4> rotation ",rotation)
+        if verbose:
+            print("pyg4> rotation ", rotation)
 
     # parse solid
     # this must be done when we have a registry
 
     # parse feature data
     featureData = options.__dict__['featureData']
-    if featureData is not None :
+    if featureData is not None:
         featureData = _parseStrMultipletAsFloat(featureData)
-        if verbose :
+        if verbose:
             print("pyg4> feature data", featureData)
 
     cli(inputFileName=options.__dict__['inputFileName'],
@@ -272,12 +293,15 @@ if __name__ == "__main__":
         solid=options.__dict__['solidCode'],
         exchangeLvName=options.__dict__['exchangeLvName'],
         clip=options.__dict__['clip'],
-        translation = translation,
-        rotation = rotation,
+        translation=translation,
+        rotation=rotation,
         outputFileName=options.__dict__['outputFileName'],
         planeCutterData=planeData,
         planeCutterOutputFileName=options.__dict__['planeCutterOutputFileName'],
         featureData=featureData,
-        featureDataOutputFileName=options.__dict__['featureDataOutputFileName'],
+        featureDataOutputFileName=options.__dict__['featureExtactOutputFileName'],
         verbose=verbose)
-    
+
+if __name__ == "__main__":
+    main()
+
