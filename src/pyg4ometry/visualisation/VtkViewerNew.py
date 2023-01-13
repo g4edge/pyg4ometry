@@ -422,6 +422,7 @@ class VtkViewerNew(_ViewerBase) :
             self.iren.Start()
 
     def removeInvisible(self):
+        '''Remove wireframe or transparent instances from self'''
         toRemove = []
 
         for k in self.localmeshes:
@@ -436,7 +437,10 @@ class VtkViewerNew(_ViewerBase) :
             self.instancePlacements.pop(k)
             self.instanceVisOptions.pop(k)
 
-    def exportGLTFScene(self, gltfFileName = 'test.gltf'):
+    def exportGLTFScene(self, gltfFileName = 'test.gltf', singleInstance = False):
+        '''Export entire scene as gltf file, filename extension dictates binary (glb) or readable json (gltf)
+           singleInstance is a Boolean flag to supress all but one instance'''
+
         try :
             from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
                                   Mesh, Attributes, Primitive, Node, \
@@ -464,10 +468,6 @@ class VtkViewerNew(_ViewerBase) :
             csg = self.localmeshes[k]
 
             inf = csg.info()
-
-            # remesh and bevel
-
-            # _isotropic_remeshing(csg.sm,1,1)
 
             vAndPs = csg.toVerticesAndPolygons()
             verts = vAndPs[0]
@@ -544,6 +544,11 @@ class VtkViewerNew(_ViewerBase) :
                                             axis[1]*_np.sin(angle/2),
                                             axis[2]*_np.sin(angle/2),
                                             _np.cos(angle/2)]))
+
+                # Only make a single instance
+                if singleInstance :
+                    break
+
                 iInstance += 1
 
             iMesh += 1
@@ -569,6 +574,20 @@ class VtkViewerNew(_ViewerBase) :
             f.close()
         else :
             print("VtkViewerNew::exportGLTFScene> unknown gltf extension")
+
+    def exportGLTFAssets(self, gltfFileName = 'test.gltf'):
+        '''Export all the assets (meshes) without all the instances. The position of the asset is
+           the position of the first instance'''
+        try :
+            from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
+                                  Mesh, Attributes, Primitive, Node, \
+                                  ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
+                                  FLOAT, UNSIGNED_INT, SCALAR, VEC3
+        except ImportError :
+            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
+            return
+
+        self.exportGLTFScene(gltfFileName, singleInstance = True)
 
     def __repr__(self):
         return ''
