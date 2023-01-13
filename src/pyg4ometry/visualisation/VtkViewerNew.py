@@ -480,7 +480,6 @@ class VtkViewerNew(_ViewerBase) :
             tris_binary_blob = tris.flatten().tobytes()
 
             pyg4VisOpt = self.instanceVisOptions[k][0]
-            print(k,pyg4VisOpt)
 
             pyg4_color = pyg4VisOpt.colour
             pyg4_alpha = pyg4VisOpt.alpha

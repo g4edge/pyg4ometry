@@ -369,7 +369,6 @@ class CSG :
                 if mdv > maxEdge :
                     maxEdge = mdv
 
-        print(minEdge,maxEdge)
         return {"minEdge":minEdge, "maxEdge":maxEdge}
 
 def do_intersect(csg1, csg2) :
