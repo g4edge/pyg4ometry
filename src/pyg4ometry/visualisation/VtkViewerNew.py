@@ -578,14 +578,6 @@ class VtkViewerNew(_ViewerBase) :
     def exportGLTFAssets(self, gltfFileName = 'test.gltf'):
         '''Export all the assets (meshes) without all the instances. The position of the asset is
            the position of the first instance'''
-        try :
-            from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
-                                  Mesh, Attributes, Primitive, Node, \
-                                  ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
-                                  FLOAT, UNSIGNED_INT, SCALAR, VEC3
-        except ImportError :
-            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
-            return
 
         self.exportGLTFScene(gltfFileName, singleInstance = True)
 
