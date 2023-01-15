@@ -193,8 +193,11 @@ def cli(inputFileName = None,
             _writeFile(outputFileName, reg)
 
     if view :
-        v = _pyg4.visualisation.PubViewer()
+        v = _pyg4.visualisation.VtkViewerNew()
         v.addLogicalVolume(reg.getWorldVolume())
+        v.removeInvisible()
+        v.buildPipelinesAppend()
+        
         if bounding :
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)

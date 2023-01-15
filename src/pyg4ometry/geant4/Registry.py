@@ -517,7 +517,7 @@ class Registry:
             incrementRenameDict = {}
         self._registryOld = volume.registry
 
-        if isinstance(volume, _PhysicalVolume):
+        if isinstance(volume, _PhysicalVolume) and volume.type == "placement":
             self.addVolumeRecursive(volume.logicalVolume, collapseAssemblies, incrementRenameDict, userRenameDict)
 
             # add members from physical volume
@@ -560,7 +560,7 @@ class Registry:
             # add members from logical volume
             self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
         else:
-            print("Volume type not supported yet for merging")
+            print("Volume type not supported yet for merging type='{}'".format(volume.type))
 
         return incrementRenameDict
 
