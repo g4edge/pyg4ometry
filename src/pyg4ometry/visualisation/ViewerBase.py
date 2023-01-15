@@ -140,6 +140,7 @@ class ViewerBase :
                 #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1, pv.name)
             elif pv.type == "replica" or pv.type == "division":
+                print("replica")
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0])
@@ -148,6 +149,8 @@ class ViewerBase :
                     # pv compound transform
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+                    pv.visOptions.depth = depth+1
 
                     self.addMesh(pv.name,mesh.localmesh)
                     self.addInstance(pv.name,new_mtra,new_tra, pv.name)
@@ -164,6 +167,8 @@ class ViewerBase :
                     # pv compound transform
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+
+                    pv.visOptions.depth = depth+1
 
                     self.addMesh(pv_name,mesh.localmesh)
                     self.addInstance(pv_name,new_mtra,new_tra,pv_name)
