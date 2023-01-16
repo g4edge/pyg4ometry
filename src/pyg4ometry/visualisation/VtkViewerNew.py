@@ -758,14 +758,14 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             self.ren.RemoveActor(self.highLightTextActor)
 
         self.highLightTextActor = _vtk.vtkTextActor()
-        self.highLightTextActor.GetTextProperty().SetFontSize(40);
+        self.highLightTextActor.GetTextProperty().SetFontSize(30);
         self.highLightTextActor.GetTextProperty().SetColor(0,0,0)
         self.highLightTextActor.SetInput("lv   : "+lvName+"\n"+
                                          "pv   : "+pvName+"\n"+
-                                         "tbr  :"+str(tba)+"\n"+
-                                         "tra  :"+str(tra)+"\n"+
-                                         "local aabb :"+str(localExtent)+"\n"+
-                                         "global aabb :"+str(globalExtent))
+                                         "tbr  :"+str(["{:5.2f}".format(v) for v in tba]).strip("'")+"\n"+
+                                         "tra  :"+str(["{:5.2f}".format(v) for v in tra]).strip("'")+"\n"+
+                                         "local aabb :"+str(["{:5.2f}".format(v) for v in localExtent]).strip("'")+"\n"+
+                                         "global aabb :"+str(["{:5.2f}".format(v) for v in globalExtent]).strip("'"))
         self.highLightTextActor.SetDisplayPosition(20, 30)
         self.ren.AddActor(self.highLightTextActor)
 
