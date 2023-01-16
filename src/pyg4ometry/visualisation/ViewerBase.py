@@ -1,3 +1,4 @@
+import base64 as _base64
 import numpy as _np
 import random as _random
 import pyg4ometry.transformation as _transformation
@@ -302,6 +303,174 @@ class ViewerBase :
             visOptions.alpha = 1.0
 
         return visOptions
+
+    def removeInvisible(self):
+        '''Remove wireframe or transparent instances from self'''
+        toRemove = []
+
+        for k in self.localmeshes:
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+            pyg4_rep   = pyg4VisOpt.representation
+            pyg4_alp   = pyg4VisOpt.alpha
+
+            if pyg4_rep == "wireframe" or pyg4_alp == 0:
+                toRemove.append(k)
+
+        for k in toRemove :
+            self.localmeshes.pop(k)
+            self.instancePlacements.pop(k)
+            self.instanceVisOptions.pop(k)
+
+    def exportGLTFScene(self, gltfFileName = 'test.gltf', singleInstance = False):
+        '''Export entire scene as gltf file, filename extension dictates binary (glb) or readable json (gltf)
+           singleInstance is a Boolean flag to supress all but one instance'''
+
+        try :
+            from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
+                                  Mesh, Attributes, Primitive, Node, \
+                                  ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
+                                  FLOAT, UNSIGNED_INT, SCALAR, VEC3
+        except ImportError :
+            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
+            return
+
+        materials   = []
+        buffers     = []
+        bufferViews = []
+        accessors   = []
+        meshes      = []
+        nodes       = []
+        scenes      = []
+
+        # loop over meshes
+        iBuffer = 0
+        key_iBuffer = {}
+        for k in self.localmeshes :
+            key_iBuffer[k] = iBuffer
+
+            # get mesh
+            csg = self.localmeshes[k]
+
+            scale = 1-0.001*self.instanceVisOptions[k][0].depth
+            csg.scale([scale,scale,scale])
+
+            inf = csg.info()
+
+            vAndPs = csg.toVerticesAndPolygons()
+            verts = vAndPs[0]
+            tris = vAndPs[1]
+
+            verts = _np.array(verts).astype(_np.float32)
+            tris = _np.array(tris).astype(_np.uint32)
+
+            verts_binary_blob = verts.flatten().tobytes()
+            tris_binary_blob = tris.flatten().tobytes()
+
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+
+            pyg4_color = pyg4VisOpt.colour
+            pyg4_alpha = pyg4VisOpt.alpha
+            pyg4_rep   = pyg4VisOpt.representation
+
+            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random(), 1.0],
+                                                        metallicFactor = _random.random(),
+                                                        roughnessFactor = _random.random())
+            #alphaMode = "OPAQUE"
+
+
+            #if pyg4_rep == "wireframe" :
+            #    alphaMode = "BLEND"
+            #    alphaCutoff = pyg4_alpha
+
+            materials.append(Material(pbrMetallicRoughness=pbrMetallicRoughness))
+
+            buffers.append(Buffer(uri = 'data:application/octet-stream;base64,'+str(_base64.b64encode(tris_binary_blob+verts_binary_blob).decode("utf-8")),
+                                  byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
+
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteLength=len(tris_binary_blob),
+                                          target=ELEMENT_ARRAY_BUFFER))
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteOffset=len(tris_binary_blob),
+                                          byteLength=len(verts_binary_blob),
+                                          target=ARRAY_BUFFER))
+            accessors.append(Accessor(bufferView=2*iBuffer,
+                                      componentType=UNSIGNED_INT,
+                                      count=tris.size,
+                                      type=SCALAR,
+                                      max=[int(tris.max())],
+                                      min=[int(tris.min())]))
+            accessors.append(Accessor(bufferView=2*iBuffer+1,
+                                      componentType=FLOAT,
+                                      count=int(verts.size/3),
+                                      type=VEC3,
+                                      max=verts.max(axis=0).tolist(),
+                                      min=verts.min(axis=0).tolist()))
+            meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1),
+                                                     indices=2*iBuffer,
+                                                     material=iBuffer)]))
+
+            iBuffer += 1
+
+        # loop over instances
+        iMesh = 0
+        for k in self.instancePlacements :
+            iInstance = 0
+            for p in self.instancePlacements[k] :
+                t = p['translation']
+                r = p['transformation']
+                aa = _transformation.matrix2axisangle(r)
+                axis = aa[0]
+                angle = aa[1]
+
+                nodes.append(Node(name=k+"_"+str(iInstance),
+                                  mesh=iMesh,
+                                  translation=[float(t[0]),float(t[1]),float(t[2])],
+                                  rotation=[axis[0]*_np.sin(angle/2),
+                                            axis[1]*_np.sin(angle/2),
+                                            axis[2]*_np.sin(angle/2),
+                                            _np.cos(angle/2)]))
+
+                # Only make a single instance
+                if singleInstance :
+                    break
+
+                iInstance += 1
+
+            iMesh += 1
+
+        scene = Scene(nodes=list(range(0,len(nodes),1)))
+        scenes.append(scene)
+
+        gltf = GLTF2(scene=0,
+                     scenes=scenes,
+                     nodes=nodes,
+                     meshes=meshes,
+                     accessors=accessors,
+                     bufferViews=bufferViews,
+                     buffers=buffers,
+                     materials=materials)
+
+        if gltfFileName.find('gltf') != -1 :
+            gltf.save_json(gltfFileName)
+        elif gltfFileName.find('glb') != -1 :
+            glb = b"".join(gltf.save_to_bytes())
+            f = open(gltfFileName,"wb")
+            f.write(glb)
+            f.close()
+        else :
+            print("ViewerBase::exportGLTFScene> unknown gltf extension")
+
+    def exportGLTFAssets(self, gltfFileName = 'test.gltf'):
+        '''Export all the assets (meshes) without all the instances. The position of the asset is
+           the position of the first instance'''
+
+        self.exportGLTFScene(gltfFileName, singleInstance = True)
+
+    def exportThreeJSScene(self, fileNameBase = 'test'):
+        self.exportGLTFScene(fileNameBase+"gltf")
+
+        html = ''
 
     def __repr__(self):
         pass
