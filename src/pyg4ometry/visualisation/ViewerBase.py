@@ -321,6 +321,14 @@ class ViewerBase :
             self.instancePlacements.pop(k)
             self.instanceVisOptions.pop(k)
 
+    def scaleScene(self, scaleFactor):
+        for k in self.localmeshes :
+            self.localmeshes[k].scale([scaleFactor,scaleFactor,scaleFactor])
+
+        for k in self.instancePlacements :
+            for p in self.instancePlacements[k] :
+                p['translation'] = p['translation']*scaleFactor
+
     def exportGLTFScene(self, gltfFileName = 'test.gltf', singleInstance = False):
         '''Export entire scene as gltf file, filename extension dictates binary (glb) or readable json (gltf)
            singleInstance is a Boolean flag to supress all but one instance'''
@@ -468,6 +476,15 @@ class ViewerBase :
         self.exportGLTFScene(gltfFileName, singleInstance = True)
 
     def exportThreeJSScene(self, fileNameBase = 'test'):
+        '''
+        html based on https://threejs.org/examples/#webgl_loader_gltf
+        HRDI https://polyhaven.com/a/concrete_tunnel_02
+
+        npm install node
+        wget https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/concrete_tunnel_02_4k.exr
+        python -m http.server 8000
+        open test.html
+        '''
         self.exportGLTFScene(fileNameBase+"gltf")
 
         html = ''
