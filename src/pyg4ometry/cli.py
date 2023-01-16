@@ -184,7 +184,7 @@ def cli(inputFileName = None,
     if outputFileName is not None :
 
         if outputFileName.find(".gl") != -1 :
-            v = _pyg4.visualisation.VtkViewerNew()
+            v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
             v.addLogicalVolume(reg.getWorldVolume())
             v.removeInvisible()
             v.buildPipelinesAppend()
@@ -193,7 +193,7 @@ def cli(inputFileName = None,
             _writeFile(outputFileName, reg)
 
     if view :
-        v = _pyg4.visualisation.VtkViewerNew()
+        v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
         v.addLogicalVolume(reg.getWorldVolume())
         v.removeInvisible()
         v.buildPipelinesAppend()

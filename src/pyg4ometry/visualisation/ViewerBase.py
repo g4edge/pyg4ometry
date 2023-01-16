@@ -150,7 +150,7 @@ class ViewerBase :
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    pv.visOptions.depth = depth+1
+                    pv.visOptions.depth = depth+2
 
                     self.addMesh(pv.name,mesh.localmesh)
                     self.addInstance(pv.name,new_mtra,new_tra, pv.name)
@@ -168,7 +168,7 @@ class ViewerBase :
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    pv.visOptions.depth = depth+1
+                    pv.visOptions.depth = depth+2
 
                     self.addMesh(pv_name,mesh.localmesh)
                     self.addInstance(pv_name,new_mtra,new_tra,pv_name)

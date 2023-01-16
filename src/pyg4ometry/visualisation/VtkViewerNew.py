@@ -430,7 +430,7 @@ class VtkViewerNew(_ViewerBase) :
             pyg4_rep   = pyg4VisOpt.representation
             pyg4_alp   = pyg4VisOpt.alpha
 
-            if pyg4_rep == "wireframe":
+            if pyg4_rep == "wireframe" or pyg4_alp == 0:
                 toRemove.append(k)
 
         for k in toRemove :
@@ -468,7 +468,7 @@ class VtkViewerNew(_ViewerBase) :
             # get mesh
             csg = self.localmeshes[k]
 
-            scale = 1-0.01*self.instanceVisOptions[k][0].depth
+            scale = 1-0.001*self.instanceVisOptions[k][0].depth
             csg.scale([scale,scale,scale])
 
             inf = csg.info()
