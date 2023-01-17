@@ -86,6 +86,7 @@ def cli(inputFileName = None,
         planeCutterOutputFileName = None,
         featureData = None,
         featureDataOutputFileName = None,
+        gltfScale = None,
         verbose = None):
 
     print("pyg4 - command line interface")
@@ -187,6 +188,8 @@ def cli(inputFileName = None,
             v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
             v.addLogicalVolume(reg.getWorldVolume())
             v.removeInvisible()
+            if gltfScale is not None :
+                v.scaleScene(float(gltfScale))
             v.buildPipelinesAppend()
             v.exportGLTFScene(outputFileName)
         else :
@@ -239,7 +242,8 @@ def main() :
     parser.add_option("-F", "--featureExtractOutput", help="feature extract output", dest="featureExtactOutputFileName",
                       metavar="FEATUREFILE")
     parser.add_option("-V", "--verbose", help='verbose script', dest="verbose", action="store_true")
-
+    parser.add_option("-S", "--gltfScale", help="scale factor for gltf conversion", dest="gltfScale",
+                      metavar="SCALE")
     # features
     (options, args) = parser.parse_args()
 
@@ -283,6 +287,11 @@ def main() :
         if verbose:
             print("pyg4> feature data", featureData)
 
+    # parse gltf scale
+    gltfScale = options.__dict__['gltfScale']
+    if gltfScale is not None:
+        gltfScale = _parseStrMultipletAsFloat(gltfScale)
+
     cli(inputFileName=options.__dict__['inputFileName'],
         view=options.__dict__['view'],
         bounding=options.__dict__['bounding'],
@@ -303,6 +312,7 @@ def main() :
         planeCutterOutputFileName=options.__dict__['planeCutterOutputFileName'],
         featureData=featureData,
         featureDataOutputFileName=options.__dict__['featureExtactOutputFileName'],
+        gltfScale=options.__dict__['gltfScale'],
         verbose=verbose)
 
 if __name__ == "__main__":

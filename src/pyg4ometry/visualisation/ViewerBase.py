@@ -141,7 +141,6 @@ class ViewerBase :
                 #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1, pv.name)
             elif pv.type == "replica" or pv.type == "division":
-                print("replica")
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0])
