@@ -474,19 +474,47 @@ class ViewerBase :
 
         self.exportGLTFScene(gltfFileName, singleInstance = True)
 
-    def exportThreeJSScene(self, fileNameBase = 'test'):
+    def exportThreeJSScene(self, fileNameBase = 'test', lightBoxHDR = 'concrete_tunnel_02_4k.hdr'):
         '''
         html based on https://threejs.org/examples/#webgl_loader_gltf
         HRDI https://polyhaven.com/a/concrete_tunnel_02
 
         npm install node
         wget https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/concrete_tunnel_02_4k.exr
+        conver EXR to HDR e.g. https://convertio.co/exr-hdr/
         python -m http.server 8000
         open test.html
         '''
-        self.exportGLTFScene(fileNameBase+"gltf")
 
-        html = ''
+        import pkg_resources
+        from jinja2 import Template
+
+        gltfFileName = fileNameBase+".gltf"
+        htmlFileName = fileNameBase+".html"
+        cssFileName = fileNameBase+".css"
+
+        self.exportGLTFScene(gltfFileName)
+
+        data = {
+            "model_gltf_file": gltfFileName,
+            "scene_hdr": lightBoxHDR,
+            "css_file": cssFileName
+        }
+
+        threeHTMLTemplate = pkg_resources.resource_filename(__name__, "threejs.html")
+        threeCSSTemplate = pkg_resources.resource_filename(__name__, "threejs.css")
+
+        with open(threeHTMLTemplate) as file:
+            template = Template(file.read())
+            renderedTemplate = template.render(data)
+            with open(htmlFileName,"w") as outfile:
+                outfile.write(renderedTemplate)
+
+        with open(threeCSSTemplate) as file:
+            template = Template(file.read())
+            renderedTemplate = template.render(data)
+            with open(cssFileName,"w") as outfile:
+                outfile.write(renderedTemplate)
 
     def __repr__(self):
         pass

@@ -192,6 +192,14 @@ def cli(inputFileName = None,
                 v.scaleScene(float(gltfScale))
             v.buildPipelinesAppend()
             v.exportGLTFScene(outputFileName)
+        if outputFileName.find(".html") != -1 :
+            v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
+            v.addLogicalVolume(reg.getWorldVolume())
+            v.removeInvisible()
+            if gltfScale is not None :
+                v.scaleScene(float(gltfScale))
+            v.buildPipelinesAppend()
+            v.exportThreeJSScene(outputFileName.split(".")[0])
         else :
             _writeFile(outputFileName, reg)
 

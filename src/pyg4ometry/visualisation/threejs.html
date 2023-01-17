@@ -4,7 +4,7 @@
     <title>three.js webgl - GLTFloader</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link type="text/css" rel="stylesheet" href="threejs.css">
+    <link type="text/css" rel="stylesheet" href="{{css_file}}">
   </head>
 
   <body>
@@ -22,7 +22,7 @@
 	  "imports": {
 	      "three": "./node_modules/three/build/three.module.js",
 	      "three/addons/": "./node_modules/three/examples/jsm/"
-	  }x
+	  }
       }
     </script>
 
@@ -42,26 +42,27 @@
 	  const container = document.createElement( 'div' );
 	  document.body.appendChild( container );
 	  
-	  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-	  camera.position.set( - 1.8, 0.6, 2.7 );
+	  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 100 );
+	  camera.position.set(10, 10, 10);
 	  
 	  scene = new THREE.Scene();
 
 	  new RGBELoader()
 	      .setPath( './' )
-	      .load( 'royal_esplanade_1k.hdr', function ( texture ) {
-		  
+	      .load( '{{scene_hdr}}' , function ( texture ) {
+
 		  texture.mapping = THREE.EquirectangularReflectionMapping;
-		  
+
 		  scene.background = texture;
 		  scene.environment = texture;
-		  
+
 		  render();
 
 		  // model		 
 		  const loader = new GLTFLoader().setPath( './' );
-		  loader.load( 'test.gltf', function ( gltf ) {		     
+		  loader.load('{{model_gltf_file}}', function ( gltf ) {
 		      scene.add( gltf.scene );
+              scene.rotation.set(0, 1.0, 0);
 		      render();
 		  } );
 	      } );
@@ -76,9 +77,9 @@
 
 	  const controls = new OrbitControls( camera, renderer.domElement );
 	  controls.addEventListener( 'change', render ); // use if there is no animation loop
-	  controls.minDistance = 2;
-	  controls.maxDistance = 10;
-	  controls.target.set( 0, 0, - 0.2 );
+	  controls.minDistance = 10;
+	  controls.maxDistance = 50;
+	  controls.target.set( 0, 0, 0 );
 	  controls.update();
 
 	  window.addEventListener( 'resize', onWindowResize );
@@ -97,7 +98,9 @@
       //
 
       function render() {
-	  renderer.render( scene, camera );
+        var viewPos = camera.position;
+        console.log(viewPos);
+        renderer.render( scene, camera );
       }
 
     </script>
