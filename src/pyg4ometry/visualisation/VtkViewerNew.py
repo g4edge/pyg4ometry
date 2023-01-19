@@ -372,6 +372,7 @@ class VtkViewerNew(_ViewerBase) :
             if not self.bClipper :
                 map.SetInputConnection(normFlt.GetOutputPort())
             else :
+                # cliFlt may not exist here... TBC
                 map.SetInputConnection(cliFlt.GetClippedOutputPort())
                 self.ren.GetActiveCamera().SetFocalPoint(0,0,0)
 
@@ -758,7 +759,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             self.ren.RemoveActor(self.highLightTextActor)
 
         self.highLightTextActor = _vtk.vtkTextActor()
-        self.highLightTextActor.GetTextProperty().SetFontSize(40);
+        self.highLightTextActor.GetTextProperty().SetFontSize(40)
         self.highLightTextActor.GetTextProperty().SetColor(0,0,0)
         self.highLightTextActor.SetInput("lv   : "+lvName+"\n"+
                                          "pv   : "+pvName+"\n"+
