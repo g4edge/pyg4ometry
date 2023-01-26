@@ -15,11 +15,11 @@ class RenderWriter :
                                   mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
                                   tra = _np.array([0,0,0])):
 
-        if logical.type != "assembly" :
+        if logical.type != "assembly":
             self.addMesh(logical)
             self.addInstance(logical, mtra, tra)
 
-        for pv in logical.daughterVolumes :
+        for pv in logical.daughterVolumes:
             if pv.type == "placement":
                 # pv transform
                 pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
@@ -57,13 +57,13 @@ class RenderWriter :
         _os.mkdir(outputDirectory)
 
         # loop over meshes and write obj files
-        for mk in self.meshes :
+        for mk in self.meshes:
             _convert.pycsgMeshToObj(self.meshes[mk],outputDirectory+"/"+mk)
 
         # loop of instances and write ascii file
         f = open(outputDirectory+"/"+"0_instances.dat","w")
         for ik in self.instances:
-            for instance in self.instances[ik] :
+            for instance in self.instances[ik]:
                 instanceName     = ik
                 instanceMaterial = str(self.materials[ik])
                 # instanceTransformation = str(instance["transformation"]).replace("\n","").replace("[","").replace("]","")
