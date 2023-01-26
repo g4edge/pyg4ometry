@@ -839,7 +839,7 @@ class Matrix :
     :param addRegistry: add matrix to registry
     :type addRegistry: bool
     """
-    def __init__(self,name, coldim, values, registry, addRegistry = True) :
+    def __init__(self, name, coldim, values, registry, addRegistry=True):
         self.name = name
         self.coldim = int(coldim)
 
@@ -856,26 +856,25 @@ class Matrix :
             if addRegistry :
                 registry.addDefine(self)
             
-    def eval(self) :
+    def eval(self):
         """ 
         Evaluate matrix
 
         :return: numerical evaluation of matrix
         :rtype: numpy.array
         """
-        a  = _np.array([ e.eval() for e in self.values ])
-        a  = a.reshape(self.coldim,int(len(a)/self.coldim))
-        
+        a = _np.array([ e.eval() for e in self.values ])
+        a = a.reshape(self.coldim,int(len(a)/self.coldim))
         return a
 
-    def __repr__(self) :
+    def __repr__(self):
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
 
     def __getitem__(self, key):
         if self.name in self.registry.defineDict:
             stridx = ','.join([str(v+1) for v in key])
             return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
-        else :
+        else:
             return self.values_asarray[key]
 
 
@@ -919,7 +918,7 @@ class Auxiliary(object) :
     :type registry: Registry
     """
     # Note that no interpreting or processing is done for auxiliary information
-    def __init__(self, auxtype, auxvalue, registry=None, unit="") :
+    def __init__(self, auxtype, auxvalue, registry=None, unit=""):
         self.auxtype = str(auxtype)
         self.auxvalue = str(auxvalue)
         self.auxunit = str(unit)

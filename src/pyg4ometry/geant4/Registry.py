@@ -135,8 +135,8 @@ class Registry:
         transferal - only the material itself.
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 material.name = _re.sub(find, replace, material.name)
 
         if material.name in incrementRenameDict:
