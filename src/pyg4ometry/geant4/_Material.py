@@ -170,7 +170,8 @@ def MaterialPredefined(name, registry=None):
 
 
 def MaterialArbitrary(name, registry=None):
-    """Just a name of a material.  WARNING:  It is left to the
+    """
+    Just a name of a material.  WARNING:  It is left to the
     user to ensure that the name is valid.
 
     Inputs:

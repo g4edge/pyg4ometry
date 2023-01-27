@@ -171,7 +171,7 @@ class Reader(object):
                 _defines.Scale(name, x, y, z, unit, self._registry)
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
-                _defines.Matrix(name,coldim,values, self._registry)
+                _defines.Matrix(name, coldim, values, self._registry)
             else:
                 print("Warning : unrecognised define: ", define_type)
 

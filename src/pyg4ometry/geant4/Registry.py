@@ -369,8 +369,8 @@ class Registry:
         Transfer a single define from another registry to this one. No checking on previous registry or not.
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 define.name = _re.sub(find, replace, define.name)
 
         if define.name in incrementRenameDict:
@@ -402,22 +402,20 @@ class Registry:
         import numpy as _np
 
         # If the variable is a position, rotation or scale
-        if isinstance(var,_Defines.VectorBase):
+        if isinstance(var, _Defines.VectorBase):
             # check and transfer components all called x,y,z for each type
             for vi in (var.x, var.y, var.z):
                 # any variables inside each component
                 for v in vi.variables():
-                    if v in self._registryOld.defineDict: # only if its in the other registry
+                    if v in self._registryOld.defineDict: # only if it's in the other registry
                         self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
-
             if var.name in self._registryOld.defineDict:
                 self.transferDefine(var, incrementRenameDict, userRenameDict)
 
-        elif isinstance(var,_Defines.ScalarBase): # a normal expression
+        elif isinstance(var, _Defines.ScalarBase): # a normal expression
             for v in var.expr.variables():                 # loop over all variables needed for an expression
-                if v in self._registryOld.defineDict:      # only if its in the other registry
+                if v in self._registryOld.defineDict:      # only if it's in the other registry
                     self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
-
             if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
                 self.transferDefine(var, incrementRenameDict, userRenameDict) # probably best to reuse here
 
