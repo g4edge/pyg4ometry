@@ -429,8 +429,7 @@ class Registry:
         elif isinstance(var, _Defines.Matrix):
             for v in var.values:
                 if v.name in self._registryOld.defineDict:
-                    temp = self._registryOld.defineDict[v.name]
-                    self.transferDefine(v , incrementRenameDict, userRenameDict)
+                    self.transferDefine(v, incrementRenameDict, userRenameDict)
             if var.name in self._registryOld.defineDict:
                 self.transferDefine(var, incrementRenameDict, userRenameDict)
         else:
