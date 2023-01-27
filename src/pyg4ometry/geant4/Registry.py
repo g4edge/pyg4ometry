@@ -131,8 +131,8 @@ class Registry:
 
     def transferMaterial(self, material, incrementRenameDict={}, userRenameDict=None):
         """
-        Transfer a material to this registry. Doesn't handle any members'
-        transferal - only the material itself.
+        Transfer a material to this registry. This can operate on a Material,
+        an Isotope and an Element instance.
         """
         import re as _re
         if userRenameDict:
@@ -399,7 +399,6 @@ class Registry:
         In "3x + 2", "x" would be a variable".  In "3.5*2" there would be no variables.
         """
         import pyg4ometry.gdml.Defines as _Defines
-        import numpy as _np
 
         # If the variable is a position, rotation or scale
         if isinstance(var, _Defines.VectorBase):
