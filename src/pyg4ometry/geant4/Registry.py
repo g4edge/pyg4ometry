@@ -418,6 +418,13 @@ class Registry:
             if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
                 self.transferDefine(var, incrementRenameDict, userRenameDict) # probably best to reuse here
 
+        elif isinstance(var, _Defines.Matrix):
+            for v in var.values:
+                if v.name in self._registryOld.defineDict:
+                    temp = self._registryOld.defineDict[v.name]
+                    self.transferDefine(v , incrementRenameDict, userRenameDict)
+            if var.name in self._registryOld.defineDict:
+                self.transferDefine(var, incrementRenameDict, userRenameDict)
         else:
             return
 
