@@ -54,7 +54,10 @@ class RenderWriter :
 
         # make output directory
         #_shutil.rmtree(outputDirectory, ignore_errors = True)
-        _os.mkdir(outputDirectory)
+        try:
+            _os.mkdir(outputDirectory)
+        except FileExistsError:
+            pass # already exists
 
         # loop over meshes and write obj files
         for mk in self.meshes:
