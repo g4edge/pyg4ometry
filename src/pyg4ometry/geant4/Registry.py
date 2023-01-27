@@ -153,12 +153,20 @@ class Registry:
                 if hasattr(material, "components"):
                     for component in material.components:
                         self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
+                # transfer material properties
+                if hasattr(material, "properties"):
+                    for key,value in material.properties.items():
+                        self.transferDefines(value, incrementRenameDict, userRenameDict)
         else:
             incrementRenameDict[material.name] = material.name
             # Material and Element have a member 'components' but Isotope doesn't
             if hasattr(material, "components"):
                 for component in material.components:
                     self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
+            # transfer material properties
+            if hasattr(material, "properties"):
+                for key, value in material.properties.items():
+                    self.transferDefines(value, incrementRenameDict, userRenameDict)
 
         self.materialDict[material.name] = material
         material.registry = self
