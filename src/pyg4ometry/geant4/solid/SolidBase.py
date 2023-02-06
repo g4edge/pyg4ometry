@@ -1,4 +1,3 @@
-#import time as _time
 import numpy as _np
 from pyg4ometry import config as _config
 

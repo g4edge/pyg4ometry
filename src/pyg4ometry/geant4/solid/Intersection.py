@@ -25,7 +25,6 @@ class Intersection(_SolidBase):
         super(Intersection, self).__init__(name, 'Intersection', registry)
         # circular import 
         import pyg4ometry.gdml.Defines as _defines
-        import pyg4ometry.geant4 as _g4
 
         self.obj1 = obj1
         self.obj2 = obj2
