@@ -76,11 +76,11 @@ class ExtrudedSolid(_SolidBase):
         import pyg4ometry.gdml.Units as _Units
         luval = _Units.unit(self.lunit)
 
-        if varName == 'pPolygon' :
+        if varName == 'pPolygon':
             pPolygons = self.evaluateParameter(self.pPolygon)
             vertices  = [[pPolygon[0]*luval, pPolygon[1]*luval] for pPolygon in pPolygons]
             return vertices
-        elif varName == 'pZslices' :
+        elif varName == 'pZslices':
             pZslices = self.evaluateParameter(self.pZslices)
             slices = [ [zslice[0]*luval, [zslice[1][0]*luval, zslice[1][1]*luval], zslice[2]] for zslice in pZslices ]
             return slices

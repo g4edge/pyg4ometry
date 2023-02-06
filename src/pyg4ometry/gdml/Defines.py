@@ -109,7 +109,7 @@ def upgradeToVector(var, reg, type="position", unit="", addRegistry=False):
         else : 
             print('type not defined')
 
-def upgradeToTransformation(var, reg, addRegistry = False) : 
+def upgradeToTransformation(var, reg, addRegistry=False):
     """
     Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation [Rotation,Position]
 
