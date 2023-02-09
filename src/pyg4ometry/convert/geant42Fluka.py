@@ -250,6 +250,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
 
     rotation, reflection = _np.linalg.qr(mtra)
     gdmlReflection = [reflection.item(0, 0), reflection.item(1, 1), reflection.item(2, 2)]
+    detS = gdmlReflection[0] * gdmlReflection[1] * gdmlReflection[2]
 
     rotation = _transformation.matrix2tbxyz(rotation)
     position = tra
@@ -1456,7 +1457,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
                     nz = dx1*dy2 - dy1*dx2
 
                     fbody = flukaRegistry.makeBody(PLA, "B" + name + format(ibody, '02'),
-                                                   [-nx*gdmlReflection[0],-ny*gdmlReflection[1],-nz*gdmlReflection[2]],
+                                                   [-detS*nx*gdmlReflection[0],-detS*ny*gdmlReflection[1],-detS*nz*gdmlReflection[2]],
                                                    [x0*gdmlReflection[0],y0*gdmlReflection[1],z0*gdmlReflection[2]],
                                                    transform=transform,
                                                    flukaregistry=flukaRegistry,
