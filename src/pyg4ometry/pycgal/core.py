@@ -382,6 +382,45 @@ def intersecting_meshes(csgList) :
 class PolygonProcessing :
 
     @classmethod
+    def windingNumber(cls, pgon):
+        ''' return the winding number of pgon'''
+
+        # winding angle
+        wa = 0
+
+        def mag(v) :
+            return (v ** 2).sum() ** 0.5
+
+        def norm(v) :
+            return v/mag(v)
+
+        pgon = list(pgon)
+        pgon = [[p[0],p[1],0] for p in pgon]
+        pgon = _np.array(pgon)
+
+        for pi in range(0,len(pgon)):
+            mpi = pi % len(pgon)
+            mpj = (pi+1) % len(pgon)
+            mpk = (pi+2) % len(pgon)
+            d1 = norm(pgon[mpk] - pgon[mpj])
+            d0 = norm(pgon[mpj] - pgon[mpi])
+
+            xp  = _np.cross(d1,d0)
+            a   = _np.arcsin(mag(xp))*_np.sign(xp[2])
+            wa += a
+
+        wa /= 2*_np.pi
+
+        return wa
+
+    @classmethod
+    def reversePolygon(cls, pgon):
+        ''' return reversed polygon'''
+
+        pgon = _np.array(pgon)
+        return pgon[::-1]
+
+    @classmethod
     def decomposePolygon2d(cls, pgon) :
     
         poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
