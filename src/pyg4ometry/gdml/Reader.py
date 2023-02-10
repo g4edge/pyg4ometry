@@ -129,7 +129,7 @@ class Reader(object):
                 u = def_attrs.get("unit", None)
                 return (x,y,z,u)
 
-            # parse matricies
+            # parse matrices
             def getMatrix(def_attrs) :
                 try : 
                     coldim = def_attrs['coldim']
@@ -171,7 +171,7 @@ class Reader(object):
                 _defines.Scale(name, x, y, z, unit, self._registry)
             elif(define_type == "matrix"):
                 (coldim, values) = getMatrix(def_attrs)
-                _defines.Matrix(name,coldim,values, self._registry)
+                _defines.Matrix(name, coldim, values, self._registry)
             else:
                 print("Warning : unrecognised define: ", define_type)
 
@@ -223,7 +223,7 @@ class Reader(object):
 
         self.materialdef = xmldoc.getElementsByTagName("materials")[0]
 
-        for node in self.materialdef.childNodes :
+        for node in self.materialdef.childNodes:
             if node.nodeType != node.ELEMENT_NODE:
                 # probably a comment node, skip
                 continue
@@ -1332,7 +1332,7 @@ class Reader(object):
         for chNode in node.childNodes:
             if chNode.nodeType != chNode.ELEMENT_NODE:
                 continue # comment
-            if chNode.tagName=="property":
+            if chNode.tagName == "property":
                 try :
                     properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
                 except KeyError :

@@ -248,7 +248,7 @@ option, preprocessGDML=0;
             if not isinstance(pref, _Defines.Matrix):
                 raise ValueError("Only references to matrices can be used for material property {}".format(pname))
             # If possible, write the variable as a reference to a define
-            if not ( pref.name in self.registry.defineDict ):
+            if not (pref.name in self.registry.defineDict):
                 raise RuntimeError("Invalid ref!")
             prop.setAttribute('ref', str(pref.name))
             oe.appendChild(prop)

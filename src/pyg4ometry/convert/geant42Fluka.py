@@ -64,10 +64,10 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
     fzone.addIntersection(blackBody)
 
     # create top logical volume
-    if logicalVolume.type == "logical" :
+    if logicalVolume.type == "logical":
         flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,logicalVolume.solid,mtra,tra,
                                                                          flukaRegistry, commentName=logicalVolume.name)
-    elif logicalVolume.type == "assembly" :
+    elif logicalVolume.type == "assembly":
         e = logicalVolume.extent()
         b = _geant4.solid.Box("ra",1.1*(e[1][0]-e[0][0]), 1.1*(e[1][1]-e[0][1]), 1.1*(e[1][2]-e[0][2]),logicalVolume.registry,"mm", False)
         flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(flukaNameCount,b,mtra,tra,
@@ -77,7 +77,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
         print("Type (",logicalVolume.type,") cannot be converted - skipping: ",logicalVolume.name)
         return
 
-    flukaMotherRegion      = _copy.deepcopy(flukaMotherOuterRegion)
+    flukaMotherRegion = _copy.deepcopy(flukaMotherOuterRegion)
     flukaNameCount += 1
 
     for zone in flukaMotherOuterRegion.zones :
@@ -204,16 +204,16 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(dv,new_mtra,new_tra,
                                                                                   flukaRegistry=flukaRegistry,
                                                                                   flukaNameCount=flukaNameCount)
-            if physicalVolume.logicalVolume.type == "logical" :
+            if physicalVolume.logicalVolume.type == "logical":
                 for motherZones in flukaMotherRegion.zones:
                     for daughterZones in flukaDaughterOuterRegion.zones:
                         motherZones.addSubtraction(daughterZones)
-            elif physicalVolume.logicalVolume.type == "assembly" :
+            elif physicalVolume.logicalVolume.type == "assembly":
                 # If assembly the daughters form the outer
-                for daughterZones in flukaDaughterOuterRegion.zones :
+                for daughterZones in flukaDaughterOuterRegion.zones:
                     flukaMotherOuterRegion.addZone(daughterZones)
 
-        if physicalVolume.logicalVolume.type == "logical" :
+        if physicalVolume.logicalVolume.type == "logical":
             flukaRegistry.addRegion(flukaMotherRegion)
             materialName = physicalVolume.logicalVolume.material.name
             materialNameShort = flukaRegistry.materialShortName[materialName]
@@ -221,7 +221,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
             try:
                 flukaMaterial = flukaRegistry.materials[materialNameShort]
                 flukaRegistry.addMaterialAssignments(flukaMaterial, flukaMotherRegion)
-            except KeyError :
+            except KeyError:
                 pass
 
     return flukaMotherOuterRegion, flukaNameCount

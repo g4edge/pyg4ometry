@@ -868,7 +868,6 @@ class LogicalVolume(object):
         for dv in self.daughterVolumes :
             physicalNames.add(dv.name)
             lvn, pvn = dv.logicalVolume.makeLogicalPhysicalNameSets()
-            print(lvn)
             logicalNames  = logicalNames.union(lvn)
             physicalNames = physicalNames.union(pvn)
         return logicalNames, physicalNames

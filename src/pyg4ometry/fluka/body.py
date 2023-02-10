@@ -206,7 +206,8 @@ class _ShiftableCylinderMixin(object):
 
 
 class RPP(BodyMixin):
-    """Rectangular Parallelepiped
+    """
+    Rectangular Parallelepiped
 
     :param name: of body
     :type name: str
@@ -222,7 +223,6 @@ class RPP(BodyMixin):
     :type zmin: float
     :param zmax: upper z coordinate of RPP)
     :type zmax: float
-
     """
     def __init__(self, name,
                  xmin, xmax, ymin, ymax, zmin, zmax,
@@ -296,7 +296,8 @@ class RPP(BodyMixin):
                     self.upper[0],self.upper[1],self.upper[2])) ^ self.transform.hash()
 
 class BOX(BodyMixin):
-    """General Rectangular Parallelepiped
+    """
+    General Rectangular Parallelepiped
 
     :param name: of body
     :type name: str
@@ -308,7 +309,6 @@ class BOX(BodyMixin):
     :type edge2: list
     :param edge3: vector [x, y, z] denoting the second side of the box.
     :type edge3: list
-
     """
     def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
                  flukaregistry=None, comment=""):
@@ -390,7 +390,8 @@ class BOX(BodyMixin):
                      self.edge3[0],self.edge3[1],self.edge3[2])) ^ self.transform.hash()
 
 class SPH(BodyMixin):
-    """Sphere
+    """
+    Sphere
 
     :param name: of body
     :type name: str
@@ -398,7 +399,6 @@ class SPH(BodyMixin):
     :type point: list
     :param radius: radius of the sphere.
     :type radius: float
-
     """
     def __init__(self, name, point, radius, transform=None, flukaregistry=None,
                  comment=""):
@@ -448,7 +448,6 @@ class SPH(BodyMixin):
 
 class RCC(BodyMixin):
     """
-
     Right Circular Cylinder
 
     :param name: of body
@@ -460,7 +459,6 @@ class RCC(BodyMixin):
     :type edge1: list
     :param edge2: radius of the cylinder face.
     :type edge2: float
-
     """
     def __init__(self, name, face, direction, radius, transform=None,
                  flukaregistry=None, comment=""):
@@ -531,7 +529,6 @@ class RCC(BodyMixin):
 
 class REC(BodyMixin):
     """
-
     Right Elliptical Cylinder
 
     :param name: of body
@@ -631,7 +628,6 @@ class REC(BodyMixin):
 
 class TRC(BodyMixin):
     """
-
     Truncated Right-angled Cone
 
     :param name: of body
@@ -646,7 +642,6 @@ class TRC(BodyMixin):
     :type major_radius: float
     :param minor_radius: radius of the smaller face.
     :type minor_radius: float
-
     """
     def __init__(self, name, major_centre, direction,
                  major_radius, minor_radius,
@@ -726,7 +721,8 @@ class TRC(BodyMixin):
                            self.minor_radius,self.major_radius)) ^ self.transform.hash()
 
 class ELL(BodyMixin):
-    """Ellipsoid of Revolution
+    """
+    Ellipsoid of Revolution
 
     :param name: of body
     :type name: str
@@ -736,7 +732,6 @@ class ELL(BodyMixin):
     :type focus2: list
     :param length: length of the ellipse axis which the foci lie on.
     :type length: float
-
     """
     def __init__(self, name, focus1, focus2, length, transform=None,
                  flukaregistry=None,comment=""):
@@ -1015,7 +1010,7 @@ class ARB(BodyMixin):
         # Convert the facenumbers which are one-indexed to
         # zero-indexed, and also account for the way in which faces
         # with 3 vertices are encoded.  Quotes from the FLUKA manual
-        # are copied here to explain some of the logic.
+        # are copied here to explain some logic.
         zeroCountingIndicesOut = []
         for fn in self.facenumbers:
             # "When the number of the faces is less than 6, the
@@ -1173,15 +1168,13 @@ class ARB(BodyMixin):
 
 class XYP(_HalfSpaceMixin):
     """
-
-    Infinite half-space delimited by the x-y plane (pependicular to the z-axis)
+    Infinite half-space delimited by the x-y plane (perpendicular to the z-axis)
 
     :param name: of body
     :type name: str
     :param z: position of the x-y plane on the z-axis.  All points\
     less than z are considered to be part of this body.
     :type z: float
-
     """
     def __init__(self, name, z, transform=None, flukaregistry=None,comment=""):
         self.name = name
@@ -1218,16 +1211,13 @@ class XYP(_HalfSpaceMixin):
 
 class XZP(_HalfSpaceMixin):
     """
-
-    Infinite half-space delimited by the x-y plane (pependicular
-    to the y-axis)
+    Infinite half-space delimited by the x-y plane (perpendicular to the y-axis)
 
     :param name: of body
     :type name: str
     :param y: position of the x-y plane on the y-axis.  All points \
     less than y are considered to be part of this body.
     :type y: float
-
     """
     def __init__(self, name, y, transform=None, flukaregistry=None, comment=""):
         self.name = name
@@ -1261,9 +1251,7 @@ class XZP(_HalfSpaceMixin):
 
 class YZP(_HalfSpaceMixin):
     """
-
-    Infinite half-space delimited by the x-y plane (pependicular to \
-    the x-axis)
+    Infinite half-space delimited by the x-y plane (perpendicular to the x-axis)
 
     :param name: of body
     :type name: str
@@ -1307,7 +1295,7 @@ class YZP(_HalfSpaceMixin):
 
 class PLA(_HalfSpaceMixin):
     """
-    Infinite half-space delimited by the x-y plane (pependicular to \
+    Infinite half-space delimited by the x-y plane (perpendicular to \
     the z-axis) Generic infinite half-space.
 
     :param name: of body
@@ -1364,7 +1352,8 @@ class PLA(_HalfSpaceMixin):
         return self._toPlaneHelper(self.normal, self.point)
 
 class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
-    """Infinite Circular Cylinder parallel to the x-axis
+    """
+    Infinite Circular Cylinder parallel to the x-axis
 
     :param name: of body
     :type name: str
@@ -1374,9 +1363,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type z: float
     :param radius: position of the centre on the
     :type radius: float
-
     """
-
     def __init__(self, name, y, z, radius, transform=None,
                  flukaregistry=None, comment=""):
         self.name = name
@@ -1430,7 +1417,8 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
 
 class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
-    """Infinite Circular Cylinder parallel to the y-axis
+    """
+    Infinite Circular Cylinder parallel to the y-axis
 
     :param name: of body
     :type name: str
@@ -1440,7 +1428,6 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type x: float
     :param radius: position of the centre on the
     :type radius: float
-
     """
     def __init__(self, name, z, x, radius, transform=None,
                  flukaregistry=None, comment=""):
@@ -1495,7 +1482,8 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
 
 class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
-    """Infinite Circular Cylinder parallel to the z-axis
+    """
+    Infinite Circular Cylinder parallel to the z-axis
 
     :param name: of body
     :type name: str
@@ -1505,7 +1493,6 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type y: float
     :param radius: position of the centre on the
     :type radius: float
-
     """
     def __init__(self, name, x, y, radius, transform=None,
                  flukaregistry=None, comment=""):
@@ -1558,7 +1545,8 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
 
 
 class XEC(BodyMixin, _ShiftableCylinderMixin):
-    """Infinite Elliptical Cylinder parallel to the x-axis
+    """
+    Infinite Elliptical Cylinder parallel to the x-axis
 
     :param name: of body
     :type name: str
@@ -1570,7 +1558,6 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
     :type ysemi: float
     :param zsemi: position of the centre on the
     :type zsemi: float
-
     """
     def __init__(self, name, y, z, ysemi, zsemi,
                  transform=None, flukaregistry=None, comment=""):
@@ -1637,7 +1624,8 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
 
 
 class YEC(BodyMixin, _ShiftableCylinderMixin):
-    """Infinite Elliptical Cylinder parallel to the y-axis
+    """
+    Infinite Elliptical Cylinder parallel to the y-axis
 
     :param name: of body
     :type name: str
@@ -1649,7 +1637,6 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
     :type zsemi: float
     :param xsemi: position of the centre on the
     :type xsemi: float
-
     """
     def __init__(self, name, z, x, zsemi, xsemi, transform=None,
                  flukaregistry=None, comment=""):
@@ -1715,7 +1702,8 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         return hash(("YEC",self.x,self.z,self.xsemi,self.zsemi)) ^ self.transform.hash()
 
 class ZEC(BodyMixin, _ShiftableCylinderMixin):
-    """Infinite Elliptical Cylinder parallel to the z-axis
+    """
+    Infinite Elliptical Cylinder parallel to the z-axis
 
     :param name: of body
     :type name: str
@@ -1727,7 +1715,6 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
     :type xsemi: float
     :param ysemi: position of the centre on the
     :type ysemi: float
-
     """
     def __init__(self, name, x, y, xsemi, ysemi, transform=None,
                  flukaregistry=None,comment=""):
@@ -1816,7 +1803,6 @@ class QUA(BodyMixin):
     :type cz: float
     :param c: constant
     :type c: constant
-
     """
     def __init__(self, name,
                  cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
@@ -1908,7 +1894,7 @@ class QUA(BodyMixin):
 
         # Don't set bounds exactly equal to the extent because the
         # curved regions directly at the edge of the extent/bounds can
-        # be quite noticeably undersampled and we will lose detail, so
+        # be quite noticeably under-sampled, and we will lose detail, so
         # to be safe we make the ModelBounds a bit bigger than the
         # extent
         sample.SetModelBounds(lower[0], upper[0],

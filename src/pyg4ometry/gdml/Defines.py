@@ -109,7 +109,7 @@ def upgradeToVector(var, reg, type="position", unit="", addRegistry=False):
         else : 
             print('type not defined')
 
-def upgradeToTransformation(var, reg, addRegistry = False) : 
+def upgradeToTransformation(var, reg, addRegistry=False):
     """
     Take a list of lists [[rx,ry,rz],[x,y,z]] and create a transformation [Rotation,Position]
 
@@ -147,14 +147,14 @@ def upgradeToTransformation(var, reg, addRegistry = False) :
 
     return [rot,tra]
 
-class ScalarBase(object) :
+class ScalarBase(object):
     """
     Base class for all scalars (Constants, Quantity, Variable and Expression)
     """
-    def __init__(self) : 
+    def __init__(self):
         pass
 
-    def __add__(self, other) :
+    def __add__(self, other):
                 
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
@@ -164,7 +164,7 @@ class ScalarBase(object) :
                      addRegistry=False)
         return v
 
-    def __sub__(self, other) :
+    def __sub__(self, other):
         v1 = upgradeToStringExpression(self.registry,self)
         v2 = upgradeToStringExpression(self.registry,other)
 
@@ -551,7 +551,7 @@ class Variable(ScalarBase) :
     def __repr__(self) :
         return "Variable: {} = {}".format(self.name, str(self.expr))
 
-class Expression(ScalarBase) : 
+class Expression(ScalarBase):
     """
     General expression, does not have an analogue in GDML
     
@@ -564,20 +564,20 @@ class Expression(ScalarBase) :
     :param addRegistry: add constant to registry
     :type addRegistry: bool
     """
-    def __init__(self, name, value, registry, addRegistry = False) :
+    def __init__(self, name, value, registry, addRegistry=False):
         super(Expression, self).__init__()
 
         self.name  = name
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
 
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
 
-        if addRegistry and registry != None:
+        if addRegistry and registry is not None:
             registry.addDefine(self)
 
-    def eval(self) :
+    def eval(self):
         """ 
         Evaluate expression
 
@@ -586,10 +586,10 @@ class Expression(ScalarBase) :
         """
         return self.expr.eval()
 
-    def __float__(self) :
+    def __float__(self):
         return self.expr.eval()
 
-    def __int__(self) :
+    def __int__(self):
         return int(self.expr.eval())
 
     def __repr__(self) :
@@ -824,7 +824,7 @@ class Scale(VectorBase) :
     def __repr__(self) :
         return "Scale : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
-class Matrix :
+class Matrix:
     """
     GDML matrix define wrapper object
     
@@ -839,13 +839,13 @@ class Matrix :
     :param addRegistry: add matrix to registry
     :type addRegistry: bool
     """
-    def __init__(self,name, coldim, values, registry, addRegistry = True) :
+    def __init__(self, name, coldim, values, registry, addRegistry=True):
         self.name = name
         self.coldim = int(coldim)
 
         self.values = [] 
-        for i, v in enumerate(values) :
-            self.values.append(Expression("matrix_expr_{}_idx{}_val".format(name,i), upgradeToStringExpression(registry,v),registry=registry))
+        for i, v in enumerate(values):
+            self.values.append(Expression("matrix_expr_{}_idx{}_val".format(name, i), upgradeToStringExpression(registry, v), registry=registry, addRegistry=addRegistry))
 
         self.values_asarray = _np.array(self.values, dtype=_np.object_)
         if self.coldim > 1:
@@ -853,29 +853,28 @@ class Matrix :
 
         if registry != None:
             self.registry = registry
-            if addRegistry :
+            if addRegistry:
                 registry.addDefine(self)
             
-    def eval(self) :
+    def eval(self):
         """ 
         Evaluate matrix
 
         :return: numerical evaluation of matrix
         :rtype: numpy.array
         """
-        a  = _np.array([ e.eval() for e in self.values ])
-        a  = a.reshape(self.coldim,int(len(a)/self.coldim))
-        
+        a = _np.array([ e.eval() for e in self.values ])
+        a = a.reshape(self.coldim,int(len(a)/self.coldim))
         return a
 
-    def __repr__(self) :
+    def __repr__(self):
         return "Matrix : {} = {} {}".format(self.name, str(self.coldim), str(self.values))
 
     def __getitem__(self, key):
         if self.name in self.registry.defineDict:
             stridx = ','.join([str(v+1) for v in key])
             return Expression("dummy_name",self.name+"["+stridx+"]",self.registry,False)
-        else :
+        else:
             return self.values_asarray[key]
 
 
@@ -909,7 +908,7 @@ def MatrixFromVectors(e, v, name, registry, eunit='eV', vunit=''):
     return Matrix(name, 2, res, registry)
 
 
-class Auxiliary(object) :
+class Auxiliary(object):
     """
     Auxiliary information container object
 
@@ -919,7 +918,7 @@ class Auxiliary(object) :
     :type registry: Registry
     """
     # Note that no interpreting or processing is done for auxiliary information
-    def __init__(self, auxtype, auxvalue, registry=None, unit="") :
+    def __init__(self, auxtype, auxvalue, registry=None, unit=""):
         self.auxtype = str(auxtype)
         self.auxvalue = str(auxvalue)
         self.auxunit = str(unit)

@@ -25,11 +25,10 @@ class Intersection(_SolidBase):
         super(Intersection, self).__init__(name, 'Intersection', registry)
         # circular import 
         import pyg4ometry.gdml.Defines as _defines
-        import pyg4ometry.geant4 as _g4
 
         self.obj1 = obj1
         self.obj2 = obj2
-        self.tra2 = _defines.upgradeToTransformation(tra2,registry)
+        self.tra2 = _defines.upgradeToTransformation(tra2, registry) # TBC should addRegistry be passed in here?
 
         self.varNames = ["tra2"]
         self.varUnits = [None]
