@@ -8,6 +8,22 @@ import pyg4ometry.geant4                          as _g4
 
 class Reader(object):
     def __init__(self, fileName, registryOn = True):
+    """
+    Read a GDML file.
+
+    :param fileName: path to gdml file to load
+    :type fileName: str
+    :param registryOn: whether to build a registry
+    :type registryOn: bool
+    :param reduceNISTMaterialsToPredefined: change NIST-named materials to predefined ones
+    :type reduceNISTMaterialsToPredefined: bool
+
+    When loading a GDML file that was exported by Geant4, the NIST materials may be
+    fully expanded to include their full element / isotope composition. With the
+    reduceNISTMaterialsToPredefined flag set to True, these will be ignored and the
+    materials that have a name that matches a NIST one will be 'reduced' back to a
+    predefined material by name only.
+    """
         super(Reader, self).__init__()
         self.filename   = fileName    
         self.registryOn = registryOn    
