@@ -1,20 +1,22 @@
 """
-GLOBAL        20000.       -1.        1.        0.        0.        0.
-DEFAULTS         0.0       0.0       0.0       0.0       0.0      0.0 EM-CASCA
-BEAM            17.5       0.0   10000.0       0.0       0.0      1.0 ELECTRON
-GEOBEGIN          3.                                                  COMBNAME
-    0    0
+.. code-block:: text
 
-USRBIN    , 10., ELECTRON, -21., 250., 0.1, 2000., ElecTop
-USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
-USRBIN    , 10., POSITRON, -22., 250., 0.1, 2000., PosTop
-USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
-USRBIN    , 10., PHOTON, -23., 250., 0.1, 2000., PhotTop
-USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
-RANDOMIZ  , 1.
-START     , 1000.
-STOP
-END
+    GLOBAL        20000.       -1.        1.        0.        0.        0.
+    DEFAULTS         0.0       0.0       0.0       0.0       0.0      0.0 EM-CASCA
+    BEAM            17.5       0.0   10000.0       0.0       0.0      1.0 ELECTRON
+    GEOBEGIN          3.                                                  COMBNAME
+                  0    0
+
+    USRBIN    , 10., ELECTRON, -21., 250., 0.1, 2000., ElecTop
+    USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
+    USRBIN    , 10., POSITRON, -22., 250., 0.1, 2000., PosTop
+    USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
+    USRBIN    , 10., PHOTON, -23., 250., 0.1, 2000., PhotTop
+    USRBIN    , -250., -0.1, -2000., 400., 1., 400.,  &
+    RANDOMIZ  , 1.
+    START     , 1000.
+    STOP
+    END
 """
 
 from pyg4ometry.fluka import material as _material
