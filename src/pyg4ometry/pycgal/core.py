@@ -65,7 +65,7 @@ class CSG :
 
         rotn = Aff_transformation_3.Aff_transformation_3_EPECK(rot[0][0], rot[0][1], rot[0][2],
                                                                rot[1][0], rot[1][1], rot[1][2],
-                                                               rot[2][0], rot[2][1], rot[2][2],1);
+                                                               rot[2][0], rot[2][1], rot[2][2],1)
         Polygon_mesh_processing.transform(rotn, self.sm)
 
     def translate(self,disp):
