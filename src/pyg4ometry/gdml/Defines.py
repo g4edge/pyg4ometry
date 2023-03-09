@@ -763,7 +763,7 @@ class Rotation(VectorBase):
     :param rz: rotation around z axis
     :type rz: float, Constant, Quantity, Variable
     """
-    def __init__(self,name,rx,ry,rz, unit="rad", registry = None, addRegistry = True) :
+    def __init__(self, name, rx, ry, rz, unit="rad", registry=None, addRegistry=True):
         super(Rotation, self).__init__()
 
         self.name = name
@@ -800,7 +800,7 @@ class Scale(VectorBase):
     :param sz: z component of scale
     :type sz: float, Constant, Quantity, Variable
     """
-    def __init__(self,name,sx,sy,sz, unit=None, registry = None, addRegistry = True) :
+    def __init__(self, name, sx, sy, sz, unit=None, registry=None, addRegistry=True):
         super(Scale, self).__init__()
 
         self.name = name
