@@ -4,7 +4,7 @@ from   xml.dom import minidom            as _minidom
 import xml.parsers.expat                 as _expat
 from . import Defines                    as _defines
 import logging                           as _log
-import pyg4ometry.geant4                          as _g4
+import pyg4ometry.geant4                 as _g4
 
 class Reader(object):
     """
@@ -148,16 +148,11 @@ class Reader(object):
 
             # parse matrices
             def getMatrix(def_attrs) :
-                try : 
+                try:
                     coldim = def_attrs['coldim']
-                except KeyError : 
+                except KeyError:
                     coldim = 0
-
-                #                try : 
                 values = def_attrs['values'].split()
-                #               except KeyError : 
-                #                   values = []
-                
                 return (coldim, values)
 
             if(define_type == "constant"):

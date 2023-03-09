@@ -1,4 +1,3 @@
-import math as _math
 from pyg4ometry.geant4.Registry import Registry as _Registry
 
 #try:
@@ -6,7 +5,7 @@ from pyg4ometry.geant4.Registry import Registry as _Registry
 #except ImportError :
 #    noSymPy = True
 
-class Expression(object) :
+class Expression(object):
     def __init__(self, name, expression, registry=_Registry()) :
         # TODO: make the registry required
         self.name       = name
@@ -14,14 +13,14 @@ class Expression(object) :
         self.parse_tree = None
         self.registry   = registry
 
-    def eval(self) :
+    def eval(self):
         expressionParser = self.registry.getExpressionParser()
         self.parse_tree = expressionParser.parse(self.expression)
         value = expressionParser.evaluate(self.parse_tree, self.registry.defineDict)
 
         return value
 
-    def variables(self) :
+    def variables(self):
         expressionParser = self.registry.getExpressionParser()
         self.parse_tree = expressionParser.parse(self.expression)
         variables = expressionParser.get_variables(self.parse_tree)
