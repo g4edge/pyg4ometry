@@ -6,7 +6,7 @@ from pyg4ometry.geant4.Registry import Registry as _Registry
 #    noSymPy = True
 
 class Expression(object):
-    def __init__(self, name, expression, registry=_Registry()) :
+    def __init__(self, name, expression, registry=_Registry()):
         # TODO: make the registry required
         self.name       = name
         self.expression = expression
@@ -27,14 +27,14 @@ class Expression(object):
 
         return variables
 
-    def simp(self) : 
+    def simp(self):
         # find all variables of the expression and create
         pass
 
-    def __repr__(self) :
+    def __repr__(self):
         return "{} : {}".format(self.name, self.expression)
 
-    def __float__(self) :
+    def __float__(self):
         return self.eval()
 
     def str(self):
