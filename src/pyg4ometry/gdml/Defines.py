@@ -493,7 +493,7 @@ class Quantity(ScalarBase):
 
         if registry is not None:
             self.registry = registry
-            if addRegistry :
+            if addRegistry:
                 registry.addDefine(self)
 
     def eval(self):
@@ -532,7 +532,7 @@ class Variable(ScalarBase):
 
         if registry is not None:
             self.registry = registry
-            if addRegistry : 
+            if addRegistry:
                 registry.addDefine(self)
 
     def eval(self):
@@ -737,7 +737,7 @@ class Position(VectorBase):
             if not isinstance(unit, str):
                 raise ValueError("unit must be None or a string")
             self.unit = unit
-        else :
+        else:
             self.unit = "mm"
 
         self.x = _Expression("expr_pos_x_{}".format(name), upgradeToStringExpression(registry,x), registry=registry)
@@ -746,7 +746,7 @@ class Position(VectorBase):
                
         if registry is not None:
             self.registry = registry
-            if addRegistry : 
+            if addRegistry:
                 registry.addDefine(self)
 
     def __repr__(self):
@@ -774,7 +774,7 @@ class Rotation(VectorBase):
             if unit not in acceptableUnits:
                 raise ValueError("Invalid unit \""+unit+"\" in rotation define \""+name+"\" - can be one of:  "+", ".join(acceptableUnits))
             self.unit = unit
-        else :
+        else:
             self.unit = "rad"
 
         self.x = _Expression("expr_rot_x_{}".format(name), upgradeToStringExpression(registry,rx), registry=registry)
@@ -783,10 +783,10 @@ class Rotation(VectorBase):
 
         if registry is not None:
             self.registry = registry
-            if addRegistry :
+            if addRegistry:
                 registry.addDefine(self)
 
-    def __repr__(self) :
+    def __repr__(self):
         return "Rotation : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Scale(VectorBase):
@@ -817,10 +817,10 @@ class Scale(VectorBase):
 
         if registry is not None:
             self.registry = registry
-            if addRegistry : 
+            if addRegistry:
                 registry.addDefine(self)        
 
-    def __repr__(self) :
+    def __repr__(self):
         return "Scale : {} = [{} {} {}]".format(self.name, str(self.x), str(self.y), str(self.z))
 
 class Matrix:
