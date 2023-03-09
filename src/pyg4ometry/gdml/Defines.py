@@ -740,9 +740,9 @@ class Position(VectorBase):
         else :
             self.unit = "mm"
 
-        self.x = _Expression("expr_{}_pos_x".format(name), upgradeToStringExpression(registry,x), registry=registry)
-        self.y = _Expression("expr_{}_pos_y".format(name), upgradeToStringExpression(registry,y), registry=registry)
-        self.z = _Expression("expr_{}_pos_z".format(name), upgradeToStringExpression(registry,z), registry=registry)
+        self.x = _Expression("expr_pos_x_{}".format(name), upgradeToStringExpression(registry,x), registry=registry)
+        self.y = _Expression("expr_pos_y_{}".format(name), upgradeToStringExpression(registry,y), registry=registry)
+        self.z = _Expression("expr_pos_z_{}".format(name), upgradeToStringExpression(registry,z), registry=registry)
                
         if registry != None: 
             self.registry = registry
@@ -777,9 +777,9 @@ class Rotation(VectorBase):
         else :
             self.unit = "rad"
 
-        self.x = _Expression("expr_{}_rot_x".format(name), upgradeToStringExpression(registry,rx), registry=registry)
-        self.y = _Expression("expr_{}_rot_y".format(name), upgradeToStringExpression(registry,ry), registry=registry)
-        self.z = _Expression("expr_{}_rot_z".format(name), upgradeToStringExpression(registry,rz), registry=registry)
+        self.x = _Expression("expr_rot_x_{}".format(name), upgradeToStringExpression(registry,rx), registry=registry)
+        self.y = _Expression("expr_rot_y_{}".format(name), upgradeToStringExpression(registry,ry), registry=registry)
+        self.z = _Expression("expr_rot_z_{}".format(name), upgradeToStringExpression(registry,rz), registry=registry)
 
         if registry != None : 
             self.registry = registry
@@ -811,9 +811,9 @@ class Scale(VectorBase):
         else :
             self.unit = "none"
 
-        self.x = _Expression("expr_{}_scl_x".format(name), upgradeToStringExpression(registry,sx), registry=registry)
-        self.y = _Expression("expr_{}_scl_y".format(name), upgradeToStringExpression(registry,sy), registry=registry)
-        self.z = _Expression("expr_{}_scl_z".format(name), upgradeToStringExpression(registry,sz), registry=registry)
+        self.x = _Expression("expr_scl_x_{}".format(name), upgradeToStringExpression(registry,sx), registry=registry)
+        self.y = _Expression("expr_scl_y_{}".format(name), upgradeToStringExpression(registry,sy), registry=registry)
+        self.z = _Expression("expr_scl_z_{}".format(name), upgradeToStringExpression(registry,sz), registry=registry)
 
         if registry != None: 
             self.registry = registry
@@ -844,7 +844,7 @@ class Matrix:
 
         self.values = [] 
         for i, v in enumerate(values):
-            self.values.append(Expression("matrix_expr_{}_idx{}_val".format(name, i), upgradeToStringExpression(registry, v), registry=registry, addRegistry=addRegistry))
+            self.values.append(Expression("matrix_expr_idx{}_val__{}".format(i, name), upgradeToStringExpression(registry, v), registry=registry, addRegistry=addRegistry))
 
         self.values_asarray = _np.array(self.values, dtype=_np.object_)
         if self.coldim > 1:
