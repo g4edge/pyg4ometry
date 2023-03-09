@@ -407,7 +407,7 @@ class Constant(ScalarBase):
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
         
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
             if addRegistry:
                 registry.addDefine(self)
@@ -491,7 +491,7 @@ class Quantity(ScalarBase):
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
 
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
             if addRegistry :
                 registry.addDefine(self)
@@ -530,7 +530,7 @@ class Variable(ScalarBase):
 
         self.expr = _Expression("expr_{}".format(name), upgradeToStringExpression(registry,value),registry)
 
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
             if addRegistry : 
                 registry.addDefine(self)
@@ -733,7 +733,7 @@ class Position(VectorBase):
 
         self.name = name
 
-        if unit != None :
+        if unit is not None:
             if not isinstance(unit, str):
                 raise ValueError("unit must be None or a string")
             self.unit = unit
@@ -744,7 +744,7 @@ class Position(VectorBase):
         self.y = _Expression("expr_pos_y_{}".format(name), upgradeToStringExpression(registry,y), registry=registry)
         self.z = _Expression("expr_pos_z_{}".format(name), upgradeToStringExpression(registry,z), registry=registry)
                
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
             if addRegistry : 
                 registry.addDefine(self)
@@ -767,7 +767,7 @@ class Rotation(VectorBase):
         super(Rotation, self).__init__()
 
         self.name = name
-        if unit != None :
+        if unit is not None:
             if not isinstance(unit, str):
                 raise ValueError("unit must be None or a string")
             acceptableUnits = ['rad', 'radian', 'mrad', 'milliradian', 'deg', 'degree']
@@ -781,7 +781,7 @@ class Rotation(VectorBase):
         self.y = _Expression("expr_rot_y_{}".format(name), upgradeToStringExpression(registry,ry), registry=registry)
         self.z = _Expression("expr_rot_z_{}".format(name), upgradeToStringExpression(registry,rz), registry=registry)
 
-        if registry != None : 
+        if registry is not None:
             self.registry = registry
             if addRegistry :
                 registry.addDefine(self)
@@ -815,7 +815,7 @@ class Scale(VectorBase):
         self.y = _Expression("expr_scl_y_{}".format(name), upgradeToStringExpression(registry,sy), registry=registry)
         self.z = _Expression("expr_scl_z_{}".format(name), upgradeToStringExpression(registry,sz), registry=registry)
 
-        if registry != None: 
+        if registry is not None:
             self.registry = registry
             if addRegistry : 
                 registry.addDefine(self)        
