@@ -844,13 +844,13 @@ class Matrix:
 
         self.values = [] 
         for i, v in enumerate(values):
-            self.values.append(Expression("matrix_expr_idx{}_val__{}".format(i, name), upgradeToStringExpression(registry, v), registry=registry, addRegistry=addRegistry))
+            self.values.append(Expression("matrix_expr_idx{}_val_{}".format(i, name), upgradeToStringExpression(registry, v), registry=registry))
 
         self.values_asarray = _np.array(self.values, dtype=_np.object_)
         if self.coldim > 1:
             self.values_asarray = self.values_asarray.reshape(self.coldim, int(len(values)/self.coldim))
 
-        if registry != None:
+        if registry is not None:
             self.registry = registry
             if addRegistry:
                 registry.addDefine(self)
