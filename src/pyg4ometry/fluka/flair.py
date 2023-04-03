@@ -26,7 +26,6 @@ class Flair:
         outputFile = open(fileName, "w")
 
         for l in inputFile:
-
             # replace file name
             if l.find("_FLUKA_INPUT_FILENAME_") != -1:
                 newl = l.replace("_FLUKA_INPUT_FILENAME_", self.flukaInputFileName)

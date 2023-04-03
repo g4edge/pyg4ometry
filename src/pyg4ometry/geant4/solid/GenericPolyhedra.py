@@ -114,7 +114,6 @@ class GenericPolyhedra(_SolidBase):
         polygons = []
 
         for i in range(0, len(pZ), 1):
-
             i1 = i
             i2 = (i + 1) % len(pZ)
 
@@ -156,7 +155,6 @@ class GenericPolyhedra(_SolidBase):
 
         if pDPhi != 2 * _np.pi:
             for cvPolygon in zrListConvex:
-
                 vPhi1 = []
                 for cvPolygonPoint in cvPolygon:
                     z = cvPolygonPoint[0]
@@ -172,7 +170,6 @@ class GenericPolyhedra(_SolidBase):
 
                 vPhi2 = []
                 for cvPolygonPoint in reversed(cvPolygon):
-
                     z = cvPolygonPoint[0]
                     r = cvPolygonPoint[1]
 

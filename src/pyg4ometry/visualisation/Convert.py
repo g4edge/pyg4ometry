@@ -42,7 +42,6 @@ def pycsgMeshToVtkPolyData(mesh):
 
 
 def pycsgMeshToObj(mesh, fileName):
-
     vtkPD = pycsgMeshToVtkPolyData(mesh)
     vtkFLT = _vtk.vtkTriangleFilter()
     vtkMAP = _vtk.vtkPolyDataMapper()

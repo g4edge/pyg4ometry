@@ -19,7 +19,6 @@ class RenderWriter:
         mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
         tra=_np.array([0, 0, 0]),
     ):
-
         if logical.type != "assembly":
             self.addMesh(logical)
             self.addInstance(logical, mtra, tra)
@@ -60,7 +59,6 @@ class RenderWriter:
             ]
 
     def write(self, outputDirectory):
-
         # make output directory
         # _shutil.rmtree(outputDirectory, ignore_errors = True)
         _os.mkdir(outputDirectory)

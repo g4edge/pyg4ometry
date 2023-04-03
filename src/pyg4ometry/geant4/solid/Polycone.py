@@ -73,7 +73,6 @@ class Polycone(_SolidBase):
         return f"Polycone : {self.name} {self.pSPhi} {self.pDPhi}"
 
     def mesh(self):
-
         _log.info("polycone.pycsgmesh>")
 
         _log.info("polycone.antlr>")

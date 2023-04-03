@@ -88,7 +88,6 @@ class ViewerBase:
         """
 
         if lv.type == "logical" and lv.mesh is not None:
-
             # add mesh
             if not self.bSubtractDaughters:
                 self.addMesh(lv.name, lv.mesh.localmesh)
@@ -173,7 +172,6 @@ class ViewerBase:
                 for mesh, trans, i in zip(
                     pv.meshes, pv.transforms, range(0, len(pv.meshes), 1)
                 ):
-
                     pv_name = pv.name + "_param_" + str(i)
 
                     # pv transform
@@ -189,7 +187,6 @@ class ViewerBase:
                     self.addVisOptions(pv_name, pv.visOptions)
 
     def addMesh(self, name, mesh):
-
         """
         Add a single mesh
 

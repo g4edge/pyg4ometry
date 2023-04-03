@@ -226,7 +226,6 @@ class LogicalVolume:
     def replaceSolid(
         self, newSolid, rotation=(0, 0, 0), position=(0, 0, 0), runit="rad", punit="mm"
     ):
-
         """
         Replace the outer solid with optional position and rotation
 

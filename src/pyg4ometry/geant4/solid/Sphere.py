@@ -139,7 +139,6 @@ class Sphere(_SolidBase):
         dTheta = (pDTheta) / self.nstack
 
         for i in range(0, self.nslice, 1):
-
             i1 = i
             i2 = i + 1
 

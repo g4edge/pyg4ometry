@@ -130,7 +130,6 @@ class Ellipsoid(_SolidBase):
             p2 = dPhi * i2
 
             for j in range(0, stacks):
-
                 j1 = j
                 j2 = j + 1
 

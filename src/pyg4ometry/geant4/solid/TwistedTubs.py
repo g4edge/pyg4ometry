@@ -92,7 +92,6 @@ class TwistedTubs(_SolidBase):
         )
 
     def makeLayers(self, verts_bot, verts_top):
-
         layers = []
 
         z1 = 2 * float(self.dz)

@@ -198,7 +198,6 @@ def electrode_profile():
 
 
 def make_lhc_blm(vis=False, interactive=False, n_slice=16):
-
     import math as _math
 
     import pyg4ometry.gdml as _gd

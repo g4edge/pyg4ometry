@@ -77,7 +77,6 @@ class Orb(_SolidBase):
     """
 
     def mesh(self):
-
         _log.info("orb.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
@@ -94,7 +93,6 @@ class Orb(_SolidBase):
         dTheta = _np.pi / self.nstack
 
         for i in range(0, self.nslice, 1):
-
             i1 = i
             i2 = i + 1
 

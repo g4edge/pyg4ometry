@@ -48,7 +48,6 @@ class Subtraction(_SolidBase):
         return "Subtraction : (" + self.obj1.name + ") - (" + str(self.obj2.name) + ")"
 
     def mesh(self):
-
         _log.info("subtraction.pycsgmesh>")
 
         # look up solids in registry

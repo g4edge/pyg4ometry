@@ -45,7 +45,6 @@ class ReplicaVolume(_PhysicalVolume):
         wunit="mm",
         ounit="mm",
     ):
-
         # TBC - doesn't call super() so doesn't have PV objects
 
         self.type = "replica"

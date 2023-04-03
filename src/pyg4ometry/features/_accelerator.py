@@ -6,7 +6,6 @@ import pyg4ometry as _pyg4
 
 
 def beamPipeCADFeature(shape):
-
     wirePnts = []
 
     topoExp = _oce.TopExp_Explorer(shape, _oce.TopAbs_WIRE, _oce.TopAbs_VERTEX)
@@ -46,7 +45,6 @@ def beamPipe(
     vis=True,
     interactive=True,
 ):
-
     datFileName = stlFileName.replace("stl", "dat")
 
     if feature1 == -1:

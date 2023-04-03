@@ -49,7 +49,6 @@ def serializedATN():
 
 
 class GdmlExpressionParser(Parser):
-
     grammarFileName = "GdmlExpression.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
@@ -229,7 +228,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def equation(self):
-
         localctx = GdmlExpressionParser.EquationContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_equation)
         try:
@@ -283,7 +281,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def expression(self):
-
         localctx = GdmlExpressionParser.ExpressionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 2, self.RULE_expression)
         self._la = 0  # Token type
@@ -346,7 +343,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def multiplyingExpression(self):
-
         localctx = GdmlExpressionParser.MultiplyingExpressionContext(
             self, self._ctx, self.state
         )
@@ -397,7 +393,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def operatorAddSub(self):
-
         localctx = GdmlExpressionParser.OperatorAddSubContext(
             self, self._ctx, self.state
         )
@@ -443,7 +438,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def operatorMulDiv(self):
-
         localctx = GdmlExpressionParser.OperatorMulDivContext(
             self, self._ctx, self.state
         )
@@ -497,7 +491,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def powExpression(self):
-
         localctx = GdmlExpressionParser.PowExpressionContext(
             self, self._ctx, self.state
         )
@@ -557,7 +550,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def signedAtom(self):
-
         localctx = GdmlExpressionParser.SignedAtomContext(self, self._ctx, self.state)
         self.enterRule(localctx, 12, self.RULE_signedAtom)
         try:
@@ -657,7 +649,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def atom(self):
-
         localctx = GdmlExpressionParser.AtomContext(self, self._ctx, self.state)
         self.enterRule(localctx, 14, self.RULE_atom)
         try:
@@ -724,7 +715,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def scientific(self):
-
         localctx = GdmlExpressionParser.ScientificContext(self, self._ctx, self.state)
         self.enterRule(localctx, 16, self.RULE_scientific)
         try:
@@ -777,7 +767,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def matrixElement(self):
-
         localctx = GdmlExpressionParser.MatrixElementContext(
             self, self._ctx, self.state
         )
@@ -837,7 +826,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def constant(self):
-
         localctx = GdmlExpressionParser.ConstantContext(self, self._ctx, self.state)
         self.enterRule(localctx, 20, self.RULE_constant)
         self._la = 0  # Token type
@@ -887,7 +875,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def variable(self):
-
         localctx = GdmlExpressionParser.VariableContext(self, self._ctx, self.state)
         self.enterRule(localctx, 22, self.RULE_variable)
         try:
@@ -940,7 +927,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def func(self):
-
         localctx = GdmlExpressionParser.FuncContext(self, self._ctx, self.state)
         self.enterRule(localctx, 24, self.RULE_func)
         self._la = 0  # Token type
@@ -1025,7 +1011,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def funcname(self):
-
         localctx = GdmlExpressionParser.FuncnameContext(self, self._ctx, self.state)
         self.enterRule(localctx, 26, self.RULE_funcname)
         self._la = 0  # Token type
@@ -1090,7 +1075,6 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def relop(self):
-
         localctx = GdmlExpressionParser.RelopContext(self, self._ctx, self.state)
         self.enterRule(localctx, 28, self.RULE_relop)
         self._la = 0  # Token type

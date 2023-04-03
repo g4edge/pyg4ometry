@@ -18,7 +18,6 @@ from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
 
 
 def geant4Reg2FlukaReg(greg, logicalVolumeName=""):
-
     freg = _fluka.FlukaRegistry()
 
     if logicalVolumeName == "":
@@ -104,7 +103,6 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
         fzone.addSubtraction(zone)
 
     for dv in logicalVolume.daughterVolumes:
-
         pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
         pvtra = _np.array(dv.position.eval())
 
@@ -159,7 +157,6 @@ def geant4PhysicalVolume2Fluka(
     flukaRegistry=None,
     flukaNameCount=0,
 ):
-
     # logical volume (outer and complete)
     if physicalVolume.logicalVolume.type == "logical":
         geant4LvOuterSolid = physicalVolume.logicalVolume.solid
@@ -277,7 +274,6 @@ def geant4Solid2FlukaRegion(
     addRegistry=True,
     commentName="",
 ):
-
     import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
     name = format(flukaNameCount, "04")
@@ -330,7 +326,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Tubs":
-
         uval = _Units.unit(solid.lunit) / 10.0
         aval = _Units.unit(solid.aunit)
 
@@ -433,7 +428,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "CutTubs":
-
         uval = _Units.unit(solid.lunit) / 10
         aval = _Units.unit(solid.aunit)
 
@@ -626,7 +620,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Para":
-
         fregion = pycsgmesh2FlukaRegion(
             solid.mesh(), name, transform, flukaRegistry, commentName
         )
@@ -697,7 +690,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Sphere":
-
         luval = _Units.unit(solid.lunit) / 10.0
         auval = _Units.unit(solid.aunit)
 
@@ -905,7 +897,6 @@ def geant4Solid2FlukaRegion(
         d = pDPhi * pRtor / solid.nstack / 2 * 1.35
 
         for i in range(0, solid.nstack, 1):
-
             x0 = pRtor * _np.cos(i * dPhi + pSPhi)
             y0 = pRtor * _np.sin(i * dPhi + pSPhi)
             z0 = 0
@@ -985,9 +976,7 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "GenericPolycone" or solid.type == "Polycone":
-
         if solid.type == "GenericPolycone":
-
             import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
             luval = _Units.unit(solid.lunit) / 10.0
@@ -1064,7 +1053,6 @@ def geant4Solid2FlukaRegion(
             ibody += 1
 
         for i in range(0, len(zrListConvex), 1):
-
             # zConv = [zr[0] for zr in zrListConvex[i]]
             # rConv = [zr[1] for zr in zrListConvex[i]]
             # _plt.plot(zConv,rConv)
@@ -1073,7 +1061,6 @@ def geant4Solid2FlukaRegion(
             negBodies = []
 
             for j in range(0, len(zrListConvex[i]), 1):
-
                 j1 = j
                 j2 = (j + 1) % len(zrListConvex[i])
 
@@ -1141,7 +1128,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "GenericPolyhedra" or solid.type == "Polyhedra":
-
         if solid.type == "GenericPolyhedra":
             import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
@@ -1198,9 +1184,7 @@ def geant4Solid2FlukaRegion(
         ibody = 0
 
         for i in range(0, len(zrListConvex), 1):
-
             for j in range(0, numSide, 1):
-
                 j1 = j
                 j2 = j + 1
 
@@ -1210,7 +1194,6 @@ def geant4Solid2FlukaRegion(
                 fzone = _fluka.Zone()
 
                 for k in range(0, len(zrListConvex[i]), 1):
-
                     k1 = k
                     k2 = (k + 1) % len(
                         zrListConvex[i]
@@ -1413,7 +1396,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "EllipticalCone":
-
         uval = _Units.unit(solid.lunit) / 10.0
 
         # xsemi and ysemi are unitless
@@ -1477,7 +1459,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Paraboloid":
-
         uval = _Units.unit(solid.lunit) / 10.0
 
         halflength = solid.evaluateParameter(solid.pDz) * uval
@@ -1627,7 +1608,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
-
         import pyg4ometry.gdml.Units as _Units
 
         luval = _Units.unit(solid.lunit) / 10.0
@@ -1967,7 +1947,6 @@ def geant4Solid2FlukaRegion(
 
 
 def geant4MaterialDict2Fluka(matr, freg):
-
     for material in matr.items():
         if isinstance(material[1], _geant4.Material):
             geant4Material2Fluka(material[1], freg)
@@ -2110,7 +2089,6 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
 
 
 def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName):
-
     polyhedron = _pycgal.Polyhedron_3.Polyhedron_3_EPECK()
     _pycgal.CGAL.copy_face_graph(mesh.sm, polyhedron)
     nef = _pycgal.Nef_polyhedron_3.Nef_polyhedron_3_EPECK(polyhedron)
@@ -2123,7 +2101,6 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName):
     ibody = 0
 
     for convex_polyhedron in convex_polyhedra:
-
         planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(
             convex_polyhedron
         )

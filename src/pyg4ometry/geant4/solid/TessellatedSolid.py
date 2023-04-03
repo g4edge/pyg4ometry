@@ -83,7 +83,6 @@ class TessellatedSolid(_SolidBase):
         # Loop over triangles (polygons) in mesh
         ivertexmap = 0
         for t in self.meshtess[1]:
-
             vinew_list = []
             for vi in t:
                 v = self.meshtess[0][vi]
@@ -114,7 +113,6 @@ class TessellatedSolid(_SolidBase):
         # print(meshtess1)
 
     def mesh(self):
-
         #############################################
         # render GDML mesh
         #############################################
@@ -198,7 +196,6 @@ def createTessellatedSolid(name, polygons, reg):
     meshtess = []
 
     for j in range(len(polygons) - 1):
-
         p1 = polygons[j]
         p2 = polygons[j + 1]
 

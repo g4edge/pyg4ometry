@@ -31,7 +31,6 @@ class Reader:
         return ls
 
     def traverse(self, label=None):
-
         name = _ph.get_TDataStd_Name_From_Label(label)
         loc = _ph.get_XCAFDoc_Location_From_Label(label)
         node = _ph.get_TDataStd_TreeNode_From_Label(label)

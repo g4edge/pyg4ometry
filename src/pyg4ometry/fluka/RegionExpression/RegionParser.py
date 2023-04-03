@@ -41,7 +41,6 @@ def serializedATN():
 
 
 class RegionParser(Parser):
-
     grammarFileName = "RegionParser.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
@@ -151,7 +150,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def regions(self):
-
         localctx = RegionParser.RegionsContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_regions)
         self._la = 0  # Token type
@@ -245,7 +243,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def region(self):
-
         localctx = RegionParser.RegionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 2, self.RULE_region)
         try:
@@ -381,7 +378,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def zoneUnion(self):
-
         localctx = RegionParser.ZoneUnionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_zoneUnion)
         self._la = 0  # Token type
@@ -537,7 +533,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def zone(self):
-
         localctx = RegionParser.ZoneContext(self, self._ctx, self.state)
         self.enterRule(localctx, 6, self.RULE_zone)
         self._la = 0  # Token type
@@ -694,7 +689,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def expr(self):
-
         localctx = RegionParser.ExprContext(self, self._ctx, self.state)
         self.enterRule(localctx, 8, self.RULE_expr)
         try:
@@ -782,7 +776,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def subZone(self):
-
         localctx = RegionParser.SubZoneContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_subZone)
         self._la = 0  # Token type
@@ -848,7 +841,6 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     def unaryExpression(self):
-
         localctx = RegionParser.UnaryExpressionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 12, self.RULE_unaryExpression)
         self._la = 0  # Token type

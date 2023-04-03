@@ -162,7 +162,6 @@ class AssemblyVolume:
         solidUsageCount=_defaultdict(int),
         lvUsageCount=_defaultdict(int),
     ):
-
         """
         Clip the geometry to newSolid, placed with rotation and position.
         """
@@ -337,7 +336,6 @@ class AssemblyVolume:
         return lv
 
     def makeWorldVolume(self, material="G4_Galactic"):
-
         wl = self.logicalVolume(material, "worldSolid")
 
         self.registry.setWorld(wl.name)

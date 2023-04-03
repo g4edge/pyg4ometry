@@ -690,7 +690,6 @@ class Reader:
         self.materialSubstitutions["dummy"] = g4galactic
 
         for iMat in range(0, materialList.GetEntries(), 1):
-
             material = materialList.At(iMat)
             materialAddress = _ROOT.addressof(material)
             materialName = str(material.GetName())
@@ -815,7 +814,6 @@ class Reader:
         warnAboutBadShapes=True,
         dontLoadOverlapNodes=True,
     ):
-
         # print("ROOT.Reader.recurseVolumeTree class={} name={}".format(volume.GetName(),
         #                                                              volume.Class_Name()))
         volumeAddress = _ROOT.addressof(volume)
@@ -830,7 +828,6 @@ class Reader:
             self.objectNames[volumeName] += 1
 
         if volumeClass != "TGeoVolumeAssembly":
-
             # shape
             shape = volume.GetShape()
             shapeAddress = _ROOT.addressof(shape)

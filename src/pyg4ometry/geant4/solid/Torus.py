@@ -95,7 +95,6 @@ class Torus(_SolidBase):
         )
 
     def mesh(self):
-
         _log.info("torus.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import

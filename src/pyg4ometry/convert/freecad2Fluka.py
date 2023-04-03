@@ -11,7 +11,6 @@ def freecadDoc2Fluka(fcd):
 
 
 def part2Region(obj, trfm, fgreg, meshDeviation=0.05):
-
     ################################
     # Tessellate object
     ################################

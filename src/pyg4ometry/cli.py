@@ -102,7 +102,6 @@ def cli(
     featureDataOutputFileName=None,
     verbose=None,
 ):
-
     print("pyg4 - command line interface")
 
     # switch on file type

@@ -473,7 +473,6 @@ class Reader:
             self._parseAuxiliary(chnode)
 
     def _parseAuxiliary(self, xmlnode, register=True):
-
         aux_list = []
         for chnode in xmlnode.childNodes:
             if chnode.nodeType != chnode.ELEMENT_NODE:
@@ -497,7 +496,6 @@ class Reader:
             return aux
 
     def parseSolids(self, xmldoc):
-
         self.xmlsolids = xmldoc.getElementsByTagName("solids")[0]
 
         for node in self.xmlsolids.childNodes:
@@ -1918,7 +1916,6 @@ class Reader:
         pass
 
     def parseStructure(self, xmldoc):
-
         self.xmlstructure = xmldoc.getElementsByTagName("structure")[0]
 
         # loop over child nodes
@@ -1932,7 +1929,6 @@ class Reader:
         self._registry.setWorld(worldLvName)
 
     def extractStructureNodeData(self, node):
-
         if node.nodeType == node.ELEMENT_NODE:
             node_name = node.tagName
 
@@ -2188,7 +2184,6 @@ class Reader:
                 )
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
-
                 volref = (
                     chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
                 )
@@ -2215,7 +2210,6 @@ class Reader:
                 paramData = []
 
                 for ppsChNode in pps.childNodes:
-
                     # default position
                     position = _defines.Position(
                         pvol_name, "0", "0", "0", "mm", self._registry, False

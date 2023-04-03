@@ -78,7 +78,6 @@ class Para(_SolidBase):
         )
 
     def mesh(self):
-
         _log.info("para.antlr>")
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 

@@ -163,7 +163,7 @@ def nist_element_2geant4Element(name, reg=None):
         result = ElementIsotopeMixture(
             name, name.replace("G4_", ""), len(isotopes), reg, state=matDict["state"]
         )
-        for (nNucleons, molarMass, massFraction) in isotopes:
+        for nNucleons, molarMass, massFraction in isotopes:
             ele = Isotope(name + "_" + str(nNucleons), z, nNucleons, molarMass, reg)
             result.add_isotope(ele, massFraction)
         result.Z = z
@@ -187,7 +187,7 @@ def nist_material_2geant4Material(name, reg=None):
             state=matDict["state"],
         )
         d = matDict["elements"]
-        for (z, nAtoms, massFraction) in matDict["elements"]:
+        for z, nAtoms, massFraction in matDict["elements"]:
             elementDict = getNistMaterialDict()[getNistElementZToName()[z]]
             element = nist_element_2geant4Element(elementDict["name"], reg)
             result.add_element_massfraction(element, massFraction)

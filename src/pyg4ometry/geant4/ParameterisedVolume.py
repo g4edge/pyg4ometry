@@ -205,7 +205,6 @@ class ParameterisedVolume(_ReplicaVolume):
         registry=None,
         addRegistry=True,
     ):
-
         self.type = "parametrised"
         self.name = name
         self.logicalVolume = logicalVolume
@@ -227,7 +226,6 @@ class ParameterisedVolume(_ReplicaVolume):
         self.meshes = self.createParameterisedMeshes()
 
     def createParameterisedMeshes(self):
-
         meshes = []
 
         for paramData, i in zip(self.paramData, range(0, int(self.ncopies), 1)):
@@ -428,7 +426,6 @@ class ParameterisedVolume(_ReplicaVolume):
             elif self.logicalVolume.solid.type == "Polycone" and isinstance(
                 paramData, self.PolyconeDimensions
             ):
-
                 solid = _solid.Polycone(
                     self.name + "_" + self.logicalVolume.solid.name + "_" + str(i),
                     paramData.pSPhi,

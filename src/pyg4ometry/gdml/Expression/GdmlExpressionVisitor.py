@@ -5,7 +5,6 @@ from antlr4 import *
 
 
 class GdmlExpressionVisitor(ParseTreeVisitor):
-
     # Visit a parse tree produced by GdmlExpressionParser#equation.
     def visitEquation(self, ctx):
         return self.visitChildren(ctx)

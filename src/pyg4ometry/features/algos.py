@@ -635,7 +635,6 @@ def extract(
     bViewer=False,
     bViewerInteractive=False,
 ):
-
     p = vtkLoadStl(inputFileName)
     e = vtkPolydataToConnectedEdges(p, angle)
     i = vtkPolydataEdgeInformation(e)
@@ -644,7 +643,6 @@ def extract(
     cpdiList = []
     ciList = []
     for plane in planes:
-
         cpd = vtkCutterPlane(plane.plane(), p)
         cpdi = vtkPolydataEdgeInformation(cpd)
         ce = vtkPolydataToConnectedEdges(cpd, 0)

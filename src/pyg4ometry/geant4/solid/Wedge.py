@@ -51,7 +51,6 @@ class Wedge(_SolidBase):
         )
 
     def pycsgmesh(self):
-
         d = self.pDz
 
         phi = _np.linspace(self.pSPhi, self.pDPhi, self.nslice)

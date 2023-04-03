@@ -179,7 +179,6 @@ class VtkViewer:
                 a.GetProperty().SetRepresentationToSurface()
 
     def setRandomColours(self, seed=0):
-
         _random.seed(seed)
 
         for a in self.actors:
@@ -448,7 +447,6 @@ class VtkViewer:
             or solid.type == "Subtraction"
             or solid.type == "Intersection"
         ):
-
             if first:
                 try:
                     mesh = solid.mesh()
@@ -550,7 +548,6 @@ class VtkViewer:
         tra=_np.array([0, 0, 0]),
     ):
         for pv in logical.daughterVolumes:
-
             # get the local vtkPolyData
             if pv.logicalVolume.type != "assembly":
                 solid_name = pv.logicalVolume.solid.name
@@ -823,7 +820,6 @@ class VtkViewer:
         vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
 
         def makeCutterPlane(origin, normal, color):
-
             plane = _vtk.vtkPlane()
             plane.SetOrigin(*origin)
             plane.SetNormal(*normal)

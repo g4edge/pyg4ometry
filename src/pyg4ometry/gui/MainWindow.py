@@ -26,7 +26,6 @@ class MainWindow(QMainWindow):
         self.geometryModel = GeometryModel()
 
     def initUI(self):
-
         menubar = self.menuBar()
         menubar.setNativeMenuBar(False)
         fileMenu = menubar.addMenu("File")
@@ -87,7 +86,6 @@ class MainWindow(QMainWindow):
             self.vtkWidget.GetRenderWindow().GetRenderers(),
             range(rens.GetNumberOfItems()),
         ):
-
             if i == iModel:
                 r.SetDraw(1)
                 r.SetLayer(0)

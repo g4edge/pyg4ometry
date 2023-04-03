@@ -115,7 +115,6 @@ class VtkExporter:
         world_volume = reg.getWorldVolume()
 
         if df_color is not None and df_model is not None:
-
             df_gdml = reg.structureAnalysis(world_volume.name)
             color_dico = self.fill_color_dico(df_gdml, df_model, df_color)
             self.add_logical_world_volume(world_volume, model, color_dico)
@@ -203,7 +202,6 @@ class VtkExporter:
             )
 
         for element in self.mbdico.keys():
-
             self.elements.append(element)
 
             writer = _vtk.vtkXMLMultiBlockDataWriter()
@@ -230,9 +228,7 @@ class VtkExporter:
 
         """
         for pv in lv.daughterVolumes:
-
             if first_level:
-
                 self.element_name = self.getElementName(pv.logicalVolume.name)
 
                 if self.element_name not in self.mbdico.keys():
@@ -275,7 +271,6 @@ class VtkExporter:
             )
 
     def addMesh(self, solid_name, mesh, rotation, translation, visOptions=None):
-
         """
         Method that converts the mesh into VtkPolyData (.vtp file)
         and gives it the correct rotation, translation and color.

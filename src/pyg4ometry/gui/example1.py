@@ -20,19 +20,15 @@ from vtk.vtkRenderingCore import vtkGenericRenderWindowInteractor, vtkRenderWind
 if PyQtImpl is None:
     # Autodetect the PyQt implementation to use
     try:
-
         PyQtImpl = "PyQt5"
     except ImportError:
         try:
-
             PyQtImpl = "PySide2"
         except ImportError:
             try:
-
                 PyQtImpl = "PyQt4"
             except ImportError:
                 try:
-
                     PyQtImpl = "PySide"
                 except ImportError:
                     raise ImportError("Cannot load either PyQt or PySide")

@@ -40,7 +40,6 @@ class Scaled(_SolidBase):
         return f"Scaled : {self.name} {self.solid} {self.pX} {self.pY} {self.pZ}"
 
     def mesh(self):
-
         _log.info("scaled.pycsgmesh> antlr")
 
         pX = self.evaluateParameter(self.pX)

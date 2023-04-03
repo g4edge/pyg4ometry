@@ -16,7 +16,6 @@ import logging as _log
 
 
 def cubeNet(vecList):
-
     return _CSG.fromPolygons(
         [
             _Polygon(

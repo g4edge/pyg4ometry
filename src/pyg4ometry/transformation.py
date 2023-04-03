@@ -59,7 +59,6 @@ def tbxyz2axisangle(rv):
 
 
 def matrix2axisangle(matrix):
-
     """
     Convert 3x3 transformation matrix to axis angle representation
 
@@ -99,7 +98,6 @@ def matrix2axisangle(matrix):
 
 
 def axisangle2matrix(axis, angle):
-
     """
     Convert axis angle to transformation matrix
 

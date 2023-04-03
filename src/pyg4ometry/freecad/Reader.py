@@ -34,7 +34,6 @@ class Reader:
         self.doc = _fc.activeDocument()
 
     def simplifyModel(self, volumeCut=5e5):
-
         for o in self.doc.Objects:
             if o.TypeId == "Part::Feature":
                 v = o.Shape.Volume
@@ -395,7 +394,6 @@ class Reader:
             self.recursePrintObjectTree(obj)
 
     def recursePrintObjectTree(self, obj):
-
         if obj.TypeId == "App::Part":
             _log.info(
                 "freecad.Reader.recursePrintObjectTree> App::Part {} {} {}".format(
@@ -408,7 +406,6 @@ class Reader:
             print("Part::Feature", obj.TypeId, obj.Label, obj.Placement)
 
     def recurseObjectTree(self, obj):
-
         import pyg4ometry.gdml.Defines
         import pyg4ometry.geant4.LogicalVolume
         import pyg4ometry.geant4.PhysicalVolume

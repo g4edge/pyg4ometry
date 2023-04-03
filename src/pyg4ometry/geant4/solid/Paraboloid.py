@@ -95,7 +95,6 @@ class Paraboloid(_SolidBase):
         k2 = (pR1**2 + pR2**2) / 2.0
 
         for i in range(0, slices):
-
             i1 = i
             i2 = i + 1
 

@@ -43,7 +43,6 @@ class MultiUnion(_SolidBase):
         return "Multi Union %s" % (self.name)
 
     def mesh(self):
-
         _log.info("MultiUnion.pycsgmesh>")
 
         result = self.objects[0].mesh()
@@ -56,7 +55,6 @@ class MultiUnion(_SolidBase):
         for idx, (solid, tra2) in enumerate(
             zip(self.objects[1:], self.transformations[1:]), start=1
         ):
-
             # tranformation
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()

@@ -84,7 +84,6 @@ def gp_XYZ_numpy(xyz):
 
 
 def test(fileName):
-
     x = XCAF()
     x.loadStepFile(fileName)
 
@@ -95,7 +94,6 @@ def test(fileName):
     st.GetShapes(ls)
 
     for l in ls:
-
         # label methods
         depth = l.Depth()
         father = l.Father()

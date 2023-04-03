@@ -43,7 +43,6 @@ class DivisionVolume(_PhysicalVolume):
         addRegistry=True,
         unit="mm",
     ):
-
         self.type = "division"
         self.name = name
         self.logicalVolume = logicalVolume

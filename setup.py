@@ -128,7 +128,6 @@ def pybind11_CGAL_extensions(extDict, config):
 
 
 def pybind11_OCE_extensions(extDict, config):
-
     extensions = []
     for ext in extDict:
         code = extDict[ext]

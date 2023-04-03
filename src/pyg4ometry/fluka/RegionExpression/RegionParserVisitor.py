@@ -5,7 +5,6 @@ from antlr4 import *
 
 
 class RegionParserVisitor(ParseTreeVisitor):
-
     # Visit a parse tree produced by RegionParser#regions.
     def visitRegions(self, ctx):
         return self.visitChildren(ctx)

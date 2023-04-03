@@ -125,12 +125,10 @@ class Hype(_SolidBase):
         polygons = []
 
         for j0 in range(slices):
-
             j1 = j0
             j2 = j0 + 1
 
             for i0 in range(stacks):
-
                 i1 = i0
                 i2 = i0 + 1
 
@@ -172,7 +170,6 @@ class Hype(_SolidBase):
                 polygons.append(_Polygon(vertices_outer))
 
                 if innerRadius != 0:
-
                     z1_inner = i1 * dz + sz
                     r1_inner = _np.sqrt(
                         innerRadius**2 + (z1_inner * _np.tan(innerStereo)) ** 2
@@ -219,7 +216,6 @@ class Hype(_SolidBase):
                     polygons.append(_Polygon(vertices_inner))
 
                     if i1 == 0:
-
                         verticesTop = []
 
                         verticesTop.append(
@@ -238,7 +234,6 @@ class Hype(_SolidBase):
                         polygons.append(_Polygon(verticesTop))
 
                     if i2 == stacks:
-
                         verticesBottom = []
 
                         verticesBottom.append(
@@ -257,9 +252,7 @@ class Hype(_SolidBase):
                         polygons.append(_Polygon(verticesBottom))
 
                 if innerRadius == 0:
-
                     if i1 == 0:
-
                         verticesTop = []
 
                         verticesTop.append(
@@ -273,7 +266,6 @@ class Hype(_SolidBase):
                         polygons.append(_Polygon(verticesTop))
 
                     if i2 == stacks:
-
                         verticesBottom = []
 
                         verticesBottom.append(

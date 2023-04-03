@@ -26,7 +26,6 @@ class GeometryModel:
         self.registryDict[name] = reg
 
     def loadNewRegistry(self, fileName):
-
         name = nameFromPath(fileName)
         type = extensionFromPath(fileName)
 

@@ -404,7 +404,6 @@ option, preprocessGDML=0;
         self.structure.appendChild(we)
 
     def writeAuxiliary(self, aux, parent=None):
-
         ax = self.doc.createElement("auxiliary")
         ax.setAttribute("auxtype", aux.auxtype)
         ax.setAttribute("auxvalue", aux.auxvalue)
@@ -722,7 +721,6 @@ option, preprocessGDML=0;
             return str(var)
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
-
         if not hasattr(instance, variable):
             raise AttributeError("")  # TODO: Add error message
 

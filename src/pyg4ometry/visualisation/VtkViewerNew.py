@@ -48,7 +48,6 @@ class VtkViewerNew(_ViewerBase):
         self.iren.SetInteractorStyle(self.interactorStyle)
 
     def clear(self):
-
         super().clear()
 
         self.polydata = {}
@@ -122,7 +121,6 @@ class VtkViewerNew(_ViewerBase):
         pass
 
     def exportCutter(self, name, fileName):
-
         self.cuttersAppFlt = _vtk.vtkAppendPolyData()
 
         for c in self.cutters[name]:
@@ -160,7 +158,6 @@ class VtkViewerNew(_ViewerBase):
             self.clipperPlaneWidget.GetRepresentation().SetOrigin(*origin)
 
     def addClipperWidget(self):
-
         if not self.bBuiltPipelines:
             print(
                 "Need to build pipelines before adding clipper widget e.g. v.bulidPipelinesAppend()"
@@ -201,7 +198,6 @@ class VtkViewerNew(_ViewerBase):
         pass
 
     def buildPipelinesSeparate(self):
-
         # loop over meshes and create polydata
         for k in self.localmeshes:
             pd = _Convert.pycsgMeshToVtkPolyData(self.localmeshes[k])
@@ -213,7 +209,6 @@ class VtkViewerNew(_ViewerBase):
             vos = self.instanceVisOptions[k]  # (v)isualisation (o)ption(s)
             pd = self.polydata[k]
             for ip, i in zip(ips, range(0, len(ips))):
-
                 triFlt = _vtk.vtkTriangleFilter()  # (tri)angle (F)i(lt)er
                 triFlt.AddInputData(pd)
                 map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
@@ -524,7 +519,6 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             self.ren.GetRenderWindow().Render()
 
     def rightButtonPressEvent(self, obj, event):
-
         if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)
 

@@ -24,7 +24,6 @@ def oceShape_Geant4_Assembly(name, greg):
 
 
 def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
-
     ##############################################
     # Check if already in registry
     ##############################################
@@ -89,7 +88,6 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     triangleCounter = 0
 
     while topoExp.More():
-
         triangulation = _oce.BRep.BRep_Tool.Triangulation(
             _oce.TopoDS.TopoDSClass.Face(topoExp.Current()),
             location,
@@ -172,7 +170,6 @@ def _oce2Geant4_traverse(
         material = "G4_Galactic"
 
     if shapeTool.IsAssembly(label):
-
         # make assembly
         try:
             return greg.logicalVolumeDict[name]
@@ -240,7 +237,6 @@ def _oce2Geant4_traverse(
         return physicalVolume
 
     elif shapeTool.IsShape(label) and label.NbChildren() == 0:
-
         # make solid
         solid = oceShape_Geant4_Tessellated(
             name, shape, greg, meshQuality[0], meshQuality[1]
@@ -255,7 +251,6 @@ def _oce2Geant4_traverse(
             return logicalVolume
 
     elif shapeTool.IsShape(label) and label.NbChildren() != 0:
-
         # make assembly (TODO might require multi union if overlapping)
 
         try:

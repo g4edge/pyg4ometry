@@ -163,7 +163,6 @@ class ScalarBase:
         pass
 
     def __add__(self, other):
-
         v1 = upgradeToStringExpression(self.registry, self)
         v2 = upgradeToStringExpression(self.registry, other)
 
@@ -200,7 +199,6 @@ class ScalarBase:
         return v
 
     def __mul__(self, other):
-
         # check to see if other is a vector
         if isinstance(other, VectorBase):
             return other * self
@@ -675,7 +673,6 @@ class VectorBase:
         return p
 
     def __sub__(self, other):
-
         other = upgradeToVector(other, self.registry, "position", "", False)
 
         p = Position(

@@ -195,7 +195,6 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         polygons = []
 
         for i in range(0, self.nstack, 1):
-
             i1 = i
             i2 = i + 1
 

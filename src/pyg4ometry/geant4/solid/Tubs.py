@@ -102,7 +102,6 @@ class Tubs(_SolidBase):
         dPhi = pDPhi / self.nslice
 
         for i in range(0, self.nslice, 1):
-
             i1 = i
             i2 = i + 1
 
@@ -157,7 +156,6 @@ class Tubs(_SolidBase):
                 polygons.append(_Polygon(vEnd))
 
             else:
-
                 vEnd = []
                 vEnd.append(_Vertex([xRMinP1, yRMinP1, -pDz]))
                 vEnd.append(_Vertex([xRMinP2, yRMinP2, -pDz]))

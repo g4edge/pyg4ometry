@@ -13,7 +13,6 @@ def MeshShrink(m, shrinkFactor=1e-5):
         nvertnormals.append(0)
 
     for tri in facet:
-
         i1 = tri[0]
         i2 = tri[1]
         i3 = tri[2]

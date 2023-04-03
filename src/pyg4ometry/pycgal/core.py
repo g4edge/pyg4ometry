@@ -244,7 +244,6 @@ def do_intersect(csg1, csg2):
 
 
 def intersecting_meshes(csgList):
-
     smList = [c.sm for c in csgList]
     print(smList)
 
@@ -263,7 +262,6 @@ class PolygonProcessing:
         partPolyList = []
 
         for pp in partPoly:
-
             partPolyCoords = []
             for ppi in range(0, pp.size()):
                 pnt = pp.vertex(ppi)
@@ -285,7 +283,6 @@ class PolyhedronProcessing:
 
     @classmethod
     def nefPolyhedron_to_convexPolyhedra(cls, np):
-
         CGAL.convex_decomposition_3(np)
         vi = np.volume_begin()
         ve = np.volume_end()
@@ -305,7 +302,6 @@ class PolyhedronProcessing:
 
     @classmethod
     def polyhedron_to_numpyArrayPlanes(cls, p):
-
         return _np.array(p.convertToPlanes())
 
         # Following does not work, maybe because not triangles
@@ -313,7 +309,6 @@ class PolyhedronProcessing:
         fi = p.facets_begin()
         fe = p.facets_end()
         while fi != fe:
-
             plane = fi.plane()
             print(plane)
             # point = plane.point()

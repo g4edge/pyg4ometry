@@ -139,7 +139,6 @@ class GenericTrap(_SolidBase):
         return vertex
 
     def makeLayers(self, verts_bot, verts_top):
-
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
         uval = _Units.unit(self.lunit)

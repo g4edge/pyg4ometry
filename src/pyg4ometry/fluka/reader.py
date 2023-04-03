@@ -240,7 +240,6 @@ class Reader:
     def _parseGeometryDirective(
         self, line_parts, expansion_stack, translation_stack, transform_stack
     ):
-
         directive = line_parts[0].lower()
         if directive == "$start_translat":
             # CONVERTING TO MILLIMETRES HERE
