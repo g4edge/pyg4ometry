@@ -9,6 +9,9 @@ class SolidBase(object):
         self.name = name
         self.type = type
         self.registry = registry
+        for ch in ['+', '-', '/', '*']:
+            if ch in name:
+                raise ValueError("The character \""+ch+"\" cannot be in the name of the object \"" + name + "\" - Geant4 will not tolerate this.")
 
     def evaluateParameter(self, obj):
         from pyg4ometry.gdml.Defines import evaluateToFloat
