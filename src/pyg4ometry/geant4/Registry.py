@@ -863,6 +863,9 @@ def _UpdateComplexity(lv, info):
     return info
 
 def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=None):
+    """
+    Produce a pandas dataframe representing the structure of the geometry.
+    """
     # do the heavy import only in the function
     import pandas as _pd
     reg = registry #shortcut
@@ -879,8 +882,14 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
     daughters = [daughter.name for daughter in daughters_lv]
     material = mother_lv.material.name.split('0')[0]
 
-    df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv,
-                    'daughters': daughters, 'material': material}, ignore_index=True)
+    df = _pd.concat([df,
+                     _pd.DataFrame.from_records([{'level': level,
+                                                  'mother_lv': mother_lv,
+                                                  'mother': mother,
+                                                  'daughters_lv': daughters_lv,
+                                                  'daughters': daughters,
+                                                  'material': material}])
+                     ], ignore_index=True)
 
     if debug:
         print("\nlevel:", level)
