@@ -66,6 +66,9 @@ class LogicalVolume(object):
 
         self.type  = "logical"
         self.solid = solid
+
+        if registry is None and addRegistry:
+            raise ValueError("No registry supplied by (by default) addRegistry=True in logical volume \""+name+"\"")
  
         if isinstance(material, _mat.Material):
             self.material = material
