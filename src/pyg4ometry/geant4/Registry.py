@@ -456,6 +456,12 @@ class Registry:
         else:
             raise TypeError("Invalid type ", worldIn.__class__.__name__," - must be str or LogicalVolume")
 
+    def setWorldVolume(self, worldIn):
+        """
+        An alias for some of us who can't remember.
+        """
+        self.setWorld(worldIn)
+
     def _orderMaterialList(self, materials, materials_ordered=[]):
         for mat in materials:
             if isinstance(mat, _mat.Material) and mat not in materials_ordered:
