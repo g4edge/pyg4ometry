@@ -273,11 +273,19 @@ void toCGALSurfaceMesh(Surface_mesh_EPECK &sm, py::list &polygons) {
 }
 
 PYBIND11_MODULE(Surface_mesh, m) {
-  py::class_<Surface_mesh_EPICK::Vertex_index>(m,"Vertex_index_EPICK")
-    .def(py::init<>());
-  py::class_<Surface_mesh_EPICK::Face_index>(m,"Face_index_EPICK");
-  py::class_<Surface_mesh_EPICK::Halfedge_index>(m,"Halfedge_index_EPICK");
-  py::class_<Surface_mesh_EPICK::Edge_index>(m,"Edge_index_EPICK");
+  py::class_<Surface_mesh_EPICK::Vertex_index>(m,"Vertex_index")
+    .def(py::init<>())
+    .def("size_t",[](Surface_mesh_EPICK::Vertex_index &fi) {return (std::size_t)fi;});
+  py::class_<Surface_mesh_EPICK::Face_index>(m,"Face_index")
+    .def(py::init<>())
+    .def("size_t",[](Surface_mesh_EPICK::Face_index &fi) {return (std::size_t)fi;});
+  py::class_<Surface_mesh_EPICK::Halfedge_index>(m,"Halfedge_index")
+    .def(py::init<>())
+    .def("size_t",[](Surface_mesh_EPICK::Halfedge_index &fi) {return (std::size_t)fi;});
+  py::class_<Surface_mesh_EPICK::Edge_index>(m,"Edge_index")
+    .def(py::init<>())
+    .def("size_t",[](Surface_mesh_EPICK::Edge_index &fi) {return (std::size_t)fi;});
+
 
   py::class_<Surface_mesh_EPICK>(m,"Surface_mesh_EPICK")
     .def(py::init<>())
@@ -297,6 +305,9 @@ PYBIND11_MODULE(Surface_mesh, m) {
     .def("add_face",[](Surface_mesh_EPICK &sm, Surface_mesh_EPICK::Vertex_index &v0, Surface_mesh_EPICK::Vertex_index &v1, Surface_mesh_EPICK::Vertex_index &v2) {return sm.add_face(v0,v1,v2);})
     .def("add_face",[](Surface_mesh_EPICK &sm, Surface_mesh_EPICK::Vertex_index &v0, Surface_mesh_EPICK::Vertex_index &v1, Surface_mesh_EPICK::Vertex_index &v2, Surface_mesh_EPICK::Vertex_index &v3) {return sm.add_face(v0,v1,v2,v3);})
 
+    /* Low level connectivity */
+    .def("target",&Surface_mesh_EPICK::target)
+
     /* Memory management */
     .def("number_of_vertices",[](Surface_mesh_EPICK &sm){return sm.number_of_vertices();})
     .def("number_of_halfedges",[](Surface_mesh_EPICK &sm){return sm.number_of_halfedges();})
@@ -311,6 +322,7 @@ PYBIND11_MODULE(Surface_mesh, m) {
 
   m.def("toCGALSurfaceMesh",[](Surface_mesh_EPICK &sm, py::list &polygons) {toCGALSurfaceMesh(sm,polygons);});
   m.def("toVerticesAndPolygons",[](Surface_mesh_EPICK &sm) {return toVerticesAndPolygons(sm);});
+
 
   py::class_<Surface_mesh_EPECK>(m,"Surface_mesh_EPECK")
     .def(py::init<>())
@@ -330,6 +342,41 @@ PYBIND11_MODULE(Surface_mesh, m) {
     .def("add_face",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &v0, Surface_mesh_EPECK::Vertex_index &v1, Surface_mesh_EPECK::Vertex_index &v2) {return sm.add_face(v0,v1,v2);})
     .def("add_face",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &v0, Surface_mesh_EPECK::Vertex_index &v1, Surface_mesh_EPECK::Vertex_index &v2, Surface_mesh_EPECK::Vertex_index &v3) {return sm.add_face(v0,v1,v2,v3);})
 
+    /* Range types */
+    .def("vertices",[](Surface_mesh_EPECK &sm) {return py::make_iterator(boost::begin(sm.vertices()), boost::end(sm.vertices()));}, py::keep_alive<0, 1>())
+    .def("halfedges",[](Surface_mesh_EPECK &sm) {return py::make_iterator(boost::begin(sm.halfedges()), boost::end(sm.halfedges()));}, py::keep_alive<0, 1>())
+    .def("edges",[](Surface_mesh_EPECK &sm) {return py::make_iterator(boost::begin(sm.edges()), boost::end(sm.edges()));}, py::keep_alive<0, 1>())
+    .def("faces",[](Surface_mesh_EPECK &sm) {return py::make_iterator(boost::begin(sm.faces()), boost::end(sm.faces()));}, py::keep_alive<0, 1>())
+
+    /* Low-Level Removal Functions */
+
+    /* Memory management */
+
+    /* Garbage collection */
+
+    /* Validity checks */
+
+    /* Low level connectivity */
+    .def("target",&Surface_mesh_EPECK::target)
+    .def("face",&Surface_mesh_EPECK::face)
+    .def("next",&Surface_mesh_EPECK::next)
+    .def("prev",&Surface_mesh_EPECK::prev)
+    .def("halfedge",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &vi) {return sm.halfedge(vi);})
+    .def("halfedge",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi) {return sm.halfedge(fi);})
+    .def("opposite",&Surface_mesh_EPECK::opposite)
+
+    /* Switching between edges and half edges */
+
+
+    /* Low level connectivity convenience functions */
+    .def("source",&Surface_mesh_EPECK::source)
+    .def("next_around_target",&Surface_mesh_EPECK::next_around_target)
+    .def("prev_around_target",&Surface_mesh_EPECK::prev_around_target)
+    .def("next_around_source",&Surface_mesh_EPECK::next_around_source)
+    .def("prev_around_source",&Surface_mesh_EPECK::prev_around_source)
+    .def("vertex",&Surface_mesh_EPECK::vertex)
+    .def("halfedge",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &source, Surface_mesh_EPECK::Vertex_index &target)  {return sm.halfedge(source, target);})
+
     /* Memory management */
     .def("number_of_vertices",[](Surface_mesh_EPECK &sm){return sm.number_of_vertices();})
     .def("number_of_halfedges",[](Surface_mesh_EPECK &sm){return sm.number_of_halfedges();})
@@ -338,9 +385,14 @@ PYBIND11_MODULE(Surface_mesh, m) {
     .def("is_empty",[](Surface_mesh_EPECK &sm){return sm.is_empty();})
     // TODO CGAL version
     .def("clear_without_removing_property_maps",[](Surface_mesh_EPECK &sm) {sm.clear_without_removing_property_maps();})
-    .def("clear",[](Surface_mesh_EPECK &sm) {sm.clear();});
+    .def("clear",[](Surface_mesh_EPECK &sm) {sm.clear();})
 
-    /* Validity checks */
+    /* Degree functions */
+
+    /* Borders */
+
+    /* Property handling */
+    .def("point",[](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &vi) { return sm.point(vi);});
 
   m.def("toCGALSurfaceMesh",[](Surface_mesh_EPECK &sm, py::list &polygons) {toCGALSurfaceMesh(sm,polygons);});
   m.def("toVerticesAndPolygons",[](Surface_mesh_EPECK &sm) {return toVerticesAndPolygons(sm);});

@@ -1,6 +1,6 @@
-import numpy as _np
 import vtk as _vtk
-
+import copy as _copy
+import numpy as _np
 
 # python iterable to vtkIdList
 def mkVtkIdList(it):
@@ -8,7 +8,6 @@ def mkVtkIdList(it):
     for i in it:
         vil.InsertNextId(int(i))
     return vil
-
 
 # convert pycsh mesh to vtkPolyData
 def pycsgMeshToVtkPolyData(mesh):
@@ -40,6 +39,53 @@ def pycsgMeshToVtkPolyData(mesh):
 
     return meshPolyData
 
+def vtkPolyDataToNumpy(fileName):
+
+    r = _vtk.vtkPolyDataReader()
+    r.SetFileName(fileName)
+    r.Update()
+    conFlt = _vtk.vtkConnectivityFilter()
+    conFlt.SetInputConnection(r.GetOutputPort())
+    conFlt.SetExtractionModeToAllRegions();
+    conFlt.ColorRegionsOn();
+    conFlt.Update()
+
+    # print(conFlt.GetNumberOfExtractedRegions())
+
+    retnSortedPnts = []
+    for i in range(0,conFlt.GetNumberOfExtractedRegions()) :
+        conFlt.SetExtractionModeToSpecifiedRegions();
+        conFlt.InitializeSpecifiedRegionList();
+        conFlt.AddSpecifiedRegion(i);
+        conFlt.Update()
+        pd = conFlt.GetOutput()
+        # print(pd.GetNumberOfPoints(),pd.GetNumberOfCells())
+
+        firstCell = pd.GetCell(0)
+        firstPointId = firstCell.GetPointId(0)
+
+        def pntsInOrder(pointId, nlim = 10000, ids=[]) :
+            ids.append(pointId)
+            vidl = _vtk.vtkIdList()
+            pd.GetPointCells(pointId,vidl)
+            for ci in range(0,vidl.GetNumberOfIds()) :
+                c = pd.GetCell(vidl.GetId(ci))
+                if c.GetPointId(0) == pointId and len(ids) < nlim:
+                    # print(nlim,len(ids))
+                    pntsInOrder(c.GetPointId(1),nlim,ids)
+
+        sortedIds = []
+        pntsInOrder(firstPointId,pd.GetNumberOfCells()+1,sortedIds)
+        # print(sortedIds)
+
+        sortedPnts = []
+        for sid in sortedIds :
+            sortedPnts.append(list(pd.GetPoint(sid)))
+
+        retnSortedPnts.append(_np.array(sortedPnts))
+
+    return retnSortedPnts
+
 
 def pycsgMeshToObj(mesh, fileName):
 
@@ -63,8 +109,7 @@ def pycsgMeshToObj(mesh, fileName):
     exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
     exporter.Write()
 
-
-def pyg42VtkTransformation(mtra, tra):
+def pyg42VtkTransformation(mtra, tra) :
     vtkTransform = _vtk.vtkMatrix4x4()
     vtkTransform.SetElement(0, 0, mtra[0, 0])
     vtkTransform.SetElement(0, 1, mtra[0, 1])
@@ -82,20 +127,14 @@ def pyg42VtkTransformation(mtra, tra):
 
     return vtkTransform
 
-
-def vtkTransformation2PyG4(vt):
+def vtkTransformation2PyG4(vt) :
     mat = vt.GetMatrix()
-    mtra = _np.array(
-        [
-            [mat.GetElement(0, 0), mat.GetElement(0, 1), mat.GetElement(0, 2)],
-            [mat.GetElement(1, 0), mat.GetElement(1, 1), mat.GetElement(1, 2)],
-            [mat.GetElement(2, 0), mat.GetElement(2, 1), mat.GetElement(2, 2)],
-        ]
-    )
-    tra = _np.array([mat.GetElement(0, 3), mat.GetElement(1, 3), mat.GetElement(2, 3)])
+    mtra = _np.array([[mat.GetElement(0,0), mat.GetElement(0,1), mat.GetElement(0,2)],
+                      [mat.GetElement(1,0), mat.GetElement(1,1), mat.GetElement(1,2)],
+                      [mat.GetElement(2,0), mat.GetElement(2,1), mat.GetElement(2,2)]])
+    tra  = _np.array([mat.GetElement(0,3),mat.GetElement(1,3),mat.GetElement(2,3)])
 
     return [mtra, tra]
-
 
 def pycsgMeshToStl(mesh, fileName):
     vtkPD = pycsgMeshToVtkPolyData(mesh)

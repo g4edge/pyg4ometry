@@ -1,8 +1,8 @@
 import pyg4ometry.fluka as _fluka
 
-
-def freecadDoc2Fluka(fcd):
+def freecadDoc2Fluka(fcd) :
     freg = _fluka.FlukaRegistry()
+
 
     # loop over parts
     for obj in fcd.doc.Objects:
@@ -10,7 +10,7 @@ def freecadDoc2Fluka(fcd):
             pass
 
 
-def part2Region(obj, trfm, fgreg, meshDeviation=0.05):
+def part2Region(obj, trfm, fgreg, meshDeviation = 0.05) :
 
     ################################
     # Tessellate object
@@ -28,3 +28,6 @@ def part2Region(obj, trfm, fgreg, meshDeviation=0.05):
     # compile list output zones
 
     # create region
+
+
+

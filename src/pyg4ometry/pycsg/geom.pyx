@@ -10,7 +10,7 @@ class Vector(object):
     class Vector
 
     Represents a 3D vector.
-
+    
     Example usage:
          Vector(1, 2, 3);
          Vector([1, 2, 3]);
@@ -35,32 +35,32 @@ class Vector(object):
 
     def __repr__(self):
         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
-
+            
     def clone(self):
         """ Clone. """
         return Vector(self.x, self.y, self.z)
-
+        
     def negated(self):
         """ Negated. """
         return Vector(-self.x, -self.y, -self.z)
 
     def __neg__(self):
         return self.negated()
-
+    
     def plus(self, a):
         """ Add. """
         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
 
     def __add__(self, a):
         return self.plus(a)
-
+    
     def minus(self, a):
         """ Subtract. """
         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
 
     def __sub__(self, a):
         return self.minus(a)
-
+    
     def times(self, a):
         """ Multiply. """
         return Vector(self.x*a, self.y*a, self.z*a)
@@ -70,7 +70,7 @@ class Vector(object):
 
     def __rmul__(self, a):
         return self.times(a)
-
+            
     def dividedBy(self, a):
         """ Divide. """
         return Vector(self.x/a, self.y/a, self.z/a)
@@ -80,7 +80,7 @@ class Vector(object):
 
     def __div__(self, a):
         return self.dividedBy(float(a))
-
+    
     def dot(self, a):
         """ Dot. """
         return self.x*a.x + self.y*a.y + self.z*a.z
@@ -91,15 +91,15 @@ class Vector(object):
     def lerp(self, a, t):
         """ Lerp. Linear interpolation from self to a"""
         return self.plus(a.minus(self).times(t));
-
+    
     def length(self):
         """ Length. """
         return math.sqrt(self.dot(self))
-
+    
     def unit(self):
         """ Normalize. """
         return self.dividedBy(self.length())
-
+        
     def cross(self, a):
         """ Cross. """
         return Vector(
@@ -114,19 +114,19 @@ class Vector(object):
         l = [self.x, self.y, self.z]
         l[key] = value
         self.x, self.y, self.z = l
-
+            
     def __len__(self):
         return 3
-
+    
     def __iter__(self):
         return iter((self.x, self.y, self.z))
-
+            
     def __repr__(self):
-        return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
-
+        return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z) 
+        
 class Vertex(object):
-    """
-    Class Vertex
+    """ 
+    Class Vertex 
 
     Represents a vertex of a polygon. Use your own vertex class instead of this
     one to provide additional features like texture coordinates and vertex
@@ -139,10 +139,10 @@ class Vertex(object):
     def __init__(self, pos, normal=None):
         self.pos = Vector(pos)
         self.normal = Vector(normal)
-
+    
     def clone(self):
         return Vertex(self.pos.clone(), self.normal.clone())
-
+    
     def flip(self):
         """
         Invert all orientation-specific data (e.g. vertex normal). Called when the
@@ -156,19 +156,19 @@ class Vertex(object):
         interpolating all properties using a parameter of `t`. Subclasses should
         override this to interpolate additional properties.
         """
-        return Vertex(self.pos.lerp(other.pos, t),
+        return Vertex(self.pos.lerp(other.pos, t), 
                           self.normal.lerp(other.normal, t))
 
     def __repr__(self):
         return repr(self.pos)
-
+                          
 class Plane(object):
     """
     class Plane
 
     Represents a plane in 3D space.
     """
-
+    
     """
     `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a
     point is on the plane.
@@ -180,7 +180,7 @@ class Plane(object):
         self.normal = normal
         # w is the (perpendicular) distance of the plane from (0, 0, 0)
         self.w = w
-
+    
     @classmethod
     def fromPoints(cls, a, b, c):
         n = b.minus(a).cross(c.minus(a)).unit()
@@ -188,14 +188,14 @@ class Plane(object):
 
     def clone(self):
         return Plane(self.normal.clone(), self.w)
-
+        
     def flip(self):
         self.normal = self.normal.negated()
         self.w = -self.w
 
     def __repr__(self):
         return 'normal: {0} w: {1}'.format(self.normal, self.w)
-
+    
     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):
         """
         Split `polygon` by this plane if needed, then put the polygon or polygon
@@ -213,22 +213,22 @@ class Plane(object):
         # four classes.
         polygonType = 0
         vertexLocs = []
-
+        
         numVertices = len(polygon.vertices)
         for i in range(numVertices):
             t = self.normal.dot(polygon.vertices[i].pos) - self.w
             loc = -1
-            if t < -Plane.EPSILON:
+            if t < -Plane.EPSILON: 
                 loc = BACK
-            elif t > Plane.EPSILON:
+            elif t > Plane.EPSILON: 
                 loc = FRONT
 #            elif t == 0 :
 #                loc = FRONT
-            else:
+            else: 
                 loc = COPLANAR
             polygonType |= loc
             vertexLocs.append(loc)
-
+    
         # Put the polygon in the correct list, splitting it when necessary.
         if polygonType == COPLANAR:
             normalDotPlaneNormal = self.normal.dot(polygon.plane.normal)
@@ -249,10 +249,10 @@ class Plane(object):
                 tj = vertexLocs[j]
                 vi = polygon.vertices[i]
                 vj = polygon.vertices[j]
-                if ti != BACK:
+                if ti != BACK: 
                     f.append(vi)
                 if ti != FRONT:
-                    if ti != BACK:
+                    if ti != BACK: 
                         b.append(vi.clone())
                     else:
                         b.append(vi)
@@ -263,9 +263,9 @@ class Plane(object):
                     v = vi.interpolate(vj, t)
                     f.append(v)
                     b.append(v.clone())
-            if len(f) >= 3:
+            if len(f) >= 3: 
                 front.append(Polygon(f, polygon.shared))
-            if len(b) >= 3:
+            if len(b) >= 3: 
                 back.append(Polygon(b, polygon.shared))
 
 class Polygon(object):
@@ -276,7 +276,7 @@ class Polygon(object):
     be coplanar and form a convex loop. They do not have to be `Vertex`
     instances but they must behave similarly (duck typing can be used for
     customization).
-
+    
     Each convex polygon has a `shared` property, which is shared between all
     polygons that are clones of each other or were split from the same polygon.
     This can be used to define per-polygon properties (such as surface color).
@@ -285,11 +285,11 @@ class Polygon(object):
         self.vertices = vertices
         self.shared = shared
         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
-
+    
     def clone(self):
         vertices = list([v.clone() for v in self.vertices])
         return Polygon(vertices, self.shared)
-
+                
     def flip(self):
         self.vertices.reverse()
         list(map(lambda v: v.flip(), self.vertices))
@@ -317,39 +317,39 @@ class BSPNode(object):
         self.polygons = []
         if polygons:
             self.build(polygons)
-
+            
     def clone(self):
         node = BSPNode()
-        if self.plane:
+        if self.plane: 
             node.plane = self.plane.clone()
-        if self.front:
+        if self.front: 
             node.front = self.front.clone()
-        if self.back:
+        if self.back: 
             node.back = self.back.clone()
         node.polygons = list([p.clone() for p in self.polygons])
         return node
-
+        
     def invert(self):
-        """
+        """ 
         Convert solid space to empty space and empty space to solid space.
         """
         for poly in self.polygons:
             poly.flip()
         self.plane.flip()
-        if self.front:
+        if self.front: 
             self.front.invert()
-        if self.back:
+        if self.back: 
             self.back.invert()
         temp = self.front
         self.front = self.back
         self.back = temp
-
+        
     def clipPolygons(self, polygons):
-        """
+        """ 
         Recursively remove all polygons in `polygons` that are inside this BSP
         tree.
         """
-        if not self.plane:
+        if not self.plane: 
             return polygons[:]
 
         front = []
@@ -357,39 +357,39 @@ class BSPNode(object):
         for poly in polygons:
             self.plane.splitPolygon(poly, front, back, front, back)
 
-        if self.front:
+        if self.front: 
             front = self.front.clipPolygons(front)
 
-        if self.back:
+        if self.back: 
             back = self.back.clipPolygons(back)
         else:
             back = []
 
         front.extend(back)
         return front
-
+        
     def clipTo(self, bsp):
-        """
+        """ 
         Remove all polygons in this BSP tree that are inside the other BSP tree
         `bsp`.
         """
         self.polygons = bsp.clipPolygons(self.polygons)
-        if self.front:
+        if self.front: 
             self.front.clipTo(bsp)
-        if self.back:
+        if self.back: 
             self.back.clipTo(bsp)
-
+        
     def allPolygons(self):
         """
         Return a list of all polygons in this BSP tree.
         """
         polygons = self.polygons[:]
-        if self.front:
+        if self.front: 
             polygons.extend(self.front.allPolygons())
-        if self.back:
+        if self.back: 
             polygons.extend(self.back.allPolygons())
         return polygons
-
+        
     def build(self, polygons):
         """
         Build a BSP tree out of `polygons`. When called on an existing tree, the
@@ -399,7 +399,7 @@ class BSPNode(object):
         """
         if len(polygons) == 0:
             return
-        if not self.plane:
+        if not self.plane: 
             self.plane = polygons[0].plane.clone()
         # add polygon to this node
         self.polygons.append(polygons[0])
@@ -419,3 +419,4 @@ class BSPNode(object):
             if not self.back:
                 self.back = BSPNode()
             self.back.build(back)
+

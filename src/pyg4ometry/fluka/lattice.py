@@ -6,15 +6,9 @@ in FLUKA geometries.
 from .card import Card
 from .directive import Transform
 
-
-class Lattice:
-    def __init__(
-        self,
-        cellRegion,
-        rotoTranslation,
-        invertRotoTranslation=False,
-        flukaregistry=None,
-    ):
+class Lattice(object):
+    def __init__(self, cellRegion, rotoTranslation,
+                 invertRotoTranslation=False, flukaregistry=None):
         self.cellRegion = cellRegion
         self.rotoTranslation = rotoTranslation
         self.invertRotoTranslation = invertRotoTranslation
@@ -23,12 +17,9 @@ class Lattice:
             flukaregistry.addLattice(self)
 
     def flukaFreeString(self, delim=", "):
-        return Card(
-            "LATTICE", what1=self.cellRegion.name, sdum=self.rotoTranslation.name
-        ).toFreeString(delim=delim)
+        return Card("LATTICE", what1=self.cellRegion.name,
+                    sdum=self.rotoTranslation.name).toFreeString(delim=delim)
 
     def getTransform(self):
-        return Transform(
-            rotoTranslation=self.rotoTranslation,
-            invertRotoTranslation=self.invertRotoTranslation,
-        )
+        return Transform(rotoTranslation=self.rotoTranslation,
+                         invertRotoTranslation=self.invertRotoTranslation)

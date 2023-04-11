@@ -1,5 +1,5 @@
 import vtk as _vtk
-
+import itertools as _itertools
 
 def writeVtkPolyDataAsSTLFile(fileName, meshes):
     """
@@ -9,7 +9,7 @@ def writeVtkPolyDataAsSTLFile(fileName, meshes):
     appendFilter = _vtk.vtkAppendPolyData()
 
     for m in meshes:
-        if m:
+        if m :
             appendFilter.AddInputData(m)
 
     # append mesh to filter
@@ -26,3 +26,6 @@ def writeVtkPolyDataAsSTLFile(fileName, meshes):
     stlWriter.SetInputConnection(appendFilter.GetOutputPort())
     stlWriter.Write()
     return stlWriter
+
+
+
