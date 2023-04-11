@@ -158,14 +158,7 @@ PYBIND11_MODULE(Polyhedron_3, m) {
     },py::return_value_policy::copy)
     .def("next",[](Polyhedron_3_EPECK::Facet_iterator &fi) {++fi;})
     .def("__ne__",[](Polyhedron_3_EPECK::Facet_iterator fi1, Polyhedron_3_EPECK::Facet_iterator fi2) {return fi1 != fi2;});
-  // TODO Plane should be moved to its own class as will clash eventually
-  py::class_<Polyhedron_3_EPECK::Facet::Plane_3>(m,"Polyhedron_3_EPECK_Face_Plane_3")
-    .def("point",&Polyhedron_3_EPECK::Facet::Plane_3::point, py::return_value_policy::copy)
-    .def("orthogonal_vector",&Polyhedron_3_EPECK::Facet::Plane_3::orthogonal_vector, py::return_value_policy::copy)
-    .def("a",[](Polyhedron_3_EPECK::Facet::Plane_3 &p3) {return CGAL::to_double(p3.a());})
-    .def("b",[](Polyhedron_3_EPECK::Facet::Plane_3 &p3) {return CGAL::to_double(p3.b());})
-    .def("c",[](Polyhedron_3_EPECK::Facet::Plane_3 &p3) {return CGAL::to_double(p3.c());})
-    .def("d",[](Polyhedron_3_EPECK::Facet::Plane_3 &p3) {return CGAL::to_double(p3.d());});
+
   py::class_<Polyhedron_3_EPECK::Halfedge_iterator>(m,"Polyhedron_3_EPECK_Halfedge_Iterator");
 
   py::class_<Polyhedron_3_EPICK>(m,"Polyhedron_3_EPICK")

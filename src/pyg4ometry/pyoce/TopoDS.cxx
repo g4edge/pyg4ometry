@@ -25,7 +25,7 @@ PYBIND11_MODULE(TopoDS, m) {
     .def_static("Wire",[](TopoDS_Shape &shape) {return TopoDS::Wire(shape);});
 
   py::class_<TopoDS_Shape> (m,"TopoDS_Shape")
-    .def(py::init<>())
+    .def(py::init<>(), "TopoDS_Shape")
     .def("IsNull",&TopoDS_Shape::IsNull)
     .def("NbChildren",&TopoDS_Shape::NbChildren)
     .def("Nullify", &TopoDS_Shape::Nullify)

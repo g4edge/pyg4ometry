@@ -1,11 +1,11 @@
-import logging as _log
-
 from .SolidBase import SolidBase as _SolidBase
+from pyg4ometry.pycsg.core import CSG as _CSG
 
+import logging as _log
 
 class Scaled(_SolidBase):
     """
-    Constructs a scaled sold.
+    Constructs a scaled sold. 
 
     :param name: of solid for registry
     :type name: str
@@ -22,12 +22,12 @@ class Scaled(_SolidBase):
     """
 
     def __init__(self, name, solid, pX, pY, pZ, registry, addRegistry=True):
-        super().__init__(name, "Scaled", registry)
+        super(Scaled, self).__init__(name, 'Scaled', registry)
 
         self.solid = solid
-        self.pX = pX
-        self.pY = pY
-        self.pZ = pZ
+        self.pX   = pX
+        self.pY   = pY
+        self.pZ   = pZ
 
         self.varNames = ["pX", "pY", "pZ"]
         self.varUnits = [None, None, None]
@@ -37,18 +37,23 @@ class Scaled(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return f"Scaled : {self.name} {self.solid} {self.pX} {self.pY} {self.pZ}"
+        return "Scaled : {} {} {} {} {}".format(self.name, self.solid, self.pX, self.pY, self.pZ)
+
+    def __str__(self):
+        return "Scaled : name={} solid={} x={} y={} z={}".format(self.name, floself.solid, float(self.pX), float(self.pY), float(self.pZ))
 
     def mesh(self):
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
 
-        _log.info("scaled.pycsgmesh> antlr")
+        _log.info('scaled.pycsgmesh> antlr')
 
         pX = self.evaluateParameter(self.pX)
         pY = self.evaluateParameter(self.pY)
         pZ = self.evaluateParameter(self.pZ)
 
         mesh = self.solid.mesh()
-        mesh.scale([pX, pY, pZ])
+        mesh.scale([pX,pY,pZ])
 
-        _log.info("scaled.pycsgmesh> mesh")
+        _log.info('scaled.pycsgmesh> mesh')
         return mesh
+

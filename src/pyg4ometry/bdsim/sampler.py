@@ -1,4 +1,4 @@
-class Sampler:
+class Sampler(object):
     def __init__(self, name, position, rotation, apertype, apers):
         self.name = name
         self.position = position
@@ -7,3 +7,4 @@ class Sampler:
         self.apers = apers
         if len(apers) != 4:
             raise ValueError("apers1-4 must be provided.")
+

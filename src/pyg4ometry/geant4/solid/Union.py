@@ -1,12 +1,13 @@
-import logging as _log
-
-from ...transformation import *
 from .SolidBase import SolidBase as _SolidBase
+import pyg4ometry.exceptions
+from ...transformation import *
 
+import copy as _copy
+import logging as _log
 
 class Union(_SolidBase):
     """
-    Union between two solids
+    Union between two solids     
 
     :param name: of solid
     :type name: str
@@ -19,16 +20,15 @@ class Union(_SolidBase):
     :param registry: for storing solid
     :type registry: Registry
     """
-
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
-        super().__init__(name, "Union", registry)
-        # circular import
+        super(Union, self).__init__(name, 'Union', registry)
+        # circular import 
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
 
         self.obj1 = obj1
         self.obj2 = obj2
-        self.tra2 = _defines.upgradeToTransformation(tra2, registry)
+        self.tra2 = _defines.upgradeToTransformation(tra2,registry)
 
         self.varNames = ["tra2"]
         self.varUnits = [None]
@@ -39,37 +39,39 @@ class Union(_SolidBase):
 
         # obj1 = self.registry.solidDict[_g4.solidName(self.obj1)]
         # obj2 = self.registry.solidDict[_g4.solidName(self.obj2)]
-        obj1.dependents.append(self)
+        obj1.dependents.append(self) 
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return f"Union {self.name}({self.obj1.name} {self.obj2.name})"
+        return 'Union %s(%s %s)' % (self.name, self.obj1.name, self.obj2.name)
+
+    def __str__(self):
+        return 'Union {} {} {}'.format(self.name, self.obj1.name, self.obj2.name)
 
     def mesh(self):
-        _log.info("union.pycsgmesh>")
+        _log.info('union.pycsgmesh>')
 
-        # look up solids in registry
+        # look up solids in registry 
         import pyg4ometry.geant4 as _g4
-
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
         # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        _log.info(f"Union.pycsgmesh> rot={str(rot)} tlate={str(tlate)}")
+        _log.info('Union.pycsgmesh> rot=%s tlate=%s' % (str(rot),str(tlate)))
 
-        # get meshes
-        _log.info("union.mesh> mesh1")
+        # get meshes 
+        _log.info('union.mesh> mesh1')
         m1 = obj1.mesh()
-        _log.info("union.mesh> mesh2")
+        _log.info('union.mesh> mesh2')
         m2 = obj2.mesh().clone()
 
-        # apply transform to second mesh
-        m2.rotate(rot[0], -rad2deg(rot[1]))
+        # apply transform to second mesh 
+        m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.info("union.pycsgmesh> union")
+        _log.info('union.pycsgmesh> union')
         mesh = m1.union(m2)
 
         return mesh
@@ -82,10 +84,8 @@ class Union(_SolidBase):
 
     def object1(self):
         import pyg4ometry.geant4 as _g4
-
         return self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
 
     def object2(self):
         import pyg4ometry.geant4 as _g4
-
         return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)

@@ -1,23 +1,22 @@
-from . import (
-    TDF,
-    BRep,
-    BRepMesh,
-    Geom,
-    Message,
-    Poly,
-    STEPCAFControl,
-    TCollection,
-    TDataStd,
-    TDocStd,
-    TKernel,
-    TNaming,
-    TopAbs,
-    TopExp,
-    TopLoc,
-    TopoDS,
-    XCAFApp,
-    XCAFDoc,
-    gp,
-    pythonHelpers,
-)
+from . import TKernel
+from . import TCollection
+from . import TDF
+from . import TNaming
+from . import TDataStd
+from . import TDocStd
+from . import TopoDS
+from . import gp
+from . import Geom
+from . import Poly
+from . import XCAFDoc
+from . import XCAFApp
+from . import TopAbs
+from . import TopLoc
+from . import TopExp
+from . import Message
+from . import BRep
+from . import BRepMesh
+from . import STEPCAFControl
+
+from . import pythonHelpers
 from .Reader import *

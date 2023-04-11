@@ -1,26 +1,24 @@
+import base64 as _base64
 import numpy as _np
-
+import random as _random
 import pyg4ometry.transformation as _transformation
-from pyg4ometry.visualisation import OverlapType as _OverlapType
-from pyg4ometry.visualisation.VisualisationOptions import (
-    VisualisationOptions as _VisOptions,
-)
+from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
+from   pyg4ometry.visualisation  import OverlapType as _OverlapType
 
+def _daughterSubtractedMesh(lv) :
+    mm = lv.mesh.localmesh.clone() # mother mesh
 
-def _daughterSubtractedMesh(lv):
-    mm = lv.mesh.localmesh.clone()  # mother mesh
-
-    for d in lv.daughterVolumes:
+    for d in lv.daughterVolumes :
         # skip over assemblies
-        if d.logicalVolume.type == "assembly":
+        if d.logicalVolume.type == "assembly" :
             continue
 
         dp = d.position.eval()
         dr = d.rotation.eval()
-        if d.scale is not None:
+        if d.scale is not None :
             ds = d.scale.eval()
-        else:
-            ds = [1, 1, 1]
+        else :
+            ds = [1,1,1]
         dm = d.logicalVolume.mesh.localmesh.clone()
 
         daa = _transformation.tbxyz2axisangle(dr)
@@ -31,11 +29,10 @@ def _daughterSubtractedMesh(lv):
 
     return mm
 
-
-class ViewerBase:
-    """
+class ViewerBase :
+    '''
     Base class for all viewers and exporters. Handles unique meshes and their instances
-    """
+    '''
 
     def __init__(self):
         # init/clear structures
@@ -53,30 +50,27 @@ class ViewerBase:
         # default pbr options
 
         # material options dict
-        self.materialVisOptions = {}  # dictionary for material vis options
-        self.materialPbrOptions = {}  # dictionary for material pbr options
+        self.materialVisOptions = {} # dictionary for material vis options
+        self.materialPbrOptions = {} # dictionary for material pbr options
 
     def clear(self):
         # basic instancing structure
-        self.localmeshes = {}  # unique meshes in scene
-        self.localmeshesoverlap = {}  # unique overlap meshes in scene
-        self.instancePlacements = {}  # instance placements
-        self.instanceVisOptions = {}  # instance vis options
-        self.instancePbrOptions = {}  # instance pbr options
+        self.localmeshes        = {} # unique meshes in scene
+        self.localmeshesoverlap = {} # unique overlap meshes in scene
+        self.instancePlacements = {} # instance placements
+        self.instanceVisOptions = {} # instance vis options
+        self.instancePbrOptions = {} # instance pbr options
 
-    def setSubtractDaughters(self, subtractDaughters=True):
+    def setSubtractDaughters(self, subtractDaughters = True):
         self.bSubtractDaughters = subtractDaughters
 
-    def addLogicalVolume(
-        self,
-        lv,
-        mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
-        tra=_np.array([0, 0, 0]),
-        visOptions=_VisOptions(representation="wireframe"),
-        depth=0,
-        name=None,
-    ):
-        """
+    def addLogicalVolume(self, lv,
+                         mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                         tra  = _np.array([0,0,0]),
+                         visOptions = _VisOptions(representation="wireframe"),
+                         depth=0,
+                         name = None):
+        '''
         Add a logical volume to viewer (recursively)
 
         :param mtra: Transformation matrix for logical volume
@@ -85,57 +79,54 @@ class ViewerBase:
         :type tra: array(3)
         :param visOptions: VisualisationOptions for the lv mesh
         :type visOptions: VisualisationOptions
-        """
+        '''
 
         if lv.type == "logical" and lv.mesh is not None:
 
             # add mesh
-            if not self.bSubtractDaughters:
+            if not self.bSubtractDaughters :
                 self.addMesh(lv.name, lv.mesh.localmesh)
-            else:
+            else :
                 self.addMesh(lv.name, _daughterSubtractedMesh(lv))
 
             # add instance
-            if name is None:
+            if name is None :
                 name = "world"
             self.addInstance(lv.name, mtra, tra, name)
 
             materialName = lv.material.name
-            materialName = materialName[0 : materialName.find("0x")]
+            materialName = materialName[0:materialName.find("0x")]
 
             # add vis options
-            if materialName in self.materialVisOptions:
+            if materialName in self.materialVisOptions :
                 visOptions = self.materialVisOptions[materialName]
                 visOptions.depth = depth
                 self.addVisOptions(lv.name, visOptions)
-            else:
+            else :
                 visOptions.depth = depth
                 self.addVisOptions(lv.name, visOptions)
 
             # add overlap meshes
-            for [overlapmesh, overlaptype], i in zip(
-                lv.mesh.overlapmeshes, range(0, len(lv.mesh.overlapmeshes))
-            ):
+            for [overlapmesh, overlaptype], i in zip(lv.mesh.overlapmeshes,
+                                                     range(0, len(lv.mesh.overlapmeshes))):
                 visOptions = self.getOverlapVisOptions(overlaptype)
-                visOptions.depth = depth + 10
+                visOptions.depth = depth+10
 
-                overlapName = lv.name + "_overlap_" + str(i)
+                overlapName = lv.name+"_overlap_"+str(i)
                 self.addMesh(overlapName, overlapmesh)
-                self.addInstance(overlapName, mtra, tra)
+                self.addInstance(overlapName,  mtra, tra)
                 self.addVisOptions(overlapName, visOptions)
 
-        elif lv.type == "assembly":
+        elif lv.type == "assembly" :
             pass
 
-        else:
+        else :
             print("Unknown logical volume type or null mesh")
 
-        for pv in lv.daughterVolumes:
+        for pv in lv.daughterVolumes :
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(
-                    _transformation.tbxyz2matrix(pv.rotation.eval())
-                )
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
                 if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
                 else:
@@ -145,17 +136,10 @@ class ViewerBase:
 
                 # pv compound transform
                 mtra_new = mtra * pvmsca * pvmrot
-                tra_new = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                tra_new  = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
-                self.addLogicalVolume(
-                    pv.logicalVolume,
-                    mtra_new,
-                    tra_new,
-                    pv.visOptions,
-                    depth + 1,
-                    pv.name,
-                )
+                #pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
+                self.addLogicalVolume(pv.logicalVolume, mtra_new, tra_new, pv.visOptions, depth+1, pv.name)
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -166,15 +150,15 @@ class ViewerBase:
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    self.addMesh(pv.name, mesh.localmesh)
-                    self.addInstance(pv.name, new_mtra, new_tra, pv.name)
-                    self.addVisOptions(pv.name, pv.visOptions)
-            elif pv.type == "parametrised":
-                for mesh, trans, i in zip(
-                    pv.meshes, pv.transforms, range(0, len(pv.meshes), 1)
-                ):
+                    pv.visOptions.depth = depth+2
 
-                    pv_name = pv.name + "_param_" + str(i)
+                    self.addMesh(pv.name,mesh.localmesh)
+                    self.addInstance(pv.name,new_mtra,new_tra, pv.name)
+                    self.addVisOptions(pv.name,pv.visOptions)
+            elif pv.type == "parametrised":
+                for mesh, trans, i  in zip(pv.meshes, pv.transforms, range(0,len(pv.meshes),1)):
+
+                    pv_name = pv.name+"_param_"+str(i)
 
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
@@ -184,28 +168,30 @@ class ViewerBase:
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                    self.addMesh(pv_name, mesh.localmesh)
-                    self.addInstance(pv_name, new_mtra, new_tra, pv_name)
-                    self.addVisOptions(pv_name, pv.visOptions)
+                    pv.visOptions.depth = depth+2
+
+                    self.addMesh(pv_name,mesh.localmesh)
+                    self.addInstance(pv_name,new_mtra,new_tra,pv_name)
+                    self.addVisOptions(pv_name,pv.visOptions)
 
     def addMesh(self, name, mesh):
 
-        """
+        '''
         Add a single mesh
 
         :param name: Name of mesh (e.g logical volume name)
         :type name: str
         :param mesh: Mesh to be added
         :type mesh: CSG
-        """
+        '''
 
-        if name in self.instancePlacements:
+        if name in self.instancePlacements :
             pass
-        else:
+        else :
             self.localmeshes[name] = mesh
 
-    def addInstance(self, name, transformation, translation, instanceName=""):
-        """
+    def addInstance(self, name, transformation, translation, instanceName = ""):
+        '''
         Add a new instance for mesh with name
 
         :param name: name of mesh to add instance
@@ -217,27 +203,19 @@ class ViewerBase:
         :param instanceName: Name of the instance e.g PV
         :type instanceName: str
 
-        """
+        '''
 
         if name in self.instancePlacements:
-            self.instancePlacements[name].append(
-                {
-                    "transformation": transformation,
-                    "translation": translation,
-                    "name": instanceName,
-                }
-            )
-        else:
-            self.instancePlacements[name] = [
-                {
-                    "transformation": transformation,
-                    "translation": translation,
-                    "name": instanceName,
-                }
-            ]
+            self.instancePlacements[name].append({"transformation":transformation,
+                                                  "translation":translation,
+                                                  "name":instanceName})
+        else :
+            self.instancePlacements[name] = [{"transformation":transformation,
+                                              "translation":translation,
+                                              "name":instanceName}]
 
     def addVisOptions(self, name, visOption):
-        """
+        '''
         Add vis options to mesh with name
 
         :param name: name of mesh
@@ -245,14 +223,14 @@ class ViewerBase:
         :param visOptions:
         :type visOptions: VisualisationOptions
 
-        """
+        '''
         if name in self.instanceVisOptions:
             self.instanceVisOptions[name].append(visOption)
-        else:
+        else :
             self.instanceVisOptions[name] = [visOption]
 
     def addPbrOptions(self, name, pbrOption):
-        """
+        '''
         Add pbr options to mesh with name
 
         :param name: name of mesh
@@ -260,7 +238,7 @@ class ViewerBase:
         :param pbrOptions:
         :type pbrOptions: PbrOptions
 
-        """
+        '''
 
         pass
 
@@ -325,5 +303,222 @@ class ViewerBase:
 
         return visOptions
 
+    def removeInvisible(self):
+        '''Remove wireframe or transparent instances from self'''
+        toRemove = []
+
+        for k in self.localmeshes:
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+            pyg4_rep   = pyg4VisOpt.representation
+            pyg4_alp   = pyg4VisOpt.alpha
+
+            if pyg4_rep == "wireframe" or pyg4_alp == 0:
+                toRemove.append(k)
+
+        for k in toRemove :
+            self.localmeshes.pop(k)
+            self.instancePlacements.pop(k)
+            self.instanceVisOptions.pop(k)
+
+    def scaleScene(self, scaleFactor):
+        for k in self.localmeshes :
+            self.localmeshes[k].scale([scaleFactor,scaleFactor,scaleFactor])
+
+        for k in self.instancePlacements :
+            for p in self.instancePlacements[k] :
+                p['translation'] = p['translation']*scaleFactor
+
+    def exportGLTFScene(self, gltfFileName = 'test.gltf', singleInstance = False):
+        '''Export entire scene as gltf file, filename extension dictates binary (glb) or readable json (gltf)
+           singleInstance is a Boolean flag to supress all but one instance'''
+
+        try :
+            from pygltflib import GLTF2, Scene, Material, PbrMetallicRoughness, Buffer, BufferView, Accessor, \
+                                  Mesh, Attributes, Primitive, Node, \
+                                  ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER, \
+                                  FLOAT, UNSIGNED_INT, SCALAR, VEC3
+        except ImportError :
+            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
+            return
+
+        materials   = []
+        buffers     = []
+        bufferViews = []
+        accessors   = []
+        meshes      = []
+        nodes       = []
+        scenes      = []
+
+        # loop over meshes
+        iBuffer = 0
+        key_iBuffer = {}
+        for k in self.localmeshes :
+            key_iBuffer[k] = iBuffer
+
+            # get mesh
+            csg = self.localmeshes[k]
+
+            scale = 1-0.001*self.instanceVisOptions[k][0].depth
+            csg.scale([scale,scale,scale])
+
+            inf = csg.info()
+
+            vAndPs = csg.toVerticesAndPolygons()
+            verts = vAndPs[0]
+            tris = vAndPs[1]
+
+            verts = _np.array(verts).astype(_np.float32)
+            tris = _np.array(tris).astype(_np.uint32)
+
+            verts_binary_blob = verts.flatten().tobytes()
+            tris_binary_blob = tris.flatten().tobytes()
+
+            pyg4VisOpt = self.instanceVisOptions[k][0]
+
+            pyg4_color = pyg4VisOpt.colour
+            pyg4_alpha = pyg4VisOpt.alpha
+            pyg4_rep   = pyg4VisOpt.representation
+
+            pbrMetallicRoughness = PbrMetallicRoughness(baseColorFactor = [_random.random(), _random.random(), _random.random(), 1.0],
+                                                        metallicFactor = _random.random(),
+                                                        roughnessFactor = _random.random())
+            #alphaMode = "OPAQUE"
+
+
+            #if pyg4_rep == "wireframe" :
+            #    alphaMode = "BLEND"
+            #    alphaCutoff = pyg4_alpha
+
+            materials.append(Material(pbrMetallicRoughness=pbrMetallicRoughness))
+
+            buffers.append(Buffer(uri = 'data:application/octet-stream;base64,'+str(_base64.b64encode(tris_binary_blob+verts_binary_blob).decode("utf-8")),
+                                  byteLength=len(tris_binary_blob) + len(verts_binary_blob)))
+
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteLength=len(tris_binary_blob),
+                                          target=ELEMENT_ARRAY_BUFFER))
+            bufferViews.append(BufferView(buffer=iBuffer,
+                                          byteOffset=len(tris_binary_blob),
+                                          byteLength=len(verts_binary_blob),
+                                          target=ARRAY_BUFFER))
+            accessors.append(Accessor(bufferView=2*iBuffer,
+                                      componentType=UNSIGNED_INT,
+                                      count=tris.size,
+                                      type=SCALAR,
+                                      max=[int(tris.max())],
+                                      min=[int(tris.min())]))
+            accessors.append(Accessor(bufferView=2*iBuffer+1,
+                                      componentType=FLOAT,
+                                      count=int(verts.size/3),
+                                      type=VEC3,
+                                      max=verts.max(axis=0).tolist(),
+                                      min=verts.min(axis=0).tolist()))
+            meshes.append(Mesh(primitives=[Primitive(attributes=Attributes(POSITION=2*iBuffer+1),
+                                                     indices=2*iBuffer,
+                                                     material=iBuffer)]))
+
+            iBuffer += 1
+
+        # loop over instances
+        iMesh = 0
+        for k in self.instancePlacements :
+            iInstance = 0
+            for p in self.instancePlacements[k] :
+                t = p['translation']
+                r = p['transformation']
+                aa = _transformation.matrix2axisangle(r)
+                axis = aa[0]
+                angle = aa[1]
+
+                nodes.append(Node(name=k+"_"+str(iInstance),
+                                  mesh=iMesh,
+                                  translation=[float(t[0]),float(t[1]),float(t[2])],
+                                  rotation=[axis[0]*_np.sin(angle/2),
+                                            axis[1]*_np.sin(angle/2),
+                                            axis[2]*_np.sin(angle/2),
+                                            _np.cos(angle/2)]))
+
+                # Only make a single instance
+                if singleInstance :
+                    break
+
+                iInstance += 1
+
+            iMesh += 1
+
+        scene = Scene(nodes=list(range(0,len(nodes),1)))
+        scenes.append(scene)
+
+        gltf = GLTF2(scene=0,
+                     scenes=scenes,
+                     nodes=nodes,
+                     meshes=meshes,
+                     accessors=accessors,
+                     bufferViews=bufferViews,
+                     buffers=buffers,
+                     materials=materials)
+
+        if gltfFileName.find('gltf') != -1 :
+            gltf.save_json(gltfFileName)
+        elif gltfFileName.find('glb') != -1 :
+            glb = b"".join(gltf.save_to_bytes())
+            f = open(gltfFileName,"wb")
+            f.write(glb)
+            f.close()
+        else :
+            print("ViewerBase::exportGLTFScene> unknown gltf extension")
+
+    def exportGLTFAssets(self, gltfFileName = 'test.gltf'):
+        '''Export all the assets (meshes) without all the instances. The position of the asset is
+           the position of the first instance'''
+
+        self.exportGLTFScene(gltfFileName, singleInstance = True)
+
+    def exportThreeJSScene(self, fileNameBase = 'test', lightBoxHDR = 'concrete_tunnel_02_4k.hdr'):
+        '''
+        html based on https://threejs.org/examples/#webgl_loader_gltf
+        HRDI https://polyhaven.com/a/concrete_tunnel_02
+
+        npm install node
+        wget https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/concrete_tunnel_02_4k.exr
+        conver EXR to HDR e.g. https://convertio.co/exr-hdr/
+        python -m http.server 8000
+        open test.html
+        '''
+
+        import pkg_resources
+        from jinja2 import Template
+
+        gltfFileName = fileNameBase+".gltf"
+        htmlFileName = fileNameBase+".html"
+        cssFileName = fileNameBase+".css"
+
+        self.exportGLTFScene(gltfFileName)
+
+        data = {
+            "model_gltf_file": gltfFileName,
+            "scene_hdr": lightBoxHDR,
+            "css_file": cssFileName
+        }
+
+        threeHTMLTemplate = pkg_resources.resource_filename(__name__, "threejs.html")
+        threeCSSTemplate = pkg_resources.resource_filename(__name__, "threejs.css")
+
+        with open(threeHTMLTemplate) as file:
+            template = Template(file.read())
+            renderedTemplate = template.render(data)
+            with open(htmlFileName,"w") as outfile:
+                outfile.write(renderedTemplate)
+
+        with open(threeCSSTemplate) as file:
+            template = Template(file.read())
+            renderedTemplate = template.render(data)
+            with open(cssFileName,"w") as outfile:
+                outfile.write(renderedTemplate)
+
     def __repr__(self):
         pass
+
+
+
+

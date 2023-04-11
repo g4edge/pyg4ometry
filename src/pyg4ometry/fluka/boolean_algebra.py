@@ -4,12 +4,11 @@ import antlr4 as _antlr4
 import numpy as _np
 import sympy as _sympy
 
-from . import fluka_registry
-from . import reader as _reader
-from . import region as _region
 from . import vector as _vector
-from .RegionExpression import RegionLexer, RegionParser
-
+from . import region as _region
+from . import reader as _reader
+from .RegionExpression import RegionParserVisitor, RegionParser, RegionLexer
+from . import fluka_registry
 
 def expressionToZone(zone, zoneExpr):
     zoneExpr = str(zoneExpr)
@@ -31,7 +30,6 @@ def expressionToZone(zone, zoneExpr):
 
     return freg.regionDict["dummy"].zones[0]
 
-
 def zoneToDNFZones(zone):
     dnf = _sympy.to_dnf(zoneToAlgebraicExpression(zone))
     zones = []
@@ -42,20 +40,18 @@ def zoneToDNFZones(zone):
     assert isinstance(dnf, _sympy.Or)
 
     for arg in dnf.args:
-        arg = _sympy.simplify_logic(arg)  # trivially solve a & ~a, etc..
+        arg = _sympy.simplify_logic(arg) # trivially solve a & ~a, etc..
         if not arg:
             continue
         zones.append(expressionToZone(zone, arg))
 
     return zones
 
-
-def regionToAlgebraicExpression(region):  # region or zone
+def regionToAlgebraicExpression(region): # region or zone
     result = []
     for z in region.zones:
         result.append(zoneToAlgebraicExpression(z))
     return _sympy.Or(*result)
-
 
 def zoneToAlgebraicExpression(zone):
     s = zone.dumps()
@@ -64,30 +60,26 @@ def zoneToAlgebraicExpression(zone):
     s = s.replace("-", "& ~")
     s = s.replace("( +", "(")
     s = s.replace(" +", " & ")
-    bodyNames = {b.name for b in zone.bodies()}
+    bodyNames = set(b.name for b in zone.bodies())
     namespace = {name: _sympy.Symbol(name) for name in bodyNames}
     return _sympy.sympify(s, locals=namespace)
-
 
 def _getMeshAndAABB(body, aabb=None):
     mesh = body.mesh(aabb=aabb)
     return mesh, _vector.AABB.fromMesh(mesh)
 
-
 def pruneRegion(reg, aabb=None):
     result = _region.Region(reg.name)
     for zone in reg.zones:
         prunedZone = pruneZone(zone)
-        if prunedZone.intersections:  # and not prunedZone.isNull(aabb=aabb):
+        if prunedZone.intersections: # and not prunedZone.isNull(aabb=aabb):
             result.addZone(prunedZone)
     return result
-
 
 def isZoneContradiction(zone):
     intNames = {b.body.name for b in zone.intersections}
     subNames = {b.body.name for b in zone.subtractions}
     return bool(intNames.intersection(subNames))
-
 
 def pruneZone(zone, aabb0=None, aabb=None):
     if not zone.isDNF():
@@ -126,7 +118,6 @@ def pruneZone(zone, aabb0=None, aabb=None):
 
     return result
 
-
 def squashDegenerateBodies(zone, bodystore=None):
     if bodystore is None:
         bodystore = fluka_registry.FlukaBodyStore()
@@ -134,14 +125,18 @@ def squashDegenerateBodies(zone, bodystore=None):
     for b in zone.intersections:
         body = b.body
         if isinstance(body, _region.Zone):
-            result.addIntersection(squashDegenerateBodies(body, bodystore=bodystore))
+            result.addIntersection(
+                squashDegenerateBodies(body, bodystore=bodystore)
+            )
         else:
             result.addIntersection(bodystore.getDegenerateBody(body))
 
     for b in zone.subtractions:
         body = b.body
         if isinstance(body, _region.Zone):
-            result.addSubtraction(squashDegenerateBodies(body, bodystore=bodystore))
+            result.addSubtraction(
+                squashDegenerateBodies(body, bodystore=bodystore)
+            )
         else:
             result.addSubtraction(bodystore.getDegenerateBody(body))
 
@@ -149,7 +144,6 @@ def squashDegenerateBodies(zone, bodystore=None):
 
 
 _MeshedZoneInfo = _namedtuple("MeshedZoneInfo", ["zone", "mesh", "volume"])
-
 
 def simplifyRegion(region):
     if not _region.isDNF():
@@ -166,18 +160,19 @@ def simplifyRegion(region):
 
     region.zones = [zd.zone for zd in zoneData]
 
-
 def _filterRedunantZonesSymbollicaly(zoneData):
     zoneData.sort(key=lambda x: x.volume, reverse=True)
 
     largestZone = zoneData[0].zone
-    intersectionNamesLargestZone = {b.body.name for b in largestZone.intersections}
-    subtractionNamesLargestZone = {b.body.name for b in largestZone.subtractions}
+    intersectionNamesLargestZone = set(b.body.name
+                                       for b in largestZone.intersections)
+    subtractionNamesLargestZone = set(b.body.name
+                                      for b in largestZone.subtractions)
 
     resultZoneData = [zoneData[0]]
     for zone, mesh, volume in zoneData[1:]:
-        zoneIntersectionNames = {b.body.name for b in zone.intersections}
-        zoneSubtractionNames = {b.body.name for b in zone.subtractions}
+        zoneIntersectionNames = set(b.body.name for b in zone.intersections)
+        zoneSubtractionNames = set(b.body.name for b in zone.subtractions)
 
         # Filter trivial "A & ~A"
         if isZoneContradiction(zone):
@@ -192,7 +187,6 @@ def _filterRedunantZonesSymbollicaly(zoneData):
         resultZoneData.append(_MeshedZoneInfo(zone, mesh, volume))
 
     return resultZoneData
-
 
 def _filterRedundantZonesMetricCheck(zoneData):
     largestZoneData = zoneData[0]
@@ -218,14 +212,12 @@ def _filterRedundantZonesMetricCheck(zoneData):
 
     return resultZoneData
 
-
 def nTermsDNF(expr):
     # expr is a Zone instance or a Region instance
     try:
         return sum(_nTermsDNFZone(e) for e in expr.zones)
     except AttributeError:
         return _nTermsDNFZone(expr)
-
 
 def _nTermsDNFZone(zone):
     total = 1

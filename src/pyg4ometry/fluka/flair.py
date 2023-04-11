@@ -1,16 +1,11 @@
 _flukaTemplateFileName = None
 
-
 def _getFLUKATemplateFileName():
     global _flukaTemplateFileName
     if _flukaTemplateFileName is None:
         import pkg_resources
-
-        _flukaTemplateFileName = pkg_resources.resource_filename(
-            __name__, "flair_template.flair"
-        )
+        _flukaTemplateFileName = pkg_resources.resource_filename(__name__, "flair_template.flair")
     return _flukaTemplateFileName
-
 
 class Flair:
     def __init__(self, flukaInputFileName="fluka.inp", extent=None):

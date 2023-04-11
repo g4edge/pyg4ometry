@@ -1,5 +1,5 @@
-# import logging as _logging
-# _logging.basicConfig(filename='logging.log', encoding='utf-8', level=_logging.INFO)
+#import logging as _logging
+#_logging.basicConfig(filename='logging.log', encoding='utf-8', level=_logging.INFO)
 
 
 """
@@ -8,17 +8,14 @@ errors. The default is around float precision.
 """
 twoPiComparisonTolerance = 1e-7
 
-
-class meshingType:
-    pycsg = 1
-    cgal_sm = 2
-    cgal_np = 3
-
+class meshingType :
+    pycsg    = 1
+    cgal_sm  = 2
+    cgal_np  = 3
 
 meshing = meshingType.cgal_sm
 # meshing = meshingType.pycsg
 meshingNullException = True
-
 
 def backendName():
     if meshing == meshingType.pycsg:
@@ -28,7 +25,6 @@ def backendName():
     if meshing == meshingType.cgal_np:
         return "cgal_np"
 
-
 # whether to generate meshes during the construction of each logical volume
 # note this is required for a lot of functionality
 doMeshing = True
@@ -37,7 +33,6 @@ doMeshing = True
 # nslice and and nstacks determine the discretisation of curved solids.
 # Solids that are curved in the x-y plane (e.g. Tubs) only need nslice. Solids that are
 # curved both planes x-y and x-z planes (e.g. Sphere) need both nslice and nstack.
-
 
 def setGlobalMeshSliceAndStack(value):
     for key in SolidDefaults.__dict__:
@@ -111,3 +106,8 @@ class SolidDefaults:
 
     class Wedge:
         nslice = 16
+
+
+
+
+

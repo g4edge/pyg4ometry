@@ -1,66 +1,13 @@
+from .SolidBase import SolidBase as _SolidBase
 import warnings
 
-from .._Material import WithPropertiesBase
-from .SolidBase import SolidBase as _SolidBase
-
-
-class OpticalSurface(_SolidBase, WithPropertiesBase):
+class OpticalSurface(_SolidBase):
     # from G4OpticalSurface.hh and G4SurfaceProperty.hh of Geant4 11.0
-    allowed_models = ["glisur", "unified", "LUT", "DAVIS", "dichroic"]
-    allowed_types = [
-        "dielectric_metal",
-        "dielectric_dielectric",
-        "dielectric_LUT",
-        "dielectric_LUTDAVIS",
-        "dielectric_dichroic",
-        "firsov",
-        "x_ray",
-    ]
-    allowed_finishes = [
-        "polished",
-        "polishedfrontpainted",
-        "polishedbackpainted",
-        "ground",
-        "groundfrontpainted",
-        "groundbackpainted",
-        "polishedlumirrorair",
-        "polishedlumirrorglue",
-        "polishedair",
-        "polishedteflonair",
-        "polishedtioair",
-        "polishedtyvekair",
-        "polishedvm2000air",
-        "polishedvm2000glue",
-        "etchedlumirrorair",
-        "etchedlumirrorglue",
-        "etchedair",
-        "etchedteflonair",
-        "etchedtioair",
-        "etchedtyvekair",
-        "etchedvm2000air",
-        "etchedvm2000glue",
-        "groundlumirrorair",
-        "groundlumirrorglue",
-        "groundair",
-        "groundteflonair",
-        "groundtioair",
-        "groundtyvekair",
-        "groundvm2000air",
-        "groundvm2000glue",
-        "Rough_LUT",
-        "RoughTeflon_LUT",
-        "RoughESR_LUT",
-        "RoughESRGrease_LUT",
-        "Polished_LUT",
-        "PolishedTeflon_LUT",
-        "PolishedESR_LUT",
-        "PolishedESRGrease_LUT",
-        "Detector_LUT",
-    ]
+    allowed_models    = ['glisur', 'unified', 'LUT', 'DAVIS', 'dichroic']
+    allowed_types     = ['dielectric_metal', 'dielectric_dielectric', 'dielectric_LUT', 'dielectric_LUTDAVIS', 'dielectric_dichroic', 'firsov', 'x_ray']
+    allowed_finishes  = ['polished', 'polishedfrontpainted', 'polishedbackpainted', 'ground', 'groundfrontpainted', 'groundbackpainted', 'polishedlumirrorair', 'polishedlumirrorglue', 'polishedair', 'polishedteflonair', 'polishedtioair', 'polishedtyvekair', 'polishedvm2000air', 'polishedvm2000glue', 'etchedlumirrorair', 'etchedlumirrorglue', 'etchedair', 'etchedteflonair', 'etchedtioair', 'etchedtyvekair', 'etchedvm2000air', 'etchedvm2000glue', 'groundlumirrorair', 'groundlumirrorglue', 'groundair', 'groundteflonair', 'groundtioair', 'groundtyvekair', 'groundvm2000air', 'groundvm2000glue', 'Rough_LUT', 'RoughTeflon_LUT', 'RoughESR_LUT', 'RoughESRGrease_LUT', 'Polished_LUT', 'PolishedTeflon_LUT', 'PolishedESR_LUT', 'PolishedESRGrease_LUT', 'Detector_LUT']
 
-    def __init__(
-        self, name, finish, model, surf_type, value, registry, addRegistry=True
-    ):
+    def __init__(self, name, finish, model, surf_type, value, registry, addRegistry=True):
         """
         Construct an optical surface.
 
@@ -75,38 +22,29 @@ class OpticalSurface(_SolidBase, WithPropertiesBase):
         :param value:   numeric parameter, depending on the model
         :type value:    str,float,int
         """
-        super().__init__(name, "OpticalSurface", registry)
+        super(OpticalSurface, self).__init__(name, 'OpticalSurface', registry)
         self.finish = finish
-        self.model = model
+        self.model  = model
         self.osType = surf_type
-        self.value = value
+        self.value  = value
         self.properties = {}
 
         # numeric values are also allowed: G4GDMLReadSolids.cc
-        if not self.model in self.allowed_models and (
-            not self.model.isdigit() or not int(self.model) in range(0, 5)
-        ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface model {self.model}"
-            )
-        if not self.osType in self.allowed_types and (
-            not self.osType.isdigit() or not int(self.osType) in range(0, 39)
-        ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface type {self.osType}"
-            )
-        if not self.finish in self.allowed_finishes and (
-            not self.finish.isdigit() or not int(self.finish) in range(0, 7)
-        ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface finish {self.finish}"
-            )
+        if not self.model in self.allowed_models and (not self.model.isdigit() or not int(self.model) in range(0,5)):
+            warnings.warn(f'OpticalSurface {self.name} has unkown surface model {self.model}')
+        if not self.osType in self.allowed_types and (not self.osType.isdigit() or not int(self.osType) in range(0,39)):
+            warnings.warn(f'OpticalSurface {self.name} has unkown surface type {self.osType}')
+        if not self.finish in self.allowed_finishes and (not self.finish.isdigit() or not int(self.finish) in range(0,7)):
+            warnings.warn(f'OpticalSurface {self.name} has unkown surface finish {self.finish}')
 
         if addRegistry:
             registry.addSolid(self)
 
     def __repr__(self):
-        return "OpticalSurface : " + str(self.name)
+        return 'OpticalSurface : '+str(self.name)
+
+    def __str__(self):
+        return 'OpticalSurface : '+str(self.name)
 
     def addProperty(self, name, matrix):
         """
