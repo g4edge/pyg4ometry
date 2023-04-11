@@ -25,6 +25,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install libboost-dev libcgal-dev libgmp-dev libmpfr-dev libocct-* libtbb-dev libxi-dev libvtk9-dev occt-misc
     - name: Get dependencies and install the pyg4ometry
       run: |
         python -m pip install --upgrade pip wheel setuptools
