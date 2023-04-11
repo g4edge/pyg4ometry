@@ -15,7 +15,7 @@ concurrency:
 jobs:
 
   build-and-test:
-    name: Test pyg4ometry with Python
+    name: Test with Python
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew update
-        brew install boost cgal gmp mpfr opencascade tbb vtk
+        brew install --overwrite boost cgal gmp mpfr opencascade tbb vtk
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -44,7 +44,7 @@ jobs:
         python -m pip install --upgrade .[test]
     - name: Run unit tests
       run: |
-        pytest
+        python -m pytest
         
   test-in-container:
     name: Test in Docker container
@@ -58,7 +58,7 @@ jobs:
         python -m pip install --upgrade .[test]
     - name: Run unit tests
       run: |
-        pytest
+        python -m pytest
 
   test-coverage:
     name: Calculate and upload test coverage
@@ -78,6 +78,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip wheel setuptools
         python -m pip install --upgrade .[test]
-        pytest --cov=pyg4ometry --cov-report=xml
+        python -m pytest --cov=pyg4ometry --cov-report=xml
     - name: Upload Coverage to codecov.io
       uses: codecov/codecov-action@v3
