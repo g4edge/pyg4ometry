@@ -725,7 +725,7 @@ class Registry:
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
 
-    def getWorldVolume(self) :         
+    def getWorldVolume(self):
         return self.worldVolume
 
     def printStats(self):

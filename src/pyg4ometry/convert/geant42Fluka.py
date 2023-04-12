@@ -28,7 +28,7 @@ def geant4Reg2FlukaReg(greg, logicalVolumeName=''):
 
     if logicalVolumeName == '':
         logi = greg.getWorldVolume()
-    else :
+    else:
         logi = greg.logicalVolumeDict[logicalVolumeName]
     freg = geant4MaterialDict2Fluka(greg.materialDict, freg)
     freg = geant4Logical2Fluka(logi, freg)
@@ -254,7 +254,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
     rotation = _transformation.matrix2tbxyz(rotation)
     position = tra
 
-    transform= _rotoTranslationFromTra2("T"+name,[rotation,tra],
+    transform= _rotoTranslationFromTra2("T"+name,
+                                        [rotation,tra],
                                         flukaregistry=flukaRegistry)
 
     commentName = commentName + " " + solid.name
@@ -365,7 +366,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
 
         flukaNameCount += 1
 
-    elif solid.type == "CutTubs" :
+    elif solid.type == "CutTubs":
 
         uval = _Units.unit(solid.lunit)/10
         aval = _Units.unit(solid.aunit)
@@ -383,26 +384,27 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         pHighNorm2 = solid.evaluateParameter(solid.pHighNorm[2])
 
         # main cylinder
-        fbody1 = flukaRegistry.makeBody(ZCC, "B"+name+"01",0,0,pRMax,
+        fbody1 = flukaRegistry.makeBody(ZCC, "B"+name+"01",
+                                        0, 0, pRMax,
                                         transform=transform,
                                         flukaregistry=flukaRegistry,
                                         comment=commentName)
 
         # low z cut
         fbody2 = flukaRegistry.makeBody(PLA, "B"+name+"02",
-                            [-pLowNorm0,-pLowNorm1,-pLowNorm2],
-                            [0, 0, -pDz/2],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
+                                        [-pLowNorm0,-pLowNorm1,-pLowNorm2],
+                                        [0, 0, -pDz/2],
+                                        transform=transform,
+                                        flukaregistry=flukaRegistry,
+                                        comment=commentName)
 
         # high z cut
         fbody3 = flukaRegistry.makeBody(PLA, "B"+name+"03",
-                            [pHighNorm0,pHighNorm1,pHighNorm2],
-                            [0, 0, pDz/2.],
-                            transform=transform,
-                            flukaregistry=flukaRegistry,
-                            comment=commentName)
+                                        [pHighNorm0,pHighNorm1,pHighNorm2],
+                                        [0, 0, pDz/2.],
+                                        transform=transform,
+                                        flukaregistry=flukaRegistry,
+                                        comment=commentName)
 
         if pRMin != 0 :
             # inner cylinder

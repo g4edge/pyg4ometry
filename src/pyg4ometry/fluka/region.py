@@ -588,8 +588,7 @@ class Region(vis.ViewableMixin):
         return graph
 
     def connectedZones(self, zoneAABBs=None, aabb=None):
-        return list(nx.connected_components(
-            self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
+        return list(nx.connected_components(self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
 
     def zoneAABBs(self, aabb=None):
         extents = []
@@ -626,8 +625,7 @@ class Region(vis.ViewableMixin):
         """
         result = Region(self.name)
         for zone in self.zones:
-            result.addZone(zone.makeUnique(flukaregistry=flukaregistry,
-                                           nameSuffix=nameSuffix))
+            result.addZone(zone.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix))
         return result
 
     def isNull(self, aabb=None):
