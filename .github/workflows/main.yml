@@ -7,11 +7,11 @@ on:
       - 'releases/**'
   pull_request:
   release:
-  
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
 
   build-and-test:
@@ -28,6 +28,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libboost-dev libcgal-dev libgmp-dev libmpfr-dev libocct-* libtbb-dev libxi-dev libvtk9-dev occt-misc
+        sudo patch -R /usr/include/opencascade/TDocStd_Application.hxx < patches/TDocStd_Application.patch
     - name: Install non-pip dependencies on MacOS
       if: runner.os == 'macOS'
       run: |
@@ -45,7 +46,7 @@ jobs:
     - name: Run unit tests
       run: |
         python -m pytest
-        
+
   test-in-container:
     name: Test in Docker container
     runs-on: ubuntu-latest
