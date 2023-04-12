@@ -1,5 +1,6 @@
 import numpy as _np
 from pyg4ometry import config as _config
+import warnings as _warnings
 
 class SolidBase(object):
     """
@@ -11,7 +12,7 @@ class SolidBase(object):
         self.registry = registry
         for ch in ['+', '-', '/', '*']:
             if ch in name:
-                raise ValueError("The character \""+ch+"\" cannot be in the name of the object \"" + name + "\" - Geant4 will not tolerate this.")
+                _warnings.warn("The character \""+ch+"\" cannot be in the name of the object \"" + name + "\" - Geant4 will not tolerate this.")
 
     def evaluateParameter(self, obj):
         from pyg4ometry.gdml.Defines import evaluateToFloat
