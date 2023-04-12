@@ -317,7 +317,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
                                         comment=commentName)
 
         # inner cylinder
-        if pRMin != 0 :
+        fbody4 = None
+        if pRMin != 0:
             fbody4 = flukaRegistry.makeBody(ZCC, "B"+name+"04",0,0,pRMin,
                                             transform=transform,
                                             flukaregistry=flukaRegistry,
@@ -345,9 +346,8 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         fzone.addSubtraction(fbody2)
         fzone.addIntersection(fbody3)
 
-        if pRMin != 0 :
+        if fbody4:
             fzone.addSubtraction(fbody4)
-
 
         if pDPhi != 2*_np.pi :
             if pDPhi < _np.pi :
