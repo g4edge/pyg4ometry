@@ -13,11 +13,11 @@ def solidName(var):
 
 class Registry:
     """
-    Object to store geometry for input and output. \
-    All of the pyg4ometry classes can be used without \
-    storing them in the Registry. The registry is used \
-    to write the GDML output file. A registry needs to \
-    be used in conjunction with GDML Define objects for \
+    Object to store geometry for input and output.
+    All of the pyg4ometry classes can be used without
+    storing them in the Registry. The registry is used
+    to write the GDML output file. A registry needs to
+    be used in conjunction with GDML Define objects for
     evaluation of expressions.
     """
     def __init__(self):

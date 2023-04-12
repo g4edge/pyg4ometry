@@ -150,7 +150,8 @@ def _filteredRegions(flukareg, regions):
             yield region
 
 def _makeWorldVolume(dimensions, material, g4registry):
-    """Make a world solid and logical volume with the given dimensions,
+    """
+    Make a world solid and logical volume with the given dimensions,
     material, and size, and add it to the geant4 Registry provided
 
     :param dimensions: list of 3 elements providing the dimensions in \
@@ -160,7 +161,6 @@ def _makeWorldVolume(dimensions, material, g4registry):
     :type material: str
     :param g4registry: The geant4 Registry instance this world solid \
     and logical volume is to be added to.
-
     """
     worldMaterial = _g4.MaterialPredefined(material)
 
@@ -172,7 +172,8 @@ def _makeWorldVolume(dimensions, material, g4registry):
     return wlv
 
 def _makeLengthSafetyRegistry(flukareg, regions):
-    """Make a new registry from a registry with length safety applied
+    """
+    Make a new registry from a registry with length safety applied
     to the zones and regions within.
 
     :param flukareg: The FlukaRegistry from which the new registry
@@ -205,11 +206,12 @@ def _makeLengthSafetyRegistry(flukareg, regions):
     return fluka_reg_out
 
 def _getRegionZoneAABBs(flukareg, regions, quadricRegionAABBs):
-    """Loop over the regions, and for each region, get all the aabbs
+    """
+    Loop over the regions, and for each region, get all the aabbs
     of the zones belonging to that region.  Don't do this for
     quadricRegionAABBs, instead, just continue to use the aabb
-    provided by the user."""
-
+    provided by the user.
+    """
     regionZoneAABBs = {}
     for name, region in flukareg.regionDict.items():
         if name in quadricRegionAABBs:
@@ -296,20 +298,20 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
     return bodies_to_minimum_aabbs
 
 def _getMaximalOfTwoAABBs(aabb1, aabb2):
-    """Given two aabbs, returns the total aabb that tightly bounds
+    """
+    Given two aabbs, returns the total aabb that tightly bounds
     the two given aabbs.
 
     :param aabb1: The first aabb.
     :type aabb1: AABB
     :param aabb2: The second aabb
     :type aabb2: AABB
-
     """
     return aabb1.union(aabb2)
 
-
 def _filterBlackHoleRegions(flukareg, regions):
-    """Returns a new FlukaRegistry instance with all regions with
+    """
+    Returns a new FlukaRegistry instance with all regions with
     BLKCHOLE material removed.
 
     :param flukareg: The FlukaRegistry instance from which the new \
@@ -318,7 +320,6 @@ def _filterBlackHoleRegions(flukareg, regions):
     :param regions: The names of the regions to be copied to the new \
     instance.
     :type regions: list
-
     """
     freg_out = _fluka.FlukaRegistry()
     for name, region in flukareg.regionDict.items():
@@ -404,10 +405,10 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
     return _do_intersect(cellRegion.mesh(), region.mesh())
 
 def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
-    """Loop over the regions looking for quadrics and for any quadrics we
-    find, make sure that that whregion has a defined region aabb in
+    """
+    Loop over the regions looking for quadrics and for any quadrics we
+    find, make sure that the region has a defined region aabb in
     quadricRegionAABBs.
-
     """
     for regionName, region in flukareg.regionDict.items():
         regionBodies = region.bodies()
@@ -422,13 +423,11 @@ def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
         elif regionName in quadricRegionAABBs:
             continue
 
-        raise ValueError(
-            f"QUA region missing from quadricRegionAABBs: {regionName}")
+        raise ValueError(f"QUA region missing from quadricRegionAABBs: {regionName}")
 
 def _getWorldDimensions(worldDimensions):
-    """Get world dimensinos and if None then return the global constant
-    WORLD_DIMENSIONS.
-
+    """
+    Get world dimensions and if None then return the global constant WORLD_DIMENSIONS.
     """
     if worldDimensions is None:
         return WORLD_DIMENSIONS
@@ -446,9 +445,10 @@ def _getSelectedRegions(flukareg, regions, omitRegions):
     return regions
 
 def _filterHalfSpaces(flukareg, regionZoneAABBs):
-    """Filter redundant half spaces from the regions of the
-    FlukaRegistry instance.  AABBs is a dictionary of region names
-    to region aabbs."""
+    """
+    Filter redundant half spaces from the regions of the FlukaRegistry
+    instance. AABBs is a dictionary of region names to region aabbs.
+    """
     fout = _fluka.FlukaRegistry()
     logger.debug("Filtering half spaces")
 
@@ -533,9 +533,11 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionAABBs):
     return flukaRegOut
 
 def _makeQuadricRegionBodyAABBMap(flukareg, quadricRegionAABBs):
-    """Given a map of regions featuring quadrics to their aabbs, we
+    """
+    Given a map of regions featuring quadrics to their aabbs, we
     loop over the bodies of the region and set their aabbs equal to
-    the region aabb."""
+    the region aabb.
+    """
     if quadricRegionAABBs is None:
         return {}
     if quadricRegionAABBs is not None:
@@ -573,8 +575,10 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
     return regionSharedAABBs
 
 def _regionZoneAABBsToRegionAABBs(regionZoneAABBs):
-    """Given a map of region names to zone aabbs, return a map of
-    region names to a total region aabb."""
+    """
+    Given a map of region names to zone aabbs, return a map of
+    region names to a total region aabb.
+    """
     regionAABBs = {}
     for name, zoneAABBs in regionZoneAABBs.items():
         regionAABB = _reduce(_getMaximalOfTwoAABBs,

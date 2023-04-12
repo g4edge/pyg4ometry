@@ -30,10 +30,11 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-
 def _generate_name(typename,index, name, isZone, rootname):
-    """Try to generate a sensible name for intermediate
-    Geant4 booleans which have no FLUKA analogue."""
+    """
+    Try to generate a sensible name for intermediate
+    Geant4 booleans which have no FLUKA analogue.
+    """
     if rootname is None:
         rootname = "a{}".format(uuid4()).replace("-", "")
 
@@ -48,7 +49,6 @@ def _generate_name(typename,index, name, isZone, rootname):
                                    index,
                                    name,
                                    rootname)
-
 
 class _Boolean(object):
     def generate_name(self, index, rootname=None):
@@ -86,7 +86,6 @@ class Zone(vis.ViewableMixin):
 
     :param name: Optional name for the zone.
     :type name: string
-
     """
     def __init__(self, name=None):
         self.intersections = []
@@ -94,7 +93,8 @@ class Zone(vis.ViewableMixin):
         self.name = name
 
     def addSubtraction(self, body):
-        """Add a body or subzone as a subtraction to this Zone
+        """
+        Add a body or subzone as a subtraction to this Zone
         instance.
 
         :param body: Body or Zone instance.
@@ -103,7 +103,8 @@ class Zone(vis.ViewableMixin):
         self.subtractions.append(Subtraction(body))
 
     def addIntersection(self,body):
-        """Add a body or subzone as an intersection to this Zone
+        """
+        Add a body or subzone as an intersection to this Zone
         instance.
 
         :param body: Body or Zone instance.
@@ -127,7 +128,7 @@ class Zone(vis.ViewableMixin):
         # For given _Boolean instance, get the underlying fluka.Body
         # instance as a GDML solid.  Either it has already been defined and
         # get it from the Geant4 Registry or define it here w.r.t the
-        # provdided AABB and add it to the geant4 registry provided.
+        # provided AABB and add it to the geant4 registry provided.
         try:
             return g4reg.solidDict[boolean.body.name]
         except KeyError:
@@ -156,9 +157,7 @@ class Zone(vis.ViewableMixin):
         :type reg: Registry
         :param aabb: Optional reference AABB or dictionary of body name to AABB instances with which the geant4 solid should be evaluated with respect to.  This is the entry point to which solid minimisation can be performed.
         :type reg: AABB or dict
-
         """
-
         try:
             body0 = self.intersections[0].body
         except IndexError:
@@ -221,8 +220,9 @@ class Zone(vis.ViewableMixin):
         return result
 
     def dumps(self):
-        """Returns a string of this Zone instance in the equivalent
-        FLUKA syntax."""
+        """
+        Returns a string of this Zone instance in the equivalent FLUKA syntax.
+        """
         fs = ""
 
         booleans = self.intersections + self.subtractions
@@ -291,7 +291,7 @@ class Zone(vis.ViewableMixin):
 
     def allBodiesToRegistry(self, flukaregistry):
         """
-        Add all the bodies that contitute this Zone to the provided
+        Add all the bodies that constitute this Zone to the provided
         FlukaRegistry instance.
 
         :param flukaregistry: FlukaRegistry instance to which constituent bodies will be added.
@@ -325,7 +325,6 @@ class Zone(vis.ViewableMixin):
 
         :param name: The name of the body to be removed.
         :type name: string
-
         """
         newIntersections = []
         for intsx in self.intersections:
@@ -352,7 +351,7 @@ class Zone(vis.ViewableMixin):
         unique name by appending nameSuffix.
 
         :param nameSuffix: The string to append to the names of the bodies.
-        :param flukaregistry: the FlukaRegisytr instance to add the uniquely defined bodies to.
+        :param flukaregistry: the FlukaRegistry instance to add the uniquely defined bodies to.
         """
         result = Zone()
         nestedZoneCount = 0
@@ -417,7 +416,7 @@ class Zone(vis.ViewableMixin):
 class Region(vis.ViewableMixin):
     """
     Represents a region which consists of a region name, one or more
-    zones, and a single material.  Metadata may be provided with the
+    zones, and a single material. Metadata may be provided with the
     comment kwarg, which is used when writing to FLUKA to provide
     contextual information to the physicist.
 
@@ -427,7 +426,6 @@ class Region(vis.ViewableMixin):
     :type material: str
     :param comment: Optional descriptive comment.
     :type param: str
-
     """
     def __init__(self, name, comment = ""):
         self.name = name
@@ -459,7 +457,9 @@ class Region(vis.ViewableMixin):
             return np.identity(3) # Multi union is already rotated.
 
     def bodies(self):
-        "Return the set of unique bodies that constitute this Zone."
+        """
+        Return the set of unique bodies that constitute this Zone.
+        """
         bodies = set()
         for zone in self.zones:
             bodies = bodies.union(zone.bodies())
@@ -611,7 +611,6 @@ class Region(vis.ViewableMixin):
 
         :param name: The name of the body to be removed.
         :type name: string
-
         """
         for zone in self.zones:
             zone.removeBody(name)
@@ -663,7 +662,9 @@ class Region(vis.ViewableMixin):
         return f"<Region: {self.name}>"
 
     def removeZones(self, indices):
-        """Remove zones by index"""
+        """
+        Remove zones by index
+        """
         for index in reversed(sorted(indices)):
             # print(self.zones)
             # print(index)
