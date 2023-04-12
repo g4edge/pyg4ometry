@@ -20,22 +20,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
         os: [ubuntu-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v2
     - name: Install non-pip dependencies on Ubuntu
       if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install libboost-dev libcgal-dev libgmp-dev libmpfr-dev libocct-* libtbb-dev libxi-dev libvtk9-dev occt-misc
-        sudo patch -R /usr/include/opencascade/TDocStd_Application.hxx < docker/patches/TDocStd_Application.patch
+      run: sudo .github/bin/install-deps-ubuntu.sh
     - name: Install non-pip dependencies on MacOS
       if: runner.os == 'macOS'
-      run: |
-        brew update
-        brew install --overwrite python # github's fault
-        brew install boost cgal gmp mpfr opencascade tbb vtk
+      run: .github/bin/install-deps-macos.sh
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -70,9 +64,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: Install non-pip dependencies on Ubuntu
-      run: |
-        sudo apt-get update
-        sudo apt-get install libboost-dev libcgal-dev libgmp-dev libmpfr-dev libocct-* libtbb-dev libxi-dev libvtk9-dev occt-misc
+      run: sudo .github/bin/install-deps-ubuntu.sh
     - uses: actions/setup-python@v2
       with:
         python-version: '3.10'
