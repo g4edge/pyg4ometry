@@ -466,6 +466,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
         pSPhi  = solid.evaluateParameter(solid.pSPhi)*auval
         pDPhi  = solid.evaluateParameter(solid.pDPhi)*auval
 
+        # TBC - dir and base appear to be a float but TRC expects list as 'base'
         dir    = pDz*_transformation.tbxyz2matrix(rotation).dot(_np.array([0, 0, 1]))
         base   = -dir/2.0
 
