@@ -34,7 +34,8 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew update
-        brew install --force --overwrite boost cgal gmp mpfr opencascade tbb vtk
+        brew install --overwrite python # github's fault
+        brew install boost cgal gmp mpfr opencascade tbb vtk
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
