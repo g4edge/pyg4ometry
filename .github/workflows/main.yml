@@ -23,6 +23,7 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10']
         os: [ubuntu-latest, macOS-latest]
     steps:
+    - uses: actions/checkout@v2
     - name: Install non-pip dependencies on Ubuntu
       if: runner.os == 'Linux'
       run: |
@@ -34,7 +35,6 @@ jobs:
       run: |
         brew update
         brew install --force --overwrite boost cgal gmp mpfr opencascade tbb vtk
-    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -65,13 +65,13 @@ jobs:
     name: Calculate and upload test coverage
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
     - name: Install non-pip dependencies on Ubuntu
       run: |
         sudo apt-get update
         sudo apt-get install libboost-dev libcgal-dev libgmp-dev libmpfr-dev libocct-* libtbb-dev libxi-dev libvtk9-dev occt-misc
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.10'
