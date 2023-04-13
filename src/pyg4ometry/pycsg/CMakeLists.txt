@@ -1,9 +1,10 @@
-find_package(skbuild)
-find_package(PythonExtensions)
-find_package(Cython)
+add_cython_target(core)
+add_library(core MODULE ${core})
+python_extension_module(core)
 
-project(pycsg)
-# Note: In this case, either one of these arguments may be omitted; their
-# value would have been inferred from that of the other.
-add_cython_target(code core.pyx)
-add_library(core MODULE core.pyx)
+add_cython_target(geom)
+add_library(geom MODULE ${geom})
+python_extension_module(geom)
+
+install(TARGETS core geom LIBRARY DESTINATION ${SKBUILD_PROJECT_NAME}/pycsg)
+install(FILES __init__.py DESTINATION ${SKBUILD_PROJECT_NAME}/pycsg)

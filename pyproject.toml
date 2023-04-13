@@ -1,16 +1,87 @@
 [build-system]
 requires = [
+    "cmake>=3.20",
     "cython",
+    "pybind11>=2.6",
     "setuptools>=42",
     "setuptools_scm[toml]>=3.4",
-    "wheel",
-    "pybind11~=2.6.1"
+    "scikit-build>=0.13",
+    "scikit-build-core>=0.3"
 ]
-
-build-backend = "setuptools.build_meta"
+build-backend = "scikit_build_core.build"
 
 [tool.setuptools_scm]
 write_to = "src/pyg4ometry/_version.py"
+
+[project]
+name = "pyg4ometry"
+description = "Geometry package for high energy physics (Geant4, Fluka)"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+authors = [{ name = "Stewart T. Boogert", email = "stewart.boogert@rhul.ac.uk" }]
+maintainers = [{ name = "Stewart T. Boogert", email = "stewart.boogert@rhul.ac.uk"  }]
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development",
+]
+requires-python = ">=3.6.8"
+dependencies = [
+    "antlr4-python3-runtime==4.7.1",
+    "configparser",
+    "matplotlib",
+    "networkx",
+    "numpy",
+    "pandas",
+    "scipy",
+    "sympy>=1.7",
+    "testtools",
+    "vtk",
+]
+
+[project.urls]
+Homepage = "https://github.com/pyg4ometry/pyg4ometry"
+Documentation = "https://pyg4ometry.readthedocs.io/"
+"Bug Tracker" = "https://github.com/pyg4ometry/pyg4ometry/issues"
+
+[project.optional-dependencies]
+all = ["pyg4ometry[docs,test]"]
+docs = [
+    "furo",
+    "myst-parser",
+    "sphinx",
+    "sphinx-copybutton",
+]
+test = [
+    "pre-commit",
+    "pytest>=6.0",
+    "pytest-cov",
+]
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.package-data]
+"pyg4ometry.convert" = ["src/pyg4ometry/convert/*.csv"]
+"pyg4ometry.fluka" = ["src/pyg4ometry/fluka/*.flair"]
+"pyg4ometry.geant4" = ["src/pyg4ometry/geant4/*.txt"]
+"pyg4ometry.visualisation" = ["src/pyg4ometry/visualisation/*.ini"]
+
+[tool.scikit-build]
+build-dir = "_skbuild"
+cmake.minimum-version = "3.20"
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -23,3 +94,6 @@ testpaths = "tests"
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+
+[tool.cibuildwheel.linux]
+# before-all = ".github/bin/install-deps-centos.sh"
