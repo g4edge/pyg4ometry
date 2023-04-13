@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 project(pyg4ometry)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules/)
-
-# set version dynamically
-cmake_policy(SET CMP0140 NEW)
-include(DynamicVersion)
-dynamic_version(PROJECT_PREFIX pyg4ometry_)
-project(pyg4ometry VERSION ${PROJECT_VERSION})
+# set version dynamically with https://github.com/LecrisUT/CMakeExtraUtils
+# FIXME: breaks on GitHub Actions runners
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules/)
+# cmake_policy(SET CMP0140 NEW)
+# include(DynamicVersion)
+# dynamic_version(PROJECT_PREFIX pyg4ometry_)
+# project(pyg4ometry VERSION ${PROJECT_VERSION})
 
 # Set a default build type if none was specified
 # FIXME when first stable version is out
