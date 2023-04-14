@@ -47,9 +47,9 @@ repos:
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: "v0.991"
   hooks:
-    - id: mypy
-      files: src
-      stages: [manual]
+  - id: mypy
+    files: src
+    stages: [manual]
 
 - repo: https://github.com/hadialqattan/pycln
   rev: "v2.1.2"
@@ -72,9 +72,9 @@ repos:
 - repo: https://github.com/kynan/nbstripout
   rev: "0.6.1"
   hooks:
-    - id: nbstripout
-      args: ["--strip-empty-cells",
-             "--extra-keys", "metadata.kernelspec metadata.language_info"]
+  - id: nbstripout
+    args: ["--strip-empty-cells",
+           "--extra-keys", "metadata.kernelspec metadata.language_info"]
 
 - repo: https://github.com/mgedmin/check-manifest
   rev: "0.49"

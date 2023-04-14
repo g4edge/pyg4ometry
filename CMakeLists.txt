@@ -26,8 +26,7 @@ else()
   message(STATUS "Setting build type to '${CMAKE_BUILD_TYPE}'")
 endif()
 
-# see pyproject.toml
-find_package(Python COMPONENTS Interpreter Development REQUIRED)
+# see pyproject.toml for version bounds
 find_package(pybind11 CONFIG REQUIRED)
 # find_package(PythonExtensions REQUIRED)
 # find_package(Cython REQUIRED)
