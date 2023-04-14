@@ -31,8 +31,9 @@ find_package(pybind11 CONFIG REQUIRED)
 # find_package(PythonExtensions REQUIRED)
 # find_package(Cython REQUIRED)
 
-find_package(CGAL REQUIRED)  # TODO: version?
-find_package(Boost REQUIRED)  # TODO: version?
+# TODO: meaningful version bounds
+find_package(CGAL 5.0 REQUIRED)
+find_package(Boost REQUIRED)
 find_package(OpenCASCADE)
 find_package(OpenCASCADE
   COMPONENTS FoundationClasses ModelingAlgorithms
