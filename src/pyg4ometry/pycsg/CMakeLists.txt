@@ -1,10 +1,13 @@
-add_cython_target(core)
-add_library(core MODULE ${core})
-python_extension_module(core)
+set(_sources
+    core
+    geom)
 
-add_cython_target(geom)
-add_library(geom MODULE ${geom})
-python_extension_module(geom)
+foreach(_source ${_sources})
+  set(_target pycsg_${_source})
+  add_cython_target(${_target} ${_source}.pyx OUTPUT_VAR X)
+  add_library(${_target} MODULE ${X})
+  python_extension_module(${_target})
+  set_target_properties(${_target} PROPERTIES LIBRARY_OUTPUT_NAME ${_source})
 
-install(TARGETS core geom LIBRARY DESTINATION ${SKBUILD_PROJECT_NAME}/pycsg)
-install(FILES __init__.py DESTINATION ${SKBUILD_PROJECT_NAME}/pycsg)
+  install(TARGETS ${_target} LIBRARY DESTINATION ${SKBUILD_PROJECT_NAME}/pycsg)
+endforeach()

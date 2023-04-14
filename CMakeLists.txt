@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 project(pyg4ometry)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules/)
+
 # set version dynamically with https://github.com/LecrisUT/CMakeExtraUtils
 # FIXME: breaks on GitHub Actions runners
-# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules/)
 # cmake_policy(SET CMP0140 NEW)
 # include(DynamicVersion)
 # dynamic_version(PROJECT_PREFIX pyg4ometry_)
@@ -28,8 +29,8 @@ endif()
 
 # see pyproject.toml for version bounds
 find_package(pybind11 CONFIG REQUIRED)
-# find_package(PythonExtensions REQUIRED)
-# find_package(Cython REQUIRED)
+find_package(PythonExtensions REQUIRED)
+find_package(Cython REQUIRED)
 
 # TODO: meaningful version bounds
 find_package(CGAL 5.0 REQUIRED)
