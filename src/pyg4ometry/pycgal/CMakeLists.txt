@@ -1,7 +1,9 @@
-set(sources
+include(SkbuildUtils)
+
+set(_sources
     Aff_transformation_3.cxx
     Bbox_3.cxx
-    # CGAL.cxx
+    CGAL.cxx
     Circle_3.cxx
     Direction_3.cxx
     geom.cxx
@@ -24,13 +26,7 @@ set(sources
     Vector_2.cxx
     Vector_3.cxx)
 
-foreach(source ${sources})
-
-  cmake_path(GET source STEM module)
-
-  pybind11_add_module(${module} ${source})
-  target_link_libraries(${module} PRIVATE CGAL::CGAL)
-
-  install(TARGETS ${module} DESTINATION ${SKBUILD_PROJECT_NAME}/pycgal)
-
+foreach(_source ${_sources})
+  configure_pybind11_extension(${_source} PACKAGE pycgal OUT_TARGET X)
+  target_link_libraries(${X} PRIVATE CGAL::CGAL)
 endforeach()

@@ -1,4 +1,4 @@
-set(sources
+set(_sources
     BRep.cxx
     BRepMesh.cxx
     Geom.cxx
@@ -11,7 +11,7 @@ set(sources
     TDataStd.cxx
     TDF.cxx
     TDocStd.cxx
-    # TKernel.cxx
+    TKernel.cxx
     TNaming.cxx
     TopAbs.cxx
     TopExp.cxx
@@ -20,15 +20,8 @@ set(sources
     XCAFApp.cxx
     XCAFDoc.cxx)
 
-foreach(source ${sources})
-
-  cmake_path(GET source STEM module)
-
-  pybind11_add_module(${module} ${source})
-
-  target_link_libraries(${module} PRIVATE ${OpenCASCADE_DataExchange_LIBRARIES})
-  target_include_directories(${module} PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
-
-  install(TARGETS ${module} DESTINATION ${SKBUILD_PROJECT_NAME}/pyoce)
-
+foreach(_source ${_sources})
+  configure_pybind11_extension(${_source} PACKAGE pyoce OUT_TARGET X)
+  target_link_libraries(${X} PRIVATE ${OpenCASCADE_DataExchange_LIBRARIES})
+  target_include_directories(${X} PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
 endforeach()
