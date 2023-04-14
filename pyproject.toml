@@ -98,6 +98,7 @@ multi_line_output = 3
 [tool.cibuildwheel]
 manylinux-x86_64-image = "gipert/pyg4ometry-manylinux2014_x86_64:latest"
 build = ["*macosx*", "*manylinux_x86_64"]
+skip = ["cp36-*"]
 
 [tool.cibuildwheel.macos]
 before-all = ".github/bin/install-deps-macos.sh"
