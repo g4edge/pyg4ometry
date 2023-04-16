@@ -41,7 +41,7 @@ PYBIND11_MODULE(Poly, m) {
     .def("NbTriangles",&Poly_Triangulation::NbTriangles)
     .def("Node",&Poly_Triangulation::Node)
     .def("Normal",[](Poly_Triangulation &pt, Standard_Integer i) {return pt.Normal(i);})
-#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR >= 6
     .def("SetNode",&Poly_Triangulation::SetNode)
     .def("SetTriangle",&Poly_Triangulation::SetTriangle)
 #else
