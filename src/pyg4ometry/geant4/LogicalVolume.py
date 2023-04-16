@@ -221,9 +221,7 @@ class LogicalVolume(object):
         :type runit: str
         :param punit: length unit for position (m,mm,km)
         :type punit: str
-
         """
-
         self.replaceSolid(self.solid,rotation, position, runit, punit)
 
     def replaceSolid(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm") :
@@ -290,7 +288,6 @@ class LogicalVolume(object):
         :param lvUsageCount: lv name dictionary for replacement recursion (DO NOT USE)
         :type lvUsageCount: defaultdict
         """
-
         # increment the recursion depth
         depth += 1
 
