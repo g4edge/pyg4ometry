@@ -28,12 +28,14 @@ else()
 endif()
 
 # see pyproject.toml for version bounds
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(PythonExtensions REQUIRED)
 find_package(Cython REQUIRED)
 
 # TODO: meaningful version bounds
 find_package(CGAL 5.0 REQUIRED)
+message(STATUS "Found CGAL (found version \"${CGAL_VERSION}\")")
 find_package(Boost REQUIRED)
 find_package(OpenCASCADE)
 find_package(OpenCASCADE

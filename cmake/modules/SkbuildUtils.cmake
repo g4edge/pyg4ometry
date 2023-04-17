@@ -3,7 +3,18 @@ function(configure_cython_extension _source)
   cmake_parse_arguments(_args "" "PACKAGE;OUT_TARGET" "" ${ARGN})
 
   cmake_path(GET _source STEM _module)
-  set(_target ${_args_PACKAGE}_${_module})
+
+  # FIXME: cannot do arbitrary scoping of target, e.g.
+  #
+  #   set(_target ${_args_PACKAGE}_${_module})
+  #
+  # it generates these errors:
+  #
+  #   ImportError: dynamic module does not define module export function (PyInit_geom)
+  #
+  # This way, however, there is no way to disambiguate if another CMake target
+  # with the same name exists
+  set(_target ${_module})
   add_cython_target(${_target} ${_source} OUTPUT_VAR X)
   add_library(${_target} MODULE ${X})
   python_extension_module(${_target})

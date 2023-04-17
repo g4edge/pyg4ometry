@@ -1,3 +1,4 @@
+# cython: language_level=3
 import math
 import sys
 from functools import reduce
