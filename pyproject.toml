@@ -5,7 +5,6 @@ requires = [
     "pybind11>=2.6",
     "setuptools>=42",
     "setuptools_scm[toml]>=3.4",
-    "scikit-build>=0.13",
     "scikit-build-core>=0.3"
 ]
 build-backend = "scikit_build_core.build"
@@ -79,7 +78,7 @@ zip-safe = false
 "pyg4ometry.visualisation" = ["src/pyg4ometry/visualisation/*.ini"]
 
 [tool.scikit-build]
-build-dir = "_skbuild"
+build-dir = "build/{cache_tag}"
 cmake.minimum-version = "3.20"
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 
