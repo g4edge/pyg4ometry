@@ -1,3 +1,5 @@
+*.swp
+.DS_Store
 /src/pyg4ometry/_version.py
 
 # CMake

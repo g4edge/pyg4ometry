@@ -20,8 +20,17 @@ set(_sources
     XCAFApp.cxx
     XCAFDoc.cxx)
 
+if(${OpenCASCADE_VERSION} VERSION_LESS 7.7)
+  message(STATUS "using patched OpenCASCADE headers")
+endif()
+
 foreach(_source ${_sources})
   configure_pybind11_extension(${_source} PACKAGE pyoce OUT_TARGET X)
   target_link_libraries(${X} PRIVATE ${OpenCASCADE_DataExchange_LIBRARIES})
+
+  if(${OpenCASCADE_VERSION} VERSION_LESS 7.7)
+    target_include_directories(${X} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/patches")
+  endif()
+
   target_include_directories(${X} PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
 endforeach()
