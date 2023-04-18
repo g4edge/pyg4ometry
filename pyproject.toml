@@ -60,6 +60,7 @@ docs = [
     "myst-parser",
     "sphinx",
     "sphinx-copybutton",
+    "sphinx_tabs",
 ]
 test = [
     "pre-commit",

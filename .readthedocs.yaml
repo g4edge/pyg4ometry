@@ -7,6 +7,24 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.10"
+  # NOTE: would be nice to call .github/bin/install-deps-ubuntu.sh
+  # but running commands as root is not supported (yet) by RTD
+  apt_packages:
+    - libboost-dev
+    - libcgal-dev
+    - libgmp-dev
+    - libmpfr-dev
+    - libtbb-dev
+    - libvtk9-dev
+    - libxi-dev
+    - libocct-data-exchange-dev
+    - libocct-draw-dev
+    - libocct-foundation-dev
+    - libocct-modeling-algorithms-dev
+    - libocct-modeling-data-dev
+    - libocct-ocaf-dev
+    - libocct-visualization-dev
+    - occt-misc
 
 python:
   install:
