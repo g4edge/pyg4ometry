@@ -146,7 +146,7 @@ class VtkExporter:
                            lv,
                            model,
                            color_dico={'R': {}, 'G': {}, 'B': {}},
-                           rotation=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                           rotation=_np.array([[1,0,0],[0,1,0],[0,0,1]]),
                            translation=_np.array([0,0,0])
                            ):
         """

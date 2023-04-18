@@ -39,7 +39,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
     """
     Convert a single logical volume - not the main entry point for the conversion.
     """
-    mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
+    mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]])
     tra  = _np.array([0,0,0])
 
     if not flukaRegistry :
@@ -137,7 +137,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry = None):
     return flukaRegistry
 
 def geant4PhysicalVolume2Fluka(physicalVolume,
-                               mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                               mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
                                tra=_np.array([0, 0, 0]),
                                flukaRegistry=None,flukaNameCount=0) :
 
@@ -235,7 +235,7 @@ def geant4PhysicalVolume2Fluka(physicalVolume,
     return flukaMotherOuterRegion, flukaNameCount
 
 def geant4Solid2FlukaRegion(flukaNameCount,solid,
-                            mtra=_np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                            mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
                             tra=_np.array([0, 0, 0]),
                             flukaRegistry = None,
                             addRegistry = True,

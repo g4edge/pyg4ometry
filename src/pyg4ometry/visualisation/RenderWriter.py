@@ -12,7 +12,7 @@ class RenderWriter :
 
     def addLogicalVolumeRecursive(self,
                                   logical,
-                                  mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                                  mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]]),
                                   tra = _np.array([0,0,0])):
 
         if logical.type != "assembly":
