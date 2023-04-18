@@ -611,7 +611,7 @@ class Registry:
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
         # info of the assemblies
-        mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
+        mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]])
         tra = _np.array([0,0,0])
         for pos, rot, sca in zip(positions, rotations, scales) :
             assembly_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rot.eval()))

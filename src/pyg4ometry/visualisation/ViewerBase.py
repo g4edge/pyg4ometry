@@ -65,7 +65,7 @@ class ViewerBase :
         self.bSubtractDaughters = subtractDaughters
 
     def addLogicalVolume(self, lv,
-                         mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                         mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]]),
                          tra  = _np.array([0,0,0]),
                          visOptions = _VisOptions(representation="wireframe"),
                          depth=0,

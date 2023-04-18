@@ -318,7 +318,7 @@ class VtkViewer:
             raise RuntimeError('Need a filename.')
 
 
-    def addLogicalVolume(self, logical, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True, addWorld = True):
+    def addLogicalVolume(self, logical, mtra=_np.array([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True, addWorld = True):
         if logical.type == "logical":
             if addWorld:
                 self.addLogicalVolumeBounding(logical)
@@ -379,7 +379,7 @@ class VtkViewer:
                      self.filters, self.mappers, self.physicalMapperMap, self.actors,
                      self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
 
-    def addBooleanSolidRecursive(self, solid, mtra=_np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
+    def addBooleanSolidRecursive(self, solid, mtra=_np.array([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
         """
         :param solid: pyg4ometry.geant4.solid instance.
         :type  solid: pyg4ometry.geant4.solid.SolidBase
@@ -446,14 +446,14 @@ class VtkViewer:
             csgMesh.translate(t)
 
         self.addMesh(name, name, csgMesh,
-                     _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
+                     _np.array([[1,0,0],[0,1,0],[0,0,1]]),
                      _np.array([0, 0, 0]),
                      self.localmeshes,
                      self.filters, self.mappers, self.physicalMapperMap, self.actors,
                      self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
 
 
-    def addLogicalVolumeRecursive(self, logical, mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
+    def addLogicalVolumeRecursive(self, logical, mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
         for pv in logical.daughterVolumes:
 
             # get the local vtkPolyData
@@ -1059,7 +1059,7 @@ def viewLogicalVolumeDifference(referenceLV, otherLV, otherTranslation=[0,0,0], 
     visOptions1 = _VisOptions()
     visOptions1.colour = [1.0, 0.0, 0.0] # red
     visOptions1.alpha = 0.4
-    mtra = _np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    mtra = _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     v.addMesh("referenceLV", lvr.solid.name, lvr.mesh.localmesh, mtra, _np.array([0, 0, 0]),
               v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
               visOptions=visOptions1, overlap=False)

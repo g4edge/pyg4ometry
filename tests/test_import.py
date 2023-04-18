@@ -7,4 +7,4 @@ def test_imports():
     import pyg4ometry.pycgal  # noqa: f401
     import pyg4ometry.pycsg  # noqa: F401
     import pyg4ometry.pyoce  # noqa: F401
-    import pyg4ometry.visualization  # noqa: f401
+    import pyg4ometry.visualisation  # noqa: f401
