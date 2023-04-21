@@ -3,8 +3,9 @@ from optparse import OptionParser
 import pyg4ometry as _pyg4
 import numpy as _np
 
-def _loadFile(fileName) :
-    if fileName.find(".gdml") != -1 :
+def _loadFile(fileName):
+    reg, wl = None, None
+    if fileName.find(".gdml") != -1:
         r = _pyg4.gdml.Reader(fileName)
         reg = r.getRegistry()
         wl = reg.getWorldVolume()
@@ -105,6 +106,9 @@ def cli(inputFileName = None,
         _pyg4.config.meshingNullException = not nullMeshException
 
     reg, wl = _loadFile(inputFileName)
+    if reg is None or wl is None:
+        print("pyg4> unable to load input correctly")
+        exit(1)
 
     # extract lv in new registry etc
     if lvName is not None :
@@ -115,7 +119,8 @@ def cli(inputFileName = None,
         reg.setWorld(lv)
         lw = reg.getWorldVolume()
 
-    if bounding :
+    bbExtent = None
+    if bounding:
         bbExtent = _np.array(wl.extent())
         bbDExtent = bbExtent[1]-bbExtent[0]
         bbCentre  = (bbExtent[0]+bbExtent[1])
@@ -209,7 +214,7 @@ def cli(inputFileName = None,
         v.removeInvisible()
         v.buildPipelinesAppend()
         
-        if bounding :
+        if bounding and bbExtent:
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)
 
