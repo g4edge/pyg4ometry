@@ -1,9 +1,6 @@
 import sys as _sys
 from collections import OrderedDict as _OrderedDict
-if _sys.version_info < (3, 10):
-    from collections import MutableMapping as _MutableMapping
-else:
-    from collections.abc import MutableMapping as _MutableMapping
+from collections.abc import MutableMapping as _MutableMapping
 
 from itertools import count as _count
 
