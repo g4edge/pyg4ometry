@@ -3,6 +3,10 @@ version: 2
 sphinx:
   configuration: docs/source/conf.py
 
+formats:
+  - epub
+  - pdf
+
 build:
   os: "ubuntu-22.04"
   tools:
@@ -25,6 +29,16 @@ build:
     - libocct-ocaf-dev
     - libocct-visualization-dev
     - occt-misc
+  jobs:
+    pre_build:
+      - rm -rf docs/source/api
+      - sphinx-apidoc
+        --private
+        --module-first
+        --force
+        --output-dir docs/source/api
+        src/pyg4ometry
+        src/pyg4ometry/_version.py
 
 python:
   install:
