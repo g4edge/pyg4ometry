@@ -37,7 +37,7 @@ class Writer(object):
         self.logicalVolumeList = []
         self.physicalVolumeList= []
 
-    def addDetector(self, registry) :
+    def addDetector(self, registry):
         self.registry = registry
 
         if not self.registry.userInfo:
@@ -176,7 +176,7 @@ option, preprocessGDML=0;
 
     def writeVectorVariable(self, node, vector_var, allow_ref=True, suppress_trivial=True):
         """
-        Writes an XML child node for a vector variable - position, roration, scale.
+        Writes an XML child node for a vector variable - position, rotation, scale.
         If allow_ref is enabled, it will write a ref to a registry define where possible.
         If suppress_trivial is enabled it won't write vectors with all elements zero.
         """

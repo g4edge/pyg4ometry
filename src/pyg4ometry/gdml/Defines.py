@@ -594,11 +594,14 @@ class Expression(ScalarBase):
     def __repr__(self) :
         return "Expression: {} = {}".format(self.name, str(self.expr))    
 
-class VectorBase(object) :
-    def __init__(self) :
-        pass
+class VectorBase(object):
+    def __init__(self):
+        self.x = None
+        self.y = None
+        self.z = None
+        self.unit = None
     
-    def __add__(self,other) :
+    def __add__(self,other):
         p  = Position("vec_{}_add_{}".format(self.name,other.name),
                       '({})+({})'.format(self.x.expression,other.x.expression),
                       '({})+({})'.format(self.y.expression,other.y.expression),

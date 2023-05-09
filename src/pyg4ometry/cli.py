@@ -3,20 +3,21 @@ from optparse import OptionParser
 import pyg4ometry as _pyg4
 import numpy as _np
 
-def _loadFile(fileName) :
-    if fileName.find(".gdml") != -1 :
+def _loadFile(fileName):
+    reg, wl = None, None
+    if fileName.find(".gdml") != -1:
         r = _pyg4.gdml.Reader(fileName)
         reg = r.getRegistry()
         wl = reg.getWorldVolume()
-    elif fileName.find(".root") != -1 :
+    elif fileName.find(".root") != -1:
         r = _pyg4.io.ROOTTGeo.Reader(fileName)
         reg = r.getRegistry()
         wl = reg.getWorldVolume()
-    elif fileName.find(".inp") != -1 :
+    elif fileName.find(".inp") != -1:
         r = _pyg4.fluka.Reader(fileName)
         reg = _pyg4.convert.fluka2Geant4(r.getRegistry())
         wl = reg.getWorldVolume()
-    elif fileName.find(".stl") != -1 :
+    elif fileName.find(".stl") != -1:
         reg = _pyg4.geant4.Registry()
         r = _pyg4.stl.Reader(fileName, registry=reg)
         s = r.getSolid()
@@ -36,7 +37,7 @@ def _loadFile(fileName) :
 
     return reg,wl
 
-def _writeFile(fileName, reg) :
+def _writeFile(fileName, reg):
     if fileName.find(".gdml") != -1 :
         ow = _pyg4.gdml.Writer(fileName)
         ow.addDetector(reg)
@@ -92,22 +93,25 @@ def cli(inputFileName = None,
     print("pyg4 - command line interface")
 
     # switch on file type
-    if not inputFileName :
+    if not inputFileName:
         print("pyg4> need input file name")
 
     try :
         open(inputFileName)
-    except FileNotFoundError :
+    except FileNotFoundError:
         print("pyg4> input file not found")
         return
 
-    if nullMeshException :
+    if nullMeshException:
         _pyg4.config.meshingNullException = not nullMeshException
 
     reg, wl = _loadFile(inputFileName)
+    if reg is None or wl is None:
+        print("pyg4> unable to load input correctly")
+        exit(1)
 
     # extract lv in new registry etc
-    if lvName is not None :
+    if lvName is not None:
         lv = reg.logicalVolumeDict[lvName]
         reg1 = _pyg4.geant4.Registry()
         reg1.addVolumeRecursive(lv)
@@ -115,17 +119,18 @@ def cli(inputFileName = None,
         reg.setWorld(lv)
         lw = reg.getWorldVolume()
 
-    if bounding :
+    bbExtent = None
+    if bounding:
         bbExtent = _np.array(wl.extent())
         bbDExtent = bbExtent[1]-bbExtent[0]
-        bbCentre  = (bbExtent[0]+bbExtent[1])
+        bbCentre = (bbExtent[0]+bbExtent[1])
 
         print("pyg4> extent        ",bbExtent)
         print("pyg4> extent size   ",bbDExtent)
         print("pyg4> extent centre ",bbCentre)
 
-    if info :
-        if info == 'reg' :
+    if info:
+        if info == 'reg':
             print('pyg4> registry defines')
             print(list(reg.defineDict.keys()))
             print('pyg4> registry materials')
@@ -142,7 +147,7 @@ def cli(inputFileName = None,
             print(list(reg.surfaceDict.keys()))
         elif info == "tree" :
             _pyg4.geant4.DumpGeometryStructureTree(wl,0)
-        elif info == "instances" :
+        elif info == "instances":
             print("pyg4> Not yet implemented")
 
     if checkOverlaps :
@@ -154,13 +159,13 @@ def cli(inputFileName = None,
         a = _pyg4.geant4.AnalyseGeometryComplexity(reg.getWorldVolume())
         a.printSummary()
 
-    if compareFileName is not None :
+    if compareFileName is not None:
         creg, cwl = _loadFile(compareFileName)
         comparision = _pyg4.compare.geometry(wl, cwl, _pyg4.compare.Tests(), False)
         print("pyg4> compare")
         comparision.print()
 
-    if appendFileName is not None :
+    if appendFileName is not None:
         reg1, wl1 = _loadFile(appendFileName)
         wp1 = _pyg4.geant4.PhysicalVolume(rotation, translation, wl1, "l1_pv", wl, reg)
         print("pyg4> append")
@@ -168,23 +173,22 @@ def cli(inputFileName = None,
 
     # parse solid
     newSolid = None
-    if solid is not None :
+    if solid is not None:
         newSolid = _parseStrPythonAsSolid(reg,solid)
 
-    if exchangeLvName is not None :
+    if exchangeLvName is not None:
         lvToChange = reg.logicalVolumeDict[exchangeLvName]
         lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
         lvToChange.reMesh()
 
-    if clip is not None :
+    if clip is not None:
         wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
 
-    if materials is not None :
+    if materials is not None:
         pass
 
-    if outputFileName is not None :
-
-        if outputFileName.find(".gl") != -1 :
+    if outputFileName is not None:
+        if outputFileName.find(".gl") != -1:
             v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
             v.addLogicalVolume(reg.getWorldVolume())
             v.removeInvisible()
@@ -192,7 +196,7 @@ def cli(inputFileName = None,
                 v.scaleScene(float(gltfScale))
             v.buildPipelinesAppend()
             v.exportGLTFScene(outputFileName)
-        if outputFileName.find(".html") != -1 :
+        if outputFileName.find(".html") != -1:
             v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
             v.addLogicalVolume(reg.getWorldVolume())
             v.removeInvisible()
@@ -200,22 +204,40 @@ def cli(inputFileName = None,
                 v.scaleScene(float(gltfScale))
             v.buildPipelinesAppend()
             v.exportThreeJSScene(outputFileName.split(".")[0])
-        else :
+        else:
             _writeFile(outputFileName, reg)
 
-    if view :
+    if view:
         v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
         v.addLogicalVolume(reg.getWorldVolume())
         v.removeInvisible()
         v.buildPipelinesAppend()
         
-        if bounding :
+        if bounding and bbExtent:
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)
 
+    if planeCutterData is not None:
+        if planeCutterOutputFileName is None:
+            print("pyg4> must specify -P or --planeCutterOutput file")
+            exit(1)
+        # up the quality of meshes
+        _pyg4.config.setGlobalMeshSliceAndStack(56)
+        v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
+        v.addLogicalVolume(wl)
+        o = planeCutterData[:3]
+        n = planeCutterData[3:]
+        v.addCutter("cli-cutter", o, n)
+        v.buildPipelinesAppend()
+        v.exportCutter("cli-cutter", planeCutterOutputFileName)
+        print("pyg4> cutter with "+str(o)+", "+str(n)+" written to: ",planeCutterOutputFileName)
 
+    if featureData is not None or featureDataOutputFileName is not None:
+        # TBC!!!
+        print("feature data has not yet been implemented in the command line interface")
+        exit(1)
 
-def main() :
+def main():
     parser = OptionParser()
     parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
     parser.add_option("-b", "--bounding", help="calculate bounding box", action="store_true", dest="bounding")

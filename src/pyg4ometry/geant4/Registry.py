@@ -13,11 +13,11 @@ def solidName(var):
 
 class Registry:
     """
-    Object to store geometry for input and output. \
-    All of the pyg4ometry classes can be used without \
-    storing them in the Registry. The registry is used \
-    to write the GDML output file. A registry needs to \
-    be used in conjunction with GDML Define objects for \
+    Object to store geometry for input and output.
+    All of the pyg4ometry classes can be used without
+    storing them in the Registry. The registry is used
+    to write the GDML output file. A registry needs to
+    be used in conjunction with GDML Define objects for
     evaluation of expressions.
     """
     def __init__(self):
@@ -456,6 +456,12 @@ class Registry:
         else:
             raise TypeError("Invalid type ", worldIn.__class__.__name__," - must be str or LogicalVolume")
 
+    def setWorldVolume(self, worldIn):
+        """
+        An alias for some of us who can't remember.
+        """
+        self.setWorld(worldIn)
+
     def _orderMaterialList(self, materials, materials_ordered=[]):
         for mat in materials:
             if isinstance(mat, _mat.Material) and mat not in materials_ordered:
@@ -719,7 +725,7 @@ class Registry:
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
 
-    def getWorldVolume(self) :         
+    def getWorldVolume(self):
         return self.worldVolume
 
     def printStats(self):
@@ -863,6 +869,9 @@ def _UpdateComplexity(lv, info):
     return info
 
 def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=None):
+    """
+    Produce a pandas dataframe representing the structure of the geometry.
+    """
     # do the heavy import only in the function
     import pandas as _pd
     reg = registry #shortcut
@@ -879,8 +888,14 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
     daughters = [daughter.name for daughter in daughters_lv]
     material = mother_lv.material.name.split('0')[0]
 
-    df = df.append({'level': level, 'mother_lv': mother_lv, 'mother': mother, 'daughters_lv': daughters_lv,
-                    'daughters': daughters, 'material': material}, ignore_index=True)
+    df = _pd.concat([df,
+                     _pd.DataFrame.from_records([{'level': level,
+                                                  'mother_lv': mother_lv,
+                                                  'mother': mother,
+                                                  'daughters_lv': daughters_lv,
+                                                  'daughters': daughters,
+                                                  'material': material}])
+                     ], ignore_index=True)
 
     if debug:
         print("\nlevel:", level)

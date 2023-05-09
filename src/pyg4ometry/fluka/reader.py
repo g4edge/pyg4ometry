@@ -163,7 +163,7 @@ class Reader(object):
         else: # we should always break out of the above loop with END.
             raise RuntimeError("Unable to parse FLUKA bodies.")
 
-    def _parseRegions(self) :
+    def _parseRegions(self):
         regions_block = self._lines[self.regionsbegin:self.regionsend]
         regions_block = "\n".join(regions_block) # turn back into 1 big string
 
@@ -691,18 +691,21 @@ class RegionVisitor(RegionParserVisitor):
         return [("+", body)] # implicit intersection
 
 class SensitiveErrorListener(ErrorListener.ErrorListener):
-    """ANTLR4 by default is very passive regarding parsing errors, it will
+    """
+    ANTLR4 by default is very passive regarding parsing errors, it will
     just carry on parsing and potentially build a nonsense-tree. This
     is not ideal as pyfluka has a very convoluted syntax; we want to
     be very strict about what our parser can and can't do.  For that
     reason this is a very sensitive error listener, throwing
     exceptions readily.
-
     """
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        msg = (f"At ({line}, {column}), Error: {msg}.  Warning:"
-               "The provided line and column numbers may be deceptive.")
-        raise antlr4.error.Errors.ParseCancellationException(msg)
+        msgf = (f"At ({line}, {column}), Error: {msg}.  Warning: The provided line number is in this section.")
+        msg2a = recognizer._input.strdata[e.startIndex - 50 : e.startIndex]
+        msg2b = recognizer._input.strdata[e.startIndex      : e.startIndex + 1]
+        msg2c = recognizer._input.strdata[e.startIndex +1   : e.startIndex + 50]
+        msgf += "\nSurrounding text +- 50 characaters\n\"" + msg2a + "\033[1m" + msg2b + "\033[0m" + msg2c + "\""
+        raise antlr4.error.Errors.ParseCancellationException(msgf)
 
 def main(filein):
     r = Reader(filein)
