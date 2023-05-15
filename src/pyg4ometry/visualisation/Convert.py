@@ -40,23 +40,22 @@ def pycsgMeshToVtkPolyData(mesh):
     return meshPolyData
 
 def vtkPolyDataToNumpy(fileName):
-
     r = _vtk.vtkPolyDataReader()
     r.SetFileName(fileName)
     r.Update()
     conFlt = _vtk.vtkConnectivityFilter()
     conFlt.SetInputConnection(r.GetOutputPort())
-    conFlt.SetExtractionModeToAllRegions();
-    conFlt.ColorRegionsOn();
+    conFlt.SetExtractionModeToAllRegions()
+    conFlt.ColorRegionsOn()
     conFlt.Update()
 
     # print(conFlt.GetNumberOfExtractedRegions())
 
     retnSortedPnts = []
-    for i in range(0,conFlt.GetNumberOfExtractedRegions()) :
-        conFlt.SetExtractionModeToSpecifiedRegions();
-        conFlt.InitializeSpecifiedRegionList();
-        conFlt.AddSpecifiedRegion(i);
+    for i in range(0,conFlt.GetNumberOfExtractedRegions()):
+        conFlt.SetExtractionModeToSpecifiedRegions()
+        conFlt.InitializeSpecifiedRegionList()
+        conFlt.AddSpecifiedRegion(i)
         conFlt.Update()
         pd = conFlt.GetOutput()
         # print(pd.GetNumberOfPoints(),pd.GetNumberOfCells())
@@ -64,7 +63,7 @@ def vtkPolyDataToNumpy(fileName):
         firstCell = pd.GetCell(0)
         firstPointId = firstCell.GetPointId(0)
 
-        def pntsInOrder(pointId, nlim = 10000, ids=[]) :
+        def pntsInOrder(pointId, nlim = 10000, ids=[]):
             ids.append(pointId)
             vidl = _vtk.vtkIdList()
             pd.GetPointCells(pointId,vidl)
