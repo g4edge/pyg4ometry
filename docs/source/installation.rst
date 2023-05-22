@@ -45,8 +45,8 @@ directory::
 
   cd /my/path/to/repositories/
   git clone http://bitbucket.org/jairhul/pyg4ometry
-  git checkout develop
   cd pyg4ometry
+  git checkout develop
 
   make install
 
