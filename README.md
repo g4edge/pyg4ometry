@@ -13,4 +13,6 @@ Carlo (Geant4 and Fluka) geometries.
 ![License](https://img.shields.io/github/license/pyg4ometry/pyg4ometry)
 [![Read the Docs](https://img.shields.io/readthedocs/pyg4ometry?logo=readthedocs)](https://pyg4ometry.readthedocs.io)
 
-🚧 WIP repackaging of https://bitbucket.org/jairhul/pyg4ometry 🚧
+> **Warning**
+>
+> Work-in-progress repackaging of https://bitbucket.org/jairhul/pyg4ometry. Report issues and pull requests there.
