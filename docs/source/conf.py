@@ -9,7 +9,7 @@ sys.path.insert(0, Path(__file__).parents[2].resolve().as_posix())
 
 project = "pyg4ometry"
 copyright = u'Royal Holloway, University of London 2023'
-author = u'S Boogert, A Abramov, A Butcher, L Nevay, W Shields, S Walker'
+author = u'S. Boogert, A. Abramov, A. Butcher, L. Nevay, W. Shields, S. Walker'
 version = get_distribution("pyg4ometry").version
 
 extensions = [
@@ -33,7 +33,7 @@ language = "python"
 # Furo theme
 html_theme = "furo"
 html_theme_options = {
-    "source_repository": "https://github.com/pyg4ometry/pyg4ometry",
+    "source_repository": "https://github.com/g4edge/pyg4ometry",
     "source_branch": "main",
     "source_directory": "docs/source",
 }

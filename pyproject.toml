@@ -49,9 +49,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pyg4ometry/pyg4ometry"
+Homepage = "https://github.com/g4edge/pyg4ometry"
 Documentation = "https://pyg4ometry.readthedocs.io/"
-"Bug Tracker" = "https://github.com/pyg4ometry/pyg4ometry/issues"
+"Bug Tracker" = "https://github.com/g4edge/pyg4ometry/issues"
 
 [project.optional-dependencies]
 all = ["pyg4ometry[docs,test]"]
