@@ -3,6 +3,7 @@
 Python code for rapid creation and conversion of radiation transport Monte
 Carlo (Geant4 and Fluka) geometries.
 
+[![PyPI](https://img.shields.io/pypi/v/pyg4ometry?logo=pypi)](https://pypi.org/project/pyg4ometry/)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/g4edge/pyg4ometry?logo=git)
 [![GitHub Workflow Status](https://img.shields.io/github/checks-status/g4edge/pyg4ometry/main?label=main%20branch&logo=github)](https://github.com/pyg4ometry/pyg4ometry/actions)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
