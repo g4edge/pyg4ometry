@@ -36,7 +36,7 @@ classifiers = [
 ]
 requires-python = ">=3.6.8"
 dependencies = [
-    "antlr4-python3-runtime~=4.9",
+    "antlr4-python3-runtime==4.9",
     "configparser",
     "matplotlib",
     "networkx>=3",
