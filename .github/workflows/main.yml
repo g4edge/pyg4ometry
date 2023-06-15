@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
         os: [ubuntu-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
   test-in-container:
     name: Test in Docker container
     runs-on: ubuntu-latest
-    container: docker://gipert/pyg4ometry:latest
+    container: docker://g4edge/pyg4ometry:latest
     steps:
     - uses: actions/checkout@v3
     - name: Get dependencies and install pyg4ometry
