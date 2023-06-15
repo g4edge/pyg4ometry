@@ -36,10 +36,10 @@ classifiers = [
 ]
 requires-python = ">=3.6.8"
 dependencies = [
-    "antlr4-python3-runtime==4.7.1",
+    "antlr4-python3-runtime~=4.9",
     "configparser",
     "matplotlib",
-    "networkx",
+    "networkx>=3",
     "numpy",
     "pandas",
     "scipy",
@@ -96,7 +96,7 @@ profile = "black"
 multi_line_output = 3
 
 [tool.cibuildwheel]
-manylinux-x86_64-image = "gipert/pyg4ometry-manylinux2014_x86_64:latest"
+manylinux-x86_64-image = "g4edge/pyg4ometry-manylinux2014_x86_64:latest"
 build = ["*macosx*", "*manylinux_x86_64"]
 skip = ["cp36-*"]
 
