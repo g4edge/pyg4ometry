@@ -45,7 +45,7 @@ jobs:
   test-in-container:
     name: Test in Docker container
     runs-on: ubuntu-latest
-    container: docker://gipert/pyg4ometry:latest
+    container: docker://g4edge/pyg4ometry:latest
     steps:
     - uses: actions/checkout@v3
     - name: Get dependencies and install pyg4ometry
