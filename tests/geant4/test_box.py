@@ -1,6 +1,8 @@
-import os as _os
+import pytest
 
-def BoxTest(vis = False, interactive = False, writeNISTMaterials = False) :
+
+@pytest.fixture(scope="session")
+def simple_box(vis = False, interactive = False, writeNISTMaterials = False) :
     import pyg4ometry.gdml as _gd
     import pyg4ometry.geant4 as _g4
     import pyg4ometry.visualisation as _vi
@@ -8,8 +10,8 @@ def BoxTest(vis = False, interactive = False, writeNISTMaterials = False) :
     import pyg4ometry.fluka as _flu
 
     reg = _g4.Registry()
-    
-    # defines 
+
+    # defines
     wx = _gd.Constant("wx","100",reg,True)
     wy = _gd.Constant("wy","100",reg,True)
     wz = _gd.Constant("wz","100",reg,True)
@@ -36,12 +38,12 @@ def BoxTest(vis = False, interactive = False, writeNISTMaterials = False) :
     assert(bs2.evaluateParameterWithUnits('pX') == 10*bx)
     assert(bs2.evaluateParameterWithUnits('pY') == 10*by)
     assert(bs2.evaluateParameterWithUnits('pZ') == 10*bz)
-        
-    # structure 
+
+    # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     bl = _g4.LogicalVolume(bs, bm, "bl", reg)
-    bp = _g4.PhysicalVolume([0,0,0],[0,0,0],  bl, "b_pv1", wl, reg) 
-    
+    bp = _g4.PhysicalVolume([0,0,0],[0,0,0],  bl, "b_pv1", wl, reg)
+
     # set world volume
     reg.setWorld(wl.name)
 
@@ -54,7 +56,7 @@ def BoxTest(vis = False, interactive = False, writeNISTMaterials = False) :
 
     # visualisation
     v = None
-    if vis : 
+    if vis :
         v = _vi.PubViewer()
         v.addLogicalVolume(reg.getWorldVolume())
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
@@ -63,5 +65,5 @@ def BoxTest(vis = False, interactive = False, writeNISTMaterials = False) :
 
     return {"testStatus": True, "logicalVolume":wl, "vtkViewer":v, "registry":reg}
 
-if __name__ == "__main__":
-    Test()
+def test_box(simple_box):
+    pass
