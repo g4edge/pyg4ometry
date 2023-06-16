@@ -30,6 +30,9 @@ build:
     - libocct-visualization-dev
     - occt-misc
   jobs:
+    post_checkout:
+      - cat /proc/cpuinfo
+      - echo "$(nproc)"
     pre_build:
       - rm -rf docs/source/api
       - sphinx-apidoc
