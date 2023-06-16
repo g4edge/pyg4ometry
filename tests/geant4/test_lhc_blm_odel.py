@@ -1,3 +1,5 @@
+import pytest
+
 import os as _os
 import numpy as _np
 import pyg4ometry.gdml as _gd
@@ -187,7 +189,8 @@ def electrode_profile():
     return _np.array(electrode_points)
 
 
-def make_lhc_blm(vis=False, interactive=False, n_slice=16):
+@pytest.fixture(scope="session")
+def lhc_blm(vis=False, interactive=False, n_slice=16):
 
     import math as _math
     import pyg4ometry.gdml as _gd
@@ -565,6 +568,5 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     return world_lv
 
 
-if __name__ == "__main__":
-    # electrode_profile()
-    make_lhc_blm(True, True)
+def test_lhc_blm(lhc_blm):
+    pass

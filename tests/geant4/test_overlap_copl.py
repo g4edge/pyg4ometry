@@ -1,13 +1,15 @@
-import os as _os
+import pytest
 
-def OverlapCoplTest(vis = False, interactive = False) :
+
+@pytest.fixture(scope="session")
+def overlap_copl(vis = False, interactive = False):
     import pyg4ometry.gdml as _gd
     import pyg4ometry.geant4 as _g4
     import pyg4ometry.visualisation as _vi
 
     reg = _g4.Registry()
-    
-    # defines 
+
+    # defines
     wx = _gd.Constant("wx","75",reg,True)
     wy = _gd.Constant("wy","25",reg,True)
     wz = _gd.Constant("wz","25",reg,True)
@@ -19,14 +21,14 @@ def OverlapCoplTest(vis = False, interactive = False) :
     b2pos = _gd.Position("b3pos",bx,0,0,"mm",reg,True)
 
 
-    wm = _g4.MaterialPredefined("G4_Galactic") 
-    bm = _g4.MaterialPredefined("G4_Fe") 
+    wm = _g4.MaterialPredefined("G4_Galactic")
+    bm = _g4.MaterialPredefined("G4_Fe")
 
     # solids
     ws = _g4.solid.Box("ws",1.5*wx,4*wy,2.5*wz, reg, "mm")
     bs = _g4.solid.Box("bs",1.0*bx,1.0*bx,1.0*bx, reg, "mm")
 
-    # structure 
+    # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
 
     bl = _g4.LogicalVolume(bs, bm, "bl", reg)
@@ -70,7 +72,7 @@ def OverlapCoplTest(vis = False, interactive = False) :
 
     # visualisation
     v = None
-    if vis : 
+    if vis :
         v = _vi.VtkViewer()
         v.addLogicalVolume(reg.getWorldVolume())
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
@@ -78,5 +80,6 @@ def OverlapCoplTest(vis = False, interactive = False) :
 
     return {"testStatus": True, "logicalVolume":wl, "vtkViewer":v}
 
-if __name__ == "__main__":
-    Test()
+
+def test_overlap_copl(overlap_copl):
+    pass
