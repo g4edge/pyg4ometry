@@ -30,6 +30,8 @@ build:
     - libocct-visualization-dev
     - occt-misc
   jobs:
+    pre_install:
+      - echo "$MAKEFLAGS"
     pre_build:
       - rm -rf docs/source/api
       - sphinx-apidoc
