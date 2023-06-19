@@ -108,7 +108,7 @@ class Material(_MatProp):
     :type pressure: float
     :param flukaregistry: Optional FlukaRegistry instance the material is to be added to.
     :type flukaregistry: FlukaRegistry
-    
+
     """
     def __init__(self, name, atomicNumber, density,
                  massNumber=None,

@@ -117,4 +117,3 @@ class Cons(_SolidBase):
         return ps.mesh()
 
         return mesh
-

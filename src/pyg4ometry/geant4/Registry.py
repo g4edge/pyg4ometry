@@ -40,7 +40,7 @@ class Registry:
         self.surfaceTypeCountDict         = _defaultdict(int) # border, skin
         self.logicalVolumeMeshSkip        = []                # meshes to skip because they are inefficient
         self.userInfo                     = []                # Ordered list for the user info, which is not processed
-        
+
         self.defineNameCount              = _defaultdict(int)
         self.materialNameCount            = _defaultdict(int)
         self.materialUsageCount           = _defaultdict(int)
@@ -53,7 +53,7 @@ class Registry:
 
         self.solidTypeCountDict           = _defaultdict(int) # Box, Cons etc
         self.logicalVolumeUsageCountDict  = _defaultdict(int) # named logical usage in physical
-        
+
         self.editedSolids                 = []               # Solids changed post-initialisation
 
         self.expressionParser = None
@@ -69,7 +69,7 @@ class Registry:
         self.physicalVolumeDict.clear()
         self.surfaceDict.clear()
         self.loopDict.clear()
-        
+
         self.logicalVolumeList = []
 
         self.solidUsageCountDict.clear()
@@ -87,12 +87,12 @@ class Registry:
         self.assemblyVolumeNameCount.clear()
         self.physicalVolumeNameCount.clear()
         self.surfaceNameCount.clear()
-        
+
         self.solidTypeCountDict.clear()
         self.logicalVolumeUsageCountDict.clear()
 
         self.editedSolids = []
-        
+
     def getExpressionParser(self):
         if not self.expressionParser:
             from pyg4ometry.gdml.Expression import ExpressionParser
@@ -190,7 +190,7 @@ class Registry:
         """
         Transfer a solid to this registry. Doesn't handle any members'
         transferal - only the solid itself.
-        
+
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
@@ -212,7 +212,7 @@ class Registry:
 
         self.solidDict[solid.name] = solid
         solid.registry = self
-            
+
         self.solidTypeCountDict[solid.type] += 1
         self.solidNameCount[solid.name] += 1
 
@@ -390,7 +390,7 @@ class Registry:
             define.name = newName
         else:
             incrementRenameDict[define.name] = define.name
-        
+
         self.defineDict[define.name] = define
         define.registry = self
 
@@ -725,7 +725,7 @@ class Registry:
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
 
-    def getWorldVolume(self) :         
+    def getWorldVolume(self) :
         return self.worldVolume
 
     def printStats(self):
@@ -796,7 +796,7 @@ class GeometryComplexityInformation:
         solidsSorted = sorted(self.solids.items(),key=lambda x: x[1], reverse=True)
         for solidName,number in solidsSorted:
             print(solidName.ljust(20),':',number)
-        
+
         print(" ")
         print("# of daughters".ljust(20),"count")
         for nDaughters in sorted(self.nDaughtersPerLV.keys()):
@@ -814,14 +814,14 @@ class GeometryComplexityInformation:
         for solidName,boolDepth in boolDepthSorted:
             if boolDepth > boolDepthLimit:
                 print(solidName.ljust(40),":",boolDepth)
-        
+
 
 def AnalyseGeometryComplexity(logicalVolume):
     """
     Analyse a geometry tree starting from a logical volume.
     Produces an instance of :class:`GeometryComplexityInformation` with
     summary information. Provides:
-    
+
     * count per solid type
     * number of daughters per logical volume
     * dictionary of N daughters for each logical volume name
@@ -848,13 +848,13 @@ def _UpdateComplexity(lv, info):
     info.nDaughtersPerLV[len(lv.daughterVolumes)] +=1
 
     booleanTypes = ['Union', 'Subtraction', 'Intersection']
-    
+
     def _CountDaughterBooleanSolids(solid, number=0):
         for solid in [solid.obj1, solid.obj2]:
             if solid.type in booleanTypes:
                 number += 1
                 number = _CountDaughterBooleanSolids(solid, number)
-        return number           
+        return number
 
     if lv.type != "assembly" and lv.solid.type in booleanTypes:
         nBooleans = 1
@@ -865,7 +865,7 @@ def _UpdateComplexity(lv, info):
     # recurse
     for pv in lv.daughterVolumes:
         info = _UpdateComplexity(pv.logicalVolume, info)
-    
+
     return info
 
 def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=None):

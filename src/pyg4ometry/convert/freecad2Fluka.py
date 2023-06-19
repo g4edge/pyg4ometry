@@ -28,6 +28,3 @@ def part2Region(obj, trfm, fgreg, meshDeviation = 0.05) :
     # compile list output zones
 
     # create region
-
-
-

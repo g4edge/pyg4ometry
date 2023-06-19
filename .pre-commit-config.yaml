@@ -4,105 +4,95 @@ ci:
   autofix_commit_msg: "style: pre-commit fixes"
 
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: "v4.4.0"
-  hooks:
-  - id: check-added-large-files
-  - id: check-case-conflict
-  - id: check-executables-have-shebangs
-  - id: check-merge-conflict
-  - id: check-symlinks
-  - id: check-yaml
-  - id: check-json
-  - id: check-toml
-  - id: check-docstring-first
-  - id: debug-statements
-  - id: end-of-file-fixer
-  - id: forbid-new-submodules
-  - id: mixed-line-ending
-  - id: requirements-txt-fixer
-  - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.4.0"
+    hooks:
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: forbid-new-submodules
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
 
-- repo: https://github.com/asottile/setup-cfg-fmt
-  rev: "v2.2.0"
-  hooks:
-  - id: setup-cfg-fmt
+  - repo: https://github.com/psf/black
+    rev: "23.3.0"
+    hooks:
+      - id: black-jupyter
+        stages: [manual]
 
-- repo: https://github.com/PyCQA/isort
-  rev: "5.11.4"
-  hooks:
-  - id: isort
+  - repo: https://github.com/asottile/blacken-docs
+    rev: "1.14.0"
+    hooks:
+      - id: blacken-docs
+        additional_dependencies: [black==23.3.0]
+        stages: [manual]
 
-- repo: https://github.com/asottile/pyupgrade
-  rev: "v3.3.1"
-  hooks:
-  - id: pyupgrade
-    args: ["--py36-plus"]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.272"
+    hooks:
+      - id: ruff
+        args: ["--fix", "--show-fixes"]
+        stages: [manual]
 
-- repo: https://github.com/psf/black
-  rev: "22.12.0"
-  hooks:
-  - id: black
+  - repo: https://github.com/mgedmin/check-manifest
+    rev: "0.49"
+    hooks:
+      - id: check-manifest
+        stages: [manual]
 
-- repo: https://github.com/pre-commit/mirrors-mypy
-  rev: "v0.991"
-  hooks:
-  - id: mypy
-    files: src
-    stages: [manual]
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.2.5"
+    hooks:
+      - id: codespell
+        args: ["-L", "sur,nd"]
+        stages: [manual]
 
-- repo: https://github.com/hadialqattan/pycln
-  rev: "v2.1.2"
-  hooks:
-  - id: pycln
-    args: ["--all"]
+  # - repo: https://github.com/pre-commit/pygrep-hooks
+  #   rev: "v1.10.0"
+  #   hooks:
+  #   - id: python-check-blanket-noqa
+  #   - id: python-check-blanket-type-ignore
+  #   - id: python-no-log-warn
+  #   - id: python-no-eval
+  #   - id: python-use-type-annotations
+  #   - id: rst-backticks
+  #   - id: rst-directive-colons
+  #   - id: rst-inline-touching-normal
 
-- repo: https://github.com/PyCQA/flake8
-  rev: "6.0.0"
-  hooks:
-  - id: flake8
-    additional_dependencies: [
-      flake8-bugbear,
-      flake8-print,
-      flake8-docstrings,
-      pep8-naming
-    ]
-    args: ["--docstring-convention", "numpy"]  # or google, change me
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: "v0.9.0.5"
+    hooks:
+      - id: shellcheck
 
-- repo: https://github.com/kynan/nbstripout
-  rev: "0.6.1"
-  hooks:
-  - id: nbstripout
-    args: ["--strip-empty-cells",
-           "--extra-keys", "metadata.kernelspec metadata.language_info"]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.0-alpha.9-for-vscode"
+    hooks:
+      - id: prettier
+        types_or: [yaml, markdown, html, css, scss, javascript, json]
 
-- repo: https://github.com/mgedmin/check-manifest
-  rev: "0.49"
-  hooks:
-  - id: check-manifest
-    stages: [manual]
+  - repo: https://github.com/kynan/nbstripout
+    rev: "0.6.1"
+    hooks:
+      - id: nbstripout
+        args:
+          [
+            "--drop-empty-cells",
+            "--extra-keys",
+            "metadata.kernelspec metadata.language_info",
+          ]
 
-- repo: https://github.com/codespell-project/codespell
-  rev: "v2.2.2"
-  hooks:
-  - id: codespell
-    args: ["-L", "nd,unparseable,compiletime"]
-
-- repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: "v0.9.0.2"
-  hooks:
-  - id: shellcheck
-
-- repo: https://github.com/pre-commit/pygrep-hooks
-  rev: "v1.9.0"
-  hooks:
-  - id: python-no-log-warn
-  - id: rst-backticks
-  - id: rst-directive-colons
-  - id: rst-inline-touching-normal
-
-- repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v3.0.0-alpha.4"
-  hooks:
-    - id: prettier
-      types_or: [yaml, markdown, html, css, scss, javascript, json]
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: "v16.0.6"
+    hooks:
+      - id: clang-format
+        types_or: [c++, c, cuda]
+        stages: [manual]

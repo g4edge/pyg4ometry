@@ -13,7 +13,7 @@ import numpy as _np
 class TwistedTrap(_SolidBase, _TwistedSolid):
     """
     Constructs a general trapezoid with a twist around one axis.
-    
+
     :param name:          of the solid
     :type name:           str
     :param twistedAngle:  angle of twist (<90 deg)
@@ -41,7 +41,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     :param registry:     for storing solid
     :type registry:      Registry
     :param lunit:        length unit (nm,um,mm,m,km) for solid
-    :type lunit:         str    
+    :type lunit:         str
     :param aunit:        angle unit (rad,deg) for solid
     :type aunit:         str
     """
@@ -61,7 +61,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         self.pDx3         = pDx3
         self.pDx4         = pDx4
         self.pAlp         = pAlp
-        self.lunit        = lunit 
+        self.lunit        = lunit
         self.aunit        = aunit
         self.nstack       = nstack if nstack else _config.SolidDefaults.TwistedTrap.nstack
 
@@ -128,9 +128,9 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
     def mesh(self):
         _log.info('twistedtrap.pycsgmesh> antlr')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
         pDz = self.evaluateParameter(self.pDz)/2.*luval

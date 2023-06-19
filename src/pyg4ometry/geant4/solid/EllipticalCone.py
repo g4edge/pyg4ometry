@@ -22,7 +22,7 @@ class EllipticalCone(_SolidBase):
     Constructs a cone with elliptical cross-section and an
     optional cut.  Both zMax and pzTopCut are half lengths
     extending from the centre of the cone, at z=0.
-    
+
     :param name:       name of the volume
     :type name:         str
     :param pxSemiAxis: semiaxis in x at z=0 as a fraction of zMax.

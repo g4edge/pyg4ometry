@@ -63,7 +63,7 @@ DEFINE_STANDARD_HANDLE(TDocStd_Application, CDF_Application)
 //! If a client needs detailed information concerning
 //! the events during the Open/Store operation, a MessageDriver
 //! based on Message_PrinterOStream may be used. In case of need client
-//! can implement his own version inheriting from Message_Printer class 
+//! can implement his own version inheriting from Message_Printer class
 //! and add it to the Messanger.
 //! Also the trace level of messages can be tuned by setting trace level (SetTraceLevel (Gravity )) for the used Printer.
 //! By default, trace level is Message_Info, so that all messages are output.
@@ -75,11 +75,11 @@ public:
 
   //! Constructs the new instance and registers it in CDM_Session
   Standard_EXPORT TDocStd_Application();
-  
+
   //! Check if meta data driver was successfully loaded
   //! by the application constructor
   Standard_EXPORT Standard_Boolean IsDriverLoaded() const;
-  
+
   //! Returns resource manager defining supported persistent formats.
   //!
   //! Default implementation loads resource file with name ResourcesName(),
@@ -99,7 +99,7 @@ public:
   //!   - [Format].RetrievalPlugin: [GUID] (optional)
   //!   - [Format].StoragePlugin: [GUID] (optional)
   Standard_EXPORT virtual Handle(Resource_Manager) Resources() Standard_OVERRIDE;
-  
+
   //! Returns the name of the file containing the
   //! resources of this application, for support of legacy
   //! method of loading formats data from resource files.
@@ -107,7 +107,7 @@ public:
   //! Method DefineFormat() can be used to define all necessary
   //! parameters explicitly without actually using resource files.
   //!
-  //! In a resource file, the application associates the 
+  //! In a resource file, the application associates the
   //! schema name of the document with the storage and
   //! retrieval plug-ins that are to be loaded for each
   //! document. On retrieval, the application reads the
@@ -130,13 +130,13 @@ public:
   //!
   //! Default implementation returns empty string.
   Standard_EXPORT virtual Standard_CString ResourcesName();
-  
+
   //! Sets up resources and registers read and storage drivers for
   //! the specified format.
-  //! 
+  //!
   //! @param theFormat - unique name for the format, used to identify it.
   //! @param theDescription - textual description of the format.
-  //! @param theExtension - extension of the files in that format. 
+  //! @param theExtension - extension of the files in that format.
   //!                       The same extension can be used by several formats.
   //! @param theReader - instance of the read driver for the format.
   //!                    Null value is allowed (no possibility to read).
@@ -160,7 +160,7 @@ public:
 
   //! returns the number of documents handled by the current applicative session.
   Standard_EXPORT Standard_Integer NbDocuments() const;
-  
+
   //! Constructs the new document aDoc.
   //! aDoc is identified by the index index which is
   //! any integer between 1 and n where n is the
@@ -174,14 +174,14 @@ public:
   //! for (Standard_Integer i = 1; i <= nbdoc; i++) {
   //! aApp->GetDocument(i,aDoc);
   Standard_EXPORT void GetDocument (const Standard_Integer index, Handle(TDocStd_Document)& aDoc) const;
-  
+
   //! Constructs the empty new document aDoc.
   //! This document will have the format format.
   //! If InitDocument is redefined for a specific
   //! application, the new document is handled by the
   //! applicative session.
   Standard_EXPORT virtual void NewDocument (const TCollection_ExtendedString& format, Handle(TDocStd_Document)& aDoc);
-  
+
   //! Initialize the document aDoc for the applicative session.
   //! This virtual function is called by NewDocument
   //! and is to be redefined for each specific application.
@@ -190,11 +190,11 @@ public:
   //! to open/save a document
   //! =======================
   Standard_EXPORT virtual void InitDocument (const Handle(TDocStd_Document)& aDoc) const;
-  
+
   //! Close the given document. the document is not any more
   //! handled by the applicative session.
   Standard_EXPORT void Close (const Handle(TDocStd_Document)& aDoc);
-  
+
   //! Returns an index for the document found in the
   //! path path in this applicative session.
   //! If the returned value is 0, the document is not
@@ -216,22 +216,22 @@ public:
   //! return 0;
   //! }
   Standard_EXPORT Standard_Integer IsInSession (const TCollection_ExtendedString& path) const;
-  
+
   //! Retrieves the document aDoc stored under the
   //! name aName in the directory directory.
   //! In order not to override a version of aDoc which
   //! is already in memory, this method can be made
   //! to depend on the value returned by IsInSession.
-  Standard_EXPORT PCDM_ReaderStatus Open (const TCollection_ExtendedString& path, 
+  Standard_EXPORT PCDM_ReaderStatus Open (const TCollection_ExtendedString& path,
                                           Handle(TDocStd_Document)& aDoc,
                                           const Message_ProgressRange& theRange = Message_ProgressRange());
 
   //! Retrieves aDoc from standard SEEKABLE stream theIStream.
   //! the stream should support SEEK fuctionality
-  Standard_EXPORT PCDM_ReaderStatus Open (Standard_IStream& theIStream, Handle(TDocStd_Document)& theDoc, 
+  Standard_EXPORT PCDM_ReaderStatus Open (Standard_IStream& theIStream, Handle(TDocStd_Document)& theDoc,
                                           const Message_ProgressRange& theRange = Message_ProgressRange());
 
-  
+
   //! Save the  active document  in the file  <name> in the
   //! path <path> ; o verwrites  the file  if  it already exists.
   Standard_EXPORT PCDM_StoreStatus SaveAs (const Handle(TDocStd_Document)& aDoc,
@@ -243,14 +243,14 @@ public:
   Standard_EXPORT PCDM_StoreStatus SaveAs (const Handle(TDocStd_Document)& theDoc,
                                            Standard_OStream& theOStream,
                                            const Message_ProgressRange& theRange = Message_ProgressRange());
-  
+
   //! Save aDoc active document.
   //! Exceptions:
   //! Standard_NotImplemented if the document
   //! was not retrieved in the applicative session by using Open.
   Standard_EXPORT PCDM_StoreStatus Save (const Handle(TDocStd_Document)& aDoc,
                                          const Message_ProgressRange& theRange = Message_ProgressRange());
-  
+
   //! Save the  active document  in the file  <name> in the
   //! path <path>  .  overwrite  the file  if  it
   //! already exist.
@@ -265,7 +265,7 @@ public:
                                            Standard_OStream& theOStream,
                                            TCollection_ExtendedString& theStatusMessage,
                                            const Message_ProgressRange& theRange = Message_ProgressRange());
-  
+
   //! Save the document overwriting the previous file
   Standard_EXPORT PCDM_StoreStatus Save (const Handle(TDocStd_Document)& aDoc,
                                          TCollection_ExtendedString& theStatusMessage,
@@ -273,10 +273,10 @@ public:
 
   //! Notification that is fired at each OpenTransaction event.
   Standard_EXPORT virtual void OnOpenTransaction (const Handle(TDocStd_Document)& theDoc);
-  
+
   //! Notification that is fired at each CommitTransaction event.
   Standard_EXPORT virtual void OnCommitTransaction (const Handle(TDocStd_Document)& theDoc);
-  
+
   //! Notification that is fired at each AbortTransaction event.
   Standard_EXPORT virtual void OnAbortTransaction (const Handle(TDocStd_Document)& theDoc);
 

@@ -56,7 +56,7 @@ class Trd(_SolidBase):
 
     def mesh(self):
         _log.info('trd.pycsgmesh> antlr')
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
 
         pX1 = self.evaluateParameter(self.pX1)*luval/2.
@@ -70,31 +70,30 @@ class Trd(_SolidBase):
                                              _Vertex(_Vector(-pX2, -pY2, pZ)),
                                              _Vertex(_Vector(pX2,  -pY2, pZ)),
                                              _Vertex(_Vector(pX2,  pY2,  pZ))]),
-                                   
+
                                    _Polygon([ _Vertex(_Vector(-pX1, -pY1, -pZ)),
                                               _Vertex(_Vector(-pX1,  pY1, -pZ)),
                                               _Vertex(_Vector(pX1,   pY1, -pZ)),
                                               _Vertex(_Vector(pX1,  -pY1, -pZ))]),
-                                   
+
                                    _Polygon([_Vertex(_Vector(pX2,  -pY2,  pZ)),
                                              _Vertex(_Vector(-pX2, -pY2,  pZ)),
                                              _Vertex(_Vector(-pX1, -pY1, -pZ)),
                                              _Vertex(_Vector(pX1,  -pY1, -pZ))]),
-                                   
+
                                    _Polygon([_Vertex(_Vector(pX2,  pY2,  pZ)),
                                              _Vertex(_Vector(pX1,  pY1, -pZ)),
                                              _Vertex(_Vector(-pX1, pY1, -pZ)),
                                              _Vertex(_Vector(-pX2, pY2,  pZ))]),
-                                   
+
                                    _Polygon([_Vertex(_Vector(-pX2,  pY2,  pZ)),
                                              _Vertex(_Vector(-pX1,  pY1, -pZ)),
                                              _Vertex(_Vector(-pX1, -pY1, -pZ)),
                                              _Vertex(_Vector(-pX2, -pY2,  pZ))]),
-                                   
+
                                    _Polygon([_Vertex(_Vector(pX2, -pY2,  pZ)),
                                              _Vertex(_Vector(pX1, -pY1, -pZ)),
                                              _Vertex(_Vector(pX1,  pY1, -pZ)),
                                              _Vertex(_Vector(pX2,  pY2,  pZ))])])
-        
-        return mesh
 
+        return mesh

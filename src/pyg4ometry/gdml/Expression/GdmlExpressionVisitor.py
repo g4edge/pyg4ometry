@@ -78,5 +78,3 @@ class GdmlExpressionVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by GdmlExpressionParser#relop.
     def visitRelop(self, ctx):
         return self.visitChildren(ctx)
-
-

@@ -47,9 +47,9 @@ class Sphere(_SolidBase):
     :param aunit: angle unit (rad,deg) for solid
     :type aunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
+    :type nslice: int
     :param nstack: number of theta elements for meshing
-    :type nstack: int 
+    :type nstack: int
     """
     def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
                  pDTheta, registry, lunit="mm", aunit="rad",
@@ -61,7 +61,7 @@ class Sphere(_SolidBase):
         self.pSPhi   = pSPhi
         self.pDPhi   = pDPhi
         self.pSTheta = pSTheta
-        self.pDTheta = pDTheta    
+        self.pDTheta = pDTheta
         self.nslice  = nslice if nslice else _config.SolidDefaults.Sphere.nslice
         self.nstack  = nstack if nstack else _config.SolidDefaults.Sphere.nslice
         self.lunit   = lunit

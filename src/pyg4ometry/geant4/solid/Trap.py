@@ -141,4 +141,3 @@ class Trap(_SolidBase):
                           vg + va3 - vb2])
 
         return mesh
-

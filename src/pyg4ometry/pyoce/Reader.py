@@ -43,4 +43,3 @@ class Reader :
         self.shapeTool.GetReferredShape(label, rlabel)
         if not rlabel.IsNull() :
             self.traverse(rlabel)
-

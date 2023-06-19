@@ -3,7 +3,7 @@ from pyg4ometry import stl
 from pyg4ometry.visualisation import Convert
 from pyg4ometry.visualisation import Writer
 
-def LoadStl(fileName) : 
+def LoadStl(fileName) :
     reg = geant4.Registry()
     r = stl.Reader(fileName, registry=reg)
     s = r.getSolid()

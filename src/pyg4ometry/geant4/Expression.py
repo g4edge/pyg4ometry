@@ -39,4 +39,3 @@ class Expression(object):
 
     def str(self):
         return 'Expression : '+self.name+' : '+str(float(self))
-

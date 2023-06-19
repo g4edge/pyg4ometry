@@ -7,7 +7,7 @@ import pyg4ometry.exceptions
 
 class Intersection(_SolidBase):
     """
-    Intersection between two solids     
+    Intersection between two solids
 
     :param name: of solid
     :type name: str
@@ -23,7 +23,7 @@ class Intersection(_SolidBase):
     """
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
         super(Intersection, self).__init__(name, 'Intersection', registry)
-        # circular import 
+        # circular import
         import pyg4ometry.gdml.Defines as _defines
 
         self.obj1 = obj1
@@ -33,11 +33,11 @@ class Intersection(_SolidBase):
         self.varNames = ["tra2"]
         self.varUnits = [None]
         self.dependents = []
-        
+
         if addRegistry:
             registry.addSolid(self)
 
-        obj1.dependents.append(self) 
+        obj1.dependents.append(self)
         obj2.dependents.append(self)
 
     def __repr__(self):
@@ -51,20 +51,20 @@ class Intersection(_SolidBase):
 
         _log.info('Intersection.pycsgmesh>>')
 
-        # look up solids in registry 
+        # look up solids in registry
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation 
+        # transformation
         rot   = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
-        # get meshes 
+        # get meshes
         _log.info('Intersection.mesh> mesh1')
         m1 = obj1.mesh()
         _log.info('Intersection.mesh> mesh2')
         m2 = obj2.mesh().clone()
-        
+
         # apply transform to second mesh
         m2.rotate(rot[0],-rad2deg(rot[1]))
         m2.translate(tlate)

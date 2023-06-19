@@ -208,7 +208,7 @@ def cli(inputFileName = None,
         v.addLogicalVolume(reg.getWorldVolume())
         v.removeInvisible()
         v.buildPipelinesAppend()
-        
+
         if bounding :
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)
@@ -325,4 +325,3 @@ def main() :
 
 if __name__ == "__main__":
     main()
-

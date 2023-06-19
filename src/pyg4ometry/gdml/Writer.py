@@ -72,10 +72,10 @@ class Writer(object):
         for logicalName in registry.logicalVolumeList:
             _log.info('gdml.Writer.addDetector> logical '+logicalName)
             logical = registry.logicalVolumeDict[logicalName]
-            if logical.type == "logical" : 
+            if logical.type == "logical" :
                 self.writeLogicalVolume(logical)
                 self.writeMaterial(logical.material)
-            elif logical.type == "assembly" : 
+            elif logical.type == "assembly" :
                 self.writeAssemblyVolume(logical)
 
         # loop over surfaces
@@ -678,7 +678,7 @@ option, preprocessGDML=0;
         if not hasattr(instance, variable):
             raise AttributeError("") #TODO: Add error message
 
-        # Indexed variable 
+        # Indexed variable
         if index is not None:
             try:
                 var = getattr(instance,variable)[index]
@@ -787,13 +787,13 @@ option, preprocessGDML=0;
             oe.appendChild(v)
 
         n = 0
-        for zs in instance.pZslices : 
+        for zs in instance.pZslices :
             z = zs[0]
             x = zs[1][0]
             y = zs[1][1]
             s = zs[2]
             sec = self.createSection(n, z, x, y, s)
-            oe.appendChild(sec)            
+            oe.appendChild(sec)
             n += 1
 
         oe.setAttribute("lunit",instance.lunit)
@@ -801,9 +801,9 @@ option, preprocessGDML=0;
 
     def createrzPoint(self, r, z):
         rz = self.doc.createElement('rzpoint')
- 
+
         rz.setAttribute('r',self.getValueOrExpr(r))
-        rz.setAttribute('z', self.getValueOrExpr(z)) 
+        rz.setAttribute('z', self.getValueOrExpr(z))
 
         return rz
 
@@ -811,7 +811,7 @@ option, preprocessGDML=0;
         oe = self.doc.createElement('genericPolycone')
         oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
-        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi')) 
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
 
         for r,z in zip(instance.pR, instance.pZ):
             p = self.createrzPoint(r, z)
@@ -821,12 +821,12 @@ option, preprocessGDML=0;
         oe.setAttribute("aunit",instance.aunit)
         self.solids.appendChild(oe)
 
-    def writeGenericPolyhedra(self, instance) : 
+    def writeGenericPolyhedra(self, instance) :
         oe = self.doc.createElement('genericPolyhedra')
         oe.setAttribute('name', self.prepend + instance.name)
         oe.setAttribute('startphi', self.getValueOrExprFromInstance(instance,'pSPhi'))
-        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi')) 
-        oe.setAttribute('numsides', self.getValueOrExprFromInstance(instance,'numSide')) 
+        oe.setAttribute('deltaphi', self.getValueOrExprFromInstance(instance,'pDPhi'))
+        oe.setAttribute('numsides', self.getValueOrExprFromInstance(instance,'numSide'))
 
         for r,z in zip(instance.pR, instance.pZ):
             p = self.createrzPoint(r, z)
@@ -987,16 +987,16 @@ option, preprocessGDML=0;
         self.solids.appendChild(oe)
 
     def createzPlane(self, rInner, rOuter, zplane):
-        d = self.doc.createElement('zplane')               
-        
+        d = self.doc.createElement('zplane')
+
         d.setAttribute('rmin',self.getValueOrExpr(rInner))
         d.setAttribute('rmax',self.getValueOrExpr(rOuter))
-        d.setAttribute('z', self.getValueOrExpr(zplane)) 
+        d.setAttribute('z', self.getValueOrExpr(zplane))
 
         # d.setAttribute('rmin',str(rInner.expr.expression))
         # d.setAttribute('rmax', str(rOuter.expr.expression))
         # d.setAttribute('z', str(zplane.expr.expression))
-        
+
         return d
 
     def writePolycone(self, instance):
@@ -1071,7 +1071,7 @@ option, preprocessGDML=0;
         oe.setAttribute("lunit",instance.lunit)
 
         self.solids.appendChild(oe)
-        
+
     def createPosition(self,name, x, y, z):
         p = self.doc.createElement('position')
         p.setAttribute('name',str(name))
@@ -1209,7 +1209,7 @@ option, preprocessGDML=0;
         oe.setAttribute("aunit",instance.aunit)
 
         self.solids.appendChild(oe)
-        
+
     def writeTwistedTubs(self, instance):
         oe = self.doc.createElement("twistedtubs")
         oe.setAttribute('name',self.prepend + instance.name)
@@ -1222,7 +1222,7 @@ option, preprocessGDML=0;
         oe.setAttribute("lunit",instance.lunit)
         oe.setAttribute("aunit",instance.aunit)
 
-        self.solids.appendChild(oe)    
+        self.solids.appendChild(oe)
 
     def writeUnion(self, instance):
         self.writeSolid(instance.obj1) # Make sure the solids are written first
@@ -1295,7 +1295,7 @@ option, preprocessGDML=0;
             self.writeSolid(obj) # Make sure the solids are written first
 
         oe  = self.doc.createElement('multiUnion')
-        oe.setAttribute('name',self.prepend + instance.name)        
+        oe.setAttribute('name',self.prepend + instance.name)
 
         # loop over objects
         for i, (solid, trans) in enumerate(zip(instance.objects,

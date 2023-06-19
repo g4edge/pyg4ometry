@@ -145,24 +145,24 @@ class GdmlExpressionLexer(Lexer):
     modeNames = [ u"DEFAULT_MODE" ]
 
     literalNames = [ u"<INVALID>",
-            u"'cos'", u"'sin'", u"'tan'", u"'acos'", u"'asin'", u"'atan'", 
-            u"'log'", u"'log10'", u"'sqrt'", u"'exp'", u"'pow'", u"'abs'", 
-            u"'('", u"')'", u"'['", u"']'", u"'+'", u"'-'", u"'*'", u"'/'", 
+            u"'cos'", u"'sin'", u"'tan'", u"'acos'", u"'asin'", u"'atan'",
+            u"'log'", u"'log10'", u"'sqrt'", u"'exp'", u"'pow'", u"'abs'",
+            u"'('", u"')'", u"'['", u"']'", u"'+'", u"'-'", u"'*'", u"'/'",
             u"'>'", u"'<'", u"'='", u"','", u"'.'", u"'^'", u"'pi'", u"'i'" ]
 
     symbolicNames = [ u"<INVALID>",
-            u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", u"ATAN", u"LN", u"LOG", 
-            u"SQRT", u"EXP", u"POWER", u"ABS", u"LPAREN", u"RPAREN", u"LBRACKET", 
-            u"RBRACKET", u"PLUS", u"MINUS", u"TIMES", u"DIV", u"GT", u"LT", 
-            u"EQ", u"COMMA", u"POINT", u"POW", u"PI", u"EULER", u"I", u"VARIABLE", 
+            u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", u"ATAN", u"LN", u"LOG",
+            u"SQRT", u"EXP", u"POWER", u"ABS", u"LPAREN", u"RPAREN", u"LBRACKET",
+            u"RBRACKET", u"PLUS", u"MINUS", u"TIMES", u"DIV", u"GT", u"LT",
+            u"EQ", u"COMMA", u"POINT", u"POW", u"PI", u"EULER", u"I", u"VARIABLE",
             u"SCIENTIFIC_NUMBER", u"WS" ]
 
-    ruleNames = [ u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", u"ATAN", u"LN", 
-                  u"LOG", u"SQRT", u"EXP", u"POWER", u"ABS", u"LPAREN", 
-                  u"RPAREN", u"LBRACKET", u"RBRACKET", u"PLUS", u"MINUS", 
-                  u"TIMES", u"DIV", u"GT", u"LT", u"EQ", u"COMMA", u"POINT", 
-                  u"POW", u"PI", u"EULER", u"I", u"VARIABLE", u"VALID_ID_START", 
-                  u"VALID_ID_CHAR", u"SCIENTIFIC_NUMBER", u"NUMBER", u"E1", 
+    ruleNames = [ u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", u"ATAN", u"LN",
+                  u"LOG", u"SQRT", u"EXP", u"POWER", u"ABS", u"LPAREN",
+                  u"RPAREN", u"LBRACKET", u"RBRACKET", u"PLUS", u"MINUS",
+                  u"TIMES", u"DIV", u"GT", u"LT", u"EQ", u"COMMA", u"POINT",
+                  u"POW", u"PI", u"EULER", u"I", u"VARIABLE", u"VALID_ID_START",
+                  u"VALID_ID_CHAR", u"SCIENTIFIC_NUMBER", u"NUMBER", u"E1",
                   u"E2", u"SIGN", u"WS" ]
 
     grammarFileName = u"GdmlExpression.g4"
@@ -173,5 +173,3 @@ class GdmlExpressionLexer(Lexer):
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None
-
-

@@ -6,6 +6,3 @@ def gdml2stl(gdmlFileName, stlFileName = "output.gdml", solidName = "ws") :
     s = reg.solidDict[solidName]
 
     _pyg4.convert.pycsgMeshToStl(s.mesh(),stlFileName)
-
-
-

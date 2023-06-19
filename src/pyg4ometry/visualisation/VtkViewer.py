@@ -27,12 +27,12 @@ class VtkViewer:
     def __init__(self, size=(1024, 1024), interpolation="none", **kwargs):
         # create a renderer
         self.ren = _vtk.vtkRenderer()
-        
+
         # create a rendering window
         self.renWin = _vtk.vtkRenderWindow()
         self.renWin.AddRenderer(self.ren)
 
-        # create a rendering window interactor 
+        # create a rendering window interactor
         self.iren = _vtk.vtkRenderWindowInteractor()
         self.iren.SetRenderWindow(self.renWin)
 
@@ -44,24 +44,24 @@ class VtkViewer:
         self.ren.SetBackground(1.0, 1.0, 1.0)
         self.renWin.SetSize(size[0],size[1])
 
-        # local meshes 
+        # local meshes
         self.localmeshes = {}
         self.localmeshesOverlap = {}
 
         # filters (per mesh)
         self.filters = {}
         self.filtersOverlap = {}
-        
-        # mappers (per mesh) 
+
+        # mappers (per mesh)
         self.mappers = []
         self.physicalMapperMap = {}
         self.mappersOverlap = []
         self.physicalMapperMapOverlap = {}
 
-        # actors (per placement) 
+        # actors (per placement)
         self.actors = []
         self.physicalActorMap = {}
-        self.actorsOverlap = [] 
+        self.actorsOverlap = []
         self.physicalActorMapOverlap = {}
 
         # cutters
@@ -95,7 +95,7 @@ class VtkViewer:
     def addAxes(self, length = 20.0, origin = (0,0,0)):
         """
         Add x,y,z axis to the scene.
-        
+
         :param length: float - length of each axis in mm
         :param origin: (float,float,float) - (x,y,z) of origin in mm
         """
@@ -336,16 +336,16 @@ class VtkViewer:
             self.addLogicalVolumeRecursive(logical, mtra, tra)
 
     def addLogicalVolumeBounding(self, logical):
-        # add logical solid as wireframe 
+        # add logical solid as wireframe
         lvm    = logical.mesh.localmesh
         lvmPD  = _Convert.pycsgMeshToVtkPolyData(lvm)
         lvmFLT = _vtk.vtkTriangleFilter()
-        lvmFLT.AddInputData(lvmPD)        
+        lvmFLT.AddInputData(lvmPD)
         lvmMAP = _vtk.vtkPolyDataMapper()
         lvmMAP.ScalarVisibilityOff()
-        lvmMAP.SetInputConnection(lvmFLT.GetOutputPort())        
+        lvmMAP.SetInputConnection(lvmFLT.GetOutputPort())
         lvmActor = _vtk.vtkActor()
-        lvmActor.SetMapper(lvmMAP)         
+        lvmActor.SetMapper(lvmMAP)
         lvmActor.GetProperty().SetRepresentationToWireframe()
         lvmActor.GetProperty().SetOpacity(0.5)
         self.actors.append(lvmActor)
@@ -474,7 +474,7 @@ class VtkViewer:
                 else :
                     pvmsca = _np.diag([1,1,1])
                 pvtra = _np.array(pv.position.eval())
-                
+
                 # pv compound transform
                 new_mtra = mtra * pvmsca * pvmrot
                 new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
@@ -503,7 +503,7 @@ class VtkViewer:
                     # pv transform
                     pvmrot = _transformation.tbxyz2matrix(trans[0])
                     pvtra = _np.array(trans[1])
-                    
+
                     # pv compound transform
                     new_mtra = mtra * pvmrot
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
@@ -610,10 +610,10 @@ class VtkViewer:
 
         if not mappername in mapperMap:
             mapperMap[mappername] = vtkMAP
-            
+
         # Actor
-        actorname = pv_name+"_actor"             
-        vtkActor = _vtk.vtkActor() 
+        actorname = pv_name+"_actor"
+        vtkActor = _vtk.vtkActor()
         vtkActor.SetMapper(vtkMAP)
         vtkActor.name = actorname
 
@@ -802,8 +802,8 @@ class VtkViewer:
     def exportCutterSection(self, filename, normal='x', scaling=1.0):
         """
         Export the section lines in plane perpendicular to normal.
-        Exported as json text. 
-        
+        Exported as json text.
+
         :param filename: (str) - name of file to export to
         :param normal: (str) - one of "x", "y" or "z"
         :param scaling: (float) - multiplier for all cutter line coordinates on export
@@ -862,7 +862,7 @@ class VtkViewer:
         :param position: [float, float, float] - (x,y,z) position in scene (mm)
         :param normal:   [float, float, float] - (nx,ny,z) normal unit vector
         :param colour: None or [float, float, float] - [r,g,b] in range [0:1]
-        
+
         Cutters are stored in self.usercutters.
         """
         if colour is None:
@@ -930,18 +930,18 @@ class VtkViewer:
         print("Focal point     ", activeCamera.GetFocalPoint())
         print("Camera position ", activeCamera.GetPosition())
         print("Focal distance  ", activeCamera.GetDistance())
-        
+
 class VtkViewerColoured(VtkViewer):
     """
-    Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours. 
-    
+    Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
+
     :Keyword Arguments:
         * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
         * **interpolation** (str): see :class:`VtkViewer`
         * **defaultColour** (str): "random" or [r,g,b]
 
     :Examples:
-    
+
     >>> vMaterialMap = VtkViewerColoured(materialVisOptions={"G4_WATER":[0,0,1]})
     >>> vRandom = VtkViewerColoured(defaultColour="random")
     >>> vColoured = VtkViewerColoured(defaultColour=[0.1,0.1,0.1])

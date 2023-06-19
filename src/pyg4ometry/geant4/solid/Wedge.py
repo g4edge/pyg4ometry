@@ -70,4 +70,3 @@ class Wedge(_SolidBase):
         mesh = _CSG.fromPolygons(polygons)
 
         return mesh
-

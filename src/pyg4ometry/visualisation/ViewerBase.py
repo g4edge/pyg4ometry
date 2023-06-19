@@ -518,7 +518,3 @@ class ViewerBase :
 
     def __repr__(self):
         pass
-
-
-
-

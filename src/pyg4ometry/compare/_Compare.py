@@ -103,7 +103,7 @@ class Tests:
 class TestResult(_enum.Enum):
     """
     A test result can be either pass, fail or not conducted.
-    
+
     Use 0,1 so we can also implicitly construct this with a Boolean.
 
     Use the bitwise or operator `|` and not the keyword `or`. This bitwise or
@@ -161,7 +161,7 @@ class ComparisonResult:
     def __init__(self):
         self.test = _defaultdict(list)
         self.result = TestResult.NotTested
-        
+
     def __getitem__(self,key):
         return self.test[key]
 
@@ -228,7 +228,7 @@ class ComparisonResult:
             for result in self.test[testName]:
                 print(result)
             print(" ") # for a new line
-                    
+
 
 def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=False):
     """
@@ -623,7 +623,7 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
     """
     Compare two materials with a set of tests.
 
-    This tests assumes both referenceMaterial and otherMaterial are derived from the 
+    This tests assumes both referenceMaterial and otherMaterial are derived from the
     type pyg4ometry.geant4._Material.Material.
 
     Compares, name, classname, density, n components
@@ -666,7 +666,7 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
             result['materialDensity'] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result['materialDensity'] += [TestResultNamed(testName, TestResult.Passed)]
-            
+
     # n components of material
     if om.number_of_components != rm.number_of_components:
         details = "# components: (reference): "+str(rm.number_of_components)
@@ -674,7 +674,7 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
         result['materialNComponents'] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result['materialNComponents'] += [TestResultNamed(testName, TestResult.Passed)]
-            
+
     # components and fractions
     if om.number_of_components == rm.number_of_components:
         getCompName = lambda tup : tup[0].name
@@ -697,7 +697,7 @@ def materials(referenceMaterial, otherMaterial, tests, lvName="", includeAllTest
                 break # we can't possibly make a more detailed comparison now
             elif includeAllTestResults:
                 result['materialComponentType'] += [TestResultNamed(testName, TestResult.Passed)]
-                
+
             # component fraction
             rFrac, oFrac = rc[1], oc[1]
             if rComponentType == "natoms":
@@ -737,7 +737,7 @@ def _elements(referenceElement, otherElement, tests, lvName="", includeAllTestRe
     oe = otherElement
 
     testName = ": ".join(list(filter(None, [lvName, re.name])))
-    
+
     if tests.names:
         result += _names("elementName", re.name, oe.name, lvName, includeAllTestResults)
     if tests.namesIgnorePointer:
@@ -787,12 +787,12 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     oso = otherSolid
 
     testName = ": ".join(list(filter(None, [lvName, rso.name])))
-    
+
     if tests.names:
         result += _names("solidName", rso.name, oso.name, lvName, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer("solidName", rso.name, oso.name, lvName, includeAllTestResults)
-        
+
     if tests.solidExact:
         # solid type
         if rso.type != oso.type:
@@ -890,7 +890,7 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
             'position' : tests.toleranceTranslationFraction,
             'scale'    : tests.toleranceScaleFraction}
     tolerance = tols[vectortype]
-    
+
     for v in ['x','y','z']:
         rc, oc = float(getattr(r1,v)), float(getattr(r2,v))
         rc *= _Units.unit(getattr(r1,'unit'))
@@ -916,7 +916,7 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
 
         if includeAllTestResults:
             result[vectortype] += [TestResultNamed(": ".join(list(filter(None, [parentName, r1.name]))), TestResult.Passed)]
-    
+
     return result
 
 def _copyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
@@ -927,7 +927,7 @@ def _copyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
         result['copyNumber'] += [TestResultNamed(pvname, TestResult.Failed, details)]
     elif includeAllTestResults:
         result['copyNumber'] += [TestResultNamed(pvname, TestResult.Passed)]
-    
+
     return result
 
 def _getBoundingBox(obj):
@@ -951,7 +951,7 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
 
     rm = referenceMesh
     om = otherMesh
-    
+
     if tests.shapeExtent:
         if rm and om:
             # can only compare if meshes exist

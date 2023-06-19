@@ -261,9 +261,9 @@ class Reader(object):
             w.writeGmadTester(fn.replace("gdml", "gmad"), fn)
 
 
-    '''    
-    def logicalVolume(self,name, material = "G4_Galactic", reg = None) : 
-        
+    '''
+    def logicalVolume(self,name, material = "G4_Galactic", reg = None) :
+
         s = _TessellatedSolid(name+"_solid",self.facet_list,reg,_TessellatedSolid.MeshType.Stl)
         l = _LogicalVolume(s,material, name+"_pv",reg)
 

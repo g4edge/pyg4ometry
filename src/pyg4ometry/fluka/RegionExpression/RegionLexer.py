@@ -71,12 +71,12 @@ class RegionLexer(Lexer):
             u"'+'", u"'-'", u"'|'", u"'('", u"')'" ]
 
     symbolicNames = [ u"<INVALID>",
-            u"Whitespace", u"InLineComment", u"LineComment", u"Newline", 
-            u"Integer", u"RegionName", u"BodyName", u"Plus", u"Minus", u"Bar", 
+            u"Whitespace", u"InLineComment", u"LineComment", u"Newline",
+            u"Integer", u"RegionName", u"BodyName", u"Plus", u"Minus", u"Bar",
             u"LParen", u"RParen" ]
 
-    ruleNames = [ u"Whitespace", u"InLineComment", u"LineComment", u"Newline", 
-                  u"Integer", u"Digit", u"RegionName", u"BodyName", u"Plus", 
+    ruleNames = [ u"Whitespace", u"InLineComment", u"LineComment", u"Newline",
+                  u"Integer", u"Digit", u"RegionName", u"BodyName", u"Plus",
                   u"Minus", u"Bar", u"LParen", u"RParen" ]
 
     grammarFileName = u"RegionLexer.g4"
@@ -104,11 +104,8 @@ class RegionLexer(Lexer):
     def LineComment_sempred(self, localctx, predIndex):
             if predIndex == 0:
                 return self.column == 1
-         
+
 
     def RegionName_sempred(self, localctx, predIndex):
             if predIndex == 1:
                 return self.column == 1
-         
-
-

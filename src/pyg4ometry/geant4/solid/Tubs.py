@@ -19,7 +19,7 @@ import logging as _log
 class Tubs(_SolidBase):
     """
     Constructs a cylindrical section.
-    
+
     :param name: of solid for registry
     :type name: str
     :param pRMin: inner radius
@@ -39,7 +39,7 @@ class Tubs(_SolidBase):
     :param aunit: angle unit (rad,deg) for solid
     :type aunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int 
+    :type nslice: int
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi, registry,
                  lunit="mm", aunit="rad", nslice=None, addRegistry=True):
@@ -187,6 +187,3 @@ class Tubs(_SolidBase):
         mesh = _CSG.fromPolygons(polygons)
 
         return mesh
-
-
-

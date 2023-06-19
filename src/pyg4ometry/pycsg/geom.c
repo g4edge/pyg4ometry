@@ -2183,7 +2183,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector___init__(CYTHON_UNUS
  *                 self.x = a.get('x', 0.0)
  *                 self.y = a.get('y', 0.0)
  */
-    __pyx_t_5 = PyDict_Check(__pyx_v_a); 
+    __pyx_t_5 = PyDict_Check(__pyx_v_a);
     __pyx_t_6 = (__pyx_t_5 != 0);
     if (__pyx_t_6) {
 
@@ -2279,7 +2279,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector___init__(CYTHON_UNUS
  *                 self.x = a[0]
  *                 self.y = a[1]             # <<<<<<<<<<<<<<
  *                 self.z = a[2]
- * 
+ *
  */
       __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_a, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
@@ -2290,7 +2290,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector___init__(CYTHON_UNUS
  *                 self.x = a[0]
  *                 self.y = a[1]
  *                 self.z = a[2]             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
       __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_a, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
@@ -2344,10 +2344,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector___init__(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":36
  *                 self.z = a[2]
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -2381,10 +2381,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_2__repr__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":37
- * 
+ *
  *     def __repr__(self):
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2456,10 +2456,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_2__repr__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":36
  *                 self.z = a[2]
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  */
 
   /* function exit code */
@@ -2481,7 +2481,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_2__repr__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":39
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         """ Clone. """
  *         return Vector(self.x, self.y, self.z)
@@ -2522,7 +2522,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_4clone(CYTHON_UNUSED
  *     def clone(self):
  *         """ Clone. """
  *         return Vector(self.x, self.y, self.z)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def negated(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2594,7 +2594,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_4clone(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":39
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         """ Clone. """
  *         return Vector(self.x, self.y, self.z)
@@ -2619,7 +2619,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_4clone(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":43
  *         return Vector(self.x, self.y, self.z)
- * 
+ *
  *     def negated(self):             # <<<<<<<<<<<<<<
  *         """ Negated. """
  *         return Vector(-self.x, -self.y, -self.z)
@@ -2660,7 +2660,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_6negated(CYTHON_UNUS
  *     def negated(self):
  *         """ Negated. """
  *         return Vector(-self.x, -self.y, -self.z)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __neg__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2741,7 +2741,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_6negated(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/geom.pyx":43
  *         return Vector(self.x, self.y, self.z)
- * 
+ *
  *     def negated(self):             # <<<<<<<<<<<<<<
  *         """ Negated. """
  *         return Vector(-self.x, -self.y, -self.z)
@@ -2766,10 +2766,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_6negated(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":47
  *         return Vector(-self.x, -self.y, -self.z)
- * 
+ *
  *     def __neg__(self):             # <<<<<<<<<<<<<<
  *         return self.negated()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -2798,10 +2798,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_8__neg__(CYTHON_UNUS
   __Pyx_RefNannySetupContext("__neg__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":48
- * 
+ *
  *     def __neg__(self):
  *         return self.negated()             # <<<<<<<<<<<<<<
- * 
+ *
  *     def plus(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2828,10 +2828,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_8__neg__(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/geom.pyx":47
  *         return Vector(-self.x, -self.y, -self.z)
- * 
+ *
  *     def __neg__(self):             # <<<<<<<<<<<<<<
  *         return self.negated()
- * 
+ *
  */
 
   /* function exit code */
@@ -2849,7 +2849,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_8__neg__(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":50
  *         return self.negated()
- * 
+ *
  *     def plus(self, a):             # <<<<<<<<<<<<<<
  *         """ Add. """
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
@@ -2941,7 +2941,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_10plus(CYTHON_UNUSED
  *     def plus(self, a):
  *         """ Add. """
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __add__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3040,7 +3040,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_10plus(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":50
  *         return self.negated()
- * 
+ *
  *     def plus(self, a):             # <<<<<<<<<<<<<<
  *         """ Add. """
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
@@ -3065,10 +3065,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_10plus(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":54
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
- * 
+ *
  *     def __add__(self, a):             # <<<<<<<<<<<<<<
  *         return self.plus(a)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3148,10 +3148,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_12__add__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__add__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":55
- * 
+ *
  *     def __add__(self, a):
  *         return self.plus(a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def minus(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3178,10 +3178,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_12__add__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":54
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
- * 
+ *
  *     def __add__(self, a):             # <<<<<<<<<<<<<<
  *         return self.plus(a)
- * 
+ *
  */
 
   /* function exit code */
@@ -3199,7 +3199,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_12__add__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":57
  *         return self.plus(a)
- * 
+ *
  *     def minus(self, a):             # <<<<<<<<<<<<<<
  *         """ Subtract. """
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
@@ -3291,7 +3291,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_14minus(CYTHON_UNUSE
  *     def minus(self, a):
  *         """ Subtract. """
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __sub__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3381,7 +3381,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_14minus(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":57
  *         return self.plus(a)
- * 
+ *
  *     def minus(self, a):             # <<<<<<<<<<<<<<
  *         """ Subtract. """
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
@@ -3406,10 +3406,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_14minus(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":61
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
- * 
+ *
  *     def __sub__(self, a):             # <<<<<<<<<<<<<<
  *         return self.minus(a)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3489,10 +3489,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_16__sub__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__sub__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":62
- * 
+ *
  *     def __sub__(self, a):
  *         return self.minus(a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def times(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3519,10 +3519,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_16__sub__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":61
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
- * 
+ *
  *     def __sub__(self, a):             # <<<<<<<<<<<<<<
  *         return self.minus(a)
- * 
+ *
  */
 
   /* function exit code */
@@ -3540,7 +3540,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_16__sub__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":64
  *         return self.minus(a)
- * 
+ *
  *     def times(self, a):             # <<<<<<<<<<<<<<
  *         """ Multiply. """
  *         return Vector(self.x*a, self.y*a, self.z*a)
@@ -3632,7 +3632,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_18times(CYTHON_UNUSE
  *     def times(self, a):
  *         """ Multiply. """
  *         return Vector(self.x*a, self.y*a, self.z*a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __mul__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3713,7 +3713,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_18times(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":64
  *         return self.minus(a)
- * 
+ *
  *     def times(self, a):             # <<<<<<<<<<<<<<
  *         """ Multiply. """
  *         return Vector(self.x*a, self.y*a, self.z*a)
@@ -3738,10 +3738,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_18times(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":68
  *         return Vector(self.x*a, self.y*a, self.z*a)
- * 
+ *
  *     def __mul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3821,10 +3821,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_20__mul__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__mul__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":69
- * 
+ *
  *     def __mul__(self, a):
  *         return self.times(a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __rmul__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3851,10 +3851,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_20__mul__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":68
  *         return Vector(self.x*a, self.y*a, self.z*a)
- * 
+ *
  *     def __mul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
 
   /* function exit code */
@@ -3872,10 +3872,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_20__mul__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":71
  *         return self.times(a)
- * 
+ *
  *     def __rmul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3955,10 +3955,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_22__rmul__(CYTHON_UN
   __Pyx_RefNannySetupContext("__rmul__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":72
- * 
+ *
  *     def __rmul__(self, a):
  *         return self.times(a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def dividedBy(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3985,10 +3985,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_22__rmul__(CYTHON_UN
 
   /* "pyg4ometry/pycsg/geom.pyx":71
  *         return self.times(a)
- * 
+ *
  *     def __rmul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
 
   /* function exit code */
@@ -4006,7 +4006,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_22__rmul__(CYTHON_UN
 
 /* "pyg4ometry/pycsg/geom.pyx":74
  *         return self.times(a)
- * 
+ *
  *     def dividedBy(self, a):             # <<<<<<<<<<<<<<
  *         """ Divide. """
  *         return Vector(self.x/a, self.y/a, self.z/a)
@@ -4098,7 +4098,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_24dividedBy(CYTHON_U
  *     def dividedBy(self, a):
  *         """ Divide. """
  *         return Vector(self.x/a, self.y/a, self.z/a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __truediv__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4179,7 +4179,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_24dividedBy(CYTHON_U
 
   /* "pyg4ometry/pycsg/geom.pyx":74
  *         return self.times(a)
- * 
+ *
  *     def dividedBy(self, a):             # <<<<<<<<<<<<<<
  *         """ Divide. """
  *         return Vector(self.x/a, self.y/a, self.z/a)
@@ -4204,10 +4204,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_24dividedBy(CYTHON_U
 
 /* "pyg4ometry/pycsg/geom.pyx":78
  *         return Vector(self.x/a, self.y/a, self.z/a)
- * 
+ *
  *     def __truediv__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4288,10 +4288,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_26__truediv__(CYTHON
   __Pyx_RefNannySetupContext("__truediv__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":79
- * 
+ *
  *     def __truediv__(self, a):
  *         return self.dividedBy(float(a))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __div__(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4321,10 +4321,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_26__truediv__(CYTHON
 
   /* "pyg4ometry/pycsg/geom.pyx":78
  *         return Vector(self.x/a, self.y/a, self.z/a)
- * 
+ *
  *     def __truediv__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
 
   /* function exit code */
@@ -4343,10 +4343,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_26__truediv__(CYTHON
 
 /* "pyg4ometry/pycsg/geom.pyx":81
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def __div__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4427,10 +4427,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_28__div__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__div__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":82
- * 
+ *
  *     def __div__(self, a):
  *         return self.dividedBy(float(a))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def dot(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4460,10 +4460,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_28__div__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":81
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def __div__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
 
   /* function exit code */
@@ -4482,7 +4482,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_28__div__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":84
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def dot(self, a):             # <<<<<<<<<<<<<<
  *         """ Dot. """
  *         return self.x*a.x + self.y*a.y + self.z*a.z
@@ -4570,7 +4570,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_30dot(CYTHON_UNUSED 
  *     def dot(self, a):
  *         """ Dot. """
  *         return self.x*a.x + self.y*a.y + self.z*a.z             # <<<<<<<<<<<<<<
- * 
+ *
  *     def scale(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4612,7 +4612,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_30dot(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/geom.pyx":84
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def dot(self, a):             # <<<<<<<<<<<<<<
  *         """ Dot. """
  *         return self.x*a.x + self.y*a.y + self.z*a.z
@@ -4634,10 +4634,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_30dot(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/geom.pyx":88
  *         return self.x*a.x + self.y*a.y + self.z*a.z
- * 
+ *
  *     def scale(self, a):             # <<<<<<<<<<<<<<
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4722,10 +4722,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_32scale(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("scale", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":89
- * 
+ *
  *     def scale(self, a):
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def lerp(self, a, t):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4815,10 +4815,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_32scale(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":88
  *         return self.x*a.x + self.y*a.y + self.z*a.z
- * 
+ *
  *     def scale(self, a):             # <<<<<<<<<<<<<<
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  */
 
   /* function exit code */
@@ -4840,7 +4840,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_32scale(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":91
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  *     def lerp(self, a, t):             # <<<<<<<<<<<<<<
  *         """ Lerp. Linear interpolation from self to a"""
  *         return self.plus(a.minus(self).times(t));
@@ -4941,7 +4941,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_34lerp(CYTHON_UNUSED
  *     def lerp(self, a, t):
  *         """ Lerp. Linear interpolation from self to a"""
  *         return self.plus(a.minus(self).times(t));             # <<<<<<<<<<<<<<
- * 
+ *
  *     def length(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5004,7 +5004,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_34lerp(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":91
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  *     def lerp(self, a, t):             # <<<<<<<<<<<<<<
  *         """ Lerp. Linear interpolation from self to a"""
  *         return self.plus(a.minus(self).times(t));
@@ -5028,7 +5028,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_34lerp(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":95
  *         return self.plus(a.minus(self).times(t));
- * 
+ *
  *     def length(self):             # <<<<<<<<<<<<<<
  *         """ Length. """
  *         return math.sqrt(self.dot(self))
@@ -5066,7 +5066,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_36length(CYTHON_UNUS
  *     def length(self):
  *         """ Length. """
  *         return math.sqrt(self.dot(self))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def unit(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5114,7 +5114,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_36length(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/geom.pyx":95
  *         return self.plus(a.minus(self).times(t));
- * 
+ *
  *     def length(self):             # <<<<<<<<<<<<<<
  *         """ Length. """
  *         return math.sqrt(self.dot(self))
@@ -5137,7 +5137,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_36length(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":99
  *         return math.sqrt(self.dot(self))
- * 
+ *
  *     def unit(self):             # <<<<<<<<<<<<<<
  *         """ Normalize. """
  *         return self.dividedBy(self.length())
@@ -5175,7 +5175,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_38unit(CYTHON_UNUSED
  *     def unit(self):
  *         """ Normalize. """
  *         return self.dividedBy(self.length())             # <<<<<<<<<<<<<<
- * 
+ *
  *     def cross(self, a):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5220,7 +5220,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_38unit(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":99
  *         return math.sqrt(self.dot(self))
- * 
+ *
  *     def unit(self):             # <<<<<<<<<<<<<<
  *         """ Normalize. """
  *         return self.dividedBy(self.length())
@@ -5243,7 +5243,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_38unit(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":103
  *         return self.dividedBy(self.length())
- * 
+ *
  *     def cross(self, a):             # <<<<<<<<<<<<<<
  *         """ Cross. """
  *         return Vector(
@@ -5376,7 +5376,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_40cross(CYTHON_UNUSE
  *             self.y * a.z - self.z * a.y,
  *             self.z * a.x - self.x * a.z,             # <<<<<<<<<<<<<<
  *             self.x * a.y - self.y * a.x)
- * 
+ *
  */
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_z); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -5403,7 +5403,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_40cross(CYTHON_UNUSE
  *             self.y * a.z - self.z * a.y,
  *             self.z * a.x - self.x * a.z,
  *             self.x * a.y - self.y * a.x)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __getitem__(self, key):
  */
   __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_x); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 108, __pyx_L1_error)
@@ -5486,7 +5486,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_40cross(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":103
  *         return self.dividedBy(self.length())
- * 
+ *
  *     def cross(self, a):             # <<<<<<<<<<<<<<
  *         """ Cross. """
  *         return Vector(
@@ -5512,10 +5512,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_40cross(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":110
  *             self.x * a.y - self.y * a.x)
- * 
+ *
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5596,10 +5596,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_42__getitem__(CYTHON
   __Pyx_RefNannySetupContext("__getitem__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":111
- * 
+ *
  *     def __getitem__(self, key):
  *         return (self.x, self.y, self.z)[key]             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __setitem__(self, key, value):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5629,10 +5629,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_42__getitem__(CYTHON
 
   /* "pyg4ometry/pycsg/geom.pyx":110
  *             self.x * a.y - self.y * a.x)
- * 
+ *
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  */
 
   /* function exit code */
@@ -5651,7 +5651,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_42__getitem__(CYTHON
 
 /* "pyg4ometry/pycsg/geom.pyx":113
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
  *         l = [self.x, self.y, self.z]
  *         l[key] = value
@@ -5747,7 +5747,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
   __Pyx_RefNannySetupContext("__setitem__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":114
- * 
+ *
  *     def __setitem__(self, key, value):
  *         l = [self.x, self.y, self.z]             # <<<<<<<<<<<<<<
  *         l[key] = value
@@ -5778,7 +5778,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
  *         l = [self.x, self.y, self.z]
  *         l[key] = value             # <<<<<<<<<<<<<<
  *         self.x, self.y, self.z = l
- * 
+ *
  */
   if (unlikely(PyObject_SetItem(__pyx_v_l, __pyx_v_key, __pyx_v_value) < 0)) __PYX_ERR(0, 115, __pyx_L1_error)
 
@@ -5786,7 +5786,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
  *         l = [self.x, self.y, self.z]
  *         l[key] = value
  *         self.x, self.y, self.z = l             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __len__(self):
  */
   if (1) {
@@ -5798,9 +5798,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
       __PYX_ERR(0, 116, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_4 = PyList_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyList_GET_ITEM(sequence, 1); 
-    __pyx_t_2 = PyList_GET_ITEM(sequence, 2); 
+    __pyx_t_4 = PyList_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyList_GET_ITEM(sequence, 1);
+    __pyx_t_2 = PyList_GET_ITEM(sequence, 2);
     __Pyx_INCREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_2);
@@ -5822,7 +5822,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
 
   /* "pyg4ometry/pycsg/geom.pyx":113
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
  *         l = [self.x, self.y, self.z]
  *         l[key] = value
@@ -5847,10 +5847,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_44__setitem__(CYTHON
 
 /* "pyg4ometry/pycsg/geom.pyx":118
  *         self.x, self.y, self.z = l
- * 
+ *
  *     def __len__(self):             # <<<<<<<<<<<<<<
  *         return 3
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5873,10 +5873,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_46__len__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__len__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":119
- * 
+ *
  *     def __len__(self):
  *         return 3             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __iter__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5886,10 +5886,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_46__len__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":118
  *         self.x, self.y, self.z = l
- * 
+ *
  *     def __len__(self):             # <<<<<<<<<<<<<<
  *         return 3
- * 
+ *
  */
 
   /* function exit code */
@@ -5901,10 +5901,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_46__len__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":121
  *         return 3
- * 
+ *
  *     def __iter__(self):             # <<<<<<<<<<<<<<
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5934,10 +5934,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_48__iter__(CYTHON_UN
   __Pyx_RefNannySetupContext("__iter__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":122
- * 
+ *
  *     def __iter__(self):
  *         return iter((self.x, self.y, self.z))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5967,10 +5967,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_48__iter__(CYTHON_UN
 
   /* "pyg4ometry/pycsg/geom.pyx":121
  *         return 3
- * 
+ *
  *     def __iter__(self):             # <<<<<<<<<<<<<<
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  */
 
   /* function exit code */
@@ -5989,10 +5989,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_48__iter__(CYTHON_UN
 
 /* "pyg4ometry/pycsg/geom.pyx":124
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6022,10 +6022,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_50__repr__(CYTHON_UN
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":125
- * 
+ *
  *     def __repr__(self):
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)             # <<<<<<<<<<<<<<
- * 
+ *
  * class Vertex(object):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6055,10 +6055,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vector_50__repr__(CYTHON_UN
 
   /* "pyg4ometry/pycsg/geom.pyx":124
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  */
 
   /* function exit code */
@@ -6179,7 +6179,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex___init__(CYTHON_UNUS
  *     def __init__(self, pos, normal=None):
  *         self.pos = Vector(pos)             # <<<<<<<<<<<<<<
  *         self.normal = Vector(normal)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Vector); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6205,7 +6205,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex___init__(CYTHON_UNUS
  *     def __init__(self, pos, normal=None):
  *         self.pos = Vector(pos)
  *         self.normal = Vector(normal)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Vector); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
@@ -6253,10 +6253,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex___init__(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":143
  *         self.normal = Vector(normal)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6289,10 +6289,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_2clone(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("clone", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":144
- * 
+ *
  *     def clone(self):
  *         return Vertex(self.pos.clone(), self.normal.clone())             # <<<<<<<<<<<<<<
- * 
+ *
  *     def flip(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6393,10 +6393,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_2clone(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":143
  *         self.normal = Vector(normal)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  */
 
   /* function exit code */
@@ -6417,7 +6417,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_2clone(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":146
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         """
  *         Invert all orientation-specific data (e.g. vertex normal). Called when the
@@ -6453,7 +6453,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_4flip(CYTHON_UNUSED 
  *         orientation of a polygon is flipped.
  *         """
  *         self.normal = self.normal.negated()             # <<<<<<<<<<<<<<
- * 
+ *
  *     def interpolate(self, other, t):
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_normal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
@@ -6481,7 +6481,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_4flip(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/geom.pyx":146
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         """
  *         Invert all orientation-specific data (e.g. vertex normal). Called when the
@@ -6504,7 +6504,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_4flip(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/geom.pyx":153
  *         self.normal = self.normal.negated()
- * 
+ *
  *     def interpolate(self, other, t):             # <<<<<<<<<<<<<<
  *         """
  *         Create a new vertex between this vertex and `other` by linearly
@@ -6609,7 +6609,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_6interpolate(CYTHON_
  *         """
  *         return Vertex(self.pos.lerp(other.pos, t),             # <<<<<<<<<<<<<<
  *                           self.normal.lerp(other.normal, t))
- * 
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Vertex); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
@@ -6673,7 +6673,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_6interpolate(CYTHON_
  *         """
  *         return Vertex(self.pos.lerp(other.pos, t),
  *                           self.normal.lerp(other.normal, t))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
   __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_normal); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 160, __pyx_L1_error)
@@ -6785,7 +6785,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_6interpolate(CYTHON_
 
   /* "pyg4ometry/pycsg/geom.pyx":153
  *         self.normal = self.normal.negated()
- * 
+ *
  *     def interpolate(self, other, t):             # <<<<<<<<<<<<<<
  *         """
  *         Create a new vertex between this vertex and `other` by linearly
@@ -6811,10 +6811,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_6interpolate(CYTHON_
 
 /* "pyg4ometry/pycsg/geom.pyx":162
  *                           self.normal.lerp(other.normal, t))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return repr(self.pos)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6842,10 +6842,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_8__repr__(CYTHON_UNU
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":163
- * 
+ *
  *     def __repr__(self):
  *         return repr(self.pos)             # <<<<<<<<<<<<<<
- * 
+ *
  * class Plane(object):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6860,10 +6860,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_8__repr__(CYTHON_UNU
 
   /* "pyg4ometry/pycsg/geom.pyx":162
  *                           self.normal.lerp(other.normal, t))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return repr(self.pos)
- * 
+ *
  */
 
   /* function exit code */
@@ -6880,7 +6880,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_6Vertex_8__repr__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":179
  *     EPSILON = 1.e-5
- * 
+ *
  *     def __init__(self, normal, w):             # <<<<<<<<<<<<<<
  *         self.normal = normal
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
@@ -6971,7 +6971,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane___init__(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":180
- * 
+ *
  *     def __init__(self, normal, w):
  *         self.normal = normal             # <<<<<<<<<<<<<<
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
@@ -6983,14 +6983,14 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane___init__(CYTHON_UNUSE
  *         self.normal = normal
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
  *         self.w = w             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_w, __pyx_v_w) < 0) __PYX_ERR(0, 182, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/geom.pyx":179
  *     EPSILON = 1.e-5
- * 
+ *
  *     def __init__(self, normal, w):             # <<<<<<<<<<<<<<
  *         self.normal = normal
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
@@ -7009,7 +7009,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane___init__(CYTHON_UNUSE
 }
 
 /* "pyg4ometry/pycsg/geom.pyx":185
- * 
+ *
  *     @classmethod
  *     def fromPoints(cls, a, b, c):             # <<<<<<<<<<<<<<
  *         n = b.minus(a).cross(c.minus(a)).unit()
@@ -7124,7 +7124,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_2fromPoints(CYTHON_UN
  *     def fromPoints(cls, a, b, c):
  *         n = b.minus(a).cross(c.minus(a)).unit()             # <<<<<<<<<<<<<<
  *         return Plane(n, n.dot(a))
- * 
+ *
  */
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_b, __pyx_n_s_minus); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -7204,7 +7204,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_2fromPoints(CYTHON_UN
  *     def fromPoints(cls, a, b, c):
  *         n = b.minus(a).cross(c.minus(a)).unit()
  *         return Plane(n, n.dot(a))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7279,7 +7279,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_2fromPoints(CYTHON_UN
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/geom.pyx":185
- * 
+ *
  *     @classmethod
  *     def fromPoints(cls, a, b, c):             # <<<<<<<<<<<<<<
  *         n = b.minus(a).cross(c.minus(a)).unit()
@@ -7305,10 +7305,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_2fromPoints(CYTHON_UN
 
 /* "pyg4ometry/pycsg/geom.pyx":189
  *         return Plane(n, n.dot(a))
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -7341,10 +7341,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_4clone(CYTHON_UNUSED 
   __Pyx_RefNannySetupContext("clone", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":190
- * 
+ *
  *     def clone(self):
  *         return Plane(self.normal.clone(), self.w)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def flip(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7427,10 +7427,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_4clone(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/geom.pyx":189
  *         return Plane(n, n.dot(a))
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  */
 
   /* function exit code */
@@ -7451,7 +7451,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_4clone(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/geom.pyx":192
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.normal = self.normal.negated()
  *         self.w = -self.w
@@ -7483,11 +7483,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_6flip(CYTHON_UNUSED P
   __Pyx_RefNannySetupContext("flip", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":193
- * 
+ *
  *     def flip(self):
  *         self.normal = self.normal.negated()             # <<<<<<<<<<<<<<
  *         self.w = -self.w
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_normal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -7516,7 +7516,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_6flip(CYTHON_UNUSED P
  *     def flip(self):
  *         self.normal = self.normal.negated()
  *         self.w = -self.w             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_w); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)
@@ -7529,7 +7529,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_6flip(CYTHON_UNUSED P
 
   /* "pyg4ometry/pycsg/geom.pyx":192
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.normal = self.normal.negated()
  *         self.w = -self.w
@@ -7552,10 +7552,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_6flip(CYTHON_UNUSED P
 
 /* "pyg4ometry/pycsg/geom.pyx":196
  *         self.w = -self.w
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -7588,10 +7588,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_8__repr__(CYTHON_UNUS
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":197
- * 
+ *
  *     def __repr__(self):
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7656,10 +7656,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_8__repr__(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/geom.pyx":196
  *         self.w = -self.w
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  */
 
   /* function exit code */
@@ -7680,7 +7680,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_8__repr__(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":199
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  *     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):             # <<<<<<<<<<<<<<
  *         """
  *         Split `polygon` by this plane if needed, then put the polygon or polygon
@@ -7859,7 +7859,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *         FRONT = 1 # all the vertices are in front of the plane
  *         BACK = 2 # all the vertices are at the back of the plane             # <<<<<<<<<<<<<<
  *         SPANNING = 3 # some vertices are in front, some in the back
- * 
+ *
  */
   __pyx_v_BACK = 2;
 
@@ -7867,7 +7867,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *         FRONT = 1 # all the vertices are in front of the plane
  *         BACK = 2 # all the vertices are at the back of the plane
  *         SPANNING = 3 # some vertices are in front, some in the back             # <<<<<<<<<<<<<<
- * 
+ *
  *         # Classify each point as well as the entire polygon into one of the above
  */
   __pyx_v_SPANNING = 3;
@@ -7877,7 +7877,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *         # four classes.
  *         polygonType = 0             # <<<<<<<<<<<<<<
  *         vertexLocs = []
- * 
+ *
  */
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_polygonType = __pyx_int_0;
@@ -7886,7 +7886,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *         # four classes.
  *         polygonType = 0
  *         vertexLocs = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         numVertices = len(polygon.vertices)
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
@@ -7896,7 +7896,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
 
   /* "pyg4ometry/pycsg/geom.pyx":217
  *         vertexLocs = []
- * 
+ *
  *         numVertices = len(polygon.vertices)             # <<<<<<<<<<<<<<
  *         for i in range(numVertices):
  *             t = self.normal.dot(polygon.vertices[i].pos) - self.w
@@ -7911,7 +7911,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":218
- * 
+ *
  *         numVertices = len(polygon.vertices)
  *         for i in range(numVertices):             # <<<<<<<<<<<<<<
  *             t = self.normal.dot(polygon.vertices[i].pos) - self.w
@@ -8120,7 +8120,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *                 loc = COPLANAR
  *             polygonType |= loc             # <<<<<<<<<<<<<<
  *             vertexLocs.append(loc)
- * 
+ *
  */
     __pyx_t_6 = PyNumber_InPlaceOr(__pyx_v_polygonType, __pyx_v_loc); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 229, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
@@ -8131,13 +8131,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *                 loc = COPLANAR
  *             polygonType |= loc
  *             vertexLocs.append(loc)             # <<<<<<<<<<<<<<
- * 
+ *
  *         # Put the polygon in the correct list, splitting it when necessary.
  */
     __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_vertexLocs, __pyx_v_loc); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 230, __pyx_L1_error)
 
     /* "pyg4ometry/pycsg/geom.pyx":218
- * 
+ *
  *         numVertices = len(polygon.vertices)
  *         for i in range(numVertices):             # <<<<<<<<<<<<<<
  *             t = self.normal.dot(polygon.vertices[i].pos) - self.w
@@ -8147,7 +8147,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":233
- * 
+ *
  *         # Put the polygon in the correct list, splitting it when necessary.
  *         if polygonType == COPLANAR:             # <<<<<<<<<<<<<<
  *             normalDotPlaneNormal = self.normal.dot(polygon.plane.normal)
@@ -8241,7 +8241,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
     __pyx_L7:;
 
     /* "pyg4ometry/pycsg/geom.pyx":233
- * 
+ *
  *         # Put the polygon in the correct list, splitting it when necessary.
  *         if polygonType == COPLANAR:             # <<<<<<<<<<<<<<
  *             normalDotPlaneNormal = self.normal.dot(polygon.plane.normal)
@@ -8902,7 +8902,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *                 front.append(Polygon(f, polygon.shared))
  *             if len(b) >= 3:             # <<<<<<<<<<<<<<
  *                 back.append(Polygon(b, polygon.shared))
- * 
+ *
  */
     __pyx_t_2 = PyList_GET_SIZE(__pyx_v_b); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 268, __pyx_L1_error)
     __pyx_t_8 = ((__pyx_t_2 >= 3) != 0);
@@ -8912,7 +8912,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *                 front.append(Polygon(f, polygon.shared))
  *             if len(b) >= 3:
  *                 back.append(Polygon(b, polygon.shared))             # <<<<<<<<<<<<<<
- * 
+ *
  * class Polygon(object):
  */
       __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 269, __pyx_L1_error)
@@ -8974,7 +8974,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
  *                 front.append(Polygon(f, polygon.shared))
  *             if len(b) >= 3:             # <<<<<<<<<<<<<<
  *                 back.append(Polygon(b, polygon.shared))
- * 
+ *
  */
     }
 
@@ -8990,7 +8990,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_5Plane_10splitPolygon(CYTHON
 
   /* "pyg4ometry/pycsg/geom.pyx":199
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  *     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):             # <<<<<<<<<<<<<<
  *         """
  *         Split `polygon` by this plane if needed, then put the polygon or polygon
@@ -9149,7 +9149,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon___init__(CYTHON_UNU
  *         self.vertices = vertices
  *         self.shared = shared             # <<<<<<<<<<<<<<
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
- * 
+ *
  */
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_shared, __pyx_v_shared) < 0) __PYX_ERR(0, 286, __pyx_L1_error)
 
@@ -9157,7 +9157,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon___init__(CYTHON_UNU
  *         self.vertices = vertices
  *         self.shared = shared
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Plane); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
@@ -9266,7 +9266,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon___init__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":289
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         vertices = list([v.clone() for v in self.vertices])
  *         return Polygon(vertices, self.shared)
@@ -9305,11 +9305,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_2clone(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("clone", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":290
- * 
+ *
  *     def clone(self):
  *         vertices = list([v.clone() for v in self.vertices])             # <<<<<<<<<<<<<<
  *         return Polygon(vertices, self.shared)
- * 
+ *
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -9388,7 +9388,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_2clone(CYTHON_UNUSE
  *     def clone(self):
  *         vertices = list([v.clone() for v in self.vertices])
  *         return Polygon(vertices, self.shared)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def flip(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9449,7 +9449,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_2clone(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":289
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         vertices = list([v.clone() for v in self.vertices])
  *         return Polygon(vertices, self.shared)
@@ -9474,7 +9474,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_2clone(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":293
  *         return Polygon(vertices, self.shared)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -9499,7 +9499,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4geom_7Polygon_5flip(PyObject *__p
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))             # <<<<<<<<<<<<<<
  *         self.plane.flip()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -9563,7 +9563,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
 
 /* "pyg4ometry/pycsg/geom.pyx":293
  *         return Polygon(vertices, self.shared)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -9581,7 +9581,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_4flip(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("flip", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":294
- * 
+ *
  *     def flip(self):
  *         self.vertices.reverse()             # <<<<<<<<<<<<<<
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -9614,7 +9614,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_4flip(CYTHON_UNUSED
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))             # <<<<<<<<<<<<<<
  *         self.plane.flip()
- * 
+ *
  */
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_7Polygon_4flip_lambda, 0, __pyx_n_s_Polygon_flip_locals_lambda, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -9640,7 +9640,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_4flip(CYTHON_UNUSED
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
  *         self.plane.flip()             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_plane); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)
@@ -9667,7 +9667,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_4flip(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/geom.pyx":293
  *         return Polygon(vertices, self.shared)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -9690,7 +9690,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_4flip(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/geom.pyx":298
  *         self.plane.flip()
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -9711,7 +9711,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4geom_7Polygon_7__repr__(PyObject 
 }
 
 /* "pyg4ometry/pycsg/geom.pyx":299
- * 
+ *
  *     def __repr__(self):
  *         return reduce(lambda x,y: x+y,             # <<<<<<<<<<<<<<
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -9811,7 +9811,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self
 
 /* "pyg4ometry/pycsg/geom.pyx":298
  *         self.plane.flip()
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -9838,7 +9838,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":299
- * 
+ *
  *     def __repr__(self):
  *         return reduce(lambda x,y: x+y,             # <<<<<<<<<<<<<<
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -9855,7 +9855,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \             # <<<<<<<<<<<<<<
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  */
   __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -9869,7 +9869,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
  *                                        for v in self.vertices] + ['])'], '')             # <<<<<<<<<<<<<<
- * 
+ *
  * class BSPNode(object):
  */
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_vertices); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 301, __pyx_L1_error)
@@ -9922,7 +9922,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \             # <<<<<<<<<<<<<<
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  */
     __pyx_t_6 = PyObject_Repr(__pyx_v_v); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 300, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
@@ -9936,7 +9936,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
  *                                        for v in self.vertices] + ['])'], '')             # <<<<<<<<<<<<<<
- * 
+ *
  * class BSPNode(object):
  */
   }
@@ -9947,7 +9947,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \             # <<<<<<<<<<<<<<
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  */
   __pyx_t_7 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -9958,7 +9958,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
  *                                        for v in self.vertices] + ['])'], '')             # <<<<<<<<<<<<<<
- * 
+ *
  * class BSPNode(object):
  */
   __pyx_t_5 = PyList_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 301, __pyx_L1_error)
@@ -10028,7 +10028,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7Polygon_6__repr__(CYTHON_UN
 
   /* "pyg4ometry/pycsg/geom.pyx":298
  *         self.plane.flip()
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -10186,7 +10186,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode___init__(CYTHON_UNU
  *         self.polygons = []
  *         if polygons:             # <<<<<<<<<<<<<<
  *             self.build(polygons)
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_polygons); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 318, __pyx_L1_error)
   if (__pyx_t_2) {
@@ -10195,7 +10195,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode___init__(CYTHON_UNU
  *         self.polygons = []
  *         if polygons:
  *             self.build(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_build); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 319, __pyx_L1_error)
@@ -10222,7 +10222,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode___init__(CYTHON_UNU
  *         self.polygons = []
  *         if polygons:             # <<<<<<<<<<<<<<
  *             self.build(polygons)
- * 
+ *
  */
   }
 
@@ -10251,7 +10251,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode___init__(CYTHON_UNU
 
 /* "pyg4ometry/pycsg/geom.pyx":321
  *             self.build(polygons)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         node = BSPNode()
  *         if self.plane:
@@ -10290,7 +10290,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_2clone(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("clone", 0);
 
   /* "pyg4ometry/pycsg/geom.pyx":322
- * 
+ *
  *     def clone(self):
  *         node = BSPNode()             # <<<<<<<<<<<<<<
  *         if self.plane:
@@ -10477,7 +10477,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_2clone(CYTHON_UNUSE
  *             node.back = self.back.clone()
  *         node.polygons = list([p.clone() for p in self.polygons])             # <<<<<<<<<<<<<<
  *         return node
- * 
+ *
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -10556,7 +10556,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_2clone(CYTHON_UNUSE
  *             node.back = self.back.clone()
  *         node.polygons = list([p.clone() for p in self.polygons])
  *         return node             # <<<<<<<<<<<<<<
- * 
+ *
  *     def invert(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -10566,7 +10566,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_2clone(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/geom.pyx":321
  *             self.build(polygons)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         node = BSPNode()
  *         if self.plane:
@@ -10591,7 +10591,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_2clone(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/geom.pyx":332
  *         return node
- * 
+ *
  *     def invert(self):             # <<<<<<<<<<<<<<
  *         """
  *         Convert solid space to empty space and empty space to solid space.
@@ -10865,7 +10865,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_4invert(CYTHON_UNUS
  *         temp = self.front
  *         self.front = self.back             # <<<<<<<<<<<<<<
  *         self.back = temp
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_back); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 344, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -10876,14 +10876,14 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_4invert(CYTHON_UNUS
  *         temp = self.front
  *         self.front = self.back
  *         self.back = temp             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clipPolygons(self, polygons):
  */
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_back, __pyx_v_temp) < 0) __PYX_ERR(0, 345, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/geom.pyx":332
  *         return node
- * 
+ *
  *     def invert(self):             # <<<<<<<<<<<<<<
  *         """
  *         Convert solid space to empty space and empty space to solid space.
@@ -10909,7 +10909,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_4invert(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":347
  *         self.back = temp
- * 
+ *
  *     def clipPolygons(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Recursively remove all polygons in `polygons` that are inside this BSP
@@ -11007,7 +11007,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         """
  *         if not self.plane:             # <<<<<<<<<<<<<<
  *             return polygons[:]
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_plane); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -11020,7 +11020,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         """
  *         if not self.plane:
  *             return polygons[:]             # <<<<<<<<<<<<<<
- * 
+ *
  *         front = []
  */
     __Pyx_XDECREF(__pyx_r);
@@ -11035,13 +11035,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         """
  *         if not self.plane:             # <<<<<<<<<<<<<<
  *             return polygons[:]
- * 
+ *
  */
   }
 
   /* "pyg4ometry/pycsg/geom.pyx":355
  *             return polygons[:]
- * 
+ *
  *         front = []             # <<<<<<<<<<<<<<
  *         back = []
  *         for poly in polygons:
@@ -11052,7 +11052,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":356
- * 
+ *
  *         front = []
  *         back = []             # <<<<<<<<<<<<<<
  *         for poly in polygons:
@@ -11068,7 +11068,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         back = []
  *         for poly in polygons:             # <<<<<<<<<<<<<<
  *             self.plane.splitPolygon(poly, front, back, front, back)
- * 
+ *
  */
   if (likely(PyList_CheckExact(__pyx_v_polygons)) || PyTuple_CheckExact(__pyx_v_polygons)) {
     __pyx_t_1 = __pyx_v_polygons; __Pyx_INCREF(__pyx_t_1); __pyx_t_4 = 0;
@@ -11116,7 +11116,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         back = []
  *         for poly in polygons:
  *             self.plane.splitPolygon(poly, front, back, front, back)             # <<<<<<<<<<<<<<
- * 
+ *
  *         if self.front:
  */
     __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_plane); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 358, __pyx_L1_error)
@@ -11185,17 +11185,17 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *         back = []
  *         for poly in polygons:             # <<<<<<<<<<<<<<
  *             self.plane.splitPolygon(poly, front, back, front, back)
- * 
+ *
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":360
  *             self.plane.splitPolygon(poly, front, back, front, back)
- * 
+ *
  *         if self.front:             # <<<<<<<<<<<<<<
  *             front = self.front.clipPolygons(front)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_front); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -11204,10 +11204,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
   if (__pyx_t_3) {
 
     /* "pyg4ometry/pycsg/geom.pyx":361
- * 
+ *
  *         if self.front:
  *             front = self.front.clipPolygons(front)             # <<<<<<<<<<<<<<
- * 
+ *
  *         if self.back:
  */
     __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_front); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 361, __pyx_L1_error)
@@ -11235,16 +11235,16 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
 
     /* "pyg4ometry/pycsg/geom.pyx":360
  *             self.plane.splitPolygon(poly, front, back, front, back)
- * 
+ *
  *         if self.front:             # <<<<<<<<<<<<<<
  *             front = self.front.clipPolygons(front)
- * 
+ *
  */
   }
 
   /* "pyg4ometry/pycsg/geom.pyx":363
  *             front = self.front.clipPolygons(front)
- * 
+ *
  *         if self.back:             # <<<<<<<<<<<<<<
  *             back = self.back.clipPolygons(back)
  *         else:
@@ -11256,7 +11256,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
   if (__pyx_t_3) {
 
     /* "pyg4ometry/pycsg/geom.pyx":364
- * 
+ *
  *         if self.back:
  *             back = self.back.clipPolygons(back)             # <<<<<<<<<<<<<<
  *         else:
@@ -11287,7 +11287,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
 
     /* "pyg4ometry/pycsg/geom.pyx":363
  *             front = self.front.clipPolygons(front)
- * 
+ *
  *         if self.back:             # <<<<<<<<<<<<<<
  *             back = self.back.clipPolygons(back)
  *         else:
@@ -11299,7 +11299,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
  *             back = self.back.clipPolygons(back)
  *         else:
  *             back = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         front.extend(back)
  */
   /*else*/ {
@@ -11312,10 +11312,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
 
   /* "pyg4ometry/pycsg/geom.pyx":368
  *             back = []
- * 
+ *
  *         front.extend(back)             # <<<<<<<<<<<<<<
  *         return front
- * 
+ *
  */
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_front, __pyx_n_s_extend); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 368, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -11337,10 +11337,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":369
- * 
+ *
  *         front.extend(back)
  *         return front             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clipTo(self, bsp):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -11350,7 +11350,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
 
   /* "pyg4ometry/pycsg/geom.pyx":347
  *         self.back = temp
- * 
+ *
  *     def clipPolygons(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Recursively remove all polygons in `polygons` that are inside this BSP
@@ -11376,7 +11376,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_6clipPolygons(CYTHO
 
 /* "pyg4ometry/pycsg/geom.pyx":371
  *         return front
- * 
+ *
  *     def clipTo(self, bsp):             # <<<<<<<<<<<<<<
  *         """
  *         Remove all polygons in this BSP tree that are inside the other BSP tree
@@ -11547,7 +11547,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_8clipTo(CYTHON_UNUS
  *             self.front.clipTo(bsp)
  *         if self.back:             # <<<<<<<<<<<<<<
  *             self.back.clipTo(bsp)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_back); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -11559,7 +11559,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_8clipTo(CYTHON_UNUS
  *             self.front.clipTo(bsp)
  *         if self.back:
  *             self.back.clipTo(bsp)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def allPolygons(self):
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_back); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 380, __pyx_L1_error)
@@ -11589,13 +11589,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_8clipTo(CYTHON_UNUS
  *             self.front.clipTo(bsp)
  *         if self.back:             # <<<<<<<<<<<<<<
  *             self.back.clipTo(bsp)
- * 
+ *
  */
   }
 
   /* "pyg4ometry/pycsg/geom.pyx":371
  *         return front
- * 
+ *
  *     def clipTo(self, bsp):             # <<<<<<<<<<<<<<
  *         """
  *         Remove all polygons in this BSP tree that are inside the other BSP tree
@@ -11619,7 +11619,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_8clipTo(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/geom.pyx":382
  *             self.back.clipTo(bsp)
- * 
+ *
  *     def allPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a list of all polygons in this BSP tree.
@@ -11757,7 +11757,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_10allPolygons(CYTHO
  *         if self.back:
  *             polygons.extend(self.back.allPolygons())             # <<<<<<<<<<<<<<
  *         return polygons
- * 
+ *
  */
     __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_polygons, __pyx_n_s_extend); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -11812,7 +11812,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_10allPolygons(CYTHO
  *         if self.back:
  *             polygons.extend(self.back.allPolygons())
  *         return polygons             # <<<<<<<<<<<<<<
- * 
+ *
  *     def build(self, polygons):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -11822,7 +11822,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_10allPolygons(CYTHO
 
   /* "pyg4ometry/pycsg/geom.pyx":382
  *             self.back.clipTo(bsp)
- * 
+ *
  *     def allPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a list of all polygons in this BSP tree.
@@ -11846,7 +11846,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_10allPolygons(CYTHO
 
 /* "pyg4ometry/pycsg/geom.pyx":393
  *         return polygons
- * 
+ *
  *     def build(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Build a BSP tree out of `polygons`. When called on an existing tree, the
@@ -12343,7 +12343,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_12build(CYTHON_UNUS
  *             if not self.back:
  *                 self.back = BSPNode()             # <<<<<<<<<<<<<<
  *             self.back.build(back)
- * 
+ *
  */
       __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_BSPNode); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 420, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
@@ -12378,7 +12378,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_12build(CYTHON_UNUS
  *             if not self.back:
  *                 self.back = BSPNode()
  *             self.back.build(back)             # <<<<<<<<<<<<<<
- * 
+ *
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_back); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 421, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
@@ -12413,7 +12413,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4geom_7BSPNode_12build(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/geom.pyx":393
  *         return polygons
- * 
+ *
  *     def build(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Build a BSP tree out of `polygons`. When called on an existing tree, the
@@ -12715,7 +12715,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         """
  *         if not self.plane:
  *             return polygons[:]             # <<<<<<<<<<<<<<
- * 
+ *
  *         front = []
  */
   __pyx_slice__7 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__7)) __PYX_ERR(0, 353, __pyx_L1_error)
@@ -12734,10 +12734,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_slice__8);
 
   /* "pyg4ometry/pycsg/geom.pyx":6
- * 
+ *
  * # increase the max number of recursive calls
  * sys.setrecursionlimit(10000) # my default is 1000, increasing too much may cause a seg fault             # <<<<<<<<<<<<<<
- * 
+ *
  * class Vector(object):
  */
   __pyx_tuple__9 = PyTuple_Pack(1, __pyx_int_10000); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 6, __pyx_L1_error)
@@ -12746,7 +12746,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":8
  * sys.setrecursionlimit(10000) # my default is 1000, increasing too much may cause a seg fault
- * 
+ *
  * class Vector(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Vector
@@ -12769,10 +12769,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":36
  *                 self.z = a[2]
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  */
   __pyx_tuple__13 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
@@ -12781,7 +12781,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":39
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         """ Clone. """
  *         return Vector(self.x, self.y, self.z)
@@ -12793,7 +12793,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":43
  *         return Vector(self.x, self.y, self.z)
- * 
+ *
  *     def negated(self):             # <<<<<<<<<<<<<<
  *         """ Negated. """
  *         return Vector(-self.x, -self.y, -self.z)
@@ -12805,10 +12805,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":47
  *         return Vector(-self.x, -self.y, -self.z)
- * 
+ *
  *     def __neg__(self):             # <<<<<<<<<<<<<<
  *         return self.negated()
- * 
+ *
  */
   __pyx_tuple__19 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
@@ -12817,7 +12817,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":50
  *         return self.negated()
- * 
+ *
  *     def plus(self, a):             # <<<<<<<<<<<<<<
  *         """ Add. """
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
@@ -12829,10 +12829,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":54
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
- * 
+ *
  *     def __add__(self, a):             # <<<<<<<<<<<<<<
  *         return self.plus(a)
- * 
+ *
  */
   __pyx_tuple__23 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
@@ -12841,7 +12841,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":57
  *         return self.plus(a)
- * 
+ *
  *     def minus(self, a):             # <<<<<<<<<<<<<<
  *         """ Subtract. """
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
@@ -12853,10 +12853,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":61
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
- * 
+ *
  *     def __sub__(self, a):             # <<<<<<<<<<<<<<
  *         return self.minus(a)
- * 
+ *
  */
   __pyx_tuple__27 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
@@ -12865,7 +12865,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":64
  *         return self.minus(a)
- * 
+ *
  *     def times(self, a):             # <<<<<<<<<<<<<<
  *         """ Multiply. """
  *         return Vector(self.x*a, self.y*a, self.z*a)
@@ -12877,10 +12877,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":68
  *         return Vector(self.x*a, self.y*a, self.z*a)
- * 
+ *
  *     def __mul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
   __pyx_tuple__31 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__31);
@@ -12889,10 +12889,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":71
  *         return self.times(a)
- * 
+ *
  *     def __rmul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
   __pyx_tuple__33 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 71, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__33);
@@ -12901,7 +12901,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":74
  *         return self.times(a)
- * 
+ *
  *     def dividedBy(self, a):             # <<<<<<<<<<<<<<
  *         """ Divide. """
  *         return Vector(self.x/a, self.y/a, self.z/a)
@@ -12913,10 +12913,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":78
  *         return Vector(self.x/a, self.y/a, self.z/a)
- * 
+ *
  *     def __truediv__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
   __pyx_tuple__37 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__37);
@@ -12925,10 +12925,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":81
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def __div__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
   __pyx_tuple__39 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__39);
@@ -12937,7 +12937,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":84
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def dot(self, a):             # <<<<<<<<<<<<<<
  *         """ Dot. """
  *         return self.x*a.x + self.y*a.y + self.z*a.z
@@ -12949,10 +12949,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":88
  *         return self.x*a.x + self.y*a.y + self.z*a.z
- * 
+ *
  *     def scale(self, a):             # <<<<<<<<<<<<<<
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  */
   __pyx_tuple__43 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_a); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__43);
@@ -12961,7 +12961,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":91
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  *     def lerp(self, a, t):             # <<<<<<<<<<<<<<
  *         """ Lerp. Linear interpolation from self to a"""
  *         return self.plus(a.minus(self).times(t));
@@ -12973,7 +12973,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":95
  *         return self.plus(a.minus(self).times(t));
- * 
+ *
  *     def length(self):             # <<<<<<<<<<<<<<
  *         """ Length. """
  *         return math.sqrt(self.dot(self))
@@ -12985,7 +12985,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":99
  *         return math.sqrt(self.dot(self))
- * 
+ *
  *     def unit(self):             # <<<<<<<<<<<<<<
  *         """ Normalize. """
  *         return self.dividedBy(self.length())
@@ -12997,7 +12997,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":103
  *         return self.dividedBy(self.length())
- * 
+ *
  *     def cross(self, a):             # <<<<<<<<<<<<<<
  *         """ Cross. """
  *         return Vector(
@@ -13009,10 +13009,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":110
  *             self.x * a.y - self.y * a.x)
- * 
+ *
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  */
   __pyx_tuple__53 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_key); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__53);
@@ -13021,7 +13021,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":113
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
  *         l = [self.x, self.y, self.z]
  *         l[key] = value
@@ -13033,10 +13033,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":118
  *         self.x, self.y, self.z = l
- * 
+ *
  *     def __len__(self):             # <<<<<<<<<<<<<<
  *         return 3
- * 
+ *
  */
   __pyx_tuple__57 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__57);
@@ -13045,10 +13045,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":121
  *         return 3
- * 
+ *
  *     def __iter__(self):             # <<<<<<<<<<<<<<
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  */
   __pyx_tuple__59 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__59);
@@ -13057,10 +13057,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":124
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  */
   __pyx_tuple__61 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__61);
@@ -13069,7 +13069,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":127
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  * class Vertex(object):             # <<<<<<<<<<<<<<
  *     """
  *     Class Vertex
@@ -13095,10 +13095,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":143
  *         self.normal = Vector(normal)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  */
   __pyx_tuple__67 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__67)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__67);
@@ -13107,7 +13107,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":146
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         """
  *         Invert all orientation-specific data (e.g. vertex normal). Called when the
@@ -13119,7 +13119,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":153
  *         self.normal = self.normal.negated()
- * 
+ *
  *     def interpolate(self, other, t):             # <<<<<<<<<<<<<<
  *         """
  *         Create a new vertex between this vertex and `other` by linearly
@@ -13131,10 +13131,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":162
  *                           self.normal.lerp(other.normal, t))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return repr(self.pos)
- * 
+ *
  */
   __pyx_tuple__73 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__73)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__73);
@@ -13143,7 +13143,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":165
  *         return repr(self.pos)
- * 
+ *
  * class Plane(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Plane
@@ -13154,7 +13154,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":179
  *     EPSILON = 1.e-5
- * 
+ *
  *     def __init__(self, normal, w):             # <<<<<<<<<<<<<<
  *         self.normal = normal
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
@@ -13165,7 +13165,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_geom_pyx, __pyx_n_s_init, 179, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 179, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/geom.pyx":185
- * 
+ *
  *     @classmethod
  *     def fromPoints(cls, a, b, c):             # <<<<<<<<<<<<<<
  *         n = b.minus(a).cross(c.minus(a)).unit()
@@ -13178,10 +13178,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":189
  *         return Plane(n, n.dot(a))
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  */
   __pyx_tuple__80 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__80);
@@ -13190,7 +13190,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":192
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.normal = self.normal.negated()
  *         self.w = -self.w
@@ -13202,10 +13202,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":196
  *         self.w = -self.w
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  */
   __pyx_tuple__84 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__84)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__84);
@@ -13214,7 +13214,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":199
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  *     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):             # <<<<<<<<<<<<<<
  *         """
  *         Split `polygon` by this plane if needed, then put the polygon or polygon
@@ -13226,7 +13226,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":271
  *                 back.append(Polygon(b, polygon.shared))
- * 
+ *
  * class Polygon(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Polygon
@@ -13252,7 +13252,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":289
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         vertices = list([v.clone() for v in self.vertices])
  *         return Polygon(vertices, self.shared)
@@ -13264,7 +13264,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":293
  *         return Polygon(vertices, self.shared)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -13276,7 +13276,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":298
  *         self.plane.flip()
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -13288,7 +13288,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":303
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  * class BSPNode(object):             # <<<<<<<<<<<<<<
  *     """
  *     class BSPNode
@@ -13314,7 +13314,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":321
  *             self.build(polygons)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         node = BSPNode()
  *         if self.plane:
@@ -13326,7 +13326,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":332
  *         return node
- * 
+ *
  *     def invert(self):             # <<<<<<<<<<<<<<
  *         """
  *         Convert solid space to empty space and empty space to solid space.
@@ -13338,7 +13338,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":347
  *         self.back = temp
- * 
+ *
  *     def clipPolygons(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Recursively remove all polygons in `polygons` that are inside this BSP
@@ -13350,7 +13350,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":371
  *         return front
- * 
+ *
  *     def clipTo(self, bsp):             # <<<<<<<<<<<<<<
  *         """
  *         Remove all polygons in this BSP tree that are inside the other BSP tree
@@ -13362,7 +13362,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":382
  *             self.back.clipTo(bsp)
- * 
+ *
  *     def allPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a list of all polygons in this BSP tree.
@@ -13374,7 +13374,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/geom.pyx":393
  *         return polygons
- * 
+ *
  *     def build(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Build a BSP tree out of `polygons`. When called on an existing tree, the
@@ -13686,7 +13686,7 @@ if (!__Pyx_RefNanny) {
  * import math
  * import sys             # <<<<<<<<<<<<<<
  * from functools import reduce
- * 
+ *
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_sys, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -13697,7 +13697,7 @@ if (!__Pyx_RefNanny) {
  * import math
  * import sys
  * from functools import reduce             # <<<<<<<<<<<<<<
- * 
+ *
  * # increase the max number of recursive calls
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
@@ -13715,10 +13715,10 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":6
- * 
+ *
  * # increase the max number of recursive calls
  * sys.setrecursionlimit(10000) # my default is 1000, increasing too much may cause a seg fault             # <<<<<<<<<<<<<<
- * 
+ *
  * class Vector(object):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
@@ -13733,7 +13733,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":8
  * sys.setrecursionlimit(10000) # my default is 1000, increasing too much may cause a seg fault
- * 
+ *
  * class Vector(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Vector
@@ -13757,10 +13757,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":36
  *                 self.z = a[2]
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_3__repr__, 0, __pyx_n_s_Vector___repr, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13769,7 +13769,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":39
  *         return '({0}, {1}, {2})'.format(self.x, self.y, self.z)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         """ Clone. """
  *         return Vector(self.x, self.y, self.z)
@@ -13781,7 +13781,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":43
  *         return Vector(self.x, self.y, self.z)
- * 
+ *
  *     def negated(self):             # <<<<<<<<<<<<<<
  *         """ Negated. """
  *         return Vector(-self.x, -self.y, -self.z)
@@ -13793,10 +13793,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":47
  *         return Vector(-self.x, -self.y, -self.z)
- * 
+ *
  *     def __neg__(self):             # <<<<<<<<<<<<<<
  *         return self.negated()
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_9__neg__, 0, __pyx_n_s_Vector___neg, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13805,7 +13805,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":50
  *         return self.negated()
- * 
+ *
  *     def plus(self, a):             # <<<<<<<<<<<<<<
  *         """ Add. """
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
@@ -13817,10 +13817,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":54
  *         return Vector(self.x+float(a.x), self.y+float(a.y), self.z+float(a.z))
- * 
+ *
  *     def __add__(self, a):             # <<<<<<<<<<<<<<
  *         return self.plus(a)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_13__add__, 0, __pyx_n_s_Vector___add, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13829,7 +13829,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":57
  *         return self.plus(a)
- * 
+ *
  *     def minus(self, a):             # <<<<<<<<<<<<<<
  *         """ Subtract. """
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
@@ -13841,10 +13841,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":61
  *         return Vector(self.x-a.x, self.y-a.y, self.z-a.z)
- * 
+ *
  *     def __sub__(self, a):             # <<<<<<<<<<<<<<
  *         return self.minus(a)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_17__sub__, 0, __pyx_n_s_Vector___sub, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__28)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13853,7 +13853,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":64
  *         return self.minus(a)
- * 
+ *
  *     def times(self, a):             # <<<<<<<<<<<<<<
  *         """ Multiply. """
  *         return Vector(self.x*a, self.y*a, self.z*a)
@@ -13865,10 +13865,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":68
  *         return Vector(self.x*a, self.y*a, self.z*a)
- * 
+ *
  *     def __mul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_21__mul__, 0, __pyx_n_s_Vector___mul, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__32)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13877,10 +13877,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":71
  *         return self.times(a)
- * 
+ *
  *     def __rmul__(self, a):             # <<<<<<<<<<<<<<
  *         return self.times(a)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_23__rmul__, 0, __pyx_n_s_Vector___rmul, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__34)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 71, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13889,7 +13889,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":74
  *         return self.times(a)
- * 
+ *
  *     def dividedBy(self, a):             # <<<<<<<<<<<<<<
  *         """ Divide. """
  *         return Vector(self.x/a, self.y/a, self.z/a)
@@ -13901,10 +13901,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":78
  *         return Vector(self.x/a, self.y/a, self.z/a)
- * 
+ *
  *     def __truediv__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_27__truediv__, 0, __pyx_n_s_Vector___truediv, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13913,10 +13913,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":81
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def __div__(self, a):             # <<<<<<<<<<<<<<
  *         return self.dividedBy(float(a))
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_29__div__, 0, __pyx_n_s_Vector___div, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13925,7 +13925,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":84
  *         return self.dividedBy(float(a))
- * 
+ *
  *     def dot(self, a):             # <<<<<<<<<<<<<<
  *         """ Dot. """
  *         return self.x*a.x + self.y*a.y + self.z*a.z
@@ -13937,10 +13937,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":88
  *         return self.x*a.x + self.y*a.y + self.z*a.z
- * 
+ *
  *     def scale(self, a):             # <<<<<<<<<<<<<<
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_33scale, 0, __pyx_n_s_Vector_scale, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -13949,7 +13949,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":91
  *         return Vector(self.x*a.x,self.y*a.y,self.z*a.z)
- * 
+ *
  *     def lerp(self, a, t):             # <<<<<<<<<<<<<<
  *         """ Lerp. Linear interpolation from self to a"""
  *         return self.plus(a.minus(self).times(t));
@@ -13961,7 +13961,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":95
  *         return self.plus(a.minus(self).times(t));
- * 
+ *
  *     def length(self):             # <<<<<<<<<<<<<<
  *         """ Length. """
  *         return math.sqrt(self.dot(self))
@@ -13973,7 +13973,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":99
  *         return math.sqrt(self.dot(self))
- * 
+ *
  *     def unit(self):             # <<<<<<<<<<<<<<
  *         """ Normalize. """
  *         return self.dividedBy(self.length())
@@ -13985,7 +13985,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":103
  *         return self.dividedBy(self.length())
- * 
+ *
  *     def cross(self, a):             # <<<<<<<<<<<<<<
  *         """ Cross. """
  *         return Vector(
@@ -13997,10 +13997,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":110
  *             self.x * a.y - self.y * a.x)
- * 
+ *
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_43__getitem__, 0, __pyx_n_s_Vector___getitem, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__54)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14009,7 +14009,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":113
  *         return (self.x, self.y, self.z)[key]
- * 
+ *
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
  *         l = [self.x, self.y, self.z]
  *         l[key] = value
@@ -14021,10 +14021,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":118
  *         self.x, self.y, self.z = l
- * 
+ *
  *     def __len__(self):             # <<<<<<<<<<<<<<
  *         return 3
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_47__len__, 0, __pyx_n_s_Vector___len, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__58)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14033,10 +14033,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":121
  *         return 3
- * 
+ *
  *     def __iter__(self):             # <<<<<<<<<<<<<<
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_49__iter__, 0, __pyx_n_s_Vector___iter, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__60)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14045,10 +14045,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":124
  *         return iter((self.x, self.y, self.z))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vector_51__repr__, 0, __pyx_n_s_Vector___repr, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__62)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14057,7 +14057,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":8
  * sys.setrecursionlimit(10000) # my default is 1000, increasing too much may cause a seg fault
- * 
+ *
  * class Vector(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Vector
@@ -14071,7 +14071,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":127
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  * class Vertex(object):             # <<<<<<<<<<<<<<
  *     """
  *     Class Vertex
@@ -14096,10 +14096,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":143
  *         self.normal = Vector(normal)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vertex_3clone, 0, __pyx_n_s_Vertex_clone, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__68)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14108,7 +14108,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":146
  *         return Vertex(self.pos.clone(), self.normal.clone())
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         """
  *         Invert all orientation-specific data (e.g. vertex normal). Called when the
@@ -14120,7 +14120,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":153
  *         self.normal = self.normal.negated()
- * 
+ *
  *     def interpolate(self, other, t):             # <<<<<<<<<<<<<<
  *         """
  *         Create a new vertex between this vertex and `other` by linearly
@@ -14132,10 +14132,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":162
  *                           self.normal.lerp(other.normal, t))
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return repr(self.pos)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_6Vertex_9__repr__, 0, __pyx_n_s_Vertex___repr, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__74)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -14144,7 +14144,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":127
  *         return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
- * 
+ *
  * class Vertex(object):             # <<<<<<<<<<<<<<
  *     """
  *     Class Vertex
@@ -14158,7 +14158,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":165
  *         return repr(self.pos)
- * 
+ *
  * class Plane(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Plane
@@ -14172,14 +14172,14 @@ if (!__Pyx_RefNanny) {
  *     """
  *     # EPSILON = 1.e-12
  *     EPSILON = 1.e-5             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __init__(self, normal, w):
  */
   if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_EPSILON, __pyx_float_1_eneg_5) < 0) __PYX_ERR(0, 177, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/geom.pyx":179
  *     EPSILON = 1.e-5
- * 
+ *
  *     def __init__(self, normal, w):             # <<<<<<<<<<<<<<
  *         self.normal = normal
  *         # w is the (perpendicular) distance of the plane from (0, 0, 0)
@@ -14190,7 +14190,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/geom.pyx":185
- * 
+ *
  *     @classmethod
  *     def fromPoints(cls, a, b, c):             # <<<<<<<<<<<<<<
  *         n = b.minus(a).cross(c.minus(a)).unit()
@@ -14201,7 +14201,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":184
  *         self.w = w
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def fromPoints(cls, a, b, c):
  *         n = b.minus(a).cross(c.minus(a)).unit()
@@ -14214,10 +14214,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":189
  *         return Plane(n, n.dot(a))
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_5Plane_5clone, 0, __pyx_n_s_Plane_clone, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__81)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -14226,7 +14226,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":192
  *         return Plane(self.normal.clone(), self.w)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.normal = self.normal.negated()
  *         self.w = -self.w
@@ -14238,10 +14238,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":196
  *         self.w = -self.w
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4geom_5Plane_9__repr__, 0, __pyx_n_s_Plane___repr, NULL, __pyx_n_s_pyg4ometry_pycsg_geom, __pyx_d, ((PyObject *)__pyx_codeobj__85)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -14250,7 +14250,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":199
  *         return 'normal: {0} w: {1}'.format(self.normal, self.w)
- * 
+ *
  *     def splitPolygon(self, polygon, coplanarFront, coplanarBack, front, back):             # <<<<<<<<<<<<<<
  *         """
  *         Split `polygon` by this plane if needed, then put the polygon or polygon
@@ -14262,7 +14262,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":165
  *         return repr(self.pos)
- * 
+ *
  * class Plane(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Plane
@@ -14276,7 +14276,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":271
  *                 back.append(Polygon(b, polygon.shared))
- * 
+ *
  * class Polygon(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Polygon
@@ -14301,7 +14301,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":289
  *         self.plane = Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         vertices = list([v.clone() for v in self.vertices])
  *         return Polygon(vertices, self.shared)
@@ -14313,7 +14313,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":293
  *         return Polygon(vertices, self.shared)
- * 
+ *
  *     def flip(self):             # <<<<<<<<<<<<<<
  *         self.vertices.reverse()
  *         list(map(lambda v: v.flip(), self.vertices))
@@ -14325,7 +14325,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":298
  *         self.plane.flip()
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return reduce(lambda x,y: x+y,
  *                       ['Polygon(['] + [repr(v) + ', ' \
@@ -14337,7 +14337,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":271
  *                 back.append(Polygon(b, polygon.shared))
- * 
+ *
  * class Polygon(object):             # <<<<<<<<<<<<<<
  *     """
  *     class Polygon
@@ -14351,7 +14351,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":303
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  * class BSPNode(object):             # <<<<<<<<<<<<<<
  *     """
  *     class BSPNode
@@ -14376,7 +14376,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":321
  *             self.build(polygons)
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         node = BSPNode()
  *         if self.plane:
@@ -14388,7 +14388,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":332
  *         return node
- * 
+ *
  *     def invert(self):             # <<<<<<<<<<<<<<
  *         """
  *         Convert solid space to empty space and empty space to solid space.
@@ -14400,7 +14400,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":347
  *         self.back = temp
- * 
+ *
  *     def clipPolygons(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Recursively remove all polygons in `polygons` that are inside this BSP
@@ -14412,7 +14412,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":371
  *         return front
- * 
+ *
  *     def clipTo(self, bsp):             # <<<<<<<<<<<<<<
  *         """
  *         Remove all polygons in this BSP tree that are inside the other BSP tree
@@ -14424,7 +14424,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":382
  *             self.back.clipTo(bsp)
- * 
+ *
  *     def allPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a list of all polygons in this BSP tree.
@@ -14436,7 +14436,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":393
  *         return polygons
- * 
+ *
  *     def build(self, polygons):             # <<<<<<<<<<<<<<
  *         """
  *         Build a BSP tree out of `polygons`. When called on an existing tree, the
@@ -14448,7 +14448,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/geom.pyx":303
  *                                        for v in self.vertices] + ['])'], '')
- * 
+ *
  * class BSPNode(object):             # <<<<<<<<<<<<<<
  *     """
  *     class BSPNode
@@ -15396,8 +15396,8 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
                 llx = lla + llb;
             return PyLong_FromLongLong(llx);
 #endif
-        
-        
+
+
     }
     #endif
     if (PyFloat_CheckExact(op1)) {

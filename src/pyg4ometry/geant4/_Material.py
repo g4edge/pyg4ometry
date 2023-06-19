@@ -40,7 +40,7 @@ def _safeName(name):
 def loadNISTMaterialDict():
     from importlib_resources import files
     nist_materials_dict = {}
-    
+
     nist_elements  = files("pyg4ometry.geant4").joinpath("nist_elements.txt")
     nist_materials = files("pyg4ometry.geant4").joinpath("nist_materials.txt")
 
@@ -49,8 +49,8 @@ def loadNISTMaterialDict():
         while line:
             if line[0] == '#' :
                 line = f.readline()
-                continue            
-            
+                continue
+
             line_data = line.split()
             if line_data[0] == "element":
                 tipe  = line_data[0]
@@ -137,7 +137,7 @@ def nist_element_2geant4Element(name, reg=None):
 
 def nist_material_2geant4Material(name, reg=None):
     matDict = nist_materials_name_lookup(name)
-    
+
     if matDict["type"] == "material":
         result = MaterialCompound(matDict["name"], matDict["density"], matDict["ncom"], reg, state=matDict["state"])
         d = matDict["elements"]
@@ -313,7 +313,7 @@ class Material(MaterialBase):
                                  "temperature_unit": None,
                                  "pressure": None,
                                  "pressure_unit": None}
-        
+
         self._NIST_compounds = getNistMaterialList()
 
         if not any(_getClassVariables(self)):

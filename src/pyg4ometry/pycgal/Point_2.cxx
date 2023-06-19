@@ -51,4 +51,3 @@ PYBIND11_MODULE(Point_2, m) {
     .def("__add__",[](Point_2_EPECK &p1, Vector_2_EPECK &p2){return p1+p2;})
     .def("__sub__",[](Point_2_EPECK &p1, Vector_2_EPECK &p2){return p1-p2;});
 }
-

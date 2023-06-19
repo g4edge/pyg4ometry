@@ -1,4 +1,4 @@
-import pyg4ometry 
+import pyg4ometry
 
 def make_square(sizex = 1, sizey = 1, offsetx = 0, offsety=0):
 	pa = pyg4ometry.pycgal.Polygon_2.Polygon_2_EPECK()

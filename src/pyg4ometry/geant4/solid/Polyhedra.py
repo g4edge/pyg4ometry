@@ -5,7 +5,7 @@ import logging as _log
 class Polyhedra(_SolidBase):
     """
     Constructs a polyhedra.
-    
+
     :param name:       of solid
     :type name:        str
     :param pSPhi:      start phi angle
@@ -15,7 +15,7 @@ class Polyhedra(_SolidBase):
     :param numSide:    number of sides
     :type numSide:     int
     :param numZPlanes: number of planes along z
-    :type numZPlanes:  int 
+    :type numZPlanes:  int
     :param zPlane:     position of z planes
     :type zPlane:      list of float, Constant, Quantity, Variable, Expression
     :param rInner:     tangent distance to inner surface per z plane
@@ -27,8 +27,8 @@ class Polyhedra(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param aunit: angle unit (rad,deg) for solid
-    :type aunit: str 
-    
+    :type aunit: str
+
     """
     def __init__(self, name, pSPhi, pDPhi, numSide, numZPlanes,
                  zPlane, rInner, rOuter, registry, lunit="mm", aunit="rad",
@@ -68,9 +68,9 @@ class Polyhedra(_SolidBase):
     def mesh(self):
         _log.info("polyhedra.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         phiStart = self.evaluateParameter(self.pSPhi) * auval
         phiTotal = self.evaluateParameter(self.pDPhi) * auval
@@ -99,4 +99,3 @@ class Polyhedra(_SolidBase):
         ps = _GenericPolyhedra("ps", phiStart, phiTotal, numSide, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
 
         return ps.mesh()
-

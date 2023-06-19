@@ -19,8 +19,8 @@ import numpy as _np
 class Paraboloid(_SolidBase):
     """
     Constructs a paraboloid with possible cuts along the z axis.
-    
-    :param name:     of solid 
+
+    :param name:     of solid
     :type name:      str
     :param pDz:      length along z
     :type pDz:       float, Constant, Quantity, Variable, Expression
@@ -31,12 +31,12 @@ class Paraboloid(_SolidBase):
     :param registry: for storing solid
     :type registry:  Registry
     :param lunit:    length unit (nm,um,mm,m,km) for solid
-    :type lunit:     str    
+    :type lunit:     str
     :param nslice:   number of phi elements for meshing
-    :type nslice:    int  
+    :type nslice:    int
     :param nstack:   number of theta elements for meshing
-    :type nstack:    int       
-    
+    :type nstack:    int
+
     """
     def __init__(self, name, pDz, pR1, pR2, registry, lunit="mm",
                  nslice=16, nstack=8, addRegistry=True):

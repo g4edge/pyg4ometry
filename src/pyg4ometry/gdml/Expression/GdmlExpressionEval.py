@@ -122,7 +122,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
         else:
             raise ValueError("Function {} not found in 'numpy' or 'math'"
                              "".format(function_name))
-            
+
         arguments = [self.visit(expr) for expr in ctx.expression()]
         return function(*arguments)
 

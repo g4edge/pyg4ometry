@@ -26,6 +26,3 @@ def writeVtkPolyDataAsSTLFile(fileName, meshes):
     stlWriter.SetInputConnection(appendFilter.GetOutputPort())
     stlWriter.Write()
     return stlWriter
-
-
-

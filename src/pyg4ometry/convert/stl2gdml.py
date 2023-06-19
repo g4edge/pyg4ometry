@@ -33,4 +33,3 @@ def stl2gdml(stlFileName, gdmlFileName = "output.gdml", worldMaterial = "G4_Gala
     w = _pyg4.gdml.Writer()
     w.addDetector(reg)
     w.write(gdmlFileName)
-

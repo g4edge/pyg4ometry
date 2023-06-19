@@ -18,19 +18,19 @@ import numpy as _np
 class TessellatedSolid(_SolidBase):
     """
     Constructs a tessellated solid
-    
+
     :param name:     of solid
     :type name:      str
-    :param mesh:     mesh 
+    :param mesh:     mesh
     :type mesh:      Freecad, Gdml or Stl
     :param registry: for storing solid
     :type registry:  Registry
     :param meshtype: type of mesh
     :type meshtype:  MeshType.Freecad
-    
+
     """
 
-    class MeshType : 
+    class MeshType :
         Freecad = 1
         Gdml    = 2
         Stl     = 3
@@ -123,7 +123,7 @@ class TessellatedSolid(_SolidBase):
         if self.meshtype == self.MeshType.Gdml :
             # vertex name - integer dict
             vdict = {}
- 
+
             i = 0
             for f in self.meshtess:
                 for facet_vertex in f:
@@ -132,12 +132,12 @@ class TessellatedSolid(_SolidBase):
                     except KeyError:
                         vdict[facet_vertex] = i
                         i += 1
-                        
-            verts = [0 for dummy in range(0,len(vdict.keys()),1)] 
+
+            verts = [0 for dummy in range(0,len(vdict.keys()),1)]
             facet = []
-            for vdi in vdict.items(): 
+            for vdi in vdict.items():
                 p = self.registry.defineDict[vdi[0]]
-                verts[vdi[1]] = p.eval() 
+                verts[vdi[1]] = p.eval()
 
             for f in self.meshtess:
                 facet.append([vdict[fi] for fi in f])
@@ -145,27 +145,27 @@ class TessellatedSolid(_SolidBase):
         #############################################
         # Mesh from CAD
         #############################################
-        elif self.meshtype == self.MeshType.Freecad : 
+        elif self.meshtype == self.MeshType.Freecad :
             verts = self.meshtess[0]
             facet = self.meshtess[1]
 
         #############################################
         # Mesh from STL
         #############################################
-        elif self.meshtype == self.MeshType.Stl : 
+        elif self.meshtype == self.MeshType.Stl :
             verts = []
             facet = []
-            
-            i = 0 
+
+            i = 0
             for f in self.meshtess :
                 v1 = f[0][0]
                 v2 = f[0][1]
                 v3 = f[0][2]
-                
+
                 verts.append(v1)
                 verts.append(v2)
                 verts.append(v3)
-                
+
                 facet.append((3*i+0,3*i+1,3*i+2))
                 i += 1
 
@@ -173,14 +173,14 @@ class TessellatedSolid(_SolidBase):
             raise ValueError("Urecognised mesh type: {}".format(self.meshtype))
 
         #############################################
-        # Convert verts and facets to polygons 
+        # Convert verts and facets to polygons
         #############################################
         polygon_list = []
 
         for f in facet:
             # This allows for both triangular and quadrilateral facets
             polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
-            polygon_list.append(polygon)            
+            polygon_list.append(polygon)
 
         return _CSG.fromPolygons(polygon_list, cgalTest=False)
 
@@ -221,4 +221,3 @@ def createTessellatedSolid(name, polygons, reg):
         meshtess.append([[p2[0], p2[i], p2[i - 1]]])
 
     return TessellatedSolid(name, meshtess, reg, TessellatedSolid.MeshType.Stl)
-

@@ -422,7 +422,7 @@ class PolygonProcessing :
 
     @classmethod
     def decomposePolygon2d(cls, pgon) :
-    
+
         poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
 
         for p in pgon :

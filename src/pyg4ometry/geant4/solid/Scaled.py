@@ -5,7 +5,7 @@ import logging as _log
 
 class Scaled(_SolidBase):
     """
-    Constructs a scaled sold. 
+    Constructs a scaled sold.
 
     :param name: of solid for registry
     :type name: str
@@ -56,4 +56,3 @@ class Scaled(_SolidBase):
 
         _log.info('scaled.pycsgmesh> mesh')
         return mesh
-

@@ -979,7 +979,7 @@ struct __pyx_defaults {
 
 /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -993,11 +993,11 @@ struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct__rotate {
 
 
 /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
 struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct_1_sphere {
   PyObject_HEAD
@@ -1007,11 +1007,11 @@ struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct_1_sphere {
 
 
 /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
 struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct_2_cylinder {
   PyObject_HEAD
@@ -1025,11 +1025,11 @@ struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct_2_cylinder {
 
 
 /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
 struct __pyx_obj_10pyg4ometry_5pycsg_4core___pyx_scope_struct_3_cone {
   PyObject_HEAD
@@ -2553,7 +2553,7 @@ static PyObject *__pyx_codeobj__83;
  *     """
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.polygons = []
- * 
+ *
  */
 
 /* Python wrapper */
@@ -2583,7 +2583,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG___init__(CYTHON_UNUSED 
  *     """
  *     def __init__(self):
  *         self.polygons = []             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __hash__(self):
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
@@ -2596,7 +2596,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG___init__(CYTHON_UNUSED 
  *     """
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.polygons = []
- * 
+ *
  */
 
   /* function exit code */
@@ -2614,7 +2614,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG___init__(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/core.pyx":67
  *         self.polygons = []
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)
@@ -2652,7 +2652,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("__hash__", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":68
- * 
+ *
  *     def __hash__(self):
  *         verts = _np.array(self.toVerticesAndPolygons()[0])             # <<<<<<<<<<<<<<
  *         as_string = _np.array2string(verts)
@@ -2707,7 +2707,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)             # <<<<<<<<<<<<<<
  *         checksum = int(_md5(as_string.encode()).hexdigest(), 16)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -2736,7 +2736,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)
  *         checksum = int(_md5(as_string.encode()).hexdigest(), 16)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return checksum
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_md5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
@@ -2808,9 +2808,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":72
  *         checksum = int(_md5(as_string.encode()).hexdigest(), 16)
- * 
+ *
  *         return checksum             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2820,7 +2820,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":67
  *         self.polygons = []
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)
@@ -2846,7 +2846,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_2__hash__(CYTHON_UNUSED
 }
 
 /* "pyg4ometry/pycsg/core.pyx":75
- * 
+ *
  *     @classmethod
  *     def fromPolygons(cls, polygons, testGeom = False):             # <<<<<<<<<<<<<<
  *         csg = CSG()
@@ -2977,7 +2977,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4fromPolygons(CYTHON_UN
  *         csg = CSG()
  *         csg.polygons = polygons             # <<<<<<<<<<<<<<
  *         return csg
- * 
+ *
  */
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_csg, __pyx_n_s_polygons, __pyx_v_polygons) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
 
@@ -2985,7 +2985,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4fromPolygons(CYTHON_UN
  *         csg = CSG()
  *         csg.polygons = polygons
  *         return csg             # <<<<<<<<<<<<<<
- * 
+ *
  *     def clone(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -2994,7 +2994,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4fromPolygons(CYTHON_UN
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/core.pyx":75
- * 
+ *
  *     @classmethod
  *     def fromPolygons(cls, polygons, testGeom = False):             # <<<<<<<<<<<<<<
  *         csg = CSG()
@@ -3017,7 +3017,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4fromPolygons(CYTHON_UN
 
 /* "pyg4ometry/pycsg/core.pyx":80
  *         return csg
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])
@@ -3055,7 +3055,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6clone(CYTHON_UNUSED Py
   __Pyx_RefNannySetupContext("clone", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":81
- * 
+ *
  *     def clone(self):
  *         csg = CSG()             # <<<<<<<<<<<<<<
  *         csg.polygons = list([p.clone() for p in self.polygons])
@@ -3086,7 +3086,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6clone(CYTHON_UNUSED Py
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])             # <<<<<<<<<<<<<<
  *         return csg
- * 
+ *
  */
   { /* enter inner scope */
     __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L5_error)
@@ -3173,7 +3173,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6clone(CYTHON_UNUSED Py
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])
  *         return csg             # <<<<<<<<<<<<<<
- * 
+ *
  *     def toPolygons(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3183,7 +3183,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6clone(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":80
  *         return csg
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])
@@ -3208,10 +3208,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6clone(CYTHON_UNUSED Py
 
 /* "pyg4ometry/pycsg/core.pyx":85
  *         return csg
- * 
+ *
  *     def toPolygons(self):             # <<<<<<<<<<<<<<
  *         return self.polygons
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3238,10 +3238,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8toPolygons(CYTHON_UNUS
   __Pyx_RefNannySetupContext("toPolygons", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":86
- * 
+ *
  *     def toPolygons(self):
  *         return self.polygons             # <<<<<<<<<<<<<<
- * 
+ *
  *     def isNull(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3253,10 +3253,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8toPolygons(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/core.pyx":85
  *         return csg
- * 
+ *
  *     def toPolygons(self):             # <<<<<<<<<<<<<<
  *         return self.polygons
- * 
+ *
  */
 
   /* function exit code */
@@ -3272,10 +3272,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8toPolygons(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/core.pyx":88
  *         return self.polygons
- * 
+ *
  *     def isNull(self):             # <<<<<<<<<<<<<<
  *         return len(self.toPolygons()) == 0
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3305,10 +3305,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_10isNull(CYTHON_UNUSED 
   __Pyx_RefNannySetupContext("isNull", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":89
- * 
+ *
  *     def isNull(self):
  *         return len(self.toPolygons()) == 0             # <<<<<<<<<<<<<<
- * 
+ *
  *     def polygonCount(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3339,10 +3339,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_10isNull(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":88
  *         return self.polygons
- * 
+ *
  *     def isNull(self):             # <<<<<<<<<<<<<<
  *         return len(self.toPolygons()) == 0
- * 
+ *
  */
 
   /* function exit code */
@@ -3360,7 +3360,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_10isNull(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/core.pyx":91
  *         return len(self.toPolygons()) == 0
- * 
+ *
  *     def polygonCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of polygons in CSG solid'''
  *         return len(self.polygons)
@@ -3395,7 +3395,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_12polygonCount(CYTHON_U
  *     def polygonCount(self):
  *         '''Return number of polygons in CSG solid'''
  *         return len(self.polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def vertexCount(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3411,7 +3411,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_12polygonCount(CYTHON_U
 
   /* "pyg4ometry/pycsg/core.pyx":91
  *         return len(self.toPolygons()) == 0
- * 
+ *
  *     def polygonCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of polygons in CSG solid'''
  *         return len(self.polygons)
@@ -3430,7 +3430,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_12polygonCount(CYTHON_U
 
 /* "pyg4ometry/pycsg/core.pyx":95
  *         return len(self.polygons)
- * 
+ *
  *     def vertexCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of vertices in CSG solid'''
  *         vCount = 0
@@ -3482,7 +3482,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_14vertexCount(CYTHON_UN
  *         vCount = 0
  *         for p in self.polygons :             # <<<<<<<<<<<<<<
  *             vCount += len(p.vertices)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_polygons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3533,7 +3533,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_14vertexCount(CYTHON_UN
  *         vCount = 0
  *         for p in self.polygons :
  *             vCount += len(p.vertices)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return vCount
  */
     __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_n_s_vertices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
@@ -3553,16 +3553,16 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_14vertexCount(CYTHON_UN
  *         vCount = 0
  *         for p in self.polygons :             # <<<<<<<<<<<<<<
  *             vCount += len(p.vertices)
- * 
+ *
  */
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":101
  *             vCount += len(p.vertices)
- * 
+ *
  *         return vCount             # <<<<<<<<<<<<<<
- * 
+ *
  *     def refine(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -3572,7 +3572,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_14vertexCount(CYTHON_UN
 
   /* "pyg4ometry/pycsg/core.pyx":95
  *         return len(self.polygons)
- * 
+ *
  *     def vertexCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of vertices in CSG solid'''
  *         vCount = 0
@@ -3595,7 +3595,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_14vertexCount(CYTHON_UN
 
 /* "pyg4ometry/pycsg/core.pyx":103
  *         return vCount
- * 
+ *
  *     def refine(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a refined CSG. To each polygon, a middle point is added to each edge and to the center
@@ -3658,7 +3658,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *         """
  *         newCSG = CSG()             # <<<<<<<<<<<<<<
  *         for poly in self.polygons:
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_CSG); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3684,7 +3684,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *         """
  *         newCSG = CSG()
  *         for poly in self.polygons:             # <<<<<<<<<<<<<<
- * 
+ *
  *             verts = poly.vertices
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_polygons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
@@ -3734,10 +3734,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":111
  *         for poly in self.polygons:
- * 
+ *
  *             verts = poly.vertices             # <<<<<<<<<<<<<<
  *             numVerts = len(verts)
- * 
+ *
  */
     __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_poly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -3745,10 +3745,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     __pyx_t_1 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":112
- * 
+ *
  *             verts = poly.vertices
  *             numVerts = len(verts)             # <<<<<<<<<<<<<<
- * 
+ *
  *             if numVerts == 0:
  */
     __pyx_t_6 = PyObject_Length(__pyx_v_verts); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 112, __pyx_L1_error)
@@ -3759,10 +3759,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":114
  *             numVerts = len(verts)
- * 
+ *
  *             if numVerts == 0:             # <<<<<<<<<<<<<<
  *                 continue
- * 
+ *
  */
     __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_numVerts, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -3771,26 +3771,26 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     if (__pyx_t_7) {
 
       /* "pyg4ometry/pycsg/core.pyx":115
- * 
+ *
  *             if numVerts == 0:
  *                 continue             # <<<<<<<<<<<<<<
- * 
+ *
  *             midPos = reduce(operator.add, [v.pos for v in verts]) / float(numVerts)
  */
       goto __pyx_L3_continue;
 
       /* "pyg4ometry/pycsg/core.pyx":114
  *             numVerts = len(verts)
- * 
+ *
  *             if numVerts == 0:             # <<<<<<<<<<<<<<
  *                 continue
- * 
+ *
  */
     }
 
     /* "pyg4ometry/pycsg/core.pyx":117
  *                 continue
- * 
+ *
  *             midPos = reduce(operator.add, [v.pos for v in verts]) / float(numVerts)             # <<<<<<<<<<<<<<
  *             midNormal = None
  *             if verts[0].normal is not None:
@@ -3918,7 +3918,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     __pyx_t_12 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":118
- * 
+ *
  *             midPos = reduce(operator.add, [v.pos for v in verts]) / float(numVerts)
  *             midNormal = None             # <<<<<<<<<<<<<<
  *             if verts[0].normal is not None:
@@ -3949,7 +3949,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *             if verts[0].normal is not None:
  *                 midNormal = poly.plane.normal             # <<<<<<<<<<<<<<
  *             midVert = Vertex(midPos, midNormal)
- * 
+ *
  */
       __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_poly, __pyx_n_s_plane); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -3972,7 +3972,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *             if verts[0].normal is not None:
  *                 midNormal = poly.plane.normal
  *             midVert = Vertex(midPos, midNormal)             # <<<<<<<<<<<<<<
- * 
+ *
  *             newVerts = verts + \
  */
     __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_Vertex); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 121, __pyx_L1_error)
@@ -4027,7 +4027,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":123
  *             midVert = Vertex(midPos, midNormal)
- * 
+ *
  *             newVerts = verts + \             # <<<<<<<<<<<<<<
  *                        [verts[i].interpolate(verts[(i + 1)%numVerts], 0.5) for i in range(numVerts)] + \
  *                        [midVert]
@@ -4035,11 +4035,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     { /* enter inner scope */
 
       /* "pyg4ometry/pycsg/core.pyx":124
- * 
+ *
  *             newVerts = verts + \
  *                        [verts[i].interpolate(verts[(i + 1)%numVerts], 0.5) for i in range(numVerts)] + \             # <<<<<<<<<<<<<<
  *                        [midVert]
- * 
+ *
  */
       __pyx_t_12 = PyList_New(0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 124, __pyx_L15_error)
       __Pyx_GOTREF(__pyx_t_12);
@@ -4161,7 +4161,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":123
  *             midVert = Vertex(midPos, midNormal)
- * 
+ *
  *             newVerts = verts + \             # <<<<<<<<<<<<<<
  *                        [verts[i].interpolate(verts[(i + 1)%numVerts], 0.5) for i in range(numVerts)] + \
  *                        [midVert]
@@ -4174,7 +4174,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *             newVerts = verts + \
  *                        [verts[i].interpolate(verts[(i + 1)%numVerts], 0.5) for i in range(numVerts)] + \
  *                        [midVert]             # <<<<<<<<<<<<<<
- * 
+ *
  *             i = 0
  */
     __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 125, __pyx_L1_error)
@@ -4184,11 +4184,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     PyList_SET_ITEM(__pyx_t_12, 0, __pyx_v_midVert);
 
     /* "pyg4ometry/pycsg/core.pyx":124
- * 
+ *
  *             newVerts = verts + \
  *                        [verts[i].interpolate(verts[(i + 1)%numVerts], 0.5) for i in range(numVerts)] + \             # <<<<<<<<<<<<<<
  *                        [midVert]
- * 
+ *
  */
     __pyx_t_3 = PyNumber_Add(__pyx_t_8, __pyx_t_12); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -4199,7 +4199,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":127
  *                        [midVert]
- * 
+ *
  *             i = 0             # <<<<<<<<<<<<<<
  *             vs = [newVerts[i], newVerts[i+numVerts], newVerts[2*numVerts], newVerts[2*numVerts-1]]
  *             newPoly = Polygon(vs, poly.shared)
@@ -4208,7 +4208,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_int_0);
 
     /* "pyg4ometry/pycsg/core.pyx":128
- * 
+ *
  *             i = 0
  *             vs = [newVerts[i], newVerts[i+numVerts], newVerts[2*numVerts], newVerts[2*numVerts-1]]             # <<<<<<<<<<<<<<
  *             newPoly = Polygon(vs, poly.shared)
@@ -4329,7 +4329,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *             newPoly.shared = poly.shared
  *             newPoly.plane = poly.plane             # <<<<<<<<<<<<<<
  *             newCSG.polygons.append(newPoly)
- * 
+ *
  */
     __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_poly, __pyx_n_s_plane); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
@@ -4340,7 +4340,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *             newPoly.shared = poly.shared
  *             newPoly.plane = poly.plane
  *             newCSG.polygons.append(newPoly)             # <<<<<<<<<<<<<<
- * 
+ *
  *             for i in range(1, numVerts):
  */
     __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_newCSG, __pyx_n_s_polygons); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 132, __pyx_L1_error)
@@ -4350,7 +4350,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":134
  *             newCSG.polygons.append(newPoly)
- * 
+ *
  *             for i in range(1, numVerts):             # <<<<<<<<<<<<<<
  *                 vs = [newVerts[i], newVerts[numVerts+i], newVerts[2*numVerts], newVerts[numVerts+i-1]]
  *                 newPoly = Polygon(vs, poly.shared)
@@ -4410,7 +4410,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
       __pyx_t_12 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":135
- * 
+ *
  *             for i in range(1, numVerts):
  *                 vs = [newVerts[i], newVerts[numVerts+i], newVerts[2*numVerts], newVerts[numVerts+i-1]]             # <<<<<<<<<<<<<<
  *                 newPoly = Polygon(vs, poly.shared)
@@ -4458,7 +4458,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *                 vs = [newVerts[i], newVerts[numVerts+i], newVerts[2*numVerts], newVerts[numVerts+i-1]]
  *                 newPoly = Polygon(vs, poly.shared)             # <<<<<<<<<<<<<<
  *                 newCSG.polygons.append(newPoly)
- * 
+ *
  */
       __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -4518,7 +4518,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *                 vs = [newVerts[i], newVerts[numVerts+i], newVerts[2*numVerts], newVerts[numVerts+i-1]]
  *                 newPoly = Polygon(vs, poly.shared)
  *                 newCSG.polygons.append(newPoly)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return newCSG
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_newCSG, __pyx_n_s_polygons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
@@ -4528,7 +4528,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
       /* "pyg4ometry/pycsg/core.pyx":134
  *             newCSG.polygons.append(newPoly)
- * 
+ *
  *             for i in range(1, numVerts):             # <<<<<<<<<<<<<<
  *                 vs = [newVerts[i], newVerts[numVerts+i], newVerts[2*numVerts], newVerts[numVerts+i-1]]
  *                 newPoly = Polygon(vs, poly.shared)
@@ -4540,7 +4540,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
  *         """
  *         newCSG = CSG()
  *         for poly in self.polygons:             # <<<<<<<<<<<<<<
- * 
+ *
  *             verts = poly.vertices
  */
     __pyx_L3_continue:;
@@ -4549,9 +4549,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":139
  *                 newCSG.polygons.append(newPoly)
- * 
+ *
  *         return newCSG             # <<<<<<<<<<<<<<
- * 
+ *
  *     def translate(self, disp):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4561,7 +4561,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":103
  *         return vCount
- * 
+ *
  *     def refine(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a refined CSG. To each polygon, a middle point is added to each edge and to the center
@@ -4600,7 +4600,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_16refine(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/core.pyx":141
  *         return newCSG
- * 
+ *
  *     def translate(self, disp):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -4876,7 +4876,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_18translate(CYTHON_UNUS
  *             for v in poly.vertices:
  *                 v.pos = v.pos.plus(d)             # <<<<<<<<<<<<<<
  *                 # no change to the normals
- * 
+ *
  */
       __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_v, __pyx_n_s_pos); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -4923,7 +4923,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_18translate(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/core.pyx":141
  *         return newCSG
- * 
+ *
  *     def translate(self, disp):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -4952,8 +4952,8 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_18translate(CYTHON_UNUS
 }
 
 /* "pyg4ometry/pycsg/core.pyx":153
- * 
- * 
+ *
+ *
  *     def scale(self, scale):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -5229,7 +5229,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20scale(CYTHON_UNUSED P
  *             for v in poly.vertices:
  *                 v.pos = v.pos.scale(d)             # <<<<<<<<<<<<<<
  *                 # no change to the normals
- * 
+ *
  */
       __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_v, __pyx_n_s_pos); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -5275,8 +5275,8 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20scale(CYTHON_UNUSED P
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":153
- * 
- * 
+ *
+ *
  *     def scale(self, scale):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -5306,7 +5306,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20scale(CYTHON_UNUSED P
 
 /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -5391,7 +5391,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4core_3CSG_23rotate(PyObject *__py
 
 /* "pyg4ometry/pycsg/core.pyx":174
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)
- * 
+ *
  *         def newVector(v):             # <<<<<<<<<<<<<<
  *             vA = v.dot(ax)
  *             vPerp = v.minus(ax.times(vA))
@@ -5439,7 +5439,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6rotate_newVector(PyObj
   __pyx_cur_scope = __pyx_outer_scope;
 
   /* "pyg4ometry/pycsg/core.pyx":175
- * 
+ *
  *         def newVector(v):
  *             vA = v.dot(ax)             # <<<<<<<<<<<<<<
  *             vPerp = v.minus(ax.times(vA))
@@ -5646,7 +5646,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6rotate_newVector(PyObj
  *             vCosA = vPerpLen*cosAngle
  *             vSinA = vPerpLen*sinAngle             # <<<<<<<<<<<<<<
  *             return ax.times(vA).plus(u1.times(vCosA).plus(u2.times(vSinA)))
- * 
+ *
  */
   if (unlikely(!__pyx_cur_scope->__pyx_v_sinAngle)) { __Pyx_RaiseClosureNameError("sinAngle"); __PYX_ERR(0, 184, __pyx_L1_error) }
   __pyx_t_1 = PyNumber_Multiply(__pyx_v_vPerpLen, __pyx_cur_scope->__pyx_v_sinAngle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
@@ -5658,7 +5658,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6rotate_newVector(PyObj
  *             vCosA = vPerpLen*cosAngle
  *             vSinA = vPerpLen*sinAngle
  *             return ax.times(vA).plus(u1.times(vCosA).plus(u2.times(vSinA)))             # <<<<<<<<<<<<<<
- * 
+ *
  *         for poly in self.polygons:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5758,7 +5758,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6rotate_newVector(PyObj
 
   /* "pyg4ometry/pycsg/core.pyx":174
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)
- * 
+ *
  *         def newVector(v):             # <<<<<<<<<<<<<<
  *             vA = v.dot(ax)
  *             vPerp = v.minus(ax.times(vA))
@@ -5790,7 +5790,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6rotate_newVector(PyObj
 
 /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -5927,7 +5927,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
  *         ax = Vector(axis[0], axis[1], axis[2]).unit()
  *         cosAngle = _np.cos(_np.pi * angleDeg / 180.)             # <<<<<<<<<<<<<<
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 171, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -5969,7 +5969,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
  *         ax = Vector(axis[0], axis[1], axis[2]).unit()
  *         cosAngle = _np.cos(_np.pi * angleDeg / 180.)
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)             # <<<<<<<<<<<<<<
- * 
+ *
  *         def newVector(v):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
@@ -6010,7 +6010,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":174
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)
- * 
+ *
  *         def newVector(v):             # <<<<<<<<<<<<<<
  *             vA = v.dot(ax)
  *             vPerp = v.minus(ax.times(vA))
@@ -6022,7 +6022,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":187
  *             return ax.times(vA).plus(u1.times(vCosA).plus(u2.times(vSinA)))
- * 
+ *
  *         for poly in self.polygons:             # <<<<<<<<<<<<<<
  *             for vert in poly.vertices:
  *                 vert.pos = newVector(vert.pos)
@@ -6073,7 +6073,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
     __pyx_t_1 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":188
- * 
+ *
  *         for poly in self.polygons:
  *             for vert in poly.vertices:             # <<<<<<<<<<<<<<
  *                 vert.pos = newVector(vert.pos)
@@ -6156,7 +6156,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
  *                 normal = vert.normal
  *                 if normal.length() > 0:             # <<<<<<<<<<<<<<
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_normal, __pyx_n_s_length); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -6185,7 +6185,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
  *                 normal = vert.normal
  *                 if normal.length() > 0:
  *                     vert.normal = newVector(vert.normal)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def toVerticesAndPolygons(self):
  */
         __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_vert, __pyx_n_s_normal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
@@ -6201,12 +6201,12 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
  *                 normal = vert.normal
  *                 if normal.length() > 0:             # <<<<<<<<<<<<<<
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  */
       }
 
       /* "pyg4ometry/pycsg/core.pyx":188
- * 
+ *
  *         for poly in self.polygons:
  *             for vert in poly.vertices:             # <<<<<<<<<<<<<<
  *                 vert.pos = newVector(vert.pos)
@@ -6217,7 +6217,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":187
  *             return ax.times(vA).plus(u1.times(vCosA).plus(u2.times(vSinA)))
- * 
+ *
  *         for poly in self.polygons:             # <<<<<<<<<<<<<<
  *             for vert in poly.vertices:
  *                 vert.pos = newVector(vert.pos)
@@ -6227,7 +6227,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -6260,7 +6260,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_22rotate(CYTHON_UNUSED 
 
 /* "pyg4ometry/pycsg/core.pyx":194
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  *     def toVerticesAndPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return list of vertices, polygons (cells), and the total
@@ -6814,11 +6814,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_24toVerticesAndPolygons
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1);
       } else {
-        __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+        __pyx_t_10 = PyList_GET_ITEM(sequence, 1);
       }
       __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_10);
@@ -6962,7 +6962,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_24toVerticesAndPolygons
  *                 p.append(float(c) - offset)
  *             verts.append(tuple(p))             # <<<<<<<<<<<<<<
  *         return verts, polys, count
- * 
+ *
  */
     __pyx_t_10 = __Pyx_PySequence_Tuple(__pyx_v_p); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 232, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
@@ -6983,7 +6983,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_24toVerticesAndPolygons
  *                 p.append(float(c) - offset)
  *             verts.append(tuple(p))
  *         return verts, polys, count             # <<<<<<<<<<<<<<
- * 
+ *
  *     def saveVTK(self, filename):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7004,7 +7004,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_24toVerticesAndPolygons
 
   /* "pyg4ometry/pycsg/core.pyx":194
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  *     def toVerticesAndPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return list of vertices, polygons (cells), and the total
@@ -7042,7 +7042,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_24toVerticesAndPolygons
 
 /* "pyg4ometry/pycsg/core.pyx":235
  *         return verts, polys, count
- * 
+ *
  *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
  *         """
  *         Save polygons in VTK file.
@@ -7263,7 +7263,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
  *             f.write('pycsg output\n')
  *             f.write('ASCII\n')             # <<<<<<<<<<<<<<
  *             f.write('DATASET POLYDATA\n')
- * 
+ *
  */
           __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
@@ -7288,7 +7288,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
  *             f.write('pycsg output\n')
  *             f.write('ASCII\n')
  *             f.write('DATASET POLYDATA\n')             # <<<<<<<<<<<<<<
- * 
+ *
  *             verts, cells, count = self.toVerticesAndPolygons()
  */
           __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L7_error)
@@ -7312,9 +7312,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
 
           /* "pyg4ometry/pycsg/core.pyx":245
  *             f.write('DATASET POLYDATA\n')
- * 
+ *
  *             verts, cells, count = self.toVerticesAndPolygons()             # <<<<<<<<<<<<<<
- * 
+ *
  *             f.write('POINTS {0} float\n'.format(len(verts)))
  */
           __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_toVerticesAndPolygons); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 245, __pyx_L7_error)
@@ -7344,13 +7344,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
             }
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
             if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-              __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1); 
-              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2); 
+              __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
+              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2);
             } else {
-              __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
-              __pyx_t_1 = PyList_GET_ITEM(sequence, 1); 
-              __pyx_t_5 = PyList_GET_ITEM(sequence, 2); 
+              __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyList_GET_ITEM(sequence, 1);
+              __pyx_t_5 = PyList_GET_ITEM(sequence, 2);
             }
             __Pyx_INCREF(__pyx_t_2);
             __Pyx_INCREF(__pyx_t_1);
@@ -7396,7 +7396,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
 
           /* "pyg4ometry/pycsg/core.pyx":247
  *             verts, cells, count = self.toVerticesAndPolygons()
- * 
+ *
  *             f.write('POINTS {0} float\n'.format(len(verts)))             # <<<<<<<<<<<<<<
  *             for v in verts:
  *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
@@ -7443,7 +7443,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
           /* "pyg4ometry/pycsg/core.pyx":248
- * 
+ *
  *             f.write('POINTS {0} float\n'.format(len(verts)))
  *             for v in verts:             # <<<<<<<<<<<<<<
  *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
@@ -7581,7 +7581,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
             __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
             /* "pyg4ometry/pycsg/core.pyx":248
- * 
+ *
  *             f.write('POINTS {0} float\n'.format(len(verts)))
  *             for v in verts:             # <<<<<<<<<<<<<<
  *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
@@ -7832,7 +7832,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
  *                 for index in cell:
  *                     f.write('{0} '.format(index))             # <<<<<<<<<<<<<<
  *                 f.write('\n')
- * 
+ *
  */
               __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 255, __pyx_L7_error)
               __Pyx_GOTREF(__pyx_t_2);
@@ -7885,7 +7885,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
  *                 for index in cell:
  *                     f.write('{0} '.format(index))
  *                 f.write('\n')             # <<<<<<<<<<<<<<
- * 
+ *
  *     def union(self, csg):
  */
             __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 256, __pyx_L7_error)
@@ -7962,7 +7962,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
             __Pyx_GIVEREF(__pyx_t_5);
             __Pyx_XGIVEREF(__pyx_t_1);
             __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_5, __pyx_t_1);
-            __pyx_t_4 = 0; __pyx_t_5 = 0; __pyx_t_1 = 0; 
+            __pyx_t_4 = 0; __pyx_t_5 = 0; __pyx_t_1 = 0;
             __PYX_ERR(0, 239, __pyx_L9_except_error)
           }
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -8006,7 +8006,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":235
  *         return verts, polys, count
- * 
+ *
  *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
  *         """
  *         Save polygons in VTK file.
@@ -8044,7 +8044,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/core.pyx":258
  *                 f.write('\n')
- * 
+ *
  *     def union(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in either this solid or in the
@@ -8362,7 +8362,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_28union(CYTHON_UNUSED P
  *         b.invert()
  *         a.build(b.allPolygons());             # <<<<<<<<<<<<<<
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_a, __pyx_n_s_build); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -8405,7 +8405,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_28union(CYTHON_UNUSED P
  *         b.invert()
  *         a.build(b.allPolygons());
  *         return CSG.fromPolygons(a.allPolygons())             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __add__(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8453,7 +8453,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_28union(CYTHON_UNUSED P
 
   /* "pyg4ometry/pycsg/core.pyx":258
  *                 f.write('\n')
- * 
+ *
  *     def union(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in either this solid or in the
@@ -8478,10 +8478,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_28union(CYTHON_UNUSED P
 
 /* "pyg4ometry/pycsg/core.pyx":284
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __add__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.union(csg)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -8561,10 +8561,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_30__add__(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("__add__", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":285
- * 
+ *
  *     def __add__(self, csg):
  *         return self.union(csg)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def subtract(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8591,10 +8591,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_30__add__(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":284
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __add__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.union(csg)
- * 
+ *
  */
 
   /* function exit code */
@@ -8612,7 +8612,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_30__add__(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/core.pyx":287
  *         return self.union(csg)
- * 
+ *
  *     def subtract(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in this solid but not in the
@@ -9000,7 +9000,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_32subtract(CYTHON_UNUSE
  *         a.build(b.allPolygons())
  *         a.invert()             # <<<<<<<<<<<<<<
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_a, __pyx_n_s_invert); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 312, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -9025,7 +9025,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_32subtract(CYTHON_UNUSE
  *         a.build(b.allPolygons())
  *         a.invert()
  *         return CSG.fromPolygons(a.allPolygons())             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __sub__(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9073,7 +9073,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_32subtract(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":287
  *         return self.union(csg)
- * 
+ *
  *     def subtract(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in this solid but not in the
@@ -9098,10 +9098,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_32subtract(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/core.pyx":315
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __sub__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.subtract(csg)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -9181,10 +9181,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_34__sub__(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("__sub__", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":316
- * 
+ *
  *     def __sub__(self, csg):
  *         return self.subtract(csg)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def intersect(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9211,10 +9211,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_34__sub__(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":315
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __sub__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.subtract(csg)
- * 
+ *
  */
 
   /* function exit code */
@@ -9232,7 +9232,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_34__sub__(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/core.pyx":318
  *         return self.subtract(csg)
- * 
+ *
  *     def intersect(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space both this solid and in the
@@ -9594,7 +9594,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_36intersect(CYTHON_UNUS
  *         a.build(b.allPolygons())
  *         a.invert()             # <<<<<<<<<<<<<<
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_a, __pyx_n_s_invert); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -9619,7 +9619,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_36intersect(CYTHON_UNUS
  *         a.build(b.allPolygons())
  *         a.invert()
  *         return CSG.fromPolygons(a.allPolygons())             # <<<<<<<<<<<<<<
- * 
+ *
  *     def coplanarIntersection(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9667,7 +9667,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_36intersect(CYTHON_UNUS
 
   /* "pyg4ometry/pycsg/core.pyx":318
  *         return self.subtract(csg)
- * 
+ *
  *     def intersect(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space both this solid and in the
@@ -9692,10 +9692,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_36intersect(CYTHON_UNUS
 
 /* "pyg4ometry/pycsg/core.pyx":345
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def coplanarIntersection(self, csg):             # <<<<<<<<<<<<<<
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  */
 
 /* Python wrapper */
@@ -9765,7 +9765,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4core_3CSG_39coplanarIntersection(
 
 /* "pyg4ometry/pycsg/core.pyx":356
  *         polygons = []
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :             # <<<<<<<<<<<<<<
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane
@@ -9856,7 +9856,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   __Pyx_RefNannySetupContext("coplanarPolys", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":357
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane             # <<<<<<<<<<<<<<
  *             FRONT = 1  # all the vertices are in front of the plane
@@ -9869,7 +9869,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane             # <<<<<<<<<<<<<<
  *             BACK = 2  # all the vertices are at the back of the plane
- * 
+ *
  */
   __pyx_v_FRONT = 1;
 
@@ -9877,17 +9877,17 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane
  *             BACK = 2  # all the vertices are at the back of the plane             # <<<<<<<<<<<<<<
- * 
+ *
  *             aplane = apoly.plane
  */
   __pyx_v_BACK = 2;
 
   /* "pyg4ometry/pycsg/core.pyx":361
  *             BACK = 2  # all the vertices are at the back of the plane
- * 
+ *
  *             aplane = apoly.plane             # <<<<<<<<<<<<<<
  *             bplane = bpoly.plane
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_apoly, __pyx_n_s_plane); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -9895,10 +9895,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":362
- * 
+ *
  *             aplane = apoly.plane
  *             bplane = bpoly.plane             # <<<<<<<<<<<<<<
- * 
+ *
  *             if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-7  :
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_plane); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L1_error)
@@ -9908,7 +9908,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":364
  *             bplane = bpoly.plane
- * 
+ *
  *             if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-7  :             # <<<<<<<<<<<<<<
  *                 return True
  *             elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-7 :
@@ -9971,7 +9971,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   if (__pyx_t_2) {
 
     /* "pyg4ometry/pycsg/core.pyx":365
- * 
+ *
  *             if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-7  :
  *                 return True             # <<<<<<<<<<<<<<
  *             elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-7 :
@@ -9984,7 +9984,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":364
  *             bplane = bpoly.plane
- * 
+ *
  *             if abs(aplane.normal.dot(bplane.normal)-1) < 1e-5 and abs(aplane.w-bplane.w) < 1e-7  :             # <<<<<<<<<<<<<<
  *                 return True
  *             elif abs(aplane.normal.dot(bplane.normal)+1) < 1e-5 and abs(aplane.w+bplane.w) < 1e-7 :
@@ -10080,7 +10080,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                 return True
  *             else :
  *                 return False             # <<<<<<<<<<<<<<
- * 
+ *
  *         def polyVertsInside(apoly, bpoly):
  */
   /*else*/ {
@@ -10092,7 +10092,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":356
  *         polygons = []
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :             # <<<<<<<<<<<<<<
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane
@@ -10116,9 +10116,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
 /* "pyg4ometry/pycsg/core.pyx":371
  *                 return False
- * 
+ *
  *         def polyVertsInside(apoly, bpoly):             # <<<<<<<<<<<<<<
- * 
+ *
  *             aplane = apoly.plane
  */
 
@@ -10219,9 +10219,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":373
  *         def polyVertsInside(apoly, bpoly):
- * 
+ *
  *             aplane = apoly.plane             # <<<<<<<<<<<<<<
- * 
+ *
  *             vertsInside = []
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_apoly, __pyx_n_s_plane); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
@@ -10231,7 +10231,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":375
  *             aplane = apoly.plane
- * 
+ *
  *             vertsInside = []             # <<<<<<<<<<<<<<
  *             for i in range(len(bpoly.vertices)):
  *                 ploc = 0
@@ -10242,11 +10242,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":376
- * 
+ *
  *             vertsInside = []
  *             for i in range(len(bpoly.vertices)):             # <<<<<<<<<<<<<<
  *                 ploc = 0
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -10260,7 +10260,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *             vertsInside = []
  *             for i in range(len(bpoly.vertices)):
  *                 ploc = 0             # <<<<<<<<<<<<<<
- * 
+ *
  *                 for j in range(len(apoly.vertices)):
  */
     __Pyx_INCREF(__pyx_int_0);
@@ -10268,7 +10268,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":379
  *                 ploc = 0
- * 
+ *
  *                 for j in range(len(apoly.vertices)):             # <<<<<<<<<<<<<<
  *                     if j == len(apoly.vertices) - 1:
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -10326,7 +10326,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_6 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":380
- * 
+ *
  *                 for j in range(len(apoly.vertices)):
  *                     if j == len(apoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -10375,7 +10375,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
         __pyx_t_11 = 0;
 
         /* "pyg4ometry/pycsg/core.pyx":380
- * 
+ *
  *                 for j in range(len(apoly.vertices)):
  *                     if j == len(apoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -10425,7 +10425,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
  *                     avunit = av.unit()             # <<<<<<<<<<<<<<
  *                     anormal = aplane.normal.cross(avunit)
- * 
+ *
  */
       __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_av, __pyx_n_s_unit); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 384, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
@@ -10451,7 +10451,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
  *                     avunit = av.unit()
  *                     anormal = aplane.normal.cross(avunit)             # <<<<<<<<<<<<<<
- * 
+ *
  *                     # distance inside place
  */
       __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_aplane, __pyx_n_s_normal); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 385, __pyx_L1_error)
@@ -10478,10 +10478,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_11 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":388
- * 
+ *
  *                     # distance inside place
  *                     t = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)             # <<<<<<<<<<<<<<
- * 
+ *
  *                     # check if inside
  */
       __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_anormal, __pyx_n_s_dot); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 388, __pyx_L1_error)
@@ -10544,11 +10544,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_12 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":391
- * 
+ *
  *                     # check if inside
  *                     if t >= 0:             # <<<<<<<<<<<<<<
  *                         ploc += 1
- * 
+ *
  */
       __pyx_t_12 = PyObject_RichCompare(__pyx_v_t, __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_12); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 391, __pyx_L1_error)
       __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 391, __pyx_L1_error)
@@ -10559,7 +10559,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                     # check if inside
  *                     if t >= 0:
  *                         ploc += 1             # <<<<<<<<<<<<<<
- * 
+ *
  *                 if ploc == len(apoly.vertices):
  */
         __pyx_t_12 = __Pyx_PyInt_AddObjC(__pyx_v_ploc, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 392, __pyx_L1_error)
@@ -10568,17 +10568,17 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
         __pyx_t_12 = 0;
 
         /* "pyg4ometry/pycsg/core.pyx":391
- * 
+ *
  *                     # check if inside
  *                     if t >= 0:             # <<<<<<<<<<<<<<
  *                         ploc += 1
- * 
+ *
  */
       }
 
       /* "pyg4ometry/pycsg/core.pyx":379
  *                 ploc = 0
- * 
+ *
  *                 for j in range(len(apoly.vertices)):             # <<<<<<<<<<<<<<
  *                     if j == len(apoly.vertices) - 1:
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -10588,10 +10588,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":394
  *                         ploc += 1
- * 
+ *
  *                 if ploc == len(apoly.vertices):             # <<<<<<<<<<<<<<
  *                     vertsInside.append(bpoly.vertices[i].pos)
- * 
+ *
  */
     __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_apoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 394, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -10606,10 +10606,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
     if (__pyx_t_10) {
 
       /* "pyg4ometry/pycsg/core.pyx":395
- * 
+ *
  *                 if ploc == len(apoly.vertices):
  *                     vertsInside.append(bpoly.vertices[i].pos)             # <<<<<<<<<<<<<<
- * 
+ *
  *             return vertsInside
  */
       __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 395, __pyx_L1_error)
@@ -10625,19 +10625,19 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
       /* "pyg4ometry/pycsg/core.pyx":394
  *                         ploc += 1
- * 
+ *
  *                 if ploc == len(apoly.vertices):             # <<<<<<<<<<<<<<
  *                     vertsInside.append(bpoly.vertices[i].pos)
- * 
+ *
  */
     }
   }
 
   /* "pyg4ometry/pycsg/core.pyx":397
  *                     vertsInside.append(bpoly.vertices[i].pos)
- * 
+ *
  *             return vertsInside             # <<<<<<<<<<<<<<
- * 
+ *
  *         def polyEdgeIntersection(apoly, bpoly) :
  */
   __Pyx_XDECREF(__pyx_r);
@@ -10647,9 +10647,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":371
  *                 return False
- * 
+ *
  *         def polyVertsInside(apoly, bpoly):             # <<<<<<<<<<<<<<
- * 
+ *
  *             aplane = apoly.plane
  */
 
@@ -10678,9 +10678,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
 /* "pyg4ometry/pycsg/core.pyx":399
  *             return vertsInside
- * 
+ *
  *         def polyEdgeIntersection(apoly, bpoly) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             vertsInter = []
  */
 
@@ -10789,9 +10789,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":401
  *         def polyEdgeIntersection(apoly, bpoly) :
- * 
+ *
  *             vertsInter = []             # <<<<<<<<<<<<<<
- * 
+ *
  *             for i in range(len(bpoly.vertices)) :
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 401, __pyx_L1_error)
@@ -10801,7 +10801,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":403
  *             vertsInter = []
- * 
+ *
  *             for i in range(len(bpoly.vertices)) :             # <<<<<<<<<<<<<<
  *                 if i == len(bpoly.vertices) - 1:
  *                     bv = bpoly.vertices[0].pos - bpoly.vertices[i].pos
@@ -10859,7 +10859,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
     __pyx_t_3 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":404
- * 
+ *
  *             for i in range(len(bpoly.vertices)) :
  *                 if i == len(bpoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                     bv = bpoly.vertices[0].pos - bpoly.vertices[i].pos
@@ -10908,7 +10908,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_8 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":404
- * 
+ *
  *             for i in range(len(bpoly.vertices)) :
  *                 if i == len(bpoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                     bv = bpoly.vertices[0].pos - bpoly.vertices[i].pos
@@ -10958,7 +10958,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                     bv = bpoly.vertices[i + 1].pos - bpoly.vertices[i].pos
  *                 bvunit = bv.unit()             # <<<<<<<<<<<<<<
  *                 b0 = bpoly.vertices[i].pos
- * 
+ *
  */
     __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_bv, __pyx_n_s_unit); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 408, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
@@ -10984,7 +10984,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                     bv = bpoly.vertices[i + 1].pos - bpoly.vertices[i].pos
  *                 bvunit = bv.unit()
  *                 b0 = bpoly.vertices[i].pos             # <<<<<<<<<<<<<<
- * 
+ *
  *                 for j in range(len(apoly.vertices)) :
  */
     __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 409, __pyx_L1_error)
@@ -11000,7 +11000,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":411
  *                 b0 = bpoly.vertices[i].pos
- * 
+ *
  *                 for j in range(len(apoly.vertices)) :             # <<<<<<<<<<<<<<
  *                     if j == len(apoly.vertices) - 1:
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -11058,7 +11058,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_6 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":412
- * 
+ *
  *                 for j in range(len(apoly.vertices)) :
  *                     if j == len(apoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -11107,7 +11107,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
         __pyx_t_11 = 0;
 
         /* "pyg4ometry/pycsg/core.pyx":412
- * 
+ *
  *                 for j in range(len(apoly.vertices)) :
  *                     if j == len(apoly.vertices) - 1:             # <<<<<<<<<<<<<<
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -11157,7 +11157,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
  *                     avunit = av.unit()             # <<<<<<<<<<<<<<
  *                     a0 = apoly.vertices[j].pos
- * 
+ *
  */
       __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_av, __pyx_n_s_unit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 416, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -11183,7 +11183,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         av = apoly.vertices[j + 1].pos - apoly.vertices[j].pos
  *                     avunit = av.unit()
  *                     a0 = apoly.vertices[j].pos             # <<<<<<<<<<<<<<
- * 
+ *
  *                     aPlaneNormal   = avunit.cross(apoly.plane.normal)
  */
       __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_apoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 417, __pyx_L1_error)
@@ -11199,9 +11199,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
       /* "pyg4ometry/pycsg/core.pyx":419
  *                     a0 = apoly.vertices[j].pos
- * 
+ *
  *                     aPlaneNormal   = avunit.cross(apoly.plane.normal)             # <<<<<<<<<<<<<<
- * 
+ *
  *                     denom = bvunit.dot(aPlaneNormal)
  */
       __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_avunit, __pyx_n_s_cross); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 419, __pyx_L1_error)
@@ -11232,7 +11232,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
       /* "pyg4ometry/pycsg/core.pyx":421
  *                     aPlaneNormal   = avunit.cross(apoly.plane.normal)
- * 
+ *
  *                     denom = bvunit.dot(aPlaneNormal)             # <<<<<<<<<<<<<<
  *                     if denom != 0 :
  *                         soln   = -(b0 - a0).dot(aPlaneNormal)/denom
@@ -11258,7 +11258,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_11 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":422
- * 
+ *
  *                     denom = bvunit.dot(aPlaneNormal)
  *                     if denom != 0 :             # <<<<<<<<<<<<<<
  *                         soln   = -(b0 - a0).dot(aPlaneNormal)/denom
@@ -11356,7 +11356,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         adist  = (inter-a0).dot(avunit)
  *                         bdist  = (inter-b0).dot(bvunit)             # <<<<<<<<<<<<<<
  *                         andist = (inter-a0).dot(apoly.plane.normal)
- * 
+ *
  */
         __pyx_t_3 = PyNumber_Subtract(__pyx_v_inter, __pyx_v_b0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 426, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
@@ -11385,7 +11385,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         adist  = (inter-a0).dot(avunit)
  *                         bdist  = (inter-b0).dot(bvunit)
  *                         andist = (inter-a0).dot(apoly.plane.normal)             # <<<<<<<<<<<<<<
- * 
+ *
  *                         if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:
  */
         __pyx_t_11 = PyNumber_Subtract(__pyx_v_inter, __pyx_v_a0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 427, __pyx_L1_error)
@@ -11419,10 +11419,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
         /* "pyg4ometry/pycsg/core.pyx":429
  *                         andist = (inter-a0).dot(apoly.plane.normal)
- * 
+ *
  *                         if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:             # <<<<<<<<<<<<<<
  *                             vertsInter.append(_Vector(inter))
- * 
+ *
  */
         __pyx_t_12 = PyObject_RichCompare(__pyx_v_adist, __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_12); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 429, __pyx_L1_error)
         __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 429, __pyx_L1_error)
@@ -11492,10 +11492,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
         if (__pyx_t_7) {
 
           /* "pyg4ometry/pycsg/core.pyx":430
- * 
+ *
  *                         if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:
  *                             vertsInter.append(_Vector(inter))             # <<<<<<<<<<<<<<
- * 
+ *
  *             return vertsInter
  */
           __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_Vector_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 430, __pyx_L1_error)
@@ -11520,15 +11520,15 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
           /* "pyg4ometry/pycsg/core.pyx":429
  *                         andist = (inter-a0).dot(apoly.plane.normal)
- * 
+ *
  *                         if adist >= 0 and adist < av.length() and bdist < bv.length() and soln > 0:             # <<<<<<<<<<<<<<
  *                             vertsInter.append(_Vector(inter))
- * 
+ *
  */
         }
 
         /* "pyg4ometry/pycsg/core.pyx":422
- * 
+ *
  *                     denom = bvunit.dot(aPlaneNormal)
  *                     if denom != 0 :             # <<<<<<<<<<<<<<
  *                         soln   = -(b0 - a0).dot(aPlaneNormal)/denom
@@ -11538,7 +11538,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
       /* "pyg4ometry/pycsg/core.pyx":411
  *                 b0 = bpoly.vertices[i].pos
- * 
+ *
  *                 for j in range(len(apoly.vertices)) :             # <<<<<<<<<<<<<<
  *                     if j == len(apoly.vertices) - 1:
  *                         av = apoly.vertices[0].pos - apoly.vertices[j].pos
@@ -11548,7 +11548,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":403
  *             vertsInter = []
- * 
+ *
  *             for i in range(len(bpoly.vertices)) :             # <<<<<<<<<<<<<<
  *                 if i == len(bpoly.vertices) - 1:
  *                     bv = bpoly.vertices[0].pos - bpoly.vertices[i].pos
@@ -11558,9 +11558,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":432
  *                             vertsInter.append(_Vector(inter))
- * 
+ *
  *             return vertsInter             # <<<<<<<<<<<<<<
- * 
+ *
  *         def convexHull(positions,normal) :
  */
   __Pyx_XDECREF(__pyx_r);
@@ -11570,9 +11570,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":399
  *             return vertsInside
- * 
+ *
  *         def polyEdgeIntersection(apoly, bpoly) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             vertsInter = []
  */
 
@@ -11610,9 +11610,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
 /* "pyg4ometry/pycsg/core.pyx":434
  *             return vertsInter
- * 
+ *
  *         def convexHull(positions,normal) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             if len(positions) < 3 :
  */
 
@@ -11712,20 +11712,20 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":436
  *         def convexHull(positions,normal) :
- * 
+ *
  *             if len(positions) < 3 :             # <<<<<<<<<<<<<<
  *                 return None
- * 
+ *
  */
   __pyx_t_1 = PyObject_Length(__pyx_v_positions); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 436, __pyx_L1_error)
   __pyx_t_2 = ((__pyx_t_1 < 3) != 0);
   if (__pyx_t_2) {
 
     /* "pyg4ometry/pycsg/core.pyx":437
- * 
+ *
  *             if len(positions) < 3 :
  *                 return None             # <<<<<<<<<<<<<<
- * 
+ *
  *             hull = []
  */
     __Pyx_XDECREF(__pyx_r);
@@ -11734,18 +11734,18 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":436
  *         def convexHull(positions,normal) :
- * 
+ *
  *             if len(positions) < 3 :             # <<<<<<<<<<<<<<
  *                 return None
- * 
+ *
  */
   }
 
   /* "pyg4ometry/pycsg/core.pyx":439
  *                 return None
- * 
+ *
  *             hull = []             # <<<<<<<<<<<<<<
- * 
+ *
  *             q_now  = positions[0]
  */
   __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 439, __pyx_L1_error)
@@ -11755,10 +11755,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":441
  *             hull = []
- * 
+ *
  *             q_now  = positions[0]             # <<<<<<<<<<<<<<
  *             q_next = positions[1]
- * 
+ *
  */
   __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_positions, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -11766,10 +11766,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":442
- * 
+ *
  *             q_now  = positions[0]
  *             q_next = positions[1]             # <<<<<<<<<<<<<<
- * 
+ *
  *             nhull = 0
  */
   __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_positions, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 442, __pyx_L1_error)
@@ -11779,19 +11779,19 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":444
  *             q_next = positions[1]
- * 
+ *
  *             nhull = 0             # <<<<<<<<<<<<<<
  *             while nhull < len(positions) :
- * 
+ *
  */
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_nhull = __pyx_int_0;
 
   /* "pyg4ometry/pycsg/core.pyx":445
- * 
+ *
  *             nhull = 0
  *             while nhull < len(positions) :             # <<<<<<<<<<<<<<
- * 
+ *
  *                 hull.append(q_now)
  */
   while (1) {
@@ -11806,18 +11806,18 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":447
  *             while nhull < len(positions) :
- * 
+ *
  *                 hull.append(q_now)             # <<<<<<<<<<<<<<
  *                 nhull = nhull + 1
- * 
+ *
  */
     __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_hull, __pyx_v_q_now); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(0, 447, __pyx_L1_error)
 
     /* "pyg4ometry/pycsg/core.pyx":448
- * 
+ *
  *                 hull.append(q_now)
  *                 nhull = nhull + 1             # <<<<<<<<<<<<<<
- * 
+ *
  *                 for p in positions :
  */
     __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_nhull, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 448, __pyx_L1_error)
@@ -11827,7 +11827,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":450
  *                 nhull = nhull + 1
- * 
+ *
  *                 for p in positions :             # <<<<<<<<<<<<<<
  *                     try :
  *                         p1 = (q_next-q_now).unit()
@@ -11875,7 +11875,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
       __pyx_t_3 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":451
- * 
+ *
  *                 for p in positions :
  *                     try :             # <<<<<<<<<<<<<<
  *                         p1 = (q_next-q_now).unit()
@@ -11921,7 +11921,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
           __pyx_t_3 = 0;
 
           /* "pyg4ometry/pycsg/core.pyx":451
- * 
+ *
  *                 for p in positions :
  *                     try :             # <<<<<<<<<<<<<<
  *                         p1 = (q_next-q_now).unit()
@@ -11971,7 +11971,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
         __pyx_L10_except_error:;
 
         /* "pyg4ometry/pycsg/core.pyx":451
- * 
+ *
  *                 for p in positions :
  *                     try :             # <<<<<<<<<<<<<<
  *                         p1 = (q_next-q_now).unit()
@@ -12113,7 +12113,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         return None
  *                     if p1.cross(p2).dot(normal) < 0 :             # <<<<<<<<<<<<<<
  *                         q_next = p
- * 
+ *
  */
       __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_p1, __pyx_n_s_cross); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 459, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
@@ -12160,7 +12160,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         return None
  *                     if p1.cross(p2).dot(normal) < 0 :
  *                         q_next = p             # <<<<<<<<<<<<<<
- * 
+ *
  *                 q_now = q_next
  */
         __Pyx_INCREF(__pyx_v_p);
@@ -12171,13 +12171,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *                         return None
  *                     if p1.cross(p2).dot(normal) < 0 :             # <<<<<<<<<<<<<<
  *                         q_next = p
- * 
+ *
  */
       }
 
       /* "pyg4ometry/pycsg/core.pyx":450
  *                 nhull = nhull + 1
- * 
+ *
  *                 for p in positions :             # <<<<<<<<<<<<<<
  *                     try :
  *                         p1 = (q_next-q_now).unit()
@@ -12187,19 +12187,19 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
     /* "pyg4ometry/pycsg/core.pyx":462
  *                         q_next = p
- * 
+ *
  *                 q_now = q_next             # <<<<<<<<<<<<<<
  *                 q_next = positions[0]
- * 
+ *
  */
     __Pyx_INCREF(__pyx_v_q_next);
     __Pyx_DECREF_SET(__pyx_v_q_now, __pyx_v_q_next);
 
     /* "pyg4ometry/pycsg/core.pyx":463
- * 
+ *
  *                 q_now = q_next
  *                 q_next = positions[0]             # <<<<<<<<<<<<<<
- * 
+ *
  *             v = []
  */
     __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_positions, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 463, __pyx_L1_error)
@@ -12210,7 +12210,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":465
  *                 q_next = positions[0]
- * 
+ *
  *             v = []             # <<<<<<<<<<<<<<
  *             for p in hull :
  *                 v.append(_Vertex(p))
@@ -12221,11 +12221,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
   __pyx_t_4 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":466
- * 
+ *
  *             v = []
  *             for p in hull :             # <<<<<<<<<<<<<<
  *                 v.append(_Vertex(p))
- * 
+ *
  */
   __pyx_t_4 = __pyx_v_hull; __Pyx_INCREF(__pyx_t_4); __pyx_t_1 = 0;
   for (;;) {
@@ -12243,7 +12243,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
  *             v = []
  *             for p in hull :
  *                 v.append(_Vertex(p))             # <<<<<<<<<<<<<<
- * 
+ *
  *             # print v
  */
     __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_n_s_Vertex_2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 467, __pyx_L1_error)
@@ -12267,20 +12267,20 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":466
- * 
+ *
  *             v = []
  *             for p in hull :             # <<<<<<<<<<<<<<
  *                 v.append(_Vertex(p))
- * 
+ *
  */
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":470
- * 
+ *
  *             # print v
  *             return Polygon(v)             # <<<<<<<<<<<<<<
- * 
+ *
  *         for i in range(0,len(apolygons),1):                     # loop over all A polygons
  */
   __Pyx_XDECREF(__pyx_r);
@@ -12307,9 +12307,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
   /* "pyg4ometry/pycsg/core.pyx":434
  *             return vertsInter
- * 
+ *
  *         def convexHull(positions,normal) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             if len(positions) < 3 :
  */
 
@@ -12338,10 +12338,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_
 
 /* "pyg4ometry/pycsg/core.pyx":345
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def coplanarIntersection(self, csg):             # <<<<<<<<<<<<<<
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  */
 
 static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_csg) {
@@ -12387,10 +12387,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":348
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)             # <<<<<<<<<<<<<<
  *         bbsp = BSPNode(csg.clone().polygons)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_BSPNode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -12434,10 +12434,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":349
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  *         bbsp = BSPNode(csg.clone().polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *         apolygons = absp.allPolygons()
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_BSPNode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
@@ -12483,10 +12483,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":351
  *         bbsp = BSPNode(csg.clone().polygons)
- * 
+ *
  *         apolygons = absp.allPolygons()             # <<<<<<<<<<<<<<
  *         bpolygons = bbsp.allPolygons()
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_absp, __pyx_n_s_allPolygons); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 351, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -12509,10 +12509,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":352
- * 
+ *
  *         apolygons = absp.allPolygons()
  *         bpolygons = bbsp.allPolygons()             # <<<<<<<<<<<<<<
- * 
+ *
  *         polygons = []
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_bbsp, __pyx_n_s_allPolygons); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
@@ -12537,9 +12537,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":354
  *         bpolygons = bbsp.allPolygons()
- * 
+ *
  *         polygons = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 354, __pyx_L1_error)
@@ -12549,7 +12549,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":356
  *         polygons = []
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :             # <<<<<<<<<<<<<<
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane
@@ -12561,9 +12561,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":371
  *                 return False
- * 
+ *
  *         def polyVertsInside(apoly, bpoly):             # <<<<<<<<<<<<<<
- * 
+ *
  *             aplane = apoly.plane
  */
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_3polyVertsInside, 0, __pyx_n_s_CSG_coplanarIntersection_locals_2, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
@@ -12573,9 +12573,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":399
  *             return vertsInside
- * 
+ *
  *         def polyEdgeIntersection(apoly, bpoly) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             vertsInter = []
  */
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_5polyEdgeIntersection, 0, __pyx_n_s_CSG_coplanarIntersection_locals_3, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 399, __pyx_L1_error)
@@ -12585,9 +12585,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":434
  *             return vertsInter
- * 
+ *
  *         def convexHull(positions,normal) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             if len(positions) < 3 :
  */
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_7convexHull, 0, __pyx_n_s_CSG_coplanarIntersection_locals_4, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 434, __pyx_L1_error)
@@ -12597,7 +12597,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":472
  *             return Polygon(v)
- * 
+ *
  *         for i in range(0,len(apolygons),1):                     # loop over all A polygons             # <<<<<<<<<<<<<<
  *             apoly  = apolygons[i]
  *             for j in range(0,len(bpolygons),1):                 # loop over all B polygons
@@ -12608,7 +12608,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
     __pyx_v_i = __pyx_t_8;
 
     /* "pyg4ometry/pycsg/core.pyx":473
- * 
+ *
  *         for i in range(0,len(apolygons),1):                     # loop over all A polygons
  *             apoly  = apolygons[i]             # <<<<<<<<<<<<<<
  *             for j in range(0,len(bpolygons),1):                 # loop over all B polygons
@@ -12624,7 +12624,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *             apoly  = apolygons[i]
  *             for j in range(0,len(bpolygons),1):                 # loop over all B polygons             # <<<<<<<<<<<<<<
  *                 bpoly = bpolygons[j]
- * 
+ *
  */
     __pyx_t_9 = PyObject_Length(__pyx_v_bpolygons); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 474, __pyx_L1_error)
     __pyx_t_10 = __pyx_t_9;
@@ -12635,7 +12635,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *             apoly  = apolygons[i]
  *             for j in range(0,len(bpolygons),1):                 # loop over all B polygons
  *                 bpoly = bpolygons[j]             # <<<<<<<<<<<<<<
- * 
+ *
  *                 copl  = coplanarPolys(apoly,bpoly)
  */
       __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_bpolygons, __pyx_v_j, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
@@ -12645,9 +12645,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
       /* "pyg4ometry/pycsg/core.pyx":477
  *                 bpoly = bpolygons[j]
- * 
+ *
  *                 copl  = coplanarPolys(apoly,bpoly)             # <<<<<<<<<<<<<<
- * 
+ *
  *                 if not copl :
  */
       __pyx_t_1 = __pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_coplanarPolys(__pyx_v_coplanarPolys, __pyx_v_apoly, __pyx_v_bpoly); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
@@ -12657,36 +12657,36 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
       /* "pyg4ometry/pycsg/core.pyx":479
  *                 copl  = coplanarPolys(apoly,bpoly)
- * 
+ *
  *                 if not copl :             # <<<<<<<<<<<<<<
  *                     continue
- * 
+ *
  */
       __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_v_copl); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 479, __pyx_L1_error)
       __pyx_t_13 = ((!__pyx_t_12) != 0);
       if (__pyx_t_13) {
 
         /* "pyg4ometry/pycsg/core.pyx":480
- * 
+ *
  *                 if not copl :
  *                     continue             # <<<<<<<<<<<<<<
- * 
+ *
  *                 aInsideB = polyVertsInside(apoly,bpoly)
  */
         goto __pyx_L5_continue;
 
         /* "pyg4ometry/pycsg/core.pyx":479
  *                 copl  = coplanarPolys(apoly,bpoly)
- * 
+ *
  *                 if not copl :             # <<<<<<<<<<<<<<
  *                     continue
- * 
+ *
  */
       }
 
       /* "pyg4ometry/pycsg/core.pyx":482
  *                     continue
- * 
+ *
  *                 aInsideB = polyVertsInside(apoly,bpoly)             # <<<<<<<<<<<<<<
  *                 bInsideA = polyVertsInside(bpoly,apoly)
  *                 aInterB  = polyEdgeIntersection(apoly,bpoly)
@@ -12697,11 +12697,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
       __pyx_t_1 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":483
- * 
+ *
  *                 aInsideB = polyVertsInside(apoly,bpoly)
  *                 bInsideA = polyVertsInside(bpoly,apoly)             # <<<<<<<<<<<<<<
  *                 aInterB  = polyEdgeIntersection(apoly,bpoly)
- * 
+ *
  */
       __pyx_t_1 = __pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_2polyVertsInside(__pyx_v_polyVertsInside, __pyx_v_bpoly, __pyx_v_apoly); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 483, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -12712,7 +12712,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *                 aInsideB = polyVertsInside(apoly,bpoly)
  *                 bInsideA = polyVertsInside(bpoly,apoly)
  *                 aInterB  = polyEdgeIntersection(apoly,bpoly)             # <<<<<<<<<<<<<<
- * 
+ *
  *                 #if len(aInsideB) != 0 and len(bInsideA) != 0 and len(aInterB) != 0 :
  */
       __pyx_t_1 = __pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_20coplanarIntersection_4polyEdgeIntersection(__pyx_v_polyEdgeIntersection, __pyx_v_apoly, __pyx_v_bpoly); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
@@ -12722,7 +12722,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
       /* "pyg4ometry/pycsg/core.pyx":492
  *                 #    print len(aInsideB),len(bInsideA),len(aInterB)
- * 
+ *
  *                 points = []             # <<<<<<<<<<<<<<
  *                 points.extend(aInsideB)
  *                 points.extend(bInsideA)
@@ -12733,7 +12733,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
       __pyx_t_1 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":493
- * 
+ *
  *                 points = []
  *                 points.extend(aInsideB)             # <<<<<<<<<<<<<<
  *                 points.extend(bInsideA)
@@ -12746,7 +12746,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *                 points.extend(aInsideB)
  *                 points.extend(bInsideA)             # <<<<<<<<<<<<<<
  *                 points.extend(aInterB)
- * 
+ *
  */
       __pyx_t_14 = __Pyx_PyList_Extend(__pyx_v_points, __pyx_v_bInsideA); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 494, __pyx_L1_error)
 
@@ -12754,14 +12754,14 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *                 points.extend(aInsideB)
  *                 points.extend(bInsideA)
  *                 points.extend(aInterB)             # <<<<<<<<<<<<<<
- * 
+ *
  *                 polygon  = convexHull(points,bpoly.plane.normal)
  */
       __pyx_t_14 = __Pyx_PyList_Extend(__pyx_v_points, __pyx_v_aInterB); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 495, __pyx_L1_error)
 
       /* "pyg4ometry/pycsg/core.pyx":497
  *                 points.extend(aInterB)
- * 
+ *
  *                 polygon  = convexHull(points,bpoly.plane.normal)             # <<<<<<<<<<<<<<
  *                 if polygon :
  *                     polygons.append(polygon)
@@ -12778,7 +12778,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
       __pyx_t_1 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":498
- * 
+ *
  *                 polygon  = convexHull(points,bpoly.plane.normal)
  *                 if polygon :             # <<<<<<<<<<<<<<
  *                     polygons.append(polygon)
@@ -12797,7 +12797,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
         __pyx_t_14 = __Pyx_PyList_Append(__pyx_v_polygons, __pyx_v_polygon); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 499, __pyx_L1_error)
 
         /* "pyg4ometry/pycsg/core.pyx":498
- * 
+ *
  *                 polygon  = convexHull(points,bpoly.plane.normal)
  *                 if polygon :             # <<<<<<<<<<<<<<
  *                     polygons.append(polygon)
@@ -12812,7 +12812,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
  *                 #else :
  *                 #    polygons.append(bpoly)
  *         return CSG.fromPolygons(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def coplanar(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -12842,10 +12842,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
   /* "pyg4ometry/pycsg/core.pyx":345
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def coplanarIntersection(self, csg):             # <<<<<<<<<<<<<<
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  */
 
   /* function exit code */
@@ -12882,9 +12882,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_38coplanarIntersection(
 
 /* "pyg4ometry/pycsg/core.pyx":504
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     def coplanar(self, csg):             # <<<<<<<<<<<<<<
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  */
 
@@ -13007,10 +13007,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":506
  *     def coplanar(self, csg):
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)             # <<<<<<<<<<<<<<
  *         bbsp = BSPNode(csg.clone().polygons)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_BSPNode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 506, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -13054,10 +13054,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":507
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  *         bbsp = BSPNode(csg.clone().polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *         apolygons = absp.allPolygons()
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_BSPNode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 507, __pyx_L1_error)
@@ -13103,10 +13103,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":509
  *         bbsp = BSPNode(csg.clone().polygons)
- * 
+ *
  *         apolygons = absp.allPolygons()             # <<<<<<<<<<<<<<
  *         bpolygons = bbsp.allPolygons()
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_absp, __pyx_n_s_allPolygons); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -13129,11 +13129,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":510
- * 
+ *
  *         apolygons = absp.allPolygons()
  *         bpolygons = bbsp.allPolygons()             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_bbsp, __pyx_n_s_allPolygons); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 510, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -13156,8 +13156,8 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":513
- * 
- * 
+ *
+ *
  *         COPLANAR = 0 # all the vertices are within EPSILON distance from plane             # <<<<<<<<<<<<<<
  *         FRONT    = 1 # all the vertices are in front of the plane
  *         BACK     = 2 # all the vertices are at the back of the plane
@@ -13165,11 +13165,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __pyx_v_COPLANAR = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":514
- * 
+ *
  *         COPLANAR = 0 # all the vertices are within EPSILON distance from plane
  *         FRONT    = 1 # all the vertices are in front of the plane             # <<<<<<<<<<<<<<
  *         BACK     = 2 # all the vertices are at the back of the plane
- * 
+ *
  */
   __pyx_v_FRONT = 1;
 
@@ -13177,16 +13177,16 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *         COPLANAR = 0 # all the vertices are within EPSILON distance from plane
  *         FRONT    = 1 # all the vertices are in front of the plane
  *         BACK     = 2 # all the vertices are at the back of the plane             # <<<<<<<<<<<<<<
- * 
+ *
  *         a = []
  */
   __pyx_v_BACK = 2;
 
   /* "pyg4ometry/pycsg/core.pyx":517
  *         BACK     = 2 # all the vertices are at the back of the plane
- * 
+ *
  *         a = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         #for apoly in apolygons :
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 517, __pyx_L1_error)
@@ -13195,7 +13195,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":534
- * 
+ *
  *         # loop over all A polygons
  *         for apoly in apolygons :             # <<<<<<<<<<<<<<
  *             aplane = apoly.plane
@@ -13260,7 +13260,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *             aplane = apoly.plane
  *             for bpoly in bpolygons :             # <<<<<<<<<<<<<<
  *                 bplane = bpoly.plane
- * 
+ *
  */
     if (likely(PyList_CheckExact(__pyx_v_bpolygons)) || PyTuple_CheckExact(__pyx_v_bpolygons)) {
       __pyx_t_2 = __pyx_v_bpolygons; __Pyx_INCREF(__pyx_t_2); __pyx_t_8 = 0;
@@ -13308,7 +13308,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *             aplane = apoly.plane
  *             for bpoly in bpolygons :
  *                 bplane = bpoly.plane             # <<<<<<<<<<<<<<
- * 
+ *
  *                 # check if B polygon is coplanar
  */
       __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_plane); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 537, __pyx_L1_error)
@@ -13317,7 +13317,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
       __pyx_t_3 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":540
- * 
+ *
  *                 # check if B polygon is coplanar
  *                 polygonType = 0             # <<<<<<<<<<<<<<
  *                 for i in range(len(bpoly.vertices)) :
@@ -13390,7 +13390,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                 for i in range(len(bpoly.vertices)) :
  *                     t = aplane.normal.dot(bpoly.vertices[i].pos) - aplane.w             # <<<<<<<<<<<<<<
  *                     loc = -1
- * 
+ *
  */
         __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_aplane, __pyx_n_s_normal); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 542, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
@@ -13434,7 +13434,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                 for i in range(len(bpoly.vertices)) :
  *                     t = aplane.normal.dot(bpoly.vertices[i].pos) - aplane.w
  *                     loc = -1             # <<<<<<<<<<<<<<
- * 
+ *
  *                     if t < -1e-8 :
  */
         __Pyx_INCREF(__pyx_int_neg_1);
@@ -13442,7 +13442,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
         /* "pyg4ometry/pycsg/core.pyx":545
  *                     loc = -1
- * 
+ *
  *                     if t < -1e-8 :             # <<<<<<<<<<<<<<
  *                         loc = BACK
  *                     elif t > 1e-8 :
@@ -13453,7 +13453,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
         if (__pyx_t_14) {
 
           /* "pyg4ometry/pycsg/core.pyx":546
- * 
+ *
  *                     if t < -1e-8 :
  *                         loc = BACK             # <<<<<<<<<<<<<<
  *                     elif t > 1e-8 :
@@ -13466,7 +13466,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
           /* "pyg4ometry/pycsg/core.pyx":545
  *                     loc = -1
- * 
+ *
  *                     if t < -1e-8 :             # <<<<<<<<<<<<<<
  *                         loc = BACK
  *                     elif t > 1e-8 :
@@ -13513,7 +13513,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                     else :
  *                         loc = COPLANAR             # <<<<<<<<<<<<<<
  *                     polygonType |= loc
- * 
+ *
  */
         /*else*/ {
           __pyx_t_5 = __Pyx_PyInt_From_long(__pyx_v_COPLANAR); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 550, __pyx_L1_error)
@@ -13527,7 +13527,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                     else :
  *                         loc = COPLANAR
  *                     polygonType |= loc             # <<<<<<<<<<<<<<
- * 
+ *
  *                 # if coplanar do a interior/exterior check
  */
         __pyx_t_5 = PyNumber_InPlaceOr(__pyx_v_polygonType, __pyx_v_loc); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 551, __pyx_L1_error)
@@ -13546,10 +13546,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
       /* "pyg4ometry/pycsg/core.pyx":554
- * 
+ *
  *                 # if coplanar do a interior/exterior check
  *                 if polygonType == COPLANAR :             # <<<<<<<<<<<<<<
- * 
+ *
  *                     aAdd = False
  */
       __pyx_t_3 = __Pyx_PyInt_From_long(__pyx_v_COPLANAR); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 554, __pyx_L1_error)
@@ -13562,19 +13562,19 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
         /* "pyg4ometry/pycsg/core.pyx":556
  *                 if polygonType == COPLANAR :
- * 
+ *
  *                     aAdd = False             # <<<<<<<<<<<<<<
- * 
+ *
  *                     for i in range(len(bpoly.vertices)) :
  */
         __pyx_v_aAdd = 0;
 
         /* "pyg4ometry/pycsg/core.pyx":558
  *                     aAdd = False
- * 
+ *
  *                     for i in range(len(bpoly.vertices)) :             # <<<<<<<<<<<<<<
  *                         ploc = 0
- * 
+ *
  */
         __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 558, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
@@ -13629,10 +13629,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
           __pyx_t_3 = 0;
 
           /* "pyg4ometry/pycsg/core.pyx":559
- * 
+ *
  *                     for i in range(len(bpoly.vertices)) :
  *                         ploc = 0             # <<<<<<<<<<<<<<
- * 
+ *
  *                         if i == len(bpoly.vertices)-1 :
  */
           __Pyx_INCREF(__pyx_int_0);
@@ -13640,7 +13640,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
           /* "pyg4ometry/pycsg/core.pyx":561
  *                         ploc = 0
- * 
+ *
  *                         if i == len(bpoly.vertices)-1 :             # <<<<<<<<<<<<<<
  *                             bv = bpoly.vertices[0].pos   - bpoly.vertices[i].pos
  *                         else :
@@ -13658,7 +13658,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
           if (__pyx_t_14) {
 
             /* "pyg4ometry/pycsg/core.pyx":562
- * 
+ *
  *                         if i == len(bpoly.vertices)-1 :
  *                             bv = bpoly.vertices[0].pos   - bpoly.vertices[i].pos             # <<<<<<<<<<<<<<
  *                         else :
@@ -13689,7 +13689,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
             /* "pyg4ometry/pycsg/core.pyx":561
  *                         ploc = 0
- * 
+ *
  *                         if i == len(bpoly.vertices)-1 :             # <<<<<<<<<<<<<<
  *                             bv = bpoly.vertices[0].pos   - bpoly.vertices[i].pos
  *                         else :
@@ -13701,8 +13701,8 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                             bv = bpoly.vertices[0].pos   - bpoly.vertices[i].pos
  *                         else :
  *                             bv = bpoly.vertices[i+1].pos - bpoly.vertices[i].pos             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
           /*else*/ {
             __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_bpoly, __pyx_n_s_vertices); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 564, __pyx_L1_error)
@@ -13734,11 +13734,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
           __pyx_L13:;
 
           /* "pyg4ometry/pycsg/core.pyx":568
- * 
+ *
  *                         # project b edge (bv) onto apoly plane
  *                         bvOnA = bv-aplane.normal*aplane.normal.dot(bv)             # <<<<<<<<<<<<<<
  *                         bpOnA = aplane.normal.dot(bpoly.vertices[i].pos)
- * 
+ *
  */
           __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_aplane, __pyx_n_s_normal); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 568, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
@@ -13776,7 +13776,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                         # project b edge (bv) onto apoly plane
  *                         bvOnA = bv-aplane.normal*aplane.normal.dot(bv)
  *                         bpOnA = aplane.normal.dot(bpoly.vertices[i].pos)             # <<<<<<<<<<<<<<
- * 
+ *
  *                         for j in range(len(apoly.vertices)) :
  */
           __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_v_aplane, __pyx_n_s_normal); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 569, __pyx_L1_error)
@@ -13813,7 +13813,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
           /* "pyg4ometry/pycsg/core.pyx":571
  *                         bpOnA = aplane.normal.dot(bpoly.vertices[i].pos)
- * 
+ *
  *                         for j in range(len(apoly.vertices)) :             # <<<<<<<<<<<<<<
  *                             if j == len(apoly.vertices)-1 :
  *                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
@@ -13871,7 +13871,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
             __pyx_t_4 = 0;
 
             /* "pyg4ometry/pycsg/core.pyx":572
- * 
+ *
  *                         for j in range(len(apoly.vertices)) :
  *                             if j == len(apoly.vertices)-1 :             # <<<<<<<<<<<<<<
  *                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
@@ -13920,7 +13920,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
               __pyx_t_3 = 0;
 
               /* "pyg4ometry/pycsg/core.pyx":572
- * 
+ *
  *                         for j in range(len(apoly.vertices)) :
  *                             if j == len(apoly.vertices)-1 :             # <<<<<<<<<<<<<<
  *                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
@@ -13970,7 +13970,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                                 av = apoly.vertices[j+1].pos - apoly.vertices[j].pos
  *                             avunit  = av.unit()             # <<<<<<<<<<<<<<
  *                             anormal = aplane.normal.cross(avunit)
- * 
+ *
  */
             __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_v_av, __pyx_n_s_unit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 576, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_13);
@@ -13996,7 +13996,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                                 av = apoly.vertices[j+1].pos - apoly.vertices[j].pos
  *                             avunit  = av.unit()
  *                             anormal = aplane.normal.cross(avunit)             # <<<<<<<<<<<<<<
- * 
+ *
  *                             # distance inside place
  */
             __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_v_aplane, __pyx_n_s_normal); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 577, __pyx_L1_error)
@@ -14023,10 +14023,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
             __pyx_t_3 = 0;
 
             /* "pyg4ometry/pycsg/core.pyx":580
- * 
+ *
  *                             # distance inside place
  *                             t  = anormal.dot(bpoly.vertices[i].pos) - apoly.vertices[j].pos.dot(anormal)             # <<<<<<<<<<<<<<
- * 
+ *
  *                             # check if inside
  */
             __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_anormal, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 580, __pyx_L1_error)
@@ -14089,11 +14089,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
             __pyx_t_18 = 0;
 
             /* "pyg4ometry/pycsg/core.pyx":583
- * 
+ *
  *                             # check if inside
  *                             if t >= 0 :             # <<<<<<<<<<<<<<
  *                                 ploc += 1
- * 
+ *
  */
             __pyx_t_18 = PyObject_RichCompare(__pyx_v_t, __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_18); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 583, __pyx_L1_error)
             __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_18); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 583, __pyx_L1_error)
@@ -14104,7 +14104,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                             # check if inside
  *                             if t >= 0 :
  *                                 ploc += 1             # <<<<<<<<<<<<<<
- * 
+ *
  *                             # test for intersection between bvOnA and av
  */
               __pyx_t_18 = __Pyx_PyInt_AddObjC(__pyx_v_ploc, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 584, __pyx_L1_error)
@@ -14113,17 +14113,17 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
               __pyx_t_18 = 0;
 
               /* "pyg4ometry/pycsg/core.pyx":583
- * 
+ *
  *                             # check if inside
  *                             if t >= 0 :             # <<<<<<<<<<<<<<
  *                                 ploc += 1
- * 
+ *
  */
             }
 
             /* "pyg4ometry/pycsg/core.pyx":571
  *                         bpOnA = aplane.normal.dot(bpoly.vertices[i].pos)
- * 
+ *
  *                         for j in range(len(apoly.vertices)) :             # <<<<<<<<<<<<<<
  *                             if j == len(apoly.vertices)-1 :
  *                                 av = apoly.vertices[0].pos   - apoly.vertices[j].pos
@@ -14133,7 +14133,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
           /* "pyg4ometry/pycsg/core.pyx":593
  *                         # print 'ploc, len',ploc,len(apoly.vertices)
- * 
+ *
  *                         if ploc == len(apoly.vertices) :             # <<<<<<<<<<<<<<
  *                             aAdd = True
  *                             break
@@ -14151,11 +14151,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
           if (__pyx_t_14) {
 
             /* "pyg4ometry/pycsg/core.pyx":594
- * 
+ *
  *                         if ploc == len(apoly.vertices) :
  *                             aAdd = True             # <<<<<<<<<<<<<<
  *                             break
- * 
+ *
  */
             __pyx_v_aAdd = 1;
 
@@ -14163,14 +14163,14 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                         if ploc == len(apoly.vertices) :
  *                             aAdd = True
  *                             break             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
             goto __pyx_L12_break;
 
             /* "pyg4ometry/pycsg/core.pyx":593
  *                         # print 'ploc, len',ploc,len(apoly.vertices)
- * 
+ *
  *                         if ploc == len(apoly.vertices) :             # <<<<<<<<<<<<<<
  *                             aAdd = True
  *                             break
@@ -14179,18 +14179,18 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
           /* "pyg4ometry/pycsg/core.pyx":558
  *                     aAdd = False
- * 
+ *
  *                     for i in range(len(bpoly.vertices)) :             # <<<<<<<<<<<<<<
  *                         ploc = 0
- * 
+ *
  */
         }
         __pyx_L12_break:;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
         /* "pyg4ometry/pycsg/core.pyx":599
- * 
- * 
+ *
+ *
  *                     if aAdd:             # <<<<<<<<<<<<<<
  *                         # print 'adding'
  *                         a.append(bpoly)
@@ -14202,14 +14202,14 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *                     if aAdd:
  *                         # print 'adding'
  *                         a.append(bpoly)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
           __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_a, __pyx_v_bpoly); if (unlikely(__pyx_t_19 == ((int)-1))) __PYX_ERR(0, 601, __pyx_L1_error)
 
           /* "pyg4ometry/pycsg/core.pyx":599
- * 
- * 
+ *
+ *
  *                     if aAdd:             # <<<<<<<<<<<<<<
  *                         # print 'adding'
  *                         a.append(bpoly)
@@ -14217,10 +14217,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
         }
 
         /* "pyg4ometry/pycsg/core.pyx":554
- * 
+ *
  *                 # if coplanar do a interior/exterior check
  *                 if polygonType == COPLANAR :             # <<<<<<<<<<<<<<
- * 
+ *
  *                     aAdd = False
  */
       }
@@ -14230,13 +14230,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
  *             aplane = apoly.plane
  *             for bpoly in bpolygons :             # <<<<<<<<<<<<<<
  *                 bplane = bpoly.plane
- * 
+ *
  */
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":534
- * 
+ *
  *         # loop over all A polygons
  *         for apoly in apolygons :             # <<<<<<<<<<<<<<
  *             aplane = apoly.plane
@@ -14246,10 +14246,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":604
- * 
- * 
+ *
+ *
  *         return CSG.fromPolygons(a)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __mul__(self, csg):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -14279,9 +14279,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":504
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     def coplanar(self, csg):             # <<<<<<<<<<<<<<
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  */
 
@@ -14326,10 +14326,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_40coplanar(CYTHON_UNUSE
 
 /* "pyg4ometry/pycsg/core.pyx":606
  *         return CSG.fromPolygons(a)
- * 
+ *
  *     def __mul__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.intersect(csg)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -14409,10 +14409,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_42__mul__(CYTHON_UNUSED
   __Pyx_RefNannySetupContext("__mul__", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":607
- * 
+ *
  *     def __mul__(self, csg):
  *         return self.intersect(csg)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def inverse(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -14439,10 +14439,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_42__mul__(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":606
  *         return CSG.fromPolygons(a)
- * 
+ *
  *     def __mul__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.intersect(csg)
- * 
+ *
  */
 
   /* function exit code */
@@ -14460,7 +14460,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_42__mul__(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/core.pyx":609
  *         return self.intersect(csg)
- * 
+ *
  *     def inverse(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid with solid and empty space switched. This solid is
@@ -14486,7 +14486,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4core_3CSG_45inverse(PyObject *__p
  *         csg = self.clone()
  *         list(map(lambda p: p.flip(), csg.polygons))             # <<<<<<<<<<<<<<
  *         return csg
- * 
+ *
  */
 
 /* Python wrapper */
@@ -14550,7 +14550,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
 
 /* "pyg4ometry/pycsg/core.pyx":609
  *         return self.intersect(csg)
- * 
+ *
  *     def inverse(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid with solid and empty space switched. This solid is
@@ -14600,7 +14600,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_44inverse(CYTHON_UNUSED
  *         csg = self.clone()
  *         list(map(lambda p: p.flip(), csg.polygons))             # <<<<<<<<<<<<<<
  *         return csg
- * 
+ *
  */
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_7inverse_lambda, 0, __pyx_n_s_CSG_inverse_locals_lambda, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 615, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -14626,7 +14626,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_44inverse(CYTHON_UNUSED
  *         csg = self.clone()
  *         list(map(lambda p: p.flip(), csg.polygons))
  *         return csg             # <<<<<<<<<<<<<<
- * 
+ *
  *     def getNumberPolys(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -14636,7 +14636,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_44inverse(CYTHON_UNUSED
 
   /* "pyg4ometry/pycsg/core.pyx":609
  *         return self.intersect(csg)
- * 
+ *
  *     def inverse(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid with solid and empty space switched. This solid is
@@ -14658,10 +14658,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_44inverse(CYTHON_UNUSED
 
 /* "pyg4ometry/pycsg/core.pyx":618
  *         return csg
- * 
+ *
  *     def getNumberPolys(self):             # <<<<<<<<<<<<<<
  *         return len(self.polygons)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -14689,10 +14689,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_46getNumberPolys(CYTHON
   __Pyx_RefNannySetupContext("getNumberPolys", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":619
- * 
+ *
  *     def getNumberPolys(self):
  *         return len(self.polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
@@ -14708,10 +14708,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_46getNumberPolys(CYTHON
 
   /* "pyg4ometry/pycsg/core.pyx":618
  *         return csg
- * 
+ *
  *     def getNumberPolys(self):             # <<<<<<<<<<<<<<
  *         return len(self.polygons)
- * 
+ *
  */
 
   /* function exit code */
@@ -14726,7 +14726,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_46getNumberPolys(CYTHON
 }
 
 /* "pyg4ometry/pycsg/core.pyx":622
- * 
+ *
  *     @classmethod
  *     def cube(cls, center=[0,0,0], radius=[1,1,1]):             # <<<<<<<<<<<<<<
  *         """
@@ -14937,7 +14937,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
  *         if isinstance(radius, list): r = radius
  *         else: r = [radius, radius, radius]
  */
-  __pyx_t_3 = PyList_Check(__pyx_v_center); 
+  __pyx_t_3 = PyList_Check(__pyx_v_center);
   __pyx_t_4 = (__pyx_t_3 != 0);
   if (__pyx_t_4) {
     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Vector); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 637, __pyx_L1_error)
@@ -14966,9 +14966,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
  *         if isinstance(center, list): c = Vector(center)
  *         if isinstance(radius, list): r = radius             # <<<<<<<<<<<<<<
  *         else: r = [radius, radius, radius]
- * 
+ *
  */
-  __pyx_t_4 = PyList_Check(__pyx_v_radius); 
+  __pyx_t_4 = PyList_Check(__pyx_v_radius);
   __pyx_t_3 = (__pyx_t_4 != 0);
   if (__pyx_t_3) {
     __Pyx_INCREF(__pyx_v_radius);
@@ -14980,7 +14980,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
  *         if isinstance(center, list): c = Vector(center)
  *         if isinstance(radius, list): r = radius
  *         else: r = [radius, radius, radius]             # <<<<<<<<<<<<<<
- * 
+ *
  *         polygons = list([Polygon(
  */
   /*else*/ {
@@ -15002,7 +15002,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":641
  *         else: r = [radius, radius, radius]
- * 
+ *
  *         polygons = list([Polygon(             # <<<<<<<<<<<<<<
  *                 list([Vertex(
  *                         Vector(
@@ -15299,7 +15299,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
 
       /* "pyg4ometry/pycsg/core.pyx":641
  *         else: r = [radius, radius, radius]
- * 
+ *
  *         polygons = list([Polygon(             # <<<<<<<<<<<<<<
  *                 list([Vertex(
  *                         Vector(
@@ -15308,7 +15308,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
       __Pyx_GOTREF(__pyx_t_10);
 
       /* "pyg4ometry/pycsg/core.pyx":642
- * 
+ *
  *         polygons = list([Polygon(
  *                 list([Vertex(             # <<<<<<<<<<<<<<
  *                         Vector(
@@ -15375,7 +15375,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
           __pyx_t_8 = 0;
 
           /* "pyg4ometry/pycsg/core.pyx":642
- * 
+ *
  *         polygons = list([Polygon(
  *                 list([Vertex(             # <<<<<<<<<<<<<<
  *                         Vector(
@@ -15619,7 +15619,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
       } /* exit inner scope */
 
       /* "pyg4ometry/pycsg/core.pyx":642
- * 
+ *
  *         polygons = list([Polygon(
  *                 list([Vertex(             # <<<<<<<<<<<<<<
  *                         Vector(
@@ -15666,7 +15666,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":641
  *         else: r = [radius, radius, radius]
- * 
+ *
  *         polygons = list([Polygon(             # <<<<<<<<<<<<<<
  *                 list([Vertex(
  *                         Vector(
@@ -15681,7 +15681,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
  *                         [[4, 5, 7, 6], [0, 0, +1]]
  *                     ]])
  *         return CSG.fromPolygons(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
@@ -15710,7 +15710,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/core.pyx":622
- * 
+ *
  *     @classmethod
  *     def cube(cls, center=[0,0,0], radius=[1,1,1]):             # <<<<<<<<<<<<<<
  *         """
@@ -15749,11 +15749,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_48cube(CYTHON_UNUSED Py
 }
 
 /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
 
 /* Python wrapper */
@@ -16018,7 +16018,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6sphere_appendVertex(Py
  *                 _np.cos(phi),
  *                 _np.sin(theta) * _np.sin(phi))             # <<<<<<<<<<<<<<
  *             vertices.append(Vertex(c.plus(d.times(r)), d))
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 686, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -16125,7 +16125,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6sphere_appendVertex(Py
  *                 _np.cos(phi),
  *                 _np.sin(theta) * _np.sin(phi))
  *             vertices.append(Vertex(c.plus(d.times(r)), d))             # <<<<<<<<<<<<<<
- * 
+ *
  *         dTheta = _np.pi * 2.0 / float(slices)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Vertex); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 687, __pyx_L1_error)
@@ -16247,11 +16247,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_6sphere_appendVertex(Py
 }
 
 /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
 
 static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_cls, PyObject *__pyx_v_kwargs) {
@@ -16333,7 +16333,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *             center = [center, center, center]
  *         c = Vector(center)
  */
-  __pyx_t_3 = PyFloat_Check(__pyx_v_center); 
+  __pyx_t_3 = PyFloat_Check(__pyx_v_center);
   __pyx_t_4 = (__pyx_t_3 != 0);
   if (__pyx_t_4) {
 
@@ -16417,7 +16417,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  */
   __pyx_t_2 = __pyx_cur_scope->__pyx_v_r;
   __Pyx_INCREF(__pyx_t_2);
-  __pyx_t_3 = PyList_Check(__pyx_t_2); 
+  __pyx_t_3 = PyList_Check(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_6 = (__pyx_t_3 != 0);
   if (__pyx_t_6) {
@@ -16507,10 +16507,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":689
  *             vertices.append(Vertex(c.plus(d.times(r)), d))
- * 
+ *
  *         dTheta = _np.pi * 2.0 / float(slices)             # <<<<<<<<<<<<<<
  *         dPhi = _np.pi / float(stacks)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 689, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -16530,10 +16530,10 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
   __pyx_t_5 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":690
- * 
+ *
  *         dTheta = _np.pi * 2.0 / float(slices)
  *         dPhi = _np.pi / float(stacks)             # <<<<<<<<<<<<<<
- * 
+ *
  *         j0 = 0
  */
   __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 690, __pyx_L1_error)
@@ -16552,7 +16552,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":692
  *         dPhi = _np.pi / float(stacks)
- * 
+ *
  *         j0 = 0             # <<<<<<<<<<<<<<
  *         j1 = j0 + 1
  *         for i0 in range(0, slices):
@@ -16561,7 +16561,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
   __pyx_v_j0 = __pyx_int_0;
 
   /* "pyg4ometry/pycsg/core.pyx":693
- * 
+ *
  *         j0 = 0
  *         j1 = j0 + 1             # <<<<<<<<<<<<<<
  *         for i0 in range(0, slices):
@@ -16696,7 +16696,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *             appendVertex(vertices, i1 * dTheta, j1 * dPhi)
  *             appendVertex(vertices, i0 * dTheta, j1 * dPhi)             # <<<<<<<<<<<<<<
  *             polygons.append(Polygon(vertices))
- * 
+ *
  */
     __pyx_t_5 = PyNumber_Multiply(__pyx_v_i0, __pyx_v_dTheta); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 703, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
@@ -16712,7 +16712,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *             appendVertex(vertices, i1 * dTheta, j1 * dPhi)
  *             appendVertex(vertices, i0 * dTheta, j1 * dPhi)
  *             polygons.append(Polygon(vertices))             # <<<<<<<<<<<<<<
- * 
+ *
  *         j0 = stacks - 1
  */
     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 704, __pyx_L1_error)
@@ -16747,7 +16747,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":706
  *             polygons.append(Polygon(vertices))
- * 
+ *
  *         j0 = stacks - 1             # <<<<<<<<<<<<<<
  *         j1 = j0 + 1
  *         for i0 in range(0, slices):
@@ -16758,7 +16758,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
   __pyx_t_2 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":707
- * 
+ *
  *         j0 = stacks - 1
  *         j1 = j0 + 1             # <<<<<<<<<<<<<<
  *         for i0 in range(0, slices):
@@ -16893,7 +16893,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *             appendVertex(vertices, i1 * dTheta, j0 * dPhi)
  *             appendVertex(vertices, i0 * dTheta, j1 * dPhi)             # <<<<<<<<<<<<<<
  *             polygons.append(Polygon(vertices))
- * 
+ *
  */
     __pyx_t_9 = PyNumber_Multiply(__pyx_v_i0, __pyx_v_dTheta); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 717, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
@@ -16909,7 +16909,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *             appendVertex(vertices, i1 * dTheta, j0 * dPhi)
  *             appendVertex(vertices, i0 * dTheta, j1 * dPhi)
  *             polygons.append(Polygon(vertices))             # <<<<<<<<<<<<<<
- * 
+ *
  *         for j0 in range(1, stacks - 1):
  */
     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
@@ -16944,7 +16944,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":720
  *             polygons.append(Polygon(vertices))
- * 
+ *
  *         for j0 in range(1, stacks - 1):             # <<<<<<<<<<<<<<
  *             j1 = j0 + 0.5
  *             j2 = j0 + 1
@@ -17006,7 +17006,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
     __pyx_t_2 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":721
- * 
+ *
  *         for j0 in range(1, stacks - 1):
  *             j1 = j0 + 0.5             # <<<<<<<<<<<<<<
  *             j2 = j0 + 1
@@ -17435,7 +17435,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *                 appendVertex(verticesE, i2 * dTheta, j0 * dPhi)
  *                 appendVertex(verticesE, i2 * dTheta, j2 * dPhi)             # <<<<<<<<<<<<<<
  *                 polygons.append(Polygon(verticesE))
- * 
+ *
  */
       __pyx_t_13 = PyNumber_Multiply(__pyx_v_i2, __pyx_v_dTheta); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 749, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
@@ -17451,7 +17451,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
  *                 appendVertex(verticesE, i2 * dTheta, j0 * dPhi)
  *                 appendVertex(verticesE, i2 * dTheta, j2 * dPhi)
  *                 polygons.append(Polygon(verticesE))             # <<<<<<<<<<<<<<
- * 
+ *
  *         return CSG.fromPolygons(polygons)
  */
       __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 750, __pyx_L1_error)
@@ -17486,7 +17486,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
     /* "pyg4ometry/pycsg/core.pyx":720
  *             polygons.append(Polygon(vertices))
- * 
+ *
  *         for j0 in range(1, stacks - 1):             # <<<<<<<<<<<<<<
  *             j1 = j0 + 0.5
  *             j2 = j0 + 1
@@ -17496,9 +17496,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 
   /* "pyg4ometry/pycsg/core.pyx":752
  *                 polygons.append(Polygon(verticesE))
- * 
+ *
  *         return CSG.fromPolygons(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
@@ -17527,11 +17527,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
 
   /* function exit code */
@@ -17569,11 +17569,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_50sphere(CYTHON_UNUSED 
 }
 
 /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
 
 /* Python wrapper */
@@ -17638,7 +17638,7 @@ static PyObject *__pyx_pw_10pyg4ometry_5pycsg_4core_3CSG_53cylinder(PyObject *__
 
 /* "pyg4ometry/pycsg/core.pyx":785
  *         polygons = []
- * 
+ *
  *         def point(stack, angle, normalBlend):             # <<<<<<<<<<<<<<
  *             out = axisX.times(_np.cos(angle)).plus(
  *                 axisY.times(_np.sin(angle)))
@@ -17744,7 +17744,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(PyObjec
   __pyx_cur_scope = __pyx_outer_scope;
 
   /* "pyg4ometry/pycsg/core.pyx":786
- * 
+ *
  *         def point(stack, angle, normalBlend):
  *             out = axisX.times(_np.cos(angle)).plus(             # <<<<<<<<<<<<<<
  *                 axisY.times(_np.sin(angle)))
@@ -17999,7 +17999,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(PyObjec
  *             normal = out.times(1.0 - _np.fabs(normalBlend)).plus(
  *                 axisZ.times(normalBlend))             # <<<<<<<<<<<<<<
  *             return Vertex(pos, normal)
- * 
+ *
  */
   if (unlikely(!__pyx_cur_scope->__pyx_v_axisZ)) { __Pyx_RaiseClosureNameError("axisZ"); __PYX_ERR(0, 790, __pyx_L1_error) }
   __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_axisZ, __pyx_n_s_times); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 790, __pyx_L1_error)
@@ -18042,7 +18042,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(PyObjec
  *             normal = out.times(1.0 - _np.fabs(normalBlend)).plus(
  *                 axisZ.times(normalBlend))
  *             return Vertex(pos, normal)             # <<<<<<<<<<<<<<
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  */
   __Pyx_XDECREF(__pyx_r);
@@ -18099,7 +18099,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(PyObjec
 
   /* "pyg4ometry/pycsg/core.pyx":785
  *         polygons = []
- * 
+ *
  *         def point(stack, angle, normalBlend):             # <<<<<<<<<<<<<<
  *             out = axisX.times(_np.cos(angle)).plus(
  *                 axisY.times(_np.sin(angle)))
@@ -18126,11 +18126,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(PyObjec
 }
 
 /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
 
 static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_cls, PyObject *__pyx_v_kwargs) {
@@ -18222,7 +18222,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  */
   __pyx_t_1 = __pyx_cur_scope->__pyx_v_s;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_3 = PyList_Check(__pyx_t_1); 
+  __pyx_t_3 = PyList_Check(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_4 = (__pyx_t_3 != 0);
   if (__pyx_t_4) {
@@ -18263,7 +18263,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *             e = Vector(*e)
  *         r = kwargs.get('radius', 1.0)
  */
-  __pyx_t_4 = PyList_Check(__pyx_v_e); 
+  __pyx_t_4 = PyList_Check(__pyx_v_e);
   __pyx_t_3 = (__pyx_t_4 != 0);
   if (__pyx_t_3) {
 
@@ -18312,7 +18312,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *         r = kwargs.get('radius', 1.0)
  *         slices = kwargs.get('slices', 16)             # <<<<<<<<<<<<<<
  *         ray = e.minus(s)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_u_slices, __pyx_int_16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 774, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -18323,7 +18323,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *         r = kwargs.get('radius', 1.0)
  *         slices = kwargs.get('slices', 16)
  *         ray = e.minus(s)             # <<<<<<<<<<<<<<
- * 
+ *
  *         axisZ = ray.unit()
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_e, __pyx_n_s_minus); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 775, __pyx_L1_error)
@@ -18349,7 +18349,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":777
  *         ray = e.minus(s)
- * 
+ *
  *         axisZ = ray.unit()             # <<<<<<<<<<<<<<
  *         isY = (_np.fabs(axisZ.y) > 0.5)
  *         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
@@ -18376,7 +18376,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":778
- * 
+ *
  *         axisZ = ray.unit()
  *         isY = (_np.fabs(axisZ.y) > 0.5)             # <<<<<<<<<<<<<<
  *         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
@@ -18643,7 +18643,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *         start = Vertex(s, axisZ.negated())
  *         end = Vertex(e, axisZ.unit())             # <<<<<<<<<<<<<<
  *         polygons = []
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Vertex); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 782, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -18718,7 +18718,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *         start = Vertex(s, axisZ.negated())
  *         end = Vertex(e, axisZ.unit())
  *         polygons = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         def point(stack, angle, normalBlend):
  */
   __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 783, __pyx_L1_error)
@@ -18728,7 +18728,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":785
  *         polygons = []
- * 
+ *
  *         def point(stack, angle, normalBlend):             # <<<<<<<<<<<<<<
  *             out = axisX.times(_np.cos(angle)).plus(
  *                 axisY.times(_np.sin(angle)))
@@ -18740,7 +18740,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":793
  *             return Vertex(pos, normal)
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)             # <<<<<<<<<<<<<<
  *         for i in range(0, slices):
  *             t0 = i * dt
@@ -18763,7 +18763,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
   __pyx_t_2 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":794
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  *         for i in range(0, slices):             # <<<<<<<<<<<<<<
  *             t0 = i * dt
@@ -19060,7 +19060,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *             polygons.append(Polygon([end.clone(),
  *                                      point(1., t1, 1.),             # <<<<<<<<<<<<<<
  *                                      point(1., t0, 1.)]))
- * 
+ *
  */
     __pyx_t_11 = __pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(__pyx_v_point, __pyx_float_1_, __pyx_v_t1, __pyx_float_1_); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 806, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
@@ -19069,7 +19069,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
  *             polygons.append(Polygon([end.clone(),
  *                                      point(1., t1, 1.),
  *                                      point(1., t0, 1.)]))             # <<<<<<<<<<<<<<
- * 
+ *
  *         return CSG.fromPolygons(polygons)
  */
     __pyx_t_6 = __pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_8cylinder_point(__pyx_v_point, __pyx_float_1_, __pyx_v_t0, __pyx_float_1_); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 807, __pyx_L1_error)
@@ -19113,7 +19113,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "pyg4ometry/pycsg/core.pyx":794
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  *         for i in range(0, slices):             # <<<<<<<<<<<<<<
  *             t0 = i * dt
@@ -19124,9 +19124,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
 
   /* "pyg4ometry/pycsg/core.pyx":809
  *                                      point(1., t0, 1.)]))
- * 
+ *
  *         return CSG.fromPolygons(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
@@ -19155,11 +19155,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
 
   /* function exit code */
@@ -19194,11 +19194,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_52cylinder(CYTHON_UNUSE
 }
 
 /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
 
 /* Python wrapper */
@@ -19472,7 +19472,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4cone_point(PyObject *_
  *             # normal taking into account the tapering of the cone
  *             normal = out.times(cosTaperAngle).plus(axisZ.times(sinTaperAngle))             # <<<<<<<<<<<<<<
  *             return pos, normal
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_out, __pyx_n_s_times); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 851, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -19537,7 +19537,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4cone_point(PyObject *_
  *             # normal taking into account the tapering of the cone
  *             normal = out.times(cosTaperAngle).plus(axisZ.times(sinTaperAngle))
  *             return pos, normal             # <<<<<<<<<<<<<<
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  */
   __Pyx_XDECREF(__pyx_r);
@@ -19582,11 +19582,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_4cone_point(PyObject *_
 }
 
 /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
 
 static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_cls, PyObject *__pyx_v_kwargs) {
@@ -19689,7 +19689,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  */
   __pyx_t_1 = __pyx_cur_scope->__pyx_v_s;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_3 = PyList_Check(__pyx_t_1); 
+  __pyx_t_3 = PyList_Check(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_4 = (__pyx_t_3 != 0);
   if (__pyx_t_4) {
@@ -19730,7 +19730,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *             e = Vector(*e)
  *         r = kwargs.get('radius', 1.0)
  */
-  __pyx_t_4 = PyList_Check(__pyx_v_e); 
+  __pyx_t_4 = PyList_Check(__pyx_v_e);
   __pyx_t_3 = (__pyx_t_4 != 0);
   if (__pyx_t_3) {
 
@@ -19779,7 +19779,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *         r = kwargs.get('radius', 1.0)
  *         slices = kwargs.get('slices', 16)             # <<<<<<<<<<<<<<
  *         ray = e.minus(s)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_u_slices, __pyx_int_16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 831, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -19790,7 +19790,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *         r = kwargs.get('radius', 1.0)
  *         slices = kwargs.get('slices', 16)
  *         ray = e.minus(s)             # <<<<<<<<<<<<<<
- * 
+ *
  *         axisZ = ray.unit()
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_e, __pyx_n_s_minus); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 832, __pyx_L1_error)
@@ -19815,7 +19815,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":834
  *         ray = e.minus(s)
- * 
+ *
  *         axisZ = ray.unit()             # <<<<<<<<<<<<<<
  *         isY = (_np.fabs(axisZ.y) > 0.5)
  *         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
@@ -19842,7 +19842,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
   __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":835
- * 
+ *
  *         axisZ = ray.unit()
  *         isY = (_np.fabs(axisZ.y) > 0.5)             # <<<<<<<<<<<<<<
  *         axisX = Vector(float(isY), float(not isY), 0).cross(axisZ).unit()
@@ -20060,7 +20060,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *         startNormal = axisZ.negated()
  *         start = Vertex(s, startNormal)             # <<<<<<<<<<<<<<
  *         polygons = []
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Vertex); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 839, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -20116,7 +20116,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *         startNormal = axisZ.negated()
  *         start = Vertex(s, startNormal)
  *         polygons = []             # <<<<<<<<<<<<<<
- * 
+ *
  *         taperAngle = _np.atan2(r, ray.length())
  */
   __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 840, __pyx_L1_error)
@@ -20126,7 +20126,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":842
  *         polygons = []
- * 
+ *
  *         taperAngle = _np.atan2(r, ray.length())             # <<<<<<<<<<<<<<
  *         sinTaperAngle = _np.sin(taperAngle)
  *         cosTaperAngle = _np.cos(taperAngle)
@@ -20204,7 +20204,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
   __pyx_t_5 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":843
- * 
+ *
  *         taperAngle = _np.atan2(r, ray.length())
  *         sinTaperAngle = _np.sin(taperAngle)             # <<<<<<<<<<<<<<
  *         cosTaperAngle = _np.cos(taperAngle)
@@ -20279,7 +20279,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":854
  *             return pos, normal
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)             # <<<<<<<<<<<<<<
  *         for i in range(0, slices):
  *             t0 = i * dt
@@ -20302,7 +20302,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
   __pyx_t_11 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":855
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  *         for i in range(0, slices):             # <<<<<<<<<<<<<<
  *             t0 = i * dt
@@ -20420,11 +20420,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
       } else {
-        __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_1 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+        __pyx_t_1 = PyList_GET_ITEM(sequence, 1);
       }
       __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_1);
@@ -20480,11 +20480,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1);
       } else {
-        __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_2 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_1 = PyList_GET_ITEM(sequence, 0);
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 1);
       }
       __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(__pyx_t_2);
@@ -20754,7 +20754,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *             # polygon extending from the low side to the tip
  *             polySide = Polygon([Vertex(p0, n0), Vertex(e, nAvg), Vertex(p1, n1)])             # <<<<<<<<<<<<<<
  *             polygons.append(polySide)
- * 
+ *
  */
     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 871, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -20933,13 +20933,13 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
  *             # polygon extending from the low side to the tip
  *             polySide = Polygon([Vertex(p0, n0), Vertex(e, nAvg), Vertex(p1, n1)])
  *             polygons.append(polySide)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return CSG.fromPolygons(polygons)
  */
     __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_polygons, __pyx_v_polySide); if (unlikely(__pyx_t_16 == ((int)-1))) __PYX_ERR(0, 872, __pyx_L1_error)
 
     /* "pyg4ometry/pycsg/core.pyx":855
- * 
+ *
  *         dt = _np.pi * 2.0 / float(slices)
  *         for i in range(0, slices):             # <<<<<<<<<<<<<<
  *             t0 = i * dt
@@ -20950,9 +20950,9 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
 
   /* "pyg4ometry/pycsg/core.pyx":874
  *             polygons.append(polySide)
- * 
+ *
  *         return CSG.fromPolygons(polygons)             # <<<<<<<<<<<<<<
- * 
+ *
  * def do_intersect(first, second):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -20981,11 +20981,11 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
   goto __pyx_L0;
 
   /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
 
   /* function exit code */
@@ -21031,7 +21031,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_54cone(CYTHON_UNUSED Py
 
 /* "pyg4ometry/pycsg/core.pyx":876
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  * def do_intersect(first, second):             # <<<<<<<<<<<<<<
  *     return not first.intersect(second).isNull()
  */
@@ -21115,7 +21115,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_do_intersect(CYTHON_UNUSED P
   __Pyx_RefNannySetupContext("do_intersect", 0);
 
   /* "pyg4ometry/pycsg/core.pyx":877
- * 
+ *
  * def do_intersect(first, second):
  *     return not first.intersect(second).isNull()             # <<<<<<<<<<<<<<
  */
@@ -21165,7 +21165,7 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_do_intersect(CYTHON_UNUSED P
 
   /* "pyg4ometry/pycsg/core.pyx":876
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  * def do_intersect(first, second):             # <<<<<<<<<<<<<<
  *     return not first.intersect(second).isNull()
  */
@@ -22285,7 +22285,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":174
  *         sinAngle = _np.sin(_np.pi * angleDeg / 180.)
- * 
+ *
  *         def newVector(v):             # <<<<<<<<<<<<<<
  *             vA = v.dot(ax)
  *             vPerp = v.minus(ax.times(vA))
@@ -22308,7 +22308,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":356
  *         polygons = []
- * 
+ *
  *         def coplanarPolys(apoly,bpoly) :             # <<<<<<<<<<<<<<
  *             COPLANAR = 0  # all the vertices are within EPSILON distance from plane
  *             FRONT = 1  # all the vertices are in front of the plane
@@ -22320,9 +22320,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":371
  *                 return False
- * 
+ *
  *         def polyVertsInside(apoly, bpoly):             # <<<<<<<<<<<<<<
- * 
+ *
  *             aplane = apoly.plane
  */
   __pyx_tuple__8 = PyTuple_Pack(11, __pyx_n_s_apoly, __pyx_n_s_bpoly, __pyx_n_s_aplane, __pyx_n_s_vertsInside, __pyx_n_s_i, __pyx_n_s_ploc, __pyx_n_s_j, __pyx_n_s_av, __pyx_n_s_avunit, __pyx_n_s_anormal, __pyx_n_s_t); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 371, __pyx_L1_error)
@@ -22332,9 +22332,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":399
  *             return vertsInside
- * 
+ *
  *         def polyEdgeIntersection(apoly, bpoly) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             vertsInter = []
  */
   __pyx_tuple__10 = PyTuple_Pack(18, __pyx_n_s_apoly, __pyx_n_s_bpoly, __pyx_n_s_vertsInter, __pyx_n_s_i, __pyx_n_s_bv, __pyx_n_s_bvunit, __pyx_n_s_b0, __pyx_n_s_j, __pyx_n_s_av, __pyx_n_s_avunit, __pyx_n_s_a0, __pyx_n_s_aPlaneNormal, __pyx_n_s_denom, __pyx_n_s_soln, __pyx_n_s_inter, __pyx_n_s_adist, __pyx_n_s_bdist, __pyx_n_s_andist); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 399, __pyx_L1_error)
@@ -22344,9 +22344,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":434
  *             return vertsInter
- * 
+ *
  *         def convexHull(positions,normal) :             # <<<<<<<<<<<<<<
- * 
+ *
  *             if len(positions) < 3 :
  */
   __pyx_tuple__12 = PyTuple_Pack(10, __pyx_n_s_positions, __pyx_n_s_normal, __pyx_n_s_hull, __pyx_n_s_q_now, __pyx_n_s_q_next, __pyx_n_s_nhull, __pyx_n_s_p, __pyx_n_s_p1, __pyx_n_s_p2, __pyx_n_s_v); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 434, __pyx_L1_error)
@@ -22401,7 +22401,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":785
  *         polygons = []
- * 
+ *
  *         def point(stack, angle, normalBlend):             # <<<<<<<<<<<<<<
  *             out = axisX.times(_np.cos(angle)).plus(
  *                 axisY.times(_np.sin(angle)))
@@ -22425,7 +22425,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":12
  * from .geom import Vector as _Vector
- * 
+ *
  * class CSG(object):             # <<<<<<<<<<<<<<
  *     """
  *     Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
@@ -22439,7 +22439,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.polygons = []
- * 
+ *
  */
   __pyx_tuple__25 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
@@ -22448,7 +22448,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":67
  *         self.polygons = []
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)
@@ -22459,7 +22459,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_hash, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 67, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":75
- * 
+ *
  *     @classmethod
  *     def fromPolygons(cls, polygons, testGeom = False):             # <<<<<<<<<<<<<<
  *         csg = CSG()
@@ -22475,7 +22475,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":80
  *         return csg
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])
@@ -22487,10 +22487,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":85
  *         return csg
- * 
+ *
  *     def toPolygons(self):             # <<<<<<<<<<<<<<
  *         return self.polygons
- * 
+ *
  */
   __pyx_tuple__34 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__34);
@@ -22499,10 +22499,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":88
  *         return self.polygons
- * 
+ *
  *     def isNull(self):             # <<<<<<<<<<<<<<
  *         return len(self.toPolygons()) == 0
- * 
+ *
  */
   __pyx_tuple__36 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__36);
@@ -22511,7 +22511,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":91
  *         return len(self.toPolygons()) == 0
- * 
+ *
  *     def polygonCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of polygons in CSG solid'''
  *         return len(self.polygons)
@@ -22523,7 +22523,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":95
  *         return len(self.polygons)
- * 
+ *
  *     def vertexCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of vertices in CSG solid'''
  *         vCount = 0
@@ -22535,7 +22535,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":103
  *         return vCount
- * 
+ *
  *     def refine(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a refined CSG. To each polygon, a middle point is added to each edge and to the center
@@ -22547,7 +22547,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":141
  *         return newCSG
- * 
+ *
  *     def translate(self, disp):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -22558,8 +22558,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__45 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__44, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_translate, 141, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__45)) __PYX_ERR(0, 141, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":153
- * 
- * 
+ *
+ *
  *     def scale(self, scale):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -22571,7 +22571,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -22583,7 +22583,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":194
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  *     def toVerticesAndPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return list of vertices, polygons (cells), and the total
@@ -22595,7 +22595,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":235
  *         return verts, polys, count
- * 
+ *
  *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
  *         """
  *         Save polygons in VTK file.
@@ -22607,7 +22607,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":258
  *                 f.write('\n')
- * 
+ *
  *     def union(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in either this solid or in the
@@ -22619,10 +22619,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":284
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __add__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.union(csg)
- * 
+ *
  */
   __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_csg); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__56);
@@ -22631,7 +22631,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":287
  *         return self.union(csg)
- * 
+ *
  *     def subtract(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in this solid but not in the
@@ -22643,10 +22643,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":315
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __sub__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.subtract(csg)
- * 
+ *
  */
   __pyx_tuple__60 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_csg); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__60);
@@ -22655,7 +22655,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":318
  *         return self.subtract(csg)
- * 
+ *
  *     def intersect(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space both this solid and in the
@@ -22667,10 +22667,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":345
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def coplanarIntersection(self, csg):             # <<<<<<<<<<<<<<
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  */
   __pyx_tuple__64 = PyTuple_Pack(25, __pyx_n_s_self, __pyx_n_s_csg, __pyx_n_s_absp, __pyx_n_s_bbsp, __pyx_n_s_apolygons, __pyx_n_s_bpolygons, __pyx_n_s_polygons, __pyx_n_s_coplanarPolys, __pyx_n_s_coplanarPolys, __pyx_n_s_polyVertsInside, __pyx_n_s_polyVertsInside, __pyx_n_s_polyEdgeIntersection, __pyx_n_s_polyEdgeIntersection, __pyx_n_s_convexHull, __pyx_n_s_convexHull, __pyx_n_s_i, __pyx_n_s_apoly, __pyx_n_s_j, __pyx_n_s_bpoly, __pyx_n_s_copl, __pyx_n_s_aInsideB, __pyx_n_s_bInsideA, __pyx_n_s_aInterB, __pyx_n_s_points, __pyx_n_s_polygon); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__64);
@@ -22679,9 +22679,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":504
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     def coplanar(self, csg):             # <<<<<<<<<<<<<<
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  */
   __pyx_tuple__66 = PyTuple_Pack(27, __pyx_n_s_self, __pyx_n_s_csg, __pyx_n_s_absp, __pyx_n_s_bbsp, __pyx_n_s_apolygons, __pyx_n_s_bpolygons, __pyx_n_s_COPLANAR, __pyx_n_s_FRONT, __pyx_n_s_BACK, __pyx_n_s_a, __pyx_n_s_apoly, __pyx_n_s_aplane, __pyx_n_s_bpoly, __pyx_n_s_bplane, __pyx_n_s_polygonType, __pyx_n_s_i, __pyx_n_s_t, __pyx_n_s_loc, __pyx_n_s_aAdd, __pyx_n_s_ploc, __pyx_n_s_bv, __pyx_n_s_bvOnA, __pyx_n_s_bpOnA, __pyx_n_s_j, __pyx_n_s_av, __pyx_n_s_avunit, __pyx_n_s_anormal); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 504, __pyx_L1_error)
@@ -22691,10 +22691,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":606
  *         return CSG.fromPolygons(a)
- * 
+ *
  *     def __mul__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.intersect(csg)
- * 
+ *
  */
   __pyx_tuple__68 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_csg); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 606, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__68);
@@ -22703,7 +22703,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":609
  *         return self.intersect(csg)
- * 
+ *
  *     def inverse(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid with solid and empty space switched. This solid is
@@ -22715,10 +22715,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":618
  *         return csg
- * 
+ *
  *     def getNumberPolys(self):             # <<<<<<<<<<<<<<
  *         return len(self.polygons)
- * 
+ *
  */
   __pyx_tuple__72 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 618, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__72);
@@ -22726,7 +22726,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_getNumberPolys, 618, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 618, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":622
- * 
+ *
  *     @classmethod
  *     def cube(cls, center=[0,0,0], radius=[1,1,1]):             # <<<<<<<<<<<<<<
  *         """
@@ -22738,11 +22738,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(3, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_cube, 622, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 622, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
   __pyx_tuple__76 = PyTuple_Pack(23, __pyx_n_s_cls, __pyx_n_s_kwargs, __pyx_n_s_center, __pyx_n_s_c, __pyx_n_s_r, __pyx_n_s_slices, __pyx_n_s_stacks, __pyx_n_s_polygons, __pyx_n_s_appendVertex, __pyx_n_s_appendVertex, __pyx_n_s_dTheta, __pyx_n_s_dPhi, __pyx_n_s_j0, __pyx_n_s_j1, __pyx_n_s_i0, __pyx_n_s_i1, __pyx_n_s_vertices, __pyx_n_s_j2, __pyx_n_s_i2, __pyx_n_s_verticesN, __pyx_n_s_verticesS, __pyx_n_s_verticesW, __pyx_n_s_verticesE); if (unlikely(!__pyx_tuple__76)) __PYX_ERR(0, 660, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__76);
@@ -22750,11 +22750,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 23, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_sphere, 660, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 660, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
   __pyx_tuple__78 = PyTuple_Pack(21, __pyx_n_s_cls, __pyx_n_s_kwargs, __pyx_n_s_s, __pyx_n_s_e, __pyx_n_s_r, __pyx_n_s_slices, __pyx_n_s_ray, __pyx_n_s_axisZ, __pyx_n_s_isY, __pyx_n_s_axisX, __pyx_n_s_axisY, __pyx_n_s_start, __pyx_n_s_end, __pyx_n_s_polygons, __pyx_n_s_point, __pyx_n_s_point, __pyx_n_s_dt, __pyx_n_s_i, __pyx_n_s_t0, __pyx_n_s_i1, __pyx_n_s_t1); if (unlikely(!__pyx_tuple__78)) __PYX_ERR(0, 755, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__78);
@@ -22762,11 +22762,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(1, 0, 21, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyg4ometry_pycsg_core_pyx, __pyx_n_s_cylinder, 755, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 755, __pyx_L1_error)
 
   /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
   __pyx_tuple__80 = PyTuple_Pack(31, __pyx_n_s_cls, __pyx_n_s_kwargs, __pyx_n_s_s, __pyx_n_s_e, __pyx_n_s_r, __pyx_n_s_slices, __pyx_n_s_ray, __pyx_n_s_axisZ, __pyx_n_s_isY, __pyx_n_s_axisX, __pyx_n_s_axisY, __pyx_n_s_startNormal, __pyx_n_s_start, __pyx_n_s_polygons, __pyx_n_s_taperAngle, __pyx_n_s_sinTaperAngle, __pyx_n_s_cosTaperAngle, __pyx_n_s_point, __pyx_n_s_point, __pyx_n_s_dt, __pyx_n_s_i, __pyx_n_s_t0, __pyx_n_s_i1, __pyx_n_s_t1, __pyx_n_s_p0, __pyx_n_s_n0, __pyx_n_s_p1, __pyx_n_s_n1, __pyx_n_s_nAvg, __pyx_n_s_polyStart, __pyx_n_s_polySide); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 812, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__80);
@@ -22775,7 +22775,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "pyg4ometry/pycsg/core.pyx":876
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  * def do_intersect(first, second):             # <<<<<<<<<<<<<<
  *     return not first.intersect(second).isNull()
  */
@@ -23130,7 +23130,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":3
  * # cython: language_level=3
- * 
+ *
  * import operator             # <<<<<<<<<<<<<<
  * from .geom import *
  * import numpy as _np
@@ -23141,7 +23141,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":4
- * 
+ *
  * import operator
  * from .geom import *             # <<<<<<<<<<<<<<
  * import numpy as _np
@@ -23175,7 +23175,7 @@ if (!__Pyx_RefNanny) {
  * import numpy as _np
  * from hashlib import md5 as _md5             # <<<<<<<<<<<<<<
  * from functools import reduce
- * 
+ *
  */
   __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -23195,7 +23195,7 @@ if (!__Pyx_RefNanny) {
  * import numpy as _np
  * from hashlib import md5 as _md5
  * from functools import reduce             # <<<<<<<<<<<<<<
- * 
+ *
  * from .geom import Vertex as _Vertex
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
@@ -23214,10 +23214,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":9
  * from functools import reduce
- * 
+ *
  * from .geom import Vertex as _Vertex             # <<<<<<<<<<<<<<
  * from .geom import Vector as _Vector
- * 
+ *
  */
   __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -23234,10 +23234,10 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":10
- * 
+ *
  * from .geom import Vertex as _Vertex
  * from .geom import Vector as _Vector             # <<<<<<<<<<<<<<
- * 
+ *
  * class CSG(object):
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
@@ -23256,7 +23256,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":12
  * from .geom import Vector as _Vector
- * 
+ *
  * class CSG(object):             # <<<<<<<<<<<<<<
  *     """
  *     Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
@@ -23271,7 +23271,7 @@ if (!__Pyx_RefNanny) {
  *     """
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.polygons = []
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_1__init__, 0, __pyx_n_s_CSG___init, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__26)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -23280,7 +23280,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":67
  *         self.polygons = []
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         verts = _np.array(self.toVerticesAndPolygons()[0])
  *         as_string = _np.array2string(verts)
@@ -23291,7 +23291,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":75
- * 
+ *
  *     @classmethod
  *     def fromPolygons(cls, polygons, testGeom = False):             # <<<<<<<<<<<<<<
  *         csg = CSG()
@@ -23303,7 +23303,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":74
  *         return checksum
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def fromPolygons(cls, polygons, testGeom = False):
  *         csg = CSG()
@@ -23316,7 +23316,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":80
  *         return csg
- * 
+ *
  *     def clone(self):             # <<<<<<<<<<<<<<
  *         csg = CSG()
  *         csg.polygons = list([p.clone() for p in self.polygons])
@@ -23328,10 +23328,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":85
  *         return csg
- * 
+ *
  *     def toPolygons(self):             # <<<<<<<<<<<<<<
  *         return self.polygons
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_9toPolygons, 0, __pyx_n_s_CSG_toPolygons, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23340,10 +23340,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":88
  *         return self.polygons
- * 
+ *
  *     def isNull(self):             # <<<<<<<<<<<<<<
  *         return len(self.toPolygons()) == 0
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_11isNull, 0, __pyx_n_s_CSG_isNull, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23352,7 +23352,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":91
  *         return len(self.toPolygons()) == 0
- * 
+ *
  *     def polygonCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of polygons in CSG solid'''
  *         return len(self.polygons)
@@ -23364,7 +23364,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":95
  *         return len(self.polygons)
- * 
+ *
  *     def vertexCount(self):             # <<<<<<<<<<<<<<
  *         '''Return number of vertices in CSG solid'''
  *         vCount = 0
@@ -23376,7 +23376,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":103
  *         return vCount
- * 
+ *
  *     def refine(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a refined CSG. To each polygon, a middle point is added to each edge and to the center
@@ -23388,7 +23388,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":141
  *         return newCSG
- * 
+ *
  *     def translate(self, disp):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -23399,8 +23399,8 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":153
- * 
- * 
+ *
+ *
  *     def scale(self, scale):             # <<<<<<<<<<<<<<
  *         """
  *         Translate Geometry.
@@ -23412,7 +23412,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":164
  *                 # no change to the normals
- * 
+ *
  *     def rotate(self, axis, angleDeg):             # <<<<<<<<<<<<<<
  *         """
  *         Rotate geometry.
@@ -23424,7 +23424,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":194
  *                     vert.normal = newVector(vert.normal)
- * 
+ *
  *     def toVerticesAndPolygons(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return list of vertices, polygons (cells), and the total
@@ -23436,7 +23436,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":235
  *         return verts, polys, count
- * 
+ *
  *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
  *         """
  *         Save polygons in VTK file.
@@ -23448,7 +23448,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":258
  *                 f.write('\n')
- * 
+ *
  *     def union(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in either this solid or in the
@@ -23460,10 +23460,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":284
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __add__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.union(csg)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_31__add__, 0, __pyx_n_s_CSG___add, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__57)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23472,7 +23472,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":287
  *         return self.union(csg)
- * 
+ *
  *     def subtract(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space in this solid but not in the
@@ -23484,10 +23484,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":315
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def __sub__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.subtract(csg)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_35__sub__, 0, __pyx_n_s_CSG___sub, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__61)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23496,7 +23496,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":318
  *         return self.subtract(csg)
- * 
+ *
  *     def intersect(self, csg):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid representing space both this solid and in the
@@ -23508,10 +23508,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":345
  *         return CSG.fromPolygons(a.allPolygons())
- * 
+ *
  *     def coplanarIntersection(self, csg):             # <<<<<<<<<<<<<<
  *         # print 'pycsg.core.coplanarIntersection>'
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_39coplanarIntersection, 0, __pyx_n_s_CSG_coplanarIntersection, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__65)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23520,9 +23520,9 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":504
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     def coplanar(self, csg):             # <<<<<<<<<<<<<<
- * 
+ *
  *         absp = BSPNode(self.clone().polygons)
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_41coplanar, 0, __pyx_n_s_CSG_coplanar, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__67)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 504, __pyx_L1_error)
@@ -23532,10 +23532,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":606
  *         return CSG.fromPolygons(a)
- * 
+ *
  *     def __mul__(self, csg):             # <<<<<<<<<<<<<<
  *         return self.intersect(csg)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_43__mul__, 0, __pyx_n_s_CSG___mul, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__69)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 606, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23544,7 +23544,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":609
  *         return self.intersect(csg)
- * 
+ *
  *     def inverse(self):             # <<<<<<<<<<<<<<
  *         """
  *         Return a new CSG solid with solid and empty space switched. This solid is
@@ -23556,10 +23556,10 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":618
  *         return csg
- * 
+ *
  *     def getNumberPolys(self):             # <<<<<<<<<<<<<<
  *         return len(self.polygons)
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_47getNumberPolys, 0, __pyx_n_s_CSG_getNumberPolys, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__73)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 618, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -23567,7 +23567,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":622
- * 
+ *
  *     @classmethod
  *     def cube(cls, center=[0,0,0], radius=[1,1,1]):             # <<<<<<<<<<<<<<
  *         """
@@ -23608,7 +23608,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":621
  *         return len(self.polygons)
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def cube(cls, center=[0,0,0], radius=[1,1,1]):
  *         """
@@ -23620,18 +23620,18 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":660
- * 
+ *
  *     @classmethod
  *     def sphere(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a sphere.
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_51sphere, __Pyx_CYFUNCTION_CLASSMETHOD, __pyx_n_s_CSG_sphere, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__77)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 660, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
 
   /* "pyg4ometry/pycsg/core.pyx":659
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def sphere(cls, **kwargs):
  *         """ Returns a sphere.
@@ -23643,18 +23643,18 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":755
- * 
+ *
  *     @classmethod
  *     def cylinder(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cylinder.
- * 
+ *
  */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_53cylinder, __Pyx_CYFUNCTION_CLASSMETHOD, __pyx_n_s_CSG_cylinder, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__79)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 755, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
   /* "pyg4ometry/pycsg/core.pyx":754
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def cylinder(cls, **kwargs):
  *         """ Returns a cylinder.
@@ -23666,18 +23666,18 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyg4ometry/pycsg/core.pyx":812
- * 
+ *
  *     @classmethod
  *     def cone(cls, **kwargs):             # <<<<<<<<<<<<<<
  *         """ Returns a cone.
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_10pyg4ometry_5pycsg_4core_3CSG_55cone, __Pyx_CYFUNCTION_CLASSMETHOD, __pyx_n_s_CSG_cone, NULL, __pyx_n_s_pyg4ometry_pycsg_core, __pyx_d, ((PyObject *)__pyx_codeobj__81)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 812, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
 
   /* "pyg4ometry/pycsg/core.pyx":811
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def cone(cls, **kwargs):
  *         """ Returns a cone.
@@ -23690,7 +23690,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":12
  * from .geom import Vector as _Vector
- * 
+ *
  * class CSG(object):             # <<<<<<<<<<<<<<
  *     """
  *     Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
@@ -23704,7 +23704,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":876
  *         return CSG.fromPolygons(polygons)
- * 
+ *
  * def do_intersect(first, second):             # <<<<<<<<<<<<<<
  *     return not first.intersect(second).isNull()
  */
@@ -23715,7 +23715,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyg4ometry/pycsg/core.pyx":1
  * # cython: language_level=3             # <<<<<<<<<<<<<<
- * 
+ *
  * import operator
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -24576,8 +24576,8 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
                 llx = lla + llb;
             return PyLong_FromLongLong(llx);
 #endif
-        
-        
+
+
     }
     #endif
     if (PyFloat_CheckExact(op1)) {
@@ -24700,8 +24700,8 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_U
                 llx = lla - llb;
             return PyLong_FromLongLong(llx);
 #endif
-        
-        
+
+
     }
     #endif
     if (PyFloat_CheckExact(op1)) {
@@ -24858,12 +24858,12 @@ static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, doub
     (void)zerodivision_check;
     if (likely(PyFloat_CheckExact(op1))) {
         a = PyFloat_AS_DOUBLE(op1);
-        
+
     } else
     #if PY_MAJOR_VERSION < 3
     if (likely(PyInt_CheckExact(op1))) {
         a = (double) PyInt_AS_LONG(op1);
-        
+
     } else
     #endif
     if (likely(PyLong_CheckExact(op1))) {
@@ -24913,12 +24913,12 @@ static PyObject* __Pyx_PyFloat_TrueDivideObjC(PyObject *op1, PyObject *op2, doub
         #endif
             a = PyLong_AsDouble(op1);
             if (unlikely(a == -1.0 && PyErr_Occurred())) return NULL;
-            
+
         }
     } else {
         return (inplace ? PyNumber_InPlaceTrueDivide : PyNumber_TrueDivide)(op1, op2);
     }
-        
+
         PyFPE_START_PROTECT("divide", return NULL)
         result = a / b;
         PyFPE_END_PROTECT(result)
@@ -26132,8 +26132,8 @@ static PyObject* __Pyx_PyInt_AndObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
                 llx = lla & llb;
             return PyLong_FromLongLong(llx);
 #endif
-        
-        
+
+
     }
     #endif
     return (inplace ? PyNumber_InPlaceAnd : PyNumber_And)(op1, op2);
@@ -26287,12 +26287,12 @@ static PyObject* __Pyx_PyFloat_AddObjC(PyObject *op1, PyObject *op2, double floa
     (void)zerodivision_check;
     if (likely(PyFloat_CheckExact(op1))) {
         a = PyFloat_AS_DOUBLE(op1);
-        
+
     } else
     #if PY_MAJOR_VERSION < 3
     if (likely(PyInt_CheckExact(op1))) {
         a = (double) PyInt_AS_LONG(op1);
-        
+
     } else
     #endif
     if (likely(PyLong_CheckExact(op1))) {
@@ -26342,12 +26342,12 @@ static PyObject* __Pyx_PyFloat_AddObjC(PyObject *op1, PyObject *op2, double floa
         #endif
             a = PyLong_AsDouble(op1);
             if (unlikely(a == -1.0 && PyErr_Occurred())) return NULL;
-            
+
         }
     } else {
         return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
     }
-        
+
         PyFPE_START_PROTECT("add", return NULL)
         result = a + b;
         PyFPE_END_PROTECT(result)
@@ -26364,12 +26364,12 @@ static PyObject* __Pyx_PyFloat_SubtractCObj(PyObject *op1, PyObject *op2, double
     (void)zerodivision_check;
     if (likely(PyFloat_CheckExact(op2))) {
         b = PyFloat_AS_DOUBLE(op2);
-        
+
     } else
     #if PY_MAJOR_VERSION < 3
     if (likely(PyInt_CheckExact(op2))) {
         b = (double) PyInt_AS_LONG(op2);
-        
+
     } else
     #endif
     if (likely(PyLong_CheckExact(op2))) {
@@ -26419,12 +26419,12 @@ static PyObject* __Pyx_PyFloat_SubtractCObj(PyObject *op1, PyObject *op2, double
         #endif
             b = PyLong_AsDouble(op2);
             if (unlikely(b == -1.0 && PyErr_Occurred())) return NULL;
-            
+
         }
     } else {
         return (inplace ? PyNumber_InPlaceSubtract : PyNumber_Subtract)(op1, op2);
     }
-        
+
         PyFPE_START_PROTECT("subtract", return NULL)
         result = a - b;
         PyFPE_END_PROTECT(result)

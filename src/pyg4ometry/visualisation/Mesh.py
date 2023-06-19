@@ -1,4 +1,4 @@
-import copy as _copy 
+import copy as _copy
 
 from .. import config as _config
 import pyg4ometry.exceptions
@@ -19,12 +19,12 @@ class OverlapType:
     coplanar   = 3
 
 class Mesh(object):
-    def __init__(self, solid) : 
-        parameters = [] 
+    def __init__(self, solid) :
+        parameters = []
         values     = {}
 
         # solid which contains the mesh
-        self.solid = solid 
+        self.solid = solid
 
         # mesh in local coordinates
         self.localmesh = self.solid.mesh()
@@ -34,7 +34,7 @@ class Mesh(object):
 
         # overlap meshes (protrusion, overlap, coplanar)
         self.overlapmeshes = []
-        
+
     def remesh(self):
         # existing overlaps become invalid
         self.overlapmeshes = []

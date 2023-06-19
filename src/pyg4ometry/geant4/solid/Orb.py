@@ -19,7 +19,7 @@ import numpy as _np
 class Orb(_SolidBase):
     """
     Constructs a solid sphere.
-    
+
     :param name: of the sold
     :type name: str
     :param pRMax: outer radius
@@ -29,9 +29,9 @@ class Orb(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
+    :type nslice: int
     :param nstack: number of theta elements for meshing
-    :type nstack: int     
+    :type nstack: int
     """
     def __init__(self, name, pRMax, registry, lunit="mm",
                  nslice=None, nstack=None, addRegistry=True):
@@ -60,7 +60,7 @@ class Orb(_SolidBase):
     def pycsgmeshOld(self):
         _log.info("orb.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
 
         pRMax = self.evaluateParameter(self.pRMax)*luval
@@ -74,7 +74,7 @@ class Orb(_SolidBase):
 
         _log.info("orb.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
         luval = _Units.unit(self.lunit)
 
         pRMax = self.evaluateParameter(self.pRMax) * luval
@@ -86,7 +86,7 @@ class Orb(_SolidBase):
 
         dPhi = 2 * _np.pi / self.nslice
         dTheta = _np.pi / self.nstack
-        
+
         for i in range(0, self.nslice, 1):
 
             i1 = i
