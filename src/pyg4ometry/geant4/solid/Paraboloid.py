@@ -52,7 +52,7 @@ class Paraboloid(_SolidBase):
         nstack=8,
         addRegistry=True,
     ):
-        super(Paraboloid, self).__init__(name, "Paraboloid", registry)
+        super().__init__(name, "Paraboloid", registry)
 
         self.pDz = pDz
         self.pR1 = pR1

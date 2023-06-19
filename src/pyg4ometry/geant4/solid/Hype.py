@@ -61,7 +61,7 @@ class Hype(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(Hype, self).__init__(name, "Hype", registry)
+        super().__init__(name, "Hype", registry)
 
         self.innerRadius = innerRadius
         self.outerRadius = outerRadius
@@ -111,7 +111,8 @@ class Hype(_SolidBase):
 
     def checkParameters(self):
         if float(self.innerRadius) > float(self.outerRadius):
-            raise ValueError("Inner radius must be less than outer radius.")
+            msg = "Inner radius must be less than outer radius."
+            raise ValueError(msg)
 
     def mesh(self):
         _log.info("hype.pycsgmesh> antlr")

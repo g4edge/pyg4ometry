@@ -19,7 +19,7 @@ class OverlapType:
     coplanar = 3
 
 
-class Mesh(object):
+class Mesh:
     def __init__(self, solid):
         parameters = []
         values = {}

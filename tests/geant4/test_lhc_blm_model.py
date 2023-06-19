@@ -502,7 +502,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
     # Make the cuts on the side and the hole in the middle
     interim_solid = insulator_base
     for i, angle in enumerate(ins_cut_angles):
-        name = "insulator_interim_{}".format(i)
+        name = f"insulator_interim_{i}"
         cut_cx = ins_cut_pos * _np.sin(angle)
         cut_cy = ins_cut_pos * _np.cos(angle)
         cut_tra = [[0, 0, 0], [cut_cx, cut_cy, -0.5]]
@@ -579,7 +579,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     ele_cut_angles = [_np.deg2rad(ang) for ang in (0, 120, 240)]
     for i, angle in enumerate(ele_cut_angles):
-        name = "electrode_interim_{}".format(i)
+        name = f"electrode_interim_{i}"
         cut_cx = ele_cut_pos * _np.sin(angle)
         cut_cy = ele_cut_pos * _np.cos(angle)
         cut_tra = [[0, 0, 0], [cut_cx, cut_cy, 0]]
@@ -672,7 +672,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
                 [0, 0, 0],
                 spacer_pos,
                 spacer_a_lv,
-                "spacer_pv_1_{}_{}".format(i, j),
+                f"spacer_pv_1_{i}_{j}",
                 active_gas_lv,
                 reg,
             )
@@ -680,7 +680,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
                 [0, 0, 0],
                 spacer_pos,
                 support_rod_lv,
-                "support_rod_pv_1_{}_{}".format(i, j),
+                f"support_rod_pv_1_{i}_{j}",
                 active_gas_lv,
                 reg,
             )
@@ -703,7 +703,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
             [0, 0, 0],
             electrode_pos,
             electrode_lv,
-            "electrode_pv_1_{}".format(i),
+            f"electrode_pv_1_{i}",
             active_gas_lv,
             reg,
         )
@@ -738,7 +738,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
                 [0, 0, 0],
                 spacer_pos,
                 spacer_a_lv,
-                "spacer_pv_2_{}_{}".format(i, j),
+                f"spacer_pv_2_{i}_{j}",
                 active_gas_lv,
                 reg,
             )
@@ -746,7 +746,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
                 [0, 0, 0],
                 spacer_pos,
                 support_rod_lv,
-                "support_rod_pv_2_{}_{}".format(i, j),
+                f"support_rod_pv_2_{i}_{j}",
                 active_gas_lv,
                 reg,
             )
@@ -763,7 +763,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
             [0, 0, start_angle],
             electrode_pos,
             electrode_lv,
-            "electrode_pv_2_{}".format(i),
+            f"electrode_pv_2_{i}",
             active_gas_lv,
             reg,
         )

@@ -73,7 +73,7 @@ class OpticalSurface(_SolidBase):
         :param value:   numeric parameter, depending on the model
         :type value:    str,float,int
         """
-        super(OpticalSurface, self).__init__(name, "OpticalSurface", registry)
+        super().__init__(name, "OpticalSurface", registry)
         self.finish = finish
         self.model = model
         self.osType = surf_type

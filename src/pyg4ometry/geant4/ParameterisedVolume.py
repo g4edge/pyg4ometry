@@ -503,8 +503,8 @@ class ParameterisedVolume(_ReplicaVolume):
             [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
 
             # TODO do we need scale here?
-            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)).flatten()
-            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)).flatten()
+            vMinDaughter = _np.array(dvmrot.dot(vMinDaughter) + dvtra).flatten()
+            vMaxDaughter = _np.array(dvmrot.dot(vMaxDaughter) + dvtra).flatten()
 
             if vMaxDaughter[0] > vMax[0]:
                 vMax[0] = vMaxDaughter[0]

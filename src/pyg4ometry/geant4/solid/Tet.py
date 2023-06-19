@@ -51,7 +51,7 @@ class Tet(_SolidBase):
         degeneracyFlag=False,
         addRegistry=True,
     ):
-        super(Tet, self).__init__(name, "Tet", registry)
+        super().__init__(name, "Tet", registry)
 
         self.anchor = anchor
         self.p2 = p2

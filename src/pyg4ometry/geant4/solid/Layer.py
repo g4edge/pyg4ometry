@@ -9,7 +9,7 @@ from ...pycsg.geom import Polygon as _Polygon
 import numpy as _np
 
 
-class Layer(object):
+class Layer:
     def __init__(self, p1, p2, p3, p4, z):
         self.p1 = p1
         self.p2 = p2

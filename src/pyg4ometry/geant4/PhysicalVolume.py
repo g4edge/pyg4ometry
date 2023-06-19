@@ -7,7 +7,7 @@ import numpy as _np
 import logging as _log
 
 
-class PhysicalVolume(object):
+class PhysicalVolume:
     """
     PhysicalVolume : G4VPhysicalVolume, G4PVPlacement
 
@@ -33,10 +33,11 @@ class PhysicalVolume(object):
         addRegistry=True,
         scale=None,
     ):
-        super(PhysicalVolume, self).__init__()
+        super().__init__()
 
         if logicalVolume == motherVolume:
-            raise ValueError("Cannot place a volume inside itself -> recursive")
+            msg = "Cannot place a volume inside itself -> recursive"
+            raise ValueError(msg)
 
         # type
         self.type = "placement"
@@ -50,9 +51,9 @@ class PhysicalVolume(object):
             elif len(position) == 4:
                 unit = position[3]
             else:
+                msg = "Position array must be in the format [px, py, pz] or [px, py, pz, unit]"
                 raise ValueError(
-                    "Position array must be in the format"
-                    " [px, py, pz] or [px, py, pz, unit]"
+                    msg
                 )
 
             position = _Defines.Position(
@@ -70,9 +71,9 @@ class PhysicalVolume(object):
             elif len(rotation) == 4:
                 unit = rotation[3]
             else:
+                msg = "Rotation array must be in the format[rx, ry, rz] or [rx, ry, rz, unit]"
                 raise ValueError(
-                    "Rotation array must be in the format"
-                    "[rx, ry, rz] or [rx, ry, rz, unit]"
+                    msg
                 )
 
             rotation = _Defines.Rotation(
@@ -86,7 +87,8 @@ class PhysicalVolume(object):
             )
         if isinstance(scale, list):
             if not len(scale) == 3:
-                raise ValueError("Scale array must be in the format" "[sx, sy, sz]")
+                msg = "Scale array must be in the format[sx, sy, sz]"
+                raise ValueError(msg)
 
             scale = _Defines.Scale(
                 name + "_sca", scale[0], scale[1], scale[2], "none", registry, False
@@ -131,8 +133,8 @@ class PhysicalVolume(object):
         [vMin, vMax] = self.logicalVolume.extent(includeBoundingSolid)
 
         # TODO do we need scale here?
-        vMinPrime = _np.array((dvmrot.dot(vMin) + dvtra)).flatten()
-        vMaxPrime = _np.array((dvmrot.dot(vMax) + dvtra)).flatten()
+        vMinPrime = _np.array(dvmrot.dot(vMin) + dvtra).flatten()
+        vMaxPrime = _np.array(dvmrot.dot(vMax) + dvtra).flatten()
 
         vmin = [min(a, b) for a, b in zip(vMinPrime, vMaxPrime)]
         vmax = [max(a, b) for a, b in zip(vMinPrime, vMaxPrime)]

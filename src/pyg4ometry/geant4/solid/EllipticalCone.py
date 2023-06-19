@@ -50,7 +50,7 @@ class EllipticalCone(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(EllipticalCone, self).__init__(name, "EllipticalCone", registry)
+        super().__init__(name, "EllipticalCone", registry)
 
         self.pxSemiAxis = pxSemiAxis
         self.pySemiAxis = pySemiAxis

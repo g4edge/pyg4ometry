@@ -1,6 +1,4 @@
 # Generated from GdmlExpression.g4 by ANTLR 4.7.1
-# encoding: utf-8
-from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
@@ -255,7 +253,7 @@ class GdmlExpressionLexer(Lexer):
     grammarFileName = "GdmlExpression.g4"
 
     def __init__(self, input=None, output=sys.stdout):
-        super(GdmlExpressionLexer, self).__init__(input, output=output)
+        super().__init__(input, output=output)
         self.checkVersion("4.7.1")
         self._interp = LexerATNSimulator(
             self, self.atn, self.decisionsToDFA, PredictionContextCache()

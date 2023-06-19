@@ -95,9 +95,8 @@ class VtkExporter:
             for x in paras.GetSources().values():
                 paras.Delete(x)
         else:
-            raise AttributeError(
-                "export_to_Paraview is not available as you are missing the paraview module."
-            )
+            msg = "export_to_Paraview is not available as you are missing the paraview module."
+            raise AttributeError(msg)
 
     def export_to_VTK(self, reg, model=True, df_model=None, df_color=None):
         """

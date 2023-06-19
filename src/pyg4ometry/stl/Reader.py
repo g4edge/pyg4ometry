@@ -21,7 +21,7 @@ class _Facet:
         return (tuple(self.vertices), self.normal)
 
 
-class Reader(object):
+class Reader:
     """
     STL file reader
 
@@ -55,7 +55,7 @@ class Reader(object):
         self._registry = registry
         self.solidname = solidname
 
-        self.worldVolumeName = str()
+        self.worldVolumeName = ""
         self.facet_list = []
 
         self.scale = float(scale)
@@ -72,7 +72,7 @@ class Reader(object):
             except Exception as e:
                 raise RuntimeError(
                     f"Failed reading STL file {self.filename}. Either the file is corrupt, uses non-standard "
-                    + f"extensions, or file type has been detected wrongly. Trying to load a binary file?: {is_binary}"
+                    f"extensions, or file type has been detected wrongly. Trying to load a binary file?: {is_binary}"
                     + (
                         " - binary loading can be forced by setting forcebinary=True"
                         if not is_binary
@@ -285,7 +285,7 @@ class Reader(object):
         w = _gd.Writer()
         w.addDetector(reg)
 
-        fn = filename if filename.endswith(".gdml") else "{}.gdml".format(filename)
+        fn = filename if filename.endswith(".gdml") else f"{filename}.gdml"
         w.write(fn)
         if gmad_tester:
             w.writeGmadTester(fn.replace("gdml", "gmad"), fn)

@@ -72,7 +72,7 @@ class GenericTrap(_SolidBase):
         lunit="mm",
         addRegistry=True,
     ):
-        super(GenericTrap, self).__init__(name, "GenericTrap", registry)
+        super().__init__(name, "GenericTrap", registry)
 
         self.dz = dz
         self.lunit = lunit
@@ -80,8 +80,8 @@ class GenericTrap(_SolidBase):
 
         vars_in = locals()
         for i in range(1, 9):
-            setattr(self, "v{}x".format(i), vars_in["v{}x".format(i)])
-            setattr(self, "v{}y".format(i), vars_in["v{}y".format(i)])
+            setattr(self, f"v{i}x", vars_in[f"v{i}x"])
+            setattr(self, f"v{i}y", vars_in[f"v{i}y"])
 
         self.dependents = []
 
@@ -110,10 +110,10 @@ class GenericTrap(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Generic Trapezoid : {}".format(self.name)
+        return f"Generic Trapezoid : {self.name}"
 
     def __str__(self):
-        return "Generic Trapezoid : name={}".format(self.name)
+        return f"Generic Trapezoid : name={self.name}"
 
     def polygon_area(self, vertices):
         # Using the shoelace formula
@@ -124,10 +124,9 @@ class GenericTrap(_SolidBase):
         if not signed_area:
             return 0
             print("vertices: ", vertices)
+            msg = f"GenericTrap: '{self.name}' Zero area quadrilateral not allowed."
             raise ValueError(
-                "GenericTrap: '{}' Zero area quadrilateral not allowed.".format(
-                    self.name
-                )
+                msg
             )  # TODO TODO
         return signed_area
 
@@ -138,8 +137,8 @@ class GenericTrap(_SolidBase):
 
         sign_z = -1 if index <= 4 else 1
         vertex = (
-            self.evaluateParameter(getattr(self, "v{}x".format(index)) * uval),
-            self.evaluateParameter(getattr(self, "v{}y".format(index)) * uval),
+            self.evaluateParameter(getattr(self, f"v{index}x") * uval),
+            self.evaluateParameter(getattr(self, f"v{index}y") * uval),
             sign_z * float(self.dz) * uval,
         )
         return vertex

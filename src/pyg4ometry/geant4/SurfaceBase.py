@@ -27,6 +27,8 @@ class SurfaceBase:
             if t == PhysicalVolume:
                 instance = self.registry.physicalVolumeDict[obj]
             if instance == None:
-                raise ValueError(f"{str(t)} {x} not found in the registry!")
+                msg = f"{t!s} {x} not found in the registry!"
+                raise ValueError(msg)
             return instance
-        raise ValueError(f"Unsupported type for {prop}: {type(obj)}")
+        msg = f"Unsupported type for {prop}: {type(obj)}"
+        raise ValueError(msg)

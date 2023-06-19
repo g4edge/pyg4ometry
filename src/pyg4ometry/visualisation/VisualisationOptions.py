@@ -71,7 +71,7 @@ def loadPredefined():
     config.optionxform = str
 
     ini = _pkg_resources.resource_filename(__name__, "colours.ini")
-    with open(ini, "r") as f:
+    with open(ini) as f:
         config.read_file(f)
 
     colourAlpha = {}

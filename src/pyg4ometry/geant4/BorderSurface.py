@@ -16,7 +16,7 @@ class BorderSurface(SurfaceBase):
         :param surface_property: the referenced :class:`pyg4ometry.solid.OpticalSurface`
         :type surface_property: str,OpticalSurface
         """
-        super(BorderSurface, self).__init__(
+        super().__init__(
             name, "bordersurface", surface_property, registry, addRegistry
         )
 

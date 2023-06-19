@@ -66,12 +66,9 @@ class DivisionVolume(_PhysicalVolume):
         self.scale = _Defines.Scale(name + "_sca", 1, 1, 1, "none", registry, False)
 
         if motherVolume.solid.type != logicalVolume.solid.type:
+            msg = f"Can not have divisions with a different solid type than the mother volume. Mother : {motherVolume.solid.type}, Division : {logicalVolume.solid.type}"
             raise ValueError(
-                "Can not have divisions with a different solid type than"
-                " the mother volume. Mother"
-                " : {}, Division : {}".format(
-                    motherVolume.solid.type, logicalVolume.solid.type
-                )
+                msg
             )
         if addRegistry:
             registry.addPhysicalVolume(self)
@@ -145,11 +142,9 @@ class DivisionVolume(_PhysicalVolume):
 
     def checkAxis(self, allowed_axes):
         if self.axis not in allowed_axes:
+            msg = f"Division along axis {self.axis} not supported for solid {self.logicalVolume.solid.type}"
             raise ValueError(
-                "Division along axis {}"
-                " not supported for solid {}".format(
-                    self.axis, self.logicalVolume.solid.type
-                )
+                msg
             )
 
     def divideBox(self, offset, width, ndiv):
@@ -462,8 +457,9 @@ class DivisionVolume(_PhysicalVolume):
 
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
+            msg = "Cannot construct polycone division with degenerate radii at -Z"
             raise ValueError(
-                "Cannot construct polycone division with degenerate radii at -Z"
+                msg
             )
 
         if self.axis == self.Axis.kPhi:
@@ -493,9 +489,9 @@ class DivisionVolume(_PhysicalVolume):
                     offs -= zs
                     if offs < 0:
                         if ndiv * width > abs(offs):
+                            msg = "Division with user-specified width is only possible between 2 z-planes."
                             raise ValueError(
-                                "Division with user-specified width is only possible"
-                                " between 2 z-planes."
+                                msg
                             )
                         zsl_index = i
                         zsl_size = zs
@@ -588,8 +584,9 @@ class DivisionVolume(_PhysicalVolume):
 
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
+            msg = "Cannot construct polyhedra division with degenerate radii at -Z"
             raise ValueError(
-                "Cannot construct polyhedra division with degenerate radii at -Z"
+                msg
             )
 
         if self.axis == self.Axis.kPhi:
@@ -621,9 +618,9 @@ class DivisionVolume(_PhysicalVolume):
                     offs -= zs
                     if offs < 0:
                         if ndiv * width > abs(offs):
+                            msg = "Division with user-specified width is only possible between 2 z-planes."
                             raise ValueError(
-                                "Division with user-specified width is only possible"
-                                " between 2 z-planes."
+                                msg
                             )
                         zsl_index = i
                         zsl_size = zs
@@ -729,15 +726,15 @@ class DivisionVolume(_PhysicalVolume):
         elif ndivisions > 0 and width > 0:
             pass  # Can work with this directly
 
-        if hasattr(self, "divide{}".format(self.logicalVolume.solid.type)):
+        if hasattr(self, f"divide{self.logicalVolume.solid.type}"):
             stype = self.logicalVolume.solid.type
-            meshes, transforms = getattr(self, "divide{}".format(stype))(
+            meshes, transforms = getattr(self, f"divide{stype}")(
                 offset, width, ndivisions
             )
         else:
+            msg = f"Division with solid {self.logicalVolume.solid.type} is not supported yet."
             raise ValueError(
-                "Division with solid {}"
-                " is not supported yet.".format(self.logicalVolume.solid.type)
+                msg
             )
 
         return [meshes, transforms]
@@ -760,8 +757,8 @@ class DivisionVolume(_PhysicalVolume):
 
             [vMinDaughter, vMaxDaughter] = mesh.getBoundingBox()
 
-            vMinDaughter = _np.array((dvmrot.dot(vMinDaughter) + dvtra)).flatten()
-            vMaxDaughter = _np.array((dvmrot.dot(vMaxDaughter) + dvtra)).flatten()
+            vMinDaughter = _np.array(dvmrot.dot(vMinDaughter) + dvtra).flatten()
+            vMaxDaughter = _np.array(dvmrot.dot(vMaxDaughter) + dvtra).flatten()
 
             if vMaxDaughter[0] > vMax[0]:
                 vMax[0] = vMaxDaughter[0]

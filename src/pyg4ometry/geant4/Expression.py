@@ -6,7 +6,7 @@ from pyg4ometry.geant4.Registry import Registry as _Registry
 #    noSymPy = True
 
 
-class Expression(object):
+class Expression:
     def __init__(self, name, expression, registry=_Registry()):
         # TODO: make the registry required
         self.name = name
@@ -33,7 +33,7 @@ class Expression(object):
         pass
 
     def __repr__(self):
-        return "{} : {}".format(self.name, self.expression)
+        return f"{self.name} : {self.expression}"
 
     def __float__(self):
         return self.eval()

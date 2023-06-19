@@ -51,7 +51,7 @@ _FLUKA_PREDEFINED_FUNCTIONS = {
 
 
 def preprocess(filein):
-    with open(filein, "r") as f:
+    with open(filein) as f:
         lines = f.readlines()
 
     preprocessed_lines = []
@@ -90,9 +90,10 @@ def preprocess(filein):
                     directive, split_line, defines, if_stack
                 )
             else:
-                raise ValueError("Unknown preprocessor directive: {}".format(directive))
+                msg = f"Unknown preprocessor directive: {directive}"
+                raise ValueError(msg)
             continue  # Don't include preprocessoes
-        if if_stack and not all([e.read_until_next for e in if_stack]):
+        if if_stack and not all(e.read_until_next for e in if_stack):
             continue
 
         preprocessed_lines.append(line)
@@ -100,7 +101,7 @@ def preprocess(filein):
     return preprocessed_lines, lines
 
 
-class _IfInfo(object):
+class _IfInfo:
     """Tells us about current conditional and its state at the current line.
 
 
@@ -118,7 +119,7 @@ class _IfInfo(object):
         self.read_until_next = read_until_next
 
     def __repr__(self):
-        return ("<IfInfo: any_branch_satisfied={}, " "read_until_next={}>").format(
+        return ("<IfInfo: any_branch_satisfied={}, read_until_next={}>").format(
             self.any_branch_satisfied, self.read_until_next
         )
 
@@ -140,7 +141,8 @@ def _parse_preprocessor_define(directive, split_line, defines):
         # remove name from defines if it has been defined.
         defines.pop(name, None)
     else:
-        raise ValueError("Unrecognised define directive: {}".format(directive))
+        msg = f"Unrecognised define directive: {directive}"
+        raise ValueError(msg)
 
 
 def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
@@ -152,7 +154,8 @@ def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
         try:
             variable = split_line[1]
         except IndexError:
-            raise FLUKAError("Missing expression in preprocessor #if.")
+            msg = "Missing expression in preprocessor #if."
+            raise FLUKAError(msg)
         if variable in defines:
             if_stack.append(_IfInfo(any_branch_satisfied=True, read_until_next=True))
         else:
@@ -161,7 +164,8 @@ def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
         try:
             variable = split_line[1]
         except IndexError:
-            raise FLUKAError("Missing expression in #elif.")
+            msg = "Missing expression in #elif."
+            raise FLUKAError(msg)
         if variable in defines:
             if_stack[-1].any_branch_satisfied = True
             if_stack[-1].read_until_next = True
@@ -177,7 +181,8 @@ def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
     elif directive == "#endif":
         if_stack.pop()
     else:
-        raise ValueError("Unknown conditional directive state.")
+        msg = "Unknown conditional directive state."
+        raise ValueError(msg)
 
 
 def _parse_preprocessor_include(directory, directive, split_line, line_stack):
@@ -186,15 +191,17 @@ def _parse_preprocessor_include(directory, directive, split_line, line_stack):
         if not os.path.isabs(filename):
             filename = os.path.join(directory, filename)
         try:
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 line_stack.extend(reversed(f.readlines()))  # read in # reverse
-        except IOError:
+        except OSError:
+            msg = f"Included preprocessor file {filename} not found."
             raise FLUKAError(
-                "Included preprocessor file {} not found.".format(filename)
+                msg
             )
     else:
+        msg = f"Unknown include preprocessor directive: {split_line[1]}"
         raise ValueError(
-            "Unknown include preprocessor directive: {}".format(split_line[1])
+            msg
         )
 
 
@@ -249,7 +256,8 @@ class _Calc(ast.NodeVisitor):
         try:
             return _FLUKA_PREDEFINED_FUNCTIONS[name]
         except KeyError:
-            raise FLUKAError("Unknown name in preprocessor define: {}".format(name))
+            msg = f"Unknown name in preprocessor define: {name}"
+            raise FLUKAError(msg)
 
     def visit_Call(self, node):
         function = self.visit(node.func)

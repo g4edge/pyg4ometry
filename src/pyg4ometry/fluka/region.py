@@ -35,15 +35,15 @@ def _generate_name(typename, index, name, isZone, rootname):
     """Try to generate a sensible name for intermediate
     Geant4 booleans which have no FLUKA analogue."""
     if rootname is None:
-        rootname = "a{}".format(uuid4()).replace("-", "")
+        rootname = f"a{uuid4()}".replace("-", "")
 
     if isZone:
         return "{}{}_{}_{}".format(typename, index, "zone", rootname)
     else:
-        return "{}{}_{}_{}".format(typename, index, name, rootname)
+        return f"{typename}{index}_{name}_{rootname}"
 
 
-class _Boolean(object):
+class _Boolean:
     def generate_name(self, index, rootname=None):
         typename = type(self).__name__
         typename = typename[:3]
@@ -158,7 +158,8 @@ class Zone(vis.ViewableMixin):
         try:
             body0 = self.intersections[0].body
         except IndexError:
-            raise FLUKAError("zone has no +.")
+            msg = "zone has no +."
+            raise FLUKAError(msg)
 
         result = self._getSolidFromBoolean(self.intersections[0], reg, aabb)
         result = self._combine_booleans(
@@ -220,14 +221,14 @@ class Zone(vis.ViewableMixin):
         for s in booleans:
             if isinstance(s, Intersection):
                 if isinstance(s.body, Zone):
-                    fs += " +({})".format(s.body.dumps())
+                    fs += f" +({s.body.dumps()})"
                 else:
-                    fs += " +{}".format(s.body.name)
+                    fs += f" +{s.body.name}"
             elif isinstance(s, Subtraction):
                 if isinstance(s.body, Zone):
-                    fs += " -({})".format(s.body.dumps())
+                    fs += f" -({s.body.dumps()})"
                 else:
-                    fs += " -{}".format(s.body.name)
+                    fs += f" -{s.body.name}"
 
         return fs
 
@@ -349,7 +350,7 @@ class Zone(vis.ViewableMixin):
         for boolean in self.intersections + self.subtractions:
             body = boolean.body
             if body.name is None:  # e.g. a zone with no name
-                name = "zone{}_{}".format(nestedZoneCount, nameSuffix)
+                name = f"zone{nestedZoneCount}_{nameSuffix}"
                 nestedZoneCount += 1
             else:
                 name = body.name + nameSuffix
@@ -382,7 +383,8 @@ class Zone(vis.ViewableMixin):
                 elif booleanType is Subtraction:
                     result.addSubtraction(newBody)
                 else:
-                    raise ValueError("Unknown Boolean type")
+                    msg = "Unknown Boolean type"
+                    raise ValueError(msg)
         return result
 
     def isNull(self, aabb=None):
@@ -472,7 +474,8 @@ class Region(vis.ViewableMixin):
         Get the geant4Solid instance corresponding to this Region.
         """
         if len(self.zones) == 0:
-            raise FLUKAError("Region {} has no zones.".format(self.name))
+            msg = f"Region {self.name} has no zones."
+            raise FLUKAError(msg)
         elif len(self.zones) == 1:
             return self.zones[0].geant4Solid(reg, aabb=aabb)
         # Do multi-unions for everything else to support possible disjointedness.
@@ -652,7 +655,8 @@ class Region(vis.ViewableMixin):
     def simplify(self):
         reg = boolean_algebra.pruneRegion(self)
         if not reg.zones:
-            raise NullMeshError(f"Pruned region {self.name} is null.")
+            msg = f"Pruned region {self.name} is null."
+            raise NullMeshError(msg)
         boolean_algebra.simplifyRegion(reg)
         self.zones = reg.zones
 
@@ -661,7 +665,7 @@ class Region(vis.ViewableMixin):
 
     def removeZones(self, indices):
         """Remove zones by index"""
-        for index in reversed(sorted(indices)):
+        for index in sorted(indices, reverse=True):
             # print(self.zones)
             # print(index)
             del self.zones[index]
@@ -712,7 +716,7 @@ def _randomName():
     """
     Returns a random name that is syntactically correct for use in GDML.
     """
-    return "a{}".format(uuid4()).replace("-", "")
+    return f"a{uuid4()}".replace("-", "")
 
 
 def _makeWorldLogicalVolume(reg):
@@ -733,7 +737,8 @@ def _getAxisAlignedBoundingBox(aabb, boolean):
     elif isinstance(boolean, BodyMixin):
         body_name = boolean.name
     else:
-        raise ValueError("Unknown boolean type")
+        msg = "Unknown boolean type"
+        raise ValueError(msg)
 
     if body_name is None:
         return aabb

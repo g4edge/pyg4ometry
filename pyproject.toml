@@ -95,29 +95,31 @@ testpaths = "tests"
 
 [tool.ruff]
 select = [
-  "E", "F", "W", # flake8
-  "B",           # flake8-bugbear
-  "I",           # isort
-  "ARG",         # flake8-unused-arguments
+  # "E",
+  # "F",
+  "W", # flake8
+  # "B",           # flake8-bugbear
+  # "I",           # isort
+  # "ARG",         # flake8-unused-arguments
   "C4",          # flake8-comprehensions
   "EM",          # flake8-errmsg
-  "ICN",         # flake8-import-conventions
+  # "ICN",         # flake8-import-conventions
   "ISC",         # flake8-implicit-str-concat
-  "G",           # flake8-logging-format
+  # "G",           # flake8-logging-format
   "PGH",         # pygrep-hooks
   "PIE",         # flake8-pie
-  "PL",          # pylint
+  # "PL",          # pylint
   "PT",          # flake8-pytest-style
-  "PTH",         # flake8-use-pathlib
-  "RET",         # flake8-return
+  # "PTH",         # flake8-use-pathlib
+  # "RET",         # flake8-return
   "RUF",         # Ruff-specific
-  "SIM",         # flake8-simplify
-  "T20",         # flake8-print
+  # "SIM",         # flake8-simplify
+  # "T20",         # flake8-print
   "UP",          # pyupgrade
   "YTT",         # flake8-2020
   "EXE",         # flake8-executable
   "NPY",         # NumPy specific rules
-  "PD",          # pandas-vet
+  # "PD",          # pandas-vet
 ]
 extend-ignore = [
   "PLR",    # Design related pylint codes

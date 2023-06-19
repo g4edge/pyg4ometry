@@ -92,9 +92,9 @@ class VtkViewer:
         # interpolation for vertex shading
         interps = ("none", "flat", "gouraud", "phong")
         if interpolation not in interps:
+            msg = "Unrecognised interpolation option {}. Possible options are :{}".format(interpolation, ", ".join(interps))
             raise ValueError(
-                "Unrecognised interpolation option {}."
-                " Possible options are :{}".format(interpolation, ", ".join(interps))
+                msg
             )
         self.interpolation = interpolation
 
@@ -195,7 +195,8 @@ class VtkViewer:
         elif dimension == "z":
             self._zCutterOrigin = origin
         else:
-            raise ValueError("invalid dimension - x,y or z")
+            msg = "invalid dimension - x,y or z"
+            raise ValueError(msg)
 
     def setCutterNormal(self, dimension, normal):
         """
@@ -209,7 +210,8 @@ class VtkViewer:
         elif dimension == "z":
             self._zCutterNormal = normal
         else:
-            raise ValueError("invalid dimension - x,y or z")
+            msg = "invalid dimension - x,y or z"
+            raise ValueError(msg)
 
     def addMaterialVisOption(self, materialName, visOptionInstance):
         """
@@ -320,7 +322,8 @@ class VtkViewer:
             writer.SetInputConnection(windowto_image_filter.GetOutputPort())
             writer.Write()
         else:
-            raise RuntimeError("Need a filename.")
+            msg = "Need a filename."
+            raise RuntimeError(msg)
 
     def addLogicalVolume(
         self,
@@ -556,8 +559,7 @@ class VtkViewer:
 
             if pv.logicalVolume.type == "logical":
                 _log.info(
-                    "VtkViewer.addLogicalVolume> Daughter %s %s %s "
-                    % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name)
+                    f"VtkViewer.addLogicalVolume> Daughter {pv.name} {pv.logicalVolume.name} {pv.logicalVolume.solid.name} "
                 )
 
             if pv.type == "placement":
@@ -945,7 +947,8 @@ class VtkViewer:
         elif axis == "z":
             cutters = self.zcutters
         else:
-            raise ValueError("axis is not one of x,y,z")
+            msg = "axis is not one of x,y,z"
+            raise ValueError(msg)
 
         allX = []
         allY = []
@@ -1153,7 +1156,7 @@ class VtkViewerColoured(VtkViewer):
                 if type(v) is list or type(v) is tuple:
                     vi = _VisOptions()
                     vi.colour = v[:3]
-                    if any([i > 1 for i in vi.colour]):
+                    if any(i > 1 for i in vi.colour):
                         vi.colour = [i / 255.0 for i in vi.colour]
                     if len(v) > 3:
                         vi.alpha = v[3]
@@ -1201,7 +1204,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         if actor:
             actorMap = self.vtkviewer.physicalActorMap
             try:
-                name = next((x[0] for x in actorMap.items() if x[1] is actor))
+                name = next(x[0] for x in actorMap.items() if x[1] is actor)
             # E.g. the axes actor or some other actor we don't wish to name.
             except StopIteration:
                 pass

@@ -24,7 +24,7 @@ class Intersection(_SolidBase):
     """
 
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
-        super(Intersection, self).__init__(name, "Intersection", registry)
+        super().__init__(name, "Intersection", registry)
         # circular import
         import pyg4ometry.gdml.Defines as _defines
 

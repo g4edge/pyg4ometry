@@ -60,7 +60,7 @@ class TwistedTubs(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(TwistedTubs, self).__init__(name, "TwistedTubs", registry)
+        super().__init__(name, "TwistedTubs", registry)
 
         self.endinnerrad = endinnerrad
         self.endouterrad = endouterrad

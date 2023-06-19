@@ -14,7 +14,7 @@ from pyg4ometry.geant4._Material import Material as _Material
 from pyg4ometry.meshutils import MeshShrink
 
 
-class Reader(object):
+class Reader:
     def __init__(self, fileName, registryOn=True, fileNameAux=None):
         self.fileName = fileName
 
@@ -58,7 +58,7 @@ class Reader(object):
                 obj.Label = "number" + obj.Label
 
     def loadAuxilaryData(self, fileName, colorByMaterial=True):
-        f = open(fileName, "r")
+        f = open(fileName)
 
         self.solidAux = {}  # TODO rename self.auxVolumeData
         self.materialSet = set()  # TODO rename self.auxMaterialSet
@@ -106,8 +106,9 @@ class Reader(object):
             elif isinstance(material, str):
                 self.material = _Material.nist(material)
             else:
+                msg = f"Unsupported type for material: {type(material)}"
                 raise SystemExit(
-                    "Unsupported type for material: {}".format(type(material))
+                    msg
                 )
 
     def convertFlat(
@@ -178,8 +179,7 @@ class Reader(object):
 
                 # info log output
                 _log.info(
-                    "freecad.reader.convertFlat> Part::Feature label=%s typeid=%s placement=%s"
-                    % (obj.Label, obj.TypeId, obj.Placement)
+                    f"freecad.reader.convertFlat> Part::Feature label={obj.Label} typeid={obj.TypeId} placement={obj.Placement}"
                 )
 
                 # remove placement
@@ -384,8 +384,7 @@ class Reader(object):
                         a = _random.uniform(0, 1)
                         f.write(
                             obj.Label
-                            + "\t\t %f,%f,%f,%f\t surface \t G4_Galactic\n"
-                            % (r, g, b, a)
+                            + f"\t\t {r:f},{g:f},{b:f},{a:f}\t surface \t G4_Galactic\n"
                         )
         if fileName != None:
             f.close()
@@ -397,8 +396,7 @@ class Reader(object):
     def recursePrintObjectTree(self, obj):
         if obj.TypeId == "App::Part":
             _log.info(
-                "freecad.Reader.recursePrintObjectTree> App::Part %s %s %s"
-                % (obj.TypeId, obj.Label, obj.Placement)
+                f"freecad.Reader.recursePrintObjectTree> App::Part {obj.TypeId} {obj.Label} {obj.Placement}"
             )
             for gobj in obj.Group:
                 self.recursePrintObjectTree(gobj)
@@ -473,8 +471,7 @@ class Reader(object):
             return objects
         elif obj.TypeId == "Part::Feature":  # mapped to logical volumes
             _log.info(
-                "freecad.reader.recurseObjectTree> Part::Feature label=%s placement=%s"
-                % (obj.Label, obj.Placement)
+                f"freecad.reader.recurseObjectTree> Part::Feature label={obj.Label} placement={obj.Placement}"
             )
 
             # tesellate

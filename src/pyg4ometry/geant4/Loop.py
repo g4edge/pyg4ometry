@@ -1,4 +1,4 @@
-class Loop(object):
+class Loop:
     def __init__(self, variable, loopFrom, loopTo, loopStep, objectsToLoop):
         self.variable = variable
         self.loopFrom = loopFrom

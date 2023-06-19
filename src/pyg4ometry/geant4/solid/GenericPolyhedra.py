@@ -51,7 +51,7 @@ class GenericPolyhedra(_SolidBase):
         aunit="rad",
         addRegistry=True,
     ):
-        super(GenericPolyhedra, self).__init__(name, "GenericPolyhedra", registry)
+        super().__init__(name, "GenericPolyhedra", registry)
 
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
@@ -84,8 +84,9 @@ class GenericPolyhedra(_SolidBase):
 
     def checkParameters(self):
         if len(self.pR) < 3:
+            msg = "Generic Polyhedra must have at least 3 R-Z points defined"
             raise ValueError(
-                "Generic Polyhedra must have at least 3 R-Z points defined"
+                msg
             )
 
     def mesh(self):

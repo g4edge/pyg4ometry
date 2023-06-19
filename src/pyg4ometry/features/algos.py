@@ -496,7 +496,7 @@ def _vtkPolydataEdgeInformation(polydata, bPlot=False):
         points.append(p)
 
     # unique point array
-    upa = _np.array([k for k in uniquePoints.keys()])
+    upa = _np.array(list(uniquePoints.keys()))
     pa = _np.array(points)
 
     # centre of points
@@ -750,7 +750,7 @@ class FeatureData:
         self.cutters = []
 
     def readFile(self, fileName):
-        f = open(fileName, "r")
+        f = open(fileName)
 
         def readInfo(f):
             d = {}

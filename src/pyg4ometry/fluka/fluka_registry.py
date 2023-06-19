@@ -23,7 +23,7 @@ logger = _logging.getLogger(__name__)
 logger.setLevel(_logging.INFO)
 
 
-class FlukaRegistry(object):
+class FlukaRegistry:
     """
     Object to store geometry for FLUKA input and output. All of the FLUKA classes \
     can be used without storing them in the Registry. The registry is used to write \
@@ -76,8 +76,9 @@ class FlukaRegistry(object):
 
     def addLattice(self, lattice):
         if lattice.cellRegion.name in self.regionDict:
+            msg = "LATTICE cell already been defined as a region in regionDict"
             raise ValueError(
-                "LATTICE cell already been defined as a region in regionDict"
+                msg
             )
         self.latticeDict[lattice.cellRegion.name] = lattice
 
@@ -88,11 +89,11 @@ class FlukaRegistry(object):
         return self._bodiesAndRegions
 
     def printDefinitions(self):
-        print("bodyDict = {}".format(self.bodyDict))
-        print("regionDict = {}".format(self.regionDict))
-        print("materialDict = {}".format(self.materials))
-        print("latticeDict = {}".format(self.latticeDict))
-        print("cardDict = {}".format(self.cardDict))
+        print(f"bodyDict = {self.bodyDict}")
+        print(f"regionDict = {self.regionDict}")
+        print(f"materialDict = {self.materials}")
+        print(f"latticeDict = {self.latticeDict}")
+        print(f"cardDict = {self.cardDict}")
 
     def regionAABBs(self, write=None):
         regionAABBs = {}
@@ -126,7 +127,8 @@ class FlukaRegistry(object):
 
     def addMaterialAssignments(self, mat, *regions):
         if isinstance(mat, _Region):
-            raise TypeError("A Region instance has been provided as a material")
+            msg = "A Region instance has been provided as a material"
+            raise TypeError(msg)
 
         try:  # Element or Compound instance
             materialName = mat.name
@@ -271,10 +273,11 @@ class RotoTranslationStore(_MutableMapping):
             msg = "Only store RotoTranslation or RecursiveRotoTranslation."
             raise TypeError(msg)
         if name != rtrans.name:
-            raise ValueError(
+            msg = (
                 "Name it is appended with doesn't match"
                 " the name of the RotoTranslation instance..."
             )
+            raise ValueError(msg)
 
         # If already defined then we give it the same transformation
         # index as the one we are overwriting.
@@ -294,10 +297,9 @@ class RotoTranslationStore(_MutableMapping):
             if not rtrans.transformationIndex:
                 recur.transformationIndex = next(self._counter)
             elif rtrans.transformationIndex in self.allTransformationIndices():
+                msg = "transformation index matches another ROT-DEFI with a different name.  Change the transformationIndex and try again."
                 raise KeyError(
-                    "transformation index matches another"
-                    " ROT-DEFI with a different name.  Change the"
-                    " transformationIndex and try again."
+                    msg
                 )
             elif rtrans.transformationIndex not in self.allTransformationIndices():
                 pass  #
@@ -370,12 +372,14 @@ class FlukaBodyStore(_MutableMapping):
 
     def __getitem__(self, key):
         if key not in self._bodyNames():
-            raise _FLUKAError(f"Undefined body: {key}")
+            msg = f"Undefined body: {key}"
+            raise _FLUKAError(msg)
         return self._df[self._df["name"] == key]["body"].item()
 
     def __delitem__(self, key):
         if key not in self._bodyNames():
-            raise KeyError(f"Missing body name: {key}")
+            msg = f"Missing body name: {key}"
+            raise KeyError(msg)
 
         body = self[key]
         self._getCacherFromBody(body).remove(key)
@@ -419,7 +423,8 @@ class BaseCacher:
             self.append(body)
         else:
             rowIndex = self.df[self.df["name"] == name].index
-            raise NotImplementedError("operation not implemented")
+            msg = "operation not implemented"
+            raise NotImplementedError(msg)
 
     def addBody(self, body):
         name = body.name
@@ -547,12 +552,14 @@ class FlukaBodyStoreExact:
 
     def __getitem__(self, key):
         if key not in self._bodyNames():
-            raise _FLUKAError(f"Undefined body: {key}")
+            msg = f"Undefined body: {key}"
+            raise _FLUKAError(msg)
         return self.nameBody[key]
 
     def __delitem__(self, key):
         if key not in self._bodyNames():
-            raise KeyError(f"Missing body name: {key}")
+            msg = f"Missing body name: {key}"
+            raise KeyError(msg)
 
         body = self[key]
         b = self.nameBody.pop(key)

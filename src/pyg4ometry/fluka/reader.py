@@ -52,7 +52,7 @@ _BODY_NAMES = {
 }
 
 
-class Reader(object):
+class Reader:
     """
     Class to read a FLUKA file.
     """
@@ -110,13 +110,17 @@ class Reader(object):
                     found_first_end = True
 
         if not found_geobegin:
-            raise FLUKAError("Missing GEOBEGIN card in input.")
+            msg = "Missing GEOBEGIN card in input."
+            raise FLUKAError(msg)
         if not found_geoend:
-            raise FLUKAError("Missing GEOEND card in input.")
+            msg = "Missing GEOEND card in input."
+            raise FLUKAError(msg)
         if not found_first_end:
-            raise FLUKAError("Missing both END cards within geometry section.")
+            msg = "Missing both END cards within geometry section."
+            raise FLUKAError(msg)
         if not found_second_end:
-            raise FLUKAError("Missing second END card within geometry section.")
+            msg = "Missing second END card within geometry section."
+            raise FLUKAError(msg)
 
     def _parseBodies(self):
         bodies_block = self._lines[self.bodiesbegin : self.bodiesend + 1]
@@ -174,9 +178,11 @@ class Reader(object):
             elif in_body:  # continue appending bits to the body_parts list.
                 body_parts.extend(line_parts)
             else:
-                raise RuntimeError(f"Failed to parse FLUKA input line: {line}")
+                msg = f"Failed to parse FLUKA input line: {line}"
+                raise RuntimeError(msg)
         else:  # we should always break out of the above loop with END.
-            raise RuntimeError("Unable to parse FLUKA bodies.")
+            msg = "Unable to parse FLUKA bodies."
+            raise RuntimeError(msg)
 
     def _parseRegions(self):
         regions_block = self._lines[self.regionsbegin : self.regionsend]
@@ -265,10 +271,11 @@ class Reader(object):
         elif directive == "$end_transform":
             transform_stack.pop()
         else:
-            raise ValueError(f"Unknown geometry directive: {directive}.")
+            msg = f"Unknown geometry directive: {directive}."
+            raise ValueError(msg)
 
     def _parseMaterialAssignments(self):
-        material_assignments = dict()
+        material_assignments = {}
         regions = self.flukaregistry.regionDict
         # Need to make a list of the keys to account for index-based
         # material assignments.
@@ -388,7 +395,8 @@ class Reader(object):
             g.add_edges_from([(cst, compoundName) for cst in constitutents])
 
         if not nx.algorithms.is_directed_acyclic_graph(g):
-            raise FLUKAError("Cyclic material definition detected.")
+            msg = "Cyclic material definition detected."
+            raise FLUKAError(msg)
 
         elements = {}
         names = nx.topological_sort(g)
@@ -406,7 +414,7 @@ class Reader(object):
 
         """
         singleElementMaterials = {}
-        compoundNames = set(c.sdum for c in self.cards if c.keyword == "COMPOUND")
+        compoundNames = {c.sdum for c in self.cards if c.keyword == "COMPOUND"}
         compounds = {name: [] for name in compoundNames}
 
         for card in self.cards:
@@ -631,7 +639,8 @@ def _make_body(
         quaParameters.append(pmm[-1])
         b = body.QUA(name, *quaParameters, flukaregistry=flukareg, transform=transform)
     else:
-        raise TypeError(f"Body type {body_type} not supported")
+        msg = f"Body type {body_type} not supported"
+        raise TypeError(msg)
     return b
 
 

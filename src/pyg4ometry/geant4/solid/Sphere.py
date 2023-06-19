@@ -69,7 +69,7 @@ class Sphere(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(Sphere, self).__init__(name, "Sphere", registry)
+        super().__init__(name, "Sphere", registry)
 
         self.pRmin = pRmin
         self.pRmax = pRmax
@@ -97,9 +97,11 @@ class Sphere(_SolidBase):
 
         auval = _Units.unit(self.aunit)
         if self.evaluateParameter(self.pRmin) > self.evaluateParameter(self.pRmax):
-            raise ValueError("Inner radius must be less than outer radius.")
+            msg = "Inner radius must be less than outer radius."
+            raise ValueError(msg)
         if self.evaluateParameter(self.pDTheta) * auval > _np.pi:
-            raise ValueError("pDTheta must be less than pi")
+            msg = "pDTheta must be less than pi"
+            raise ValueError(msg)
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):

@@ -61,7 +61,7 @@ class Torus(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(Torus, self).__init__(name, "Torus", registry)
+        super().__init__(name, "Torus", registry)
 
         self.pRmin = pRmin
         self.pRmax = pRmax

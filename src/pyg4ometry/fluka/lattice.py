@@ -7,7 +7,7 @@ from .card import Card
 from .directive import Transform
 
 
-class Lattice(object):
+class Lattice:
     def __init__(
         self,
         cellRegion,

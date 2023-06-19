@@ -86,7 +86,8 @@ class Tests:
             print("Invalid test name. Available test names are:")
             for name in self._testNames:
                 print(name)
-            raise ValueError("invalid test name")
+            msg = "invalid test name"
+            raise ValueError(msg)
         else:
             setattr(self, testName, False)
 
@@ -141,7 +142,8 @@ class TestResult(_enum.Enum):
         return TestResult(bool(self.value) and bool(other.value))
 
     def __ior__(self, other):
-        raise IOError("not implement")
+        msg = "not implement"
+        raise OSError(msg)
 
     @staticmethod
     def All():
@@ -365,13 +367,13 @@ def logicalVolumes(
         pattern = r"(0x\w{7})"
         rNameToObject = {_re.sub(pattern, "", d.name): d for d in rlv.daughterVolumes}
         oNameToObject = {_re.sub(pattern, "", d.name): d for d in olv.daughterVolumes}
-        rSet = set([_re.sub(pattern, "", d.name) for d in rlv.daughterVolumes])
-        oSet = set([_re.sub(pattern, "", d.name) for d in olv.daughterVolumes])
+        rSet = {_re.sub(pattern, "", d.name) for d in rlv.daughterVolumes}
+        oSet = {_re.sub(pattern, "", d.name) for d in olv.daughterVolumes}
     else:
         rNameToObject = {d.name: d for d in rlv.daughterVolumes}
         oNameToObject = {d.name: d for d in olv.daughterVolumes}
-        rSet = set([d.name for d in rlv.daughterVolumes])
-        oSet = set([d.name for d in olv.daughterVolumes])
+        rSet = {d.name for d in rlv.daughterVolumes}
+        oSet = {d.name for d in olv.daughterVolumes}
 
     # iterate over daughters
     # if we assume there's some mismatch, we use the intersection set of names - ie the ones
@@ -577,8 +579,8 @@ def assemblyVolumes(
     # we rely here on unique names in pyg4ometry as that's true in GDML
     rNameToObject = {d.name: d for d in rDaughters}
     oNameToObject = {d.name: d for d in oDaughters}
-    rSet = set([d.name for d in rDaughters])
-    oSet = set([d.name for d in oDaughters])
+    rSet = {d.name for d in rDaughters}
+    oSet = {d.name for d in oDaughters}
 
     result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 

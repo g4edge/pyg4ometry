@@ -26,10 +26,10 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
             try:
                 value = _units[name]
             except KeyError as err:
-                msg = "<= Undefined variable : {}".format(name)
+                msg = f"<= Undefined variable : {name}"
                 if not err.args:
                     err.args = ("",)
-                err.args = err.args + (msg,)
+                err.args = (*err.args, msg)
                 raise
 
         return value
@@ -109,7 +109,8 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
         elif ctx.matrixElement():
             value = self.visit(ctx.matrixElement())
         else:
-            raise SystemExit("Invalid atom.")  ##DEBUG####
+            msg = "Invalid atom."
+            raise SystemExit(msg)  ##DEBUG####
 
         return float(value)
 
@@ -120,8 +121,9 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
         elif hasattr(numpy, function_name):
             function = getattr(numpy, function_name)
         else:
+            msg = f"Function {function_name} not found in 'numpy' or 'math'"
             raise ValueError(
-                "Function {} not found in 'numpy' or 'math'" "".format(function_name)
+                msg
             )
 
         arguments = [self.visit(expr) for expr in ctx.expression()]
@@ -155,7 +157,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
                 return getattr(math, constant().getText())
 
 
-class ExpressionParser(object):
+class ExpressionParser:
     def __init__(self):
         self.visitor = GdmlExpressionEvalVisitor()
         self.defines_dict = {}

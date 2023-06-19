@@ -21,7 +21,7 @@ class MultiUnion(_SolidBase):
     """
 
     def __init__(self, name, objects, transformations, registry, addRegistry=True):
-        super(MultiUnion, self).__init__(name, "MultiUnion", registry)
+        super().__init__(name, "MultiUnion", registry)
         # circular import
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
@@ -42,11 +42,11 @@ class MultiUnion(_SolidBase):
             obj.dependents.append(self)
 
     def __repr__(self):
-        return "Multi Union {}".format(self.name)
+        return f"Multi Union {self.name}"
 
     def __str__(self):
         # TODO put all information
-        return "Multi Union {}".format(self.name)
+        return f"Multi Union {self.name}"
 
     def mesh(self):
         _log.info("MultiUnion.pycsgmesh>")
@@ -64,7 +64,7 @@ class MultiUnion(_SolidBase):
             # tranformation
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()
-            _log.info("MulUnion.mesh> rot=%s tlate=%s" % (str(rot), str(tlate)))
+            _log.info(f"MulUnion.mesh> rot={rot!s} tlate={tlate!s}")
 
             # get meshes
             _log.info("union.mesh> mesh %s" % str(idx))

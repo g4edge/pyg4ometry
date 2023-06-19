@@ -90,7 +90,7 @@ class Box(_SolidBase):
     """
 
     def __init__(self, name, pX, pY, pZ, registry, lunit="mm", addRegistry=True):
-        super(Box, self).__init__(name, "Box", registry)
+        super().__init__(name, "Box", registry)
 
         self.lunit = lunit
 
@@ -107,7 +107,7 @@ class Box(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Box : {} {} {} {}".format(self.name, self.pX, self.pY, self.pZ)
+        return f"Box : {self.name} {self.pX} {self.pY} {self.pZ}"
 
     def __str__(self):
         return "Box : name={} x={} y={} z={}".format(
@@ -127,11 +127,9 @@ class Box(_SolidBase):
         c = _Vector(0, 0, 0)
         r = [pX, pY, pZ]
 
-        polygons = list(
-            [
+        polygons = [
                 _Polygon(
-                    list(
-                        [
+                    [
                             _Vertex(
                                 _Vector(
                                     c.x + r[0] * (2 * bool(i & 1) - 1),
@@ -141,7 +139,6 @@ class Box(_SolidBase):
                             )
                             for i in v[0]
                         ]
-                    )
                 )
                 for v in [
                     [[0, 4, 6, 2], [-1, 0, 0]],
@@ -152,5 +149,4 @@ class Box(_SolidBase):
                     [[4, 5, 7, 6], [0, 0, +1]],
                 ]
             ]
-        )
         return _CSG.fromPolygons(polygons)

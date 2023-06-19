@@ -27,7 +27,7 @@ class Wedge(_SolidBase):
     def __init__(
         self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000, nslice=None
     ):
-        super(Wedge, self).__init__(name, "InfiniteWedge", None)
+        super().__init__(name, "InfiniteWedge", None)
 
         self.pRMax = float(pRMax)
         self.pSPhi = float(pSPhi)

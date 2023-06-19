@@ -59,7 +59,7 @@ class Ellipsoid(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(Ellipsoid, self).__init__(name, "Ellipsoid", registry)
+        super().__init__(name, "Ellipsoid", registry)
         self.pxSemiAxis = pxSemiAxis
         self.pySemiAxis = pySemiAxis
         self.pzSemiAxis = pzSemiAxis

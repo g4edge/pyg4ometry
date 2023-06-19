@@ -55,7 +55,7 @@ def predefinedMaterialNames():
     return names
 
 
-class BuiltIn(object):
+class BuiltIn:
     def __init__(
         self,
         name,
@@ -73,7 +73,7 @@ class BuiltIn(object):
             flukaregistry.addMaterial(self)
 
     def __repr__(self):
-        return "<Builtin: {}>".format(self.name)
+        return f"<Builtin: {self.name}>"
 
     def flukaFreeString(self, delim=""):
         return ""
@@ -94,7 +94,7 @@ def defineBuiltInFlukaMaterials(flukaregistry=None):
     return out
 
 
-class _MatProp(object):
+class _MatProp:
     def isGas(self):
         return self.density < 0.01 or self.pressure
 
@@ -166,7 +166,7 @@ class Material(_MatProp):
     def __repr__(self):
         massNumber = ""
         if self.massNumber is not None:
-            massNumber = ", A={}".format(self.massNumber)
+            massNumber = f", A={self.massNumber}"
         return '<Material: "{}", Z={}, density={}*g/cm3{}>'.format(
             self.name, self.atomicNumber, self.density, massNumber
         )
@@ -211,7 +211,8 @@ class Compound(_MatProp):
         self.density = density
         self.fractions = fractions
         if fractionType not in {"atomic", "mass", "volume"}:
-            raise ValueError(f"Unknown fractionType: {fractionType}")
+            msg = f"Unknown fractionType: {fractionType}"
+            raise ValueError(msg)
         self.fractionType = fractionType
         self.pressure = pressure
 
@@ -254,7 +255,7 @@ class Compound(_MatProp):
         if self.pressure:
             matprop = [self.makeMatPropCard()]
 
-        return [material] + compounds + matprop
+        return [material, *compounds, *matprop]
 
     def flukaFreeString(self, delim=", "):
         return "\n".join(c.toFreeString(delim=delim) for c in self.toCards())
@@ -271,13 +272,14 @@ class Compound(_MatProp):
         fractionTypes = []
         for c in compounds:
             if c.sdum != compoundName:
-                raise ValueError("COMPOUND name does not match MATERIAL name.")
+                msg = "COMPOUND name does not match MATERIAL name."
+                raise ValueError(msg)
             _appendFractionPairs(c, fractions, fractionTypes)
 
         if len(set(fractionTypes)) > 2:
+            msg = f"Mixed mass, volume, and fraction types are not supported for material={compoundName}"
             raise TypeError(
-                "Mixed mass, volume, and fraction types"
-                f" are not supported for material={compoundName}"
+                msg
             )
 
         # Map the material names to material/compound instances via the FlukaRegistry.
@@ -332,7 +334,8 @@ def _parseFraction(what1, what2):
     elif prefix1 == "-" and prefix2 == "-":
         return str(what2)[1:], abs(what1), "volume"
 
-    raise ValueError("Unknown compound fraction format")
+    msg = "Unknown compound fraction format"
+    raise ValueError(msg)
 
 
 def _formatFlukaMaterialPair(pair, namePrefix, fractionPrefix):

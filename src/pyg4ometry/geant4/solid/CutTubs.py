@@ -56,7 +56,7 @@ class CutTubs(_SolidBase):
         nslice=None,
         addRegistry=True,
     ):
-        super(CutTubs, self).__init__(name, "CutTubs", registry)
+        super().__init__(name, "CutTubs", registry)
 
         if not nslice:
             nslice = _config.SolidDefaults.CutTubs.nslice

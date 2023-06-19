@@ -29,10 +29,10 @@ def upgradeToStringExpression(reg, obj):
                 e.eval()
                 return obj
             except Exception as err:
-                msg = "<= Cannot evaluate expression : {}".format(obj)
+                msg = f"<= Cannot evaluate expression : {obj}"
                 if not err.args:
                     err.args = ("",)
-                err.args = err.args + (msg,)
+                err.args = (*err.args, msg)
                 raise
 
     elif isinstance(obj, ScalarBase):
@@ -137,7 +137,8 @@ def upgradeToTransformation(var, reg, addRegistry=False):
             aunit = ""
         rot = upgradeToVector(var[0], reg, "rotation", aunit, addRegistry)
     else:
-        raise TypeError("Unknown rotation type: {}".format(type(var[0])))
+        msg = f"Unknown rotation type: {type(var[0])}"
+        raise TypeError(msg)
 
     if isinstance(var[1], VectorBase):
         tra = var[1]
@@ -148,12 +149,13 @@ def upgradeToTransformation(var, reg, addRegistry=False):
             lunit = ""
         tra = upgradeToVector(var[1], reg, "position", lunit, addRegistry)
     else:
-        raise TypeError("Unknown position type: {}".format(type(var[1])))
+        msg = f"Unknown position type: {type(var[1])}"
+        raise TypeError(msg)
 
     return [rot, tra]
 
 
-class ScalarBase(object):
+class ScalarBase:
     """
     Base class for all scalars (Constants, Quantity, Variable and Expression)
     """
@@ -166,8 +168,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_add_{}".format(v1, v2),
-            "({}) + ({})".format(v1, v2),
+            f"var_{v1}_add_{v2}",
+            f"({v1}) + ({v2})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -178,8 +180,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_sub_{}".format(v1, v2),
-            "({}) - ({})".format(v1, v2),
+            f"var_{v1}_sub_{v2}",
+            f"({v1}) - ({v2})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -190,8 +192,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_sub_{}".format(v2, v1),
-            "({}) - ({})".format(v2, v1),
+            f"var_{v2}_sub_{v1}",
+            f"({v2}) - ({v1})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -206,8 +208,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_mul_{}".format(v1, v2),
-            "({}) * ({})".format(v1, v2),
+            f"var_{v1}_mul_{v2}",
+            f"({v1}) * ({v2})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -218,8 +220,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_div_{}".format(v1, v2),
-            "({}) / ({})".format(v1, v2),
+            f"var_{v1}_div_{v2}",
+            f"({v1}) / ({v2})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -230,8 +232,8 @@ class ScalarBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         v = Constant(
-            "var_{}_div_{}".format(v2, v1),
-            "({}) / ({})".format(v2, v1),
+            f"var_{v2}_div_{v1}",
+            f"({v2}) / ({v1})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -241,8 +243,8 @@ class ScalarBase(object):
         v1 = upgradeToStringExpression(self.registry, self)
 
         v = Constant(
-            "var_neg_{}".format(v1),
-            "-({})".format(v1),
+            f"var_neg_{v1}",
+            f"-({v1})",
             registry=self.registry,
             addRegistry=False,
         )
@@ -266,7 +268,7 @@ class ScalarBase(object):
         """
 
         self.name = name
-        self.expr.name = "expr_{}".format(name)
+        self.expr.name = f"expr_{name}"
         self.expr.registry = self.registry
         self.registry.addDefine(self)
 
@@ -288,8 +290,8 @@ def sin(arg):
 
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "sin_{}".format(v1),
-        "sin({})".format(v1),
+        f"sin_{v1}",
+        f"sin({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -305,8 +307,8 @@ def cos(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "cos_{}".format(v1),
-        "cos({})".format(v1),
+        f"cos_{v1}",
+        f"cos({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -322,8 +324,8 @@ def tan(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "tan_{}".format(v1),
-        "tan({})".format(v1),
+        f"tan_{v1}",
+        f"tan({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -339,8 +341,8 @@ def asin(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "sin_{}".format(v1),
-        "asin({})".format(v1),
+        f"sin_{v1}",
+        f"asin({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -356,8 +358,8 @@ def acos(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "cos_{}".format(v1),
-        "acos({})".format(v1),
+        f"cos_{v1}",
+        f"acos({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -373,8 +375,8 @@ def atan(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "tan_{}".format(v1),
-        "atan({})".format(v1),
+        f"tan_{v1}",
+        f"atan({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -390,8 +392,8 @@ def exp(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "exp_{}".format(v1),
-        "exp({})".format(v1),
+        f"exp_{v1}",
+        f"exp({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -407,8 +409,8 @@ def log(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "log_{}".format(v1),
-        "log({})".format(v1),
+        f"log_{v1}",
+        f"log({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -424,8 +426,8 @@ def log10(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "log10_{}".format(v1),
-        "log10({})".format(v1),
+        f"log10_{v1}",
+        f"log10({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -441,8 +443,8 @@ def sqrt(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "sqrt_{}".format(v1),
-        "sqrt({})".format(v1),
+        f"sqrt_{v1}",
+        f"sqrt({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -460,8 +462,8 @@ def pow(arg, power):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "sqrt_{}".format(v1),
-        "pow({},{})".format(v1, str(power)),
+        f"sqrt_{v1}",
+        f"pow({v1},{power!s})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -477,8 +479,8 @@ def abs(arg):
     """
     v1 = upgradeToStringExpression(arg.registry, arg)
     v = Constant(
-        "abs_{}".format(v1),
-        "abs({})".format(v1),
+        f"abs_{v1}",
+        f"abs({v1})",
         registry=arg.registry,
         addRegistry=False,
     )
@@ -500,12 +502,12 @@ class Constant(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=True):
-        super(Constant, self).__init__()
+        super().__init__()
 
         self.name = name
 
         self.expr = _Expression(
-            "expr_{}".format(name), upgradeToStringExpression(registry, value), registry
+            f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
         if registry is not None:
@@ -563,7 +565,7 @@ class Constant(ScalarBase):
         return self.expr.eval()
 
     def __repr__(self):
-        return "Constant : {} = {}".format(self.name, str(self.expr))
+        return f"Constant : {self.name} = {self.expr!s}"
 
 
 class Quantity(ScalarBase):
@@ -585,14 +587,14 @@ class Quantity(ScalarBase):
     """
 
     def __init__(self, name, value, unit, type, registry, addRegistry=True):
-        super(Quantity, self).__init__()
+        super().__init__()
 
         self.name = name
         self.unit = unit
         self.type = type
 
         self.expr = _Expression(
-            "expr_{}".format(name), upgradeToStringExpression(registry, value), registry
+            f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
         if registry is not None:
@@ -631,12 +633,12 @@ class Variable(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=True):
-        super(Variable, self).__init__()
+        super().__init__()
 
         self.name = name
 
         self.expr = _Expression(
-            "expr_{}".format(name), upgradeToStringExpression(registry, value), registry
+            f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
         if registry is not None:
@@ -657,7 +659,7 @@ class Variable(ScalarBase):
         return self.expr.eval()
 
     def __repr__(self):
-        return "Variable: {} = {}".format(self.name, str(self.expr))
+        return f"Variable: {self.name} = {self.expr!s}"
 
 
 class Expression(ScalarBase):
@@ -675,12 +677,12 @@ class Expression(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=False):
-        super(Expression, self).__init__()
+        super().__init__()
 
         self.name = name
 
         self.expr = _Expression(
-            "expr_{}".format(name), upgradeToStringExpression(registry, value), registry
+            f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
         if registry is not None:
@@ -705,10 +707,10 @@ class Expression(ScalarBase):
         return int(self.expr.eval())
 
     def __repr__(self):
-        return "Expression: {} = {}".format(self.name, str(self.expr))
+        return f"Expression: {self.name} = {self.expr!s}"
 
 
-class VectorBase(object):
+class VectorBase:
     def __init__(self):
         self.x = None
         self.y = None
@@ -717,10 +719,10 @@ class VectorBase(object):
 
     def __add__(self, other):
         p = Position(
-            "vec_{}_add_{}".format(self.name, other.name),
-            "({})+({})".format(self.x.expression, other.x.expression),
-            "({})+({})".format(self.y.expression, other.y.expression),
-            "({})+({})".format(self.z.expression, other.z.expression),
+            f"vec_{self.name}_add_{other.name}",
+            f"({self.x.expression})+({other.x.expression})",
+            f"({self.y.expression})+({other.y.expression})",
+            f"({self.z.expression})+({other.z.expression})",
             self.unit,
             self.registry,
             False,
@@ -735,10 +737,10 @@ class VectorBase(object):
         other = upgradeToVector(other, self.registry, "position", "", False)
 
         p = Position(
-            "vec_{}_sub_{}".format(self.name, other.name),
-            "({})-({})".format(self.x.expression, other.x.expression),
-            "({})-({})".format(self.y.expression, other.y.expression),
-            "({})-({})".format(self.z.expression, other.z.expression),
+            f"vec_{self.name}_sub_{other.name}",
+            f"({self.x.expression})-({other.x.expression})",
+            f"({self.y.expression})-({other.y.expression})",
+            f"({self.z.expression})-({other.z.expression})",
             self.unit,
             self.registry,
             False,
@@ -754,10 +756,10 @@ class VectorBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         p = Position(
-            "vec_{}_mul_{}".format(self.name, v2),
-            "({})*({})".format(self.x.expression, v2),
-            "({})*({})".format(self.y.expression, v2),
-            "({})*({})".format(self.z.expression, v2),
+            f"vec_{self.name}_mul_{v2}",
+            f"({self.x.expression})*({v2})",
+            f"({self.y.expression})*({v2})",
+            f"({self.z.expression})*({v2})",
             self.unit,
             self.registry,
             False,
@@ -775,10 +777,10 @@ class VectorBase(object):
         v2 = upgradeToStringExpression(self.registry, other)
 
         p = Position(
-            "vec_{}_div_{}".format(self.name, v2),
-            "({})/({})".format(self.x.expression, v2),
-            "({})/({})".format(self.y.expression, v2),
-            "({})/({})".format(self.z.expression, v2),
+            f"vec_{self.name}_div_{v2}",
+            f"({self.x.expression})/({v2})",
+            f"({self.y.expression})/({v2})",
+            f"({self.z.expression})/({v2})",
             self.unit,
             self.registry,
             False,
@@ -800,9 +802,9 @@ class VectorBase(object):
         self.x.registry = self.registry
         self.y.registry = self.registry
         self.z.registry = self.registry
-        self.x.name = "expr_{}_vec_x".format(name)
-        self.y.name = "expr_{}_vec_y".format(name)
-        self.z.name = "expr_{}_vec_z".format(name)
+        self.x.name = f"expr_{name}_vec_x"
+        self.y.name = f"expr_{name}_vec_y"
+        self.z.name = f"expr_{name}_vec_z"
         self.registry.addDefine(self)
 
     def eval(self):
@@ -854,29 +856,30 @@ class Position(VectorBase):
     """
 
     def __init__(self, name, x, y, z, unit="mm", registry=None, addRegistry=True):
-        super(Position, self).__init__()
+        super().__init__()
 
         self.name = name
 
         if unit is not None:
             if not isinstance(unit, str):
-                raise ValueError("unit must be None or a string")
+                msg = "unit must be None or a string"
+                raise ValueError(msg)
             self.unit = unit
         else:
             self.unit = "mm"
 
         self.x = _Expression(
-            "expr_pos_x_{}".format(name),
+            f"expr_pos_x_{name}",
             upgradeToStringExpression(registry, x),
             registry=registry,
         )
         self.y = _Expression(
-            "expr_pos_y_{}".format(name),
+            f"expr_pos_y_{name}",
             upgradeToStringExpression(registry, y),
             registry=registry,
         )
         self.z = _Expression(
-            "expr_pos_z_{}".format(name),
+            f"expr_pos_z_{name}",
             upgradeToStringExpression(registry, z),
             registry=registry,
         )
@@ -905,12 +908,13 @@ class Rotation(VectorBase):
     """
 
     def __init__(self, name, rx, ry, rz, unit="rad", registry=None, addRegistry=True):
-        super(Rotation, self).__init__()
+        super().__init__()
 
         self.name = name
         if unit is not None:
             if not isinstance(unit, str):
-                raise ValueError("unit must be None or a string")
+                msg = "unit must be None or a string"
+                raise ValueError(msg)
             acceptableUnits = ["rad", "radian", "mrad", "milliradian", "deg", "degree"]
             if unit not in acceptableUnits:
                 raise ValueError(
@@ -926,17 +930,17 @@ class Rotation(VectorBase):
             self.unit = "rad"
 
         self.x = _Expression(
-            "expr_rot_x_{}".format(name),
+            f"expr_rot_x_{name}",
             upgradeToStringExpression(registry, rx),
             registry=registry,
         )
         self.y = _Expression(
-            "expr_rot_y_{}".format(name),
+            f"expr_rot_y_{name}",
             upgradeToStringExpression(registry, ry),
             registry=registry,
         )
         self.z = _Expression(
-            "expr_rot_z_{}".format(name),
+            f"expr_rot_z_{name}",
             upgradeToStringExpression(registry, rz),
             registry=registry,
         )
@@ -965,28 +969,29 @@ class Scale(VectorBase):
     """
 
     def __init__(self, name, sx, sy, sz, unit=None, registry=None, addRegistry=True):
-        super(Scale, self).__init__()
+        super().__init__()
 
         self.name = name
         if unit != None:
             if not isinstance(unit, str):
-                raise ValueError("unit must be None or a string")
+                msg = "unit must be None or a string"
+                raise ValueError(msg)
             self.unit = unit
         else:
             self.unit = "none"
 
         self.x = _Expression(
-            "expr_scl_x_{}".format(name),
+            f"expr_scl_x_{name}",
             upgradeToStringExpression(registry, sx),
             registry=registry,
         )
         self.y = _Expression(
-            "expr_scl_y_{}".format(name),
+            f"expr_scl_y_{name}",
             upgradeToStringExpression(registry, sy),
             registry=registry,
         )
         self.z = _Expression(
-            "expr_scl_z_{}".format(name),
+            f"expr_scl_z_{name}",
             upgradeToStringExpression(registry, sz),
             registry=registry,
         )
@@ -1026,7 +1031,7 @@ class Matrix:
         for i, v in enumerate(values):
             self.values.append(
                 Expression(
-                    "matrix_expr_idx{}_val_{}".format(i, name),
+                    f"matrix_expr_idx{i}_val_{name}",
                     upgradeToStringExpression(registry, v),
                     registry=registry,
                 )
@@ -1099,7 +1104,7 @@ def MatrixFromVectors(e, v, name, registry, eunit="eV", vunit=""):
     return Matrix(name, 2, res, registry)
 
 
-class Auxiliary(object):
+class Auxiliary:
     """
     Auxiliary information container object
 
@@ -1126,5 +1131,6 @@ class Auxiliary(object):
         :type aux: object, gdml.Defines.Auxiliary
         """
         if not isinstance(aux, Auxiliary):
-            raise ValueError("Added object must be a gdml.Defines.Auxiliary instance.")
+            msg = "Added object must be a gdml.Defines.Auxiliary instance."
+            raise ValueError(msg)
         self.subaux.append(aux)
