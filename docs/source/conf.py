@@ -19,7 +19,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.inheritance_diagram",
     "sphinx_copybutton",
-    "sphinx_tabs.tabs",
+    "sphinx_inline_tabs",
     "myst_parser",
 ]
 
