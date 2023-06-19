@@ -17,12 +17,10 @@ extensions = [
     "sphinx.ext.inheritance_diagram",
     "sphinx_copybutton",
     "sphinx_inline_tabs",
-    "myst_parser",
 ]
 
 source_suffix = {
     ".rst": "restructuredtext",
-    ".md": "markdown",
 }
 master_doc = "index"
 language = "python"
