@@ -61,7 +61,7 @@ docs = [
     "myst-parser",
     "sphinx",
     "sphinx-copybutton",
-    "sphinx_tabs",
+    "sphinx-inline-tabs",
 ]
 test = [
     "g4edge-testdata",
