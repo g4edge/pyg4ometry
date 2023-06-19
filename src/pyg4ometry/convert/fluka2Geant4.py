@@ -85,7 +85,8 @@ def fluka2Geant4(
         flukareg, regionZoneAABBs = _filterRegistryNullZones(flukareg, regionZoneAABBs)
         regions = [r for r in regions if r in regionZoneAABBs]
         if not regions:
-            raise NullModel("Conversion result is null.")
+            msg = "Conversion result is null."
+            raise NullModel(msg)
 
     aabbMap = None
     if kwargs["minimiseSolids"]:
@@ -306,7 +307,8 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
             aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
             logger.debug("Minimum aabb = %s", aabb)
         else:
-            raise ValueError("WHAT?")
+            msg = "WHAT?"
+            raise ValueError(msg)
 
         bodies_to_minimum_aabbs[body_name] = aabb
 
@@ -443,7 +445,8 @@ def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
         elif regionName in quadricRegionAABBs:
             continue
 
-        raise ValueError(f"QUA region missing from quadricRegionAABBs: {regionName}")
+        msg = f"QUA region missing from quadricRegionAABBs: {regionName}"
+        raise ValueError(msg)
 
 
 def _getWorldDimensions(worldDimensions):
@@ -458,9 +461,11 @@ def _getWorldDimensions(worldDimensions):
 
 def _getSelectedRegions(flukareg, regions, omitRegions):
     if not flukareg.regionDict:
-        raise ValueError("No regions in registry.")
+        msg = "No regions in registry."
+        raise ValueError(msg)
     elif regions and omitRegions:
-        raise ValueError("Only one of regions and omitRegions may be set.")
+        msg = "Only one of regions and omitRegions may be set."
+        raise ValueError(msg)
     elif omitRegions:
         return set(flukareg.regionDict).difference(omitRegions)
     elif regions is None:

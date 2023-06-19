@@ -9,7 +9,7 @@ from collections import defaultdict as _defaultdict
 import copy as _copy
 
 
-class AssemblyVolume(object):
+class AssemblyVolume:
     """
     AssemblyVolume : similar to a logical volume but does not have a sense of
     shape, material or field
@@ -22,7 +22,7 @@ class AssemblyVolume(object):
     """
 
     def __init__(self, name, registry=None, addRegistry=True):
-        super(AssemblyVolume, self).__init__()
+        super().__init__()
         self.type = "assembly"
         self.name = name
         self.daughterVolumes = []

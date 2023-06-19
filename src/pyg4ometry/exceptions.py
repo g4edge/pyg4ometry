@@ -19,7 +19,7 @@ class NullMeshError(Exception):
                     " {}, {}.".format(self.solid.obj1.name, self.solid.obj2.name)
                 )
             else:
-                self.message = "Null mesh in {}.".format(type(self.solid))
+                self.message = f"Null mesh in {type(self.solid)}."
             super(Exception, self).__init__(str(self))
         elif isinstance(arg, str):
             self.message = arg
@@ -40,7 +40,7 @@ class IdenticalNameError(Exception):
         self.name = name
         self.nametype = nametype
         if nametype is None:
-            self.message = "Identical name detected in registry: {}".format(name)
+            self.message = f"Identical name detected in registry: {name}"
         else:
             self.message = "Identical {} name detected in registry: {}".format(
                 nametype, name

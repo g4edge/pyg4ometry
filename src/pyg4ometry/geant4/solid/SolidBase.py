@@ -2,7 +2,7 @@ import numpy as _np
 from pyg4ometry import config as _config
 
 
-class SolidBase(object):
+class SolidBase:
     """
     Base class for all solids
     """

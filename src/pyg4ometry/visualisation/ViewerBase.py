@@ -264,7 +264,6 @@ class ViewerBase:
 
         """
 
-        pass
 
     def addMaterialVisOption(self, materialName, visOption):
         """

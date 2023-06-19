@@ -64,7 +64,7 @@ def zoneToAlgebraicExpression(zone):
     s = s.replace("-", "& ~")
     s = s.replace("( +", "(")
     s = s.replace(" +", " & ")
-    bodyNames = set(b.name for b in zone.bodies())
+    bodyNames = {b.name for b in zone.bodies()}
     namespace = {name: _sympy.Symbol(name) for name in bodyNames}
     return _sympy.sympify(s, locals=namespace)
 
@@ -91,7 +91,8 @@ def isZoneContradiction(zone):
 
 def pruneZone(zone, aabb0=None, aabb=None):
     if not zone.isDNF():
-        raise ValueError("Zone must be in DNF")
+        msg = "Zone must be in DNF"
+        raise ValueError(msg)
 
     intersections = zone.intersections
 
@@ -153,7 +154,8 @@ _MeshedZoneInfo = _namedtuple("MeshedZoneInfo", ["zone", "mesh", "volume"])
 
 def simplifyRegion(region):
     if not _region.isDNF():
-        raise ValueError("Must be DNF to simplify region")
+        msg = "Must be DNF to simplify region"
+        raise ValueError(msg)
 
     zoneData = []
     for zone in region.zones:
@@ -171,13 +173,13 @@ def _filterRedunantZonesSymbollicaly(zoneData):
     zoneData.sort(key=lambda x: x.volume, reverse=True)
 
     largestZone = zoneData[0].zone
-    intersectionNamesLargestZone = set(b.body.name for b in largestZone.intersections)
-    subtractionNamesLargestZone = set(b.body.name for b in largestZone.subtractions)
+    intersectionNamesLargestZone = {b.body.name for b in largestZone.intersections}
+    subtractionNamesLargestZone = {b.body.name for b in largestZone.subtractions}
 
     resultZoneData = [zoneData[0]]
     for zone, mesh, volume in zoneData[1:]:
-        zoneIntersectionNames = set(b.body.name for b in zone.intersections)
-        zoneSubtractionNames = set(b.body.name for b in zone.subtractions)
+        zoneIntersectionNames = {b.body.name for b in zone.intersections}
+        zoneSubtractionNames = {b.body.name for b in zone.subtractions}
 
         # Filter trivial "A & ~A"
         if isZoneContradiction(zone):

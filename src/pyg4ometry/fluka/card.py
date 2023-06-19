@@ -2,7 +2,7 @@ import sys
 import re
 
 
-class Card(object):
+class Card:
     """Card class for representing a FLUKA input card. To construct
     instances from a of FLUKA input, use the fromFree or fromFixed
     class method for FREE and FIXED format, respectively.
@@ -30,7 +30,7 @@ class Card(object):
         self.sdum = _attempt_float_coercion(sdum)
 
     def __repr__(self):
-        return "<Card: {}>".format(self.toFreeString())
+        return f"<Card: {self.toFreeString()}>"
 
     def toList(self):
         return [
@@ -72,7 +72,8 @@ class Card(object):
     @classmethod
     def fromFixed(cls, line):
         if len(line) > 80:
-            raise TypeError("Line too long.  Maximum line length is 80.")
+            msg = "Line too long.  Maximum line length is 80."
+            raise TypeError(msg)
         line = line.rstrip("\n")
         # column positions are multiples of 10 up to 80 inclusive.
         positions = [10 * x for x in range(9)]
@@ -98,7 +99,7 @@ def _attempt_float_coercion(string):
 def freeFormatStringSplit(string):
     """Method to split a string in FLUKA FREE format into its components."""
     # Split the string along non-black separators [,;:/\]
-    partial_split = re.split(";|,|\\/|:|\\\|\n", r"{}".format(string))
+    partial_split = re.split(";|,|\\/|:|\\\|\n", fr"{string}")
 
     # Populate zeros between consequtive non-blank separators as per
     # the FLUKA manual.

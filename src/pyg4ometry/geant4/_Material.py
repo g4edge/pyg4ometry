@@ -60,7 +60,7 @@ def loadNISTMaterialDict():
     nist_elements = files("pyg4ometry.geant4").joinpath("nist_elements.txt")
     nist_materials = files("pyg4ometry.geant4").joinpath("nist_materials.txt")
 
-    with open(nist_elements, "r") as f:
+    with open(nist_elements) as f:
         line = f.readline()
         while line:
             if line[0] == "#":
@@ -97,7 +97,7 @@ def loadNISTMaterialDict():
 
             line = f.readline()
 
-    with open(nist_materials, "r") as f:
+    with open(nist_materials) as f:
         line = f.readline()
         while line:
             if line[0] == "#":
@@ -218,7 +218,8 @@ def MaterialPredefined(name, registry=None):
         name          - string
     """
     if name not in getNistMaterialList():
-        raise ValueError("{} is not a NIST compound".format(name))
+        msg = f"{name} is not a NIST compound"
+        raise ValueError(msg)
     return Material(**locals())
 
 
@@ -297,7 +298,7 @@ def ElementIsotopeMixture(name, symbol, n_comp, registry=None, state=None):
     return Element(**locals())
 
 
-class MaterialBase(object):
+class MaterialBase:
     def __init__(self, name, state=None, registry=None):
         self.name = name
         self.state = state
@@ -313,9 +314,11 @@ class MaterialBase(object):
                 try:
                     material_obj = self.registry.materialDict[material]
                 except KeyError:
-                    raise KeyError("Material {} not found in registry".format(material))
+                    msg = f"Material {material} not found in registry"
+                    raise KeyError(msg)
             else:
-                raise KeyError("No registry supplied, cannot look up materials by name")
+                msg = "No registry supplied, cannot look up materials by name"
+                raise KeyError(msg)
         else:
             material_obj = material
 
@@ -372,7 +375,7 @@ class Material(MaterialBase):
     """
 
     def __init__(self, **kwargs):
-        super(Material, self).__init__(
+        super().__init__(
             kwargs.get("name", None),
             state=kwargs.get("state", None),
             registry=kwargs.get("registry", None),
@@ -410,10 +413,9 @@ class Material(MaterialBase):
             ):
                 self.type = "simple"
             else:
+                msg = f"Material : '{self.name}' Cannot use both atomic number/weight and number_of_components."
                 raise ValueError(
-                    "Material : '{}' Cannot use both atomic number/weight and number_of_components.".format(
-                        self.name
-                    )
+                    msg
                 )
         else:
             if kwargs.get("tolerateZeroDensity", False):
@@ -427,10 +429,9 @@ class Material(MaterialBase):
                 self.density = 1e-20
                 self.type = "simple"
             else:
+                msg = f"Material : '{self.name}' Density must be specified for custom materials."
                 raise ValueError(
-                    "Material : '{}' Density must be specified for custom materials.".format(
-                        self.name
-                    )
+                    msg
                 )
 
         # After the material type is determined, set the temperature and pressure if provided
@@ -462,13 +463,15 @@ class Material(MaterialBase):
         element_obj = self.get_material_oject(element)
 
         if not isinstance(element_obj, Element):
+            msg = f"Can only add Element instanes, recieved type {type(element)}"
             raise ValueError(
-                "Can only add Element instanes, recieved type {}".format(type(element))
+                msg
             )
 
         if not self.number_of_components:
+            msg = "This material is not specified as composite, cannot add elements."
             raise ValueError(
-                "This material is not specified as composite, cannot add elements."
+                msg
             )
 
         self.components.append((element_obj, massfraction, "massfraction"))
@@ -485,13 +488,15 @@ class Material(MaterialBase):
         element_obj = self.get_material_oject(element)
 
         if not isinstance(element_obj, Element):
+            msg = f"Can only add Element instanes, recieved type {type(element)}"
             raise ValueError(
-                "Can only add Element instanes, recieved type {}".format(type(element))
+                msg
             )
 
         if not self.number_of_components:
+            msg = "This material is not specified as composite, cannot add elements."
             raise ValueError(
-                "This material is not specified as composite, cannot add elements."
+                msg
             )
 
         self.components.append((element_obj, natoms, "natoms"))
@@ -508,22 +513,24 @@ class Material(MaterialBase):
         material_obj = self.get_material_oject(material)
 
         if not isinstance(material_obj, Material):
+            msg = f"Can only add Material instances, recieved type {type(material_obj)}"
             raise ValueError(
-                "Can only add Material instances,"
-                " recieved type {}".format(type(material_obj))
+                msg
             )
 
         if not self.number_of_components:
+            msg = "This material is not specified as composite, cannot add materials."
             raise ValueError(
-                "This material is not specified as composite, cannot add materials."
+                msg
             )
 
         self.components.append((material_obj, fractionmass, "massfraction"))
 
     def set_pressure(self, value, unit="pascal"):
         if self.type in ["predefined", "arbitrary"]:
+            msg = "Cannot set pressure for predefined or aribtrary materials."
             raise ValueError(
-                "Cannot set pressure for predefined or aribtrary materials."
+                msg
             )
 
         self._state_variables["pressure"] = value
@@ -531,8 +538,9 @@ class Material(MaterialBase):
 
     def set_temperature(self, value, unit="K"):
         if self.type in ["nist", "arbitrary"]:
+            msg = "Cannot set temperature for predefined or aribtrary materials."
             raise ValueError(
-                "Cannot set temperature for predefined or aribtrary materials."
+                msg
             )
         self._state_variables["temperature"] = value
         self._state_variables["temperature_unit"] = unit
@@ -554,8 +562,9 @@ class Material(MaterialBase):
         :type matrix: Matrix
         """
         if self.type == "nist" or self.type == "arbitrary":
+            msg = "Properties cannot be set of predefined or arbitrary materials"
             raise ValueError(
-                "Properties cannot be set of predefined or arbitrary materials"
+                msg
             )
         self.properties[name] = matrix
 
@@ -620,7 +629,7 @@ class Element(MaterialBase):
     """
 
     def __init__(self, **kwargs):
-        super(Element, self).__init__(
+        super().__init__(
             kwargs.get("name", None),
             state=kwargs.get("state", None),
             registry=kwargs.get("registry", None),
@@ -637,8 +646,9 @@ class Element(MaterialBase):
         elif self.Z and self.A and not self.n_comp:
             self.type = "element-simple"
         else:
+            msg = "Cannot use both atomic number/weight and number_of_components."
             raise ValueError(
-                "Cannot use both atomic number/weight and number_of_components."
+                msg
             )
 
         self._addToRegistry()
@@ -653,8 +663,9 @@ class Element(MaterialBase):
         """
         isotope_obj = self.get_material_oject(isotope)
         if not isinstance(isotope, Isotope):
+            msg = f"Can only add Isotope instanes, recieved type {type(isotope)}"
             raise ValueError(
-                "Can only add Isotope instanes, recieved type {}".format(type(isotope))
+                msg
             )
 
         self.components.append((isotope_obj, abundance, "abundance"))
@@ -673,7 +684,7 @@ class Isotope(MaterialBase):
     """
 
     def __init__(self, name, Z, N, a, registry=None):
-        super(Isotope, self).__init__(name, state=None, registry=registry)
+        super().__init__(name, state=None, registry=registry)
         self.Z = Z
         self.N = N
         self.a = a

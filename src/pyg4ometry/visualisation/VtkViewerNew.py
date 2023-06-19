@@ -20,7 +20,7 @@ from pyg4ometry.pycgal.Polygon_mesh_processing import (
 
 class VtkViewerNew(_ViewerBase):
     def __init__(self):
-        super(VtkViewerNew, self).__init__()
+        super().__init__()
 
         self.initVtk()
         self.clear()
@@ -55,7 +55,7 @@ class VtkViewerNew(_ViewerBase):
         self.iren.SetInteractorStyle(self.interactorStyle)
 
     def clear(self):
-        super(VtkViewerNew, self).clear()
+        super().clear()
 
         self.polydata = {}
         self.actors = {}
@@ -484,7 +484,7 @@ class VtkViewerColouredNew(VtkViewerNew):
                 if type(v) is list or type(v) is tuple:
                     vi = _VisOptions()
                     vi.colour = v[:3]
-                    if any([i > 1 for i in vi.colour]):
+                    if any(i > 1 for i in vi.colour):
                         vi.colour = [i / 255.0 for i in vi.colour]
                     if len(v) > 3:
                         vi.alpha = v[3]
@@ -634,16 +634,16 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             + pvName
             + "\n"
             + "tbr  :"
-            + str(["{:5.2f}".format(v) for v in tba]).strip("'")
+            + str([f"{v:5.2f}" for v in tba]).strip("'")
             + "\n"
             + "tra  :"
-            + str(["{:5.2f}".format(v) for v in tra]).strip("'")
+            + str([f"{v:5.2f}" for v in tra]).strip("'")
             + "\n"
             + "local aabb :"
-            + str(["{:5.2f}".format(v) for v in localExtent]).strip("'")
+            + str([f"{v:5.2f}" for v in localExtent]).strip("'")
             + "\n"
             + "global aabb :"
-            + str(["{:5.2f}".format(v) for v in globalExtent]).strip("'")
+            + str([f"{v:5.2f}" for v in globalExtent]).strip("'")
         )
         self.highLightTextActor.SetDisplayPosition(20, 30)
         self.ren.AddActor(self.highLightTextActor)

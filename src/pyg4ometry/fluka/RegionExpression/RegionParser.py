@@ -1,6 +1,4 @@
 # Generated from RegionParser.g4 by ANTLR 4.7
-# encoding: utf-8
-from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
@@ -114,7 +112,7 @@ class RegionParser(Parser):
     RParen = 12
 
     def __init__(self, input, output=sys.stdout):
-        super(RegionParser, self).__init__(input, output=output)
+        super().__init__(input, output=output)
         self.checkVersion("4.7")
         self._interp = ParserATNSimulator(
             self, self.atn, self.decisionsToDFA, self.sharedContextCache

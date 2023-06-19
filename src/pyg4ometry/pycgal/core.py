@@ -332,11 +332,9 @@ class CSG:
         else:
             r = [radius, radius, radius]
 
-        polygons = list(
-            [
+        polygons = [
                 geom.Polygon(
-                    list(
-                        [
+                    [
                             geom.Vertex(
                                 geom.Vector(
                                     c.x + r[0] * (2 * bool(i & 1) - 1),
@@ -346,7 +344,6 @@ class CSG:
                             )
                             for i in v[0]
                         ]
-                    )
                 )
                 for v in [
                     [[0, 4, 6, 2], [-1, 0, 0]],
@@ -357,7 +354,6 @@ class CSG:
                     [[4, 5, 7, 6], [0, 0, +1]],
                 ]
             ]
-        )
         return CSG.fromPolygons(polygons)
 
     def isNull(self):

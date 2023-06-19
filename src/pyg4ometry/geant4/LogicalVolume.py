@@ -48,7 +48,7 @@ def _solid2tessellated(solid):
     return tesselated_solid
 
 
-class LogicalVolume(object):
+class LogicalVolume:
     """
     LogicalVolume : G4LogicalVolume
 
@@ -68,7 +68,7 @@ class LogicalVolume(object):
     def __init__(
         self, solid, material, name, registry=None, addRegistry=True, **kwargs
     ):
-        super(LogicalVolume, self).__init__()
+        super().__init__()
 
         self.type = "logical"
         self.solid = solid
@@ -92,7 +92,8 @@ class LogicalVolume(object):
                     name=material, registry=registry
                 )
         else:
-            raise ValueError("Unsupported type for material: {}".format(type(material)))
+            msg = f"Unsupported type for material: {type(material)}"
+            raise ValueError(msg)
 
         self.name = name
         self.daughterVolumes = []
@@ -133,10 +134,10 @@ class LogicalVolume(object):
                     d.logicalVolume.reMesh(recursive)
         except _pyg4ometry.exceptions.NullMeshError:
             self.mesh = None
-            print("geant4.LogicalVolume> meshing error {}".format(self.name))
+            print(f"geant4.LogicalVolume> meshing error {self.name}")
         except ValueError:
             self.mesh = None
-            print("geant4.LogicalVolume> meshing error {}".format(self.name))
+            print(f"geant4.LogicalVolume> meshing error {self.name}")
 
     def add(self, physicalVolume):
         """
@@ -1020,8 +1021,8 @@ class LogicalVolume(object):
         This is built up recursively by checking all daughters etc etc.
         """
 
-        logicalNames = set([])
-        physicalNames = set([])
+        logicalNames = set()
+        physicalNames = set()
 
         logicalNames.add(self.name)
 
@@ -1056,7 +1057,7 @@ class LogicalVolume(object):
         Return a set of material names used in this logical volume and any daughters.
         This is built up recursively by checking all daughters etc etc.
         """
-        materialNames = set([])
+        materialNames = set()
 
         materialNames.add(self.material.name)
 

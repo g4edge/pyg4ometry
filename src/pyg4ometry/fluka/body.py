@@ -115,7 +115,7 @@ class BodyMixin(vis.ViewableMixin):
         else:
             # This should be used as a FULL LENGTH.
             return (
-                np.sqrt((aabb.size.x**2 + aabb.size.y**2 + aabb.size.z**2)) * 1.1
+                np.sqrt(aabb.size.x**2 + aabb.size.y**2 + aabb.size.z**2) * 1.1
             )
 
     def _aabb_to_offset(self, aabb):
@@ -124,7 +124,8 @@ class BodyMixin(vis.ViewableMixin):
         elif aabb is not None:
             offset = aabb.centre
         else:
-            raise TypeError(f"Unknown type of aabb {aabb}")
+            msg = f"Unknown type of aabb {aabb}"
+            raise TypeError(msg)
         return offset
 
     def mesh(self, aabb=None):
@@ -212,7 +213,7 @@ class _InfiniteCylinderMixin(BodyMixin):
         return f"{typename} {self.name} {coord1} {coord2} {coord3}"
 
 
-class _ShiftableCylinderMixin(object):
+class _ShiftableCylinderMixin:
     def _shiftInfiniteCylinderCentre(self, aabb, initialDirection, initialCentre):
         transformedDirection = self.transform.leftMultiplyRotation(initialDirection)
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
@@ -268,10 +269,9 @@ class RPP(BodyMixin):
         self.comment = comment
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
+            msg = "Each of the xmin, ymin, zmin must be smaller than the corresponding xmax, ymax, zmax."
             raise ValueError(
-                "Each of the xmin, ymin, zmin must be"
-                " smaller than the corresponding"
-                " xmax, ymax, zmax."
+                msg
             )
 
         if addRegistry and flukaregistry:
@@ -300,7 +300,7 @@ class RPP(BodyMixin):
 
     def _withLengthSafety(self, safety, reg):
         lower = self.lower - [safety, safety, safety]
-        upper = self.upper + [safety, safety, safety]
+        upper = [*self.upper, safety, safety, safety]
         return RPP(
             self.name,
             lower.x,
@@ -389,7 +389,7 @@ class BOX(BodyMixin):
 
     def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(
-            (self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3))
+            self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3)
         )
 
     def rotation(self):
@@ -441,7 +441,7 @@ class BOX(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "BOX {} {}".format(self.name, param_string)
+        return prefix + f"BOX {self.name} {param_string}"
 
     def hash(self):
         return (
@@ -929,9 +929,9 @@ class ELL(BodyMixin):
         # foci from the centre (aka the linear eccentricity).
         semimajor = 0.5 * self.transform.netExpansion() * self.length
         if semimajor <= self._linearEccentricity():
+            msg = "Distance from foci to centre must be smaller than the semi-major axis length."
             raise ValueError(
-                "Distance from foci to centre must be"
-                " smaller than the semi-major axis length."
+                msg
             )
 
         self.addToRegistry(flukaregistry)
@@ -1063,7 +1063,8 @@ class _WED_RAW(BodyMixin):
         elif trans.are_anti_parallel(crossproduct, self.edge3):
             centre = self.vertex + self.edge3
         else:
-            raise ValueError("Unable to determine if parallel or anti-parallel.")
+            msg = "Unable to determine if parallel or anti-parallel."
+            raise ValueError(msg)
         return self.transform.leftMultiplyVector(centre)
 
     def rotation(self):
@@ -1209,13 +1210,15 @@ class ARB(BodyMixin):
 
         # Must always provide 8 vertices.
         if len(self.vertices) != 8:
+            msg = "8 vertices must always be supplied, even if not all are used."
             raise ValueError(
-                "8 vertices must always be supplied," " even if not all are used."
+                msg
             )
         # Must always provide 6 facenumbers.
         if len(self.facenumbers) != 6:
+            msg = "6 face numbers must always be supplied, even if not all are used."
             raise ValueError(
-                "6 face numbers must always be supplied," " even if not all are used."
+                msg
             )
 
         self._nfaces = 6
@@ -1228,15 +1231,17 @@ class ARB(BodyMixin):
                 zeros.append(i)
         # Can't have less than 4 faces
         if self._nfaces < 4:
+            msg = "Not enough faces provided in arg facenumbers.  Must be 4, 5 or 6."
             raise ValueError(
-                "Not enough faces provided in arg facenumbers." "  Must be 4, 5 or 6."
+                msg
             )
 
         # Null-faces must be put as 0.0 in the facenumbers and they
         # must be at the end (i.e. 5 and 6 or 6).
         if zeros and (zeros != [4, 5] or zeros != [5]):
+            msg = "Facenumbers equal to zero to must be at the end of the list."
             raise ValueError(
-                "Facenumbers equal to zero to must be at" " the end of the list."
+                msg
             )
 
         self.addToRegistry(flukaregistry)
@@ -1341,9 +1346,9 @@ class ARB(BodyMixin):
 
     def __repr__(self):
         vs = map(list, self.vertices)
-        vstrings = ["v{}={}".format(i, v) for (i, v) in enumerate(vs, 1)]
+        vstrings = [f"v{i}={v}" for (i, v) in enumerate(vs, 1)]
         vstring = ", ".join(vstrings)
-        return "<ARB: {}, {}, faces={}>".format(self.name, vstring, self.facenumbers)
+        return f"<ARB: {self.name}, {vstring}, faces={self.facenumbers}>"
 
     def _withLengthSafety(self, safety, reg):
         arb = ARB(
@@ -2253,9 +2258,9 @@ class QUA(BodyMixin):
             j += 1
 
         if not verts:
+            msg = f"Failed to generate a mesh for QUA {self.name} with bounds {lower} {upper}."
             raise pyg4ometry.exceptions.NullMeshError(
-                f"Failed to generate a mesh for QUA {self.name}"
-                f" with bounds {lower} {upper}."
+                msg
             )
 
         polygons = []
@@ -2268,7 +2273,8 @@ class QUA(BodyMixin):
 
     def geant4Solid(self, reg, aabb=None):
         if aabb is None:
-            raise ValueError("QUA must be evaluated with respect to an AABB.")
+            msg = "QUA must be evaluated with respect to an AABB."
+            raise ValueError(msg)
 
         scale = self._aabbToScaleFactor(aabb)
         lower = aabb.lower - scale

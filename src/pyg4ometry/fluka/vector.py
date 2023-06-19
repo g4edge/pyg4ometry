@@ -10,7 +10,8 @@ class Three(_np.ndarray):
         elif _np.shape(coordinates) == (3,):  # If supplied as x, y, z
             obj = _np.asarray(coordinates, dtype=float).view(cls)
         else:
-            raise TypeError("Unknown construction: %s" % (coordinates,))
+            msg = f"Unknown construction: {coordinates}"
+            raise TypeError(msg)
         return obj
 
     @property
@@ -123,7 +124,7 @@ class Three(_np.ndarray):
         return self
 
 
-class AABB(object):
+class AABB:
     def __init__(self, lower, upper):
         self.lower = Three(lower)
         self.upper = Three(upper)
@@ -132,7 +133,8 @@ class AABB(object):
 
         for i, j in zip(lower, upper):
             if i >= j:
-                raise ValueError("Lower extent must be less than upper.")
+                msg = "Lower extent must be less than upper."
+                raise ValueError(msg)
 
     def __repr__(self):
         return (

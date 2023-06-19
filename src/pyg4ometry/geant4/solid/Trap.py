@@ -68,7 +68,7 @@ class Trap(_SolidBase):
         aunit="rad",
         addRegistry=True,
     ):
-        super(Trap, self).__init__(name, "Trap", registry)
+        super().__init__(name, "Trap", registry)
 
         self.pDz = pDz
         self.pTheta = pTheta

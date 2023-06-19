@@ -1,7 +1,7 @@
 import numpy as _np
 
 
-class TwoVector(object):
+class TwoVector:
     def __init__(self, xIn, yIn):
         self.x = xIn
         self.y = yIn

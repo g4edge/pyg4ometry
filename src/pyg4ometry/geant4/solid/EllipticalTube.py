@@ -53,7 +53,7 @@ class EllipticalTube(_SolidBase):
         nslice=None,
         addRegistry=True,
     ):
-        super(EllipticalTube, self).__init__(name, "EllipticalTube", registry)
+        super().__init__(name, "EllipticalTube", registry)
 
         self.pDx = pDx
         self.pDy = pDy

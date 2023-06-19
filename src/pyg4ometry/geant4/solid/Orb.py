@@ -45,7 +45,7 @@ class Orb(_SolidBase):
         nstack=None,
         addRegistry=True,
     ):
-        super(Orb, self).__init__(name, "Orb", registry)
+        super().__init__(name, "Orb", registry)
 
         self.pRMax = pRMax
         self.lunit = lunit
@@ -61,10 +61,10 @@ class Orb(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Orb : {} {}".format(self.name, self.pRMax)
+        return f"Orb : {self.name} {self.pRMax}"
 
     def __str__(self):
-        return "Orb : name={} rmax={}".format(self.name, float(self.pRMax))
+        return f"Orb : name={self.name} rmax={float(self.pRMax)}"
 
     """'
     def pycsgmeshOld(self):

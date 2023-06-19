@@ -41,7 +41,7 @@ class Trd(_SolidBase):
     def __init__(
         self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry, lunit="mm", addRegistry=True
     ):
-        super(Trd, self).__init__(name, "Trd", registry)
+        super().__init__(name, "Trd", registry)
 
         self.pX1 = pDx1
         self.pX2 = pDx2

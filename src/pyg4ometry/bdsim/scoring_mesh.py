@@ -1,4 +1,4 @@
-class ScoringMesh(object):
+class ScoringMesh:
     def __init__(self, name, position, rotation, quantity, nbins, size):
         self.name = name
         self.position = position

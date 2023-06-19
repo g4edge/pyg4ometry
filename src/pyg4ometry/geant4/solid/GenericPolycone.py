@@ -45,7 +45,7 @@ class GenericPolycone(_SolidBase):
         nslice=None,
         addRegistry=True,
     ):
-        super(GenericPolycone, self).__init__(name, "GenericPolycone", registry)
+        super().__init__(name, "GenericPolycone", registry)
 
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
@@ -67,15 +67,16 @@ class GenericPolycone(_SolidBase):
 
     def __repr__(self):
         # TODO put a proper string in here
-        return "GenericPolycone solid: {}".format(self.name)
+        return f"GenericPolycone solid: {self.name}"
 
     def __str__(self):
         # TODO put a proper string in here
-        return "GenericPolycone solid: name={}".format(self.name)
+        return f"GenericPolycone solid: name={self.name}"
 
     def checkParameters(self):
         if len(self.pR) < 3:
-            raise ValueError("Generic Polycone must have at least 3 R-Z points defined")
+            msg = "Generic Polycone must have at least 3 R-Z points defined"
+            raise ValueError(msg)
 
     def mesh(self):
         _log.info("genericpolycone.antlr>")

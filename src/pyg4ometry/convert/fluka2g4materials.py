@@ -123,7 +123,8 @@ class _FlukaToG4MaterialConverter:
             elif isinstance(material, _fluMat.Compound):
                 self.convertCompound(material)
             else:
-                raise TypeError(f"Unknown material type {material}")
+                msg = f"Unknown material type {material}"
+                raise TypeError(msg)
 
     def convertBuiltin(self, name, flukaMaterial):
         assert name == flukaMaterial.name
@@ -239,7 +240,7 @@ def makeFlukaToG4MaterialsMap(freg, greg):
     return g.g4materials
 
 
-class _PeriodicTable(object):
+class _PeriodicTable:
     def __init__(self):
         self.table = _getPeriodicTable()
 
@@ -247,7 +248,8 @@ class _PeriodicTable(object):
         t = self.table
         nNeutrons = t["NumberofNeutrons"][t["AtomicNumber"] == z].values
         if not nNeutrons:
-            raise _FLUKAError("Unable to determine mass number for Z = {}".format(z))
+            msg = f"Unable to determine mass number for Z = {z}"
+            raise _FLUKAError(msg)
         return int(nNeutrons) + z
 
     def atomicMassFromZ(self, z):

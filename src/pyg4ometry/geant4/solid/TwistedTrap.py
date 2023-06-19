@@ -67,7 +67,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         nstack=None,
         addRegistry=True,
     ):
-        super(TwistedTrap, self).__init__(name, "TwistedTrap", registry)
+        super().__init__(name, "TwistedTrap", registry)
 
         self.twistedAngle = twistedAngle
         self.pDz = pDz
@@ -120,10 +120,11 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
     def checkParameters(self):
         if self.evaluateParameterWithUnits("twistedAngle") > _np.pi:
-            raise ValueError("Twisted Angle must be less than 0.5*pi")
+            msg = "Twisted Angle must be less than 0.5*pi"
+            raise ValueError(msg)
 
     def __repr__(self):
-        return "Twisted Trap : {} {} {}".format(self.name, self.twistedAngle, self.pDz)
+        return f"Twisted Trap : {self.name} {self.twistedAngle} {self.pDz}"
 
     def __str__(self):
         return "Twisted Trap : name={} twistedAngle={} dz={}".format(

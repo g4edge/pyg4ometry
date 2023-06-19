@@ -59,7 +59,7 @@ class Para(_SolidBase):
         aunit="rad",
         addRegistry=True,
     ):
-        super(Para, self).__init__(name, "Para", registry)
+        super().__init__(name, "Para", registry)
 
         self.pX = pDx
         self.pY = pDy

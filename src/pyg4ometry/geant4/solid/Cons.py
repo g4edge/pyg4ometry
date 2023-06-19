@@ -65,7 +65,7 @@ class Cons(_SolidBase):
         nslice=None,
         addRegistry=True,
     ):
-        super(Cons, self).__init__(name, "Cons", registry)
+        super().__init__(name, "Cons", registry)
 
         self.pRmin1 = pRmin1
         self.pRmax1 = pRmax1
@@ -108,9 +108,11 @@ class Cons(_SolidBase):
 
     def checkParameters(self):
         if self.evaluateParameter(self.pRmin1) > self.evaluateParameter(self.pRmax1):
-            raise ValueError("Inner radius must be less than outer radius.")
+            msg = "Inner radius must be less than outer radius."
+            raise ValueError(msg)
         if self.evaluateParameter(self.pRmin2) > self.evaluateParameter(self.pRmax2):
-            raise ValueError("Inner radius must be less than outer radius.")
+            msg = "Inner radius must be less than outer radius."
+            raise ValueError(msg)
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):

@@ -7,7 +7,7 @@ import logging as _log
 import pyg4ometry.geant4 as _g4
 
 
-class Reader(object):
+class Reader:
     """
     Read a GDML file.
 
@@ -28,7 +28,7 @@ class Reader(object):
     def __init__(
         self, fileName, registryOn=True, reduceNISTMaterialsToPredefined=False
     ):
-        super(Reader, self).__init__()
+        super().__init__()
         self.filename = fileName
         self.registryOn = registryOn
         self._reduceNISTMaterialsToPredefined = reduceNISTMaterialsToPredefined
@@ -59,7 +59,7 @@ class Reader(object):
 
         # Extract the information from entities and store in a dict
         entities = {}
-        en_block = _re.search("<!DOCTYPE(\s+)gdml([\s\S]*)>", start_block)
+        en_block = _re.search("<!DOCTYPE(\\s+)gdml([\\s\\S]*)>", start_block)
 
         try:
             ents = en_block.group(0).split("<")
@@ -70,9 +70,9 @@ class Reader(object):
             if "ENTITY" in en:
                 name = en.split()[1]
                 filename = _re.search(r"[^\"]+", " ".join(en.split()[3:])).group(0)
-                with open(filename, "r") as content_file:
+                with open(filename) as content_file:
                     # ensure the contents are properly prepared for parsing
-                    contents = str()
+                    contents = ""
                     for l in content_file:
                         l = l.strip()
                         if l.endswith(">"):
@@ -84,7 +84,7 @@ class Reader(object):
                 entities[name] = (filename, contents)
 
         # remove all newline charecters and whitespaces outside tags
-        fs = str()
+        fs = ""
         for l in data:
             l = l.strip()
             # Render out entities in those lines
@@ -140,7 +140,7 @@ class Reader(object):
 
             keys = attrs.keys()
             vals = [attr.value for attr in attrs.values()]
-            def_attrs = {key: val for (key, val) in zip(keys, vals)}
+            def_attrs = dict(zip(keys, vals))
 
             # parse positions and rotations
             def getXYZ(def_attrs):
@@ -251,7 +251,7 @@ class Reader(object):
 
             keys = attrs.keys()
             vals = [attr.value for attr in attrs.values()]
-            def_attrs = {key: val for (key, val) in zip(keys, vals)}
+            def_attrs = dict(zip(keys, vals))
 
             if mat_type == "isotope":
                 for chNode in node.childNodes:
@@ -275,7 +275,7 @@ class Reader(object):
                     elif chNode.tagName == "fraction":
                         keys = chNode.attributes.keys()
                         vals = [attr.value for attr in chNode.attributes.values()]
-                        comp = {key: val for (key, val) in zip(keys, vals)}
+                        comp = dict(zip(keys, vals))
                         comp["comp_type"] = "fraction"
                         components.append(comp)
 
@@ -319,14 +319,14 @@ class Reader(object):
                     elif chNode.tagName == "composite":
                         keys = chNode.attributes.keys()
                         vals = [attr.value for attr in chNode.attributes.values()]
-                        comp = {key: val for (key, val) in zip(keys, vals)}
+                        comp = dict(zip(keys, vals))
                         comp["comp_type"] = "composite"
                         components.append(comp)
 
                     elif chNode.tagName == "fraction":
                         keys = chNode.attributes.keys()
                         vals = [attr.value for attr in chNode.attributes.values()]
-                        comp = {key: val for (key, val) in zip(keys, vals)}
+                        comp = dict(zip(keys, vals))
                         comp["comp_type"] = "fraction"
                         components.append(comp)
 
@@ -447,10 +447,9 @@ class Reader(object):
                         try:
                             _g4.MaterialPredefined(ref, registry=self._registry)
                         except ValueError:
+                            msg = f"Component {ref} not defined for composite material {name}"
                             raise ValueError(
-                                "Component {} not defined for composite material {}".format(
-                                    ref, name
-                                )
+                                msg
                             )
 
                     if comp_type == "fraction":
@@ -470,8 +469,9 @@ class Reader(object):
                         mat.add_element_natoms(self._registry.materialDict[ref], natoms)
 
                     else:
+                        msg = f"Unrecognised material component type: {comp_type}"
                         raise ValueError(
-                            "Unrecognised material component type: {}".format(comp_type)
+                            msg
                         )
 
             # Set the optional variables of state
@@ -489,10 +489,9 @@ class Reader(object):
                 if pref not in self._registry.defineDict or not isinstance(
                     self._registry.defineDict[pref], _defines.Matrix
                 ):
+                    msg = f"Referenced matrix {pref} not defined for property {pname} on material {name}"
                     raise ValueError(
-                        "Referenced matrix {} not defined for property {} on material {}".format(
-                            pref, pname, name
-                        )
+                        msg
                     )
                 mat.addProperty(pname, self._registry.defineDict[pref])
 
@@ -1158,7 +1157,7 @@ class Reader(object):
             dphi = _defines.Expression(solid_name + "_pDphi", "2*pi", self._registry)
 
         nside = _defines.Expression(
-            "{}_numSide".format(solid_name),
+            f"{solid_name}_numSide",
             node.attributes["numsides"].value,
             self._registry,
         )
@@ -1180,19 +1179,19 @@ class Reader(object):
         i = 0
         for chNode in node.childNodes:
             rmin = _defines.Expression(
-                "{}_zplaine_rmin_{}".format(solid_name, i),
+                f"{solid_name}_zplaine_rmin_{i}",
                 chNode.attributes["rmin"].value,
                 self._registry,
             )
 
             rmax = _defines.Expression(
-                "{}_zplaine_rmax_{}".format(solid_name, i),
+                f"{solid_name}_zplaine_rmax_{i}",
                 chNode.attributes["rmax"].value,
                 self._registry,
             )
 
             z = _defines.Expression(
-                "{}_zplaine_z_{}".format(solid_name, i),
+                f"{solid_name}_zplaine_z_{i}",
                 chNode.attributes["z"].value,
                 self._registry,
             )
@@ -1203,7 +1202,7 @@ class Reader(object):
             i += 1
 
         nzplane = _defines.Expression(
-            "{}_numZplanes".format(solid_name), len(Z), self._registry
+            f"{solid_name}_numZplanes", len(Z), self._registry
         )
 
         _g4.solid.Polyhedra(
@@ -1238,7 +1237,7 @@ class Reader(object):
             dphi = _defines.Expression(solid_name + "_pDphi", "2*pi", self._registry)
 
         nside = _defines.Expression(
-            "{}_numSide".format(solid_name),
+            f"{solid_name}_numSide",
             node.attributes["numsides"].value,
             self._registry,
         )
@@ -1679,13 +1678,13 @@ class Reader(object):
         args = [solid_name]
         for i in range(1, 9):
             vx = _defines.Expression(
-                "{}_v{}x".format(solid_name, i),
-                node.attributes["v{}x".format(i)].value,
+                f"{solid_name}_v{i}x",
+                node.attributes[f"v{i}x"].value,
                 self._registry,
             )
             vy = _defines.Expression(
-                "{}_v{}y".format(solid_name, i),
-                node.attributes["v{}y".format(i)].value,
+                f"{solid_name}_v{i}y",
+                node.attributes[f"v{i}y"].value,
                 self._registry,
             )
             args.extend([vx, vy])
@@ -1924,10 +1923,9 @@ class Reader(object):
                     pass
         for pname, pref in properties.items():
             if pref not in self._registry.defineDict:
+                msg = f"Referenced matrix {pref} not defined for property {pname} on optical surface {solid_name}"
                 raise ValueError(
-                    "Referenced matrix {} not defined for property {} on optical surface {}".format(
-                        pref, pname, solid_name
-                    )
+                    msg
                 )
             surf.addProperty(pname, self._registry.defineDict[pref])
 

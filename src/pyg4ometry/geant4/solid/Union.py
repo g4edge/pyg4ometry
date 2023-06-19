@@ -23,7 +23,7 @@ class Union(_SolidBase):
     """
 
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
-        super(Union, self).__init__(name, "Union", registry)
+        super().__init__(name, "Union", registry)
         # circular import
         import pyg4ometry.gdml.Defines as _defines
         import pyg4ometry.geant4 as _g4
@@ -45,10 +45,10 @@ class Union(_SolidBase):
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return "Union %s(%s %s)" % (self.name, self.obj1.name, self.obj2.name)
+        return f"Union {self.name}({self.obj1.name} {self.obj2.name})"
 
     def __str__(self):
-        return "Union {} {} {}".format(self.name, self.obj1.name, self.obj2.name)
+        return f"Union {self.name} {self.obj1.name} {self.obj2.name}"
 
     def mesh(self):
         _log.info("union.pycsgmesh>")
@@ -62,7 +62,7 @@ class Union(_SolidBase):
         # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        _log.info("Union.pycsgmesh> rot=%s tlate=%s" % (str(rot), str(tlate)))
+        _log.info(f"Union.pycsgmesh> rot={rot!s} tlate={tlate!s}")
 
         # get meshes
         _log.info("union.mesh> mesh1")

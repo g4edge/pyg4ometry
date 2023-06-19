@@ -7,7 +7,7 @@ from tempfile import gettempdir
 import pytest
 from g4edgetestdata import G4EdgeTestData
 
-_tmptestdir = Path(gettempdir()) / f"pygama-tests-{getuser()}-{str(uuid.uuid4())}"
+_tmptestdir = Path(gettempdir()) / f"pygama-tests-{getuser()}-{uuid.uuid4()!s}"
 
 pytest_plugins = [
     "geant4.test_box",

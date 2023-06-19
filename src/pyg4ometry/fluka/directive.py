@@ -169,17 +169,21 @@ class RotoTranslation(MatrixConvertibleMixin):
         self.transformationIndex = transformationIndex
 
         if not axis and any([polar, azimuth]):
-            raise TypeError("Axis not set for non-zero polar and/or azimuth.")
+            msg = "Axis not set for non-zero polar and/or azimuth."
+            raise TypeError(msg)
 
         if flukaregistry is not None:
             flukaregistry.addRotoTranslation(self)
 
         if len(name) > 10:
-            raise ValueError(f"Name {name} is too long.  Max length = 10.")
+            msg = f"Name {name} is too long.  Max length = 10."
+            raise ValueError(msg)
         if polar < 0 or polar > 180.0:
-            raise ValueError(f"Polar must be between 0 and +180°: {polar}")
+            msg = f"Polar must be between 0 and +180°: {polar}"
+            raise ValueError(msg)
         if azimuth < -180.0 or azimuth > 180.0:
-            raise ValueError(f"Azimuth must be between ±180°: {azimuth}")
+            msg = f"Azimuth must be between ±180°: {azimuth}"
+            raise ValueError(msg)
         if translation is None:
             self.translation = Three([0, 0, 0])
 
@@ -271,7 +275,8 @@ class RotoTranslation(MatrixConvertibleMixin):
     @classmethod
     def fromCard(cls, card):
         if card.keyword != "ROT-DEFI":
-            raise ValueError("Not a ROT-DEFI card, keyword={}".format(card.keyword))
+            msg = f"Not a ROT-DEFI card, keyword={card.keyword}"
+            raise ValueError(msg)
         card = card.nonesToZero()
 
         what1 = int(card.what1)
@@ -290,12 +295,14 @@ class RotoTranslation(MatrixConvertibleMixin):
             # i = what1
             j = 0
         else:
-            raise ValueError(f"Unable to parse ROT-DEFI WHAT1: {what1}.")
+            msg = f"Unable to parse ROT-DEFI WHAT1: {what1}."
+            raise ValueError(msg)
 
         try:
             axis = ["z", "x", "y", "z"][j]  # j = 0, 1, 2, 3
         except IndexError:
-            raise FLUKAError(f"Unable to determine axis for WHAT1={what1}.")
+            msg = f"Unable to determine axis for WHAT1={what1}."
+            raise FLUKAError(msg)
 
         tx, ty, tz = card.what4, card.what5, card.what6
         # CONVERTING TO MILLIMETRES!!
@@ -349,7 +356,8 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     def __setitem__(self, i, obj):
         if not isinstance(obj, RotoTranslation):
-            raise TypeError("Items must be RotoTranslation instances")
+            msg = "Items must be RotoTranslation instances"
+            raise TypeError(msg)
         self._raiseIfDifferentName(obj.name)
         self._rtransList[i] = obj
 
@@ -361,7 +369,8 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     def insert(self, i, obj):
         if not isinstance(obj, RotoTranslation):
-            raise TypeError("Items must be RotoTranslation instances")
+            msg = "Items must be RotoTranslation instances"
+            raise TypeError(msg)
         self._raiseIfDifferentName(obj.name)
         self._rtransList.insert(i, obj)
 

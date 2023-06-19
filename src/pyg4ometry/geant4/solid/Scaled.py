@@ -23,7 +23,7 @@ class Scaled(_SolidBase):
     """
 
     def __init__(self, name, solid, pX, pY, pZ, registry, addRegistry=True):
-        super(Scaled, self).__init__(name, "Scaled", registry)
+        super().__init__(name, "Scaled", registry)
 
         self.solid = solid
         self.pX = pX

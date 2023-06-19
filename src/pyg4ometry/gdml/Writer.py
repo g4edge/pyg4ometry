@@ -10,9 +10,9 @@ import logging as _log
 from pyg4ometry.geant4 import Expression as _Expression
 
 
-class Writer(object):
+class Writer:
     def __init__(self, prepend=""):
-        super(Writer, self).__init__()
+        super().__init__()
         self.prepend = prepend
 
         self.imp = getDOMImplementation()
@@ -205,7 +205,7 @@ option, preprocessGDML=0;
         vtype = vv.__class__.__name__.lower()
         if allow_ref and vv.name in self.registry.defineDict:
             # If possible and allowed, write the variable as a reference to a define
-            vn = self.doc.createElement("{}ref".format(vtype))
+            vn = self.doc.createElement(f"{vtype}ref")
             vn.setAttribute("ref", vv.name)
         else:
             if suppress_trivial and not vv.nonzero():
@@ -257,30 +257,29 @@ option, preprocessGDML=0;
             oe.appendChild(tn)
             self.defines.appendChild(oe)
         elif any(
-            [
-                isinstance(define, d)
+            isinstance(define, d)
                 for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]
-            ]
         ):
             self.writeVectorVariable(
                 self.defines, define, allow_ref=False, suppress_trivial=False
             )
         else:
-            raise Exception("Unrecognised define type: {}".format(type(define)))
+            msg = f"Unrecognised define type: {type(define)}"
+            raise Exception(msg)
 
     def writeMaterialProps(self, material, oe):
         for pname, pref in material.properties.items():
             prop = self.doc.createElement("property")
             prop.setAttribute("name", str(pname))
             if not isinstance(pref, _Defines.Matrix):
+                msg = f"Only references to matrices can be used for material property {pname}"
                 raise ValueError(
-                    "Only references to matrices can be used for material property {}".format(
-                        pname
-                    )
+                    msg
                 )
             # If possible, write the variable as a reference to a define
             if not (pref.name in self.registry.defineDict):
-                raise RuntimeError("Invalid ref!")
+                msg = "Invalid ref!"
+                raise RuntimeError(msg)
             prop.setAttribute("ref", str(pref.name))
             oe.appendChild(prop)
 
@@ -381,16 +380,16 @@ option, preprocessGDML=0;
     def writeLogicalVolume(self, lv):
         we = self.doc.createElement("volume")
         # we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
-        we.setAttribute("name", "{}{}".format(self.prepend, lv.name))
+        we.setAttribute("name", f"{self.prepend}{lv.name}")
         mr = self.doc.createElement("materialref")
         if lv.material.name.find("G4") != -1:
             mr.setAttribute("ref", lv.material.name)
         else:
-            mr.setAttribute("ref", "{}{}".format(self.prepend, lv.material.name))
+            mr.setAttribute("ref", f"{self.prepend}{lv.material.name}")
         we.appendChild(mr)
 
         sr = self.doc.createElement("solidref")
-        sr.setAttribute("ref", "{}{}".format(self.prepend, lv.solid.name))
+        sr.setAttribute("ref", f"{self.prepend}{lv.solid.name}")
         we.appendChild(sr)
 
         if lv.auxiliary:
@@ -407,7 +406,8 @@ option, preprocessGDML=0;
             elif dv.type == "division":
                 dve = self.writeDivisionVolume(dv)
             else:
-                raise ValueError("Unknown daughter volume type: {}".format(dv.type))
+                msg = f"Unknown daughter volume type: {dv.type}"
+                raise ValueError(msg)
             we.appendChild(dve)
 
         self.structure.appendChild(we)
@@ -430,7 +430,7 @@ option, preprocessGDML=0;
     def writeAssemblyVolume(self, lv):
         we = self.doc.createElement("assembly")
         # we.setAttribute('name', "{}{}_lv".format(self.prepend, lv.name, '_lv'))
-        we.setAttribute("name", "{}{}".format(self.prepend, lv.name))
+        we.setAttribute("name", f"{self.prepend}{lv.name}")
 
         for dv in lv.daughterVolumes:
             dve = self.writePhysicalVolume(dv)
@@ -440,9 +440,9 @@ option, preprocessGDML=0;
 
     def writePhysicalVolume(self, pv):
         pvol = self.doc.createElement("physvol")
-        pvol.setAttribute("name", "{}{}".format(self.prepend, pv.name))
+        pvol.setAttribute("name", f"{self.prepend}{pv.name}")
         vr = self.doc.createElement("volumeref")
-        vr.setAttribute("ref", "{}{}".format(self.prepend, pv.logicalVolume.name))
+        vr.setAttribute("ref", f"{self.prepend}{pv.logicalVolume.name}")
         pvol.appendChild(vr)
 
         self.writeVectorVariable(pvol, pv.position)
@@ -459,7 +459,7 @@ option, preprocessGDML=0;
         rvol.setAttribute("number", str(int(float(instance.nreplicas))))
 
         vr = self.doc.createElement("volumeref")
-        vr.setAttribute("ref", "{}{}".format(self.prepend, instance.logicalVolume.name))
+        vr.setAttribute("ref", f"{self.prepend}{instance.logicalVolume.name}")
         rvol.appendChild(vr)
 
         ra = self.doc.createElement("replicate_along_axis")
@@ -495,7 +495,7 @@ option, preprocessGDML=0;
             dvol.setAttribute("unit", instance.unit)
 
         vr = self.doc.createElement("volumeref")
-        vr.setAttribute("ref", "{}{}".format(self.prepend, instance.logicalVolume.name))
+        vr.setAttribute("ref", f"{self.prepend}{instance.logicalVolume.name}")
         dvol.appendChild(vr)
 
         return dvol
@@ -505,7 +505,7 @@ option, preprocessGDML=0;
         pvol.setAttribute("ncopies", str(int(float(instance.ncopies))))
 
         vr = self.doc.createElement("volumeref")
-        vr.setAttribute("ref", "{}{}".format(self.prepend, instance.logicalVolume.name))
+        vr.setAttribute("ref", f"{self.prepend}{instance.logicalVolume.name}")
         pvol.appendChild(vr)
 
         pos_size = self.doc.createElement("parameterised_position_size")
@@ -643,7 +643,7 @@ option, preprocessGDML=0;
                     "numSide": "numSide",
                 }
 
-            dim = self.doc.createElement("{}_dimensions".format(dim_solid))
+            dim = self.doc.createElement(f"{dim_solid}_dimensions")
             for name in dim_names:
                 dim.setAttribute(
                     dim_names[name], self.getValueOrExprFromInstance(params, name)
@@ -672,25 +672,25 @@ option, preprocessGDML=0;
 
     def writeSkinSurface(self, instance):
         surf = self.doc.createElement("skinsurface")
-        surf.setAttribute("name", "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute("name", f"{self.prepend}{instance.name}")
         surf.setAttribute("surfaceproperty", instance.surface_property.name)
 
         vr = self.doc.createElement("volumeref")
-        vr.setAttribute("ref", "{}{}".format(self.prepend, instance.volumeref.name))
+        vr.setAttribute("ref", f"{self.prepend}{instance.volumeref.name}")
         surf.appendChild(vr)
 
         self.structure.appendChild(surf)
 
     def writeBorderSurface(self, instance):
         surf = self.doc.createElement("bordersurface")
-        surf.setAttribute("name", "{}{}".format(self.prepend, instance.name))
+        surf.setAttribute("name", f"{self.prepend}{instance.name}")
         surf.setAttribute("surfaceproperty", instance.surface_property.name)
 
         pvr1 = self.doc.createElement("physvolref")
-        pvr1.setAttribute("ref", "{}{}".format(self.prepend, instance.physref1.name))
+        pvr1.setAttribute("ref", f"{self.prepend}{instance.physref1.name}")
         surf.appendChild(pvr1)
         pvr2 = self.doc.createElement("physvolref")
-        pvr2.setAttribute("ref", "{}{}".format(self.prepend, instance.physref2.name))
+        pvr2.setAttribute("ref", f"{self.prepend}{instance.physref2.name}")
         surf.appendChild(pvr2)
 
         self.structure.appendChild(surf)
@@ -731,14 +731,16 @@ option, preprocessGDML=0;
 
     def getValueOrExprFromInstance(self, instance, variable, index=None):
         if not hasattr(instance, variable):
-            raise AttributeError("")  # TODO: Add error message
+            msg = ""
+            raise AttributeError(msg)  # TODO: Add error message
 
         # Indexed variable
         if index is not None:
             try:
                 var = getattr(instance, variable)[index]
             except IndexError:
-                raise IndexError("")  # TODO: Add error message
+                msg = ""
+                raise IndexError(msg)  # TODO: Add error message
 
         else:
             var = getattr(instance, variable)
@@ -940,7 +942,7 @@ option, preprocessGDML=0;
 
             vert_names = []
             for vertex_id, v in enumerate(verts):
-                defname = "{}_{}".format(name, vertex_id)
+                defname = f"{name}_{vertex_id}"
                 vert_names.append(defname)
 
                 self.writeDefine(_Defines.Position(defname, v[0], v[1], v[2]))
@@ -956,7 +958,7 @@ option, preprocessGDML=0;
             for facet_id, f in enumerate(facet):
                 vertex_names = []
                 for vertex_id, v in enumerate(f[0]):
-                    defname = "{}_f{}_v{}".format(name, facet_id, vertex_id)
+                    defname = f"{name}_f{facet_id}_v{vertex_id}"
                     vertex_names.append(defname)
                     self.writeDefine(_Defines.Position(defname, v[0], v[1], v[2]))
 

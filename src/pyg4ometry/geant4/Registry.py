@@ -382,7 +382,8 @@ class Registry:
         from pyg4ometry.gdml.Units import units as _units
 
         if define.name in _units:
-            raise ValueError("Redefinition of a constant unit : {}".format(define.name))
+            msg = f"Redefinition of a constant unit : {define.name}"
+            raise ValueError(msg)
 
         if define.name in self.defineDict:
             raise _exceptions.IdenticalNameError(define.name, "define")
@@ -498,8 +499,9 @@ class Registry:
                 self.logicalVolumeDict[worldIn.name] = worldIn
             self.logicalVolumeList.append(worldIn.name)
         else:
+            msg = "Invalid type "
             raise TypeError(
-                "Invalid type ",
+                msg,
                 worldIn.__class__.__name__,
                 " - must be str or LogicalVolume",
             )
@@ -592,8 +594,9 @@ class Registry:
             and collapseAssemblies == True
             and isinstance(volume, _AssemblyVolume)
         ):
+            msg = "Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume"
             raise RuntimeError(
-                "Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume"
+                msg
             )
 
         if incrementRenameDict is None:

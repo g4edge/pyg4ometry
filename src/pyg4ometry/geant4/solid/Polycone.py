@@ -49,7 +49,7 @@ class Polycone(_SolidBase):
         nslice=None,
         addRegistry=True,
     ):
-        super(Polycone, self).__init__(name, "Polycone", registry)
+        super().__init__(name, "Polycone", registry)
 
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
@@ -71,7 +71,7 @@ class Polycone(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Polycone : {} {} {}".format(self.name, self.pSPhi, self.pDPhi)
+        return f"Polycone : {self.name} {self.pSPhi} {self.pDPhi}"
 
     def __str__(self):
         # TODO finish other polycone

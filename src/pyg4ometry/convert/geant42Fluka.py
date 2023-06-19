@@ -1374,7 +1374,7 @@ def geant4Solid2FlukaRegion(
 
         # Main ellipsoid.  ELL can't be used as ELL is an ellipsoid of rotation.
         fbody1 = _fluka.QUA(
-            "B{}_01".format(name),
+            f"B{name}_01",
             cxx,
             cyy,
             czz,
@@ -1398,7 +1398,7 @@ def geant4Solid2FlukaRegion(
         if zhigh < zsemi:
             fbody2 = flukaRegistry.makeBody(
                 XYP,
-                "B{}_0{}".format(name, ellcuti),
+                f"B{name}_0{ellcuti}",
                 zhigh,
                 transform=transform,
                 flukaregistry=flukaRegistry,
@@ -1410,7 +1410,7 @@ def geant4Solid2FlukaRegion(
         if zlow > -zsemi:
             fbody3 = flukaRegistry.makeBody(
                 XYP,
-                "B{}_0{}".format(name, ellcuti),
+                f"B{name}_0{ellcuti}",
                 zlow,
                 transform=transform,
                 flukaregistry=flukaRegistry,
@@ -1442,7 +1442,7 @@ def geant4Solid2FlukaRegion(
         fzone = _fluka.Zone()
         # Cone from general quadric
         fbody1 = _fluka.QUA(
-            "B{}_01".format(name),
+            f"B{name}_01",
             cxx,
             cyy,
             czz,
@@ -1463,7 +1463,7 @@ def geant4Solid2FlukaRegion(
         zcut = min(zcut, zheight)
         fbody2 = flukaRegistry.makeBody(
             XYP,
-            "B{}_02".format(name),
+            f"B{name}_02",
             zcut,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -1473,7 +1473,7 @@ def geant4Solid2FlukaRegion(
 
         fbody3 = flukaRegistry.makeBody(
             XYP,
-            "B{}_03".format(name),
+            f"B{name}_03",
             -zcut,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -1502,7 +1502,7 @@ def geant4Solid2FlukaRegion(
         fzone = _fluka.Zone()
         # Tip points in -ve z direction.  larger face is +ve z.
         fbody1 = _fluka.QUA(
-            "B{}_01".format(name),
+            f"B{name}_01",
             1,
             1,
             0,
@@ -1521,7 +1521,7 @@ def geant4Solid2FlukaRegion(
         # cut at positive z.
         fbody2 = flukaRegistry.makeBody(
             XYP,
-            "B{}_02".format(name),
+            f"B{name}_02",
             halflength,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -1531,7 +1531,7 @@ def geant4Solid2FlukaRegion(
         # cut at negative z
         fbody3 = flukaRegistry.makeBody(
             XYP,
-            "B{}_03".format(name),
+            f"B{name}_03",
             -halflength,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -1562,7 +1562,7 @@ def geant4Solid2FlukaRegion(
         fzone = _fluka.Zone()
         # Outer QUA
         fbody1 = _fluka.QUA(
-            "B{}_01".format(name),
+            f"B{name}_01",
             1,
             1,
             czzOuter,
@@ -1584,7 +1584,7 @@ def geant4Solid2FlukaRegion(
         if innerRadius != 0 or innerStereo != 0:
             # Inner QUA
             fbody2 = _fluka.QUA(
-                "B{}_0{}".format(name, ihype),
+                f"B{name}_0{ihype}",
                 1,
                 1,
                 czzInner,
@@ -1604,7 +1604,7 @@ def geant4Solid2FlukaRegion(
 
         fbody3 = flukaRegistry.makeBody(
             XYP,
-            "B{}_0{}".format(name, ihype),
+            f"B{name}_0{ihype}",
             lenZ / 2.0,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -1615,7 +1615,7 @@ def geant4Solid2FlukaRegion(
 
         fbody4 = flukaRegistry.makeBody(
             XYP,
-            "B{}_0{}".format(name, ihype),
+            f"B{name}_0{ihype}",
             -lenZ / 2.0,
             transform=transform,
             flukaregistry=flukaRegistry,
@@ -2019,7 +2019,8 @@ def geant4Material2Fluka(
     if isinstance(materialInstance, _geant4.Material):
         # none, nist, arbitrary, simple, composite
         if materialInstance.type == "none":
-            raise Exception("Cannot have material with none type")
+            msg = "Cannot have material with none type"
+            raise Exception(msg)
 
         elif materialInstance.type == "nist":
             # make material object from dictionary of information
@@ -2032,7 +2033,8 @@ def geant4Material2Fluka(
             )
 
         elif materialInstance.type == "arbitrary":
-            raise Exception("Cannot have material with arbitrary type")
+            msg = "Cannot have material with arbitrary type"
+            raise Exception(msg)
 
         elif materialInstance.type == "simple":
             fe = _fluka.Material(

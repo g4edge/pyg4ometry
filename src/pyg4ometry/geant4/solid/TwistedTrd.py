@@ -55,7 +55,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         refine=0,
         addRegistry=True,
     ):
-        super(TwistedTrd, self).__init__(name, "TwistedTrd", registry)
+        super().__init__(name, "TwistedTrd", registry)
 
         self.twistedAngle = twistedangle
         self.pDx1 = pDx1
@@ -102,7 +102,8 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
 
     def checkParameters(self):
         if self.evaluateParameterWithUnits("twistedAngle") > _np.pi:
-            raise ValueError("Twisted Angle must be less than 0.5*pi")
+            msg = "Twisted Angle must be less than 0.5*pi"
+            raise ValueError(msg)
 
     def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, theta, nsl):
         dz = 2 * pDz / nsl

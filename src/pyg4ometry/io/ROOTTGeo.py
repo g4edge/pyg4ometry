@@ -870,7 +870,7 @@ class Reader:
             elif volumeClass == "TGeoVolumeAssembly":
                 volumePyG4 = _g4.AssemblyVolume(volumeName, self._registry)
             else:
-                print("ROOT.Reader> unknown volume class {}".format(volumeClass))
+                print(f"ROOT.Reader> unknown volume class {volumeClass}")
 
             # add logical volume to dictionaries
             self.logicalVolumes[volumeAddress] = {

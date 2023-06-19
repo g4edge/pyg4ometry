@@ -12,7 +12,7 @@ elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 
-class TwistedSolid(object):
+class TwistedSolid:
     def makeFaceFromLayer(self, layer, reverse=False):
         pols = []
         l = layer

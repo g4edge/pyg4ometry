@@ -39,7 +39,7 @@ class TessellatedSolid(_SolidBase):
     def __init__(
         self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True
     ):
-        super(TessellatedSolid, self).__init__(name, "TessellatedSolid", registry)
+        super().__init__(name, "TessellatedSolid", registry)
 
         if meshTess is None:
             self.meshtess = []
@@ -68,7 +68,7 @@ class TessellatedSolid(_SolidBase):
         return self.type
 
     def __str__(self):
-        return "TessellatedSolid {}".format(self.type)
+        return f"TessellatedSolid {self.type}"
 
     def addVertex(self, vertex):
         self.meshtess[0].append(vertex)
@@ -174,7 +174,8 @@ class TessellatedSolid(_SolidBase):
                 i += 1
 
         else:
-            raise ValueError("Urecognised mesh type: {}".format(self.meshtype))
+            msg = f"Urecognised mesh type: {self.meshtype}"
+            raise ValueError(msg)
 
         #############################################
         # Convert verts and facets to polygons

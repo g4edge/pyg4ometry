@@ -23,7 +23,7 @@ class Subtraction(_SolidBase):
     """
 
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
-        super(Subtraction, self).__init__(name, "Subtraction", registry)
+        super().__init__(name, "Subtraction", registry)
         # circular import
         import pyg4ometry.gdml.Defines as _defines
 

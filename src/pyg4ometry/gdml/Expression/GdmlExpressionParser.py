@@ -1,6 +1,4 @@
 # Generated from GdmlExpression.g4 by ANTLR 4.7.1
-# encoding: utf-8
-from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
@@ -195,7 +193,7 @@ class GdmlExpressionParser(Parser):
     WS = 32
 
     def __init__(self, input, output=sys.stdout):
-        super(GdmlExpressionParser, self).__init__(input, output=output)
+        super().__init__(input, output=output)
         self.checkVersion("4.7.1")
         self._interp = ParserATNSimulator(
             self, self.atn, self.decisionsToDFA, self.sharedContextCache
@@ -856,7 +854,7 @@ class GdmlExpressionParser(Parser):
             self.state = 96
             _la = self._input.LA(1)
             if not (
-                (
+
                     ((_la) & ~0x3F) == 0
                     and (
                         (1 << _la)
@@ -867,7 +865,7 @@ class GdmlExpressionParser(Parser):
                         )
                     )
                     != 0
-                )
+
             ):
                 self._errHandler.recoverInline(self)
             else:
@@ -1049,7 +1047,7 @@ class GdmlExpressionParser(Parser):
             self.state = 112
             _la = self._input.LA(1)
             if not (
-                (
+
                     ((_la) & ~0x3F) == 0
                     and (
                         (1 << _la)
@@ -1069,7 +1067,7 @@ class GdmlExpressionParser(Parser):
                         )
                     )
                     != 0
-                )
+
             ):
                 self._errHandler.recoverInline(self)
             else:
@@ -1117,7 +1115,7 @@ class GdmlExpressionParser(Parser):
             self.state = 114
             _la = self._input.LA(1)
             if not (
-                (
+
                     ((_la) & ~0x3F) == 0
                     and (
                         (1 << _la)
@@ -1128,7 +1126,7 @@ class GdmlExpressionParser(Parser):
                         )
                     )
                     != 0
-                )
+
             ):
                 self._errHandler.recoverInline(self)
             else:

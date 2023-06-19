@@ -39,7 +39,8 @@ if PyQtImpl is None:
 
                     PyQtImpl = "PySide"
                 except ImportError:
-                    raise ImportError("Cannot load either PyQt or PySide")
+                    msg = "Cannot load either PyQt or PySide"
+                    raise ImportError(msg)
 
 if PyQtImpl == "PyQt5":
     if QVTKRWIBase == "QGLWidget":

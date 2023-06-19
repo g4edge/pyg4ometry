@@ -44,7 +44,7 @@ class ExtrudedSolid(_SolidBase):
     def __init__(
         self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True
     ):
-        super(ExtrudedSolid, self).__init__(name, "ExtrudedSolid", registry)
+        super().__init__(name, "ExtrudedSolid", registry)
 
         self.lunit = lunit
 
@@ -62,11 +62,11 @@ class ExtrudedSolid(_SolidBase):
 
     def __repr__(self):
         # TODO put a proper string in here
-        return "Extruded solid: {}".format(self.name)
+        return f"Extruded solid: {self.name}"
 
     def __str__(self):
         # TODO put a proper string in here
-        return "Extruded solid: {}".format(self.name)
+        return f"Extruded solid: {self.name}"
 
     def polygon_area(self, vertices):
         # Using the shoelace formula
@@ -99,8 +99,9 @@ class ExtrudedSolid(_SolidBase):
             ]
             return slices
         else:
+            msg = f"ExtrudedSolid.evaluateParameterWithUnits : unknown variable: {varName}"
             raise RuntimeError(
-                f"ExtrudedSolid.evaluateParameterWithUnits : unknown variable: {varName}"
+                msg
             )
 
     def mesh(self):

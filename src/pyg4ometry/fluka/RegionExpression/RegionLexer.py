@@ -1,6 +1,4 @@
 # Generated from RegionLexer.g4 by ANTLR 4.7
-# encoding: utf-8
-from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
@@ -103,7 +101,7 @@ class RegionLexer(Lexer):
     grammarFileName = "RegionLexer.g4"
 
     def __init__(self, input=None, output=sys.stdout):
-        super(RegionLexer, self).__init__(input, output=output)
+        super().__init__(input, output=output)
         self.checkVersion("4.7")
         self._interp = LexerATNSimulator(
             self, self.atn, self.decisionsToDFA, PredictionContextCache()
@@ -113,7 +111,7 @@ class RegionLexer(Lexer):
 
     def sempred(self, localctx, ruleIndex, predIndex):
         if self._predicates is None:
-            preds = dict()
+            preds = {}
             preds[2] = self.LineComment_sempred
             preds[6] = self.RegionName_sempred
             self._predicates = preds

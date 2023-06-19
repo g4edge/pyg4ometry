@@ -1,10 +1,10 @@
 def test_imports():
-    import pyg4ometry  # noqa: F401
-    import pyg4ometry.convert  # noqa: F401
-    import pyg4ometry.fluka  # noqa: F401
-    import pyg4ometry.gdml  # noqa: F401
-    import pyg4ometry.geant4  # noqa: F401
-    import pyg4ometry.pycgal  # noqa: F401
-    import pyg4ometry.pycsg  # noqa: F401
-    import pyg4ometry.pyoce  # noqa: F401
-    import pyg4ometry.visualisation  # noqa: F401
+    import pyg4ometry
+    import pyg4ometry.convert
+    import pyg4ometry.fluka
+    import pyg4ometry.gdml
+    import pyg4ometry.geant4
+    import pyg4ometry.pycgal
+    import pyg4ometry.pycsg
+    import pyg4ometry.pyoce
+    import pyg4ometry.visualisation

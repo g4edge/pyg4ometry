@@ -47,7 +47,7 @@ class Polyhedra(_SolidBase):
         aunit="rad",
         addRegistry=True,
     ):
-        super(Polyhedra, self).__init__(name, "Polyhedra", registry)
+        super().__init__(name, "Polyhedra", registry)
 
         self.pSPhi = pSPhi
         self.pDPhi = pDPhi
