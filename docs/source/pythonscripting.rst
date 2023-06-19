@@ -72,7 +72,7 @@ Examples:
   reg = pyg4ometry.geant4.Registry()
   boxSolid = pyg4ometry.geant4.solid.Box("aBox", 10, 20, 30, reg)
 
-This defines a box with the default units (none specifed), so mm. We can specify them:
+This defines a box with the default units (none specified), so mm. We can specify them:
 
 .. code-block:: python
 

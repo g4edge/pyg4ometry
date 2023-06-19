@@ -256,7 +256,7 @@ def _filterRegistryNullZones(flukareg, regionZoneAABBs):
         region = regout.regionDict[regionName]
         region.zones = list(_filterRegionNullZones(region, aabbs))
         if not region.zones:
-            logger.warn(f"Omitting null region {region.name} from conversion")
+            logger.warning(f"Omitting null region {region.name} from conversion")
             del regout.regionDict[regionName]
             regout.assignmas.pop(regionName, None)
 
@@ -271,7 +271,7 @@ def _filterRegionNullZones(region, aabbs):
         if aabb is not None:
             yield zone
         else:
-            logger.warn(
+            logger.warning(
                 f"Filtering null zone {zone.dumps()} in region "
                 f"{region.name} from conversion"
             )
