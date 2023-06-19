@@ -3,18 +3,15 @@
 import sys
 from pathlib import Path
 
-from pkg_resources import get_distribution
-
 sys.path.insert(0, Path(__file__).parents[2].resolve().as_posix())
 
 project = "pyg4ometry"
 copyright = "Royal Holloway, University of London 2023"
 author = "S. Boogert, A. Abramov, A. Butcher, L. Nevay, W. Shields, S. Walker"
-version = get_distribution("pyg4ometry").version
 
 extensions = [
     "sphinx.ext.githubpages",
-    "sphinx.ext.autodoc",
+    "autoapi.extension",
     "sphinx.ext.mathjax",
     "sphinx.ext.intersphinx",
     "sphinx.ext.inheritance_diagram",
@@ -37,7 +34,7 @@ html_theme_options = {
     "source_branch": "main",
     "source_directory": "docs/source",
 }
-html_title = f"{project} {version}"
+html_title = f"{project}"
 
 autodoc_default_options = {"ignore-module-all": True}
 
@@ -50,9 +47,6 @@ intersphinx_mapping = {
     "matplotlib": ("http://matplotlib.org/stable", None),
 }  # add new intersphinx mappings here
 
-# sphinx-autodoc
-# Include __init__() docstring in class docstring
-autoclass_content = "both"
-autodoc_typehints = "both"
-autodoc_typehints_description_target = "documented_params"
-autodoc_typehints_format = "short"
+# sphinx-autoapi
+autoapi_dirs = ["../../src"]
+autodoc_typehints = 'description'

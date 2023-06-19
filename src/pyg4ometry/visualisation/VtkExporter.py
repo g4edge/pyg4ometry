@@ -56,7 +56,8 @@ class VtkExporter:
         Method that exports the visible logical volumes of the registry reg into Paraview VTK files (.vtm)
         and creates a Paraview State file (.pvsm) for the Paraview Model.
 
-        df_model and df_color are optional: if they are not given, the Paraview model will take the materials colors
+        df_model and df_color are optional: if they are not given, the Paraview
+        model will take the materials colors
 
         Args:
             reg: Registry
@@ -109,7 +110,6 @@ class VtkExporter:
                 False: it will create one .vtm file for the whole GDML
             df_model: (optional) pandas.DataFrame linking the NAME of the element and their TYPE
             df_color: (optional) pandas.DataFrame linking the TYPE with its specific R G B color
-
         """
         world_volume = reg.getWorldVolume()
 
@@ -134,7 +134,6 @@ class VtkExporter:
 
         Returns: A dictionary with the keys R, G and B whose item is a dictionary
             with as keys the logical volumes names and as item the respective RGB value
-
         """
         import pandas as pd
 
@@ -183,7 +182,6 @@ class VtkExporter:
                 with as keys the logical volumes names and as item the respective RGB value
             rotation: (optional) numpy.matrix
             translation: (optional) numpy.array
-
         """
         if model:
             self.add_logical_volume_recursive(lv, rotation, translation, color_dico)
@@ -224,7 +222,6 @@ class VtkExporter:
             color_dico: A dictionary with the keys R, G and B whose item is a dictionary
                 with as keys the logical volumes names and as item the respective RGB value
             first_level: Boolean indicating if we are at the first level of recursivity
-
         """
         for pv in lv.daughterVolumes:
             if first_level:
@@ -280,7 +277,6 @@ class VtkExporter:
             rotation: numpy.matrix
             translation: numpy.array
             visOptions: VisualisationOptions instance
-
         """
 
         if solid_name in self.localmeshes:
@@ -334,8 +330,7 @@ class VtkExporter:
                 self.mbindexdico[self.element_name] += 1
 
     def getMaterialVisOptions(self, name):
-        """
-        Method that "cleans" the logical volume material string.
+        """Method that "cleans" the logical volume material string.
 
         Args:
             name: raw name of the logical volume material
@@ -356,8 +351,8 @@ class VtkExporter:
             return self.materialVisualisationOptions["G4_C"]
 
     def getElementName(self, logicalVolumeName):
-        """
-        Method that "cleans" the logical volume name string.
+        """Method that "cleans" the logical volume name string.
+
         Args:
             logicalVolumeName: raw name of the logical volume
 
@@ -387,8 +382,8 @@ class VtkExporter:
             )
 
     def countVisibleDaughters(self, lv, element_name, n=0):
-        """
-        Method that counts the number of "visible" daughter logical volumes of the mother logical volume lv.
+        """Method that counts the number of "visible" daughter logical volumes of the mother logical volume lv.
+
         Args:
             lv: logical volume
             element_name: name of the element
