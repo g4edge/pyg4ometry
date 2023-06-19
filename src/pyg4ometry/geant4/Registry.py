@@ -866,7 +866,7 @@ class Registry:
 
         if (
             solid.type == "union"
-            or solid.type == "intersecton"
+            or solid.type == "intersection"
             or solid.type == "subtraction"
         ):
             self.solidTree(solid.obj1.name)
