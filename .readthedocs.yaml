@@ -11,11 +11,6 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.10"
-
-python:
-  install:
-    - furo
-    - sphinx
-    - sphinx-autoapi
-    - sphinx-copybutton
-    - sphinx-inline-tabs
+  jobs:
+    post_install:
+      - pip install furo sphinx sphinx-autoapi sphinx-copybutton sphinx-inline-tabs
