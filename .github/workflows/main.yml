@@ -84,3 +84,5 @@ jobs:
         python -m pytest --cov=pyg4ometry --cov-report=xml
     - name: Upload Coverage to codecov.io
       uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
