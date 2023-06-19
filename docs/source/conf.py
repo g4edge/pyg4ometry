@@ -49,4 +49,4 @@ intersphinx_mapping = {
 
 # sphinx-autoapi
 autoapi_dirs = ["../../src"]
-autodoc_typehints = 'description'
+autodoc_typehints = "description"
