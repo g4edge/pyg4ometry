@@ -24,7 +24,7 @@ output
 GDML Output
 -----------
 
-To write an GDML file, a :code:`pyg4ometry.geant4.registy` instance (:code:`reg` here),
+To write an GDML file, a :code:`pyg4ometry.geant4.registry` instance (:code:`reg` here),
 must be supplied.
 
 .. code-block :: python
@@ -32,7 +32,7 @@ must be supplied.
    :linenos:
 
    import pyg4ometry
-   w = p4gometry.gdml.Writer()
+   w = pyg4ometry.gdml.Writer()
    w.addDetector(reg)
    w.write('file.gdml')
    # make a quick bdsim job for the one component in a beam line
@@ -81,7 +81,7 @@ followed.
 
    import pyg4ometry
    r = pyg4ometry.fluka.Reader("./Chamber.inp")
-   greg = pyg4ometry.convert.fluka2geant4(r.getRegistry())
+   greg = pyg4ometry.convert.fluka2Geant4(r.getRegistry())
    l = greg.getWorldVolume()
    v = pyg4ometry.visualisation.VtkViewer()
    v.addLogicalVolume(l)

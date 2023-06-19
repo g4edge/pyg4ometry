@@ -104,7 +104,7 @@ installation for each of these OSes.
 FreeCAD support for CAD to GDML conversion
 ------------------------------------------
 
-For FreeCAD support and you already have it installed you  need to add library to PYTHONPATH, for example
+For FreeCAD support and you already have it installed you need to add library to PYTHONPATH, for example
 
 .. code-block :: console
 
@@ -117,12 +117,12 @@ Building FreeCAD can be a pain for MAC so
    mkdir FreeCAD
    cd FreeCAD
    set FCROOT=$pwd
-   wget  https://github.com/FreeCAD/FreeCAD/archive/0.19_pre.tar.gz
-   tar zxf 0.19_pre.tar.gz
+   wget  https://github.com/FreeCAD/FreeCAD/archive/refs/tags/0.19.4.tar.gz
+   tar zxf 0.19.4.tar.gz
    mkdir build
    mkdir install
    cd build
-   cmake ../FreeCAD-0.18.4 -DCMAKE_INSTALL_PREFIX=../install \
+   cmake ../FreeCAD-0.19.4 -DCMAKE_INSTALL_PREFIX=../install \
    -DCOIN3D_LIBRARIES=/opt/local/Library/Frameworks/Inventor.framework/Libraries/libCoin.dylib -DBUILD_FEM=0 \
    -DBUILD_MATERIAL=0 -DBUILD_SHIP=0 -DBUILD_DRAFT=0 -DBUILD_TUX=0 -DBUILD_ARCH=0 -DBUILD_PLOT=0 \
    -DBUILD_OPENSCAD=0
