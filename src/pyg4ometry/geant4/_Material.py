@@ -38,11 +38,11 @@ def _safeName(name):
     return name
 
 def loadNISTMaterialDict():
-    import pkg_resources
+    from importlib_resources import files
     nist_materials_dict = {}
     
-    nist_elements  = pkg_resources.resource_filename(__name__, "nist_elements.txt")
-    nist_materials = pkg_resources.resource_filename(__name__, "nist_materials.txt")
+    nist_elements  = files("pyg4ometry.geant4").joinpath("nist_elements.txt")
+    nist_materials = files("pyg4ometry.geant4").joinpath("nist_materials.txt")
 
     with open(nist_elements, "r") as f:
         line = f.readline()
