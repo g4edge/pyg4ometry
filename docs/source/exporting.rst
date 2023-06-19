@@ -100,6 +100,7 @@ writer
    :emphasize-lines: 4-6
 
    import pyg4ometry
+
    r = pyg4ometry.gdml.Reader("./Chamber.gdml")
    l = r.getRegistry().getWorldVolume()
    w = pyg4ometry.visualisation.RenderWriter()

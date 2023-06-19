@@ -1,43 +1,47 @@
 import numpy as _np
 
-def rad2deg(rad) :
-    '''Convert rad in radians into degrees
+
+def rad2deg(rad):
+    """Convert rad in radians into degrees
 
     :param rad: Input in radians
     :type rad: float
     :return: rad in degrees
     :rtype: float
 
-    '''
+    """
 
     return 180 * (rad / _np.pi)
 
-def deg2rad(deg) :
-    '''Convert deg in degrees into radians
+
+def deg2rad(deg):
+    """Convert deg in degrees into radians
 
     :param deg: Input in degrees
     :type deg: float
     :return: deg in radians
     :rtype: float
 
-    '''
+    """
 
-    return _np.pi * (deg / 180.)
+    return _np.pi * (deg / 180.0)
 
-def grad2rad(gradians) :
-    '''Convert rad in gradians into radians
+
+def grad2rad(gradians):
+    """Convert rad in gradians into radians
 
     :param gradians: Input in gradians
     :type gradians: float
     :return: gradians in radians
     :rtype: float
 
-    '''
+    """
 
-    return _np.pi * (gradians / 200.)
+    return _np.pi * (gradians / 200.0)
 
-def tbxyz2axisangle(rv) :
-    '''
+
+def tbxyz2axisangle(rv):
+    """
     Tait-Bryan x-y-z rotation to axis-angle representation
     Algorithm from http://www.sedris.org/wg8home/Documents/WG80485.pdf
 
@@ -49,14 +53,13 @@ def tbxyz2axisangle(rv) :
     :returns: [axis,angle]
     :rtype: list(list(3),float)
 
-    '''
+    """
     matrix = tbxyz2matrix(rv)
     return matrix2axisangle(matrix)
 
 
 def matrix2axisangle(matrix):
-
-    '''
+    """
     Convert 3x3 transformation matrix to axis angle representation
 
     :param matrix: 3x3 rotation matrix array
@@ -64,34 +67,38 @@ def matrix2axisangle(matrix):
     :returns: [axis,angle]
     :rtype: list(list(3),float)
 
-    '''
+    """
 
     m = matrix
     # angle of rotation
-    ang = _np.arccos((float(m.trace())-1)/2.0)
+    ang = _np.arccos((float(m.trace()) - 1) / 2.0)
 
     # axis of rotation
-    if ang == 0 :
-        axi = _np.array([0,0,1])
-    elif ang > 0 and ang < _np.pi :
-        axi = _np.array([float(m[2,1]-m[1,2]),
-                         float(m[0,2]-m[2,0]),
-                         float(m[1,0]-m[0,1])])
-        axi = axi / (2*_np.abs(_np.sin(ang)))
-    else :
-        if m[0,0] > m[1,1] and m[0,0] > m[2,2] :
-            axi = _np.array([m[0,0]+1,m[0,1],m[0,2]])
-        elif m[1,1] > m[0,0] and m[1,1] > m[2,2] :
-            axi = _np.array([m[1,0],m[1,1]+1,m[1,2]])
-        elif m[2,2] > m[0,0] and m[2,2] > m[1,1] :
-            axi = _np.array([m[2,0],m[2,1],m[2,2]+1])
+    if ang == 0:
+        axi = _np.array([0, 0, 1])
+    elif ang > 0 and ang < _np.pi:
+        axi = _np.array(
+            [
+                float(m[2, 1] - m[1, 2]),
+                float(m[0, 2] - m[2, 0]),
+                float(m[1, 0] - m[0, 1]),
+            ]
+        )
+        axi = axi / (2 * _np.abs(_np.sin(ang)))
+    else:
+        if m[0, 0] > m[1, 1] and m[0, 0] > m[2, 2]:
+            axi = _np.array([m[0, 0] + 1, m[0, 1], m[0, 2]])
+        elif m[1, 1] > m[0, 0] and m[1, 1] > m[2, 2]:
+            axi = _np.array([m[1, 0], m[1, 1] + 1, m[1, 2]])
+        elif m[2, 2] > m[0, 0] and m[2, 2] > m[1, 1]:
+            axi = _np.array([m[2, 0], m[2, 1], m[2, 2] + 1])
 
-        axi = axi/_np.sqrt((axi*axi).sum())
-    return [list(axi),ang]
+        axi = axi / _np.sqrt((axi * axi).sum())
+    return [list(axi), ang]
+
 
 def axisangle2matrix(axis, angle):
-
-    '''
+    """
     Convert axis angle to transformation matrix
 
     :param axis: axis for rotation
@@ -101,9 +108,9 @@ def axisangle2matrix(axis, angle):
     :returns: transformation matrix
     :rtype: array(3,3)
 
-    '''
+    """
 
-    axis = [i/_np.linalg.norm(axis) for i in axis]
+    axis = [i / _np.linalg.norm(axis) for i in axis]
     cos = _np.cos(angle)
     sin = _np.sin(angle)
     versin = 1 - cos
@@ -123,9 +130,8 @@ def axisangle2matrix(axis, angle):
     a_32 = (versin * z * y) + (x * sin)
     a_33 = (versin * z * z) + cos
 
-    return  _np.array([[a_11, a_12, a_13],
-                        [a_21, a_22, a_23],
-                        [a_31, a_32, a_33]])
+    return _np.array([[a_11, a_12, a_13], [a_21, a_22, a_23], [a_31, a_32, a_33]])
+
 
 def matrix2tbxyz(matrix):
     """
@@ -138,13 +144,13 @@ def matrix2tbxyz(matrix):
     :rtype: list(3)
     """
 
-    a_11 = matrix[0,0]
-    a_12 = matrix[0,1]
-    a_13 = matrix[0,2]
-    a_21 = matrix[1,0]
-    a_31 = matrix[2,0]
-    a_32 = matrix[2,1]
-    a_33 = matrix[2,2]
+    a_11 = matrix[0, 0]
+    a_12 = matrix[0, 1]
+    a_13 = matrix[0, 2]
+    a_21 = matrix[1, 0]
+    a_31 = matrix[2, 0]
+    a_32 = matrix[2, 1]
+    a_33 = matrix[2, 2]
 
     if _np.isclose(a_31, 1) and a_31 > 1.0:
         a_31 = 1.0
@@ -166,6 +172,7 @@ def matrix2tbxyz(matrix):
 
     return [x, y, z]
 
+
 def axisangle2tbxyz(axis, angle):
     """
     Convert axis and angle to tait bryan angles
@@ -179,8 +186,8 @@ def axisangle2tbxyz(axis, angle):
 
     """
 
-
     return matrix2tbxyz(axisangle2matrix(axis, angle))
+
 
 def tbxyz2matrix(angles):
     """
@@ -203,18 +210,13 @@ def tbxyz2matrix(angles):
     cz = _np.cos(z)
 
     # Rotation matrices.
-    mx = _np.array([[1,    0,    0],
-                     [0,   cx,  -sx],
-                     [0,  sx,    cx]])
-    my = _np.array([[ cy,  0,   sy],
-                     [  0,  1,    0],
-                     [-sy,   0,  cy]])
-    mz = _np.array([[ cz, -sz,  0],
-                     [ sz,  cz,  0],
-                     [  0,   0,  1]])
+    mx = _np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+    my = _np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+    mz = _np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
 
     m = mz.dot(my.dot(mx))
     return m
+
 
 def tbzyx2matrix(angles):
     """
@@ -238,18 +240,13 @@ def tbzyx2matrix(angles):
     cz = _np.cos(z)
 
     # Rotation matrices.
-    mx = _np.array([[1,    0,    0],
-                     [0,   cx,  -sx],
-                     [0,  sx,    cx]])
-    my = _np.array([[ cy,  0,   sy],
-                     [  0,  1,    0],
-                     [-sy,   0,  cy]])
-    mz = _np.array([[ cz, -sz,  0],
-                     [ sz,  cz,  0],
-                     [  0,   0,  1]])
+    mx = _np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+    my = _np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+    mz = _np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
 
     m = mx.dot(my.dot(mz))
     return m
+
 
 def matrix_from(v_from, v_to):
     """
@@ -268,30 +265,28 @@ def matrix_from(v_from, v_to):
     elif are_anti_parallel(v_from, v_to):
         return _rodrigues_anti_parallel(v_from, v_to)
     # Get the axis to rotate around and the angle to rotate by:
-    axis = (_np.cross(v_from,
-                      v_to)
-            / _np.linalg.norm(_np.cross(v_from,
-                                        v_to)))
-    angle = _np.arccos(_np.dot(v_from,
-                               v_to)
-                       / (_np.linalg.norm(v_from)
-                          * _np.linalg.norm(v_to)))
+    axis = _np.cross(v_from, v_to) / _np.linalg.norm(_np.cross(v_from, v_to))
+    angle = _np.arccos(
+        _np.dot(v_from, v_to) / (_np.linalg.norm(v_from) * _np.linalg.norm(v_to))
+    )
 
     # Construct the skew-symmetric cross product matrix.
-    cross_matrix = _np.array([[0,       -axis[2],  axis[1]],
-                               [axis[2],       0,  -axis[0]],
-                               [-axis[1], axis[0],        0]])
+    cross_matrix = _np.array(
+        [[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]]
+    )
     # Rodrigues' rotation formula.
-    rotation_matrix = (_np.eye(3)
-                       + (_np.sin(angle) * (cross_matrix))
-                       + ((1 - _np.cos(angle))
-                          * (cross_matrix).dot(cross_matrix)))
+    rotation_matrix = (
+        _np.eye(3)
+        + (_np.sin(angle) * (cross_matrix))
+        + ((1 - _np.cos(angle)) * (cross_matrix).dot(cross_matrix))
+    )
 
-    assert are_parallel(v_to, rotation_matrix.dot(v_from)), (
-        "Not parallel!")
-    assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), (
-        "Not orthogonal!")
+    assert are_parallel(v_to, rotation_matrix.dot(v_from)), "Not parallel!"
+    assert _np.allclose(
+        rotation_matrix.T.dot(rotation_matrix), _np.eye(3)
+    ), "Not orthogonal!"
     return rotation_matrix
+
 
 def _rodrigues_anti_parallel(v_from, v_to):
     """
@@ -310,37 +305,36 @@ def _rodrigues_anti_parallel(v_from, v_to):
 
     # Handle case when vector is along the z-axis:
     if _np.allclose(abs(v_from[2]), 1.0):
-        return _np.array([[-1, 0, 0],
-                           [ 0, 1, 0],
-                           [ 0, 0, -1]])
+        return _np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]])
 
     # First row
-    R_11 = -(v_from[0]**2 - v_from[1]**2)
+    R_11 = -(v_from[0] ** 2 - v_from[1] ** 2)
     R_12 = -2 * v_from[0] * v_from[1]
-    R_13 = 0.
+    R_13 = 0.0
 
     # Second row:
     R_21 = R_12
     R_22 = -1 * R_11
-    R_23 = 0.
+    R_23 = 0.0
 
     # Third row:
     R_31 = 0.0
     R_32 = 0.0
-    R_33 = -(1 - v_from[2]**2)
+    R_33 = -(1 - v_from[2] ** 2)
 
-    factor = 1 / (1 - v_from[2]**2)
+    factor = 1 / (1 - v_from[2] ** 2)
 
-    rotation_matrix = factor * _np.array([[R_11, R_12, R_13],
-                                           [R_21, R_22, R_23],
-                                           [R_31, R_32, R_33]])
+    rotation_matrix = factor * _np.array(
+        [[R_11, R_12, R_13], [R_21, R_22, R_23], [R_31, R_32, R_33]]
+    )
 
-    assert are_parallel(v_to, rotation_matrix.dot(v_from)), (
-        "Not parallel!")
-    assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), (
-        "Not orthogonal!")
+    assert are_parallel(v_to, rotation_matrix.dot(v_from)), "Not parallel!"
+    assert _np.allclose(
+        rotation_matrix.T.dot(rotation_matrix), _np.eye(3)
+    ), "Not orthogonal!"
 
     return rotation_matrix
+
 
 def are_parallel(vector_1, vector_2, tolerance=1e-10):
     """
@@ -357,9 +351,12 @@ def are_parallel(vector_1, vector_2, tolerance=1e-10):
     :rtype: bool
 
     """
-    return (_np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1)
-                                           * _np.linalg.norm(vector_2))
-            > 1 - tolerance)
+    return (
+        _np.dot(vector_1, vector_2)
+        / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
+        > 1 - tolerance
+    )
+
 
 def are_anti_parallel(vector_1, vector_2, tolerance=1e-10):
     """
@@ -375,9 +372,12 @@ def are_anti_parallel(vector_1, vector_2, tolerance=1e-10):
     :returns: if vectors are antiparallel
     :rtype: bool
     """
-    return (_np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1)
-                                          * _np.linalg.norm(vector_2))
-            < -1 + tolerance)
+    return (
+        _np.dot(vector_1, vector_2)
+        / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
+        < -1 + tolerance
+    )
+
 
 def reverse(angles):
     """
@@ -387,8 +387,9 @@ def reverse(angles):
     # Convert to matrix, invert, and then convert back to angles
     return matrix2tbxyz(tbxyz2matrix(angles).T)
 
+
 def two_fold_orientation(v1, v2, e1, e2):
-    """ matrix_from will align one vector with another, but there are
+    """matrix_from will align one vector with another, but there are
     an infinite number of such matrices that align two vectors.  This
     further contrains the rotation by introducing a second pair of vectors.
 

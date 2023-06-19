@@ -2,18 +2,19 @@ from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
 
-if _config.meshing == _config.meshingType.pycsg :
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import numpy as _np
+
 
 class TessellatedSolid(_SolidBase):
     """
@@ -30,21 +31,23 @@ class TessellatedSolid(_SolidBase):
 
     """
 
-    class MeshType :
+    class MeshType:
         Freecad = 1
-        Gdml    = 2
-        Stl     = 3
+        Gdml = 2
+        Stl = 3
 
-    def __init__(self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True):
-        super(TessellatedSolid, self).__init__(name, 'TessellatedSolid', registry)
+    def __init__(
+        self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True
+    ):
+        super(TessellatedSolid, self).__init__(name, "TessellatedSolid", registry)
 
-        if meshTess is None :
+        if meshTess is None:
             self.meshtess = []
             self.meshtess.append([])
             self.meshtess.append([])
-        else :
-            self.meshtess    = meshTess
-        self.meshtype    = meshtype
+        else:
+            self.meshtess = meshTess
+        self.meshtype = meshtype
 
         self.dependents = []
         self.varNames = []
@@ -61,23 +64,22 @@ class TessellatedSolid(_SolidBase):
                     if facet_vertex not in self.varNames:
                         self.varNames.append(facet_vertex)
 
-
     def __repr__(self):
         return self.type
 
     def __str__(self):
         return "TessellatedSolid {}".format(self.type)
 
-    def addVertex(self,vertex):
+    def addVertex(self, vertex):
         self.meshtess[0].append(vertex)
 
-    def addTriangle(self,triangle):
+    def addTriangle(self, triangle):
         self.meshtess[1].append(triangle)
 
     def removeDuplicateVertices(self):
         # print("removeDuplicateVertices")
 
-        if self.meshtype != TessellatedSolid.MeshType.Freecad :
+        if self.meshtype != TessellatedSolid.MeshType.Freecad:
             print("Cannot run on this mesh type")
             return
 
@@ -88,17 +90,20 @@ class TessellatedSolid(_SolidBase):
 
         # Loop over triangles (polygons) in mesh
         ivertexmap = 0
-        for t in self.meshtess[1] :
-
+        for t in self.meshtess[1]:
             vinew_list = []
-            for vi in t :
+            for vi in t:
                 v = self.meshtess[0][vi]
-                vr = (round(v[0]+1.23456789, 10), round(v[1]+1.23456789, 10), round(v[2]+1.23456789, 10))
+                vr = (
+                    round(v[0] + 1.23456789, 10),
+                    round(v[1] + 1.23456789, 10),
+                    round(v[2] + 1.23456789, 10),
+                )
                 vrhash = hash(vr)
 
-                try :
+                try:
                     vinew = vertexmap[vrhash]
-                except KeyError :
+                except KeyError:
                     vertexmap[vrhash] = ivertexmap
                     meshtess0.append(v)
                     vinew = ivertexmap
@@ -111,16 +116,15 @@ class TessellatedSolid(_SolidBase):
         self.meshtess[0] = meshtess0
         self.meshtess[1] = meshtess1
 
-        #print(vertexmap)
-        #print(meshtess0)
-        #print(meshtess1)
+        # print(vertexmap)
+        # print(meshtess0)
+        # print(meshtess1)
 
-    def mesh(self) :
-
+    def mesh(self):
         #############################################
         # render GDML mesh
         #############################################
-        if self.meshtype == self.MeshType.Gdml :
+        if self.meshtype == self.MeshType.Gdml:
             # vertex name - integer dict
             vdict = {}
 
@@ -133,7 +137,7 @@ class TessellatedSolid(_SolidBase):
                         vdict[facet_vertex] = i
                         i += 1
 
-            verts = [0 for dummy in range(0,len(vdict.keys()),1)]
+            verts = [0 for dummy in range(0, len(vdict.keys()), 1)]
             facet = []
             for vdi in vdict.items():
                 p = self.registry.defineDict[vdi[0]]
@@ -145,19 +149,19 @@ class TessellatedSolid(_SolidBase):
         #############################################
         # Mesh from CAD
         #############################################
-        elif self.meshtype == self.MeshType.Freecad :
+        elif self.meshtype == self.MeshType.Freecad:
             verts = self.meshtess[0]
             facet = self.meshtess[1]
 
         #############################################
         # Mesh from STL
         #############################################
-        elif self.meshtype == self.MeshType.Stl :
+        elif self.meshtype == self.MeshType.Stl:
             verts = []
             facet = []
 
             i = 0
-            for f in self.meshtess :
+            for f in self.meshtess:
                 v1 = f[0][0]
                 v2 = f[0][1]
                 v3 = f[0][2]
@@ -166,7 +170,7 @@ class TessellatedSolid(_SolidBase):
                 verts.append(v2)
                 verts.append(v3)
 
-                facet.append((3*i+0,3*i+1,3*i+2))
+                facet.append((3 * i + 0, 3 * i + 1, 3 * i + 2))
                 i += 1
 
         else:
@@ -200,7 +204,6 @@ def createTessellatedSolid(name, polygons, reg):
     meshtess = []
 
     for j in range(len(polygons) - 1):
-
         p1 = polygons[j]
         p2 = polygons[j + 1]
 

@@ -1,26 +1,27 @@
 from ... import config as _config
 
-from   .SolidBase import SolidBase as _SolidBase
+from .SolidBase import SolidBase as _SolidBase
 
-if _config.meshing == _config.meshingType.pycsg :
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
     from pyg4ometry.pycgal.geom import Polygon as _Polygon
 
 import sys as _sys
-from   copy import deepcopy as _dc
+from copy import deepcopy as _dc
 
 import numpy as _np
 import logging as _log
 
 import resource as _resource
 import time as _time
+
 
 class Sphere(_SolidBase):
     """
@@ -51,21 +52,35 @@ class Sphere(_SolidBase):
     :param nstack: number of theta elements for meshing
     :type nstack: int
     """
-    def __init__(self, name, pRmin, pRmax, pSPhi, pDPhi, pSTheta,
-                 pDTheta, registry, lunit="mm", aunit="rad",
-                 nslice=None, nstack=None, addRegistry=True):
-        super(Sphere, self).__init__(name, 'Sphere', registry)
 
-        self.pRmin   = pRmin
-        self.pRmax   = pRmax
-        self.pSPhi   = pSPhi
-        self.pDPhi   = pDPhi
+    def __init__(
+        self,
+        name,
+        pRmin,
+        pRmax,
+        pSPhi,
+        pDPhi,
+        pSTheta,
+        pDTheta,
+        registry,
+        lunit="mm",
+        aunit="rad",
+        nslice=None,
+        nstack=None,
+        addRegistry=True,
+    ):
+        super(Sphere, self).__init__(name, "Sphere", registry)
+
+        self.pRmin = pRmin
+        self.pRmax = pRmax
+        self.pSPhi = pSPhi
+        self.pDPhi = pDPhi
         self.pSTheta = pSTheta
         self.pDTheta = pDTheta
-        self.nslice  = nslice if nslice else _config.SolidDefaults.Sphere.nslice
-        self.nstack  = nstack if nstack else _config.SolidDefaults.Sphere.nslice
-        self.lunit   = lunit
-        self.aunit   = aunit
+        self.nslice = nslice if nslice else _config.SolidDefaults.Sphere.nslice
+        self.nstack = nstack if nstack else _config.SolidDefaults.Sphere.nslice
+        self.lunit = lunit
+        self.aunit = aunit
 
         self.dependents = []
 
@@ -78,25 +93,36 @@ class Sphere(_SolidBase):
             registry.addSolid(self)
 
     def checkParameters(self):
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         auval = _Units.unit(self.aunit)
         if self.evaluateParameter(self.pRmin) > self.evaluateParameter(self.pRmax):
             raise ValueError("Inner radius must be less than outer radius.")
-        if self.evaluateParameter(self.pDTheta)*auval > _np.pi:
+        if self.evaluateParameter(self.pDTheta) * auval > _np.pi:
             raise ValueError("pDTheta must be less than pi")
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
-        return "Sphere : {} {} {} {} {} {} {}".format(self.name, self.pRmin,
-                                                      self.pRmax, self.pSPhi,
-                                                      self.pDPhi, self.pSTheta,
-                                                      self.pDTheta)
+        return "Sphere : {} {} {} {} {} {} {}".format(
+            self.name,
+            self.pRmin,
+            self.pRmax,
+            self.pSPhi,
+            self.pDPhi,
+            self.pSTheta,
+            self.pDTheta,
+        )
 
     def __str__(self):
-        return "Sphere : name={} rmin={} rmax={} sphi={} dphi={} stheta={} dtheta={}".format(self.name, float(self.pRmin),
-                                                                                             float(self.pRmax), float(self.pSPhi),
-                                                                                             float(self.pDPhi), float(self.pSTheta),
-                                                                                             float(self.pDTheta))
+        return "Sphere : name={} rmin={} rmax={} sphi={} dphi={} stheta={} dtheta={}".format(
+            self.name,
+            float(self.pRmin),
+            float(self.pRmax),
+            float(self.pSPhi),
+            float(self.pDPhi),
+            float(self.pSTheta),
+            float(self.pDTheta),
+        )
 
     def mesh(self):
         """
@@ -108,42 +134,42 @@ class Sphere(_SolidBase):
         tBefore = _time.process_time()
 
         _log.info("sphere.antlr>")
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
 
-        pRmin   = self.evaluateParameter(self.pRmin)*luval
-        pRmax   = self.evaluateParameter(self.pRmax)*luval
-        pSPhi   = self.evaluateParameter(self.pSPhi)*auval
-        pDPhi   = self.evaluateParameter(self.pDPhi)*auval
-        pSTheta = self.evaluateParameter(self.pSTheta)*auval
-        pDTheta = self.evaluateParameter(self.pDTheta)*auval
+        pRmin = self.evaluateParameter(self.pRmin) * luval
+        pRmax = self.evaluateParameter(self.pRmax) * luval
+        pSPhi = self.evaluateParameter(self.pSPhi) * auval
+        pDPhi = self.evaluateParameter(self.pDPhi) * auval
+        pSTheta = self.evaluateParameter(self.pSTheta) * auval
+        pDTheta = self.evaluateParameter(self.pDTheta) * auval
 
-        _log.info('Sphere.pycsgmesh>')
+        _log.info("Sphere.pycsgmesh>")
 
         polygons = []
 
         # changed from d - s/ st
 
-        dPhi   = (pDPhi)/self.nslice
-        dTheta = (pDTheta)/self.nstack
+        dPhi = (pDPhi) / self.nslice
+        dTheta = (pDTheta) / self.nstack
 
-        for i in range(0,self.nslice,1) :
-
+        for i in range(0, self.nslice, 1):
             i1 = i
-            i2 = i+1
+            i2 = i + 1
 
-            p1 = dPhi*i1 + pSPhi
-            p2 = dPhi*i2 + pSPhi
+            p1 = dPhi * i1 + pSPhi
+            p2 = dPhi * i2 + pSPhi
 
-            for j in range(0,self.nstack,1) :
+            for j in range(0, self.nstack, 1):
                 j1 = j
-                j2 = j+1
+                j2 = j + 1
 
                 t1 = dTheta * j1 + pSTheta
                 t2 = dTheta * j2 + pSTheta
 
-                if pRmin != 0 :
+                if pRmin != 0:
                     xRMinP1T1 = pRmin * _np.sin(t1) * _np.cos(p1)
                     yRMinP1T1 = pRmin * _np.sin(t1) * _np.sin(p1)
                     zRMinP1T1 = pRmin * _np.cos(t1)
@@ -159,7 +185,7 @@ class Sphere(_SolidBase):
                     xRMinP2T2 = pRmin * _np.sin(t2) * _np.cos(p2)
                     yRMinP2T2 = pRmin * _np.sin(t2) * _np.sin(p2)
                     zRMinP2T2 = pRmin * _np.cos(t2)
-                else :
+                else:
                     xRMinP1T1 = 0.0
                     yRMinP1T1 = 0.0
                     zRMinP1T1 = 0.0
@@ -195,21 +221,21 @@ class Sphere(_SolidBase):
                 ###########################
                 # Curved sphere faces
                 ###########################
-                if t1 == 0:                 # if north pole (triangles)
+                if t1 == 0:  # if north pole (triangles)
                     vCurv = []
                     vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1]))
                     vCurv.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
                     vCurv.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
                     # print "outer  north pole",len(polygons)
                     polygons.append(_Polygon(vCurv))
-                elif t2 == _np.pi :   # if south pole (triangleS)
+                elif t2 == _np.pi:  # if south pole (triangleS)
                     vCurv = []
                     vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1]))
                     vCurv.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
                     vCurv.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1]))
                     # print "outer south pole",len(polygons)
                     polygons.append(_Polygon(vCurv))
-                else :                      # normal curved quad
+                else:  # normal curved quad
                     vCurv = []
                     vCurv.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1]))
                     vCurv.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
@@ -241,10 +267,10 @@ class Sphere(_SolidBase):
                         vCurv.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1]))
                         # print "inner quad ", len(polygons)
                         polygons.append(_Polygon(vCurv))
-                if pDPhi != 2*_np.pi :
-                    if i == 0 and pSPhi != 0 :
+                if pDPhi != 2 * _np.pi:
+                    if i == 0 and pSPhi != 0:
                         vEnd = []
-                        if pRmin != 0 :
+                        if pRmin != 0:
                             vEnd.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1]))
                         vEnd.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2]))
                         vEnd.append(_Vertex([xRMaxP1T2, yRMaxP1T2, zRMaxP1T2]))
@@ -252,9 +278,9 @@ class Sphere(_SolidBase):
                         # print "theta low end ", len(polygons)
                         polygons.append(_Polygon(vEnd))
 
-                    if i == self.nslice-1 and pSPhi + pDPhi != 2*_np.pi:
+                    if i == self.nslice - 1 and pSPhi + pDPhi != 2 * _np.pi:
                         vEnd = []
-                        if pRmin != 0 :
+                        if pRmin != 0:
                             vEnd.append(_Vertex([xRMinP2T1, yRMinP2T1, zRMinP2T1]))
                         vEnd.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1]))
                         vEnd.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
@@ -265,7 +291,7 @@ class Sphere(_SolidBase):
                 if pDTheta != _np.pi:
                     if j == 0 and pSTheta != 0:
                         vEnd = []
-                        if pRmin != 0 :
+                        if pRmin != 0:
                             vEnd.append(_Vertex([xRMinP1T1, yRMinP1T1, zRMinP1T1]))
                         vEnd.append(_Vertex([xRMaxP1T1, yRMaxP1T1, zRMaxP1T1]))
                         vEnd.append(_Vertex([xRMaxP2T1, yRMaxP2T1, zRMaxP2T1]))
@@ -273,9 +299,9 @@ class Sphere(_SolidBase):
                         # print "theta low end ", len(polygons)
                         polygons.append(_Polygon(vEnd))
 
-                    if j == self.nstack-1 and pSTheta + pDTheta != _np.pi :
+                    if j == self.nstack - 1 and pSTheta + pDTheta != _np.pi:
                         vEnd = []
-                        if pRmin != 0 :
+                        if pRmin != 0:
                             vEnd.append(_Vertex([xRMinP1T2, yRMinP1T2, zRMinP1T2]))
                         vEnd.append(_Vertex([xRMinP2T2, yRMinP2T2, zRMinP2T2]))
                         vEnd.append(_Vertex([xRMaxP2T2, yRMaxP2T2, zRMaxP2T2]))
@@ -287,5 +313,13 @@ class Sphere(_SolidBase):
         mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         mesh = _CSG.fromPolygons(polygons)
         mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
-        _log.info('Sphere.pycsgmesh> profile {} {} {} {} {}'.format(self.nstack, self.nslice, mesh.getNumberPolys(),mAfter-mBefore,tAfter-tBefore))
+        _log.info(
+            "Sphere.pycsgmesh> profile {} {} {} {} {}".format(
+                self.nstack,
+                self.nslice,
+                mesh.getNumberPolys(),
+                mAfter - mBefore,
+                tAfter - tBefore,
+            )
+        )
         return mesh

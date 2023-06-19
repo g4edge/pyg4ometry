@@ -212,9 +212,9 @@ So the box example above can be rewritten using constants
    .. code-block:: python
       :linenos:
 
-      b1   = pyg4ometry.geant4.solid.Box("b1",bx,by,bz,reg)
-      b1.pX = 20              # do not do this
-      b1.pX.setExpression(20) # rather do this
+      b1 = pyg4ometry.geant4.solid.Box("b1", bx, by, bz, reg)
+      b1.pX = 20  # do not do this
+      b1.pX.setExpression(20)  # rather do this
 
 Solids
 ------
@@ -386,6 +386,7 @@ is shown here.
    :linenos:
 
    import pyg4ometry
+
    r = pyg4ometry.geant4.Registry()
    vacuum = _g4.MaterialPredefined("G4_Galactic")
    water = _g4.MaterialPredefined("G4_WATER")
@@ -394,12 +395,7 @@ is shown here.
    worldLV = pyg4ometry.geant4.LogicalVolume(worldSolid, vacuum, "world_lv", reg)
    boxLV = pyg4ometry.geant4.LogicalVolume(boxSolid, water, "box_lv", reg)
 
-   pyg4ometry.geant4.PhysicalVolume([0,0,0],
-                                    [0,0,0],
-				    boxLV,
-				    "box_pv",
-				    worldLV,
-				    reg)
+   pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], boxLV, "box_pv", worldLV, reg)
 
 This creates a box of water inside a box of vacuum. The box of water is 10 x 20 x 50 mm long
 (note mm are the default length units), and it is placed with no offset and no rotation (i.e.
@@ -409,12 +405,10 @@ at the centre) of the world volume. Alternatively:
    :linenos:
 
    import numpy as np
-   pyg4ometry.geant4.PhysicalVolume([0,np.pi/3.0,0],
-                                    [0,0,0],
-				    boxLV,
-				    "box_pv",
-				    worldLV,
-				    reg)
+
+   pyg4ometry.geant4.PhysicalVolume(
+       [0, np.pi / 3.0, 0], [0, 0, 0], boxLV, "box_pv", worldLV, reg
+   )
 
 In this case, the box is placed with no offset but with a rotation of :math:`\pi/3` radians
 about the y axis of the world box.
@@ -441,8 +435,22 @@ the surface between either
 .. code-block:: python
    :linenos:
 
-   opa = _g4.solid.OpticalSurface("AirSurface", finish="polished", model="glisur", surf_type="dielectric_dielectric", value="1", registry=reg)
-   opw = _g4.solid.OpticalSurface("WaterSurface", finish="ground", model="unified", surf_type="dielectric_dielectric", value="0", registry=reg)
+   opa = _g4.solid.OpticalSurface(
+       "AirSurface",
+       finish="polished",
+       model="glisur",
+       surf_type="dielectric_dielectric",
+       value="1",
+       registry=reg,
+   )
+   opw = _g4.solid.OpticalSurface(
+       "WaterSurface",
+       finish="ground",
+       model="unified",
+       surf_type="dielectric_dielectric",
+       value="0",
+       registry=reg,
+   )
 
    _g4.SkinSurface("AirSurface", air_lv, opa, reg)
    _g4.BorderSurface("WaterSurface", water_phys, world_phys, opw, reg)
@@ -470,9 +478,9 @@ Units can be specified by setting the parameters ``eunit`` for the energy vector
    :linenos:
 
    scint = _g4.Material(...)
-   scint.addConstProperty('SCINTILLATIONTIMECONSTANT1', 2.5, vunit='ns')
-   scint.addConstProperty('SCINTILLATIONYIELD', 8000, vunit='/MeV')
-   scint.addVecProperty('RINDEX', [1, 10], [1.3, 1.05])
+   scint.addConstProperty("SCINTILLATIONTIMECONSTANT1", 2.5, vunit="ns")
+   scint.addConstProperty("SCINTILLATIONYIELD", 8000, vunit="/MeV")
+   scint.addVecProperty("RINDEX", [1, 10], [1.3, 1.05])
 
 
 FLUKA Geometry Creation

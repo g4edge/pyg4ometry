@@ -2,12 +2,12 @@ from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
 
-if _config.meshing == _config.meshingType.pycsg :
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
@@ -16,6 +16,7 @@ elif _config.meshing == _config.meshingType.cgal_sm :
 import logging as _log
 
 import numpy as _np
+
 
 class Ellipsoid(_SolidBase):
 
@@ -44,49 +45,76 @@ class Ellipsoid(_SolidBase):
     :type nstack:       int
     """
 
-
-    def __init__(self, name, pxSemiAxis, pySemiAxis, pzSemiAxis,
-                 pzBottomCut, pzTopCut, registry, lunit = "mm",
-                 nslice=None, nstack=None, addRegistry=True):
-        super(Ellipsoid, self).__init__(name, 'Ellipsoid', registry)
-        self.pxSemiAxis  = pxSemiAxis
-        self.pySemiAxis  = pySemiAxis
-        self.pzSemiAxis  = pzSemiAxis
+    def __init__(
+        self,
+        name,
+        pxSemiAxis,
+        pySemiAxis,
+        pzSemiAxis,
+        pzBottomCut,
+        pzTopCut,
+        registry,
+        lunit="mm",
+        nslice=None,
+        nstack=None,
+        addRegistry=True,
+    ):
+        super(Ellipsoid, self).__init__(name, "Ellipsoid", registry)
+        self.pxSemiAxis = pxSemiAxis
+        self.pySemiAxis = pySemiAxis
+        self.pzSemiAxis = pzSemiAxis
         self.pzBottomCut = pzBottomCut
-        self.pzTopCut    = pzTopCut
-        self.lunit       = lunit
-        self.nslice      = nslice if nslice else _config.SolidDefaults.Ellipsoid.nslice
-        self.nstack      = nstack if nstack else _config.SolidDefaults.Ellipsoid.nstack
+        self.pzTopCut = pzTopCut
+        self.lunit = lunit
+        self.nslice = nslice if nslice else _config.SolidDefaults.Ellipsoid.nslice
+        self.nstack = nstack if nstack else _config.SolidDefaults.Ellipsoid.nstack
 
         self.dependents = []
 
-        self.varNames = ["pxSemiAxis", "pySemiAxis", "pzSemiAxis", "pzBottomCut", "pzTopCut"]
+        self.varNames = [
+            "pxSemiAxis",
+            "pySemiAxis",
+            "pzSemiAxis",
+            "pzBottomCut",
+            "pzTopCut",
+        ]
         self.varUnits = ["lunit", "lunit", "lunit", "lunit", "lunit"]
 
         if addRegistry:
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Ellipsoid : {} {} {} {} {} {}".format(self.name, self.pxSemiAxis,
-                                                      self.pySemiAxis, self.pzSemiAxis,
-                                                      self.pzBottomCut, self.pzTopCut)
+        return "Ellipsoid : {} {} {} {} {} {}".format(
+            self.name,
+            self.pxSemiAxis,
+            self.pySemiAxis,
+            self.pzSemiAxis,
+            self.pzBottomCut,
+            self.pzTopCut,
+        )
 
     def __str__(self):
-        return "Ellipsoid : name={} xSemiAxis={} ySemiAxis={} zSemiAxis={} zBottomCut={} zTopCut={}".format(self.name, float(self.pxSemiAxis),
-                                                                                                            float(self.pySemiAxis), float(self.pzSemiAxis),
-                                                                                                            float(self.pzBottomCut), float(self.pzTopCut))
+        return "Ellipsoid : name={} xSemiAxis={} ySemiAxis={} zSemiAxis={} zBottomCut={} zTopCut={}".format(
+            self.name,
+            float(self.pxSemiAxis),
+            float(self.pySemiAxis),
+            float(self.pzSemiAxis),
+            float(self.pzBottomCut),
+            float(self.pzTopCut),
+        )
 
     def mesh(self):
         _log.info("ellipsoid.antlr>")
 
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         luval = _Units.unit(self.lunit)
 
-        pxSemiAxis  = self.evaluateParameter(self.pxSemiAxis) * luval
-        pySemiAxis  = self.evaluateParameter(self.pySemiAxis) * luval
-        pzSemiAxis  = self.evaluateParameter(self.pzSemiAxis) * luval
+        pxSemiAxis = self.evaluateParameter(self.pxSemiAxis) * luval
+        pySemiAxis = self.evaluateParameter(self.pySemiAxis) * luval
+        pzSemiAxis = self.evaluateParameter(self.pzSemiAxis) * luval
         pzBottomCut = float(self.pzBottomCut) * luval
-        pzTopCut    = float(self.pzTopCut)    * luval
+        pzTopCut = float(self.pzTopCut) * luval
 
         _log.info("ellipsoid.pycsgmesh>")
 
@@ -99,28 +127,27 @@ class Ellipsoid(_SolidBase):
         if pzBottomCut < -pzSemiAxis:
             pzBottomCut = -pzSemiAxis
 
-        thetaTop =          _np.arccos(pzTopCut   / pzSemiAxis)
-        thetaBot = _np.pi - _np.arccos(pzBottomCut/-pzSemiAxis)
+        thetaTop = _np.arccos(pzTopCut / pzSemiAxis)
+        thetaBot = _np.pi - _np.arccos(pzBottomCut / -pzSemiAxis)
 
         dTheta = (thetaBot - thetaTop) / stacks
         dPhi = 2 * _np.pi / self.nslice
 
         polygons = []
 
-        for i in range(0,slices):
+        for i in range(0, slices):
             i1 = i
             i2 = i + 1
 
-            p1 = dPhi*i1
-            p2 = dPhi*i2
+            p1 = dPhi * i1
+            p2 = dPhi * i2
 
-            for j in range(0,stacks) :
-
+            for j in range(0, stacks):
                 j1 = j
                 j2 = j + 1
 
-                t1 = dTheta*j1 + thetaTop
-                t2 = dTheta*j2 + thetaTop
+                t1 = dTheta * j1 + thetaTop
+                t2 = dTheta * j2 + thetaTop
 
                 x11 = pxSemiAxis * _np.sin(t1) * _np.cos(p1)
                 y11 = pySemiAxis * _np.sin(t1) * _np.sin(p1)
@@ -139,21 +166,21 @@ class Ellipsoid(_SolidBase):
                 z22 = pzSemiAxis * _np.cos(t2)
 
                 # Curved edges
-                if thetaTop == 0 and j == 0 :
+                if thetaTop == 0 and j == 0:
                     vCurv = []
                     vCurv.append(_Vertex([x11, y11, z11]))
                     vCurv.append(_Vertex([x22, y22, z22]))
                     vCurv.append(_Vertex([x21, y21, z21]))
                     vCurv.reverse()
                     polygons.append(_Polygon(vCurv))
-                elif thetaBot == _np.pi and j == stacks-1:
+                elif thetaBot == _np.pi and j == stacks - 1:
                     vCurv = []
                     vCurv.append(_Vertex([x11, y11, z11]))
                     vCurv.append(_Vertex([x12, y12, z12]))
                     vCurv.append(_Vertex([x21, y21, z21]))
                     vCurv.reverse()
                     polygons.append(_Polygon(vCurv))
-                else :
+                else:
                     vCurv = []
                     vCurv.append(_Vertex([x11, y11, z11]))
                     vCurv.append(_Vertex([x12, y12, z12]))
@@ -170,7 +197,7 @@ class Ellipsoid(_SolidBase):
                     vEnd.append(_Vertex([x12, y12, pzTopCut]))
                     polygons.append(_Polygon(vEnd))
 
-                elif thetaBot < _np.pi and j == stacks-1:
+                elif thetaBot < _np.pi and j == stacks - 1:
                     vEnd = []
                     vEnd.append(_Vertex([0, 0, pzBottomCut]))
                     vEnd.append(_Vertex([x22, y22, pzBottomCut]))

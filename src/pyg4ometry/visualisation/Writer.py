@@ -1,6 +1,7 @@
 import vtk as _vtk
 import itertools as _itertools
 
+
 def writeVtkPolyDataAsSTLFile(fileName, meshes):
     """
     meshes : list of triFilters
@@ -9,7 +10,7 @@ def writeVtkPolyDataAsSTLFile(fileName, meshes):
     appendFilter = _vtk.vtkAppendPolyData()
 
     for m in meshes:
-        if m :
+        if m:
             appendFilter.AddInputData(m)
 
     # append mesh to filter

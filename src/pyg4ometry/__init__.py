@@ -14,7 +14,8 @@ from . import gdml
 from . import io
 from . import geant4
 from . import pycgal
-try :
+
+try:
     from . import pyoce
 except ImportError:
     print("Failed to import open cascade")
