@@ -107,9 +107,7 @@ class Reader:
                 self.material = _Material.nist(material)
             else:
                 msg = f"Unsupported type for material: {type(material)}"
-                raise SystemExit(
-                    msg
-                )
+                raise SystemExit(msg)
 
     def convertFlat(
         self,

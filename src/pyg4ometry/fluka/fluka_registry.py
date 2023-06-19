@@ -77,9 +77,7 @@ class FlukaRegistry:
     def addLattice(self, lattice):
         if lattice.cellRegion.name in self.regionDict:
             msg = "LATTICE cell already been defined as a region in regionDict"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         self.latticeDict[lattice.cellRegion.name] = lattice
 
     def getBody(self, name):
@@ -298,9 +296,7 @@ class RotoTranslationStore(_MutableMapping):
                 recur.transformationIndex = next(self._counter)
             elif rtrans.transformationIndex in self.allTransformationIndices():
                 msg = "transformation index matches another ROT-DEFI with a different name.  Change the transformationIndex and try again."
-                raise KeyError(
-                    msg
-                )
+                raise KeyError(msg)
             elif rtrans.transformationIndex not in self.allTransformationIndices():
                 pass  #
             self[name] = recur

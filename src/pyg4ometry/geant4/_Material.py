@@ -414,9 +414,7 @@ class Material(MaterialBase):
                 self.type = "simple"
             else:
                 msg = f"Material : '{self.name}' Cannot use both atomic number/weight and number_of_components."
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
         else:
             if kwargs.get("tolerateZeroDensity", False):
                 # this behaviour is to match Geant4's tolerance of 0 density which if forbids
@@ -430,9 +428,7 @@ class Material(MaterialBase):
                 self.type = "simple"
             else:
                 msg = f"Material : '{self.name}' Density must be specified for custom materials."
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
 
         # After the material type is determined, set the temperature and pressure if provided
         if "temperature" in kwargs:
@@ -464,15 +460,11 @@ class Material(MaterialBase):
 
         if not isinstance(element_obj, Element):
             msg = f"Can only add Element instanes, recieved type {type(element)}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if not self.number_of_components:
             msg = "This material is not specified as composite, cannot add elements."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.components.append((element_obj, massfraction, "massfraction"))
 
@@ -489,15 +481,11 @@ class Material(MaterialBase):
 
         if not isinstance(element_obj, Element):
             msg = f"Can only add Element instanes, recieved type {type(element)}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if not self.number_of_components:
             msg = "This material is not specified as composite, cannot add elements."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.components.append((element_obj, natoms, "natoms"))
 
@@ -514,24 +502,18 @@ class Material(MaterialBase):
 
         if not isinstance(material_obj, Material):
             msg = f"Can only add Material instances, recieved type {type(material_obj)}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if not self.number_of_components:
             msg = "This material is not specified as composite, cannot add materials."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.components.append((material_obj, fractionmass, "massfraction"))
 
     def set_pressure(self, value, unit="pascal"):
         if self.type in ["predefined", "arbitrary"]:
             msg = "Cannot set pressure for predefined or aribtrary materials."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self._state_variables["pressure"] = value
         self._state_variables["pressure_unit"] = unit
@@ -539,9 +521,7 @@ class Material(MaterialBase):
     def set_temperature(self, value, unit="K"):
         if self.type in ["nist", "arbitrary"]:
             msg = "Cannot set temperature for predefined or aribtrary materials."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         self._state_variables["temperature"] = value
         self._state_variables["temperature_unit"] = unit
 
@@ -563,9 +543,7 @@ class Material(MaterialBase):
         """
         if self.type == "nist" or self.type == "arbitrary":
             msg = "Properties cannot be set of predefined or arbitrary materials"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         self.properties[name] = matrix
 
     def addVecProperty(self, name, e, v, eunit="eV", vunit=""):
@@ -647,9 +625,7 @@ class Element(MaterialBase):
             self.type = "element-simple"
         else:
             msg = "Cannot use both atomic number/weight and number_of_components."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self._addToRegistry()
 
@@ -664,9 +640,7 @@ class Element(MaterialBase):
         isotope_obj = self.get_material_oject(isotope)
         if not isinstance(isotope, Isotope):
             msg = f"Can only add Isotope instanes, recieved type {type(isotope)}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.components.append((isotope_obj, abundance, "abundance"))
 

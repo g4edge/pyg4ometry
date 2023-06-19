@@ -195,14 +195,10 @@ def _parse_preprocessor_include(directory, directive, split_line, line_stack):
                 line_stack.extend(reversed(f.readlines()))  # read in # reverse
         except OSError:
             msg = f"Included preprocessor file {filename} not found."
-            raise FLUKAError(
-                msg
-            )
+            raise FLUKAError(msg)
     else:
         msg = f"Unknown include preprocessor directive: {split_line[1]}"
-        raise ValueError(
-            msg
-        )
+        raise ValueError(msg)
 
 
 class _Calc(ast.NodeVisitor):
