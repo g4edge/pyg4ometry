@@ -59,8 +59,8 @@ def fluka2Geant4(
 
     Developer options (to kwargs) withLengthSafety: Whether or not to apply automatic length safety.
 
-    minimiseSolids: Whether or not to minimise the boxes and tubes of Geant4 used to represent infinite solids in FLUKA.
-
+    minimiseSolids: Whether or not to minimise the boxes and tubes of Geant4
+    used to represent infinite solids in FLUKA.
     """
 
     kwargs.setdefault("minimiseSolids", True)
@@ -165,14 +165,13 @@ def _makeWorldVolume(dimensions, material, g4registry):
     """Make a world solid and logical volume with the given dimensions,
     material, and size, and add it to the geant4 Registry provided
 
-    :param dimensions: list of 3 elements providing the dimensions in \
-    [x, y, z] of the world box.
+    :param dimensions: list of 3 elements providing the dimensions in [x, y, z]
+    of the world box.
     :type dimension: list
     :param material: The name of the material to be used for the world volume.
     :type material: str
-    :param g4registry: The geant4 Registry instance this world solid \
-    and logical volume is to be added to.
-
+    :param g4registry: The geant4 Registry instance this world solid and
+    logical volume is to be added to.
     """
     worldMaterial = _g4.MaterialPredefined(material)
 
@@ -191,7 +190,6 @@ def _makeLengthSafetyRegistry(flukareg, regions):
     with length safety applied should be built.
     :type flukareg: FlukaRegistry
     :param regions: The names of the regions that are to be converted.
-
     """
     # Why do I pass regions in as an argument?  Why don't I just
     # filter the FlukaRegistry instance early on and then just carry
@@ -323,7 +321,6 @@ def _getMaximalOfTwoAABBs(aabb1, aabb2):
     :type aabb1: AABB
     :param aabb2: The second aabb
     :type aabb2: AABB
-
     """
     return aabb1.union(aabb2)
 
@@ -332,10 +329,10 @@ def _filterBlackHoleRegions(flukareg, regions):
     """Returns a new FlukaRegistry instance with all regions with
     BLKCHOLE material removed.
 
-    :param flukareg: The FlukaRegistry instance from which the new \
+    :param flukareg: The FlukaRegistry instance from which the new
     FlukaRegistry instance sans BLCKHOLE regions is built.
     :type flukareg: FlukaRegistry
-    :param regions: The names of the regions to be copied to the new \
+    :param regions: The names of the regions to be copied to the new
     instance.
     :type regions: list
 
@@ -430,7 +427,6 @@ def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """Loop over the regions looking for quadrics and for any quadrics we
     find, make sure that that whregion has a defined region aabb in
     quadricRegionAABBs.
-
     """
     for regionName, region in flukareg.regionDict.items():
         regionBodies = region.bodies()
@@ -452,7 +448,6 @@ def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
 def _getWorldDimensions(worldDimensions):
     """Get world dimensinos and if None then return the global constant
     WORLD_DIMENSIONS.
-
     """
     if worldDimensions is None:
         return WORLD_DIMENSIONS
@@ -476,7 +471,8 @@ def _getSelectedRegions(flukareg, regions, omitRegions):
 def _filterHalfSpaces(flukareg, regionZoneAABBs):
     """Filter redundant half spaces from the regions of the
     FlukaRegistry instance.  AABBs is a dictionary of region names
-    to region aabbs."""
+    to region aabbs.
+    """
     fout = _fluka.FlukaRegistry()
     logger.debug("Filtering half spaces")
 
@@ -571,7 +567,8 @@ def _makeUniqueQuadricRegions(flukareg, quadricRegionAABBs):
 def _makeQuadricRegionBodyAABBMap(flukareg, quadricRegionAABBs):
     """Given a map of regions featuring quadrics to their aabbs, we
     loop over the bodies of the region and set their aabbs equal to
-    the region aabb."""
+    the region aabb.
+    """
     if quadricRegionAABBs is None:
         return {}
     if quadricRegionAABBs is not None:
@@ -613,7 +610,8 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
 
 def _regionZoneAABBsToRegionAABBs(regionZoneAABBs):
     """Given a map of region names to zone aabbs, return a map of
-    region names to a total region aabb."""
+    region names to a total region aabb.
+    """
     regionAABBs = {}
     for name, zoneAABBs in regionZoneAABBs.items():
         regionAABB = _reduce(_getMaximalOfTwoAABBs, zoneAABBs, zoneAABBs[0])
