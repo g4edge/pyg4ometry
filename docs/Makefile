@@ -3,7 +3,7 @@ SOURCEDIR = source
 BUILDDIR = build
 
 all:
-	sphinx-build -M html "$(SOURCEDIR)" "$(BUILDDIR)" --keep-going
+	sphinx-build -M html "$(SOURCEDIR)" "$(BUILDDIR)" -W --keep-going
 
 clean:
 	rm -rf "$(BUILDDIR)"
