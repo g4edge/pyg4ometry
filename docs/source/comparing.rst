@@ -61,7 +61,7 @@ The available tests are described below.
 |                          | translations in each placement.                |
 +--------------------------+------------------------------------------------+
 | scale                    | Compare the 'scale' for a physical volume that |
-|                          | can be used for a relfection. No scale is      |
+|                          | can be used for a reflection. No scale is      |
 |                          | equal to unit scale [1,1,1].                   |
 +--------------------------+------------------------------------------------+
 | copyNumber               | Compare the copy number for a physical volume. |
