@@ -12,9 +12,7 @@ class SkinSurface(SurfaceBase):
         :param surface_property: the referenced :code:`pyg4ometry.solid.OpticalSurface`
         :type surface_property: str,OpticalSurface
         """
-        super().__init__(
-            name, "skinsurface", surface_property, registry, addRegistry
-        )
+        super().__init__(name, "skinsurface", surface_property, registry, addRegistry)
 
         self.volumeref = self._chkType(volumeref, LogicalVolume, "volumeref")
 

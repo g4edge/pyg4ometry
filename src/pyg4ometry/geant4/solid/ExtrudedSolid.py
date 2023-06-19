@@ -100,9 +100,7 @@ class ExtrudedSolid(_SolidBase):
             return slices
         else:
             msg = f"ExtrudedSolid.evaluateParameterWithUnits : unknown variable: {varName}"
-            raise RuntimeError(
-                msg
-            )
+            raise RuntimeError(msg)
 
     def mesh(self):
         _log.info("xtru.pycsgmesh> antlr")

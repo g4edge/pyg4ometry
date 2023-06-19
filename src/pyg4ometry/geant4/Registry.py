@@ -595,9 +595,7 @@ class Registry:
             and isinstance(volume, _AssemblyVolume)
         ):
             msg = "Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume"
-            raise RuntimeError(
-                msg
-            )
+            raise RuntimeError(msg)
 
         if incrementRenameDict is None:
             incrementRenameDict = {}

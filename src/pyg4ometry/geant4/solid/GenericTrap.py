@@ -125,9 +125,7 @@ class GenericTrap(_SolidBase):
             return 0
             print("vertices: ", vertices)
             msg = f"GenericTrap: '{self.name}' Zero area quadrilateral not allowed."
-            raise ValueError(
-                msg
-            )  # TODO TODO
+            raise ValueError(msg)  # TODO TODO
         return signed_area
 
     def get_vertex(self, index):

@@ -16,9 +16,7 @@ class BorderSurface(SurfaceBase):
         :param surface_property: the referenced :class:`pyg4ometry.solid.OpticalSurface`
         :type surface_property: str,OpticalSurface
         """
-        super().__init__(
-            name, "bordersurface", surface_property, registry, addRegistry
-        )
+        super().__init__(name, "bordersurface", surface_property, registry, addRegistry)
 
         self.physref1 = self._chkType(physref1, PhysicalVolume, "physref1")
         self.physref2 = self._chkType(physref2, PhysicalVolume, "physref2")

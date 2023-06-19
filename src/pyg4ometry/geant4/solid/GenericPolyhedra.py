@@ -85,9 +85,7 @@ class GenericPolyhedra(_SolidBase):
     def checkParameters(self):
         if len(self.pR) < 3:
             msg = "Generic Polyhedra must have at least 3 R-Z points defined"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
     def mesh(self):
         _log.info("genericpolyhedra.antlr>")

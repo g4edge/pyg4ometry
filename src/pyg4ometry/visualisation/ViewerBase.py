@@ -264,7 +264,6 @@ class ViewerBase:
 
         """
 
-
     def addMaterialVisOption(self, materialName, visOption):
         """
         Append a visualisation option instance to the dictionary of materials.

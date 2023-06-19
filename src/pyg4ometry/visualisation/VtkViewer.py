@@ -92,10 +92,12 @@ class VtkViewer:
         # interpolation for vertex shading
         interps = ("none", "flat", "gouraud", "phong")
         if interpolation not in interps:
-            msg = "Unrecognised interpolation option {}. Possible options are :{}".format(interpolation, ", ".join(interps))
-            raise ValueError(
-                msg
+            msg = (
+                "Unrecognised interpolation option {}. Possible options are :{}".format(
+                    interpolation, ", ".join(interps)
+                )
             )
+            raise ValueError(msg)
         self.interpolation = interpolation
 
     def addAxes(self, length=20.0, origin=(0, 0, 0)):

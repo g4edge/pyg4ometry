@@ -52,9 +52,7 @@ class PhysicalVolume:
                 unit = position[3]
             else:
                 msg = "Position array must be in the format [px, py, pz] or [px, py, pz, unit]"
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
 
             position = _Defines.Position(
                 name + "_pos",
@@ -72,9 +70,7 @@ class PhysicalVolume:
                 unit = rotation[3]
             else:
                 msg = "Rotation array must be in the format[rx, ry, rz] or [rx, ry, rz, unit]"
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
 
             rotation = _Defines.Rotation(
                 name + "_rot",

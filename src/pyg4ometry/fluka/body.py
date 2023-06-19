@@ -114,9 +114,7 @@ class BodyMixin(vis.ViewableMixin):
             return INFINITY
         else:
             # This should be used as a FULL LENGTH.
-            return (
-                np.sqrt(aabb.size.x**2 + aabb.size.y**2 + aabb.size.z**2) * 1.1
-            )
+            return np.sqrt(aabb.size.x**2 + aabb.size.y**2 + aabb.size.z**2) * 1.1
 
     def _aabb_to_offset(self, aabb):
         if aabb is None:
@@ -270,9 +268,7 @@ class RPP(BodyMixin):
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
             msg = "Each of the xmin, ymin, zmin must be smaller than the corresponding xmax, ymax, zmax."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if addRegistry and flukaregistry:
             self.addToRegistry(flukaregistry)
@@ -930,9 +926,7 @@ class ELL(BodyMixin):
         semimajor = 0.5 * self.transform.netExpansion() * self.length
         if semimajor <= self._linearEccentricity():
             msg = "Distance from foci to centre must be smaller than the semi-major axis length."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.addToRegistry(flukaregistry)
 
@@ -1211,15 +1205,11 @@ class ARB(BodyMixin):
         # Must always provide 8 vertices.
         if len(self.vertices) != 8:
             msg = "8 vertices must always be supplied, even if not all are used."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         # Must always provide 6 facenumbers.
         if len(self.facenumbers) != 6:
             msg = "6 face numbers must always be supplied, even if not all are used."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self._nfaces = 6
         # Get the indices of the facenumbers equal to zero and count
@@ -1232,17 +1222,13 @@ class ARB(BodyMixin):
         # Can't have less than 4 faces
         if self._nfaces < 4:
             msg = "Not enough faces provided in arg facenumbers.  Must be 4, 5 or 6."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         # Null-faces must be put as 0.0 in the facenumbers and they
         # must be at the end (i.e. 5 and 6 or 6).
         if zeros and (zeros != [4, 5] or zeros != [5]):
             msg = "Facenumbers equal to zero to must be at the end of the list."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self.addToRegistry(flukaregistry)
 
@@ -2259,9 +2245,7 @@ class QUA(BodyMixin):
 
         if not verts:
             msg = f"Failed to generate a mesh for QUA {self.name} with bounds {lower} {upper}."
-            raise pyg4ometry.exceptions.NullMeshError(
-                msg
-            )
+            raise pyg4ometry.exceptions.NullMeshError(msg)
 
         polygons = []
         for f in facet:

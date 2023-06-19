@@ -278,9 +278,7 @@ class Compound(_MatProp):
 
         if len(set(fractionTypes)) > 2:
             msg = f"Mixed mass, volume, and fraction types are not supported for material={compoundName}"
-            raise TypeError(
-                msg
-            )
+            raise TypeError(msg)
 
         # Map the material names to material/compound instances via the FlukaRegistry.
         fractions = [(flukareg.getMaterial(name), f) for name, f in fractions]
