@@ -36,6 +36,7 @@ classifiers = [
 ]
 requires-python = ">=3.6.8"
 dependencies = [
+    "importlib-resources",
     "antlr4-python3-runtime==4.9",
     "configparser",
     "matplotlib",
@@ -63,6 +64,7 @@ docs = [
     "sphinx_tabs",
 ]
 test = [
+    "g4edge-testdata",
     "pre-commit",
     "pytest>=6.0",
     "pytest-cov",
