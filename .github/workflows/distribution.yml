@@ -7,7 +7,6 @@ on:
       - published
 
 jobs:
-
   make_sdist:
     name: Make SDist
     runs-on: ubuntu-latest

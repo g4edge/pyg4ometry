@@ -8,10 +8,11 @@ from .TwistedSolid import TwistedSolid as _TwistedSolid
 import numpy as _np
 import logging as _log
 
+
 class TwistedTrd(_SolidBase, _TwistedSolid):
     """
     Constructs a twisted general trapezoid.
-    
+
     :param name:            of solid
     :type name:             str
     :param twistedangle:    twist angle, must be less than 0.5*pi
@@ -33,25 +34,39 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
     :param lunit:           length unit (nm,um,mm,m,km) for solid
     :type lunit:            str
     :param aunit:           angle unit (rad,deg) for solid
-    :type aunit:            str    
+    :type aunit:            str
     :param nstack:          number of theta elements for meshing
-    :type nstack:           int       
+    :type nstack:           int
     """
-    def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
-                 pDz, registry, lunit="mm", aunit="rad",
-                 nstack=None, refine=0, addRegistry=True):
-        super(TwistedTrd, self).__init__(name, 'TwistedTrd', registry)
 
-        self.twistedAngle     = twistedangle
-        self.pDx1             = pDx1
-        self.pDx2             = pDx2
-        self.pDy1             = pDy1
-        self.pDy2             = pDy2
-        self.pDz              = pDz
-        self.lunit            = lunit
-        self.aunit            = aunit
-        self.nstack           = nstack if nstack else _config.SolidDefaults.TwistedTrap.nstack
-        self.refine           = refine
+    def __init__(
+        self,
+        name,
+        twistedangle,
+        pDx1,
+        pDx2,
+        pDy1,
+        pDy2,
+        pDz,
+        registry,
+        lunit="mm",
+        aunit="rad",
+        nstack=None,
+        refine=0,
+        addRegistry=True,
+    ):
+        super().__init__(name, "TwistedTrd", registry)
+
+        self.twistedAngle = twistedangle
+        self.pDx1 = pDx1
+        self.pDx2 = pDx2
+        self.pDy1 = pDy1
+        self.pDy2 = pDy2
+        self.pDz = pDz
+        self.lunit = lunit
+        self.aunit = aunit
+        self.nstack = nstack if nstack else _config.SolidDefaults.TwistedTrap.nstack
+        self.refine = refine
 
         self.dependents = []
 
@@ -64,31 +79,41 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "TwistedTrd : {} {} {} {} {} {} {}".format(self.name, self.twistedAngle,
-                                                          self.pDx1, self.pDx2,
-                                                          self.pDy1, self.pDy2,
-                                                          self.pDz)
+        return "TwistedTrd : {} {} {} {} {} {} {}".format(
+            self.name,
+            self.twistedAngle,
+            self.pDx1,
+            self.pDx2,
+            self.pDy1,
+            self.pDy2,
+            self.pDz,
+        )
 
     def __str__(self):
-        return "TwistedTrd : name={} twistedAngle={} dx1={} dx2={} dy1={} dy2={} dz={}".format(self.name, self.twistedAngle,
-                                                                                               self.pDx1, self.pDx2,
-                                                                                               self.pDy1, self.pDy2,
-                                                                                               self.pDz)
+        return "TwistedTrd : name={} twistedAngle={} dx1={} dx2={} dy1={} dy2={} dz={}".format(
+            self.name,
+            self.twistedAngle,
+            self.pDx1,
+            self.pDx2,
+            self.pDy1,
+            self.pDy2,
+            self.pDz,
+        )
 
     def checkParameters(self):
-        if self.evaluateParameterWithUnits('twistedAngle') > _np.pi:
-            raise ValueError("Twisted Angle must be less than 0.5*pi")
-
+        if self.evaluateParameterWithUnits("twistedAngle") > _np.pi:
+            msg = "Twisted Angle must be less than 0.5*pi"
+            raise ValueError(msg)
 
     def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, theta, nsl):
-        dz = 2*pDz/nsl
-        dtheta = theta/nsl
+        dz = 2 * pDz / nsl
+        dtheta = theta / nsl
         z = -pDz
 
         layers = []
 
-        bottom = _Layer(pl1,pl2,pl3,pl4, z)
-        bottom = bottom.Rotated(-theta*0.5) #overwrite
+        bottom = _Layer(pl1, pl2, pl3, pl4, z)
+        bottom = bottom.Rotated(-theta * 0.5)  # overwrite
         layers.append(bottom)
 
         for i in range(nsl):
@@ -97,39 +122,42 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
             pn3 = pl3 + float(i + 1) * (pu3 - pl3) / nsl
             pn4 = pl4 + float(i + 1) * (pu4 - pl4) / nsl
 
-            z += dz # increment z
+            z += dz  # increment z
             n = _Layer(pn1, pn2, pn3, pn4, z)
-            angle = -theta*0.5 + float(i + 1) * dtheta
-            nr = n.Rotated(angle) # returns rotated copy
+            angle = -theta * 0.5 + float(i + 1) * dtheta
+            nr = n.Rotated(angle)  # returns rotated copy
             layers.append(nr)
 
         return layers
 
     def mesh(self):
-        _log.info('twistedtrd.pycsgmesh> antlr')
+        _log.info("twistedtrd.pycsgmesh> antlr")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
-        twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
-        pDx1 = self.evaluateParameter(self.pDx1)/2.*luval
-        pDx2 = self.evaluateParameter(self.pDx2)/2.*luval
-        pDy1 = self.evaluateParameter(self.pDy1)/2.*luval
-        pDy2 = self.evaluateParameter(self.pDy2)/2.*luval
-        pDz = self.evaluateParameter(self.pDz)/2.*luval
+        twistedAngle = self.evaluateParameter(self.twistedAngle) * auval
+        pDx1 = self.evaluateParameter(self.pDx1) / 2.0 * luval
+        pDx2 = self.evaluateParameter(self.pDx2) / 2.0 * luval
+        pDy1 = self.evaluateParameter(self.pDy1) / 2.0 * luval
+        pDy2 = self.evaluateParameter(self.pDy2) / 2.0 * luval
+        pDz = self.evaluateParameter(self.pDz) / 2.0 * luval
 
-        _log.info('twistedtrd.mesh> mesh')
-        pl1 = _TwoVector(-pDx1, -pDy1)#, pDz]
-        pl2 = _TwoVector(pDx1, -pDy1) # pDz]
-        pl3 = _TwoVector(pDx1, pDy1) #pDz]
-        pl4 = _TwoVector(-pDx1, pDy1) # pDz]
+        _log.info("twistedtrd.mesh> mesh")
+        pl1 = _TwoVector(-pDx1, -pDy1)  # , pDz]
+        pl2 = _TwoVector(pDx1, -pDy1)  # pDz]
+        pl3 = _TwoVector(pDx1, pDy1)  # pDz]
+        pl4 = _TwoVector(-pDx1, pDy1)  # pDz]
 
-        pu1 = _TwoVector(-pDx2, -pDy2)#, pDz]
-        pu2 = _TwoVector(pDx2, -pDy2) # pDz]
-        pu3 = _TwoVector(pDx2, pDy2) #pDz]
-        pu4 = _TwoVector(-pDx2, pDy2) # pDz]pu1 = _TwoVector(-pDx2, -pDy2)
+        pu1 = _TwoVector(-pDx2, -pDy2)  # , pDz]
+        pu2 = _TwoVector(pDx2, -pDy2)  # pDz]
+        pu3 = _TwoVector(pDx2, pDy2)  # pDz]
+        pu4 = _TwoVector(-pDx2, pDy2)  # pDz]pu1 = _TwoVector(-pDx2, -pDy2)
 
-        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nstack)
+        m = self.makeLayers(
+            pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nstack
+        )
 
         return self.meshFromLayers(m, self.nstack)

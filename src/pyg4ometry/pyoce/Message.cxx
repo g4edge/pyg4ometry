@@ -1,5 +1,5 @@
-#include <pybind11/pybind11.h>
 #include <pybind11/iostream.h>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
@@ -11,6 +11,6 @@ PYBIND
 PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(Message, m) {
-  py::class_<Message_ProgressRange> (m,"Message_ProgressRange")
-    .def(py::init<>());
+  py::class_<Message_ProgressRange>(m, "Message_ProgressRange")
+      .def(py::init<>());
 }

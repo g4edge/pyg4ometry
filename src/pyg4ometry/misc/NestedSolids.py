@@ -1,7 +1,8 @@
 import pyg4ometry.geant4.solid.Box as _box
 
-def NestedBoxes(nameBase, bx,by,bz,registry, lunit="mm", dx=0,dy=0 ,dz=0,N=0) :
-    '''
+
+def NestedBoxes(nameBase, bx, by, bz, registry, lunit="mm", dx=0, dy=0, dz=0, N=0):
+    """
     Creates a list of geant4.Box starting the bx, by, bz in size and each element is dx, dy, dz smaller
     for each iteration
 
@@ -25,13 +26,13 @@ def NestedBoxes(nameBase, bx,by,bz,registry, lunit="mm", dx=0,dy=0 ,dz=0,N=0) :
     :type dz: float
     :param N: number of iterations
     :type N: int
-    '''
+    """
 
     solids = []
 
-    for i in range(0,N+1,1) :
-        nameLevel = nameBase+"_"+str(i)
-        b = _box(nameLevel,bx-i*dx,by-i*dy,bz-i*dz,registry,lunit)
+    for i in range(0, N + 1, 1):
+        nameLevel = nameBase + "_" + str(i)
+        b = _box(nameLevel, bx - i * dx, by - i * dy, bz - i * dz, registry, lunit)
         solids.append(b)
 
     return solids

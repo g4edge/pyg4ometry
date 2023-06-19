@@ -15,9 +15,9 @@ class MatrixConvertibleMixin:
     def toScaleMatrix(self):
         mtra = self.to4DMatrix()
         result = np.identity(4)
-        result[0, 0] = np.linalg.norm(mtra[:,0])
-        result[1, 1] = np.linalg.norm(mtra[:,1])
-        result[2, 2] = np.linalg.norm(mtra[:,2])
+        result[0, 0] = np.linalg.norm(mtra[:, 0])
+        result[1, 1] = np.linalg.norm(mtra[:, 1])
+        result[2, 2] = np.linalg.norm(mtra[:, 2])
         return result
 
     def toTranslationMatrix(self):
@@ -28,7 +28,7 @@ class MatrixConvertibleMixin:
 
     def toRotationMatrix(self):
         mtra = self.to4DMatrix()
-        mtra[:3, 3]  = 0.0
+        mtra[:3, 3] = 0.0
         scale = self.toScaleMatrix()
         mtra[:, 2] /= scale[2, 2]
         mtra[:, 1] /= scale[1, 1]
@@ -36,7 +36,7 @@ class MatrixConvertibleMixin:
         return mtra
 
     def netTranslation(self):
-        return self.to4DMatrix()[0:,3][:3]
+        return self.to4DMatrix()[0:, 3][:3]
 
     def netExpansion(self):
         factors = np.diagonal(self.toScaleMatrix())[:3]
@@ -44,7 +44,7 @@ class MatrixConvertibleMixin:
         return factors[0]
 
     def leftMultiplyVector(self, vector):
-        vector4d = [*vector, 1] # [x, y, z, 1]
+        vector4d = [*vector, 1]  # [x, y, z, 1]
         matrix = self.to4DMatrix()
         return Three(matrix.dot(vector4d)[0:3])
 
@@ -53,18 +53,41 @@ class MatrixConvertibleMixin:
 
     def hash(self):
         m4d = self.to4DMatrix()
-        return hash((m4d[0][0],m4d[0][1],m4d[0][2],m4d[0][3],
-                     m4d[1][0],m4d[1][1],m4d[1][2],m4d[1][3],
-                     m4d[2][0],m4d[2][1],m4d[2][2],m4d[2][3],
-                     m4d[3][0],m4d[3][1],m4d[3][2],m4d[3][3]))
+        return hash(
+            (
+                m4d[0][0],
+                m4d[0][1],
+                m4d[0][2],
+                m4d[0][3],
+                m4d[1][0],
+                m4d[1][1],
+                m4d[1][2],
+                m4d[1][3],
+                m4d[2][0],
+                m4d[2][1],
+                m4d[2][2],
+                m4d[2][3],
+                m4d[3][0],
+                m4d[3][1],
+                m4d[3][2],
+                m4d[3][3],
+            )
+        )
 
 
 class Transform(MatrixConvertibleMixin):
     """expansion, translation, rotoTranslation can be either a single
     instance of RotoTranslation or a multiple instances of
     RotoTranslation and RecursiveRotoTranslation"""
-    def __init__(self, *, expansion=None, translation=None,
-                 rotoTranslation=None, invertRotoTranslation=None):
+
+    def __init__(
+        self,
+        *,
+        expansion=None,
+        translation=None,
+        rotoTranslation=None,
+        invertRotoTranslation=None,
+    ):
         self.expansion = expansion
         self.translation = translation
         self.rotoTranslation = rotoTranslation
@@ -90,7 +113,7 @@ class Transform(MatrixConvertibleMixin):
     def _rotoTranslationsTo4DMatrices(self):
         if not self.rotoTranslation:
             return [np.identity(4)]
-        try: # A single RotoTranslation or RecursiveRotoTranslation
+        try:  # A single RotoTranslation or RecursiveRotoTranslation
             matrix = self.rotoTranslation.to4DMatrix()
             try:
                 invertThis = self.invertRotoTranslation[0]
@@ -100,7 +123,7 @@ class Transform(MatrixConvertibleMixin):
                 matrix = np.linalg.inv(matrix)
             return [matrix]
         except AttributeError:
-            matrices = [] # Then it is a stack of recursive definitions
+            matrices = []  # Then it is a stack of recursive definitions
             anyInversion = bool(self.invertRotoTranslation)
             for i, rtrans in enumerate(self.rotoTranslation):
                 matrix = rtrans.to4DMatrix()
@@ -124,10 +147,20 @@ class Transform(MatrixConvertibleMixin):
         matrices.extend(self._rotoTranslationsTo4DMatrices())
         return _rightMultiplyMatrices(matrices)
 
+
 class RotoTranslation(MatrixConvertibleMixin):
     """translation in mm, angles in degrees"""
-    def __init__(self, name, axis=None, polar=0., azimuth=0.,
-                 translation=None, transformationIndex=None, flukaregistry=None):
+
+    def __init__(
+        self,
+        name,
+        axis=None,
+        polar=0.0,
+        azimuth=0.0,
+        translation=None,
+        transformationIndex=None,
+        flukaregistry=None,
+    ):
         self.name = name
         self.axis = axis
         self.polar = polar
@@ -136,34 +169,39 @@ class RotoTranslation(MatrixConvertibleMixin):
         self.transformationIndex = transformationIndex
 
         if not axis and any([polar, azimuth]):
-            raise TypeError("Axis not set for non-zero polar and/or azimuth.")
+            msg = "Axis not set for non-zero polar and/or azimuth."
+            raise TypeError(msg)
 
         if flukaregistry is not None:
             flukaregistry.addRotoTranslation(self)
 
         if len(name) > 10:
-            raise ValueError(f"Name {name} is too long.  Max length = 10.")
-        if polar < 0 or polar > 180.:
-            raise ValueError( f"Polar must be between 0 and +180°: {polar}")
-        if azimuth < -180. or azimuth > 180.:
-            raise ValueError(f"Azimuth must be between ±180°: {azimuth}")
+            msg = f"Name {name} is too long.  Max length = 10."
+            raise ValueError(msg)
+        if polar < 0 or polar > 180.0:
+            msg = f"Polar must be between 0 and +180°: {polar}"
+            raise ValueError(msg)
+        if azimuth < -180.0 or azimuth > 180.0:
+            msg = f"Azimuth must be between ±180°: {azimuth}"
+            raise ValueError(msg)
         if translation is None:
             self.translation = Three([0, 0, 0])
 
     def __repr__(self):
-        strs = [f"<RTrans: {self.name}",
-                f"t={self.translation}" if self.hasTranslation() else "",
-                f"ax={self.axis}" if self.hasRotation() else "",
-                f"theta={self.polar}°" if self.polar else "",
-                f"phi={self.azimuth}°" if self.hasTranslation else ""]
+        strs = [
+            f"<RTrans: {self.name}",
+            f"t={self.translation}" if self.hasTranslation() else "",
+            f"ax={self.axis}" if self.hasRotation() else "",
+            f"theta={self.polar}°" if self.polar else "",
+            f"phi={self.azimuth}°" if self.hasTranslation else "",
+        ]
         strs = [s for s in strs if s]
         result = ", ".join(strs)
         return result + ">"
 
-
     def to4DMatrix(self):
-        theta = self.polar * np.pi / 180.
-        phi = self.azimuth * np.pi / 180.
+        theta = self.polar * np.pi / 180.0
+        phi = self.azimuth * np.pi / 180.0
         ct = np.cos(theta)
         cp = np.cos(phi)
         st = np.sin(theta)
@@ -177,32 +215,35 @@ class RotoTranslation(MatrixConvertibleMixin):
             r1 = np.identity(4)
             r2 = _translationTo4DMatrix(self.translation)
         elif self.axis == "x":
-            r1 = np.array([[ ct,  st, 0, 0],
-                           [-st,  ct, 0, 0],
-                           [  0,   0, 1, 0],
-                           [  0,   0, 0, 1]])
-            r2 = np.array([[1,   0,  0,            tx],
-                           [0,  cp, sp, ty*cp + tz*sp],
-                           [0, -sp, cp, tz*cp - ty*sp],
-                           [0,   0,  0,             1]])
+            r1 = np.array([[ct, st, 0, 0], [-st, ct, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+            r2 = np.array(
+                [
+                    [1, 0, 0, tx],
+                    [0, cp, sp, ty * cp + tz * sp],
+                    [0, -sp, cp, tz * cp - ty * sp],
+                    [0, 0, 0, 1],
+                ]
+            )
         elif self.axis == "y":
-            r1 = np.array([[1,   0,  0, 0],
-                           [0,  ct, st, 0],
-                           [0, -st, ct, 0],
-                           [0,   0,  0, 1]])
-            r2 = np.array([[cp, 0, -sp, tx*cp - tz*sp],
-                           [ 0, 1,   0,            ty],
-                           [sp, 0,  cp, tx*sp + tz*cp],
-                           [ 0, 0,   0,             1]])
+            r1 = np.array([[1, 0, 0, 0], [0, ct, st, 0], [0, -st, ct, 0], [0, 0, 0, 1]])
+            r2 = np.array(
+                [
+                    [cp, 0, -sp, tx * cp - tz * sp],
+                    [0, 1, 0, ty],
+                    [sp, 0, cp, tx * sp + tz * cp],
+                    [0, 0, 0, 1],
+                ]
+            )
         elif self.axis == "z":
-            r1 = np.array([[ct, 0, -st, 0],
-                           [ 0, 1,   0, 0],
-                           [st, 0,  ct, 0],
-                           [ 0, 0,   0, 1]])
-            r2 = np.array([[ cp, sp, 0, tx*cp + ty*sp],
-                           [-sp, cp, 0, ty*cp - tx*sp],
-                           [  0,  0, 1,            tz],
-                           [  0,  0, 0,             1]])
+            r1 = np.array([[ct, 0, -st, 0], [0, 1, 0, 0], [st, 0, ct, 0], [0, 0, 0, 1]])
+            r2 = np.array(
+                [
+                    [cp, sp, 0, tx * cp + ty * sp],
+                    [-sp, cp, 0, ty * cp - tx * sp],
+                    [0, 0, 1, tz],
+                    [0, 0, 0, 1],
+                ]
+            )
         else:
             msg = f"Unable to determine rotation matrix axis: {self.axis}."
             raise ValueError(msg)
@@ -212,14 +253,21 @@ class RotoTranslation(MatrixConvertibleMixin):
     def toCard(self):
         index = [None, "x", "y", "z"].index(self.axis)
         try:
-            index += self.transformationIndex # see fluka manual on ROT-DEFI
+            index += self.transformationIndex  # see fluka manual on ROT-DEFI
         except:
             pass
         tx, ty, tz = self.translation
         # CONVERTING TO CENTIMETRES!!
-        return Card("ROT-DEFI", index,
-                    self.polar, self.azimuth,
-                    tx*0.1, ty*0.1, tz*0.1, self.name)
+        return Card(
+            "ROT-DEFI",
+            index,
+            self.polar,
+            self.azimuth,
+            tx * 0.1,
+            ty * 0.1,
+            tz * 0.1,
+            self.name,
+        )
 
     def flukaFreeString(self):
         return self.toCard().toFreeString()
@@ -227,15 +275,15 @@ class RotoTranslation(MatrixConvertibleMixin):
     @classmethod
     def fromCard(cls, card):
         if card.keyword != "ROT-DEFI":
-            raise ValueError("Not a ROT-DEFI card, keyword={}".format(
-                card.keyword))
+            msg = f"Not a ROT-DEFI card, keyword={card.keyword}"
+            raise ValueError(msg)
         card = card.nonesToZero()
 
         what1 = int(card.what1)
-        if what1 >= 1000.:
+        if what1 >= 1000.0:
             # i = what1 // 1000
             j = int(str(what1)[-1])
-        elif what1 >= 100. and what1 < 1000.:
+        elif what1 >= 100.0 and what1 < 1000.0:
             # i = int(str(what1)[-1])
             j = what1 // 100
         elif what1 > 0 and what1 <= 100:
@@ -247,12 +295,14 @@ class RotoTranslation(MatrixConvertibleMixin):
             # i = what1
             j = 0
         else:
-            raise ValueError(f"Unable to parse ROT-DEFI WHAT1: {what1}.")
+            msg = f"Unable to parse ROT-DEFI WHAT1: {what1}."
+            raise ValueError(msg)
 
         try:
-            axis = ["z", "x", "y", "z"][j] # j = 0, 1, 2, 3
+            axis = ["z", "x", "y", "z"][j]  # j = 0, 1, 2, 3
         except IndexError:
-            raise FLUKAError(f"Unable to determine axis for WHAT1={what1}.")
+            msg = f"Unable to determine axis for WHAT1={what1}."
+            raise FLUKAError(msg)
 
         tx, ty, tz = card.what4, card.what5, card.what6
         # CONVERTING TO MILLIMETRES!!
@@ -279,6 +329,7 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     [a, b, c], the order of evaluation acting on a vector v is
     c*b*a*v.  so teh first rototrans is applied first..  and so on."""
+
     def __init__(self, name, rotoTranslations):
         self.name = name
         self._rtransList = rotoTranslations
@@ -297,13 +348,16 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     def _raiseIfDifferentName(self, name):
         if self.name != name:
-            msg = ("Inserted RotoTranslation must have same"
-                   " name as the RecursiveRotoTranslation.")
+            msg = (
+                "Inserted RotoTranslation must have same"
+                " name as the RecursiveRotoTranslation."
+            )
             raise ValueError(msg)
 
     def __setitem__(self, i, obj):
         if not isinstance(obj, RotoTranslation):
-            raise TypeError("Items must be RotoTranslation instances")
+            msg = "Items must be RotoTranslation instances"
+            raise TypeError(msg)
         self._raiseIfDifferentName(obj.name)
         self._rtransList[i] = obj
 
@@ -315,7 +369,8 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     def insert(self, i, obj):
         if not isinstance(obj, RotoTranslation):
-            raise TypeError("Items must be RotoTranslation instances")
+            msg = "Items must be RotoTranslation instances"
+            raise TypeError(msg)
         self._raiseIfDifferentName(obj.name)
         self._rtransList.insert(i, obj)
 
@@ -337,7 +392,7 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     @property
     def transformationIndex(self):
-        if not self: # if empty
+        if not self:  # if empty
             return None
         return self[0].transformationIndex
 
@@ -351,6 +406,7 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
         for rtrans in self:
             del rtrans.transformationIndex
 
+
 def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     """tbxyz = trait bryan angles in radians"""
     # Reverse it's because different convention in FLUKA (passive vs
@@ -361,45 +417,63 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     # Note that we are converting from radians to degrees here.
 
     if tbxyz.x:
-        result.append(RotoTranslation(name, axis="x",
-                                      azimuth=-tbxyz[0]*180/np.pi,
-                                      flukaregistry=flukaregistry))
+        result.append(
+            RotoTranslation(
+                name,
+                axis="x",
+                azimuth=-tbxyz[0] * 180 / np.pi,
+                flukaregistry=flukaregistry,
+            )
+        )
 
     if tbxyz.y:
-        result.append(RotoTranslation(name, axis="y",
-                                      azimuth=-tbxyz[1]*180/np.pi,
-                                      flukaregistry=flukaregistry))
+        result.append(
+            RotoTranslation(
+                name,
+                axis="y",
+                azimuth=-tbxyz[1] * 180 / np.pi,
+                flukaregistry=flukaregistry,
+            )
+        )
 
     if tbxyz.z:
-        result.append(RotoTranslation(name, axis="z",
-                                      azimuth=-tbxyz[2]*180/np.pi,
-                                      flukaregistry=flukaregistry))
+        result.append(
+            RotoTranslation(
+                name,
+                axis="z",
+                azimuth=-tbxyz[2] * 180 / np.pi,
+                flukaregistry=flukaregistry,
+            )
+        )
 
     return result
+
 
 def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
     rotation = tra2[0]
     translation = tra2[1]
 
     # Start with rotation
-    result = rotoTranslationFromTBxyz(name, rotation,
-                                      flukaregistry=flukaregistry)
+    result = rotoTranslationFromTBxyz(name, rotation, flukaregistry=flukaregistry)
 
-    if any(translation): # Don't append a translation of zeros
-        result.append(RotoTranslation(name,
-                                      translation=translation,
-                                      flukaregistry=flukaregistry))
+    if any(translation):  # Don't append a translation of zeros
+        result.append(
+            RotoTranslation(name, translation=translation, flukaregistry=flukaregistry)
+        )
     return result
+
 
 def _translationTo4DMatrix(translation):
     mat = np.identity(4)
     mat[:3, 3] = translation
     return mat
 
+
 def _expansionFactorTo4DMatrix(factor):
     mat = np.identity(4)
     mat[0, 0] = mat[1, 1] = mat[2, 2] = factor
     return mat
+
 
 def _rightMultiplyMatrices(matrices):
     # Reverse because we apply the matrices to a vector v in in
