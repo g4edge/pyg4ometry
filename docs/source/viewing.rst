@@ -28,11 +28,10 @@ Generally:
 
 .. code-block:: python
 
-		v = pyg4ometry.visualisation.VtkViewer()
-		v.addLogicalVolume(lv)
-		v.view()
-		# or
-		v.view(interactive=False) # to not block the terminal
+    v = pyg4ometry.visualisation.VtkViewer()
+    v.addLogicalVolume(lv)
+    v.view()  # or
+    v.view(interactive=False)  # to not block the terminal
 
 
 Exact documentation can be found in :ref:`module-docs-visualisation`.
@@ -59,40 +58,38 @@ Rotating
 ********
 
 .. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/pan-rotate-v1.gif
-	    :width: 80%
-	    :align: center
+   :width: 80%
+   :align: center
 
-	    Rotate by clicking and dragging, then release.
+Rotate by clicking and dragging, then release.
 
 
 Zooming
 *******
 
 .. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/zooming-v1.gif
-	    :width: 80%
-	    :align: center
+   :width: 80%
+   :align: center
 
-	    Scroll in and out on a mouse or trackpad whilst pointing at the visualiser.
+Scroll in and out on a mouse or trackpad whilst pointing at the visualiser.
 
 
 Panning And Rotating
 ********************
 
 .. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/pan-rotate-v1.gif
-	    :width: 80%
-	    :align: center
+   :width: 80%
+   :align: center
 
-	    Click and drag to rotate. Hold the shift key on the keyboard, then click
-	    and drag to pan.
-
+Click and drag to rotate. Hold the shift key on the keyboard, then click
+and drag to pan.
 
 When we rotate the geometry it may twist in multiple angles. To rotate in a specific
 way we can click and drag and draw it small circles where the geometry will precess.
 
 .. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/precessing-v1.gif
-	    :width: 80%
-	    :align: center
-
+   :width: 80%
+   :align: center
 
 
 Picking
@@ -102,8 +99,8 @@ If you right click on a volume and look at the terminal, if pyg4ometry can find
 a volume behind the point clicked it will print out the name.
 
 .. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/picking-v1.gif
-	    :width: 80%
-	    :align: center
+   :width: 80%
+   :align: center
 
 
 Solid or Wireframe
@@ -125,28 +122,26 @@ in the centre of the visualiser coordinate system, i.e. in its own frame.
 
 .. code-block:: python
 
-		lv # pyg4ometry.geant4.LogicalVolume instance
-		v = pyg4ometry.visualisation.VtkViewer()
-		v.addLogicalVolume(lv)
-		v.view()
+    lv  # pyg4ometry.geant4.LogicalVolume instance
+    v = pyg4ometry.visualisation.VtkViewer()
+    v.addLogicalVolume(lv)
+    v.view()
 
 It is possible to view the logical volume with an offset (i.e. translation) and
 rotation. This is purely for adding the scene of the viewer and does not affect
 the logical volume itself or anything it is used in. We can see the docstring:
 
-.. code-block::
-
-		>>> v = pyg4ometry.visualisation.VtkViewer()
-		>>> v.addLogicalVolume?
-		    Signature:
-		    v.addLogicalVolume(
-		    logical,
-		    mtra=matrix([[1, 0, 0],
-		    [0, 1, 0],
-		    [0, 0, 1]]),
-		    tra=array([0, 0, 0]),
-		    recursive=True,
-		    )
+>>> v = pyg4ometry.visualisation.VtkViewer()
+>>> v.addLogicalVolume?
+Signature:
+v.addLogicalVolume(
+logical,
+mtra=matrix([[1, 0, 0],
+[0, 1, 0],
+[0, 0, 1]]),
+tra=array([0, 0, 0]),
+recursive=True,
+)
 
 If we start from a rotation as a series of Tait-Bryan angles, we can turn this into
 a matrix with:
@@ -161,12 +156,12 @@ a matrix with:
    v.addLogicalVolume(l, mtra=rotation, tra=[0,0,500])
 
 
-.. note:: When directly using rotations and translations, the units are radians and mm.
+.. note::
+   When directly using rotations and translations, the units are radians and mm.
 
 If overlap checking has been used, this produces overlap meshes (if any) and these will
 be visualised automatically when visualising a LogicalVolume instance as they are associated
 with that instance.
-
 
 Solid
 -----
@@ -176,28 +171,26 @@ It is possible to view an individual solid, i.e. any instance of a class in
 
 .. code-block:: python
 
-		s # e.g. a pyg4ometry.geant4.solid.Box instance
-		v = pyg4ometry.visualisation.VtkViewer()
-		v.addSolid(s)
-		v.view()
+    s  # e.g. a pyg4ometry.geant4.solid.Box instance
+    v = pyg4ometry.visualisation.VtkViewer()
+    v.addSolid(s)
+    v.view()
 
 
 Similarly to a logical volume, an individual solid has no concept of placement position
 and will by default be placed at the centre of the scene. It is also possible to add it
 to the scene with a rotation and translation.
 
-.. code-block:: python
-
-		v.addSolid?
-		Signature:
-		v.addSolid(
-		solid,
-		rotation=[0, 0, 0],
-		position=[0, 0, 0],
-		representation='surface',
-		colour=[0.5, 0.5, 0.5],
-		opacity=0.2,
-		)
+>>> v.addSolid?
+Signature:
+v.addSolid(
+solid,
+rotation=[0, 0, 0],
+position=[0, 0, 0],
+representation='surface',
+colour=[0.5, 0.5, 0.5],
+opacity=0.2,
+)
 
 This uses Tait-Bryan angles for the rotation.
 

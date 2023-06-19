@@ -4,57 +4,67 @@ from .card import Card as _Card
 
 # http://www.fluka.org/content/manuals/online/5.2.html
 # name, atomic mass, atomic number, density in g/cm3
-_PREDEFINED_ELEMENTS = [("BLCKHOLE",  0, 0, 0),
-                        ("VACUUM",    0, 0, 0),
-                        ("HYDROGEN",  1.00794, 1., 0.0000837),
-                        ("HELIUM",    4.002602, 2., 0.000166),
-                        ("BERYLLIU",  9.012182, 4., 1.848),
-                        ("CARBON",    12.0107, 6., 2.000),
-                        ("NITROGEN",  14.0067, 7., 0.00117),
-                        ("OXYGEN",    15.9994, 8., 0.00133),
-                        ("MAGNESIU",  24.3050, 12., 1.740),
-                        ("ALUMINUM",  26.981538, 13., 2.699),
-                        ("IRON",      55.845, 26., 7.874),
-                        ("COPPER",    63.546, 29., 8.960),
-                        ("SILVER",    107.8682, 47., 10.500),
-                        ("SILICON",   28.0855, 14., 2.329),
-                        ("GOLD",      196.96655, 79., 19.320),
-                        ("MERCURY",   200.59, 80., 13.546),
-                        ("LEAD",      207.2, 82., 11.350),
-                        ("TANTALUM",  180.9479, 73., 16.654),
-                        ("SODIUM",    22.989770, 11., 0.971),
-                        ("ARGON",     39.948, 18., 0.00166),
-                        ("CALCIUM",   40.078, 20., 1.550),
-                        ("TIN",       118.710, 50., 7.310),
-                        ("TUNGSTEN",  183.84, 74., 19.300),
-                        ("TITANIUM",  47.867, 22., 4.540),
-                        ("NICKEL",    58.6934, 28., 8.902)]
+_PREDEFINED_ELEMENTS = [
+    ("BLCKHOLE", 0, 0, 0),
+    ("VACUUM", 0, 0, 0),
+    ("HYDROGEN", 1.00794, 1.0, 0.0000837),
+    ("HELIUM", 4.002602, 2.0, 0.000166),
+    ("BERYLLIU", 9.012182, 4.0, 1.848),
+    ("CARBON", 12.0107, 6.0, 2.000),
+    ("NITROGEN", 14.0067, 7.0, 0.00117),
+    ("OXYGEN", 15.9994, 8.0, 0.00133),
+    ("MAGNESIU", 24.3050, 12.0, 1.740),
+    ("ALUMINUM", 26.981538, 13.0, 2.699),
+    ("IRON", 55.845, 26.0, 7.874),
+    ("COPPER", 63.546, 29.0, 8.960),
+    ("SILVER", 107.8682, 47.0, 10.500),
+    ("SILICON", 28.0855, 14.0, 2.329),
+    ("GOLD", 196.96655, 79.0, 19.320),
+    ("MERCURY", 200.59, 80.0, 13.546),
+    ("LEAD", 207.2, 82.0, 11.350),
+    ("TANTALUM", 180.9479, 73.0, 16.654),
+    ("SODIUM", 22.989770, 11.0, 0.971),
+    ("ARGON", 39.948, 18.0, 0.00166),
+    ("CALCIUM", 40.078, 20.0, 1.550),
+    ("TIN", 118.710, 50.0, 7.310),
+    ("TUNGSTEN", 183.84, 74.0, 19.300),
+    ("TITANIUM", 47.867, 22.0, 4.540),
+    ("NICKEL", 58.6934, 28.0, 8.902),
+]
 
 # Name, density
-_PREDEFINED_COMPOUNDS =  [("WATER", 1.0),
-                          ("POLYSTYR", 1.06),
-                          ("PLASCINT", 1.032),
-                          ("PMMA", 1.19),
-                          ("BONECOMP", 1.85),
-                          ("BONECORT", 1.85),
-                          ("MUSCLESK", 1.04),
-                          ("MUSCLEST", 1.04),
-                          ("ADTISSUE", 0.92),
-                          ("KAPTON", 1.42),
-                          ("POLYETHY", 0.94),
-                          ("AIR", 0.00120479)]
+_PREDEFINED_COMPOUNDS = [
+    ("WATER", 1.0),
+    ("POLYSTYR", 1.06),
+    ("PLASCINT", 1.032),
+    ("PMMA", 1.19),
+    ("BONECOMP", 1.85),
+    ("BONECORT", 1.85),
+    ("MUSCLESK", 1.04),
+    ("MUSCLEST", 1.04),
+    ("ADTISSUE", 0.92),
+    ("KAPTON", 1.42),
+    ("POLYETHY", 0.94),
+    ("AIR", 0.00120479),
+]
+
 
 def predefinedMaterialNames():
     names = [i[0] for i in _PREDEFINED_ELEMENTS]
     names.extend(i[0] for i in _PREDEFINED_COMPOUNDS)
     return names
 
+
 class BuiltIn(object):
-    def __init__(self, name, *,
-                 atomicNumber=None,
-                 atomicMass=None,
-                 density=None,
-                 flukaregistry=None):
+    def __init__(
+        self,
+        name,
+        *,
+        atomicNumber=None,
+        atomicMass=None,
+        density=None,
+        flukaregistry=None,
+    ):
         self.name = name
         self.atomicNumber = atomicNumber
         self.atomicMass = atomicMass
@@ -68,17 +78,21 @@ class BuiltIn(object):
     def flukaFreeString(self, delim=""):
         return ""
 
+
 def defineBuiltInFlukaMaterials(flukaregistry=None):
     out = {}
     for name, atomicMass, atomicNumber, density in _PREDEFINED_ELEMENTS:
-        out[name] = BuiltIn(name,
-                            atomicNumber=atomicNumber,
-                            atomicMass=atomicMass,
-                            density=density,
-                            flukaregistry=flukaregistry)
+        out[name] = BuiltIn(
+            name,
+            atomicNumber=atomicNumber,
+            atomicMass=atomicMass,
+            density=density,
+            flukaregistry=flukaregistry,
+        )
     for name, density in _PREDEFINED_COMPOUNDS:
         out[name] = BuiltIn(name, density=density, flukaregistry=flukaregistry)
     return out
+
 
 class _MatProp(object):
     def isGas(self):
@@ -86,6 +100,7 @@ class _MatProp(object):
 
     def makeMatPropCard(self):
         return _Card("MAT-PROP", what1=self.pressure, what4=self.name)
+
 
 class Material(_MatProp):
     """
@@ -110,11 +125,17 @@ class Material(_MatProp):
     :type flukaregistry: FlukaRegistry
 
     """
-    def __init__(self, name, atomicNumber, density,
-                 massNumber=None,
-                 atomicMass=None,
-                 pressure=None,
-                 flukaregistry=None):
+
+    def __init__(
+        self,
+        name,
+        atomicNumber,
+        density,
+        massNumber=None,
+        atomicMass=None,
+        pressure=None,
+        flukaregistry=None,
+    ):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
@@ -125,12 +146,16 @@ class Material(_MatProp):
             flukaregistry.addMaterial(self)
 
     def toCards(self):
-        material = [_Card("MATERIAL",
-                         what1=self.atomicNumber,
-                         what2=self.atomicMass,
-                         what3=self.density,
-                         what6=self.massNumber,
-                         sdum=self.name)]
+        material = [
+            _Card(
+                "MATERIAL",
+                what1=self.atomicNumber,
+                what2=self.atomicMass,
+                what3=self.density,
+                what6=self.massNumber,
+                sdum=self.name,
+            )
+        ]
         if self.pressure:
             material.append(self.makeMatPropCard())
         return material
@@ -143,16 +168,18 @@ class Material(_MatProp):
         if self.massNumber is not None:
             massNumber = ", A={}".format(self.massNumber)
         return '<Material: "{}", Z={}, density={}*g/cm3{}>'.format(
-            self.name,
-            self.atomicNumber,
-            self.density,
-            massNumber)
+            self.name, self.atomicNumber, self.density, massNumber
+        )
 
     @classmethod
     def fromCard(cls, card, flukaregistry):
-        return cls(card.sdum, card.what1, card.what3,
-                   massNumber=card.what6,
-                   flukaregistry=flukaregistry)
+        return cls(
+            card.sdum,
+            card.what1,
+            card.what3,
+            massNumber=card.what6,
+            flukaregistry=flukaregistry,
+        )
 
 
 class Compound(_MatProp):
@@ -176,9 +203,10 @@ class Compound(_MatProp):
     is to be added to.
     :type flukaregistry: FlukaRegistry
     """
-    def __init__(self, name, density, fractions, fractionType,
-                 pressure=None,
-                 flukaregistry=None):
+
+    def __init__(
+        self, name, density, fractions, fractionType, pressure=None, flukaregistry=None
+    ):
         self.name = name
         self.density = density
         self.fractions = fractions
@@ -191,11 +219,8 @@ class Compound(_MatProp):
             flukaregistry.addMaterial(self)
 
     def toCards(self):
-        compoundName =self.name
-        material = _Card(keyword="MATERIAL",
-                        what3=self.density,
-                        sdum=compoundName)
-
+        compoundName = self.name
+        material = _Card(keyword="MATERIAL", what3=self.density, sdum=compoundName)
 
         fractionPrefix = ""
         namePrefix = ""
@@ -208,20 +233,18 @@ class Compound(_MatProp):
             namePrefix = "-"
 
         compounds = []
-        for first, second, third in  _grouper(3, self.fractions):
-            frac, name  = _formatFlukaMaterialPair(first, namePrefix,
-                                                   fractionPrefix)
+        for first, second, third in _grouper(3, self.fractions):
+            frac, name = _formatFlukaMaterialPair(first, namePrefix, fractionPrefix)
             card = _Card("COMPOUND", what1=frac, what2=name, sdum=compoundName)
             if second is not None:
-                frac, name  = _formatFlukaMaterialPair(second,
-                                                       namePrefix,
-                                                       fractionPrefix)
+                frac, name = _formatFlukaMaterialPair(
+                    second, namePrefix, fractionPrefix
+                )
                 card.what3 = frac
                 card.what4 = name
 
             if third is not None:
-                frac, name = _formatFlukaMaterialPair(third, namePrefix,
-                                                      fractionPrefix)
+                frac, name = _formatFlukaMaterialPair(third, namePrefix, fractionPrefix)
 
                 card.what5 = frac
                 card.what6 = name
@@ -252,20 +275,22 @@ class Compound(_MatProp):
             _appendFractionPairs(c, fractions, fractionTypes)
 
         if len(set(fractionTypes)) > 2:
-            raise TypeError("Mixed mass, volume, and fraction types"
-                            f" are not supported for material={compoundName}")
+            raise TypeError(
+                "Mixed mass, volume, and fraction types"
+                f" are not supported for material={compoundName}"
+            )
 
         # Map the material names to material/compound instances via the FlukaRegistry.
         fractions = [(flukareg.getMaterial(name), f) for name, f in fractions]
 
-        return cls(compoundName, density, fractions, fractionTypes[0],
-                   flukaregistry=flukareg)
+        return cls(
+            compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg
+        )
 
     def __repr__(self):
         return "<Compound: {}, density={}*g/cm3, nparts={}>".format(
-            self.name,
-            self.density,
-            len(self.fractions))
+            self.name, self.density, len(self.fractions)
+        )
 
     def totalWeighting(self, densityWeighted=False):
         if not densityWeighted:
@@ -288,6 +313,7 @@ def _appendFractionPairs(card, fractions, fractionTypes):
         name, fraction, fractiontype = _parseFraction(card.what5, card.what6)
         fractions.append((name, fraction))
         fractionTypes.append(fractiontype)
+
 
 def _parseFraction(what1, what2):
     """
@@ -317,6 +343,7 @@ def _formatFlukaMaterialPair(pair, namePrefix, fractionPrefix):
     # pair is just an entry from the list of (material, fraction)
     # tuples.
     return (f"{fractionPrefix}{pair[1]}", f"{namePrefix}{pair[0].name}")
+
 
 def _grouper(n, iterable, fillvalue=None):
     """

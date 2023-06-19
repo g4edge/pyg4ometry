@@ -2,6 +2,7 @@
 Geant4 classes. The classes mainly match those of Geant4
 """
 
+
 def IsAReplica(logicalVolume):
     """
     Utility function to test if an LV is really a replica volume. A replica is a special case
@@ -14,6 +15,7 @@ def IsAReplica(logicalVolume):
         replicaCondition2 = type(logicalVolume.daughterVolumes[0]) is ReplicaVolume
     itsAReplica = replicaCondition1 and replicaCondition2
     return itsAReplica
+
 
 from .LogicalVolume import *
 from .PhysicalVolume import *

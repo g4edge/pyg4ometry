@@ -2,12 +2,15 @@ import numpy as _np
 import vtk as _vtk
 import pyg4ometry.exceptions as _exceptions
 import pyg4ometry.transformation as _transformation
-from   pyg4ometry.visualisation  import OverlapType as _OverlapType
-from   pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
-from   pyg4ometry.visualisation import Convert as _Convert
+from pyg4ometry.visualisation import OverlapType as _OverlapType
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from .VisualisationOptions import (
+    getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
+)
+from pyg4ometry.visualisation import Convert as _Convert
 import logging as _log
 import random as _random
+
 
 class VtkViewer:
     """
@@ -23,6 +26,7 @@ class VtkViewer:
     >>> v.view()
 
     """
+
     # def __init__(self,size=(2048,1536), interpolation="none"):
     def __init__(self, size=(1024, 1024), interpolation="none", **kwargs):
         # create a renderer
@@ -42,7 +46,7 @@ class VtkViewer:
         self.iren.SetInteractorStyle(style)
 
         self.ren.SetBackground(1.0, 1.0, 1.0)
-        self.renWin.SetSize(size[0],size[1])
+        self.renWin.SetSize(size[0], size[1])
 
         # local meshes
         self.localmeshes = {}
@@ -65,12 +69,12 @@ class VtkViewer:
         self.physicalActorMapOverlap = {}
 
         # cutters
-        self._xCutterOrigin = [0,0,0]
-        self._yCutterOrigin = [0,0,0]
-        self._zCutterOrigin = [0,0,0]
-        self._xCutterNormal = [1,0,0]
-        self._yCutterNormal = [0,1,0]
-        self._zCutterNormal = [0,0,1]
+        self._xCutterOrigin = [0, 0, 0]
+        self._yCutterOrigin = [0, 0, 0]
+        self._zCutterOrigin = [0, 0, 0]
+        self._xCutterNormal = [1, 0, 0]
+        self._yCutterNormal = [0, 1, 0]
+        self._zCutterNormal = [0, 0, 1]
         self.xcutters = []
         self.ycutters = []
         self.zcutters = []
@@ -88,11 +92,13 @@ class VtkViewer:
         # interpolation for vertex shading
         interps = ("none", "flat", "gouraud", "phong")
         if interpolation not in interps:
-            raise ValueError("Unrecognised interpolation option {}."
-                             " Possible options are :{}".format(interpolation, ", ".join(interps)))
+            raise ValueError(
+                "Unrecognised interpolation option {}."
+                " Possible options are :{}".format(interpolation, ", ".join(interps))
+            )
         self.interpolation = interpolation
 
-    def addAxes(self, length = 20.0, origin = (0,0,0)):
+    def addAxes(self, length=20.0, origin=(0, 0, 0)):
         """
         Add x,y,z axis to the scene.
 
@@ -103,21 +109,21 @@ class VtkViewer:
 
         # transform to move axes
         tran = _vtk.vtkTransform()
-        tran.Translate(origin[0],origin[1], origin[2])
+        tran.Translate(origin[0], origin[1], origin[2])
         axes.SetUserTransform(tran)
 
         self.axes.append(axes)
-        axes.SetTotalLength(length,length,length)
+        axes.SetTotalLength(length, length, length)
         self.ren.AddActor(axes)
 
     def addAxesWidget(self):
         axesActor = _vtk.vtkAnnotatedCubeActor()
-        axesActor.SetXPlusFaceText('+x')
-        axesActor.SetXMinusFaceText('-x')
-        axesActor.SetYPlusFaceText('+y')
-        axesActor.SetYMinusFaceText('-y')
-        axesActor.SetZPlusFaceText('+z')
-        axesActor.SetZMinusFaceText('-z')
+        axesActor.SetXPlusFaceText("+x")
+        axesActor.SetXMinusFaceText("-x")
+        axesActor.SetYPlusFaceText("+y")
+        axesActor.SetYMinusFaceText("-y")
+        axesActor.SetZPlusFaceText("+z")
+        axesActor.SetZMinusFaceText("-z")
         axesActor.GetTextEdgesProperty().SetColor(1, 1, 1)
         axesActor.GetTextEdgesProperty().SetLineWidth(2)
         axesActor.GetCubeProperty().SetColor(0.4, 0.4, 0.4)
@@ -128,66 +134,65 @@ class VtkViewer:
         self.axesWidget.InteractiveOn()
 
     def setOpacity(self, v, iActor=-1):
-        for a, i in zip(self.actors,range(0,len(self.actors))):
-            if i == iActor :
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
                 a.GetProperty().SetOpacity(v)
             elif iActor == -1:
                 a.GetProperty().SetOpacity(v)
 
-    def setWireframe(self, iActor = -1 ) :
-        for a, i in zip(self.actors,range(0,len(self.actors))):
-            if i == iActor :
+    def setWireframe(self, iActor=-1):
+        for a, i in zip(self.actors, range(0, len(self.actors))):
+            if i == iActor:
                 a.GetProperty().SetRepresentationToWireframe()
-            elif iActor == -1 :
+            elif iActor == -1:
                 a.GetProperty().SetRepresentationToWireframe()
 
-    def setSurface(self, iActor = -1):
+    def setSurface(self, iActor=-1):
         for a, i in zip(self.actors, range(0, len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToSurface()
-            elif iActor == -1 :
+            elif iActor == -1:
                 a.GetProperty().SetRepresentationToSurface()
 
-    def setOpacityOverlap(self,v, iActor = -1):
+    def setOpacityOverlap(self, v, iActor=-1):
         for a, i in zip(self.actorsOverlap, range(0, len(self.actorsOverlap))):
             if i == iActor:
                 a.GetProperty().SetOpacity(v)
             elif iActor == -1:
                 a.GetProperty().SetOpacity(v)
 
-    def setWireframeOverlap(self, iActor = -1) :
+    def setWireframeOverlap(self, iActor=-1):
         for a, i in zip(self.actors, range(0, len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToWireframe()
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToWireframe()
 
-    def setSurfaceOverlap(self, iActor = -1):
+    def setSurfaceOverlap(self, iActor=-1):
         for a, i in zip(self.actors, range(0, len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToSurface()
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToSurface()
 
-    def setRandomColours(self, seed = 0):
-
+    def setRandomColours(self, seed=0):
         _random.seed(seed)
 
         for a in self.actors:
-            a.GetProperty().SetColor(_random.random(),
-                                     _random.random(),
-                                     _random.random())
+            a.GetProperty().SetColor(
+                _random.random(), _random.random(), _random.random()
+            )
 
     def setCutterOrigin(self, dimension, origin):
         """
         :param dimension: str - 'x', 'y', or 'z'
         :param origin: list([x,y,z])
         """
-        if dimension == 'x':
+        if dimension == "x":
             self._xCutterOrigin = origin
-        elif dimension == 'y':
+        elif dimension == "y":
             self._yCutterOrigin = origin
-        elif dimension == 'z':
+        elif dimension == "z":
             self._zCutterOrigin = origin
         else:
             raise ValueError("invalid dimension - x,y or z")
@@ -197,11 +202,11 @@ class VtkViewer:
         :param dimension: str - 'x', 'y', or 'z'
         :param normal: list([x,y,z]) -  should be unit vector
         """
-        if dimension == 'x':
+        if dimension == "x":
             self._xCutterNormal = normal
-        elif dimension == 'y':
+        elif dimension == "y":
             self._yCutterNormal = normal
-        elif dimension == 'z':
+        elif dimension == "z":
             self._zCutterNormal = normal
         else:
             raise ValueError("invalid dimension - x,y or z")
@@ -227,7 +232,7 @@ class VtkViewer:
         """
         self.materialVisOptions = materialDict
 
-    def setCameraFocusPosition(self,focalPoint = [0,0,0], position = [100,100,100]):
+    def setCameraFocusPosition(self, focalPoint=[0, 0, 0], position=[100, 100, 100]):
         self.ren.GetActiveCamera().SetFocalPoint(focalPoint)
         self.ren.GetActiveCamera().SetPosition(position)
 
@@ -235,32 +240,32 @@ class VtkViewer:
         self.renWin.Render()
         self.iren.Start()
 
-    def exportOBJScene(self,fileName="scene") :
+    def exportOBJScene(self, fileName="scene"):
         rw = _vtk.vtkRenderWindow()
         rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
 
         exporter = _vtk.vtkOBJExporter()
         exporter.SetRenderWindow(rw)
-        exporter.SetFilePrefix("./"+fileName)  # create mtl and obj file.
+        exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
         exporter.Write()
 
-    def exportVRMLScene(self,fileName="scene") :
+    def exportVRMLScene(self, fileName="scene"):
         rw = _vtk.vtkRenderWindow()
         rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
 
         exporter = _vtk.vtkVRMLExporter()
         exporter.SetRenderWindow(rw)
-        exporter.SetFileName("./"+fileName)  # create mtl and obj file.
+        exporter.SetFileName("./" + fileName)  # create mtl and obj file.
         exporter.Write()
 
-    def exportGLTFScene(self,fileName="scene.gltf"):
+    def exportGLTFScene(self, fileName="scene.gltf"):
         rw = _vtk.vtkRenderWindow()
         rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
 
         exporter = _vtk.vtkGLTFExporter()
         exporter.SetRenderWindow(rw)
         exporter.InlineDataOn()
-        exporter.SetFileName("./"+fileName)
+        exporter.SetFileName("./" + fileName)
         exporter.Write()
 
     def exportScreenShot(self, fileName="screenshot.png", rgba=True):
@@ -283,19 +288,19 @@ class VtkViewer:
             path, ext = os.path.splitext(fileName)
             ext = ext.lower()
             if not ext:
-                ext = '.png'
+                ext = ".png"
                 fileName = fileName + ext
-            if ext == '.bmp':
+            if ext == ".bmp":
                 writer = _vtk.vtkBMPWriter()
-            elif ext == '.jpg':
+            elif ext == ".jpg":
                 writer = _vtk.vtkJPEGWriter()
-            elif ext == '.pnm':
+            elif ext == ".pnm":
                 writer = _vtk.vtkPNMWriter()
-            elif ext == '.ps':
+            elif ext == ".ps":
                 if rgba:
                     rgba = False
                 writer = _vtk.vtkPostScriptWriter()
-            elif ext == '.tiff':
+            elif ext == ".tiff":
                 writer = _vtk.vtkTIFFWriter()
             else:
                 writer = _vtk.vtkPNGWriter()
@@ -315,21 +320,39 @@ class VtkViewer:
             writer.SetInputConnection(windowto_image_filter.GetOutputPort())
             writer.Write()
         else:
-            raise RuntimeError('Need a filename.')
+            raise RuntimeError("Need a filename.")
 
-
-    def addLogicalVolume(self, logical, mtra=_np.array([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), recursive=True, addWorld = True):
+    def addLogicalVolume(
+        self,
+        logical,
+        mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+        tra=_np.array([0, 0, 0]),
+        recursive=True,
+        addWorld=True,
+    ):
         if logical.type == "logical":
             if addWorld:
                 self.addLogicalVolumeBounding(logical)
-            for [overlapmesh, overlaptype], i in zip(logical.mesh.overlapmeshes,
-                                                     range(0, len(logical.mesh.overlapmeshes))):
+            for [overlapmesh, overlaptype], i in zip(
+                logical.mesh.overlapmeshes, range(0, len(logical.mesh.overlapmeshes))
+            ):
                 visOptions = self.getOverlapVisOptions(overlaptype)
-                self.addMesh(logical.name, logical.solid.name + "_overlap" + str(i), overlapmesh, mtra, tra,
-                             self.localmeshesOverlap, self.filtersOverlap,
-                             self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
-                             self.physicalActorMapOverlap,
-                             visOptions=visOptions, overlap=True, cutters=False)
+                self.addMesh(
+                    logical.name,
+                    logical.solid.name + "_overlap" + str(i),
+                    overlapmesh,
+                    mtra,
+                    tra,
+                    self.localmeshesOverlap,
+                    self.filtersOverlap,
+                    self.mappersOverlap,
+                    self.physicalMapperMapOverlap,
+                    self.actorsOverlap,
+                    self.physicalActorMapOverlap,
+                    visOptions=visOptions,
+                    overlap=True,
+                    cutters=False,
+                )
 
         if recursive:
             # recurse down scene hierarchy
@@ -337,8 +360,8 @@ class VtkViewer:
 
     def addLogicalVolumeBounding(self, logical):
         # add logical solid as wireframe
-        lvm    = logical.mesh.localmesh
-        lvmPD  = _Convert.pycsgMeshToVtkPolyData(lvm)
+        lvm = logical.mesh.localmesh
+        lvmPD = _Convert.pycsgMeshToVtkPolyData(lvm)
         lvmFLT = _vtk.vtkTriangleFilter()
         lvmFLT.AddInputData(lvmPD)
         lvmMAP = _vtk.vtkPolyDataMapper()
@@ -351,7 +374,15 @@ class VtkViewer:
         self.actors.append(lvmActor)
         self.ren.AddActor(lvmActor)
 
-    def addSolid(self, solid, rotation=[0,0,0], position=[0,0,0], representation="surface", colour=[0.5,0.5,0.5], opacity=0.2):
+    def addSolid(
+        self,
+        solid,
+        rotation=[0, 0, 0],
+        position=[0, 0, 0],
+        representation="surface",
+        colour=[0.5, 0.5, 0.5],
+        opacity=0.2,
+    ):
         """
         Add a solid to the view with an optional rotation and translation.
 
@@ -375,11 +406,30 @@ class VtkViewer:
         visOptions.color = colour
         mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rotation))
         mtra = _np.array(position)
-        self.addMesh(solid.name, solid.name, mesh, mrot, mtra, self.localmeshes,
-                     self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                     self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+        self.addMesh(
+            solid.name,
+            solid.name,
+            mesh,
+            mrot,
+            mtra,
+            self.localmeshes,
+            self.filters,
+            self.mappers,
+            self.physicalMapperMap,
+            self.actors,
+            self.physicalActorMap,
+            visOptions=visOptions,
+            overlap=False,
+            cutters=False,
+        )
 
-    def addBooleanSolidRecursive(self, solid, mtra=_np.array([[1,0,0],[0,1,0],[0,0,1]]), tra=_np.array([0,0,0]), first=True):
+    def addBooleanSolidRecursive(
+        self,
+        solid,
+        mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+        tra=_np.array([0, 0, 0]),
+        first=True,
+    ):
         """
         :param solid: pyg4ometry.geant4.solid instance.
         :type  solid: pyg4ometry.geant4.solid.SolidBase
@@ -391,8 +441,11 @@ class VtkViewer:
         only the constituents can be shown.
         """
 
-        if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection":
-
+        if (
+            solid.type == "Union"
+            or solid.type == "Subtraction"
+            or solid.type == "Intersection"
+        ):
             if first:
                 try:
                     mesh = solid.mesh()
@@ -400,12 +453,25 @@ class VtkViewer:
                     visOptions.representation = "surface"
                     visOptions.alpha = 1.0
                     visOptions.color = [0.5, 0.5, 0.5]
-                    self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
-                                self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                                self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+                    self.addMesh(
+                        solid.name,
+                        solid.name,
+                        mesh,
+                        mtra,
+                        tra,
+                        self.localmeshes,
+                        self.filters,
+                        self.mappers,
+                        self.physicalMapperMap,
+                        self.actors,
+                        self.physicalActorMap,
+                        visOptions=visOptions,
+                        overlap=False,
+                        cutters=False,
+                    )
                     first = False
                 except _exceptions.NullMeshError:
-                    print(solid.name,"> null mesh... continuing")
+                    print(solid.name, "> null mesh... continuing")
 
             obj1 = solid.object1()
             obj2 = solid.object2()
@@ -415,7 +481,7 @@ class VtkViewer:
 
             rotm = _transformation.tbxyz2matrix(rotn)
             new_mtra = mtra * rotm
-            new_tra  = (_np.array(mtra.dot(tran)) + tra)[0]
+            new_tra = (_np.array(mtra.dot(tran)) + tra)[0]
 
             self.addBooleanSolidRecursive(obj1, mtra, tra, first)
             self.addBooleanSolidRecursive(obj2, new_mtra, new_tra, first)
@@ -424,13 +490,25 @@ class VtkViewer:
             visOptions = _VisOptions()
             visOptions.representation = "wireframe"
             visOptions.alpha = 0.5
-            visOptions.color = [1,0,0]
-            self.addMesh(solid.name, solid.name, mesh, mtra, tra, self.localmeshes,
-                         self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                         self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+            visOptions.color = [1, 0, 0]
+            self.addMesh(
+                solid.name,
+                solid.name,
+                mesh,
+                mtra,
+                tra,
+                self.localmeshes,
+                self.filters,
+                self.mappers,
+                self.physicalMapperMap,
+                self.actors,
+                self.physicalActorMap,
+                visOptions=visOptions,
+                overlap=False,
+                cutters=False,
+            )
 
-
-    def addMeshSimple(self, csgMesh, visOptions=_VisOptions(), clip=False, name = "mesh"):
+    def addMeshSimple(self, csgMesh, visOptions=_VisOptions(), clip=False, name="mesh"):
         if clip:
             csgMesh = csgMesh.clone()
             verts, _, _ = csgMesh.toVerticesAndPolygons()
@@ -440,63 +518,113 @@ class VtkViewer:
             xsize = max(x) - min(x)
             ysize = max(y) - min(y)
             zsize = max(z) - min(z)
-            t = -_np.array([min(x) + xsize/2.,
-                            min(y) + ysize/2.,
-                            min(z) + ysize/2.])
+            t = -_np.array(
+                [min(x) + xsize / 2.0, min(y) + ysize / 2.0, min(z) + ysize / 2.0]
+            )
             csgMesh.translate(t)
 
-        self.addMesh(name, name, csgMesh,
-                     _np.array([[1,0,0],[0,1,0],[0,0,1]]),
-                     _np.array([0, 0, 0]),
-                     self.localmeshes,
-                     self.filters, self.mappers, self.physicalMapperMap, self.actors,
-                     self.physicalActorMap, visOptions=visOptions, overlap=False, cutters=False)
+        self.addMesh(
+            name,
+            name,
+            csgMesh,
+            _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+            _np.array([0, 0, 0]),
+            self.localmeshes,
+            self.filters,
+            self.mappers,
+            self.physicalMapperMap,
+            self.actors,
+            self.physicalActorMap,
+            visOptions=visOptions,
+            overlap=False,
+            cutters=False,
+        )
 
-
-    def addLogicalVolumeRecursive(self, logical, mtra = _np.array([[1,0,0],[0,1,0],[0,0,1]]), tra = _np.array([0,0,0])):
+    def addLogicalVolumeRecursive(
+        self,
+        logical,
+        mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+        tra=_np.array([0, 0, 0]),
+    ):
         for pv in logical.daughterVolumes:
-
             # get the local vtkPolyData
-            if pv.logicalVolume.type != "assembly" :
+            if pv.logicalVolume.type != "assembly":
                 solid_name = pv.logicalVolume.solid.name
-            else :
+            else:
                 solid_name = "none"
             pv_name = pv.name
 
             if pv.logicalVolume.type == "logical":
-                _log.info('VtkViewer.addLogicalVolume> Daughter %s %s %s ' % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name))
+                _log.info(
+                    "VtkViewer.addLogicalVolume> Daughter %s %s %s "
+                    % (pv.name, pv.logicalVolume.name, pv.logicalVolume.solid.name)
+                )
 
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
-                if pv.scale :
+                pvmrot = _np.linalg.inv(
+                    _transformation.tbxyz2matrix(pv.rotation.eval())
+                )
+                if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
-                else :
-                    pvmsca = _np.diag([1,1,1])
+                else:
+                    pvmsca = _np.diag([1, 1, 1])
                 pvtra = _np.array(pv.position.eval())
 
                 # pv compound transform
                 new_mtra = mtra * pvmsca * pvmrot
                 new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
-                if pv.logicalVolume.type != "assembly" and pv.logicalVolume.mesh is not None :
-                    mesh = pv.logicalVolume.mesh.localmesh # TODO implement a check if mesh has changed
+                if (
+                    pv.logicalVolume.type != "assembly"
+                    and pv.logicalVolume.mesh is not None
+                ):
+                    mesh = (
+                        pv.logicalVolume.mesh.localmesh
+                    )  # TODO implement a check if mesh has changed
                     # mesh = _Mesh(pv.logicalVolume.solid).localmesh
 
                     visOptions = self.getMaterialVisOptions(pv)
-                    self.addMesh(pv_name, solid_name, mesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions=visOptions, overlap=False)
+                    self.addMesh(
+                        pv_name,
+                        solid_name,
+                        mesh,
+                        new_mtra,
+                        new_tra,
+                        self.localmeshes,
+                        self.filters,
+                        self.mappers,
+                        self.physicalMapperMap,
+                        self.actors,
+                        self.physicalActorMap,
+                        visOptions=visOptions,
+                        overlap=False,
+                    )
 
                     # overlap meshes
-                    for [overlapmesh,overlaptype], i in zip(pv.logicalVolume.mesh.overlapmeshes,range(0,len(pv.logicalVolume.mesh.overlapmeshes))) :
+                    for [overlapmesh, overlaptype], i in zip(
+                        pv.logicalVolume.mesh.overlapmeshes,
+                        range(0, len(pv.logicalVolume.mesh.overlapmeshes)),
+                    ):
                         visOptions = self.getOverlapVisOptions(overlaptype)
 
-                        self.addMesh(pv_name, solid_name+"_overlap"+str(i), overlapmesh, new_mtra, new_tra, self.localmeshesOverlap,
-                                     self.filtersOverlap, self.mappersOverlap, self.physicalMapperMapOverlap, self.actorsOverlap,
-                                     self.physicalActorMapOverlap, visOptions=visOptions, overlap=True)
+                        self.addMesh(
+                            pv_name,
+                            solid_name + "_overlap" + str(i),
+                            overlapmesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshesOverlap,
+                            self.filtersOverlap,
+                            self.mappersOverlap,
+                            self.physicalMapperMapOverlap,
+                            self.actorsOverlap,
+                            self.physicalActorMapOverlap,
+                            visOptions=visOptions,
+                            overlap=True,
+                        )
 
-                self.addLogicalVolumeRecursive(pv.logicalVolume,new_mtra,new_tra)
+                self.addLogicalVolumeRecursive(pv.logicalVolume, new_mtra, new_tra)
 
             elif pv.type == "replica" or pv.type == "division":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
@@ -509,9 +637,21 @@ class VtkViewer:
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                     # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions=pv.visOptions, overlap=False)
+                    self.addMesh(
+                        pv_name,
+                        mesh.solid.name,
+                        mesh.localmesh,
+                        new_mtra,
+                        new_tra,
+                        self.localmeshes,
+                        self.filters,
+                        self.mappers,
+                        self.physicalMapperMap,
+                        self.actors,
+                        self.physicalActorMap,
+                        visOptions=pv.visOptions,
+                        overlap=False,
+                    )
             elif pv.type == "parametrised":
                 for mesh, trans in zip(pv.meshes, pv.transforms):
                     # pv transform
@@ -523,22 +663,49 @@ class VtkViewer:
                     new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
 
                     # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(pv_name, mesh.solid.name, mesh.localmesh, new_mtra, new_tra, self.localmeshes, self.filters,
-                                 self.mappers, self.physicalMapperMap, self.actors, self.physicalActorMap,
-                                 visOptions=pv.visOptions, overlap=False)
+                    self.addMesh(
+                        pv_name,
+                        mesh.solid.name,
+                        mesh.localmesh,
+                        new_mtra,
+                        new_tra,
+                        self.localmeshes,
+                        self.filters,
+                        self.mappers,
+                        self.physicalMapperMap,
+                        self.actors,
+                        self.physicalActorMap,
+                        visOptions=pv.visOptions,
+                        overlap=False,
+                    )
 
-    def addMesh(self, pv_name, solid_name, mesh, mtra, tra, localmeshes, filters,
-                mappers, mapperMap, actors, actorMap, visOptions=None, overlap=False,
-                cutters=True, clippers=False):
+    def addMesh(
+        self,
+        pv_name,
+        solid_name,
+        mesh,
+        mtra,
+        tra,
+        localmeshes,
+        filters,
+        mappers,
+        mapperMap,
+        actors,
+        actorMap,
+        visOptions=None,
+        overlap=False,
+        cutters=True,
+        clippers=False,
+    ):
         # VtkPolyData : check if mesh is in localmeshes dict
-        _log.info('VtkViewer.addLogicalVolume> vtkPD')
+        _log.info("VtkViewer.addLogicalVolume> vtkPD")
 
         if solid_name in localmeshes:
             vtkPD = localmeshes[solid_name]
-        else :
-            if clippers :
-                clipper_min_x =  0
-                clipper_min_y =  0
+        else:
+            if clippers:
+                clipper_min_x = 0
+                clipper_min_y = 0
                 clipper_min_z = -1e6
 
                 clipper_max_x = 1e6
@@ -549,26 +716,28 @@ class VtkViewer:
                 clipper_d_y = clipper_max_y - clipper_min_y
                 clipper_d_z = clipper_max_z - clipper_min_z
 
-                clipper_c_x = (clipper_max_x + clipper_min_x)/2.0
-                clipper_c_y = (clipper_max_y + clipper_min_y)/2.0
-                clipper_c_z = (clipper_max_z + clipper_min_z)/2.0
+                clipper_c_x = (clipper_max_x + clipper_min_x) / 2.0
+                clipper_c_y = (clipper_max_y + clipper_min_y) / 2.0
+                clipper_c_z = (clipper_max_z + clipper_min_z) / 2.0
 
                 import pyg4ometry
 
                 reg = pyg4ometry.geant4.Registry()
-                b = pyg4ometry.geant4.solid.Box("b",clipper_d_x, clipper_d_y, clipper_d_z,reg,"mm",False)
+                b = pyg4ometry.geant4.solid.Box(
+                    "b", clipper_d_x, clipper_d_y, clipper_d_z, reg, "mm", False
+                )
                 bm = b.mesh()
-                bm.translate([clipper_c_x,clipper_c_y,clipper_c_z])
+                bm.translate([clipper_c_x, clipper_c_y, clipper_c_z])
                 aa = pyg4ometry.transformation.matrix2axisangle(mtra)
                 meshclone = mesh.clone()
-                meshclone.rotate(aa[0],-aa[1]/_np.pi*180.)
-                meshclone.translate([tra[0],tra[1],tra[2]])
+                meshclone.rotate(aa[0], -aa[1] / _np.pi * 180.0)
+                meshclone.translate([tra[0], tra[1], tra[2]])
                 meshclone = meshclone.subtract(bm)
-                meshclone.translate([-tra[0],-tra[1],-tra[2]])
-                meshclone.rotate(aa[0],aa[1]/_np.pi*180.)
+                meshclone.translate([-tra[0], -tra[1], -tra[2]])
+                meshclone.rotate(aa[0], aa[1] / _np.pi * 180.0)
                 vtkPD = _Convert.pycsgMeshToVtkPolyData(meshclone)
 
-            else :
+            else:
                 vtkPD = _Convert.pycsgMeshToVtkPolyData(mesh)
                 localmeshes[solid_name] = vtkPD
 
@@ -588,22 +757,22 @@ class VtkViewer:
             vtkPD = normal_generator.GetOutput()
 
         # Filter : check if filter is in the filters dict
-        _log.info('VtkViewer.addLogicalVolume> vtkFLT')
-        filtername = solid_name+"_filter"
+        _log.info("VtkViewer.addLogicalVolume> vtkFLT")
+        filtername = solid_name + "_filter"
         if filtername in filters:
             vtkFLT = filters[filtername]
-        else :
+        else:
             vtkFLT = _vtk.vtkTriangleFilter()
             vtkFLT.AddInputData(vtkPD)
-            filters[filtername]  = vtkFLT
+            filters[filtername] = vtkFLT
 
         # Mapper
-        _log.info('VtkViewer.addLogicalVolume> vtkMAP')
-        mappername = pv_name+"_mapper"
+        _log.info("VtkViewer.addLogicalVolume> vtkMAP")
+        mappername = pv_name + "_mapper"
         vtkMAP = _vtk.vtkPolyDataMapper()
         vtkMAP.ScalarVisibilityOff()
         # TRIANGLE/NON-TRIANGLE FILTER
-        #vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
+        # vtkMAP.SetInputConnection(vtkFLT.GetOutputPort())
         vtkMAP.SetInputData(vtkPD)
 
         mappers.append(vtkMAP)
@@ -612,7 +781,7 @@ class VtkViewer:
             mapperMap[mappername] = vtkMAP
 
         # Actor
-        actorname = pv_name+"_actor"
+        actorname = pv_name + "_actor"
         vtkActor = _vtk.vtkActor()
         vtkActor.SetMapper(vtkMAP)
         vtkActor.name = actorname
@@ -626,19 +795,19 @@ class VtkViewer:
                 vtkActor.GetProperty().SetInterpolationToFlat()
 
         vtkTransform = _vtk.vtkMatrix4x4()
-        vtkTransform.SetElement(0,0,mtra[0,0])
-        vtkTransform.SetElement(0,1,mtra[0,1])
-        vtkTransform.SetElement(0,2,mtra[0,2])
-        vtkTransform.SetElement(1,0,mtra[1,0])
-        vtkTransform.SetElement(1,1,mtra[1,1])
-        vtkTransform.SetElement(1,2,mtra[1,2])
-        vtkTransform.SetElement(2,0,mtra[2,0])
-        vtkTransform.SetElement(2,1,mtra[2,1])
-        vtkTransform.SetElement(2,2,mtra[2,2])
-        vtkTransform.SetElement(0,3,tra[0])
-        vtkTransform.SetElement(1,3,tra[1])
-        vtkTransform.SetElement(2,3,tra[2])
-        vtkTransform.SetElement(3,3,1)
+        vtkTransform.SetElement(0, 0, mtra[0, 0])
+        vtkTransform.SetElement(0, 1, mtra[0, 1])
+        vtkTransform.SetElement(0, 2, mtra[0, 2])
+        vtkTransform.SetElement(1, 0, mtra[1, 0])
+        vtkTransform.SetElement(1, 1, mtra[1, 1])
+        vtkTransform.SetElement(1, 2, mtra[1, 2])
+        vtkTransform.SetElement(2, 0, mtra[2, 0])
+        vtkTransform.SetElement(2, 1, mtra[2, 1])
+        vtkTransform.SetElement(2, 2, mtra[2, 2])
+        vtkTransform.SetElement(0, 3, tra[0])
+        vtkTransform.SetElement(1, 3, tra[1])
+        vtkTransform.SetElement(2, 3, tra[2])
+        vtkTransform.SetElement(3, 3, 1)
 
         vtkActor.SetUserMatrix(vtkTransform)
 
@@ -648,8 +817,7 @@ class VtkViewer:
         vtkTransFLT.SetTransform(vtkTransform1)
         vtkTransFLT.SetInputConnection(vtkFLT.GetOutputPort())
 
-        def makeCutterPlane(origin, normal, color) :
-
+        def makeCutterPlane(origin, normal, color):
             plane = _vtk.vtkPlane()
             plane.SetOrigin(*origin)
             plane.SetNormal(*normal)
@@ -677,7 +845,7 @@ class VtkViewer:
 
             return cutter
 
-        def makeClipperPlane(normal) :
+        def makeClipperPlane(normal):
             plane = _vtk.vtkPlane()
             plane.SetOrigin(0, 0, 0)
             plane.SetNormal(normal[0], normal[1], normal[2])
@@ -690,7 +858,7 @@ class VtkViewer:
             clipperMapper.ScalarVisibilityOff()
             clipperMapper.SetInputConnection(clipper.GetOutputPort())
 
-            clipperActor =_vtk.vtkActor()
+            clipperActor = _vtk.vtkActor()
             clipperActor.SetMapper(clipperMapper)
             clipperActor.GetProperty().SetColor(1.0, 1.0, 1.0)
             clipperActor.GetProperty().SetOpacity(0.5)
@@ -699,17 +867,23 @@ class VtkViewer:
             vtkActor.GetProperty().SetOpacity(0.0)
             self.ren.AddActor(clipperActor)  # selection part end
 
-        if cutters :
-            self.xcutters.append(makeCutterPlane(self._xCutterOrigin, self._xCutterNormal, [1,0,0]))
-            self.ycutters.append(makeCutterPlane(self._yCutterOrigin, self._yCutterNormal, [0,1,0]))
-            self.zcutters.append(makeCutterPlane(self._zCutterOrigin, self._zCutterNormal, [0,0,1]))
+        if cutters:
+            self.xcutters.append(
+                makeCutterPlane(self._xCutterOrigin, self._xCutterNormal, [1, 0, 0])
+            )
+            self.ycutters.append(
+                makeCutterPlane(self._yCutterOrigin, self._yCutterNormal, [0, 1, 0])
+            )
+            self.zcutters.append(
+                makeCutterPlane(self._zCutterOrigin, self._zCutterNormal, [0, 0, 1])
+            )
 
-        #if clippers :
+        # if clippers :
         #    makeClipperPlane([1,0,0])
         #    makeClipperPlane([0,1,0])
         #    makeClipperPlane([0,0,1])
 
-        if overlap :
+        if overlap:
             overlapText = _vtk.vtkVectorText()
             overlapText.SetText("overlap")
 
@@ -743,13 +917,13 @@ class VtkViewer:
             elif visOptions.representation == "wireframe":
                 vtkActor.GetProperty().SetRepresentationToWireframe()
         else:
-            vtkActor.GetProperty().SetColor(1,0,0)
+            vtkActor.GetProperty().SetColor(1, 0, 0)
 
         vtkActor.SetVisibility(visOptions.visible)
         actors.append(vtkActor)
         self.ren.AddActor(vtkActor)
 
-    def view(self, interactive=True, resetCamera=True ):
+    def view(self, interactive=True, resetCamera=True):
         # enable user interface interactor
         self.iren.Initialize()
 
@@ -763,12 +937,12 @@ class VtkViewer:
         if interactive:
             self.iren.Start()
 
-    def _getCutterData(self, axis='x', scaling=1.0):
-        if axis == 'x':
+    def _getCutterData(self, axis="x", scaling=1.0):
+        if axis == "x":
             cutters = self.xcutters
-        elif axis == 'y':
+        elif axis == "y":
             cutters = self.ycutters
-        elif axis == 'z':
+        elif axis == "z":
             cutters = self.zcutters
         else:
             raise ValueError("axis is not one of x,y,z")
@@ -777,29 +951,29 @@ class VtkViewer:
         allY = []
         for c in cutters:
             pd = c.GetOutput()
-            xs,ys = [],[]
-            for i in range(0,pd.GetNumberOfCells(),1) :
+            xs, ys = [], []
+            for i in range(0, pd.GetNumberOfCells(), 1):
                 idl = _vtk.vtkIdList()
-                pd.GetCellPoints(i,idl)
-                x,y = [],[]
-                for j in range(0,idl.GetNumberOfIds(),1) :
+                pd.GetCellPoints(i, idl)
+                x, y = [], []
+                for j in range(0, idl.GetNumberOfIds(), 1):
                     p = pd.GetPoint(idl.GetId(j))
 
-                    if axis == 'x':
-                        x.append(p[1]*scaling)
-                        y.append(p[2]*scaling)
-                    elif axis == 'y':
-                        x.append(p[0]*scaling)
-                        y.append(p[2]*scaling)
-                    elif axis == 'z':
-                        x.append(p[0]*scaling)
-                        y.append(p[1]*scaling)
+                    if axis == "x":
+                        x.append(p[1] * scaling)
+                        y.append(p[2] * scaling)
+                    elif axis == "y":
+                        x.append(p[0] * scaling)
+                        y.append(p[2] * scaling)
+                    elif axis == "z":
+                        x.append(p[0] * scaling)
+                        y.append(p[1] * scaling)
                 if len(x) > 0 and len(y) > 0:
                     allX.append(x)
                     allY.append(y)
-        return allX,allY
+        return allX, allY
 
-    def exportCutterSection(self, filename, normal='x', scaling=1.0):
+    def exportCutterSection(self, filename, normal="x", scaling=1.0):
         """
         Export the section lines in plane perpendicular to normal.
         Exported as json text.
@@ -814,19 +988,21 @@ class VtkViewer:
         """
         d = self._getCutterData(normal, scaling)
         import json
-        f = open(filename, 'w')
-        json.dump(d,f)
+
+        f = open(filename, "w")
+        json.dump(d, f)
         f.close()
 
-    def viewSection(self, dir='x'):
+    def viewSection(self, dir="x"):
         import matplotlib.pyplot as _plt
-        #from vtk.numpy_interface import dataset_adapter as dsa
 
-        if dir == 'x':
+        # from vtk.numpy_interface import dataset_adapter as dsa
+
+        if dir == "x":
             cutters = self.xcutters
-        elif dir == 'y':
+        elif dir == "y":
             cutters = self.ycutters
-        elif dir == 'z':
+        elif dir == "z":
             cutters = self.zcutters
         else:
             raise ValueError("Unknown direction " + dir)
@@ -843,17 +1019,17 @@ class VtkViewer:
                 for j in range(0, idl.GetNumberOfIds(), 1):
                     p = pd.GetPoint(idl.GetId(j))
 
-                    if dir == 'x':
+                    if dir == "x":
                         x.append(p[1])
                         y.append(p[2])
-                    elif dir == 'y':
+                    elif dir == "y":
                         x.append(p[0])
                         y.append(p[2])
-                    elif dir == 'z':
+                    elif dir == "z":
                         x.append(p[0])
                         y.append(p[1])
 
-                _plt.plot(x, y, color='k')
+                _plt.plot(x, y, color="k")
 
     def addCutterPlane(self, position, normal, colour=None):
         """
@@ -914,7 +1090,7 @@ class VtkViewer:
             materialName = pv.logicalVolume.material.name
             # if 0x is in name, strip the appended pointer (common in exported GDML)
             if "0x" in materialName:
-                materialName = materialName[0:materialName.find("0x")]
+                materialName = materialName[0 : materialName.find("0x")]
             # get with default
             v = self.materialVisOptions.get(materialName, pv.visOptions)
         else:
@@ -930,6 +1106,7 @@ class VtkViewer:
         print("Focal point     ", activeCamera.GetFocalPoint())
         print("Camera position ", activeCamera.GetPosition())
         print("Focal distance  ", activeCamera.GetDistance())
+
 
 class VtkViewerColoured(VtkViewer):
     """
@@ -958,6 +1135,7 @@ class VtkViewerColoured(VtkViewer):
     If the value in the materialVisOptions is a list or a tuple, it will be upgraded
     to a :class:`VisualisationOptions` instance.
     """
+
     def __init__(self, *args, defaultColour=None, materialVisOptions=None, **kwargs):
         kwargs["interpolation"] = kwargs.get("interpolation", "flat")
         super().__init__(*args, **kwargs)
@@ -971,12 +1149,12 @@ class VtkViewerColoured(VtkViewer):
         # loop over dictionary of material vis options - if value is list(rgba)
         # convert to vis options instance, make invisible if alpha is 0
         if materialVisOptions:
-            for k,v in materialVisOptions.items():
+            for k, v in materialVisOptions.items():
                 if type(v) is list or type(v) is tuple:
                     vi = _VisOptions()
                     vi.colour = v[:3]
-                    if any([i>1 for i in vi.colour]):
-                        vi.colour = [i/255.0 for i in vi.colour]
+                    if any([i > 1 for i in vi.colour]):
+                        vi.colour = [i / 255.0 for i in vi.colour]
                     if len(v) > 3:
                         vi.alpha = v[3]
                         vi.visible = vi.alpha != 0
@@ -987,8 +1165,10 @@ class VtkViewerColoured(VtkViewer):
     def _getDefaultVis(self, pv):
         return self._defaultVis
 
+
 # for backwards compatibility for old name
 PubViewer = VtkViewerColoured
+
 
 class VtkViewerColouredMaterial(PubViewer):
     """
@@ -996,8 +1176,12 @@ class VtkViewerColouredMaterial(PubViewer):
     several common materials. Material colours are in defined Colour.py for many
     Geant4, FLUKA and BDSIM materials.
     """
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
+        super().__init__(
+            *args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs
+        )
+
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self, renderer, vtkviewer):
@@ -1012,7 +1196,6 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         picker = _vtk.vtkPropPicker()
         picker.Pick(clickPos[0], clickPos[1], 0, self.renderer)
 
-
         actor = picker.GetActor()
         # If an actor was right clicked
         if actor:
@@ -1023,20 +1206,27 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             except StopIteration:
                 pass
             else:
-                name = name[:name.find("_actor")]
+                name = name[: name.find("_actor")]
                 print(f"{type(self.vtkviewer).__name__}> selected> {name}")
 
 
 def axesFromExtents(extent):
-    low  = _np.array(extent[0])
+    low = _np.array(extent[0])
     high = _np.array(extent[1])
-    diff = high-low
-    centre = (high+low)/2.0
-    length = diff.max()/2
+    diff = high - low
+    centre = (high + low) / 2.0
+    length = diff.max() / 2
 
-    return length,centre
+    return length, centre
 
-def viewLogicalVolumeDifference(referenceLV, otherLV, otherTranslation=[0,0,0], otherRotation=[0,0,0], viewDifference=True):
+
+def viewLogicalVolumeDifference(
+    referenceLV,
+    otherLV,
+    otherTranslation=[0, 0, 0],
+    otherRotation=[0, 0, 0],
+    viewDifference=True,
+):
     """
     :param referenceLV: LogicalVolume instance to view viewed in red.
     :type  referenceLV: pyg4ometry.geant4.LogicalVolume.
@@ -1057,38 +1247,75 @@ def viewLogicalVolumeDifference(referenceLV, otherLV, otherTranslation=[0,0,0], 
     v = VtkViewer()
 
     visOptions1 = _VisOptions()
-    visOptions1.colour = [1.0, 0.0, 0.0] # red
+    visOptions1.colour = [1.0, 0.0, 0.0]  # red
     visOptions1.alpha = 0.4
     mtra = _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-    v.addMesh("referenceLV", lvr.solid.name, lvr.mesh.localmesh, mtra, _np.array([0, 0, 0]),
-              v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
-              visOptions=visOptions1, overlap=False)
+    v.addMesh(
+        "referenceLV",
+        lvr.solid.name,
+        lvr.mesh.localmesh,
+        mtra,
+        _np.array([0, 0, 0]),
+        v.localmeshes,
+        v.filters,
+        v.mappers,
+        v.physicalMapperMap,
+        v.actors,
+        v.physicalActorMap,
+        visOptions=visOptions1,
+        overlap=False,
+    )
 
     visOptions2 = _VisOptions()
     visOptions2.colour = [0.0, 0.0, 1.0]  # blue
     visOptions2.alpha = 0.4
     oRotation = _transformation.tbxyz2matrix(otherRotation)
     oTranslation = _np.array(otherTranslation)
-    v.addMesh("otherLV", lvo.solid.name, lvo.mesh.localmesh, oRotation, oTranslation,
-              v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
-              visOptions=visOptions2, overlap=False)
+    v.addMesh(
+        "otherLV",
+        lvo.solid.name,
+        lvo.mesh.localmesh,
+        oRotation,
+        oTranslation,
+        v.localmeshes,
+        v.filters,
+        v.mappers,
+        v.physicalMapperMap,
+        v.actors,
+        v.physicalActorMap,
+        visOptions=visOptions2,
+        overlap=False,
+    )
 
     if viewDifference:
         oMeshClone = lvo.mesh.localmesh.clone()
-        #aa = oRotation
+        # aa = oRotation
         import pyg4ometry
-        #print(pyg4ometry.pycgal.geom.Vector(aa[0]))
+
+        # print(pyg4ometry.pycgal.geom.Vector(aa[0]))
         aa = _transformation.matrix2axisangle(oRotation)
         tra = oTranslation
-        oMeshClone.rotate(aa[0], -aa[1] / _np.pi * 180.)
+        oMeshClone.rotate(aa[0], -aa[1] / _np.pi * 180.0)
         oMeshClone.translate([tra[0], tra[1], tra[2]])
         differenceMesh = oMeshClone.subtract(lvr.mesh.localmesh.clone())
         visOptions3 = _VisOptions()
         visOptions3.colour = [0.0, 1.0, 0.0]  # blue
         visOptions3.alpha = 0.8
-        v.addMesh("difference-mesh", "difference-solid", differenceMesh, mtra, _np.array([0, 0, 0]),
-                  v.localmeshes, v.filters, v.mappers, v.physicalMapperMap, v.actors, v.physicalActorMap,
-                  visOptions=visOptions3, overlap=False)
+        v.addMesh(
+            "difference-mesh",
+            "difference-solid",
+            differenceMesh,
+            mtra,
+            _np.array([0, 0, 0]),
+            v.localmeshes,
+            v.filters,
+            v.mappers,
+            v.physicalMapperMap,
+            v.actors,
+            v.physicalActorMap,
+            visOptions=visOptions3,
+            overlap=False,
+        )
 
     v.view()
     return v

@@ -8,6 +8,6 @@ class ViewableMixin:
         if mesh.isNull():
             raise NullMeshError(f"{self.name} mesh is null")
         v = VtkViewer()
-        v.addMeshSimple(mesh, clip=True) #, name=self.name)
+        v.addMeshSimple(mesh, clip=True)  # , name=self.name)
         v.addAxes()
         v.view()

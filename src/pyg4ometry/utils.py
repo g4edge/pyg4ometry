@@ -3,9 +3,11 @@ import time
 import numpy as np
 from copy import deepcopy
 
+
 def _write_pickle(obj, path):
     with open(path, "wb") as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
 
 def _load_pickle(path):
     with open(path, "rb") as f:
@@ -24,8 +26,7 @@ class Samples:
             self[name].append(time)
 
     def n_samples_description(self):
-        return "\n".join([f"{k}: {len(v)} samples" for
-                          k, v in self.times.items()])
+        return "\n".join([f"{k}: {len(v)} samples" for k, v in self.times.items()])
 
     def sample_names(self, exclude=None):
         if exclude is None:
@@ -35,14 +36,18 @@ class Samples:
     def means(self, exclude=None):
         if exclude is None:
             exclude = []
-        return {key: np.mean(val)
-                for key, val in self.times.items() if key not in exclude}
+        return {
+            key: np.mean(val) for key, val in self.times.items() if key not in exclude
+        }
 
     def stds(self, exclude=None):
         if exclude is None:
             exclude = []
-        return {key: np.std(val, ddof=1)
-                for key, val in self.times.items() if key not in exclude}
+        return {
+            key: np.std(val, ddof=1)
+            for key, val in self.times.items()
+            if key not in exclude
+        }
 
     @classmethod
     def from_existing(cls, *samples):
@@ -56,7 +61,7 @@ class Samples:
         if len(samples) == 1:
             return result
 
-        all_sample_names = set() # Get all sample names across all samples.
+        all_sample_names = set()  # Get all sample names across all samples.
         for s in samples:
             all_sample_names = all_sample_names.union(s.sample_names())
 
@@ -99,7 +104,6 @@ class Samples:
         return key in self.times
 
 
-
 class Timer:
     """A class for recording the CPU time at specific positions within code
     with the use of a name.  Records time stamps in a Samples instance.
@@ -118,6 +122,7 @@ class Timer:
     std_step1 = timer.samples.stds()["step1"]
 
     """
+
     def __init__(self, **metadata):
         self.metadata = metadata
         self.time0 = time.process_time()

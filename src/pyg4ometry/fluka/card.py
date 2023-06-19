@@ -8,11 +8,18 @@ class Card(object):
     class method for FREE and FIXED format, respectively.
 
     """
-    def __init__(self,
-                 keyword,
-                 what1=None, what2=None, what3=None,
-                 what4=None, what5=None, what6=None,
-                 sdum=None):
+
+    def __init__(
+        self,
+        keyword,
+        what1=None,
+        what2=None,
+        what3=None,
+        what4=None,
+        what5=None,
+        what6=None,
+        sdum=None,
+    ):
         self.keyword = keyword
         self.what1 = _attempt_float_coercion(what1)
         self.what2 = _attempt_float_coercion(what2)
@@ -26,8 +33,16 @@ class Card(object):
         return "<Card: {}>".format(self.toFreeString())
 
     def toList(self):
-        return [self.keyword, self.what1, self.what2, self.what3,
-                self.what4, self.what5, self.what6, self.sdum]
+        return [
+            self.keyword,
+            self.what1,
+            self.what2,
+            self.what3,
+            self.what4,
+            self.what5,
+            self.what6,
+            self.sdum,
+        ]
 
     def toFreeString(self, delim=", "):
         # Coerce to strings, replace None with empty string.
@@ -36,8 +51,8 @@ class Card(object):
 
     def toFixedString(self):
         # TODO finish fixed string
-        #*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+...
-        #PHOTONUC      1111.0       0.0       0.0      26.0     147.0       1.0ELECTNUC
+        # *...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+...
+        # PHOTONUC      1111.0       0.0       0.0      26.0     147.0       1.0ELECTNUC
         pass
 
     def nonesToZero(self):
@@ -58,12 +73,11 @@ class Card(object):
     def fromFixed(cls, line):
         if len(line) > 80:
             raise TypeError("Line too long.  Maximum line length is 80.")
-        line = line.rstrip('\n')
+        line = line.rstrip("\n")
         # column positions are multiples of 10 up to 80 inclusive.
         positions = [10 * x for x in range(9)]
         # Split the line into a list of strings according to the positions
-        columns = [line[start:stop]
-                   for start, stop in zip(positions, positions[1:])]
+        columns = [line[start:stop] for start, stop in zip(positions, positions[1:])]
         # remove trailing/leading whitepace
         columns = [column.strip() for column in columns]
         # Empty strings -> None
@@ -84,13 +98,12 @@ def _attempt_float_coercion(string):
 def freeFormatStringSplit(string):
     """Method to split a string in FLUKA FREE format into its components."""
     # Split the string along non-black separators [,;:/\]
-    partial_split = re.split(';|,|\\/|:|\\\|\n', r"{}".format(string))
+    partial_split = re.split(";|,|\\/|:|\\\|\n", r"{}".format(string))
 
     # Populate zeros between consequtive non-blank separators as per
     # the FLUKA manual.
-    is_blank  = lambda s : not set(s) or set(s) == {" "}
-    noblanks_split = [chunk if not is_blank(chunk) else None
-                      for chunk in partial_split]
+    is_blank = lambda s: not set(s) or set(s) == {" "}
+    noblanks_split = [chunk if not is_blank(chunk) else None for chunk in partial_split]
 
     # Strip whitespace
     components = []
@@ -108,5 +121,5 @@ def main(filein):
     m = rotdefini_to_matrix(c)
 
 
-if __name__ == '__main__':
-    main("asdasd") #sys.argv[1])
+if __name__ == "__main__":
+    main("asdasd")  # sys.argv[1])
