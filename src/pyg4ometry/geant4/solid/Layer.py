@@ -8,13 +8,14 @@ from ...pycsg.geom import Polygon as _Polygon
 
 import numpy as _np
 
-class Layer(object):
+
+class Layer:
     def __init__(self, p1, p2, p3, p4, z):
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
         self.p4 = p4
-        self.z  = z
+        self.z = z
 
     def __getitem__(self, index):
         if index == 0:
@@ -25,24 +26,26 @@ class Layer(object):
             return self.p3
         elif index == 3:
             return self.p4
-        elif index ==4:
+        elif index == 4:
             return self.z
         else:
-            raise IndexError("Invalid index "+str(index))
+            raise IndexError("Invalid index " + str(index))
 
     def Rotated(self, angle):
-        result = Layer(self.p1.Rotated(angle),
-                       self.p2.Rotated(angle),
-                       self.p3.Rotated(angle),
-                       self.p4.Rotated(angle),
-                       self.z)
+        result = Layer(
+            self.p1.Rotated(angle),
+            self.p2.Rotated(angle),
+            self.p3.Rotated(angle),
+            self.p4.Rotated(angle),
+            self.z,
+        )
         return result
 
     def __repr__(self):
-        s = 'Layer<'
-        s += str(self.p1) + ', '
-        s += str(self.p2) + ', '
-        s += str(self.p3) + ', '
-        s += str(self.p4) + ', '
-        s += ' z = ' + str(self.z) + '>'
+        s = "Layer<"
+        s += str(self.p1) + ", "
+        s += str(self.p2) + ", "
+        s += str(self.p3) + ", "
+        s += str(self.p4) + ", "
+        s += " z = " + str(self.z) + ">"
         return s

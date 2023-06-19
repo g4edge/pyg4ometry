@@ -8,8 +8,8 @@ from pkg_resources import get_distribution
 sys.path.insert(0, Path(__file__).parents[2].resolve().as_posix())
 
 project = "pyg4ometry"
-copyright = u'Royal Holloway, University of London 2023'
-author = u'S. Boogert, A. Abramov, A. Butcher, L. Nevay, W. Shields, S. Walker'
+copyright = "Royal Holloway, University of London 2023"
+author = "S. Boogert, A. Abramov, A. Butcher, L. Nevay, W. Shields, S. Walker"
 version = get_distribution("pyg4ometry").version
 
 extensions = [
@@ -19,7 +19,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.inheritance_diagram",
     "sphinx_copybutton",
-    "sphinx_tabs.tabs",
+    "sphinx_inline_tabs",
     "myst_parser",
 ]
 

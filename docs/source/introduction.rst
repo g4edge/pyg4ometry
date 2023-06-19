@@ -8,8 +8,8 @@ accelerator systems. Creation of geometry is a time consuming activity and
 pyg4ometry hopefully will improve the time taken to create accurate reliable
 geometry flies.
 
-Need for programatic geometry generation
-----------------------------------------
+Need for programmatic geometry generation
+-----------------------------------------
 
  * Non-expert user creation and maintenance of geometry
  * Reduce time spent creating geometry

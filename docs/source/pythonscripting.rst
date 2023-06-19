@@ -70,13 +70,13 @@ Examples:
 .. code-block:: python
 
   reg = pyg4ometry.geant4.Registry()
-  boxSolid = pyg4ometry.genat4.solid.Box("aBox", 10, 20, 30, reg)
+  boxSolid = pyg4ometry.geant4.solid.Box("aBox", 10, 20, 30, reg)
 
-This defines a box with the default units (none specifed), so mm. We can specify them:
+This defines a box with the default units (none specified), so mm. We can specify them:
 
 .. code-block:: python
 
-  boxSolid = pyg4ometry.genat4.solid.Box("aBox", 10, 20, 30, reg, "cm")
+  boxSolid = pyg4ometry.geant4.solid.Box("aBox", 10, 20, 30, reg, "cm")
 
 
 Geant4 Python Scripting
@@ -84,30 +84,30 @@ Geant4 Python Scripting
 
 Making use of pyg4ometry requires the following modules
 
-.. code-block :: python
+.. code-block:: python
 
    import pyg4ometry
 
 To make a simple geometry of a box located at the origin
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
    # load pyg4ometry
    import pyg4ometry
 
    # registry to store gdml data
-   reg  = pyg4ometry.geant4.Registry()
+   reg = pyg4ometry.geant4.Registry()
 
    # world solid and logical
-   ws   = pyg4ometry.geant4.solid.Box("ws",50,50,50,reg)
-   wl   = pyg4ometry.geant4.LogicalVolume(ws,"G4_Galactic","wl",reg)
+   ws = pyg4ometry.geant4.solid.Box("ws", 50, 50, 50, reg)
+   wl = pyg4ometry.geant4.LogicalVolume(ws, "G4_Galactic", "wl", reg)
    reg.setWorld(wl.name)
 
    # box placed at origin
-   b1   = pyg4ometry.geant4.solid.Box("b1",10,10,10,reg)
-   b1_l = pyg4ometry.geant4.LogicalVolume(b1,"G4_Fe","b1_l",reg)
-   b1_p = pyg4ometry.geant4.PhysicalVolume([0,0,0],[0,0,0],b1_l,"b1_p",wl,reg)
+   b1 = pyg4ometry.geant4.solid.Box("b1", 10, 10, 10, reg)
+   b1_l = pyg4ometry.geant4.LogicalVolume(b1, "G4_Fe", "b1_l", reg)
+   b1_p = pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], b1_l, "b1_p", wl, reg)
 
    # visualise geometry
    v = pyg4ometry.visualisation.VtkViewer()
@@ -128,50 +128,40 @@ geometry, materials etc. These can be used as variables or definitions and
 mean that any equations used will be retained in GDML output. For example a
 GDML constant can be created in the following way
 
-.. code-block :: python
+.. code-block:: python
 
    # registry to store gdml data
    reg = pyg4ometry.geant4.Registry()
 
    # constant called x
-   x = pyg4ometry.gdml.Constant("x",10,reg)
+   x = pyg4ometry.gdml.Constant("x", 10, reg)
 
 The normal set of mathematical operations in python can be performed and
 evaluated
 
-.. code-block :: python
-
-   y = 2*x + 10
-   y.eval()
-
-.. code-block :: python
-
-   >> 30
+>>> y = 2*x + 10
+>>> y.eval()
+30
 
 The constant ``x`` can of course be changed and ``y`` re-evaluated
 
-.. code-block :: python
-
-   x.setExpression(5)
-   y.eval()
-
-.. code-block :: python
-
-   >> 20
+>>> x.setExpression(5)
+>>> y.eval()
+20
 
 .. note::
    Standard mathematical functions can be used with GDML defines (Constant, Variable, etc). So sin, cos, tan,
    exp and so on, but pyg4ometry functions have to be used
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
-   x  = pyg4ometry.gdml.Constant("x",10,reg)
+   x = pyg4ometry.gdml.Constant("x", 10, reg)
    cx = pyg4ometry.gdml.cos(x)
 
 So the box example above can be rewritten using constants
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
    :emphasize-lines: 7-9,16
 
@@ -179,20 +169,20 @@ So the box example above can be rewritten using constants
    import pyg4ometry
 
    # registry to store gdml data
-   reg  = pyg4ometry.geant4.Registry()
+   reg = pyg4ometry.geant4.Registry()
 
-   bx = pyg4ometry.gdml.Constant("bx","10",reg,True)
-   by = pyg4ometry.gdml.Constant("by",2*bx,reg,True)
-   bz = pyg4ometry.gdml.Constant("bz",2*by,reg,True)
+   bx = pyg4ometry.gdml.Constant("bx", "10", reg, True)
+   by = pyg4ometry.gdml.Constant("by", 2 * bx, reg, True)
+   bz = pyg4ometry.gdml.Constant("bz", 2 * by, reg, True)
 
    # world solid and logical
-   ws   = pyg4ometry.geant4.solid.Box("ws",50,50,50,reg)
-   wl   = pyg4ometry.geant4.LogicalVolume(ws,"G4_Galactic","wl",reg)
+   ws = pyg4ometry.geant4.solid.Box("ws", 50, 50, 50, reg)
+   wl = pyg4ometry.geant4.LogicalVolume(ws, "G4_Galactic", "wl", reg)
 
    # box placed at origin
-   b1   = pyg4ometry.geant4.solid.Box("b1",bx,by,bz,reg)
-   b1_l = pyg4ometry.geant4.LogicalVolume(b1,"G4_Fe","b1_l",reg)
-   b1_p = pyg4ometry.geant4.PhysicalVolume([0,0,0],[0,0,0],b1_l,"b1_p",wl,reg)
+   b1 = pyg4ometry.geant4.solid.Box("b1", bx, by, bz, reg)
+   b1_l = pyg4ometry.geant4.LogicalVolume(b1, "G4_Fe", "b1_l", reg)
+   b1_p = pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], b1_l, "b1_p", wl, reg)
 
    # visualise geometry
    v = pyg4ometry.visualisation.VtkViewer()
@@ -210,20 +200,20 @@ So the box example above can be rewritten using constants
    .. code-block:: python
       :linenos:
 
-      b1   = pyg4ometry.geant4.solid.Box("b1",bx,by,bz,reg)
-      b1.pX = 20              # do not do this
-      b1.pX.setExpression(20) # rather do this
+      b1 = pyg4ometry.geant4.solid.Box("b1", bx, by, bz, reg)
+      b1.pX = 20  # do not do this
+      b1.pX.setExpression(20)  # rather do this
 
 Solids
 ------
 
 The python geant4 solids match the Geant4 constructors as much possible (different constructor signatures are not supported in python). For example looking at the ``G4Box`` class
 
-.. code-block :: python
+.. code-block:: python
 
    pyg4ometry.geant4.solid.Box(name, pX, pY, pZ, registry, lunit)
 
-.. code-block :: c++
+.. code-block:: c++
 
    G4Box(const G4String& pName, G4double  pX, G4double  pY, G4double pZ)
 
@@ -241,74 +231,84 @@ contrast to Geant4.
 
 To define a material from the Geant4 predefined (e.g. NIST) materials
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 2-3
    :linenos:
 
    import pyg4ometry.geant4 as _g4
+
    wm = _g4.MaterialPredefined("G4_Galactic")
    bm = _g4.MaterialPredefined("G4_Fe")
 
 
 To define a single element in terms of atomic number, atomic mass and density.
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 2-3
    :linenos:
 
    import pyg4ometry.geant4 as _g4
-   wm = _g4.MaterialSingleElement("galactic",1,1.008,1e-25,reg)   # low density hydrogen
-   bm = _g4.MaterialSingleElement("iron",26,55.8452,7.874,reg)    # iron at near room temp
+
+   wm = _g4.MaterialSingleElement("galactic", 1, 1.008, 1e-25, reg)  # low density hydrogen
+   bm = _g4.MaterialSingleElement(
+       "iron", 26, 55.8452, 7.874, reg
+   )  # iron at near room temp
 
 To define a compound two elements using the mass fraction
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 2
    :linenos:
 
    import pyg4ometry.geant4 as _g4
-   wm = _g4.MaterialCompound("air",1.290e-3,2,reg)
-   ne = _g4.ElementSimple("nitrogen","N",7,14.01)
-   oe = _g4.ElementSimple("oxygen","O",8,16.0)
-   wm.add_element_massfraction(ne,0.7)
-   wm.add_element_massfraction(oe,0.3)
-   bm = _g4.MaterialSingleElement("iron",26,55.8452,7.874,reg)    # iron at near room temp
+
+   wm = _g4.MaterialCompound("air", 1.290e-3, 2, reg)
+   ne = _g4.ElementSimple("nitrogen", "N", 7, 14.01)
+   oe = _g4.ElementSimple("oxygen", "O", 8, 16.0)
+   wm.add_element_massfraction(ne, 0.7)
+   wm.add_element_massfraction(oe, 0.3)
+   bm = _g4.MaterialSingleElement(
+       "iron", 26, 55.8452, 7.874, reg
+   )  # iron at near room temp
 
 To define a compound using number of atoms
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 2
    :linenos:
 
    import pyg4ometry.geant4 as _g4
-   bm = _g4.MaterialCompound("plastic",1.38,3,reg)    # Generic PET C_10 H_8 O_4
-   he = _g4.ElementSimple("hydrogen","H",1,1.008)
-   ce = _g4.ElementSimple("carbon","C",6,12.0096)
-   oe = _g4.ElementSimple("oxygen","O",8,16.0)
-   bm.add_element_natoms(he,8)
-   bm.add_element_natoms(ce,10)
-   bm.add_element_natoms(oe,4)
+
+   bm = _g4.MaterialCompound("plastic", 1.38, 3, reg)  # Generic PET C_10 H_8 O_4
+   he = _g4.ElementSimple("hydrogen", "H", 1, 1.008)
+   ce = _g4.ElementSimple("carbon", "C", 6, 12.0096)
+   oe = _g4.ElementSimple("oxygen", "O", 8, 16.0)
+   bm.add_element_natoms(he, 8)
+   bm.add_element_natoms(ce, 10)
+   bm.add_element_natoms(oe, 4)
 
 Material as a mixture of materials
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 2
    :linenos:
 
    import pyg4ometry.geant4 as _g4
-   bm     = _g4.MaterialCompound("YellowBrass_C26800", 8.14, 2, reg)
+
+   bm = _g4.MaterialCompound("YellowBrass_C26800", 8.14, 2, reg)
    copper = _g4.MaterialPredefined("G4_Cu")
-   zinc   = _g4.MaterialPredefined("G4_Zn")
+   zinc = _g4.MaterialPredefined("G4_Zn")
    bm.add_material(copper, 0.67)
    bm.add_material(zinc, 0.33)
 
 Example of elements formed by isotopes
 
-.. code-block :: python
+.. code-block:: python
    :emphasize-lines: 4
    :linenos:
 
    import pyg4ometry.geant4 as _g4
+
    u235 = _g4.Isotope("U235", 92, 235, 235.044)
    u238 = _g4.Isotope("U238", 92, 238, 238.051)
    uranium = _g4.ElementIsotopeMixture("uranium", "U", 2)
@@ -330,11 +330,12 @@ in Geant4 based on a cache in pyg4ometry of the material compositions generated 
 Geant4 (10.7.p01 as of writing). Should the user wish to use these, they can be accessed from the
 functions in the geant4 module.
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
    import pyg4ometry
-   nistHydrogenElement = pyg4ometry.geant4.nist_element_2geant4Element('G4_H')
+
+   nistHydrogenElement = pyg4ometry.geant4.nist_element_2geant4Element("G4_H")
 
 Note, an 'element' cannot be used as a 'material' in a logical volume. We must upgrade it to a material
 for that. The NIST elements contain the appropriate mixture of natural isotopes and can be used in
@@ -342,12 +343,13 @@ for that. The NIST elements contain the appropriate mixture of natural isotopes 
 
 Alternatively, we can access the NIST materials and materials of elements.
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
    import pyg4ometry
-   nistHydrogenMaterial = pyg4ometry.geant4.nist_material_2geant4Material('G4_H')
-   nistConcreteMaterial = pyg4ometry.geant4.nist_material_2geant4Material('G4_CONCRETE')
+
+   nistHydrogenMaterial = pyg4ometry.geant4.nist_material_2geant4Material("G4_H")
+   nistConcreteMaterial = pyg4ometry.geant4.nist_material_2geant4Material("G4_CONCRETE")
 
 
 Detector Construction
@@ -384,6 +386,7 @@ is shown here.
    :linenos:
 
    import pyg4ometry
+
    r = pyg4ometry.geant4.Registry()
    vacuum = _g4.MaterialPredefined("G4_Galactic")
    water = _g4.MaterialPredefined("G4_WATER")
@@ -392,12 +395,7 @@ is shown here.
    worldLV = pyg4ometry.geant4.LogicalVolume(worldSolid, vacuum, "world_lv", reg)
    boxLV = pyg4ometry.geant4.LogicalVolume(boxSolid, water, "box_lv", reg)
 
-   pyg4ometry.geant4.PhysicalVolume([0,0,0],
-                                    [0,0,0],
-				    boxLV,
-				    "box_pv",
-				    worldLV,
-				    reg)
+   pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], boxLV, "box_pv", worldLV, reg)
 
 This creates a box of water inside a box of vacuum. The box of water is 10 x 20 x 50 mm long
 (note mm are the default length units), and it is placed with no offset and no rotation (i.e.
@@ -407,12 +405,10 @@ at the centre) of the world volume. Alternatively:
    :linenos:
 
    import numpy as np
-   pyg4ometry.geant4.PhysicalVolume([0,np.pi/3.0,0],
-                                    [0,0,0],
-				    boxLV,
-				    "box_pv",
-				    worldLV,
-				    reg)
+
+   pyg4ometry.geant4.PhysicalVolume(
+       [0, np.pi / 3.0, 0], [0, 0, 0], boxLV, "box_pv", worldLV, reg
+   )
 
 In this case, the box is placed with no offset but with a rotation of :math:`\pi/3` radians
 about the y axis of the world box.
@@ -439,8 +435,22 @@ the surface between either
 .. code-block:: python
    :linenos:
 
-   opa = _g4.solid.OpticalSurface("AirSurface", finish="polished", model="glisur", surf_type="dielectric_dielectric", value="1", registry=reg)
-   opw = _g4.solid.OpticalSurface("WaterSurface", finish="ground", model="unified", surf_type="dielectric_dielectric", value="0", registry=reg)
+   opa = _g4.solid.OpticalSurface(
+       "AirSurface",
+       finish="polished",
+       model="glisur",
+       surf_type="dielectric_dielectric",
+       value="1",
+       registry=reg,
+   )
+   opw = _g4.solid.OpticalSurface(
+       "WaterSurface",
+       finish="ground",
+       model="unified",
+       surf_type="dielectric_dielectric",
+       value="0",
+       registry=reg,
+   )
 
    _g4.SkinSurface("AirSurface", air_lv, opa, reg)
    _g4.BorderSurface("WaterSurface", water_phys, world_phys, opw, reg)
@@ -468,9 +478,9 @@ Units can be specified by setting the parameters ``eunit`` for the energy vector
    :linenos:
 
    scint = _g4.Material(...)
-   scint.addConstProperty('SCINTILLATIONTIMECONSTANT1', 2.5, vunit='ns')
-   scint.addConstProperty('SCINTILLATIONYIELD', 8000, vunit='/MeV')
-   scint.addVecProperty('RINDEX', [1, 10], [1.3, 1.05])
+   scint.addConstProperty("SCINTILLATIONTIMECONSTANT1", 2.5, vunit="ns")
+   scint.addConstProperty("SCINTILLATIONYIELD", 8000, vunit="/MeV")
+   scint.addVecProperty("RINDEX", [1, 10], [1.3, 1.05])
 
 Registry and GDML Output
 ------------------------
@@ -493,7 +503,7 @@ Visualisation
 
 Any logical volume ``lv`` can be visualised using:
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
     v = pyg4ometry.visualisation.VtkViewer()
@@ -504,7 +514,7 @@ Any logical volume ``lv`` can be visualised using:
 which will open a Vtk render window. The render window now receives keyboard and mouse commands.
 To exit render window ``q``, to restart interaction with the visualiser
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
     v.start()
@@ -513,7 +523,7 @@ There are also convenience methods of ``pyg4ometry.visualisation.VtkViewer()`` t
 of the viewing parameters. So if the viewer is active then render window needs to be stopped ``q``
 and then commands can be typed into the terminal, for example
 
-.. code-block :: python
+.. code-block:: python
    :linenos:
 
     v.setOpactity(0.1)
@@ -534,14 +544,14 @@ possible to check between all daughter solid meshes and between daughters and th
 Given an :code:`pyg4ometry.geant4.LogicalVolume` instance ("lv"), this check can be performed by calling
 the following code:
 
-.. code-block :: python
+.. code-block:: python
 
     lv.checkOverlaps()
 
 This will check only the immediate daughters of this logical volume. To descend further into
 a geometry, the recursive flag can be used:
 
-.. code-block :: python
+.. code-block:: python
 
     lv.checkOverlaps(recursive=True)
 

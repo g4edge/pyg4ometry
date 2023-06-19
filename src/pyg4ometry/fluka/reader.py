@@ -15,39 +15,49 @@ from .card import freeFormatStringSplit, Card
 from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
 from .fluka_registry import FlukaRegistry
 from .lattice import Lattice
-from . preprocessor import preprocess
+from .preprocessor import preprocess
 from .region import Zone, Region
-from pyg4ometry.fluka.RegionExpression import (RegionParserVisitor,
-                                               RegionParser,
-                                               RegionLexer)
+from pyg4ometry.fluka.RegionExpression import (
+    RegionParserVisitor,
+    RegionParser,
+    RegionLexer,
+)
 from .vector import Three
 from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
 from .material import Material, Compound
 
 
+_BODY_NAMES = {
+    "RPP",
+    "BOX",
+    "SPH",
+    "RCC",
+    "REC",
+    "TRC",
+    "ELL",
+    "WED",
+    "RAW",
+    "ARB",
+    "XYP",
+    "XZP",
+    "YZP",
+    "PLA",
+    "XCC",
+    "YCC",
+    "ZCC",
+    "XEC",
+    "YEC",
+    "ZEC",
+    "QUA",
+}
 
-_BODY_NAMES = {"RPP",
-               "BOX",
-               "SPH",
-               "RCC",
-               "REC",
-               "TRC",
-               "ELL",
-               "WED", "RAW",
-               "ARB",
-               "XYP", "XZP", "YZP",
-               "PLA",
-               "XCC", "YCC", "ZCC",
-               "XEC", "YEC", "ZEC",
-               "QUA"}
 
-
-class Reader(object):
+class Reader:
     """
     Class to read a FLUKA file.
     """
 
-    def __init__(self, filename) :
+    def __init__(self, filename):
         self.filename = filename
         self.flukaregistry = FlukaRegistry()
         self.cards = []
@@ -72,14 +82,14 @@ class Reader(object):
         self._parseLattice()
         self._parseMaterialAssignments()
 
-    def _findLines(self) :
+    def _findLines(self):
         # find geo(begin/end) lines and bodies/region ends
         found_geobegin = False
         found_geoend = False
         found_first_end = False
         found_second_end = False
         in_geo = False
-        for i, line in enumerate(self._lines) :
+        for i, line in enumerate(self._lines):
             if line.startswith("GEOBEGIN"):
                 found_geobegin = in_geo = True
                 self.geobegin = i
@@ -100,16 +110,20 @@ class Reader(object):
                     found_first_end = True
 
         if not found_geobegin:
-            raise FLUKAError("Missing GEOBEGIN card in input.")
+            msg = "Missing GEOBEGIN card in input."
+            raise FLUKAError(msg)
         if not found_geoend:
-            raise FLUKAError("Missing GEOEND card in input.")
+            msg = "Missing GEOEND card in input."
+            raise FLUKAError(msg)
         if not found_first_end:
-            raise FLUKAError("Missing both END cards within geometry section.")
+            msg = "Missing both END cards within geometry section."
+            raise FLUKAError(msg)
         if not found_second_end:
-            raise FLUKAError("Missing second END card within geometry section.")
+            msg = "Missing second END card within geometry section."
+            raise FLUKAError(msg)
 
-    def _parseBodies(self) :
-        bodies_block = self._lines[self.bodiesbegin:self.bodiesend+1]
+    def _parseBodies(self):
+        bodies_block = self._lines[self.bodiesbegin : self.bodiesend + 1]
 
         # there can only be one of each directive used at a time, and
         # the order in which they are nested is irrelevant to the
@@ -121,51 +135,58 @@ class Reader(object):
         # type, name, parameters, etc.,  may be accumulated
         # over many lines, each part is a string in the list in order.
         body_parts = []
-        in_body = False # flag to tell us if we are currently in a body defn
+        in_body = False  # flag to tell us if we are currently in a body defn
         for line in bodies_block:
             # split the line into chunks according to the FLUKA delimiter rules.
             line_parts = freeFormatStringSplit(line)
             # Get the first bit of the line, which determines what we do next.
             first_bit = line_parts[0]
-            if first_bit in _BODY_NAMES: # start of body definition
-                if in_body: # already in body, build the previous one.
-                    _make_body(body_parts,
-                               expansion_stack,
-                               translation_stack,
-                               transform_stack,
-                               self.flukaregistry)
+            if first_bit in _BODY_NAMES:  # start of body definition
+                if in_body:  # already in body, build the previous one.
+                    _make_body(
+                        body_parts,
+                        expansion_stack,
+                        translation_stack,
+                        transform_stack,
+                        self.flukaregistry,
+                    )
                 body_parts = line_parts
                 in_body = True
-            elif first_bit.startswith("$"): # geometry directive
-                if in_body: # build the body we have accrued...
-                    _make_body(body_parts,
-                               expansion_stack,
-                               translation_stack,
-                               transform_stack,
-                               self.flukaregistry)
-                self._parseGeometryDirective(line_parts,
-                                             expansion_stack,
-                                             translation_stack,
-                                             transform_stack)
+            elif first_bit.startswith("$"):  # geometry directive
+                if in_body:  # build the body we have accrued...
+                    _make_body(
+                        body_parts,
+                        expansion_stack,
+                        translation_stack,
+                        transform_stack,
+                        self.flukaregistry,
+                    )
+                self._parseGeometryDirective(
+                    line_parts, expansion_stack, translation_stack, transform_stack
+                )
                 in_body = False
-            elif first_bit == "END": # finished parsing bodies
-                if in_body: # one last body to make
-                    _make_body(body_parts,
-                               expansion_stack,
-                               translation_stack,
-                               transform_stack,
-                               self.flukaregistry)
+            elif first_bit == "END":  # finished parsing bodies
+                if in_body:  # one last body to make
+                    _make_body(
+                        body_parts,
+                        expansion_stack,
+                        translation_stack,
+                        transform_stack,
+                        self.flukaregistry,
+                    )
                 break
-            elif in_body: # continue appending bits to the body_parts list.
+            elif in_body:  # continue appending bits to the body_parts list.
                 body_parts.extend(line_parts)
             else:
-                raise RuntimeError(f"Failed to parse FLUKA input line: {line}")
-        else: # we should always break out of the above loop with END.
-            raise RuntimeError("Unable to parse FLUKA bodies.")
+                msg = f"Failed to parse FLUKA input line: {line}"
+                raise RuntimeError(msg)
+        else:  # we should always break out of the above loop with END.
+            msg = "Unable to parse FLUKA bodies."
+            raise RuntimeError(msg)
 
     def _parseRegions(self):
-        regions_block = self._lines[self.regionsbegin:self.regionsend]
-        regions_block = "\n".join(regions_block) # turn back into 1 big string
+        regions_block = self._lines[self.regionsbegin : self.regionsend]
+        regions_block = "\n".join(regions_block)  # turn back into 1 big string
 
         # Create ANTLR4 char stream from processed regions_block string
         istream = antlr4.InputStream(regions_block)
@@ -182,32 +203,32 @@ class Reader(object):
         parser.removeErrorListeners()
         parser.addErrorListener(SensitiveErrorListener())
 
-        tree = parser.regions() # build the tree
+        tree = parser.regions()  # build the tree
 
         visitor = RegionVisitor(self.flukaregistry)
         visitor.visit(tree)  # walk the tree, populating flukaregistry
 
     def _parseCards(self):
-        fixed = True # start off parsing as fixed, i.e. not free format.
+        fixed = True  # start off parsing as fixed, i.e. not free format.
         cards = []
         # Parse everything except the bodies and the regions as cards:
-        lines = self._lines[:self.geobegin] + self._lines[self.latticebegin:]
+        lines = self._lines[: self.geobegin] + self._lines[self.latticebegin :]
         inTitle = False
         for line in lines:
-            if inTitle: # Special treatment for the title line.
+            if inTitle:  # Special treatment for the title line.
                 self.title = line
                 inTitle = False
                 kw = None
             elif fixed:
                 cards.append(Card.fromFixed(line))
                 kw = cards[-1].keyword
-            else: # must be free format
+            else:  # must be free format
                 cards.append(Card.fromFree(line))
                 kw = cards[-1].keyword
 
             if kw == "TITLE":
                 inTitle = True
-            if kw == "GLOBAL": # See manual
+            if kw == "GLOBAL":  # See manual
                 if cards[-1].what4 == 2.0:
                     fixed = False
             elif kw != "FREE" and kw != "FIXED":
@@ -226,16 +247,13 @@ class Reader(object):
             name = rotdefi.name
             self.flukaregistry.addRotoTranslation(rotdefi)
 
-    def _parseGeometryDirective(self, line_parts,
-                                expansion_stack,
-                                translation_stack,
-                                transform_stack):
-
+    def _parseGeometryDirective(
+        self, line_parts, expansion_stack, translation_stack, transform_stack
+    ):
         directive = line_parts[0].lower()
         if directive == "$start_translat":
             # CONVERTING TO MILLIMETRES HERE
-            translation_stack.append(
-                Three([10*float(x) for x in line_parts[1:4]]))
+            translation_stack.append(Three([10 * float(x) for x in line_parts[1:4]]))
         elif directive == "$end_translat":
             translation_stack.pop()
         elif directive == "$start_expansion":
@@ -253,10 +271,11 @@ class Reader(object):
         elif directive == "$end_transform":
             transform_stack.pop()
         else:
-            raise ValueError(f"Unknown geometry directive: {directive}.")
+            msg = f"Unknown geometry directive: {directive}."
+            raise ValueError(msg)
 
     def _parseMaterialAssignments(self):
-        material_assignments = dict()
+        material_assignments = {}
         regions = self.flukaregistry.regionDict
         # Need to make a list of the keys to account for index-based
         # material assignments.
@@ -273,8 +292,7 @@ class Reader(object):
             # WHAT1 is the material name or index
             if material_name is None:
                 material_name = 1
-            elif (not isinstance(material_name, str)
-                    and int(material_name) <= 0.0):
+            elif not isinstance(material_name, str) and int(material_name) <= 0.0:
                 material_name = 1
 
             # WHAT2 is either the lower region name or index.
@@ -289,13 +307,15 @@ class Reader(object):
 
             # WHAT3 is the upper region name or index.
             if isinstance(region_upper, str):
-                 # Special name corresponding to "largest"
-                 # region number (last defined region)
+                # Special name corresponding to "largest"
+                # region number (last defined region)
                 if region_upper == "@LASTREG":
                     region_upper = regionlist[-1]
                 elif region_upper not in regionlist:
-                    msg = (f"Region {region_upper} referred to in WHAT3"
-                           " of ASSIGNMA has not been defined.")
+                    msg = (
+                        f"Region {region_upper} referred to in WHAT3"
+                        " of ASSIGNMA has not been defined."
+                    )
                     raise ValueError(msg)
                 stop = regionlist.index(region_upper)
             elif region_upper is None:
@@ -312,8 +332,9 @@ class Reader(object):
             # Do the material assignment
             # Add 1 to index as the bound is open on the upper bound
             # in python, but closed in the ASSIGMA case of fluka.
-            self.flukaregistry.assignma(material_name,
-                                        *regionlist[start:stop+1:step])
+            self.flukaregistry.assignma(
+                material_name, *regionlist[start : stop + 1 : step]
+            )
 
     def _parseLattice(self):
         for card in self.cards:
@@ -350,8 +371,7 @@ class Reader(object):
                 invert = True
 
             cellRegion = self.flukaregistry.regionDict[cellName]
-            lattice = Lattice(cellRegion, rotoTranslation,
-                              invertRotoTranslation=invert)
+            lattice = Lattice(cellRegion, rotoTranslation, invertRotoTranslation=invert)
             # It's a LATTICE region which we store in the latticeDict,
             # not the regionDict.  Now we know that the region read in
             # previously is a LATTICE cell we don't store it in there
@@ -375,7 +395,8 @@ class Reader(object):
             g.add_edges_from([(cst, compoundName) for cst in constitutents])
 
         if not nx.algorithms.is_directed_acyclic_graph(g):
-            raise FLUKAError("Cyclic material definition detected.")
+            msg = "Cyclic material definition detected."
+            raise FLUKAError(msg)
 
         elements = {}
         names = nx.topological_sort(g)
@@ -393,7 +414,7 @@ class Reader(object):
 
         """
         singleElementMaterials = {}
-        compoundNames = set(c.sdum for c in self.cards if c.keyword == "COMPOUND")
+        compoundNames = {c.sdum for c in self.cards if c.keyword == "COMPOUND"}
         compounds = {name: [] for name in compoundNames}
 
         for card in self.cards:
@@ -435,8 +456,10 @@ def _getConstituentMaterialNamesFromCompound(compoundCards):
 
     return constituents
 
-def _make_body(body_parts,
-               expansion_stack, translation_stack, transform_stack, flukareg):
+
+def _make_body(
+    body_parts, expansion_stack, translation_stack, transform_stack, flukareg
+):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
@@ -452,16 +475,24 @@ def _make_body(body_parts,
     transform_stack = deepcopy(transform_stack[::-1])
     rotoTranslations = [x[0] for x in transform_stack]
     inversion_stack = [x[1] for x in transform_stack]
-    transform = Transform(expansion=deepcopy(expansion_stack),
-                          translation=deepcopy(translation_stack),
-                          rotoTranslation=rotoTranslations,
-                          invertRotoTranslation=inversion_stack)
+    transform = Transform(
+        expansion=deepcopy(expansion_stack),
+        translation=deepcopy(translation_stack),
+        rotoTranslation=rotoTranslations,
+        invertRotoTranslation=inversion_stack,
+    )
 
     if body_type == "RPP":
         b = body.RPP(name, *pmm, flukaregistry=flukareg, transform=transform)
     elif body_type == "RCC":
-        b = body.RCC(name, pmm[0:3], pmm[3:6], pmm[6], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.RCC(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "XYP":
         b = body.XYP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "XZP":
@@ -469,61 +500,132 @@ def _make_body(body_parts,
     elif body_type == "YZP":
         b = body.YZP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "PLA":
-        b = body.PLA(name, pmm[0:3], pmm[3:6], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.PLA(
+            name, pmm[0:3], pmm[3:6], flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "XCC":
-        b = body.XCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.XCC(
+            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "YCC":
-        b = body.YCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.YCC(
+            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "ZCC":
-        b = body.ZCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.ZCC(
+            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "XEC":
-        b = body.XEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
-                     flukaregistry=flukareg,
-                     transform=transform)
+        b = body.XEC(
+            name,
+            pmm[0],
+            pmm[1],
+            pmm[2],
+            pmm[3],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "YEC":
-        b = body.YEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
-                     flukaregistry=flukareg,
-                     transform=transform)
+        b = body.YEC(
+            name,
+            pmm[0],
+            pmm[1],
+            pmm[2],
+            pmm[3],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "ZEC":
-        b = body.ZEC(name, pmm[0], pmm[1], pmm[2], pmm[3],
-                     flukaregistry=flukareg,
-                     transform=transform)
+        b = body.ZEC(
+            name,
+            pmm[0],
+            pmm[1],
+            pmm[2],
+            pmm[3],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "TRC":
-        b = body.TRC(name, pmm[0:3], pmm[3:6], pmm[6], pmm[7],
-                     flukaregistry=flukareg,
-                     transform=transform)
+        b = body.TRC(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6],
+            pmm[7],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "SPH":
-        b = body.SPH(name, pmm[0:3], pmm[3], flukaregistry=flukareg,
-                     transform=transform)
+        b = body.SPH(
+            name, pmm[0:3], pmm[3], flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "REC":
-        b = body.REC(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
-                     flukaregistry=flukareg, transform=transform)
+        b = body.REC(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6:9],
+            pmm[9:12],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "ELL":
-        b = body.ELL(name, pmm[0:3], pmm[3:6], pmm[6],
-                     flukaregistry=flukareg, transform=transform)
+        b = body.ELL(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "BOX":
-        b = body.BOX(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
-                     flukaregistry=flukareg, transform=transform)
+        b = body.BOX(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6:9],
+            pmm[9:12],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "WED":
-        b = body.WED(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
-                     flukaregistry=flukareg, transform=transform)
+        b = body.WED(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6:9],
+            pmm[9:12],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "RAW":
-        b = body.RAW(name, pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
-                     flukaregistry=flukareg, transform=transform)
+        b = body.RAW(
+            name,
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6:9],
+            pmm[9:12],
+            flukaregistry=flukareg,
+            transform=transform,
+        )
     elif body_type == "ARB":
-        vertices = [pmm[0:3], pmm[3:6], pmm[6:9], pmm[9:12],
-                    pmm[12:15], pmm[15:18], pmm[18:21], pmm[21:24]]
+        vertices = [
+            pmm[0:3],
+            pmm[3:6],
+            pmm[6:9],
+            pmm[9:12],
+            pmm[12:15],
+            pmm[15:18],
+            pmm[18:21],
+            pmm[21:24],
+        ]
         # Remember we converted to param to millimetres blindly above,
         # well, facenumbers are not dimensions, but indices, so we use
         # the raw numbers / "centimetres" here:
         facenumbers = pcm[24:]
-        b = body.ARB(name, vertices, facenumbers,
-                     flukaregistry=flukareg,
-                     transform=transform)
+        b = body.ARB(
+            name, vertices, facenumbers, flukaregistry=flukareg, transform=transform
+        )
     elif body_type == "QUA":
         # This slightly more convoluted unit conversion is to account
         # for the different order of the terms.  Converting to mm
@@ -532,13 +634,13 @@ def _make_body(body_parts,
         # original because the input will be in mm.  The last,
         # constant, term must be in mm.
         quaParameters = []
-        quaParameters.extend(pcm[0:6] / 10.)
+        quaParameters.extend(pcm[0:6] / 10.0)
         quaParameters.extend(pcm[6:9])
         quaParameters.append(pmm[-1])
-        b = body.QUA(name, *quaParameters, flukaregistry=flukareg,
-                     transform=transform)
+        b = body.QUA(name, *quaParameters, flukaregistry=flukareg, transform=transform)
     else:
-        raise TypeError(f"Body type {body_type} not supported")
+        msg = f"Body type {body_type} not supported"
+        raise TypeError(msg)
     return b
 
 
@@ -550,6 +652,7 @@ class RegionVisitor(RegionParserVisitor):
     and pyfluka.geometry.Region instances.
 
     """
+
     def __init__(self, flukaregistry):
         self.flukaregistry = flukaregistry
         # Purely so we can give nested subzones meaningful names:
@@ -606,9 +709,9 @@ class RegionVisitor(RegionParserVisitor):
         body_name = ctx.BodyName().getText()
         body = self.flukaregistry.bodyDict[body_name]
         if ctx.Plus():
-            return  [('+', body)]
+            return [("+", body)]
         elif ctx.Minus():
-            return [('-', body)]
+            return [("-", body)]
         return None
 
     def visitUnaryAndSubZone(self, ctx):
@@ -643,9 +746,9 @@ class RegionVisitor(RegionParserVisitor):
         return self.visitMultipleUnion(ctx)
 
     def visitSubZone(self, ctx):
-        operator = '-'
+        operator = "-"
         if ctx.Plus():
-            operator = '+'
+            operator = "+"
         self.subzone_counter += 1
         solids = self.visit(ctx.expr())
         z = Zone(name=f"{self.region_name}_subzone{self.subzone_counter}")
@@ -662,33 +765,34 @@ class RegionVisitor(RegionParserVisitor):
         return (operator, z)
 
     def visitZoneExpr(self, ctx):
-        opsAndBooleans= self.visit(ctx.expr())
+        opsAndBooleans = self.visit(ctx.expr())
 
         if not ctx.BodyName():
             return opsAndBooleans
 
         bodyName = ctx.BodyName().getText()
         body = self.flukaregistry.bodyDict[bodyName]
-        boolean = [("+", body)] # implicit intersection
+        boolean = [("+", body)]  # implicit intersection
         boolean.extend(opsAndBooleans)
         return boolean
 
     def visitZoneSubZone(self, ctx):
-        opsAndBooleans= self.visit(ctx.subZone())
+        opsAndBooleans = self.visit(ctx.subZone())
 
         if not ctx.BodyName():
             return opsAndBooleans
 
         bodyName = ctx.BodyName().getText()
         body = self.flukaregistry.bodyDict[bodyName]
-        boolean = [("+", body)] # implict intersection
+        boolean = [("+", body)]  # implict intersection
         boolean.extend(opsAndBooleans)
         return boolean
 
     def visitZoneBody(self, ctx):
         bodyName = ctx.BodyName().getText()
         body = self.flukaregistry.bodyDict[bodyName]
-        return [("+", body)] # implicit intersection
+        return [("+", body)]  # implicit intersection
+
 
 class SensitiveErrorListener(ErrorListener.ErrorListener):
     """
@@ -699,16 +803,27 @@ class SensitiveErrorListener(ErrorListener.ErrorListener):
     reason this is a very sensitive error listener, throwing
     exceptions readily.
     """
+
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        msgf = (f"At ({line}, {column}), Error: {msg}.  Warning: The provided line number is in this section.")
+        msgf = f"At ({line}, {column}), Error: {msg}.  Warning: The provided line number is in this section."
         msg2a = recognizer._input.strdata[e.startIndex - 50 : e.startIndex]
-        msg2b = recognizer._input.strdata[e.startIndex      : e.startIndex + 1]
-        msg2c = recognizer._input.strdata[e.startIndex +1   : e.startIndex + 50]
-        msgf += "\nSurrounding text +- 50 characaters\n\"" + msg2a + "\033[1m" + msg2b + "\033[0m" + msg2c + "\""
+        msg2b = recognizer._input.strdata[e.startIndex : e.startIndex + 1]
+        msg2c = recognizer._input.strdata[e.startIndex + 1 : e.startIndex + 50]
+        msgf += (
+            '\nSurrounding text +- 50 characaters\n"'
+            + msg2a
+            + "\033[1m"
+            + msg2b
+            + "\033[0m"
+            + msg2c
+            + '"'
+        )
         raise antlr4.error.Errors.ParseCancellationException(msgf)
+
 
 def main(filein):
     r = Reader(filein)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main(sys.argv[1])
