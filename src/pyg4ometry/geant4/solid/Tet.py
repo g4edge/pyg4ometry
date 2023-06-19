@@ -20,7 +20,7 @@ from copy import deepcopy as _dc
 class Tet(_SolidBase):
     """
     Constructs a tetrahedra.
-    
+
     :param name:           of the solid
     :param anchor:         point 1 (anchor point)
     :type anchor:          list
@@ -34,7 +34,7 @@ class Tet(_SolidBase):
     :type registry:        Registry
     :param lunit:          length unit (nm,um,mm,m,km) for solid
     :type lunit:           str
-    
+
     :param degeneracyFlag: bool, indicates degeneracy of points
     """
     def __init__(self, name, anchor, p2, p3, p4, registry, lunit = "mm",
@@ -57,10 +57,10 @@ class Tet(_SolidBase):
             registry.addSolid(self) # Always need the registry
 
     def __repr__(self):
-        return "Tet : {} Vertexes: {}, {}, {}, {}".format(self.name, 
-                                                          str(self.anchor), 
+        return "Tet : {} Vertexes: {}, {}, {}, {}".format(self.name,
+                                                          str(self.anchor),
                                                           str(self.p2),
-                                                          str(self.p3), 
+                                                          str(self.p3),
                                                           str(self.p4))
 
     def __str__(self):

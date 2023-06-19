@@ -21,7 +21,7 @@ class Ellipsoid(_SolidBase):
 
     """
     Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
-    
+
     :param name:        of the solid
     :type name:         str
     :param pxSemiAxis:  length of x semi axis
@@ -39,9 +39,9 @@ class Ellipsoid(_SolidBase):
     :param lunit:       length unit (nm,um,mm,m,km) for solid
     :type lunit:        str
     :param nslice:      number of phi elements for meshing
-    :type nslice:       int  
+    :type nslice:       int
     :param nstack:      number of theta elements for meshing
-    :type nstack:       int         
+    :type nstack:       int
     """
 
 
@@ -178,4 +178,3 @@ class Ellipsoid(_SolidBase):
                     polygons.append(_Polygon(vEnd))
 
         return _CSG.fromPolygons(polygons)
-

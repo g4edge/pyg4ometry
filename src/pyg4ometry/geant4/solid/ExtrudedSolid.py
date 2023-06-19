@@ -34,7 +34,7 @@ class ExtrudedSolid(_SolidBase):
     :type registry:        Registry
     :param lunit:          length unit (nm,um,mm,m,km) for solid
     :type lunit:           str
-    
+
     Example: Triangular prism with 2 slices
     pPoligon = [[x1,y1],[x2,y2],[x3,y3]] - vertices of polygon in clockwise order
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]

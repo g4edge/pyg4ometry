@@ -14,15 +14,15 @@ class AssemblyVolume(object):
     shape, material or field
     :param name: of assembly volume
     :type name: str
-    :param registry: 
-    :type registry: 
-    :param addRegistry: 
+    :param registry:
+    :type registry:
+    :param addRegistry:
     :type addRegistry: bool
     """
     def __init__(self, name, registry=None, addRegistry=True) :
         super(AssemblyVolume, self).__init__()
         self.type            = "assembly"
-        self.name            = name 
+        self.name            = name
         self.daughterVolumes = []
         self._daughterVolumesDict = {}
         self.registry = registry
@@ -30,7 +30,7 @@ class AssemblyVolume(object):
             registry.addLogicalVolume(self)
 
         self.overlapChecked = False
-            
+
     def __repr__(self):
         return 'Logical volume : '+self.name
 

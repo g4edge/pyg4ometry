@@ -7,7 +7,7 @@ import logging as _log
 
 class Subtraction(_SolidBase):
     """
-    Subtraction between two solids     
+    Subtraction between two solids
 
     :param name: of solid
     :type name: str
@@ -22,7 +22,7 @@ class Subtraction(_SolidBase):
     """
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
         super(Subtraction, self).__init__(name, 'Subtraction', registry)
-        # circular import 
+        # circular import
         import pyg4ometry.gdml.Defines as _defines
         self.obj1 = obj1
         self.obj2 = obj2
@@ -35,7 +35,7 @@ class Subtraction(_SolidBase):
         if addRegistry:
             registry.addSolid(self)
 
-        obj1.dependents.append(self) 
+        obj1.dependents.append(self)
         obj2.dependents.append(self)
 
     def __repr__(self):
@@ -48,16 +48,16 @@ class Subtraction(_SolidBase):
 
         _log.info('subtraction.pycsgmesh>')
 
-        # look up solids in registry 
+        # look up solids in registry
         import pyg4ometry.geant4 as _g4
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation 
+        # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
-        # get meshes 
+        # get meshes
         _log.info('subtraction.mesh> mesh1')
         m1 = obj1.mesh()
         _log.info('subtraction.mesh> mesh2')
@@ -90,4 +90,3 @@ class Subtraction(_SolidBase):
     def object2(self):
         import pyg4ometry.geant4 as _g4
         return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
-

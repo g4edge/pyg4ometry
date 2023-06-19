@@ -55,7 +55,7 @@ class Samples:
 
         if len(samples) == 1:
             return result
-        
+
         all_sample_names = set() # Get all sample names across all samples.
         for s in samples:
             all_sample_names = all_sample_names.union(s.sample_names())
@@ -67,13 +67,13 @@ class Samples:
                 else:
                     result[sample_name].extend(sample[sample_name])
         return result
-        
+
     def __str__(self):
         return str(self.times)
 
     def write(self, path):
         _write_pickle(self, path)
-    
+
     def writeAppend(self, path, verbose=False):
         try:
             existing = _load_pickle(path)
@@ -97,8 +97,8 @@ class Samples:
 
     def __contains__(self, key):
         return key in self.times
-            
-    
+
+
 
 class Timer:
     """A class for recording the CPU time at specific positions within code

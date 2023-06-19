@@ -39,7 +39,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     :param registry:     for storing solid
     :type registry:      Registry
     :param lunit:        length unit (nm,um,mm,m,km) for solid
-    :type lunit:         str    
+    :type lunit:         str
     :param aunit:        angle unit (rad,deg) for solid
     :type aunit:         str
     :param nstack:       Not written
@@ -166,9 +166,9 @@ class TwistedBox(_SolidBase, _TwistedSolid):
     def mesh(self):
         _log.info('twistedbox.pycsgmesh> antlr')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
         pDx = self.evaluateParameter(self.pDx)/2.*luval

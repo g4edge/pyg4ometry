@@ -11,7 +11,7 @@ import logging as _log
 class TwistedTrd(_SolidBase, _TwistedSolid):
     """
     Constructs a twisted general trapezoid.
-    
+
     :param name:            of solid
     :type name:             str
     :param twistedangle:    twist angle, must be less than 0.5*pi
@@ -33,9 +33,9 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
     :param lunit:           length unit (nm,um,mm,m,km) for solid
     :type lunit:            str
     :param aunit:           angle unit (rad,deg) for solid
-    :type aunit:            str    
+    :type aunit:            str
     :param nstack:          number of theta elements for meshing
-    :type nstack:           int       
+    :type nstack:           int
     """
     def __init__(self, name, twistedangle, pDx1, pDx2, pDy1, pDy2,
                  pDz, registry, lunit="mm", aunit="rad",
@@ -108,9 +108,9 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
     def mesh(self):
         _log.info('twistedtrd.pycsgmesh> antlr')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         twistedAngle = self.evaluateParameter(self.twistedAngle)*auval
         pDx1 = self.evaluateParameter(self.pDx1)/2.*luval

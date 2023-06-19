@@ -57,18 +57,18 @@ class GdmlExpressionParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ u"<INVALID>", u"'cos'", u"'sin'", u"'tan'", u"'acos'", 
-                     u"'asin'", u"'atan'", u"'log'", u"'log10'", u"'sqrt'", 
-                     u"'exp'", u"'pow'", u"'abs'", u"'('", u"')'", u"'['", 
-                     u"']'", u"'+'", u"'-'", u"'*'", u"'/'", u"'>'", u"'<'", 
-                     u"'='", u"','", u"'.'", u"'^'", u"'pi'", u"<INVALID>", 
+    literalNames = [ u"<INVALID>", u"'cos'", u"'sin'", u"'tan'", u"'acos'",
+                     u"'asin'", u"'atan'", u"'log'", u"'log10'", u"'sqrt'",
+                     u"'exp'", u"'pow'", u"'abs'", u"'('", u"')'", u"'['",
+                     u"']'", u"'+'", u"'-'", u"'*'", u"'/'", u"'>'", u"'<'",
+                     u"'='", u"','", u"'.'", u"'^'", u"'pi'", u"<INVALID>",
                      u"'i'" ]
 
-    symbolicNames = [ u"<INVALID>", u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN", 
-                      u"ATAN", u"LN", u"LOG", u"SQRT", u"EXP", u"POWER", 
-                      u"ABS", u"LPAREN", u"RPAREN", u"LBRACKET", u"RBRACKET", 
-                      u"PLUS", u"MINUS", u"TIMES", u"DIV", u"GT", u"LT", 
-                      u"EQ", u"COMMA", u"POINT", u"POW", u"PI", u"EULER", 
+    symbolicNames = [ u"<INVALID>", u"COS", u"SIN", u"TAN", u"ACOS", u"ASIN",
+                      u"ATAN", u"LN", u"LOG", u"SQRT", u"EXP", u"POWER",
+                      u"ABS", u"LPAREN", u"RPAREN", u"LBRACKET", u"RBRACKET",
+                      u"PLUS", u"MINUS", u"TIMES", u"DIV", u"GT", u"LT",
+                      u"EQ", u"COMMA", u"POINT", u"POW", u"PI", u"EULER",
                       u"I", u"VARIABLE", u"SCIENTIFIC_NUMBER", u"WS" ]
 
     RULE_equation = 0
@@ -87,9 +87,9 @@ class GdmlExpressionParser ( Parser ):
     RULE_funcname = 13
     RULE_relop = 14
 
-    ruleNames =  [ u"equation", u"expression", u"multiplyingExpression", 
-                   u"operatorAddSub", u"operatorMulDiv", u"powExpression", 
-                   u"signedAtom", u"atom", u"scientific", u"matrixElement", 
+    ruleNames =  [ u"equation", u"expression", u"multiplyingExpression",
+                   u"operatorAddSub", u"operatorMulDiv", u"powExpression",
+                   u"signedAtom", u"atom", u"scientific", u"matrixElement",
                    u"constant", u"variable", u"func", u"funcname", u"relop" ]
 
     EOF = Token.EOF
@@ -1030,8 +1030,3 @@ class GdmlExpressionParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
-
-
-
-
-

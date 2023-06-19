@@ -106,8 +106,3 @@ class SolidDefaults:
 
     class Wedge:
         nslice = 16
-
-
-
-
-

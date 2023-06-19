@@ -69,7 +69,7 @@ class LogicalVolume(object):
 
         if registry is None and addRegistry:
             raise ValueError("No registry supplied by (by default) addRegistry=True in logical volume \""+name+"\"")
- 
+
         if isinstance(material, _mat.Material):
             self.material = material
             self.material.set_registry(registry, dontWarnIfAlreadyAdded=True)
@@ -156,17 +156,17 @@ class LogicalVolume(object):
         if pv.scale :
             s = pv.scale.eval()
             mesh.scale(s)
-            
+
             if s[0]*s[1]*s[2] == 1 :
                 pass
             elif s[0]*s[1]*s[2] == -1 :
                 mesh = mesh.inverse()
-                
+
         # translate
         t = pv.position.eval()
         mesh.translate(t)
         return mesh
-        
+
     def cullDaughtersOutsideSolid(self, solid, rotation=None, position=None):
         """
         Given a solid with a placement rotation and position inside this logical
@@ -626,7 +626,7 @@ class LogicalVolume(object):
                 # translate
                 mesh.translate(t)
                 boundingmesh.translate(t)
-            
+
                 transformedMeshes.append(mesh)
                 transformedBoundingMeshes.append(boundingmesh)
                 transformedMeshesNames.append(name)
@@ -730,8 +730,8 @@ class LogicalVolume(object):
         Set (replace) the outer solid. Does not change the placement of the daughters in the volume. If there is a
         transformation then use replaceSolid
         """
-        self.solid = solid 
-        self.mesh  = _Mesh(self.solid)        
+        self.solid = solid
+        self.mesh  = _Mesh(self.solid)
 
     def makeSolidTessellated(self):
         """
@@ -772,7 +772,7 @@ class LogicalVolume(object):
             vMax = [-1e99,-1e99,-1e99]
 
         # transform logical solid BB
-                
+
         for dv in self.daughterVolumes :
             [vMinDaughter, vMaxDaughter] = dv.extent(True)
 
@@ -891,7 +891,7 @@ class LogicalVolume(object):
             l = d.logicalVolume.findLogicalByName(name)
             if len(l) != 0 :
                 lv.append(l)
-        
+
         return lv
 
     def makeMaterialNameSet(self):
@@ -959,5 +959,3 @@ class LogicalVolume(object):
         for d in self.daughterVolumes :
             print(2*depth*"-"+d.name+" (pv)")
             d.logicalVolume.dumpStructure(depth+2)
-
-

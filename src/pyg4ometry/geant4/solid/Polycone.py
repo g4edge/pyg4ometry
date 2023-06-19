@@ -8,7 +8,7 @@ import logging as _log
 class Polycone(_SolidBase):
     """
     Constructs a solid of rotation using an arbitrary 2D surface.
-    
+
     :param name:   of the solid
     :type name:    str
     :param pSPhi:  starting rotation angle in radians
@@ -18,7 +18,7 @@ class Polycone(_SolidBase):
     :param pZPlns: z-positions of planes used
     :type pZPlns:  list of float, Constant, Quantity, Variable, Expression
     :param pRInr:  inner radii of surface at each z-plane
-    :type pRInr:   list of float, Constant, Quantity, Variable, Expression 
+    :type pRInr:   list of float, Constant, Quantity, Variable, Expression
     :param pROut:  outer radii of surface at each z-plane
     :type pROut:   list of float, Constant, Quantity, Variable, Expression
     :param registry: for storing solid
@@ -26,10 +26,10 @@ class Polycone(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param aunit: angle unit (rad,deg) for solid
-    :type aunit: str    
+    :type aunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
-    
+    :type nslice: int
+
     Optional registration as this solid is used as a temporary solid
     in Polyhedra and needn't be always registered.
     """
@@ -99,7 +99,3 @@ class Polycone(_SolidBase):
         ps = _GenericPolyhedra("ps", pSPhi, pDPhi, self.nslice, pR, pZ, self.registry, "mm", "rad", addRegistry=False)
 
         return ps.mesh()
-
-
-
-

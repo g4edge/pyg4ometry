@@ -49,12 +49,12 @@ class RegionParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
+    literalNames = [ u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>",
+                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>",
                      u"'+'", u"'-'", u"'|'", u"'('", u"')'" ]
 
-    symbolicNames = [ u"<INVALID>", u"Whitespace", u"InLineComment", u"LineComment", 
-                      u"Newline", u"Integer", u"RegionName", u"BodyName", 
+    symbolicNames = [ u"<INVALID>", u"Whitespace", u"InLineComment", u"LineComment",
+                      u"Newline", u"Integer", u"RegionName", u"BodyName",
                       u"Plus", u"Minus", u"Bar", u"LParen", u"RParen" ]
 
     RULE_regions = 0
@@ -65,7 +65,7 @@ class RegionParser ( Parser ):
     RULE_subZone = 5
     RULE_unaryExpression = 6
 
-    ruleNames =  [ u"regions", u"region", u"zoneUnion", u"zone", u"expr", 
+    ruleNames =  [ u"regions", u"region", u"zoneUnion", u"zone", u"expr",
                    u"subZone", u"unaryExpression" ]
 
     EOF = Token.EOF
@@ -130,13 +130,13 @@ class RegionParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 15 
+            self.state = 15
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
                 self.state = 14
                 self.region()
-                self.state = 17 
+                self.state = 17
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==RegionParser.RegionName):
@@ -160,7 +160,7 @@ class RegionParser ( Parser ):
         def getRuleIndex(self):
             return RegionParser.RULE_region
 
-     
+
         def copyFrom(self, ctx):
             super(RegionParser.RegionContext, self).copyFrom(ctx)
 
@@ -274,7 +274,7 @@ class RegionParser ( Parser ):
         def getRuleIndex(self):
             return RegionParser.RULE_zoneUnion
 
-     
+
         def copyFrom(self, ctx):
             super(RegionParser.ZoneUnionContext, self).copyFrom(ctx)
 
@@ -390,7 +390,7 @@ class RegionParser ( Parser ):
                 self.match(RegionParser.Bar)
                 self.state = 28
                 self.zone()
-                self.state = 31 
+                self.state = 31
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
@@ -398,7 +398,7 @@ class RegionParser ( Parser ):
                     self.match(RegionParser.Bar)
                     self.state = 30
                     self.zone()
-                    self.state = 33 
+                    self.state = 33
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==RegionParser.Bar):
@@ -430,7 +430,7 @@ class RegionParser ( Parser ):
                         self.state = 39
                         self.zone()
                         self.state = 40
-                        self.match(RegionParser.Bar) 
+                        self.match(RegionParser.Bar)
                     self.state = 46
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,3,self._ctx)
@@ -458,7 +458,7 @@ class RegionParser ( Parser ):
         def getRuleIndex(self):
             return RegionParser.RULE_zone
 
-     
+
         def copyFrom(self, ctx):
             super(RegionParser.ZoneContext, self).copyFrom(ctx)
 
@@ -608,7 +608,7 @@ class RegionParser ( Parser ):
         def getRuleIndex(self):
             return RegionParser.RULE_expr
 
-     
+
         def copyFrom(self, ctx):
             super(RegionParser.ExprContext, self).copyFrom(ctx)
 
@@ -909,8 +909,3 @@ class RegionParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
-
-
-
-
-

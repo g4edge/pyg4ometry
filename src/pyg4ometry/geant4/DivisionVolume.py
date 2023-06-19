@@ -13,9 +13,9 @@ class DivisionVolume(_PhysicalVolume) :
     '''
     DivisionVolume: G4PVDivision
 
-    :param name: of physical volume 
+    :param name: of physical volume
     :param logical: volume to be placed
-    :param mother: logical volume, 
+    :param mother: logical volume,
     :param axis: kXAxis,kYAxis,kZAxis,kRho,kPhi
     :param ncopies: number of replicas
     :param width: spacing between replicas along axis
@@ -658,4 +658,3 @@ class DivisionVolume(_PhysicalVolume) :
                 vMin[2] = vMinDaughter[2]
 
         return [vMin,vMax]
-

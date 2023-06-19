@@ -34,9 +34,9 @@ class CutTubs(_SolidBase):
     :param pDPhi: angle of segment
     :type pDPhi: float, Constant, Quantity, Variable
     :param pLowNorm: normal vector of the cut plane at -pDz/2
-    :type pLowNorm: list 
+    :type pLowNorm: list
     :param pHighNorm: normal vector of the cut plane at +pDz/2
-    :type pHighNorm: list 
+    :type pHighNorm: list
     """
     def __init__(self, name, pRMin, pRMax, pDz, pSPhi, pDPhi,
                  pLowNorm, pHighNorm, registry, lunit="mm",

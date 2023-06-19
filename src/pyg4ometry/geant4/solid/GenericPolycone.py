@@ -9,8 +9,8 @@ import numpy as _np
 class GenericPolycone(_SolidBase):
     """
     Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
-    
-    :param name: of solid 
+
+    :param name: of solid
     :type name: str
     :param pSPhi: angle phi at start of rotation
     :type pSPhi: float, Constant, Quantity, Variable, Expression
@@ -25,10 +25,10 @@ class GenericPolycone(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param aunit: angle unit (rad,deg) for solid
-    :type aunit: str 
+    :type aunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
-    
+    :type nslice: int
+
     """
     def __init__(self, name, pSPhi, pDPhi, pR, pZ,
                  registry, lunit="mm", aunit="rad",
@@ -68,10 +68,10 @@ class GenericPolycone(_SolidBase):
     def mesh(self):
         _log.info("genericpolycone.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
-        
+        auval = _Units.unit(self.aunit)
+
         pSPhi = self.evaluateParameter(self.pSPhi)*auval
         pDPhi = self.evaluateParameter(self.pDPhi)*auval
         pR = [val*luval for val in self.evaluateParameter(self.pR)]

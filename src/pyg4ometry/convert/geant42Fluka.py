@@ -522,7 +522,7 @@ def geant4Solid2FlukaRegion(flukaNameCount,solid,
 
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name,transform, flukaRegistry,commentName)
         flukaNameCount += 1
-        ''' 
+        '''
 
         luval = _Units.unit(solid.lunit)/10.0/2.0
         auval = _Units.unit(solid.aunit)

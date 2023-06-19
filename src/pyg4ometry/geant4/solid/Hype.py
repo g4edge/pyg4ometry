@@ -21,7 +21,7 @@ import numpy as _np
 class Hype(_SolidBase):
     """
     Constructs a tube with hyperbolic profile.
-    
+
     :param name:        of solid
     :type name:         str
     :param innerRadius: inner radius
@@ -38,11 +38,11 @@ class Hype(_SolidBase):
     :param lunit:       length unit (nm,um,mm,m,km) for solid
     :type lunit:        str
     :param aunit:       angle unit (rad,deg) for solid
-    :type aunit:        str    
+    :type aunit:        str
     :param nslice:      number of phi elements for meshing
-    :type nslice:       int  
+    :type nslice:       int
     :param nstack:      number of theta elements for meshing
-    :type nstack:       int             
+    :type nstack:       int
     """
     def __init__(self, name, innerRadius, outerRadius, innerStereo,
                  outerStereo, lenZ, registry, lunit="mm", aunit="rad",

@@ -186,7 +186,7 @@ def tbxyz2matrix(angles):
     """
     Convert tait bryan angles to a single passive rotation matrix.
     rotation order = x -> y -> z.
-    
+
     :param angles: list of angles:  x, y, z
 
     :return: rotation matrix
@@ -220,7 +220,7 @@ def tbzyx2matrix(angles):
     """
     Convert Tait-Bryan angles to a single passive rotation matrix.
     rotation order = x -> y -> z.
-    
+
     :param angles: list of angles:  x, y, z
 
     :return: rotation matrix
@@ -400,4 +400,3 @@ def two_fold_orientation(v1, v2, e1, e2):
     m1 = matrix_from(v1, v2)
     m2 = matrix_from(m1.dot(e1), e2)
     return m2.dot(m1)
-

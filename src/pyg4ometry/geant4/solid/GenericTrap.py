@@ -23,7 +23,7 @@ class GenericTrap(_SolidBase):
     on two parallel planes. Vertices 1-4 define the quadrilateral at -dz and
     vertices 5-8 define the quadrilateral at +dz. This solid is called Arb8
     in GDML notation.
-    
+
     :param name:     string, name of the volume
     :param v1x:      vertex 1 x position
     :param v1y:      vertex 1 y position

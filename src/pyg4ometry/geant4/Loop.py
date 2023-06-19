@@ -13,8 +13,3 @@ class Loop(object):
         # update variable
 
         return objectExpanded
-
-
-
-
-

@@ -20,7 +20,7 @@ import logging as _log
 class Torus(_SolidBase):
     """
     Constructs a torus.
-    
+
     :param name:   string, name of the volume
     :type name:    str
     :param pRmin:  innder radius
@@ -38,11 +38,11 @@ class Torus(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param aunit: angle unit (rad,deg) for solid
-    :type aunit: str    
+    :type aunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
+    :type nslice: int
     :param nstack: number of theta elements for meshing
-    :type nstack: int         
+    :type nstack: int
 
     """
     def __init__(self, name, pRmin, pRmax, pRtor, pSPhi, pDPhi,

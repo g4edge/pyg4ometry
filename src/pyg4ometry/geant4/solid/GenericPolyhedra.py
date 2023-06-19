@@ -22,7 +22,7 @@ import numpy as _np
 class GenericPolyhedra(_SolidBase):
     """
     Constructs a solid of rotation using an arbitrary 2D surface defined by a series of (r,z) coordinates.
-    
+
     :param name:    name
     :type name:     str
     :param pSPhi:   angle Phi at start of rotation
@@ -74,9 +74,9 @@ class GenericPolyhedra(_SolidBase):
     def mesh(self):
         _log.info("genericpolyhedra.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         pSPhi = self.evaluateParameter(self.pSPhi)*auval
         pDPhi = self.evaluateParameter(self.pDPhi)*auval

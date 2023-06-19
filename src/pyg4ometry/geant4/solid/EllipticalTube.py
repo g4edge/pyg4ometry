@@ -20,7 +20,7 @@ import numpy as _np
 class EllipticalTube(_SolidBase):
     """
     Constructs a tube of elliptical cross-section.
-    
+
     :param name: name of the solid
     :type name:  str
     :param pDx:  length in x
@@ -34,10 +34,10 @@ class EllipticalTube(_SolidBase):
     :param lunit: length unit (nm,um,mm,m,km) for solid
     :type lunit: str
     :param nslice: number of phi elements for meshing
-    :type nslice: int  
+    :type nslice: int
     :param nstack: number of theta elements for meshing
-    :type nstack: int     
-    
+    :type nstack: int
+
     """
     def __init__(self, name, pDx, pDy, pDz, registry, lunit="mm",
                  nstack=None, nslice=None, addRegistry=True):
@@ -71,7 +71,7 @@ class EllipticalTube(_SolidBase):
 
         _log.info('ellipticaltube.antlr>')
 
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
 
         pDx = self.evaluateParameter(self.pDx)*luval/2.0
@@ -87,7 +87,7 @@ class EllipticalTube(_SolidBase):
         slices  = self.nslice
 
         pRMin = 0
-        
+
         for i in range(0,self.nslice,1) :
 
             i1 = i

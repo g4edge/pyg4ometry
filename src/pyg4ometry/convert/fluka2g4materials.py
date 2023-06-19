@@ -108,7 +108,7 @@ class _FlukaToG4MaterialConverter:
     def convertAll(self):
         # delayed import as possibly heavy
         from pyg4ometry.fluka import material as _fluMat
-        
+
         for name, material in self.freg.materials.items():
             if isinstance(material, _fluMat.BuiltIn):
                 self.convertBuiltin(name, material)
@@ -147,7 +147,7 @@ class _FlukaToG4MaterialConverter:
             g4element = self.g4elementKeysMangled[elementName]
         g4material = _g4.MaterialSingleElement(name, atomicNumber, atomicMass,
                                                density, registry=self.greg)
-        
+
         self.g4elements[name] = g4element
         self.g4materials[name] = g4material
 
@@ -199,7 +199,7 @@ class _FlukaToG4MaterialConverter:
         assert flukaCompound.name == name
         g4material = self._makeBaseCompoundMaterial(name, flukaCompound)
         totalAtomicWeight = self._totalMassWeightedFractionOfCompound(
-            flukaCompound) 
+            flukaCompound)
 
         pt = self.periodicTable
         for part, fraction in flukaCompound.fractions:

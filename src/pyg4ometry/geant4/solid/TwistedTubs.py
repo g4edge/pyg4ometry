@@ -20,7 +20,7 @@ import numpy as _np
 class TwistedTubs(_SolidBase):
     """
     Creates a twisted tube segement. Note that only 1 constructor is supprted.
-    
+
     :param name:         of solid
     :type name:          str
     :param endinnerrad:  inner radius at the end of the segment
@@ -36,11 +36,11 @@ class TwistedTubs(_SolidBase):
     :param lunit:        length unit (nm,um,mm,m,km) for solid
     :type lunit:         str
     :param aunit:        angle unit (rad,deg) for solid
-    :type aunit:         str    
+    :type aunit:         str
     :param nslice:       number of phi elements for meshing
-    :type nstack:        int    
+    :type nstack:        int
     :param nstack:       number of theta elements for meshing
-    :type nstack:        int    
+    :type nstack:        int
 
     """
     def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
@@ -108,15 +108,15 @@ class TwistedTubs(_SolidBase):
 
     def mesh(self):
         _log.info("polycone.antlr>")
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
         endinnerrad = self.evaluateParameter(self.endinnerrad)*luval
         endouterrad = self.evaluateParameter(self.endouterrad)*luval
 
         zlen         = self.evaluateParameter(self.zlen)*luval
-        phi          = self.evaluateParameter(self.phi)*auval 
+        phi          = self.evaluateParameter(self.phi)*auval
         twistedangle = self.evaluateParameter(self.twistedangle)*auval
 
         _log.info("polycone.basicmesh>")

@@ -78,5 +78,3 @@ class RegionParserVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by RegionParser#unaryExpression.
     def visitUnaryExpression(self, ctx):
         return self.visitChildren(ctx)
-
-

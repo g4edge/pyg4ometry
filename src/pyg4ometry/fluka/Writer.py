@@ -87,13 +87,13 @@ class Writer:
                 if transform.flukaFreeString() != '' :
                     f.write("$end_transform\n")
         f.write("END\n")
-        
+
         # loop over regions
         for rk in self.flukaRegistry.regionDict.keys() :
             f.write(self.flukaRegistry.regionDict[rk].flukaFreeString())
         f.write("END\n")
         f.write("GEOEND\n")
-        
+
         # loop over materials
         f.write("FREE\n")
 
@@ -107,7 +107,7 @@ class Writer:
                 pass
             else :
                 f.write(self.flukaRegistry.materials[mk].flukaFreeString()+"\n")
-                
+
         # loop over material assignments
         for rk in self.flukaRegistry.regionDict.keys() :
             try :
@@ -116,12 +116,12 @@ class Writer:
                 f.write(assignmaString+"\n")
             except KeyError :
                 print("Region does not have an assigned material",rk)
-                
+
         # loop over rotdefis
         for rotdefi in rotdefi.values():
             rotstr = rotdefi.flukaFreeString()
             f.write(f"{rotstr}\n")
-            
+
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys() :
             if c != "TITLE" and c != "DEFAULTS" and c != "BEAM" and c != "BEAMPOS" and c!= "":
@@ -129,7 +129,7 @@ class Writer:
                     cardstr = card.toFreeString()
                     f.write(f"{cardstr}\n")
 
-                    
+
         # Close file (TODO use with)
         # f.write("END\n")
         f.close()

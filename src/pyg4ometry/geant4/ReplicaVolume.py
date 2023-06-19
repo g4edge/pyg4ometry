@@ -13,9 +13,9 @@ class ReplicaVolume(_PhysicalVolume):
     '''
     ReplicaVolume: G4PVReplica
 
-    :param name: of physical volume 
+    :param name: of physical volume
     :param logical: volume to be placed
-    :param mother: logical volume, 
+    :param mother: logical volume,
     :param axis: kXAxis,kYAxis,kZAxis,kRho,kPhi
     :param ncopies: number of replicas
     :param width: spacing between replicas along axis
@@ -28,8 +28,8 @@ class ReplicaVolume(_PhysicalVolume):
         kZAxis = 3
         kRho   = 4
         kPhi   = 5
-        
-    def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas, 
+
+    def __init__(self, name, logicalVolume, motherVolume, axis, nreplicas,
                  width, offset=0, registry=None, addRegistry=True, wunit="mm", ounit="mm"):
 
         # TBC - doesn't call super() so doesn't have PV objects
@@ -58,7 +58,7 @@ class ReplicaVolume(_PhysicalVolume):
 
         # Create replica meshes
         [self.meshes,self.transforms] = self.createReplicaMeshes()
-        
+
     def GetAxisName(self):
         names = {1 : 'kXAxis',
                  2 : 'kYAxis',
@@ -165,7 +165,7 @@ class ReplicaVolume(_PhysicalVolume):
                 elif self.axis == self.Axis.kPhi :
                     meshes.append(self.logicalVolume.mesh)
                     transforms.append([[0,0,v],[0,0,0]])
-            
+
         return [meshes,transforms]
 
     def getPhysicalVolumes(self):

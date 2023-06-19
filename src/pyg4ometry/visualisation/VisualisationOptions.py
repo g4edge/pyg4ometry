@@ -100,5 +100,3 @@ def makeVisualisationOptionsDictFromPredefined(ColourMap):
             ColourMap[material].visible = False
 
     return ColourMap
-
-

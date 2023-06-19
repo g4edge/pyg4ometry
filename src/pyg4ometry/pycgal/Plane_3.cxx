@@ -106,6 +106,3 @@ PYBIND11_MODULE(Plane_3, m) {
 
     /* pybdind11 only */
 }
-
-
-

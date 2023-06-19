@@ -26,11 +26,11 @@ class Plane(_SolidBase): # point on plane is on z-axis
         self.mesh   = None
 
     def __repr__(self):
-        return "Pane : {} [{},{},{}] {}".format(self.name, 
-                                                str(self.normal[0]), 
-                                                str(self.normal[1]), 
+        return "Pane : {} [{},{},{}] {}".format(self.name,
+                                                str(self.normal[0]),
+                                                str(self.normal[1]),
                                                 str(self.normal[2]),
-                                                str(self.dist), 
+                                                str(self.dist),
                                                 str(self.pDz))
 
     def pycsgmesh(self):

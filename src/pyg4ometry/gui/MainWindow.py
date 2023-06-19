@@ -8,7 +8,7 @@ import pyg4ometry.visualisation.VtkViewer
 from .GeometryModel import GeometryModel
 
 class MainWindow(QMainWindow):
-    
+
     def __init__(self):
         super(MainWindow,self).__init__()
 
