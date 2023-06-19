@@ -190,7 +190,7 @@ def electrode_profile():
 
 
 @pytest.fixture(scope="session")
-def lhc_blm(vis=False, interactive=False, n_slice=16):
+def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     import math as _math
     import pyg4ometry.gdml as _gd
@@ -554,7 +554,7 @@ def lhc_blm(vis=False, interactive=False, n_slice=16):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write("blm_model_colours.gdml")
+    w.write(tmptestdir / "blm_model_colours.gdml")
 
     # visualisation
     v = 1
