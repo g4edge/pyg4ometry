@@ -32,7 +32,7 @@ in a geometry. In directory ``pyg4ometry/pyg4ometry/test/stl``.
 
    import pyg4ometry
    reg = pyg4ometry.geant4.Registry()
-   r = pyg4ometry.stl.Reader("utahteapot.stl" registry=reg)
+   r = pyg4ometry.stl.Reader("utahteapot.stl", registry=reg)
    s = r.getSolid()
    copper = pyg4ometry.geant4.MaterialPredefined("G4_Cu")
    l = pyg4ometry.geant4.LogicalVolume(s, copper, "utahteapot_lv", reg)
