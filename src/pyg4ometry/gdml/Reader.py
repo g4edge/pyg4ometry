@@ -472,12 +472,11 @@ class Reader:
 
             # Set the optional variables of state
             if "temperature" in material:
-                mat.set_temperature(
-                    float(material["temperature"]), material["temperature_unit"]
-                )
+                mat.set_temperature(_defines.Expression(mat.name + "_T", material["temperature"], self._registry),
+                                    material["temperature_unit"])
 
             if "pressure" in material:
-                mat.set_pressure(float(material["pressure"]), material["pressure_unit"])
+                mat.set_pressure(_defines.Expression(mat.name + "_T", material["pressure"], self._registry), material["pressure_unit"])
 
             # Set the optional properties
             properties = material.get("properties")
