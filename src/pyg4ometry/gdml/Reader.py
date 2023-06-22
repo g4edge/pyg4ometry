@@ -476,7 +476,7 @@ class Reader:
                                     material["temperature_unit"])
 
             if "pressure" in material:
-                mat.set_pressure(_defines.Expression(mat.name + "_T", material["pressure"], self._registry), material["pressure_unit"])
+                mat.set_pressure(_defines.Expression(mat.name + "_P", material["pressure"], self._registry), material["pressure_unit"])
 
             # Set the optional properties
             properties = material.get("properties")
