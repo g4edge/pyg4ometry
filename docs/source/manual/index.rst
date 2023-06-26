@@ -15,9 +15,6 @@ User Manual
    combining
    comparing
    analysing
-   pythonscripting
-   tutorials
-   tutorialsAdvanced
 
 
 Indices and tables
