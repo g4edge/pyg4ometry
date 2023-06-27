@@ -225,7 +225,6 @@ class LogicalVolume(object):
         self.replaceSolid(self.solid,rotation, position, runit, punit)
 
     def replaceSolid(self, newSolid, rotation = (0,0,0), position=(0,0,0), runit="rad", punit="mm") :
-
         """
         Replace the outer solid with optional position and rotation
 
@@ -506,7 +505,7 @@ class LogicalVolume(object):
                 # inside the solid - just update placement transform
                 _updateRotoTranslation(pv)
             else:
-                # by elimination it's protruding
+                # by elimination, it's protruding
                 _updateRotoTranslation(pv)
                 # We keep the 1st object in the intersection the original so its frame
                 # is preserved. We therefore use the inverse of the (new and updated)

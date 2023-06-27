@@ -324,7 +324,7 @@ class Reader(object):
                         comp["comp_type"] = "fraction"
                         components.append(comp)
 
-                    elif chNode.tagName=="property":
+                    elif chNode.tagName == "property":
                         try :
                             properties[chNode.attributes["name"].value] = chNode.attributes["value"].value
                         except KeyError :
@@ -340,7 +340,7 @@ class Reader(object):
                 materials.append(def_attrs)
 
             else:
-                print("Urecognised define: ", mat_type)
+                print("Unrecognised define: ", mat_type)
 
         materialSubstitutionNames = self._makeMaterials(materials, elements, isotopes)
         return materialSubstitutionNames
@@ -353,7 +353,7 @@ class Reader(object):
         isotope_dict = {}
         element_dict = {} # No material dict as materials go into the registry
 
-        # if we find any NIST materials and we're reducing them back to predefine,
+        # if we find any NIST materials, and we're reducing them back to predefine,
         # keep a dictionary of original name : NIST name for later substitution
         substitueDictionary = {}
 
