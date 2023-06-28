@@ -167,7 +167,7 @@ POWER
 ABS
    : 'abs'
    ;
-   
+
 LPAREN
    : '('
    ;

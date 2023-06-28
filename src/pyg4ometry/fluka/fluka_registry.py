@@ -1,9 +1,6 @@
 import sys as _sys
 from collections import OrderedDict as _OrderedDict
-if _sys.version_info < (3, 10):
-    from collections import MutableMapping as _MutableMapping
-else:
-    from collections.abc import MutableMapping as _MutableMapping
+from collections.abc import MutableMapping as _MutableMapping
 
 from itertools import count as _count
 
@@ -15,25 +12,26 @@ from .directive import RecursiveRotoTranslation as _RecursiveRotoTranslation
 from .directive import RotoTranslation as _RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError as _IdenticalNameError
 from pyg4ometry.exceptions import FLUKAError as _FLUKAError
-from .material import (defineBuiltInFlukaMaterials,
-                       BuiltIn,
-                       predefinedMaterialNames)
+from .material import defineBuiltInFlukaMaterials, BuiltIn, predefinedMaterialNames
 from . import body as _body
 from . import vector as _vector
 from . import card as _card
 
 import logging as _logging
+
 logger = _logging.getLogger(__name__)
 logger.setLevel(_logging.INFO)
 
-class FlukaRegistry(object):
+
+class FlukaRegistry:
     """
     Object to store geometry for FLUKA input and output. All of the FLUKA classes \
     can be used without storing them in the Registry. The registry is used to write \
     the FLUKA output file.
     """
+
     def __init__(self):
-        #self.bodyDict = FlukaBodyStore()
+        # self.bodyDict = FlukaBodyStore()
         self.bodyDict = FlukaBodyStoreExact()
 
         self.rotoTranslations = RotoTranslationStore()
@@ -78,8 +76,8 @@ class FlukaRegistry(object):
 
     def addLattice(self, lattice):
         if lattice.cellRegion.name in self.regionDict:
-            raise ValueError(
-                "LATTICE cell already been defined as a region in regionDict")
+            msg = "LATTICE cell already been defined as a region in regionDict"
+            raise ValueError(msg)
         self.latticeDict[lattice.cellRegion.name] = lattice
 
     def getBody(self, name):
@@ -89,11 +87,11 @@ class FlukaRegistry(object):
         return self._bodiesAndRegions
 
     def printDefinitions(self):
-        print("bodyDict = {}".format(self.bodyDict))
-        print("regionDict = {}".format(self.regionDict))
-        print("materialDict = {}".format(self.materials))
-        print("latticeDict = {}".format(self.latticeDict))
-        print("cardDict = {}".format(self.cardDict))
+        print(f"bodyDict = {self.bodyDict}")
+        print(f"regionDict = {self.regionDict}")
+        print(f"materialDict = {self.materials}")
+        print(f"latticeDict = {self.latticeDict}")
+        print(f"cardDict = {self.cardDict}")
 
     def regionAABBs(self, write=None):
         regionAABBs = {}
@@ -102,6 +100,7 @@ class FlukaRegistry(object):
 
         if write:
             import pickle
+
             with open(write, "wb") as f:
                 pickle.dump(regionAABBs, f)
 
@@ -126,19 +125,22 @@ class FlukaRegistry(object):
 
     def addMaterialAssignments(self, mat, *regions):
         if isinstance(mat, _Region):
-            raise TypeError("A Region instance has been provided as a material")
+            msg = "A Region instance has been provided as a material"
+            raise TypeError(msg)
 
-        try: # Element or Compound instance
+        try:  # Element or Compound instance
             materialName = mat.name
-        except AttributeError: # By name, get Ele/Comp from self.
+        except AttributeError:  # By name, get Ele/Comp from self.
             materialName = mat
             mat = self.materials[materialName]
         # More checks.
         if materialName not in self.materials:
             self.addMaterialAssignments(material)
         elif mat not in self.materials.values():
-            msg = ("Mismatch between provided FLUKA material \"{}\" for "
-                   "assignment and existing found in registry".format(mat.name))
+            msg = (
+                'Mismatch between provided FLUKA material "{}" for '
+                "assignment and existing found in registry".format(mat.name)
+            )
             raise _FLUKAError(msg)
 
         for region in regions:
@@ -156,22 +158,22 @@ class FlukaRegistry(object):
     def addCard(self, card):
         if card.keyword in self.cardDict:
             self.cardDict[card.keyword].append(card)
-        else :
+        else:
             self.cardDict[card.keyword] = [card]
 
-    def addTitle(self, title = "FLUKA simulation"):
-        c = _card.Card("TITLE",sdum="\n"+title)
+    def addTitle(self, title="FLUKA simulation"):
+        c = _card.Card("TITLE", sdum="\n" + title)
         self.addCard(c)
 
     def addDefaults(self, default="EM-CASCA"):
-        c = _card.Card("DEFAULTS",sdum=default)
+        c = _card.Card("DEFAULTS", sdum=default)
         self.addCard(c)
 
     def addGlobal(self):
         pass
 
     def addBeam(self, energy):
-        c = _card.Card("BEAM",energy,0.1,0,0.1,0.,-1,"ELECTRON")
+        c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, "ELECTRON")
         self.addCard(c)
 
     def addBeamPos(self):
@@ -184,10 +186,35 @@ class FlukaRegistry(object):
     def addUserBnn(self):
         pass
 
-    def addUsrBdx(self, binning, scoringDir, scoringType, type, lunOutput, reg1, reg2, area, name,
-                   maxKE = None,minKE = None, nKEbin = None, maxSA = None, minSA = None, nSEbin = None):
-        c1 = _card.Card("USRBDX",binning + 10*scoringDir + 100*scoringType, type, lunOutput, reg1, reg2, area, name)
-        c2 = _card.Card("USRBDX",maxKE, minKE, nKEbin, maxSa, minSA, nSEbin, "&")
+    def addUsrBdx(
+        self,
+        binning,
+        scoringDir,
+        scoringType,
+        type,
+        lunOutput,
+        reg1,
+        reg2,
+        area,
+        name,
+        maxKE=None,
+        minKE=None,
+        nKEbin=None,
+        maxSA=None,
+        minSA=None,
+        nSEbin=None,
+    ):
+        c1 = _card.Card(
+            "USRBDX",
+            binning + 10 * scoringDir + 100 * scoringType,
+            type,
+            lunOutput,
+            reg1,
+            reg2,
+            area,
+            name,
+        )
+        c2 = _card.Card("USRBDX", maxKE, minKE, nKEbin, maxSa, minSA, nSEbin, "&")
 
         self.addCard(c1)
         self.addCard(c2)
@@ -200,23 +227,33 @@ class FlukaRegistry(object):
         c = _card.Card("USROCALL")
         self.addCard(c)
 
-    def addUserDump(self, mgdraw = 100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
-        if not sdum :
-            c = _card.Card("USERDUMP",mgdraw, lun, mgdrawOpt, sdum=sdum)
+    def addUserDump(self, mgdraw=100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
+        if not sdum:
+            c = _card.Card("USERDUMP", mgdraw, lun, mgdrawOpt, sdum=sdum)
             self.addCard(c)
-        elif sdum == "UDQUENCH" :
+        elif sdum == "UDQUENCH":
             c1 = _card.Card()
 
-    def addRandomiz(self, seedLun =1, seed=54217137):
+    def addRandomiz(self, seedLun=1, seed=54217137):
         c = _card.Card("RANDOMIZ", seedLun, seed)
         self.addCard(c)
 
-    def addStart(self, maxPrimHistories = 1, timeTermSec= None, coreDump = None, eachHistoryOutput = None):
-        c = _card.Card("START", maxPrimHistories,None,timeTermSec,coreDump,eachHistoryOutput)
+    def addStart(
+        self,
+        maxPrimHistories=1,
+        timeTermSec=None,
+        coreDump=None,
+        eachHistoryOutput=None,
+    ):
+        c = _card.Card(
+            "START", maxPrimHistories, None, timeTermSec, coreDump, eachHistoryOutput
+        )
         self.addCard(c)
 
+
 class RotoTranslationStore(_MutableMapping):
-    """ only get by names."""
+    """only get by names."""
+
     def __init__(self):
         self._nameMap = _OrderedDict()
         # internal infinite counter generating new unique
@@ -234,8 +271,11 @@ class RotoTranslationStore(_MutableMapping):
             msg = "Only store RotoTranslation or RecursiveRotoTranslation."
             raise TypeError(msg)
         if name != rtrans.name:
-            raise ValueError("Name it is appended with doesn't match"
-                             " the name of the RotoTranslation instance...")
+            msg = (
+                "Name it is appended with doesn't match"
+                " the name of the RotoTranslation instance..."
+            )
+            raise ValueError(msg)
 
         # If already defined then we give it the same transformation
         # index as the one we are overwriting.
@@ -245,7 +285,7 @@ class RotoTranslationStore(_MutableMapping):
 
     def addRotoTranslation(self, rtrans):
         name = rtrans.name
-        if name in self: # match the name to the previous transformationIndex
+        if name in self:  # match the name to the previous transformationIndex
             rtrans.transformationIndex = self[name].transformationIndex
             self[name].append(rtrans)
         else:
@@ -255,11 +295,10 @@ class RotoTranslationStore(_MutableMapping):
             if not rtrans.transformationIndex:
                 recur.transformationIndex = next(self._counter)
             elif rtrans.transformationIndex in self.allTransformationIndices():
-                raise KeyError("transformation index matches another"
-                               " ROT-DEFI with a different name.  Change the"
-                               " transformationIndex and try again.")
+                msg = "transformation index matches another ROT-DEFI with a different name.  Change the transformationIndex and try again."
+                raise KeyError(msg)
             elif rtrans.transformationIndex not in self.allTransformationIndices():
-                pass #
+                pass  #
             self[name] = recur
 
     def allTransformationIndices(self):
@@ -284,13 +323,14 @@ class FlukaBodyStore(_MutableMapping):
         hscacher = HalfSpaceCacher(self._df)
         infCylCacher = InfiniteCylinderCacher(self._df)
 
-        self._cachers = {_body.XZP: hscacher,
-                         _body.YZP: hscacher,
-                         _body.XYP: hscacher,
-                         _body.PLA: hscacher,
-                         _body.XCC: infCylCacher,
-                         _body.YCC: infCylCacher,
-                         _body.ZCC: infCylCacher
+        self._cachers = {
+            _body.XZP: hscacher,
+            _body.YZP: hscacher,
+            _body.XYP: hscacher,
+            _body.PLA: hscacher,
+            _body.XCC: infCylCacher,
+            _body.YCC: infCylCacher,
+            _body.ZCC: infCylCacher,
         }
         self._basecacher = BaseCacher(self._df)
 
@@ -305,11 +345,11 @@ class FlukaBodyStore(_MutableMapping):
 
     def make(self, clas, *args, **kwargs):
         try:
-            del kwargs["flukaregistry"] # Prevent infinite recursion
+            del kwargs["flukaregistry"]  # Prevent infinite recursion
         except KeyError:
             pass
         try:
-            result =  self._cachers[clas].make(clas, *args, **kwargs)
+            result = self._cachers[clas].make(clas, *args, **kwargs)
             return result
 
         except KeyError:
@@ -328,12 +368,14 @@ class FlukaBodyStore(_MutableMapping):
 
     def __getitem__(self, key):
         if key not in self._bodyNames():
-            raise _FLUKAError(f"Undefined body: {key}")
+            msg = f"Undefined body: {key}"
+            raise _FLUKAError(msg)
         return self._df[self._df["name"] == key]["body"].item()
 
     def __delitem__(self, key):
         if key not in self._bodyNames():
-            raise KeyError(f"Missing body name: {key}")
+            msg = f"Missing body name: {key}"
+            raise KeyError(msg)
 
         body = self[key]
         self._getCacherFromBody(body).remove(key)
@@ -350,14 +392,16 @@ class FlukaBodyStore(_MutableMapping):
     def __repr__(self):
         return repr(dict(zip(self._bodyNames(), self._bodies())))
 
+
 class BaseCacher:
-    COLUMNS =  ["name", "body"]
+    COLUMNS = ["name", "body"]
+
     def __init__(self, df):
         self.df = df
         for column in self.COLUMNS:
             try:
                 self.df.insert(len(self.df), column, [])
-            except ValueError: # already added the column maybe
+            except ValueError:  # already added the column maybe
                 pass
 
     def appendData(self, variables):
@@ -374,8 +418,9 @@ class BaseCacher:
         if name not in self.df["name"]:
             self.append(body)
         else:
-            rowIndex= self.df[self.df["name"] == name].index
-            raise NotImplementedError("operation not implemented")
+            rowIndex = self.df[self.df["name"] == name].index
+            msg = "operation not implemented"
+            raise NotImplementedError(msg)
 
     def addBody(self, body):
         name = body.name
@@ -401,11 +446,11 @@ class BaseCacher:
 class Cacheable(BaseCacher):
     def getDegenerateBody(self, body):
         mask = self.mask(body)
-        if not mask.any(): # i.e. this half space has not been defined before.
+        if not mask.any():  # i.e. this half space has not been defined before.
             self.append(body)
             return body
         result = self.df[mask]["body"].item()
-        return result # self.df[mask]["body"].item()
+        return result  # self.df[mask]["body"].item()
 
     def getMask(self, columns, values, predicates):
         if self.df.empty:
@@ -422,6 +467,7 @@ class Cacheable(BaseCacher):
 
 class HalfSpaceCacher(Cacheable):
     COLUMNS = ["name", "body", "planeNormal", "pointOnPlane"]
+
     def append(self, body):
         name = body.name
         normal, point = body.toPlane()
@@ -429,33 +475,32 @@ class HalfSpaceCacher(Cacheable):
 
     def mask(self, body):
         normal, point = body.toPlane()
-        return self.getMask(["planeNormal", "pointOnPlane"],
-                            [normal, point],
-                            [_np.isclose, _np.isclose])
+        return self.getMask(
+            ["planeNormal", "pointOnPlane"], [normal, point], [_np.isclose, _np.isclose]
+        )
 
 
 class InfiniteCylinderCacher(Cacheable):
     COLUMNS = ["name", "body", "direction", "pointOnLine", "radius"]
+
     def append(self, body):
         super().appendData(
-            [body.name,
-             body,
-             body.direction(),
-             self._cylinderPoint(body),
-             body.radius]
+            [body.name, body, body.direction(), self._cylinderPoint(body), body.radius]
         )
 
     def mask(self, body):
         return self.getMask(
             ["direction", "pointOnLine", "radius"],
             [body.direction(), self._cylinderPoint(body), body.radius],
-            [_vector.areParallelOrAntiParallel, _np.isclose, _np.isclose])
+            [_vector.areParallelOrAntiParallel, _np.isclose, _np.isclose],
+        )
 
     @staticmethod
     def _cylinderPoint(body):
-        return _vector.pointOnLineClosestToPoint([0, 0, 0],
-                                                 body.point(),
-                                                 body.direction())
+        return _vector.pointOnLineClosestToPoint(
+            [0, 0, 0], body.point(), body.direction()
+        )
+
 
 class FlukaBodyStoreExact:
     def __init__(self):
@@ -476,12 +521,12 @@ class FlukaBodyStoreExact:
     def getDegenerateBody(self, body):
         if body.hash() in self.hashBody:
             return self.hashBody[body.hash()]
-        else :
+        else:
             self.addBody(body)
             return body
 
     def addBody(self, body):
-        if body.name in self.nameBody :
+        if body.name in self.nameBody:
             raise _IdenticalNameError(body.name)
         logger.debug("%s", body)
 
@@ -498,17 +543,19 @@ class FlukaBodyStoreExact:
     def __setitem__(self, key, value):
         assert key == value.name
         self.addBody(value)
-        #c = value.hash()
-        #c.setBody(value)
+        # c = value.hash()
+        # c.setBody(value)
 
     def __getitem__(self, key):
         if key not in self._bodyNames():
-            raise _FLUKAError(f"Undefined body: {key}")
+            msg = f"Undefined body: {key}"
+            raise _FLUKAError(msg)
         return self.nameBody[key]
 
     def __delitem__(self, key):
         if key not in self._bodyNames():
-            raise KeyError(f"Missing body name: {key}")
+            msg = f"Missing body name: {key}"
+            raise KeyError(msg)
 
         body = self[key]
         b = self.nameBody.pop(key)

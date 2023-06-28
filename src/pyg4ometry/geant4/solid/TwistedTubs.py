@@ -2,12 +2,12 @@ from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
 
-if _config.meshing == _config.meshingType.pycsg :
+if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
     from pyg4ometry.pycsg.geom import Vector as _Vector
     from pyg4ometry.pycsg.geom import Vertex as _Vertex
     from pyg4ometry.pycsg.geom import Polygon as _Polygon
-elif _config.meshing == _config.meshingType.cgal_sm :
+elif _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import CSG as _CSG
     from pyg4ometry.pycgal.geom import Vector as _Vector
     from pyg4ometry.pycgal.geom import Vertex as _Vertex
@@ -17,10 +17,11 @@ import logging as _log
 
 import numpy as _np
 
+
 class TwistedTubs(_SolidBase):
     """
     Creates a twisted tube segement. Note that only 1 constructor is supprted.
-    
+
     :param name:         of solid
     :type name:          str
     :param endinnerrad:  inner radius at the end of the segment
@@ -36,27 +37,40 @@ class TwistedTubs(_SolidBase):
     :param lunit:        length unit (nm,um,mm,m,km) for solid
     :type lunit:         str
     :param aunit:        angle unit (rad,deg) for solid
-    :type aunit:         str    
+    :type aunit:         str
     :param nslice:       number of phi elements for meshing
-    :type nstack:        int    
+    :type nstack:        int
     :param nstack:       number of theta elements for meshing
-    :type nstack:        int    
+    :type nstack:        int
 
     """
-    def __init__(self, name, endinnerrad, endouterrad, zlen, phi, twistedangle,
-                 registry, lunit="mm", aunit="rad",
-                 nslice=None, nstack=None, addRegistry=True):
-        super(TwistedTubs, self).__init__(name, 'TwistedTubs', registry)
 
-        self.endinnerrad  = endinnerrad
-        self.endouterrad  = endouterrad
-        self.zlen         = zlen
-        self.phi          = phi
+    def __init__(
+        self,
+        name,
+        endinnerrad,
+        endouterrad,
+        zlen,
+        phi,
+        twistedangle,
+        registry,
+        lunit="mm",
+        aunit="rad",
+        nslice=None,
+        nstack=None,
+        addRegistry=True,
+    ):
+        super().__init__(name, "TwistedTubs", registry)
+
+        self.endinnerrad = endinnerrad
+        self.endouterrad = endouterrad
+        self.zlen = zlen
+        self.phi = phi
         self.twistedangle = twistedangle
-        self.lunit        = lunit
-        self.aunit        = aunit
-        self.nslice       = nslice if nslice else _config.SolidDefaults.TwistedTubs.nslice
-        self.nstack       = nstack if nstack else _config.SolidDefaults.TwistedTubs.nstack
+        self.lunit = lunit
+        self.aunit = aunit
+        self.nslice = nslice if nslice else _config.SolidDefaults.TwistedTubs.nslice
+        self.nstack = nstack if nstack else _config.SolidDefaults.TwistedTubs.nstack
 
         self.dependents = []
 
@@ -68,26 +82,35 @@ class TwistedTubs(_SolidBase):
         # self.checkParameters()
 
     def __repr__(self):
-        return "TwistedTubs : {} {} {} {} {} {} {}".format(self.name,
-                                                     self.endinnerrad, self.endouterrad,
-                                                     self.zlen, self.twistedangle,
-                                                     self.nslice, self.nstack)
+        return "TwistedTubs : {} {} {} {} {} {} {}".format(
+            self.name,
+            self.endinnerrad,
+            self.endouterrad,
+            self.zlen,
+            self.twistedangle,
+            self.nslice,
+            self.nstack,
+        )
 
     def __str__(self):
-        return "TwistedTubs : name={} endinnerrad={} endouterrad={} zlen={} twistedangle={} nslice={} nstack={}".format(self.name,
-                                                                                                                        self.endinnerrad, self.endouterrad,
-                                                                                                                        self.zlen, self.twistedangle,
-                                                                                                                        self.nslice, self.nstack)
+        return "TwistedTubs : name={} endinnerrad={} endouterrad={} zlen={} twistedangle={} nslice={} nstack={}".format(
+            self.name,
+            self.endinnerrad,
+            self.endouterrad,
+            self.zlen,
+            self.twistedangle,
+            self.nslice,
+            self.nstack,
+        )
 
     def makeLayers(self, verts_bot, verts_top):
-
         layers = []
 
-        z1 = 2*float(self.dz)
+        z1 = 2 * float(self.dz)
         z0 = -float(self.dz)
 
-        for i in range(self.nstack+1):
-            z = z0 + i*z1/self.nstack
+        for i in range(self.nstack + 1):
+            z = z0 + i * z1 / self.nstack
             dz = (z - z0) / (z1 - z0)
 
             verts_i = []
@@ -105,49 +128,49 @@ class TwistedTubs(_SolidBase):
 
         return layers
 
-
     def mesh(self):
         _log.info("polycone.antlr>")
-        import pyg4ometry.gdml.Units as _Units #TODO move circular import 
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
         luval = _Units.unit(self.lunit)
-        auval = _Units.unit(self.aunit) 
+        auval = _Units.unit(self.aunit)
 
-        endinnerrad = self.evaluateParameter(self.endinnerrad)*luval
-        endouterrad = self.evaluateParameter(self.endouterrad)*luval
+        endinnerrad = self.evaluateParameter(self.endinnerrad) * luval
+        endouterrad = self.evaluateParameter(self.endouterrad) * luval
 
-        zlen         = self.evaluateParameter(self.zlen)*luval
-        phi          = self.evaluateParameter(self.phi)*auval 
-        twistedangle = self.evaluateParameter(self.twistedangle)*auval
+        zlen = self.evaluateParameter(self.zlen) * luval
+        phi = self.evaluateParameter(self.phi) * auval
+        twistedangle = self.evaluateParameter(self.twistedangle) * auval
 
         _log.info("polycone.basicmesh>")
         polygons = []
 
-        stacks  = self.nstack
-        slices  = self.nslice
+        stacks = self.nstack
+        slices = self.nslice
 
-        pSPhi =  3*_np.pi/2.
-        dPhi  = phi/slices
-        sz = -zlen/2.
-        dz = zlen/stacks
-        stwist = -twistedangle/2.
-        dtwist = twistedangle/stacks
+        pSPhi = 3 * _np.pi / 2.0
+        dPhi = phi / slices
+        sz = -zlen / 2.0
+        dz = zlen / stacks
+        stwist = -twistedangle / 2.0
+        dtwist = twistedangle / stacks
 
         def appendVertex(vertices, theta, z, r, rotangle=0):
             # Generate points on a circle
-            c = _Vector([0,0,0])
-            x = r*_np.cos(theta)
-            y = r*_np.sin(theta)
+            c = _Vector([0, 0, 0])
+            x = r * _np.cos(theta)
+            y = r * _np.sin(theta)
 
             # Rotate the points
-            xr = x*_np.cos(rotangle) - y*_np.sin(rotangle)
-            yr = x*_np.sin(rotangle) + y*_np.cos(rotangle)
+            xr = x * _np.cos(rotangle) - y * _np.sin(rotangle)
+            yr = x * _np.sin(rotangle) + y * _np.cos(rotangle)
 
-            vertices.append(_Vertex(c+_Vector(xr,yr,z)))
+            vertices.append(_Vertex(c + _Vector(xr, yr, z)))
 
-        offs = 1.e-25 #Small offset to avoid point degenracy when the radius is zero. TODO: make more robust
+        offs = 1.0e-25  # Small offset to avoid point degenracy when the radius is zero. TODO: make more robust
 
         # Mesh the sides
-        rinout    = [endinnerrad, endouterrad]
+        rinout = [endinnerrad, endouterrad]
         for R in rinout:
             for j0 in range(stacks):
                 j1 = j0 + 0.5
@@ -155,17 +178,55 @@ class TwistedTubs(_SolidBase):
                 for i0 in range(slices):
                     i1 = i0 + 0.5
                     i2 = i0 + 1
-                    k0 = i0 if R == endouterrad else i2  #needed to ensure the surface normals on the inner and outer surface are obeyed
+                    k0 = (
+                        i0 if R == endouterrad else i2
+                    )  # needed to ensure the surface normals on the inner and outer surface are obeyed
                     k1 = i2 if R == endouterrad else i0
 
                     verticesA = []
-                    appendVertex(verticesA, k0 * dPhi + pSPhi, sz + j0*dz, R + offs, stwist + j0*dtwist)
-                    appendVertex(verticesA, k1 * dPhi + pSPhi, sz + j0*dz, R + offs, stwist + j0*dtwist)
-                    appendVertex(verticesA, k1 * dPhi + pSPhi, sz + j2*dz, R + offs, stwist + j2*dtwist)
+                    appendVertex(
+                        verticesA,
+                        k0 * dPhi + pSPhi,
+                        sz + j0 * dz,
+                        R + offs,
+                        stwist + j0 * dtwist,
+                    )
+                    appendVertex(
+                        verticesA,
+                        k1 * dPhi + pSPhi,
+                        sz + j0 * dz,
+                        R + offs,
+                        stwist + j0 * dtwist,
+                    )
+                    appendVertex(
+                        verticesA,
+                        k1 * dPhi + pSPhi,
+                        sz + j2 * dz,
+                        R + offs,
+                        stwist + j2 * dtwist,
+                    )
                     verticesB = []
-                    appendVertex(verticesB, k1 * dPhi + pSPhi, sz + j2*dz, R + offs, stwist + j2*dtwist)
-                    appendVertex(verticesB, k0 * dPhi + pSPhi, sz + j2*dz, R + offs, stwist + j2*dtwist)
-                    appendVertex(verticesB, k0 * dPhi + pSPhi, sz + j0*dz, R + offs, stwist + j0*dtwist)
+                    appendVertex(
+                        verticesB,
+                        k1 * dPhi + pSPhi,
+                        sz + j2 * dz,
+                        R + offs,
+                        stwist + j2 * dtwist,
+                    )
+                    appendVertex(
+                        verticesB,
+                        k0 * dPhi + pSPhi,
+                        sz + j2 * dz,
+                        R + offs,
+                        stwist + j2 * dtwist,
+                    )
+                    appendVertex(
+                        verticesB,
+                        k0 * dPhi + pSPhi,
+                        sz + j0 * dz,
+                        R + offs,
+                        stwist + j0 * dtwist,
+                    )
 
                     polygons.append(_Polygon(verticesA))
                     polygons.append(_Polygon(verticesB))
@@ -177,49 +238,169 @@ class TwistedTubs(_SolidBase):
             vertices_t = []
             vertices_b = []
 
-            appendVertex(vertices_t, i0 * dPhi + pSPhi, zlen/2., endinnerrad + offs, twistedangle/2.)
-            appendVertex(vertices_t, i2 * dPhi + pSPhi, zlen/2., endinnerrad + offs, twistedangle/2.)
-            appendVertex(vertices_t, i2 * dPhi + pSPhi, zlen/2., endouterrad + offs, twistedangle/2.)
-            appendVertex(vertices_t, i0 * dPhi + pSPhi, zlen/2., endouterrad + offs, twistedangle/2.)
+            appendVertex(
+                vertices_t,
+                i0 * dPhi + pSPhi,
+                zlen / 2.0,
+                endinnerrad + offs,
+                twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_t,
+                i2 * dPhi + pSPhi,
+                zlen / 2.0,
+                endinnerrad + offs,
+                twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_t,
+                i2 * dPhi + pSPhi,
+                zlen / 2.0,
+                endouterrad + offs,
+                twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_t,
+                i0 * dPhi + pSPhi,
+                zlen / 2.0,
+                endouterrad + offs,
+                twistedangle / 2.0,
+            )
             polygons.append(_Polygon(vertices_t))
 
-            appendVertex(vertices_b, i2 * dPhi + pSPhi, -zlen/2., endinnerrad + offs, -twistedangle/2.)
-            appendVertex(vertices_b, i0 * dPhi + pSPhi, -zlen/2., endinnerrad + offs, -twistedangle/2.)
-            appendVertex(vertices_b, i0 * dPhi + pSPhi, -zlen/2., endouterrad + offs, -twistedangle/2.)
-            appendVertex(vertices_b, i2 * dPhi + pSPhi, -zlen/2., endouterrad + offs, -twistedangle/2.)
+            appendVertex(
+                vertices_b,
+                i2 * dPhi + pSPhi,
+                -zlen / 2.0,
+                endinnerrad + offs,
+                -twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_b,
+                i0 * dPhi + pSPhi,
+                -zlen / 2.0,
+                endinnerrad + offs,
+                -twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_b,
+                i0 * dPhi + pSPhi,
+                -zlen / 2.0,
+                endouterrad + offs,
+                -twistedangle / 2.0,
+            )
+            appendVertex(
+                vertices_b,
+                i2 * dPhi + pSPhi,
+                -zlen / 2.0,
+                endouterrad + offs,
+                -twistedangle / 2.0,
+            )
             polygons.append(_Polygon(vertices_b))
 
         # Mesh the segment endpieces (if not 2pi angle)
-        if phi != 2*_np.pi:
+        if phi != 2 * _np.pi:
             for i0 in range(stacks):
                 i1 = i0 + 0.5
                 i2 = i0 + 1
 
                 vertices_A1 = []
                 vertices_A2 = []
-                appendVertex(vertices_A1, pSPhi, sz + i0*dz, endinnerrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_A1, pSPhi, sz + i0*dz, endouterrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_A1, pSPhi, sz + i2*dz, endinnerrad + offs, stwist + i2*dtwist)
+                appendVertex(
+                    vertices_A1,
+                    pSPhi,
+                    sz + i0 * dz,
+                    endinnerrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_A1,
+                    pSPhi,
+                    sz + i0 * dz,
+                    endouterrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_A1,
+                    pSPhi,
+                    sz + i2 * dz,
+                    endinnerrad + offs,
+                    stwist + i2 * dtwist,
+                )
 
-                appendVertex(vertices_A2, pSPhi, sz + i2*dz, endinnerrad + offs, stwist + i2*dtwist)
-                appendVertex(vertices_A2, pSPhi, sz + i0*dz, endouterrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_A2, pSPhi, sz + i2*dz, endouterrad + offs, stwist + i2*dtwist)
+                appendVertex(
+                    vertices_A2,
+                    pSPhi,
+                    sz + i2 * dz,
+                    endinnerrad + offs,
+                    stwist + i2 * dtwist,
+                )
+                appendVertex(
+                    vertices_A2,
+                    pSPhi,
+                    sz + i0 * dz,
+                    endouterrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_A2,
+                    pSPhi,
+                    sz + i2 * dz,
+                    endouterrad + offs,
+                    stwist + i2 * dtwist,
+                )
 
                 polygons.append(_Polygon(vertices_A1))
                 polygons.append(_Polygon(vertices_A2))
 
                 vertices_B1 = []
                 vertices_B2 = []
-                appendVertex(vertices_B1, pSPhi + slices*dPhi, sz + i0*dz, endouterrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_B1, pSPhi + slices*dPhi, sz + i0*dz, endinnerrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_B1, pSPhi + slices*dPhi, sz + i2*dz, endinnerrad + offs, stwist + i2*dtwist)
+                appendVertex(
+                    vertices_B1,
+                    pSPhi + slices * dPhi,
+                    sz + i0 * dz,
+                    endouterrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_B1,
+                    pSPhi + slices * dPhi,
+                    sz + i0 * dz,
+                    endinnerrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_B1,
+                    pSPhi + slices * dPhi,
+                    sz + i2 * dz,
+                    endinnerrad + offs,
+                    stwist + i2 * dtwist,
+                )
 
-                appendVertex(vertices_B2, pSPhi + slices*dPhi, sz + i0*dz, endouterrad + offs, stwist + i0*dtwist)
-                appendVertex(vertices_B2, pSPhi + slices*dPhi, sz + i2*dz, endinnerrad + offs, stwist + i2*dtwist)
-                appendVertex(vertices_B2, pSPhi + slices*dPhi, sz + i2*dz, endouterrad + offs, stwist + i2*dtwist)
+                appendVertex(
+                    vertices_B2,
+                    pSPhi + slices * dPhi,
+                    sz + i0 * dz,
+                    endouterrad + offs,
+                    stwist + i0 * dtwist,
+                )
+                appendVertex(
+                    vertices_B2,
+                    pSPhi + slices * dPhi,
+                    sz + i2 * dz,
+                    endinnerrad + offs,
+                    stwist + i2 * dtwist,
+                )
+                appendVertex(
+                    vertices_B2,
+                    pSPhi + slices * dPhi,
+                    sz + i2 * dz,
+                    endouterrad + offs,
+                    stwist + i2 * dtwist,
+                )
 
                 polygons.append(_Polygon(vertices_B1))
                 polygons.append(_Polygon(vertices_B2))
 
-        mesh     = _CSG.fromPolygons(polygons)
+        mesh = _CSG.fromPolygons(polygons)
         return mesh

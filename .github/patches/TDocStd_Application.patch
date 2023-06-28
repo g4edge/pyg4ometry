@@ -1,0 +1,11 @@
+--- src/TDocStd/TDocStd_Application.hxx	2022-09-29 10:40:22.918558004 +0000
++++ /usr/local/include/opencascade/TDocStd_Application.hxx	2022-09-28 20:52:40.000000000 +0000
+@@ -32,7 +32,7 @@
+
+ class Resource_Manager;
+ class Standard_NoSuchObject;
+-#include <TDocStd_Document.hxx>
++class TDocStd_Document;
+ class TCollection_ExtendedString;
+
+ class TDocStd_Application;

@@ -1,0 +1,10 @@
+def test_imports():
+    import pyg4ometry
+    import pyg4ometry.convert
+    import pyg4ometry.fluka
+    import pyg4ometry.gdml
+    import pyg4ometry.geant4
+    import pyg4ometry.pycgal
+    import pyg4ometry.pycsg
+    import pyg4ometry.pyoce
+    import pyg4ometry.visualisation

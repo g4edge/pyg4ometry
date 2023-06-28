@@ -5,9 +5,10 @@ import logging as _log
 
 import pyg4ometry.exceptions
 
+
 class Intersection(_SolidBase):
     """
-    Intersection between two solids     
+    Intersection between two solids
 
     :param name: of solid
     :type name: str
@@ -21,60 +22,73 @@ class Intersection(_SolidBase):
     :type registry: Registry
 
     """
+
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
-        super(Intersection, self).__init__(name, 'Intersection', registry)
-        # circular import 
+        super().__init__(name, "Intersection", registry)
+        # circular import
         import pyg4ometry.gdml.Defines as _defines
 
         self.obj1 = obj1
         self.obj2 = obj2
-        self.tra2 = _defines.upgradeToTransformation(tra2, registry) # TBC should addRegistry be passed in here?
+        self.tra2 = _defines.upgradeToTransformation(
+            tra2, registry
+        )  # TBC should addRegistry be passed in here?
 
         self.varNames = ["tra2"]
         self.varUnits = [None]
         self.dependents = []
-        
+
         if addRegistry:
             registry.addSolid(self)
 
-        obj1.dependents.append(self) 
+        obj1.dependents.append(self)
         obj2.dependents.append(self)
 
     def __repr__(self):
-        return 'Intersection '+self.name+': ('+str(self.obj1.name)+') with ('+str(self.obj2.name)+')'
+        return (
+            "Intersection "
+            + self.name
+            + ": ("
+            + str(self.obj1.name)
+            + ") with ("
+            + str(self.obj2.name)
+            + ")"
+        )
 
     def __str__(self):
-        return 'Intersection {} {} {}'.format(self.name,str(self.obj1.name),str(self.obj2.name), repr(self.tra2))
+        return "Intersection {} {} {}".format(
+            self.name, str(self.obj1.name), str(self.obj2.name), repr(self.tra2)
+        )
 
     def mesh(self):
         import pyg4ometry.geant4 as _g4
 
-        _log.info('Intersection.pycsgmesh>>')
+        _log.info("Intersection.pycsgmesh>>")
 
-        # look up solids in registry 
+        # look up solids in registry
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation 
-        rot   = tbxyz2axisangle(self.tra2[0].eval())
+        # transformation
+        rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
-        # get meshes 
-        _log.info('Intersection.mesh> mesh1')
+        # get meshes
+        _log.info("Intersection.mesh> mesh1")
         m1 = obj1.mesh()
-        _log.info('Intersection.mesh> mesh2')
+        _log.info("Intersection.mesh> mesh2")
         m2 = obj2.mesh().clone()
-        
+
         # apply transform to second mesh
-        m2.rotate(rot[0],-rad2deg(rot[1]))
+        m2.rotate(rot[0], -rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.info('Intersection.pycsgmesh> intersect')
+        _log.info("Intersection.pycsgmesh> intersect")
         mesh = m1.intersect(m2)
         if mesh.isNull():
             raise pyg4ometry.exceptions.NullMeshError(self)
 
-        #print 'intersection mesh ', self.name
+        # print 'intersection mesh ', self.name
         return mesh
 
     def translation(self):
@@ -85,8 +99,10 @@ class Intersection(_SolidBase):
 
     def object1(self):
         import pyg4ometry.geant4 as _g4
+
         return self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
 
     def object2(self):
         import pyg4ometry.geant4 as _g4
+
         return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)

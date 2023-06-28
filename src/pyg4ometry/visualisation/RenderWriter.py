@@ -4,17 +4,19 @@ import numpy as _np
 import pyg4ometry.transformation as _transformation
 from . import Convert as _convert
 
-class RenderWriter :
+
+class RenderWriter:
     def __init__(self):
         self.materials = {}
-        self.meshes    = {}
+        self.meshes = {}
         self.instances = {}
 
-    def addLogicalVolumeRecursive(self,
-                                  logical,
-                                  mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]]),
-                                  tra = _np.array([0,0,0])):
-
+    def addLogicalVolumeRecursive(
+        self,
+        logical,
+        mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+        tra=_np.array([0, 0, 0]),
+    ):
         if logical.type != "assembly":
             self.addMesh(logical)
             self.addInstance(logical, mtra, tra)
@@ -22,7 +24,9 @@ class RenderWriter :
         for pv in logical.daughterVolumes:
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
+                pvmrot = _np.linalg.inv(
+                    _transformation.tbxyz2matrix(pv.rotation.eval())
+                )
                 if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
                 else:
@@ -38,40 +42,60 @@ class RenderWriter :
     def addMesh(self, logical):
         if logical.name in self.materials:
             pass
-        else :
+        else:
             self.materials[logical.name] = logical.material
             self.meshes[logical.name] = logical.mesh.localmesh
 
     def addInstance(self, logical, transformation, translation):
         if logical.name in self.instances:
-            self.instances[logical.name].append({"transformation":transformation,
-                                                 "translation":translation})
-        else :
-            self.instances[logical.name] = [{"transformation":transformation,
-                                             "translation":translation}]
+            self.instances[logical.name].append(
+                {"transformation": transformation, "translation": translation}
+            )
+        else:
+            self.instances[logical.name] = [
+                {"transformation": transformation, "translation": translation}
+            ]
 
     def write(self, outputDirectory):
-
         # make output directory
-        #_shutil.rmtree(outputDirectory, ignore_errors = True)
+        # _shutil.rmtree(outputDirectory, ignore_errors = True)
         try:
             _os.mkdir(outputDirectory)
         except FileExistsError:
-            pass # already exists
+            pass  # already exists
 
         # loop over meshes and write obj files
         for mk in self.meshes:
-            _convert.pycsgMeshToObj(self.meshes[mk],outputDirectory+"/"+mk)
+            _convert.pycsgMeshToObj(self.meshes[mk], outputDirectory + "/" + mk)
 
         # loop of instances and write ascii file
-        f = open(outputDirectory+"/"+"0_instances.dat","w")
+        f = open(outputDirectory + "/" + "0_instances.dat", "w")
         for ik in self.instances:
             for instance in self.instances[ik]:
-                instanceName     = ik
+                instanceName = ik
                 instanceMaterial = str(self.materials[ik])
                 # instanceTransformation = str(instance["transformation"]).replace("\n","").replace("[","").replace("]","")
-                instanceTransformation = str(_transformation.matrix2tbxyz(instance["transformation"])).replace("\n", "").replace("[", "").replace("]","")
-                instancePosition      = str(instance["translation"]).replace("\n","").replace("[","").replace("]","")
+                instanceTransformation = (
+                    str(_transformation.matrix2tbxyz(instance["transformation"]))
+                    .replace("\n", "")
+                    .replace("[", "")
+                    .replace("]", "")
+                )
+                instancePosition = (
+                    str(instance["translation"])
+                    .replace("\n", "")
+                    .replace("[", "")
+                    .replace("]", "")
+                )
 
-                f.write(instanceName+" "+instanceMaterial+" "+instanceTransformation+" "+instancePosition+"\n")
+                f.write(
+                    instanceName
+                    + " "
+                    + instanceMaterial
+                    + " "
+                    + instanceTransformation
+                    + " "
+                    + instancePosition
+                    + "\n"
+                )
         f.close()

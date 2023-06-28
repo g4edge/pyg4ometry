@@ -1,8 +1,28 @@
 """Set of classes for FLUKA bodies."""
 
-__all__ = ["RPP", "BOX", "SPH", "RCC", "REC", "TRC", "ELL",
-           "WED", "RAW", "ARB", "XYP", "XZP", "YZP", "PLA",
-           "XCC", "YCC", "ZCC", "XEC", "YEC", "ZEC", "QUA"]
+__all__ = [
+    "RPP",
+    "BOX",
+    "SPH",
+    "RCC",
+    "REC",
+    "TRC",
+    "ELL",
+    "WED",
+    "RAW",
+    "ARB",
+    "XYP",
+    "XZP",
+    "YZP",
+    "PLA",
+    "XCC",
+    "YCC",
+    "ZCC",
+    "XEC",
+    "YEC",
+    "ZEC",
+    "QUA",
+]
 
 from math import degrees
 from contextlib import contextmanager
@@ -94,9 +114,7 @@ class BodyMixin(vis.ViewableMixin):
             return INFINITY
         else:
             # This should be used as a FULL LENGTH.
-            return np.sqrt((aabb.size.x**2
-                            + aabb.size.y**2
-                            + aabb.size.z**2)) * 1.1
+            return np.sqrt(aabb.size.x**2 + aabb.size.y**2 + aabb.size.z**2) * 1.1
 
     def _aabb_to_offset(self, aabb):
         if aabb is None:
@@ -104,7 +122,8 @@ class BodyMixin(vis.ViewableMixin):
         elif aabb is not None:
             offset = aabb.centre
         else:
-            raise TypeError(f"Unknown type of aabb {aabb}")
+            msg = f"Unknown type of aabb {aabb}"
+            raise TypeError(msg)
         return offset
 
     def mesh(self, aabb=None):
@@ -154,8 +173,7 @@ class _HalfSpaceMixin(BodyMixin):
         closestPointOnFace = self.pointOnPlaneClosestToPoint(referencePoint)
         # Use reference point and normal to shift the box backwards by
         # half the box size.
-        shiftedCentre = (closestPointOnFace
-                         - normal * 0.5 * self._boxFullSize(aabb))
+        shiftedCentre = closestPointOnFace - normal * 0.5 * self._boxFullSize(aabb)
 
         return shiftedCentre
 
@@ -177,30 +195,31 @@ class _InfiniteCylinderMixin(BodyMixin):
     def geant4Solid(self, registry, aabb=None):
         exp = self.transform.netExpansion()
         scale = self._aabbToScaleFactor(aabb)
-        return g4.solid.Tubs(self.name,
-                             0.0,
-                             exp * self.radius,
-                             scale * exp,
-                             0.0, 2*np.pi,
-                             registry,
-                             lunit="mm")
+        return g4.solid.Tubs(
+            self.name,
+            0.0,
+            exp * self.radius,
+            scale * exp,
+            0.0,
+            2 * np.pi,
+            registry,
+            lunit="mm",
+        )
 
     def _infCylinderFreestringHelper(self, coord1, coord2, coord3):
         typename = type(self).__name__
         return f"{typename} {self.name} {coord1} {coord2} {coord3}"
 
 
-class _ShiftableCylinderMixin(object):
-    def _shiftInfiniteCylinderCentre(self, aabb, initialDirection,
-                                     initialCentre):
-        transformedDirection = self.transform.leftMultiplyRotation(
-            initialDirection)
+class _ShiftableCylinderMixin:
+    def _shiftInfiniteCylinderCentre(self, aabb, initialDirection, initialCentre):
+        transformedDirection = self.transform.leftMultiplyRotation(initialDirection)
         transformedCentre = self.transform.leftMultiplyVector(initialCentre)
         # Shift the ZEC along its infinite axis to the point closest
         # to the aabb centre.
-        shiftedCentre = vector.pointOnLineClosestToPoint(aabb.centre,
-                                                         transformedCentre,
-                                                         transformedDirection)
+        shiftedCentre = vector.pointOnLineClosestToPoint(
+            aabb.centre, transformedCentre, transformedDirection
+        )
 
         return Three(shiftedCentre)
 
@@ -224,11 +243,21 @@ class RPP(BodyMixin):
     :param zmax: upper z coordinate of RPP)
     :type zmax: float
     """
-    def __init__(self, name,
-                 xmin, xmax, ymin, ymax, zmin, zmax,
-                 transform=None, flukaregistry=None,
-                 addRegistry=True,
-                 comment=""):
+
+    def __init__(
+        self,
+        name,
+        xmin,
+        xmax,
+        ymin,
+        ymax,
+        zmin,
+        zmax,
+        transform=None,
+        flukaregistry=None,
+        addRegistry=True,
+        comment="",
+    ):
         self.name = name
         self.lower = Three([xmin, ymin, zmin])
         self.upper = Three([xmax, ymax, zmax])
@@ -238,16 +267,14 @@ class RPP(BodyMixin):
         self.comment = comment
 
         if not all([xmin < xmax, ymin < ymax, zmin < zmax]):
-            raise ValueError("Each of the xmin, ymin, zmin must be"
-                             " smaller than the corresponding"
-                             " xmax, ymax, zmax.")
+            msg = "Each of the xmin, ymin, zmin must be smaller than the corresponding xmax, ymax, zmax."
+            raise ValueError(msg)
 
         if addRegistry and flukaregistry:
             self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
-        return self.transform.leftMultiplyVector(0.5 * (self.lower
-                                                        + self.upper))
+        return self.transform.leftMultiplyVector(0.5 * (self.lower + self.upper))
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -257,43 +284,61 @@ class RPP(BodyMixin):
 
     def geant4Solid(self, reg, aabb=None):
         v = self.transform.netExpansion() * (self.upper - self.lower)
-        return g4.solid.Box(self.name,
-                            v.x, v.y, v.z,
-                            reg,
-                            lunit="mm")
+        return g4.solid.Box(self.name, v.x, v.y, v.z, reg, lunit="mm")
 
     def __repr__(self):
         l = self.lower
         u = self.upper
-        return (f"<RPP: {self.name},"
-                f" x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>")
+        return (
+            f"<RPP: {self.name},"
+            f" x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>"
+        )
 
     def _withLengthSafety(self, safety, reg):
         lower = self.lower - [safety, safety, safety]
-        upper = self.upper + [safety, safety, safety]
-        return RPP(self.name,
-                   lower.x, upper.x,
-                   lower.y, upper.y,
-                   lower.z, upper.z,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        upper = [*self.upper, safety, safety, safety]
+        return RPP(
+            self.name,
+            lower.x,
+            upper.x,
+            lower.y,
+            upper.y,
+            lower.z,
+            upper.z,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "RPP {} {} {} {} {} {} {}".format(self.name,
-                                                 str(self.lower[0]),
-                                                 str(self.upper[0]),
-                                                 str(self.lower[1]),
-                                                 str(self.upper[1]),
-                                                 str(self.lower[2]),
-                                                 str(self.upper[2]))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "RPP {} {} {} {} {} {} {}".format(
+            self.name,
+            str(self.lower[0]),
+            str(self.upper[0]),
+            str(self.lower[1]),
+            str(self.upper[1]),
+            str(self.lower[2]),
+            str(self.upper[2]),
+        )
 
     def hash(self):
-        return hash(("RPP",self.lower[0],self.lower[1],self.lower[2],
-                    self.upper[0],self.upper[1],self.upper[2])) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "RPP",
+                    self.lower[0],
+                    self.lower[1],
+                    self.lower[2],
+                    self.upper[0],
+                    self.upper[1],
+                    self.upper[2],
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class BOX(BodyMixin):
     """
@@ -310,8 +355,18 @@ class BOX(BodyMixin):
     :param edge3: vector [x, y, z] denoting the second side of the box.
     :type edge3: list
     """
-    def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self,
+        name,
+        vertex,
+        edge1,
+        edge2,
+        edge3,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)
@@ -323,16 +378,15 @@ class BOX(BodyMixin):
         self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
-            self.edge1, self.edge2, self.edge3,
-            "Edges are not all mutally orthogonal.")
+            self.edge1, self.edge2, self.edge3, "Edges are not all mutally orthogonal."
+        )
 
         self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
-        return self.transform.leftMultiplyVector((self.vertex
-                                                  + 0.5 * (self.edge1
-                                                           + self.edge2
-                                                           + self.edge3)))
+        return self.transform.leftMultiplyVector(
+            self.vertex + 0.5 * (self.edge1 + self.edge2 + self.edge3)
+        )
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -343,12 +397,14 @@ class BOX(BodyMixin):
 
     def geant4Solid(self, greg, aabb=None):
         exp = self.transform.netExpansion()
-        return g4.solid.Box(self.name,
-                            exp * self.edge1.length(),
-                            exp * self.edge2.length(),
-                            exp * self.edge3.length(),
-                            greg,
-                            lunit="mm")
+        return g4.solid.Box(
+            self.name,
+            exp * self.edge1.length(),
+            exp * self.edge2.length(),
+            exp * self.edge3.length(),
+            greg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return ("<BOX: {}, v={}, e1={}, e2={}, e3={}>").format(
@@ -364,30 +420,47 @@ class BOX(BodyMixin):
         u2 = self.edge2.unit()
         u3 = self.edge3.unit()
         new_vertex = self.vertex - (u1 + u2 + u3) * safety
-        return BOX(self.name,
-                   new_vertex,
-                   self.edge1 + 2 * safety * u1,
-                   self.edge2 + 2 * safety * u2,
-                   self.edge3 + 2 * safety * u3,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return BOX(
+            self.name,
+            new_vertex,
+            self.edge1 + 2 * safety * u1,
+            self.edge2 + 2 * safety * u2,
+            self.edge3 + 2 * safety * u3,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
-        param_string = _iterablesToFreeString(self.vertex,
-                                                 self.edge1,
-                                                 self.edge2,
-                                                 self.edge3)
+        param_string = _iterablesToFreeString(
+            self.vertex, self.edge1, self.edge2, self.edge3
+        )
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "BOX {} {}".format(self.name, param_string)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + f"BOX {self.name} {param_string}"
 
     def hash(self):
-        return hash(("BOX",self.vertex[0],self.vertex[1],self.vertex[2],
-                     self.edge1[0],self.edge1[1],self.edge1[2],
-                     self.edge2[0],self.edge2[1],self.edge2[2],
-                     self.edge3[0],self.edge3[1],self.edge3[2])) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "BOX",
+                    self.vertex[0],
+                    self.vertex[1],
+                    self.vertex[2],
+                    self.edge1[0],
+                    self.edge1[1],
+                    self.edge1[2],
+                    self.edge2[0],
+                    self.edge2[1],
+                    self.edge2[2],
+                    self.edge3[0],
+                    self.edge3[1],
+                    self.edge3[2],
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class SPH(BodyMixin):
     """
@@ -400,8 +473,10 @@ class SPH(BodyMixin):
     :param radius: radius of the sphere.
     :type radius: float
     """
-    def __init__(self, name, point, radius, transform=None, flukaregistry=None,
-                 comment=""):
+
+    def __init__(
+        self, name, point, radius, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.point = Three(point)
         self.radius = radius
@@ -419,31 +494,35 @@ class SPH(BodyMixin):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
     def geant4Solid(self, reg, aabb=None):
-        return g4.solid.Orb(self.name,
-                            self.transform.netExpansion() * self.radius,
-                            reg,
-                            lunit="mm")
+        return g4.solid.Orb(
+            self.name, self.transform.netExpansion() * self.radius, reg, lunit="mm"
+        )
 
     def __repr__(self):
         return f"<SPH: {self.name}, point={list(self.point)}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg):
-        return SPH(self.name, self.point, self.radius + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return SPH(
+            self.name,
+            self.point,
+            self.radius + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "SPH {} {} {}".format(self.name,
-                                     _iterablesToFreeString(self.point),
-                                     self.radius)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "SPH {} {} {}".format(
+            self.name, _iterablesToFreeString(self.point), self.radius
+        )
 
     def hash(self):
-        return hash(("SPH",self.point[0],self.point[1],self.point[2],
-                    self.radius)) ^ self.transform.hash()
+        return (
+            hash(("SPH", self.point[0], self.point[1], self.point[2], self.radius))
+            ^ self.transform.hash()
+        )
 
 
 class RCC(BodyMixin):
@@ -460,8 +539,17 @@ class RCC(BodyMixin):
     :param edge2: radius of the cylinder face.
     :type edge2: float
     """
-    def __init__(self, name, face, direction, radius, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self,
+        name,
+        face,
+        direction,
+        radius,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
@@ -484,14 +572,16 @@ class RCC(BodyMixin):
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
-        return g4.solid.Tubs(self.name,
-                             0.0,
-                             exp * self.radius,
-                             exp * self.direction.length(),
-                             0.0,
-                             2*np.pi,
-                             reg,
-                             lunit="mm")
+        return g4.solid.Tubs(
+            self.name,
+            0.0,
+            exp * self.radius,
+            exp * self.direction.length(),
+            0.0,
+            2 * np.pi,
+            reg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         f = list(self.face)
@@ -505,26 +595,42 @@ class RCC(BodyMixin):
         # that the face has been shifted by a single amount of
         # safety in the direction of the direction vector.
         direction = self.direction + 2 * safety * unit
-        return RCC(self.name,
-                   face, direction,
-                   self.radius + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return RCC(
+            self.name,
+            face,
+            direction,
+            self.radius + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "RCC {} {} {} {}".format(self.name,
-                                     _iterablesToFreeString(self.face),
-                                     _iterablesToFreeString(self.direction),
-                                     str(self.radius))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "RCC {} {} {} {}".format(
+            self.name,
+            _iterablesToFreeString(self.face),
+            _iterablesToFreeString(self.direction),
+            str(self.radius),
+        )
 
     def hash(self):
-        return hash(("RCC",self.face[0],self.face[1],self.face[2],
-                           self.direction[0],self.direction[1],self.direction[2],
-                           self.radius)) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "RCC",
+                    self.face[0],
+                    self.face[1],
+                    self.face[2],
+                    self.direction[0],
+                    self.direction[1],
+                    self.direction[2],
+                    self.radius,
+                )
+            )
+            ^ self.transform.hash()
+        )
 
 
 class REC(BodyMixin):
@@ -543,10 +649,18 @@ class REC(BodyMixin):
     :type semimajor: list
 
     """
-    def __init__(self, name, face, direction, semiminor, semimajor,
-                 transform=None,
-                 flukaregistry=None,
-                 comment=""):
+
+    def __init__(
+        self,
+        name,
+        face,
+        direction,
+        semiminor,
+        semimajor,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.face = Three(face)
         self.direction = Three(direction)
@@ -558,15 +672,19 @@ class REC(BodyMixin):
         self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
-            self.direction, self.semiminor, semimajor,
-            ("Direction, semiminor, and semimajor are"
-             " not all mutually perpendicular."))
+            self.direction,
+            self.semiminor,
+            semimajor,
+            (
+                "Direction, semiminor, and semimajor are"
+                " not all mutually perpendicular."
+            ),
+        )
 
         self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
-        return self.transform.leftMultiplyVector(self.face
-                                                 + 0.5 * self.direction)
+        return self.transform.leftMultiplyVector(self.face + 0.5 * self.direction)
 
     def rotation(self):
         initial_direction = [0, 0, 1]
@@ -574,26 +692,30 @@ class REC(BodyMixin):
 
         final_direction = self.direction
         final_semiminor = self.semiminor
-        rotation = trans.two_fold_orientation(initial_direction,
-                                              final_direction,
-                                              initial_semiminor,
-                                              final_semiminor)
+        rotation = trans.two_fold_orientation(
+            initial_direction, final_direction, initial_semiminor, final_semiminor
+        )
         return self.transform.leftMultiplyRotation(rotation)
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
-        return g4.solid.EllipticalTube(self.name,
-                                       2 * exp * self.semiminor.length(),
-                                       2 * exp * self.semimajor.length(),
-                                       exp * self.direction.length(),
-                                       reg,
-                                       lunit="mm")
+        return g4.solid.EllipticalTube(
+            self.name,
+            2 * exp * self.semiminor.length(),
+            2 * exp * self.semimajor.length(),
+            exp * self.direction.length(),
+            reg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return ("<REC: {}, face={}, dir={}, semimin={}, semimaj={}>").format(
             self.name,
-            list(self.face), list(self.direction),
-            list(self.semiminor), list(self.semimajor))
+            list(self.face),
+            list(self.direction),
+            list(self.semiminor),
+            list(self.semimajor),
+        )
 
     def _withLengthSafety(self, safety, reg):
         direction_unit = self.direction.unit()
@@ -603,28 +725,46 @@ class REC(BodyMixin):
         semiminor = self.semiminor + safety * self.semiminor.unit()
         semimajor = self.semimajor + safety * self.semimajor.unit()
 
-        return REC(self.name, face,
-                   direction,
-                   semiminor,
-                   semimajor,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return REC(
+            self.name,
+            face,
+            direction,
+            semiminor,
+            semimajor,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "REC {} {}".format(self.name,
-                                  _iterablesToFreeString(self.face,
-                                                         self.direction,
-                                                         self.semiminor,
-                                                         self.semimajor))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "REC {} {}".format(
+            self.name,
+            _iterablesToFreeString(
+                self.face, self.direction, self.semiminor, self.semimajor
+            ),
+        )
 
     def hash(self):
-        return hash(("REC",self.direction[0],self.direction[1],self.direction[2],
-                           self.semiminor[0],self.semiminor[1],self.semiminor[2],
-                           self.semimajor[0],self.semimajor[1],self.semimajor[2])) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "REC",
+                    self.direction[0],
+                    self.direction[1],
+                    self.direction[2],
+                    self.semiminor[0],
+                    self.semiminor[1],
+                    self.semiminor[2],
+                    self.semimajor[0],
+                    self.semimajor[1],
+                    self.semimajor[2],
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class TRC(BodyMixin):
     """
@@ -643,11 +783,18 @@ class TRC(BodyMixin):
     :param minor_radius: radius of the smaller face.
     :type minor_radius: float
     """
-    def __init__(self, name, major_centre, direction,
-                 major_radius, minor_radius,
-                 transform=None,
-                 flukaregistry=None,
-                 comment=""):
+
+    def __init__(
+        self,
+        name,
+        major_centre,
+        direction,
+        major_radius,
+        minor_radius,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.major_centre = Three(major_centre)
         self.direction = Three(direction)
@@ -675,13 +822,18 @@ class TRC(BodyMixin):
         # The first face of g4.Cons is located at -z, and the
         # second at +z.  Here choose to put the major face at -z.
         exp = self.transform.netExpansion()
-        return g4.solid.Cons(self.name,
-                             0.0, exp * self.major_radius,
-                             0.0, exp * self.minor_radius,
-                             exp * self.direction.length(),
-                             0.0, 2*np.pi,
-                             registry,
-                             lunit="mm")
+        return g4.solid.Cons(
+            self.name,
+            0.0,
+            exp * self.major_radius,
+            0.0,
+            exp * self.minor_radius,
+            exp * self.direction.length(),
+            0.0,
+            2 * np.pi,
+            registry,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return ("<TRC: {}, major={} direction={} rmaj={}, rmin={}>").format(
@@ -689,36 +841,52 @@ class TRC(BodyMixin):
             list(self.major_centre),
             list(self.direction),
             self.major_radius,
-            self.minor_radius)
+            self.minor_radius,
+        )
 
     def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
         major_centre = self.major_centre - safety * unit
         # Apply double safety for the same reason as we did with the RCC.
         direction = self.direction + 2 * safety * unit
-        return TRC(self.name,
-                   major_centre,
-                   direction,
-                   self.major_radius + safety,
-                   self.minor_radius + safety,
-                   transform=self.transform)
+        return TRC(
+            self.name,
+            major_centre,
+            direction,
+            self.major_radius + safety,
+            self.minor_radius + safety,
+            transform=self.transform,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "TRC {} {} {} {}".format(self.name,
-                                        _iterablesToFreeString(
-                                        self.major_centre,
-                                        self.direction),
-                                        self.major_radius,
-                                        self.minor_radius)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "TRC {} {} {} {}".format(
+            self.name,
+            _iterablesToFreeString(self.major_centre, self.direction),
+            self.major_radius,
+            self.minor_radius,
+        )
 
     def hash(self):
-        return hash(("RPP",self.major_centre[0],self.major_centre[1],self.major_centre[2],
-                           self.direction[0],self.direction[1],self.direction[2],
-                           self.minor_radius,self.major_radius)) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "RPP",
+                    self.major_centre[0],
+                    self.major_centre[1],
+                    self.major_centre[2],
+                    self.direction[0],
+                    self.direction[1],
+                    self.direction[2],
+                    self.minor_radius,
+                    self.major_radius,
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class ELL(BodyMixin):
     """
@@ -733,12 +901,21 @@ class ELL(BodyMixin):
     :param length: length of the ellipse axis which the foci lie on.
     :type length: float
     """
-    def __init__(self, name, focus1, focus2, length, transform=None,
-                 flukaregistry=None,comment=""):
+
+    def __init__(
+        self,
+        name,
+        focus1,
+        focus2,
+        length,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.focus1 = Three(focus1)
         self.focus2 = Three(focus2)
-        self.length = length # major axis length
+        self.length = length  # major axis length
 
         self.transform = self._setTransform(transform)
 
@@ -748,44 +925,47 @@ class ELL(BodyMixin):
         # foci from the centre (aka the linear eccentricity).
         semimajor = 0.5 * self.transform.netExpansion() * self.length
         if semimajor <= self._linearEccentricity():
-            raise ValueError("Distance from foci to centre must be"
-                             " smaller than the semi-major axis length.")
+            msg = "Distance from foci to centre must be smaller than the semi-major axis length."
+            raise ValueError(msg)
 
         self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
-        return self.transform.leftMultiplyVector(0.5 * (self.focus1
-                                                        + self.focus2))
+        return self.transform.leftMultiplyVector(0.5 * (self.focus1 + self.focus2))
 
     def rotation(self):
         initial = [0, 0, 1]  # major axis pointing along z
         final = self.focus1 - self.focus2
-        return self.transform.leftMultiplyRotation(
-            trans.matrix_from(initial, final))
+        return self.transform.leftMultiplyRotation(trans.matrix_from(initial, final))
 
     def _linearEccentricity(self):
         # Distance from centre to one of the foci.  This doesn't use
         # the .centre method as this ought to be independent of
         # location, whereas centre takes into account geometry directives.
-        return (0.5 * self.transform.netExpansion()
-                * (self.focus1 - self.focus2).length())
+        return (
+            0.5 * self.transform.netExpansion() * (self.focus1 - self.focus2).length()
+        )
 
     def _semiminor(self):
-        return np.sqrt((0.5 * self.transform.netExpansion() * self.length)**2 -
-                       self._linearEccentricity()**2)
+        return np.sqrt(
+            (0.5 * self.transform.netExpansion() * self.length) ** 2
+            - self._linearEccentricity() ** 2
+        )
 
     def geant4Solid(self, greg, aabb=None):
         semiminor = self._semiminor()
         expansion = self.transform.netExpansion()
-        return g4.solid.Ellipsoid(self.name,
-                                  semiminor,
-                                  semiminor,
-                                   # choose z to be the major.
-                                  0.5 * expansion * self.length,
-                                   # cuts, we don't cut:
-                                  -self.length * expansion,
-                                  self.length * expansion,
-                                  greg)
+        return g4.solid.Ellipsoid(
+            self.name,
+            semiminor,
+            semiminor,
+            # choose z to be the major.
+            0.5 * expansion * self.length,
+            # cuts, we don't cut:
+            -self.length * expansion,
+            self.length * expansion,
+            greg,
+        )
 
     def __repr__(self):
         f1 = list(self.focus1)
@@ -797,36 +977,58 @@ class ELL(BodyMixin):
 
         # XXX: Dial up the safety so that the semiminor axes are
         # reduced sufficiently as well.  Maybe not ideal.
-        ls_length = self.length + 10*safety
+        ls_length = self.length + 10 * safety
 
-        return ELL(self.name,
-                   self.focus1,
-                   self.focus2,
-                   ls_length,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return ELL(
+            self.name,
+            self.focus1,
+            self.focus2,
+            ls_length,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
         if self.comment != "":
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "ELL {} {} {}".format(self.name,
-                                     _iterablesToFreeString(self.focus1,
-                                                            self.focus2),
-                                     self.length)
+            prefix = "* " + self.comment + "\n"
+        return prefix + "ELL {} {} {}".format(
+            self.name, _iterablesToFreeString(self.focus1, self.focus2), self.length
+        )
 
     def hash(self):
-        return hash(("ELL",self.focus1[0],self.focus1[1],self.focus1[2],
-                           self.focus2[0],self.focus2[1],self.focus2[2],
-                           self.length)) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "ELL",
+                    self.focus1[0],
+                    self.focus1[1],
+                    self.focus1[2],
+                    self.focus2[0],
+                    self.focus2[1],
+                    self.focus2[2],
+                    self.length,
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class _WED_RAW(BodyMixin):
     # WED and RAW are aliases for one another, so we define it in a
     # single place and then inherit this class to provide the correct
     # type names below.
-    def __init__(self, name, vertex, edge1, edge2, edge3, transform=None,
-                 flukaregistry=None, comment=""):
+    def __init__(
+        self,
+        name,
+        vertex,
+        edge1,
+        edge2,
+        edge3,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.vertex = Three(vertex)
         self.edge1 = Three(edge1)  # direction of the triangular face.
@@ -838,8 +1040,11 @@ class _WED_RAW(BodyMixin):
         self.comment = comment
 
         _raiseIfNotAllMutuallyPerpendicular(
-            self.edge1, self.edge2, self.edge3,
-            "Edges are not all mutually perpendicular.")
+            self.edge1,
+            self.edge2,
+            self.edge3,
+            "Edges are not all mutually perpendicular.",
+        )
         self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
@@ -848,73 +1053,92 @@ class _WED_RAW(BodyMixin):
         # vectors to get the correct vertex to use.
         crossproduct = np.cross(self.edge1, self.edge2)
         if trans.are_parallel(crossproduct, self.edge3):
-            centre =  self.vertex
+            centre = self.vertex
         elif trans.are_anti_parallel(crossproduct, self.edge3):
             centre = self.vertex + self.edge3
         else:
-            raise ValueError(
-                "Unable to determine if parallel or anti-parallel.")
+            msg = "Unable to determine if parallel or anti-parallel."
+            raise ValueError(msg)
         return self.transform.leftMultiplyVector(centre)
 
     def rotation(self):
-        initial1 = [1, 0, 0] # edge1 starts off pointing in the x-direction.
-        initial2 = [0, 1, 0] # edge3 starts off pointing in the y-direction.
-        rotation =  trans.two_fold_orientation(initial1, self.edge1.unit(),
-                                               initial2, self.edge2.unit())
+        initial1 = [1, 0, 0]  # edge1 starts off pointing in the x-direction.
+        initial2 = [0, 1, 0]  # edge3 starts off pointing in the y-direction.
+        rotation = trans.two_fold_orientation(
+            initial1, self.edge1.unit(), initial2, self.edge2.unit()
+        )
         return self.transform.leftMultiplyRotation(rotation)
 
     def geant4Solid(self, greg, aabb=None):
         exp = self.transform.netExpansion()
-        face = [[0, 0],
-                [exp * self.edge1.length(), 0],
-                [0, exp * self.edge2.length()]]
+        face = [[0, 0], [exp * self.edge1.length(), 0], [0, exp * self.edge2.length()]]
 
-        return g4.solid.ExtrudedSolid(self.name,
-                                      face,
-                                      [[0, [0, 0], 1],
-                                       [exp * self.edge3.length(), [0, 0], 1]],
-                                      registry=greg)
+        return g4.solid.ExtrudedSolid(
+            self.name,
+            face,
+            [[0, [0, 0], 1], [exp * self.edge3.length(), [0, 0], 1]],
+            registry=greg,
+        )
 
     def __repr__(self):
         return ("<{}: {}, v={}, e1={}, e2={}, e3={}>").format(
-            type(self).__name__, # Can be either WED or RAW
+            type(self).__name__,  # Can be either WED or RAW
             self.name,
             list(self.vertex),
             list(self.edge1),
             list(self.edge2),
-            list(self.edge3))
+            list(self.edge3),
+        )
 
     def _withLengthSafety(self, safety, reg):
-        ctor = type(self) # return WED or RAW, not _WED_RAW.
+        ctor = type(self)  # return WED or RAW, not _WED_RAW.
         u1 = self.edge1.unit()
         u2 = self.edge2.unit()
         u3 = self.edge3.unit()
         new_vertex = self.vertex - (u1 + u2 + u3) * safety
-        return ctor(self.name,
-                    new_vertex,
-                    self.edge1 + 2 * safety * u1,
-                    self.edge2 + 2 * safety * u2,
-                    self.edge3 + 2 * safety * u3,
-                    transform=self.transform,
-                    flukaregistry=reg)
+        return ctor(
+            self.name,
+            new_vertex,
+            self.edge1 + 2 * safety * u1,
+            self.edge2 + 2 * safety * u2,
+            self.edge3 + 2 * safety * u3,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         typename = type(self).__name__
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "{} {} {}".format(typename, self.name,
-                                 _iterablesToFreeString(self.vertex,
-                                                           self.edge1,
-                                                           self.edge2,
-                                                           self.edge3))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "{} {} {}".format(
+            typename,
+            self.name,
+            _iterablesToFreeString(self.vertex, self.edge1, self.edge2, self.edge3),
+        )
 
     def hash(self):
-        return hash(("WED",self.vertex[0],self.vertex[1],self.vertex[2],
-                           self.edge1[0],self.edge1[1],self.edge1[2],
-                           self.edge2[0],self.edge2[1],self.edge2[2],
-                           self.edge3[0],self.edge3[1],self.edge3[2],)) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "WED",
+                    self.vertex[0],
+                    self.vertex[1],
+                    self.vertex[2],
+                    self.edge1[0],
+                    self.edge1[1],
+                    self.edge1[2],
+                    self.edge2[0],
+                    self.edge2[1],
+                    self.edge2[2],
+                    self.edge3[0],
+                    self.edge3[1],
+                    self.edge3[2],
+                )
+            )
+            ^ self.transform.hash()
+        )
+
 
 class WED(_WED_RAW):
     """Right Angle Wedge
@@ -957,8 +1181,16 @@ class ARB(BodyMixin):
     :type facenumbers: float
 
     """
-    def __init__(self, name, vertices, facenumbers, transform=None,
-                 flukaregistry=None,comment=""):
+
+    def __init__(
+        self,
+        name,
+        vertices,
+        facenumbers,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.vertices = [Three(v) for v in vertices]
         self.facenumbers = facenumbers
@@ -972,31 +1204,31 @@ class ARB(BodyMixin):
 
         # Must always provide 8 vertices.
         if len(self.vertices) != 8:
-            raise ValueError("8 vertices must always be supplied,"
-                            " even if not all are used.")
+            msg = "8 vertices must always be supplied, even if not all are used."
+            raise ValueError(msg)
         # Must always provide 6 facenumbers.
         if len(self.facenumbers) != 6:
-            raise ValueError("6 face numbers must always be supplied,"
-                            " even if not all are used.")
+            msg = "6 face numbers must always be supplied, even if not all are used."
+            raise ValueError(msg)
 
         self._nfaces = 6
         # Get the indices of the facenumbers equal to zero and count
         # how many faces we have by counting the number of zeros.
-        zeros = [] # zero-counting index here to refer to face numbers...
+        zeros = []  # zero-counting index here to refer to face numbers...
         for i, facenumber in enumerate(self.facenumbers):
             if facenumber == 0:
                 self._nfaces -= 1
                 zeros.append(i)
         # Can't have less than 4 faces
         if self._nfaces < 4:
-            raise ValueError("Not enough faces provided in arg facenumbers."
-                            "  Must be 4, 5 or 6.")
+            msg = "Not enough faces provided in arg facenumbers.  Must be 4, 5 or 6."
+            raise ValueError(msg)
 
         # Null-faces must be put as 0.0 in the facenumbers and they
         # must be at the end (i.e. 5 and 6 or 6).
         if zeros and (zeros != [4, 5] or zeros != [5]):
-            raise ValueError("Facenumbers equal to zero to must be at"
-                             " the end of the list.")
+            msg = "Facenumbers equal to zero to must be at the end of the list."
+            raise ValueError(msg)
 
         self.addToRegistry(flukaregistry)
 
@@ -1018,7 +1250,7 @@ class ARB(BodyMixin):
             # appear at the end of the list."
             if fn == 0.0:
                 continue
-            fn = str(int(fn)) # Convert 1234.0 to string of integer 1234
+            fn = str(int(fn))  # Convert 1234.0 to string of integer 1234
 
             # "If a face has three vertices, the omitted position may
             # be either 0 or a repeat of one of the other vertices."
@@ -1040,22 +1272,19 @@ class ARB(BodyMixin):
     def _extent(self):
         vertices, _, _ = self._toVerticesAndPolygons(reverse=False)
         vertices = np.vstack(vertices)
-        x = vertices[...,0]
-        y = vertices[...,1]
-        z = vertices[...,2]
+        x = vertices[..., 0]
+        y = vertices[..., 1]
+        z = vertices[..., 2]
         return vector.AABB([min(x), min(y), min(z)], [max(x), max(y), max(z)])
 
     def geant4Solid(self, greg, aabb=None):
         verticesAndPolygons = self._getVerticesAndPolygons()
-        return self._toTesselatedSolid(verticesAndPolygons,
-                                       greg,
-                                       addRegistry=True)
+        return self._toTesselatedSolid(verticesAndPolygons, greg, addRegistry=True)
 
     def _toTesselatedSolid(self, verticesAndPolygons, greg, addRegistry):
-        return g4.solid.TessellatedSolid(self.name,
-                                         verticesAndPolygons,
-                                         greg,
-                                         addRegistry=addRegistry)
+        return g4.solid.TessellatedSolid(
+            self.name, verticesAndPolygons, greg, addRegistry=addRegistry
+        )
 
     def _getVerticesAndPolygons(self):
         extent = self._extent()
@@ -1064,21 +1293,25 @@ class ARB(BodyMixin):
         # to deal with arbitrary clockwise/anticlockwise vertex
         # ordering for the ARB input.
         g4reg = g4.Registry()
-        tesselatedSolid = self._toTesselatedSolid(verticesAndPolygons,
-                                                  g4reg,
-                                                  addRegistry=False)
-        envelopingBox = g4.solid.Box("test_box",
-                                     10*(extent.size.x),
-                                     10*(extent.size.y),
-                                     10*(extent.size.z),
-                                     g4reg,
-                                     addRegistry=False)
-        test_union = g4.solid.Union("test_union",
-                                    tesselatedSolid,
-                                    envelopingBox,
-                                    [[0, 0, 0], [0, 0, 0]],
-                                    g4reg,
-                                    addRegistry=False)
+        tesselatedSolid = self._toTesselatedSolid(
+            verticesAndPolygons, g4reg, addRegistry=False
+        )
+        envelopingBox = g4.solid.Box(
+            "test_box",
+            10 * (extent.size.x),
+            10 * (extent.size.y),
+            10 * (extent.size.z),
+            g4reg,
+            addRegistry=False,
+        )
+        test_union = g4.solid.Union(
+            "test_union",
+            tesselatedSolid,
+            envelopingBox,
+            [[0, 0, 0], [0, 0, 0]],
+            g4reg,
+            addRegistry=False,
+        )
         # If a null mesh results from a union, then the input mesh of
         # the ARB must have been malformed, as this is not otherwise possible.
         # Try reversing the vertex order, and return that either way.
@@ -1099,18 +1332,19 @@ class ARB(BodyMixin):
 
     def __repr__(self):
         vs = map(list, self.vertices)
-        vstrings = ["v{}={}".format(i, v) for (i, v)  in enumerate(vs, 1)]
+        vstrings = [f"v{i}={v}" for (i, v) in enumerate(vs, 1)]
         vstring = ", ".join(vstrings)
-        return "<ARB: {}, {}, faces={}>".format(self.name,
-                                                vstring, self.facenumbers)
+        return f"<ARB: {self.name}, {vstring}, faces={self.facenumbers}>"
 
     def _withLengthSafety(self, safety, reg):
-        arb = ARB(self.name,
-                  self.vertices,
-                  self.facenumbers,
-                  transform=self.transform,
-                  flukaregistry=reg)
-        vertices, faces , _ = arb._getVerticesAndPolygons()
+        arb = ARB(
+            self.name,
+            self.vertices,
+            self.facenumbers,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
+        vertices, faces, _ = arb._getVerticesAndPolygons()
         vertices = [np.array(v) for v in vertices]
         facenumbers = []
         for face in faces:
@@ -1120,18 +1354,20 @@ class ARB(BodyMixin):
             ls = safety * np.array(normal)
             for i in face:
                 vertices[i] -= [ls[0], ls[1], ls[2]]
-            facenumbers.append([i+1 for i in face])
+            facenumbers.append([i + 1 for i in face])
 
         # Convert lists of vertex integers for each face to individual floats
         facenumbersCorrected = []
         for fn in facenumbers:
             facenumbersCorrected.append(float("".join(str(f) for f in fn)))
 
-        return ARB(self.name,
-                   vertices,
-                   facenumbersCorrected,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return ARB(
+            self.name,
+            vertices,
+            facenumbersCorrected,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         line1 = []
@@ -1148,23 +1384,20 @@ class ARB(BodyMixin):
         line4.extend(list(self.vertices[7]))
         itfs = _iterablesToFreeString
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "{}\n{}\n{}\n{}\n{}".format(itfs(line1),
-                                           itfs(line2),
-                                           itfs(line3),
-                                           itfs(line4),
-                                           itfs(self.facenumbers))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "{}\n{}\n{}\n{}\n{}".format(
+            itfs(line1), itfs(line2), itfs(line3), itfs(line4), itfs(self.facenumbers)
+        )
 
     def hash(self):
-
         # TODO check this is all that is required
         h = hash("ARB")
-        for v in self.vertices :
-            h ^= hash((v[0],v[1],v[2]))
+        for v in self.vertices:
+            h ^= hash((v[0], v[1], v[2]))
 
         h ^= self.transform.hash()
+
 
 class XYP(_HalfSpaceMixin):
     """
@@ -1176,7 +1409,8 @@ class XYP(_HalfSpaceMixin):
     less than z are considered to be part of this body.
     :type z: float
     """
-    def __init__(self, name, z, transform=None, flukaregistry=None,comment=""):
+
+    def __init__(self, name, z, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.z = z
 
@@ -1190,20 +1424,18 @@ class XYP(_HalfSpaceMixin):
         return f"<XYP: {self.name}, z={self.z}>"
 
     def _withLengthSafety(self, safety, reg):
-        return XYP(self.name,
-                   self.z + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return XYP(
+            self.name, self.z + safety, transform=self.transform, flukaregistry=reg
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._halfspaceFreeStringHelper(self.z)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._halfspaceFreeStringHelper(self.z)
 
     def hash(self):
-        return hash(("ZXP",self.z)) ^ self.transform.hash()
+        return hash(("ZXP", self.z)) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper([0, 0, 1], [0, 0, self.z])
@@ -1219,6 +1451,7 @@ class XZP(_HalfSpaceMixin):
     less than y are considered to be part of this body.
     :type y: float
     """
+
     def __init__(self, name, y, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.y = y
@@ -1231,23 +1464,22 @@ class XZP(_HalfSpaceMixin):
         return f"<XZP: {self.name}, y={self.y}>"
 
     def _withLengthSafety(self, safety, reg):
-        return XZP(self.name,
-                   self.y + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return XZP(
+            self.name, self.y + safety, transform=self.transform, flukaregistry=reg
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._halfspaceFreeStringHelper(self.y)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._halfspaceFreeStringHelper(self.y)
 
     def hash(self):
-        return hash(("XZP",self.y)) ^ self.transform.hash()
+        return hash(("XZP", self.y)) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper([0, 1, 0], [0, self.y, 0])
+
 
 class YZP(_HalfSpaceMixin):
     """
@@ -1260,6 +1492,7 @@ class YZP(_HalfSpaceMixin):
     :type x: float
 
     """
+
     def __init__(self, name, x, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.x = x
@@ -1274,20 +1507,18 @@ class YZP(_HalfSpaceMixin):
         return f"<YZP: {self.name}, x={self.x}>"
 
     def _withLengthSafety(self, safety, reg):
-        return YZP(self.name,
-                   self.x + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return YZP(
+            self.name, self.x + safety, transform=self.transform, flukaregistry=reg
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._halfspaceFreeStringHelper(self.x)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._halfspaceFreeStringHelper(self.x)
 
     def hash(self):
-        return hash(("YZP",self.x)) ^ self.transform.hash()
+        return hash(("YZP", self.x)) ^ self.transform.hash()
 
     def toPlane(self):
         return self._toPlaneHelper([1, 0, 0], [self.x, 0, 0])
@@ -1307,7 +1538,10 @@ class PLA(_HalfSpaceMixin):
     :type normal: list
 
     """
-    def __init__(self, name, normal, point, transform=None, flukaregistry=None,comment=""):
+
+    def __init__(
+        self, name, normal, point, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.normal = Three(normal)
         self.point = Three(point)
@@ -1322,34 +1556,48 @@ class PLA(_HalfSpaceMixin):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
         return self.transform.leftMultiplyRotation(
-            trans.matrix_from([0, 0, 1], self.normal))
+            trans.matrix_from([0, 0, 1], self.normal)
+        )
 
     def __repr__(self):
-        return "<PLA: {}, normal={}, point={}>".format(self.name,
-                                                       list(self.normal),
-                                                       list(self.point))
+        return "<PLA: {}, normal={}, point={}>".format(
+            self.name, list(self.normal), list(self.point)
+        )
 
     def _withLengthSafety(self, safety, reg=None):
         norm = self.normal.unit()
         newpoint = self.point + norm * safety
-        return PLA(self.name, norm, newpoint,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return PLA(
+            self.name, norm, newpoint, transform=self.transform, flukaregistry=reg
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "PLA {} {}".format(self.name,
-                                  _iterablesToFreeString(self.normal,
-                                                         self.point))
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "PLA {} {}".format(
+            self.name, _iterablesToFreeString(self.normal, self.point)
+        )
+
     def hash(self):
-        return hash(("PLA",self.normal[0],self.normal[1],self.normal[2],
-                    self.point[0],self.point[1],self.point[2])) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "PLA",
+                    self.normal[0],
+                    self.normal[1],
+                    self.normal[2],
+                    self.point[0],
+                    self.point[1],
+                    self.point[2],
+                )
+            )
+            ^ self.transform.hash()
+        )
 
     def toPlane(self):
         return self._toPlaneHelper(self.normal, self.point)
+
 
 class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     """
@@ -1364,8 +1612,10 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :param radius: position of the centre on the
     :type radius: float
     """
-    def __init__(self, name, y, z, radius, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self, name, y, z, radius, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.y = y
         self.z = z
@@ -1381,32 +1631,34 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         initialCentre = Three(0, self.y, self.z)
         if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [1, 0, 0],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [1, 0, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.array([[0, 0, -1],
-                                                             [0, 1, 0],
-                                                             [1, 0, 0]]))
+        return self.transform.leftMultiplyRotation(
+            np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
+        )
 
     def __repr__(self):
         return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
-        return XCC(self.name, self.y, self.z, self.radius + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return XCC(
+            self.name,
+            self.y,
+            self.z,
+            self.radius + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._infCylinderFreestringHelper(self.y, self.z)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._infCylinderFreestringHelper(self.y, self.z)
 
     def hash(self):
-        return hash(("XCC",self.y,self.z,self.radius)) ^ self.transform.hash()
+        return hash(("XCC", self.y, self.z, self.radius)) ^ self.transform.hash()
 
     def point(self):
         return self.transform.leftMultiplyRotation([0, self.y, self.z])
@@ -1429,8 +1681,10 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :param radius: position of the centre on the
     :type radius: float
     """
-    def __init__(self, name, z, x, radius, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self, name, z, x, radius, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.z = z
         self.x = x
@@ -1446,32 +1700,34 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         initialCentre = Three(self.x, 0, self.z)
         if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [0, 1, 0],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [0, 1, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.array([[1, 0, 0],
-                                                             [0, 0, 1],
-                                                             [0, -1, 0]]))
+        return self.transform.leftMultiplyRotation(
+            np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
+        )
 
     def __repr__(self):
         return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
-        return YCC(self.name, self.z, self.x, self.radius + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return YCC(
+            self.name,
+            self.z,
+            self.x,
+            self.radius + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._infCylinderFreestringHelper(self.z, self.x)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._infCylinderFreestringHelper(self.z, self.x)
 
     def hash(self):
-        return hash(("YCC",self.z,self.x,self.radius)) ^ self.transform.hash()
+        return hash(("YCC", self.z, self.x, self.radius)) ^ self.transform.hash()
 
     def point(self):
         return self.transform.leftMultiplyVector([self.x, 0, self.z])
@@ -1494,8 +1750,10 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :param radius: position of the centre on the
     :type radius: float
     """
-    def __init__(self, name, x, y, radius, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self, name, x, y, radius, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.x = x
         self.y = y
@@ -1511,9 +1769,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         initialCentre = Three(self.x, self.y, 0)
         if aabb is None:
             return self.transform.leftMultiplyVector(initialCentre)
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [0, 0, 1],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [0, 0, 1], initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -1522,19 +1778,23 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return f"<ZCC: {self.name}, x={self.x}, y={self.y}, r={self.radius}>"
 
     def _withLengthSafety(self, safety, reg=None):
-        return ZCC(self.name, self.x, self.y, self.radius + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return ZCC(
+            self.name,
+            self.x,
+            self.y,
+            self.radius + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               self._infCylinderFreestringHelper(self.x, self.y, self.radius)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + self._infCylinderFreestringHelper(self.x, self.y, self.radius)
 
     def hash(self):
-        return hash(("ZCC",self.x, self.y, self.radius)) ^ self.transform.hash()
+        return hash(("ZCC", self.x, self.y, self.radius)) ^ self.transform.hash()
 
     def point(self):
         return self.transform.leftMultiplyVector([self.x, self.y, 0])
@@ -1559,8 +1819,10 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
     :param zsemi: position of the centre on the
     :type zsemi: float
     """
-    def __init__(self, name, y, z, ysemi, zsemi,
-                 transform=None, flukaregistry=None, comment=""):
+
+    def __init__(
+        self, name, y, z, ysemi, zsemi, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.y = y
         self.z = z
@@ -1577,50 +1839,55 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         initialCentre = Three(0, self.y, self.z)
         if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [1, 0, 0],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [1, 0, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.array([[0, 0, -1],
-                                                             [0, 1, 0],
-                                                             [1, 0, 0]]))
+        return self.transform.leftMultiplyRotation(
+            np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
+        )
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
         scale = self._aabbToScaleFactor(aabb)
-        return g4.solid.EllipticalTube(self.name,
-                                       # full width, not semi:
-                                       2 * exp * self.zsemi,
-                                       2 * exp * self.ysemi,
-                                       scale,
-                                       reg,
-                                       lunit="mm")
+        return g4.solid.EllipticalTube(
+            self.name,
+            # full width, not semi:
+            2 * exp * self.zsemi,
+            2 * exp * self.ysemi,
+            scale,
+            reg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return "<XEC: {}, y={}, z={}, ysemi={}, zsemi={}>".format(
-            self.name,
-            self.y, self.z,
-            self.ysemi, self.zsemi)
+            self.name, self.y, self.z, self.ysemi, self.zsemi
+        )
 
     def _withLengthSafety(self, safety, reg=None):
-        return XEC(self.name, self.y, self.z,
-                   self.ysemi + safety,
-                   self.zsemi + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return XEC(
+            self.name,
+            self.y,
+            self.z,
+            self.ysemi + safety,
+            self.zsemi + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "XEC {} {} {} {} {}".format(self.name,
-                                           self.y, self.z,
-                                           self.ysemi, self.zsemi)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "XEC {} {} {} {} {}".format(
+            self.name, self.y, self.z, self.ysemi, self.zsemi
+        )
 
     def hash(self):
-        return hash(("XEC",self.y,self.z,self.ysemi,self.zsemi)) ^ self.transform.hash()
+        return (
+            hash(("XEC", self.y, self.z, self.ysemi, self.zsemi))
+            ^ self.transform.hash()
+        )
 
 
 class YEC(BodyMixin, _ShiftableCylinderMixin):
@@ -1638,8 +1905,10 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
     :param xsemi: position of the centre on the
     :type xsemi: float
     """
-    def __init__(self, name, z, x, zsemi, xsemi, transform=None,
-                 flukaregistry=None, comment=""):
+
+    def __init__(
+        self, name, z, x, zsemi, xsemi, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.z = z
         self.x = x
@@ -1656,50 +1925,56 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         initialCentre = Three(self.x, 0, self.z)
         if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [0, 1, 0],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [0, 1, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(np.array([[1, 0, 0],
-                                                             [0, 0, 1],
-                                                             [0, -1, 0]]))
+        return self.transform.leftMultiplyRotation(
+            np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
+        )
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
         scale = self._aabbToScaleFactor(aabb)
-        return g4.solid.EllipticalTube(self.name,
-                                       # full width, not semi
-                                       2 * exp * self.xsemi,
-                                       2 * exp * self.zsemi,
-                                       scale,
-                                       reg,
-                                       lunit="mm")
+        return g4.solid.EllipticalTube(
+            self.name,
+            # full width, not semi
+            2 * exp * self.xsemi,
+            2 * exp * self.zsemi,
+            scale,
+            reg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return "<YEC: {}, z={}, x={}, zsemi={}, xsemi={}>".format(
-            self.name,
-            self.z, self.x,
-            self.zsemi, self.xsemi)
+            self.name, self.z, self.x, self.zsemi, self.xsemi
+        )
 
     def _withLengthSafety(self, safety, reg=None):
-        return YEC(self.name, self.z, self.x,
-                   self.zsemi + safety,
-                   self.xsemi + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return YEC(
+            self.name,
+            self.z,
+            self.x,
+            self.zsemi + safety,
+            self.xsemi + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "YEC {} {} {} {} {}".format(self.name,
-                                           self.z, self.x,
-                                           self.zsemi, self.xsemi)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "YEC {} {} {} {} {}".format(
+            self.name, self.z, self.x, self.zsemi, self.xsemi
+        )
 
     def hash(self):
-        return hash(("YEC",self.x,self.z,self.xsemi,self.zsemi)) ^ self.transform.hash()
+        return (
+            hash(("YEC", self.x, self.z, self.xsemi, self.zsemi))
+            ^ self.transform.hash()
+        )
+
 
 class ZEC(BodyMixin, _ShiftableCylinderMixin):
     """
@@ -1716,8 +1991,10 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
     :param ysemi: position of the centre on the
     :type ysemi: float
     """
-    def __init__(self, name, x, y, xsemi, ysemi, transform=None,
-                 flukaregistry=None,comment=""):
+
+    def __init__(
+        self, name, x, y, xsemi, ysemi, transform=None, flukaregistry=None, comment=""
+    ):
         self.name = name
         self.x = x
         self.y = y
@@ -1734,9 +2011,7 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         initialCentre = Three(self.x, self.y, 0)
         if aabb is None:
             return initialCentre
-        return self._shiftInfiniteCylinderCentre(aabb,
-                                                 [0, 0, 1],
-                                                 initialCentre)
+        return self._shiftInfiniteCylinderCentre(aabb, [0, 0, 1], initialCentre)
 
     def rotation(self):
         return self.transform.leftMultiplyRotation(np.identity(3))
@@ -1744,38 +2019,46 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
         scale = self._aabbToScaleFactor(aabb)
-        return g4.solid.EllipticalTube(self.name,
-                                       # full width, not semi
-                                       2 * exp * self.xsemi,
-                                       2 * exp * self.ysemi,
-                                       scale,
-                                       reg,
-                                       lunit="mm")
+        return g4.solid.EllipticalTube(
+            self.name,
+            # full width, not semi
+            2 * exp * self.xsemi,
+            2 * exp * self.ysemi,
+            scale,
+            reg,
+            lunit="mm",
+        )
 
     def __repr__(self):
         return "<ZEC: {}, x={}, y={}, xsemi={}, ysemi={}>".format(
-            self.name,
-            self.x, self.y,
-            self.xsemi, self.ysemi)
+            self.name, self.x, self.y, self.xsemi, self.ysemi
+        )
 
     def _withLengthSafety(self, safety, reg=None):
-        return ZEC(self.name, self.x, self.y,
-                   self.xsemi + safety,
-                   self.ysemi + safety,
-                   transform=self.transform,
-                   flukaregistry=reg)
+        return ZEC(
+            self.name,
+            self.x,
+            self.y,
+            self.xsemi + safety,
+            self.ysemi + safety,
+            transform=self.transform,
+            flukaregistry=reg,
+        )
 
     def flukaFreeString(self):
         prefix = ""
-        if self.comment != "" :
-            prefix = "* "+self.comment+"\n"
-        return prefix+\
-               "ZEC {} {} {} {} {}".format(self.name,
-                                           self.x, self.y,
-                                           self.xsemi, self.ysemi)
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+        return prefix + "ZEC {} {} {} {} {}".format(
+            self.name, self.x, self.y, self.xsemi, self.ysemi
+        )
 
     def hash(self):
-        return hash(("ZEC",self.x,self.y,self.xsemi,self.ysemi)) ^ self.transform.hash()
+        return (
+            hash(("ZEC", self.x, self.y, self.xsemi, self.ysemi))
+            ^ self.transform.hash()
+        )
+
 
 class QUA(BodyMixin):
     """
@@ -1804,12 +2087,25 @@ class QUA(BodyMixin):
     :param c: constant
     :type c: constant
     """
-    def __init__(self, name,
-                 cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c,
-                 transform=None,
-                 flukaregistry=None,
-                 comment="",
-                 **kwargs):
+
+    def __init__(
+        self,
+        name,
+        cxx,
+        cyy,
+        czz,
+        cxy,
+        cxz,
+        cyz,
+        cx,
+        cy,
+        cz,
+        c,
+        transform=None,
+        flukaregistry=None,
+        comment="",
+        **kwargs,
+    ):
         self.name = name
 
         self.cxx = cxx
@@ -1818,10 +2114,10 @@ class QUA(BodyMixin):
         self.cxy = cxy
         self.cxz = cxz
         self.cyz = cyz
-        self.cx  = cx
-        self.cy  = cy
-        self.cz  = cz
-        self.c  = c
+        self.cx = cx
+        self.cy = cy
+        self.cz = cz
+        self.c = c
 
         self.transform = self._setTransform(transform)
 
@@ -1844,34 +2140,37 @@ class QUA(BodyMixin):
         cxx = self.cxx
         cyy = self.cyy
         czz = self.czz
-        cxy = self.cxy / 2.
-        cxz = self.cxz / 2.
-        cyz = self.cyz / 2.
-        cx = self.cx / 2.
-        cy = self.cy / 2.
-        cz = self.cz / 2.
+        cxy = self.cxy / 2.0
+        cxz = self.cxz / 2.0
+        cyz = self.cyz / 2.0
+        cx = self.cx / 2.0
+        cy = self.cy / 2.0
+        cz = self.cz / 2.0
         c = self.c
 
-        return np.array([[cxx, cxy, cxz, cx],
-                         [cxy, cyy, cyz, cy],
-                         [cxz, cyz, czz, cz],
-                         [ cx,  cy,  cz,  c]])
+        return np.array(
+            [
+                [cxx, cxy, cxz, cx],
+                [cxy, cyy, cyz, cy],
+                [cxz, cyz, czz, cz],
+                [cx, cy, cz, c],
+            ]
+        )
 
     @staticmethod
     def _quadricMatrixToCoefficients(matrix):
-        return {"cxx": matrix[0,0],
-                "cyy": matrix[1,1],
-                "czz": matrix[2,2],
-
-                "cxy": 2 * matrix[0,1],
-                "cxz": 2 * matrix[0,2],
-                "cyz": 2 * matrix[1,2],
-
-                "cx": 2 * matrix[0,3],
-                "cy": 2 * matrix[1,3],
-                "cz": 2 * matrix[2,3],
-
-                "c": matrix[3,3]}
+        return {
+            "cxx": matrix[0, 0],
+            "cyy": matrix[1, 1],
+            "czz": matrix[2, 2],
+            "cxy": 2 * matrix[0, 1],
+            "cxz": 2 * matrix[0, 2],
+            "cyz": 2 * matrix[1, 2],
+            "cx": 2 * matrix[0, 3],
+            "cy": 2 * matrix[1, 3],
+            "cz": 2 * matrix[2, 3],
+            "c": matrix[3, 3],
+        }
 
     def mesh(self, lower, upper, capping=True):
         # Apply any geometry directives.
@@ -1883,10 +2182,18 @@ class QUA(BodyMixin):
         coeff = self._quadricMatrixToCoefficients(transformedQuadric)
 
         quadric = vtk.vtkQuadric()
-        quadric.SetCoefficients(coeff["cxx"], coeff["cyy"], coeff["czz"],
-                                coeff["cxy"], coeff["cyz"], coeff["cxz"],
-                                coeff["cx"],  coeff["cy"], coeff["cz"],
-                                coeff["c"])
+        quadric.SetCoefficients(
+            coeff["cxx"],
+            coeff["cyy"],
+            coeff["czz"],
+            coeff["cxy"],
+            coeff["cyz"],
+            coeff["cxz"],
+            coeff["cx"],
+            coeff["cy"],
+            coeff["cz"],
+            coeff["c"],
+        )
 
         sample = vtk.vtkSampleFunction()
         # sample.SetSampleDimensions(50, 50, 50)
@@ -1897,9 +2204,9 @@ class QUA(BodyMixin):
         # be quite noticeably under-sampled, and we will lose detail, so
         # to be safe we make the ModelBounds a bit bigger than the
         # extent
-        sample.SetModelBounds(lower[0], upper[0],
-                              lower[1], upper[1],
-                              lower[2], upper[2])
+        sample.SetModelBounds(
+            lower[0], upper[0], lower[1], upper[1], lower[2], upper[2]
+        )
 
         sample.SetImplicitFunction(quadric)
         if capping:
@@ -1923,37 +2230,35 @@ class QUA(BodyMixin):
         facet = []
 
         j = 0
-        for i in range(pd.GetNumberOfCells()) :
+        for i in range(pd.GetNumberOfCells()):
             c = pd.GetCell(i)
             p = c.GetPoints()
-            if p.GetNumberOfPoints() < 3: # lines.
+            if p.GetNumberOfPoints() < 3:  # lines.
                 continue
             # if p.GetNumberOfPoints() > 3: # this shouldn't happen
             #     raise ValueError("2 many poitnts")
             verts.append(np.array(p.GetPoint(2)))
             verts.append(np.array(p.GetPoint(1)))
             verts.append(np.array(p.GetPoint(0)))
-            facet.append([3*j+0,3*j+1,3*j+2])
+            facet.append([3 * j + 0, 3 * j + 1, 3 * j + 2])
             j += 1
 
         if not verts:
-            raise pyg4ometry.exceptions.NullMeshError(
-                f"Failed to generate a mesh for QUA {self.name}"
-                f" with bounds {lower} {upper}.")
+            msg = f"Failed to generate a mesh for QUA {self.name} with bounds {lower} {upper}."
+            raise pyg4ometry.exceptions.NullMeshError(msg)
 
         polygons = []
         for f in facet:
             # This allows for both triangular and quadrilateral facets
-            polygon = _Polygon([_Vertex(verts[facet_vertex])
-                                for facet_vertex in f])
+            polygon = _Polygon([_Vertex(verts[facet_vertex]) for facet_vertex in f])
             polygons.append(polygon)
 
         return _CSG.fromPolygons(polygons)
 
-
     def geant4Solid(self, reg, aabb=None):
         if aabb is None:
-            raise ValueError("QUA must be evaluated with respect to an AABB.")
+            msg = "QUA must be evaluated with respect to an AABB."
+            raise ValueError(msg)
 
         scale = self._aabbToScaleFactor(aabb)
         lower = aabb.lower - scale
@@ -1967,52 +2272,93 @@ class QUA(BodyMixin):
             # Multiply by -1 to match convention of MeshShrink
             # (positive shrinkFactor = smaller mesh), which is
             # opposite of this.
-            vertnormals = MeshShrink([vertices, facets],
-                                     shrinkFactor=-1*self.safety)
+            vertnormals = MeshShrink([vertices, facets], shrinkFactor=-1 * self.safety)
 
         return g4.solid.TessellatedSolid(
             self.name,
             [vertices, facets],
             reg,
-            g4.solid.TessellatedSolid.MeshType.Freecad)
+            g4.solid.TessellatedSolid.MeshType.Freecad,
+        )
 
     def _withLengthSafety(self, safety, reg=None):
-        return QUA(self.name,
-                   self.cxx, self.cyy, self.czz,
-                   self.cxy, self.cxz, self.cyz,
-                   self.cx, self.cy,  self.cz, self.c,
-                   transform=self.transform,
-                   flukaregistry=reg,
-                   safety=safety)
+        return QUA(
+            self.name,
+            self.cxx,
+            self.cyy,
+            self.czz,
+            self.cxy,
+            self.cxz,
+            self.cyz,
+            self.cx,
+            self.cy,
+            self.cz,
+            self.c,
+            transform=self.transform,
+            flukaregistry=reg,
+            safety=safety,
+        )
 
     def __repr__(self):
         s = self
-        return (f"<QUA: {s.name} xx={s.cxx}, yy={s.cyy}, zz={s.czz},"
-                f" xy={s.cxy}, xz={s.cxz}, yz={s.cyz}, x={s.cx},"
-                f" y={s.cy}, z={s.cz}, c={s.c}>")
+        return (
+            f"<QUA: {s.name} xx={s.cxx}, yy={s.cyy}, zz={s.czz},"
+            f" xy={s.cxy}, xz={s.cxz}, yz={s.cyz}, x={s.cx},"
+            f" y={s.cy}, z={s.cz}, c={s.c}>"
+        )
 
     def flukaFreeString(self):
         prefix = ""
         if self.comment:
-            prefix = "* "+self.comment+"\n"
+            prefix = "* " + self.comment + "\n"
         return "{}QUA {} {}".format(
             prefix,
             self.name,
-            _iterablesToFreeString([self.cxx, self.cyy, self.czz,
-                                    self.cxy, self.cxz, self.cyz,
-                                    self.cx, self.cy, self.cz, self.c]))
+            _iterablesToFreeString(
+                [
+                    self.cxx,
+                    self.cyy,
+                    self.czz,
+                    self.cxy,
+                    self.cxz,
+                    self.cyz,
+                    self.cx,
+                    self.cy,
+                    self.cz,
+                    self.c,
+                ]
+            ),
+        )
 
     def hash(self):
-        return hash(("QUA",self.cxx, self.cyy, self.czz, self.cxy,
-                           self.cxz, self.cyz, self.cx, self.cy,
-                           self.cz, self.c)) ^ self.transform.hash()
+        return (
+            hash(
+                (
+                    "QUA",
+                    self.cxx,
+                    self.cyy,
+                    self.czz,
+                    self.cxy,
+                    self.cxz,
+                    self.cyz,
+                    self.cx,
+                    self.cy,
+                    self.cz,
+                    self.c,
+                )
+            )
+            ^ self.transform.hash()
+        )
 
 
 def _raiseIfNotAllMutuallyPerpendicular(first, second, third, message):
-    if (not np.isclose(first.dot(second),0) or
-        not np.isclose(first.dot(third),0) or
-        not np.isclose(second.dot(third),0)):
+    if (
+        not np.isclose(first.dot(second), 0)
+        or not np.isclose(first.dot(third), 0)
+        or not np.isclose(second.dot(third), 0)
+    ):
         raise ValueError(message)
+
 
 def _iterablesToFreeString(*iterables):
     return " ".join([str(e) for e in chain(*iterables)])

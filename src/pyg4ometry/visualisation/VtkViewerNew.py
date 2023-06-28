@@ -7,13 +7,20 @@ import numpy as _np
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
 import pyg4ometry.visualisation.Convert as _Convert
-from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
-from .VisualisationOptions import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
-from pyg4ometry.pycgal.Polygon_mesh_processing import isotropic_remeshing as _isotropic_remeshing
+from pyg4ometry.visualisation.VisualisationOptions import (
+    VisualisationOptions as _VisOptions,
+)
+from .VisualisationOptions import (
+    getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
+)
+from pyg4ometry.pycgal.Polygon_mesh_processing import (
+    isotropic_remeshing as _isotropic_remeshing,
+)
 
-class VtkViewerNew(_ViewerBase) :
+
+class VtkViewerNew(_ViewerBase):
     def __init__(self):
-        super(VtkViewerNew, self).__init__()
+        super().__init__()
 
         self.initVtk()
         self.clear()
@@ -48,22 +55,21 @@ class VtkViewerNew(_ViewerBase) :
         self.iren.SetInteractorStyle(self.interactorStyle)
 
     def clear(self):
-
-        super(VtkViewerNew, self).clear()
+        super().clear()
 
         self.polydata = {}
-        self.actors   = {}
-        self.cutters  = {}   # cut filters
-        self.clippers = []   # clip filters
-        self.axes     = []   # axes actors
+        self.actors = {}
+        self.cutters = {}  # cut filters
+        self.clippers = []  # clip filters
+        self.axes = []  # axes actors
 
-        self.pdNameDict       = {} # polydata to LV name
-        self.instanceNameDict = {} # instance transformation to PV name
+        self.pdNameDict = {}  # polydata to LV name
+        self.instanceNameDict = {}  # instance transformation to PV name
 
         self.bBuiltPipelines = False
 
         # remove all actors
-        for a in self.ren.GetActors() :
+        for a in self.ren.GetActors():
             self.ren.RemoveActor(a)
 
     def addAxes(self, length=20.0, origin=(0, 0, 0)):
@@ -90,12 +96,12 @@ class VtkViewerNew(_ViewerBase) :
 
     def addAxesWidget(self):
         axesActor = _vtk.vtkAnnotatedCubeActor()
-        axesActor.SetXPlusFaceText('+x')
-        axesActor.SetXMinusFaceText('-x')
-        axesActor.SetYPlusFaceText('+y')
-        axesActor.SetYMinusFaceText('-y')
-        axesActor.SetZPlusFaceText('+z')
-        axesActor.SetZMinusFaceText('-z')
+        axesActor.SetXPlusFaceText("+x")
+        axesActor.SetXMinusFaceText("-x")
+        axesActor.SetYPlusFaceText("+y")
+        axesActor.SetYMinusFaceText("-y")
+        axesActor.SetZPlusFaceText("+z")
+        axesActor.SetZMinusFaceText("-z")
         axesActor.GetTextEdgesProperty().SetColor(1, 1, 1)
         axesActor.GetTextEdgesProperty().SetLineWidth(2)
         axesActor.GetCubeProperty().SetColor(0.4, 0.4, 0.4)
@@ -106,14 +112,14 @@ class VtkViewerNew(_ViewerBase) :
         self.axesWidget.InteractiveOn()
 
     def addCutter(self, name, origin, normal):
-        if self.bBuiltPipelines :
+        if self.bBuiltPipelines:
             print("Need to add cutter before pipelines are built")
 
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
 
     def setCutter(self, name, origin, normal):
-        for c in self.cutters[name] :
+        for c in self.cutters[name]:
             p = c.GetCutFunction()
             p.SetOrigin(*origin)
             p.SetNormal(*normal)
@@ -122,10 +128,9 @@ class VtkViewerNew(_ViewerBase) :
         pass
 
     def exportCutter(self, name, fileName):
-
         self.cuttersAppFlt = _vtk.vtkAppendPolyData()
 
-        for c in self.cutters[name] :
+        for c in self.cutters[name]:
             self.cuttersAppFlt.AddInputConnection(c.GetOutputPort())
 
         w = _vtk.vtkPolyDataWriter()
@@ -133,41 +138,43 @@ class VtkViewerNew(_ViewerBase) :
         w.SetInputConnection(self.cuttersAppFlt.GetOutputPort())
         w.Write()
 
-    def addClipper(self, origin, normal, bClipperCutter = False, bClipperCloseCuts = True):
-        if self.bBuiltPipelines :
+    def addClipper(self, origin, normal, bClipperCutter=False, bClipperCloseCuts=True):
+        if self.bBuiltPipelines:
             print("Need to add clipper before pipelines are built")
 
-        self.bClipper          = True
-        self.clipperOrigin     = origin
-        self.clipperNormal     = normal
-        self.bClipperCutter    = bClipperCutter
+        self.bClipper = True
+        self.clipperOrigin = origin
+        self.clipperNormal = normal
+        self.bClipperCutter = bClipperCutter
         self.bClipperCloseCuts = bClipperCloseCuts
 
-        if self.bClipperCutter :
+        if self.bClipperCutter:
             self.addCutter("clipperCutter", origin, normal)
 
     def setClipper(self, origin, normal):
-        for c in self.clippers :
+        for c in self.clippers:
             p = c.GetClipFunction()
             p.SetOrigin(*origin)
             p.SetNormal(*normal)
 
-        if self.bClipperCutter :
-            self.setCutter("clipperCutter",origin,normal)
+        if self.bClipperCutter:
+            self.setCutter("clipperCutter", origin, normal)
 
-        if self.clipperPlaneWidget :
+        if self.clipperPlaneWidget:
             self.clipperPlaneWidget.GetRepresentation().SetNormal(*normal)
             self.clipperPlaneWidget.GetRepresentation().SetOrigin(*origin)
 
-
     def addClipperWidget(self):
-
-        if not self.bBuiltPipelines :
-            print("Need to build pipelines before adding clipper widget e.g. v.bulidPipelinesAppend()")
+        if not self.bBuiltPipelines:
+            print(
+                "Need to build pipelines before adding clipper widget e.g. v.bulidPipelinesAppend()"
+            )
             return
 
-        if len(self.clippers) == 0 :
-            print("Need to add a clipping plane adding clipper widget e.g. v.addClipper([0, 0, 0], [0, 0, 1], True")
+        if len(self.clippers) == 0:
+            print(
+                "Need to add a clipping plane adding clipper widget e.g. v.addClipper([0, 0, 0], [0, 0, 1], True"
+            )
             return
 
         plaRep = _vtk.vtkImplicitPlaneRepresentation()
@@ -180,7 +187,9 @@ class VtkViewerNew(_ViewerBase) :
         self.clipperPlaneWidget.SetInteractor(self.iren)
         self.clipperPlaneWidget.SetRepresentation(plaRep)
 
-        self.clipperPlaneWidget.AddObserver("InteractionEvent", self.updateClipperPlaneCallback)
+        self.clipperPlaneWidget.AddObserver(
+            "InteractionEvent", self.updateClipperPlaneCallback
+        )
 
     def updateClipperPlaneCallback(self, obj, event):
         rep = obj.GetRepresentation()
@@ -196,27 +205,27 @@ class VtkViewerNew(_ViewerBase) :
         pass
 
     def buildPipelinesSeparate(self):
-
         # loop over meshes and create polydata
-        for k in self.localmeshes :
+        for k in self.localmeshes:
             pd = _Convert.pycsgMeshToVtkPolyData(self.localmeshes[k])
             self.polydata[k] = pd
 
         # loop over polydata and create actors for instances
-        for k in self.instancePlacements :
-            ips = self.instancePlacements[k] # (i)nstance (p)placement(s)
-            vos = self.instanceVisOptions[k] # (v)isualisation (o)ption(s)
-            pd  = self.polydata[k]
-            for ip, i in zip(ips,range(0,len(ips))) :
-
-                triFlt = _vtk.vtkTriangleFilter()   # (tri)angle (F)i(lt)er
+        for k in self.instancePlacements:
+            ips = self.instancePlacements[k]  # (i)nstance (p)placement(s)
+            vos = self.instanceVisOptions[k]  # (v)isualisation (o)ption(s)
+            pd = self.polydata[k]
+            for ip, i in zip(ips, range(0, len(ips))):
+                triFlt = _vtk.vtkTriangleFilter()  # (tri)angle (F)i(lt)er
                 triFlt.AddInputData(pd)
-                map = _vtk.vtkPolyDataMapper()      # vtkPolyData(Map)per
+                map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
                 map.ScalarVisibilityOff()
                 map.SetInputConnection(triFlt.GetOutputPort())
-                actor = _vtk.vtkActor()             # vtk(Actor)
+                actor = _vtk.vtkActor()  # vtk(Actor)
                 actor.SetMapper(map)
-                vtrans = _Convert.pyg42VtkTransformation(ip['transformation'],ip['translation'])
+                vtrans = _Convert.pyg42VtkTransformation(
+                    ip["transformation"], ip["translation"]
+                )
                 actor.SetUserMatrix(vtrans)
                 visopt = vos[i]
                 rgb = visopt.colour
@@ -224,30 +233,30 @@ class VtkViewerNew(_ViewerBase) :
                 actor.GetProperty().SetColor(rgb)
                 actor.GetProperty().SetOpacity(alpha)
 
-                self.actors[k+str(i)] = actor
+                self.actors[k + str(i)] = actor
                 self.ren.AddActor(actor)
 
         self.bBuiltPipelines = True
 
-    def buildPipelinesAppend(self) :
+    def buildPipelinesAppend(self):
         # loop over meshes and create polydata
-        for k in self.localmeshes :
+        for k in self.localmeshes:
             pd = _Convert.pycsgMeshToVtkPolyData(self.localmeshes[k])
             # pd.SetObjectName(k)
             self.polydata[k] = pd
             self.pdNameDict[pd] = k
 
-        appFltDict  = {}
-        visOptDict  = {}
+        appFltDict = {}
+        visOptDict = {}
 
         # loop over polydata and create actors for instances
-        for k in self.instancePlacements :
-            vos = self.instanceVisOptions[k] # (v)isualisation (o)ption(s)
+        for k in self.instancePlacements:
+            vos = self.instanceVisOptions[k]  # (v)isualisation (o)ption(s)
 
-            ips = self.instancePlacements[k] # (i)nstance (p)placement(s)
-            pd  = self.polydata[k]
+            ips = self.instancePlacements[k]  # (i)nstance (p)placement(s)
+            pd = self.polydata[k]
 
-            for ip, i in zip(ips,range(0,len(ips))) :
+            for ip, i in zip(ips, range(0, len(ips))):
                 if str(vos[i]) in appFltDict:
                     appFlt = appFltDict[str(vos[i])]
                 else:
@@ -255,29 +264,31 @@ class VtkViewerNew(_ViewerBase) :
                     appFltDict[str(vos[i])] = appFlt
                     visOptDict[str(vos[i])] = vos[i]
 
-                triFlt = _vtk.vtkTriangleFilter()   # (tri)angle (F)i(lt)er
+                triFlt = _vtk.vtkTriangleFilter()  # (tri)angle (F)i(lt)er
                 triFlt.AddInputData(pd)
 
-                traFlt = _vtk.vtkTransformPolyDataFilter() # (tra)nsform (F)i(lt)er
-                vtramat = _Convert.pyg42VtkTransformation(ip['transformation'],ip['translation'])
-                vtra    = _vtk.vtkGeneralTransform()
+                traFlt = _vtk.vtkTransformPolyDataFilter()  # (tra)nsform (F)i(lt)er
+                vtramat = _Convert.pyg42VtkTransformation(
+                    ip["transformation"], ip["translation"]
+                )
+                vtra = _vtk.vtkGeneralTransform()
                 vtra.Concatenate(vtramat)
                 traFlt.SetInputConnection(triFlt.GetOutputPort())
                 traFlt.SetTransform(vtra)
 
                 appFlt.AddInputConnection(traFlt.GetOutputPort())
 
-                self.instanceNameDict[traFlt] = ip['name']
+                self.instanceNameDict[traFlt] = ip["name"]
 
-        for k in appFltDict :
-            normFlt = _vtk.vtkPolyDataNormals() #
+        for k in appFltDict:
+            normFlt = _vtk.vtkPolyDataNormals()  #
             normFlt.SetFeatureAngle(179)
             normFlt.SetInputConnection(appFltDict[k].GetOutputPort())
 
-            normFlt = appFltDict[k] # bypass the normal filter
+            normFlt = appFltDict[k]  # bypass the normal filter
 
             # Add cutters
-            for ck in self.cutterOrigins :
+            for ck in self.cutterOrigins:
                 p = self.cutterOrigins[ck]
                 n = self.cutterNormals[ck]
 
@@ -289,9 +300,9 @@ class VtkViewerNew(_ViewerBase) :
                 cutFilt.SetCutFunction(plane)
                 cutFilt.SetInputConnection(normFlt.GetOutputPort())
 
-                try :
+                try:
                     self.cutters[ck].append(cutFilt)
-                except KeyError :
+                except KeyError:
                     self.cutters[ck] = []
                     self.cutters[ck].append(cutFilt)
 
@@ -302,13 +313,13 @@ class VtkViewerNew(_ViewerBase) :
                 cutActor = _vtk.vtkActor()  # vtk(Actor)
                 cutActor.SetMapper(cutMap)
                 cutActor.GetProperty().SetLineWidth(4)
-                cutActor.GetProperty().SetColor(*[1,0,0])
+                cutActor.GetProperty().SetColor(*[1, 0, 0])
                 cutActor.GetProperty().SetRepresentationToSurface()
-                self.actors[k+"_"+ck] = cutActor
+                self.actors[k + "_" + ck] = cutActor
                 self.ren.AddActor(cutActor)
 
             # Add clippers
-            if self.clipperNormal is not None :
+            if self.clipperNormal is not None:
                 p = self.clipperOrigin
                 n = self.clipperNormal
 
@@ -334,8 +345,8 @@ class VtkViewerNew(_ViewerBase) :
 
                 cleFlt = _vtk.vtkContourLoopExtraction()
                 cleFlt.SetInputConnection(edgTriFlt.GetOutputPort())
-                #cleFlt.SetLoopClosureToBoundary()
-                #cleFlt.SetLoopClosureToOff()
+                # cleFlt.SetLoopClosureToBoundary()
+                # cleFlt.SetLoopClosureToOff()
 
                 strFlt = _vtk.vtkStripper()
                 strFlt.SetInputConnection(cleFlt.GetOutputPort())
@@ -345,7 +356,9 @@ class VtkViewerNew(_ViewerBase) :
                 edgMap = _vtk.vtkPolyDataMapper()
                 edgMap.SetInputConnection(strFlt.GetOutputPort())
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
-                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-3*visOpt.depth)
+                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(
+                    0, -3 * visOpt.depth
+                )
                 edgMap.ScalarVisibilityOff()
                 edgActor = _vtk.vtkActor()
                 edgActor.SetMapper(edgMap)
@@ -356,8 +369,8 @@ class VtkViewerNew(_ViewerBase) :
                 edgActor.GetProperty().SetOpacity(visOpt.alpha)
                 edgActor.GetProperty().SetColor(*visOpt.colour)
 
-                if self.bClipperCloseCuts :
-                    self.actors[k+"_clipper"] = edgActor
+                if self.bClipperCloseCuts:
+                    self.actors[k + "_clipper"] = edgActor
                     self.ren.AddActor(edgActor)
 
                 self.clippers.append(cliFlt)
@@ -367,19 +380,21 @@ class VtkViewerNew(_ViewerBase) :
             map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
             map.ScalarVisibilityOff()
             map.SetResolveCoincidentTopologyToPolygonOffset()
-            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 3*visOpt.depth)
+            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(
+                0, 3 * visOpt.depth
+            )
 
-            if not self.bClipper :
+            if not self.bClipper:
                 map.SetInputConnection(normFlt.GetOutputPort())
-            else :
+            else:
                 map.SetInputConnection(cliFlt.GetClippedOutputPort())
-                self.ren.GetActiveCamera().SetFocalPoint(0,0,0)
+                self.ren.GetActiveCamera().SetFocalPoint(0, 0, 0)
 
             actor = _vtk.vtkActor()  # vtk(Actor)
             actor.SetMapper(map)
             self.actors[k] = actor
 
-            if visOpt.representation == "wireframe" :
+            if visOpt.representation == "wireframe":
                 actor.GetProperty().SetRepresentationToWireframe()
 
             actor.GetProperty().SetOpacity(visOpt.alpha)
@@ -393,15 +408,15 @@ class VtkViewerNew(_ViewerBase) :
         pass
 
     def render(self):
-        if not self.bBuiltPipelines :
+        if not self.bBuiltPipelines:
             print("Not built pipelines")
             return
 
         # Render
         self.renWin.Render()
 
-    def view(self, interactive = True, resetCamera = False):
-        if not self.bBuiltPipelines :
+    def view(self, interactive=True, resetCamera=False):
+        if not self.bBuiltPipelines:
             print("Not built pipelines")
             return
 
@@ -415,14 +430,15 @@ class VtkViewerNew(_ViewerBase) :
         # Render
         self.renWin.Render()
 
-        if self.clipperPlaneWidget :
+        if self.clipperPlaneWidget:
             self.clipperPlaneWidget.On()
 
         if interactive:
             self.iren.Start()
 
     def __repr__(self):
-        return ''
+        return ""
+
 
 class VtkViewerColouredNew(VtkViewerNew):
     """
@@ -468,7 +484,7 @@ class VtkViewerColouredNew(VtkViewerNew):
                 if type(v) is list or type(v) is tuple:
                     vi = _VisOptions()
                     vi.colour = v[:3]
-                    if any([i > 1 for i in vi.colour]):
+                    if any(i > 1 for i in vi.colour):
                         vi.colour = [i / 255.0 for i in vi.colour]
                     if len(v) > 3:
                         vi.alpha = v[3]
@@ -480,42 +496,46 @@ class VtkViewerColouredNew(VtkViewerNew):
     def _getDefaultVis(self, pv):
         return self._defaultVis
 
+
 class VtkViewerColouredMaterialNew(VtkViewerColouredNew):
     """
     Extension of VtkViewerColoured that uses a default material dictionary for
     several common materials. Material colours are in defined Colour.py for many
     Geant4, FLUKA and BDSIM materials.
     """
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
+        super().__init__(
+            *args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs
+        )
+
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self, renderer, vtkviewer):
         self.AddObserver("RightButtonPressEvent", self.rightButtonPressEvent)
 
-        self.ren       = renderer
+        self.ren = renderer
         self.vtkviewer = vtkviewer
 
         self.highLightActor = None
         self.highLightTextActor = None
 
     def removeHighLight(self):
-        if self.highLightActor :
+        if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)
             self.ren.GetRenderWindow().Render()
 
     def removeHighLightText(self):
-        if self.highLighTextActor :
+        if self.highLighTextActor:
             self.ren.RemoveActor(self.highLightTextActor)
             self.ren.GetRenderWindow().Render()
 
     def rightButtonPressEvent(self, obj, event):
-
-        if self.highLightActor :
+        if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)
 
         clickPos = self.GetInteractor().GetEventPosition()
-        print("clickPos> ",clickPos)
+        print("clickPos> ", clickPos)
 
         picker = _vtk.vtkPropPicker()
         picker.Pick(clickPos[0], clickPos[1], 0, self.ren)
@@ -531,54 +551,63 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         actor = cellPicker.GetActor()
 
         # possible we don't hit an actor
-        if actor is None :
+        if actor is None:
             return
 
-        map   = actor.GetMapper()
+        map = actor.GetMapper()
         self.inalgo = map.GetInputAlgorithm()
 
-
-        if self.inalgo.GetClassName() == "vtkClipPolyData" :
+        if self.inalgo.GetClassName() == "vtkClipPolyData":
             appPolyData = self.inalgo.GetInputAlgorithm()
-        elif self.inalgo.GetClassName() == "vtkAppendPolyData" :
+        elif self.inalgo.GetClassName() == "vtkAppendPolyData":
             appPolyData = self.inalgo
-        else :
-            appPolyData = self.inalgo.GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm().GetInputAlgorithm()
+        else:
+            appPolyData = (
+                self.inalgo.GetInputAlgorithm()
+                .GetInputAlgorithm()
+                .GetInputAlgorithm()
+                .GetInputAlgorithm()
+                .GetInputAlgorithm()
+            )
 
         print(self.inalgo.GetClassName(), appPolyData.GetClassName())
 
         point = self.inalgo.GetOutput().GetPoint(cellPicker.GetPointId())
-        print("pointPos>",point)
+        print("pointPos>", point)
 
         # loop over appendPolyData and find closest
         dmin = 1e99
-        di   = -1
-        pdmin  = None
+        di = -1
+        pdmin = None
         pdamin = None
-        for ipd in range(0,appPolyData.GetNumberOfInputConnections(0),1) :
-            pd = appPolyData.GetInput(ipd)              # polydata
-            pda = appPolyData.GetInputAlgorithm(0,ipd)  # polydata algorithm
+        for ipd in range(0, appPolyData.GetNumberOfInputConnections(0), 1):
+            pd = appPolyData.GetInput(ipd)  # polydata
+            pda = appPolyData.GetInputAlgorithm(0, ipd)  # polydata algorithm
             pdd = _vtk.vtkImplicitPolyDataDistance()
             pdd.SetInput(pd)
             dist = pdd.EvaluateFunction(*point)
-            if dist < dmin :
+            if dist < dmin:
                 di = ipd
                 dmin = dist
-                pdmin  = pd
+                pdmin = pd
                 pdamin = pda
 
-        lvName  = self.vtkviewer.pdNameDict[pdamin.GetInputAlgorithm().GetInput()]
-        pvName  = self.vtkviewer.instanceNameDict[pdamin]
+        lvName = self.vtkviewer.pdNameDict[pdamin.GetInputAlgorithm().GetInput()]
+        pvName = self.vtkviewer.instanceNameDict[pdamin]
         pvTrans = pdamin.GetTransform()
-        [mtra, tra] = _Convert.vtkTransformation2PyG4(pvTrans.GetConcatenatedTransform(0))
+        [mtra, tra] = _Convert.vtkTransformation2PyG4(
+            pvTrans.GetConcatenatedTransform(0)
+        )
         globalExtent = pdmin.GetBounds()
-        localExtent  = pdamin.GetInput().GetBounds()
+        localExtent = pdamin.GetInput().GetBounds()
 
         tba = _transformation.matrix2tbxyz(mtra)
 
-        print("minimum pd>", di,dmin, lvName, pvName,tba,tra, localExtent, globalExtent)
+        print(
+            "minimum pd>", di, dmin, lvName, pvName, tba, tra, localExtent, globalExtent
+        )
 
-        if self.highLightActor :
+        if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)
 
         highLightMapper = _vtk.vtkPolyDataMapper()
@@ -586,23 +615,36 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
 
         self.highLightActor = _vtk.vtkActor()
         self.highLightActor.SetMapper(highLightMapper)
-        self.highLightActor.GetProperty().SetColor(0,1,0)
+        self.highLightActor.GetProperty().SetColor(0, 1, 0)
         self.highLightActor.GetProperty().SetOpacity(0.5)
 
         self.ren.AddActor(self.highLightActor)
 
-        if self.highLightTextActor :
+        if self.highLightTextActor:
             self.ren.RemoveActor(self.highLightTextActor)
 
         self.highLightTextActor = _vtk.vtkTextActor()
-        self.highLightTextActor.GetTextProperty().SetFontSize(30);
-        self.highLightTextActor.GetTextProperty().SetColor(0,0,0)
-        self.highLightTextActor.SetInput("lv   : "+lvName+"\n"+
-                                         "pv   : "+pvName+"\n"+
-                                         "tbr  :"+str(["{:5.2f}".format(v) for v in tba]).strip("'")+"\n"+
-                                         "tra  :"+str(["{:5.2f}".format(v) for v in tra]).strip("'")+"\n"+
-                                         "local aabb :"+str(["{:5.2f}".format(v) for v in localExtent]).strip("'")+"\n"+
-                                         "global aabb :"+str(["{:5.2f}".format(v) for v in globalExtent]).strip("'"))
+        self.highLightTextActor.GetTextProperty().SetFontSize(30)
+        self.highLightTextActor.GetTextProperty().SetColor(0, 0, 0)
+        self.highLightTextActor.SetInput(
+            "lv   : "
+            + lvName
+            + "\n"
+            + "pv   : "
+            + pvName
+            + "\n"
+            + "tbr  :"
+            + str([f"{v:5.2f}" for v in tba]).strip("'")
+            + "\n"
+            + "tra  :"
+            + str([f"{v:5.2f}" for v in tra]).strip("'")
+            + "\n"
+            + "local aabb :"
+            + str([f"{v:5.2f}" for v in localExtent]).strip("'")
+            + "\n"
+            + "global aabb :"
+            + str([f"{v:5.2f}" for v in globalExtent]).strip("'")
+        )
         self.highLightTextActor.SetDisplayPosition(20, 30)
         self.ren.AddActor(self.highLightTextActor)
 

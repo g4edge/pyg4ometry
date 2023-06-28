@@ -13,48 +13,52 @@ def solidName(var):
 
 class Registry:
     """
-    Object to store geometry for input and output.
-    All of the pyg4ometry classes can be used without
-    storing them in the Registry. The registry is used
-    to write the GDML output file. A registry needs to
-    be used in conjunction with GDML Define objects for
+    Object to store geometry for input and output. \
+    All of the pyg4ometry classes can be used without \
+    storing them in the Registry. The registry is used \
+    to write the GDML output file. A registry needs to \
+    be used in conjunction with GDML Define objects for \
     evaluation of expressions.
     """
+
     def __init__(self):
         self.materialList = []
         # note python3 dictionaries are ordered by default
-        self.defineDict                   = {}
-        self.materialDict                 = {}
-        self.solidDict                    = {}
-        self.logicalVolumeDict            = {}
-        self.assemblyVolumeDict           = {}
-        self.physicalVolumeDict           = {}
-        self.surfaceDict                  = {}
-        self.loopDict                     = {}
+        self.defineDict = {}
+        self.materialDict = {}
+        self.solidDict = {}
+        self.logicalVolumeDict = {}
+        self.assemblyVolumeDict = {}
+        self.physicalVolumeDict = {}
+        self.surfaceDict = {}
+        self.loopDict = {}
 
-        self.logicalVolumeList            = [] # Ordered list of logical volumes (and assemblies) from world down to bottom
+        self.logicalVolumeList = (
+            []
+        )  # Ordered list of logical volumes (and assemblies) from world down to bottom
 
-        self.solidUsageCountDict          = _defaultdict(int) # solidName1, solidName2
-        self.volumeTypeCountDict          = _defaultdict(int) # logical, physical, assembly
-        self.physicalVolumeCountDict      = _defaultdict(int) #
-        self.surfaceTypeCountDict         = _defaultdict(int) # border, skin
-        self.logicalVolumeMeshSkip        = []                # meshes to skip because they are inefficient
-        self.userInfo                     = []                # Ordered list for the user info, which is not processed
-        
-        self.defineNameCount              = _defaultdict(int)
-        self.materialNameCount            = _defaultdict(int)
-        self.materialUsageCount           = _defaultdict(int)
-        self.solidNameCount               = _defaultdict(int)
-        self.logicalVolumeNameCount       = _defaultdict(int)
-        self.assemblyVolumeNameCount      = _defaultdict(int)
-        self.physicalVolumeNameCount      = _defaultdict(int)
-        self.surfaceNameCount             = _defaultdict(int)
+        self.solidUsageCountDict = _defaultdict(int)  # solidName1, solidName2
+        self.volumeTypeCountDict = _defaultdict(int)  # logical, physical, assembly
+        self.physicalVolumeCountDict = _defaultdict(int)  #
+        self.surfaceTypeCountDict = _defaultdict(int)  # border, skin
+        self.logicalVolumeMeshSkip = []  # meshes to skip because they are inefficient
+        self.userInfo = []  # Ordered list for the user info, which is not processed
 
+        self.defineNameCount = _defaultdict(int)
+        self.materialNameCount = _defaultdict(int)
+        self.materialUsageCount = _defaultdict(int)
+        self.solidNameCount = _defaultdict(int)
+        self.logicalVolumeNameCount = _defaultdict(int)
+        self.assemblyVolumeNameCount = _defaultdict(int)
+        self.physicalVolumeNameCount = _defaultdict(int)
+        self.surfaceNameCount = _defaultdict(int)
 
-        self.solidTypeCountDict           = _defaultdict(int) # Box, Cons etc
-        self.logicalVolumeUsageCountDict  = _defaultdict(int) # named logical usage in physical
-        
-        self.editedSolids                 = []               # Solids changed post-initialisation
+        self.solidTypeCountDict = _defaultdict(int)  # Box, Cons etc
+        self.logicalVolumeUsageCountDict = _defaultdict(
+            int
+        )  # named logical usage in physical
+
+        self.editedSolids = []  # Solids changed post-initialisation
 
         self.expressionParser = None
 
@@ -69,7 +73,7 @@ class Registry:
         self.physicalVolumeDict.clear()
         self.surfaceDict.clear()
         self.loopDict.clear()
-        
+
         self.logicalVolumeList = []
 
         self.solidUsageCountDict.clear()
@@ -87,15 +91,16 @@ class Registry:
         self.assemblyVolumeNameCount.clear()
         self.physicalVolumeNameCount.clear()
         self.surfaceNameCount.clear()
-        
+
         self.solidTypeCountDict.clear()
         self.logicalVolumeUsageCountDict.clear()
 
         self.editedSolids = []
-        
+
     def getExpressionParser(self):
         if not self.expressionParser:
             from pyg4ometry.gdml.Expression import ExpressionParser
+
             self.expressionParser = ExpressionParser()
 
         return self.expressionParser
@@ -135,34 +140,41 @@ class Registry:
         an Isotope and an Element instance.
         """
         import re as _re
+
         if userRenameDict:
             for find, replace in userRenameDict.items():
                 material.name = _re.sub(find, replace, material.name)
 
         if material.name in incrementRenameDict:
-            return # it's already been transferred in this 'transfer' call, ignore
+            return  # it's already been transferred in this 'transfer' call, ignore
         if material.name in self.materialDict:
             if material.type == "nist":
-                return # nist ones generally aren't added and allowed to pass through
+                return  # nist ones generally aren't added and allowed to pass through
             else:
-                newName = material.name + "_" + str(self.materialNameCount[material.name])
+                newName = (
+                    material.name + "_" + str(self.materialNameCount[material.name])
+                )
                 self.materialNameCount[material.name] += 1
                 incrementRenameDict[newName] = material.name
                 material.name = newName
                 # Material and Element have a member 'components' but Isotope doesn't
                 if hasattr(material, "components"):
                     for component in material.components:
-                        self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
+                        self.transferMaterial(
+                            component[0], incrementRenameDict, userRenameDict
+                        )
                 # transfer material properties
                 if hasattr(material, "properties"):
-                    for key,value in material.properties.items():
+                    for key, value in material.properties.items():
                         self.transferDefines(value, incrementRenameDict, userRenameDict)
         else:
             incrementRenameDict[material.name] = material.name
             # Material and Element have a member 'components' but Isotope doesn't
             if hasattr(material, "components"):
                 for component in material.components:
-                    self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
+                    self.transferMaterial(
+                        component[0], incrementRenameDict, userRenameDict
+                    )
             # transfer material properties
             if hasattr(material, "properties"):
                 for key, value in material.properties.items():
@@ -190,17 +202,18 @@ class Registry:
         """
         Transfer a solid to this registry. Doesn't handle any members'
         transferal - only the solid itself.
-        
+
         :param solid: Solid object for storage
         :type solid: One of the geant4 solids
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 solid.name = _re.sub(find, replace, solid.name)
 
         if solid.name in incrementRenameDict:
-            return # it's already been transferred in this 'transfer' call, ignore
+            return  # it's already been transferred in this 'transfer' call, ignore
         if solid.name in self.solidDict:
             # we already have a solid called this, so uniquely name it by incrementing it
             newName = solid.name + "_" + str(self.solidNameCount[solid.name])
@@ -212,7 +225,7 @@ class Registry:
 
         self.solidDict[solid.name] = solid
         solid.registry = self
-            
+
         self.solidTypeCountDict[solid.type] += 1
         self.solidNameCount[solid.name] += 1
 
@@ -228,30 +241,33 @@ class Registry:
         else:
             self.logicalVolumeDict[volume.name] = volume
 
-        self.logicalVolumeNameCount[volume.name]  += 1
+        self.logicalVolumeNameCount[volume.name] += 1
         self.volumeTypeCountDict["logicalVolume"] += 1
         # material doesn't exist for an assembly volume, which this function is also used for
         if volume.type == "logical":
             self.materialUsageCount[volume.material.name] += 1
-        elif volume.type == 'assembly':
+        elif volume.type == "assembly":
             self.assemblyVolumeDict[volume.name] = volume
             self.assemblyVolumeNameCount[volume.name] += 1
 
-    def transferLogicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
+    def transferLogicalVolume(
+        self, volume, incrementRenameDict={}, userRenameDict=None
+    ):
         """
         Transfer a logical volume to this registry. Doesn't handle any members'
         transferal - only the logical volume itself.
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 volume.name = _re.sub(find, replace, volume.name)
 
         if volume.name in incrementRenameDict:
-            return # it's already been transferred in this 'transfer' call, ignore
+            return  # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.logicalVolumeDict:
             # we already have an LV called this, so uniquely name it by incrementing it
-            newName =  volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
+            newName = volume.name + "_" + str(self.logicalVolumeNameCount[volume.name])
             self.logicalVolumeNameCount[volume.name] += 1
             incrementRenameDict[newName] = volume.name
             volume.name = newName
@@ -272,7 +288,7 @@ class Registry:
         :type volume: PhysicalVolume
         """
         if volume.name in self.physicalVolumeDict:
-            raise _exceptions.IdenticalNameError(volume.name,"physical volume")
+            raise _exceptions.IdenticalNameError(volume.name, "physical volume")
         else:
             self.physicalVolumeDict[volume.name] = volume
 
@@ -280,18 +296,21 @@ class Registry:
         self.volumeTypeCountDict["physicalVolume"] += 1
         self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
-    def transferPhysicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
+    def transferPhysicalVolume(
+        self, volume, incrementRenameDict={}, userRenameDict=None
+    ):
         """
         Transfer a physical volume to this registry. Doesn't handle any members'
         transferal - only the physical volume itself.
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 volume.name = _re.sub(find, replace, volume.name)
 
         if volume.name in incrementRenameDict:
-            return # it's already been transferred in this 'transfer' call, ignore
+            return  # it's already been transferred in this 'transfer' call, ignore
         if volume.name in self.physicalVolumeDict:
             # we already have a PV called this, so uniquely name it by incrementing it
             newName = volume.name + "_" + str(self.physicalVolumeNameCount[volume.name])
@@ -328,8 +347,9 @@ class Registry:
         Transfer a surface to this registry.
         """
         import re as _re
-        if userRenameDict :
-            for find, replace in userRenameDict.items() :
+
+        if userRenameDict:
+            for find, replace in userRenameDict.items():
                 surface.name = _re.sub(find, replace, surface.name)
 
         if surface.name in incrementRenameDict:
@@ -350,7 +370,7 @@ class Registry:
         self.surfaceNameCount[surface.name] += 1
 
     def addAuxiliary(self, auxiliary):
-            self.userInfo.append(auxiliary)
+        self.userInfo.append(auxiliary)
 
     def addDefine(self, define):
         """
@@ -360,23 +380,26 @@ class Registry:
         :type define: Constant, Quantity, Variable, Matrix
         """
         from pyg4ometry.gdml.Units import units as _units
+
         if define.name in _units:
-            raise ValueError("Redefinition of a constant unit : {}".format(define.name))
+            msg = f"Redefinition of a constant unit : {define.name}"
+            raise ValueError(msg)
 
         if define.name in self.defineDict:
-            raise _exceptions.IdenticalNameError(define.name,"define")
+            raise _exceptions.IdenticalNameError(define.name, "define")
         else:
             self.defineDict[define.name] = define
 
         self.defineNameCount[define.name] += 1
 
-        return define.name # why do we need this?
+        return define.name  # why do we need this?
 
     def transferDefine(self, define, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a single define from another registry to this one. No checking on previous registry or not.
         """
         import re as _re
+
         if userRenameDict:
             for find, replace in userRenameDict.items():
                 define.name = _re.sub(find, replace, define.name)
@@ -390,7 +413,7 @@ class Registry:
             define.name = newName
         else:
             incrementRenameDict[define.name] = define.name
-        
+
         self.defineDict[define.name] = define
         define.registry = self
 
@@ -414,17 +437,37 @@ class Registry:
             for vi in (var.x, var.y, var.z):
                 # any variables inside each component
                 for v in vi.variables():
-                    if v in self._registryOld.defineDict: # only if it's in the other registry
-                        self.transferDefines(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
+                    if (
+                        v in self._registryOld.defineDict
+                    ):  # only if it's in the other registry
+                        self.transferDefines(
+                            self._registryOld.defineDict[v],
+                            incrementRenameDict,
+                            userRenameDict,
+                        )
             if var.name in self._registryOld.defineDict:
                 self.transferDefine(var, incrementRenameDict, userRenameDict)
 
-        elif isinstance(var, _Defines.ScalarBase): # a normal expression
-            for v in var.expr.variables():                 # loop over all variables needed for an expression
-                if v in self._registryOld.defineDict:      # only if it's in the other registry
-                    self.transferDefine(self._registryOld.defineDict[v], incrementRenameDict, userRenameDict)
-            if var.name in self._registryOld.defineDict:      # check if variable is stored in registry, if so need to be transferred
-                self.transferDefine(var, incrementRenameDict, userRenameDict) # probably best to reuse here
+        elif isinstance(var, _Defines.ScalarBase):  # a normal expression
+            for (
+                v
+            ) in (
+                var.expr.variables()
+            ):  # loop over all variables needed for an expression
+                if (
+                    v in self._registryOld.defineDict
+                ):  # only if it's in the other registry
+                    self.transferDefine(
+                        self._registryOld.defineDict[v],
+                        incrementRenameDict,
+                        userRenameDict,
+                    )
+            if (
+                var.name in self._registryOld.defineDict
+            ):  # check if variable is stored in registry, if so need to be transferred
+                self.transferDefine(
+                    var, incrementRenameDict, userRenameDict
+                )  # probably best to reuse here
 
         elif isinstance(var, _Defines.Matrix):
             for v in var.values:
@@ -447,14 +490,21 @@ class Registry:
             self.worldVolume = self.logicalVolumeDict[worldIn]
             self.orderLogicalVolumes(worldIn)
             self.logicalVolumeList.append(worldIn)
-        elif worldIn.__class__.__name__ == "LogicalVolume": # way to test without importing it
+        elif (
+            worldIn.__class__.__name__ == "LogicalVolume"
+        ):  # way to test without importing it
             self.worldName = worldIn.name
             self.worldVolume = worldIn
             if worldIn not in self.logicalVolumeDict:
                 self.logicalVolumeDict[worldIn.name] = worldIn
             self.logicalVolumeList.append(worldIn.name)
         else:
-            raise TypeError("Invalid type ", worldIn.__class__.__name__," - must be str or LogicalVolume")
+            msg = "Invalid type "
+            raise TypeError(
+                msg,
+                worldIn.__class__.__name__,
+                " - must be str or LogicalVolume",
+            )
 
     def setWorldVolume(self, worldIn):
         """
@@ -466,7 +516,9 @@ class Registry:
         for mat in materials:
             if isinstance(mat, _mat.Material) and mat not in materials_ordered:
                 component_objects = [comp[0] for comp in mat.components]
-                materials_ordered = self._orderMaterialList(component_objects, materials_ordered)
+                materials_ordered = self._orderMaterialList(
+                    component_objects, materials_ordered
+                )
                 materials_ordered.append(mat)
         return materials_ordered
 
@@ -476,13 +528,17 @@ class Registry:
         GDML. GDML needs to have the isotopes/elements/materials defined in use order
         """
         for name in list(self.materialDict.keys()):  # Forces registered materials to
-            if isinstance(self.materialDict[name], _mat.Material):           # recursively register their components too
+            if isinstance(
+                self.materialDict[name], _mat.Material
+            ):  # recursively register their components too
                 self.materialDict[name].set_registry(self, dontWarnIfAlreadyAdded=True)
 
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
         elements = []  # isotope of isotopes or element of elements
-        materials = []  # Material do need internal ordering as material of materials is possible
+        materials = (
+            []
+        )  # Material do need internal ordering as material of materials is possible
         for name, obj in self.materialDict.items():
             if isinstance(obj, _mat.Isotope):
                 isotopes.append(obj)
@@ -511,7 +567,13 @@ class Registry:
                 self.orderLogicalVolumes(dlvName, False)
                 self.logicalVolumeList.append(dlvName)
 
-    def addVolumeRecursive(self, volume, collapseAssemblies=False, incrementRenameDict=None, userRenameDict=None):
+    def addVolumeRecursive(
+        self,
+        volume,
+        collapseAssemblies=False,
+        incrementRenameDict=None,
+        userRenameDict=None,
+    ):
         """
         Transfer a volume hierarchy to this registry. Any objects that had a registry set to
         another will be set to this one and will be owned by it effectively.
@@ -527,15 +589,25 @@ class Registry:
         import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
         import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
 
-        if incrementRenameDict is None and collapseAssemblies == True and isinstance(volume, _AssemblyVolume) :
-            raise RuntimeError('Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume')
+        if (
+            incrementRenameDict is None
+            and collapseAssemblies == True
+            and isinstance(volume, _AssemblyVolume)
+        ):
+            msg = "Registry:addVolumeRecursive : cannot collapse assemblies when top level volume is an AssemblyVolume"
+            raise RuntimeError(msg)
 
         if incrementRenameDict is None:
             incrementRenameDict = {}
         self._registryOld = volume.registry
 
         if isinstance(volume, _PhysicalVolume) and volume.type == "placement":
-            self.addVolumeRecursive(volume.logicalVolume, collapseAssemblies, incrementRenameDict, userRenameDict)
+            self.addVolumeRecursive(
+                volume.logicalVolume,
+                collapseAssemblies,
+                incrementRenameDict,
+                userRenameDict,
+            )
 
             # add members from physical volume
             self.transferDefines(volume.position, incrementRenameDict, userRenameDict)
@@ -548,18 +620,29 @@ class Registry:
             # loop over all daughters
             assembliesToRemove = []
             for dv in volume.daughterVolumes:
-                if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume) :
+                if collapseAssemblies and isinstance(dv.logicalVolume, _AssemblyVolume):
                     positions = []
                     rotations = []
                     scales = []
                     names = []
-                    self.addAndCollapseAssemblyVolumeRecursive(dv, volume, positions, rotations, scales, names, incrementRenameDict, userRenameDict)
-                    assembliesToRemove.append( dv.name )
-                else :
-                    self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
+                    self.addAndCollapseAssemblyVolumeRecursive(
+                        dv,
+                        volume,
+                        positions,
+                        rotations,
+                        scales,
+                        names,
+                        incrementRenameDict,
+                        userRenameDict,
+                    )
+                    assembliesToRemove.append(dv.name)
+                else:
+                    self.addVolumeRecursive(
+                        dv, collapseAssemblies, incrementRenameDict, userRenameDict
+                    )
 
             # if we're collapsing assembly volumes, prune any assembly daughters
-            for assemblyName in assembliesToRemove :
+            for assemblyName in assembliesToRemove:
                 assembly = volume._daughterVolumesDict.pop(assemblyName)
                 volume.daughterVolumes.remove(assembly)
 
@@ -572,16 +655,32 @@ class Registry:
         elif isinstance(volume, _AssemblyVolume):
             # loop over all daughters
             for dv in volume.daughterVolumes:
-                self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
+                self.addVolumeRecursive(
+                    dv, collapseAssemblies, incrementRenameDict, userRenameDict
+                )
 
             # add members from logical volume
             self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
         else:
-            print("Volume type not supported yet for merging type='{}'".format(volume.type))
+            print(
+                "Volume type not supported yet for merging type='{}'".format(
+                    volume.type
+                )
+            )
 
         return incrementRenameDict
 
-    def addAndCollapseAssemblyVolumeRecursive(self, assemblyPV, motherVol, positions, rotations, scales, names, incrementRenameDict, userRenameDict):
+    def addAndCollapseAssemblyVolumeRecursive(
+        self,
+        assemblyPV,
+        motherVol,
+        positions,
+        rotations,
+        scales,
+        names,
+        incrementRenameDict,
+        userRenameDict,
+    ):
         """
         Transfer and collapse an AssemblyVolume hierarchy to this registry.
         Daughter volumes are copied, renamed, and attached to the supplied
@@ -603,23 +702,23 @@ class Registry:
         import pyg4ometry.transformation as _transformation
         import pyg4ometry.gdml.Defines as _Defines
 
-        positions.append( assemblyPV.position )
-        rotations.append( assemblyPV.rotation )
-        scales.append( assemblyPV.scale )
-        names.append( assemblyPV.name )
+        positions.append(assemblyPV.position)
+        rotations.append(assemblyPV.rotation)
+        scales.append(assemblyPV.scale)
+        names.append(assemblyPV.name)
 
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
         # info of the assemblies
-        mtra = _np.matrix([[1,0,0],[0,1,0],[0,0,1]])
-        tra = _np.array([0,0,0])
-        for pos, rot, sca in zip(positions, rotations, scales) :
+        mtra = _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        tra = _np.array([0, 0, 0])
+        for pos, rot, sca in zip(positions, rotations, scales):
             assembly_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rot.eval()))
             assembly_pos = _np.array(pos.eval())
-            if sca :
+            if sca:
                 assembly_sca = _np.diag(sca.eval())
-            else :
-                assembly_sca = _np.diag([1,1,1])
+            else:
+                assembly_sca = _np.diag([1, 1, 1])
 
             new_mtra = mtra * assembly_sca * assembly_mrot
             new_tra = (_np.array(mtra.dot(assembly_pos)) + tra)[0]
@@ -631,9 +730,18 @@ class Registry:
         # an assembly) or deal properly with an actual solid placement
         assemblyLV = assemblyPV.logicalVolume
         for dv in assemblyLV.daughterVolumes:
-            if isinstance(dv.logicalVolume, _AssemblyVolume) :
-                self.addAndCollapseAssemblyVolumeRecursive(dv, motherVol, list(positions), list(rotations), list(scales), list(names), incrementRenameDict, userRenameDict)
-            else :
+            if isinstance(dv.logicalVolume, _AssemblyVolume):
+                self.addAndCollapseAssemblyVolumeRecursive(
+                    dv,
+                    motherVol,
+                    list(positions),
+                    list(rotations),
+                    list(scales),
+                    list(names),
+                    incrementRenameDict,
+                    userRenameDict,
+                )
+            else:
                 # we need to copy and rename the volume since we could
                 # potentially end up with many of the same pv (now with
                 # different positions) being attached to the mother volume
@@ -641,20 +749,32 @@ class Registry:
                 names_copy = list(names)
                 names_copy.reverse()
                 dv_copy_name = dv.name
-                for name in names_copy :
-                    dv_copy_name =  name + '_' + dv_copy_name
-                dv_copy = _PhysicalVolume( dv.rotation, dv.position, dv.logicalVolume, dv_copy_name, motherVol, None, dv.copyNumber, False, dv.scale)
+                for name in names_copy:
+                    dv_copy_name = name + "_" + dv_copy_name
+                dv_copy = _PhysicalVolume(
+                    dv.rotation,
+                    dv.position,
+                    dv.logicalVolume,
+                    dv_copy_name,
+                    motherVol,
+                    None,
+                    dv.copyNumber,
+                    False,
+                    dv.scale,
+                )
 
                 # redefine the position and rotation of the daughter volume to
                 # be in the reference frame of the new mother volume, using the
                 # aggregated assembly transforms calculated above and the
                 # transforms of the pv itself
-                dv_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv_copy.rotation.eval()))
+                dv_mrot = _np.linalg.inv(
+                    _transformation.tbxyz2matrix(dv_copy.rotation.eval())
+                )
                 dv_pos = _np.array(dv_copy.position.eval())
-                if dv_copy.scale :
+                if dv_copy.scale:
                     dv_sca = _np.diag(dv_copy.scale.eval())
-                else :
-                    dv_sca = _np.diag([1,1,1])
+                else:
+                    dv_sca = _np.diag([1, 1, 1])
 
                 new_mtra = mtra * dv_sca * dv_mrot
                 new_tra = (_np.array(mtra.dot(dv_pos)) + tra)[0]
@@ -663,11 +783,29 @@ class Registry:
                 new_pos = new_tra.tolist()
 
                 # update the position and rotation information
-                dv_copy.position = _Defines.Position( dv_copy.name + dv_copy.position.name.removeprefix(dv.name), new_pos[0], new_pos[1], new_pos[2],  "mm", self, False )
-                dv_copy.rotation = _Defines.Rotation( dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name), new_rot[0], new_rot[1], new_rot[2], "rad", self, False )
+                dv_copy.position = _Defines.Position(
+                    dv_copy.name + dv_copy.position.name.removeprefix(dv.name),
+                    new_pos[0],
+                    new_pos[1],
+                    new_pos[2],
+                    "mm",
+                    self,
+                    False,
+                )
+                dv_copy.rotation = _Defines.Rotation(
+                    dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name),
+                    new_rot[0],
+                    new_rot[1],
+                    new_rot[2],
+                    "rad",
+                    self,
+                    False,
+                )
 
                 # add this volume recursively to the registry
-                self.addVolumeRecursive(dv_copy, True, incrementRenameDict, userRenameDict)
+                self.addVolumeRecursive(
+                    dv_copy, True, incrementRenameDict, userRenameDict
+                )
 
     def transferSolidDefines(self, solid, incrementRenameDict={}, userRenameDict=None):
         """
@@ -676,19 +814,23 @@ class Registry:
         """
         # TODO make this work for all classes (using update variables method)
 
-        if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection" :
+        if (
+            solid.type == "Subtraction"
+            or solid.type == "Union"
+            or solid.type == "Intersection"
+        ):
             self.transferSolidDefines(solid.obj1, incrementRenameDict, userRenameDict)
             self.transferSolidDefines(solid.obj2, incrementRenameDict, userRenameDict)
-        elif solid.type == "MultiUnion" :
-            for object in solid.objects :
+        elif solid.type == "MultiUnion":
+            for object in solid.objects:
                 self.transferSolidDefines(object, incrementRenameDict, userRenameDict)
 
-        for varName in solid.varNames :
+        for varName in solid.varNames:
             # skip unit variables
             if varName.find("unit") != -1:
                 continue
             # skip slicing variables
-            if varName.find("slice") != -1 and varName.find("pZslices") == -1 :
+            if varName.find("slice") != -1 and varName.find("pZslices") == -1:
                 continue
             # skip stack variables
             if varName.find("stack") != -1:
@@ -701,16 +843,18 @@ class Registry:
                     return flatten(S[0]) + flatten(S[1:])
                 return S[:1] + flatten(S[1:])
 
-            var = getattr(solid,varName)
+            var = getattr(solid, varName)
 
-            if isinstance(var, (int, float, str)):  # int, float, str could not be in registry
+            if isinstance(
+                var, (int, float, str)
+            ):  # int, float, str could not be in registry
                 continue
-            elif isinstance(var,list):              # list of variables
+            elif isinstance(var, list):  # list of variables
                 var = flatten(var)
             else:
-                var = [var]                         # single variable upgraded to list
+                var = [var]  # single variable upgraded to list
 
-            for v in var:                           # loop over variables
+            for v in var:  # loop over variables
                 self.transferDefines(v, incrementRenameDict, userRenameDict)
 
     def volumeTree(self, lvName):
@@ -721,7 +865,11 @@ class Registry:
         """Not sure what this method is used for"""
         solid = self.solidDict[solidName]
 
-        if solid.type == 'union' or solid.type == 'intersecton' or solid.type == 'subtraction':
+        if (
+            solid.type == "union"
+            or solid.type == "intersection"
+            or solid.type == "subtraction"
+        ):
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
 
@@ -736,92 +884,93 @@ class Registry:
         return AnalyseGeometryStructure(self, lv_name, debug, level, df)
 
     def _findDictByName(self, dic, nameFragment):
-        '''
+        """
         Find a object which name matches (or partially matches) nameFragment,
         returns a list of objects
-        '''
+        """
 
         objs = []
 
-        for k in dic :
-            if k.find(nameFragment) != -1 :
+        for k in dic:
+            if k.find(nameFragment) != -1:
                 objs.append(dic[k])
 
         return objs
 
-    def findSolidByName(self, nameFragment = "box"):
-        '''
+    def findSolidByName(self, nameFragment="box"):
+        """
         Find a solid  which name matches (or partially matches) nameFragment,
         returns a list of solids
-        '''
+        """
 
-        return self._findDictByName(self.solidDict,nameFragment)
+        return self._findDictByName(self.solidDict, nameFragment)
 
-    def findMaterialByName(self, nameFragment = "G4_AIR"):
-        '''
+    def findMaterialByName(self, nameFragment="G4_AIR"):
+        """
         Find a material which name matches (or partially matches) nameFragment,
         returns a list of materials
-        '''
+        """
 
-        return self._findDictByName(self.materialDict,nameFragment)
+        return self._findDictByName(self.materialDict, nameFragment)
 
-
-    def findLogicalVolumeByName(self, nameFragment = "World"):
-        '''
+    def findLogicalVolumeByName(self, nameFragment="World"):
+        """
         Find a logical volume  which name matches (or partially matches) nameFragment,
         returns a list of LogicalVolumes
-        '''
+        """
 
-        return self._findDictByName(self.logicalVolumeDict,nameFragment)
+        return self._findDictByName(self.logicalVolumeDict, nameFragment)
 
-
-    def findPhysicalVolumeByame(self,name):
-        '''
+    def findPhysicalVolumeByame(self, name):
+        """
         Find a physical volume  which name matches (or partially matches) nameFragment,
         returns a list of LogicalVolumes
-        '''
+        """
 
-        return self._findDictByName(self.physicalVolumeDict,nameFragment)
+        return self._findDictByName(self.physicalVolumeDict, nameFragment)
+
 
 class GeometryComplexityInformation:
     def __init__(self):
-        self.solids            = _defaultdict(int)
-        self.nDaughtersPerLV   = _defaultdict(int)
-        self.nDaughters        = {}
+        self.solids = _defaultdict(int)
+        self.nDaughtersPerLV = _defaultdict(int)
+        self.nDaughters = {}
         self.booleanDepthCount = _defaultdict(int)
-        self.booleanDepth      = _defaultdict(int)
+        self.booleanDepth = _defaultdict(int)
 
     def printSummary(self, boolDepthLimit=3):
         print("Types of solids")
-        solidsSorted = sorted(self.solids.items(),key=lambda x: x[1], reverse=True)
-        for solidName,number in solidsSorted:
-            print(solidName.ljust(20),':',number)
-        
+        solidsSorted = sorted(self.solids.items(), key=lambda x: x[1], reverse=True)
+        for solidName, number in solidsSorted:
+            print(solidName.ljust(20), ":", number)
+
         print(" ")
-        print("# of daughters".ljust(20),"count")
+        print("# of daughters".ljust(20), "count")
         for nDaughters in sorted(self.nDaughtersPerLV.keys()):
-            print(str(nDaughters).ljust(20), ':', self.nDaughtersPerLV[nDaughters])
+            print(str(nDaughters).ljust(20), ":", self.nDaughtersPerLV[nDaughters])
 
         print(" ")
-        print("Depth of booleans".ljust(20),"count")
+        print("Depth of booleans".ljust(20), "count")
         for boolDepth in sorted(self.booleanDepthCount.keys()):
-            print(str(boolDepth).ljust(20), ':', self.booleanDepthCount[boolDepth])
+            print(str(boolDepth).ljust(20), ":", self.booleanDepthCount[boolDepth])
 
         print(" ")
-        print("Booleans width depth over ",boolDepthLimit)
-        print("Solid name".ljust(40),":","n Booleans")
-        boolDepthSorted = sorted(self.booleanDepth.items(),key=lambda x: x[1], reverse=True)
-        for solidName,boolDepth in boolDepthSorted:
+        print("Booleans width depth over ", boolDepthLimit)
+        print("Solid name".ljust(40), ":", "n Booleans")
+        boolDepthSorted = sorted(
+            self.booleanDepth.items(), key=lambda x: x[1], reverse=True
+        )
+        for solidName, boolDepth in boolDepthSorted:
             if boolDepth > boolDepthLimit:
-                print(solidName.ljust(40),":",boolDepth)
-        
+                print(solidName.ljust(40), ":", boolDepth)
+
 
 def AnalyseGeometryComplexity(logicalVolume):
     """
     Analyse a geometry tree starting from a logical volume.
     Produces an instance of :class:`GeometryComplexityInformation` with
     summary information. Provides:
-    
+
     * count per solid type
     * number of daughters per logical volume
     * dictionary of N daughters for each logical volume name
@@ -840,21 +989,22 @@ def AnalyseGeometryComplexity(logicalVolume):
     result = _UpdateComplexity(logicalVolume, result)
     return result
 
+
 def _UpdateComplexity(lv, info):
-    if lv.type != "assembly" :
+    if lv.type != "assembly":
         info.solids[lv.solid.type] += 1
 
     info.nDaughters[lv.name] = len(lv.daughterVolumes)
-    info.nDaughtersPerLV[len(lv.daughterVolumes)] +=1
+    info.nDaughtersPerLV[len(lv.daughterVolumes)] += 1
 
-    booleanTypes = ['Union', 'Subtraction', 'Intersection']
-    
+    booleanTypes = ["Union", "Subtraction", "Intersection"]
+
     def _CountDaughterBooleanSolids(solid, number=0):
         for solid in [solid.obj1, solid.obj2]:
             if solid.type in booleanTypes:
                 number += 1
                 number = _CountDaughterBooleanSolids(solid, number)
-        return number           
+        return number
 
     if lv.type != "assembly" and lv.solid.type in booleanTypes:
         nBooleans = 1
@@ -865,8 +1015,9 @@ def _UpdateComplexity(lv, info):
     # recurse
     for pv in lv.daughterVolumes:
         info = _UpdateComplexity(pv.logicalVolume, info)
-    
+
     return info
+
 
 def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=None):
     """
@@ -874,28 +1025,48 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
     """
     # do the heavy import only in the function
     import pandas as _pd
-    reg = registry #shortcut
+
+    reg = registry  # shortcut
     if lv_name is None:
         lv_name = reg.getWorldVolume().name
 
     if df is None:
         reg.logicalVolumeList = []
-        df = _pd.DataFrame(columns=['level', 'mother', 'material', 'daughters', 'mother_lv', 'daughters_lv'])
+        df = _pd.DataFrame(
+            columns=[
+                "level",
+                "mother",
+                "material",
+                "daughters",
+                "mother_lv",
+                "daughters_lv",
+            ]
+        )
 
     mother_lv = reg.logicalVolumeDict[lv_name]
     mother = mother_lv.name
     daughters_lv = [daughter.logicalVolume for daughter in mother_lv.daughterVolumes]
     daughters = [daughter.name for daughter in daughters_lv]
-    material = mother_lv.material.name.split('0')[0]
+    material = mother_lv.material.name.split("0")[0]
 
-    df = _pd.concat([df,
-                     _pd.DataFrame.from_records([{'level': level,
-                                                  'mother_lv': mother_lv,
-                                                  'mother': mother,
-                                                  'daughters_lv': daughters_lv,
-                                                  'daughters': daughters,
-                                                  'material': material}])
-                     ], ignore_index=True)
+    df = _pd.concat(
+        [
+            df,
+            _pd.DataFrame.from_records(
+                [
+                    {
+                        "level": level,
+                        "mother_lv": mother_lv,
+                        "mother": mother,
+                        "daughters_lv": daughters_lv,
+                        "daughters": daughters,
+                        "material": material,
+                    }
+                ]
+            ),
+        ],
+        ignore_index=True,
+    )
 
     if debug:
         print("\nlevel:", level)
@@ -914,10 +1085,11 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
 
     return df
 
-def DumpGeometryStructureTree(lv, depth=0) :
-    print(4*(depth-1)*' '+4*'-'+'>'+lv.name)
 
-    for dv in lv.daughterVolumes :
-        print(4*(depth+1)*' '+4*'-'+'>' + dv.name+" (pv)")
+def DumpGeometryStructureTree(lv, depth=0):
+    print(4 * (depth - 1) * " " + 4 * "-" + ">" + lv.name)
 
-        DumpGeometryStructureTree(dv.logicalVolume, depth+3)
+    for dv in lv.daughterVolumes:
+        print(4 * (depth + 1) * " " + 4 * "-" + ">" + dv.name + " (pv)")
+
+        DumpGeometryStructureTree(dv.logicalVolume, depth + 3)

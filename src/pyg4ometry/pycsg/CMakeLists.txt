@@ -1,9 +1,9 @@
-find_package(skbuild)
-find_package(PythonExtensions)
-find_package(Cython)
+include(SkbuildUtils)
 
-project(pycsg)
-# Note: In this case, either one of these arguments may be omitted; their
-# value would have been inferred from that of the other.
-add_cython_target(code core.pyx)
-add_library(core MODULE core.pyx)
+set(_sources
+    core.pyx
+    geom.pyx)
+
+foreach(_source ${_sources})
+  configure_cython_extension(${_source} PACKAGE pycsg)
+endforeach()

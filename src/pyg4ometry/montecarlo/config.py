@@ -1,6 +1,5 @@
-class Config :
-
-    def __init__(self, nHistory = 1, seed = 1 ):
+class Config:
+    def __init__(self, nHistory=1, seed=1):
         self.nHistory = nHistory
         self.seed = seed
 
