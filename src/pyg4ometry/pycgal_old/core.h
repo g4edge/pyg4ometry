@@ -6,26 +6,25 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
-#include "geom.h"
 #include "algo.h"
+#include "geom.h"
 
 namespace py = pybind11;
 
 class CSG {
-protected : 
- 
+protected:
 public:
   SurfaceMesh *_surfacemesh;
   int count;
-  
+
   CSG();
   CSG(py::list &polygons);
   CSG(CSG &csg);
   CSG(SurfaceMesh *mesh);
   ~CSG();
-  CSG* clone();
+  CSG *clone();
 
-  static CSG* fromPolygons(py::list &polygons, bool cgalTest = true);
+  static CSG *fromPolygons(py::list &polygons, bool cgalTest = true);
 
   void read(std::string fileName);
   void write(std::string fileName);
@@ -39,14 +38,14 @@ public:
   void scale(Vector &s);
   void scale(py::list &s);
   void scale(double xs, double ys, double zs);
-  py::list* toVerticesAndPolygons();
+  py::list *toVerticesAndPolygons();
   void toCGALSurfaceMesh(py::list &polygons);
-  CSG* unioN(CSG &csg);
-  CSG* subtract(CSG &csg);
-  CSG* intersect(CSG &csg);
-  CSG* coplanarIntersection(CSG &csg);          // not yet implemented
-  CSG* inverse();
-  SurfaceMesh& getSurfaceMesh();
+  CSG *unioN(CSG &csg);
+  CSG *subtract(CSG &csg);
+  CSG *intersect(CSG &csg);
+  CSG *coplanarIntersection(CSG &csg); // not yet implemented
+  CSG *inverse();
+  SurfaceMesh &getSurfaceMesh();
   int getNumberPolys();
   int vertexCount();
   int polygonCount();

@@ -3,16 +3,15 @@
 
 #include <cmath>
 
-#include <pybind11/pybind11.h>
-#include <pybind11/operators.h>
-#include <pybind11/pytypes.h>
 #include <pybind11/numpy.h>
+#include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/pytypes.h>
 
 namespace py = pybind11;
 
 class Vector {
-protected :
-
+protected:
 public:
   double _x;
   double _y;
@@ -32,7 +31,6 @@ public:
   double get(int i) const;
   void set(int i, double value);
 
-
   Vector operator+(const Vector &v) const;
   Vector operator-(const Vector &v) const;
   Vector operator*(double value) const;
@@ -51,12 +49,10 @@ public:
   Vector transform(const double[3][3]);
   int len();
   std::string toString() const;
-
 };
 
 class Vertex {
 protected:
-
 public:
   Vector _pos;
   Vector _normal;
@@ -69,14 +65,13 @@ public:
   Vertex(py::list pos, py::list normal);
   std::string toString() const;
 
-
   ~Vertex();
-  Vector pos() const ;
+  Vector pos() const;
   Vector normal() const;
 };
 
 class Plane {
- public:
+public:
   double _w;
   Vector _normal;
   Plane();
@@ -95,6 +90,5 @@ public:
   ~Polygon();
   py::list vertices();
 };
-
 
 #endif
