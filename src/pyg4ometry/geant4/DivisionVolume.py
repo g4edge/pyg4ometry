@@ -67,7 +67,9 @@ class DivisionVolume(_PhysicalVolume):
 
         if motherVolume.solid.type != logicalVolume.solid.type:
             msg = f"Can not have divisions with a different solid type than the mother volume. Mother : {motherVolume.solid.type}, Division : {logicalVolume.solid.type}"
-            raise ValueError(msg)
+            raise ValueError(
+                msg
+            )
         if addRegistry:
             registry.addPhysicalVolume(self)
 
@@ -141,7 +143,9 @@ class DivisionVolume(_PhysicalVolume):
     def checkAxis(self, allowed_axes):
         if self.axis not in allowed_axes:
             msg = f"Division along axis {self.axis} not supported for solid {self.logicalVolume.solid.type}"
-            raise ValueError(msg)
+            raise ValueError(
+                msg
+            )
 
     def divideBox(self, offset, width, ndiv):
         allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
@@ -169,15 +173,15 @@ class DivisionVolume(_PhysicalVolume):
             )
 
             if self.axis == self.Axis.kXAxis:
-                solid.pX.expr.expression = str(width)
+                solid.pX.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [v, 0, 0]])
 
             elif self.axis == self.Axis.kYAxis:
-                solid.pY.expr.expression = str(width)
+                solid.pY.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, v, 0]])
 
             elif self.axis == self.Axis.kZAxis:
-                solid.pZ.expr.expression = str(width)
+                solid.pZ.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, v]])
 
             meshes.append(_Mesh(solid))
@@ -227,17 +231,17 @@ class DivisionVolume(_PhysicalVolume):
             )
 
             if self.axis == self.Axis.kZAxis:
-                solid.pDz.expr.expression = str(width)
+                solid.pDz.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, v]])
 
             elif self.axis == self.Axis.kRho:
-                solid.pRMin.expr.expression = str(v)
-                solid.pRMax.expr.expression = str(v + width)
+                solid.pRMin.expression.expressionString = str(v)
+                solid.pRMax.expression.expressionString = str(v + width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
-                solid.pSPhi.expr.expression = str(v)
-                solid.pDPhi.expr.expression = str(width)
+                solid.pSPhi.expression.expressionString = str(v)
+                solid.pDPhi.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             meshes.append(_Mesh(solid))
@@ -301,29 +305,29 @@ class DivisionVolume(_PhysicalVolume):
             )
 
             if self.axis == self.Axis.kZAxis:
-                solid.pRmin1.expr.expression = str(r_i)  # Set the radii
-                solid.pRmax1.expr.expression = str(R_i)
+                solid.pRmin1.expression.expressionString = str(r_i)  # Set the radii
+                solid.pRmax1.expression.expressionString = str(R_i)
                 h_i += width
                 r_i = r1 + h_i * dr / msize
                 R_i = R1 + h_i * dR / msize
-                solid.pRmin2.expr.expression = str(r_i)
-                solid.pRmax2.expr.expression = str(R_i)
-                solid.pDz.expr.expression = str(width)  # Set the slice size
+                solid.pRmin2.expression.expressionString = str(r_i)
+                solid.pRmax2.expression.expressionString = str(R_i)
+                solid.pDz.expression.expressionString = str(width)  # Set the slice size
                 transforms.append([[0, 0, 0], [0, 0, v]])
 
             elif self.axis == self.Axis.kRho:
-                solid.pRmin1.expr.expression = str(v)
-                solid.pRmax1.expr.expression = str(v + width)
+                solid.pRmin1.expression.expressionString = str(v)
+                solid.pRmax1.expression.expressionString = str(v + width)
                 v_2 = (
                     v - (r1 + offset) + (r2 + w_ratio * offset)
                 )  # Transfrom to top starting offset
-                solid.pRmin2.expr.expression = str(v_2)
-                solid.pRmax2.expr.expression = str(v_2 + w_ratio * width)
+                solid.pRmin2.expression.expressionString = str(v_2)
+                solid.pRmax2.expression.expressionString = str(v_2 + w_ratio * width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
-                solid.pSPhi.expr.expression = str(v)
-                solid.pDPhi.expr.expression = str(width)
+                solid.pSPhi.expression.expressionString = str(v)
+                solid.pDPhi.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             meshes.append(_Mesh(solid))
@@ -360,17 +364,17 @@ class DivisionVolume(_PhysicalVolume):
             )
 
             if self.axis == self.Axis.kXAxis:
-                solid.pX.expr.expression = str(width / 2.0)
+                solid.pX.expression.expressionString = str(width / 2.0)
                 transforms.append([[0, 0, 0], [v, 0, 0]])
 
             elif self.axis == self.Axis.kYAxis:
-                solid.pY.expr.expression = str(width / 2.0)
+                solid.pY.expression.expressionString = str(width / 2.0)
                 transforms.append([[0, 0, 0], [v * _np.sin(float(solid.pAlpha)), v, 0]])
 
             elif self.axis == self.Axis.kZAxis:
                 theta = float(solid.pTheta)
                 phi = float(solid.pPhi)
-                solid.pZ.expr.expression = str(width / 2.0)
+                solid.pZ.expression.expressionString = str(width / 2.0)
                 transforms.append(
                     [
                         [0, 0, 0],
@@ -420,24 +424,24 @@ class DivisionVolume(_PhysicalVolume):
                 False,
             )
             if self.axis == self.Axis.kXAxis:
-                solid.pX1.expr.expression = str(width)
-                solid.pX2.expr.expression = str(width)
+                solid.pX1.expression.expressionString = str(width)
+                solid.pX2.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [v, 0, 0]])
 
             elif self.axis == self.Axis.kYAxis:
-                solid.pY1.expr.expression = str(width)
-                solid.pY2.expr.expression = str(width)
+                solid.pY1.expression.expressionString = str(width)
+                solid.pY2.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, v, 0]])
 
             elif self.axis == self.Axis.kZAxis:
-                solid.pX1.expr.expression = str(x_i)
-                solid.pY1.expr.expression = str(y_i)
+                solid.pX1.expression.expressionString = str(x_i)
+                solid.pY1.expression.expressionString = str(y_i)
                 h_i += width
                 x_i = x1 + h_i * dX / msize
                 y_i = y1 + h_i * dY / msize
-                solid.pX2.expr.expression = str(x_i)
-                solid.pY2.expr.expression = str(y_i)
-                solid.pZ.expr.expression = str(width)
+                solid.pX2.expression.expressionString = str(x_i)
+                solid.pY2.expression.expressionString = str(y_i)
+                solid.pZ.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, v]])
 
             meshes.append(_Mesh(solid))
@@ -454,7 +458,9 @@ class DivisionVolume(_PhysicalVolume):
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
             msg = "Cannot construct polycone division with degenerate radii at -Z"
-            raise ValueError(msg)
+            raise ValueError(
+                msg
+            )
 
         if self.axis == self.Axis.kPhi:
             # Always take into account the inner sizes of the solids
@@ -484,7 +490,9 @@ class DivisionVolume(_PhysicalVolume):
                     if offs < 0:
                         if ndiv * width > abs(offs):
                             msg = "Division with user-specified width is only possible between 2 z-planes."
-                            raise ValueError(msg)
+                            raise ValueError(
+                                msg
+                            )
                         zsl_index = i
                         zsl_size = zs
                         break
@@ -532,13 +540,15 @@ class DivisionVolume(_PhysicalVolume):
                     v_2 = w_ratio_i * (v - (r_0 + offset)) + (
                         r_i + w_ratio_i * offset
                     )  # Proprtional increase
-                    solid.pRMin[i].expr.expression = str(v_2)
-                    solid.pRMax[i].expr.expression = str(v_2 + w_ratio_i * width)
+                    solid.pRMin[i].expression.expressionString = str(v_2)
+                    solid.pRMax[i].expression.expressionString = str(
+                        v_2 + w_ratio_i * width
+                    )
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
-                solid.pSPhi.expr.expression = str(v)
-                solid.pDPhi.expr.expression = str(width)
+                solid.pSPhi.expression.expressionString = str(v)
+                solid.pDPhi.expression.expressionString = str(width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kZAxis:
@@ -577,7 +587,9 @@ class DivisionVolume(_PhysicalVolume):
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
             msg = "Cannot construct polyhedra division with degenerate radii at -Z"
-            raise ValueError(msg)
+            raise ValueError(
+                msg
+            )
 
         if self.axis == self.Axis.kPhi:
             # Always take into account the inner sizes of the solids
@@ -609,7 +621,9 @@ class DivisionVolume(_PhysicalVolume):
                     if offs < 0:
                         if ndiv * width > abs(offs):
                             msg = "Division with user-specified width is only possible between 2 z-planes."
-                            raise ValueError(msg)
+                            raise ValueError(
+                                msg
+                            )
                         zsl_index = i
                         zsl_size = zs
                         break
@@ -658,14 +672,16 @@ class DivisionVolume(_PhysicalVolume):
                     v_2 = w_ratio_i * (v - (r_0 + offset)) + (
                         r_i + w_ratio_i * offset
                     )  # Proprtional increase
-                    solid.rInner[i].expr.expression = str(v_2)
-                    solid.rOuter[i].expr.expression = str(v_2 + w_ratio_i * width)
+                    solid.rInner[i].expression.expressionString = str(v_2)
+                    solid.rOuter[i].expression.expressionString = str(
+                        v_2 + w_ratio_i * width
+                    )
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
-                solid.pSPhi.expr.expression = str(v)
-                solid.pDPhi.expr.expression = str(dphi / nsides)
-                solid.numSide.expr.expression = "1"
+                solid.pSPhi.expression.expressionString = str(v)
+                solid.pDPhi.expression.expressionString = str(dphi / nsides)
+                solid.numSide.expression.expressionString = "1"
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kZAxis:
@@ -721,7 +737,9 @@ class DivisionVolume(_PhysicalVolume):
             )
         else:
             msg = f"Division with solid {self.logicalVolume.solid.type} is not supported yet."
-            raise ValueError(msg)
+            raise ValueError(
+                msg
+            )
 
         return [meshes, transforms]
 

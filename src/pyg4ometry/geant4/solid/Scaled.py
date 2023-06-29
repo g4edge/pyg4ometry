@@ -44,7 +44,7 @@ class Scaled(_SolidBase):
 
     def __str__(self):
         return "Scaled : name={} solid={} x={} y={} z={}".format(
-            self.name, floself.solid, float(self.pX), float(self.pY), float(self.pZ)
+            self.name, self.solid, float(self.pX), float(self.pY), float(self.pZ)
         )
 
     def mesh(self):

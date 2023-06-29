@@ -854,16 +854,18 @@ class GdmlExpressionParser(Parser):
             self.state = 96
             _la = self._input.LA(1)
             if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.PI)
-                        | (1 << GdmlExpressionParser.EULER)
-                        | (1 << GdmlExpressionParser.I)
+
+                    ((_la) & ~0x3F) == 0
+                    and (
+                        (1 << _la)
+                        & (
+                            (1 << GdmlExpressionParser.PI)
+                            | (1 << GdmlExpressionParser.EULER)
+                            | (1 << GdmlExpressionParser.I)
+                        )
                     )
-                )
-                != 0
+                    != 0
+
             ):
                 self._errHandler.recoverInline(self)
             else:
@@ -1045,25 +1047,27 @@ class GdmlExpressionParser(Parser):
             self.state = 112
             _la = self._input.LA(1)
             if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.COS)
-                        | (1 << GdmlExpressionParser.SIN)
-                        | (1 << GdmlExpressionParser.TAN)
-                        | (1 << GdmlExpressionParser.ACOS)
-                        | (1 << GdmlExpressionParser.ASIN)
-                        | (1 << GdmlExpressionParser.ATAN)
-                        | (1 << GdmlExpressionParser.LN)
-                        | (1 << GdmlExpressionParser.LOG)
-                        | (1 << GdmlExpressionParser.SQRT)
-                        | (1 << GdmlExpressionParser.EXP)
-                        | (1 << GdmlExpressionParser.POWER)
-                        | (1 << GdmlExpressionParser.ABS)
+
+                    ((_la) & ~0x3F) == 0
+                    and (
+                        (1 << _la)
+                        & (
+                            (1 << GdmlExpressionParser.COS)
+                            | (1 << GdmlExpressionParser.SIN)
+                            | (1 << GdmlExpressionParser.TAN)
+                            | (1 << GdmlExpressionParser.ACOS)
+                            | (1 << GdmlExpressionParser.ASIN)
+                            | (1 << GdmlExpressionParser.ATAN)
+                            | (1 << GdmlExpressionParser.LN)
+                            | (1 << GdmlExpressionParser.LOG)
+                            | (1 << GdmlExpressionParser.SQRT)
+                            | (1 << GdmlExpressionParser.EXP)
+                            | (1 << GdmlExpressionParser.POWER)
+                            | (1 << GdmlExpressionParser.ABS)
+                        )
                     )
-                )
-                != 0
+                    != 0
+
             ):
                 self._errHandler.recoverInline(self)
             else:
@@ -1111,16 +1115,18 @@ class GdmlExpressionParser(Parser):
             self.state = 114
             _la = self._input.LA(1)
             if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.GT)
-                        | (1 << GdmlExpressionParser.LT)
-                        | (1 << GdmlExpressionParser.EQ)
+
+                    ((_la) & ~0x3F) == 0
+                    and (
+                        (1 << _la)
+                        & (
+                            (1 << GdmlExpressionParser.GT)
+                            | (1 << GdmlExpressionParser.LT)
+                            | (1 << GdmlExpressionParser.EQ)
+                        )
                     )
-                )
-                != 0
+                    != 0
+
             ):
                 self._errHandler.recoverInline(self)
             else:
