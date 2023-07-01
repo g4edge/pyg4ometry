@@ -13,13 +13,15 @@ def Test(vis=False, interactive=False):
     semiminor = [10, 0, 0]
     semimajor = [0, 5, 0]
 
-    rec = REC("REC_BODY",
-              face,
-              direction,
-              semiminor,
-              semimajor,
-              transform=Transform(expansion=2.0),
-              flukaregistry=freg)
+    rec = REC(
+        "REC_BODY",
+        face,
+        direction,
+        semiminor,
+        semimajor,
+        transform=Transform(expansion=2.0),
+        flukaregistry=freg,
+    )
 
     z = Zone()
     z.addIntersection(rec)
@@ -39,5 +41,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

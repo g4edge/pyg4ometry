@@ -2,8 +2,8 @@ import logging
 
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import (XZP, YZP, XYP, PLA, RPP, Region, Zone,
-                              FlukaRegistry)
+from pyg4ometry.fluka import XZP, YZP, XYP, PLA, RPP, Region, Zone, FlukaRegistry
+
 
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
@@ -21,16 +21,12 @@ def Test(vis=False, interactive=False):
     xyp = XYP("XYP", faraway, flukaregistry=freg)
     xypsub = XYP("XYPsub", -faraway, flukaregistry=freg)
 
-    pla = PLA("PLA", [1, 1, 1],
-              [faraway, faraway, faraway],
-              flukaregistry=freg)
-    plasub = PLA("PLAsub", [1, 1, 1], [-faraway, -faraway, -faraway],
-                 flukaregistry=freg) 
+    pla = PLA("PLA", [1, 1, 1], [faraway, faraway, faraway], flukaregistry=freg)
+    plasub = PLA(
+        "PLAsub", [1, 1, 1], [-faraway, -faraway, -faraway], flukaregistry=freg
+    )
 
-
-    plaDoesIntersect = PLA("PLAint", [1, 1, 1], [3, 3, 3],
-                           flukaregistry=freg)
-    
+    plaDoesIntersect = PLA("PLAint", [1, 1, 1], [3, 3, 3], flukaregistry=freg)
 
     z = Zone()
     z.addIntersection(rpp)
@@ -38,7 +34,7 @@ def Test(vis=False, interactive=False):
     z.addIntersection(xzp)
     z.addIntersection(yzp)
     z.addIntersection(pla)
-    
+
     z.addIntersection(plaDoesIntersect)
 
     z.addSubtraction(xzpsub)
@@ -58,7 +54,7 @@ def Test(vis=False, interactive=False):
 
     greg = convert.fluka2Geant4(freg)
 
-    assert len(greg.solidDict) == 4 # world, rpp, plaDoesInt, and rpp+plaDoesInt
+    assert len(greg.solidDict) == 4  # world, rpp, plaDoesInt, and rpp+plaDoesInt
 
     greg.getWorldVolume().clipSolid()
 
@@ -69,7 +65,8 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer":v}
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

@@ -19,7 +19,6 @@ def Test(vis=False, interactive=False):
     z.addIntersection(xyp_hi)
     z.addSubtraction(xyp_lo)
 
-
     region = Region("REG_INF")
     region.addZone(z)
 
@@ -37,5 +36,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

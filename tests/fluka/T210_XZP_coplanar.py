@@ -24,7 +24,6 @@ def Test(vis=False, interactive=False):
     yzp_lo2 = YZP("YZP1_BODY2", 5, flukaregistry=freg)
     yzp_hi2 = YZP("YZP2_BODY2", 15.0, flukaregistry=freg)
 
-
     z1 = Zone()
     z2 = Zone()
     z3 = Zone()
@@ -59,7 +58,7 @@ def Test(vis=False, interactive=False):
 
     wlv = greg.getWorldVolume()
 
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -70,5 +69,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

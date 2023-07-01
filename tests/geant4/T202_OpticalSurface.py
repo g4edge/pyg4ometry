@@ -1,7 +1,7 @@
 import os as _os
 
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.gdml   as _gd
+import pyg4ometry.gdml as _gd
 
 
 def Test_OpticalSurface():
@@ -37,13 +37,24 @@ def Test_OpticalSurface():
     air = _g4.MaterialCompound("Air", 1.290e-3, 2, reg)
     air.add_element_massfraction(ne, 0.7)
     air.add_element_massfraction(oe, 0.3)
-    air.addVecProperty("RINDEX", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [1,1,1,1])
+    air.addVecProperty(
+        "RINDEX", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [1, 1, 1, 1]
+    )
 
     water = _g4.MaterialCompound("Water", 1.0, 2, reg)
     water.add_element_massfraction(he, 0.112)
     water.add_element_massfraction(oe, 0.888)
-    water.addVecProperty("RINDEX", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [1.3435,1.344,1.3445,1.345])
-    water.addVecProperty("ABSLENGTH", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [3448,4082,6329,9174], vunit='m')
+    water.addVecProperty(
+        "RINDEX",
+        [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03],
+        [1.3435, 1.344, 1.3445, 1.345],
+    )
+    water.addVecProperty(
+        "ABSLENGTH",
+        [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03],
+        [3448, 4082, 6329, 9174],
+        vunit="m",
+    )
     water.addConstProperty("YIELDRATIO", 0.8)
 
     # solids
@@ -52,8 +63,12 @@ def Test_OpticalSurface():
     tank = _g4.solid.Box("tank", tx, ty, tz, reg, "mm")
     bubble = _g4.solid.Box("bubble", bx, by, bz, reg, "mm")
 
-    opa = _g4.solid.OpticalSurface("AirSurface", finish="0", model="0", surf_type="1", value="1", registry=reg)
-    opw = _g4.solid.OpticalSurface("WaterSurface", finish="3", model="1", surf_type="1", value="0", registry=reg)
+    opa = _g4.solid.OpticalSurface(
+        "AirSurface", finish="0", model="0", surf_type="1", value="1", registry=reg
+    )
+    opw = _g4.solid.OpticalSurface(
+        "WaterSurface", finish="3", model="1", surf_type="1", value="0", registry=reg
+    )
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
@@ -75,8 +90,11 @@ def Test_OpticalSurface():
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(_os.path.join(_os.path.dirname(__file__), "T202_Optical.gdml"))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__), "T201_Optical.gmad"),
-                      "T201_Optical.gdml")
+    w.writeGmadTester(
+        _os.path.join(_os.path.dirname(__file__), "T201_Optical.gmad"),
+        "T201_Optical.gdml",
+    )
+
 
 if __name__ == "__main__":
     Test_OpticalSurface()

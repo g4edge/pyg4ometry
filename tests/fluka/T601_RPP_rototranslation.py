@@ -12,14 +12,12 @@ from pyg4ometry.gdml import Writer
 def Test(vis=False, interactive=False, write=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2("rppTRF",
-                                     [[np.pi/4, np.pi/4, np.pi/4],
-                                      [0, 0, 20]])
+    rtrans = rotoTranslationFromTra2(
+        "rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
+    )
     transform = Transform(rotoTranslation=rtrans)
 
-    rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10,
-              transform=transform,
-              flukaregistry=freg)
+    rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10, transform=transform, flukaregistry=freg)
 
     z = Zone()
     z.addIntersection(rpp)
@@ -44,15 +42,13 @@ def Test(vis=False, interactive=False, write=False):
         filename = os.path.basename(__file__)
         name, _ = os.path.splitext(__file__)
 
-        gdml_name = "{}.gdml".format(name)
-        gmad_name = "{}.gmad".format(name)
+        gdml_name = f"{name}.gdml"
+        gmad_name = f"{name}.gmad"
         w.write(os.path.join(dirname, gdml_name))
         w.writeGMADTesterNoBeamline(os.path.join(dirname, gmad_name), gdml_name)
 
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-    return {"testStatus": True,
-            "logicalVolume": greg.getWorldVolume(),
-            "vtkViewer":v}
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Test(True, True, True)

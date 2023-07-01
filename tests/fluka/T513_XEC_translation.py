@@ -6,10 +6,15 @@ from pyg4ometry.fluka import XEC, YZP, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    xec = XEC("XEC_BODY",
-              20, 20, 20, 10,
-              transform=Transform(translation=[-20, -20, -20]),
-              flukaregistry=freg)
+    xec = XEC(
+        "XEC_BODY",
+        20,
+        20,
+        20,
+        10,
+        transform=Transform(translation=[-20, -20, -20]),
+        flukaregistry=freg,
+    )
 
     yzp_hi = YZP("YZP1_BODY", 20, flukaregistry=freg)
     yzp_lo = YZP("YZP2_BODY", 0, flukaregistry=freg)
@@ -37,5 +42,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

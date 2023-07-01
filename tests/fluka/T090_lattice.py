@@ -4,13 +4,18 @@ import numpy as np
 
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import (RCC, Region, Zone, FlukaRegistry,
-                              RotoTranslation,
-                              RecursiveRotoTranslation,
-                              Transform, Lattice)
+from pyg4ometry.fluka import (
+    RCC,
+    Region,
+    Zone,
+    FlukaRegistry,
+    RotoTranslation,
+    RecursiveRotoTranslation,
+    Transform,
+    Lattice,
+)
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 from pyg4ometry.gdml import Writer
-
 
 
 def Test(vis=False, interactive=False, write=False):
@@ -20,17 +25,25 @@ def Test(vis=False, interactive=False, write=False):
 
     rtrans = RecursiveRotoTranslation(
         "rtrans",
-        [RotoTranslation("rtrans", translation=[0, -20, -300]),
-         RotoTranslation("rtrans", axis="x", azimuth=-45)])
+        [
+            RotoTranslation("rtrans", translation=[0, -20, -300]),
+            RotoTranslation("rtrans", axis="x", azimuth=-45),
+        ],
+    )
 
-    target = RCC("target", [0.0, 0.0, -50.], [0.0, 0.0, 100.], 50.,
-                 flukaregistry=freg)
+    target = RCC(
+        "target", [0.0, 0.0, -50.0], [0.0, 0.0, 100.0], 50.0, flukaregistry=freg
+    )
     ztarget = Zone()
     ztarget.addIntersection(target)
 
-    targRepl = RCC("targRepl", [0.0, 0.0, -50.], [0.0, 0.0, 100.], 50.,
-                   transform=Transform(rotoTranslation=rtrans,
-                                       invertRotoTranslation=True))
+    targRepl = RCC(
+        "targRepl",
+        [0.0, 0.0, -50.0],
+        [0.0, 0.0, 100.0],
+        50.0,
+        transform=Transform(rotoTranslation=rtrans, invertRotoTranslation=True),
+    )
     zrepl = Zone()
     zrepl.addIntersection(targRepl)
 
@@ -38,7 +51,6 @@ def Test(vis=False, interactive=False, write=False):
     targetRegion.addZone(ztarget)
     replicaRegion = Region("REPLICA")
     replicaRegion.addZone(zrepl)
-
 
     lattice = Lattice(replicaRegion, rotoTranslation=rtrans, flukaregistry=freg)
 
@@ -64,16 +76,13 @@ def Test(vis=False, interactive=False, write=False):
         filename = os.path.basename(__file__)
         name, _ = os.path.splitext(__file__)
 
-        gdml_name = "{}.gdml".format(name)
-        gmad_name = "{}.gmad".format(name)
+        gdml_name = f"{name}.gdml"
+        gmad_name = f"{name}.gmad"
         w.write(os.path.join(dirname, gdml_name))
         w.writeGMADTesterNoBeamline(os.path.join(dirname, gmad_name), gdml_name)
 
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-    return {"testStatus": True,
-            "logicalVolume": greg.getWorldVolume(),
-            "vtkViewer":v}
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Test(True, True, True)
-

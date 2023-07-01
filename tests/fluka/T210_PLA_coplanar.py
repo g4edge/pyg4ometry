@@ -7,56 +7,20 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     # Bigger cube.
-    pla_a1 = PLA("PLA_A1_BODY",
-                 [0, 0, 20],
-                 [0, 0, 20],
-                 flukaregistry=freg)
-    pla_a2 = PLA("PLA_A2_BODY",
-                 [0, 0, 20],
-                 [0, 0, 0],
-                 flukaregistry=freg)
-    pla_b1 = PLA("PLA_B1_BODY",
-               [0, 20, 0],
-               [0, 20, 0],
-               flukaregistry=freg)
-    pla_b2 = PLA("PLA_B2_BODY",
-               [0, 20, 0],
-               [0, 0, 0],
-               flukaregistry=freg)
-    pla_c1 = PLA("PLA_C1_BODY",
-               [20, 0, 0],
-               [20, 0, 0],
-               flukaregistry=freg)
-    pla_c2 = PLA("PLA_C2_BODY",
-               [20, 0, 0],
-               [0, 0, 0],
-               flukaregistry=freg)
+    pla_a1 = PLA("PLA_A1_BODY", [0, 0, 20], [0, 0, 20], flukaregistry=freg)
+    pla_a2 = PLA("PLA_A2_BODY", [0, 0, 20], [0, 0, 0], flukaregistry=freg)
+    pla_b1 = PLA("PLA_B1_BODY", [0, 20, 0], [0, 20, 0], flukaregistry=freg)
+    pla_b2 = PLA("PLA_B2_BODY", [0, 20, 0], [0, 0, 0], flukaregistry=freg)
+    pla_c1 = PLA("PLA_C1_BODY", [20, 0, 0], [20, 0, 0], flukaregistry=freg)
+    pla_c2 = PLA("PLA_C2_BODY", [20, 0, 0], [0, 0, 0], flukaregistry=freg)
 
     # smaller cube.
-    pla_d1 = PLA("PLA_D1_BODY",
-                 [0, 0, 20],
-                 [0, 0, 15],
-                 flukaregistry=freg)
-    pla_d2 = PLA("PLA_D2_BODY",
-                 [0, 0, 20],
-                 [0, 0, 5.],
-                 flukaregistry=freg)
-    pla_e1 = PLA("PLA_e1_BODY",
-               [0, 20, 0],
-               [0, 15, 0],
-               flukaregistry=freg)
-    pla_e2 = PLA("PLA_e2_BODY",
-               [0, 20, 0],
-               [0, 5., 0],
-               flukaregistry=freg)
-    pla_f1 = PLA("PLA_f1_BODY",
-               [20, 0, 0],
-               [15, 0, 0],
-               flukaregistry=freg)
-    pla_f2 = PLA("PLA_f2_BODY",
-               [20, 0, 0],
-               [5, 0, 0],
-               flukaregistry=freg)
+    pla_d1 = PLA("PLA_D1_BODY", [0, 0, 20], [0, 0, 15], flukaregistry=freg)
+    pla_d2 = PLA("PLA_D2_BODY", [0, 0, 20], [0, 0, 5.0], flukaregistry=freg)
+    pla_e1 = PLA("PLA_e1_BODY", [0, 20, 0], [0, 15, 0], flukaregistry=freg)
+    pla_e2 = PLA("PLA_e2_BODY", [0, 20, 0], [0, 5.0, 0], flukaregistry=freg)
+    pla_f1 = PLA("PLA_f1_BODY", [20, 0, 0], [15, 0, 0], flukaregistry=freg)
+    pla_f2 = PLA("PLA_f2_BODY", [20, 0, 0], [5, 0, 0], flukaregistry=freg)
 
     z1 = Zone()
     z2 = Zone()
@@ -79,7 +43,6 @@ def Test(vis=False, interactive=False):
     # make hole in box1 with box2
     z1.addSubtraction(z2)
 
-
     region1 = Region("REG_INF1")
     region1.addZone(z1)
 
@@ -91,12 +54,10 @@ def Test(vis=False, interactive=False):
     freg.addRegion(region2)
     freg.assignma("COPPER", region1, region2)
 
-    greg = convert.fluka2Geant4(freg,
-                                withLengthSafety=True,
-                                splitDisjointUnions=False)
+    greg = convert.fluka2Geant4(freg, withLengthSafety=True, splitDisjointUnions=False)
 
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -107,5 +68,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

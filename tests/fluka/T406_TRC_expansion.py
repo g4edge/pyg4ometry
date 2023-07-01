@@ -6,10 +6,15 @@ from pyg4ometry.fluka import TRC, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    trc = TRC("TRC_BODY",
-              [5, 0, 0], [5, 0, 0], 10, 5,
-              transform=Transform(expansion=2.0),
-              flukaregistry=freg)
+    trc = TRC(
+        "TRC_BODY",
+        [5, 0, 0],
+        [5, 0, 0],
+        10,
+        5,
+        transform=Transform(expansion=2.0),
+        flukaregistry=freg,
+    )
     z = Zone()
     z.addIntersection(trc)
     region = Region("TRC_REG")
@@ -28,5 +33,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

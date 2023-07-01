@@ -7,17 +7,13 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     # trivially coplanar:
-    rec1 = REC("REC_BODY1",
-               [0, 0, 0],
-               [20, 0, 0],
-               [0, 0, 5],
-               [0, 10, 0], flukaregistry=freg)
+    rec1 = REC(
+        "REC_BODY1", [0, 0, 0], [20, 0, 0], [0, 0, 5], [0, 10, 0], flukaregistry=freg
+    )
 
-    rec2 = REC("REC_BODY2",
-               [5, 0, 0],
-               [10, 0, 0],
-               [0, 0, 2.5],
-               [0, 5, 0], flukaregistry=freg)
+    rec2 = REC(
+        "REC_BODY2", [5, 0, 0], [10, 0, 0], [0, 0, 2.5], [0, 5, 0], flukaregistry=freg
+    )
 
     z1 = Zone()
     z2 = Zone()
@@ -38,12 +34,10 @@ def Test(vis=False, interactive=False):
     freg.assignma("COPPER", region1, region2)
 
     # default is True, but to be explicit:
-    greg = convert.fluka2Geant4(freg,
-                                withLengthSafety=True,
-                                splitDisjointUnions=False)
+    greg = convert.fluka2Geant4(freg, withLengthSafety=True, splitDisjointUnions=False)
 
     wv = greg.getWorldVolume()
-    wv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -52,8 +46,8 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(wv)
         v.view(interactive=interactive)
 
-
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

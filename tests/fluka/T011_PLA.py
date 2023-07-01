@@ -6,10 +6,7 @@ from pyg4ometry.fluka import PLA, Region, Zone, FlukaRegistry
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    pla1 = PLA("PLA1_BODY",
-               [1, 1, 1],
-               [0, 0.0, 0],
-               flukaregistry=freg)
+    pla1 = PLA("PLA1_BODY", [1, 1, 1], [0, 0.0, 0], flukaregistry=freg)
 
     z1 = Zone()
 
@@ -32,5 +29,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

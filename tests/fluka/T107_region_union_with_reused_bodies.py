@@ -7,8 +7,8 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
     # I pick 20 because that's the length of the axes added below, so
     # verifying the resulting cube is of the correct length is trivial.
-    rpp = RPP("RPP_BODY", 0, 20., 0, 20., 0., 20., flukaregistry=freg)
-    rcc = RCC("RCC_BODY", [0., 0., 20.], [0., 20., 0.], 10., flukaregistry=freg)
+    rpp = RPP("RPP_BODY", 0, 20.0, 0, 20.0, 0.0, 20.0, flukaregistry=freg)
+    rcc = RCC("RCC_BODY", [0.0, 0.0, 20.0], [0.0, 20.0, 0.0], 10.0, flukaregistry=freg)
 
     # RPP is used in the definitions of both zone1 and zone2.
 
@@ -17,7 +17,6 @@ def Test(vis=False, interactive=False):
     z2 = Zone()
     z2.addIntersection(rcc)
     z2.addSubtraction(rpp)
-
 
     region = Region("REG_INF")
     region.addZone(z1)
@@ -36,5 +35,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

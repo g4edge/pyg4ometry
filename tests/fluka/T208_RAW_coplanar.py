@@ -10,19 +10,23 @@ def Test(vis=False, interactive=False):
     # union of two wedeges. with sides equal to 20cm.  The mesh shows
     # the two wedges.
 
-    raw1 = RAW("RAW1_BODY",
-              [0, 0, 0], # vertex position
-              [20, 0, 0], # one transverse side.
-              [0, 0, 20], # length vector.
-              [0, 20, 0], # the other transverse side.
-              flukaregistry=freg)
+    raw1 = RAW(
+        "RAW1_BODY",
+        [0, 0, 0],  # vertex position
+        [20, 0, 0],  # one transverse side.
+        [0, 0, 20],  # length vector.
+        [0, 20, 0],  # the other transverse side.
+        flukaregistry=freg,
+    )
 
-    raw2 = RAW("RAW2_BODY",
-               [5, 5, 5], # vertex position
-               [5, 0, 0], # one transverse side.
-               [0, 0, 5], # length vector.
-               [0, 5, 0], # the other transverse side.
-               flukaregistry=freg)
+    raw2 = RAW(
+        "RAW2_BODY",
+        [5, 5, 5],  # vertex position
+        [5, 0, 0],  # one transverse side.
+        [0, 0, 5],  # length vector.
+        [0, 5, 0],  # the other transverse side.
+        flukaregistry=freg,
+    )
 
     z1 = Zone()
     z1.addIntersection(raw1)
@@ -42,13 +46,10 @@ def Test(vis=False, interactive=False):
     freg.assignma("COPPER", region1, region2)
 
     # default is True, but to be explicit:
-    greg = convert.fluka2Geant4(freg,
-                                withLengthSafety=True,
-                                splitDisjointUnions=False)
-
+    greg = convert.fluka2Geant4(freg, withLengthSafety=True, splitDisjointUnions=False)
 
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -60,5 +61,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

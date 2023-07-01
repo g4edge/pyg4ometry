@@ -12,13 +12,13 @@ def Test(vis=False, interactive=False):
     # verifying the resulting body is of the correct length and radius
     # is trivial.
 
-    rtrans = rotoTranslationFromTra2("xecTRF",
-                                     [[np.pi/4, np.pi/4, np.pi/4],
-                                      [0, 0, 20]])
+    rtrans = rotoTranslationFromTra2(
+        "xecTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
+    )
     transform = Transform(rotoTranslation=rtrans)
-    
+
     # Bigger semi axis is y, smaller is z
-    xec = XEC("XEC_BODY", 0, 0, 20, 10, transform=transform,flukaregistry=freg)
+    xec = XEC("XEC_BODY", 0, 0, 20, 10, transform=transform, flukaregistry=freg)
 
     yzp_hi = YZP("YZP1_BODY", 20, transform=transform, flukaregistry=freg)
     yzp_lo = YZP("YZP2_BODY", 0, transform=transform, flukaregistry=freg)
@@ -46,5 +46,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

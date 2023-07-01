@@ -13,25 +13,36 @@ def Test(vis=False, interactive=False):
     wz = _gd.Constant("wz", "150", reg, True)
 
     # pi         = _gd.Constant("pi","3.1415926",reg,True)
-    ctrmin     = _gd.Constant("trmin", "2.5", reg, True)
-    ctrmax     = _gd.Constant("trmax", "10.0", reg, True)
-    ctz        = _gd.Constant("tz", "110", reg, True)
+    ctrmin = _gd.Constant("trmin", "2.5", reg, True)
+    ctrmax = _gd.Constant("trmax", "10.0", reg, True)
+    ctz = _gd.Constant("tz", "110", reg, True)
     ctstartphi = _gd.Constant("startphi", "0", reg, True)
     ctdeltaphi = _gd.Constant("deltaphi", "1.5*pi", reg, True)
-    ctlowx     = _gd.Constant("ctlowx", "-1", reg, True)
-    ctlowy     = _gd.Constant("ctlowy", "-1", reg, True)
-    ctlowz     = _gd.Constant("ctlowz", "-1", reg, True)
-    cthighx    = _gd.Constant("cthighx", "1", reg, True)
-    cthighy    = _gd.Constant("cthighy", "1", reg, True)
-    cthighz    = _gd.Constant("cthighz", "1", reg, True)
+    ctlowx = _gd.Constant("ctlowx", "-1", reg, True)
+    ctlowy = _gd.Constant("ctlowy", "-1", reg, True)
+    ctlowz = _gd.Constant("ctlowz", "-1", reg, True)
+    cthighx = _gd.Constant("cthighx", "1", reg, True)
+    cthighy = _gd.Constant("cthighy", "1", reg, True)
+    cthighz = _gd.Constant("cthighz", "1", reg, True)
 
     wm = _g4.Material(name="G4_Galactic")
     bm = _g4.Material(name="G4_W")
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    cts = _g4.solid.CutTubs("ts", ctrmin, ctrmax, ctz, ctstartphi, ctdeltaphi,
-                            [ctlowx, ctlowy, ctlowz], [cthighx, cthighy, cthighz], reg, "mm", "rad")
+    cts = _g4.solid.CutTubs(
+        "ts",
+        ctrmin,
+        ctrmax,
+        ctz,
+        ctstartphi,
+        ctdeltaphi,
+        [ctlowx, ctlowy, ctlowz],
+        [cthighx, cthighy, cthighz],
+        reg,
+        "mm",
+        "rad",
+    )
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
@@ -41,7 +52,7 @@ def Test(vis=False, interactive=False):
     ctl.makeSolidTessellated()  # Operation is in-place
 
     # Place the lv as normal
-    ctp = _g4.PhysicalVolume([3.14/2., 0, 0], [0, 0, 0], ctl, "ct_pv1", wl, reg)
+    ctp = _g4.PhysicalVolume([3.14 / 2.0, 0, 0], [0, 0, 0], ctl, "ct_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -50,11 +61,14 @@ def Test(vis=False, interactive=False):
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(_os.path.join(_os.path.dirname(__file__), "T600_LVTessellated.gdml"))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__),"T600_LVTessellated.gmad"),"T600_LVTessellated.gdml")
+    w.writeGmadTester(
+        _os.path.join(_os.path.dirname(__file__), "T600_LVTessellated.gmad"),
+        "T600_LVTessellated.gdml",
+    )
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
-    extent   = wl.extent(includeBoundingSolid=False)
+    extent = wl.extent(includeBoundingSolid=False)
 
     # visualisation
     v = None
@@ -64,7 +78,7 @@ def Test(vis=False, interactive=False):
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume":wl, "vtkViewer":v}
+    return {"testStatus": True, "logicalVolume": wl, "vtkViewer": v}
 
 
 if __name__ == "__main__":

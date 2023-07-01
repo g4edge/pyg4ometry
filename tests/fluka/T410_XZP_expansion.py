@@ -1,15 +1,15 @@
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import (XZP, Region, Zone, FlukaRegistry,
-                              Transform, infinity)
+from pyg4ometry.fluka import XZP, Region, Zone, FlukaRegistry, Transform, infinity
+
 
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     with infinity(30):
-        xzp = XZP("XZP_BODY", 10.0,
-                  transform=Transform(expansion=2.0),
-                  flukaregistry=freg)
+        xzp = XZP(
+            "XZP_BODY", 10.0, transform=Transform(expansion=2.0), flukaregistry=freg
+        )
 
         z = Zone()
         z.addIntersection(xzp)
@@ -32,6 +32,5 @@ def Test(vis=False, interactive=False):
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     Test(True, True)

@@ -8,10 +8,7 @@ def Test(vis=False, interactive=False):
 
     transform = Transform(expansion=2.0)
 
-
-    rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10,
-              flukaregistry=freg,
-              transform=transform)
+    rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10, flukaregistry=freg, transform=transform)
     z = Zone()
     z.addIntersection(rpp)
     region = Region("RPP_REG")
@@ -30,5 +27,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

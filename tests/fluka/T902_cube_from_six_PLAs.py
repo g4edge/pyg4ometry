@@ -7,31 +7,13 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     # Bigger cube.
-    pla_a1 = PLA("PLA_A1_BODY",
-                 [0, 0, 20],
-                 [0, 0, 20],
-                 flukaregistry=freg)
-    pla_a2 = PLA("PLA_A2_BODY",
-                 [0, 0, 20],
-                 [0, 0, 0],
-                 flukaregistry=freg)
-    pla_b1 = PLA("PLA_B1_BODY",
-               [0, 20, 0],
-               [0, 20, 0],
-               flukaregistry=freg)
-    pla_b2 = PLA("PLA_B2_BODY",
-               [0, 20, 0],
-               [0, 0, 0],
-               flukaregistry=freg)
-    pla_c1 = PLA("PLA_C1_BODY",
-               [20, 0, 0],
-               [20, 0, 0],
-               flukaregistry=freg) 
-    pla_c2 = PLA("PLA_C2_BODY",
-               [20, 0, 0],
-               [0, 0, 0],
-               flukaregistry=freg) 
-    
+    pla_a1 = PLA("PLA_A1_BODY", [0, 0, 20], [0, 0, 20], flukaregistry=freg)
+    pla_a2 = PLA("PLA_A2_BODY", [0, 0, 20], [0, 0, 0], flukaregistry=freg)
+    pla_b1 = PLA("PLA_B1_BODY", [0, 20, 0], [0, 20, 0], flukaregistry=freg)
+    pla_b2 = PLA("PLA_B2_BODY", [0, 20, 0], [0, 0, 0], flukaregistry=freg)
+    pla_c1 = PLA("PLA_C1_BODY", [20, 0, 0], [20, 0, 0], flukaregistry=freg)
+    pla_c2 = PLA("PLA_C2_BODY", [20, 0, 0], [0, 0, 0], flukaregistry=freg)
+
     z1 = Zone()
 
     # Box1:
@@ -44,14 +26,12 @@ def Test(vis=False, interactive=False):
 
     region1 = Region("REG_INF1")
     region1.addZone(z1)
-    
+
     freg.addRegion(region1)
 
     freg.assignma("IRON", region1)
 
-    greg = convert.fluka2Geant4(freg,
-                                withLengthSafety=True,
-                                splitDisjointUnions=False)
+    greg = convert.fluka2Geant4(freg, withLengthSafety=True, splitDisjointUnions=False)
 
     wlv = greg.getWorldVolume()
     wlv.checkOverlaps()
@@ -65,5 +45,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

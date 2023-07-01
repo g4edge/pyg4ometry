@@ -1,7 +1,8 @@
 import os as _os
 
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.gdml   as _gd
+import pyg4ometry.gdml as _gd
+
 
 def Test_NIST_Element():
     reg = _g4.Registry()
@@ -14,7 +15,7 @@ def Test_NIST_Element():
     wm = _g4.MaterialPredefined("G4_Galactic", reg)
 
     #######################################################################################
-    bm1 = _g4.nist_material_2geant4Material('G4_H', reg)
+    bm1 = _g4.nist_material_2geant4Material("G4_H", reg)
     #######################################################################################
 
     # solids
@@ -39,5 +40,7 @@ def Test_NIST_Element():
     w = _gd.Writer()
     w.addDetector(reg)
     name = "T204_NIST_Element"
-    w.write(_os.path.join(_os.path.dirname(__file__), name+".gdml"))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__),name+".gmad"),name+".gdml")
+    w.write(_os.path.join(_os.path.dirname(__file__), name + ".gdml"))
+    w.writeGmadTester(
+        _os.path.join(_os.path.dirname(__file__), name + ".gmad"), name + ".gdml"
+    )

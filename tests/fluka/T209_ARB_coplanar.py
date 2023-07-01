@@ -6,20 +6,21 @@ from pyg4ometry.fluka import ARB, Region, Zone, FlukaRegistry, Three, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    vertices = [[0, 0, 0],
-                [20, 0, 0],
-                [10, 20, 0],
-                [0, 20, 0],
-                [0, 0, 20],
-                [20, 0, 20],
-                [10, 20, 20],
-                [0, 20, 20]]
+    vertices = [
+        [0, 0, 0],
+        [20, 0, 0],
+        [10, 20, 0],
+        [0, 20, 0],
+        [0, 0, 20],
+        [20, 0, 20],
+        [10, 20, 20],
+        [0, 20, 20],
+    ]
     facenumbers = [4321, 5678, 2376, 1584, 3487, 1265]
 
     arb = ARB("ARB_BODY", vertices, facenumbers, flukaregistry=freg)
 
-    trans = Transform(expansion=0.5,
-                      translation=[5, 5, 5])
+    trans = Transform(expansion=0.5, translation=[5, 5, 5])
 
     arbInner = ARB("ARB_BODY2", vertices, facenumbers, transform=trans)
 
@@ -42,7 +43,7 @@ def Test(vis=False, interactive=False):
 
     greg = convert.fluka2Geant4(freg)
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -53,5 +54,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

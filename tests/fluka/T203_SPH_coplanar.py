@@ -30,7 +30,7 @@ def Test(vis=False, interactive=False):
     greg = convert.fluka2Geant4(freg, withLengthSafety=True)
 
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -41,5 +41,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

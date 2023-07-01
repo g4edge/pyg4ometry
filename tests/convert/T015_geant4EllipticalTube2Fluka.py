@@ -7,8 +7,7 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis = False, interactive=False, fluka = True) :
-
+def Test(vis=False, interactive=False, fluka=True):
     reg = _g4.Registry()
 
     # defines
@@ -22,8 +21,8 @@ def Test(vis = False, interactive=False, fluka = True) :
     ez = _gd.Constant("ez", "20", reg, True)
 
     # materials
-    wm  = _g4.nist_material_2geant4Material('G4_Galactic')
-    em  = _g4.nist_material_2geant4Material("G4_Fe")
+    wm = _g4.nist_material_2geant4Material("G4_Galactic")
+    em = _g4.nist_material_2geant4Material("G4_Fe")
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
@@ -40,17 +39,25 @@ def Test(vis = False, interactive=False, fluka = True) :
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
 
-    if fluka :
+    if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(_os.path.join(_os.path.dirname(__file__),"T015_geant4EllipticalTube2Fluka.inp"))
+        w.write(
+            _os.path.join(
+                _os.path.dirname(__file__), "T015_geant4EllipticalTube2Fluka.inp"
+            )
+        )
 
     # flair output file
-    f = _fluka.Flair("T015_geant4EllipticalTube2Fluka.inp",extentBB)
-    f.write(_os.path.join(_os.path.dirname(__file__),"T015_geant4EllipticalTube2Fluka.flair"))
+    f = _fluka.Flair("T015_geant4EllipticalTube2Fluka.inp", extentBB)
+    f.write(
+        _os.path.join(
+            _os.path.dirname(__file__), "T015_geant4EllipticalTube2Fluka.flair"
+        )
+    )
 
-    if vis :
+    if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)

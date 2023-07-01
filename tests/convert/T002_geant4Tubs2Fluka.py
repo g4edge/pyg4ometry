@@ -5,8 +5,8 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 
-def Test(vis = True, interactive = False, fluka = True) :
 
+def Test(vis=True, interactive=False, fluka=True):
     # registry
     reg = _g4.Registry()
 
@@ -27,8 +27,8 @@ def Test(vis = True, interactive = False, fluka = True) :
     ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
 
     # materials
-    wm  = _g4.nist_material_2geant4Material('G4_Galactic')
-    bm  = _g4.nist_material_2geant4Material("G4_Fe")
+    wm = _g4.nist_material_2geant4Material("G4_Galactic")
+    bm = _g4.nist_material_2geant4Material("G4_Fe")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
@@ -47,22 +47,23 @@ def Test(vis = True, interactive = False, fluka = True) :
     w.write(_os.path.join(_os.path.dirname(__file__), "T002_geant4Tubs2Fluka.gdml"))
 
     # fluka conversion
-    if fluka :
+    if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(_os.path.join(_os.path.dirname(__file__), "T002_geant4Tubs2Fluka.inp"))
 
     # flair output file
-    f = _fluka.Flair("T002_geant4Tubs2Fluka.inp",extentBB)
+    f = _fluka.Flair("T002_geant4Tubs2Fluka.inp", extentBB)
     f.write(_os.path.join(_os.path.dirname(__file__), "T002_geant4Tubs2Fluka.flair"))
 
-    if vis :
+    if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)
 
-    return {'greg':reg,'freg':freg}
+    return {"greg": reg, "freg": freg}
+
 
 if __name__ == "__main__":
     Test()

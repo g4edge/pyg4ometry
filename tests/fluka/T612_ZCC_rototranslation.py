@@ -12,15 +12,12 @@ def Test(vis=False, interactive=False):
     # verifying the resulting body is of the correct length and radius
     # is trivial.
 
-    rtrans = rotoTranslationFromTra2("zccTRF",
-                                     [[np.pi/4, np.pi/4, np.pi/4],
-                                      [0, 0, 20]])
+    rtrans = rotoTranslationFromTra2(
+        "zccTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
+    )
     transform = Transform(rotoTranslation=rtrans)
-    
 
-    zcc = ZCC("ZCC_BODY", 0, 0, 20,
-              transform=transform,
-              flukaregistry=freg)
+    zcc = ZCC("ZCC_BODY", 0, 0, 20, transform=transform, flukaregistry=freg)
 
     xyp_hi = XYP("XYP1_BODY", 20, transform=transform, flukaregistry=freg)
     xyp_lo = XYP("XYP2_BODY", 0, transform=transform, flukaregistry=freg)
@@ -48,5 +45,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

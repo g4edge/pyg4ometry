@@ -2,12 +2,13 @@ import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import RPP, Region, Zone, FlukaRegistry, Material
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     density = 2.48
     z = 87
-    massNumber = None # i.e. determine it automatically given z.
+    massNumber = None  # i.e. determine it automatically given z.
     fr = Material("FRANCIUM", z, density, massNumber=massNumber, flukaregistry=freg)
     card = fr.toCards()[0]
     assert card.keyword == "MATERIAL"
@@ -17,7 +18,7 @@ def Test(vis=False, interactive=False):
     rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10, flukaregistry=freg)
     zone = Zone()
     zone.addIntersection(rpp)
-    region = Region("RPP_REG") # should this be string or
+    region = Region("RPP_REG")  # should this be string or
 
     # material instance or maybe either?
     region.addZone(zone)
@@ -41,7 +42,8 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer":v}
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

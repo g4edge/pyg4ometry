@@ -5,6 +5,7 @@ from pyg4ometry.fluka import RPP, ZCC, Region, Zone, FlukaRegistry
 # This is same as T105_REGION_SUBZONE_SUBTRACTION.py but with a union
 # as well.
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
@@ -26,7 +27,6 @@ def Test(vis=False, interactive=False):
 
     # Adding zone2 as a subtraction to the first zone.
     z.addSubtraction(z2)
-
 
     z3 = Zone()
     z3.addIntersection(rppunion)
@@ -50,5 +50,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
-    Test(True,True)
+
+if __name__ == "__main__":
+    Test(True, True)

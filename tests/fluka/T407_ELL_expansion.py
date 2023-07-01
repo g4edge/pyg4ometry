@@ -12,12 +12,14 @@ def Test(vis=False, interactive=False):
     focus2 = Three([20, 15, 0])
     length = 20
 
-    ell = ELL("ELL_BODY",
-              focus1,
-              focus2,
-              length,
-              transform=Transform(expansion=2.0),
-              flukaregistry=freg)
+    ell = ELL(
+        "ELL_BODY",
+        focus1,
+        focus2,
+        length,
+        transform=Transform(expansion=2.0),
+        flukaregistry=freg,
+    )
 
     z = Zone()
     z.addIntersection(ell)
@@ -37,5 +39,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

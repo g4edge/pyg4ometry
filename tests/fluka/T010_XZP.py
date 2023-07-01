@@ -2,11 +2,11 @@ import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import XZP, Region, Zone, FlukaRegistry, infinity
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     with infinity(30):
-
         xzp = XZP("XZP_BODY", 20.0, flukaregistry=freg)
 
         z = Zone()
@@ -30,6 +30,5 @@ def Test(vis=False, interactive=False):
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     Test(True, True)

@@ -4,7 +4,7 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials = False):
+def Test(vis=False, interactive=False, writeNISTMaterials=False):
     reg = _g4.Registry()
 
     # defines
@@ -13,21 +13,26 @@ def Test(vis=False, interactive=False, writeNISTMaterials = False):
     wz = _gd.Constant("wz", "5000", reg, True)
 
     p1 = [(-500, 500, 0), (500, 500, 0), (500, -500, 0), (-500, -500, 0)]
-    p2 = [(-1000, 1000, 2000), (1000, 1000, 2000), (1000, -1000, 2000), (-1000, -1000, 2000)]
+    p2 = [
+        (-1000, 1000, 2000),
+        (1000, 1000, 2000),
+        (1000, -1000, 2000),
+        (-1000, -1000, 2000),
+    ]
 
     polygons = [p1, p2]
 
     # materials
-    if writeNISTMaterials :
-        wm = _g4.nist_material_2geant4Material("G4_Galactic",reg)
-        xm = _g4.nist_material_2geant4Material("G4_Fe",reg)
-    else :
+    if writeNISTMaterials:
+        wm = _g4.nist_material_2geant4Material("G4_Galactic", reg)
+        xm = _g4.nist_material_2geant4Material("G4_Fe", reg)
+    else:
         wm = _g4.MaterialPredefined("G4_Galactic")
         xm = _g4.MaterialPredefined("G4_Fe")
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    xtess = _g4.solid.createTessellatedSolid('test', polygons, reg)
+    xtess = _g4.solid.createTessellatedSolid("test", polygons, reg)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
@@ -41,7 +46,10 @@ def Test(vis=False, interactive=False, writeNISTMaterials = False):
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(_os.path.join(_os.path.dirname(__file__), "T033_TessellatedSolid.gdml"))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__), "T033_TessellatedSolid.gmad"), "T033_TessellatedSolid.gdml")
+    w.writeGmadTester(
+        _os.path.join(_os.path.dirname(__file__), "T033_TessellatedSolid.gmad"),
+        "T033_TessellatedSolid.gdml",
+    )
 
     # test __repr__
     str(xtess)

@@ -3,6 +3,7 @@ import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import ZEC, XYP, Region, Zone, FlukaRegistry
 from pyg4ometry.fluka.body import INFINITY
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
     # I pick 20 because that's the length of the axes added below, so
@@ -25,10 +26,9 @@ def Test(vis=False, interactive=False):
     freg.addRegion(region)
     freg.assignma("COPPER", region)
 
-    greg = convert.fluka2Geant4(freg,
-                                withLengthSafety=True,
-                                splitDisjointUnions=False,
-                                minimiseSolids=True)
+    greg = convert.fluka2Geant4(
+        freg, withLengthSafety=True, splitDisjointUnions=False, minimiseSolids=True
+    )
 
     assert greg.solidDict["ZEC_BODY_s"].pDz < INFINITY
 
@@ -41,5 +41,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

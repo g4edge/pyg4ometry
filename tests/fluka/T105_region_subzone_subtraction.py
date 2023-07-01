@@ -41,5 +41,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
-    Test(True,True)
+
+if __name__ == "__main__":
+    Test(True, True)

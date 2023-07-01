@@ -11,10 +11,10 @@ from g4edgetestdata import G4EdgeTestData
 
 _tmptestdir = Path(gettempdir()) / f"pygama-tests-{getuser()}-{uuid.uuid4()!s}"
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'compare/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'features/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'fluka/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'geant4/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "compare/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "features/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "fluka/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "geant4/"))
 
 pytest_plugins = [
     "geant4.test_box",

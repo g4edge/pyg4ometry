@@ -12,21 +12,25 @@ def Test(vis=False, interactive=False):
 
     transform = Transform(translation=[-20, -20, -20])
 
-    raw1 = RAW("RAW1_BODY",
-               [40, 40, 40], # vertex position
-               [-20, 0, 0], # one transverse side.
-               [0, 0, -20], # length vector.
-               [0, -20, 0], # the other transverse side.
-               transform=transform,
-               flukaregistry=freg)
+    raw1 = RAW(
+        "RAW1_BODY",
+        [40, 40, 40],  # vertex position
+        [-20, 0, 0],  # one transverse side.
+        [0, 0, -20],  # length vector.
+        [0, -20, 0],  # the other transverse side.
+        transform=transform,
+        flukaregistry=freg,
+    )
 
-    raw2 = RAW("RAW2_BODY",
-               [20, 20, 20],
-               [20, 0, 0], # one transverse side.
-               [0, 0, 20], # length vector.
-               [0, 20, 0], # the other transverse side.
-               transform=transform,
-               flukaregistry=freg)
+    raw2 = RAW(
+        "RAW2_BODY",
+        [20, 20, 20],
+        [20, 0, 0],  # one transverse side.
+        [0, 0, 20],  # length vector.
+        [0, 20, 0],  # the other transverse side.
+        transform=transform,
+        flukaregistry=freg,
+    )
 
     z1 = Zone()
     z1.addIntersection(raw1)
@@ -51,5 +55,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

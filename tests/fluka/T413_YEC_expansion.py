@@ -10,9 +10,15 @@ def Test(vis=False, interactive=False):
     # is trivial.
 
     # Bigger semi axis is z, smaller is x
-    yec = YEC("YEC_BODY",  2.5, 5, 2.5, 5,
-              transform=Transform(expansion=2.0),
-              flukaregistry=freg)
+    yec = YEC(
+        "YEC_BODY",
+        2.5,
+        5,
+        2.5,
+        5,
+        transform=Transform(expansion=2.0),
+        flukaregistry=freg,
+    )
 
     xzp_hi = XZP("XZP1_BODY", 20, flukaregistry=freg)
     xzp_lo = XZP("XZP2_BODY", 0, flukaregistry=freg)
@@ -40,5 +46,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

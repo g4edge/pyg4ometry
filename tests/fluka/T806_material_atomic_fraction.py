@@ -2,31 +2,32 @@ import os
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry import gdml
-from pyg4ometry.fluka import (RPP, Region,
-                              Zone, FlukaRegistry,
-                              Material, Compound)
+from pyg4ometry.fluka import RPP, Region, Zone, FlukaRegistry, Material, Compound
+
 
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    fr = Material("FRANCIUM", 50,  2, flukaregistry=freg)
+    fr = Material("FRANCIUM", 50, 2, flukaregistry=freg)
     es = Material("EINSTEIN", 100, 8, flukaregistry=freg)
 
     frFrac = 0.5
     frEs = 0.5
 
-    fr2es3 = Compound("Fr2Es3", 7.5,
-                      [(fr, frFrac), (es, frEs)],
-                      fractionType="atomic",
-                      flukaregistry=freg)
+    fr2es3 = Compound(
+        "Fr2Es3",
+        7.5,
+        [(fr, frFrac), (es, frEs)],
+        fractionType="atomic",
+        flukaregistry=freg,
+    )
 
     card = fr2es3.toCards()
-
 
     rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10, flukaregistry=freg)
     zone = Zone()
     zone.addIntersection(rpp)
-    region = Region("RPP_REG") # should this be string or
+    region = Region("RPP_REG")  # should this be string or
 
     # material instance or maybe either?
     region.addZone(zone)
@@ -56,7 +57,6 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-
     w = gdml.Writer()
     w.addDetector(greg)
     gdml_name = "atom.inp".rstrip(".inp") + ".gdml"
@@ -64,8 +64,8 @@ def Test(vis=False, interactive=False):
     w.write(os.path.join(os.path.dirname(__file__), gdml_name))
     w.writeGmadTester(gmad_name, gdml_name)
 
-        
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer":v}
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

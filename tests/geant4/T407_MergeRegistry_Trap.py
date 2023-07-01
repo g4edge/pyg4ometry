@@ -6,11 +6,12 @@ import pyg4ometry.visualisation as _vi
 import T001_Box
 import T007_Trap
 
-def Test(vis = False, interactive = False) :
+
+def Test(vis=False, interactive=False):
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(False,False)["logicalVolume"]
-    l2 = T007_Trap.Test(False,False)["logicalVolume"]
+    l1 = T001_Box.Test(False, False)["logicalVolume"]
+    l2 = T007_Trap.Test(False, False)["logicalVolume"]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)
@@ -20,8 +21,8 @@ def Test(vis = False, interactive = False) :
     ws = _g4.solid.Box("ws", wx0, wy0, wz0, reg0, "mm")
     wl = _g4.LogicalVolume(ws, wm, "wl", reg0)
 
-    p1 = _g4.PhysicalVolume([0,0,0],[-50,0,0], l1, "l1_pv", wl, reg0)
-    p2 = _g4.PhysicalVolume([0,0,0],[ 50,0,0], l2, "l2_pv", wl, reg0)
+    p1 = _g4.PhysicalVolume([0, 0, 0], [-50, 0, 0], l1, "l1_pv", wl, reg0)
+    p2 = _g4.PhysicalVolume([0, 0, 0], [50, 0, 0], l2, "l2_pv", wl, reg0)
 
     reg0.addVolumeRecursive(p1)
     reg0.addVolumeRecursive(p2)
@@ -35,17 +36,18 @@ def Test(vis = False, interactive = False) :
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
-    extent   = wl.extent(includeBoundingSolid=False)
+    extent = wl.extent(includeBoundingSolid=False)
 
     # visualisation
     v = None
-    if vis :
+    if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(reg0.getWorldVolume())
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume":wl, "vtkViewer":v}
+    return {"testStatus": True, "logicalVolume": wl, "vtkViewer": v}
+
 
 if __name__ == "__main__":
     Test()

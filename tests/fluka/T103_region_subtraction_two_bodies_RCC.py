@@ -12,14 +12,14 @@ def Test(vis=False, interactive=False):
     z = Zone()
 
     z.addIntersection(rcc1)
-    z.addSubtraction(rcc2)    
+    z.addSubtraction(rcc2)
     region = Region("RCC_REG")
     region.addZone(z)
     freg.addRegion(region)
     freg.assignma("COPPER", region)
 
     greg = convert.fluka2Geant4(freg)
-    
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -29,10 +29,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)
-
-    
-
-
-    

@@ -12,26 +12,26 @@ def Test(vis=False, interactive=False):
     # tesselated solid.  This is the right hand corkscrew rule.
 
     # Rear face:
-    vertex1 = Three([0.0, 0.0, 0.0])   # lower left corner
-    vertex2 = Three([20.0, 0.0, 0.0])   # lower right corner
+    vertex1 = Three([0.0, 0.0, 0.0])  # lower left corner
+    vertex2 = Three([20.0, 0.0, 0.0])  # lower right corner
     vertex3 = Three([10.0, 20.0, 0.0])  # upper right corner
     vertex4 = Three([0.0, 20.0, 0.0])  # Upper left corner
     face1 = 4321  # clockwise in direction of normal
     # face1 = 1234  # anticlockwise in direction of normal
 
     # Front face:
-    vertex5 =  Three([0.0, 0.0, 20.])  # lower left corner
-    vertex6 = Three([20.0, 0.0, 20.])   # lower right corner
-    vertex7 = Three([10.0, 20.0, 20.])   # upper right corner
-    vertex8 = Three([0.0, 20.0, 20.]) # Upper left corner
+    vertex5 = Three([0.0, 0.0, 20.0])  # lower left corner
+    vertex6 = Three([20.0, 0.0, 20.0])  # lower right corner
+    vertex7 = Three([10.0, 20.0, 20.0])  # upper right corner
+    vertex8 = Three([0.0, 20.0, 20.0])  # Upper left corner
 
-    face2 = 5678 # clockwise in direction of normal
+    face2 = 5678  # clockwise in direction of normal
     # face2 = 8765 # anticlockwise in direction of normal
 
-    face3 = 2376 # right face
-    face4 = 1584 # left face
-    face5 = 3487 # top face
-    face6 = 1265 # bottom face
+    face3 = 2376  # right face
+    face4 = 1584  # left face
+    face5 = 3487  # top face
+    face6 = 1265  # bottom face
 
     # anticlockwise in direction of noraml
     # face3 = 6732 # right face
@@ -39,14 +39,16 @@ def Test(vis=False, interactive=False):
     # face5 = 7843 # top face
     # face6 = 5621 # bottom face
 
-    vertices = [vertex1, vertex2, vertex3, vertex4,
-                vertex5, vertex6, vertex7, vertex8]
+    vertices = [vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8]
     facenumbers = [face1, face2, face3, face4, face5, face6]
 
-    arb = ARB("ARB_BODY",
-              vertices, facenumbers,
-              transform=Transform(expansion=0.5),
-              flukaregistry=freg)
+    arb = ARB(
+        "ARB_BODY",
+        vertices,
+        facenumbers,
+        transform=Transform(expansion=0.5),
+        flukaregistry=freg,
+    )
 
     z = Zone()
     z.addIntersection(arb)
@@ -67,5 +69,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

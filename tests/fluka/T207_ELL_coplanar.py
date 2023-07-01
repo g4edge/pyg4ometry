@@ -9,17 +9,21 @@ def Test(vis=False, interactive=False):
     # ellipsoid with major axes poining in the y direction, total
     # legnth=20, offset in x.
 
-    ell1 = ELL("ELL1_BODY",
-               [20, 5, 0], # focus1
-               [20, 15, 0], # focus2
-               20, # length
-               flukaregistry=freg)
+    ell1 = ELL(
+        "ELL1_BODY",
+        [20, 5, 0],  # focus1
+        [20, 15, 0],  # focus2
+        20,  # length
+        flukaregistry=freg,
+    )
 
-    ell2 = ELL("ELL2_BODY",
-               [20, 7.5, 0], # focus1
-               [20, 12.5, 0], # focus2
-               15, # length
-               flukaregistry=freg)
+    ell2 = ELL(
+        "ELL2_BODY",
+        [20, 7.5, 0],  # focus1
+        [20, 12.5, 0],  # focus2
+        15,  # length
+        flukaregistry=freg,
+    )
 
     z1 = Zone()
     z1.addIntersection(ell1)
@@ -36,7 +40,7 @@ def Test(vis=False, interactive=False):
 
     greg = convert.fluka2Geant4(freg)
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive = False, coplanar = True, debugIO = False)
+    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
     v = None
     if vis:
@@ -47,5 +51,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

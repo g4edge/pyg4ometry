@@ -5,33 +5,38 @@ import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import RAW, Region, Zone, FlukaRegistry, Transform
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2("rawTRF",
-                                     [[np.pi/4, np.pi/4, np.pi/4],
-                                      [0, 0, 20]])
+    rtrans = rotoTranslationFromTra2(
+        "rawTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
+    )
     transform = Transform(rotoTranslation=rtrans)
-    
+
     # What I expect to see in the visualiser is a cube formed by the
     # union of two wedeges. with sides equal to 20cm.  The mesh shows
     # the two wedges.
 
-    raw1 = RAW("RAW1_BODY",
-               [20, 20, 20], # vertex position
-               [-20, 0, 0], # one transverse side.
-               [0, 0, -20], # the other transverse side.
-               [0, -20, 0], # length vector.
-               transform=transform,
-               flukaregistry=freg)
+    raw1 = RAW(
+        "RAW1_BODY",
+        [20, 20, 20],  # vertex position
+        [-20, 0, 0],  # one transverse side.
+        [0, 0, -20],  # the other transverse side.
+        [0, -20, 0],  # length vector.
+        transform=transform,
+        flukaregistry=freg,
+    )
 
-    raw2 = RAW("RAW2_BODY",
-               [0, 0, 0],
-               [20, 0, 0], # one transverse side.
-               [0, 0, 20], # the other transverse side.
-               [0, 20, 0], # length vector.
-               transform=transform,
-               flukaregistry=freg)
+    raw2 = RAW(
+        "RAW2_BODY",
+        [0, 0, 0],
+        [20, 0, 0],  # one transverse side.
+        [0, 0, 20],  # the other transverse side.
+        [0, 20, 0],  # length vector.
+        transform=transform,
+        flukaregistry=freg,
+    )
 
     # better test please...?
 
@@ -58,5 +63,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

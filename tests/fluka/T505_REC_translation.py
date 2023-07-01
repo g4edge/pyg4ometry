@@ -8,22 +8,25 @@ from pyg4ometry.fluka import REC, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    face = [20, 20, 20] # one face is situated at (0, 0, 0).
-    direction = [3, 3, 3] # length pointing from above face in the
-                          # i+j+k direction.
-    semiminor = [0.5, -1, 0.5] # one axis line intercepts the y-axis, length= ~1.22
+    face = [20, 20, 20]  # one face is situated at (0, 0, 0).
+    direction = [3, 3, 3]  # length pointing from above face in the
+    # i+j+k direction.
+    semiminor = [0.5, -1, 0.5]  # one axis line intercepts the y-axis, length= ~1.22
     semiminor_length = np.linalg.norm(semiminor)
     semimajor = np.cross(direction, semiminor)
-    semimajor = 2 * (semiminor_length * semimajor /
-                     np.linalg.norm(semimajor)) # Twice the length of semiminor
+    semimajor = 2 * (
+        semiminor_length * semimajor / np.linalg.norm(semimajor)
+    )  # Twice the length of semiminor
 
-    rec = REC("REC_BODY",
-              face,
-              direction,
-              semiminor,
-              semimajor,
-              transform=Transform(translation=[-20, -20, -20]),
-              flukaregistry=freg)
+    rec = REC(
+        "REC_BODY",
+        face,
+        direction,
+        semiminor,
+        semimajor,
+        transform=Transform(translation=[-20, -20, -20]),
+        flukaregistry=freg,
+    )
 
     z = Zone()
     z.addIntersection(rec)
@@ -43,5 +46,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

@@ -1,9 +1,10 @@
 import os as _os
 
 import pyg4ometry.geant4 as _g4
-import pyg4ometry.gdml   as _gd
+import pyg4ometry.gdml as _gd
 
-def Test_MaterialsRegistry() :
+
+def Test_MaterialsRegistry():
     reg = _g4.Registry()
 
     # defines
@@ -15,13 +16,15 @@ def Test_MaterialsRegistry() :
     wm = _g4.MaterialPredefined("G4_Galactic", reg)
 
     bm1 = _g4.MaterialPredefined("G4_Fe", reg)
-    bm2 = _g4.MaterialSingleElement("iron",26,55.8452,7.874, reg)    # iron at near room temp
+    bm2 = _g4.MaterialSingleElement(
+        "iron", 26, 55.8452, 7.874, reg
+    )  # iron at near room temp
 
-    bm3 = _g4.MaterialCompound("air",1.290e-3,2,reg)
-    ne = _g4.ElementSimple("nitrogen","N",7,14.01, reg)
-    oe = _g4.ElementSimple("oxygen","O",8,16.0, reg)
-    bm3.add_element_massfraction(ne,0.7)
-    bm3.add_element_massfraction(oe,0.3)
+    bm3 = _g4.MaterialCompound("air", 1.290e-3, 2, reg)
+    ne = _g4.ElementSimple("nitrogen", "N", 7, 14.01, reg)
+    oe = _g4.ElementSimple("oxygen", "O", 8, 16.0, reg)
+    bm3.add_element_massfraction(ne, 0.7)
+    bm3.add_element_massfraction(oe, 0.3)
 
     bm3 = _g4.MaterialCompound("water", 1.0, 2, reg)
     he = _g4.ElementSimple("hydrogen", "H", 1, 1.01, reg)
@@ -29,13 +32,13 @@ def Test_MaterialsRegistry() :
     bm3.add_element_natoms(oe, 1)
 
     copper = _g4.MaterialPredefined("G4_Cu", reg)
-    zinc   = _g4.MaterialPredefined("G4_Zn", reg)
-    bm4     = _g4.MaterialCompound("YellowBrass_C26800", 8.14, 2, reg)
+    zinc = _g4.MaterialPredefined("G4_Zn", reg)
+    bm4 = _g4.MaterialCompound("YellowBrass_C26800", 8.14, 2, reg)
     bm4.add_material(copper, 0.67)
     bm4.add_material(zinc, 0.33)
 
     u235 = _g4.Isotope("U235", 92, 235, 235.044, reg)  # Explicitly registered
-    u238 = _g4.Isotope("U238", 92, 238, 238.051) # Not explicitly registered
+    u238 = _g4.Isotope("U238", 92, 238, 238.051)  # Not explicitly registered
     uranium = _g4.ElementIsotopeMixture("uranium", "U", 2, reg)
     uranium.add_isotope(u235, 0.00716)
     uranium.add_isotope(u238, 0.99284)
@@ -60,7 +63,9 @@ def Test_MaterialsRegistry() :
     bl2 = _g4.LogicalVolume(bs, bm2, "bl2", reg)
     bl3 = _g4.LogicalVolume(bs, bm3, "bl3", reg)
     bl4 = _g4.LogicalVolume(bs, bm4, "bl4", reg)  # Material specified by object
-    bl5 = _g4.LogicalVolume(bs, "natural_uranium", "bl5", reg)  # Material specified by name
+    bl5 = _g4.LogicalVolume(
+        bs, "natural_uranium", "bl5", reg
+    )  # Material specified by name
     bl6 = _g4.LogicalVolume(bs, "RadioactiveBrass", "bl6", reg)
 
     bp1 = _g4.PhysicalVolume([0, 0, 0], [40, 0, 0], bl1, "b_pv1", wl, reg)
@@ -81,4 +86,7 @@ def Test_MaterialsRegistry() :
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(_os.path.join(_os.path.dirname(__file__), "T203_MaterialsRegistry.gdml"))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__),"T203_MaterialsRegistry.gmad"),"T203_MaterialsRegistry.gdml")
+    w.writeGmadTester(
+        _os.path.join(_os.path.dirname(__file__), "T203_MaterialsRegistry.gmad"),
+        "T203_MaterialsRegistry.gdml",
+    )

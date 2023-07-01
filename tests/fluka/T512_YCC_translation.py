@@ -2,13 +2,18 @@ import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import YCC, XZP, Region, Zone, FlukaRegistry, Transform
 
+
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    ycc = YCC("YCC_BODY",
-              20, 20, 20,
-              transform=Transform(translation=[-20, -20, -20]),
-              flukaregistry=freg)
+    ycc = YCC(
+        "YCC_BODY",
+        20,
+        20,
+        20,
+        transform=Transform(translation=[-20, -20, -20]),
+        flukaregistry=freg,
+    )
 
     xzp_hi = XZP("XZP1_BODY", 20, flukaregistry=freg)
     xzp_lo = XZP("XZP2_BODY", 0, flukaregistry=freg)
@@ -36,5 +41,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

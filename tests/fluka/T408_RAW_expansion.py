@@ -6,13 +6,15 @@ from pyg4ometry.fluka import RAW, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    raw = RAW("RAW_BODY",
-              [5, 0, 0], # vertex position
-              [5, 0, 0], # one transverse side.
-              [0, 0, 10], # length vector.
-              [0, 10, 0], # the other transverse side.
-              transform=Transform(expansion=2.0),
-              flukaregistry=freg)
+    raw = RAW(
+        "RAW_BODY",
+        [5, 0, 0],  # vertex position
+        [5, 0, 0],  # one transverse side.
+        [0, 0, 10],  # length vector.
+        [0, 10, 0],  # the other transverse side.
+        transform=Transform(expansion=2.0),
+        flukaregistry=freg,
+    )
 
     z = Zone()
     z.addIntersection(raw)
@@ -33,5 +35,6 @@ def Test(vis=False, interactive=False):
 
     return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Test(True, True)

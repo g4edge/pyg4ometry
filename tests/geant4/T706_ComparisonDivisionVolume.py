@@ -1,11 +1,12 @@
 import pyg4ometry
 import pyg4ometry.geant4 as _g4
 
+
 def Test(printOut=False):
     r = _g4.Registry()
 
     tests = pyg4ometry.compare.Tests()
-    
+
     galactic1 = _g4.MaterialPredefined("G4_Galactic", r)
     galactic2 = _g4.MaterialPredefined("G4_Galactic", r)
 
@@ -13,11 +14,12 @@ def Test(printOut=False):
     comp1 = pyg4ometry.compare.materials(galactic1, galactic2, tests)
     if printOut:
         comp1.print()
-    assert(len(comp1) == 0)
+    assert len(comp1) == 0
 
-    #TBC
-    
+    # TBC
+
     return {"teststatus": True}
+
 
 if __name__ == "__main__":
     Test()

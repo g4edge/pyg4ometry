@@ -1,24 +1,25 @@
 import pyg4ometry
 
-def Test() :
+
+def Test():
     s = pyg4ometry.geant4.solid.SolidBase("oldname", "type", None)
 
     # get name
-    name = s.name 
-        
-    # set name 
+    name = s.name
+
+    # set name
     s.name = "newname"
-        
+
     # set name special char
-    try : 
+    try:
         s.name = "newname!"
-    except ValueError :
+    except ValueError:
         pass
 
     # set name first char number
-    try :
+    try:
         s.name = "1newname"
-    except ValueError : 
+    except ValueError:
         pass
 
-    return {"testStatus":True}
+    return {"testStatus": True}
