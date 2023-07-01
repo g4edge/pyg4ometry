@@ -777,7 +777,7 @@ class Registry:
                     dv_sca = _np.diag([1, 1, 1])
 
                 new_mtra = mtra @ dv_sca @ dv_mrot
-                new_tra = mtra @ dv_pos + tra 
+                new_tra = mtra @ dv_pos + tra
 
                 new_rot = _transformation.matrix2tbxyz(_np.linalg.inv(new_mtra))
                 new_pos = new_tra.tolist()

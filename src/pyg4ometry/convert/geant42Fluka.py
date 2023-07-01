@@ -123,7 +123,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
                 [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
             )
         new_mtra = mtra @ pvmrot @ reflection
-        new_tra = mtra @ reflection @ pvtra  + tra
+        new_tra = mtra @ reflection @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
             dv, new_mtra, new_tra, flukaRegistry, flukaNameCount

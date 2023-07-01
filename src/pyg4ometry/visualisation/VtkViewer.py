@@ -577,7 +577,7 @@ class VtkViewer:
 
                 # pv compound transform
                 new_mtra = mtra @ pvmsca @ pvmrot
-                new_tra = _np.array(mtra@pvtra) + tra
+                new_tra = mtra @ pvtra + tra
 
                 if (
                     pv.logicalVolume.type != "assembly"
@@ -664,7 +664,7 @@ class VtkViewer:
 
                     # pv compound transform
                     new_mtra = mtra @ pvmrot
-                    new_tra = _np.array @ pvtra+ tra
+                    new_tra = _np.array @ pvtra + tra
 
                     # TBC - should pv.visOptions be used exclusively?
                     self.addMesh(
