@@ -31,11 +31,11 @@ def flairLoadWriteTest(fileName, vis=True, interactive=False,
     w = _gdml.Writer()
     w.addDetector(greg)
 
-    gdmlFileName = fileName.replace(".inp", ".gdml")
-    gmadFileName  = fileName.replace(".inp", ".gmad")
-
-    w.write(_os.path.join(_os.path.dirname(__file__), gdmlFileName))
-    w.writeGmadTester(_os.path.join(_os.path.dirname(__file__),gmadFileName),gdmlFileName)
+    # TODO write to temporary directory
+    #gdmlFileName = fileName.replace(".inp", ".gdml")
+    #gmadFileName  = fileName.replace(".inp", ".gmad")
+    #w.write(_os.path.join(_os.path.dirname(__file__), gdmlFileName))
+    #w.writeGmadTester(_os.path.join(_os.path.dirname(__file__),gmadFileName),gdmlFileName)
 
     return r.flukaregistry, greg
 
