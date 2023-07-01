@@ -4,11 +4,10 @@ _flukaTemplateFileName = None
 def _getFLUKATemplateFileName():
     global _flukaTemplateFileName
     if _flukaTemplateFileName is None:
-        import pkg_resources
+        import importlib_resources
 
-        _flukaTemplateFileName = pkg_resources.resource_filename(
-            __name__, "flair_template.flair"
-        )
+        _flukaTemplateFileName = importlib_resources.files('pyg4ometry') / 'fluka/flair_template.flair'
+
     return _flukaTemplateFileName
 
 
