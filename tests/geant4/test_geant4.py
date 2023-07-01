@@ -243,36 +243,32 @@ def test_Python_ExceptionIdenticalNameError() :
 # VtkVisualisation
 ##############################
 
-def test_Python_VisualisationVtk_setOpacity():
-    from pyg4ometry.commontest import BoxTest
+def test_Python_VisualisationVtk_setOpacity(simple_box):
 
-    r = BoxTest(False,False)
+    r = simple_box
     v  = r['vtkViewer']
     if v is not None :
         v.setOpacity(0, 0)
         v.setOpacity(0.5,-1)
 
-def test_Python_VisualisationVtk_setWireframe():
-    from pyg4ometry.commontest import BoxTest
+def test_Python_VisualisationVtk_setWireframe(simple_box):
 
-    r = BoxTest(False,False)
+    r = simple_box
     v  = r['vtkViewer']
     if v is not None :
         v.setWireframe()
 
-def test_Python_VisualisationVtk_setSurface():
-    from pyg4ometry.commontest import BoxTest
+def test_Python_VisualisationVtk_setSurface(simple_box):
 
-    r = BoxTest(False,False)
+    r = simple_box
     v  = r['vtkViewer']
     if v is not None :
         v.setSurface()
 
-def test_Python_VisualisationVtk_setWireframe_VisualisationOptions():
-    from pyg4ometry.commontest import BoxTest
+def test_Python_VisualisationVtk_setWireframe_VisualisationOptions(simple_box):
     import pyg4ometry.visualisation.VtkViewer
 
-    r = BoxTest(False,False)
+    r = simple_box
     lv = r['logicalVolume']
     dv = lv.daughterVolumes[0]
     dv.visOptions.representation = "wireframe"
@@ -281,57 +277,50 @@ def test_Python_VisualisationVtk_setWireframe_VisualisationOptions():
     v.addLogicalVolume(lv)
     #v.view(interactive=False)
 
-def test_Python_VisualisationVtk_setOpacityOverlap():
-    from pyg4ometry.commontest import OverlapCoplTest
+def test_Python_VisualisationVtk_setOpacityOverlap(overlap_copl):
 
-    r = OverlapCoplTest(False,False)
+    r = overlap_copl
     v  = r['vtkViewer']
     if v is not None :
         v.setOpacityOverlap(0)
 
-def test_Python_VisualisationVtk_setWireframeOverlap():
-    from pyg4ometry.commontest import OverlapCoplTest
+def test_Python_VisualisationVtk_setWireframeOverlap(overlap_copl):
 
-    r = OverlapCoplTest(False,False)
+    r = overlap_copl
     v  = r['vtkViewer']
     if v is not None :
         v.setWireframeOverlap()
 
-def test_Python_VisualisationVtk_setSurfaceOverlap():
-    from pyg4ometry.commontest.OverlapCopl import OverlapCoplTest
+def test_Python_VisualisationVtk_setSurfaceOverlap(overlap_copl):
 
-    r = OverlapCoplTest(False,False)
+    r = overlap_copl
     v  = r['vtkViewer']
     if v is not None :
         v.setSurfaceOverlap()
 
-def test_Python_VisualisationVtk_setRandomColours():
-    from pyg4ometry.commontest.OverlapCopl import OverlapCoplTest
+def test_Python_VisualisationVtk_setRandomColours(overlap_copl):
 
-    r = OverlapCoplTest(False,False)
+    r = test_overlap_copl
     v  = r['vtkViewer' ]
     if v is not None :
         v.setRandomColours()
 
-def test_Python_VisualisationVtk_RandomColour():
-    from pyg4ometry.commontest import LhcBlmModel as lhc_blm_model
+def test_Python_VisualisationVtk_RandomColour(lhc_blm):
     import pyg4ometry
 
-    wlv = lhc_blm_model.make_lhc_blm()
+    wlv = lhc_blm
     v = pyg4ometry.visualisation.VtkViewerColoured(defaultColour="random")
     v.addLogicalVolume(wlv)
 
-def test_Python_VisualisationVtk_DefaultMaterial():
-    from pyg4ometry.commontest import LhcBlmModel as lhc_blm_model
+def test_Python_VisualisationVtk_DefaultMaterial(lhc_blm):
     import pyg4ometry
-    wlv = lhc_blm_model.make_lhc_blm()
+    wlv = lhc_blm
     v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
     v.addLogicalVolume(wlv)
 
-def test_Python_VisualisationVtk_CustomMaterialColours():
-    from pyg4ometry.commontest import LhcBlmModel as lhc_blm_model
+def test_Python_VisualisationVtk_CustomMaterialColours(lhc_blm):
     import pyg4ometry
-    wlv = lhc_blm_model.make_lhc_blm()
+    wlv = lhc_blm
     colours = lhc_blm_model.materialToColour
     v = pyg4ometry.visualisation.VtkViewerColoured(materialVisOptions=colours)
     v.addLogicalVolume(wlv)
