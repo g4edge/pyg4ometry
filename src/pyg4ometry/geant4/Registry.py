@@ -720,8 +720,8 @@ class Registry:
             else:
                 assembly_sca = _np.diag([1, 1, 1])
 
-            new_mtra = mtra * assembly_sca * assembly_mrot
-            new_tra = (_np.array(mtra.dot(assembly_pos)) + tra)[0]
+            new_mtra = mtra @ assembly_sca @ assembly_mrot
+            new_tra = mtra @ assembly_pos + tra
 
             mtra = new_mtra
             tra = new_tra
@@ -776,8 +776,8 @@ class Registry:
                 else:
                     dv_sca = _np.diag([1, 1, 1])
 
-                new_mtra = mtra * dv_sca * dv_mrot
-                new_tra = (_np.array(mtra.dot(dv_pos)) + tra)[0]
+                new_mtra = mtra @ dv_sca @ dv_mrot
+                new_tra = mtra @ dv_pos + tra 
 
                 new_rot = _transformation.matrix2tbxyz(_np.linalg.inv(new_mtra))
                 new_pos = new_tra.tolist()
