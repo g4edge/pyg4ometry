@@ -82,7 +82,7 @@ def _getPeriodicTable():
         import pandas as pd
         import importlib_resources
 
-        csv = importlib_resources.files('pyg4ometry') / 'convert/periodic-table.csv'
+        csv = importlib_resources.files("pyg4ometry") / "convert/periodic-table.csv"
 
         _periodicTable = pd.read_csv(csv)
     return _periodicTable
