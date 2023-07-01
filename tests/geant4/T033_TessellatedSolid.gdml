@@ -1,0 +1,115 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="5000"/>
+		<constant name="wy" value="5000"/>
+		<constant name="wz" value="5000"/>
+		<position name="test_f0_v0" x="-500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f0_v1" x="500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f0_v2" x="500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f1_v0" x="-500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f1_v1" x="500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f1_v2" x="-500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f2_v0" x="-500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f2_v1" x="-1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f2_v2" x="1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f3_v0" x="-500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f3_v1" x="1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f3_v2" x="500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f4_v0" x="500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f4_v1" x="1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f4_v2" x="1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f5_v0" x="500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f5_v1" x="1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f5_v2" x="500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f6_v0" x="500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f6_v1" x="1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f6_v2" x="-1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f7_v0" x="500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f7_v1" x="-1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f7_v2" x="-500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f8_v0" x="-500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f8_v1" x="-1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f8_v2" x="-1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f9_v0" x="-500.000000000000000" y="-500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f9_v1" x="-1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f9_v2" x="-500.000000000000000" y="500.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="test_f10_v0" x="-1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f10_v1" x="-1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f10_v2" x="1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f11_v0" x="-1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f11_v1" x="1000.000000000000000" y="-1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+		<position name="test_f11_v2" x="1000.000000000000000" y="1000.000000000000000" z="2000.000000000000000" unit="mm"/>
+	</define>
+	<materials>
+		<isotope name="G4_H_1" Z="1" N="1">
+			<atom value="1.007825"/>
+		</isotope>
+		<isotope name="G4_H_2" Z="1" N="2">
+			<atom value="2.014102"/>
+		</isotope>
+		<element name="G4_H" formula="H">
+			<fraction ref="G4_H_1" n="0.999885"/>
+			<fraction ref="G4_H_2" n="0.000115"/>
+		</element>
+		<material name="G4_Galactic" state="gas">
+			<D value="1e-25"/>
+			<fraction ref="G4_H" n="1.0"/>
+		</material>
+		<isotope name="G4_Fe_54" Z="26" N="54">
+			<atom value="53.9396"/>
+		</isotope>
+		<isotope name="G4_Fe_56" Z="26" N="56">
+			<atom value="55.9349"/>
+		</isotope>
+		<isotope name="G4_Fe_57" Z="26" N="57">
+			<atom value="56.9354"/>
+		</isotope>
+		<isotope name="G4_Fe_58" Z="26" N="58">
+			<atom value="57.9333"/>
+		</isotope>
+		<element name="G4_Fe" formula="Fe">
+			<fraction ref="G4_Fe_54" n="0.05845"/>
+			<fraction ref="G4_Fe_56" n="0.91754"/>
+			<fraction ref="G4_Fe_57" n="0.02119"/>
+			<fraction ref="G4_Fe_58" n="0.00282"/>
+		</element>
+		<material name="Material_G4_Fe" state="solid">
+			<D value="7.874"/>
+			<fraction ref="G4_Fe" n="1.0"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<tessellated name="test">
+			<triangular vertex1="test_f0_v0" vertex2="test_f0_v1" vertex3="test_f0_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f1_v0" vertex2="test_f1_v1" vertex3="test_f1_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f2_v0" vertex2="test_f2_v1" vertex3="test_f2_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f3_v0" vertex2="test_f3_v1" vertex3="test_f3_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f4_v0" vertex2="test_f4_v1" vertex3="test_f4_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f5_v0" vertex2="test_f5_v1" vertex3="test_f5_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f6_v0" vertex2="test_f6_v1" vertex3="test_f6_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f7_v0" vertex2="test_f7_v1" vertex3="test_f7_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f8_v0" vertex2="test_f8_v1" vertex3="test_f8_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f9_v0" vertex2="test_f9_v1" vertex3="test_f9_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f10_v0" vertex2="test_f10_v1" vertex3="test_f10_v2" type="ABSOLUTE"/>
+			<triangular vertex1="test_f11_v0" vertex2="test_f11_v1" vertex3="test_f11_v2" type="ABSOLUTE"/>
+		</tessellated>
+	</solids>
+	<structure>
+		<volume name="tess_l">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="test"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="tess_p">
+				<volumeref ref="tess_l"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

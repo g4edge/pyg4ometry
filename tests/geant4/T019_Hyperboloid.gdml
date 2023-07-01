@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="pi" value="3.1415926"/>
+		<constant name="hrmin" value="20"/>
+		<constant name="hrmax" value="30.0"/>
+		<constant name="hz" value="50.0"/>
+		<constant name="hinst" value="0.7"/>
+		<constant name="houtst" value="0.7"/>
+		<constant name="hinst_deg" value="0.7/pi*180"/>
+		<constant name="houtst_deg" value="0.7/pi*180"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<hype name="hs" rmin="hrmin" rmax="hrmax" z="hz" inst="hinst" outst="houtst" lunit="mm" aunit="rad"/>
+		<hype name="hs2" rmin="hrmin" rmax="hrmax" z="hz" inst="hinst" outst="houtst" lunit="cm" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="hl">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="hs"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="h_pv1">
+				<volumeref ref="hl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

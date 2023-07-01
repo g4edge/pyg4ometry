@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="1000"/>
+		<constant name="wy" value="1000"/>
+		<constant name="wz" value="1000"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+		<constant name="pRMin" value="5"/>
+		<constant name="pRMax" value="25"/>
+		<constant name="pDz" value="50"/>
+		<constant name="pSPhi" value="0"/>
+		<constant name="pDPhi" value="2*pi"/>
+		<position name="bp1" x="0.000000000000000" y="0.000000000000000" z="(bx) * (-8.000000000000000)" unit="mm"/>
+		<rotation name="br1" x="0.000000000000000" y="0.000000000000000" z="-0.400000000000000" unit="rad"/>
+		<position name="bp2" x="0.000000000000000" y="0.000000000000000" z="(bx) * (-6.000000000000000)" unit="mm"/>
+		<rotation name="br2" x="0.000000000000000" y="0.000000000000000" z="-0.300000000000000" unit="rad"/>
+		<position name="bp3" x="0.000000000000000" y="0.000000000000000" z="(bx) * (-4.000000000000000)" unit="mm"/>
+		<rotation name="br3" x="0.000000000000000" y="0.000000000000000" z="-0.200000000000000" unit="rad"/>
+		<position name="bp4" x="0.000000000000000" y="0.000000000000000" z="(bx) * (-2.000000000000000)" unit="mm"/>
+		<rotation name="br4" x="0.000000000000000" y="0.000000000000000" z="-0.100000000000000" unit="rad"/>
+		<position name="bp5" x="0.000000000000000" y="0.000000000000000" z="(bx) * (0.000000000000000)" unit="mm"/>
+		<rotation name="br5" x="0.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="rad"/>
+		<position name="bp6" x="0.000000000000000" y="0.000000000000000" z="(bx) * (2.000000000000000)" unit="mm"/>
+		<rotation name="br6" x="0.000000000000000" y="0.000000000000000" z="0.100000000000000" unit="rad"/>
+		<position name="bp7" x="0.000000000000000" y="0.000000000000000" z="(bx) * (4.000000000000000)" unit="mm"/>
+		<rotation name="br7" x="0.000000000000000" y="0.000000000000000" z="0.200000000000000" unit="rad"/>
+		<position name="bp8" x="0.000000000000000" y="0.000000000000000" z="(bx) * (6.000000000000000)" unit="mm"/>
+		<rotation name="br8" x="0.000000000000000" y="0.000000000000000" z="0.300000000000000" unit="rad"/>
+		<position name="bp9" x="0.000000000000000" y="0.000000000000000" z="(bx) * (8.000000000000000)" unit="mm"/>
+		<rotation name="br9" x="0.000000000000000" y="0.000000000000000" z="0.400000000000000" unit="rad"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs" x="(bx) * (20.000000000000000)" y="(by) * (20.000000000000000)" z="(bz) * (20.000000000000000)" lunit="mm"/>
+		<tube name="tsp" rmin="pRMin" rmax="pRMax" z="pDz" startphi="pSPhi" deltaphi="pDPhi" lunit="mm" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="tl2">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="tsp"/>
+		</volume>
+		<volume name="bl1">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="bs"/>
+			<paramvol ncopies="9">
+				<volumeref ref="tl2"/>
+				<parameterised_position_size>
+					<parameters number="1">
+						<positionref ref="bp1"/>
+						<rotationref ref="br1"/>
+						<tube_dimensions InR="0.1" OutR="1.0" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.1" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="2">
+						<positionref ref="bp2"/>
+						<rotationref ref="br2"/>
+						<tube_dimensions InR="0.2" OutR="1.2" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.2" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="3">
+						<positionref ref="bp3"/>
+						<rotationref ref="br3"/>
+						<tube_dimensions InR="0.3" OutR="1.4" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.3" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="4">
+						<positionref ref="bp4"/>
+						<rotationref ref="br4"/>
+						<tube_dimensions InR="0.4" OutR="1.6" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.4" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="5">
+						<positionref ref="bp5"/>
+						<rotationref ref="br5"/>
+						<tube_dimensions InR="0.5" OutR="1.8" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.5" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="6">
+						<positionref ref="bp6"/>
+						<rotationref ref="br6"/>
+						<tube_dimensions InR="0.6" OutR="2.0" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.6" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="7">
+						<positionref ref="bp7"/>
+						<rotationref ref="br7"/>
+						<tube_dimensions InR="0.7" OutR="2.2" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.7" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="8">
+						<positionref ref="bp8"/>
+						<rotationref ref="br8"/>
+						<tube_dimensions InR="0.8" OutR="2.4" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.8" lunit="mm" aunit="rad"/>
+					</parameters>
+					<parameters number="9">
+						<positionref ref="bp9"/>
+						<rotationref ref="br9"/>
+						<tube_dimensions InR="0.9" OutR="2.6" hz="2.5" StartPhi="0" DeltaPhi="2*pi*0.9" lunit="mm" aunit="rad"/>
+					</parameters>
+				</parameterised_position_size>
+			</paramvol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl1"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

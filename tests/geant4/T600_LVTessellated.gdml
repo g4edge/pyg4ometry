@@ -1,0 +1,571 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="150"/>
+		<constant name="wy" value="150"/>
+		<constant name="wz" value="150"/>
+		<constant name="trmin" value="2.5"/>
+		<constant name="trmax" value="10.0"/>
+		<constant name="tz" value="110"/>
+		<constant name="startphi" value="0"/>
+		<constant name="deltaphi" value="1.5*pi"/>
+		<constant name="ctlowx" value="-1"/>
+		<constant name="ctlowy" value="-1"/>
+		<constant name="ctlowz" value="-1"/>
+		<constant name="cthighx" value="1"/>
+		<constant name="cthighy" value="1"/>
+		<constant name="cthighz" value="1"/>
+		<position name="ts_asTesselated_f0_v0" x="10.000000000000000" y="0.000000000000000" z="45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f0_v1" x="2.500000000000000" y="0.000000000000000" z="-57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f0_v2" x="10.000000000000000" y="0.000000000000000" z="-65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f1_v0" x="2.500000000000000" y="0.000000000000000" z="-57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f1_v1" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f1_v2" x="10.000000000000000" y="0.000000000000000" z="-65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f2_v0" x="2.500000000000000" y="0.000000000000000" z="52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f2_v1" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f2_v2" x="2.392350912094116" y="0.725711703300476" z="51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f3_v0" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f3_v1" x="10.000000000000000" y="0.000000000000000" z="45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f3_v2" x="10.000000000000000" y="0.000000000000000" z="-65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f4_v0" x="2.500000000000000" y="0.000000000000000" z="52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f4_v1" x="2.392350912094116" y="0.725711703300476" z="-58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f4_v2" x="2.500000000000000" y="0.000000000000000" z="-57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f5_v0" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f5_v1" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f5_v2" x="2.392350912094116" y="0.725711703300476" z="-58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f6_v0" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f6_v1" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f6_v2" x="2.392350912094116" y="0.725711703300476" z="51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f7_v0" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f7_v1" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f7_v2" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f8_v0" x="2.392350912094116" y="0.725711703300476" z="51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f8_v1" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f8_v2" x="2.392350912094116" y="0.725711703300476" z="-58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f9_v0" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f9_v1" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f9_v2" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f10_v0" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f10_v1" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f10_v2" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f11_v0" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f11_v1" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f11_v2" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f12_v0" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f12_v1" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f12_v2" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f13_v0" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f13_v1" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f13_v2" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f14_v0" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f14_v1" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f14_v2" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f15_v0" x="3.826834440231323" y="9.238795280456543" z="-68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f15_v1" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f15_v2" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f16_v0" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f16_v1" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f16_v2" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f17_v0" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f17_v1" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f17_v2" x="3.826834440231323" y="9.238795280456543" z="-68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f18_v0" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f18_v1" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f18_v2" x="0.245042845606804" y="2.487961769104004" z="52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f19_v0" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f19_v1" x="3.826834440231323" y="9.238795280456543" z="41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f19_v2" x="3.826834440231323" y="9.238795280456543" z="-68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f20_v0" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f20_v1" x="0.245042845606804" y="2.487961769104004" z="-57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f20_v2" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f21_v0" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f21_v1" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f21_v2" x="0.245042845606804" y="2.487961769104004" z="-57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f22_v0" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f22_v1" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f22_v2" x="0.245042845606804" y="2.487961769104004" z="52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f23_v0" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f23_v1" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f23_v2" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f24_v0" x="0.245042845606804" y="2.487961769104004" z="52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f24_v1" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f24_v2" x="0.245042845606804" y="2.487961769104004" z="-57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f25_v0" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f25_v1" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f25_v2" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f26_v0" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f26_v1" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f26_v2" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f27_v0" x="-4.713967323303223" y="8.819212913513184" z="-59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f27_v1" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f27_v2" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f28_v0" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f28_v1" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f28_v2" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f29_v0" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f29_v1" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f29_v2" x="-4.713967323303223" y="8.819212913513184" z="-59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f30_v0" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f30_v1" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f30_v2" x="-1.767766952514648" y="1.767766952514648" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f31_v0" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f31_v1" x="-4.713967323303223" y="8.819212913513184" z="50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f31_v2" x="-4.713967323303223" y="8.819212913513184" z="-59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f32_v0" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f32_v1" x="-1.767766952514648" y="1.767766952514648" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f32_v2" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f33_v0" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f33_v1" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f33_v2" x="-1.767766952514648" y="1.767766952514648" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f34_v0" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f34_v1" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f34_v2" x="-1.767766952514648" y="1.767766952514648" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f35_v0" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f35_v1" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f35_v2" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f36_v0" x="-1.767766952514648" y="1.767766952514648" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f36_v1" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f36_v2" x="-1.767766952514648" y="1.767766952514648" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f37_v0" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f37_v1" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f37_v2" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f38_v0" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f38_v1" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f38_v2" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f39_v0" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f39_v1" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f39_v2" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f40_v0" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f40_v1" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f40_v2" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f41_v0" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f41_v1" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f41_v2" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f42_v0" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f42_v1" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f42_v2" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f43_v0" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f43_v1" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f43_v2" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f44_v0" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f44_v1" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f44_v2" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f45_v0" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f45_v1" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f45_v2" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f46_v0" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f46_v1" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f46_v2" x="-2.309698820114136" y="-0.956708610057831" z="58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f47_v0" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f47_v1" x="-9.951847076416016" y="-0.980171382427216" z="65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f47_v2" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f48_v0" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f48_v1" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f48_v2" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f49_v0" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f49_v1" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f49_v2" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f50_v0" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f50_v1" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f50_v2" x="-2.309698820114136" y="-0.956708610057831" z="58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f51_v0" x="-7.730104446411133" y="-6.343932628631592" z="-40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f51_v1" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f51_v2" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f52_v0" x="-2.309698820114136" y="-0.956708610057831" z="58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f52_v1" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f52_v2" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f53_v0" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f53_v1" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f53_v2" x="-7.730104446411133" y="-6.343932628631592" z="-40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f54_v0" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f54_v1" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f54_v2" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f55_v0" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f55_v1" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f55_v2" x="-7.730104446411133" y="-6.343932628631592" z="-40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f56_v0" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f56_v1" x="-1.388925552368164" y="-2.078674077987671" z="-51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f56_v2" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f57_v0" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f57_v1" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f57_v2" x="-1.388925552368164" y="-2.078674077987671" z="-51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f58_v0" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f58_v1" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f58_v2" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f59_v0" x="-2.902846813201904" y="-9.569403648376465" z="-42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f59_v1" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f59_v2" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f60_v0" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f60_v1" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f60_v2" x="-1.388925552368164" y="-2.078674077987671" z="-51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f61_v0" x="-0.000000000000002" y="-10.000000000000000" z="65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f61_v1" x="-0.000000000000000" y="-2.500000000000000" z="-52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f61_v2" x="-0.000000000000000" y="-2.500000000000000" z="57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f62_v0" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f62_v1" x="-0.000000000000002" y="-10.000000000000000" z="-45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f62_v2" x="-2.902846813201904" y="-9.569403648376465" z="-42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f63_v0" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f63_v1" x="-0.000000000000000" y="-2.500000000000000" z="57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f63_v2" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f64_v0" x="-0.000000000000002" y="-10.000000000000000" z="-45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f64_v1" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f64_v2" x="-2.902846813201904" y="-9.569403648376465" z="-42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f65_v0" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f65_v1" x="-0.000000000000000" y="-2.500000000000000" z="-52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f65_v2" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f66_v0" x="2.500000000000000" y="0.000000000000000" z="-57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f66_v1" x="10.000000000000000" y="0.000000000000000" z="45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f66_v2" x="2.500000000000000" y="0.000000000000000" z="52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f67_v0" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f67_v1" x="2.500000000000000" y="0.000000000000000" z="-57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f67_v2" x="2.392350912094116" y="0.725711703300476" z="-58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f68_v0" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f68_v1" x="2.500000000000000" y="0.000000000000000" z="52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f68_v2" x="10.000000000000000" y="0.000000000000000" z="45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f69_v0" x="10.000000000000000" y="0.000000000000000" z="45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f69_v1" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f69_v2" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f70_v0" x="2.392350912094116" y="0.725711703300476" z="-58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f70_v1" x="2.500000000000000" y="0.000000000000000" z="52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f70_v2" x="2.392350912094116" y="0.725711703300476" z="51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f71_v0" x="9.569403648376465" y="2.902846813201904" z="-67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f71_v1" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f71_v2" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f72_v0" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f72_v1" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f72_v2" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f73_v0" x="9.569403648376465" y="2.902846813201904" z="42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f73_v1" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f73_v2" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f74_v0" x="2.078674077987671" y="1.388925552368164" z="-58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f74_v1" x="2.392350912094116" y="0.725711703300476" z="51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f74_v2" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f75_v0" x="8.314696311950684" y="5.555702209472656" z="-68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f75_v1" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f75_v2" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f76_v0" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f76_v1" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f76_v2" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f77_v0" x="8.314696311950684" y="5.555702209472656" z="41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f77_v1" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f77_v2" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f78_v0" x="1.585983157157898" y="1.932526111602783" z="-58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f78_v1" x="2.078674077987671" y="1.388925552368164" z="51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f78_v2" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f79_v0" x="6.343932628631592" y="7.730104446411133" z="-69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f79_v1" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f79_v2" x="3.826834440231323" y="9.238795280456543" z="-68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f80_v0" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f80_v1" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f80_v2" x="3.826834440231323" y="9.238795280456543" z="41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f81_v0" x="6.343932628631592" y="7.730104446411133" z="40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f81_v1" x="3.826834440231323" y="9.238795280456543" z="-68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f81_v2" x="3.826834440231323" y="9.238795280456543" z="41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f82_v0" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f82_v1" x="1.585983157157898" y="1.932526111602783" z="51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f82_v2" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f83_v0" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f83_v1" x="0.956708610057831" y="2.309698820114136" z="-58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f83_v2" x="0.245042845606804" y="2.487961769104004" z="-57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f84_v0" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f84_v1" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f84_v2" x="3.826834440231323" y="9.238795280456543" z="41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f85_v0" x="3.826834440231323" y="9.238795280456543" z="41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f85_v1" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f85_v2" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f86_v0" x="0.245042845606804" y="2.487961769104004" z="-57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f86_v1" x="0.956708610057831" y="2.309698820114136" z="51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f86_v2" x="0.245042845606804" y="2.487961769104004" z="52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f87_v0" x="0.980171382427216" y="9.951847076416016" z="-65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f87_v1" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f87_v2" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f88_v0" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f88_v1" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f88_v2" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f89_v0" x="0.980171382427216" y="9.951847076416016" z="44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f89_v1" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f89_v2" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f90_v0" x="-0.487725794315338" y="2.451963186264038" z="-56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f90_v1" x="0.245042845606804" y="2.487961769104004" z="52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f90_v2" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f91_v0" x="-1.950903177261353" y="9.807852745056152" z="-62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f91_v1" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f91_v2" x="-4.713967323303223" y="8.819212913513184" z="-59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f92_v0" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f92_v1" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f92_v2" x="-4.713967323303223" y="8.819212913513184" z="50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f93_v0" x="-1.950903177261353" y="9.807852745056152" z="47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f93_v1" x="-4.713967323303223" y="8.819212913513184" z="-59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f93_v2" x="-4.713967323303223" y="8.819212913513184" z="50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f94_v0" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f94_v1" x="-0.487725794315338" y="2.451963186264038" z="53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f94_v2" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f95_v0" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f95_v1" x="-1.178491830825806" y="2.204803228378296" z="-56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f95_v2" x="-1.767766952514648" y="1.767766952514648" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f96_v0" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f96_v1" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f96_v2" x="-4.713967323303223" y="8.819212913513184" z="50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f97_v0" x="-4.713967323303223" y="8.819212913513184" z="50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f97_v1" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f97_v2" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f98_v0" x="-1.767766952514648" y="1.767766952514648" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f98_v1" x="-1.178491830825806" y="2.204803228378296" z="53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f98_v2" x="-1.767766952514648" y="1.767766952514648" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f99_v0" x="-7.071067810058594" y="7.071067810058594" z="-55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f99_v1" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f99_v2" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f100_v0" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f100_v1" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f100_v2" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f101_v0" x="-7.071067810058594" y="7.071067810058594" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f101_v1" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f101_v2" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f102_v0" x="-2.204803228378296" y="1.178491830825806" z="-53.973690032958984" unit="mm"/>
+		<position name="ts_asTesselated_f102_v1" x="-1.767766952514648" y="1.767766952514648" z="55.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f102_v2" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f103_v0" x="-8.819212913513184" y="4.713967323303223" z="-50.894756317138672" unit="mm"/>
+		<position name="ts_asTesselated_f103_v1" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f103_v2" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f104_v0" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f104_v1" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f104_v2" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f105_v0" x="-8.819212913513184" y="4.713967323303223" z="59.105243682861328" unit="mm"/>
+		<position name="ts_asTesselated_f105_v1" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f105_v2" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f106_v0" x="-2.451963186264038" y="0.487725794315338" z="-53.035762786865234" unit="mm"/>
+		<position name="ts_asTesselated_f106_v1" x="-2.204803228378296" y="1.178491830825806" z="56.026309967041016" unit="mm"/>
+		<position name="ts_asTesselated_f106_v2" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f107_v0" x="-9.807852745056152" y="1.950903177261353" z="-47.143051147460938" unit="mm"/>
+		<position name="ts_asTesselated_f107_v1" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f107_v2" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f108_v0" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f108_v1" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f108_v2" x="-9.951847076416016" y="-0.980171382427216" z="65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f109_v0" x="-9.807852745056152" y="1.950903177261353" z="62.856948852539062" unit="mm"/>
+		<position name="ts_asTesselated_f109_v1" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f109_v2" x="-9.951847076416016" y="-0.980171382427216" z="65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f110_v0" x="-2.487961769104004" y="-0.245042845606804" z="-52.266994476318359" unit="mm"/>
+		<position name="ts_asTesselated_f110_v1" x="-2.451963186264038" y="0.487725794315338" z="56.964237213134766" unit="mm"/>
+		<position name="ts_asTesselated_f110_v2" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f111_v0" x="-9.951847076416016" y="-0.980171382427216" z="-44.067981719970703" unit="mm"/>
+		<position name="ts_asTesselated_f111_v1" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f111_v2" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f112_v0" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f112_v1" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f112_v2" x="-9.951847076416016" y="-0.980171382427216" z="65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f113_v0" x="-9.951847076416016" y="-0.980171382427216" z="65.932022094726562" unit="mm"/>
+		<position name="ts_asTesselated_f113_v1" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f113_v2" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f114_v0" x="-2.309698820114136" y="-0.956708610057831" z="-51.733592987060547" unit="mm"/>
+		<position name="ts_asTesselated_f114_v1" x="-2.487961769104004" y="-0.245042845606804" z="57.733005523681641" unit="mm"/>
+		<position name="ts_asTesselated_f114_v2" x="-2.309698820114136" y="-0.956708610057831" z="58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f115_v0" x="-9.238795280456543" y="-3.826834440231323" z="-41.934371948242188" unit="mm"/>
+		<position name="ts_asTesselated_f115_v1" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f115_v2" x="-7.730104446411133" y="-6.343932628631592" z="-40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f116_v0" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f116_v1" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f116_v2" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f117_v0" x="-9.238795280456543" y="-3.826834440231323" z="68.065628051757812" unit="mm"/>
+		<position name="ts_asTesselated_f117_v1" x="-7.730104446411133" y="-6.343932628631592" z="-40.925964355468750" unit="mm"/>
+		<position name="ts_asTesselated_f117_v2" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f118_v0" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f118_v1" x="-2.309698820114136" y="-0.956708610057831" z="58.266407012939453" unit="mm"/>
+		<position name="ts_asTesselated_f118_v2" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f119_v0" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f119_v1" x="-1.932526111602783" y="-1.585983157157898" z="-51.481491088867188" unit="mm"/>
+		<position name="ts_asTesselated_f119_v2" x="-1.388925552368164" y="-2.078674077987671" z="-51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f120_v0" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f120_v1" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f120_v2" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f121_v0" x="-7.730104446411133" y="-6.343932628631592" z="69.074035644531250" unit="mm"/>
+		<position name="ts_asTesselated_f121_v1" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f121_v2" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f122_v0" x="-1.388925552368164" y="-2.078674077987671" z="-51.532402038574219" unit="mm"/>
+		<position name="ts_asTesselated_f122_v1" x="-1.932526111602783" y="-1.585983157157898" z="58.518508911132812" unit="mm"/>
+		<position name="ts_asTesselated_f122_v2" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f123_v0" x="-5.555702209472656" y="-8.314696311950684" z="-41.129600524902344" unit="mm"/>
+		<position name="ts_asTesselated_f123_v1" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f123_v2" x="-2.902846813201904" y="-9.569403648376465" z="-42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f124_v0" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f124_v1" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f124_v2" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f125_v0" x="-5.555702209472656" y="-8.314696311950684" z="68.870399475097656" unit="mm"/>
+		<position name="ts_asTesselated_f125_v1" x="-2.902846813201904" y="-9.569403648376465" z="-42.527748107910156" unit="mm"/>
+		<position name="ts_asTesselated_f125_v2" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f126_v0" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f126_v1" x="-1.388925552368164" y="-2.078674077987671" z="58.467597961425781" unit="mm"/>
+		<position name="ts_asTesselated_f126_v2" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f127_v0" x="-0.000000000000000" y="-2.500000000000000" z="-52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f127_v1" x="-0.000000000000002" y="-10.000000000000000" z="65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f127_v2" x="-0.000000000000002" y="-10.000000000000000" z="-45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f128_v0" x="-0.000000000000002" y="-10.000000000000000" z="-45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f128_v1" x="-0.725711703300476" y="-2.392350912094116" z="-51.881938934326172" unit="mm"/>
+		<position name="ts_asTesselated_f128_v2" x="-0.000000000000000" y="-2.500000000000000" z="-52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f129_v0" x="-0.000000000000000" y="-2.500000000000000" z="57.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f129_v1" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f129_v2" x="-0.000000000000002" y="-10.000000000000000" z="65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f130_v0" x="-2.902846813201904" y="-9.569403648376465" z="67.472251892089844" unit="mm"/>
+		<position name="ts_asTesselated_f130_v1" x="-0.000000000000002" y="-10.000000000000000" z="-45.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f130_v2" x="-0.000000000000002" y="-10.000000000000000" z="65.000000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f131_v0" x="-0.000000000000000" y="-2.500000000000000" z="-52.500000000000000" unit="mm"/>
+		<position name="ts_asTesselated_f131_v1" x="-0.725711703300476" y="-2.392350912094116" z="58.118061065673828" unit="mm"/>
+		<position name="ts_asTesselated_f131_v2" x="-0.000000000000000" y="-2.500000000000000" z="57.500000000000000" unit="mm"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<cutTube name="ts" z="tz" rmin="trmin" rmax="trmax" startphi="startphi" deltaphi="deltaphi" lowX="ctlowx" lowY="ctlowy" lowZ="ctlowz" highX="cthighx" highY="cthighy" highZ="cthighz" lunit="mm" aunit="rad"/>
+		<tessellated name="ts_asTesselated">
+			<triangular vertex1="ts_asTesselated_f0_v0" vertex2="ts_asTesselated_f0_v1" vertex3="ts_asTesselated_f0_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f1_v0" vertex2="ts_asTesselated_f1_v1" vertex3="ts_asTesselated_f1_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f2_v0" vertex2="ts_asTesselated_f2_v1" vertex3="ts_asTesselated_f2_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f3_v0" vertex2="ts_asTesselated_f3_v1" vertex3="ts_asTesselated_f3_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f4_v0" vertex2="ts_asTesselated_f4_v1" vertex3="ts_asTesselated_f4_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f5_v0" vertex2="ts_asTesselated_f5_v1" vertex3="ts_asTesselated_f5_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f6_v0" vertex2="ts_asTesselated_f6_v1" vertex3="ts_asTesselated_f6_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f7_v0" vertex2="ts_asTesselated_f7_v1" vertex3="ts_asTesselated_f7_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f8_v0" vertex2="ts_asTesselated_f8_v1" vertex3="ts_asTesselated_f8_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f9_v0" vertex2="ts_asTesselated_f9_v1" vertex3="ts_asTesselated_f9_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f10_v0" vertex2="ts_asTesselated_f10_v1" vertex3="ts_asTesselated_f10_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f11_v0" vertex2="ts_asTesselated_f11_v1" vertex3="ts_asTesselated_f11_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f12_v0" vertex2="ts_asTesselated_f12_v1" vertex3="ts_asTesselated_f12_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f13_v0" vertex2="ts_asTesselated_f13_v1" vertex3="ts_asTesselated_f13_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f14_v0" vertex2="ts_asTesselated_f14_v1" vertex3="ts_asTesselated_f14_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f15_v0" vertex2="ts_asTesselated_f15_v1" vertex3="ts_asTesselated_f15_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f16_v0" vertex2="ts_asTesselated_f16_v1" vertex3="ts_asTesselated_f16_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f17_v0" vertex2="ts_asTesselated_f17_v1" vertex3="ts_asTesselated_f17_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f18_v0" vertex2="ts_asTesselated_f18_v1" vertex3="ts_asTesselated_f18_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f19_v0" vertex2="ts_asTesselated_f19_v1" vertex3="ts_asTesselated_f19_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f20_v0" vertex2="ts_asTesselated_f20_v1" vertex3="ts_asTesselated_f20_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f21_v0" vertex2="ts_asTesselated_f21_v1" vertex3="ts_asTesselated_f21_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f22_v0" vertex2="ts_asTesselated_f22_v1" vertex3="ts_asTesselated_f22_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f23_v0" vertex2="ts_asTesselated_f23_v1" vertex3="ts_asTesselated_f23_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f24_v0" vertex2="ts_asTesselated_f24_v1" vertex3="ts_asTesselated_f24_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f25_v0" vertex2="ts_asTesselated_f25_v1" vertex3="ts_asTesselated_f25_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f26_v0" vertex2="ts_asTesselated_f26_v1" vertex3="ts_asTesselated_f26_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f27_v0" vertex2="ts_asTesselated_f27_v1" vertex3="ts_asTesselated_f27_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f28_v0" vertex2="ts_asTesselated_f28_v1" vertex3="ts_asTesselated_f28_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f29_v0" vertex2="ts_asTesselated_f29_v1" vertex3="ts_asTesselated_f29_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f30_v0" vertex2="ts_asTesselated_f30_v1" vertex3="ts_asTesselated_f30_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f31_v0" vertex2="ts_asTesselated_f31_v1" vertex3="ts_asTesselated_f31_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f32_v0" vertex2="ts_asTesselated_f32_v1" vertex3="ts_asTesselated_f32_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f33_v0" vertex2="ts_asTesselated_f33_v1" vertex3="ts_asTesselated_f33_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f34_v0" vertex2="ts_asTesselated_f34_v1" vertex3="ts_asTesselated_f34_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f35_v0" vertex2="ts_asTesselated_f35_v1" vertex3="ts_asTesselated_f35_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f36_v0" vertex2="ts_asTesselated_f36_v1" vertex3="ts_asTesselated_f36_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f37_v0" vertex2="ts_asTesselated_f37_v1" vertex3="ts_asTesselated_f37_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f38_v0" vertex2="ts_asTesselated_f38_v1" vertex3="ts_asTesselated_f38_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f39_v0" vertex2="ts_asTesselated_f39_v1" vertex3="ts_asTesselated_f39_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f40_v0" vertex2="ts_asTesselated_f40_v1" vertex3="ts_asTesselated_f40_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f41_v0" vertex2="ts_asTesselated_f41_v1" vertex3="ts_asTesselated_f41_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f42_v0" vertex2="ts_asTesselated_f42_v1" vertex3="ts_asTesselated_f42_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f43_v0" vertex2="ts_asTesselated_f43_v1" vertex3="ts_asTesselated_f43_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f44_v0" vertex2="ts_asTesselated_f44_v1" vertex3="ts_asTesselated_f44_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f45_v0" vertex2="ts_asTesselated_f45_v1" vertex3="ts_asTesselated_f45_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f46_v0" vertex2="ts_asTesselated_f46_v1" vertex3="ts_asTesselated_f46_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f47_v0" vertex2="ts_asTesselated_f47_v1" vertex3="ts_asTesselated_f47_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f48_v0" vertex2="ts_asTesselated_f48_v1" vertex3="ts_asTesselated_f48_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f49_v0" vertex2="ts_asTesselated_f49_v1" vertex3="ts_asTesselated_f49_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f50_v0" vertex2="ts_asTesselated_f50_v1" vertex3="ts_asTesselated_f50_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f51_v0" vertex2="ts_asTesselated_f51_v1" vertex3="ts_asTesselated_f51_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f52_v0" vertex2="ts_asTesselated_f52_v1" vertex3="ts_asTesselated_f52_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f53_v0" vertex2="ts_asTesselated_f53_v1" vertex3="ts_asTesselated_f53_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f54_v0" vertex2="ts_asTesselated_f54_v1" vertex3="ts_asTesselated_f54_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f55_v0" vertex2="ts_asTesselated_f55_v1" vertex3="ts_asTesselated_f55_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f56_v0" vertex2="ts_asTesselated_f56_v1" vertex3="ts_asTesselated_f56_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f57_v0" vertex2="ts_asTesselated_f57_v1" vertex3="ts_asTesselated_f57_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f58_v0" vertex2="ts_asTesselated_f58_v1" vertex3="ts_asTesselated_f58_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f59_v0" vertex2="ts_asTesselated_f59_v1" vertex3="ts_asTesselated_f59_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f60_v0" vertex2="ts_asTesselated_f60_v1" vertex3="ts_asTesselated_f60_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f61_v0" vertex2="ts_asTesselated_f61_v1" vertex3="ts_asTesselated_f61_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f62_v0" vertex2="ts_asTesselated_f62_v1" vertex3="ts_asTesselated_f62_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f63_v0" vertex2="ts_asTesselated_f63_v1" vertex3="ts_asTesselated_f63_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f64_v0" vertex2="ts_asTesselated_f64_v1" vertex3="ts_asTesselated_f64_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f65_v0" vertex2="ts_asTesselated_f65_v1" vertex3="ts_asTesselated_f65_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f66_v0" vertex2="ts_asTesselated_f66_v1" vertex3="ts_asTesselated_f66_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f67_v0" vertex2="ts_asTesselated_f67_v1" vertex3="ts_asTesselated_f67_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f68_v0" vertex2="ts_asTesselated_f68_v1" vertex3="ts_asTesselated_f68_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f69_v0" vertex2="ts_asTesselated_f69_v1" vertex3="ts_asTesselated_f69_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f70_v0" vertex2="ts_asTesselated_f70_v1" vertex3="ts_asTesselated_f70_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f71_v0" vertex2="ts_asTesselated_f71_v1" vertex3="ts_asTesselated_f71_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f72_v0" vertex2="ts_asTesselated_f72_v1" vertex3="ts_asTesselated_f72_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f73_v0" vertex2="ts_asTesselated_f73_v1" vertex3="ts_asTesselated_f73_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f74_v0" vertex2="ts_asTesselated_f74_v1" vertex3="ts_asTesselated_f74_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f75_v0" vertex2="ts_asTesselated_f75_v1" vertex3="ts_asTesselated_f75_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f76_v0" vertex2="ts_asTesselated_f76_v1" vertex3="ts_asTesselated_f76_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f77_v0" vertex2="ts_asTesselated_f77_v1" vertex3="ts_asTesselated_f77_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f78_v0" vertex2="ts_asTesselated_f78_v1" vertex3="ts_asTesselated_f78_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f79_v0" vertex2="ts_asTesselated_f79_v1" vertex3="ts_asTesselated_f79_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f80_v0" vertex2="ts_asTesselated_f80_v1" vertex3="ts_asTesselated_f80_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f81_v0" vertex2="ts_asTesselated_f81_v1" vertex3="ts_asTesselated_f81_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f82_v0" vertex2="ts_asTesselated_f82_v1" vertex3="ts_asTesselated_f82_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f83_v0" vertex2="ts_asTesselated_f83_v1" vertex3="ts_asTesselated_f83_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f84_v0" vertex2="ts_asTesselated_f84_v1" vertex3="ts_asTesselated_f84_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f85_v0" vertex2="ts_asTesselated_f85_v1" vertex3="ts_asTesselated_f85_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f86_v0" vertex2="ts_asTesselated_f86_v1" vertex3="ts_asTesselated_f86_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f87_v0" vertex2="ts_asTesselated_f87_v1" vertex3="ts_asTesselated_f87_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f88_v0" vertex2="ts_asTesselated_f88_v1" vertex3="ts_asTesselated_f88_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f89_v0" vertex2="ts_asTesselated_f89_v1" vertex3="ts_asTesselated_f89_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f90_v0" vertex2="ts_asTesselated_f90_v1" vertex3="ts_asTesselated_f90_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f91_v0" vertex2="ts_asTesselated_f91_v1" vertex3="ts_asTesselated_f91_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f92_v0" vertex2="ts_asTesselated_f92_v1" vertex3="ts_asTesselated_f92_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f93_v0" vertex2="ts_asTesselated_f93_v1" vertex3="ts_asTesselated_f93_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f94_v0" vertex2="ts_asTesselated_f94_v1" vertex3="ts_asTesselated_f94_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f95_v0" vertex2="ts_asTesselated_f95_v1" vertex3="ts_asTesselated_f95_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f96_v0" vertex2="ts_asTesselated_f96_v1" vertex3="ts_asTesselated_f96_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f97_v0" vertex2="ts_asTesselated_f97_v1" vertex3="ts_asTesselated_f97_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f98_v0" vertex2="ts_asTesselated_f98_v1" vertex3="ts_asTesselated_f98_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f99_v0" vertex2="ts_asTesselated_f99_v1" vertex3="ts_asTesselated_f99_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f100_v0" vertex2="ts_asTesselated_f100_v1" vertex3="ts_asTesselated_f100_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f101_v0" vertex2="ts_asTesselated_f101_v1" vertex3="ts_asTesselated_f101_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f102_v0" vertex2="ts_asTesselated_f102_v1" vertex3="ts_asTesselated_f102_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f103_v0" vertex2="ts_asTesselated_f103_v1" vertex3="ts_asTesselated_f103_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f104_v0" vertex2="ts_asTesselated_f104_v1" vertex3="ts_asTesselated_f104_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f105_v0" vertex2="ts_asTesselated_f105_v1" vertex3="ts_asTesselated_f105_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f106_v0" vertex2="ts_asTesselated_f106_v1" vertex3="ts_asTesselated_f106_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f107_v0" vertex2="ts_asTesselated_f107_v1" vertex3="ts_asTesselated_f107_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f108_v0" vertex2="ts_asTesselated_f108_v1" vertex3="ts_asTesselated_f108_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f109_v0" vertex2="ts_asTesselated_f109_v1" vertex3="ts_asTesselated_f109_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f110_v0" vertex2="ts_asTesselated_f110_v1" vertex3="ts_asTesselated_f110_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f111_v0" vertex2="ts_asTesselated_f111_v1" vertex3="ts_asTesselated_f111_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f112_v0" vertex2="ts_asTesselated_f112_v1" vertex3="ts_asTesselated_f112_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f113_v0" vertex2="ts_asTesselated_f113_v1" vertex3="ts_asTesselated_f113_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f114_v0" vertex2="ts_asTesselated_f114_v1" vertex3="ts_asTesselated_f114_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f115_v0" vertex2="ts_asTesselated_f115_v1" vertex3="ts_asTesselated_f115_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f116_v0" vertex2="ts_asTesselated_f116_v1" vertex3="ts_asTesselated_f116_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f117_v0" vertex2="ts_asTesselated_f117_v1" vertex3="ts_asTesselated_f117_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f118_v0" vertex2="ts_asTesselated_f118_v1" vertex3="ts_asTesselated_f118_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f119_v0" vertex2="ts_asTesselated_f119_v1" vertex3="ts_asTesselated_f119_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f120_v0" vertex2="ts_asTesselated_f120_v1" vertex3="ts_asTesselated_f120_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f121_v0" vertex2="ts_asTesselated_f121_v1" vertex3="ts_asTesselated_f121_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f122_v0" vertex2="ts_asTesselated_f122_v1" vertex3="ts_asTesselated_f122_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f123_v0" vertex2="ts_asTesselated_f123_v1" vertex3="ts_asTesselated_f123_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f124_v0" vertex2="ts_asTesselated_f124_v1" vertex3="ts_asTesselated_f124_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f125_v0" vertex2="ts_asTesselated_f125_v1" vertex3="ts_asTesselated_f125_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f126_v0" vertex2="ts_asTesselated_f126_v1" vertex3="ts_asTesselated_f126_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f127_v0" vertex2="ts_asTesselated_f127_v1" vertex3="ts_asTesselated_f127_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f128_v0" vertex2="ts_asTesselated_f128_v1" vertex3="ts_asTesselated_f128_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f129_v0" vertex2="ts_asTesselated_f129_v1" vertex3="ts_asTesselated_f129_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f130_v0" vertex2="ts_asTesselated_f130_v1" vertex3="ts_asTesselated_f130_v2" type="ABSOLUTE"/>
+			<triangular vertex1="ts_asTesselated_f131_v0" vertex2="ts_asTesselated_f131_v1" vertex3="ts_asTesselated_f131_v2" type="ABSOLUTE"/>
+		</tessellated>
+	</solids>
+	<structure>
+		<volume name="ctl">
+			<materialref ref="G4_W"/>
+			<solidref ref="ts_asTesselated"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="ct_pv1">
+				<volumeref ref="ctl"/>
+				<rotation name="ct_pv1_rot" x="1.570000000000000" y="0.000000000000000" z="0.000000000000000" unit="rad"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

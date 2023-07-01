@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="rmin" value="8.0"/>
+		<constant name="rmax" value="10.0"/>
+		<constant name="rtor" value="40.0"/>
+		<constant name="sphi" value="0"/>
+		<constant name="sphi2s" value="0.3*pi"/>
+		<constant name="dphi" value="1.5*pi"/>
+		<constant name="sphi_deg" value="0"/>
+		<constant name="sphi2s_deg" value="54"/>
+		<constant name="dphi_deg" value="270"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<torus name="ts1" rmin="rmin" rmax="rmax" rtor="rtor" deltaphi="dphi" startphi="sphi" lunit="mm" aunit="rad"/>
+		<torus name="ts2" rmin="rmin" rmax="rmax" rtor="rtor" deltaphi="dphi" startphi="sphi2s" lunit="mm" aunit="rad"/>
+		<torus name="ts3" rmin="rmin" rmax="rmax" rtor="rtor" deltaphi="dphi_deg" startphi="sphi_deg" lunit="cm" aunit="deg"/>
+	</solids>
+	<structure>
+		<volume name="tl1">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ts1"/>
+		</volume>
+		<volume name="tl2">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ts2"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="t1_pv1">
+				<volumeref ref="tl1"/>
+			</physvol>
+			<physvol name="t2_pv1">
+				<volumeref ref="tl2"/>
+				<position name="t2_pv1_pos" x="0.000000000000000" y="0.000000000000000" z="((rmax) * (2.000000000000000)) + (5.000000000000000)" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

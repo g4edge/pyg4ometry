@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs" x="bx" y="by" z="bz" lunit="mm"/>
+		<box name="bs1" x="(bx) * (2.000000000000000)" y="(by) * (2.000000000000000)" z="(bz) * (2.000000000000000)" lunit="mm"/>
+		<subtraction name="ss">
+			<first ref="bs"/>
+			<second ref="bs"/>
+			<position name="ss_translation" x="(bx) / (2.000000000000000)" y="(by) / (2.000000000000000)" z="(bz) / (2.000000000000000)" unit="mm"/>
+			<rotation name="ss_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</subtraction>
+		<subtraction name="ss2">
+			<first ref="bs"/>
+			<second ref="bs"/>
+			<position name="ss2_translation" x="(bx) / (20.000000000000000)" y="(by) / (20.000000000000000)" z="(bz) / (20.000000000000000)" unit="cm"/>
+			<rotation name="ss2_rotation" x="5.729577951308232" y="11.459155902616464" z="17.188733853924695" unit="deg"/>
+		</subtraction>
+	</solids>
+	<structure>
+		<volume name="ul">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ss"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="s_pv1">
+				<volumeref ref="ul"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="tptwist" value="1.0"/>
+		<constant name="tx1" value="20"/>
+		<constant name="ty1" value="25"/>
+		<constant name="tx2" value="5"/>
+		<constant name="ty2" value="7.5"/>
+		<constant name="tz" value="10.0"/>
+		<constant name="tptwist_deg" value="1.0/pi*180"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<twistedtrd name="ts" PhiTwist="tptwist" x1="2*tx1" x2="2*tx2" y1="2*ty1" y2="2*ty2" z="2*tz" lunit="mm" aunit="rad"/>
+		<twistedtrd name="ts2" PhiTwist="tptwist_deg" x1="2*tx1" x2="2*tx2" y1="2*ty1" y2="2*ty2" z="2*tz" lunit="cm" aunit="deg"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ts"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="t_pv1">
+				<volumeref ref="tl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

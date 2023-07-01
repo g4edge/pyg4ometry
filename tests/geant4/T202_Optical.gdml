@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="150"/>
+		<constant name="wy" value="150"/>
+		<constant name="wz" value="150"/>
+		<constant name="ox" value="100"/>
+		<constant name="oy" value="100"/>
+		<constant name="oz" value="100"/>
+		<constant name="tx" value="50"/>
+		<constant name="ty" value="50"/>
+		<constant name="tz" value="50"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+		<matrix name="Air_RINDEX" coldim="2" values="0.002034*eV 1 0.002068*eV 1 0.002103*eV 1 0.002139*eV 1"/>
+		<matrix name="Water_RINDEX" coldim="2" values="0.002034*eV 1.3435 0.002068*eV 1.344 0.002103*eV 1.3445 0.002139*eV 1.345"/>
+		<matrix name="Water_ABSLENGTH" coldim="2" values="0.002034*eV 3448*m 0.002068*eV 4082*m 0.002103*eV 6329*m 0.002139*eV 9174*m"/>
+		<matrix name="Water_YIELDRATIO" coldim="1" values="0.8"/>
+	</define>
+	<materials>
+		<element name="Nitrogen" formula="N" Z="7">
+			<atom value="14.01"/>
+		</element>
+		<element name="Oxygen" formula="O" Z="8">
+			<atom value="16.0"/>
+		</element>
+		<material name="Air">
+			<property name="RINDEX" ref="Air_RINDEX"/>
+			<D value="0.00129"/>
+			<fraction ref="Nitrogen" n="0.7"/>
+			<fraction ref="Oxygen" n="0.3"/>
+		</material>
+		<element name="Hydrogen" formula="H" Z="1">
+			<atom value="1.01"/>
+		</element>
+		<material name="Water">
+			<property name="RINDEX" ref="Water_RINDEX"/>
+			<property name="ABSLENGTH" ref="Water_ABSLENGTH"/>
+			<property name="YIELDRATIO" ref="Water_YIELDRATIO"/>
+			<D value="1.0"/>
+			<fraction ref="Hydrogen" n="0.112"/>
+			<fraction ref="Oxygen" n="0.888"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bigbox" x="ox" y="oy" z="oz" lunit="mm"/>
+		<box name="tank" x="tx" y="ty" z="tz" lunit="mm"/>
+		<box name="bubble" x="bx" y="by" z="bz" lunit="mm"/>
+		<opticalsurface name="AirSurface" model="0" finish="0" type="1" value="1.0"/>
+		<opticalsurface name="WaterSurface" model="1" finish="3" type="1" value="0.0"/>
+	</solids>
+	<structure>
+		<volume name="bubble_logical">
+			<materialref ref="Air"/>
+			<solidref ref="bubble"/>
+		</volume>
+		<volume name="tank_logical">
+			<materialref ref="Water"/>
+			<solidref ref="tank"/>
+			<physvol name="bubble_pv1">
+				<volumeref ref="bubble_logical"/>
+				<position name="bubble_pv1_pos" x="0.000000000000000" y="2.500000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+		<volume name="bigbox_logical">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="bigbox"/>
+			<physvol name="tank_pv1">
+				<volumeref ref="tank_logical"/>
+			</physvol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="bigbox_pv">
+				<volumeref ref="bigbox_logical"/>
+			</physvol>
+		</volume>
+		<skinsurface name="AirSurface" surfaceproperty="AirSurface">
+			<volumeref ref="bubble_logical"/>
+		</skinsurface>
+		<bordersurface name="WaterSurface" surfaceproperty="WaterSurface">
+			<physvolref ref="bubble_pv1"/>
+			<physvolref ref="bigbox_pv"/>
+		</bordersurface>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

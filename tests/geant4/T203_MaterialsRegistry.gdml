@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="500"/>
+		<constant name="wy" value="500"/>
+		<constant name="wz" value="500"/>
+	</define>
+	<materials>
+		<material name="iron" Z="26">
+			<D value="7.874"/>
+			<atom value="55.8452"/>
+		</material>
+		<element name="nitrogen" formula="N" Z="7">
+			<atom value="14.01"/>
+		</element>
+		<element name="oxygen" formula="O" Z="8">
+			<atom value="16.0"/>
+		</element>
+		<material name="air">
+			<D value="0.00129"/>
+			<fraction ref="nitrogen" n="0.7"/>
+			<fraction ref="oxygen" n="0.3"/>
+		</material>
+		<element name="hydrogen" formula="H" Z="1">
+			<atom value="1.01"/>
+		</element>
+		<material name="water">
+			<D value="1.0"/>
+			<composite ref="hydrogen" n="2"/>
+			<composite ref="oxygen" n="1"/>
+		</material>
+		<material name="YellowBrass_C26800">
+			<D value="8.14"/>
+			<fraction ref="G4_Cu" n="0.67"/>
+			<fraction ref="G4_Zn" n="0.33"/>
+		</material>
+		<isotope name="U235" Z="92" N="235">
+			<atom value="235.044"/>
+		</isotope>
+		<isotope name="U238" Z="92" N="238">
+			<atom value="238.051"/>
+		</isotope>
+		<element name="uranium" formula="U">
+			<fraction ref="U235" n="0.00716"/>
+			<fraction ref="U238" n="0.99284"/>
+		</element>
+		<material name="natural_uranium">
+			<D value="19.1"/>
+			<fraction ref="uranium" n="1"/>
+		</material>
+		<material name="RadioactiveBrass">
+			<D value="8.14"/>
+			<fraction ref="YellowBrass_C26800" n="0.99"/>
+			<fraction ref="natural_uranium" n="0.01"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs" x="10" y="10" z="10" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="bl1">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="bl2">
+			<materialref ref="iron"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="bl3">
+			<materialref ref="water"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="bl4">
+			<materialref ref="YellowBrass_C26800"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="bl5">
+			<materialref ref="natural_uranium"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="bl6">
+			<materialref ref="RadioactiveBrass"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl1"/>
+				<position name="b_pv1_pos" x="40.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv2">
+				<volumeref ref="bl2"/>
+				<position name="b_pv2_pos" x="0.000000000000000" y="40.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv3">
+				<volumeref ref="bl3"/>
+				<position name="b_pv3_pos" x="0.000000000000000" y="0.000000000000000" z="40.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv4">
+				<volumeref ref="bl4"/>
+				<position name="b_pv4_pos" x="20.000000000000000" y="20.000000000000000" z="20.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv5">
+				<volumeref ref="bl5"/>
+				<position name="b_pv5_pos" x="-20.000000000000000" y="-20.000000000000000" z="-20.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv6">
+				<volumeref ref="bl6"/>
+				<position name="b_pv6_pos" x="-40.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

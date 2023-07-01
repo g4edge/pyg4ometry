@@ -1,0 +1,10 @@
+d1: drift, l=0.01*cm;
+e1: element, geometry="gdml:T008_Sphere.gdml", l=100.0*mm;
+l1: line = (e1);
+use, period=l1;
+
+sample, all;
+beam, particle="e-",
+      energy=250*GeV;
+option, physicsList="em";
+option, preprocessGDML=0;

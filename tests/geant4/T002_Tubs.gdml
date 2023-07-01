@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="trmin" value="2.5"/>
+		<constant name="trmax" value="10.0"/>
+		<constant name="tz" value="50"/>
+		<constant name="startphi" value="0"/>
+		<constant name="deltaphi" value="1.5*pi"/>
+		<constant name="startphi_deg" value="0"/>
+		<constant name="deltaphi_deg" value="270"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<tube name="ts" rmin="trmin" rmax="trmax" z="tz" startphi="startphi" deltaphi="deltaphi" lunit="mm" aunit="rad"/>
+		<tube name="ts2" rmin="trmin" rmax="trmax" z="tz" startphi="startphi_deg" deltaphi="deltaphi_deg" lunit="cm" aunit="deg"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="G4_Au"/>
+			<solidref ref="ts"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="t_pv1">
+				<volumeref ref="tl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

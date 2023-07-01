@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="sphi" value="1"/>
+		<constant name="dphi" value="4"/>
+		<constant name="pnsid" value="4"/>
+		<constant name="prmin1" value="1"/>
+		<constant name="prmax1" value="9"/>
+		<constant name="z1" value="-10"/>
+		<constant name="prmin2" value="3"/>
+		<constant name="prmax2" value="5"/>
+		<constant name="z2" value="12"/>
+		<constant name="sphi_deg" value="1/pi*180"/>
+		<constant name="dphi_deg" value="4/pi*180"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<polyhedra name="ps" startphi="sphi" deltaphi="dphi" numsides="pnsid" lunit="mm" aunit="rad">
+			<zplane rmin="prmin1" rmax="prmax1" z="z1"/>
+			<zplane rmin="prmin2" rmax="prmax2" z="z2"/>
+		</polyhedra>
+		<polyhedra name="ps2" startphi="sphi_deg" deltaphi="dphi_deg" numsides="pnsid" lunit="cm" aunit="deg">
+			<zplane rmin="prmin1" rmax="prmax1" z="z1"/>
+			<zplane rmin="prmin2" rmax="prmax2" z="z2"/>
+		</polyhedra>
+	</solids>
+	<structure>
+		<volume name="pl">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ps"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="p_pv1">
+				<volumeref ref="pl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

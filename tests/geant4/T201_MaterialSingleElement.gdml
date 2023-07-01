@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+	</define>
+	<materials>
+		<material name="galactic" Z="1">
+			<D value="1e-25"/>
+			<atom value="1.008"/>
+		</material>
+		<material name="iron" Z="26">
+			<D value="7.874"/>
+			<atom value="55.8452"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs" x="bx" y="by" z="bz" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="bl">
+			<materialref ref="iron"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

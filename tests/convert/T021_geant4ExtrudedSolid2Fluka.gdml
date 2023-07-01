@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="150"/>
+		<constant name="wy" value="150"/>
+		<constant name="wz" value="150"/>
+		<constant name="p1x" value="-20"/>
+		<constant name="p1y" value="-20"/>
+		<constant name="p2x" value="-20"/>
+		<constant name="p2y" value="20"/>
+		<constant name="p3x" value="20"/>
+		<constant name="p3y" value="20"/>
+		<constant name="p4x" value="20"/>
+		<constant name="p4y" value="10"/>
+		<constant name="p5x" value="-10"/>
+		<constant name="p5y" value="10"/>
+		<constant name="p6x" value="-10"/>
+		<constant name="p6y" value="-10"/>
+		<constant name="p7x" value="20"/>
+		<constant name="p7y" value="-10"/>
+		<constant name="p8x" value="20"/>
+		<constant name="p8y" value="-20"/>
+		<constant name="z1" value="-20"/>
+		<constant name="x1" value="5"/>
+		<constant name="y1" value="5"/>
+		<constant name="s1" value="1"/>
+		<constant name="z2" value="0"/>
+		<constant name="x2" value="-5"/>
+		<constant name="y2" value="-5"/>
+		<constant name="s2" value="1"/>
+		<constant name="z3" value="20"/>
+		<constant name="x3" value="0"/>
+		<constant name="y3" value="0"/>
+		<constant name="s3" value="2"/>
+	</define>
+	<materials>
+		<isotope name="G4_H_1" Z="1" N="1">
+			<atom value="1.007825"/>
+		</isotope>
+		<isotope name="G4_H_2" Z="1" N="2">
+			<atom value="2.014102"/>
+		</isotope>
+		<element name="G4_H" formula="H">
+			<fraction ref="G4_H_1" n="0.999885"/>
+			<fraction ref="G4_H_2" n="0.000115"/>
+		</element>
+		<material name="G4_Galactic" state="gas">
+			<D value="1e-25"/>
+			<fraction ref="G4_H" n="1.0"/>
+		</material>
+		<isotope name="G4_Fe_54" Z="26" N="54">
+			<atom value="53.9396"/>
+		</isotope>
+		<isotope name="G4_Fe_56" Z="26" N="56">
+			<atom value="55.9349"/>
+		</isotope>
+		<isotope name="G4_Fe_57" Z="26" N="57">
+			<atom value="56.9354"/>
+		</isotope>
+		<isotope name="G4_Fe_58" Z="26" N="58">
+			<atom value="57.9333"/>
+		</isotope>
+		<element name="G4_Fe" formula="Fe">
+			<fraction ref="G4_Fe_54" n="0.05845"/>
+			<fraction ref="G4_Fe_56" n="0.91754"/>
+			<fraction ref="G4_Fe_57" n="0.02119"/>
+			<fraction ref="G4_Fe_58" n="0.00282"/>
+		</element>
+		<material name="Material_G4_Fe" state="solid">
+			<D value="7.874"/>
+			<fraction ref="G4_Fe" n="1.0"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<xtru name="xs" lunit="mm">
+			<twoDimVertex x="p1x" y="p1y"/>
+			<twoDimVertex x="p2x" y="p2y"/>
+			<twoDimVertex x="p3x" y="p3y"/>
+			<twoDimVertex x="p4x" y="p4y"/>
+			<twoDimVertex x="p5x" y="p5y"/>
+			<twoDimVertex x="p6x" y="p6y"/>
+			<twoDimVertex x="p7x" y="p7y"/>
+			<twoDimVertex x="p8x" y="p8y"/>
+			<section zOrder="0" zPosition="z1" xOffset="x1" yOffset="y1" scalingFactor="s1"/>
+			<section zOrder="1" zPosition="z2" xOffset="x2" yOffset="y2" scalingFactor="s2"/>
+			<section zOrder="2" zPosition="z3" xOffset="x3" yOffset="y3" scalingFactor="s3"/>
+		</xtru>
+	</solids>
+	<structure>
+		<volume name="xl">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="xs"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="x_pv1">
+				<volumeref ref="xl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="1000.000000000000000"/>
+		<constant name="wy" value="1000.000000000000000"/>
+		<constant name="wz" value="1000.000000000000000"/>
+		<constant name="bx" value="100.000000000000000"/>
+		<constant name="by" value="100.000000000000000"/>
+		<constant name="bz" value="100.000000000000000"/>
+		<constant name="rmin" value="100.000000000000000"/>
+		<constant name="rmax" value="200.000000000000000"/>
+		<constant name="z" value="800.000000000000000"/>
+		<constant name="mtdphi" value="2*pi"/>
+		<constant name="tdphi" value="2*pi"/>
+		<constant name="nreplicas" value="8.000000000000000"/>
+		<constant name="tdR" value="(rmax) / (nreplicas)"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<tube name="ts" rmin="0" rmax="rmax" z="z" startphi="0" deltaphi="tdphi" lunit="mm" aunit="rad"/>
+		<tube name="mts" rmin="0" rmax="rmax" z="z" startphi="0" deltaphi="mtdphi" lunit="mm" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ts"/>
+		</volume>
+		<volume name="ml">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="mts"/>
+			<replicavol number="8">
+				<volumeref ref="tl"/>
+				<replicate_along_axis>
+					<direction rho="1"/>
+					<width value="25.0" unit="mm"/>
+					<offset value="0.0" unit="mm"/>
+				</replicate_along_axis>
+			</replicavol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="ml_pv1">
+				<volumeref ref="ml"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

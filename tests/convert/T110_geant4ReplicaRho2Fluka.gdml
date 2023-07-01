@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="1000.000000000000000"/>
+		<constant name="wy" value="1000.000000000000000"/>
+		<constant name="wz" value="1000.000000000000000"/>
+		<constant name="bx" value="100.000000000000000"/>
+		<constant name="by" value="100.000000000000000"/>
+		<constant name="bz" value="100.000000000000000"/>
+		<constant name="rmin" value="100.000000000000000"/>
+		<constant name="rmax" value="200.000000000000000"/>
+		<constant name="z" value="800.000000000000000"/>
+		<constant name="mtdphi" value="2*pi"/>
+		<constant name="tdphi" value="2*pi"/>
+		<constant name="nreplicas" value="8.000000000000000"/>
+		<constant name="tdR" value="(rmax) / (nreplicas)"/>
+	</define>
+	<materials>
+		<isotope name="G4_H_1" Z="1" N="1">
+			<atom value="1.007825"/>
+		</isotope>
+		<isotope name="G4_H_2" Z="1" N="2">
+			<atom value="2.014102"/>
+		</isotope>
+		<element name="G4_H" formula="H">
+			<fraction ref="G4_H_1" n="0.999885"/>
+			<fraction ref="G4_H_2" n="0.000115"/>
+		</element>
+		<material name="G4_Galactic" state="gas">
+			<D value="1e-25"/>
+			<fraction ref="G4_H" n="1.0"/>
+		</material>
+		<isotope name="G4_Fe_54" Z="26" N="54">
+			<atom value="53.9396"/>
+		</isotope>
+		<isotope name="G4_Fe_56" Z="26" N="56">
+			<atom value="55.9349"/>
+		</isotope>
+		<isotope name="G4_Fe_57" Z="26" N="57">
+			<atom value="56.9354"/>
+		</isotope>
+		<isotope name="G4_Fe_58" Z="26" N="58">
+			<atom value="57.9333"/>
+		</isotope>
+		<element name="G4_Fe" formula="Fe">
+			<fraction ref="G4_Fe_54" n="0.05845"/>
+			<fraction ref="G4_Fe_56" n="0.91754"/>
+			<fraction ref="G4_Fe_57" n="0.02119"/>
+			<fraction ref="G4_Fe_58" n="0.00282"/>
+		</element>
+		<material name="Material_G4_Fe" state="solid">
+			<D value="7.874"/>
+			<fraction ref="G4_Fe" n="1.0"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<tube name="ts" rmin="0" rmax="rmax" z="z" startphi="0" deltaphi="tdphi" lunit="mm" aunit="rad"/>
+		<tube name="mts" rmin="0" rmax="rmax" z="z" startphi="0" deltaphi="mtdphi" lunit="mm" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ts"/>
+		</volume>
+		<volume name="ml">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="mts"/>
+			<replicavol number="8">
+				<volumeref ref="tl"/>
+				<replicate_along_axis>
+					<direction rho="1"/>
+					<width value="25.0" unit="mm"/>
+					<offset value="0.0" unit="mm"/>
+				</replicate_along_axis>
+			</replicavol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="ml_pv1">
+				<volumeref ref="ml"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

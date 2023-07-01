@@ -1,0 +1,400 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box name="ws" x="3000" y="3000" z="3000" lunit="mm"/>
+		<box name="ds" x="1000" y="1000" z="1000" lunit="mm"/>
+		<box name="dds" x="200" y="200" z="200" lunit="mm"/>
+		<box name="ddds" x="150" y="150" z="150" lunit="mm"/>
+		<box name="clipper" x="800" y="800" z="800" lunit="mm"/>
+		<box name="clipper_0" x="800" y="800" z="800" lunit="mm"/>
+		<box name="clipper_1" x="750" y="750" z="750" lunit="mm"/>
+		<box name="clipper_2" x="700" y="700" z="700" lunit="mm"/>
+		<box name="clipper_3" x="650" y="650" z="650" lunit="mm"/>
+		<intersection name="ddds_n_17">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_17_translation" x="247.949068599733351" y="467.270461303030515" z="-37.809725920427070" unit="mm"/>
+			<rotation name="ddds_n_17_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_18">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_18_translation" x="316.723030429294283" y="228.164189840722401" z="-62.270574672240997" unit="mm"/>
+			<rotation name="ddds_n_18_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_19">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_19_translation" x="385.496992258855187" y="-10.942081621585730" z="-86.731423424054924" unit="mm"/>
+			<rotation name="ddds_n_19_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_20">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_20_translation" x="454.270954088416147" y="-250.048353083893858" z="-111.192272175868851" unit="mm"/>
+			<rotation name="ddds_n_20_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_21">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_21_translation" x="13.875727703683514" y="394.863091896651611" z="11.857606778338237" unit="mm"/>
+			<rotation name="ddds_n_21_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_22">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_22_translation" x="82.649689533244441" y="155.756820434343496" z="-12.603241973475690" unit="mm"/>
+			<rotation name="ddds_n_22_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_23">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_23_translation" x="151.423651362805373" y="-83.349451027964619" z="-37.064090725289617" unit="mm"/>
+			<rotation name="ddds_n_23_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_24">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_24_translation" x="220.197613192366305" y="-322.455722490272706" z="-61.524939477103544" unit="mm"/>
+			<rotation name="ddds_n_24_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_25">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_25_translation" x="-220.197613192366305" y="322.455722490272706" z="61.524939477103544" unit="mm"/>
+			<rotation name="ddds_n_25_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_26">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_26_translation" x="-151.423651362805373" y="83.349451027964619" z="37.064090725289617" unit="mm"/>
+			<rotation name="ddds_n_26_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_27">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_27_translation" x="-82.649689533244441" y="-155.756820434343496" z="12.603241973475690" unit="mm"/>
+			<rotation name="ddds_n_27_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_28">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_28_translation" x="-13.875727703683514" y="-394.863091896651611" z="-11.857606778338237" unit="mm"/>
+			<rotation name="ddds_n_28_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_29">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_29_translation" x="-454.270954088416147" y="250.048353083893858" z="111.192272175868851" unit="mm"/>
+			<rotation name="ddds_n_29_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_30">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_30_translation" x="-385.496992258855187" y="10.942081621585730" z="86.731423424054924" unit="mm"/>
+			<rotation name="ddds_n_30_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_31">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_31_translation" x="-316.723030429294283" y="-228.164189840722401" z="62.270574672240997" unit="mm"/>
+			<rotation name="ddds_n_31_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+		<intersection name="ddds_n_32">
+			<first ref="ddds"/>
+			<second ref="clipper_2"/>
+			<position name="ddds_n_32_translation" x="-247.949068599733351" y="-467.270461303030515" z="37.809725920427070" unit="mm"/>
+			<rotation name="ddds_n_32_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</intersection>
+	</solids>
+	<structure>
+		<volume name="ddpv_00_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_17"/>
+		</volume>
+		<assembly name="ddpv_00_n_3">
+			<physvol name="ddpv_00_n_3_dddpv">
+				<volumeref ref="ddpv_00_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_00_n_3_dddpv">
+				<volumeref ref="ddpv_00_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_01_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_18"/>
+		</volume>
+		<assembly name="ddpv_01_n_3">
+			<physvol name="ddpv_01_n_3_dddpv">
+				<volumeref ref="ddpv_01_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_01_n_3_dddpv">
+				<volumeref ref="ddpv_01_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_02_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_19"/>
+		</volume>
+		<assembly name="ddpv_02_n_3">
+			<physvol name="ddpv_02_n_3_dddpv">
+				<volumeref ref="ddpv_02_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_02_n_3_dddpv">
+				<volumeref ref="ddpv_02_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_03_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_20"/>
+		</volume>
+		<assembly name="ddpv_03_n_3">
+			<physvol name="ddpv_03_n_3_dddpv">
+				<volumeref ref="ddpv_03_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_03_n_3_dddpv">
+				<volumeref ref="ddpv_03_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_10_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_21"/>
+		</volume>
+		<assembly name="ddpv_10_n_3">
+			<physvol name="ddpv_10_n_3_dddpv">
+				<volumeref ref="ddpv_10_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_10_n_3_dddpv">
+				<volumeref ref="ddpv_10_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_11_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_22"/>
+		</volume>
+		<assembly name="ddpv_11_n_4">
+			<physvol name="ddpv_11_n_4_dddpv">
+				<volumeref ref="ddpv_11_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_11_n_4_dddpv">
+				<volumeref ref="ddpv_11_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_12_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_23"/>
+		</volume>
+		<assembly name="ddpv_12_n_4">
+			<physvol name="ddpv_12_n_4_dddpv">
+				<volumeref ref="ddpv_12_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_12_n_4_dddpv">
+				<volumeref ref="ddpv_12_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_13_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_24"/>
+		</volume>
+		<assembly name="ddpv_13_n_3">
+			<physvol name="ddpv_13_n_3_dddpv">
+				<volumeref ref="ddpv_13_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_13_n_3_dddpv">
+				<volumeref ref="ddpv_13_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_20_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_25"/>
+		</volume>
+		<assembly name="ddpv_20_n_3">
+			<physvol name="ddpv_20_n_3_dddpv">
+				<volumeref ref="ddpv_20_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_20_n_3_dddpv">
+				<volumeref ref="ddpv_20_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_21_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_26"/>
+		</volume>
+		<assembly name="ddpv_21_n_4">
+			<physvol name="ddpv_21_n_4_dddpv">
+				<volumeref ref="ddpv_21_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_21_n_4_dddpv">
+				<volumeref ref="ddpv_21_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_22_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_27"/>
+		</volume>
+		<assembly name="ddpv_22_n_4">
+			<physvol name="ddpv_22_n_4_dddpv">
+				<volumeref ref="ddpv_22_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_22_n_4_dddpv">
+				<volumeref ref="ddpv_22_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_23_n_3_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_28"/>
+		</volume>
+		<assembly name="ddpv_23_n_3">
+			<physvol name="ddpv_23_n_3_dddpv">
+				<volumeref ref="ddpv_23_n_3_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_23_n_3_dddpv">
+				<volumeref ref="ddpv_23_n_3_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_30_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_29"/>
+		</volume>
+		<assembly name="ddpv_30_n_4">
+			<physvol name="ddpv_30_n_4_dddpv">
+				<volumeref ref="ddpv_30_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_30_n_4_dddpv">
+				<volumeref ref="ddpv_30_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_31_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_30"/>
+		</volume>
+		<assembly name="ddpv_31_n_4">
+			<physvol name="ddpv_31_n_4_dddpv">
+				<volumeref ref="ddpv_31_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_31_n_4_dddpv">
+				<volumeref ref="ddpv_31_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_32_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_31"/>
+		</volume>
+		<assembly name="ddpv_32_n_4">
+			<physvol name="ddpv_32_n_4_dddpv">
+				<volumeref ref="ddpv_32_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_32_n_4_dddpv">
+				<volumeref ref="ddpv_32_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="ddpv_33_n_4_dddpv_n_1">
+			<materialref ref="G4_W"/>
+			<solidref ref="ddds_n_32"/>
+		</volume>
+		<assembly name="ddpv_33_n_4">
+			<physvol name="ddpv_33_n_4_dddpv">
+				<volumeref ref="ddpv_33_n_4_dddpv_n_1"/>
+			</physvol>
+			<physvol name="ddpv_33_n_4_dddpv">
+				<volumeref ref="ddpv_33_n_4_dddpv_n_1"/>
+			</physvol>
+		</assembly>
+		<volume name="dlv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ds"/>
+			<physvol name="ddpv_00">
+				<volumeref ref="ddpv_00_n_3"/>
+				<position name="ddpv_00_pos" x="-375.000000000000000" y="-375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_00_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_01">
+				<volumeref ref="ddpv_01_n_3"/>
+				<position name="ddpv_01_pos" x="-375.000000000000000" y="-125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_01_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_02">
+				<volumeref ref="ddpv_02_n_3"/>
+				<position name="ddpv_02_pos" x="-375.000000000000000" y="125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_02_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_03">
+				<volumeref ref="ddpv_03_n_3"/>
+				<position name="ddpv_03_pos" x="-375.000000000000000" y="375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_03_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_10">
+				<volumeref ref="ddpv_10_n_3"/>
+				<position name="ddpv_10_pos" x="-125.000000000000000" y="-375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_10_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_11">
+				<volumeref ref="ddpv_11_n_4"/>
+				<position name="ddpv_11_pos" x="-125.000000000000000" y="-125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_11_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_12">
+				<volumeref ref="ddpv_12_n_4"/>
+				<position name="ddpv_12_pos" x="-125.000000000000000" y="125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_12_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_13">
+				<volumeref ref="ddpv_13_n_3"/>
+				<position name="ddpv_13_pos" x="-125.000000000000000" y="375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_13_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_20">
+				<volumeref ref="ddpv_20_n_3"/>
+				<position name="ddpv_20_pos" x="125.000000000000000" y="-375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_20_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_21">
+				<volumeref ref="ddpv_21_n_4"/>
+				<position name="ddpv_21_pos" x="125.000000000000000" y="-125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_21_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_22">
+				<volumeref ref="ddpv_22_n_4"/>
+				<position name="ddpv_22_pos" x="125.000000000000000" y="125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_22_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_23">
+				<volumeref ref="ddpv_23_n_3"/>
+				<position name="ddpv_23_pos" x="125.000000000000000" y="375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_23_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_30">
+				<volumeref ref="ddpv_30_n_4"/>
+				<position name="ddpv_30_pos" x="375.000000000000000" y="-375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_30_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_31">
+				<volumeref ref="ddpv_31_n_4"/>
+				<position name="ddpv_31_pos" x="375.000000000000000" y="-125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_31_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_32">
+				<volumeref ref="ddpv_32_n_4"/>
+				<position name="ddpv_32_pos" x="375.000000000000000" y="125.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_32_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+			<physvol name="ddpv_33">
+				<volumeref ref="ddpv_33_n_4"/>
+				<position name="ddpv_33_pos" x="375.000000000000000" y="375.000000000000000" z="0.000000000000000" unit="mm"/>
+				<rotation name="ddpv_33_rot" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+			</physvol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="dlv_pv">
+				<volumeref ref="dlv"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

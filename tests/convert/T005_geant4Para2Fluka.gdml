@@ -1,0 +1,136 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="200"/>
+		<constant name="wy" value="200"/>
+		<constant name="wz" value="200"/>
+		<constant name="px" value="2.5"/>
+		<constant name="py" value="5"/>
+		<constant name="pz" value="7.5"/>
+		<constant name="pAlpha" value="0.2"/>
+		<constant name="pTheta" value="0.4"/>
+		<constant name="pPhi" value="0"/>
+	</define>
+	<materials>
+		<isotope name="G4_H_1" Z="1" N="1">
+			<atom value="1.007825"/>
+		</isotope>
+		<isotope name="G4_H_2" Z="1" N="2">
+			<atom value="2.014102"/>
+		</isotope>
+		<element name="G4_H" formula="H">
+			<fraction ref="G4_H_1" n="0.999885"/>
+			<fraction ref="G4_H_2" n="0.000115"/>
+		</element>
+		<material name="G4_Galactic" state="gas">
+			<D value="1e-25"/>
+			<fraction ref="G4_H" n="1.0"/>
+		</material>
+		<isotope name="G4_Fe_54" Z="26" N="54">
+			<atom value="53.9396"/>
+		</isotope>
+		<isotope name="G4_Fe_56" Z="26" N="56">
+			<atom value="55.9349"/>
+		</isotope>
+		<isotope name="G4_Fe_57" Z="26" N="57">
+			<atom value="56.9354"/>
+		</isotope>
+		<isotope name="G4_Fe_58" Z="26" N="58">
+			<atom value="57.9333"/>
+		</isotope>
+		<element name="G4_Fe" formula="Fe">
+			<fraction ref="G4_Fe_54" n="0.05845"/>
+			<fraction ref="G4_Fe_56" n="0.91754"/>
+			<fraction ref="G4_Fe_57" n="0.02119"/>
+			<fraction ref="G4_Fe_58" n="0.00282"/>
+		</element>
+		<material name="Material_G4_Fe" state="solid">
+			<D value="7.874"/>
+			<fraction ref="G4_Fe" n="1.0"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<para name="ps_0_0_0" x="px" y="py" z="pz" alpha="0.0" theta="0.0" phi="0.0" lunit="mm" aunit="rad"/>
+		<para name="ps_0_0_1" x="px" y="py" z="pz" alpha="0.0" theta="0.0" phi="0.2" lunit="mm" aunit="rad"/>
+		<para name="ps_0_1_0" x="px" y="py" z="pz" alpha="0.0" theta="0.2" phi="0.0" lunit="mm" aunit="rad"/>
+		<para name="ps_0_1_1" x="px" y="py" z="pz" alpha="0.0" theta="0.2" phi="0.2" lunit="mm" aunit="rad"/>
+		<para name="ps_1_0_0" x="px" y="py" z="pz" alpha="0.2" theta="0.0" phi="0.0" lunit="mm" aunit="rad"/>
+		<para name="ps_1_0_1" x="px" y="py" z="pz" alpha="0.2" theta="0.0" phi="0.2" lunit="mm" aunit="rad"/>
+		<para name="ps_1_1_0" x="px" y="py" z="pz" alpha="0.2" theta="0.2" phi="0.0" lunit="mm" aunit="rad"/>
+		<para name="ps_1_1_1" x="px" y="py" z="pz" alpha="0.2" theta="0.2" phi="0.2" lunit="mm" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="pl_0_0_0">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_0_0_0"/>
+		</volume>
+		<volume name="pl_0_0_1">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_0_0_1"/>
+		</volume>
+		<volume name="pl_0_1_0">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_0_1_0"/>
+		</volume>
+		<volume name="pl_0_1_1">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_0_1_1"/>
+		</volume>
+		<volume name="pl_1_0_0">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_1_0_0"/>
+		</volume>
+		<volume name="pl_1_0_1">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_1_0_1"/>
+		</volume>
+		<volume name="pl_1_1_0">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_1_1_0"/>
+		</volume>
+		<volume name="pl_1_1_1">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ps_1_1_1"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="p_pv1_0_0_0">
+				<volumeref ref="pl_0_0_0"/>
+				<position name="p_pv1_0_0_0_pos" x="(((px) * (0.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (0.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (0.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_0_0_1">
+				<volumeref ref="pl_0_0_1"/>
+				<position name="p_pv1_0_0_1_pos" x="(((px) * (0.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (0.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (1.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_0_1_0">
+				<volumeref ref="pl_0_1_0"/>
+				<position name="p_pv1_0_1_0_pos" x="(((px) * (0.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (1.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (0.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_0_1_1">
+				<volumeref ref="pl_0_1_1"/>
+				<position name="p_pv1_0_1_1_pos" x="(((px) * (0.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (1.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (1.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_1_0_0">
+				<volumeref ref="pl_1_0_0"/>
+				<position name="p_pv1_1_0_0_pos" x="(((px) * (1.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (0.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (0.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_1_0_1">
+				<volumeref ref="pl_1_0_1"/>
+				<position name="p_pv1_1_0_1_pos" x="(((px) * (1.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (0.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (1.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_1_1_0">
+				<volumeref ref="pl_1_1_0"/>
+				<position name="p_pv1_1_1_0_pos" x="(((px) * (1.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (1.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (0.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+			<physvol name="p_pv1_1_1_1">
+				<volumeref ref="pl_1_1_1"/>
+				<position name="p_pv1_1_1_1_pos" x="(((px) * (1.000000000000000)) * (4.000000000000000)) - ((((px) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" y="(((py) * (1.000000000000000)) * (4.000000000000000)) - ((((py) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" z="(((pz) * (1.000000000000000)) * (4.000000000000000)) - ((((pz) * (1.000000000000000)) * (4.000000000000000)) / (2.000000000000000))" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx0" value="200"/>
+		<constant name="wy0" value="200"/>
+		<constant name="wz0" value="200"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="bx_1" value="10"/>
+		<constant name="by_1" value="10"/>
+		<constant name="bz_1" value="10"/>
+		<constant name="wx_1" value="100"/>
+		<constant name="wy_1" value="100"/>
+		<constant name="wz_1" value="100"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx0" y="wy0" z="wz0" lunit="mm"/>
+		<box name="bs" x="bx" y="by" z="bz" lunit="mm"/>
+		<box name="ws_1" x="wx" y="wy" z="wz" lunit="mm"/>
+		<subtraction name="ss">
+			<first ref="bs"/>
+			<second ref="bs"/>
+			<position name="ss_translation" x="(bx) / (2.000000000000000)" y="(by) / (2.000000000000000)" z="(bz) / (2.000000000000000)" unit="mm"/>
+			<rotation name="ss_rotation" x="0.100000000000000" y="0.200000000000000" z="0.300000000000000" unit="rad"/>
+		</subtraction>
+		<box name="ws_2" x="wx_1" y="wy_1" z="wz_1" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="bl">
+			<materialref ref="G4_Au"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="wl_1">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws_1"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl"/>
+			</physvol>
+		</volume>
+		<volume name="ul">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ss"/>
+		</volume>
+		<volume name="wl_2">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws_2"/>
+			<physvol name="s_pv1">
+				<volumeref ref="ul"/>
+			</physvol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="l1_pv_1">
+				<volumeref ref="wl_1"/>
+				<position name="l1_pv_pos" x="-50.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="l2_pv_1">
+				<volumeref ref="wl_2"/>
+				<position name="l2_pv_pos" x="50.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="2"/>
+		<constant name="wy" value="2"/>
+		<constant name="wz" value="2"/>
+		<constant name="HALPPI" value="pi/2."/>
+		<constant name="TWOPI" value="2*pi"/>
+		<position name="centre" x="0.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="m"/>
+		<rotation name="identity" x="0.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="rad"/>
+		<rotation name="alignSurfX" x="0.000000000000000" y="HALPPI" z="0.000000000000000" unit="rad"/>
+		<rotation name="alignSurfY" x="HALPPI" y="0.000000000000000" z="0.000000000000000" unit="rad"/>
+	</define>
+	<materials>
+		<isotope name="G4_H_1" Z="1" N="1">
+			<atom value="1.007825"/>
+		</isotope>
+		<isotope name="G4_H_2" Z="1" N="2">
+			<atom value="2.014102"/>
+		</isotope>
+		<element name="G4_H" formula="H">
+			<fraction ref="G4_H_1" n="0.999885"/>
+			<fraction ref="G4_H_2" n="0.000115"/>
+		</element>
+		<material name="G4_Galactic" state="gas">
+			<D value="1e-25"/>
+			<fraction ref="G4_H" n="1.0"/>
+		</material>
+		<isotope name="G4_Fe_54" Z="26" N="54">
+			<atom value="53.9396"/>
+		</isotope>
+		<isotope name="G4_Fe_56" Z="26" N="56">
+			<atom value="55.9349"/>
+		</isotope>
+		<isotope name="G4_Fe_57" Z="26" N="57">
+			<atom value="56.9354"/>
+		</isotope>
+		<isotope name="G4_Fe_58" Z="26" N="58">
+			<atom value="57.9333"/>
+		</isotope>
+		<element name="G4_Fe" formula="Fe">
+			<fraction ref="G4_Fe_54" n="0.05845"/>
+			<fraction ref="G4_Fe_56" n="0.91754"/>
+			<fraction ref="G4_Fe_57" n="0.02119"/>
+			<fraction ref="G4_Fe_58" n="0.00282"/>
+		</element>
+		<material name="Material_G4_Fe" state="solid">
+			<D value="7.874"/>
+			<fraction ref="G4_Fe" n="1.0"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="m"/>
+		<tube name="ts" rmin="0.1075" rmax="0.1875" z="0.1875" startphi="0" deltaphi="TWOPI" lunit="m" aunit="rad"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="Material_G4_Fe"/>
+			<solidref ref="ts"/>
+		</volume>
+		<assembly name="wa">
+			<physvol name="t_pv1">
+				<volumeref ref="tl"/>
+				<position name="t_pv1_pos" x="0.000000000000000" y="0.000000000000000" z="500.000000000000000" unit="mm"/>
+				<rotationref ref="alignSurfX"/>
+			</physvol>
+			<physvol name="t_pv2">
+				<volumeref ref="tl"/>
+				<position name="t_pv2_pos" x="0.000000000000000" y="0.000000000000000" z="-500.000000000000000" unit="mm"/>
+				<rotationref ref="alignSurfY"/>
+			</physvol>
+		</assembly>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="a_pv1">
+				<volumeref ref="wa"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="bx" value="10"/>
+		<position name="b1pos" x="-(bx)" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="b2pos" x="0.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+		<position name="b3pos" x="bx" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs1" x="(bx) * (1.100000000000000)" y="(bx) * (0.900000000000000)" z="(bx) * (0.900000000000000)" lunit="mm"/>
+		<box name="bs2" x="(bx) * (1.100000000000000)" y="(bx) * (0.800000000000000)" z="(bx) * (0.800000000000000)" lunit="mm"/>
+		<box name="bs3" x="(bx) * (1.100000000000000)" y="(bx) * (0.700000000000000)" z="(bx) * (0.700000000000000)" lunit="mm"/>
+		<box name="rs" x="(bx) * (3.000000000000000)" y="(bx) * (2.000000000000000)" z="(bx) * (2.000000000000000)" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="bl1">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="bs1"/>
+		</volume>
+		<volume name="bl2">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="bs2"/>
+		</volume>
+		<volume name="bl3">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="bs3"/>
+		</volume>
+		<volume name="rl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="rs"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl1"/>
+				<position name="b_pv1_pos" x="-(bx)" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="b_pv2">
+				<volumeref ref="bl2"/>
+			</physvol>
+			<physvol name="b_pv3">
+				<volumeref ref="bl3"/>
+				<position name="b_pv3_pos" x="bx" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="r_pv1">
+				<volumeref ref="rl"/>
+				<position name="r_pv1_pos" x="(bx) * (3.000000000000000)" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="r_pv2" copynumber="1">
+				<volumeref ref="rl"/>
+				<position name="r_pv2_pos" x="(bx) * (-3.000000000000000)" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

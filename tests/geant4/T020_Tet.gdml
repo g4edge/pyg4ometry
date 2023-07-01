@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<position name="v1" x="10" y="10" z="0" unit="mm"/>
+		<position name="v2" x="-10" y="10" z="0" unit="mm"/>
+		<position name="v3" x="-10" y="-10" z="0" unit="mm"/>
+		<position name="v4" x="0" y="0" z="10" unit="mm"/>
+		<position name="ts_v1" x="10" y="10" z="0"/>
+		<position name="ts_v2" x="-10" y="10" z="0"/>
+		<position name="ts_v3" x="-10" y="-10" z="0"/>
+		<position name="ts_v4" x="0" y="0" z="10"/>
+		<position name="ts2_v1" x="10" y="10" z="0"/>
+		<position name="ts2_v2" x="-10" y="10" z="0"/>
+		<position name="ts2_v3" x="-10" y="-10" z="0"/>
+		<position name="ts2_v4" x="0" y="0" z="10"/>
+	</define>
+	<materials/>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<tet name="ts" vertex1="ts_v1" vertex2="ts_v2" vertex3="ts_v3" vertex4="ts_v4" lunit="mm"/>
+		<tet name="ts2" vertex1="ts2_v1" vertex2="ts2_v2" vertex3="ts2_v3" vertex4="ts2_v4" lunit="cm"/>
+	</solids>
+	<structure>
+		<volume name="tl">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="ts"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="t_pv1">
+				<volumeref ref="tl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

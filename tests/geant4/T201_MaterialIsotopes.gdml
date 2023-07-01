@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define>
+		<constant name="wx" value="100"/>
+		<constant name="wy" value="100"/>
+		<constant name="wz" value="100"/>
+		<constant name="bx" value="10"/>
+		<constant name="by" value="10"/>
+		<constant name="bz" value="10"/>
+	</define>
+	<materials>
+		<isotope name="U235" Z="92" N="235">
+			<atom value="235.044"/>
+		</isotope>
+		<isotope name="U238" Z="92" N="238">
+			<atom value="238.051"/>
+		</isotope>
+		<element name="uranium" formula="U">
+			<fraction ref="U235" n="0.00716"/>
+			<fraction ref="U238" n="0.99284"/>
+		</element>
+		<material name="natural_uranium">
+			<D value="19.1"/>
+			<fraction ref="uranium" n="1"/>
+		</material>
+	</materials>
+	<solids>
+		<box name="ws" x="wx" y="wy" z="wz" lunit="mm"/>
+		<box name="bs" x="bx" y="by" z="bz" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="bl">
+			<materialref ref="natural_uranium"/>
+			<solidref ref="bs"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws"/>
+			<physvol name="b_pv1">
+				<volumeref ref="bl"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>
