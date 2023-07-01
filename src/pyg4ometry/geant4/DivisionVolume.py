@@ -67,9 +67,7 @@ class DivisionVolume(_PhysicalVolume):
 
         if motherVolume.solid.type != logicalVolume.solid.type:
             msg = f"Can not have divisions with a different solid type than the mother volume. Mother : {motherVolume.solid.type}, Division : {logicalVolume.solid.type}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         if addRegistry:
             registry.addPhysicalVolume(self)
 
@@ -143,9 +141,7 @@ class DivisionVolume(_PhysicalVolume):
     def checkAxis(self, allowed_axes):
         if self.axis not in allowed_axes:
             msg = f"Division along axis {self.axis} not supported for solid {self.logicalVolume.solid.type}"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
     def divideBox(self, offset, width, ndiv):
         allowed_axes = [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]
@@ -458,9 +454,7 @@ class DivisionVolume(_PhysicalVolume):
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
             msg = "Cannot construct polycone division with degenerate radii at -Z"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if self.axis == self.Axis.kPhi:
             # Always take into account the inner sizes of the solids
@@ -490,9 +484,7 @@ class DivisionVolume(_PhysicalVolume):
                     if offs < 0:
                         if ndiv * width > abs(offs):
                             msg = "Division with user-specified width is only possible between 2 z-planes."
-                            raise ValueError(
-                                msg
-                            )
+                            raise ValueError(msg)
                         zsl_index = i
                         zsl_size = zs
                         break
@@ -587,9 +579,7 @@ class DivisionVolume(_PhysicalVolume):
         msize = self.getMotherSize()
         if not msize:  # Possible if inner and outer radii at -Z are the same
             msg = "Cannot construct polyhedra division with degenerate radii at -Z"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         if self.axis == self.Axis.kPhi:
             # Always take into account the inner sizes of the solids
@@ -621,9 +611,7 @@ class DivisionVolume(_PhysicalVolume):
                     if offs < 0:
                         if ndiv * width > abs(offs):
                             msg = "Division with user-specified width is only possible between 2 z-planes."
-                            raise ValueError(
-                                msg
-                            )
+                            raise ValueError(msg)
                         zsl_index = i
                         zsl_size = zs
                         break
@@ -737,9 +725,7 @@ class DivisionVolume(_PhysicalVolume):
             )
         else:
             msg = f"Division with solid {self.logicalVolume.solid.type} is not supported yet."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         return [meshes, transforms]
 

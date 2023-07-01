@@ -448,9 +448,7 @@ class Reader:
                             _g4.MaterialPredefined(ref, registry=self._registry)
                         except ValueError:
                             msg = f"Component {ref} not defined for composite material {name}"
-                            raise ValueError(
-                                msg
-                            )
+                            raise ValueError(msg)
 
                     if comp_type == "fraction":
                         # abundance = float(comp.get("n", 0.0))
@@ -470,9 +468,7 @@ class Reader:
 
                     else:
                         msg = f"Unrecognised material component type: {comp_type}"
-                        raise ValueError(
-                            msg
-                        )
+                        raise ValueError(msg)
 
             # Set the optional variables of state
             if "temperature" in material:
@@ -490,9 +486,7 @@ class Reader:
                     self._registry.defineDict[pref], _defines.Matrix
                 ):
                     msg = f"Referenced matrix {pref} not defined for property {pname} on material {name}"
-                    raise ValueError(
-                        msg
-                    )
+                    raise ValueError(msg)
                 mat.addProperty(pname, self._registry.defineDict[pref])
 
         return substitueDictionary
@@ -1924,9 +1918,7 @@ class Reader:
         for pname, pref in properties.items():
             if pref not in self._registry.defineDict:
                 msg = f"Referenced matrix {pref} not defined for property {pname} on optical surface {solid_name}"
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
             surf.addProperty(pname, self._registry.defineDict[pref])
 
     def parseScaledSolid(self, node):

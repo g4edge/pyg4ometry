@@ -256,7 +256,7 @@ option, preprocessGDML=0;
             self.defines.appendChild(oe)
         elif any(
             isinstance(define, d)
-                for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]
+            for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]
         ):
             self.writeVectorVariable(
                 self.defines, define, allow_ref=False, suppress_trivial=False
@@ -271,9 +271,7 @@ option, preprocessGDML=0;
             prop.setAttribute("name", str(pname))
             if not isinstance(pref, _Defines.Matrix):
                 msg = f"Only references to matrices can be used for material property {pname}"
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
             # If possible, write the variable as a reference to a define
             if not (pref.name in self.registry.defineDict):
                 msg = "Invalid ref!"
