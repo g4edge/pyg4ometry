@@ -577,7 +577,7 @@ class VtkViewer:
 
                 # pv compound transform
                 new_mtra = mtra @ pvmsca @ pvmrot
-                new_tra = _np.array(mtra@pvtra) + tra
+                new_tra = mtra @ pvtra + tra
 
                 if (
                     pv.logicalVolume.type != "assembly"
