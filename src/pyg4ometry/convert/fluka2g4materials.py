@@ -260,7 +260,7 @@ class _PeriodicTable:
     def atomicNumberAndMassFromSymbol(self, symbol):
         t = self.table
         mask = t["Symbol"] == symbol
-        massNumber = int(t.AtomicMass[mask])
-        atomicNumber = int(t.AtomicNumber[mask])
+        massNumber = int(t.AtomicMass[mask].iloc[0])
+        atomicNumber = int(t.AtomicNumber[mask].iloc[0])
 
         return atomicNumber, massNumber
