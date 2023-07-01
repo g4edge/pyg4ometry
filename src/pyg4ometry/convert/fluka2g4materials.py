@@ -255,7 +255,7 @@ class _PeriodicTable:
     def atomicMassFromZ(self, z):
         t = self.table
         mask = t["AtomicNumber"] == z
-        return float(t["AtomicMass"][mask])
+        return float(t["AtomicMass"][mask].iloc[0])
 
     def atomicNumberAndMassFromSymbol(self, symbol):
         t = self.table
