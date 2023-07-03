@@ -3,7 +3,7 @@ import os as _os
 import numpy as _np
 
 
-def Test(vis=False, interactive=False):
+def Test(testdata, tmptestdir, vis=False, interactive=False):
     reg = _pyg4.geant4.Registry()
     radius1 = 7
     radius2 = 9
@@ -20,10 +20,11 @@ def Test(vis=False, interactive=False):
         "t1", radius1, radius2, d, 0, 2 * _np.pi, n1, n2, reg
     )
 
-    stlFileName = _os.path.join(
-        _os.path.dirname(__file__), "T721_featureExtract_cutTubs.stl"
-    )
-    datFileName = stlFileName.replace("stl", "dat")
+    stlFileName = testdata['stl/ST0372507_01_a.stl']
+    #_os.path.join(
+    #    _os.path.dirname(__file__), "T721_featureExtract_cutTubs.stl"
+    #)
+    datFileName = tmptestdir / 'ST0372507_01_a.dat'
     _pyg4.convert.pycsgMeshToStl(t.mesh(), stlFileName)
 
     p1 = _pyg4.features.algos.Plane([0, 0, 0], [0, 0, 1])
