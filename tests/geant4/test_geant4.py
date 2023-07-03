@@ -368,7 +368,7 @@ def test_Python_VisualisationVtk_setRandomColours(simple_box):
 def test_Python_VisualisationVtk_RandomColour(simple_box):
     import pyg4ometry
 
-    wlv = simple_box['logicalVolume']
+    wlv = simple_box["logicalVolume"]
     v = pyg4ometry.visualisation.VtkViewerColoured(defaultColour="random")
     v.addLogicalVolume(wlv)
 
@@ -376,13 +376,13 @@ def test_Python_VisualisationVtk_RandomColour(simple_box):
 def test_Python_VisualisationVtk_DefaultMaterial(simple_box):
     import pyg4ometry
 
-    wlv = simple_box['logicalVolume']
+    wlv = simple_box["logicalVolume"]
     v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
     v.addLogicalVolume(wlv)
 
 
 # TODO reinstate test
-#def test_Python_VisualisationVtk_CustomMaterialColours(lhc_blm):
+# def test_Python_VisualisationVtk_CustomMaterialColours(lhc_blm):
 #    import pyg4ometry
 #
 #    wlv = lhc_blm

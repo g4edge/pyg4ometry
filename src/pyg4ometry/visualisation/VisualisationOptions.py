@@ -64,6 +64,7 @@ def loadPredefined():
     Lods from package resource files.
     """
     import importlib_resources
+
     config = _configparser.ConfigParser(
         allow_no_value=True, interpolation=_configparser.ExtendedInterpolation()
     )

@@ -917,8 +917,9 @@ def test_GdmlLoad_300_MalformedGdml(testdata):
     import xml.parsers.expat as _expat
 
     # TODO reinstate
-    #with pytest.raises(_expat.ExpatError):
+    # with pytest.raises(_expat.ExpatError):
     #    r = pyg4ometry.gdml.Reader(testdata["gdml/300_malformed.gdml"])
+
 
 def test_GdmlLoad_301_Quantity(testdata):
     assert pyg4ometryLoadWriteTest(testdata["gdml/301_quantity.gdml"])
