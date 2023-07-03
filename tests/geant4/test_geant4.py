@@ -1,5 +1,5 @@
 import numpy as _np
-import pytest as _pytest
+import pytest
 
 import pyg4ometry.transformation as _trans
 from pyg4ometry.geant4.solid import TwoVector
@@ -130,8 +130,8 @@ def test_Python_Matrix2axisangleX():
         ]
     )
     aa = _trans.matrix2axisangle(m)
-    assert _pytest.approx(aa[0]) == [1.0, 0.0, 0.0]
-    assert _pytest.approx(aa[1]) == 0.5
+    assert pytest.approx(aa[0]) == [1.0, 0.0, 0.0]
+    assert pytest.approx(aa[1]) == 0.5
 
 
 def test_Python_Matrix2axisangleY():
@@ -144,8 +144,8 @@ def test_Python_Matrix2axisangleY():
         ]
     )
     aa = _trans.matrix2axisangle(m)
-    assert _pytest.approx(aa[0]) == [0.0, -1.0, 0.0]
-    assert _pytest.approx(aa[1]) == 0.5
+    assert pytest.approx(aa[0]) == [0.0, -1.0, 0.0]
+    assert pytest.approx(aa[1]) == 0.5
 
 
 def test_Python_Matrix2axisangleZ():
@@ -158,8 +158,8 @@ def test_Python_Matrix2axisangleZ():
         ]
     )
     aa = _trans.matrix2axisangle(m)
-    assert _pytest.approx(aa[0]) == [0.0, 0.0, 1.0]
-    assert _pytest.approx(aa[1]) == 0.5
+    assert pytest.approx(aa[0]) == [0.0, 0.0, 1.0]
+    assert pytest.approx(aa[1]) == 0.5
 
 
 def test_Python_Axisangle2matrixX():
