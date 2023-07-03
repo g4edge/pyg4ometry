@@ -122,8 +122,8 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
             reflection = _np.diag(
                 [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
             )
-        new_mtra = mtra * pvmrot * reflection
-        new_tra = (_np.array((mtra * reflection).dot(pvtra)) + tra)[0]
+        new_mtra = mtra @ pvmrot @ reflection
+        new_tra = mtra @ reflection @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
             dv, new_mtra, new_tra, flukaRegistry, flukaNameCount
@@ -228,8 +228,8 @@ def geant4PhysicalVolume2Fluka(
                 reflection = _np.diag(
                     [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
                 )
-            new_mtra = mtra * pvmrot * reflection
-            new_tra = (_np.array((mtra * reflection).dot(pvtra)) + tra)[0]
+            new_mtra = mtra @ pvmrot @ reflection
+            new_tra = mtra @ reflection @ pvtra + tra
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
                 new_mtra,
@@ -257,8 +257,8 @@ def geant4PhysicalVolume2Fluka(
                 reflection = _np.diag(
                     [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
                 )
-            new_mtra = mtra * pvmrot * reflection
-            new_tra = (_np.array((mtra * reflection).dot(pvtra)) + tra)[0]
+            new_mtra = mtra @ pvmrot @ reflection
+            new_tra = mtra @ reflection @ pvtra + tra
 
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
@@ -1829,8 +1829,8 @@ def geant4Solid2FlukaRegion(
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        new_mtra = mtra * bsmtra
-        new_tra = (_np.array(mtra.dot(bstra)) + tra)[0]
+        new_mtra = mtra @ bsmtra
+        new_tra = mtra @ bstra + tra
 
         r1, flukaNameCount = geant4Solid2FlukaRegion(
             flukaNameCount,
@@ -1881,8 +1881,8 @@ def geant4Solid2FlukaRegion(
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        new_mtra = mtra * bsmtra
-        new_tra = (_np.array(mtra.dot(bstra)) + tra)[0]
+        new_mtra = mtra @ bsmtra
+        new_tra = mtra @ bstra + tra
 
         r1, flukaNameCount = geant4Solid2FlukaRegion(
             flukaNameCount,
@@ -1935,8 +1935,8 @@ def geant4Solid2FlukaRegion(
         solid1 = solid.obj1
         solid2 = solid.obj2
 
-        new_mtra = mtra * bsmtra
-        new_tra = (_np.array(mtra.dot(bstra)) + tra)[0]
+        new_mtra = mtra @ bsmtra
+        new_tra = mtra @ bstra + tra
 
         r1, flukaNameCount = geant4Solid2FlukaRegion(
             flukaNameCount,

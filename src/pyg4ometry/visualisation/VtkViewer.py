@@ -485,8 +485,8 @@ class VtkViewer:
             rotn = solid.rotation()
 
             rotm = _transformation.tbxyz2matrix(rotn)
-            new_mtra = mtra * rotm
-            new_tra = (_np.array(mtra.dot(tran)) + tra)[0]
+            new_mtra = mtra @ rotm
+            new_tra = mtra @ tran + tra
 
             self.addBooleanSolidRecursive(obj1, mtra, tra, first)
             self.addBooleanSolidRecursive(obj2, new_mtra, new_tra, first)
@@ -576,8 +576,8 @@ class VtkViewer:
                 pvtra = _np.array(pv.position.eval())
 
                 # pv compound transform
-                new_mtra = mtra * pvmsca * pvmrot
-                new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                new_mtra = mtra @ pvmsca @ pvmrot
+                new_tra = mtra @ pvtra + tra
 
                 if (
                     pv.logicalVolume.type != "assembly"
@@ -637,8 +637,8 @@ class VtkViewer:
                     pvtra = _np.array(trans[1])
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = mtra @ pvtra + tra
 
                     # TBC - should pv.visOptions be used exclusively?
                     self.addMesh(
@@ -663,8 +663,8 @@ class VtkViewer:
                     pvtra = _np.array(trans[1].eval())
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = _np.array @ pvtra + tra
 
                     # TBC - should pv.visOptions be used exclusively?
                     self.addMesh(
