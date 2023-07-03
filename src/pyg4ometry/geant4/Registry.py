@@ -13,9 +13,10 @@ def solidName(var):
 
 def removeprefix(string: str, prefix: str, /) -> str:
     if string.startswith(prefix):
-        return string[len(prefix):]
+        return string[len(prefix) :]
     else:
         return string[:]
+
 
 class Registry:
     """
@@ -793,9 +794,13 @@ class Registry:
 
                 # update the position and rotation information
                 try:
-                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(dv.name)
+                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(
+                        dv.name
+                    )
                 except AttributeError:
-                    pos_name = dv_copy.name + removeprefix(dv_copy.position.name, dv.name)
+                    pos_name = dv_copy.name + removeprefix(
+                        dv_copy.position.name, dv.name
+                    )
                 dv_copy.position = _Defines.Position(
                     pos_name,
                     new_pos[0],
@@ -807,9 +812,13 @@ class Registry:
                 )
 
                 try:
-                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name)
+                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(
+                        dv.name
+                    )
                 except AttributeError:
-                    rot_name = dv_copy.name + removeprefix(dv_copy.rotation.name, dv.name)
+                    rot_name = dv_copy.name + removeprefix(
+                        dv_copy.rotation.name, dv.name
+                    )
 
                 dv_copy.rotation = _Defines.Rotation(
                     rot_name,
