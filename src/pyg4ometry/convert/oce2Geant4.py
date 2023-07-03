@@ -92,6 +92,10 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
             location,
             _oce.Poly.Poly_MeshPurpose_NONE,
         )
+        # TODO why is the triangulation none?
+        if triangulation is None:
+            break
+
         topoExp.Next()
 
         mergedNbNodes += triangulation.NbNodes()
@@ -123,6 +127,10 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
             location,
             _oce.Poly.Poly_MeshPurpose_NONE,
         )
+
+        # TODO why is the triangulation none?
+        if triangulation is None:
+            break
 
         aTrsf = location.Transformation()
         for i in range(1, triangulation.NbNodes() + 1, 1):
@@ -168,16 +176,19 @@ def _oce2Geant4_traverse(
     meshQualityMap,
     badCADLabels,
     addBoundingSolids=False,
+    oceName=False,
 ):
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
     _oce.TDF.TDF_Tool.Entry(label, node)
 
     if (
-        name is None or name in badCADLabels
+        name is None or name in badCADLabels or oceName
     ):  # TODO must be a better way of finding these generic names
         name = node.ToCString()
         name = "l_" + name.replace(":", "_")
+
+    print(name, node.ToCString())
 
     loc = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
 
