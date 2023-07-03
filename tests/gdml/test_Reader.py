@@ -943,6 +943,7 @@ def test_GdmlLoad_305_UnrecognisedDefine(testdata):
 
 
 def test_GdmlLoad_306_Tubs_Bad_Pi(testdata):
+    pass
     # TODO check it raises an exception
     #with pytest.raises(ValueError):
     #    pyg4ometryLoadWriteTest(testdata["gdml/306_tubs_hand_written_bad_pi.gdml"])
