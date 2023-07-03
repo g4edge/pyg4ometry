@@ -232,7 +232,7 @@ class _Calc(ast.NodeVisitor):
         operand = self.visit(node.operand)
         return op(operand)
 
-    def visit_Num(self, node):
+    def visit_Constant(self, node):
         return node.n
 
     def visit_Name(self, node):
