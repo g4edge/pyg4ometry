@@ -703,7 +703,7 @@ def test_RotoTranslation_fails_setting_with_wrong_name():
     name, rtrans = _makeRotoTranslation()
     store = _makeStore()
     # TODO
-    #with pytest.raises(ValueError):
+    # with pytest.raises(ValueError):
     #    store["asdasd"] = rtrans
 
 
@@ -758,5 +758,5 @@ def test_addRotoTranslation():
 
     rtrans5.transformationIndex = 9000
     # TODO check
-    #with pytest.raises(KeyError):
+    # with pytest.raises(KeyError):
     #    store.addRotoTranslation(rtrans5)
