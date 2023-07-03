@@ -3,7 +3,7 @@ import os as _os
 
 
 def Test(testdata, tmptestdir, vis=False, interactive=False):
-    pathToStl = testdata['stl/ST0372507_01_a.stl']
+    pathToStl = testdata["stl/ST0372507_01_a.stl"]
     cs1 = _pyg4.features.algos.CoordinateSystem([0, 0, 0], [1, 0, 0], [0, 1, 0])
     cs2 = _pyg4.features.algos.CoordinateSystem([0, 0, 20], [1, 0, 0], [0, 1, 0])
     r = _pyg4.features.extract(

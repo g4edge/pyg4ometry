@@ -20,11 +20,11 @@ def Test(testdata, tmptestdir, vis=False, interactive=False):
         "t1", radius1, radius2, d, 0, 2 * _np.pi, n1, n2, reg
     )
 
-    stlFileName = testdata['stl/ST0372507_01_a.stl']
-    #_os.path.join(
+    stlFileName = testdata["stl/ST0372507_01_a.stl"]
+    # _os.path.join(
     #    _os.path.dirname(__file__), "T721_featureExtract_cutTubs.stl"
-    #)
-    datFileName = tmptestdir / 'ST0372507_01_a.dat'
+    # )
+    datFileName = tmptestdir / "ST0372507_01_a.dat"
     _pyg4.convert.pycsgMeshToStl(t.mesh(), stlFileName)
 
     p1 = _pyg4.features.algos.Plane([0, 0, 0], [0, 0, 1])
