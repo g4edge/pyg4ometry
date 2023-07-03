@@ -295,8 +295,8 @@ class RPP(BodyMixin):
         )
 
     def _withLengthSafety(self, safety, reg):
-        lower = self.lower - [safety, safety, safety]
-        upper = [*self.upper, safety, safety, safety]
+        lower = self.lower - Three(safety, safety, safety)
+        upper = self.upper - Three(safety, safety, safety)
         return RPP(
             self.name,
             lower.x,
