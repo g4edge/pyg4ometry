@@ -161,33 +161,33 @@ class Reader:
 
             if define_type == "constant":
                 value = def_attrs["value"]
-                _defines.Constant(name, value, self._registry)
+                _defines.Constant(name, value, self._registry, True)
             elif define_type == "quantity":
                 value = def_attrs["value"]
                 unit = def_attrs["unit"]
                 qtype = def_attrs["type"]
-                _defines.Quantity(name, value, unit, qtype, self._registry)
+                _defines.Quantity(name, value, unit, qtype, self._registry, True)
             elif define_type == "variable":
                 value = def_attrs["value"]
-                _defines.Variable(name, value, self._registry)
+                _defines.Variable(name, value, self._registry, True)
             elif define_type == "expression":
                 value = df.childNodes[0].nodeValue
                 _defines.Expression(name, value, self._registry, True)
             elif define_type == "position":
                 (x, y, z, u) = getXYZ(def_attrs)
                 unit = u if u else "mm"
-                _defines.Position(name, x, y, z, unit, self._registry)
+                _defines.Position(name, x, y, z, unit, self._registry, True)
             elif define_type == "rotation":
                 (x, y, z, u) = getXYZ(def_attrs)
                 unit = u if u else "rad"
-                _defines.Rotation(name, x, y, z, unit, self._registry)
+                _defines.Rotation(name, x, y, z, unit, self._registry, True)
             elif define_type == "scale":
                 (x, y, z, u) = getXYZ(def_attrs)
                 unit = u if u else "none"
-                _defines.Scale(name, x, y, z, unit, self._registry)
+                _defines.Scale(name, x, y, z, unit, self._registry, True)
             elif define_type == "matrix":
                 (coldim, values) = getMatrix(def_attrs)
-                _defines.Matrix(name, coldim, values, self._registry)
+                _defines.Matrix(name, coldim, values, self._registry, True)
             else:
                 print("Warning : unrecognised define: ", define_type)
 
@@ -350,7 +350,7 @@ class Reader:
                 materials.append(def_attrs)
 
             else:
-                print("Urecognised define: ", mat_type)
+                print("Unrecognised define: ", mat_type)
 
         materialSubstitutionNames = self._makeMaterials(materials, elements, isotopes)
         return materialSubstitutionNames
@@ -363,7 +363,7 @@ class Reader:
         isotope_dict = {}
         element_dict = {}  # No material dict as materials go into the registry
 
-        # if we find any NIST materials and we're reducing them back to predefine,
+        # if we find any NIST materials, and we're reducing them back to predefine,
         # keep a dictionary of original name : NIST name for later substitution
         substitueDictionary = {}
 
@@ -473,19 +473,11 @@ class Reader:
             # Set the optional variables of state
             if "temperature" in material:
                 mat.set_temperature(
-                    _defines.Expression(
-                        mat.name + "_T", material["temperature"], self._registry
-                    ),
-                    material["temperature_unit"],
+                    float(material["temperature"]), material["temperature_unit"]
                 )
 
             if "pressure" in material:
-                mat.set_pressure(
-                    _defines.Expression(
-                        mat.name + "_P", material["pressure"], self._registry
-                    ),
-                    material["pressure_unit"],
-                )
+                mat.set_pressure(float(material["pressure"]), material["pressure_unit"])
 
             # Set the optional properties
             properties = material.get("properties")
@@ -1951,12 +1943,7 @@ class Reader:
         solid = self._registry.solidDict[solid_name]
 
         _g4.solid.Scaled(
-            scaledSolid_name,
-            solid,
-            scale.x.expression,
-            scale.y.expression,
-            scale.z.expression,
-            self._registry,
+            scaledSolid_name, solid, scale.x, scale.y, scale.z, self._registry
         )
 
     def parseSolidLoop(self, node):
@@ -2183,6 +2170,7 @@ class Reader:
 
                 repNode = chNode.getElementsByTagName("replicate_along_axis")[0]
                 dirNode = repNode.getElementsByTagName("direction")[0]
+                axis = None
                 if "x" in dirNode.attributes:
                     axis = _g4.ReplicaVolume.Axis.kXAxis
                 elif "y" in dirNode.attributes:

@@ -3,11 +3,8 @@ from ..geant4._Material import Material as _Material
 from ..geant4._Material import Element as _Element
 from ..geant4._Material import Isotope as _Isotope
 from ..gdml import Defines as _Defines
-from . import Expression as _Expression
 import pyg4ometry.geant4 as _g4
 import logging as _log
-
-from pyg4ometry.geant4 import Expression as _Expression
 
 
 class Writer:
@@ -46,7 +43,7 @@ class Writer:
         if not self.registry.userInfo:
             # Geant4 version earlier than 10.1 do not support userinfo
             # If no user info is specified, remove the userinfo tag from the GDML document
-            # This is done here, because the regsitry is not available at construction time
+            # This is done here, because the registry is not available at construction time
             self.top.removeChild(
                 [n for n in self.top.childNodes if n.tagName == "userinfo"][0]
             )
@@ -214,9 +211,9 @@ option, preprocessGDML=0;
             vn = self.doc.createElement(vtype)
             if vv.name:  # Write the name where possible
                 vn.setAttribute("name", vv.name)
-            vn.setAttribute("x", vv.x.expression)
-            vn.setAttribute("y", vv.y.expression)
-            vn.setAttribute("z", vv.z.expression)
+            vn.setAttribute("x", vv.x.expressionString)
+            vn.setAttribute("y", vv.y.expressionString)
+            vn.setAttribute("z", vv.z.expressionString)
             if vv.unit != "none":  # Write the unit if it is valid
                 vn.setAttribute("unit", vv.unit)
 
@@ -227,12 +224,12 @@ option, preprocessGDML=0;
         if isinstance(define, _Defines.Constant):
             oe = self.doc.createElement("constant")
             oe.setAttribute("name", define.name)
-            oe.setAttribute("value", str(define.expr.expression))
+            oe.setAttribute("value", str(define.expression.expressionString))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Quantity):
             oe = self.doc.createElement("quantity")
             oe.setAttribute("name", define.name)
-            oe.setAttribute("value", str(define.expr.expression))
+            oe.setAttribute("value", str(define.expression.expressionString))
             oe.setAttribute("type", define.type)
             if define.unit is not None:
                 oe.setAttribute("unit", define.unit)
@@ -240,20 +237,21 @@ option, preprocessGDML=0;
         elif isinstance(define, _Defines.Variable):
             oe = self.doc.createElement("variable")
             oe.setAttribute("name", define.name)
-            oe.setAttribute("value", str(define.expr.expression))
+            oe.setAttribute("value", str(define.expression.expressionString))
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Matrix):
             oe = self.doc.createElement("matrix")
             oe.setAttribute("name", define.name)
             oe.setAttribute("coldim", str(define.coldim))
             oe.setAttribute(
-                "values", " ".join([val.expr.expression for val in define.values])
+                "values",
+                " ".join([val.expression.expressionString for val in define.values]),
             )
             self.defines.appendChild(oe)
         elif isinstance(define, _Defines.Expression):
             oe = self.doc.createElement("expression")
             oe.setAttribute("name", define.name)
-            tn = self.doc.createTextNode(define.expr.expression)
+            tn = self.doc.createTextNode(define.expression.expressionString)
             oe.appendChild(tn)
             self.defines.appendChild(oe)
         elif any(
@@ -288,7 +286,7 @@ option, preprocessGDML=0;
         if isinstance(material, _Material):
             oe = self.doc.createElement("material")
             oe.setAttribute("name", material.name)
-            if material.state != "" and material.state != None:
+            if material.state != "" and material.state is not None:
                 oe.setAttribute("state", material.state)
 
             # No need to add defines for NIST compounds or
@@ -710,20 +708,12 @@ option, preprocessGDML=0;
     # TODO got to be removed
     def getValueOrExpr(self, var):
         # pyg4ometry expression (evaluatable string)
-        if isinstance(var, _Expression):
-            return str(var.expression)
+        if isinstance(var, _Defines.BasicExpression):
+            return str(var.expressionString)
 
         # Expression, Constant, Quantity or Variable
-        elif (
-            isinstance(var, _Defines.Expression)
-            or isinstance(var, _Defines.Constant)
-            or isinstance(var, _Defines.Quantity)
-            or isinstance(var, _Defines.Variable)
-        ):
-            if var.name in self.registry.defineDict:
-                return var.name
-            else:
-                return str(var.expr.expression)
+        elif isinstance(var, _Defines.ScalarBase):
+            return str(var.expression.expressionString)
         else:
             return str(var)
 
@@ -1071,9 +1061,9 @@ option, preprocessGDML=0;
         d.setAttribute("rmax", self.getValueOrExpr(rOuter))
         d.setAttribute("z", self.getValueOrExpr(zplane))
 
-        # d.setAttribute('rmin',str(rInner.expr.expression))
-        # d.setAttribute('rmax', str(rOuter.expr.expression))
-        # d.setAttribute('z', str(zplane.expr.expression))
+        # d.setAttribute('rmin',str(rInner.expression))
+        # d.setAttribute('rmax', str(rOuter.expression))
+        # d.setAttribute('z', str(zplane.expression))
 
         return d
 
@@ -1159,9 +1149,9 @@ option, preprocessGDML=0;
     def createPosition(self, name, x, y, z):
         p = self.doc.createElement("position")
         p.setAttribute("name", str(name))
-        p.setAttribute("x", x.expression)
-        p.setAttribute("y", y.expression)
-        p.setAttribute("z", z.expression)
+        p.setAttribute("x", x.expressionString)
+        p.setAttribute("y", y.expressionString)
+        p.setAttribute("z", z.expressionString)
         return p
 
     def writeTet(self, instance):

@@ -13,11 +13,11 @@ def solidName(var):
 
 class Registry:
     """
-    Object to store geometry for input and output. \
-    All of the pyg4ometry classes can be used without \
-    storing them in the Registry. The registry is used \
-    to write the GDML output file. A registry needs to \
-    be used in conjunction with GDML Define objects for \
+    Object to store geometry for input and output.
+    All of the pyg4ometry classes can be used without
+    storing them in the Registry. The registry is used
+    to write the GDML output file. A registry needs to
+    be used in conjunction with GDML Define objects for
     evaluation of expressions.
     """
 
@@ -83,7 +83,7 @@ class Registry:
         self.logicalVolumeMeshSkip = []
         self.userInfo = []
 
-        self.definNameCount.clear()
+        self.defineNameCount.clear()
         self.materialNameCount.clear()
         self.materialUsageCount.clear()
         self.solidNameCount.clear()
@@ -99,7 +99,7 @@ class Registry:
 
     def getExpressionParser(self):
         if not self.expressionParser:
-            from pyg4ometry.gdml.Expression import ExpressionParser
+            from pyg4ometry.gdml.GdmlExpression import ExpressionParser
 
             self.expressionParser = ExpressionParser()
 
@@ -419,7 +419,9 @@ class Registry:
 
         self.defineNameCount[define.name] += 1
 
-    def transferDefines(self, var, incrementRenameDict={}, userRenameDict=None):
+    def transferDefines(
+        self, var, otherRegistry, incrementRenameDict={}, userRenameDict=None
+    ):
         """
         This function tolerates all types of defines including vector ones.
 
@@ -438,32 +440,27 @@ class Registry:
                 # any variables inside each component
                 for v in vi.variables():
                     if (
-                        v in self._registryOld.defineDict
+                        v in otherRegistry.defineDict
                     ):  # only if it's in the other registry
                         self.transferDefines(
-                            self._registryOld.defineDict[v],
+                            otherRegistry.defineDict[v],
+                            otherRegistry,
                             incrementRenameDict,
                             userRenameDict,
                         )
-            if var.name in self._registryOld.defineDict:
+            if var.name in otherRegistry.defineDict:
                 self.transferDefine(var, incrementRenameDict, userRenameDict)
 
         elif isinstance(var, _Defines.ScalarBase):  # a normal expression
-            for (
-                v
-            ) in (
-                var.expr.variables()
+            for v in var.expression.variables(
+                True
             ):  # loop over all variables needed for an expression
-                if (
-                    v in self._registryOld.defineDict
-                ):  # only if it's in the other registry
+                if v in otherRegistry.defineDict:  # only if it's in the other registry
                     self.transferDefine(
-                        self._registryOld.defineDict[v],
-                        incrementRenameDict,
-                        userRenameDict,
+                        otherRegistry.defineDict[v], incrementRenameDict, userRenameDict
                     )
             if (
-                var.name in self._registryOld.defineDict
+                var.name in otherRegistry.defineDict
             ):  # check if variable is stored in registry, if so need to be transferred
                 self.transferDefine(
                     var, incrementRenameDict, userRenameDict
@@ -471,9 +468,9 @@ class Registry:
 
         elif isinstance(var, _Defines.Matrix):
             for v in var.values:
-                if v.name in self._registryOld.defineDict:
+                if v.name in otherRegistry.defineDict:
                     self.transferDefine(v, incrementRenameDict, userRenameDict)
-            if var.name in self._registryOld.defineDict:
+            if var.name in otherRegistry.defineDict:
                 self.transferDefine(var, incrementRenameDict, userRenameDict)
         else:
             return
@@ -578,6 +575,7 @@ class Registry:
         Transfer a volume hierarchy to this registry. Any objects that had a registry set to
         another will be set to this one and will be owned by it effectively.
         :param volume: PhysicalVolume or LogicalVolume or AssemblyVolume.
+        :type volume: pyg4ometry.geant4.PhysicalVolume, pyg4ometry.geant4.LogicalVolume, pyg4ometry.geant4.AssemblyVolume.
         :param collapseAssemblies: if True, daughters of AssemblyVolume's will be attached directly to the mother of the assembly and the AssemblyVolume itself will be eliminated from the geometry tree
         :param incrementRenameDict: ignore - dictionary used internally for potentially incrementing names
         :param userRenameDict: a dictionary of find/replace regex strings to be used to rename volumes/materials/etc.
@@ -599,7 +597,6 @@ class Registry:
 
         if incrementRenameDict is None:
             incrementRenameDict = {}
-        self._registryOld = volume.registry
 
         if isinstance(volume, _PhysicalVolume) and volume.type == "placement":
             self.addVolumeRecursive(
@@ -610,10 +607,16 @@ class Registry:
             )
 
             # add members from physical volume
-            self.transferDefines(volume.position, incrementRenameDict, userRenameDict)
-            self.transferDefines(volume.rotation, incrementRenameDict, userRenameDict)
+            self.transferDefines(
+                volume.position, volume.registry, incrementRenameDict, userRenameDict
+            )
+            self.transferDefines(
+                volume.rotation, volume.registry, incrementRenameDict, userRenameDict
+            )
             if volume.scale:
-                self.transferDefines(volume.scale, incrementRenameDict, userRenameDict)
+                self.transferDefines(
+                    volume.scale, volume.registry, incrementRenameDict, userRenameDict
+                )
             self.transferPhysicalVolume(volume, incrementRenameDict, userRenameDict)
 
         elif isinstance(volume, _LogicalVolume):
@@ -710,7 +713,7 @@ class Registry:
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
         # info of the assemblies
-        mtra = _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        mtra = _np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         tra = _np.array([0, 0, 0])
         for pos, rot, sca in zip(positions, rotations, scales):
             assembly_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rot.eval()))
@@ -757,9 +760,9 @@ class Registry:
                     dv.logicalVolume,
                     dv_copy_name,
                     motherVol,
-                    None,
+                    assemblyPV.registry,
                     dv.copyNumber,
-                    False,
+                    True,
                     dv.scale,
                 )
 
@@ -790,7 +793,7 @@ class Registry:
                     new_pos[2],
                     "mm",
                     self,
-                    False,
+                    True,
                 )
                 dv_copy.rotation = _Defines.Rotation(
                     dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name),
@@ -799,7 +802,7 @@ class Registry:
                     new_rot[2],
                     "rad",
                     self,
-                    False,
+                    True,
                 )
 
                 # add this volume recursively to the registry
@@ -855,7 +858,9 @@ class Registry:
                 var = [var]  # single variable upgraded to list
 
             for v in var:  # loop over variables
-                self.transferDefines(v, incrementRenameDict, userRenameDict)
+                self.transferDefines(
+                    v, solid.registry, incrementRenameDict, userRenameDict
+                )
 
     def volumeTree(self, lvName):
         """Not sure what this method is used for"""
@@ -867,7 +872,7 @@ class Registry:
 
         if (
             solid.type == "union"
-            or solid.type == "intersection"
+            or solid.type == "intersecton"
             or solid.type == "subtraction"
         ):
             self.solidTree(solid.obj1.name)
@@ -888,7 +893,6 @@ class Registry:
         Find a object which name matches (or partially matches) nameFragment,
         returns a list of objects
         """
-
         objs = []
 
         for k in dic:
@@ -902,7 +906,6 @@ class Registry:
         Find a solid  which name matches (or partially matches) nameFragment,
         returns a list of solids
         """
-
         return self._findDictByName(self.solidDict, nameFragment)
 
     def findMaterialByName(self, nameFragment="G4_AIR"):
@@ -910,7 +913,6 @@ class Registry:
         Find a material which name matches (or partially matches) nameFragment,
         returns a list of materials
         """
-
         return self._findDictByName(self.materialDict, nameFragment)
 
     def findLogicalVolumeByName(self, nameFragment="World"):
@@ -918,15 +920,13 @@ class Registry:
         Find a logical volume  which name matches (or partially matches) nameFragment,
         returns a list of LogicalVolumes
         """
-
         return self._findDictByName(self.logicalVolumeDict, nameFragment)
 
-    def findPhysicalVolumeByame(self, name):
+    def findPhysicalVolumeByName(self, nameFragment):
         """
         Find a physical volume  which name matches (or partially matches) nameFragment,
         returns a list of LogicalVolumes
         """
-
         return self._findDictByName(self.physicalVolumeDict, nameFragment)
 
 

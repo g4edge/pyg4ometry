@@ -1,13 +1,72 @@
 import numbers as _numbers
-from pyg4ometry.geant4 import Expression as _Expression
+import numpy as _np
 from pyg4ometry.gdml import Units as _Units
 
-import numpy as _np
+
+class BasicExpression:
+    """
+    Holds an expression as a string and can use the expression parser
+    in the supplied registry to evaluate it. A registry is required.
+
+    :param name: Name of the expression object
+    :type name: str
+    :param expressionString: Expression itself as a string e.g. "12.0" or "a + 3.0"
+    :type expressionString: str
+    :param registry: The registry object to give context for any variables used.
+    :type registry: pyg4ometry.geant4.Registry.Registry
+
+    >>> r = pyg4ometry.geant4.Registry()
+    >>> a = BasicExpression("a", "3.0", r)
+    >>> float(a)
+    >>> str(a)
+    """
+
+    def __init__(self, name, expressionString, registry):
+        self.name = name
+        self.expressionString = expressionString
+        self.parseTree = None
+        self.registry = registry
+
+    def eval(self):
+        expressionParser = self.registry.getExpressionParser()
+        self.parseTree = expressionParser.parse(self.expressionString)
+        value = expressionParser.evaluate(self.parseTree, self.registry.defineDict)
+        return value
+
+    def variables(self, allDependents=False):
+        expressionParser = self.registry.getExpressionParser()
+        self.parseTree = expressionParser.parse(self.expressionString)
+        variables = expressionParser.get_variables(self.parseTree)
+        if allDependents:
+            dependents = []
+            for v in variables:
+                if v in self.registry.defineDict:
+                    define = self.registry.defineDict[v]
+                    dependents = define.expression.variables() + dependents  # prepend
+            variables = dependents + variables  # prepend
+        result = []
+        [
+            result.append(v) for v in variables if v not in result
+        ]  # remove duplicates but preserve prepended order
+        return result
+
+    def simp(self):
+        # find all variables of the expression and create
+        pass
+
+    def __repr__(self):
+        return f"{self.name} : {self.expressionString}"
+
+    def __float__(self):
+        return self.eval()
+
+    def str(self):
+        return "BasicExpression : " + self.name + " : " + str(float(self))
 
 
 def upgradeToStringExpression(reg, obj):
     """
-    Take a float, str, ScalarBase and return string expression
+    Take a float, str, ScalarBase and return string expression.
 
     :param reg: Registry for lookup in define dictionary
     :type reg: Registry
@@ -24,7 +83,7 @@ def upgradeToStringExpression(reg, obj):
         if obj in reg.defineDict:  # not sure if this is needed
             return obj
         else:
-            e = _Expression("", obj, reg)
+            e = BasicExpression("", obj, reg)
             try:
                 e.eval()
                 return obj
@@ -39,7 +98,9 @@ def upgradeToStringExpression(reg, obj):
         if obj.name in reg.defineDict:
             return obj.name  # so a scalar expression in registry
         else:
-            return obj.expr.expression  # so a scalar expression not in registry
+            return (
+                obj.expression.expressionString
+            )  # so a scalar expression not in registry
 
     else:
         raise ValueError(
@@ -53,14 +114,13 @@ def evaluateToFloat(reg, obj):
             raise AttributeError
         ans = [evaluateToFloat(reg, item) for item in obj.__iter__()]
     except (AttributeError,):
-        if isinstance(obj, _numbers.Number) or isinstance(obj, ScalarBase):
-            evaluatable = obj
-        elif isinstance(obj, VectorBase):
+        if isinstance(obj, _numbers.Number) or isinstance(obj, BasicExpression):
+            return float(obj)
+        elif isinstance(obj, ScalarBase) or isinstance(obj, VectorBase):
             return obj.eval()
         else:
-            evaluatable = _Expression("", obj, reg)
-        ans = float(evaluatable)
-
+            evaluatable = BasicExpression("", obj, reg)
+        ans = float(evaluatable.eval())
     return ans
 
 
@@ -71,7 +131,7 @@ def upgradeToExpression(reg, obj):
 
     # TODO: consider merging into/reusing the upgradeToStringExpression
     as_string = upgradeToStringExpression(reg, obj)
-    expression = _Expression("", as_string, reg)
+    expression = BasicExpression("", as_string, reg)
 
     try:
         float(expression)
@@ -123,8 +183,6 @@ def upgradeToTransformation(var, reg, addRegistry=False):
     :type var: list of str, float, Constant, Quantity, Variable
     :param reg: registry
     :type reg: Registry
-    :param type: class type of vector (position, rotation, scale)
-    :type type: str
     :param addRegistry: flag to add to registry
     :type addRegistry: bool
     """
@@ -155,13 +213,81 @@ def upgradeToTransformation(var, reg, addRegistry=False):
     return [rot, tra]
 
 
-class ScalarBase:
+class DefineBase:
     """
-    Base class for all scalars (Constants, Quantity, Variable and Expression)
+    Common bits for a define. Must have a name and a registry. Adding
+    to the registry can't be done here as it must be done by the derived type.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, name="", registry=None):
+        self.name = name
+        self.registry = registry
+
+    def setName(self, name):
+        """
+        Set name of the object.
+
+        :param name: name of object
+        :type name: str
+        """
+        self.name = name
+
+    def setRegistry(self, registry):
+        self.registry = registry
+
+
+class ScalarBase(DefineBase):
+    """
+    Base class for all scalars (Constants, Quantity, Variable and 'Expression')
+    """
+
+    def __init__(self, typeName, name="", registry=None):
+        super().__init__(name, registry)
+        self.expression = None
+        self._typeName = typeName
+
+    def setName(self, name):
+        """
+        Set name of scalar
+
+        :param name: name of object
+        :type name: str
+        """
+        super().setName(name)
+        self.expression.name = f"expr_{name}"
+
+    def setExpression(self, expressionString):
+        """
+        Take a string and make it into the BasicExpression type for this object.
+
+        :param expressionString: Expression to store.
+        :type expressionString: str
+        """
+        self.expression = BasicExpression(
+            f"expr_{self.name}",
+            upgradeToStringExpression(self.registry, expressionString),
+            self.registry,
+        )
+
+    def setRegistry(self, registry):
+        super().setRegistry(registry)
+        if self.expression:
+            registry.transferDefine(self)
+
+    def eval(self):
+        """
+        Evaluate the expression
+
+        :return: numerical evaluation of Constant
+        :rtype: float
+        """
+        return self.expression.eval()
+
+    def __repr__(self):
+        return self._typeName + f" : {self.name} = {self.expression!s}"
+
+    def __float__(self):
+        return self.expression.eval()
 
     def __add__(self, other):
         v1 = upgradeToStringExpression(self.registry, self)
@@ -258,26 +384,6 @@ class ScalarBase:
 
     __radd__ = __add__
     __rmul__ = __mul__
-
-    def setName(self, name):
-        """
-        Set name of scalar
-
-        :param name: name of object
-        :type name: str
-        """
-
-        self.name = name
-        self.expr.name = f"expr_{name}"
-        self.expr.registry = self.registry
-        self.registry.addDefine(self)
-
-    def setExpression(self, expr):
-        self.expr.expression = upgradeToStringExpression(self.registry, expr)
-
-    def setRegistry(self, registry):
-        self.registry = registry
-        self.expr.registry = registry
 
 
 def sin(arg):
@@ -502,28 +608,13 @@ class Constant(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=True):
-        super().__init__()
-
-        self.name = name
-
-        self.expr = _Expression(
+        super().__init__("Constant", name, registry)
+        self.expression = BasicExpression(
             f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def eval(self):
-        """
-        Evaluate constant
-
-        :return: numerical evaluation of Constant
-        :rtype: float
-
-        """
-        return self.expr.eval()
+        if registry and addRegistry:
+            registry.addDefine(self)
 
     def __eq__(self, other):
         if isinstance(other, Constant):
@@ -561,12 +652,6 @@ class Constant(ScalarBase):
         else:
             return self.eval() >= other
 
-    def __float__(self):
-        return self.expr.eval()
-
-    def __repr__(self):
-        return f"Constant : {self.name} = {self.expr!s}"
-
 
 class Quantity(ScalarBase):
     """
@@ -587,36 +672,19 @@ class Quantity(ScalarBase):
     """
 
     def __init__(self, name, value, unit, type, registry, addRegistry=True):
-        super().__init__()
-
-        self.name = name
+        super().__init__("Quantity", name, registry)
         self.unit = unit
         self.type = type
-
-        self.expr = _Expression(
+        self.expression = BasicExpression(
             f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def eval(self):
-        """
-        Evaluate quantity
-
-        :return: numerical evaluation of Quantity
-        :rtype: float
-        """
-        return self.expr.eval()
-
-    def __float__(self):
-        return self.expr.eval()
+        if registry and addRegistry:
+            registry.addDefine(self)
 
     def __repr__(self):
-        return "Quantity: {} = {} [{}] {}".format(
-            self.name, str(self.expr), self.unit, self.type
+        return self._typeName + " : {} = {} [{}] {}".format(
+            self.name, str(self.expression), self.unit, self.type
         )
 
 
@@ -633,33 +701,13 @@ class Variable(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=True):
-        super().__init__()
-
-        self.name = name
-
-        self.expr = _Expression(
+        super().__init__("Variable", name, registry)
+        self.expression = BasicExpression(
             f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def eval(self):
-        """
-        Evaluate variable
-
-        :return: numerical evaluation of Constant
-        :rtype: float
-        """
-        return self.expr.eval()
-
-    def __float__(self):
-        return self.expr.eval()
-
-    def __repr__(self):
-        return f"Variable: {self.name} = {self.expr!s}"
+        if registry and addRegistry:
+            registry.addDefine(self)
 
 
 class Expression(ScalarBase):
@@ -677,52 +725,39 @@ class Expression(ScalarBase):
     """
 
     def __init__(self, name, value, registry, addRegistry=False):
-        super().__init__()
-
-        self.name = name
-
-        self.expr = _Expression(
+        super().__init__("Expression", name, registry)
+        self.expression = BasicExpression(
             f"expr_{name}", upgradeToStringExpression(registry, value), registry
         )
 
-        if registry is not None:
-            self.registry = registry
-
-        if addRegistry and registry is not None:
+        if registry and addRegistry:
             registry.addDefine(self)
 
-    def eval(self):
-        """
-        Evaluate expression
-
-        :return: numerical evaluation of Constant
-        :rtype: float
-        """
-        return self.expr.eval()
-
-    def __float__(self):
-        return self.expr.eval()
-
     def __int__(self):
-        return int(self.expr.eval())
-
-    def __repr__(self):
-        return f"Expression: {self.name} = {self.expr!s}"
+        return int(self.expression.eval())
 
 
 class VectorBase:
-    def __init__(self):
+    def __init__(self, typeName, name, registry):
+        self._typeName = typeName
+        self.name = name
+        self.registry = registry
         self.x = None
         self.y = None
         self.z = None
         self.unit = None
 
+    def __repr__(self):
+        return self._typeName + " : {} = [{} {} {}]".format(
+            self.name, str(self.x), str(self.y), str(self.z)
+        )
+
     def __add__(self, other):
         p = Position(
             f"vec_{self.name}_add_{other.name}",
-            f"({self.x.expression})+({other.x.expression})",
-            f"({self.y.expression})+({other.y.expression})",
-            f"({self.z.expression})+({other.z.expression})",
+            f"({self.x.expressionString})+({other.x.expressionString})",
+            f"({self.y.expressionString})+({other.y.expressionString})",
+            f"({self.z.expressionString})+({other.z.expressionString})",
             self.unit,
             self.registry,
             False,
@@ -738,9 +773,9 @@ class VectorBase:
 
         p = Position(
             f"vec_{self.name}_sub_{other.name}",
-            f"({self.x.expression})-({other.x.expression})",
-            f"({self.y.expression})-({other.y.expression})",
-            f"({self.z.expression})-({other.z.expression})",
+            f"({self.x.expressionString})-({other.x.expressionString})",
+            f"({self.y.expressionString})-({other.y.expressionString})",
+            f"({self.z.expressionString})-({other.z.expressionString})",
             self.unit,
             self.registry,
             False,
@@ -757,9 +792,9 @@ class VectorBase:
 
         p = Position(
             f"vec_{self.name}_mul_{v2}",
-            f"({self.x.expression})*({v2})",
-            f"({self.y.expression})*({v2})",
-            f"({self.z.expression})*({v2})",
+            f"({self.x.expressionString})*({v2})",
+            f"({self.y.expressionString})*({v2})",
+            f"({self.z.expressionString})*({v2})",
             self.unit,
             self.registry,
             False,
@@ -778,9 +813,9 @@ class VectorBase:
 
         p = Position(
             f"vec_{self.name}_div_{v2}",
-            f"({self.x.expression})/({v2})",
-            f"({self.y.expression})/({v2})",
-            f"({self.z.expression})/({v2})",
+            f"({self.x.expressionString})/({v2})",
+            f"({self.y.expressionString})/({v2})",
+            f"({self.z.expressionString})/({v2})",
             self.unit,
             self.registry,
             False,
@@ -856,9 +891,7 @@ class Position(VectorBase):
     """
 
     def __init__(self, name, x, y, z, unit="mm", registry=None, addRegistry=True):
-        super().__init__()
-
-        self.name = name
+        super().__init__("Position", name, registry)
 
         if unit is not None:
             if not isinstance(unit, str):
@@ -868,31 +901,24 @@ class Position(VectorBase):
         else:
             self.unit = "mm"
 
-        self.x = _Expression(
+        self.x = BasicExpression(
             f"expr_pos_x_{name}",
             upgradeToStringExpression(registry, x),
             registry=registry,
         )
-        self.y = _Expression(
+        self.y = BasicExpression(
             f"expr_pos_y_{name}",
             upgradeToStringExpression(registry, y),
             registry=registry,
         )
-        self.z = _Expression(
+        self.z = BasicExpression(
             f"expr_pos_z_{name}",
             upgradeToStringExpression(registry, z),
             registry=registry,
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def __repr__(self):
-        return "Position : {} = [{} {} {}]".format(
-            self.name, str(self.x), str(self.y), str(self.z)
-        )
+        if registry and addRegistry:
+            self.registry.addDefine(self)
 
 
 class Rotation(VectorBase):
@@ -908,9 +934,8 @@ class Rotation(VectorBase):
     """
 
     def __init__(self, name, rx, ry, rz, unit="rad", registry=None, addRegistry=True):
-        super().__init__()
+        super().__init__("Rotation", name, registry)
 
-        self.name = name
         if unit is not None:
             if not isinstance(unit, str):
                 msg = "unit must be None or a string"
@@ -929,31 +954,24 @@ class Rotation(VectorBase):
         else:
             self.unit = "rad"
 
-        self.x = _Expression(
+        self.x = BasicExpression(
             f"expr_rot_x_{name}",
             upgradeToStringExpression(registry, rx),
             registry=registry,
         )
-        self.y = _Expression(
+        self.y = BasicExpression(
             f"expr_rot_y_{name}",
             upgradeToStringExpression(registry, ry),
             registry=registry,
         )
-        self.z = _Expression(
+        self.z = BasicExpression(
             f"expr_rot_z_{name}",
             upgradeToStringExpression(registry, rz),
             registry=registry,
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def __repr__(self):
-        return "Rotation : {} = [{} {} {}]".format(
-            self.name, str(self.x), str(self.y), str(self.z)
-        )
+        if registry and addRegistry:
+            self.registry.addDefine(self)
 
 
 class Scale(VectorBase):
@@ -969,9 +987,8 @@ class Scale(VectorBase):
     """
 
     def __init__(self, name, sx, sy, sz, unit=None, registry=None, addRegistry=True):
-        super().__init__()
+        super().__init__("Scale", name, registry)
 
-        self.name = name
         if unit != None:
             if not isinstance(unit, str):
                 msg = "unit must be None or a string"
@@ -980,31 +997,24 @@ class Scale(VectorBase):
         else:
             self.unit = "none"
 
-        self.x = _Expression(
+        self.x = BasicExpression(
             f"expr_scl_x_{name}",
             upgradeToStringExpression(registry, sx),
             registry=registry,
         )
-        self.y = _Expression(
+        self.y = BasicExpression(
             f"expr_scl_y_{name}",
             upgradeToStringExpression(registry, sy),
             registry=registry,
         )
-        self.z = _Expression(
+        self.z = BasicExpression(
             f"expr_scl_z_{name}",
             upgradeToStringExpression(registry, sz),
             registry=registry,
         )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
-
-    def __repr__(self):
-        return "Scale : {} = [{} {} {}]".format(
-            self.name, str(self.x), str(self.y), str(self.z)
-        )
+        if registry and addRegistry:
+            self.registry.addDefine(self)
 
 
 class Matrix:
@@ -1023,9 +1033,10 @@ class Matrix:
     :type addRegistry: bool
     """
 
-    def __init__(self, name, coldim, values, registry, addRegistry=True):
+    def __init__(self, name, coldim, values, registry=None, addRegistry=True):
         self.name = name
         self.coldim = int(coldim)
+        self.registry = registry
 
         self.values = []
         for i, v in enumerate(values):
@@ -1043,10 +1054,8 @@ class Matrix:
                 self.coldim, int(len(values) / self.coldim)
             )
 
-        if registry is not None:
-            self.registry = registry
-            if addRegistry:
-                registry.addDefine(self)
+        if registry and addRegistry:
+            self.registry.addDefine(self)
 
     def eval(self):
         """
@@ -1107,21 +1116,17 @@ def MatrixFromVectors(e, v, name, registry, eunit="eV", vunit=""):
 class Auxiliary:
     """
     Auxiliary information container object
-
-    :param value: string expression
-    :type value: float,str,Constant,Quantity,Variable
-    :param registry: for storing define
-    :type registry: Registry
     """
 
     # Note that no interpreting or processing is done for auxiliary information
-    def __init__(self, auxtype, auxvalue, registry=None, unit=""):
+    def __init__(self, auxtype, auxvalue, registry=None, unit="", addRegistry=True):
         self.auxtype = str(auxtype)
         self.auxvalue = str(auxvalue)
         self.auxunit = str(unit)
         self.subaux = []
-        if registry != None:
-            registry.addAuxiliary(self)
+        self.registry = registry
+        if self.registry and addRegistry:
+            self.registry.addAuxiliary(self)
 
     def addSubAuxiliary(self, aux):
         """
