@@ -710,7 +710,7 @@ def test_RotoTranslation_fails_without_rotoTranslation():
     name, rtrans = _makeRotoTranslation()
     store = _makeStore()
     # TODO check this test
-    #with pytest.raises(TypeError):
+    # with pytest.raises(TypeError):
     #    store[name] = "something"
 
 
