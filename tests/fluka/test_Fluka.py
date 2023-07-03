@@ -702,7 +702,7 @@ def test_gettingRotoTranslation():
 def test_RotoTranslation_fails_setting_with_wrong_name():
     name, rtrans = _makeRotoTranslation()
     store = _makeStore()
-    with _pytest.raises(ValueError):
+    with pytest.raises(ValueError):
         store["asdasd"] = rtrans
 
 
