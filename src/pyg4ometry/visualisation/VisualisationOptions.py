@@ -63,14 +63,14 @@ def loadPredefined():
 
     Lods from package resource files.
     """
-    import pkg_resources as _pkg_resources
-
+    import importlib_resources
     config = _configparser.ConfigParser(
         allow_no_value=True, interpolation=_configparser.ExtendedInterpolation()
     )
     config.optionxform = str
 
-    ini = _pkg_resources.resource_filename(__name__, "colours.ini")
+    ini = importlib_resources.files("pyg4ometry") / "visualisation/colours.ini"
+
     with open(ini) as f:
         config.read_file(f)
 
