@@ -11,6 +11,12 @@ def solidName(var):
         return var
 
 
+def removeprefix(string: str, prefix: str, /) -> str:
+    if string.startswith(prefix):
+        return string[len(prefix):]
+    else:
+        return string[:]
+
 class Registry:
     """
     Object to store geometry for input and output.
@@ -786,8 +792,12 @@ class Registry:
                 new_pos = new_tra.tolist()
 
                 # update the position and rotation information
+                try:
+                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(dv.name)
+                except AttributeError:
+                    pos_name = dv_copy.name + removeprefix(dv_copy.position.name, dv.name)
                 dv_copy.position = _Defines.Position(
-                    dv_copy.name + dv_copy.position.name.removeprefix(dv.name),
+                    pos_name,
                     new_pos[0],
                     new_pos[1],
                     new_pos[2],
@@ -795,8 +805,14 @@ class Registry:
                     self,
                     True,
                 )
+
+                try:
+                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name)
+                except AttributeError:
+                    rot_name = dv_copy.name + removeprefix(dv_copy.rotation.name, dv.name)
+
                 dv_copy.rotation = _Defines.Rotation(
-                    dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name),
+                    rot_name,
                     new_rot[0],
                     new_rot[1],
                     new_rot[2],
