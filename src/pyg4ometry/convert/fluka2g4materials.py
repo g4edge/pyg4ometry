@@ -80,9 +80,10 @@ def _getPeriodicTable():
     global _periodicTable
     if _periodicTable is None:
         import pandas as pd
-        import pkg_resources
+        import importlib_resources
 
-        csv = pkg_resources.resource_filename(__name__, "periodic-table.csv")
+        csv = importlib_resources.files("pyg4ometry") / "convert/periodic-table.csv"
+
         _periodicTable = pd.read_csv(csv)
     return _periodicTable
 
