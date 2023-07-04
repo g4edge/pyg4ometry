@@ -12,11 +12,11 @@ export ROOTSYS PATH LD_LIBRARY_PATH MANPATH JUPYTER_CONFIG_DIR CLING_STANDARD_PC
 if [ -n "$GITHUB_ENV" ]; then
     {
         echo "ROOTSYS=\"$ROOTSYS\""
-        echo "PATH=\"\$PATH:$ROOTSYS/bin\""
-        echo "LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:$ROOTSYS/lib\""
-        echo "MANPATH=\"\$MANPATH:$ROOTSYS/man\""
-        echo "PYTHONPATH=\"\$PYTHONPATH:$ROOTSYS/lib\""
-        echo "JUPYTER_CONFIG_DIR=\"\$JUPYTER_CONFIG_DIR:$ROOTSYS/etc/notebook\""
+        echo "PATH=\"$PATH:$ROOTSYS/bin\""
+        echo "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:$ROOTSYS/lib\""
+        echo "MANPATH=\"$MANPATH:$ROOTSYS/man\""
+        echo "PYTHONPATH=\"$PYTHONPATH:$ROOTSYS/lib\""
+        echo "JUPYTER_CONFIG_DIR=\"$JUPYTER_CONFIG_DIR:$ROOTSYS/etc/notebook\""
         echo "CLING_STANDARD_PCH=none"
     } >> "$GITHUB_ENV"
 fi
