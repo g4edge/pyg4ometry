@@ -25,9 +25,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install non-pip dependencies on Ubuntu
         if: runner.os == 'Linux'
-        run: |
-          sudo .github/bin/install-deps-ubuntu.sh
-          .github/bin/setenv-ubuntu.sh
+        run: sudo .github/bin/install-deps-ubuntu.sh
       - name: Install non-pip dependencies on MacOS
         if: runner.os == 'macOS'
         run: .github/bin/install-deps-macos.sh
