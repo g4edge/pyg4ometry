@@ -8,6 +8,7 @@ pytestmark = pytest.mark.xfail(run=True, reason="requires PyROOT")
 
 def gdml2ROOT(gdmlFileName, rootFileName):
     import ROOT as _ROOT
+
     _ROOT.TGeoManager.SetVerboseLevel(0)
     tgm = _ROOT.TGeoManager.Import(
         _os.path.join(_os.path.dirname(__file__), gdmlFileName)
