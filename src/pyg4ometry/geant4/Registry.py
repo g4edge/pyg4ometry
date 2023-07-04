@@ -11,6 +11,13 @@ def solidName(var):
         return var
 
 
+def removeprefix(string: str, prefix: str, /) -> str:
+    if string.startswith(prefix):
+        return string[len(prefix) :]
+    else:
+        return string[:]
+
+
 class Registry:
     """
     Object to store geometry for input and output.
@@ -713,7 +720,7 @@ class Registry:
         # find the transformations for this assembly in the reference frame of the mother
         # start with identity transformations and then aggregate the placement
         # info of the assemblies
-        mtra = _np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        mtra = _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         tra = _np.array([0, 0, 0])
         for pos, rot, sca in zip(positions, rotations, scales):
             assembly_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(rot.eval()))
@@ -786,8 +793,16 @@ class Registry:
                 new_pos = new_tra.tolist()
 
                 # update the position and rotation information
+                try:
+                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(
+                        dv.name
+                    )
+                except AttributeError:
+                    pos_name = dv_copy.name + removeprefix(
+                        dv_copy.position.name, dv.name
+                    )
                 dv_copy.position = _Defines.Position(
-                    dv_copy.name + dv_copy.position.name.removeprefix(dv.name),
+                    pos_name,
                     new_pos[0],
                     new_pos[1],
                     new_pos[2],
@@ -795,8 +810,18 @@ class Registry:
                     self,
                     True,
                 )
+
+                try:
+                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(
+                        dv.name
+                    )
+                except AttributeError:
+                    rot_name = dv_copy.name + removeprefix(
+                        dv_copy.rotation.name, dv.name
+                    )
+
                 dv_copy.rotation = _Defines.Rotation(
-                    dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name),
+                    rot_name,
                     new_rot[0],
                     new_rot[1],
                     new_rot[2],

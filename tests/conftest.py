@@ -3,11 +3,18 @@ import uuid
 from getpass import getuser
 from pathlib import Path
 from tempfile import gettempdir
+import sys
+import os
 
 import pytest
 from g4edgetestdata import G4EdgeTestData
 
 _tmptestdir = Path(gettempdir()) / f"pygama-tests-{getuser()}-{uuid.uuid4()!s}"
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "compare/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "features/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "fluka/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "geant4/"))
 
 pytest_plugins = [
     "geant4.test_box",
@@ -28,5 +35,5 @@ def pytest_sessionfinish(session, exitstatus):
 @pytest.fixture(scope="session")
 def testdata():
     g4data = G4EdgeTestData()
-    g4data.checkout("04af6cb")
+    g4data.checkout("4b0f21f")
     return g4data
