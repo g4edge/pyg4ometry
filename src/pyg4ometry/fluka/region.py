@@ -131,7 +131,6 @@ class Zone(vis.ViewableMixin):
             return boolean.body.geant4Solid(g4reg, aabb=aabb)
 
     def mesh(self, aabb=None):
-
         if len(self.intersections) == 0:
             print(self.dumpsDebug())
             return None

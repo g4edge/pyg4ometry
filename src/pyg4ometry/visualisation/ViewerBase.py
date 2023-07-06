@@ -191,27 +191,27 @@ class ViewerBase:
                     self.addInstance(pv_name, new_mtra, new_tra, pv_name)
                     self.addVisOptions(pv_name, pv.visOptions)
 
-
-    def addFlukaRegions(self, fluka_registry, max_region=1000000, debugIO = False):
+    def addFlukaRegions(self, fluka_registry, max_region=1000000, debugIO=False):
         icount = 0
         for k in fluka_registry.regionDict:
-            if debugIO :
+            if debugIO:
                 print("ViewerBase.addFlukaRegions>", k)
             m = fluka_registry.regionDict[k].mesh()
 
             if m is not None:
-                self.addMesh(k,m)
-                self.addInstance(k,
-                                 _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
-                                 _np.array([0, 0, 0]),
-                                 k+"_instance")
+                self.addMesh(k, m)
+                self.addInstance(
+                    k,
+                    _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                    _np.array([0, 0, 0]),
+                    k + "_instance",
+                )
                 self.addVisOptions(k, _VisOptions())
 
             icount += 1
 
-            if icount > max_region :
+            if icount > max_region:
                 break
-
 
     def addMesh(self, name, mesh):
         """

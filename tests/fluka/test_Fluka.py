@@ -762,8 +762,9 @@ def test_addRotoTranslation():
     # with pytest.raises(KeyError):
     #    store.addRotoTranslation(rtrans5)
 
+
 def test_fluka_vis():
-    r = T902_cube_from_six_PLAs.Test(False,False)["flukaRegistry"]
+    r = T902_cube_from_six_PLAs.Test(False, False)["flukaRegistry"]
     v = _VtkViewerNew()
     v.addFlukaRegions(r)
     v.buildPipelinesAppend()
