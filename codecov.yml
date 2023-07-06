@@ -5,7 +5,7 @@ coverage:
   status:
     project:
       default:
-        target: 20%
+        target: 70%
     patch: false
 
 github_checks:
@@ -14,3 +14,7 @@ github_checks:
 ignore:
   - tests
   - docs
+  - "src/pyg4ometry/pycgal_old"
+  - "src/pyg4ometry/freecad"
+  - "src/pyg4ometry/bdsim"
+  - "src/pyg4ometry/gui"
