@@ -2,6 +2,7 @@ from random import random
 import numpy as np
 import pytest
 
+import pyg4ometry.visualisation.VtkViewerNew as _VtkViewerNew
 from pyg4ometry.fluka.fluka_registry import RotoTranslationStore, FlukaRegistry
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 
@@ -760,3 +761,9 @@ def test_addRotoTranslation():
     # TODO check
     # with pytest.raises(KeyError):
     #    store.addRotoTranslation(rtrans5)
+
+def test_fluka_vis():
+    r = T902_cube_from_six_PLAs.Test(False,False)["flukaRegistry"]
+    v = _VtkViewerNew()
+    v.addFlukaRegions(r)
+    v.buildPipelinesAppend()
