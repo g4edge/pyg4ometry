@@ -131,6 +131,11 @@ class Zone(vis.ViewableMixin):
             return boolean.body.geant4Solid(g4reg, aabb=aabb)
 
     def mesh(self, aabb=None):
+
+        if len(self.intersections) == 0:
+            print(self.dumpsDebug())
+            return None
+
         result = self.intersections[0].body.mesh(aabb=aabb)
         for boolean in self.intersections[1:] + self.subtractions:
             mesh = boolean.body.mesh(aabb=aabb)
@@ -229,6 +234,26 @@ class Zone(vis.ViewableMixin):
                     fs += f" -({s.body.dumps()})"
                 else:
                     fs += f" -{s.body.name}"
+
+        return fs
+
+    def dumpsDebug(self):
+        """Returns a string of this Zone instance in the equivalent
+        FLUKA syntax with extra debug information"""
+        fs = ""
+
+        booleans = self.intersections + self.subtractions
+        for s in booleans:
+            if isinstance(s, Intersection):
+                if isinstance(s.body, Zone):
+                    fs += f" +({s.body.dumps()})"
+                else:
+                    fs += f" +{s.body.name} ({type(s.body)})"
+            elif isinstance(s, Subtraction):
+                if isinstance(s.body, Zone):
+                    fs += f" -({s.body.dumps()})"
+                else:
+                    fs += f" -{s.body.name} ({type(s.body)})"
 
         return fs
 
