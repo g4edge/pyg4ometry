@@ -9,8 +9,7 @@ flat_ends = 2
 
 
 def Test(vis=False, interactive=False, type=normal, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()

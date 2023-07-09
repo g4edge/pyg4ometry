@@ -9,7 +9,6 @@ import numpy as _np
 
 
 def Test(vis=False, interactive=False, fluka=True, n_slice=10, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -65,7 +64,7 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T011_geant4Polycone2Fluka.gdml")
+    w.write(outputPath / "T011_geant4Polycone2Fluka.gdml")
 
     # fluka conversion
     if fluka:
@@ -74,12 +73,9 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, outputPath=None):
         w.addDetector(freg)
         w.write(outputPath / "T011_geant4Polycone2Fluka.inp")
 
-
     # flair output file
     f = _fluka.Flair("T011_geant4Polycone2Fluka.inp", extentBB)
-    f.write(
-        _os.path.join(outputPath /  "T011_geant4Polycone2Fluka.flair")
-    )
+    f.write(_os.path.join(outputPath / "T011_geant4Polycone2Fluka.flair"))
 
     if vis:
         v = _vi.VtkViewer()

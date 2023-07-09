@@ -5,8 +5,7 @@ import pyg4ometry.gdml as _gd
 
 
 def Test_MaterialPredefined(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -43,12 +42,9 @@ def Test_MaterialPredefined(outputPath=None):
     w.write(outputPath / "T201_MaterialPredefined.gdml")
 
 
-
 def Test_MaterialSingleElement(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
-
 
     reg = _g4.Registry()
 
@@ -88,10 +84,8 @@ def Test_MaterialSingleElement(outputPath=None):
     w.write(outputPath / "T201_MaterialSingleElement.gdml")
 
 
-
 def Test_MaterialCompoundMassFraction(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -135,8 +129,7 @@ def Test_MaterialCompoundMassFraction(outputPath=None):
 
 
 def Test_MaterialCompoundAtoms(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -186,10 +179,8 @@ def Test_MaterialCompoundAtoms(outputPath=None):
     w.write(outputPath / "T201_MaterialCompoundNumberAtoms.gdml")
 
 
-
 def Test_MaterialMixture(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -231,10 +222,8 @@ def Test_MaterialMixture(outputPath=None):
     w.write(outputPath / "T201_MaterialMixture.gdml")
 
 
-
 def Test_MaterialIsotopes(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -279,10 +268,8 @@ def Test_MaterialIsotopes(outputPath=None):
     w.write(outputPath / "T201_MaterialIsotopes.gdml")
 
 
-
 def Test_MaterialPressureTemperature(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -335,8 +322,7 @@ def Test_MaterialPressureTemperature(outputPath=None):
 
 
 def Test_MaterialState(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()

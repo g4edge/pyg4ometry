@@ -9,14 +9,17 @@ import T019_Hyperboloid
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
-    l2 = T019_Hyperboloid.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
+    l2 = T019_Hyperboloid.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)
@@ -38,7 +41,6 @@ def Test(vis=False, interactive=False, outputPath=None):
     w = _gd.Writer()
     w.addDetector(reg0)
     w.write(outputPath / "T419_MergeRegistry_Hyperboloid.gdml")
-
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

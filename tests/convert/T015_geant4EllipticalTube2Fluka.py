@@ -9,7 +9,6 @@ import pyg4ometry.visualisation as _vi
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

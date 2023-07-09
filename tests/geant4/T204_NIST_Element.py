@@ -5,8 +5,7 @@ import pyg4ometry.gdml as _gd
 
 
 def Test_NIST_Element(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -44,5 +43,4 @@ def Test_NIST_Element(outputPath=None):
     w = _gd.Writer()
     w.addDetector(reg)
     name = "T204_NIST_Element"
-    w.write(outputPath /  (name+".gdml"))
-
+    w.write(outputPath / (name + ".gdml"))

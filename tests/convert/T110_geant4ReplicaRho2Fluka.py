@@ -8,7 +8,6 @@ import pyg4ometry.fluka as _fluka
 
 
 def Test(vis=False, interactive=False, fluka=False, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -66,7 +65,7 @@ def Test(vis=False, interactive=False, fluka=False, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T110_geant4ReplicaRho2Fluka.gdml")
+    w.write(outputPath / "T110_geant4ReplicaRho2Fluka.gdml")
 
     # test __repr__
     str(mtl)
@@ -84,7 +83,7 @@ def Test(vis=False, interactive=False, fluka=False, outputPath=None):
 
         # flair output file
         f = _fluka.Flair("T110_geant4ReplicaRho2Fluka.inp", extentBB)
-        f.write(outputPath /  "T110_geant4ReplicaRho2Fluka.flair")
+        f.write(outputPath / "T110_geant4ReplicaRho2Fluka.flair")
 
     # visualisation
     v = None

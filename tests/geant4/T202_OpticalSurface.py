@@ -5,8 +5,7 @@ import pyg4ometry.gdml as _gd
 
 
 def Test_OpticalSurface(outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()

@@ -9,9 +9,10 @@ normal = 1
 non_intersecting = 2
 
 
-def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None):
-
-    if not outputPath :
+def Test(
+    vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None
+):
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -69,8 +70,7 @@ def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, ou
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T030_Intersection.gdml")
-
+    w.write(outputPath / "T030_Intersection.gdml")
 
     # test __repr__
     str(ns)

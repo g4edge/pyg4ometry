@@ -9,7 +9,6 @@ import numpy as _np
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -47,7 +46,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T022_geant4TwistedBox2Fluka.gdml")
+    w.write(outputPath / "T022_geant4TwistedBox2Fluka.gdml")
 
     # fluka conversion
     if fluka:
@@ -55,7 +54,6 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputPath / "T022_geant4TwistedBox2Fluka.inp")
-
 
     # flair output file
     f = _fluka.Flair("T022_geant4TwistedBox2Fluka.inp", extentBB)

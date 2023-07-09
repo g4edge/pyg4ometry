@@ -7,9 +7,14 @@ import pyg4ometry.exceptions
 import numpy as _np
 
 
-def Test(vis=False, interactive=False, nullMesh=False, writeNISTMaterials=False, outputPath=None):
-
-    if not outputPath :
+def Test(
+    vis=False,
+    interactive=False,
+    nullMesh=False,
+    writeNISTMaterials=False,
+    outputPath=None,
+):
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -69,7 +74,6 @@ def Test(vis=False, interactive=False, nullMesh=False, writeNISTMaterials=False,
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T029_Subtraction.gdml")
-
 
     # test __repr__
     str(ss)

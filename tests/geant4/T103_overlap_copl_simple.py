@@ -6,8 +6,7 @@ import pyg4ometry.visualisation as _vi
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -43,7 +42,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T103_overlap_copl.gdml")
+    w.write(outputPath / "T103_overlap_copl.gdml")
 
     # test __repr__
     str(bs)

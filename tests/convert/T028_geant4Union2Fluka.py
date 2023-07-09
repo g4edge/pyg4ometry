@@ -9,7 +9,6 @@ import pathlib as _pl
 
 
 def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -74,7 +73,7 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T028_geant4Union2Fluka.inp")
+        w.write(outputPath / "T028_geant4Union2Fluka.inp")
 
 
 if __name__ == "__main__":

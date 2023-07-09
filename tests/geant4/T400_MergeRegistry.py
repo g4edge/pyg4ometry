@@ -52,8 +52,7 @@ def MakeGeometry(size=50, lowOxygen=False):
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg0 = _g4.Registry()

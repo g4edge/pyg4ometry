@@ -15,10 +15,14 @@ inner_cylinder = 7
 
 
 def Test(
-    vis=False, interactive=False, type=normal, n_slice=10, writeNISTMaterials=False, outputPath=None
+    vis=False,
+    interactive=False,
+    type=normal,
+    n_slice=10,
+    writeNISTMaterials=False,
+    outputPath=None,
 ):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -125,7 +129,6 @@ def Test(
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T004_Cons.gdml")
-
 
     # test __repr__
     str(cs)

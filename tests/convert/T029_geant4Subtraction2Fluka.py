@@ -9,7 +9,6 @@ import pathlib as _pl
 
 
 def Test(vis=False, interactive=False, fluka=True, nullMesh=False, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

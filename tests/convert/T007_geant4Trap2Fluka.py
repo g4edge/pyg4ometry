@@ -9,7 +9,6 @@ import numpy as _np
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -71,7 +70,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
 
     # flair output file
     f = _fluka.Flair("T007_geant4Trap2Fluka.inp", extentBB)
-    f.write(outputPath /  "T007_geant4Trap2Fluka.flair")
+    f.write(outputPath / "T007_geant4Trap2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

@@ -16,10 +16,9 @@ def Test(
     n_slice=16,
     n_stack=16,
     writeNISTMaterials=False,
-    outputPath=None
+    outputPath=None,
 ):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -94,7 +93,6 @@ def Test(
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T019_Hyperboloid.gdml")
-
 
     # test __repr__
     str(hs)

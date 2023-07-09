@@ -7,8 +7,9 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None):
-
+def Test(
+    vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -44,7 +45,7 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outpu
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T009_geant4Orb2Fluka.gdml")
+    w.write(outputPath / "T009_geant4Orb2Fluka.gdml")
 
     # fluka conversion
     if fluka:
@@ -55,7 +56,7 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outpu
 
     # flair output file
     f = _fluka.Flair("T0019_geant4Orb2Fluka.inp", extentBB)
-    f.write(outputPath /  "T009_geant4Orb2Fluka.flair")
+    f.write(outputPath / "T009_geant4Orb2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

@@ -8,8 +8,9 @@ import pyg4ometry.visualisation as _vi
 import numpy as _np
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=30, n_stack=30, outputPath=None):
-
+def Test(
+    vis=False, interactive=False, fluka=True, n_slice=30, n_stack=30, outputPath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -62,7 +63,7 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=30, n_stack=30, outpu
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath /  "T010_geant4Torus2Fluka.gdml")
+    w.write(outputPath / "T010_geant4Torus2Fluka.gdml")
 
     # fluka conversion
     if fluka:

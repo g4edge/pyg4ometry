@@ -8,7 +8,6 @@ import pyg4ometry.convert as _convert
 
 
 def Test(vis=False, interactive=False, fluka=False, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -68,7 +67,7 @@ def Test(vis=False, interactive=False, fluka=False, outputPath=None):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T109_geant4ReplicaPhi2Fluka.inp")
+        w.write(outputPath / "T109_geant4ReplicaPhi2Fluka.inp")
 
         # flair output file
         f = _fluka.Flair("T109_geant4ReplicaPhi2Fluka.inp", extentBB)

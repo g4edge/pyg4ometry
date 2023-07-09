@@ -11,8 +11,9 @@ normal = 1
 zcut_outofrange = 2
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, n_slice=16, outputPath=None):
-
+def Test(
+    vis=False, interactive=False, fluka=True, type=normal, n_slice=16, outputPath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -64,11 +65,11 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, n_slice=16, outp
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T017_geant4EllipticalCone2Fluka.inp")
+        w.write(outputPath / "T017_geant4EllipticalCone2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T017_geant4EllipticalCone2Fluka.inp", extentBB)
-    f.write(outputPath /  "T017_geant4EllipticalCone2Fluka.flair")
+    f.write(outputPath / "T017_geant4EllipticalCone2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

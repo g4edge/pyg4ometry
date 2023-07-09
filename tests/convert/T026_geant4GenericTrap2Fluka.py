@@ -12,7 +12,6 @@ zero_area_quad = 2
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -101,7 +100,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /"T026_geant4GenericTrap2Fluka.inp")
+        w.write(outputPath / "T026_geant4GenericTrap2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T026_geant4GenericTrap2Fluka.inp", extentBB)

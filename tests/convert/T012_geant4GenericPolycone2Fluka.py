@@ -11,7 +11,6 @@ two_planes = 2
 
 
 def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -88,7 +87,7 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
 
     # flair output file
     f = _fluka.Flair("T012_geant4GenericPolycone2Fluka.inp", extentBB)
-    f.write(outputPath /  "T012_geant4GenericPolycone2Fluka.flair")
+    f.write(outputPath / "T012_geant4GenericPolycone2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

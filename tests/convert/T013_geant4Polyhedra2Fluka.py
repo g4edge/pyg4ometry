@@ -9,7 +9,6 @@ import numpy as _np
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -69,11 +68,11 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T013_geant4Polyhedra2Fluka.inp")
+        w.write(outputPath / "T013_geant4Polyhedra2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T013_geant4Polyhedra2Fluka.inp", extentBB)
-    f.write(outputPath /  "T013_geant4Polyhedra2Fluka.flair")
+    f.write(outputPath / "T013_geant4Polyhedra2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

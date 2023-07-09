@@ -9,14 +9,17 @@ import T026_GenericTrap
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
-    l2 = T026_GenericTrap.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
+    l2 = T026_GenericTrap.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)

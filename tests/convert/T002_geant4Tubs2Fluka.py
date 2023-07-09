@@ -8,11 +8,8 @@ import pyg4ometry.visualisation as _vi
 
 
 def Test(vis=True, interactive=False, fluka=True, outputPath=None):
-
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
-
 
     # registry
     reg = _g4.Registry()
@@ -58,11 +55,11 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T002_geant4Tubs2Fluka.inp")
+        w.write(outputPath / "T002_geant4Tubs2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T002_geant4Tubs2Fluka.inp", extentBB)
-    f.write(outputPath /  "T002_geant4Tubs2Fluka.flair")
+    f.write(outputPath / "T002_geant4Tubs2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

@@ -8,8 +8,7 @@ import numpy as _np
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -61,7 +60,6 @@ def Test(vis=False, interactive=False, outputPath=None):
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T607_LvChangeAndClipSolid.gdml")
-
 
     # visualisation
     v = None

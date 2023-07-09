@@ -12,8 +12,15 @@ rmin_eq_zero = 2
 rmin_gt_rmax = 3
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, n_slice=16, n_stack=16, outputPath=None):
-
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    type=normal,
+    n_slice=16,
+    n_stack=16,
+    outputPath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -70,11 +77,11 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, n_slice=16, n_st
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T019_geant4Hyperboloid2Fluka.inp")
+        w.write(outputPath / "T019_geant4Hyperboloid2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T019_geant4Hyperboloid2Fluka.inp", extentBB)
-    f.write(outputPath /  "T019_geant4Hyperboloid2Fluka.flair")
+    f.write(outputPath / "T019_geant4Hyperboloid2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

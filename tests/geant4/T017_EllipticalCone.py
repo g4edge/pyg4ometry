@@ -9,10 +9,14 @@ zcut_outofrange = 2
 
 
 def Test(
-    vis=False, interactive=False, type=normal, n_slice=16, writeNISTMaterials=False, outputPath=None
+    vis=False,
+    interactive=False,
+    type=normal,
+    n_slice=16,
+    writeNISTMaterials=False,
+    outputPath=None,
 ):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -84,7 +88,6 @@ def Test(
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T017_EllipticalCone.gdml")
-
 
     # test __repr__
     str(es)

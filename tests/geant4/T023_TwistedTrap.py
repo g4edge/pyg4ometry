@@ -6,8 +6,7 @@ import pyg4ometry.visualisation as _vi
 
 
 def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -107,7 +106,6 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T023_TwistedTrap.gdml")
-
 
     # test __repr__
     str(ts)

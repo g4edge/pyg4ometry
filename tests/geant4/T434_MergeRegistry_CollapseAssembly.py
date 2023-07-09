@@ -49,8 +49,7 @@ def MakeGeometry():
 
 
 def Test(vis=False, interactive=False, outputPath=None):
-
-    if not outputPath :
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg0 = MakeGeometry()
@@ -80,7 +79,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg1)
-    w.write( outputPath / "T434_MergeRegistry_CollapseAssembly.gdml")
+    w.write(outputPath / "T434_MergeRegistry_CollapseAssembly.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

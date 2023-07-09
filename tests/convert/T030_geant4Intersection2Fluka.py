@@ -12,7 +12,6 @@ non_intersecting = 2
 
 
 def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -67,7 +66,7 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath /  "T030_geant4Intersection2Fluka.inp")
+        w.write(outputPath / "T030_geant4Intersection2Fluka.inp")
 
 
 if __name__ == "__main__":

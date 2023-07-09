@@ -5,9 +5,10 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis=False, interactive=False, n_slice=64, writeNISTMaterials=False, outputPath=None):
-
-    if not outputPath :
+def Test(
+    vis=False, interactive=False, n_slice=64, writeNISTMaterials=False, outputPath=None
+):
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
@@ -82,7 +83,6 @@ def Test(vis=False, interactive=False, n_slice=64, writeNISTMaterials=False, out
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T011_Polycone.gdml")
-
 
     # test __repr__
     str(ps)

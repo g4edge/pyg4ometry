@@ -6,7 +6,6 @@ import pyg4ometry.visualisation as _vi
 
 
 def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -58,7 +57,6 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T006_Trd.gdml")
-
 
     # test __repr__
     str(ts)

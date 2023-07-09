@@ -37,97 +37,157 @@ from . import T110_geant4ReplicaRho2Fluka
 
 class Geant42FlukaConversionTests(_unittest.TestCase):
     def test_Geant42FlukaConversion_T001_Box(self):
-        T001_geant4Box2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T001_geant4Box2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T002_Tubs(self):
-        T002_geant4Tubs2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T002_geant4Tubs2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T003_CutTubs(self):
-        T003_geant4CutTubs2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T003_geant4CutTubs2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T004_Cons(self):
-        T004_geant4Cons2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T004_geant4Cons2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T005_Para(self):
-        T005_geant4Para2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T005_geant4Para2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T006_Tdr(self):
-        T006_geant4Trd2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T006_geant4Trd2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T007_Trap(self):
-        T007_geant4Trap2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T007_geant4Trap2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T008_Sphere(self):
-        T008_geant4Sphere2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T008_geant4Sphere2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T009_Orb(self):
-        T009_geant4Orb2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T009_geant4Orb2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T010_Torus(self):
-        T010_geant4Torus2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T010_geant4Torus2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T011_Polycone(self):
-        T011_geant4Polycone2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T011_geant4Polycone2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T012_GenericPolycone(self):
-        T012_geant4GenericPolycone2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T012_geant4GenericPolycone2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T013_Polyhedra(self):
-        T013_geant4Polyhedra2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T013_geant4Polyhedra2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T014_GenericPolyhedra(self):
-        T014_geant4GenericPolyhedra2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T014_geant4GenericPolyhedra2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T015_EllipticalTube(self):
-        T015_geant4EllipticalTube2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T015_geant4EllipticalTube2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T016_Ellipsoid(self):
-        T016_geant4Ellipsoid2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T016_geant4Ellipsoid2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T017_EllipticalCone(self):
-        T017_geant4EllipticalCone2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T017_geant4EllipticalCone2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T018_Paraboloid(self):
-        T018_geant4Paraboloid2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T018_geant4Paraboloid2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T019_Hyperboloid(self):
-        T019_geant4Hyperboloid2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T019_geant4Hyperboloid2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T020_Tet(self):
-        T020_geant4Tet2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T020_geant4Tet2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T021_ExtrudedSolid(self):
-        T021_geant4ExtrudedSolid2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T021_geant4ExtrudedSolid2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     #    def test_Geant42FlukaConversion_T026_GenericTrap(self):
     #        T026_geant4GenericTrap2Fluka.Test(False,False,True)
 
     def test_Geant42FlukaConversion_T028_Union(self):
-        T028_geant4Union2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T028_geant4Union2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T029_Subtraction(self):
-        T029_geant4Subtraction2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T029_geant4Subtraction2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T030_Intersection(self):
-        T030_geant4Intersection2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T030_geant4Intersection2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T105_Assembly(self):
-        T105_geant4Assembly2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T105_geant4Assembly2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T106_replica_x(self):
-        T106_geant4ReplicaX2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T106_geant4ReplicaX2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T107_replica_y(self):
-        T107_geant4ReplicaY2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T107_geant4ReplicaY2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T108_replica_z(self):
-        T108_geant4ReplicaZ2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T108_geant4ReplicaZ2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T109_replica_phi(self):
-        T109_geant4ReplicaPhi2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T109_geant4ReplicaPhi2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
     def test_Geant42FlukaConversion_T110_replica_rho(self):
-        T110_geant4ReplicaRho2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
+        T110_geant4ReplicaRho2Fluka.Test(
+            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
+        )
 
 
 if __name__ == "__main__":

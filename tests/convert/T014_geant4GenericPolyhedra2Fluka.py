@@ -11,7 +11,6 @@ two_planes = 2
 
 
 def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None):
-
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

@@ -3,9 +3,9 @@ import pyg4ometry
 import os as _os
 import pathlib as _pl
 
-def Test(vis=False, interactive=False, outputPath=None):
 
-    if not outputPath :
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg0 = pyg4ometry.geant4.Registry()
@@ -47,7 +47,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     # gdml output
     w = pyg4ometry.gdml.Writer()
     w.addDetector(reg1)
-    w.write(outputPath /  "T433_MergeRegistry_Scale.gdml")
+    w.write(outputPath / "T433_MergeRegistry_Scale.gdml")
 
     v = None
     if vis:
