@@ -1,10 +1,11 @@
 import os as _os
 import pathlib as _pl
+from ast import literal_eval as _literal_eval
+
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
-import pyg4ometry.convert as _conv
-import pyg4ometry.fluka as _flu
+import pyg4ometry.misc as _mi
 
 
 def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
@@ -53,6 +54,10 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath / "T001_Box.gdml")
+
+    # check file
+    file_hash = _mi.md5_file(outputPath / "T001_Box.gdml")
+    assert file_hash == "cb0f7eff60314dcf5ca9a7540713f11a"
 
     # test __repr__
     str(bs)
