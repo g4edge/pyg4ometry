@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
@@ -7,7 +8,11 @@ normal = 1
 two_planes = 2
 
 
-def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False):
+def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -86,11 +91,8 @@ def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T014_GenericPolyhedra.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T014_GenericPolyhedra.gmad"),
-        "T014_GenericPolyhedra.gdml",
-    )
+    w.write(outputPath / "T014_GenericPolyhedra.gdml")
+
 
     # test __repr__
     str(ps)

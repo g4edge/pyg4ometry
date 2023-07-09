@@ -4,7 +4,11 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
 
 
-def Test_MaterialsRegistry():
+def Test_MaterialsRegistry(outputPath=None):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -85,8 +89,4 @@ def Test_MaterialsRegistry():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T203_MaterialsRegistry.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T203_MaterialsRegistry.gmad"),
-        "T203_MaterialsRegistry.gdml",
-    )
+    w.write(outputPath / "T203_MaterialsRegistry.gdml")

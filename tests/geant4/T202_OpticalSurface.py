@@ -1,10 +1,14 @@
 import os as _os
-
+import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
 
 
-def Test_OpticalSurface():
+def Test_OpticalSurface(outputPath=None):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # World box
@@ -89,11 +93,7 @@ def Test_OpticalSurface():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T202_Optical.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_Optical.gmad"),
-        "T201_Optical.gdml",
-    )
+    w.write(outputPath / "T202_Optical.gdml")
 
 
 if __name__ == "__main__":

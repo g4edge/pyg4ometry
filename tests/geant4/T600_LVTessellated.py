@@ -1,10 +1,15 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -60,11 +65,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T600_LVTessellated.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T600_LVTessellated.gmad"),
-        "T600_LVTessellated.gdml",
-    )
+    w.write(outputPath / "T600_LVTessellated.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
@@ -8,8 +9,12 @@ two_planes = 2
 
 
 def Test(
-    vis=False, interactive=False, type=normal, n_slice=64, writeNISTMaterials=False
+    vis=False, interactive=False, type=normal, n_slice=64, writeNISTMaterials=False, outputPath=None
 ):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -104,11 +109,8 @@ def Test(
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T012_GenericPolycone.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T012_GenericPolycone.gmad"),
-        "T012_GenericPolycone.gdml",
-    )
+    w.write(outputPath / "T012_GenericPolycone.gdml")
+
 
     # test __repr__
     str(ps)

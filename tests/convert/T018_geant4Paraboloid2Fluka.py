@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
@@ -7,7 +8,11 @@ import pyg4ometry.visualisation as _vi
 import numpy as _np
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16):
+def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None):
+
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     # registry
     reg = _g4.Registry()
 
@@ -43,24 +48,19 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T018_geant4Paraboloid2Fluka.gdml")
-    )
+    w.write(outputPath /"T018_geant4Paraboloid2Fluka.gdml")
+
 
     # fluka conversion
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(
-            _os.path.join(_os.path.dirname(__file__), "T018_geant4Paraboloid2Fluka.inp")
-        )
+        w.write(outputPath / "T018_geant4Paraboloid2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T018_geant4Paraboloid2Fluka.inp", extentBB)
-    f.write(
-        _os.path.join(_os.path.dirname(__file__), "T001_geant4Paraboloid2Fluka.flair")
-    )
+    f.write(outputPath / "T001_geant4Paraboloid2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()

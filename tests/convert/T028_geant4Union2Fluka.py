@@ -5,9 +5,14 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import os as _os
+import pathlib as _pl
 
 
-def Test(vis=False, interactive=False, fluka=True, disjoint=False):
+def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None):
+
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -69,7 +74,7 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(_os.path.join(_os.path.dirname(__file__), "T028_geant4Union2Fluka.inp"))
+        w.write(outputPath /  "T028_geant4Union2Fluka.inp")
 
 
 if __name__ == "__main__":

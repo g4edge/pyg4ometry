@@ -51,7 +51,11 @@ def MakeGeometry(size=50, lowOxygen=False):
     return reg
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+
+    if not outputPath :
+        outputPath = _pl.Path(__file__).parent
+
     reg0 = _g4.Registry()
     reg1 = MakeGeometry()
     reg2 = MakeGeometry(size=70, lowOxygen=True)
@@ -82,7 +86,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg0)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T400_MergeRegistry.gdml"))
+    w.write(outputPath / "T400_MergeRegistry.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

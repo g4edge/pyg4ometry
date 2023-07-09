@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
@@ -7,7 +8,11 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 
 
-def Test(vis=False, interactive=False, fluka=True):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -43,19 +48,11 @@ def Test(vis=False, interactive=False, fluka=True):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(
-            _os.path.join(
-                _os.path.dirname(__file__), "T015_geant4EllipticalTube2Fluka.inp"
-            )
-        )
+        w.write(outputPath / "T015_geant4EllipticalTube2Fluka.inp")
 
     # flair output file
     f = _fluka.Flair("T015_geant4EllipticalTube2Fluka.inp", extentBB)
-    f.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T015_geant4EllipticalTube2Fluka.flair"
-        )
-    )
+    f.write(outputPath / "T015_geant4EllipticalTube2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()
