@@ -62,7 +62,6 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputPath /  "T023_geant4TwistedTrap2Fluka.gdml")
-    )
 
     # fluka conversion
     if fluka:
