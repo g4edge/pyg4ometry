@@ -49,6 +49,9 @@ dependencies = [
     "vtk",
 ]
 
+[project.scripts]
+pyg4ometry = "pyg4ometry.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/g4edge/pyg4ometry"
 Documentation = "https://pyg4ometry.readthedocs.io/"
