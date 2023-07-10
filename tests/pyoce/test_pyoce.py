@@ -9,6 +9,9 @@ def commonCode(fileName, mats={}, skip=[], mesh={}):
     # test traversal
     r.traverse(ls.Value(1))
 
+    # python helpers
+    _pyg4.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(ls.Value(1))
+
     # test conversion
     reg = _pyg4.convert.oce2Geant4(r.shapeTool, worldName, mats, skip, mesh)
     wa = reg.logicalVolumeDict[worldName]
