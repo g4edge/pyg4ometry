@@ -1,5 +1,8 @@
+# ruff: noqa
+
 # Generated from RegionParser.g4 by ANTLR 4.9.3
 from antlr4 import *
+
 if __name__ is not None and "." in __name__:
     from .RegionParser import RegionParser
 else:
@@ -7,82 +10,67 @@ else:
 
 # This class defines a complete generic visitor for a parse tree produced by RegionParser.
 
+
 class RegionParserVisitor(ParseTreeVisitor):
-
     # Visit a parse tree produced by RegionParser#regions.
-    def visitRegions(self, ctx:RegionParser.RegionsContext):
+    def visitRegions(self, ctx: RegionParser.RegionsContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#simpleRegion.
-    def visitSimpleRegion(self, ctx:RegionParser.SimpleRegionContext):
+    def visitSimpleRegion(self, ctx: RegionParser.SimpleRegionContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#complexRegion.
-    def visitComplexRegion(self, ctx:RegionParser.ComplexRegionContext):
+    def visitComplexRegion(self, ctx: RegionParser.ComplexRegionContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#multipleUnion.
-    def visitMultipleUnion(self, ctx:RegionParser.MultipleUnionContext):
+    def visitMultipleUnion(self, ctx: RegionParser.MultipleUnionContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#singleUnion.
-    def visitSingleUnion(self, ctx:RegionParser.SingleUnionContext):
+    def visitSingleUnion(self, ctx: RegionParser.SingleUnionContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#multipleUnion2.
-    def visitMultipleUnion2(self, ctx:RegionParser.MultipleUnion2Context):
+    def visitMultipleUnion2(self, ctx: RegionParser.MultipleUnion2Context):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#zoneExpr.
-    def visitZoneExpr(self, ctx:RegionParser.ZoneExprContext):
+    def visitZoneExpr(self, ctx: RegionParser.ZoneExprContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#zoneSubZone.
-    def visitZoneSubZone(self, ctx:RegionParser.ZoneSubZoneContext):
+    def visitZoneSubZone(self, ctx: RegionParser.ZoneSubZoneContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#zoneBody.
-    def visitZoneBody(self, ctx:RegionParser.ZoneBodyContext):
+    def visitZoneBody(self, ctx: RegionParser.ZoneBodyContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#singleUnary.
-    def visitSingleUnary(self, ctx:RegionParser.SingleUnaryContext):
+    def visitSingleUnary(self, ctx: RegionParser.SingleUnaryContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#unaryAndBoolean.
-    def visitUnaryAndBoolean(self, ctx:RegionParser.UnaryAndBooleanContext):
+    def visitUnaryAndBoolean(self, ctx: RegionParser.UnaryAndBooleanContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#unaryAndSubZone.
-    def visitUnaryAndSubZone(self, ctx:RegionParser.UnaryAndSubZoneContext):
+    def visitUnaryAndSubZone(self, ctx: RegionParser.UnaryAndSubZoneContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#oneSubZone.
-    def visitOneSubZone(self, ctx:RegionParser.OneSubZoneContext):
+    def visitOneSubZone(self, ctx: RegionParser.OneSubZoneContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#subZone.
-    def visitSubZone(self, ctx:RegionParser.SubZoneContext):
+    def visitSubZone(self, ctx: RegionParser.SubZoneContext):
         return self.visitChildren(ctx)
-
 
     # Visit a parse tree produced by RegionParser#unaryExpression.
-    def visitUnaryExpression(self, ctx:RegionParser.UnaryExpressionContext):
+    def visitUnaryExpression(self, ctx: RegionParser.UnaryExpressionContext):
         return self.visitChildren(ctx)
-
 
 
 del RegionParser
