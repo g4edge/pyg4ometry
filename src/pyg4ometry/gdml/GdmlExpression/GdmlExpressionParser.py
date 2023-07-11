@@ -1,48 +1,55 @@
-# Generated from GdmlExpression.g4 by ANTLR 4.7.1
+# ruff: noqa
+
+# Generated from GdmlExpression.g4 by ANTLR 4.9.3
 from antlr4 import *
 from io import StringIO
 import sys
 
+if sys.version_info[1] > 5:
+    from typing import TextIO
+else:
+    from typing.io import TextIO
+
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write('"w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4')
-        buf.write("\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
-        buf.write("\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3\3\3")
-        buf.write("\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4\62\n")
-        buf.write("\4\f\4\16\4\65\13\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\7\7>")
-        buf.write("\n\7\f\7\16\7A\13\7\3\b\3\b\3\b\3\b\3\b\3\b\5\bI\n\b")
-        buf.write("\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tS\n\t\3\n\3\n\3\13")
-        buf.write("\3\13\3\13\3\13\3\13\7\13\\\n\13\f\13\16\13_\13\13\3")
-        buf.write("\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\7\16")
-        buf.write("l\n\16\f\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20\3\20")
-        buf.write("\3\20\2\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2")
-        buf.write("\7\3\2\23\24\3\2\25\26\3\2\35\37\3\2\3\16\3\2\27\31\2")
-        buf.write("s\2 \3\2\2\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2\n8\3")
-        buf.write("\2\2\2\f:\3\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2")
-        buf.write("\24V\3\2\2\2\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34r")
-        buf.write('\3\2\2\2\36t\3\2\2\2 !\5\4\3\2!"\5\36\20\2"#\5\4\3')
-        buf.write("\2#\3\3\2\2\2$*\5\6\4\2%&\5\b\5\2&'\5\6\4\2')\3\2\2")
-        buf.write("\2(%\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2")
-        buf.write(",*\3\2\2\2-\63\5\f\7\2./\5\n\6\2/\60\5\f\7\2\60\62\3")
-        buf.write("\2\2\2\61.\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2\2\63\64")
-        buf.write("\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\t\2\2\2\67")
-        buf.write("\t\3\2\2\289\t\3\2\29\13\3\2\2\2:?\5\16\b\2;<\7\34\2")
-        buf.write("\2<>\5\16\b\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2")
-        buf.write("@\r\3\2\2\2A?\3\2\2\2BC\7\23\2\2CI\5\16\b\2DE\7\24\2")
-        buf.write("\2EI\5\16\b\2FI\5\32\16\2GI\5\20\t\2HB\3\2\2\2HD\3\2")
-        buf.write("\2\2HF\3\2\2\2HG\3\2\2\2I\17\3\2\2\2JS\5\22\n\2KS\5\24")
-        buf.write("\13\2LS\5\30\r\2MS\5\26\f\2NO\7\17\2\2OP\5\4\3\2PQ\7")
-        buf.write("\20\2\2QS\3\2\2\2RJ\3\2\2\2RK\3\2\2\2RL\3\2\2\2RM\3\2")
-        buf.write("\2\2RN\3\2\2\2S\21\3\2\2\2TU\7!\2\2U\23\3\2\2\2VW\5\30")
-        buf.write("\r\2WX\7\21\2\2X]\5\4\3\2YZ\7\32\2\2Z\\\5\4\3\2[Y\3\2")
-        buf.write("\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3\2\2\2_]\3\2\2")
-        buf.write("\2`a\7\22\2\2a\25\3\2\2\2bc\t\4\2\2c\27\3\2\2\2de\7 ")
-        buf.write("\2\2e\31\3\2\2\2fg\5\34\17\2gh\7\17\2\2hm\5\4\3\2ij\7")
-        buf.write("\32\2\2jl\5\4\3\2ki\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2")
-        buf.write("\2\2np\3\2\2\2om\3\2\2\2pq\7\20\2\2q\33\3\2\2\2rs\t\5")
-        buf.write("\2\2s\35\3\2\2\2tu\t\6\2\2u\37\3\2\2\2\t*\63?HR]m")
+        buf.write('\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3"')
+        buf.write("w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
+        buf.write("\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t")
+        buf.write("\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3")
+        buf.write("\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4\62\n\4")
+        buf.write("\f\4\16\4\65\13\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\7\7>\n\7")
+        buf.write("\f\7\16\7A\13\7\3\b\3\b\3\b\3\b\3\b\3\b\5\bI\n\b\3\t\3")
+        buf.write("\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tS\n\t\3\n\3\n\3\13\3\13")
+        buf.write("\3\13\3\13\3\13\7\13\\\n\13\f\13\16\13_\13\13\3\13\3\13")
+        buf.write("\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\7\16l\n\16\f")
+        buf.write("\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20\3\20\3\20\2")
+        buf.write("\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2\7\3\2\23")
+        buf.write("\24\3\2\25\26\3\2\35\37\3\2\3\16\3\2\27\31\2s\2 \3\2\2")
+        buf.write("\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2\n8\3\2\2\2\f:\3")
+        buf.write("\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2\24V\3\2\2\2")
+        buf.write("\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34r\3\2\2\2\36t\3")
+        buf.write('\2\2\2 !\5\4\3\2!"\5\36\20\2"#\5\4\3\2#\3\3\2\2\2$*')
+        buf.write("\5\6\4\2%&\5\b\5\2&'\5\6\4\2')\3\2\2\2(%\3\2\2\2),\3")
+        buf.write("\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2,*\3\2\2\2-\63\5")
+        buf.write("\f\7\2./\5\n\6\2/\60\5\f\7\2\60\62\3\2\2\2\61.\3\2\2\2")
+        buf.write("\62\65\3\2\2\2\63\61\3\2\2\2\63\64\3\2\2\2\64\7\3\2\2")
+        buf.write("\2\65\63\3\2\2\2\66\67\t\2\2\2\67\t\3\2\2\289\t\3\2\2")
+        buf.write("9\13\3\2\2\2:?\5\16\b\2;<\7\34\2\2<>\5\16\b\2=;\3\2\2")
+        buf.write("\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@\r\3\2\2\2A?\3\2\2\2")
+        buf.write("BC\7\23\2\2CI\5\16\b\2DE\7\24\2\2EI\5\16\b\2FI\5\32\16")
+        buf.write("\2GI\5\20\t\2HB\3\2\2\2HD\3\2\2\2HF\3\2\2\2HG\3\2\2\2")
+        buf.write("I\17\3\2\2\2JS\5\22\n\2KS\5\24\13\2LS\5\30\r\2MS\5\26")
+        buf.write("\f\2NO\7\17\2\2OP\5\4\3\2PQ\7\20\2\2QS\3\2\2\2RJ\3\2\2")
+        buf.write("\2RK\3\2\2\2RL\3\2\2\2RM\3\2\2\2RN\3\2\2\2S\21\3\2\2\2")
+        buf.write("TU\7!\2\2U\23\3\2\2\2VW\5\30\r\2WX\7\21\2\2X]\5\4\3\2")
+        buf.write("YZ\7\32\2\2Z\\\5\4\3\2[Y\3\2\2\2\\_\3\2\2\2][\3\2\2\2")
+        buf.write("]^\3\2\2\2^`\3\2\2\2_]\3\2\2\2`a\7\22\2\2a\25\3\2\2\2")
+        buf.write("bc\t\4\2\2c\27\3\2\2\2de\7 \2\2e\31\3\2\2\2fg\5\34\17")
+        buf.write("\2gh\7\17\2\2hm\5\4\3\2ij\7\32\2\2jl\5\4\3\2ki\3\2\2\2")
+        buf.write("lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7")
+        buf.write("\20\2\2q\33\3\2\2\2rs\t\5\2\2s\35\3\2\2\2tu\t\6\2\2u\37")
+        buf.write("\3\2\2\2\t*\63?HR]m")
         return buf.getvalue()
 
 
@@ -192,22 +199,24 @@ class GdmlExpressionParser(Parser):
     SCIENTIFIC_NUMBER = 31
     WS = 32
 
-    def __init__(self, input, output=sys.stdout):
-        super().__init__(input, output=output)
-        self.checkVersion("4.7.1")
+    def __init__(self, input: TokenStream, output: TextIO = sys.stdout):
+        super().__init__(input, output)
+        self.checkVersion("4.9.3")
         self._interp = ParserATNSimulator(
             self, self.atn, self.decisionsToDFA, self.sharedContextCache
         )
         self._predicates = None
 
     class EquationContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.EquationContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
-        def expression(self, i=None):
+        def expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -221,7 +230,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_equation
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterEquation"):
+                listener.enterEquation(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitEquation"):
+                listener.exitEquation(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitEquation"):
                 return visitor.visitEquation(self)
             else:
@@ -247,13 +264,15 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class ExpressionContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.ExpressionContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
-        def multiplyingExpression(self, i=None):
+        def multiplyingExpression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(
                     GdmlExpressionParser.MultiplyingExpressionContext
@@ -263,7 +282,7 @@ class GdmlExpressionParser(Parser):
                     GdmlExpressionParser.MultiplyingExpressionContext, i
                 )
 
-        def operatorAddSub(self, i=None):
+        def operatorAddSub(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(
                     GdmlExpressionParser.OperatorAddSubContext
@@ -276,7 +295,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_expression
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterExpression"):
+                listener.enterExpression(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitExpression"):
+                listener.exitExpression(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitExpression"):
                 return visitor.visitExpression(self)
             else:
@@ -311,13 +338,15 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class MultiplyingExpressionContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.MultiplyingExpressionContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
-        def powExpression(self, i=None):
+        def powExpression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(
                     GdmlExpressionParser.PowExpressionContext
@@ -327,7 +356,7 @@ class GdmlExpressionParser(Parser):
                     GdmlExpressionParser.PowExpressionContext, i
                 )
 
-        def operatorMulDiv(self, i=None):
+        def operatorMulDiv(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(
                     GdmlExpressionParser.OperatorMulDivContext
@@ -340,7 +369,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_multiplyingExpression
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterMultiplyingExpression"):
+                listener.enterMultiplyingExpression(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitMultiplyingExpression"):
+                listener.exitMultiplyingExpression(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMultiplyingExpression"):
                 return visitor.visitMultiplyingExpression(self)
             else:
@@ -377,10 +414,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class OperatorAddSubContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.OperatorAddSubContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def PLUS(self):
@@ -392,7 +431,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorAddSub
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterOperatorAddSub"):
+                listener.enterOperatorAddSub(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitOperatorAddSub"):
+                listener.exitOperatorAddSub(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitOperatorAddSub"):
                 return visitor.visitOperatorAddSub(self)
             else:
@@ -424,10 +471,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class OperatorMulDivContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.OperatorMulDivContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def TIMES(self):
@@ -439,7 +488,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorMulDiv
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterOperatorMulDiv"):
+                listener.enterOperatorMulDiv(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitOperatorMulDiv"):
+                listener.exitOperatorMulDiv(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitOperatorMulDiv"):
                 return visitor.visitOperatorMulDiv(self)
             else:
@@ -471,13 +528,15 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class PowExpressionContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.PowExpressionContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
-        def signedAtom(self, i=None):
+        def signedAtom(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.SignedAtomContext)
             else:
@@ -485,7 +544,7 @@ class GdmlExpressionParser(Parser):
                     GdmlExpressionParser.SignedAtomContext, i
                 )
 
-        def POW(self, i=None):
+        def POW(self, i: int = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.POW)
             else:
@@ -494,7 +553,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_powExpression
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterPowExpression"):
+                listener.enterPowExpression(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitPowExpression"):
+                listener.exitPowExpression(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitPowExpression"):
                 return visitor.visitPowExpression(self)
             else:
@@ -531,10 +598,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class SignedAtomContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.SignedAtomContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def PLUS(self):
@@ -555,7 +624,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_signedAtom
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterSignedAtom"):
+                listener.enterSignedAtom(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitSignedAtom"):
+                listener.exitSignedAtom(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSignedAtom"):
                 return visitor.visitSignedAtom(self)
             else:
@@ -624,10 +701,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class AtomContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.AtomContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def scientific(self):
@@ -656,7 +735,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_atom
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterAtom"):
+                listener.enterAtom(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitAtom"):
+                listener.exitAtom(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitAtom"):
                 return visitor.visitAtom(self)
             else:
@@ -712,10 +799,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class ScientificContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.ScientificContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def SCIENTIFIC_NUMBER(self):
@@ -724,7 +813,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_scientific
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterScientific"):
+                listener.enterScientific(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitScientific"):
+                listener.exitScientific(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitScientific"):
                 return visitor.visitScientific(self)
             else:
@@ -746,10 +843,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class MatrixElementContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.MatrixElementContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def variable(self):
@@ -758,7 +857,7 @@ class GdmlExpressionParser(Parser):
         def LBRACKET(self):
             return self.getToken(GdmlExpressionParser.LBRACKET, 0)
 
-        def expression(self, i=None):
+        def expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -769,7 +868,7 @@ class GdmlExpressionParser(Parser):
         def RBRACKET(self):
             return self.getToken(GdmlExpressionParser.RBRACKET, 0)
 
-        def COMMA(self, i=None):
+        def COMMA(self, i: int = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:
@@ -778,7 +877,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_matrixElement
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterMatrixElement"):
+                listener.enterMatrixElement(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitMatrixElement"):
+                listener.exitMatrixElement(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMatrixElement"):
                 return visitor.visitMatrixElement(self)
             else:
@@ -821,10 +928,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class ConstantContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.ConstantContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def PI(self):
@@ -839,7 +948,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_constant
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterConstant"):
+                listener.enterConstant(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitConstant"):
+                listener.exitConstant(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitConstant"):
                 return visitor.visitConstant(self)
             else:
@@ -878,10 +995,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class VariableContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.VariableContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def VARIABLE(self):
@@ -890,7 +1009,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_variable
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterVariable"):
+                listener.enterVariable(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitVariable"):
+                listener.exitVariable(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitVariable"):
                 return visitor.visitVariable(self)
             else:
@@ -912,10 +1039,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class FuncContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.FuncContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def funcname(self):
@@ -924,7 +1053,7 @@ class GdmlExpressionParser(Parser):
         def LPAREN(self):
             return self.getToken(GdmlExpressionParser.LPAREN, 0)
 
-        def expression(self, i=None):
+        def expression(self, i: int = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -935,7 +1064,7 @@ class GdmlExpressionParser(Parser):
         def RPAREN(self):
             return self.getToken(GdmlExpressionParser.RPAREN, 0)
 
-        def COMMA(self, i=None):
+        def COMMA(self, i: int = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:
@@ -944,7 +1073,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_func
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterFunc"):
+                listener.enterFunc(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitFunc"):
+                listener.exitFunc(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitFunc"):
                 return visitor.visitFunc(self)
             else:
@@ -985,10 +1122,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class FuncnameContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.FuncnameContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def COS(self):
@@ -1030,7 +1169,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_funcname
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterFuncname"):
+                listener.enterFuncname(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitFuncname"):
+                listener.exitFuncname(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitFuncname"):
                 return visitor.visitFuncname(self)
             else:
@@ -1078,10 +1225,12 @@ class GdmlExpressionParser(Parser):
         return localctx
 
     class RelopContext(ParserRuleContext):
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(GdmlExpressionParser.RelopContext, self).__init__(
-                parent, invokingState
-            )
+        __slots__ = "parser"
+
+        def __init__(
+            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
+        ):
+            super().__init__(parent, invokingState)
             self.parser = parser
 
         def EQ(self):
@@ -1096,7 +1245,15 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_relop
 
-        def accept(self, visitor):
+        def enterRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "enterRelop"):
+                listener.enterRelop(self)
+
+        def exitRule(self, listener: ParseTreeListener):
+            if hasattr(listener, "exitRelop"):
+                listener.exitRelop(self)
+
+        def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitRelop"):
                 return visitor.visitRelop(self)
             else:
