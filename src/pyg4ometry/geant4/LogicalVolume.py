@@ -1117,7 +1117,7 @@ class LogicalVolume:
         self.registry.setWorld(wl.name)
 
     def dumpStructure(self, depth=0):
-        print(depth * "-" + self.name + " (lv)")
+        print(depth * "-" + self.name + " " + self.solid.type + " (lv)")
 
         for d in self.daughterVolumes:
             print(2 * depth * "-" + d.name + " (pv)")
