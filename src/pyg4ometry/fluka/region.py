@@ -42,6 +42,7 @@ def bracket_depth(zone):
 
     return depth
 
+
 def bracket_number(zone):
     nzones = 0
 
@@ -51,6 +52,7 @@ def bracket_number(zone):
             nzones += 1
 
     return nzones
+
 
 def zone_to_sympy(zone):
     s = zone.dumps()
@@ -71,37 +73,39 @@ def region_to_sympy(region):
         result.append(zone_to_sympy(z))
     return _sympy.Or(*result)
 
-def sympy_to_zone(sympy_expr, freg) :
+
+def sympy_to_zone(sympy_expr, freg):
     z = Zone()
 
     for and_args in sympy_expr.args:
         # either can by symbol or Not (of just a symbol)
-        if isinstance(and_args, _sympy.Symbol) :
+        if isinstance(and_args, _sympy.Symbol):
             bstr = str(and_args)
             b = freg.bodyDict[bstr]
             z.addIntersection(b)
-        elif isinstance(and_args, _sympy.Not) :
+        elif isinstance(and_args, _sympy.Not):
             bstr = str(and_args.args[0])
             b = freg.bodyDict[bstr]
             z.addSubtraction(b)
 
     return z
 
-def sympy_to_region(sympy_expr, freg, regionName = "name") :
-    '''
+
+def sympy_to_region(sympy_expr, freg, regionName="name"):
+    """
     Convert sympy boolean to fluka region
     Must be the OR of multiple convex zones
-    '''
+    """
     r = Region(regionName)
 
-    for or_args in sympy_expr.args :
+    for or_args in sympy_expr.args:
         z = sympy_to_zone(or_args, freg)
         r.addZone(z)
 
     return r
 
 
-def simplify_region(region) :
+def simplify_region(region):
     r = Region()
 
 
@@ -182,7 +186,6 @@ class Zone(vis.ViewableMixin):
         self.intersections.append(Intersection(body))
 
     def convertToDNF(self, fluka_registry):
-
         zone = Zone()
 
         paraToDNF = []
@@ -197,21 +200,22 @@ class Zone(vis.ViewableMixin):
         r = Region("temp")
         r.addZone(zone)
 
-        for para, i in zip(paraToDNF, range(0,len(paraToDNF))):
+        for para, i in zip(paraToDNF, range(0, len(paraToDNF))):
             zone.addSubtraction(para.body)
             sympy_expr = region_to_sympy(r)
             sympy_expr_dnf = _sympy.to_dnf(sympy_expr)
-            print('convertToDNF', i, len(sympy_expr.args), len(sympy_expr_dnf.args))
-            #print("raw",r.dumps())
-            #print("g4",sympy_expr)
-            #print("dnf",sympy_expr_dnf)
+            print("convertToDNF", i, len(sympy_expr.args), len(sympy_expr_dnf.args))
+            # print("raw",r.dumps())
+            # print("g4",sympy_expr)
+            # print("dnf",sympy_expr_dnf)
 
             r_to_add = sympy_to_region(sympy_expr_dnf, fluka_registry)
             r_to_add.removeNullZones()
-            if r_to_add is not None :
+            if r_to_add is not None:
                 r.extend(r_to_add)
 
         return r
+
     def centre(self, aabb=None):
         body_name = self.intersections[0].body.name
         aabb = _getAxisAlignedBoundingBox(aabb, self.intersections[0])
@@ -569,28 +573,25 @@ class Region(vis.ViewableMixin):
         """
         self.zones.append(zone)
 
-
     def addIntersection(self, zone):
-        for z in self.zones :
+        for z in self.zones:
             z.addIntersection(zone)
 
     def addSubtraction(self, zone):
-        for z in self.zones :
+        for z in self.zones:
             z.addSubtraction(zone)
 
     def extend(self, region):
-        for z in region.zones :
+        for z in region.zones:
             self.addZone(z)
 
-
     def removeNullZones(self):
-
-        #print('removeNullZones')
+        # print('removeNullZones')
         zones = []
 
-        for z,i in zip(self.zones, range(0, len(self.zones))):
+        for z, i in zip(self.zones, range(0, len(self.zones))):
             m = z.mesh()
-            #print(i, z)
+            # print(i, z)
             if m.vertexCount() != 0:
                 zones.append(z)
 
@@ -598,11 +599,10 @@ class Region(vis.ViewableMixin):
 
         self.zones = zones
 
-
-    def convertToDNF(self,fluka_registry):
+    def convertToDNF(self, fluka_registry):
         r = Region(self.name)
 
-        for zone in self.zones :
+        for zone in self.zones:
             r_to_add = zone.convertToDNF(fluka_registry)
             r.extend(r_to_add)
 

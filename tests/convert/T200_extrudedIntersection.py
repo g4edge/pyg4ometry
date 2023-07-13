@@ -29,18 +29,28 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         [1000, 333],
         [1000, 0],
     ]
-    slices = [[-2000, [-500, -500], 1],  [2000, [-500, -500], 1]]
-
+    slices = [[-2000, [-500, -500], 1], [2000, [-500, -500], 1]]
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
     xm = _g4.nist_material_2geant4Material("G4_Fe")
 
     # solids
-    ws  = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    xs  = _g4.solid.ExtrudedSolid("xs", polygon, slices, reg, lunit="mm")
-    cts = _g4.solid.CutTubs("cts", 0, 2000, 1000, 0, 2*_np.pi, [0.25, 0, -1], [0.25, 0, 1],  reg, lunit="mm")
-    ss  = _g4.solid.Intersection("int", xs, cts, [[0, 0, 0], [0, 0, 0]], reg)
+    ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
+    xs = _g4.solid.ExtrudedSolid("xs", polygon, slices, reg, lunit="mm")
+    cts = _g4.solid.CutTubs(
+        "cts",
+        0,
+        2000,
+        1000,
+        0,
+        2 * _np.pi,
+        [0.25, 0, -1],
+        [0.25, 0, 1],
+        reg,
+        lunit="mm",
+    )
+    ss = _g4.solid.Intersection("int", xs, cts, [[0, 0, 0], [0, 0, 0]], reg)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

@@ -42,9 +42,9 @@ def zoneToDNFZones(zone):
     assert isinstance(dnf, _sympy.Or)
 
     for arg in dnf.args:
-        #print("original",arg)
+        # print("original",arg)
         # arg = _sympy.simplify_logic(arg)  # trivially solve a & ~a, etc..
-        #print("simplified",arg)
+        # print("simplified",arg)
         if not arg:
             continue
         zones.append(expressionToZone(zone, arg))

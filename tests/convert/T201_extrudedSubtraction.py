@@ -29,23 +29,29 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         [1000, 333],
         [1000, 0],
     ]
-    slices = [[-2000, [-500, -500], 1],  [2000, [-500, -500], 1]]
-
+    slices = [[-2000, [-500, -500], 1], [2000, [-500, -500], 1]]
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
     xm = _g4.nist_material_2geant4Material("G4_Fe")
 
     # solids
-    ws  = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    xs  = _g4.solid.ExtrudedSolid("xs", polygon, slices, reg, lunit="mm")
+    ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
+    xs = _g4.solid.ExtrudedSolid("xs", polygon, slices, reg, lunit="mm")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     xl = _g4.LogicalVolume(xs, xm, "xl", reg)
-    for i in range(0,3):
-        for j in range(0,3):
-            xp = _g4.PhysicalVolume([0, 0, 0], [(i-1)*2000 , (j-1)*2000, 0], xl, "x_pv_"+str(i)+"_"+str(j), wl, reg)
+    for i in range(0, 3):
+        for j in range(0, 3):
+            xp = _g4.PhysicalVolume(
+                [0, 0, 0],
+                [(i - 1) * 2000, (j - 1) * 2000, 0],
+                xl,
+                "x_pv_" + str(i) + "_" + str(j),
+                wl,
+                reg,
+            )
 
     # set world volume
     reg.setWorld(wl.name)

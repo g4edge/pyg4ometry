@@ -76,11 +76,9 @@ class FlukaRegistry:
 
         self.regionDict[region.name] = region
 
-
     def makeRegionsDNF(self):
         for r in self.regionDict:
             self.regionDict[r] = self.regionDict[r].toDNF(r)
-
 
     def addLattice(self, lattice):
         if lattice.cellRegion.name in self.regionDict:
@@ -263,10 +261,11 @@ class FlukaRegistry:
             print("regions", len(self.regionDict))
             if detail >= 2:
                 for r in self.regionDict:
-                    print("region", r, len(self.regionDict[r].zones),  self.assignmas[r])
+                    print("region", r, len(self.regionDict[r].zones), self.assignmas[r])
                     if detail >= 3:
                         print(self.regionDict[r].dumps())
                         print("")
+
 
 class RotoTranslationStore(_MutableMapping):
     """only get by names."""
@@ -332,6 +331,7 @@ class RotoTranslationStore(_MutableMapping):
 
     def flukaFreeString(self):
         return "\n".join([r.flukaFreeString() for r in self.values()])
+
 
 class FlukaBodyStore(_MutableMapping):
     def __init__(self):
