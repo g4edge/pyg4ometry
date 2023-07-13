@@ -8,6 +8,8 @@ import numpy as _np
 import pandas as _pd
 import pyg4ometry.geant4 as _g4
 from .region import Region as _Region
+from .region import bracket_depth as _bracket_depth
+from .region import bracket_number as _bracket_number
 from .directive import RecursiveRotoTranslation as _RecursiveRotoTranslation
 from .directive import RotoTranslation as _RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError as _IdenticalNameError
@@ -73,6 +75,12 @@ class FlukaRegistry:
                 self._bodiesAndRegions[body.name] = {region.name}
 
         self.regionDict[region.name] = region
+
+
+    def makeRegionsDNF(self):
+        for r in self.regionDict:
+            self.regionDict[r] = self.regionDict[r].toDNF(r)
+
 
     def addLattice(self, lattice):
         if lattice.cellRegion.name in self.regionDict:
@@ -250,6 +258,15 @@ class FlukaRegistry:
         )
         self.addCard(c)
 
+    def printDumps(self, detail=1):
+        if detail >= 1:
+            print("regions", len(self.regionDict))
+            if detail >= 2:
+                for r in self.regionDict:
+                    print("region", r, len(self.regionDict[r].zones),  self.assignmas[r])
+                    if detail >= 3:
+                        print(self.regionDict[r].dumps())
+                        print("")
 
 class RotoTranslationStore(_MutableMapping):
     """only get by names."""
@@ -315,7 +332,6 @@ class RotoTranslationStore(_MutableMapping):
 
     def flukaFreeString(self):
         return "\n".join([r.flukaFreeString() for r in self.values()])
-
 
 class FlukaBodyStore(_MutableMapping):
     def __init__(self):
