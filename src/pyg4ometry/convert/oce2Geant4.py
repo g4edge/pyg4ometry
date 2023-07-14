@@ -188,6 +188,9 @@ def _oce2Geant4_traverse(
         name = node.ToCString()
         name = "l_" + name.replace(":", "_")
 
+    if name.find("-") != -1 :
+        name = name.replace("-","_")
+
     print(name, node.ToCString())
 
     loc = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
