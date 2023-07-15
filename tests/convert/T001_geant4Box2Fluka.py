@@ -53,9 +53,21 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     # fluka conversion
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
+
+        # fluka running
+        freg.addDefaults()
+        freg.addBeam(energy=10)
+        freg.addBeamPos()
+        freg.addUserBnn(name="bnn1")
+        freg.addUserBnn(name="bnn2")
+        freg.addRandomiz()
+        freg.addStart(maxPrimHistories=100)
+
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputPath / "T001_geant4Box2Fluka.inp")
+
+
 
     # flair output file
     f = _fluka.Flair("T001_geant4Box2Fluka.inp", extentBB)

@@ -182,15 +182,46 @@ class FlukaRegistry:
         c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, "ELECTRON")
         self.addCard(c)
 
-    def addBeamPos(self):
-        pass
+    def addBeamPos(self, xpos=0, ypos=0, zpos=0, xdc=0, ydc=0):
+        c = _card.Card("BEAMPOS", xpos, ypos, zpos, xdc, ydc)
+        self.addCard(c)
 
     def addLowMat(self):
         # https://flukafiles.web.cern.ch/manual/chapters/low_energy_neutrons/multigroup_neutron_transport/neutron_cross_section_library/available_cross_sections.html
         pass
 
-    def addUserBnn(self):
-        pass
+    def addUserBnn(self,
+                   mesh=0,
+                   particle="ENERGY",
+                   lunOutput=-21,
+                   e1max=1,
+                   e2max=1,
+                   e3max=1,
+                   name="name",
+                   e1min=-1,
+                   e2min=-1,
+                   e3min=-1,
+                   e1nbin=10,
+                   e2nbin=10,
+                   e3nbin=10):
+        c1 = _card.Card("USRBIN",
+                        mesh,
+                        particle,
+                        lunOutput,
+                        e1max,
+                        e2max,
+                        e3max,
+                        name,)
+        c2 = _card.Card("USRBIN",
+                        e1min,
+                        e2min,
+                        e3min,
+                        e1nbin,
+                        e2nbin,
+                        e2nbin, "&")
+
+        self.addCard(c1)
+        self.addCard(c2)
 
     def addUsrBdx(
         self,
