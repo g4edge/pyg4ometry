@@ -27,7 +27,15 @@ from pyg4ometry.fluka.Writer import Writer
 from .fluka_registry import FlukaRegistry
 from .fluka_registry import FlukaBodyStoreExact
 from .vector import Three, AABB
-from .region import Zone, Region
+from .region import (
+    Zone,
+    Region,
+    bracket_depth,
+    bracket_number,
+    zone_to_sympy,
+    region_to_sympy,
+    sympy_to_region,
+)
 from .directive import Transform, RotoTranslation, RecursiveRotoTranslation
 from .lattice import Lattice
 from .flair import Flair
