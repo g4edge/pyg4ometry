@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
@@ -7,11 +8,18 @@ import T001_Box
 import T023_TwistedTrap
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(False, False)["logicalVolume"]
-    l2 = T023_TwistedTrap.Test(False, False)["logicalVolume"]
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
+    l2 = T023_TwistedTrap.Test(vis=False, interactive=False, outputPath=outputPath)[
+        "logicalVolume"
+    ]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)
@@ -32,9 +40,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg0)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T423_MergeRegistry_TwistedTrap.gdml")
-    )
+    w.write(outputPath / "T423_MergeRegistry_TwistedTrap.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

@@ -1,5 +1,7 @@
 import numpy as _np
 import os as _os
+import pytest
+
 
 import pyg4ometry
 
@@ -129,242 +131,367 @@ def test_PythonGeant_T000_SolidBase():
     assert T000_SolidBase.Test()["testStatus"]
 
 
-def test_PythonGeant_T001_Box():
-    assert T001_Box.Test(False, False, writeNISTMaterials)["testStatus"]
-
-
-def test_PythonGeant_T002_Tubs():
-    assert T002_Tubs.Test(False, False, writeNISTMaterials=writeNISTMaterials)
-
-
-def test_PythonGeant_T003_CutTubs():
-    assert T003_CutTubs.Test(
-        False, False, T003_CutTubs.normal, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
-    assert T003_CutTubs.Test(False, False, T003_CutTubs.flat_ends)["testStatus"]
-    assert T0031_CutTubs_number.Test(False, False)["testStatus"]
-    assert T0032_CutTubs_string.Test(False, False)["testStatus"]
-    # TODO
-    # assert T0033_CutTubs_expression.Test(False, False)["testStatus"]
-    assert T0034_CutTubs_DefineTree.Test(False, False)["testStatus"]
-
-
-def test_PythonGeant_T004_Cons():
-    try:
-        assert T004_Cons.Test(
-            False,
-            False,
-            T004_Cons.r1min_gt_r1max,
-            writeNISTMaterials=writeNISTMaterials,
-        )["testStatus"]
-    except ValueError:
-        pass
-
-    try:
-        assert T004_Cons.Test(False, False, T004_Cons.r2min_gt_r2max)["testStatus"]
-    except ValueError:
-        pass
-
-    try:
-        assert T004_Cons.Test(False, False, T004_Cons.dphi_gt_2pi)["testStatus"]
-    except ValueError:
-        pass
-
-    assert T004_Cons.Test(False, False, T004_Cons.dphi_eq_2pi)["testStatus"]
-    assert T004_Cons.Test(False, False, T004_Cons.cone_up)["testStatus"]
-    assert T004_Cons.Test(False, False, T004_Cons.inner_cylinder)["testStatus"]
-
-    assert T004_Cons.Test(False, False)["testStatus"]
-
-
-def test_PythonGeant_T005_Para():
-    assert T005_Para.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T006_Trd():
-    assert T006_Trd.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T007_Trap():
-    assert T007_Trap.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T008_Sphere():
-    assert T008_Sphere.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T009_Orb():
-    assert T009_Orb.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T010_Torus():
-    assert T010_Torus.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T011_Polycone():
-    assert T011_Polycone.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T012_GenericPolycone():
-    assert T012_GenericPolycone.Test(
-        False, False, T012_GenericPolycone.normal, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
-
-    try:
-        T012_GenericPolycone.Test(False, False, T012_GenericPolycone.two_planes)[
-            "testStatus"
-        ]
-    except ValueError:
-        pass
-
-
-def test_PythonGeant_T013_Polyhedra():
-    assert T013_Polyhedra.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-
-
-def test_PythonGeant_T014_GenericPolyhedra():
-    assert T014_GenericPolyhedra.Test(
-        False,
-        False,
-        T014_GenericPolyhedra.normal,
+def test_PythonGeant_T001_Box(tmptestdir):
+    T001_Box.Test(
+        vis=False,
+        interactive=False,
         writeNISTMaterials=writeNISTMaterials,
-    )["testStatus"]
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T002_Tubs(tmptestdir):
+    T002_Tubs.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T003_CutTubs(tmptestdir):
+    T003_CutTubs.Test(
+        vis=False,
+        interactive=False,
+        type=T003_CutTubs.normal,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+    T003_CutTubs.Test(
+        vis=False, interactive=False, type=T003_CutTubs.flat_ends, outputPath=tmptestdir
+    )
+    T0031_CutTubs_number.Test(vis=False, interactive=False, outputPath=tmptestdir)
+    T0032_CutTubs_string.Test(vis=False, interactive=False, outputPath=tmptestdir)
+    # TODO
+    # T0033_CutTubs_expression.Test(vis=False, interactive=False, outputPath=tmptestdir)
+    T0034_CutTubs_DefineTree.Test(vis=False, interactive=False, outputPath=tmptestdir)
+
+
+def test_PythonGeant_T004_Cons(tmptestdir):
+    try:
+        T004_Cons.Test(
+            vis=False,
+            interactive=False,
+            type=T004_Cons.r1min_gt_r1max,
+            writeNISTMaterials=writeNISTMaterials,
+            outputPath=tmptestdir,
+        )
+    except ValueError:
+        pass
 
     try:
-        T014_GenericPolyhedra.Test(False, False, T014_GenericPolyhedra.two_planes)[
-            "testStatus"
-        ]
+        T004_Cons.Test(
+            vis=False,
+            interactive=False,
+            type=T004_Cons.r2min_gt_r2max,
+            outputPath=tmptestdir,
+        )
+    except ValueError:
+        pass
+
+    try:
+        T004_Cons.Test(
+            vis=False,
+            interactive=False,
+            type=T004_Cons.dphi_gt_2pi,
+            outputPath=tmptestdir,
+        )
+    except ValueError:
+        pass
+
+    T004_Cons.Test(
+        vis=False, interactive=False, type=T004_Cons.dphi_eq_2pi, outputPath=tmptestdir
+    )
+    T004_Cons.Test(
+        vis=False, interactive=False, type=T004_Cons.cone_up, outputPath=tmptestdir
+    )
+    T004_Cons.Test(
+        vis=False,
+        interactive=False,
+        type=T004_Cons.inner_cylinder,
+        outputPath=tmptestdir,
+    )
+
+    T004_Cons.Test(vis=False, interactive=False, outputPath=tmptestdir)
+
+
+def test_PythonGeant_T005_Para(tmptestdir):
+    T005_Para.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T006_Trd(tmptestdir):
+    T006_Trd.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T007_Trap(tmptestdir):
+    T007_Trap.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T008_Sphere(tmptestdir):
+    assert T008_Sphere.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T009_Orb(tmptestdir):
+    T009_Orb.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T010_Torus(tmptestdir):
+    T010_Torus.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T011_Polycone(tmptestdir):
+    T011_Polycone.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T012_GenericPolycone(tmptestdir):
+    T012_GenericPolycone.Test(
+        vis=False,
+        interactive=False,
+        type=T012_GenericPolycone.normal,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+    try:
+        T012_GenericPolycone.Test(
+            vis=False,
+            interactive=False,
+            type=T012_GenericPolycone.two_planes,
+            outputPath=tmptestdir,
+        )
     except ValueError:
         pass
 
 
-def test_PythonGeant_T015_EllipticalTube():
-    assert T015_EllipticalTube.Test(
-        False, False, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
+def test_PythonGeant_T013_Polyhedra(tmptestdir):
+    T013_Polyhedra.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T016_Ellipsoid():
-    assert T016_Ellipsoid.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T014_GenericPolyhedra(tmptestdir):
+    T014_GenericPolyhedra.Test(
+        vis=False,
+        interactive=False,
+        type=T014_GenericPolyhedra.normal,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+    try:
+        T014_GenericPolyhedra.Test(
+            vis=False,
+            interactive=False,
+            type=T014_GenericPolyhedra.two_planes,
+            outputPath=tmptestdir,
+        )
+    except ValueError:
+        pass
 
 
-def test_PythonGeant_T017_EllipticalCone():
-    assert T017_EllipticalCone.Test(
-        False, False, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
+def test_PythonGeant_T015_EllipticalTube(tmptestdir):
+    T015_EllipticalTube.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T016_Ellipsoid(tmptestdir):
+    assert T016_Ellipsoid.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T017_EllipticalCone(tmptestdir):
+    T017_EllipticalCone.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
     try:
         T017_EllipticalCone.Test(
-            False,
-            False,
-            T017_EllipticalCone.zcut_outofrange,
+            vis=False,
+            interactive=False,
+            type=T017_EllipticalCone.zcut_outofrange,
             writeNISTMaterials=writeNISTMaterials,
-        )["testStatus"]
+            outputPath=tmptestdir,
+        )
     except ValueError:
         pass
 
 
-def test_PythonGeant_T018_Paraboloid():
-    assert T018_Paraboloid.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "teststatus"
-    ]
-
-
-def test_PythonGeant_T019_Hyperboloid():
-    assert T019_Hyperboloid.Test(
-        False, False, T019_Hyperboloid.normal, writeNISTMaterials=writeNISTMaterials
-    )["teststatus"]
-    assert T019_Hyperboloid.Test(
-        False,
-        False,
-        T019_Hyperboloid.rmin_eq_zero,
+def test_PythonGeant_T018_Paraboloid(tmptestdir):
+    T018_Paraboloid.Test(
+        vis=False,
+        interactive=False,
         writeNISTMaterials=writeNISTMaterials,
-    )["teststatus"]
+        outputPath=tmptestdir,
+    )
+
+
+def test_PythonGeant_T019_Hyperboloid(tmptestdir):
+    T019_Hyperboloid.Test(
+        vis=False,
+        interactive=False,
+        type=T019_Hyperboloid.normal,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+    T019_Hyperboloid.Test(
+        vis=False,
+        interactive=False,
+        type=T019_Hyperboloid.rmin_eq_zero,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
     try:
         T019_Hyperboloid.Test(
-            False,
-            False,
-            T019_Hyperboloid.rmin_gt_rmax,
+            vis=False,
+            interactive=False,
+            type=T019_Hyperboloid.rmin_gt_rmax,
             writeNISTMaterials=writeNISTMaterials,
-        )["testStatus"]
+            outputPath=tmptestdir,
+        )
     except ValueError:
         pass
 
 
-def test_PythonGeant_T020_Tet():
-    assert T020_Tet.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T020_Tet(tmptestdir):
+    T020_Tet.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T021_ExtrudedSolid():
-    assert T021_ExtrudedSolid.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T021_ExtrudedSolid(tmptestdir):
+    T021_ExtrudedSolid.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T022_TwistedBox():
-    assert T022_TwistedBox.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T022_TwistedBox(tmptestdir):
+    T022_TwistedBox.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T023_TwistedTrap():
-    assert T023_TwistedTrap.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T023_TwistedTrap(tmptestdir):
+    T023_TwistedTrap.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T024_TwistedTrd():
-    assert T024_TwistedTrd.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T024_TwistedTrd(tmptestdir):
+    T024_TwistedTrd.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T025_TwistedTubs():
-    assert T025_TwistedTubs.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "teststatus"
-    ]
+def test_PythonGeant_T025_TwistedTubs(tmptestdir):
+    T025_TwistedTubs.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T026_GenericTrap():
-    assert T026_GenericTrap.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "teststatus"
-    ]
+def test_PythonGeant_T026_GenericTrap(tmptestdir):
+    T026_GenericTrap.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T028_Union():
-    assert T028_Union.Test(False, False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
-    assert T028_Union.Test(False, False, True, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T028_Union(tmptestdir):
+    T028_Union.Test(
+        vis=False,
+        interactive=False,
+        disjoint=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
+
+    T028_Union.Test(
+        vis=False,
+        interactive=False,
+        disjoint=True,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T029_Subtraction():
-    assert T029_Subtraction.Test(
-        False, False, False, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
+def test_PythonGeant_T029_Subtraction(tmptestdir):
+    T029_Subtraction.Test(
+        vis=False,
+        interactive=False,
+        nullMesh=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
     # try :
     #    T029_Subtraction.Test(False,False,True)
@@ -372,10 +499,14 @@ def test_PythonGeant_T029_Subtraction():
     #    pass
 
 
-def test_PythonGeant_T030_Intersection():
-    assert T030_Intersection.Test(
-        False, False, T030_Intersection.normal, writeNISTMaterials=writeNISTMaterials
-    )["teststatus"]
+def test_PythonGeant_T030_Intersection(tmptestdir):
+    T030_Intersection.Test(
+        vis=False,
+        interactive=False,
+        type=T030_Intersection.normal,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
     # try :
     #    T030_Intersection.Test(False,False,T030_Intersection.non_intersecting)
@@ -383,243 +514,292 @@ def test_PythonGeant_T030_Intersection():
     #    pass
 
 
-def test_PythonGeant_T031_MultiUnion():
-    assert T031_MultiUnion.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "teststatus"
-    ]
+def test_PythonGeant_T031_MultiUnion(tmptestdir):
+    T031_MultiUnion.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T032_Scaled():
-    assert T032_Scaled.Test(False, False, writeNISTMaterials=writeNISTMaterials)[
-        "testStatus"
-    ]
+def test_PythonGeant_T032_Scaled(tmptestdir):
+    T032_Scaled.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T033_Tessellated():
-    assert T033_TessellatedSolid.Test(
-        False, False, writeNISTMaterials=writeNISTMaterials
-    )["testStatus"]
+def test_PythonGeant_T033_Tessellated(tmptestdir):
+    T033_TessellatedSolid.Test(
+        vis=False,
+        interactive=False,
+        writeNISTMaterials=writeNISTMaterials,
+        outputPath=tmptestdir,
+    )
 
 
-def test_PythonGeant_T101_PhysicalLogical():
-    assert T101_physical_logical.Test()["testStatus"]
+def test_PythonGeant_T101_PhysicalLogical(tmptestdir):
+    T101_physical_logical.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T102_OverlapMone():
-    assert T102_overlap_none.Test()["testStatus"]
+def test_PythonGeant_T102_OverlapMone(tmptestdir):
+    T102_overlap_none.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T103_OverlapCopl():
-    assert T103_overlap_copl.Test()["testStatus"]
+def test_PythonGeant_T103_OverlapCopl(tmptestdir):
+    T103_overlap_copl.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T103_OverlapCopl_Simple():
-    assert T103_overlap_copl_simple.Test()["testStatus"]
+def test_PythonGeant_T103_OverlapCopl_Simple(tmptestdir):
+    T103_overlap_copl_simple.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T104_OverlapVolu():
-    assert T104_overlap_volu.Test()["testStatus"]
+def test_PythonGeant_T104_OverlapVolu(tmptestdir):
+    T104_overlap_volu.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T105_Assembly():
-    assert T105_assembly.Test()["testStatus"]
+def test_PythonGeant_T105_Assembly(tmptestdir):
+    T105_assembly.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T106_ReplicaX():
-    assert T106_replica_x.Test()["testStatus"]
+def test_PythonGeant_T106_ReplicaX(tmptestdir):
+    T106_replica_x.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T107_ReplicaY():
-    assert T107_replica_y.Test()["testStatus"]
+def test_PythonGeant_T107_ReplicaY(tmptestdir):
+    T107_replica_y.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T108_ReplicaZ():
-    assert T108_replica_z.Test()["testStatus"]
+def test_PythonGeant_T108_ReplicaZ(tmptestdir):
+    T108_replica_z.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T109_ReplicaPhi():
-    assert T109_replica_phi.Test()["testStatus"]
+def test_PythonGeant_T109_ReplicaPhi(tmptestdir):
+    T109_replica_phi.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T110_ReplicaRho():
-    assert T110_replica_rho.Test()["testStatus"]
+def test_PythonGeant_T110_ReplicaRho(tmptestdir):
+    T110_replica_rho.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T111_parameterised_box():
-    assert T111_parameterised_box.Test()["testStatus"]
+def test_PythonGeant_T111_parameterised_box(tmptestdir):
+    T111_parameterised_box.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T112_parameterised_tube():
-    assert T112_parameterised_tube.Test()["testStatus"]
+def test_PythonGeant_T112_parameterised_tube(tmptestdir):
+    T112_parameterised_tube.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T201_Materials():
-    T201_Materials.Test_MaterialPredefined()
-    T201_Materials.Test_MaterialSingleElement()
-    T201_Materials.Test_MaterialCompoundMassFraction()
-    T201_Materials.Test_MaterialCompoundAtoms()
-    T201_Materials.Test_MaterialMixture()
-    T201_Materials.Test_MaterialIsotopes()
+def test_PythonGeant_T201_Materials(tmptestdir):
+    T201_Materials.Test_MaterialPredefined(outputPath=tmptestdir)
+    T201_Materials.Test_MaterialSingleElement(outputPath=tmptestdir)
+    T201_Materials.Test_MaterialCompoundMassFraction(outputPath=tmptestdir)
+    T201_Materials.Test_MaterialCompoundAtoms(outputPath=tmptestdir)
+    T201_Materials.Test_MaterialMixture(outputPath=tmptestdir)
+    T201_Materials.Test_MaterialIsotopes(outputPath=tmptestdir)
 
 
-def test_PythonGeant_T202_OpticalSurface():
-    T202_OpticalSurface.Test_OpticalSurface()
+def test_PythonGeant_T202_OpticalSurface(tmptestdir):
+    T202_OpticalSurface.Test_OpticalSurface(outputPath=tmptestdir)
 
 
-def test_PythonGeant_T203_MaterialsRegistry():
-    T203_MaterialsRegistry.Test_MaterialsRegistry()
+def test_PythonGeant_T203_MaterialsRegistry(tmptestdir):
+    T203_MaterialsRegistry.Test_MaterialsRegistry(outputPath=tmptestdir)
 
 
-def test_PythonGeant_T204_NIST_Element():
-    T204_NIST_Element.Test_NIST_Element()
+def test_PythonGeant_T204_NIST_Element(tmptestdir):
+    T204_NIST_Element.Test_NIST_Element(outputPath=tmptestdir)
 
 
-def test_PythonGeant_T205_NIST_Material():
-    T205_NIST_Material.Test_NIST_Material()
+def test_PythonGeant_T205_NIST_Material(tmptestdir):
+    T205_NIST_Material.Test_NIST_Material(outputPath=tmptestdir)
 
 
-def test_PythonGeant_T400_MergeRegistry():
-    assert T400_MergeRegistry.Test()["teststatus"]
+def test_PythonGeant_T400_MergeRegistry(tmptestdir):
+    T400_MergeRegistry.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T401_MergeRegistry_Box():
-    assert T401_MergeRegistry_Box.Test(False, False)["testStatus"]
+def test_PythonGeant_T401_MergeRegistry_Box(tmptestdir):
+    T401_MergeRegistry_Box.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T402_MergeRegistry_Tubs():
-    assert T402_MergeRegistry_Tubs.Test()["testStatus"]
+def test_PythonGeant_T402_MergeRegistry_Tubs(tmptestdir):
+    T402_MergeRegistry_Tubs.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T403_MergeRegistry_CutTubs():
-    assert T403_MergeRegistry_CutTubs.Test()["testStatus"]
+def test_PythonGeant_T403_MergeRegistry_CutTubs(tmptestdir):
+    T403_MergeRegistry_CutTubs.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T404_MergeRegistry_Cons():
-    assert T404_MergeRegistry_Cons.Test()["testStatus"]
+def test_PythonGeant_T404_MergeRegistry_Cons(tmptestdir):
+    T404_MergeRegistry_Cons.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T405_MergeRegistry_Para():
-    assert T405_MergeRegistry_Para.Test()["testStatus"]
+def test_PythonGeant_T405_MergeRegistry_Para(tmptestdir):
+    T405_MergeRegistry_Para.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T406_MergeRegistry_Trd():
-    assert T406_MergeRegistry_Trd.Test()["testStatus"]
+def test_PythonGeant_T406_MergeRegistry_Trd(tmptestdir):
+    T406_MergeRegistry_Trd.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T407_MergeRegistry_Trap():
-    assert T407_MergeRegistry_Trap.Test()["testStatus"]
+def test_PythonGeant_T407_MergeRegistry_Trap(tmptestdir):
+    T407_MergeRegistry_Trap.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T408_MergeRegistry_Sphere():
-    assert T408_MergeRegistry_Sphere.Test()["testStatus"]
+def test_PythonGeant_T408_MergeRegistry_Sphere(tmptestdir):
+    T408_MergeRegistry_Sphere.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T409_MergeRegistry_Orb():
-    assert T409_MergeRegistry_Orb.Test()["testStatus"]
+def test_PythonGeant_T409_MergeRegistry_Orb(tmptestdir):
+    T409_MergeRegistry_Orb.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T410_MergeRegistry_Torus():
-    assert T410_MergeRegistry_Torus.Test()["testStatus"]
+def test_PythonGeant_T410_MergeRegistry_Torus(tmptestdir):
+    T410_MergeRegistry_Torus.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T411_MergeRegistry_Polycone():
-    assert T411_MergeRegistry_Polycone.Test()["testStatus"]
+def test_PythonGeant_T411_MergeRegistry_Polycone(tmptestdir):
+    T411_MergeRegistry_Polycone.Test(
+        vis=False, interactive=tmptestdir, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T412_MergeRegistry_GenericPolycone():
-    assert T412_MergeRegistry_GenericPolycone.Test()["testStatus"]
+def test_PythonGeant_T412_MergeRegistry_GenericPolycone(tmptestdir):
+    T412_MergeRegistry_GenericPolycone.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T413_MergeRegistry_Polyhedra():
-    assert T413_MergeRegistry_Polyhedra.Test()["testStatus"]
+def test_PythonGeant_T413_MergeRegistry_Polyhedra(tmptestdir):
+    T413_MergeRegistry_Polyhedra.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T414_MergeRegistry_GenericPolyhedra():
-    assert T414_MergeRegistry_GenericPolyhedra.Test()["testStatus"]
+def test_PythonGeant_T414_MergeRegistry_GenericPolyhedra(tmptestdir):
+    T414_MergeRegistry_GenericPolyhedra.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T415_MergeRegistry_EllipticalTube():
-    assert T415_MergeRegistry_EllipticalTube.Test()["testStatus"]
+def test_PythonGeant_T415_MergeRegistry_EllipticalTube(tmptestdir):
+    T415_MergeRegistry_EllipticalTube.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T416_MergeRegistry_Ellipsoid():
-    assert T416_MergeRegistry_Ellipoid.Test()["testStatus"]
+def test_PythonGeant_T416_MergeRegistry_Ellipsoid(tmptestdir):
+    T416_MergeRegistry_Ellipoid.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T417_MergeRegistry_EllipticalCone():
-    assert T417_MergeRegistry_EllipticalCone.Test()["testStatus"]
+def test_PythonGeant_T417_MergeRegistry_EllipticalCone(tmptestdir):
+    T417_MergeRegistry_EllipticalCone.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T418_MergeRegistry_EllipticalParaboloid():
-    assert T418_MergeRegistry_Paraboloid.Test()["testStatus"]
+def test_PythonGeant_T418_MergeRegistry_EllipticalParaboloid(tmptestdir):
+    T418_MergeRegistry_Paraboloid.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T419_MergeRegistry_Hyperboloid():
-    assert T419_MergeRegistry_Hyperboloid.Test()["testStatus"]
+def test_PythonGeant_T419_MergeRegistry_Hyperboloid(tmptestdir):
+    T419_MergeRegistry_Hyperboloid.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T420_MergeRegistry_Tet():
-    assert T420_MergeRegistry_Tet.Test()["testStatus"]
+def test_PythonGeant_T420_MergeRegistry_Tet(tmptestdir):
+    T420_MergeRegistry_Tet.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T421_MergeRegistry_ExtrudedSolid():
-    assert T421_MergeRegistry_ExtrudedSolid.Test()["testStatus"]
+def test_PythonGeant_T421_MergeRegistry_ExtrudedSolid(tmptestdir):
+    T421_MergeRegistry_ExtrudedSolid.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T422_MergeRegistry_TwistedBox():
-    assert T422_MergeRegistry_TwistedBox.Test()["testStatus"]
+def test_PythonGeant_T422_MergeRegistry_TwistedBox(tmptestdir):
+    T422_MergeRegistry_TwistedBox.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T423_MergeRegistry_TwistedTrap():
-    assert T423_MergeRegistry_TwistedTrap.Test()["testStatus"]
+def test_PythonGeant_T423_MergeRegistry_TwistedTrap(tmptestdir):
+    T423_MergeRegistry_TwistedTrap.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T424_MergeRegistry_TwistedTrd():
-    assert T424_MergeRegistry_TwistedTrd.Test()["testStatus"]
+def test_PythonGeant_T424_MergeRegistry_TwistedTrd(tmptestdir):
+    T424_MergeRegistry_TwistedTrd.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T425_MergeRegistry_TwistedTubs():
-    assert T425_MergeRegistry_TwistedTubs.Test()["testStatus"]
+def test_PythonGeant_T425_MergeRegistry_TwistedTubs(tmptestdir):
+    T425_MergeRegistry_TwistedTubs.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T426_MergeRegistry_GenericTrap():
-    assert T426_MergeRegistry_GenericTrap.Test()["testStatus"]
+def test_PythonGeant_T426_MergeRegistry_GenericTrap(tmptestdir):
+    T426_MergeRegistry_GenericTrap.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T428_MergeRegistry_Union():
-    assert T428_MergeRegistry_Union.Test()["testStatus"]
+def test_PythonGeant_T428_MergeRegistry_Union(tmptestdir):
+    T428_MergeRegistry_Union.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T429_MergeRegistry_Subtraction():
-    assert T429_MergeRegistry_Subtraction.Test()["testStatus"]
+def test_PythonGeant_T429_MergeRegistry_Subtraction(tmptestdir):
+    T429_MergeRegistry_Subtraction.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T430_MergeRegistry_Intersection():
-    assert T430_MergeRegistry_Intersection.Test()["testStatus"]
+def test_PythonGeant_T430_MergeRegistry_Intersection(tmptestdir):
+    T430_MergeRegistry_Intersection.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T431_MergeRegistry_MultiUnion():
-    assert T431_MergeRegistry_MultiUnion.Test()["testStatus"]
+def test_PythonGeant_T431_MergeRegistry_MultiUnion(tmptestdir):
+    T431_MergeRegistry_MultiUnion.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T432_MergeRegistryBoxAssemblyConverion():
-    assert T432_MergeRegistry_Box_AssemblyConversion.Test()["testStatus"]
+def test_PythonGeant_T432_MergeRegistryBoxAssemblyConverion(tmptestdir):
+    T432_MergeRegistry_Box_AssemblyConversion.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T433_MergeRegistry_Scale():
-    assert T433_MergeRegistry_Scale.Test()["testStatus"]
+def test_PythonGeant_T433_MergeRegistry_Scale(tmptestdir):
+    T433_MergeRegistry_Scale.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T434_MergeRegistry_CollapseAssembly():
-    assert T434_MergeRegistry_CollapseAssembly.Test()["testStatus"]
+def test_PythonGeant_T434_MergeRegistry_CollapseAssembly(tmptestdir):
+    T434_MergeRegistry_CollapseAssembly.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )
 
 
-def test_PythonGeant_T600_LVTessellated():
-    assert T600_LVTessellated.Test()["testStatus"]
+def test_PythonGeant_T600_LVTessellated(tmptestdir):
+    T600_LVTessellated.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T601_reflect():
-    assert T601_reflect.Test()["testStatus"]
+def test_PythonGeant_T601_reflect(tmptestdir):
+    T601_reflect.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 # def test_PythonGeant_T602_lv_cull_daughters():
@@ -632,21 +812,23 @@ def test_PythonGeant_T601_reflect():
 #    assert T604_lv_change_solid_and_timr_rot.Test()["testStatus"]
 
 
-def test_PythonGeant_T605_LvChangeSolid():
-    assert T605_LvChangeSolid.Test()["testStatus"]
+def test_PythonGeant_T605_LvChangeSolid(tmptestdir):
+    T605_LvChangeSolid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T606_LvClipSolid():
-    assert T606_LvClipSolid.Test()["testStatus"]
+def test_PythonGeant_T606_LvClipSolid(tmptestdir):
+    T606_LvClipSolid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T607_LvChangeAndClipSolid():
-    assert T607_LvChangeAndClipSolid.Test()["testStatus"]
+def test_PythonGeant_T607_LvChangeAndClipSolid(tmptestdir):
+    T607_LvChangeAndClipSolid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T608_LvClipSolidRecursive():
-    assert T608_LvClipSolidRecursive.Test()["testStatus"]
+def test_PythonGeant_T608_LvClipSolidRecursive(tmptestdir):
+    T608_LvClipSolidRecursive.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
-def test_PythonGeant_T609_LvClipSolidRecursiveAssembly():
-    assert T609_LvClipSolidRecursiveAssembly.Test()["testStatus"]
+def test_PythonGeant_T609_LvClipSolidRecursiveAssembly(tmptestdir):
+    T609_LvClipSolidRecursiveAssembly.Test(
+        vis=False, interactive=False, outputPath=tmptestdir
+    )

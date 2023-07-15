@@ -1,10 +1,13 @@
 import os as _os
-
+import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
 
 
-def Test_MaterialPredefined():
+def Test_MaterialPredefined(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -36,14 +39,13 @@ def Test_MaterialPredefined():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T201_MaterialPredefined.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialPredefined.gmad"),
-        "T201_MaterialPredefined.gdml",
-    )
+    w.write(outputPath / "T201_MaterialPredefined.gdml")
 
 
-def Test_MaterialSingleElement():
+def Test_MaterialSingleElement(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -79,16 +81,13 @@ def Test_MaterialSingleElement():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialSingleElement.gdml")
-    )
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialSingleElement.gmad"),
-        "T201_MaterialSingleElement.gdml",
-    )
+    w.write(outputPath / "T201_MaterialSingleElement.gdml")
 
 
-def Test_MaterialCompoundMassFraction():
+def Test_MaterialCompoundMassFraction(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -126,20 +125,13 @@ def Test_MaterialCompoundMassFraction():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialCompoundMassFraction.gdml"
-        )
-    )
-    w.writeGmadTester(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialCompoundMassFraction.gmad"
-        ),
-        "T201_MaterialCompoundMassFractiion.gdml",
-    )
+    w.write(outputPath / "T201_MaterialCompoundMassFraction.gdml")
 
 
-def Test_MaterialCompoundAtoms():
+def Test_MaterialCompoundAtoms(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -184,20 +176,13 @@ def Test_MaterialCompoundAtoms():
     w = _gd.Writer()
     w.addDetector(reg)
 
-    w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialCompoundNumberAtoms.gdml"
-        )
-    )
-    w.writeGmadTester(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialCompoundNumberAtoms.gmad"
-        ),
-        "T201_MaterialCompoundNumberAtoms.gdml",
-    )
+    w.write(outputPath / "T201_MaterialCompoundNumberAtoms.gdml")
 
 
-def Test_MaterialMixture():
+def Test_MaterialMixture(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -234,14 +219,13 @@ def Test_MaterialMixture():
     w = _gd.Writer()
     w.addDetector(reg)
 
-    w.write(_os.path.join(_os.path.dirname(__file__), "T201_MaterialMixture.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialMixture.gmad"),
-        "T201_MaterialMixture.gdml",
-    )
+    w.write(outputPath / "T201_MaterialMixture.gdml")
 
 
-def Test_MaterialIsotopes():
+def Test_MaterialIsotopes(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -281,14 +265,13 @@ def Test_MaterialIsotopes():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T201_MaterialIsotopes.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialIsotopes.gmad"),
-        "T201_MaterialIsotopes.gdml",
-    )
+    w.write(outputPath / "T201_MaterialIsotopes.gdml")
 
 
-def Test_MaterialPressureTemperature():
+def Test_MaterialPressureTemperature(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -335,20 +318,13 @@ def Test_MaterialPressureTemperature():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialPressureTemperature.gdml"
-        )
-    )
-    w.writeGmadTester(
-        _os.path.join(
-            _os.path.dirname(__file__), "T201_MaterialPressureTemperature.gmad"
-        ),
-        "T201_MaterialPressureTemperature.gdml",
-    )
+    w.write(outputPath / "T201_MaterialPressureTemperature.gdml")
 
 
-def Test_MaterialState():
+def Test_MaterialState(outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -391,8 +367,4 @@ def Test_MaterialState():
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T201_MaterialState.gdml"))
-    w.writeGmadTester(
-        _os.path.join(_os.path.dirname(__file__), "T201_MaterialState.gmad"),
-        "T201_MaterialState.gdml",
-    )
+    w.write(outputPath / "T201_MaterialState.gdml")

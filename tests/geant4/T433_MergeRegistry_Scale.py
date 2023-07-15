@@ -1,8 +1,13 @@
 import pyg4ometry
+
 import os as _os
+import pathlib as _pl
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg0 = pyg4ometry.geant4.Registry()
     scale = pyg4ometry.gdml.Defines.Scale("sca_reflection", 1, 1, -1, registry=reg0)
 
@@ -42,7 +47,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = pyg4ometry.gdml.Writer()
     w.addDetector(reg1)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T433_MergeRegistry_Scale.gdml"))
+    w.write(outputPath / "T433_MergeRegistry_Scale.gdml")
 
     v = None
     if vis:

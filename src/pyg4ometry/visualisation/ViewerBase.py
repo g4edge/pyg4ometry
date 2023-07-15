@@ -144,8 +144,8 @@ class ViewerBase:
                 pvtra = _np.array(pv.position.eval())
 
                 # pv compound transform
-                mtra_new = mtra * pvmsca * pvmrot
-                tra_new = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                mtra_new = mtra @ pvmsca @ pvmrot
+                tra_new = mtra @ pvtra + tra
 
                 # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(
@@ -163,8 +163,8 @@ class ViewerBase:
                     pvtra = _np.array(trans[1])
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = mtra @ pvtra + tra
 
                     pv.visOptions.depth = depth + 2
 
@@ -182,8 +182,8 @@ class ViewerBase:
                     pvtra = _np.array(trans[1].eval())
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = mtra @ pvtra + tra
 
                     pv.visOptions.depth = depth + 2
 

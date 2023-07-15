@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
@@ -6,7 +7,10 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 
 
-def Test(vis=False, interactive=False, fluka=True):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg = _g4.Registry()
 
     # defines
@@ -47,7 +51,7 @@ def Test(vis=False, interactive=False, fluka=True):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(_os.path.join(_os.path.dirname(__file__), "T106_geant4ReplicaX2Fluka.gdml"))
+    w.write(outputPath / "T106_geant4ReplicaX2Fluka.gdml")
 
     # test __repr__
     str(mbl)
@@ -61,15 +65,11 @@ def Test(vis=False, interactive=False, fluka=True):
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(
-            _os.path.join(_os.path.dirname(__file__), "T106_geant4ReplicaX2Fluka.inp")
-        )
+        w.write(outputPath / "T106_geant4ReplicaX2Fluka.inp")
 
         # flair output file
         f = _fluka.Flair("T106_geant4ReplicaX2Fluka.inp", extentBB)
-        f.write(
-            _os.path.join(_os.path.dirname(__file__), "T106_geant4ReplicaX2Fluka.flair")
-        )
+        f.write(outputPath / "T106_geant4ReplicaX2Fluka.flair")
 
     # visualisation
     v = None

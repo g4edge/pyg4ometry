@@ -1,4 +1,5 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
@@ -47,7 +48,10 @@ def MakeGeometry():
     return reg
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     reg0 = MakeGeometry()
     wl = reg0.getWorldVolume()
 
@@ -75,11 +79,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg1)
-    w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T434_MergeRegistry_CollapseAssembly.gdml"
-        )
-    )
+    w.write(outputPath / "T434_MergeRegistry_CollapseAssembly.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
