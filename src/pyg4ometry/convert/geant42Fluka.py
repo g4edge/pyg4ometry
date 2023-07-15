@@ -2126,7 +2126,7 @@ def geant4Material2Fluka(
 
             mat = _fluka.Compound(
                 materialNameShort,
-                0.1,
+                0.123456789,
                 flukaComposition,
                 fractionType="atomic",
                 flukaregistry=freg,

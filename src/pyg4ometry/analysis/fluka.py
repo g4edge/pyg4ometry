@@ -1,4 +1,5 @@
 import struct as _struct
+import numpy as _np
 
 def fortran_skip(f):
 
@@ -75,14 +76,15 @@ class FlukaData:
 		self.data = None
 
 
-
 class BNN(_FlukaDataFile):
 	def __init__(self, fd, read_data=False):
 
 		self.stat_pos = -1
 
+		self.detector = []
+
 		super().read_header(fd)
-		self.read_header(fd, read_data=False)
+		self.read_header(fd, read_data=read_data)
 
 	def read_header(self, fd, read_data=False):
 
@@ -104,11 +106,11 @@ class BNN(_FlukaDataFile):
 			print(header)
 
 			idet = header[0]
-			name = str(header[1]).strip(" ")
+			name = str(header[1]).replace("'","").strip(" ")
 
 			e1low = float(header[4])
 			e1high = float(header[5])
-			selfe1n = int(header[6])
+			e1n = int(header[6])
 			e1d = float(header[7])
 
 			e2low = float(header[8])
@@ -127,10 +129,24 @@ class BNN(_FlukaDataFile):
 
 			data_size = e1n * e2n * e3n * 4
 
+			fluka_data = FlukaData(idet, name, "bin")
+			fluka_data.e1low = e1low
+			fluka_data.e1high = e1high
+			fluka_data.e2low = e2low
+			fluka_data.e2high = e2high
+			fluka_data.e3low = e3low
+			fluka_data.e3high = e3high
+			fluka_data.e1n = e1n
+			fluka_data.e2n = e2n
+			fluka_data.e3n = e3n
+
 			if read_data:
-				pass
+				fluka_data.data = _np.reshape(_np.frombuffer(fortran_read(fd), _np.float32), (e1n,e2n,e3n), order="F")
 			else :
 				fortran_skip(fd)
+
+			self.detector.append(fluka_data)
+
 	def read_data(sef, fd):
 		pass
 

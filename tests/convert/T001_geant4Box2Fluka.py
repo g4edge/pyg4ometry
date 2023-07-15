@@ -55,11 +55,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         freg = _convert.geant4Reg2FlukaReg(reg)
 
         # fluka running
-        freg.addDefaults()
+        freg.addDefaults(default="PRECISIO")
         freg.addBeam(energy=10)
         freg.addBeamPos()
-        freg.addUserBnn(name="bnn1")
-        freg.addUserBnn(name="bnn2")
+        freg.addUserBin(name="bin1")
+        freg.addUserBin(name="bin2")
+        freg.addLowMatAllMaterials()
+        # freg.addLowPwxs()
         freg.addRandomiz()
         freg.addStart(maxPrimHistories=100)
 
