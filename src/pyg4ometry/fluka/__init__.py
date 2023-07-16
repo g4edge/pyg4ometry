@@ -43,4 +43,3 @@ from .material import BuiltIn, Material, Compound
 from .card import Card
 from . import boolean_algebra
 from .extruder import Extruder
-

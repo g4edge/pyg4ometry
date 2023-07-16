@@ -146,6 +146,7 @@ import T902_cube_from_six_PLAs
 
 import T1000_extruder
 
+
 def test_PythonFluka_T001_RPP():
     T001_RPP.Test(False, False)
 
@@ -770,5 +771,6 @@ def test_fluka_vis():
     v.addFlukaRegions(r)
     v.buildPipelinesAppend()
 
+
 def test_PythonFluka_T1000_extruder():
-    T1000_extruder.Test(False,False)
+    T1000_extruder.Test(False, False)
