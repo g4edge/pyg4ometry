@@ -460,9 +460,8 @@ PYBIND11_MODULE(Surface_mesh, m) {
              return he;
            })
       .def("halfedge",
-           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi, Surface_mesh_EPECK::Halfedge_index &he) {
-             he = sm.halfedge(fi);
-           })
+           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi,
+              Surface_mesh_EPECK::Halfedge_index &he) { he = sm.halfedge(fi); })
       .def("opposite", &Surface_mesh_EPECK::opposite)
 
       /* Switching between edges and half edges */
