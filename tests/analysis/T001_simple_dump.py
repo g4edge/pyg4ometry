@@ -22,8 +22,8 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None):
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    db = _g4.solid.Box("db",700,700,700,reg,"mm")
-    dt = _g4.solid.Tubs("dt", 0, 100, 500, 0, _np.pi*2, reg, "mm", "rad")
+    db = _g4.solid.Box("db", 700, 700, 700, reg, "mm")
+    dt = _g4.solid.Tubs("dt", 0, 100, 500, 0, _np.pi * 2, reg, "mm", "rad")
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
@@ -36,7 +36,6 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None):
     tl = _g4.LogicalVolume(dt, tm, "tl", reg)
     bp = _g4.PhysicalVolume([0, 0.0, 0.0], [0, 0, 0], bl, "bl1", wl, reg)
     tp = _g4.PhysicalVolume([0, 0.0, 0.0], [0, 0, 100], tl, "tl1", bl, reg)
-
 
     # set world volume
     reg.setWorld(wl.name)
@@ -57,10 +56,18 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None):
         freg.addDefaults(default="PRECISIO")
         freg.addBeam(energy=100)
         freg.addBeamPos()
-        freg.addUserBin(name="bin1",
-                        e1max=100, e2max=100, e3max=100,
-                        e1min=-100, e2min=-100, e3min=-100,
-                        e1nbin=100, e2nbin=100, e3nbin=100)
+        freg.addUserBin(
+            name="bin1",
+            e1max=100,
+            e2max=100,
+            e3max=100,
+            e1min=-100,
+            e2min=-100,
+            e3min=-100,
+            e1nbin=100,
+            e2nbin=100,
+            e3nbin=100,
+        )
         freg.addLowMatAllMaterials()
         # freg.addLowPwxs()
         freg.addRandomiz()

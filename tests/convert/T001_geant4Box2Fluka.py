@@ -69,8 +69,6 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         w.addDetector(freg)
         w.write(outputPath / "T001_geant4Box2Fluka.inp")
 
-
-
     # flair output file
     f = _fluka.Flair("T001_geant4Box2Fluka.inp", extentBB)
     f.write(outputPath / "T001_geant4Box2Fluka.flair")
