@@ -21,6 +21,8 @@ typedef CGAL::Surface_mesh<Kernel_EPECK::Point_3> Surface_mesh_EPECK;
 
 #include "geom.h"
 
+#define PYBIND11_DETAILED_ERROR_MESSAGES
+
 namespace std {
 inline void hash_combine(std::size_t) {}
 
@@ -449,11 +451,17 @@ PYBIND11_MODULE(Surface_mesh, m) {
       .def("prev", &Surface_mesh_EPECK::prev)
       .def("halfedge",
            [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &vi) {
-             return sm.halfedge(vi);
+             auto he = sm.halfedge(vi);
+             return he;
            })
       .def("halfedge",
            [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi) {
-             return sm.halfedge(fi);
+             auto he = sm.halfedge(fi);
+             return he;
+           })
+      .def("halfedge",
+           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi, Surface_mesh_EPECK::Halfedge_index &he) {
+             he = sm.halfedge(fi);
            })
       .def("opposite", &Surface_mesh_EPECK::opposite)
 

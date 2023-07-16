@@ -159,7 +159,8 @@ class CSG:
 
             # loop over sm1 faces and make planes
             for f in sm.faces():
-                he = sm.halfedge(f)
+                he = Surface_mesh.Halfedge_index()
+                sm.halfedge(f, he)
 
                 tpl = []
 
