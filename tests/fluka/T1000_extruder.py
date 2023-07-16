@@ -1,6 +1,6 @@
 import pyg4ometry
 
-def Test(vis=False, interactive=False):
+def Test(vis=False):
     e = pyg4ometry.fluka.Extruder()
 
     r1 = e.add_region("outer")
@@ -18,7 +18,9 @@ def Test(vis=False, interactive=False):
 
     e.build_cgal_polygons()
 
-    e.plot()
+    if vis :
+        e.plot()
+        e.plot(decompositions=True)
 
 
     return e

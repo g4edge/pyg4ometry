@@ -1,4 +1,5 @@
 import pyg4ometry.pycgal.CGAL
+import pyg4ometry.pycgal.pythonHelpers
 
 from ..pycgal import Polygon_2
 from ..pycgal import Polygon_with_holes_2
@@ -62,7 +63,7 @@ class Extruder:
 
 
     def plot(self, decompositions=False):
-        f = _plt.figure(1)
+        f = _plt.figure()
 
         for region in self.regions:
             region_connect = self.regions[region].copy()
@@ -76,6 +77,9 @@ class Extruder:
         if not decompositions:
             return
 
+        for dr in self.decomposed:
+            for p in self.decomposed[dr] :
+                pyg4ometry.pycgal.pythonHelpers.draw_polygon_2(p)
 
 
 
