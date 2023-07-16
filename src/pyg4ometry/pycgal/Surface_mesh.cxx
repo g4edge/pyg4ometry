@@ -442,7 +442,6 @@ PYBIND11_MODULE(Surface_mesh, m) {
 
       /* Validity checks */
 
-
       /* Low level connectivity */
       .def("target", &Surface_mesh_EPECK::target)
       .def("face", &Surface_mesh_EPECK::face)
