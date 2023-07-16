@@ -448,12 +448,12 @@ PYBIND11_MODULE(Surface_mesh, m) {
       .def("next", &Surface_mesh_EPECK::next)
       .def("prev", &Surface_mesh_EPECK::prev)
       .def("halfedge",
-           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &vi) {
-             return sm.halfedge(vi);
+           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index *vi) {
+             return sm.halfedge(*vi);
            })
       .def("halfedge",
-           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi) {
-             return sm.halfedge(fi);
+           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index *fi) {
+             return sm.halfedge(*fi);
            })
       .def("opposite", &Surface_mesh_EPECK::opposite)
 
