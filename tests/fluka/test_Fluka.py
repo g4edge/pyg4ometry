@@ -773,4 +773,4 @@ def test_fluka_vis():
 
 
 def test_PythonFluka_T1000_extruder():
-    T1000_extruder.Test(False, False)
+    T1000_extruder.Test(False)
