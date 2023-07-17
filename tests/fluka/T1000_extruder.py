@@ -2,8 +2,9 @@ import pathlib as _pl
 import pyg4ometry
 
 
-def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, outputPath=None):
-
+def Test(
+    vis=False, interactive=False, fluka=True, writeNISTMaterials=False, outputPath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -14,10 +15,9 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
     wy = pyg4ometry.gdml.Constant("wy", "1000", reg, True)
     wz = pyg4ometry.gdml.Constant("wz", "1000", reg, True)
 
-
     # materials
     if writeNISTMaterials:
-        wm  = pyg4ometry.geant4.nist_material_2geant4Material("G4_Galactic", reg)
+        wm = pyg4ometry.geant4.nist_material_2geant4Material("G4_Galactic", reg)
         em1 = pyg4ometry.geant4.nist_material_2geant4Material("G4_Au", reg)
         em2 = pyg4ometry.geant4.nist_material_2geant4Material("G4_Fe", reg)
 
@@ -26,9 +26,8 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
         em1 = pyg4ometry.geant4.MaterialPredefined("G4_Au")
         em2 = pyg4ometry.geant4.MaterialPredefined("G4_Fe")
 
-
     ws = pyg4ometry.geant4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    es = pyg4ometry.fluka.Extruder("Magnet",length=500, registry=reg)
+    es = pyg4ometry.fluka.Extruder("Magnet", length=500, registry=reg)
 
     r1 = es.add_region("outer")
     r1.append([-100, -100])
@@ -49,7 +48,7 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
     # structure
     wl = pyg4ometry.geant4.LogicalVolume(ws, wm, "wl", reg)
     el = pyg4ometry.geant4.LogicalVolume(es, em1, "el", reg)
-    ep = pyg4ometry.geant4.PhysicalVolume([0, 0, 0],[0, 0, 0], el, "el_pv1",wl,reg)
+    ep = pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], el, "el_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
