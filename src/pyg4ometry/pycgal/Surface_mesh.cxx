@@ -21,8 +21,6 @@ typedef CGAL::Surface_mesh<Kernel_EPECK::Point_3> Surface_mesh_EPECK;
 
 #include "geom.h"
 
-#define PYBIND11_DETAILED_ERROR_MESSAGES
-
 namespace std {
 inline void hash_combine(std::size_t) {}
 
