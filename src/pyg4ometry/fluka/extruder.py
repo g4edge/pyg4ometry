@@ -1,3 +1,5 @@
+import pyg4ometry.geant4
+import pyg4ometry.geant4.solid
 import pyg4ometry.pycgal.CGAL
 import pyg4ometry.pycgal.pythonHelpers
 
@@ -8,14 +10,17 @@ import matplotlib.pyplot as _plt
 import numpy as _np
 
 
-class Extruder:
-    def __init__(self, length=1000):
+class Extruder(pyg4ometry.geant4.solid.SolidBase):
+    def __init__(self, name="", length=1000, regions={}, registry=None):
+        super().__init__( name, 'extruder', registry)
+
         self.length = length
-        self.points = []
-        self.regions = {}
+        self.regions = regions
         self.cgalpolys = {}
         self.extrusions = {}
         self.decomposed = {}
+        self.g4_extrusions = {}
+        self.g4_decomposed_extrusions = {}
 
     def add_region(self, name):
         self.regions[name] = []
@@ -26,9 +31,6 @@ class Extruder:
 
     def set_region_to_outer_boundary(self, name):
         self.boundary = name
-
-    def build_and_test_hierachy(self):
-        pass
 
     def build_cgal_polygons(self):
         # build a CGAL polygon (without holes for each region)
@@ -64,7 +66,35 @@ class Extruder:
         )
 
     def build_geant4_extrusions(self):
-        pass
+
+        # normal geant4 extrusions
+        for region in self.regions:
+            g4_extrusions = []
+
+            g4e = pyg4ometry.geant4.solid.ExtrudedSolid(region,
+                                                        self.regions[region],
+                                                        [[-self.length / 2, [0, 0], 1], [self.length / 2, [0, 0], 1]],
+                                                        self.registry,
+                                                        lunit="mm")
+
+            self.g4_extrusions[region] = g4e
+
+        # decomposed geant4 extrusions
+        for region in self.regions:
+
+            g4_decomposed_extrusions = []
+
+            pgonList = self.decomposed[region]
+
+            for pgon, idecomp in zip(pgonList,range(0,len(pgonList))):
+                g4e = pyg4ometry.geant4.solid.ExtrudedSolid(region+"_"+str(idecomp),
+                                                            pyg4ometry.pycgal.pythonHelpers.polygon_to_numpy(pgon),
+                                                            [[-self.length/2,[0,0],1], [self.length/2,[0,0],1]],
+                                                            self.registry,
+                                                            lunit="mm")
+                g4_decomposed_extrusions.append(g4e)
+
+            self.g4_decomposed_extrusions[region] = g4_decomposed_extrusions
 
     def plot(self, decompositions=False):
         f = _plt.figure()
@@ -83,3 +113,15 @@ class Extruder:
         for dr in self.decomposed:
             for p in self.decomposed[dr]:
                 pyg4ometry.pycgal.pythonHelpers.draw_polygon_2(p)
+
+    def mesh(self):
+
+        return self.g4_extrusions[self.boundary].mesh()
+
+        #m = pyg4ometry.pycgal.CSG()
+        #
+        #for bs in self.g4_decomposed_extrusions[self.boundary]:
+        #    bsm = bs.mesh()
+        #    m = m.union(bsm)
+        #
+        #return m

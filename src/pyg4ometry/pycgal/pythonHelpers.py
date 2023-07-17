@@ -2,6 +2,16 @@ import matplotlib.pyplot as _plt
 import pyg4ometry as _pyg4
 
 
+def polygon_to_numpy(polygon):
+
+    ptns = []
+
+    for i in range(0,polygon.size()):
+        v = polygon.vertex(i)
+        ptns.append([v.x(), v.y()])
+
+    return ptns
+
 def _draw_polygon_2(p2):
     x = []
     y = []
