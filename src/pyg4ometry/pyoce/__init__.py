@@ -15,6 +15,7 @@ from . import TopLoc
 from . import TopExp
 from . import Message
 from . import BRep
+from . import BRepBuilder
 from . import BRepMesh
 from . import STEPCAFControl
 

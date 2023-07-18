@@ -29,6 +29,7 @@ PYBIND11_MODULE(gp, m) {
 
   py::class_<gp_Pnt>(m, "gp_Pnt")
       .def(py::init<>())
+      .def(py::init<const Standard_Real, const Standard_Real, const Standard_Real>())
       .def("Transform", &gp_Pnt::Transform)
       .def("X", &gp_Pnt::X)
       .def("Y", &gp_Pnt::Y)

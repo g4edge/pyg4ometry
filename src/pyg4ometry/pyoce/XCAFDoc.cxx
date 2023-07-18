@@ -64,6 +64,7 @@ PYBIND11_MODULE(XCAFDoc, m) {
               const Standard_Boolean findInstance) {
              return st.FindShape(shape, findInstance);
            })
+      .def("AddShape",&XCAFDoc_ShapeTool::AddShape)
       .def("GetComponents",
            [](XCAFDoc_ShapeTool &st, const TDF_Label &label,
               TDF_LabelSequence &labels, const Standard_Boolean getsubchilds) {
