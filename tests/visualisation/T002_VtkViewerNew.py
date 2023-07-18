@@ -50,19 +50,6 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     # set world volume
     reg.setWorld(wl.name)
 
-    # gdml output
-    w = _gd.Writer()
-    w.addDetector(reg)
-    w.write(outputPath / "T001_Box.gdml")
-
-    # check file
-    file_hash = _mi.md5_file(outputPath / "T001_Box.gdml")
-    # print(file_hash)
-    # assert file_hash == "cb0f7eff60314dcf5ca9a7540713f11a"
-
-    # test __repr__
-    str(bs)
-
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
