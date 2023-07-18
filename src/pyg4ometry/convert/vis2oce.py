@@ -32,12 +32,23 @@ def vis2oce(vis, stepFileName="output.step"):
     # shape tool
     shape_tool = pyg4ometry.pyoce.XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(top_label)
 
+    shape_dict = {}
+
     for shape_name in vis.localmeshes :
+        # make oce triangulation
         shape_triangulation = convert_mesh_to_poly_Triangulation(vis.localmeshes[shape_name])
+
+        # Shape builder
         shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
         shape.Build()
-        print(shape)
-        shape_tool.AddShape(shape.Shape(), False, True)
+
+        # Add shape to assembly
+        shape_label = shape_tool.AddShape(shape.Shape(), False, False)
+
+        # Store label for later component creation
+        shape_dict[shape_name] = shape_label
+
+    shape_tool.Dump()
 
     w = pyg4ometry.pyoce.STEPCAFControl.STEPCAFControl_Writer()
     w.Transfer(doc)
