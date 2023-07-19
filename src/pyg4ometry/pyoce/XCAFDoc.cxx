@@ -82,6 +82,12 @@ PYBIND11_MODULE(XCAFDoc, m) {
            })
       .def("GetShapes", &XCAFDoc_ShapeTool::GetShapes)
       .def("GetFreeShapes", &XCAFDoc_ShapeTool::GetFreeShapes)
+      .def("AddComponent",
+           [](XCAFDoc_ShapeTool &st, const TDF_Label &assembly,
+              const TDF_Label &comp, const TopLoc_Location &loc) {
+                return st.AddComponent(assembly, comp, loc);
+
+           })
       .def("GetSubShapes", &XCAFDoc_ShapeTool::GetSubShapes)
       .def("GetUsers", &XCAFDoc_ShapeTool::GetUsers)
       .def("ID", &XCAFDoc_ShapeTool::ID)
