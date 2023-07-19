@@ -143,9 +143,13 @@ isort.required-imports = ["from __future__ import annotations"]
 "tests/**" = ["T20"]
 
 [tool.cibuildwheel]
-manylinux-x86_64-image = "g4edge/pyg4ometry-manylinux2014_x86_64:latest"
 build = ["*macosx*", "*manylinux_x86_64"]
-skip = ["cp36-*"]
+skip = ["pp*", "cp36-*"]
+
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "g4edge/pyg4ometry-manylinux2014_x86_64:latest"
+archs = ["auto"]
 
 [tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
 before-all = ".github/bin/install-deps-macos.sh"
