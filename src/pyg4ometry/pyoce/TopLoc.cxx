@@ -14,6 +14,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 PYBIND11_MODULE(TopLoc, m) {
   py::class_<TopLoc_Location>(m, "TopLoc_Location")
       .def(py::init<>())
+      .def(py::init<const gp_Trsf &>())
       .def("FirstDatum",
            [](TopLoc_Location &location) { return location.FirstDatum(); })
       .def("ShallowDump",
