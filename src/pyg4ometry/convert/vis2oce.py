@@ -66,8 +66,7 @@ def vis2oce(vis, stepFileName="output.step"):
         instances = vis.instancePlacements[shape_name]
         for instance in instances:
 
-            print(iInstance)
-            print(shape_name, instance)
+            print(iInstance, shape_name, instance)
             rotation = instance['transformation']
             rotation_aa = _transformation.matrix2axisangle(rotation)
             translation = instance['translation']
@@ -75,8 +74,8 @@ def vis2oce(vis, stepFileName="output.step"):
             axis = gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(rotation_aa[0][0], rotation_aa[0][1], rotation_aa[0][2]))
             trans = gp_Trsf()
             trans.SetValues(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
-                            rotation[1][0],rotation[1][1], rotation[1][2], translation[1],
-                            rotation[2][0],rotation[2][1], rotation[2][2], translation[2])
+                            rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
+                            rotation[2][0], rotation[2][1], rotation[2][2], translation[2])
 
             #trans.SetRotation(axis, rotation_aa[1]/_np.pi*180)
             #trans.SetTranslationPart(gp_Vec(translation[0], translation[1], translation[2]))
@@ -91,6 +90,7 @@ def vis2oce(vis, stepFileName="output.step"):
 
             iInstance += 1
 
+    shape_tool.UpdateAssemblies()
     shape_tool.Dump()
 
     w = pyg4ometry.pyoce.STEPCAFControl.STEPCAFControl_Writer()

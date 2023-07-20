@@ -126,5 +126,6 @@ PYBIND11_MODULE(XCAFDoc, m) {
       .def("NewShape", &XCAFDoc_ShapeTool::NewShape)
       .def("Search", &XCAFDoc_ShapeTool::Search)
       .def("SearchUsingMap", &XCAFDoc_ShapeTool::SearchUsingMap)
-      .def("SetShape", &XCAFDoc_ShapeTool::SetShape);
+      .def("SetShape", &XCAFDoc_ShapeTool::SetShape)
+      .def("UpdateAssemblies",&XCAFDoc_ShapeTool::UpdateAssemblies);
 }

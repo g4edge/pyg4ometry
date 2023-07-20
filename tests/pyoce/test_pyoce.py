@@ -79,3 +79,28 @@ def test_14_MonolithicConversion(testdata):
     worldShape = r.shapeTool.GetShape(ls.Value(1))
     greg = _pyg4.geant4.Registry()
     _pyg4.convert.oceShape_Geant4_Tessellated("world", worldShape, greg)
+
+
+def test_xcaf(testdata=None):
+
+    # create application
+    app = _pyg4.pyoce.XCAFApp.XCAFApp_Application.GetApplication()
+
+    # create new document
+    doc = app.NewDocument(_pyg4.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF"))
+
+    # top label
+    top_label = doc.Main()
+
+    # shape tool
+    shape_tool = _pyg4.pyoce.XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(top_label)
+
+    # add some childen
+    child1_label = _pyg4.pyoce.TDF.TDF_TagSource.NewChild(top_label)
+    child2_label = _pyg4.pyoce.TDF.TDF_TagSource.NewChild(top_label)
+
+    w = _pyg4.pyoce.STEPCAFControl.STEPCAFControl_Writer()
+    w.Transfer(doc)
+    w.WriteFile("output.step")
+
+    return {"top_label":top_label}
