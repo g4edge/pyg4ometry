@@ -56,7 +56,7 @@ def vis2oce(vis, stepFileName="output.step"):
         shape_label = shape_tool.AddShape(shape.Shape(), False, True)
 
         # Store label for later component creation
-        shape_dict[shape_name] = shape_label
+        shape_dict[shape_name] = shape.Shape()
 
         print(iMeshes)
         iMeshes += 1
@@ -77,16 +77,10 @@ def vis2oce(vis, stepFileName="output.step"):
                             rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
                             rotation[2][0], rotation[2][1], rotation[2][2], translation[2])
 
-            #trans.SetRotation(axis, rotation_aa[1]/_np.pi*180)
-            #trans.SetTranslationPart(gp_Vec(translation[0], translation[1], translation[2]))
-
-            #print(rotation_aa)
-            #trans.DumpJson()
-            #print("")
-
             loc = pyg4ometry.pyoce.TopLoc.TopLoc_Location(trans)
-            comp_label = shape_tool.AddComponent(top_label, shape_dict[shape_name], loc)
-            print(comp_label)
+
+            shape_located = shape_dict[shape_name].Located(loc,False)
+            shape_tool.AddShape(shape_located, False, True)
 
             iInstance += 1
 
