@@ -1,6 +1,7 @@
 import base64 as _base64
 import numpy as _np
 import random as _random
+import pyg4ometry.pycgal as _pycgal
 import pyg4ometry.transformation as _transformation
 from pyg4ometry.visualisation.VisualisationOptions import (
     VisualisationOptions as _VisOptions,
@@ -625,6 +626,17 @@ class ViewerBase:
             renderedTemplate = template.render(data)
             with open(cssFileName, "w") as outfile:
                 outfile.write(renderedTemplate)
+
+
+    def dumpMeshQuality(self):
+        for localmeshkey in self.localmeshes:
+            mesh = self.localmeshes[localmeshkey]
+
+            if _pycgal.CGAL.is_triangle_mesh(mesh.sm):
+                print(localmeshkey, mesh, mesh.polygonCount(), mesh.vertexCount(), mesh.area(), mesh.volume())
+            else:
+                print(localmeshkey)
+
 
     def __repr__(self):
         pass
