@@ -5,6 +5,7 @@ namespace py = pybind11;
 
 #include <TopoDS.hxx>
 #include <TopoDS_Builder.hxx>
+#include <TopoDS_CompSolid.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
@@ -45,7 +46,6 @@ PYBIND11_MODULE(TopoDS, m) {
   py::class_<TopoDS_Shape>(m, "TopoDS_Shape")
   .def(py::init<>(), "TopoDS_Shape")
   .def("IsNull", &TopoDS_Shape::IsNull)
-  .def("NbChildren", &TopoDS_Shape::NbChildren)
   .def("Nullify", &TopoDS_Shape::Nullify)
   .def("Location", [](TopoDS_Shape &shape) { return shape.Location(); })
 #if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR == 6
@@ -62,7 +62,11 @@ PYBIND11_MODULE(TopoDS, m) {
        [](TopoDS_Shape &shape) {
          return shape.Orientation();
        })
+  .def("TShape",[](TopoDS_Shape &ts) {
+       return ts.TShape();
+       })
   .def("ShapeType", &TopoDS_Shape::ShapeType)
+  .def("NbChildren", &TopoDS_Shape::NbChildren)
   .def("DumpJson",
        [](TopoDS_Shape &shape)
        {
@@ -70,6 +74,9 @@ PYBIND11_MODULE(TopoDS, m) {
          shape.DumpJson(std::cout);
        });
 
+
+  py::class_<TopoDS_CompSolid, TopoDS_Shape>(m, "TopoDS_CompSolid").def(py::init<>());
+  py::class_<TopoDS_Compound, TopoDS_Shape>(m, "TopoDS_Compound").def(py::init<>());
   py::class_<TopoDS_Edge, TopoDS_Shape>(m, "TopoDS_Edge").def(py::init<>());
   py::class_<TopoDS_Face, TopoDS_Shape>(m, "TopoDS_Face").def(py::init<>());
   py::class_<TopoDS_Wire, TopoDS_Shape>(m, "TopoDS_Wire").def(py::init<>());
