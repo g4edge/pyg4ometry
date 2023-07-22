@@ -109,8 +109,15 @@ PYBIND11_MODULE(CGAL, m) {
       "is_closed", [](Surface_mesh_EPICK &pm) { return CGAL::is_closed(pm); },
       "Is the surface closed", py::arg("Surface_mesh_EPICK"));
   m.def(
+      "is_triangle_mesh", [](Surface_mesh_EPICK &pm) { return CGAL::is_triangle_mesh(pm); },
+      "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
+
+  m.def(
       "is_closed", [](Surface_mesh_EPECK &pm) { return CGAL::is_closed(pm); },
       "Is the surface closed", py::arg("Surface_mesh_EPECK"));
+  m.def(
+      "is_triangle_mesh", [](Surface_mesh_EPECK &pm) { return CGAL::is_triangle_mesh(pm); },
+      "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
 
   /* Iterators and circulators */
   m.def(
