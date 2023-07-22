@@ -87,6 +87,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     location = _oce.TopLoc.TopLoc_Location()
 
     while topoExp.More():
+        # print(topoExp.Current().ShapeType())
         triangulation = _oce.BRep.BRep_Tool.Triangulation(
             _oce.TopoDS.TopoDSClass.Face(topoExp.Current()),
             location,
@@ -94,6 +95,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
         )
         # TODO why is the triangulation none?
         if triangulation is None:
+            print("empty triangulation")
             break
 
         topoExp.Next()
