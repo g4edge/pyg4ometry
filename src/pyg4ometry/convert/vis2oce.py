@@ -50,7 +50,11 @@ def vis2oce(vis, stepFileName="output.step"):
 
         # Shape builder
         shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
-        shape.Build()
+        try :
+            shape.Build()
+        except RuntimeError:
+            print("vis2oce : problem building shape from mesh",shape_name)
+            continue
 
         # Add shape to assembly
         shape_label = shape_tool.AddShape(shape.Shape(), False, True)
@@ -79,8 +83,11 @@ def vis2oce(vis, stepFileName="output.step"):
 
             loc = pyg4ometry.pyoce.TopLoc.TopLoc_Location(trans)
 
-            shape_located = shape_dict[shape_name].Located(loc,False)
-            shape_tool.AddShape(shape_located, False, True)
+            try :
+                shape_located = shape_dict[shape_name].Located(loc,False)
+                shape_tool.AddShape(shape_located, False, True)
+            except KeyError :
+                continue
 
             iInstance += 1
 
