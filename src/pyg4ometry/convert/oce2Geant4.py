@@ -57,10 +57,13 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     ##############################################
     # Check if already in registry
     ##############################################
+
     try:
         return greg.solidDict[name]
     except KeyError:
         pass
+
+
 
     ##############################################
     # G4 tessellated solid
@@ -103,7 +106,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
         mergedNbNodes += triangulation.NbNodes()
         mergedNbTriangles += triangulation.NbTriangles()
 
-    # print('total : nodes, triangles',mergedNbNodes,mergedNbTriangles)
+    # print('total : nodes, triangles', mergedNbNodes, mergedNbTriangles)
 
     ##############################################
     # Empty tesselation
@@ -178,7 +181,7 @@ def _oce2Geant4_traverse(
     meshQualityMap,
     badCADLabels,
     addBoundingSolids=False,
-    oceName=False,
+    oceName=True,
 ):
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
@@ -192,8 +195,6 @@ def _oce2Geant4_traverse(
 
     if name.find("-") != -1:
         name = name.replace("-", "_")
-
-    print(name, node.ToCString())
 
     loc = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
 
@@ -215,7 +216,14 @@ def _oce2Geant4_traverse(
     except KeyError:
         material = "G4_Galactic"
 
+    #print("------------------------------")
+    #print(name, node.ToCString())
+    #print(_oce.pythonHelpers.get_shapeTypeString(shapeTool, label))
+    #print(_oce.pythonHelpers.shapeTopology(shape))
+
     if shapeTool.IsAssembly(label):
+        #print("Assembly")
+
         # make assembly
         try:
             return greg.logicalVolumeDict[name]
@@ -244,6 +252,8 @@ def _oce2Geant4_traverse(
         return assembly
 
     elif shapeTool.IsComponent(label):
+        #print("Component")
+
         rlabel = _oce.TDF.TDF_Label()
         shapeTool.GetReferredShape(label, rlabel)
 
@@ -282,7 +292,9 @@ def _oce2Geant4_traverse(
 
         return physicalVolume
 
-    elif shapeTool.IsShape(label) and label.NbChildren() == 0:
+    elif shapeTool.IsShape(label):#  and label.NbChildren() == 0:
+        #print("Shape with no children")
+
         # make solid
         solid = oceShape_Geant4_Tessellated(
             name, shape, greg, meshQuality[0], meshQuality[1]
@@ -297,6 +309,8 @@ def _oce2Geant4_traverse(
             return logicalVolume
 
     elif shapeTool.IsShape(label) and label.NbChildren() != 0:
+        #print("Shape with children", label.NbChildren())
+
         # make assembly (TODO might require multi union if overlapping)
 
         try:
