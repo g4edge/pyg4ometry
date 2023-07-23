@@ -181,7 +181,7 @@ def _oce2Geant4_traverse(
     meshQualityMap,
     badCADLabels,
     addBoundingSolids=False,
-    oceName=True,
+    oceName=False,
 ):
     name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
