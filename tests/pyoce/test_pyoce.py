@@ -102,5 +102,3 @@ def test_xcaf(testdata=None):
     w = _pyg4.pyoce.STEPCAFControl.STEPCAFControl_Writer()
     w.Transfer(doc)
     w.WriteFile("output.step")
-
-    return {"top_label":top_label}
