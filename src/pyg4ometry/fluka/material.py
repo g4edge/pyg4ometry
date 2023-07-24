@@ -126,15 +126,17 @@ class Material(_MatProp):
 
     """
 
-    def __init__(self,
-                 name,
-                 atomicNumber,
-                 density,
-                 massNumber=None,
-                 atomicMass=None,
-                 pressure=None,
-                 flukaregistry=None,
-                 comment=""):
+    def __init__(
+        self,
+        name,
+        atomicNumber,
+        density,
+        massNumber=None,
+        atomicMass=None,
+        pressure=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.atomicNumber = atomicNumber
         self.density = density
@@ -146,12 +148,16 @@ class Material(_MatProp):
             flukaregistry.addMaterial(self)
 
     def toCards(self):
-        material = [_Card("MATERIAL",
-                          what1=self.atomicNumber,
-                          what2=self.atomicMass,
-                          what3=self.density,
-                          what6=self.massNumber,
-                          sdum=self.name)]
+        material = [
+            _Card(
+                "MATERIAL",
+                what1=self.atomicNumber,
+                what2=self.atomicMass,
+                what3=self.density,
+                what6=self.massNumber,
+                sdum=self.name,
+            )
+        ]
         if self.pressure:
             material.append(self.makeMatPropCard())
         return material
@@ -172,7 +178,13 @@ class Material(_MatProp):
 
     @classmethod
     def fromCard(cls, card, flukaregistry):
-        return cls(card.sdum, card.what1, card.what3, massNumber=card.what6, flukaregistry=flukaregistry)
+        return cls(
+            card.sdum,
+            card.what1,
+            card.what3,
+            massNumber=card.what6,
+            flukaregistry=flukaregistry,
+        )
 
 
 class Compound(_MatProp):
@@ -197,7 +209,16 @@ class Compound(_MatProp):
     :type flukaregistry: FlukaRegistry
     """
 
-    def __init__(self, name, density, fractions, fractionType, pressure=None, flukaregistry=None, comment=""):
+    def __init__(
+        self,
+        name,
+        density,
+        fractions,
+        fractionType,
+        pressure=None,
+        flukaregistry=None,
+        comment="",
+    ):
         self.name = name
         self.density = density
         self.fractions = fractions
@@ -278,7 +299,9 @@ class Compound(_MatProp):
         # Map the material names to material/compound instances via the FlukaRegistry.
         fractions = [(flukareg.getMaterial(name), f) for name, f in fractions]
 
-        return cls(compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg)
+        return cls(
+            compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg
+        )
 
     def __repr__(self):
         return "<Compound: {}, density={}*g/cm3, nparts={}>".format(

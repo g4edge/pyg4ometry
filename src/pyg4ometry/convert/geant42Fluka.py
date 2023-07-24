@@ -2006,7 +2006,9 @@ def geant4MaterialDict2Fluka(matr, freg):
     return freg
 
 
-def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=False, materialNameShort=None):
+def geant4Material2Fluka(
+    material, freg, suggestedDensity=None, elementSuffix=False, materialNameShort=None
+):
     materialName = material.name
     materialInstance = material
 
@@ -2034,20 +2036,26 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
 
         elif materialInstance.type == "nist":
             # make material object from dictionary of information
-            nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
+            nistMatInstance = _geant4.nist_material_2geant4Material(
+                materialInstance.name
+            )
             nistMatInstance.type = "composite"  # prevent recursion - Material internally decides if it's a nist material or not
-            return geant4Material2Fluka(nistMatInstance, freg, materialNameShort=materialNameShort)
+            return geant4Material2Fluka(
+                nistMatInstance, freg, materialNameShort=materialNameShort
+            )
 
         elif materialInstance.type == "arbitrary":
             msg = "Cannot have material with arbitrary type"
             raise Exception(msg)
 
         elif materialInstance.type == "simple":
-            fe = _fluka.Material(materialNameShort,
-                                 materialInstance.atomic_number,
-                                 materialInstance.density,
-                                 flukaregistry=freg,
-                                 comment="material-simple: "+materialName)
+            fe = _fluka.Material(
+                materialNameShort,
+                materialInstance.atomic_number,
+                materialInstance.density,
+                flukaregistry=freg,
+                comment="material-simple: " + materialName,
+            )
             return fe
 
         elif materialInstance.type == "composite":
@@ -2056,11 +2064,13 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
 
             iComp = 0
             for comp in materialInstance.components:
-                fm = geant4Material2Fluka(comp[0],
-                                          freg,
-                                          materialInstance.density,
-                                          elementSuffix=True,
-                                          materialNameShort=materialNameShort + format(iComp, "02"))
+                fm = geant4Material2Fluka(
+                    comp[0],
+                    freg,
+                    materialInstance.density,
+                    elementSuffix=True,
+                    materialNameShort=materialNameShort + format(iComp, "02"),
+                )
 
                 compFraction = float(comp[1])
                 compFractionType = comp[2]
@@ -2073,12 +2083,14 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                 flukaComposition.append((fm, compFraction))
                 iComp += 1
 
-            mat = _fluka.Compound(materialNameShort,
-                                  materialInstance.density,
-                                  flukaComposition,
-                                  fractionType=flukaFractionType,
-                                  flukaregistry=freg,
-                                  comment="material-composite: "+materialName)
+            mat = _fluka.Compound(
+                materialNameShort,
+                materialInstance.density,
+                flukaComposition,
+                fractionType=flukaFractionType,
+                flukaregistry=freg,
+                comment="material-composite: " + materialName,
+            )
             return mat
 
     elif isinstance(materialInstance, _geant4.Element):
@@ -2092,12 +2104,14 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
         #    return freg.materials[materialNameShort]
 
         if materialInstance.type == "element-simple":
-            mat = _fluka.Material(materialNameShort,
-                                  materialInstance.Z,
-                                  suggestedDensity,
-                                  materialInstance.A,
-                                  flukaregistry=freg,
-                                  comment="element-simple: "+materialName)
+            mat = _fluka.Material(
+                materialNameShort,
+                materialInstance.Z,
+                suggestedDensity,
+                materialInstance.A,
+                flukaregistry=freg,
+                comment="element-simple: " + materialName,
+            )
             return mat
 
         elif materialInstance.type == "element-composite":
@@ -2107,7 +2121,11 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
 
             iComp = 0
             for iso in materialInstance.components:
-                fi = geant4Material2Fluka(iso[0], freg, materialNameShort=materialNameShort + format(iComp, "02"))
+                fi = geant4Material2Fluka(
+                    iso[0],
+                    freg,
+                    materialNameShort=materialNameShort + format(iComp, "02"),
+                )
 
                 compFlukaName = makeShortName(iso[0].name)
                 compFraction = iso[1]
@@ -2117,24 +2135,30 @@ def geant4Material2Fluka(material, freg, suggestedDensity=None, elementSuffix=Fa
                 flukaComponentFractions.append(compFraction)
                 iComp += 1
 
-            flukaComposition = [ (c, f) for c, f in zip(flukaComponents, flukaComponentFractions) ]
+            flukaComposition = [
+                (c, f) for c, f in zip(flukaComponents, flukaComponentFractions)
+            ]
 
-            mat = _fluka.Compound(materialNameShort,
-                                  0.123456789,
-                                  flukaComposition,
-                                  fractionType="atomic",
-                                  flukaregistry=freg,
-                                  comment="element-composite: "+materialName)
+            mat = _fluka.Compound(
+                materialNameShort,
+                0.123456789,
+                flukaComposition,
+                fractionType="atomic",
+                flukaregistry=freg,
+                comment="element-composite: " + materialName,
+            )
             return mat
 
     elif isinstance(materialInstance, _geant4.Isotope):
-        fi = _fluka.Material(materialNameShort,
-                             materialInstance.Z,
-                             10, # this density won't be used finally but needs to be there
-                             flukaregistry=freg,
-                             atomicMass=materialInstance.a,
-                             massNumber=materialInstance.N,
-                             comment="isotope: "+materialName)
+        fi = _fluka.Material(
+            materialNameShort,
+            materialInstance.Z,
+            10,  # this density won't be used finally but needs to be there
+            flukaregistry=freg,
+            atomicMass=materialInstance.a,
+            massNumber=materialInstance.N,
+            comment="isotope: " + materialName,
+        )
         return fi
     else:
         raise TypeError('Unknown material.type "' + str(material.type) + '"')

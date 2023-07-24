@@ -8,7 +8,18 @@ class Card:
     instances from a of FLUKA input, use the fromFree or fromFixed
     class method for FREE and FIXED format, respectively.
     """
-    def __init__(self, keyword, what1=None, what2=None, what3=None, what4=None, what5=None, what6=None, sdum=None):
+
+    def __init__(
+        self,
+        keyword,
+        what1=None,
+        what2=None,
+        what3=None,
+        what4=None,
+        what5=None,
+        what6=None,
+        sdum=None,
+    ):
         self.keyword = keyword
         self.what1 = _attempt_float_coercion(what1)
         self.what2 = _attempt_float_coercion(what2)

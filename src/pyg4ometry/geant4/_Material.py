@@ -375,9 +375,11 @@ class Material(MaterialBase):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs.get("name", None),
-                         state=kwargs.get("state", None),
-                         registry=kwargs.get("registry", None))
+        super().__init__(
+            kwargs.get("name", None),
+            state=kwargs.get("state", None),
+            registry=kwargs.get("registry", None),
+        )
 
         self.density = kwargs.get("density", None)
         self.atomic_number = kwargs.get("atomic_number", None)
@@ -404,7 +406,11 @@ class Material(MaterialBase):
         elif self.density:
             if self.number_of_components and not self.atomic_number:
                 self.type = "composite"
-            elif (self.atomic_number and self.atomic_weight and not self.number_of_components):
+            elif (
+                self.atomic_number
+                and self.atomic_weight
+                and not self.number_of_components
+            ):
                 self.type = "simple"
             else:
                 msg = f"Material : '{self.name}' Cannot use both atomic number/weight and number_of_components."
@@ -427,12 +433,16 @@ class Material(MaterialBase):
         # After the material type is determined, set the temperature and pressure if provided
         if "temperature" in kwargs:
             temperature = kwargs["temperature"]
-            temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
+            temperature_unit = kwargs.get(
+                "temperature_unit", "K"
+            )  # The unit is optional
             self.set_temperature(temperature, temperature_unit)
 
         if "pressure" in kwargs:
             pressure = kwargs["pressure"]
-            pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
+            pressure_unit = kwargs.get(
+                "pressure_unit", "pascal"
+            )  # The unit is optional
             self.set_pressure(pressure, pressure_unit)
 
         self._addToRegistry()
@@ -597,9 +607,11 @@ class Element(MaterialBase):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs.get("name", None),
-                         state=kwargs.get("state", None),
-                         registry=kwargs.get("registry", None))
+        super().__init__(
+            kwargs.get("name", None),
+            state=kwargs.get("state", None),
+            registry=kwargs.get("registry", None),
+        )
 
         self.symbol = kwargs.get("symbol", None)
         self.n_comp = kwargs.get("n_comp", None)
