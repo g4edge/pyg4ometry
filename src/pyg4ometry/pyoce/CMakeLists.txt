@@ -1,6 +1,7 @@
 set(_sources
     BRep.cxx
     BRepBuilder.cxx
+    BRepPrimAPI.cxx
     BRepMesh.cxx
     Geom.cxx
     gp.cxx
