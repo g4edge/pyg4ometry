@@ -19,6 +19,7 @@ from . import BRepBuilder
 from . import BRepPrimAPI
 from . import BRepMesh
 from . import STEPCAFControl
+from . import Standard
 
 from . import pythonHelpers
 from .Reader import *

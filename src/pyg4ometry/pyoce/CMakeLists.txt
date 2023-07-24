@@ -7,6 +7,7 @@ set(_sources
     gp.cxx
     Message.cxx
     Poly.cxx
+    Standard.cxx
     STEPCAFControl.cxx
     StlAPI.cxx
     TCollection.cxx
