@@ -179,5 +179,5 @@ class UserDump(_FlukaDataFile):
     def __init__(self):
         pass
 
-    def read_data(sef, fd):
+    def read_data(self, fd):
         pass

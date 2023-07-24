@@ -29,21 +29,21 @@ def Test(
     ws = pyg4ometry.geant4.solid.Box("ws", wx, wy, wz, reg, "mm")
     es = pyg4ometry.fluka.Extruder("Magnet", length=500, registry=reg)
 
-    r1 = es.add_region("outer")
+    r1 = es.addRegion("outer")
     r1.append([-100, -100])
     r1.append([-100, 100])
     r1.append([100, 100])
     r1.append([100, -100])
-    es.set_region_to_outer_boundary("outer")
+    es.setRegionToOuterBoundary("outer")
 
-    r2 = es.add_region("pole")
+    r2 = es.addRegion("pole")
     r2.append([-50, -50])
     r2.append([-50, 50])
     r2.append([50, 50])
     r2.append([50, -50])
 
-    es.build_cgal_polygons()
-    es.build_geant4_extrusions()
+    es.buildCgalPolygons()
+    es.buildGeant4Extrusions()
 
     # structure
     wl = pyg4ometry.geant4.LogicalVolume(ws, wm, "wl", reg)

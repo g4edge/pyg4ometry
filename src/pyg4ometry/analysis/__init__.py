@@ -1,1 +1,1 @@
-from . import fluka
+from . import flukaData
