@@ -20,5 +20,5 @@ PYBIND11_MODULE(BRepPrimAPI, m) {
                     const Standard_Real>())
       .def(py::init<const gp_Pnt &, const gp_Pnt &>());
   //.def(py::init<const gp_Ax2 &, const Standard_Real, const Standard_Real,
-  //const Standard_Real>); // TODO
+  // const Standard_Real>); // TODO
 }
