@@ -53,7 +53,7 @@ typedef CGAL::Nef_polyhedron_3<Kernel_EPECK> Nef_polyhedron_3_EPECK;
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/Boolean_set_operations_2.h>
-
+#include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/number_utils.h>
 
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron_3_EPECK, Kernel_EPECK>
@@ -255,6 +255,50 @@ PYBIND11_MODULE(CGAL, m) {
         [](Polygon_with_holes_2_EPECK &p1, Polygon_with_holes_2_EPECK &p2,
            std::vector<Polygon_with_holes_2_EPECK> &diff) {
           CGAL::difference(p1, p2, std::back_inserter(diff));
+        });
+
+  /* Polygon decomposition */
+  m.def("PolygonDecomposition_2_wrapped", [](Polygon_2_EPECK &polyToDecompose) {
+    auto polyToDecomposeTraits = Partition_traits_2_Polygon_2_EPECK();
+
+    for (auto v = polyToDecompose.vertices_begin();
+         v != polyToDecompose.vertices_end(); ++v) {
+      polyToDecomposeTraits.push_back(*v);
+    }
+
+    std::vector<Polygon_2_EPECK> output;
+    std::vector<Partition_traits_2_Polygon_2_EPECK> outputTraits;
+    CGAL::optimal_convex_partition_2(polyToDecomposeTraits.vertices_begin(),
+                                     polyToDecomposeTraits.vertices_end(),
+                                     std::back_inserter(outputTraits));
+
+    for (auto dp : outputTraits) {
+      auto pgonOut = Polygon_2_EPECK();
+
+      for (auto p = dp.vertices_begin(); p != dp.vertices_end(); ++p) {
+        pgonOut.push_back(*p);
+      }
+      output.push_back(pgonOut);
+    }
+    return output;
+  });
+
+  m.def("PolygonDecomposition_2_wrapped",
+        [](Partition_traits_2_Polygon_2_EPECK &polyToDecompose) {
+          std::vector<Partition_traits_2_Polygon_2_EPECK> output;
+          CGAL::optimal_convex_partition_2(polyToDecompose.vertices_begin(),
+                                           polyToDecompose.vertices_end(),
+                                           std::back_inserter(output));
+          return output;
+        });
+
+  /* PolygonWithHolesConvexDecomposition_2 */
+  m.def("PolygonWithHolesConvexDecomposition_2_wrapped",
+        [](Polygon_with_holes_2_EPECK &polyToDecompose) {
+          std::vector<Polygon_2_EPECK> output;
+          auto pwhd = CGAL::Polygon_vertical_decomposition_2<Kernel_EPECK>();
+          pwhd(polyToDecompose, std::back_inserter(output));
+          return output;
         });
 
   /* TODO Boolean operations on Nef polyhedra */

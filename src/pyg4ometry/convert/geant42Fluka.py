@@ -1973,6 +1973,18 @@ def geant4Solid2FlukaRegion(
                 zone1.addIntersection(zone2)
             fregion.addZone(zone1)
 
+    elif solid.type == "extruder":
+        fregion, flukaNamecount = geant4Solid2FlukaRegion(
+            flukaNameCount,
+            solid.g4_extrusions[solid.boundary],
+            mtra=mtra,
+            tra=tra,
+            flukaRegistry=flukaRegistry,
+            addRegistry=True,
+            commentName=solid.name,
+        )
+        # flukaRegistry.regionDict.pop(fregion.name)
+        print(fregion.name, flukaRegistry.regionDict.keys())
     else:
         fregion = _fluka.Region("R" + name)
         print(solid.type)
@@ -2126,7 +2138,7 @@ def geant4Material2Fluka(
 
             mat = _fluka.Compound(
                 materialNameShort,
-                0.1,
+                0.123456789,
                 flukaComposition,
                 fractionType="atomic",
                 flukaregistry=freg,
