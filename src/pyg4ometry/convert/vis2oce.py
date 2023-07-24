@@ -2,8 +2,9 @@ import numpy as _np
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.pyoce
 from pyg4ometry.pyoce.gp import gp_XYZ, gp_Pnt, gp_Dir, gp_Vec, gp_Trsf, gp_Ax1
+from pyg4ometry.pyoce.BRepBuilder import BRepBuilderAPI_MakePolygon, BRepBuilderAPI_MakeFace, BRepBuilderAPI_Sewing
 
-def convert_mesh_to_poly_Triangulation(m):
+def convertMeshToPolyTriangulation(m):
     # Take a CSG object mesh and convert to opencascade Poly_triangulation
 
     # Get verts and polys
@@ -27,6 +28,43 @@ def convert_mesh_to_poly_Triangulation(m):
 
     return poly_triangulation
 
+def convertMeshToShape(m):
+
+    # https://dev.opencascade.org/content/build-topodsshape-triangulation
+
+    # Get verts and polys
+    v_and_p = m.toVerticesAndPolygons()
+
+    verts = v_and_p[0]
+    triangles = v_and_p[1]
+
+    sewing = BRepBuilderAPI_Sewing(1e-9, True, True, True, False)
+
+    for triangle in triangles:
+        v1 = verts[triangle[0]]
+        v2 = verts[triangle[1]]
+        v3 = verts[triangle[2]]
+
+        p1 = gp_Pnt(v1[0], v1[1], v1[2])
+        p2 = gp_Pnt(v2[0], v2[1], v2[2])
+        p3 = gp_Pnt(v3[0], v3[1], v3[2])
+
+        polygonBuilder = BRepBuilderAPI_MakePolygon(p1, p2, p3, True)
+
+        #print("--------------------")
+        #print(v1[0], v1[1], v1[2])
+        #print(v2[0], v2[1], v2[2])
+        #print(v3[0], v3[1], v3[2])
+
+        face = BRepBuilderAPI_MakeFace(polygonBuilder.Wire(), True);
+        sewing.Add(face.Shape())
+
+
+    progress = pyg4ometry.pyoce.Message.Message_ProgressRange()
+    sewing.Perform(progress)
+
+    return sewing.SewedShape()
+
 def vis2oce(vis, stepFileName="output.step"):
 
     # create application
@@ -46,21 +84,23 @@ def vis2oce(vis, stepFileName="output.step"):
     iMeshes = 1
     for shape_name in vis.localmeshes :
         # make oce triangulation
-        shape_triangulation = convert_mesh_to_poly_Triangulation(vis.localmeshes[shape_name])
+        shape_triangulation = convertMeshToPolyTriangulation(vis.localmeshes[shape_name])
 
         # Shape builder
-        shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
-        try :
-            shape.Build()
-        except RuntimeError:
-            print("vis2oce : problem building shape from mesh",shape_name)
-            continue
+        #shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
+        shape = convertMeshToShape(vis.localmeshes[shape_name])
+
+        #try :
+        #    shape.Build()
+        #except RuntimeError:
+        #    print("vis2oce : problem building shape from mesh",shape_name)
+        #    continue
 
         # Add shape to assembly
-        shape_label = shape_tool.AddShape(shape.Shape(), False, True)
+        shape_label = shape_tool.AddShape(shape, False, True)
 
         # Store label for later component creation
-        shape_dict[shape_name] = shape.Shape()
+        shape_dict[shape_name] = shape
 
         print(iMeshes)
         iMeshes += 1
@@ -86,7 +126,7 @@ def vis2oce(vis, stepFileName="output.step"):
             try :
                 shape_located = shape_dict[shape_name].Located(loc,False)
                 shape_tool.AddShape(shape_located, False, True)
-            except KeyError :
+            except KeyError:
                 continue
 
             iInstance += 1
