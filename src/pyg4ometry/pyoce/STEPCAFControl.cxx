@@ -32,12 +32,14 @@ PYBIND11_MODULE(STEPCAFControl, m) {
       });
 
   py::class_<STEPCAFControl_Writer>(m, "STEPCAFControl_Writer")
-       .def(py::init<>())
-       .def("Transfer", [](STEPCAFControl_Writer &writer,
-                          opencascade::handle<TDocStd_Document> &doc) {
-         writer.Transfer(doc);
-        })
-       .def("WriteFile",[](STEPCAFControl_Writer &writer, const Standard_CString filename) {
-         writer.Write(filename);
-       });
+      .def(py::init<>())
+      .def("Transfer",
+           [](STEPCAFControl_Writer &writer,
+              opencascade::handle<TDocStd_Document> &doc) {
+             writer.Transfer(doc);
+           })
+      .def("WriteFile",
+           [](STEPCAFControl_Writer &writer, const Standard_CString filename) {
+             writer.Write(filename);
+           });
 }

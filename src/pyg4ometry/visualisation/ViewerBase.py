@@ -627,16 +627,21 @@ class ViewerBase:
             with open(cssFileName, "w") as outfile:
                 outfile.write(renderedTemplate)
 
-
     def dumpMeshQuality(self):
         for localmeshkey in self.localmeshes:
             mesh = self.localmeshes[localmeshkey]
 
             if _pycgal.CGAL.is_triangle_mesh(mesh.sm):
-                print(localmeshkey, mesh, mesh.polygonCount(), mesh.vertexCount(), mesh.area(), mesh.volume())
+                print(
+                    localmeshkey,
+                    mesh,
+                    mesh.polygonCount(),
+                    mesh.vertexCount(),
+                    mesh.area(),
+                    mesh.volume(),
+                )
             else:
                 print(localmeshkey)
-
 
     def __repr__(self):
         pass

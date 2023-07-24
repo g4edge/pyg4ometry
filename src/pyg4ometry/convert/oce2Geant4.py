@@ -63,8 +63,6 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     except KeyError:
         pass
 
-
-
     ##############################################
     # G4 tessellated solid
     ##############################################
@@ -216,13 +214,13 @@ def _oce2Geant4_traverse(
     except KeyError:
         material = "G4_Galactic"
 
-    #print("------------------------------")
-    #print(name, node.ToCString())
-    #print(_oce.pythonHelpers.get_shapeTypeString(shapeTool, label))
-    #print(_oce.pythonHelpers.shapeTopology(shape))
+    # print("------------------------------")
+    # print(name, node.ToCString())
+    # print(_oce.pythonHelpers.get_shapeTypeString(shapeTool, label))
+    # print(_oce.pythonHelpers.shapeTopology(shape))
 
     if shapeTool.IsAssembly(label):
-        #print("Assembly")
+        # print("Assembly")
 
         # make assembly
         try:
@@ -252,7 +250,7 @@ def _oce2Geant4_traverse(
         return assembly
 
     elif shapeTool.IsComponent(label):
-        #print("Component")
+        # print("Component")
 
         rlabel = _oce.TDF.TDF_Label()
         shapeTool.GetReferredShape(label, rlabel)
@@ -292,8 +290,8 @@ def _oce2Geant4_traverse(
 
         return physicalVolume
 
-    elif shapeTool.IsShape(label):#  and label.NbChildren() == 0:
-        #print("Shape with no children")
+    elif shapeTool.IsShape(label):  #  and label.NbChildren() == 0:
+        # print("Shape with no children")
 
         # make solid
         solid = oceShape_Geant4_Tessellated(
@@ -309,7 +307,7 @@ def _oce2Geant4_traverse(
             return logicalVolume
 
     elif shapeTool.IsShape(label) and label.NbChildren() != 0:
-        #print("Shape with children", label.NbChildren())
+        # print("Shape with children", label.NbChildren())
 
         # make assembly (TODO might require multi union if overlapping)
 

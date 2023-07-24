@@ -3,12 +3,11 @@
 
 namespace py = pybind11;
 
+#include <gp_Ax1.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Pnt.hxx>
-#include <gp_Vec.hxx>
-#include <gp_Ax1.hxx>
 #include <gp_Trsf.hxx>
-
+#include <gp_Vec.hxx>
 
 #include <sstream>
 
@@ -21,14 +20,16 @@ PYBIND11_MODULE(gp, m) {
 
   py::class_<gp_XYZ>(m, "gp_XYZ")
       .def(py::init<>())
-      .def(py::init<const Standard_Real, const Standard_Real, const Standard_Real>())
+      .def(py::init<const Standard_Real, const Standard_Real,
+                    const Standard_Real>())
       .def("X", &gp_XYZ::X)
       .def("Y", &gp_XYZ::Y)
       .def("Z", &gp_XYZ::Z)
       .def("__str__",
            [](gp_XYZ &gpxyz) {
              std::stringstream ss;
-             ss << "gp_XYZ: " << gpxyz.X() << " " << gpxyz.Y() << " " << gpxyz.Z();
+             ss << "gp_XYZ: " << gpxyz.X() << " " << gpxyz.Y() << " "
+                << gpxyz.Z();
              return ss.str();
            })
       .def("DumpJson", [](gp_XYZ &gpxyz) {
@@ -39,7 +40,8 @@ PYBIND11_MODULE(gp, m) {
   py::class_<gp_Dir>(m, "gp_Dir")
       .def(py::init<>())
       .def(py::init<const gp_XYZ &>())
-      .def(py::init<const Standard_Real, const Standard_Real, const Standard_Real>())
+      .def(py::init<const Standard_Real, const Standard_Real,
+                    const Standard_Real>())
       .def("X", &gp_Dir::X)
       .def("Y", &gp_Dir::Y)
       .def("Z", &gp_Dir::Z)
@@ -51,7 +53,8 @@ PYBIND11_MODULE(gp, m) {
 
   py::class_<gp_Pnt>(m, "gp_Pnt")
       .def(py::init<>())
-      .def(py::init<const Standard_Real, const Standard_Real, const Standard_Real>())
+      .def(py::init<const Standard_Real, const Standard_Real,
+                    const Standard_Real>())
       .def("Transform", &gp_Pnt::Transform)
       .def("X", &gp_Pnt::X)
       .def("Y", &gp_Pnt::Y)
@@ -65,7 +68,8 @@ PYBIND11_MODULE(gp, m) {
   py::class_<gp_Vec>(m, "gp_Vec")
       .def(py::init<>())
       .def(py::init<const gp_XYZ &>())
-      .def(py::init<const Standard_Real, const Standard_Real, const Standard_Real>())
+      .def(py::init<const Standard_Real, const Standard_Real,
+                    const Standard_Real>())
       .def("X", &gp_Vec::X)
       .def("Y", &gp_Vec::Y)
       .def("Z", &gp_Vec::Z)
@@ -81,11 +85,12 @@ PYBIND11_MODULE(gp, m) {
 
   py::class_<gp_Trsf>(m, "gp_Trsf")
       .def(py::init<>())
-      .def("SetRotation",[](gp_Trsf &t, const gp_Ax1 &ax, const Standard_Real ang) {
-        t.SetRotation(ax, ang);
-      })
-      .def("SetTranslationPart",&gp_Trsf::SetTranslationPart)
-      .def("SetValues",&gp_Trsf::SetValues)
+      .def("SetRotation",
+           [](gp_Trsf &t, const gp_Ax1 &ax, const Standard_Real ang) {
+             t.SetRotation(ax, ang);
+           })
+      .def("SetTranslationPart", &gp_Trsf::SetTranslationPart)
+      .def("SetValues", &gp_Trsf::SetValues)
       .def("GetRotation",
            [](gp_Trsf &trsf, gp_XYZ &axis, Standard_Real angle) {
              auto b = trsf.GetRotation(axis, angle);

@@ -2,7 +2,12 @@ import numpy as _np
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.pyoce
 from pyg4ometry.pyoce.gp import gp_XYZ, gp_Pnt, gp_Dir, gp_Vec, gp_Trsf, gp_Ax1
-from pyg4ometry.pyoce.BRepBuilder import BRepBuilderAPI_MakePolygon, BRepBuilderAPI_MakeFace, BRepBuilderAPI_Sewing
+from pyg4ometry.pyoce.BRepBuilder import (
+    BRepBuilderAPI_MakePolygon,
+    BRepBuilderAPI_MakeFace,
+    BRepBuilderAPI_Sewing,
+)
+
 
 def convertMeshToPolyTriangulation(m):
     # Take a CSG object mesh and convert to opencascade Poly_triangulation
@@ -14,22 +19,24 @@ def convertMeshToPolyTriangulation(m):
     triangles = v_and_p[1]
 
     # create triangulation
-    poly_triangulation = pyg4ometry.pyoce.Poly.Poly_Triangulation(len(verts), len(triangles), False, False)
+    poly_triangulation = pyg4ometry.pyoce.Poly.Poly_Triangulation(
+        len(verts), len(triangles), False, False
+    )
 
     # fill vertices
-    for vert, ivert in zip(verts, range(0, len(verts))) :
+    for vert, ivert in zip(verts, range(0, len(verts))):
         p = pyg4ometry.pyoce.gp.gp_Pnt(vert[0], vert[1], vert[2])
-        poly_triangulation.SetNode(ivert+1, p)
+        poly_triangulation.SetNode(ivert + 1, p)
 
     # fill triangles
-    for tri, itri in zip(triangles, range(0,len(triangles))):
-        tri = pyg4ometry.pyoce.Poly.Poly_Triangle(tri[0]+1, tri[1]+1, tri[2]+1)
-        poly_triangulation.SetTriangle(itri+1, tri)
+    for tri, itri in zip(triangles, range(0, len(triangles))):
+        tri = pyg4ometry.pyoce.Poly.Poly_Triangle(tri[0] + 1, tri[1] + 1, tri[2] + 1)
+        poly_triangulation.SetTriangle(itri + 1, tri)
 
     return poly_triangulation
 
-def convertMeshToShape(m):
 
+def convertMeshToShape(m):
     # https://dev.opencascade.org/content/build-topodsshape-triangulation
 
     # Get verts and polys
@@ -51,27 +58,28 @@ def convertMeshToShape(m):
 
         polygonBuilder = BRepBuilderAPI_MakePolygon(p1, p2, p3, True)
 
-        #print("--------------------")
-        #print(v1[0], v1[1], v1[2])
-        #print(v2[0], v2[1], v2[2])
-        #print(v3[0], v3[1], v3[2])
+        # print("--------------------")
+        # print(v1[0], v1[1], v1[2])
+        # print(v2[0], v2[1], v2[2])
+        # print(v3[0], v3[1], v3[2])
 
-        face = BRepBuilderAPI_MakeFace(polygonBuilder.Wire(), True);
+        face = BRepBuilderAPI_MakeFace(polygonBuilder.Wire(), True)
         sewing.Add(face.Shape())
-
 
     progress = pyg4ometry.pyoce.Message.Message_ProgressRange()
     sewing.Perform(progress)
 
     return sewing.SewedShape()
 
-def vis2oce(vis, stepFileName="output.step"):
 
+def vis2oce(vis, stepFileName="output.step"):
     # create application
     app = pyg4ometry.pyoce.XCAFApp.XCAFApp_Application.GetApplication()
 
     # create new document
-    doc = app.NewDocument(pyg4ometry.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF"))
+    doc = app.NewDocument(
+        pyg4ometry.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF")
+    )
 
     # top label
     top_label = doc.Main()
@@ -82,17 +90,19 @@ def vis2oce(vis, stepFileName="output.step"):
     shape_dict = {}
 
     iMeshes = 1
-    for shape_name in vis.localmeshes :
+    for shape_name in vis.localmeshes:
         # make oce triangulation
-        shape_triangulation = convertMeshToPolyTriangulation(vis.localmeshes[shape_name])
+        shape_triangulation = convertMeshToPolyTriangulation(
+            vis.localmeshes[shape_name]
+        )
 
         # Shape builder
-        #shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
+        # shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
         shape = convertMeshToShape(vis.localmeshes[shape_name])
 
-        #try :
+        # try :
         #    shape.Build()
-        #except RuntimeError:
+        # except RuntimeError:
         #    print("vis2oce : problem building shape from mesh",shape_name)
         #    continue
 
@@ -109,22 +119,35 @@ def vis2oce(vis, stepFileName="output.step"):
     for shape_name in vis.localmeshes:
         instances = vis.instancePlacements[shape_name]
         for instance in instances:
-
             print(iInstance, shape_name, instance)
-            rotation = instance['transformation']
+            rotation = instance["transformation"]
             rotation_aa = _transformation.matrix2axisangle(rotation)
-            translation = instance['translation']
+            translation = instance["translation"]
 
-            axis = gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(rotation_aa[0][0], rotation_aa[0][1], rotation_aa[0][2]))
+            axis = gp_Ax1(
+                gp_Pnt(0, 0, 0),
+                gp_Dir(rotation_aa[0][0], rotation_aa[0][1], rotation_aa[0][2]),
+            )
             trans = gp_Trsf()
-            trans.SetValues(rotation[0][0], rotation[0][1], rotation[0][2], translation[0],
-                            rotation[1][0], rotation[1][1], rotation[1][2], translation[1],
-                            rotation[2][0], rotation[2][1], rotation[2][2], translation[2])
+            trans.SetValues(
+                rotation[0][0],
+                rotation[0][1],
+                rotation[0][2],
+                translation[0],
+                rotation[1][0],
+                rotation[1][1],
+                rotation[1][2],
+                translation[1],
+                rotation[2][0],
+                rotation[2][1],
+                rotation[2][2],
+                translation[2],
+            )
 
             loc = pyg4ometry.pyoce.TopLoc.TopLoc_Location(trans)
 
-            try :
-                shape_located = shape_dict[shape_name].Located(loc,False)
+            try:
+                shape_located = shape_dict[shape_name].Located(loc, False)
                 shape_tool.AddShape(shape_located, False, True)
             except KeyError:
                 continue
