@@ -2054,6 +2054,7 @@ def geant4Material2Fluka(
                 materialInstance.atomic_number,
                 materialInstance.density,
                 flukaregistry=freg,
+                comment="material-simple: " + materialName,
             )
             return fe
 
@@ -2088,6 +2089,7 @@ def geant4Material2Fluka(
                 flukaComposition,
                 fractionType=flukaFractionType,
                 flukaregistry=freg,
+                comment="material-composite: " + materialName,
             )
             return mat
 
@@ -2108,6 +2110,7 @@ def geant4Material2Fluka(
                 suggestedDensity,
                 materialInstance.A,
                 flukaregistry=freg,
+                comment="element-simple: " + materialName,
             )
             return mat
 
@@ -2142,6 +2145,7 @@ def geant4Material2Fluka(
                 flukaComposition,
                 fractionType="atomic",
                 flukaregistry=freg,
+                comment="element-composite: " + materialName,
             )
             return mat
 
@@ -2149,10 +2153,11 @@ def geant4Material2Fluka(
         fi = _fluka.Material(
             materialNameShort,
             materialInstance.Z,
-            10,
+            10,  # this density won't be used finally but needs to be there
             flukaregistry=freg,
             atomicMass=materialInstance.a,
             massNumber=materialInstance.N,
+            comment="isotope: " + materialName,
         )
         return fi
     else:

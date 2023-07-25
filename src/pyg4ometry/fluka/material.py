@@ -135,6 +135,7 @@ class Material(_MatProp):
         atomicMass=None,
         pressure=None,
         flukaregistry=None,
+        comment="",
     ):
         self.name = name
         self.atomicNumber = atomicNumber
@@ -142,6 +143,7 @@ class Material(_MatProp):
         self.atomicMass = atomicMass
         self.massNumber = massNumber
         self.pressure = pressure
+        self.comment = comment
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
 
@@ -161,7 +163,10 @@ class Material(_MatProp):
         return material
 
     def flukaFreeString(self, delim=", "):
-        return "".join(c.toFreeString(delim=delim) for c in self.toCards())
+        result = "".join(c.toFreeString(delim=delim) for c in self.toCards())
+        if self.comment:
+            result = f"* {self.comment}\n{result}"
+        return result
 
     def __repr__(self):
         massNumber = ""
@@ -205,7 +210,14 @@ class Compound(_MatProp):
     """
 
     def __init__(
-        self, name, density, fractions, fractionType, pressure=None, flukaregistry=None
+        self,
+        name,
+        density,
+        fractions,
+        fractionType,
+        pressure=None,
+        flukaregistry=None,
+        comment="",
     ):
         self.name = name
         self.density = density
@@ -215,6 +227,7 @@ class Compound(_MatProp):
             raise ValueError(msg)
         self.fractionType = fractionType
         self.pressure = pressure
+        self.comment = comment
 
         if flukaregistry is not None:
             flukaregistry.addMaterial(self)
@@ -258,7 +271,10 @@ class Compound(_MatProp):
         return [material, *compounds, *matprop]
 
     def flukaFreeString(self, delim=", "):
-        return "\n".join(c.toFreeString(delim=delim) for c in self.toCards())
+        result = "\n".join(c.toFreeString(delim=delim) for c in self.toCards())
+        if self.comment:
+            result = f"* {self.comment}\n{result}"
+        return result
 
     @classmethod
     def fromCards(cls, cards, flukareg):
