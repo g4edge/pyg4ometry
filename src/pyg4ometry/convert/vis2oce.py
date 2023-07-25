@@ -35,6 +35,10 @@ def convertMeshToPolyTriangulation(m):
 
     return poly_triangulation
 
+def convertMeshToShapeUsingMakeShapeOnMesh(m):
+    shape_triangulation = convertMeshToPolyTriangulation(m)
+    shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
+    return shape.Shape()
 
 def convertMeshToShape(m):
     # https://dev.opencascade.org/content/build-topodsshape-triangulation
@@ -91,20 +95,13 @@ def vis2oce(vis, stepFileName="output.step"):
 
     iMeshes = 1
     for shape_name in vis.localmeshes:
-        # make oce triangulation
-        shape_triangulation = convertMeshToPolyTriangulation(
-            vis.localmeshes[shape_name]
-        )
 
         # Shape builder
-        # shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
-        shape = convertMeshToShape(vis.localmeshes[shape_name])
-
-        # try :
-        #    shape.Build()
-        # except RuntimeError:
-        #    print("vis2oce : problem building shape from mesh",shape_name)
-        #    continue
+        try :
+            shape = convertMeshToShapeUsingMakeShapeOnMesh(vis.localmeshes[shape_name])
+            # shape = convertMeshToShape(vis.localmeshes[shape_name])
+        except pyg4ometry.pyoce.Standard.Standard_Failure:
+            continue
 
         # Add shape to assembly
         shape_label = shape_tool.AddShape(shape, False, True)
