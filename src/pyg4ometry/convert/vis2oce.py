@@ -107,19 +107,20 @@ def vis2oce(vis, stepFileName="output.step"):
             continue
 
         # Add shape to assembly
-        shape_label = shape_tool.AddShape(shape, False, True)
+        shape_tool.AddShape(shape, False, True)
 
         # Store label for later component creation
         shape_dict[shape_name] = shape
 
-        print(iMeshes)
+        # print('vis2oce: iMesh=',iMeshes)
+
         iMeshes += 1
 
     iInstance = 1
     for shape_name in vis.localmeshes:
         instances = vis.instancePlacements[shape_name]
         for instance in instances:
-            print(iInstance, shape_name, instance)
+            # print('vis2oce: instance=',iInstance, shape_name, instance)
             rotation = instance["transformation"]
             rotation_aa = _transformation.matrix2axisangle(rotation)
             translation = instance["translation"]
@@ -155,7 +156,7 @@ def vis2oce(vis, stepFileName="output.step"):
             iInstance += 1
 
     shape_tool.UpdateAssemblies()
-    shape_tool.Dump()
+    # shape_tool.Dump()
 
     w = pyg4ometry.pyoce.STEPCAFControl.STEPCAFControl_Writer()
     w.Transfer(doc)
