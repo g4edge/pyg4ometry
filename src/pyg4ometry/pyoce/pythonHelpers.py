@@ -3,8 +3,51 @@ from . import TCollection as _TCollection
 from . import TDF as _TDF
 from . import TDataStd as _TDataStd
 from . import XCAFDoc as _XCAFDoc
+from . import TopExp as _TopExp
+from . import TopAbs as _TopAbs
 from . import gp as _gp
 import numpy as _np
+
+
+def shapeTopologyCount(
+    shape, countType=_TopAbs.TopAbs_FACE, ignoreType=_TopAbs.TopAbs_VERTEX
+):
+    topoExp = _TopExp.TopExp_Explorer(shape, countType, ignoreType)
+
+    iCount = 0
+
+    while topoExp.More():
+        current_shape = topoExp.Current()
+        iCount += 1
+        topoExp.Next()
+
+    return iCount
+
+
+def shapeTopology(shape):
+    nCompound = shapeTopologyCount(
+        shape, _TopAbs.TopAbs_COMPOUND, _TopAbs.TopAbs_VERTEX
+    )
+    nCompSolid = shapeTopologyCount(
+        shape, _TopAbs.TopAbs_COMPSOLID, _TopAbs.TopAbs_VERTEX
+    )
+    nSolid = shapeTopologyCount(shape, _TopAbs.TopAbs_SOLID, _TopAbs.TopAbs_VERTEX)
+    nShell = shapeTopologyCount(shape, _TopAbs.TopAbs_SHELL, _TopAbs.TopAbs_VERTEX)
+    nFace = shapeTopologyCount(shape, _TopAbs.TopAbs_FACE, _TopAbs.TopAbs_VERTEX)
+    nWire = shapeTopologyCount(shape, _TopAbs.TopAbs_WIRE, _TopAbs.TopAbs_VERTEX)
+    nEdge = shapeTopologyCount(shape, _TopAbs.TopAbs_EDGE, _TopAbs.TopAbs_VERTEX)
+    nVertex = shapeTopologyCount(shape, _TopAbs.TopAbs_VERTEX, _TopAbs.TopAbs_SHAPE)
+
+    return {
+        "nCompound": nCompound,
+        "nCompSolid": nCompSolid,
+        "nSolid": nSolid,
+        "nShell": nShell,
+        "nFace": nFace,
+        "nWire": nWire,
+        "nEdge": nEdge,
+        "nVertex": nVertex,
+    }
 
 
 def findOCCShapeByName(shapeTool, shapeName):

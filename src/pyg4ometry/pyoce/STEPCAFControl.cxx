@@ -5,7 +5,9 @@ namespace py = pybind11;
 
 #include <Message_ProgressRange.hxx>
 #include <STEPCAFControl_Reader.hxx>
+#include <STEPCAFControl_Writer.hxx>
 #include <TDocStd_Document.hxx>
+
 /*********************************************
 PYBIND
 *********************************************/
@@ -28,4 +30,16 @@ PYBIND11_MODULE(STEPCAFControl, m) {
                               Message_ProgressRange()) {
         reader.Transfer(doc, theProgress);
       });
+
+  py::class_<STEPCAFControl_Writer>(m, "STEPCAFControl_Writer")
+      .def(py::init<>())
+      .def("Transfer",
+           [](STEPCAFControl_Writer &writer,
+              opencascade::handle<TDocStd_Document> &doc) {
+             writer.Transfer(doc);
+           })
+      .def("WriteFile",
+           [](STEPCAFControl_Writer &writer, const Standard_CString filename) {
+             writer.Write(filename);
+           });
 }
