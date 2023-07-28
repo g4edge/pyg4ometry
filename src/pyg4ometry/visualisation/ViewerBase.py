@@ -91,7 +91,7 @@ class ViewerBase:
 
         if lv.type == "logical" and lv.mesh is not None and lv.solid.type == "extruder":
             for extruName in lv.solid.g4_decomposed_extrusions:
-                meshName = lv.name+"_"+extruName
+                meshName = lv.name + "_" + extruName
 
                 for extruDecom in lv.solid.g4_decomposed_extrusions[extruName]:
                     meshNameDecom = lv.name + "_" + extruName + "_" + extruDecom.name
