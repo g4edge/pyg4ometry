@@ -316,6 +316,68 @@ class FlukaRegistry:
                         print(self.regionDict[r].dumps())
                         print("")
 
+    def findLastBodyIndex(self):
+        maxIndex = -1
+        for bodyKey in self.bodyDict.keys():
+            if bodyKey == 'BLKBODY':
+                continue
+
+            maxIndex = max(maxIndex, int(bodyKey[1:5]))
+
+        return maxIndex
+
+    def findLastRegionIndex(self):
+        maxIndex = -1
+        for regionKey in self.regionDict.keys():
+            if regionKey == 'BLKHOLE':
+                continue
+
+            maxIndex = max(maxIndex, int(regionKey[1:]))
+
+        return maxIndex
+
+    def findLastMaterialIndex(self):
+        maxIndex = -1
+        for materialKey in self.materials.keys():
+            if materialKey == 'BLCKHOLE' or materialKey.find("0") == -1:
+                continue
+
+            maxIndex = max(maxIndex, int(materialKey[1:4]))
+
+        return maxIndex
+
+    def findLastTransformationIndex(self):
+        pass
+
+
+    def checkBodyName(self, bodyName):
+        if bodyName in self.bodyDict:
+            pass
+
+    def checkRegionName(self, regionName):
+        if regionName in self.regionDict:
+            pass
+
+    def checkMaterialName(self, materialName):
+        if materialName in self.materials:
+            pass
+
+
+    def addRegistry(self, flukaRegistry, outerRegion = None, transformation = None,
+                    removeRegions =[], removeRegionDependents = False):
+        pass
+
+        # solids (loop over solids)
+
+        # regions (loop over regions)
+
+        # rotdefi (loop over rotdefi)
+
+        # materials (loop over material)
+
+
+
+
 
 class RotoTranslationStore(_MutableMapping):
     """only get by names."""
