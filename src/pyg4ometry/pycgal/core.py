@@ -450,16 +450,15 @@ class PolygonProcessing:
         return pgon[::-1]
 
     @classmethod
-    def makePolygonFromList(cls, pgon, type = ""):
-        ''' Convert list of points [[x1,y1], [x2,y2], ... ] to cgal Polygon_2
+    def makePolygonFromList(cls, pgon, type=""):
+        """Convert list of points [[x1,y1], [x2,y2], ... ] to cgal Polygon_2
 
         :param pgon: list of points [[x1,y1], [x2,y2], ... ]
         :type pgon: List[List[x,y], ..]
         :param type: Class of polygon (Polygon_2_EPICK, Polygon_2_EPECK, Partition_traits_2_Polygon_2_EPECK)
         :param type: str
         returns: Polygon_2
-        '''
-
+        """
 
         if type == "Partition_traits_2_Polygon_2_EPECK":
             poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
@@ -467,7 +466,7 @@ class PolygonProcessing:
             poly2 = Polygon_2.Polygon_2_EPECK()
         elif type == "Polygon_2_EPICK":
             poly2 = Polygon_2.Polygon_2_EPICK()
-        else :
+        else:
             poly2 = Polygon_2.Polygon_2_EPECK()
 
         for p in pgon:
@@ -477,12 +476,12 @@ class PolygonProcessing:
 
     @classmethod
     def makeListFromPolygon(selfclas, pgon):
-        ''' Convert 2D polygon to list of points [[x1,y1], [x2,y2], ... ]
+        """Convert 2D polygon to list of points [[x1,y1], [x2,y2], ... ]
 
         :param pgon: cgal Polygon_2 input
         :type pgon: Polygon_2_EPECK or Polygon_2_EPICK
         returns: [[x1,y1], [x2,y2], ...]
-        '''
+        """
 
         polyCoords = []
         for ppi in range(0, pgon.size()):
@@ -493,13 +492,13 @@ class PolygonProcessing:
 
     @classmethod
     def decomposePolygon2d(cls, pgon):
-        ''' Decompose general 2D polygon (pgon) to convex 2D polygons
+        """Decompose general 2D polygon (pgon) to convex 2D polygons
 
         :param pgon: list of pgon points (which are lists) [[x1,y1], [x2,y2], ...]
         :type pgon: List(List[2])
         returns: List of polgons [pgon1, pgon2, ...]
 
-        '''
+        """
 
         poly2 = Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK()
 
@@ -532,13 +531,13 @@ class PolygonProcessing:
 
     @classmethod
     def decomposePolygon2dWithHoles(cls, pgonOuter, pgonHoles):
-        ''' Decompose general 2D polygon with holes (pgon) to convex 2D polygons
+        """Decompose general 2D polygon with holes (pgon) to convex 2D polygons
 
         :param pgonOuter: list of pgon points (which are lists) [[x1,y1], [x2,y2], ...]
         :type pgon: List(List[2])
         :param pgonHoles: List of polgons [pgon1, pgon2, ...]
         returns: List of polgons [pgon1, pgon2, ...]
-        '''
+        """
 
         poly2Boundary = cls.makePolygonFromList(pgonOuter)
 
@@ -559,12 +558,12 @@ class PolygonProcessing:
 
     @classmethod
     def triangulatePolygon2d(cls, pgon):
-        ''' Triangulate general 2D polygon
+        """Triangulate general 2D polygon
 
         :param pgonOuter: list of pgon points (which are lists) [[x1,y1], [x2,y2], ...]
         :type pgon: List(List[2])
         returns: List of triangles [ [[x1,y1], [x2,y2], [x3,y3]], [[x1,y1], [x2,y2], [x3,y3]], ...]
-        '''
+        """
 
         # first decompose as triangulation only works on convex hulls
         partPolyList = cls.decomposePolygon2d(pgon)

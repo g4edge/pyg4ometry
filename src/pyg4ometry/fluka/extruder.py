@@ -36,16 +36,18 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
     def buildCgalPolygons(self):
         # build a CGAL polygon (without holes for each region)
 
-
         holes = []
 
         for region in self.regions:
             if self.boundary != region:
-                self.decomposed[region] = PolygonProcessing.decomposePolygon2d(self.regions[region])
+                self.decomposed[region] = PolygonProcessing.decomposePolygon2d(
+                    self.regions[region]
+                )
                 holes.append(self.regions[region])
 
-        self.decomposed[self.boundary] = PolygonProcessing.decomposePolygon2dWithHoles(self.regions[self.boundary], holes)
-
+        self.decomposed[self.boundary] = PolygonProcessing.decomposePolygon2dWithHoles(
+            self.regions[self.boundary], holes
+        )
 
     def buildGeant4Extrusions(self):
         # normal geant4 extrusions
