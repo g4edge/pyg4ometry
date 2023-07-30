@@ -326,8 +326,8 @@ PYBIND11_MODULE(CGAL, m) {
   py::class_<Polyhedral_mesh_domain_3_EPICK>(m,
                                              "Polyhedral_mesh_domain_3_EPICK")
       .def(py::init<Polyhedron_3_EPICK &>());
-  //py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK")
-  //    .def(py::init<double, double, double, double, double>());
+  // py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK")
+  //     .def(py::init<double, double, double, double, double>());
   py::class_<Mesh_complex_3_in_triangulation_3_EPICK>(
       m, "Mesh_complex_3_in_triangulation_3_EPICK")
       .def("output_facets_in_complex_to_off",
