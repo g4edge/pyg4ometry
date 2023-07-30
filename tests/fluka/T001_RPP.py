@@ -25,7 +25,8 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v,
+            "flukaRegistry":freg, "geant4Registry":greg}
 
 
 if __name__ == "__main__":
