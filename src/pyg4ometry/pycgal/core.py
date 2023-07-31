@@ -139,6 +139,10 @@ class CSG:
         csg.sm = out
         return csg
 
+    def inverse(self):
+        CGAL.reverse_face_orientations(self.sm)
+        return self
+
     # TODO finish coplanar intersection
     def coplanarIntersection(self, csg):
         """
