@@ -232,7 +232,7 @@ which will result in every volume being visualised with a random colour to be di
 
 .. code-block::
 
-   v = pyg4ometry.visualisation.VtkViewerColourd(defaultColour="random")
+   v = pyg4ometry.visualisation.VtkViewerColoured(defaultColour="random")
 
 
 Overlaying Two Geometries
@@ -248,3 +248,16 @@ Logical Volume Difference
 The function :code:`pyg4ometry.visualisation.viewLogicalVolumeDifference` is provided that will
 view two :code:`pyg4ometry.geant4.LogicalVolume` instances. It will also calculate the difference
 mesh between the two and visualise that also on top of the two with a different colour to highlight it.
+
+Viewing FLUKA geometry
+----------------------
+
+The viewer can be used to view FLUKA geometry.
+
+.. code-block::
+
+    r = pyg4ometry.fluka.Reader("./FLUKA_FILE.inp")
+    v = pyg4ometry.visualisation.VtkViewerNew()
+    v.addFlukaRegions(r.getRegistry())
+    v.buildPipelinesAppend()
+    v.view()

@@ -352,6 +352,8 @@ PYBIND11_MODULE(Surface_mesh, m) {
       .def("number_of_faces",
            [](Surface_mesh_EPICK &sm) { return sm.number_of_faces(); })
       .def("is_empty", [](Surface_mesh_EPICK &sm) { return sm.is_empty(); })
+      .def("is_valid", [](Surface_mesh_EPICK &sm) { return sm.is_valid(); })
+
       // TODO CGAL version
       .def("clear_without_removing_property_maps",
            [](Surface_mesh_EPICK &sm) {
@@ -449,12 +451,17 @@ PYBIND11_MODULE(Surface_mesh, m) {
       .def("prev", &Surface_mesh_EPECK::prev)
       .def("halfedge",
            [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Vertex_index &vi) {
-             return sm.halfedge(vi);
+             auto he = sm.halfedge(vi);
+             return he;
            })
       .def("halfedge",
            [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi) {
-             return sm.halfedge(fi);
+             auto he = sm.halfedge(fi);
+             return he;
            })
+      .def("halfedge",
+           [](Surface_mesh_EPECK &sm, Surface_mesh_EPECK::Face_index &fi,
+              Surface_mesh_EPECK::Halfedge_index &he) { he = sm.halfedge(fi); })
       .def("opposite", &Surface_mesh_EPECK::opposite)
 
       /* Switching between edges and half edges */
@@ -482,6 +489,7 @@ PYBIND11_MODULE(Surface_mesh, m) {
       .def("number_of_faces",
            [](Surface_mesh_EPECK &sm) { return sm.number_of_faces(); })
       .def("is_empty", [](Surface_mesh_EPECK &sm) { return sm.is_empty(); })
+      .def("is_valid", [](Surface_mesh_EPECK &sm) { return sm.is_valid(); })
       // TODO CGAL version
       .def("clear_without_removing_property_maps",
            [](Surface_mesh_EPECK &sm) {

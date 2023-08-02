@@ -23,7 +23,7 @@ def expressionToZone(zone, zoneExpr):
     lexed_input = RegionLexer(istream)
     tokens = _antlr4.CommonTokenStream(lexed_input)
     parser = RegionParser(tokens)
-    tree = parser._region()
+    tree = parser.regions()
     freg = fluka_registry.FlukaRegistry()
     zone.allBodiesToRegistry(freg)
     vis = _reader.RegionVisitor(freg)
@@ -42,7 +42,9 @@ def zoneToDNFZones(zone):
     assert isinstance(dnf, _sympy.Or)
 
     for arg in dnf.args:
-        arg = _sympy.simplify_logic(arg)  # trivially solve a & ~a, etc..
+        # print("original",arg)
+        # arg = _sympy.simplify_logic(arg)  # trivially solve a & ~a, etc..
+        # print("simplified",arg)
         if not arg:
             continue
         zones.append(expressionToZone(zone, arg))

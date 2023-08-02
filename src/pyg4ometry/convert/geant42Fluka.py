@@ -1973,6 +1973,18 @@ def geant4Solid2FlukaRegion(
                 zone1.addIntersection(zone2)
             fregion.addZone(zone1)
 
+    elif solid.type == "extruder":
+        fregion, flukaNamecount = geant4Solid2FlukaRegion(
+            flukaNameCount,
+            solid.g4_extrusions[solid.boundary],
+            mtra=mtra,
+            tra=tra,
+            flukaRegistry=flukaRegistry,
+            addRegistry=True,
+            commentName=solid.name,
+        )
+        # flukaRegistry.regionDict.pop(fregion.name)
+        print(fregion.name, flukaRegistry.regionDict.keys())
     else:
         fregion = _fluka.Region("R" + name)
         print(solid.type)
@@ -2042,6 +2054,7 @@ def geant4Material2Fluka(
                 materialInstance.atomic_number,
                 materialInstance.density,
                 flukaregistry=freg,
+                comment="material-simple: " + materialName,
             )
             return fe
 
@@ -2076,6 +2089,7 @@ def geant4Material2Fluka(
                 flukaComposition,
                 fractionType=flukaFractionType,
                 flukaregistry=freg,
+                comment="material-composite: " + materialName,
             )
             return mat
 
@@ -2096,6 +2110,7 @@ def geant4Material2Fluka(
                 suggestedDensity,
                 materialInstance.A,
                 flukaregistry=freg,
+                comment="element-simple: " + materialName,
             )
             return mat
 
@@ -2126,10 +2141,11 @@ def geant4Material2Fluka(
 
             mat = _fluka.Compound(
                 materialNameShort,
-                0.1,
+                0.123456789,
                 flukaComposition,
                 fractionType="atomic",
                 flukaregistry=freg,
+                comment="element-composite: " + materialName,
             )
             return mat
 
@@ -2137,10 +2153,11 @@ def geant4Material2Fluka(
         fi = _fluka.Material(
             materialNameShort,
             materialInstance.Z,
-            10,
+            10,  # this density won't be used finally but needs to be there
             flukaregistry=freg,
             atomicMass=materialInstance.a,
             massNumber=materialInstance.N,
+            comment="isotope: " + materialName,
         )
         return fi
     else:

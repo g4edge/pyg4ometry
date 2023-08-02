@@ -115,7 +115,12 @@ PYBIND11_MODULE(TDF, m) {
       m, "TDF_TagSource")
       .def(py::init<>())
       .def("Get", &TDF_TagSource::Get)
-      .def_static("GetID", &TDF_TagSource::GetID);
+      .def_static("GetID", &TDF_TagSource::GetID)
+      .def_static("Set",
+                  [](const TDF_Label &l) { return TDF_TagSource::Set(l); })
+      .def_static("NewChild", [](const TDF_Label &l) {
+        return TDF_TagSource::NewChild(l);
+      });
 
   py::class_<TDF_Tool>(m, "TDF_Tool")
       .def_static("Entry", &TDF_Tool::Entry)

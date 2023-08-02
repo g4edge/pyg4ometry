@@ -1,10 +1,13 @@
 set(_sources
     BRep.cxx
+    BRepBuilder.cxx
+    BRepPrimAPI.cxx
     BRepMesh.cxx
     Geom.cxx
     gp.cxx
     Message.cxx
     Poly.cxx
+    Standard.cxx
     STEPCAFControl.cxx
     StlAPI.cxx
     TCollection.cxx

@@ -1,6 +1,7 @@
 import base64 as _base64
 import numpy as _np
 import random as _random
+import pyg4ometry.pycgal as _pycgal
 import pyg4ometry.transformation as _transformation
 from pyg4ometry.visualisation.VisualisationOptions import (
     VisualisationOptions as _VisOptions,
@@ -88,6 +89,16 @@ class ViewerBase:
         :type visOptions: VisualisationOptions
         """
 
+        if lv.type == "logical" and lv.mesh is not None and lv.solid.type == "extruder":
+            for extruName in lv.solid.g4_decomposed_extrusions:
+                meshName = lv.name + "_" + extruName
+
+                for extruDecom in lv.solid.g4_decomposed_extrusions[extruName]:
+                    meshNameDecom = lv.name + "_" + extruName + "_" + extruDecom.name
+                    self.addMesh(meshNameDecom, extruDecom.mesh())
+                    self.addInstance(meshNameDecom, mtra, tra, name)
+                    self.addVisOptions(meshNameDecom, visOptions)
+
         if lv.type == "logical" and lv.mesh is not None:
             # add mesh
             if not self.bSubtractDaughters:
@@ -144,8 +155,8 @@ class ViewerBase:
                 pvtra = _np.array(pv.position.eval())
 
                 # pv compound transform
-                mtra_new = mtra * pvmsca * pvmrot
-                tra_new = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                mtra_new = mtra @ pvmsca @ pvmrot
+                tra_new = mtra @ pvtra + tra
 
                 # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(
@@ -163,8 +174,8 @@ class ViewerBase:
                     pvtra = _np.array(trans[1])
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = mtra @ pvtra + tra
 
                     pv.visOptions.depth = depth + 2
 
@@ -182,14 +193,36 @@ class ViewerBase:
                     pvtra = _np.array(trans[1].eval())
 
                     # pv compound transform
-                    new_mtra = mtra * pvmrot
-                    new_tra = (_np.array(mtra.dot(pvtra)) + tra)[0]
+                    new_mtra = mtra @ pvmrot
+                    new_tra = mtra @ pvtra + tra
 
                     pv.visOptions.depth = depth + 2
 
                     self.addMesh(pv_name, mesh.localmesh)
                     self.addInstance(pv_name, new_mtra, new_tra, pv_name)
                     self.addVisOptions(pv_name, pv.visOptions)
+
+    def addFlukaRegions(self, fluka_registry, max_region=1000000, debugIO=False):
+        icount = 0
+        for k in fluka_registry.regionDict:
+            if debugIO:
+                print("ViewerBase.addFlukaRegions>", k)
+            m = fluka_registry.regionDict[k].mesh()
+
+            if m is not None:
+                self.addMesh(k, m)
+                self.addInstance(
+                    k,
+                    _np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+                    _np.array([0, 0, 0]),
+                    k + "_instance",
+                )
+                self.addVisOptions(k, _VisOptions())
+
+            icount += 1
+
+            if icount > max_region:
+                break
 
     def addMesh(self, name, mesh):
         """
@@ -213,7 +246,7 @@ class ViewerBase:
         :param name: name of mesh to add instance
         :type name: str
         :param transformation: Transformation matrix for instance
-        :type transformation: matrix(3,3)
+        :type transformation: array(3,3)
         :param translation: Translation for instance
         :type translation: array(3)
         :param instanceName: Name of the instance e.g PV
@@ -603,6 +636,22 @@ class ViewerBase:
             renderedTemplate = template.render(data)
             with open(cssFileName, "w") as outfile:
                 outfile.write(renderedTemplate)
+
+    def dumpMeshQuality(self):
+        for localmeshkey in self.localmeshes:
+            mesh = self.localmeshes[localmeshkey]
+
+            if _pycgal.CGAL.is_triangle_mesh(mesh.sm):
+                print(
+                    localmeshkey,
+                    mesh,
+                    mesh.polygonCount(),
+                    mesh.vertexCount(),
+                    mesh.area(),
+                    mesh.volume(),
+                )
+            else:
+                print(localmeshkey)
 
     def __repr__(self):
         pass

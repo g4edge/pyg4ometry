@@ -53,7 +53,7 @@ typedef CGAL::Nef_polyhedron_3<Kernel_EPECK> Nef_polyhedron_3_EPECK;
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/Boolean_set_operations_2.h>
-
+#include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/number_utils.h>
 
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron_3_EPECK, Kernel_EPECK>
@@ -109,8 +109,41 @@ PYBIND11_MODULE(CGAL, m) {
       "is_closed", [](Surface_mesh_EPICK &pm) { return CGAL::is_closed(pm); },
       "Is the surface closed", py::arg("Surface_mesh_EPICK"));
   m.def(
+      "is_triangle_mesh",
+      [](Surface_mesh_EPICK &pm) { return CGAL::is_triangle_mesh(pm); },
+      "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "is_outward_oriented",
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
+      "Is the surface outward oriented", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "reverse_face_orientations",
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
+      "Reverse the face orientations ", py::arg("Surface_mesh_EPICK"));
+
+  m.def(
       "is_closed", [](Surface_mesh_EPECK &pm) { return CGAL::is_closed(pm); },
       "Is the surface closed", py::arg("Surface_mesh_EPECK"));
+  m.def(
+      "is_triangle_mesh",
+      [](Surface_mesh_EPECK &pm) { return CGAL::is_triangle_mesh(pm); },
+      "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "is_outward_oriented",
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
+      "Is the surface outward oriented", py::arg("Surface_mesh_EPECK"));
+  m.def(
+      "reverse_face_orientations",
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
+      "Reverse the face orientations ", py::arg("Surface_mesh_EPECK"));
 
   /* Iterators and circulators */
   m.def(
@@ -257,6 +290,50 @@ PYBIND11_MODULE(CGAL, m) {
           CGAL::difference(p1, p2, std::back_inserter(diff));
         });
 
+  /* Polygon decomposition */
+  m.def("PolygonDecomposition_2_wrapped", [](Polygon_2_EPECK &polyToDecompose) {
+    auto polyToDecomposeTraits = Partition_traits_2_Polygon_2_EPECK();
+
+    for (auto v = polyToDecompose.vertices_begin();
+         v != polyToDecompose.vertices_end(); ++v) {
+      polyToDecomposeTraits.push_back(*v);
+    }
+
+    std::vector<Polygon_2_EPECK> output;
+    std::vector<Partition_traits_2_Polygon_2_EPECK> outputTraits;
+    CGAL::optimal_convex_partition_2(polyToDecomposeTraits.vertices_begin(),
+                                     polyToDecomposeTraits.vertices_end(),
+                                     std::back_inserter(outputTraits));
+
+    for (auto dp : outputTraits) {
+      auto pgonOut = Polygon_2_EPECK();
+
+      for (auto p = dp.vertices_begin(); p != dp.vertices_end(); ++p) {
+        pgonOut.push_back(*p);
+      }
+      output.push_back(pgonOut);
+    }
+    return output;
+  });
+
+  m.def("PolygonDecomposition_2_wrapped",
+        [](Partition_traits_2_Polygon_2_EPECK &polyToDecompose) {
+          std::vector<Partition_traits_2_Polygon_2_EPECK> output;
+          CGAL::optimal_convex_partition_2(polyToDecompose.vertices_begin(),
+                                           polyToDecompose.vertices_end(),
+                                           std::back_inserter(output));
+          return output;
+        });
+
+  /* PolygonWithHolesConvexDecomposition_2 */
+  m.def("PolygonWithHolesConvexDecomposition_2_wrapped",
+        [](Polygon_with_holes_2_EPECK &polyToDecompose) {
+          std::vector<Polygon_2_EPECK> output;
+          auto pwhd = CGAL::Polygon_vertical_decomposition_2<Kernel_EPECK>();
+          pwhd(polyToDecompose, std::back_inserter(output));
+          return output;
+        });
+
   /* TODO Boolean operations on Nef polyhedra */
 
   /* convex decomposition of nef polyhedra */
@@ -273,8 +350,8 @@ PYBIND11_MODULE(CGAL, m) {
   py::class_<Polyhedral_mesh_domain_3_EPICK>(m,
                                              "Polyhedral_mesh_domain_3_EPICK")
       .def(py::init<Polyhedron_3_EPICK &>());
-  py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK")
-      .def(py::init<double, double, double, double, double>());
+  py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK");
+  //.def(py::init<double, double, double, double, double>());
   py::class_<Mesh_complex_3_in_triangulation_3_EPICK>(
       m, "Mesh_complex_3_in_triangulation_3_EPICK")
       .def("output_facets_in_complex_to_off",

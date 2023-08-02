@@ -6,6 +6,7 @@ from math import degrees
 
 import numpy as np
 import networkx as nx
+import sympy as _sympy
 
 from . import vis
 from pyg4ometry.exceptions import FLUKAError, NullMeshError
@@ -29,6 +30,83 @@ from textwrap import wrap as _wrap
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+def bracket_depth(zone):
+    depth = 0
+    for body in zone.intersections + zone.subtractions:
+        b = body.body
+        if isinstance(b, Zone):
+            depth += bracket_depth(b) + 1
+            return depth
+
+    return depth
+
+
+def bracket_number(zone):
+    nzones = 0
+
+    for body in zone.intersections + zone.subtractions:
+        b = body.body
+        if isinstance(b, Zone):
+            nzones += 1
+
+    return nzones
+
+
+def zone_to_sympy(zone):
+    s = zone.dumps()
+    s = s.strip()
+    s = s.lstrip("+")
+    s = s.replace("-", "& ~")
+    s = s.replace("( +", "(")
+    s = s.replace(" +", " & ")
+    # s = s.replace("|","")
+    bodyNames = {b.name for b in zone.bodies()}
+    namespace = {name: _sympy.Symbol(name) for name in bodyNames}
+    return _sympy.sympify(s, locals=namespace)
+
+
+def region_to_sympy(region):
+    result = []
+    for z in region.zones:
+        result.append(zone_to_sympy(z))
+    return _sympy.Or(*result)
+
+
+def sympy_to_zone(sympy_expr, freg):
+    z = Zone()
+
+    for and_args in sympy_expr.args:
+        # either can by symbol or Not (of just a symbol)
+        if isinstance(and_args, _sympy.Symbol):
+            bstr = str(and_args)
+            b = freg.bodyDict[bstr]
+            z.addIntersection(b)
+        elif isinstance(and_args, _sympy.Not):
+            bstr = str(and_args.args[0])
+            b = freg.bodyDict[bstr]
+            z.addSubtraction(b)
+
+    return z
+
+
+def sympy_to_region(sympy_expr, freg, regionName="name"):
+    """
+    Convert sympy boolean to fluka region
+    Must be the OR of multiple convex zones
+    """
+    r = Region(regionName)
+
+    for or_args in sympy_expr.args:
+        z = sympy_to_zone(or_args, freg)
+        r.addZone(z)
+
+    return r
+
+
+def simplify_region(region):
+    r = Region()
 
 
 def _generate_name(typename, index, name, isZone, rootname):
@@ -107,6 +185,37 @@ class Zone(vis.ViewableMixin):
         """
         self.intersections.append(Intersection(body))
 
+    def convertToDNF(self, fluka_registry):
+        zone = Zone()
+
+        paraToDNF = []
+        for op in self.intersections + self.subtractions:
+            if isinstance(op.body, Zone):
+                paraToDNF.append(op)
+            elif isinstance(op, Subtraction):
+                zone.addSubtraction(op.body)
+            elif isinstance(op, Intersection):
+                zone.addIntersection(op.body)
+
+        r = Region("temp")
+        r.addZone(zone)
+
+        for para, i in zip(paraToDNF, range(0, len(paraToDNF))):
+            zone.addSubtraction(para.body)
+            sympy_expr = region_to_sympy(r)
+            sympy_expr_dnf = _sympy.to_dnf(sympy_expr)
+            print("convertToDNF", i, len(sympy_expr.args), len(sympy_expr_dnf.args))
+            # print("raw",r.dumps())
+            # print("g4",sympy_expr)
+            # print("dnf",sympy_expr_dnf)
+
+            r_to_add = sympy_to_region(sympy_expr_dnf, fluka_registry)
+            r_to_add.removeNullZones()
+            if r_to_add is not None:
+                r.extend(r_to_add)
+
+        return r
+
     def centre(self, aabb=None):
         body_name = self.intersections[0].body.name
         aabb = _getAxisAlignedBoundingBox(aabb, self.intersections[0])
@@ -131,10 +240,14 @@ class Zone(vis.ViewableMixin):
             return boolean.body.geant4Solid(g4reg, aabb=aabb)
 
     def mesh(self, aabb=None):
+        if len(self.intersections) == 0:
+            print(self.dumpsDebug())
+            return None
+
         result = self.intersections[0].body.mesh(aabb=aabb)
         for boolean in self.intersections[1:] + self.subtractions:
             mesh = boolean.body.mesh(aabb=aabb)
-
+            # TODOprint(boolean.body)
             if isinstance(boolean, Intersection):
                 result = result.intersect(mesh)
             elif isinstance(boolean, Subtraction):
@@ -229,6 +342,26 @@ class Zone(vis.ViewableMixin):
                     fs += f" -({s.body.dumps()})"
                 else:
                     fs += f" -{s.body.name}"
+
+        return fs
+
+    def dumpsDebug(self):
+        """Returns a string of this Zone instance in the equivalent
+        FLUKA syntax with extra debug information"""
+        fs = ""
+
+        booleans = self.intersections + self.subtractions
+        for s in booleans:
+            if isinstance(s, Intersection):
+                if isinstance(s.body, Zone):
+                    fs += f" +({s.body.dumps()})"
+                else:
+                    fs += f" +{s.body.name} ({type(s.body)})"
+            elif isinstance(s, Subtraction):
+                if isinstance(s.body, Zone):
+                    fs += f" -({s.body.dumps()})"
+                else:
+                    fs += f" -{s.body.name} ({type(s.body)})"
 
         return fs
 
@@ -440,6 +573,41 @@ class Region(vis.ViewableMixin):
         """
         self.zones.append(zone)
 
+    def addIntersection(self, zone):
+        for z in self.zones:
+            z.addIntersection(zone)
+
+    def addSubtraction(self, zone):
+        for z in self.zones:
+            z.addSubtraction(zone)
+
+    def extend(self, region):
+        for z in region.zones:
+            self.addZone(z)
+
+    def removeNullZones(self):
+        # print('removeNullZones')
+        zones = []
+
+        for z, i in zip(self.zones, range(0, len(self.zones))):
+            m = z.mesh()
+            # print(i, z)
+            if m.vertexCount() != 0:
+                zones.append(z)
+
+        print("removeNullZones", len(self.zones), len(zones))
+
+        self.zones = zones
+
+    def convertToDNF(self, fluka_registry):
+        r = Region(self.name)
+
+        for zone in self.zones:
+            r_to_add = zone.convertToDNF(fluka_registry)
+            r.extend(r_to_add)
+
+        return r
+
     def centre(self, aabb=None):
         if len(self.zones) == 1:
             return self.zones[0].centre(aabb=aabb)
@@ -640,7 +808,8 @@ class Region(vis.ViewableMixin):
             if zone.isDNF():
                 result.zones.append(zone)
             else:
-                result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
+                # result.zones.extend(boolean_algebra.zoneToDNFZones(zone))
+                result.zones.extend(boolean_algebra.zoneToDNFZonesInremental(zone))
         return result
 
     def isDNF(self):
