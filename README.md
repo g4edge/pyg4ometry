@@ -17,3 +17,42 @@ Carlo (Geant4 and Fluka) geometries.
 > **Warning**
 >
 > Work-in-progress repackaging of https://bitbucket.org/jairhul/pyg4ometry. Report issues and pull requests there.
+
+## Installing 
+
+* `pip install pyg4ometry`
+
+> **Warning**
+> Most dependencies are available from pip but you will need to install OpenCASCADE 
+
+
+## Building
+
+* `git clone https://github.com/g4edge/pyg4ometry.git`
+* `cd pyg4ometry`
+* `pip install . ` or 
+* `pip install --editable .` for a version which you can edit 
+
+> **Warning**
+> If you update your git clone and the pybind11 C++ has changes you will need 
+> to reinstall and this trigger a rebuild
+
+
+## Manual 
+
+Online manual 
+* https://pyg4ometry.readthedocs.io/en/latest/
+
+## Developer notes
+
+* Building the manual
+  * `cd pyg4ometry/docs`
+  * `make`
+* Running tests
+  * `cd pyg4ometry/tests`
+  * `pytest`
+* Git commit messages 
+  * Start commit message with `submodule : (type of change) detailed notes`
+  * e.g `pycgal : (extra functionality) more 2d mesh processing`
+* Update the CHANGES.md file for generating the release notes
+
