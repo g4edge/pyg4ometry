@@ -114,11 +114,15 @@ PYBIND11_MODULE(CGAL, m) {
       "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
   m.def(
       "is_outward_oriented",
-      [](Surface_mesh_EPICK &pm) {return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);},
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
       "Is the surface outward oriented", py::arg("Surface_mesh_EPICK"));
   m.def(
       "reverse_face_orientations",
-      [](Surface_mesh_EPICK &pm) {return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);},
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
       "Reverse the face orientations ", py::arg("Surface_mesh_EPICK"));
 
   m.def(
@@ -130,11 +134,15 @@ PYBIND11_MODULE(CGAL, m) {
       "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
   m.def(
       "is_outward_oriented",
-      [](Surface_mesh_EPECK &pm) {return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);},
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
       "Is the surface outward oriented", py::arg("Surface_mesh_EPECK"));
   m.def(
       "reverse_face_orientations",
-      [](Surface_mesh_EPECK &pm) {return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);},
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
       "Reverse the face orientations ", py::arg("Surface_mesh_EPECK"));
 
   /* Iterators and circulators */
@@ -343,7 +351,7 @@ PYBIND11_MODULE(CGAL, m) {
                                              "Polyhedral_mesh_domain_3_EPICK")
       .def(py::init<Polyhedron_3_EPICK &>());
   py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK");
-      //.def(py::init<double, double, double, double, double>());
+  //.def(py::init<double, double, double, double, double>());
   py::class_<Mesh_complex_3_in_triangulation_3_EPICK>(
       m, "Mesh_complex_3_in_triangulation_3_EPICK")
       .def("output_facets_in_complex_to_off",
@@ -381,7 +389,6 @@ PYBIND11_MODULE(CGAL, m) {
            [](CDT2_EPECK &cdt, CDT2_EPECK::Face_handle fh) {
              return cdt.is_infinite(fh);
            })
-
 
       /* Triangulation_2 Access Functions */
       .def("dimension", &CDT2_EPECK::dimension)
