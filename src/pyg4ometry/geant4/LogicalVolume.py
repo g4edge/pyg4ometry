@@ -1018,7 +1018,7 @@ class LogicalVolume:
     def makeLogicalPhysicalNameSets(self):
         """
         Return a set of logical names and physical names used in this logical volume and any daughters.
-        This is built up recursively by checking all daughters etc etc.
+        This is built up recursively by checking all daughters etc.
         """
 
         logicalNames = set()
@@ -1069,7 +1069,7 @@ class LogicalVolume:
 
     def assemblyVolume(self, materialName="G4_AIR0x7f8441173ac0"):
         """
-        Return an assembly volume of this this logical volume, in effect
+        Return an assembly volume of this logical volume, in effect
         removing the solid and material of this logical volume, but retaining
         all of the relative daughter placements.
         """

@@ -3,10 +3,10 @@ import re
 
 
 class Card:
-    """Card class for representing a FLUKA input card. To construct
+    """
+    Card class for representing a FLUKA input card. To construct
     instances from a of FLUKA input, use the fromFree or fromFixed
     class method for FREE and FIXED format, respectively.
-
     """
 
     def __init__(

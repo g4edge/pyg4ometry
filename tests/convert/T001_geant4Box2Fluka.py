@@ -53,6 +53,18 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     # fluka conversion
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
+
+        # fluka running
+        freg.addDefaults(default="PRECISIO")
+        freg.addBeam(energy=10)
+        freg.addBeamPos()
+        freg.addUserBin(name="bin1")
+        freg.addUserBin(name="bin2")
+        freg.addLowMatAllMaterials()
+        # freg.addLowPwxs()
+        freg.addRandomiz()
+        freg.addStart(maxPrimHistories=100)
+
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputPath / "T001_geant4Box2Fluka.inp")

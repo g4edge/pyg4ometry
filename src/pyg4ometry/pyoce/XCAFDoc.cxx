@@ -64,6 +64,7 @@ PYBIND11_MODULE(XCAFDoc, m) {
               const Standard_Boolean findInstance) {
              return st.FindShape(shape, findInstance);
            })
+      .def("AddShape", &XCAFDoc_ShapeTool::AddShape)
       .def("GetComponents",
            [](XCAFDoc_ShapeTool &st, const TDF_Label &label,
               TDF_LabelSequence &labels, const Standard_Boolean getsubchilds) {
@@ -81,6 +82,11 @@ PYBIND11_MODULE(XCAFDoc, m) {
            })
       .def("GetShapes", &XCAFDoc_ShapeTool::GetShapes)
       .def("GetFreeShapes", &XCAFDoc_ShapeTool::GetFreeShapes)
+      .def("AddComponent",
+           [](XCAFDoc_ShapeTool &st, const TDF_Label &assembly,
+              const TDF_Label &comp, const TopLoc_Location &loc) {
+             return st.AddComponent(assembly, comp, loc);
+           })
       .def("GetSubShapes", &XCAFDoc_ShapeTool::GetSubShapes)
       .def("GetUsers", &XCAFDoc_ShapeTool::GetUsers)
       .def("ID", &XCAFDoc_ShapeTool::ID)
@@ -119,5 +125,6 @@ PYBIND11_MODULE(XCAFDoc, m) {
       .def("NewShape", &XCAFDoc_ShapeTool::NewShape)
       .def("Search", &XCAFDoc_ShapeTool::Search)
       .def("SearchUsingMap", &XCAFDoc_ShapeTool::SearchUsingMap)
-      .def("SetShape", &XCAFDoc_ShapeTool::SetShape);
+      .def("SetShape", &XCAFDoc_ShapeTool::SetShape)
+      .def("UpdateAssemblies", &XCAFDoc_ShapeTool::UpdateAssemblies);
 }

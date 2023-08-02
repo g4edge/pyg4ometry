@@ -14,7 +14,12 @@ from .directive import RecursiveRotoTranslation as _RecursiveRotoTranslation
 from .directive import RotoTranslation as _RotoTranslation
 from pyg4ometry.exceptions import IdenticalNameError as _IdenticalNameError
 from pyg4ometry.exceptions import FLUKAError as _FLUKAError
-from .material import defineBuiltInFlukaMaterials, BuiltIn, predefinedMaterialNames
+from .material import (
+    defineBuiltInFlukaMaterials,
+    BuiltIn,
+    predefinedMaterialNames,
+    Material,
+)
 from . import body as _body
 from . import vector as _vector
 from . import card as _card
@@ -182,15 +187,62 @@ class FlukaRegistry:
         c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, "ELECTRON")
         self.addCard(c)
 
-    def addBeamPos(self):
-        pass
+    def addBeamPos(self, xpos=0, ypos=0, zpos=0, xdc=0, ydc=0):
+        c = _card.Card("BEAMPOS", xpos, ypos, zpos, xdc, ydc)
+        self.addCard(c)
 
-    def addLowMat(self):
+    def addLowMat(self, flukaMat, lowENeutron1, lowENeutron2, lowENeutron3):
         # https://flukafiles.web.cern.ch/manual/chapters/low_energy_neutrons/multigroup_neutron_transport/neutron_cross_section_library/available_cross_sections.html
-        pass
+        c = _card.Card("LOW-MAT", flukaMat, lowENeutron1, lowENeutron2, lowENeutron3)
+        print(c)
+        self.addCard(c)
 
-    def addUserBnn(self):
-        pass
+    def addLowMatAllMaterials(self):
+        for mat_name in self.materials:
+            mat = self.materials[mat_name]
+            if type(mat) is Material:
+                self.addLowMat(mat.name, round(mat.atomicNumber), -2, 296)
+
+    def addUserBin(
+        self,
+        mesh=0,
+        particle="ENERGY",
+        lunOutput=-21,
+        e1max=1,
+        e2max=1,
+        e3max=1,
+        name="name",
+        e1min=-1,
+        e2min=-1,
+        e3min=-1,
+        e1nbin=10,
+        e2nbin=10,
+        e3nbin=10,
+    ):
+        c1 = _card.Card(
+            "USRBIN",
+            mesh,
+            particle,
+            lunOutput,
+            e1max,
+            e2max,
+            e3max,
+            name,
+        )
+        c2 = _card.Card("USRBIN", e1min, e2min, e3min, e1nbin, e2nbin, e3nbin, "&")
+
+        self.addCard(c1)
+        self.addCard(c2)
+
+    def addRotprBin(
+        self, precision=0, rotDefi=0, printEventBin=0, lowerBin=None, upperBin=None
+    ):
+        if upperBin is None:
+            upperBin = lowerBin
+
+        c = _card.Card(
+            "ROTPRBIN", precision, rotDefi, printEvent, lowerBin, upperBin=None
+        )
 
     def addUsrBdx(
         self,
@@ -253,6 +305,12 @@ class FlukaRegistry:
     ):
         c = _card.Card(
             "START", maxPrimHistories, None, timeTermSec, coreDump, eachHistoryOutput
+        )
+        self.addCard(c)
+
+    def addLowPwxs(self, lowerMaterial=None, upperMaterial=None):
+        c = _card.Card(
+            "LOW-PWXS", what1=10010, what4=lowerMaterial, what5=upperMaterial
         )
         self.addCard(c)
 

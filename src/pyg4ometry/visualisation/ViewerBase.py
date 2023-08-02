@@ -1,6 +1,7 @@
 import base64 as _base64
 import numpy as _np
 import random as _random
+import pyg4ometry.pycgal as _pycgal
 import pyg4ometry.transformation as _transformation
 from pyg4ometry.visualisation.VisualisationOptions import (
     VisualisationOptions as _VisOptions,
@@ -87,6 +88,16 @@ class ViewerBase:
         :param visOptions: VisualisationOptions for the lv mesh
         :type visOptions: VisualisationOptions
         """
+
+        if lv.type == "logical" and lv.mesh is not None and lv.solid.type == "extruder":
+            for extruName in lv.solid.g4_decomposed_extrusions:
+                meshName = lv.name + "_" + extruName
+
+                for extruDecom in lv.solid.g4_decomposed_extrusions[extruName]:
+                    meshNameDecom = lv.name + "_" + extruName + "_" + extruDecom.name
+                    self.addMesh(meshNameDecom, extruDecom.mesh())
+                    self.addInstance(meshNameDecom, mtra, tra, name)
+                    self.addVisOptions(meshNameDecom, visOptions)
 
         if lv.type == "logical" and lv.mesh is not None:
             # add mesh
@@ -625,6 +636,22 @@ class ViewerBase:
             renderedTemplate = template.render(data)
             with open(cssFileName, "w") as outfile:
                 outfile.write(renderedTemplate)
+
+    def dumpMeshQuality(self):
+        for localmeshkey in self.localmeshes:
+            mesh = self.localmeshes[localmeshkey]
+
+            if _pycgal.CGAL.is_triangle_mesh(mesh.sm):
+                print(
+                    localmeshkey,
+                    mesh,
+                    mesh.polygonCount(),
+                    mesh.vertexCount(),
+                    mesh.area(),
+                    mesh.volume(),
+                )
+            else:
+                print(localmeshkey)
 
     def __repr__(self):
         pass
