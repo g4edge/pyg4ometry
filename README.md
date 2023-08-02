@@ -24,6 +24,8 @@ Carlo (Geant4 and Fluka) geometries.
 
 > **Warning**
 > Most dependencies are available from pip but you will need to install OpenCASCADE
+> cgal, mpfr, gmp, ROOT
+
 
 ## Building
 
