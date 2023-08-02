@@ -112,6 +112,18 @@ PYBIND11_MODULE(CGAL, m) {
       "is_triangle_mesh",
       [](Surface_mesh_EPICK &pm) { return CGAL::is_triangle_mesh(pm); },
       "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "is_outward_oriented",
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
+      "Is the surface outward oriented", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "reverse_face_orientations",
+      [](Surface_mesh_EPICK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
+      "Reverse the face orientations ", py::arg("Surface_mesh_EPICK"));
 
   m.def(
       "is_closed", [](Surface_mesh_EPECK &pm) { return CGAL::is_closed(pm); },
@@ -120,6 +132,18 @@ PYBIND11_MODULE(CGAL, m) {
       "is_triangle_mesh",
       [](Surface_mesh_EPECK &pm) { return CGAL::is_triangle_mesh(pm); },
       "Is the surface a triangular mesh", py::arg("Surface_mesh_EPICK"));
+  m.def(
+      "is_outward_oriented",
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::is_outward_oriented(pm);
+      },
+      "Is the surface outward oriented", py::arg("Surface_mesh_EPECK"));
+  m.def(
+      "reverse_face_orientations",
+      [](Surface_mesh_EPECK &pm) {
+        return CGAL::Polygon_mesh_processing::reverse_face_orientations(pm);
+      },
+      "Reverse the face orientations ", py::arg("Surface_mesh_EPECK"));
 
   /* Iterators and circulators */
   m.def(
@@ -326,8 +350,8 @@ PYBIND11_MODULE(CGAL, m) {
   py::class_<Polyhedral_mesh_domain_3_EPICK>(m,
                                              "Polyhedral_mesh_domain_3_EPICK")
       .def(py::init<Polyhedron_3_EPICK &>());
-  // py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK")
-  //     .def(py::init<double, double, double, double, double>());
+  py::class_<Mesh_criteria_3_EPICK>(m, "Mesh_criteria_3_EPICK");
+  //.def(py::init<double, double, double, double, double>());
   py::class_<Mesh_complex_3_in_triangulation_3_EPICK>(
       m, "Mesh_complex_3_in_triangulation_3_EPICK")
       .def("output_facets_in_complex_to_off",
