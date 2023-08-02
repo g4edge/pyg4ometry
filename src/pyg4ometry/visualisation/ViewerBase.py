@@ -89,6 +89,16 @@ class ViewerBase:
         :type visOptions: VisualisationOptions
         """
 
+        if lv.type == "logical" and lv.mesh is not None and lv.solid.type == "extruder":
+            for extruName in lv.solid.g4_decomposed_extrusions:
+                meshName = lv.name + "_" + extruName
+
+                for extruDecom in lv.solid.g4_decomposed_extrusions[extruName]:
+                    meshNameDecom = lv.name + "_" + extruName + "_" + extruDecom.name
+                    self.addMesh(meshNameDecom, extruDecom.mesh())
+                    self.addInstance(meshNameDecom, mtra, tra, name)
+                    self.addVisOptions(meshNameDecom, visOptions)
+
         if lv.type == "logical" and lv.mesh is not None:
             # add mesh
             if not self.bSubtractDaughters:
