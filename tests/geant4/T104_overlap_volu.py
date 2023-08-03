@@ -47,9 +47,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     bp3 = _g4.PhysicalVolume([0.0, 0, 0], [bx, 0, 0], bl3, "b_pv3", rl, reg)
 
     rp1 = _g4.PhysicalVolume([0, 0, 0], [3 * bx, 0, 0], rl, "r_pv1", wl, reg)
-    rp2 = _g4.PhysicalVolume(
-        [0, 0, 0], [-3 * bx, 0, 0], rl, "r_pv2", wl, reg, True, [-1, 1, 1]
-    )
+    rp2 = _g4.PhysicalVolume([0, 0, 0], [-3 * bx, 0, 0], rl, "r_pv2", wl, reg, True, [-1, 1, 1])
     # check overlaps
     wl.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
 

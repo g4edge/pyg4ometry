@@ -374,9 +374,7 @@ class Zone(vis.ViewableMixin):
 
             if isinstance(body, Zone):
                 zone_out.addIntersection(
-                    body.withLengthSafety(
-                        bigger_flukareg, smaller_flukareg, shrink_intersections
-                    )
+                    body.withLengthSafety(bigger_flukareg, smaller_flukareg, shrink_intersections)
                 )
             elif shrink_intersections:
                 ls_body = deepcopy(smaller_flukareg.getBody(name))
@@ -386,9 +384,7 @@ class Zone(vis.ViewableMixin):
             else:
                 ls_body = deepcopy(bigger_flukareg.getBody(name))
                 ls_body.name += "_e"
-                logger.debug(
-                    "Adding expanded intersection %s to registry", ls_body.name
-                )
+                logger.debug("Adding expanded intersection %s to registry", ls_body.name)
                 zone_out.addIntersection(ls_body)
 
         for boolean in self.subtractions:
@@ -493,15 +489,11 @@ class Zone(vis.ViewableMixin):
             if isinstance(body, Zone):
                 if booleanType is Intersection:
                     result.addIntersection(
-                        body.makeUnique(
-                            flukaregistry=flukaregistry, nameSuffix=nameSuffix
-                        )
+                        body.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix)
                     )
                 elif booleanType is Subtraction:
                     result.addSubtraction(
-                        body.makeUnique(
-                            flukaregistry=flukaregistry, nameSuffix=nameSuffix
-                        )
+                        body.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix)
                     )
             else:
                 if name in flukaregistry.bodyDict:
@@ -653,9 +645,7 @@ class Region(vis.ViewableMixin):
             solids.append(zone.geant4Solid(reg, aabb=aabb))
             transforms.append([zone.tbxyz(), list(zone.centre(aabb=aabb))])
 
-        return g4.solid.MultiUnion(
-            f"{self.name}_solid", solids, transforms, registry=reg
-        )
+        return g4.solid.MultiUnion(f"{self.name}_solid", solids, transforms, registry=reg)
 
     def dumps(self):
         return "\n".join([f"|{z.dumps()}" for z in self.zones])
@@ -683,9 +673,7 @@ class Region(vis.ViewableMixin):
         result = Region(self.name)
         for zone in self.zones:
             result.addZone(
-                zone.withLengthSafety(
-                    bigger_flukareg, smaller_flukareg, shrink_intersections=True
-                )
+                zone.withLengthSafety(bigger_flukareg, smaller_flukareg, shrink_intersections=True)
             )
         return result
 
@@ -754,9 +742,7 @@ class Region(vis.ViewableMixin):
         return graph
 
     def connectedZones(self, zoneAABBs=None, aabb=None):
-        return list(
-            nx.connected_components(self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb))
-        )
+        return list(nx.connected_components(self.zoneGraph(zoneAABBs=zoneAABBs, aabb=aabb)))
 
     def zoneAABBs(self, aabb=None):
         extents = []
@@ -794,9 +780,7 @@ class Region(vis.ViewableMixin):
         """
         result = Region(self.name)
         for zone in self.zones:
-            result.addZone(
-                zone.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix)
-            )
+            result.addZone(zone.makeUnique(flukaregistry=flukaregistry, nameSuffix=nameSuffix))
         return result
 
     def isNull(self, aabb=None):
@@ -912,9 +896,7 @@ def _getAxisAlignedBoundingBox(aabb, boolean):
     if body_name is None:
         return aabb
 
-    if isinstance(boolean, (Subtraction, Intersection)) and isinstance(
-        boolean.body, Zone
-    ):
+    if isinstance(boolean, (Subtraction, Intersection)) and isinstance(boolean.body, Zone):
         return aabb
 
     if aabb is None:

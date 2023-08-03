@@ -38,9 +38,7 @@ class Trd(_SolidBase):
     :type lunit: str
     """
 
-    def __init__(
-        self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry, lunit="mm", addRegistry=True
-    ):
+    def __init__(self, name, pDx1, pDx2, pDy1, pDy2, pDz, registry, lunit="mm", addRegistry=True):
         super().__init__(name, "Trd", registry)
 
         self.pX1 = pDx1

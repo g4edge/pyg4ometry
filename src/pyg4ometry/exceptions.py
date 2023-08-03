@@ -9,14 +9,12 @@ class NullMeshError(Exception):
         if isinstance(arg, pyg4ometry.geant4.solid.SolidBase):
             self.solid = arg
             if isinstance(self.solid, pyg4ometry.geant4.solid.Intersection):
-                self.message = (
-                    "Null mesh in intersection between solids:"
-                    " {}, {}.".format(self.solid.obj1.name, self.solid.obj2.name)
+                self.message = "Null mesh in intersection between solids: {}, {}.".format(
+                    self.solid.obj1.name, self.solid.obj2.name
                 )
             elif isinstance(self.solid, pyg4ometry.geant4.solid.Subtraction):
-                self.message = (
-                    "Null mesh in subtraction between solids:"
-                    " {}, {}.".format(self.solid.obj1.name, self.solid.obj2.name)
+                self.message = "Null mesh in subtraction between solids: {}, {}.".format(
+                    self.solid.obj1.name, self.solid.obj2.name
                 )
             else:
                 self.message = f"Null mesh in {type(self.solid)}."
@@ -42,9 +40,7 @@ class IdenticalNameError(Exception):
         if nametype is None:
             self.message = f"Identical name detected in registry: {name}"
         else:
-            self.message = "Identical {} name detected in registry: {}".format(
-                nametype, name
-            )
+            self.message = f"Identical {nametype} name detected in registry: {name}"
         super(Exception, self).__init__(self.message)
 
 

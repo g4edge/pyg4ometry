@@ -16,13 +16,9 @@ def Test(vis=False, interactive=False):
     n1 = [_np.cos(_np.pi / 2 - theta / 2.0), 0, -_np.sin(_np.pi / 2 - theta / 2.0)]
     n2 = [_np.cos(_np.pi / 2 - theta / 2.0), 0, _np.sin(_np.pi / 2 - theta / 2.0)]
 
-    t = _pyg4.geant4.solid.CutTubs(
-        "t1", radius1, radius2, d, 0, 2 * _np.pi, n1, n2, reg
-    )
+    t = _pyg4.geant4.solid.CutTubs("t1", radius1, radius2, d, 0, 2 * _np.pi, n1, n2, reg)
 
-    stlFileName = _os.path.join(
-        _os.path.dirname(__file__), "T721_featureExtract_cutTubs.stl"
-    )
+    stlFileName = _os.path.join(_os.path.dirname(__file__), "T721_featureExtract_cutTubs.stl")
     datFileName = stlFileName.replace("stl", "dat")
     _pyg4.convert.pycsgMeshToStl(t.mesh(), stlFileName)
 
@@ -60,9 +56,7 @@ def Test(vis=False, interactive=False):
 
     v.addPlane(cs.origin, cs.e1, cs.e2, cs.dist)
     v.addPlane(cs.origin, cs1.e1, cs1.e2, cs.dist)
-    v.addAxis(
-        cs.origin, [cs.dist, cs.dist, cs.dist], cs.rot, label=True, disableCone=True
-    )
+    v.addAxis(cs.origin, [cs.dist, cs.dist, cs.dist], cs.rot, label=True, disableCone=True)
     v.view(interactive=interactive)
 
     v = _pyg4.features.extract(

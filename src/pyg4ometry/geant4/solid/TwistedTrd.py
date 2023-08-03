@@ -156,8 +156,6 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         pu3 = _TwoVector(pDx2, pDy2)  # pDz]
         pu4 = _TwoVector(-pDx2, pDy2)  # pDz]pu1 = _TwoVector(-pDx2, -pDy2)
 
-        m = self.makeLayers(
-            pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nstack
-        )
+        m = self.makeLayers(pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twistedAngle, self.nstack)
 
         return self.meshFromLayers(m, self.nstack)

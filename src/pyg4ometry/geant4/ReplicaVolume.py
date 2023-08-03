@@ -106,9 +106,7 @@ class ReplicaVolume(_PhysicalVolume):
                 print(
                     f"\033[1mOVERLAP DETECTED> overlap with mother \033[0m {tempMeshes[i]} {interMesh.vertexCount()}"
                 )
-                self.motherVolume.mesh.addOverlapMesh(
-                    [interMesh, _OverlapType.protrusion]
-                )
+                self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.protrusion])
 
         # daughter-daughter overlap check
         for i in range(0, len(tempMeshes)):
@@ -134,9 +132,7 @@ class ReplicaVolume(_PhysicalVolume):
                     print(
                         f"\033[1mOVERLAP DETECTED> overlap between daughters of {self.name} \033[0m #{i} #{j} {interMesh.vertexCount()}"
                     )
-                    self.motherVolume.mesh.addOverlapMesh(
-                        [interMesh, _OverlapType.overlap]
-                    )
+                    self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.overlap])
 
     def createReplicaMeshes(self):
         import pyg4ometry.gdml.Units as _Units
@@ -151,9 +147,7 @@ class ReplicaVolume(_PhysicalVolume):
 
         if self.axis in [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]:
             for v, i in zip(
-                _np.arange(
-                    -width * (nreplicas - 1) * 0.5, width * (nreplicas + 1) * 0.5, width
-                ),
+                _np.arange(-width * (nreplicas - 1) * 0.5, width * (nreplicas + 1) * 0.5, width),
                 range(0, nreplicas, 1),
             ):
                 rot = [0, 0, 0]
@@ -228,9 +222,7 @@ class ReplicaVolume(_PhysicalVolume):
 
         if self.axis in [self.Axis.kXAxis, self.Axis.kYAxis, self.Axis.kZAxis]:
             for v, i in zip(
-                _np.arange(
-                    -width * (nreplicas - 1) * 0.5, width * (nreplicas + 1) * 0.5, width
-                ),
+                _np.arange(-width * (nreplicas - 1) * 0.5, width * (nreplicas + 1) * 0.5, width),
                 range(0, nreplicas, 1),
             ):
                 rot = [0, 0, 0]
@@ -275,11 +267,7 @@ class ReplicaVolume(_PhysicalVolume):
             ):
                 # create a unique temporary solid and therefore logical volume
                 solid = _solid.Tubs(
-                    self.name
-                    + "_"
-                    + self.logicalVolume.solid.name
-                    + "_replica_"
-                    + str(i),
+                    self.name + "_" + self.logicalVolume.solid.name + "_replica_" + str(i),
                     v,
                     v + width,
                     self.logicalVolume.solid.pDz,

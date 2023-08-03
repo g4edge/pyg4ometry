@@ -123,9 +123,7 @@ def test_FlairLoad_T020_ZEC(testdata):
 
 def test_FlairLoad_T021_QUA(testdata):
     quaAABB = {"QUA_REG": _fluka.AABB([-150.0, 100.0, 0], [150.0, 200.0, 1000.0])}
-    flairLoadWriteTest(
-        testdata["fluka/021_QUA.inp"], False, False, quadricRegionAABBs=quaAABB
-    )
+    flairLoadWriteTest(testdata["fluka/021_QUA.inp"], False, False, quadricRegionAABBs=quaAABB)
 
 
 def test_FlairLoad_T050_RPP_Translate(testdata):
@@ -145,9 +143,7 @@ def test_FlairLoad_T053_RPP_RotDefi2(testdata):
 
 
 def test_FlairLoad_T054_RPP_TranslateExpansionRotDefi(testdata):
-    flairLoadWriteTest(
-        testdata["fluka/054_RPP_TranslateExpansionRotDefi.inp"], False, False
-    )
+    flairLoadWriteTest(testdata["fluka/054_RPP_TranslateExpansionRotDefi.inp"], False, False)
 
 
 def test_FlairLoad_T100_Multiple(testdata):
@@ -261,9 +257,7 @@ def test_FlairLoad_T314_QUA_transform(testdata):
 
 
 def test_FlairLoad_T320_cube_from_halfspaces_transform(testdata):
-    flairLoadWriteTest(
-        testdata["fluka/320_cube_from_halfspaces_transform.inp"], False, False
-    )
+    flairLoadWriteTest(testdata["fluka/320_cube_from_halfspaces_transform.inp"], False, False)
 
 
 def test_FlairLoad_T321_cube_from_plas_transform(testdata):
@@ -311,9 +305,7 @@ def test_FlairLoad_T514_QUA_coplanar(testdata):
 
 
 def test_FlairLoad_T601_filter_redundant_halfspaces(testdata):
-    flairLoadWriteTest(
-        testdata["fluka/601_filter_redundant_halfspaces.inp"], False, False
-    )
+    flairLoadWriteTest(testdata["fluka/601_filter_redundant_halfspaces.inp"], False, False)
 
 
 def test_FlairLoad_T701_LATTICE(testdata):
@@ -349,31 +341,23 @@ def test_FlairLoad_T805_inverse_transform(testdata):
 
 
 def test_FlairLoad_T806_combined_translat_transform(testdata):
-    flairLoadWriteTest(
-        testdata["fluka/806_combined_translat_transform.inp"], False, False
-    )
+    flairLoadWriteTest(testdata["fluka/806_combined_translat_transform.inp"], False, False)
 
 
 def test_FlairLoad_T901_preprocessor_if(testdata):
-    freg, greg = flairLoadWriteTest(
-        testdata["fluka/901_preprocessor_if.inp"], False, False
-    )
+    freg, greg = flairLoadWriteTest(testdata["fluka/901_preprocessor_if.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Cons)
 
 
 def test_FlairLoad_T902_preprocessor_elif(testdata):
-    freg, greg = flairLoadWriteTest(
-        testdata["fluka/902_preprocessor_elif.inp"], False, False
-    )
+    freg, greg = flairLoadWriteTest(testdata["fluka/902_preprocessor_elif.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Box)
 
 
 def test_FlairLoad_T903_preprocessor_else(testdata):
-    freg, greg = flairLoadWriteTest(
-        testdata["fluka/903_preprocessor_else.inp"], False, False
-    )
+    freg, greg = flairLoadWriteTest(testdata["fluka/903_preprocessor_else.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Tubs)
 
@@ -383,9 +367,7 @@ def test_FlairLoad_T904_preprocessor_include(testdata):
 
 
 def test_FlairLoad_T905_preprocessor_nested_if(testdata):
-    freg, greg = flairLoadWriteTest(
-        testdata["fluka/905_preprocessor_nested_if.inp"], False, False
-    )
+    freg, greg = flairLoadWriteTest(testdata["fluka/905_preprocessor_nested_if.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Cons)
 

@@ -14,9 +14,7 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
-        "logicalVolume"
-    ]
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
     l2 = T012_GenericPolycone.Test(vis=False, interactive=False, outputPath=outputPath)[
         "logicalVolume"
     ]

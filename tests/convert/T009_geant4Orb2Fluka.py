@@ -7,9 +7,7 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 
 
-def Test(
-    vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None
-):
+def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

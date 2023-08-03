@@ -9,9 +9,7 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "boxTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("boxTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     # box with corner at the origin and sides of length 20 extending

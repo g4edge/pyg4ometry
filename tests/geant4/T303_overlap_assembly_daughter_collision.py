@@ -16,9 +16,7 @@ def Test(vis=False, interactive=False):
     worldLV = _g4.LogicalVolume(worldSolid, vacuum, "world_lv", reg)
 
     asPV1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], assembly, "part_pv1", worldLV, reg)
-    asPV2 = _g4.PhysicalVolume(
-        [0, 0, 0], [50, 0, 0], assembly, "part_pv2", worldLV, reg
-    )
+    asPV2 = _g4.PhysicalVolume([0, 0, 0], [50, 0, 0], assembly, "part_pv2", worldLV, reg)
 
     # check for overlaps
     worldLV.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
@@ -30,9 +28,7 @@ def Test(vis=False, interactive=False):
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T303_overlap_assembly_daughter_collision.gdml"
-        )
+        _os.path.join(_os.path.dirname(__file__), "T303_overlap_assembly_daughter_collision.gdml")
     )
 
     # test __repr__

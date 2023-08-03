@@ -60,9 +60,7 @@ class DivisionVolume(_PhysicalVolume):
         from pyg4ometry.gdml import Defines as _Defines
 
         self.position = _Defines.Position(name + "_pos", 0, 0, 0, "mm", registry, False)
-        self.rotation = _Defines.Rotation(
-            name + "_rot", 0, 0, 0, "rad", registry, False
-        )
+        self.rotation = _Defines.Rotation(name + "_rot", 0, 0, 0, "rad", registry, False)
         self.scale = _Defines.Scale(name + "_sca", 1, 1, 1, "none", registry, False)
 
         if motherVolume.solid.type != logicalVolume.solid.type:
@@ -533,9 +531,7 @@ class DivisionVolume(_PhysicalVolume):
                         r_i + w_ratio_i * offset
                     )  # Proprtional increase
                     solid.pRMin[i].expression.expressionString = str(v_2)
-                    solid.pRMax[i].expression.expressionString = str(
-                        v_2 + w_ratio_i * width
-                    )
+                    solid.pRMax[i].expression.expressionString = str(v_2 + w_ratio_i * width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
@@ -598,9 +594,7 @@ class DivisionVolume(_PhysicalVolume):
             # If width is not specified, divide along the Z planes
             # If the width is specified, can only divide between 2 Z planes
             if ndiv * width == msize:  # this means default width
-                placements = _np.array(
-                    [float(t) for t in self.motherVolume.solid.zPlane]
-                )
+                placements = _np.array([float(t) for t in self.motherVolume.solid.zPlane])
             else:
                 zpl_sizes = _np.diff([float(t) for t in self.motherVolume.solid.zPlane])
                 zsl_index = 0
@@ -661,9 +655,7 @@ class DivisionVolume(_PhysicalVolume):
                         r_i + w_ratio_i * offset
                     )  # Proprtional increase
                     solid.rInner[i].expression.expressionString = str(v_2)
-                    solid.rOuter[i].expression.expressionString = str(
-                        v_2 + w_ratio_i * width
-                    )
+                    solid.rOuter[i].expression.expressionString = str(v_2 + w_ratio_i * width)
                 transforms.append([[0, 0, 0], [0, 0, 0]])
 
             elif self.axis == self.Axis.kPhi:
@@ -720,9 +712,7 @@ class DivisionVolume(_PhysicalVolume):
 
         if hasattr(self, f"divide{self.logicalVolume.solid.type}"):
             stype = self.logicalVolume.solid.type
-            meshes, transforms = getattr(self, f"divide{stype}")(
-                offset, width, ndivisions
-            )
+            meshes, transforms = getattr(self, f"divide{stype}")(offset, width, ndivisions)
         else:
             msg = f"Division with solid {self.logicalVolume.solid.type} is not supported yet."
             raise ValueError(msg)

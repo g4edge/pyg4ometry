@@ -40,9 +40,7 @@ def Test_OpticalSurface(outputPath=None):
     air = _g4.MaterialCompound("Air", 1.290e-3, 2, reg)
     air.add_element_massfraction(ne, 0.7)
     air.add_element_massfraction(oe, 0.3)
-    air.addVecProperty(
-        "RINDEX", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [1, 1, 1, 1]
-    )
+    air.addVecProperty("RINDEX", [2.034e-03, 2.068e-03, 2.103e-03, 2.139e-03], [1, 1, 1, 1])
 
     water = _g4.MaterialCompound("Water", 1.0, 2, reg)
     water.add_element_massfraction(he, 0.112)

@@ -46,9 +46,7 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, outputPath=None):
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ps = _g4.solid.Polycone(
-        "ps", psphi, pdphi, pz, prmin, prmax, reg, "mm", "rad", nslice=n_slice
-    )
+    ps = _g4.solid.Polycone("ps", psphi, pdphi, pz, prmin, prmax, reg, "mm", "rad", nslice=n_slice)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

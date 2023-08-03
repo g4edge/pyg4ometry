@@ -80,9 +80,7 @@ def beamPipe(
 
     if vis:
         v.addPlane(cs.origin, cs.e1, cs.e2, cs.dist)
-        v.addAxis(
-            cs.origin, [cs.dist, cs.dist, cs.dist], cs.rot, label=True, disableCone=True
-        )
+        v.addAxis(cs.origin, [cs.dist, cs.dist, cs.dist], cs.rot, label=True, disableCone=True)
         v.view(interactive=True)
 
     v = _pyg4.features.extract(

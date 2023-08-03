@@ -84,11 +84,7 @@ class AssemblyVolume:
                 nm = [self.name + "_" + pv.name]
             except AttributeError:
                 raise AttributeError(
-                    "Error with LV: "
-                    + dlv.name
-                    + " in PV: "
-                    + pv.name
-                    + " - no mesh available"
+                    "Error with LV: " + dlv.name + " in PV: " + pv.name + " - no mesh available"
                 )
 
         aa = _trans.tbxyz2axisangle(pv.rotation.eval())
@@ -130,9 +126,7 @@ class AssemblyVolume:
         # cannot currently deal with replica, division and parametrised
         if pv.type != "placement":
             if warn:
-                print(
-                    "Cannot generate specific daughter mesh for replica, division, parameterised"
-                )
+                print("Cannot generate specific daughter mesh for replica, division, parameterised")
             return None
         if pv.logicalVolume.type == "assembly":
             mesh = pv.logicalVolume.getAABBMesh()
@@ -205,9 +199,7 @@ class AssemblyVolume:
             if pvInterMesh.isNull():
                 # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is outside")
                 outside.append(pvmesh)
-            elif (
-                not pvInterMesh.isNull()
-            ):  # intersection of new solid and existing solid
+            elif not pvInterMesh.isNull():  # intersection of new solid and existing solid
                 # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is intersecting")
                 intersections.append(pvInterMesh)
                 intersectionsPV.append(pv)
@@ -232,9 +224,7 @@ class AssemblyVolume:
             pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
 
             if pvi.logicalVolume.type == "assembly":
-                lvNew = _pyg4ometry.geant4.AssemblyVolume(
-                    pvNewName, pvi.logicalVolume.registry
-                )
+                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
             else:
                 lvNew = _pyg4ometry.geant4.LogicalVolume(
                     pvi.logicalVolume.solid,

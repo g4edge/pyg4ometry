@@ -40,57 +40,39 @@ def Test(vis=False, interactive=False, outputPath=None):
     tl2 = _g4.LogicalVolume(ts2, bm, "tl2", reg)
     bp1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], bl1, "b_pv1", wl, reg)
 
-    ptd1 = _g4.ParameterisedVolume.TubeDimensions(
-        0.1, 1.0, 2.5, 0, "2*pi*0.1", "mm", "rad"
-    )
+    ptd1 = _g4.ParameterisedVolume.TubeDimensions(0.1, 1.0, 2.5, 0, "2*pi*0.1", "mm", "rad")
     ptp1 = _gd.Position("bp1", 0.0, 0.0, -8 * bx, "mm", reg)
     ptr1 = _gd.Rotation("br1", 0.0, 0.0, -0.4, "rad", reg)
 
-    ptd2 = _g4.ParameterisedVolume.TubeDimensions(
-        0.2, 1.2, 2.5, 0, "2*pi*0.2", "mm", "rad"
-    )
+    ptd2 = _g4.ParameterisedVolume.TubeDimensions(0.2, 1.2, 2.5, 0, "2*pi*0.2", "mm", "rad")
     ptp2 = _gd.Position("bp2", 0.0, 0.0, -6 * bx, "mm", reg)
     ptr2 = _gd.Rotation("br2", 0.0, 0.0, -0.3, "rad", reg)
 
-    ptd3 = _g4.ParameterisedVolume.TubeDimensions(
-        0.3, 1.4, 2.5, 0, "2*pi*0.3", "mm", "rad"
-    )
+    ptd3 = _g4.ParameterisedVolume.TubeDimensions(0.3, 1.4, 2.5, 0, "2*pi*0.3", "mm", "rad")
     ptp3 = _gd.Position("bp3", 0.0, 0.0, -4 * bx, "mm", reg)
     ptr3 = _gd.Rotation("br3", 0.0, 0.0, -0.2, "rad", reg)
 
-    ptd4 = _g4.ParameterisedVolume.TubeDimensions(
-        0.4, 1.6, 2.5, 0, "2*pi*0.4", "mm", "rad"
-    )
+    ptd4 = _g4.ParameterisedVolume.TubeDimensions(0.4, 1.6, 2.5, 0, "2*pi*0.4", "mm", "rad")
     ptp4 = _gd.Position("bp4", 0.0, 0.0, -2 * bx, "mm", reg)
     ptr4 = _gd.Rotation("br4", 0.0, 0.0, -0.1, "rad", reg)
 
-    ptd5 = _g4.ParameterisedVolume.TubeDimensions(
-        0.5, 1.8, 2.5, 0, "2*pi*0.5", "mm", "rad"
-    )
+    ptd5 = _g4.ParameterisedVolume.TubeDimensions(0.5, 1.8, 2.5, 0, "2*pi*0.5", "mm", "rad")
     ptp5 = _gd.Position("bp5", 0.0, 0.0, 0 * bx, "mm", reg)
     ptr5 = _gd.Rotation("br5", 0.0, 0.0, 0.0, "rad", reg)
 
-    ptd6 = _g4.ParameterisedVolume.TubeDimensions(
-        0.6, 2.0, 2.5, 0, "2*pi*0.6", "mm", "rad"
-    )
+    ptd6 = _g4.ParameterisedVolume.TubeDimensions(0.6, 2.0, 2.5, 0, "2*pi*0.6", "mm", "rad")
     ptp6 = _gd.Position("bp6", 0.0, 0.0, 2 * bx, "mm", reg)
     ptr6 = _gd.Rotation("br6", 0.0, 0.0, 0.1, "rad", reg)
 
-    ptd7 = _g4.ParameterisedVolume.TubeDimensions(
-        0.7, 2.2, 2.5, 0, "2*pi*0.7", "mm", "rad"
-    )
+    ptd7 = _g4.ParameterisedVolume.TubeDimensions(0.7, 2.2, 2.5, 0, "2*pi*0.7", "mm", "rad")
     ptp7 = _gd.Position("bp7", 0.0, 0.0, 4 * bx, "mm", reg)
     ptr7 = _gd.Rotation("br7", 0.0, 0.0, 0.2, "rad", reg)
 
-    ptd8 = _g4.ParameterisedVolume.TubeDimensions(
-        0.8, 2.4, 2.5, 0, "2*pi*0.8", "mm", "rad"
-    )
+    ptd8 = _g4.ParameterisedVolume.TubeDimensions(0.8, 2.4, 2.5, 0, "2*pi*0.8", "mm", "rad")
     ptp8 = _gd.Position("bp8", 0.0, 0.0, 6 * bx, "mm", reg)
     ptr8 = _gd.Rotation("br8", 0.0, 0.0, 0.3, "rad", reg)
 
-    ptd9 = _g4.ParameterisedVolume.TubeDimensions(
-        0.9, 2.6, 2.5, 0, "2*pi*0.9", "mm", "rad"
-    )
+    ptd9 = _g4.ParameterisedVolume.TubeDimensions(0.9, 2.6, 2.5, 0, "2*pi*0.9", "mm", "rad")
     ptp9 = _gd.Position("bp9", 0.0, 0.0, 8 * bx, "mm", reg)
     ptr9 = _gd.Rotation("br9", 0.0, 0.0, 0.4, "rad", reg)
 

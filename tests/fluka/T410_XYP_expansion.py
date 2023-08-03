@@ -7,9 +7,7 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     with infinity(30):
-        xyp = XYP(
-            "XYP_BODY", 10.0, transform=Transform(expansion=2.0), flukaregistry=freg
-        )
+        xyp = XYP("XYP_BODY", 10.0, transform=Transform(expansion=2.0), flukaregistry=freg)
 
         z = Zone()
         z.addIntersection(xyp)

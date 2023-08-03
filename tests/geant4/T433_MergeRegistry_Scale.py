@@ -20,9 +20,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     box = pyg4ometry.geant4.solid.Box("box_solid", 10, 20, 50, reg0)
     boxLV = pyg4ometry.geant4.LogicalVolume(box, iron, "box_lv", reg0)
 
-    pv1 = pyg4ometry.geant4.PhysicalVolume(
-        [0, 0, 0], [50, 0, 0], boxLV, "box_pv1", worldLV, reg0
-    )
+    pv1 = pyg4ometry.geant4.PhysicalVolume([0, 0, 0], [50, 0, 0], boxLV, "box_pv1", worldLV, reg0)
 
     pv2 = pyg4ometry.geant4.PhysicalVolume(
         [0, 0, 0], [-50, 0, 0], boxLV, "box_pv2", worldLV, reg0, scale=scale

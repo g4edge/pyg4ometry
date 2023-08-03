@@ -57,13 +57,7 @@ class Writer:
 
         # loop over (init cards)
         for c in self.flukaRegistry.cardDict.keys():
-            if (
-                c == "TITLE"
-                or c == "DEFAULTS"
-                or c == "BEAM"
-                or c == "BEAMPOS"
-                or c == ""
-            ):
+            if c == "TITLE" or c == "DEFAULTS" or c == "BEAM" or c == "BEAMPOS" or c == "":
                 print(self.flukaRegistry.cardDict[c])
                 if type(self.flukaRegistry.cardDict[c]) is list:
                     for cc in self.flukaRegistry.cardDict[c]:
@@ -121,9 +115,7 @@ class Writer:
         for rk in self.flukaRegistry.regionDict.keys():
             try:
                 # print(self.flukaRegistry.assignmas[rk])
-                assignmaString = (
-                    "ASSIGNMA " + self.flukaRegistry.assignmas[rk] + " " + rk
-                )
+                assignmaString = "ASSIGNMA " + self.flukaRegistry.assignmas[rk] + " " + rk
                 f.write(assignmaString + "\n")
             except KeyError:
                 print("Region does not have an assigned material", rk)
@@ -135,13 +127,7 @@ class Writer:
 
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys():
-            if (
-                c != "TITLE"
-                and c != "DEFAULTS"
-                and c != "BEAM"
-                and c != "BEAMPOS"
-                and c != ""
-            ):
+            if c != "TITLE" and c != "DEFAULTS" and c != "BEAM" and c != "BEAMPOS" and c != "":
                 for card in self.flukaRegistry.cardDict[c]:
                     cardstr = card.toFreeString()
                     f.write(f"{cardstr}\n")

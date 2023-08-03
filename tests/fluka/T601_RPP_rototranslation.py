@@ -12,9 +12,7 @@ from pyg4ometry.gdml import Writer
 def Test(vis=False, interactive=False, write=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     rpp = RPP("RPP_BODY", 0, 10, 0, 10, 0, 10, transform=transform, flukaregistry=freg)

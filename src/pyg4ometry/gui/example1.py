@@ -97,9 +97,7 @@ if QVTKRWIBase == "QWidget":
 elif QVTKRWIBase == "QGLWidget":
     QVTKRWIBaseClass = QGLWidget
 else:
-    raise ImportError(
-        "Unknown base class for QVTKRenderWindowInteractor " + QVTKRWIBase
-    )
+    raise ImportError("Unknown base class for QVTKRenderWindowInteractor " + QVTKRWIBase)
 
 
 class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
@@ -274,9 +272,7 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
 
         self._Iren.AddObserver("CreateTimerEvent", self.CreateTimer)
         self._Iren.AddObserver("DestroyTimerEvent", self.DestroyTimer)
-        self._Iren.GetRenderWindow().AddObserver(
-            "CursorChangedEvent", self.CursorChangedEvent
-        )
+        self._Iren.GetRenderWindow().AddObserver("CursorChangedEvent", self.CursorChangedEvent)
 
         # Create a hidden child widget and connect its destroyed signal to its
         # parent ``Finalize`` slot. The hidden children will be destroyed before
@@ -292,9 +288,7 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
         elif hasattr(self._Iren, attr):
             return getattr(self._Iren, attr)
         else:
-            raise AttributeError(
-                self.__class__.__name__ + " has no attribute named " + attr
-            )
+            raise AttributeError(self.__class__.__name__ + " has no attribute named " + attr)
 
     def Finalize(self):
         """
@@ -395,16 +389,12 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
 
     def enterEvent(self, ev):
         ctrl, shift = self._GetCtrlShift(ev)
-        self._setEventInformation(
-            self.__saveX, self.__saveY, ctrl, shift, chr(0), 0, None
-        )
+        self._setEventInformation(self.__saveX, self.__saveY, ctrl, shift, chr(0), 0, None)
         self._Iren.EnterEvent()
 
     def leaveEvent(self, ev):
         ctrl, shift = self._GetCtrlShift(ev)
-        self._setEventInformation(
-            self.__saveX, self.__saveY, ctrl, shift, chr(0), 0, None
-        )
+        self._setEventInformation(self.__saveX, self.__saveY, ctrl, shift, chr(0), 0, None)
         self._Iren.LeaveEvent()
 
     def mousePressEvent(self, ev):
@@ -455,9 +445,7 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
         if shift and len(keySym) == 1 and keySym.isalpha():
             keySym = keySym.upper()
 
-        self._setEventInformation(
-            self.__saveX, self.__saveY, ctrl, shift, key, 0, keySym
-        )
+        self._setEventInformation(self.__saveX, self.__saveY, ctrl, shift, key, 0, keySym)
         self._Iren.KeyPressEvent()
         self._Iren.CharEvent()
 

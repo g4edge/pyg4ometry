@@ -82,9 +82,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     mergedNbNodes = 0
     mergedNbTriangles = 0
 
-    topoExp = _oce.TopExp.TopExp_Explorer(
-        shape, _oce.TopAbs.TopAbs_FACE, _oce.TopAbs.TopAbs_VERTEX
-    )
+    topoExp = _oce.TopExp.TopExp_Explorer(shape, _oce.TopAbs.TopAbs_FACE, _oce.TopAbs.TopAbs_VERTEX)
     location = _oce.TopLoc.TopLoc_Location()
 
     while topoExp.More():
@@ -115,9 +113,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     ##############################################
     # Merge triangles from faces
     ##############################################
-    mergedMesh = _oce.Poly.Poly_Triangulation(
-        mergedNbNodes, mergedNbTriangles, False, False
-    )
+    mergedMesh = _oce.Poly.Poly_Triangulation(mergedNbNodes, mergedNbTriangles, False, False)
 
     topoExp.Init(shape, _oce.TopAbs.TopAbs_FACE, _oce.TopAbs.TopAbs_VERTEX)
 
@@ -284,9 +280,7 @@ def _oce2Geant4_traverse(
         rot = _pyg4.transformation.axisangle2tbxyz(ax, -an)
 
         # make physical volume
-        physicalVolume = _pyg4.geant4.PhysicalVolume(
-            rot, trans, logicalVolume, name, None, greg
-        )
+        physicalVolume = _pyg4.geant4.PhysicalVolume(rot, trans, logicalVolume, name, None, greg)
 
         return physicalVolume
 
@@ -294,9 +288,7 @@ def _oce2Geant4_traverse(
         # print("Shape with no children")
 
         # make solid
-        solid = oceShape_Geant4_Tessellated(
-            name, shape, greg, meshQuality[0], meshQuality[1]
-        )
+        solid = oceShape_Geant4_Tessellated(name, shape, greg, meshQuality[0], meshQuality[1])
 
         if solid is None:
             return None
@@ -364,9 +356,7 @@ def _oce2Geant4_traverse(
         print(name, "missing compound 2")
 
 
-def oce2Geant4(
-    shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQualityMap={}
-):
+def oce2Geant4(shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQualityMap={}):
     """
     Convert CAD geometry starting from shapeName
 

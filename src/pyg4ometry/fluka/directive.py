@@ -348,10 +348,7 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
 
     def _raiseIfDifferentName(self, name):
         if self.name != name:
-            msg = (
-                "Inserted RotoTranslation must have same"
-                " name as the RecursiveRotoTranslation."
-            )
+            msg = "Inserted RotoTranslation must have same name as the RecursiveRotoTranslation."
             raise ValueError(msg)
 
     def __setitem__(self, i, obj):
@@ -457,9 +454,7 @@ def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
     result = rotoTranslationFromTBxyz(name, rotation, flukaregistry=flukaregistry)
 
     if any(translation):  # Don't append a translation of zeros
-        result.append(
-            RotoTranslation(name, translation=translation, flukaregistry=flukaregistry)
-        )
+        result.append(RotoTranslation(name, translation=translation, flukaregistry=flukaregistry))
     return result
 
 

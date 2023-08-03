@@ -52,9 +52,7 @@ class _FlukaDataFile:
             (title, time, self.weight, self.ncase) = _struct.unpack("=80s32sfi", data)
             self.nbatch = 1
         elif data_size == 124:
-            (title, time, self.weight, self.ncase, self.nbatch) = _struct.unpack(
-                "=80s32sfii", data
-            )
+            (title, time, self.weight, self.ncase, self.nbatch) = _struct.unpack("=80s32sfii", data)
         elif data_size == 128:
             (
                 title,

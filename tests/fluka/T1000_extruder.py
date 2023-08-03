@@ -2,9 +2,7 @@ import pathlib as _pl
 import pyg4ometry
 
 
-def Test(
-    vis=False, interactive=False, fluka=True, writeNISTMaterials=False, outputPath=None
-):
+def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

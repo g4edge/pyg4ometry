@@ -86,9 +86,7 @@ def test_xcaf(testdata=None):
     app = _pyg4.pyoce.XCAFApp.XCAFApp_Application.GetApplication()
 
     # create new document
-    doc = app.NewDocument(
-        _pyg4.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF")
-    )
+    doc = app.NewDocument(_pyg4.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF"))
 
     # top label
     top_label = doc.Main()
