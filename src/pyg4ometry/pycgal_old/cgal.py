@@ -12,9 +12,7 @@ for p in g:
         f = p[2]
         for fn in f:
             if fn.find("pyg4_cgal.cpython") != -1:
-                _lib = _ctypes.cdll.LoadLibrary(
-                    _os.path.join(_os.path.dirname(__file__), fn)
-                )
+                _lib = _ctypes.cdll.LoadLibrary(_os.path.join(_os.path.dirname(__file__), fn))
 
 vertexfacet_to_polyhedron = _lib.pyg4_cgal_vertexfacet_to_polyhedron
 vertexfacet_to_polyhedron.argtypes = [
@@ -135,12 +133,10 @@ def pycsgmesh2NefPolyhedron(mesh):
     polys = polyarray
 
     vertspp = (
-        verts.__array_interface__["data"][0]
-        + _np.arange(verts.shape[0]) * verts.strides[0]
+        verts.__array_interface__["data"][0] + _np.arange(verts.shape[0]) * verts.strides[0]
     ).astype(_np.uintp)
     polyspp = (
-        polys.__array_interface__["data"][0]
-        + _np.arange(polys.shape[0]) * polys.strides[0]
+        polys.__array_interface__["data"][0] + _np.arange(polys.shape[0]) * polys.strides[0]
     ).astype(_np.uintp)
     polyarraypp = (
         polyarray.__array_interface__["data"][0]

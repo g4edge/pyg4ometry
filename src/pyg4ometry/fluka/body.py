@@ -289,10 +289,7 @@ class RPP(BodyMixin):
     def __repr__(self):
         l = self.lower
         u = self.upper
-        return (
-            f"<RPP: {self.name},"
-            f" x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>"
-        )
+        return f"<RPP: {self.name}, x0={l.x}, x1={u.x}, y0={l.y}, y1={u.y}, z0={l.z}, z1={u.z}>"
 
     def _withLengthSafety(self, safety, reg):
         lower = self.lower - Three(safety, safety, safety)
@@ -431,9 +428,7 @@ class BOX(BodyMixin):
         )
 
     def flukaFreeString(self):
-        param_string = _iterablesToFreeString(
-            self.vertex, self.edge1, self.edge2, self.edge3
-        )
+        param_string = _iterablesToFreeString(self.vertex, self.edge1, self.edge2, self.edge3)
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
@@ -474,9 +469,7 @@ class SPH(BodyMixin):
     :type radius: float
     """
 
-    def __init__(
-        self, name, point, radius, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, point, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.point = Three(point)
         self.radius = radius
@@ -494,9 +487,7 @@ class SPH(BodyMixin):
         return self.transform.leftMultiplyRotation(np.identity(3))
 
     def geant4Solid(self, reg, aabb=None):
-        return g4.solid.Orb(
-            self.name, self.transform.netExpansion() * self.radius, reg, lunit="mm"
-        )
+        return g4.solid.Orb(self.name, self.transform.netExpansion() * self.radius, reg, lunit="mm")
 
     def __repr__(self):
         return f"<SPH: {self.name}, point={list(self.point)}, r={self.radius}>"
@@ -675,10 +666,7 @@ class REC(BodyMixin):
             self.direction,
             self.semiminor,
             semimajor,
-            (
-                "Direction, semiminor, and semimajor are"
-                " not all mutually perpendicular."
-            ),
+            ("Direction, semiminor, and semimajor are not all mutually perpendicular."),
         )
 
         self.addToRegistry(flukaregistry)
@@ -741,9 +729,7 @@ class REC(BodyMixin):
             prefix = "* " + self.comment + "\n"
         return prefix + "REC {} {}".format(
             self.name,
-            _iterablesToFreeString(
-                self.face, self.direction, self.semiminor, self.semimajor
-            ),
+            _iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor),
         )
 
     def hash(self):
@@ -808,9 +794,7 @@ class TRC(BodyMixin):
         self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
-        return self.transform.leftMultiplyVector(
-            self.major_centre + 0.5 * self.direction
-        )
+        return self.transform.leftMultiplyVector(self.major_centre + 0.5 * self.direction)
 
     def rotation(self):
         # We choose in the as_gdml_solid method to place the major at
@@ -942,9 +926,7 @@ class ELL(BodyMixin):
         # Distance from centre to one of the foci.  This doesn't use
         # the .centre method as this ought to be independent of
         # location, whereas centre takes into account geometry directives.
-        return (
-            0.5 * self.transform.netExpansion() * (self.focus1 - self.focus2).length()
-        )
+        return 0.5 * self.transform.netExpansion() * (self.focus1 - self.focus2).length()
 
     def _semiminor(self):
         return np.sqrt(
@@ -1293,9 +1275,7 @@ class ARB(BodyMixin):
         # to deal with arbitrary clockwise/anticlockwise vertex
         # ordering for the ARB input.
         g4reg = g4.Registry()
-        tesselatedSolid = self._toTesselatedSolid(
-            verticesAndPolygons, g4reg, addRegistry=False
-        )
+        tesselatedSolid = self._toTesselatedSolid(verticesAndPolygons, g4reg, addRegistry=False)
         envelopingBox = g4.solid.Box(
             "test_box",
             10 * (extent.size.x),
@@ -1424,9 +1404,7 @@ class XYP(_HalfSpaceMixin):
         return f"<XYP: {self.name}, z={self.z}>"
 
     def _withLengthSafety(self, safety, reg):
-        return XYP(
-            self.name, self.z + safety, transform=self.transform, flukaregistry=reg
-        )
+        return XYP(self.name, self.z + safety, transform=self.transform, flukaregistry=reg)
 
     def flukaFreeString(self):
         prefix = ""
@@ -1464,9 +1442,7 @@ class XZP(_HalfSpaceMixin):
         return f"<XZP: {self.name}, y={self.y}>"
 
     def _withLengthSafety(self, safety, reg):
-        return XZP(
-            self.name, self.y + safety, transform=self.transform, flukaregistry=reg
-        )
+        return XZP(self.name, self.y + safety, transform=self.transform, flukaregistry=reg)
 
     def flukaFreeString(self):
         prefix = ""
@@ -1507,9 +1483,7 @@ class YZP(_HalfSpaceMixin):
         return f"<YZP: {self.name}, x={self.x}>"
 
     def _withLengthSafety(self, safety, reg):
-        return YZP(
-            self.name, self.x + safety, transform=self.transform, flukaregistry=reg
-        )
+        return YZP(self.name, self.x + safety, transform=self.transform, flukaregistry=reg)
 
     def flukaFreeString(self):
         prefix = ""
@@ -1539,9 +1513,7 @@ class PLA(_HalfSpaceMixin):
 
     """
 
-    def __init__(
-        self, name, normal, point, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, normal, point, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.normal = Three(normal)
         self.point = Three(point)
@@ -1555,9 +1527,7 @@ class PLA(_HalfSpaceMixin):
     def rotation(self):
         # Choose the face pointing in the direction of the positive
         # z-axis to make the surface of the half space.
-        return self.transform.leftMultiplyRotation(
-            trans.matrix_from([0, 0, 1], self.normal)
-        )
+        return self.transform.leftMultiplyRotation(trans.matrix_from([0, 0, 1], self.normal))
 
     def __repr__(self):
         return "<PLA: {}, normal={}, point={}>".format(
@@ -1567,9 +1537,7 @@ class PLA(_HalfSpaceMixin):
     def _withLengthSafety(self, safety, reg=None):
         norm = self.normal.unit()
         newpoint = self.point + norm * safety
-        return PLA(
-            self.name, norm, newpoint, transform=self.transform, flukaregistry=reg
-        )
+        return PLA(self.name, norm, newpoint, transform=self.transform, flukaregistry=reg)
 
     def flukaFreeString(self):
         prefix = ""
@@ -1613,9 +1581,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
     """
 
-    def __init__(
-        self, name, y, z, radius, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, y, z, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.y = y
         self.z = z
@@ -1634,9 +1600,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return self._shiftInfiniteCylinderCentre(aabb, [1, 0, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(
-            np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
-        )
+        return self.transform.leftMultiplyRotation(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]]))
 
     def __repr__(self):
         return f"<XCC: {self.name}, y={self.y}, z={self.z}, r={self.radius}>"
@@ -1682,9 +1646,7 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
     """
 
-    def __init__(
-        self, name, z, x, radius, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, z, x, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
@@ -1703,9 +1665,7 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         return self._shiftInfiniteCylinderCentre(aabb, [0, 1, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(
-            np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
-        )
+        return self.transform.leftMultiplyRotation(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]]))
 
     def __repr__(self):
         return f"<YCC: {self.name}, z={self.z}, x={self.x}, r={self.radius}>"
@@ -1751,9 +1711,7 @@ class ZCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
     :type radius: float
     """
 
-    def __init__(
-        self, name, x, y, radius, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, x, y, radius, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.x = x
         self.y = y
@@ -1820,9 +1778,7 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
     :type zsemi: float
     """
 
-    def __init__(
-        self, name, y, z, ysemi, zsemi, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, y, z, ysemi, zsemi, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.y = y
         self.z = z
@@ -1842,9 +1798,7 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         return self._shiftInfiniteCylinderCentre(aabb, [1, 0, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(
-            np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
-        )
+        return self.transform.leftMultiplyRotation(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]]))
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
@@ -1884,10 +1838,7 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         )
 
     def hash(self):
-        return (
-            hash(("XEC", self.y, self.z, self.ysemi, self.zsemi))
-            ^ self.transform.hash()
-        )
+        return hash(("XEC", self.y, self.z, self.ysemi, self.zsemi)) ^ self.transform.hash()
 
 
 class YEC(BodyMixin, _ShiftableCylinderMixin):
@@ -1906,9 +1857,7 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
     :type xsemi: float
     """
 
-    def __init__(
-        self, name, z, x, zsemi, xsemi, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, z, x, zsemi, xsemi, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.z = z
         self.x = x
@@ -1928,9 +1877,7 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         return self._shiftInfiniteCylinderCentre(aabb, [0, 1, 0], initialCentre)
 
     def rotation(self):
-        return self.transform.leftMultiplyRotation(
-            np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
-        )
+        return self.transform.leftMultiplyRotation(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]]))
 
     def geant4Solid(self, reg, aabb=None):
         exp = self.transform.netExpansion()
@@ -1970,10 +1917,7 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         )
 
     def hash(self):
-        return (
-            hash(("YEC", self.x, self.z, self.xsemi, self.zsemi))
-            ^ self.transform.hash()
-        )
+        return hash(("YEC", self.x, self.z, self.xsemi, self.zsemi)) ^ self.transform.hash()
 
 
 class ZEC(BodyMixin, _ShiftableCylinderMixin):
@@ -1992,9 +1936,7 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
     :type ysemi: float
     """
 
-    def __init__(
-        self, name, x, y, xsemi, ysemi, transform=None, flukaregistry=None, comment=""
-    ):
+    def __init__(self, name, x, y, xsemi, ysemi, transform=None, flukaregistry=None, comment=""):
         self.name = name
         self.x = x
         self.y = y
@@ -2054,10 +1996,7 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         )
 
     def hash(self):
-        return (
-            hash(("ZEC", self.x, self.y, self.xsemi, self.ysemi))
-            ^ self.transform.hash()
-        )
+        return hash(("ZEC", self.x, self.y, self.xsemi, self.ysemi)) ^ self.transform.hash()
 
 
 class QUA(BodyMixin):
@@ -2204,9 +2143,7 @@ class QUA(BodyMixin):
         # be quite noticeably under-sampled, and we will lose detail, so
         # to be safe we make the ModelBounds a bit bigger than the
         # extent
-        sample.SetModelBounds(
-            lower[0], upper[0], lower[1], upper[1], lower[2], upper[2]
-        )
+        sample.SetModelBounds(lower[0], upper[0], lower[1], upper[1], lower[2], upper[2])
 
         sample.SetImplicitFunction(quadric)
         if capping:

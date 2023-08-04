@@ -187,9 +187,7 @@ class VtkViewerNew(_ViewerBase):
         self.clipperPlaneWidget.SetInteractor(self.iren)
         self.clipperPlaneWidget.SetRepresentation(plaRep)
 
-        self.clipperPlaneWidget.AddObserver(
-            "InteractionEvent", self.updateClipperPlaneCallback
-        )
+        self.clipperPlaneWidget.AddObserver("InteractionEvent", self.updateClipperPlaneCallback)
 
     def updateClipperPlaneCallback(self, obj, event):
         rep = obj.GetRepresentation()
@@ -223,9 +221,7 @@ class VtkViewerNew(_ViewerBase):
                 map.SetInputConnection(triFlt.GetOutputPort())
                 actor = _vtk.vtkActor()  # vtk(Actor)
                 actor.SetMapper(map)
-                vtrans = _Convert.pyg42VtkTransformation(
-                    ip["transformation"], ip["translation"]
-                )
+                vtrans = _Convert.pyg42VtkTransformation(ip["transformation"], ip["translation"])
                 actor.SetUserMatrix(vtrans)
                 visopt = vos[i]
                 rgb = visopt.colour
@@ -268,9 +264,7 @@ class VtkViewerNew(_ViewerBase):
                 triFlt.AddInputData(pd)
 
                 traFlt = _vtk.vtkTransformPolyDataFilter()  # (tra)nsform (F)i(lt)er
-                vtramat = _Convert.pyg42VtkTransformation(
-                    ip["transformation"], ip["translation"]
-                )
+                vtramat = _Convert.pyg42VtkTransformation(ip["transformation"], ip["translation"])
                 vtra = _vtk.vtkGeneralTransform()
                 vtra.Concatenate(vtramat)
                 traFlt.SetInputConnection(triFlt.GetOutputPort())
@@ -356,9 +350,7 @@ class VtkViewerNew(_ViewerBase):
                 edgMap = _vtk.vtkPolyDataMapper()
                 edgMap.SetInputConnection(strFlt.GetOutputPort())
                 edgMap.SetResolveCoincidentTopologyToPolygonOffset()
-                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(
-                    0, -3 * visOpt.depth
-                )
+                edgMap.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, -3 * visOpt.depth)
                 edgMap.ScalarVisibilityOff()
                 edgActor = _vtk.vtkActor()
                 edgActor.SetMapper(edgMap)
@@ -380,9 +372,7 @@ class VtkViewerNew(_ViewerBase):
             map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
             map.ScalarVisibilityOff()
             map.SetResolveCoincidentTopologyToPolygonOffset()
-            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(
-                0, 3 * visOpt.depth
-            )
+            map.SetRelativeCoincidentTopologyPolygonOffsetParameters(0, 3 * visOpt.depth)
 
             if not self.bClipper:
                 map.SetInputConnection(normFlt.GetOutputPort())
@@ -505,9 +495,7 @@ class VtkViewerColouredMaterialNew(VtkViewerColouredNew):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(
-            *args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs
-        )
+        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
 
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
@@ -595,17 +583,13 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
         lvName = self.vtkviewer.pdNameDict[pdamin.GetInputAlgorithm().GetInput()]
         pvName = self.vtkviewer.instanceNameDict[pdamin]
         pvTrans = pdamin.GetTransform()
-        [mtra, tra] = _Convert.vtkTransformation2PyG4(
-            pvTrans.GetConcatenatedTransform(0)
-        )
+        [mtra, tra] = _Convert.vtkTransformation2PyG4(pvTrans.GetConcatenatedTransform(0))
         globalExtent = pdmin.GetBounds()
         localExtent = pdamin.GetInput().GetBounds()
 
         tba = _transformation.matrix2tbxyz(mtra)
 
-        print(
-            "minimum pd>", di, dmin, lvName, pvName, tba, tra, localExtent, globalExtent
-        )
+        print("minimum pd>", di, dmin, lvName, pvName, tba, tra, localExtent, globalExtent)
 
         if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)

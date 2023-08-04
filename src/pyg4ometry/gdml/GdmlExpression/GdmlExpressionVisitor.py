@@ -21,9 +21,7 @@ class GdmlExpressionVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by GdmlExpressionParser#multiplyingExpression.
-    def visitMultiplyingExpression(
-        self, ctx: GdmlExpressionParser.MultiplyingExpressionContext
-    ):
+    def visitMultiplyingExpression(self, ctx: GdmlExpressionParser.MultiplyingExpressionContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by GdmlExpressionParser#operatorAddSub.

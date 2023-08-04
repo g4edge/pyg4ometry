@@ -6,9 +6,7 @@ from pyg4ometry.fluka import ZCC, XYP, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    zcc = ZCC(
-        "ZCC_BODY", 5, 5, 5, transform=Transform(expansion=2.0), flukaregistry=freg
-    )
+    zcc = ZCC("ZCC_BODY", 5, 5, 5, transform=Transform(expansion=2.0), flukaregistry=freg)
 
     xyp_hi = XYP("XYP1_BODY", 20, flukaregistry=freg)
     xyp_lo = XYP("XYP2_BODY", 0, flukaregistry=freg)

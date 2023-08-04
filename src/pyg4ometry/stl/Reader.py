@@ -103,18 +103,14 @@ class Reader:
         def extractXYZ(string):
             # The scaling here is a bit cheeky, but the scale parameter in
             # GDML seems to be ignored by Geant4 for Tessellated Solids
-            return tuple(
-                [self.scale * float(v) for v in string.split() if num_re.match(v)]
-            )
+            return tuple([self.scale * float(v) for v in string.split() if num_re.match(v)])
 
         f = io.TextIOWrapper(io.BytesIO(data))
         line = f.readline()
         facet = None
         while line:
             sline = line.strip()
-            if sline.startswith(
-                "facet"
-            ):  # Indicates a facet, only first char comparison
+            if sline.startswith("facet"):  # Indicates a facet, only first char comparison
                 assert facet == None
                 normal = extractXYZ(sline)
                 facet = _Facet(normal)
@@ -245,12 +241,8 @@ class Reader:
         dummy_reg = _g4.Registry()
         dummy_material = _g4.MaterialPredefined("G4_Fe")
         dummy_reg.addSolid(self.solid)
-        lv = _g4.LogicalVolume(
-            self.solid, dummy_material, self.solidname + "_pv", dummy_reg
-        )
-        lv.makeWorldVolume(
-            worldMaterial="G4_Galactic"
-        )  # Make a world volume automatically
+        lv = _g4.LogicalVolume(self.solid, dummy_material, self.solidname + "_pv", dummy_reg)
+        lv.makeWorldVolume(worldMaterial="G4_Galactic")  # Make a world volume automatically
 
         wv = dummy_reg.getWorldVolume()
         vis = _vi.VtkViewer()
@@ -277,9 +269,7 @@ class Reader:
         material = _g4.MaterialPredefined("G4_Fe")
         reg.addSolid(self.solid)
         lv = _g4.LogicalVolume(self.solid, material, self.solidname + "_pv", reg)
-        lv.makeWorldVolume(
-            worldMaterial="G4_Galactic"
-        )  # Make a world volume automatically
+        lv.makeWorldVolume(worldMaterial="G4_Galactic")  # Make a world volume automatically
 
         # gdml output
         w = _gd.Writer()

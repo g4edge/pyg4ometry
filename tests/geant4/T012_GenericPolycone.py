@@ -71,9 +71,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ps = _g4.solid.GenericPolycone(
-        "ps", psphi, pdphi, pr, pz, reg, "mm", "rad", nslice=n_slice
-    )
+    ps = _g4.solid.GenericPolycone("ps", psphi, pdphi, pr, pz, reg, "mm", "rad", nslice=n_slice)
     assert ps.evaluateParameterWithUnits("pSPhi") == psphi
     assert ps.evaluateParameterWithUnits("pDPhi") == pdphi
     if type == two_planes:

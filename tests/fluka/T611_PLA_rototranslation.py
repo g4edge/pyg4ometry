@@ -9,16 +9,12 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "plaTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("plaTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
 
     transform = Transform(rotoTranslation=rtrans)
 
     with infinity(30):
-        pla1 = PLA(
-            "PLA1_BODY", [1, 1, 1], [0, 0.0, 0], transform=transform, flukaregistry=freg
-        )
+        pla1 = PLA("PLA1_BODY", [1, 1, 1], [0, 0.0, 0], transform=transform, flukaregistry=freg)
 
         z1 = Zone()
 

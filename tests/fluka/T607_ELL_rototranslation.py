@@ -9,9 +9,7 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "ellTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("ellTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     # ellipsoid with major axes poining in the y direction, total
@@ -20,9 +18,7 @@ def Test(vis=False, interactive=False):
     focus2 = Three([20, 15, 0])
     length = 20
 
-    ell = ELL(
-        "ELL_BODY", focus1, focus2, length, transform=transform, flukaregistry=freg
-    )
+    ell = ELL("ELL_BODY", focus1, focus2, length, transform=transform, flukaregistry=freg)
 
     z = Zone()
     z.addIntersection(ell)

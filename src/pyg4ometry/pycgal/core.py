@@ -104,9 +104,7 @@ class CSG:
             x = 1
             y = 1
             z = 1
-        scal = Aff_transformation_3.Aff_transformation_3_EPECK(
-            x, 0, 0, 0, y, 0, 0, 0, z, 1
-        )
+        scal = Aff_transformation_3.Aff_transformation_3_EPECK(x, 0, 0, 0, y, 0, 0, 0, z, 1)
         Polygon_mesh_processing.transform(scal, self.sm)
 
     def getNumberPolys(self):

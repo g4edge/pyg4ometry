@@ -29,9 +29,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T301_overlap_assembly_none.gdml")
-    )
+    w.write(_os.path.join(_os.path.dirname(__file__), "T301_overlap_assembly_none.gdml"))
 
     # test __repr__
     str(worldSolid)

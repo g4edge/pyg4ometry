@@ -82,13 +82,9 @@ def preprocess(filein):
             if directive == "#define" or directive == "#undef":
                 _parse_preprocessor_define(directive, split_line, defines)
             elif directive == "#include":
-                _parse_preprocessor_include(
-                    directory, directive, split_line, line_stack
-                )
+                _parse_preprocessor_include(directory, directive, split_line, line_stack)
             elif directive in ["#if", "#elif", "#endif", "#else"]:
-                _parse_preprocessor_conditional(
-                    directive, split_line, defines, if_stack
-                )
+                _parse_preprocessor_conditional(directive, split_line, defines, if_stack)
             else:
                 msg = f"Unknown preprocessor directive: {directive}"
                 raise ValueError(msg)

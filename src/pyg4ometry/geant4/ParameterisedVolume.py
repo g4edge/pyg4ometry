@@ -67,9 +67,7 @@ class ParameterisedVolume(_ReplicaVolume):
             self.lunit = lunit
 
     class SphereDimensions:
-        def __init__(
-            self, pRMin, pRMax, pSPhi, pDPhi, pSTheta, pDTheta, lunit="mm", aunit="rad"
-        ):
+        def __init__(self, pRMin, pRMax, pSPhi, pDPhi, pSTheta, pDTheta, lunit="mm", aunit="rad"):
             self.pRMin = pRMin
             self.pRMax = pRMax
             self.pSPhi = pSPhi
@@ -170,9 +168,7 @@ class ParameterisedVolume(_ReplicaVolume):
             self.aunit = aunit
 
     class PolyhedraDimensions:
-        def __init__(
-            self, pSPhi, pDPhi, numSide, pZpl, pRMin, pRMax, lunit="mm", aunit="rad"
-        ):
+        def __init__(self, pSPhi, pDPhi, numSide, pZpl, pRMin, pRMax, lunit="mm", aunit="rad"):
             self.pSPhi = pSPhi
             self.pDPhi = pDPhi
             self.numSide = numSide
@@ -183,9 +179,7 @@ class ParameterisedVolume(_ReplicaVolume):
             self.aunit = aunit
 
     class EllipsoidDimensions:
-        def __init__(
-            self, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, lunit="mm"
-        ):
+        def __init__(self, pxSemiAxis, pySemiAxis, pzSemiAxis, pzBottomCut, pzTopCut, lunit="mm"):
             self.pxSemiAxis = pxSemiAxis
             self.pySemiAxis = pySemiAxis
             self.pzSemiAxis = pzSemiAxis
@@ -229,9 +223,7 @@ class ParameterisedVolume(_ReplicaVolume):
 
         for paramData, i in zip(self.paramData, range(0, int(self.ncopies), 1)):
             # box
-            if self.logicalVolume.solid.type == "Box" and isinstance(
-                paramData, self.BoxDimensions
-            ):
+            if self.logicalVolume.solid.type == "Box" and isinstance(paramData, self.BoxDimensions):
                 solid = _solid.Box(
                     self.name + "_" + self.logicalVolume.solid.name + "_" + str(i),
                     paramData.pX,

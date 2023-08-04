@@ -240,50 +240,34 @@ def geant4_structure():
     return _geant4_structure
 
 
-def test_geant4_box(
-    geant4_box, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_box(geant4_box, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_box, registry, two_materials, geant4_world)
     # vertex count, poly count, area, volume, minEdge, maxEdge
 
 
-def test_geant4_tubs(
-    geant4_tubs, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_tubs(geant4_tubs, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_tubs, registry, two_materials, geant4_world)
 
 
-def test_geant4_cuttubs(
-    geant4_cuttubs, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_cuttubs(geant4_cuttubs, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_cuttubs, registry, two_materials, geant4_world)
 
 
-def test_geant4_cons(
-    geant4_cons, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_cons(geant4_cons, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_cons, registry, two_materials, geant4_world)
 
 
-def test_geant4_para(
-    geant4_para, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_para(geant4_para, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_para, registry, two_materials, geant4_world)
 
 
-def test_geant4_trd(
-    geant4_trd, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_trd(geant4_trd, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_trd, registry, two_materials, geant4_world)
 
 
-def test_geant4_trap(
-    geant4_trap, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_trap(geant4_trap, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_trap, registry, two_materials, geant4_world)
 
 
-def test_geant4_sphere(
-    geant4_sphere, registry, two_materials, geant4_world, geant4_structure
-):
+def test_geant4_sphere(geant4_sphere, registry, two_materials, geant4_world, geant4_structure):
     reg = geant4_structure(geant4_sphere, registry, two_materials, geant4_world)

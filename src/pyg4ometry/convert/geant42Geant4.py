@@ -25,8 +25,6 @@ def geant4Solid2Geant4Tessellated(solid):
     name = solid.name + "_asTesselated"
     reg = solid.registry
     mesh_type = _solid.TessellatedSolid.MeshType.Stl
-    tesselated_solid = _solid.TessellatedSolid(
-        name, meshTriangular, reg, meshtype=mesh_type
-    )
+    tesselated_solid = _solid.TessellatedSolid(name, meshTriangular, reg, meshtype=mesh_type)
 
     return tesselated_solid

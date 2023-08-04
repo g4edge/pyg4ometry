@@ -70,9 +70,7 @@ class Paraboloid(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Paraboloid : {} {} {} {}".format(
-            self.name, self.pDz, self.pR1, self.pR2
-        )
+        return f"Paraboloid : {self.name} {self.pDz} {self.pR1} {self.pR2}"
 
     def __str__(self):
         return "Paraboloid : name={} dz={} r1={} r2={}".format(

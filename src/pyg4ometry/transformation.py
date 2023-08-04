@@ -266,9 +266,7 @@ def matrix_from(v_from, v_to):
         return _rodrigues_anti_parallel(v_from, v_to)
     # Get the axis to rotate around and the angle to rotate by:
     axis = _np.cross(v_from, v_to) / _np.linalg.norm(_np.cross(v_from, v_to))
-    angle = _np.arccos(
-        _np.dot(v_from, v_to) / (_np.linalg.norm(v_from) * _np.linalg.norm(v_to))
-    )
+    angle = _np.arccos(_np.dot(v_from, v_to) / (_np.linalg.norm(v_from) * _np.linalg.norm(v_to)))
 
     # Construct the skew-symmetric cross product matrix.
     cross_matrix = _np.array(
@@ -282,9 +280,7 @@ def matrix_from(v_from, v_to):
     )
 
     assert are_parallel(v_to, rotation_matrix.dot(v_from)), "Not parallel!"
-    assert _np.allclose(
-        rotation_matrix.T.dot(rotation_matrix), _np.eye(3)
-    ), "Not orthogonal!"
+    assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), "Not orthogonal!"
     return rotation_matrix
 
 
@@ -329,9 +325,7 @@ def _rodrigues_anti_parallel(v_from, v_to):
     )
 
     assert are_parallel(v_to, rotation_matrix.dot(v_from)), "Not parallel!"
-    assert _np.allclose(
-        rotation_matrix.T.dot(rotation_matrix), _np.eye(3)
-    ), "Not orthogonal!"
+    assert _np.allclose(rotation_matrix.T.dot(rotation_matrix), _np.eye(3)), "Not orthogonal!"
 
     return rotation_matrix
 
@@ -352,8 +346,7 @@ def are_parallel(vector_1, vector_2, tolerance=1e-10):
 
     """
     return (
-        _np.dot(vector_1, vector_2)
-        / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
+        _np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
         > 1 - tolerance
     )
 
@@ -373,8 +366,7 @@ def are_anti_parallel(vector_1, vector_2, tolerance=1e-10):
     :rtype: bool
     """
     return (
-        _np.dot(vector_1, vector_2)
-        / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
+        _np.dot(vector_1, vector_2) / (_np.linalg.norm(vector_1) * _np.linalg.norm(vector_2))
         < -1 + tolerance
     )
 

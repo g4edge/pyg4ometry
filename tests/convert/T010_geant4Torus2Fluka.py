@@ -8,9 +8,7 @@ import pyg4ometry.visualisation as _vi
 import numpy as _np
 
 
-def Test(
-    vis=False, interactive=False, fluka=True, n_slice=30, n_stack=30, outputPath=None
-):
+def Test(vis=False, interactive=False, fluka=True, n_slice=30, n_stack=30, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

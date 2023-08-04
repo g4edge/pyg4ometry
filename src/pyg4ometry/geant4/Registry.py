@@ -61,9 +61,7 @@ class Registry:
         self.surfaceNameCount = _defaultdict(int)
 
         self.solidTypeCountDict = _defaultdict(int)  # Box, Cons etc
-        self.logicalVolumeUsageCountDict = _defaultdict(
-            int
-        )  # named logical usage in physical
+        self.logicalVolumeUsageCountDict = _defaultdict(int)  # named logical usage in physical
 
         self.editedSolids = []  # Solids changed post-initialisation
 
@@ -158,18 +156,14 @@ class Registry:
             if material.type == "nist":
                 return  # nist ones generally aren't added and allowed to pass through
             else:
-                newName = (
-                    material.name + "_" + str(self.materialNameCount[material.name])
-                )
+                newName = material.name + "_" + str(self.materialNameCount[material.name])
                 self.materialNameCount[material.name] += 1
                 incrementRenameDict[newName] = material.name
                 material.name = newName
                 # Material and Element have a member 'components' but Isotope doesn't
                 if hasattr(material, "components"):
                     for component in material.components:
-                        self.transferMaterial(
-                            component[0], incrementRenameDict, userRenameDict
-                        )
+                        self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
                 # transfer material properties
                 if hasattr(material, "properties"):
                     for key, value in material.properties.items():
@@ -179,9 +173,7 @@ class Registry:
             # Material and Element have a member 'components' but Isotope doesn't
             if hasattr(material, "components"):
                 for component in material.components:
-                    self.transferMaterial(
-                        component[0], incrementRenameDict, userRenameDict
-                    )
+                    self.transferMaterial(component[0], incrementRenameDict, userRenameDict)
             # transfer material properties
             if hasattr(material, "properties"):
                 for key, value in material.properties.items():
@@ -257,9 +249,7 @@ class Registry:
             self.assemblyVolumeDict[volume.name] = volume
             self.assemblyVolumeNameCount[volume.name] += 1
 
-    def transferLogicalVolume(
-        self, volume, incrementRenameDict={}, userRenameDict=None
-    ):
+    def transferLogicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a logical volume to this registry. Doesn't handle any members'
         transferal - only the logical volume itself.
@@ -303,9 +293,7 @@ class Registry:
         self.volumeTypeCountDict["physicalVolume"] += 1
         self.logicalVolumeUsageCountDict[volume.logicalVolume.name] += 1
 
-    def transferPhysicalVolume(
-        self, volume, incrementRenameDict={}, userRenameDict=None
-    ):
+    def transferPhysicalVolume(self, volume, incrementRenameDict={}, userRenameDict=None):
         """
         Transfer a physical volume to this registry. Doesn't handle any members'
         transferal - only the physical volume itself.
@@ -426,9 +414,7 @@ class Registry:
 
         self.defineNameCount[define.name] += 1
 
-    def transferDefines(
-        self, var, otherRegistry, incrementRenameDict={}, userRenameDict=None
-    ):
+    def transferDefines(self, var, otherRegistry, incrementRenameDict={}, userRenameDict=None):
         """
         This function tolerates all types of defines including vector ones.
 
@@ -446,9 +432,7 @@ class Registry:
             for vi in (var.x, var.y, var.z):
                 # any variables inside each component
                 for v in vi.variables():
-                    if (
-                        v in otherRegistry.defineDict
-                    ):  # only if it's in the other registry
+                    if v in otherRegistry.defineDict:  # only if it's in the other registry
                         self.transferDefines(
                             otherRegistry.defineDict[v],
                             otherRegistry,
@@ -494,9 +478,7 @@ class Registry:
             self.worldVolume = self.logicalVolumeDict[worldIn]
             self.orderLogicalVolumes(worldIn)
             self.logicalVolumeList.append(worldIn)
-        elif (
-            worldIn.__class__.__name__ == "LogicalVolume"
-        ):  # way to test without importing it
+        elif worldIn.__class__.__name__ == "LogicalVolume":  # way to test without importing it
             self.worldName = worldIn.name
             self.worldVolume = worldIn
             if worldIn not in self.logicalVolumeDict:
@@ -520,9 +502,7 @@ class Registry:
         for mat in materials:
             if isinstance(mat, _mat.Material) and mat not in materials_ordered:
                 component_objects = [comp[0] for comp in mat.components]
-                materials_ordered = self._orderMaterialList(
-                    component_objects, materials_ordered
-                )
+                materials_ordered = self._orderMaterialList(component_objects, materials_ordered)
                 materials_ordered.append(mat)
         return materials_ordered
 
@@ -540,9 +520,7 @@ class Registry:
         # Order is isotopes -> elements -> materials
         isotopes = []  # Isotopes and elements don't need internal ordering as no
         elements = []  # isotope of isotopes or element of elements
-        materials = (
-            []
-        )  # Material do need internal ordering as material of materials is possible
+        materials = []  # Material do need internal ordering as material of materials is possible
         for name, obj in self.materialDict.items():
             if isinstance(obj, _mat.Isotope):
                 isotopes.append(obj)
@@ -665,18 +643,12 @@ class Registry:
         elif isinstance(volume, _AssemblyVolume):
             # loop over all daughters
             for dv in volume.daughterVolumes:
-                self.addVolumeRecursive(
-                    dv, collapseAssemblies, incrementRenameDict, userRenameDict
-                )
+                self.addVolumeRecursive(dv, collapseAssemblies, incrementRenameDict, userRenameDict)
 
             # add members from logical volume
             self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
         else:
-            print(
-                "Volume type not supported yet for merging type='{}'".format(
-                    volume.type
-                )
-            )
+            print(f"Volume type not supported yet for merging type='{volume.type}'")
 
         return incrementRenameDict
 
@@ -777,9 +749,7 @@ class Registry:
                 # be in the reference frame of the new mother volume, using the
                 # aggregated assembly transforms calculated above and the
                 # transforms of the pv itself
-                dv_mrot = _np.linalg.inv(
-                    _transformation.tbxyz2matrix(dv_copy.rotation.eval())
-                )
+                dv_mrot = _np.linalg.inv(_transformation.tbxyz2matrix(dv_copy.rotation.eval()))
                 dv_pos = _np.array(dv_copy.position.eval())
                 if dv_copy.scale:
                     dv_sca = _np.diag(dv_copy.scale.eval())
@@ -794,13 +764,9 @@ class Registry:
 
                 # update the position and rotation information
                 try:
-                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(
-                        dv.name
-                    )
+                    pos_name = dv_copy.name + dv_copy.position.name.removeprefix(dv.name)
                 except AttributeError:
-                    pos_name = dv_copy.name + removeprefix(
-                        dv_copy.position.name, dv.name
-                    )
+                    pos_name = dv_copy.name + removeprefix(dv_copy.position.name, dv.name)
                 dv_copy.position = _Defines.Position(
                     pos_name,
                     new_pos[0],
@@ -812,13 +778,9 @@ class Registry:
                 )
 
                 try:
-                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(
-                        dv.name
-                    )
+                    rot_name = dv_copy.name + dv_copy.rotation.name.removeprefix(dv.name)
                 except AttributeError:
-                    rot_name = dv_copy.name + removeprefix(
-                        dv_copy.rotation.name, dv.name
-                    )
+                    rot_name = dv_copy.name + removeprefix(dv_copy.rotation.name, dv.name)
 
                 dv_copy.rotation = _Defines.Rotation(
                     rot_name,
@@ -831,9 +793,7 @@ class Registry:
                 )
 
                 # add this volume recursively to the registry
-                self.addVolumeRecursive(
-                    dv_copy, True, incrementRenameDict, userRenameDict
-                )
+                self.addVolumeRecursive(dv_copy, True, incrementRenameDict, userRenameDict)
 
     def transferSolidDefines(self, solid, incrementRenameDict={}, userRenameDict=None):
         """
@@ -842,11 +802,7 @@ class Registry:
         """
         # TODO make this work for all classes (using update variables method)
 
-        if (
-            solid.type == "Subtraction"
-            or solid.type == "Union"
-            or solid.type == "Intersection"
-        ):
+        if solid.type == "Subtraction" or solid.type == "Union" or solid.type == "Intersection":
             self.transferSolidDefines(solid.obj1, incrementRenameDict, userRenameDict)
             self.transferSolidDefines(solid.obj2, incrementRenameDict, userRenameDict)
         elif solid.type == "MultiUnion":
@@ -873,9 +829,7 @@ class Registry:
 
             var = getattr(solid, varName)
 
-            if isinstance(
-                var, (int, float, str)
-            ):  # int, float, str could not be in registry
+            if isinstance(var, (int, float, str)):  # int, float, str could not be in registry
                 continue
             elif isinstance(var, list):  # list of variables
                 var = flatten(var)
@@ -883,9 +837,7 @@ class Registry:
                 var = [var]  # single variable upgraded to list
 
             for v in var:  # loop over variables
-                self.transferDefines(
-                    v, solid.registry, incrementRenameDict, userRenameDict
-                )
+                self.transferDefines(v, solid.registry, incrementRenameDict, userRenameDict)
 
     def volumeTree(self, lvName):
         """Not sure what this method is used for"""
@@ -895,11 +847,7 @@ class Registry:
         """Not sure what this method is used for"""
         solid = self.solidDict[solidName]
 
-        if (
-            solid.type == "union"
-            or solid.type == "intersecton"
-            or solid.type == "subtraction"
-        ):
+        if solid.type == "union" or solid.type == "intersecton" or solid.type == "subtraction":
             self.solidTree(solid.obj1.name)
             self.solidTree(solid.obj2.name)
 
@@ -982,9 +930,7 @@ class GeometryComplexityInformation:
         print(" ")
         print("Booleans width depth over ", boolDepthLimit)
         print("Solid name".ljust(40), ":", "n Booleans")
-        boolDepthSorted = sorted(
-            self.booleanDepth.items(), key=lambda x: x[1], reverse=True
-        )
+        boolDepthSorted = sorted(self.booleanDepth.items(), key=lambda x: x[1], reverse=True)
         for solidName, boolDepth in boolDepthSorted:
             if boolDepth > boolDepthLimit:
                 print(solidName.ljust(40), ":", boolDepth)

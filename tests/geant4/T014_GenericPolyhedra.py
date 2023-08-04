@@ -8,9 +8,7 @@ normal = 1
 two_planes = 2
 
 
-def Test(
-    vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None
-):
+def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -68,9 +66,7 @@ def Test(
     else:
         assert ps.evaluateParameterWithUnits("pZ") == [-10, 0, 10]
         assert ps.evaluateParameterWithUnits("pR") == [1, 2, 1]
-    ps2 = _g4.solid.GenericPolyhedra(
-        "ps2", psphi_deg, pdphi_deg, pnsid, pr, pz, reg, "cm", "deg"
-    )
+    ps2 = _g4.solid.GenericPolyhedra("ps2", psphi_deg, pdphi_deg, pnsid, pr, pz, reg, "cm", "deg")
     assert ps2.evaluateParameterWithUnits("pSPhi") == psphi
     assert ps2.evaluateParameterWithUnits("pDPhi") == pdphi
     assert ps2.evaluateParameterWithUnits("numSide") == pnsid

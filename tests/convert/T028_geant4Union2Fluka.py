@@ -46,9 +46,7 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
             reg,
         )
     else:
-        us = _g4.solid.Union(
-            "us", bs, bs, [[0.0, 0.0, 0.0], [bx * 2, by * 2, bz * 2]], reg
-        )
+        us = _g4.solid.Union("us", bs, bs, [[0.0, 0.0, 0.0], [bx * 2, by * 2, bz * 2]], reg)
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     ul = _g4.LogicalVolume(us2, bm, "ul", reg)

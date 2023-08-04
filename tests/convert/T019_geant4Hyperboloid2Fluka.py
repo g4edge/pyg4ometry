@@ -52,9 +52,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    hs = _g4.solid.Hype(
-        "ps", hrmin, hrmax, hinst, houtst, hz, reg, nslice=n_slice, nstack=n_stack
-    )
+    hs = _g4.solid.Hype("ps", hrmin, hrmax, hinst, houtst, hz, reg, nslice=n_slice, nstack=n_stack)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

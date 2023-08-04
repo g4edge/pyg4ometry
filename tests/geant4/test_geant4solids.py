@@ -199,12 +199,8 @@ def test_PythonGeant_T004_Cons(tmptestdir):
     except ValueError:
         pass
 
-    T004_Cons.Test(
-        vis=False, interactive=False, type=T004_Cons.dphi_eq_2pi, outputPath=tmptestdir
-    )
-    T004_Cons.Test(
-        vis=False, interactive=False, type=T004_Cons.cone_up, outputPath=tmptestdir
-    )
+    T004_Cons.Test(vis=False, interactive=False, type=T004_Cons.dphi_eq_2pi, outputPath=tmptestdir)
+    T004_Cons.Test(vis=False, interactive=False, type=T004_Cons.cone_up, outputPath=tmptestdir)
     T004_Cons.Test(
         vis=False,
         interactive=False,
@@ -663,57 +659,39 @@ def test_PythonGeant_T410_MergeRegistry_Torus(tmptestdir):
 
 
 def test_PythonGeant_T411_MergeRegistry_Polycone(tmptestdir):
-    T411_MergeRegistry_Polycone.Test(
-        vis=False, interactive=tmptestdir, outputPath=tmptestdir
-    )
+    T411_MergeRegistry_Polycone.Test(vis=False, interactive=tmptestdir, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T412_MergeRegistry_GenericPolycone(tmptestdir):
-    T412_MergeRegistry_GenericPolycone.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T412_MergeRegistry_GenericPolycone.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T413_MergeRegistry_Polyhedra(tmptestdir):
-    T413_MergeRegistry_Polyhedra.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T413_MergeRegistry_Polyhedra.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T414_MergeRegistry_GenericPolyhedra(tmptestdir):
-    T414_MergeRegistry_GenericPolyhedra.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T414_MergeRegistry_GenericPolyhedra.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T415_MergeRegistry_EllipticalTube(tmptestdir):
-    T415_MergeRegistry_EllipticalTube.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T415_MergeRegistry_EllipticalTube.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T416_MergeRegistry_Ellipsoid(tmptestdir):
-    T416_MergeRegistry_Ellipoid.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T416_MergeRegistry_Ellipoid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T417_MergeRegistry_EllipticalCone(tmptestdir):
-    T417_MergeRegistry_EllipticalCone.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T417_MergeRegistry_EllipticalCone.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T418_MergeRegistry_EllipticalParaboloid(tmptestdir):
-    T418_MergeRegistry_Paraboloid.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T418_MergeRegistry_Paraboloid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T419_MergeRegistry_Hyperboloid(tmptestdir):
-    T419_MergeRegistry_Hyperboloid.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T419_MergeRegistry_Hyperboloid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T420_MergeRegistry_Tet(tmptestdir):
@@ -721,39 +699,27 @@ def test_PythonGeant_T420_MergeRegistry_Tet(tmptestdir):
 
 
 def test_PythonGeant_T421_MergeRegistry_ExtrudedSolid(tmptestdir):
-    T421_MergeRegistry_ExtrudedSolid.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T421_MergeRegistry_ExtrudedSolid.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T422_MergeRegistry_TwistedBox(tmptestdir):
-    T422_MergeRegistry_TwistedBox.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T422_MergeRegistry_TwistedBox.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T423_MergeRegistry_TwistedTrap(tmptestdir):
-    T423_MergeRegistry_TwistedTrap.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T423_MergeRegistry_TwistedTrap.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T424_MergeRegistry_TwistedTrd(tmptestdir):
-    T424_MergeRegistry_TwistedTrd.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T424_MergeRegistry_TwistedTrd.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T425_MergeRegistry_TwistedTubs(tmptestdir):
-    T425_MergeRegistry_TwistedTubs.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T425_MergeRegistry_TwistedTubs.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T426_MergeRegistry_GenericTrap(tmptestdir):
-    T426_MergeRegistry_GenericTrap.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T426_MergeRegistry_GenericTrap.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T428_MergeRegistry_Union(tmptestdir):
@@ -761,21 +727,15 @@ def test_PythonGeant_T428_MergeRegistry_Union(tmptestdir):
 
 
 def test_PythonGeant_T429_MergeRegistry_Subtraction(tmptestdir):
-    T429_MergeRegistry_Subtraction.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T429_MergeRegistry_Subtraction.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T430_MergeRegistry_Intersection(tmptestdir):
-    T430_MergeRegistry_Intersection.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T430_MergeRegistry_Intersection.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T431_MergeRegistry_MultiUnion(tmptestdir):
-    T431_MergeRegistry_MultiUnion.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T431_MergeRegistry_MultiUnion.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T432_MergeRegistryBoxAssemblyConverion(tmptestdir):
@@ -789,9 +749,7 @@ def test_PythonGeant_T433_MergeRegistry_Scale(tmptestdir):
 
 
 def test_PythonGeant_T434_MergeRegistry_CollapseAssembly(tmptestdir):
-    T434_MergeRegistry_CollapseAssembly.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T434_MergeRegistry_CollapseAssembly.Test(vis=False, interactive=False, outputPath=tmptestdir)
 
 
 def test_PythonGeant_T600_LVTessellated(tmptestdir):
@@ -829,6 +787,4 @@ def test_PythonGeant_T608_LvClipSolidRecursive(tmptestdir):
 
 
 def test_PythonGeant_T609_LvClipSolidRecursiveAssembly(tmptestdir):
-    T609_LvClipSolidRecursiveAssembly.Test(
-        vis=False, interactive=False, outputPath=tmptestdir
-    )
+    T609_LvClipSolidRecursiveAssembly.Test(vis=False, interactive=False, outputPath=tmptestdir)

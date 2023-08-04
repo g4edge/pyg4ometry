@@ -53,7 +53,9 @@ class Tests:
         self.materials = True
         self.materialClassType = True
         self.materialCompositionType = True  # i.e. N atoms or mass fraction
-        self.testDaughtersByName = True  # if true, match up daughters by name, otherwise just iterate over in sequence
+        self.testDaughtersByName = (
+            True  # if true, match up daughters by name, otherwise just iterate over in sequence
+        )
 
         self.toleranceSolidParameterFraction = 1e-3
         self.toleranceSolidExtentFraction = 1e-6
@@ -203,9 +205,7 @@ class ComparisonResult:
     def __iadd__(self, other):
         if other is None:
             return self
-        self.result = (
-            self.result | other.result
-        )  # this should already be a product of all subtests
+        self.result = self.result | other.result  # this should already be a product of all subtests
         for testName, results in other.test.items():
             self.test[testName].extend(results)
         return self
@@ -320,9 +320,7 @@ def logicalVolumes(
     testName = ": ".join(["(lv)", rlv.name])
 
     if tests.names:
-        result += _names(
-            "logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults
-        )
+        result += _names("logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer(
             "logicalVolumeName", rlv.name, olv.name, testName, includeAllTestResults
@@ -333,22 +331,16 @@ def logicalVolumes(
             "mat_test_" + rlv.material.name,
             "mat_test_" + olv.material.name,
         ) not in testsAlreadyDone:
-            result += materials(
-                rlv.material, olv.material, tests, testName, includeAllTestResults
-            )
+            result += materials(rlv.material, olv.material, tests, testName, includeAllTestResults)
             testsAlreadyDone.append(
                 ("mat_test_" + rlv.material.name, "mat_test_" + olv.material.name)
             )
 
     if tests.nDaughters:
         if len(olv.daughterVolumes) != len(rlv.daughterVolumes):
-            details = (
-                "# daughters: ('" + rlv.name + "') : " + str(len(rlv.daughterVolumes))
-            )
+            details = "# daughters: ('" + rlv.name + "') : " + str(len(rlv.daughterVolumes))
             details += ", ('" + olv.name + "') : " + str(len(olv.daughterVolumes))
-            result["nDaughters"] += [
-                TestResultNamed(testName, TestResult.Failed, details)
-            ]
+            result["nDaughters"] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result["nDaughters"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -356,9 +348,7 @@ def logicalVolumes(
 
     # if not recursive return now and don't loop over daughter physical volumes
     if not recursive:
-        testsAlreadyDone.append(
-            ("lv_test_" + referenceLV.name, "lv_test_" + otherLV.name)
-        )
+        testsAlreadyDone.append(("lv_test_" + referenceLV.name, "lv_test_" + otherLV.name))
         return result
 
     # test daughters are the same - could even be same number but different
@@ -424,9 +414,7 @@ def logicalVolumes(
             )
 
     if tests.names or tests.namesIgnorePointer:
-        result = _testDaughterNameSets(
-            rSet, oSet, result, testName, includeAllTestResults
-        )
+        result = _testDaughterNameSets(rSet, oSet, result, testName, includeAllTestResults)
 
     testsAlreadyDone.append(("lv_test_" + referenceLV.name, "lv_test_" + otherLV.name))
     return result
@@ -452,9 +440,7 @@ def physicalVolumes(
     testName = ": ".join(list(filter(None, [lvName, "(pv)", rpv.name])))
 
     if tests.names:
-        result += _names(
-            "placementName", rpv.name, opv.name, testName, includeAllTestResults
-        )
+        result += _names("placementName", rpv.name, opv.name, testName, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer(
             "placementName", rpv.name, opv.name, testName, includeAllTestResults
@@ -478,9 +464,7 @@ def physicalVolumes(
         )
     if tests.scale:
         if rpv.scale and opv.scale:  # may be None
-            result += _vector(
-                "scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults
-            )
+            result += _vector("scale", rpv.scale, opv.scale, tests, testName, includeAllTestResults)
         elif rpv.scale or opv.scale:
             rpvScaleNumeric = rpv.scale.eval() if rpv.scale else [1.0, 1.0, 1.0]
             opvScaleNumeric = opv.scale.eval() if opv.scale else [1.0, 1.0, 1.0]
@@ -488,14 +472,9 @@ def physicalVolumes(
                 rpvScale = str(rpv.scale) if rpv.scale else "None"
                 opvScale = str(opv.scale) if opv.scale else "None"
                 details = (
-                    "pv scale inconsistent: (reference): "
-                    + rpvScale
-                    + ", (other): "
-                    + opvScale
+                    "pv scale inconsistent: (reference): " + rpvScale + ", (other): " + opvScale
                 )
-                result["pvScale"] += [
-                    TestResultNamed(testName, TestResult.Failed, details)
-                ]
+                result["pvScale"] += [TestResultNamed(testName, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["pvScale"] += [TestResultNamed(testName, TestResult.Passed)]
         elif includeAllTestResults:
@@ -551,9 +530,7 @@ def assemblyVolumes(
     testName = ": ".join(["(av)", rav.name])
 
     if tests.names:
-        result += _names(
-            "assemblyName", rav.name, oav.name, rav.name, includeAllTestResults
-        )
+        result += _names("assemblyName", rav.name, oav.name, rav.name, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer(
             "assemblyName", rav.name, oav.name, rav.name, includeAllTestResults
@@ -565,13 +542,9 @@ def assemblyVolumes(
 
     if tests.nDaughters:
         if len(oDaughters) != len(rDaughters):
-            details = (
-                "# daughters: ('" + rav.name + "') : " + str(len(rav.daughterVolumes))
-            )
+            details = "# daughters: ('" + rav.name + "') : " + str(len(rav.daughterVolumes))
             details += ", ('" + oav.name + "') : " + str(len(oav.daughterVolumes))
-            result["nDaughters"] += [
-                TestResultNamed(testName, TestResult.Failed, details)
-            ]
+            result["nDaughters"] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result["nDaughters"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -612,12 +585,8 @@ def assemblyVolumes(
             )
 
             # even though one individual daughter, it itself might be an assembly and produce more than 1 mesh
-            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByName(
-                daugtherName
-            )
-            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByName(
-                daugtherName
-            )
+            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByName(daugtherName)
+            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByName(daugtherName)
             for nameToUse, rMesh, oMesh in zip(i_rMeshName, i_rMeshes, i_oMeshes):
                 result += _meshes(nameToUse, rMesh, oMesh, tests)
     else:
@@ -673,35 +642,25 @@ def _checkPVLikeDaughters(
     if expectedType != oDaughter.type:
         details = "daughter types in '" + parentName + "': (ref): " + str(expectedType)
         details += ", (other): " + str(oDaughter.type)
-        result["daughterType"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["daughterType"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["daughterType"] += [TestResultNamed(testName, TestResult.Passed)]
 
     # do custom type check
     if expectedType == "placement":
-        result += physicalVolumes(
-            rDaughter, oDaughter, tests, r, testName, iatr, testsAlreadyDone
-        )
+        result += physicalVolumes(rDaughter, oDaughter, tests, r, testName, iatr, testsAlreadyDone)
     elif expectedType == "assembly":
-        result += assemblyVolumes(
-            rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone
-        )
+        result += assemblyVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
     elif expectedType == "replica":
         result += replicaVolumes(rDaughter, oDaughter, tests, r, iatr, testsAlreadyDone)
     elif expectedType == "division":
         result += divisionVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
     elif expectedType == "parameterised":
-        result += parameterisedVolumes(
-            rDaughter, oDaughter, tests, iatr, testsAlreadyDone
-        )
+        result += parameterisedVolumes(rDaughter, oDaughter, tests, iatr, testsAlreadyDone)
     else:
         # LN: don't know what to SkinSurface, BorderSurface and Loop
         pass
-    testsAlreadyDone.append(
-        ("daughter_test_" + rDaughter.name, "daughter_test_" + oDaughter.name)
-    )
+    testsAlreadyDone.append(("daughter_test_" + rDaughter.name, "daughter_test_" + oDaughter.name))
 
     return result
 
@@ -723,9 +682,7 @@ def _testDaughterNameSets(
         if len(extraNames) > 1:
             details += "s "
         details += "[" + ", ".join(extraNames) + "]"
-        result["extraDaughter"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["extraDaughter"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["extraDaughter"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -735,9 +692,7 @@ def _testDaughterNameSets(
         if len(missingNames) > 1:
             details += "s "
         details += "[" + ", ".join(missingNames) + "]"
-        result["missingDaughter"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["missingDaughter"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["missingDaughter"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -760,9 +715,7 @@ def replicaVolumes(
     testName = ": ".join(["(rv)", rrv.name])
 
     if tests.names:
-        result += _names(
-            "replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults
-        )
+        result += _names("replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer(
             "replicaVolumeName", rrv.name, orv.name, testName, includeAllTestResults
@@ -804,13 +757,9 @@ def replicaVolumes(
 
     # n replicas
     if rrv.nreplicas != orv.nreplicas:
-        details = (
-            "replica N replicas in '" + rrv.name + "': (ref): " + str(rrv.nreplicas)
-        )
+        details = "replica N replicas in '" + rrv.name + "': (ref): " + str(rrv.nreplicas)
         details += ", (other): " + str(orv.nreplicas)
-        result["replicaNReplicas"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["replicaNReplicas"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["replicaNReplicas"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -818,9 +767,7 @@ def replicaVolumes(
     if rrv.width != orv.width:
         details = "replica width in '" + rrv.name + "': (ref): " + str(rrv.width)
         details += ", (other): " + str(orv.width)
-        result["replicaWidth"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["replicaWidth"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["replicaWidth"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -828,9 +775,7 @@ def replicaVolumes(
     if rrv.offset != orv.offset:
         details = "replica offset in '" + rrv.name + "': (ref): " + str(rrv.offset)
         details += ", (other): " + str(orv.offset)
-        result["replicaOffset"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["replicaOffset"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["replicaOffset"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -838,9 +783,7 @@ def replicaVolumes(
     if rrv.wunit != orv.wunit:
         details = "replicaWUnit in '" + rrv.name + "': (ref): " + str(rrv.wunit)
         details += ", (other): " + str(orv.wunit)
-        result["replicaWUnit"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["replicaWUnit"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["replicaWUnit"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -848,9 +791,7 @@ def replicaVolumes(
     if rrv.ounit != orv.ounit:
         details = "replicaOUnit '" + rrv.name + "': (ref): " + str(rrv.ounit)
         details += ", (other): " + str(orv.ounit)
-        result["replicaOUnit"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["replicaOUnit"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["replicaOunit"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -859,9 +800,7 @@ def replicaVolumes(
     return result
 
 
-def divisionVolumes(
-    referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]
-):
+def divisionVolumes(referenceRV, otherRV, tests, includeAllTestResults=False, testsAlreadyDone=[]):
     """
     Compare two DivisionVolume instances with a set of tests.
     """
@@ -903,9 +842,7 @@ def materials(
     testName = ": ".join(list(filter(None, [lvName, "(material)", rm.name])))
 
     if tests.names:
-        result += _names(
-            "materialName", rm.name, om.name, testName, includeAllTestResults
-        )
+        result += _names("materialName", rm.name, om.name, testName, includeAllTestResults)
     if tests.namesIgnorePointer:
         result += _namesIgnorePointer(
             "materialName", rm.name, om.name, testName, includeAllTestResults
@@ -913,33 +850,18 @@ def materials(
 
     if tests.materialClassType:
         if type(om) != type(rm):
-            details = (
-                "material type: (reference): "
-                + str(type(rm))
-                + ", (other): "
-                + str(type(om))
-            )
-            result["materialType"] += [
-                TestResultNamed(testName, TestResult.Failed, details)
-            ]
+            details = "material type: (reference): " + str(type(rm)) + ", (other): " + str(type(om))
+            result["materialType"] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result["materialType"] += [TestResultNamed(testName, TestResult.Passed)]
 
     if rm.type == "nist" or om.type == "nist":
         # just because one of them's NIST, doesn't mean the other isn't a different (NIST) material.. check!
-        result += _names(
-            "materialNameNIST", rm.name, om.name, lvName, includeAllTestResults
-        )
+        result += _names("materialNameNIST", rm.name, om.name, lvName, includeAllTestResults)
         if includeAllTestResults:
-            result["materialDensity"] += [
-                TestResultNamed(testName, TestResult.NotTested)
-            ]
-            result["materialNComponents"] += [
-                TestResultNamed(testName, TestResult.NotTested)
-            ]
-            result["materialComponentType"] += [
-                TestResultNamed(testName, TestResult.NotTested)
-            ]
+            result["materialDensity"] += [TestResultNamed(testName, TestResult.NotTested)]
+            result["materialNComponents"] += [TestResultNamed(testName, TestResult.NotTested)]
+            result["materialComponentType"] += [TestResultNamed(testName, TestResult.NotTested)]
             result["materialComponentMassFraction"] += [
                 TestResultNamed(testName, TestResult.NotTested)
             ]
@@ -950,15 +872,8 @@ def materials(
     dDensity = om.density - rm.density
     if dDensity != 0:  # avoid zero division
         if abs(dDensity / rm.density) > tests.toleranceMaterialDensityFraction:
-            details = (
-                "density: (reference): "
-                + str(rm.density)
-                + ", (other): "
-                + str(om.density)
-            )
-            result["materialDensity"] += [
-                TestResultNamed(testName, TestResult.Failed, details)
-            ]
+            details = "density: (reference): " + str(rm.density) + ", (other): " + str(om.density)
+            result["materialDensity"] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result["materialDensity"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -966,9 +881,7 @@ def materials(
     if om.number_of_components != rm.number_of_components:
         details = "# components: (reference): " + str(rm.number_of_components)
         details += ", (other): " + str(om.number_of_components)
-        result["materialNComponents"] += [
-            TestResultNamed(testName, TestResult.Failed, details)
-        ]
+        result["materialNComponents"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["materialNComponents"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -988,33 +901,22 @@ def materials(
             rComponentType, oComponentType = rc[2], oc[2]
             if rComponentType != oComponentType:
                 if tests.materialCompositionType:
-                    details = "material component type: (reference): " + str(
-                        rComponentType
-                    )
+                    details = "material component type: (reference): " + str(rComponentType)
                     details += ", (other): " + str(oComponentType)
                     result["materialComponentType"] += [
                         TestResultNamed(testName, TestResult.Failed, details)
                     ]
                 break  # we can't possibly make a more detailed comparison now
             elif includeAllTestResults:
-                result["materialComponentType"] += [
-                    TestResultNamed(testName, TestResult.Passed)
-                ]
+                result["materialComponentType"] += [TestResultNamed(testName, TestResult.Passed)]
 
             # component fraction
             rFrac, oFrac = rc[1], oc[1]
             if rComponentType == "natoms":
                 # integer comparison
                 if rFrac != oFrac:
-                    details = (
-                        "natoms: component (i): "
-                        + str(i)
-                        + ", named: "
-                        + str(rc[0].name)
-                    )
-                    details += (
-                        ": (reference): " + str(rFrac) + ", (other): " + str(oFrac)
-                    )
+                    details = "natoms: component (i): " + str(i) + ", named: " + str(rc[0].name)
+                    details += ": (reference): " + str(rFrac) + ", (other): " + str(oFrac)
                     result["materialComponentNAtoms"] += [
                         TestResultNamed(testName, TestResult.Failed, details)
                     ]
@@ -1033,9 +935,7 @@ def materials(
                             + ", named: "
                             + str(rc[0].name)
                         )
-                        details += (
-                            ": (reference): " + str(rFrac) + ", (other): " + str(oFrac)
-                        )
+                        details += ": (reference): " + str(rFrac) + ", (other): " + str(oFrac)
                         result["materialComponentMassFraction"] += [
                             TestResultNamed(testName, TestResult.Failed, details)
                         ]
@@ -1056,9 +956,7 @@ def materials(
     return result
 
 
-def _elements(
-    referenceElement, otherElement, tests, lvName="", includeAllTestResults=False
-):
+def _elements(referenceElement, otherElement, tests, lvName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     re = referenceElement
@@ -1074,9 +972,7 @@ def _elements(
         )
 
     if re.type != oe.type:
-        details = (
-            "element type: (reference): " + str(re.type) + ", (other): " + str(oe.type)
-        )
+        details = "element type: (reference): " + str(re.type) + ", (other): " + str(oe.type)
         result["elementType"] += [TestResultNamed(testName, TestResult.Failed, details)]
     elif includeAllTestResults:
         result["elementType"] += [TestResultNamed(testName, TestResult.Passed)]
@@ -1086,22 +982,14 @@ def _elements(
         if re.type == "simple":
             # compare A
             if re.A != re.A:
-                details = (
-                    "element A: (reference): " + str(re.A) + ", (other): " + str(oe.A)
-                )
-                result["elementA"] += [
-                    TestResultNamed(testName, TestResult.Failed, details)
-                ]
+                details = "element A: (reference): " + str(re.A) + ", (other): " + str(oe.A)
+                result["elementA"] += [TestResultNamed(testName, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["elementA"] += [TestResultNamed(testName, TestResult.Passed)]
             # compare Z
             if re.Z != re.Z:
-                details = (
-                    "element Z: (reference): " + str(re.Z) + ", (other): " + str(oe.Z)
-                )
-                result["elementZ"] += [
-                    TestResultNamed(testName, TestResult.Failed, details)
-                ]
+                details = "element Z: (reference): " + str(re.Z) + ", (other): " + str(oe.Z)
+                result["elementZ"] += [TestResultNamed(testName, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["elementZ"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -1113,9 +1001,7 @@ def _elements(
                     + ", (other): "
                     + str(oe.n_comp)
                 )
-                result["elementNComp"] += [
-                    TestResultNamed(testName, TestResult.Failed, details)
-                ]
+                result["elementNComp"] += [TestResultNamed(testName, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["elementNComp"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -1146,15 +1032,8 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
     if tests.solidExact:
         # solid type
         if rso.type != oso.type:
-            details = (
-                "solid type: (reference): "
-                + str(rso.type)
-                + ", (other): "
-                + str(oso.type)
-            )
-            result["solidExactType"] += [
-                TestResultNamed(testName, TestResult.Failed, details)
-            ]
+            details = "solid type: (reference): " + str(rso.type) + ", (other): " + str(oso.type)
+            result["solidExactType"] += [TestResultNamed(testName, TestResult.Failed, details)]
         elif includeAllTestResults:
             result["solidExactType"] += [TestResultNamed(testName, TestResult.Passed)]
 
@@ -1171,9 +1050,7 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
                     nonlocal problem
                     aDifference = dv != 0
                     if aDifference:
-                        problem = problem or (
-                            abs(dv / v1) > tests.toleranceSolidParameterFraction
-                        )
+                        problem = problem or (abs(dv / v1) > tests.toleranceSolidParameterFraction)
 
                 def ProblemLength(v1, v2):
                     """Report if length of iterable list or tuple is different."""
@@ -1222,9 +1099,7 @@ def solids(referenceSolid, otherSolid, tests, lvName="", includeAllTestResults=F
                         TestResultNamed(testName, TestResult.Failed, details)
                     ]
                 elif includeAllTestResults:
-                    result["solidExactParameter"] += [
-                        TestResultNamed(testName, TestResult.Passed)
-                    ]
+                    result["solidExactParameter"] += [TestResultNamed(testName, TestResult.Passed)]
     elif includeAllTestResults:
         result["solidExactType"] += [TestResultNamed(testName, TestResult.NotTested)]
 
@@ -1247,18 +1122,14 @@ def _names(testName, str1, str2, parentName="", includeAllTestResults=False):
         ]
     elif includeAllTestResults:
         result[testName] = [
-            TestResultNamed(
-                ": ".join(list(filter(None, [parentName, str1]))), TestResult.Passed
-            )
+            TestResultNamed(": ".join(list(filter(None, [parentName, str1]))), TestResult.Passed)
         ]
 
     result.result = result.result | TestResult.Passed
     return result
 
 
-def _namesIgnorePointer(
-    testName, str1, str2, parentName="", includeAllTestResults=False
-):
+def _namesIgnorePointer(testName, str1, str2, parentName="", includeAllTestResults=False):
     result = ComparisonResult()
 
     testName += "IgnorePointer"
@@ -1308,8 +1179,7 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
             drc2pi = abs(drc - 360.0 * _Units.unit("deg"))
             if drc != 0 and drc2pi != 0:
                 if (
-                    (rc != 0 and (drc / rc) > tolerance)
-                    or (oc != 0 and (drc / oc) > tolerance)
+                    (rc != 0 and (drc / rc) > tolerance) or (oc != 0 and (drc / oc) > tolerance)
                 ) and (
                     (rc != 0 and (drc2pi / rc) > tolerance)
                     or (oc != 0 and (drc2pi / oc) > tolerance)
@@ -1326,9 +1196,7 @@ def _vector(vectortype, r1, r2, tests, parentName="", includeAllTestResults=Fals
         else:
             # otherwise we just check against zero
             if drc != 0:
-                if (rc != 0 and (drc / rc) > tolerance) or (
-                    oc != 0 and (drc / oc) > tolerance
-                ):
+                if (rc != 0 and (drc / rc) > tolerance) or (oc != 0 and (drc / oc) > tolerance):
                     details = v + ": (reference): " + str(rc) + ", (other): " + str(oc)
                     result[vectortype] += [
                         TestResultNamed(
@@ -1401,16 +1269,8 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                         abs(dMin / rmMin[i]) if rmMin[i] != 0 else abs(dMin)
                     )  # rmMax[i] may be 0 -> zero division error
                     if tv > tests.toleranceSolidExtentFraction:
-                        details = (
-                            "axis-aligned bounding box lower edge: dimension: "
-                            + labels[i]
-                        )
-                        details += (
-                            ", (reference): "
-                            + str(rmMin[i])
-                            + ", (other): "
-                            + str(omMin[i])
-                        )
+                        details = "axis-aligned bounding box lower edge: dimension: " + labels[i]
+                        details += ", (reference): " + str(rmMin[i]) + ", (other): " + str(omMin[i])
                         result["shapeExtentBoundingBoxMin"] += [
                             TestResultNamed(lvname, TestResult.Failed, details)
                         ]
@@ -1420,16 +1280,8 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                         abs(dMax / rmMax[i]) if rmMax[i] != 0 else abs(dMax)
                     )  # rmMax[i] may be 0 -> zero division error
                     if tv > tests.toleranceSolidExtentFraction:
-                        details = (
-                            "axis-aligned bounding box upper edge: dimension: "
-                            + labels[i]
-                        )
-                        details += (
-                            ", (reference): "
-                            + str(rmMax[i])
-                            + ", (other): "
-                            + str(omMax[i])
-                        )
+                        details = "axis-aligned bounding box upper edge: dimension: " + labels[i]
+                        details += ", (reference): " + str(rmMax[i]) + ", (other): " + str(omMax[i])
                         result["shapeExtentBoundingBoxMax"] += [
                             TestResultNamed(lvname, TestResult.Failed, details)
                         ]
@@ -1437,9 +1289,7 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
-            result["shapeExtent"] += [
-                TestResultNamed(lvname, TestResult.NotTested, "no meshes")
-            ]
+            result["shapeExtent"] += [TestResultNamed(lvname, TestResult.NotTested, "no meshes")]
 
     if tests.shapeVolume:
         if rm and om:
@@ -1450,9 +1300,7 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
             dVolume = oVolume - rVolume
             dVolumeFraction = abs(dVolume) / rVolume
             if dVolumeFraction > tests.toleranceVolumeFraction:
-                details = (
-                    "volume difference greater than fractional tolerance, (reference): "
-                )
+                details = "volume difference greater than fractional tolerance, (reference): "
                 details += (
                     str(rVolume)
                     + ", (other): "
@@ -1460,18 +1308,14 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                     + ", fractional difference is: "
                     + str(dVolumeFraction)
                 )
-                result["shapeVolume"] += [
-                    TestResultNamed(lvname, TestResult.Failed, details)
-                ]
+                result["shapeVolume"] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["shapeVolume"] += [TestResultNamed(lvname, TestResult.NotTested)]
             result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
             details = "one or both meshes unavailable for: " + lvname
-            result["shapeVolume"] += [
-                TestResultNamed(lvname, TestResult.NotTested, details)
-            ]
+            result["shapeVolume"] += [TestResultNamed(lvname, TestResult.NotTested, details)]
 
     if tests.shapeArea:
         if rm and om:
@@ -1490,17 +1334,13 @@ def _meshes(lvname, referenceMesh, otherMesh, tests, includeAllTestResults=False
                     + ", fractional difference is: "
                     + str(dAreaFraction)
                 )
-                result["shapeArea"] += [
-                    TestResultNamed(lvname, TestResult.Failed, details)
-                ]
+                result["shapeArea"] += [TestResultNamed(lvname, TestResult.Failed, details)]
             elif includeAllTestResults:
                 result["shapeArea"] += [TestResultNamed(lvname, TestResult.NotTested)]
             result.result = result.result | TestResult.Passed
         else:
             # explicitly flag as we were meant to test but can't
             details = "one or both meshes unavailable for: " + lvname
-            result["shapeArea"] += [
-                TestResultNamed(lvname, TestResult.NotTested, details)
-            ]
+            result["shapeArea"] += [TestResultNamed(lvname, TestResult.NotTested, details)]
 
     return result

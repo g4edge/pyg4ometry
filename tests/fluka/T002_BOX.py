@@ -8,9 +8,7 @@ def Test(vis=False, interactive=False):
 
     # box with corner at the origin and sides of length 20 extending
     # along the axes
-    box = BOX(
-        "BOX_BODY", [0, 0, 0], [20, 0, 0], [0, 20, 0], [0, 0, 20], flukaregistry=freg
-    )
+    box = BOX("BOX_BODY", [0, 0, 0], [20, 0, 0], [0, 20, 0], [0, 0, 20], flukaregistry=freg)
     z = Zone()
     z.addIntersection(box)
     region = Region("BOX_REG")

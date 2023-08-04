@@ -46,12 +46,8 @@ def Test(printOut=False):
     miniBox2LV = _g4.LogicalVolume(miniBox1, galactic1, "mb2_lv", r1)
     miniBox3 = _g4.solid.Box("mb3", 3, 2, 1, r1)
     miniBox3LV = _g4.LogicalVolume(miniBox1, galactic1, "mb3_lv", r1)
-    miniBox1PV1 = _g4.PhysicalVolume(
-        [0, 0.1, 0], [-1, 0, -10], miniBox1LV, "mb1_pv1", tl1, r1
-    )
-    miniBox1PV2 = _g4.PhysicalVolume(
-        [0, -0.1, 0], [5, 0, 10], miniBox1LV, "mb1_pv2", tl1, r1
-    )
+    miniBox1PV1 = _g4.PhysicalVolume([0, 0.1, 0], [-1, 0, -10], miniBox1LV, "mb1_pv1", tl1, r1)
+    miniBox1PV2 = _g4.PhysicalVolume([0, -0.1, 0], [5, 0, 10], miniBox1LV, "mb1_pv2", tl1, r1)
     miniBox1PV3 = _g4.PhysicalVolume(
         [0.1, -0.1, 3.14159265],
         [-5, 0, 30],
@@ -104,9 +100,7 @@ def Test(printOut=False):
     assert len(comp5) == 0
 
     # extra placement in 2nd one now
-    miniBox12PV4 = _g4.PhysicalVolume(
-        [0, 0, 0], [-5, 0, 40], miniBox12LV, "mb1_pv4", tl2, r2
-    )
+    miniBox12PV4 = _g4.PhysicalVolume([0, 0, 0], [-5, 0, 40], miniBox12LV, "mb1_pv4", tl2, r2)
     comp6 = pyg4ometry.compare.logicalVolumes(tl1, tl2, tests, recursive=True)
     if printOut:
         comp6.print()

@@ -25,6 +25,7 @@ repos:
     rev: "23.3.0"
     hooks:
       - id: black-jupyter
+        args: ["--line-length", "100"]
 
   - repo: https://github.com/asottile/blacken-docs
     rev: "1.14.0"

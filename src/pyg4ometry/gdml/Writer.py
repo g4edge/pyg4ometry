@@ -44,9 +44,7 @@ class Writer:
             # Geant4 version earlier than 10.1 do not support userinfo
             # If no user info is specified, remove the userinfo tag from the GDML document
             # This is done here, because the registry is not available at construction time
-            self.top.removeChild(
-                [n for n in self.top.childNodes if n.tagName == "userinfo"][0]
-            )
+            self.top.removeChild([n for n in self.top.childNodes if n.tagName == "userinfo"][0])
 
         # Set the world again to force a refresh on the
         # ordering of logical volumes
@@ -132,11 +130,7 @@ class Writer:
         s = "d1: drift, l=0.01*cm;\n"
         s += f'e1: element, geometry="gdml:{filenameGDML}'
         if "GDML_Size_position_z" in self.registry.defineDict:
-            s += (
-                '", l='
-                + str(self.registry.defineDict["GDML_Size_position_z"].value)
-                + "*mm;\n"
-            )
+            s += '", l=' + str(self.registry.defineDict["GDML_Size_position_z"].value) + "*mm;\n"
         else:
             # be super tolerant incase the meshing fails - still write out
             try:
@@ -187,9 +181,7 @@ option, preprocessGDML=0;
     def checkPhysicalVolumeName(self, physicalVolumeName):
         pass
 
-    def writeVectorVariable(
-        self, node, vector_var, allow_ref=True, suppress_trivial=True
-    ):
+    def writeVectorVariable(self, node, vector_var, allow_ref=True, suppress_trivial=True):
         """
         Writes an XML child node for a vector variable - position, rotation, scale.
         If allow_ref is enabled, it will write a ref to a registry define where possible.
@@ -255,12 +247,9 @@ option, preprocessGDML=0;
             oe.appendChild(tn)
             self.defines.appendChild(oe)
         elif any(
-            isinstance(define, d)
-            for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]
+            isinstance(define, d) for d in [_Defines.Position, _Defines.Rotation, _Defines.Scale]
         ):
-            self.writeVectorVariable(
-                self.defines, define, allow_ref=False, suppress_trivial=False
-            )
+            self.writeVectorVariable(self.defines, define, allow_ref=False, suppress_trivial=False)
         else:
             msg = f"Unrecognised define type: {type(define)}"
             raise Exception(msg)
@@ -641,9 +630,7 @@ option, preprocessGDML=0;
 
             dim = self.doc.createElement(f"{dim_solid}_dimensions")
             for name in dim_names:
-                dim.setAttribute(
-                    dim_names[name], self.getValueOrExprFromInstance(params, name)
-                )
+                dim.setAttribute(dim_names[name], self.getValueOrExprFromInstance(params, name))
             for unit in ["lunit", "aunit"]:
                 if hasattr(params, unit):
                     dim.setAttribute(unit, getattr(params, unit))
@@ -766,24 +753,12 @@ option, preprocessGDML=0;
         oe.setAttribute("rmax", self.getValueOrExprFromInstance(instance, "pRMax"))
         oe.setAttribute("startphi", self.getValueOrExprFromInstance(instance, "pSPhi"))
         oe.setAttribute("deltaphi", self.getValueOrExprFromInstance(instance, "pDPhi"))
-        oe.setAttribute(
-            "lowX", self.getValueOrExprFromInstance(instance, "pLowNorm", 0)
-        )
-        oe.setAttribute(
-            "lowY", self.getValueOrExprFromInstance(instance, "pLowNorm", 1)
-        )
-        oe.setAttribute(
-            "lowZ", self.getValueOrExprFromInstance(instance, "pLowNorm", 2)
-        )
-        oe.setAttribute(
-            "highX", self.getValueOrExprFromInstance(instance, "pHighNorm", 0)
-        )
-        oe.setAttribute(
-            "highY", self.getValueOrExprFromInstance(instance, "pHighNorm", 1)
-        )
-        oe.setAttribute(
-            "highZ", self.getValueOrExprFromInstance(instance, "pHighNorm", 2)
-        )
+        oe.setAttribute("lowX", self.getValueOrExprFromInstance(instance, "pLowNorm", 0))
+        oe.setAttribute("lowY", self.getValueOrExprFromInstance(instance, "pLowNorm", 1))
+        oe.setAttribute("lowZ", self.getValueOrExprFromInstance(instance, "pLowNorm", 2))
+        oe.setAttribute("highX", self.getValueOrExprFromInstance(instance, "pHighNorm", 0))
+        oe.setAttribute("highY", self.getValueOrExprFromInstance(instance, "pHighNorm", 1))
+        oe.setAttribute("highZ", self.getValueOrExprFromInstance(instance, "pHighNorm", 2))
         oe.setAttribute("lunit", instance.lunit)
         oe.setAttribute("aunit", instance.aunit)
         self.solids.appendChild(oe)
@@ -794,9 +769,7 @@ option, preprocessGDML=0;
         oe.setAttribute("ax", self.getValueOrExprFromInstance(instance, "pxSemiAxis"))
         oe.setAttribute("by", self.getValueOrExprFromInstance(instance, "pySemiAxis"))
         oe.setAttribute("cz", self.getValueOrExprFromInstance(instance, "pzSemiAxis"))
-        oe.setAttribute(
-            "zcut1", self.getValueOrExprFromInstance(instance, "pzBottomCut")
-        )
+        oe.setAttribute("zcut1", self.getValueOrExprFromInstance(instance, "pzBottomCut"))
         oe.setAttribute("zcut2", self.getValueOrExprFromInstance(instance, "pzTopCut"))
         oe.setAttribute("lunit", instance.lunit)
         self.solids.appendChild(oe)
@@ -885,9 +858,7 @@ option, preprocessGDML=0;
         oe.setAttribute("name", self.prepend + instance.name)
         oe.setAttribute("startphi", self.getValueOrExprFromInstance(instance, "pSPhi"))
         oe.setAttribute("deltaphi", self.getValueOrExprFromInstance(instance, "pDPhi"))
-        oe.setAttribute(
-            "numsides", self.getValueOrExprFromInstance(instance, "numSide")
-        )
+        oe.setAttribute("numsides", self.getValueOrExprFromInstance(instance, "numSide"))
 
         for r, z in zip(instance.pR, instance.pZ):
             p = self.createrzPoint(r, z)
@@ -951,9 +922,7 @@ option, preprocessGDML=0;
                     self.writeDefine(_Defines.Position(defname, v[0], v[1], v[2]))
 
                 oe.appendChild(
-                    self.createTriangularFacet(
-                        vertex_names[0], vertex_names[1], vertex_names[2]
-                    )
+                    self.createTriangularFacet(vertex_names[0], vertex_names[1], vertex_names[2])
                 )
 
         self.solids.appendChild(oe)
@@ -961,19 +930,11 @@ option, preprocessGDML=0;
     def writeHype(self, instance):
         oe = self.doc.createElement("hype")
         oe.setAttribute("name", self.prepend + instance.name)
-        oe.setAttribute(
-            "rmin", self.getValueOrExprFromInstance(instance, "innerRadius")
-        )
-        oe.setAttribute(
-            "rmax", self.getValueOrExprFromInstance(instance, "outerRadius")
-        )
+        oe.setAttribute("rmin", self.getValueOrExprFromInstance(instance, "innerRadius"))
+        oe.setAttribute("rmax", self.getValueOrExprFromInstance(instance, "outerRadius"))
         oe.setAttribute("z", self.getValueOrExprFromInstance(instance, "lenZ"))
-        oe.setAttribute(
-            "inst", self.getValueOrExprFromInstance(instance, "innerStereo")
-        )
-        oe.setAttribute(
-            "outst", self.getValueOrExprFromInstance(instance, "outerStereo")
-        )
+        oe.setAttribute("inst", self.getValueOrExprFromInstance(instance, "innerStereo"))
+        oe.setAttribute("outst", self.getValueOrExprFromInstance(instance, "outerStereo"))
         oe.setAttribute("lunit", instance.lunit)
         oe.setAttribute("aunit", instance.aunit)
         self.solids.appendChild(oe)
@@ -1088,9 +1049,7 @@ option, preprocessGDML=0;
         oe.setAttribute("name", self.prepend + instance.name)
         oe.setAttribute("startphi", self.getValueOrExprFromInstance(instance, "pSPhi"))
         oe.setAttribute("deltaphi", self.getValueOrExprFromInstance(instance, "pDPhi"))
-        oe.setAttribute(
-            "numsides", self.getValueOrExprFromInstance(instance, "numSide")
-        )
+        oe.setAttribute("numsides", self.getValueOrExprFromInstance(instance, "numSide"))
 
         i = instance
         for w, x, y in zip(i.rInner, i.rOuter, i.zPlane):
@@ -1109,12 +1068,8 @@ option, preprocessGDML=0;
         oe.setAttribute("rmax", self.getValueOrExprFromInstance(instance, "pRmax"))
         oe.setAttribute("deltaphi", self.getValueOrExprFromInstance(instance, "pDPhi"))
         oe.setAttribute("startphi", self.getValueOrExprFromInstance(instance, "pSPhi"))
-        oe.setAttribute(
-            "starttheta", self.getValueOrExprFromInstance(instance, "pSTheta")
-        )
-        oe.setAttribute(
-            "deltatheta", self.getValueOrExprFromInstance(instance, "pDTheta")
-        )
+        oe.setAttribute("starttheta", self.getValueOrExprFromInstance(instance, "pSTheta"))
+        oe.setAttribute("deltatheta", self.getValueOrExprFromInstance(instance, "pDTheta"))
 
         oe.setAttribute("lunit", instance.lunit)
         oe.setAttribute("aunit", instance.aunit)
@@ -1159,9 +1114,7 @@ option, preprocessGDML=0;
         oe = self.doc.createElement("tet")
         uniqueName = self.prepend + instance.name
         oe.setAttribute("name", uniqueName)
-        v1 = self.createPosition(
-            uniqueName + "_v1", j.anchor[0], j.anchor[1], j.anchor[2]
-        )
+        v1 = self.createPosition(uniqueName + "_v1", j.anchor[0], j.anchor[1], j.anchor[2])
         self.defines.appendChild(v1)
         v2 = self.createPosition(uniqueName + "_v2", j.p2[0], j.p2[1], j.p2[2])
         self.defines.appendChild(v2)
@@ -1241,9 +1194,7 @@ option, preprocessGDML=0;
     def writeTwistedBox(self, instance):
         oe = self.doc.createElement("twistedbox")
         oe.setAttribute("name", self.prepend + instance.name)
-        oe.setAttribute(
-            "PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle")
-        )
+        oe.setAttribute("PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle"))
         oe.setAttribute("x", self.getValueOrExprFromInstance(instance, "pDx"))
         oe.setAttribute("y", self.getValueOrExprFromInstance(instance, "pDy"))
         oe.setAttribute("z", self.getValueOrExprFromInstance(instance, "pDz"))
@@ -1256,9 +1207,7 @@ option, preprocessGDML=0;
     def writeTwistedTrd(self, instance):
         oe = self.doc.createElement("twistedtrd")
         oe.setAttribute("name", self.prepend + instance.name)
-        oe.setAttribute(
-            "PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle")
-        )
+        oe.setAttribute("PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle"))
         oe.setAttribute("x1", "2*" + self.getValueOrExprFromInstance(instance, "pDx1"))
         oe.setAttribute("x2", "2*" + self.getValueOrExprFromInstance(instance, "pDx2"))
         oe.setAttribute("y1", "2*" + self.getValueOrExprFromInstance(instance, "pDy1"))
@@ -1273,9 +1222,7 @@ option, preprocessGDML=0;
     def writeTwistedTrap(self, instance):
         oe = self.doc.createElement("twistedtrap")
         oe.setAttribute("name", self.prepend + instance.name)
-        oe.setAttribute(
-            "PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle")
-        )
+        oe.setAttribute("PhiTwist", self.getValueOrExprFromInstance(instance, "twistedAngle"))
         oe.setAttribute("z", self.getValueOrExprFromInstance(instance, "pDz"))
         oe.setAttribute("Theta", self.getValueOrExprFromInstance(instance, "pTheta"))
         oe.setAttribute("Phi", self.getValueOrExprFromInstance(instance, "pDPhi"))
@@ -1295,17 +1242,11 @@ option, preprocessGDML=0;
     def writeTwistedTubs(self, instance):
         oe = self.doc.createElement("twistedtubs")
         oe.setAttribute("name", self.prepend + instance.name)
-        oe.setAttribute(
-            "endinnerrad", self.getValueOrExprFromInstance(instance, "endinnerrad")
-        )
-        oe.setAttribute(
-            "endouterrad", self.getValueOrExprFromInstance(instance, "endouterrad")
-        )
+        oe.setAttribute("endinnerrad", self.getValueOrExprFromInstance(instance, "endinnerrad"))
+        oe.setAttribute("endouterrad", self.getValueOrExprFromInstance(instance, "endouterrad"))
         oe.setAttribute("zlen", self.getValueOrExprFromInstance(instance, "zlen"))
         oe.setAttribute("phi", self.getValueOrExprFromInstance(instance, "phi"))
-        oe.setAttribute(
-            "twistedangle", self.getValueOrExprFromInstance(instance, "twistedangle")
-        )
+        oe.setAttribute("twistedangle", self.getValueOrExprFromInstance(instance, "twistedangle"))
 
         oe.setAttribute("lunit", instance.lunit)
         oe.setAttribute("aunit", instance.aunit)

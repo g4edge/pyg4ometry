@@ -40,9 +40,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
 
         for region in self.regions:
             if self.boundary != region:
-                self.decomposed[region] = PolygonProcessing.decomposePolygon2d(
-                    self.regions[region]
-                )
+                self.decomposed[region] = PolygonProcessing.decomposePolygon2d(self.regions[region])
                 holes.append(self.regions[region])
 
         self.decomposed[self.boundary] = PolygonProcessing.decomposePolygon2dWithHoles(

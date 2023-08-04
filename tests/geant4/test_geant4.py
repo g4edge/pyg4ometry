@@ -236,9 +236,7 @@ def test_Python_ExceptionNullMeshErrorIntersection():
         s1 = pyg4ometry.geant4.solid.Box("s1", 10, 10, 10, reg, "mm")
         s2 = pyg4ometry.geant4.solid.Box("s2", 10, 10, 10, reg, "mm")
 
-        inter = pyg4ometry.geant4.solid.Intersection(
-            "inter", s1, s2, [[0, 0, 0], [0, 0, 0]], reg
-        )
+        inter = pyg4ometry.geant4.solid.Intersection("inter", s1, s2, [[0, 0, 0], [0, 0, 0]], reg)
         raise pyg4ometry.exceptions.NullMeshError(inter)
     except pyg4ometry.exceptions.NullMeshError:
         pass
@@ -252,9 +250,7 @@ def test_Python_ExceptionNullMeshErrorSubtraction():
         s1 = pyg4ometry.geant4.solid.Box("s1", 10, 10, 10, reg, "mm")
         s2 = pyg4ometry.geant4.solid.Box("s2", 10, 10, 10, reg, "mm")
 
-        subtra = pyg4ometry.geant4.solid.Subtraction(
-            "subtra", s1, s2, [[0, 0, 0], [0, 0, 0]], reg
-        )
+        subtra = pyg4ometry.geant4.solid.Subtraction("subtra", s1, s2, [[0, 0, 0], [0, 0, 0]], reg)
         raise pyg4ometry.exceptions.NullMeshError(subtra)
     except pyg4ometry.exceptions.NullMeshError:
         pass

@@ -16,9 +16,7 @@ def Test(vis=False, interactive=False):
     worldSolid = _g4.solid.Box("world_solid", 200, 200, 200, reg)
     worldLV = _g4.LogicalVolume(worldSolid, vacuum, "world_lv", reg)
 
-    asPV1 = _g4.PhysicalVolume(
-        [0, 0, 0], [0, -20, 0], assembly, "part_pv1", worldLV, reg
-    )
+    asPV1 = _g4.PhysicalVolume([0, 0, 0], [0, -20, 0], assembly, "part_pv1", worldLV, reg)
     asPV2 = _g4.PhysicalVolume(
         [0, _np.pi / 15, _np.pi / 6], [10, -20, 5], assembly, "part_pv2", worldLV, reg
     )
@@ -35,11 +33,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(
-            _os.path.dirname(__file__), "T304_overlap_assembly_volumetric.gdml"
-        )
-    )
+    w.write(_os.path.join(_os.path.dirname(__file__), "T304_overlap_assembly_volumetric.gdml"))
 
     # test __repr__
     str(worldSolid)

@@ -39,33 +39,23 @@ def test_GdmlDefine_UpgradeToVector():
     v = pyg4ometry.gdml.Defines.Position("v", 0, 0, 0, "mm", r, False)
 
     # vector
-    p = pyg4ometry.gdml.Defines.upgradeToVector(
-        v, r, "position", unit="", addRegistry=False
-    )
+    p = pyg4ometry.gdml.Defines.upgradeToVector(v, r, "position", unit="", addRegistry=False)
     assert p.eval() == [0, 0, 0]
 
     # list to position
-    p = pyg4ometry.gdml.Defines.upgradeToVector(
-        [0, 0, 0], r, "position", addRegistry=False
-    )
+    p = pyg4ometry.gdml.Defines.upgradeToVector([0, 0, 0], r, "position", addRegistry=False)
     assert p.eval() == [0, 0, 0]
 
     # list to rotation
-    p = pyg4ometry.gdml.Defines.upgradeToVector(
-        [0, 0, 0], r, "rotation", addRegistry=False
-    )
+    p = pyg4ometry.gdml.Defines.upgradeToVector([0, 0, 0], r, "rotation", addRegistry=False)
     assert p.eval() == [0, 0, 0]
 
     # list to scale
-    p = pyg4ometry.gdml.Defines.upgradeToVector(
-        [0, 0, 0], r, "scale", addRegistry=False
-    )
+    p = pyg4ometry.gdml.Defines.upgradeToVector([0, 0, 0], r, "scale", addRegistry=False)
     assert p.eval() == [0, 0, 0]
 
     # list to undefined
-    p = pyg4ometry.gdml.Defines.upgradeToVector(
-        [0, 0, 0], r, "undefined", addRegistry=False
-    )
+    p = pyg4ometry.gdml.Defines.upgradeToVector([0, 0, 0], r, "undefined", addRegistry=False)
     assert p is None
 
 

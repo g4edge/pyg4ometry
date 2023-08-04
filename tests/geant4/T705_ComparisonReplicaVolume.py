@@ -23,9 +23,7 @@ def Test(printOut=False):
 
     # different number of replicas
     r2 = _g4.Registry()
-    mbl2 = _g4.ReplicaVolume(
-        "mbl", bl, ml, _g4.ReplicaVolume.Axis.kXAxis, 7, 100, 0, r2
-    )
+    mbl2 = _g4.ReplicaVolume("mbl", bl, ml, _g4.ReplicaVolume.Axis.kXAxis, 7, 100, 0, r2)
     comp2 = pyg4ometry.compare.replicaVolumes(mbl, mbl2, tests)
     if printOut:
         comp2.print()
@@ -33,9 +31,7 @@ def Test(printOut=False):
 
     # different axis
     r3 = _g4.Registry()
-    mbl3 = _g4.ReplicaVolume(
-        "mbl", bl, ml, _g4.ReplicaVolume.Axis.kYAxis, 8, 100, 0, r3
-    )
+    mbl3 = _g4.ReplicaVolume("mbl", bl, ml, _g4.ReplicaVolume.Axis.kYAxis, 8, 100, 0, r3)
     comp3 = pyg4ometry.compare.replicaVolumes(mbl, mbl3, tests)
     if printOut:
         comp3.print()

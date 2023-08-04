@@ -35,9 +35,7 @@ def Test(vis=False, interactive=False, outputPath=None):
     bl1 = _g4.LogicalVolume(bs1, bm, "bl1", reg)
 
     bp1 = _g4.PhysicalVolume([0.0, 0, 0], [-bx, 0, 0], bl1, "b_pv1", wl, reg)
-    bp2 = _g4.PhysicalVolume(
-        [0.0, 0, 0], [bx, 0, 0], bl1, "b_pv2", wl, reg, True, [-1, 1, 1]
-    )
+    bp2 = _g4.PhysicalVolume([0.0, 0, 0], [bx, 0, 0], bl1, "b_pv2", wl, reg, True, [-1, 1, 1])
 
     # check overlaps
     wl.checkOverlaps(recursive=True)
