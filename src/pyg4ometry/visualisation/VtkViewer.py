@@ -92,10 +92,8 @@ class VtkViewer:
         # interpolation for vertex shading
         interps = ("none", "flat", "gouraud", "phong")
         if interpolation not in interps:
-            msg = (
-                "Unrecognised interpolation option {}. Possible options are :{}".format(
-                    interpolation, ", ".join(interps)
-                )
+            msg = "Unrecognised interpolation option {}. Possible options are :{}".format(
+                interpolation, ", ".join(interps)
             )
             raise ValueError(msg)
         self.interpolation = interpolation
@@ -181,9 +179,7 @@ class VtkViewer:
         _random.seed(seed)
 
         for a in self.actors:
-            a.GetProperty().SetColor(
-                _random.random(), _random.random(), _random.random()
-            )
+            a.GetProperty().SetColor(_random.random(), _random.random(), _random.random())
 
     def setCutterOrigin(self, dimension, origin):
         """
@@ -446,11 +442,7 @@ class VtkViewer:
         only the constituents can be shown.
         """
 
-        if (
-            solid.type == "Union"
-            or solid.type == "Subtraction"
-            or solid.type == "Intersection"
-        ):
+        if solid.type == "Union" or solid.type == "Subtraction" or solid.type == "Intersection":
             if first:
                 try:
                     mesh = solid.mesh()
@@ -523,9 +515,7 @@ class VtkViewer:
             xsize = max(x) - min(x)
             ysize = max(y) - min(y)
             zsize = max(z) - min(z)
-            t = -_np.array(
-                [min(x) + xsize / 2.0, min(y) + ysize / 2.0, min(z) + ysize / 2.0]
-            )
+            t = -_np.array([min(x) + xsize / 2.0, min(y) + ysize / 2.0, min(z) + ysize / 2.0])
             csgMesh.translate(t)
 
         self.addMesh(
@@ -566,9 +556,7 @@ class VtkViewer:
 
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(
-                    _transformation.tbxyz2matrix(pv.rotation.eval())
-                )
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
                 if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
                 else:
@@ -579,10 +567,7 @@ class VtkViewer:
                 new_mtra = mtra @ pvmsca @ pvmrot
                 new_tra = mtra @ pvtra + tra
 
-                if (
-                    pv.logicalVolume.type != "assembly"
-                    and pv.logicalVolume.mesh is not None
-                ):
+                if pv.logicalVolume.type != "assembly" and pv.logicalVolume.mesh is not None:
                     mesh = (
                         pv.logicalVolume.mesh.localmesh
                     )  # TODO implement a check if mesh has changed
@@ -1183,9 +1168,7 @@ class VtkViewerColouredMaterial(PubViewer):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(
-            *args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs
-        )
+        super().__init__(*args, materialVisOptions=_getPredefinedMaterialVisOptions(), **kwargs)
 
 
 class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):

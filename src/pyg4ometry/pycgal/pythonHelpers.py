@@ -64,10 +64,8 @@ def draw_polygon_2(p2):
         for p in p2:
             draw_polygon_2(p)
     elif (
-        type(p2)
-        == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK
-        or type(p2)
-        == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPICK
+        type(p2) == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK
+        or type(p2) == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPICK
     ):
         _draw_polygon_2(p2)
     else:

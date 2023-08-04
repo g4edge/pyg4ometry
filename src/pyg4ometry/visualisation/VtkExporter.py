@@ -194,9 +194,7 @@ class VtkExporter:
             )
             self.mbindexdico[self.element_name] = 0
 
-            self.add_logical_volume_recursive(
-                lv, rotation, translation, color_dico, False
-            )
+            self.add_logical_volume_recursive(lv, rotation, translation, color_dico, False)
 
         for element in self.mbdico.keys():
             self.elements.append(element)
@@ -208,9 +206,7 @@ class VtkExporter:
             writer.SetFileName(f"{self.path}/{element}.vtm")
             writer.Write()
 
-    def add_logical_volume_recursive(
-        self, lv, rotation, translation, color_dico, first_level=True
-    ):
+    def add_logical_volume_recursive(self, lv, rotation, translation, color_dico, first_level=True):
         """
         Method that receives a logical volume and add calls addMesh() on its mesh.
         The method is recursive and will be called on all the daughter logical volumes of the logical volume.
@@ -359,11 +355,7 @@ class VtkExporter:
         Returns: clean name of the logical volume
         """
         if "PREPENDworld_" in logicalVolumeName:
-            return (
-                logicalVolumeName.split("PREPENDworld_")[1]
-                .split("0x")[0]
-                .split("_lv")[0]
-            )
+            return logicalVolumeName.split("PREPENDworld_")[1].split("0x")[0].split("_lv")[0]
         if "PREPEND_" in logicalVolumeName:
             return logicalVolumeName.split("PREPEND_")[1].split("0x")[0].split("_lv")[0]
         else:

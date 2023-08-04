@@ -119,9 +119,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
         pvtra = _np.array(dv.position.eval())
         reflection = _np.diag([1, 1, 1])
         if dv.scale:
-            reflection = _np.diag(
-                [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
-            )
+            reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
         new_mtra = mtra @ pvmrot @ reflection
         new_tra = mtra @ reflection @ pvtra + tra
 
@@ -212,8 +210,7 @@ def geant4PhysicalVolume2Fluka(
     replicaCondition2 = False
     if replicaCondition1:  # can only do this if len > 0
         replicaCondition2 = (
-            type(physicalVolume.logicalVolume.daughterVolumes[0])
-            is _geant4.ReplicaVolume
+            type(physicalVolume.logicalVolume.daughterVolumes[0]) is _geant4.ReplicaVolume
         )
     itsAReplica = replicaCondition1 and replicaCondition2
     if itsAReplica:
@@ -225,9 +222,7 @@ def geant4PhysicalVolume2Fluka(
             pvtra = _np.array(dv.position.eval())
             reflection = _np.diag([1, 1, 1])
             if dv.scale:
-                reflection = _np.diag(
-                    [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
-                )
+                reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
             new_mtra = mtra @ pvmrot @ reflection
             new_tra = mtra @ reflection @ pvtra + tra
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
@@ -254,9 +249,7 @@ def geant4PhysicalVolume2Fluka(
             pvtra = _np.array(dv.position.eval())
             reflection = _np.diag([1, 1, 1])
             if dv.scale:
-                reflection = _np.diag(
-                    [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
-                )
+                reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
             new_mtra = mtra @ pvmrot @ reflection
             new_tra = mtra @ reflection @ pvtra + tra
 
@@ -316,9 +309,7 @@ def geant4Solid2FlukaRegion(
     rotation = _transformation.matrix2tbxyz(rotation)
     position = tra
 
-    transform = _rotoTranslationFromTra2(
-        "T" + name, [rotation, tra], flukaregistry=flukaRegistry
-    )
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
 
     commentName = commentName + " " + solid.name
 
@@ -652,9 +643,7 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Para":
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
         """
 
@@ -706,15 +695,11 @@ def geant4Solid2FlukaRegion(
         """
 
     elif solid.type == "Trd":
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "Trap":
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "Sphere":
@@ -1223,9 +1208,7 @@ def geant4Solid2FlukaRegion(
 
                 for k in range(0, len(zrListConvex[i]), 1):
                     k1 = k
-                    k2 = (k + 1) % len(
-                        zrListConvex[i]
-                    )  # cyclic index as polygon is closed
+                    k2 = (k + 1) % len(zrListConvex[i])  # cyclic index as polygon is closed
 
                     z1 = zrListConvex[i][k1][0]
                     r1 = zrListConvex[i][k1][1]
@@ -1630,9 +1613,7 @@ def geant4Solid2FlukaRegion(
 
     elif solid.type == "Tet":
         print("calling pycsgmesh2FlakaRegion tet")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
@@ -1783,37 +1764,27 @@ def geant4Solid2FlukaRegion(
 
     elif solid.type == "TwistedBox":
         print("calling pycsgmesh2FlakaRegion TwistedBox")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrap":
         print("calling pycsgmesh2FlakaRegion TwistedTrap")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrd":
         print("calling pycsgmesh2FlakaRegion TwistedTrd")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTubs":
         print("calling pycsgmesh2FlakaRegion TwistedTubs")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
         print("calling pycsgmesh2FlakaRegion GenericTrap")
-        fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, transform, flukaRegistry, commentName
-        )
+        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "Union":
@@ -2036,13 +2007,9 @@ def geant4Material2Fluka(
 
         elif materialInstance.type == "nist":
             # make material object from dictionary of information
-            nistMatInstance = _geant4.nist_material_2geant4Material(
-                materialInstance.name
-            )
+            nistMatInstance = _geant4.nist_material_2geant4Material(materialInstance.name)
             nistMatInstance.type = "composite"  # prevent recursion - Material internally decides if it's a nist material or not
-            return geant4Material2Fluka(
-                nistMatInstance, freg, materialNameShort=materialNameShort
-            )
+            return geant4Material2Fluka(nistMatInstance, freg, materialNameShort=materialNameShort)
 
         elif materialInstance.type == "arbitrary":
             msg = "Cannot have material with arbitrary type"
@@ -2135,9 +2102,7 @@ def geant4Material2Fluka(
                 flukaComponentFractions.append(compFraction)
                 iComp += 1
 
-            flukaComposition = [
-                (c, f) for c, f in zip(flukaComponents, flukaComponentFractions)
-            ]
+            flukaComposition = [(c, f) for c, f in zip(flukaComponents, flukaComponentFractions)]
 
             mat = _fluka.Compound(
                 materialNameShort,
@@ -2168,18 +2133,14 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName):
     polyhedron = _pycgal.Polyhedron_3.Polyhedron_3_EPECK()
     _pycgal.CGAL.copy_face_graph(mesh.sm, polyhedron)
     nef = _pycgal.Nef_polyhedron_3.Nef_polyhedron_3_EPECK(polyhedron)
-    convex_polyhedra = _pycgal.PolyhedronProcessing.nefPolyhedron_to_convexPolyhedra(
-        nef
-    )
+    convex_polyhedra = _pycgal.PolyhedronProcessing.nefPolyhedron_to_convexPolyhedra(nef)
 
     fregion = _fluka.Region("R" + name)
 
     ibody = 0
 
     for convex_polyhedron in convex_polyhedra:
-        planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(
-            convex_polyhedron
-        )
+        planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(convex_polyhedron)
 
         fzone = _fluka.Zone()
 

@@ -24,9 +24,7 @@ class RenderWriter:
         for pv in logical.daughterVolumes:
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(
-                    _transformation.tbxyz2matrix(pv.rotation.eval())
-                )
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
                 if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
                 else:
@@ -82,10 +80,7 @@ class RenderWriter:
                     .replace("]", "")
                 )
                 instancePosition = (
-                    str(instance["translation"])
-                    .replace("\n", "")
-                    .replace("[", "")
-                    .replace("]", "")
+                    str(instance["translation"]).replace("\n", "").replace("[", "").replace("]", "")
                 )
 
                 f.write(

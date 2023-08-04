@@ -84,17 +84,15 @@ class Tubs(_SolidBase):
         )
 
     def __str__(self):
-        return (
-            "Tubs : {} rmin={} rmax={} dz={} sphi={} dphi={} lunit={} aunit={}".format(
-                self.name,
-                float(self.pRMin),
-                float(self.pRMax),
-                float(self.pDz),
-                float(self.pSPhi),
-                float(self.pDPhi),
-                self.lunit,
-                self.aunit,
-            )
+        return "Tubs : {} rmin={} rmax={} dz={} sphi={} dphi={} lunit={} aunit={}".format(
+            self.name,
+            float(self.pRMin),
+            float(self.pRMax),
+            float(self.pDz),
+            float(self.pSPhi),
+            float(self.pDPhi),
+            self.lunit,
+            self.aunit,
         )
 
     def mesh(self):

@@ -228,9 +228,7 @@ def cli(
 
 def main():
     parser = OptionParser()
-    parser.add_option(
-        "-v", "--view", help="view geometry", action="store_true", dest="view"
-    )
+    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
     parser.add_option(
         "-b",
         "--bounding",
@@ -367,9 +365,7 @@ def main():
         dest="featureExtactOutputFileName",
         metavar="FEATUREFILE",
     )
-    parser.add_option(
-        "-V", "--verbose", help="verbose script", dest="verbose", action="store_true"
-    )
+    parser.add_option("-V", "--verbose", help="verbose script", dest="verbose", action="store_true")
     parser.add_option(
         "-S",
         "--gltfScale",

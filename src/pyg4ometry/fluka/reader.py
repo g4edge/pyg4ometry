@@ -332,9 +332,7 @@ class Reader:
             # Do the material assignment
             # Add 1 to index as the bound is open on the upper bound
             # in python, but closed in the ASSIGMA case of fluka.
-            self.flukaregistry.assignma(
-                material_name, *regionlist[start : stop + 1 : step]
-            )
+            self.flukaregistry.assignma(material_name, *regionlist[start : stop + 1 : step])
 
     def _parseLattice(self):
         for card in self.cards:
@@ -457,9 +455,7 @@ def _getConstituentMaterialNamesFromCompound(compoundCards):
     return constituents
 
 
-def _make_body(
-    body_parts, expansion_stack, translation_stack, transform_stack, flukareg
-):
+def _make_body(body_parts, expansion_stack, translation_stack, transform_stack, flukareg):
     # definition is string of the entire definition as written in the file.
     body_type = body_parts[0]
     name = body_parts[1]
@@ -500,21 +496,13 @@ def _make_body(
     elif body_type == "YZP":
         b = body.YZP(name, pmm[0], flukaregistry=flukareg, transform=transform)
     elif body_type == "PLA":
-        b = body.PLA(
-            name, pmm[0:3], pmm[3:6], flukaregistry=flukareg, transform=transform
-        )
+        b = body.PLA(name, pmm[0:3], pmm[3:6], flukaregistry=flukareg, transform=transform)
     elif body_type == "XCC":
-        b = body.XCC(
-            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
-        )
+        b = body.XCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform)
     elif body_type == "YCC":
-        b = body.YCC(
-            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
-        )
+        b = body.YCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform)
     elif body_type == "ZCC":
-        b = body.ZCC(
-            name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform
-        )
+        b = body.ZCC(name, pmm[0], pmm[1], pmm[2], flukaregistry=flukareg, transform=transform)
     elif body_type == "XEC":
         b = body.XEC(
             name,
@@ -556,9 +544,7 @@ def _make_body(
             transform=transform,
         )
     elif body_type == "SPH":
-        b = body.SPH(
-            name, pmm[0:3], pmm[3], flukaregistry=flukareg, transform=transform
-        )
+        b = body.SPH(name, pmm[0:3], pmm[3], flukaregistry=flukareg, transform=transform)
     elif body_type == "REC":
         b = body.REC(
             name,
@@ -623,9 +609,7 @@ def _make_body(
         # well, facenumbers are not dimensions, but indices, so we use
         # the raw numbers / "centimetres" here:
         facenumbers = pcm[24:]
-        b = body.ARB(
-            name, vertices, facenumbers, flukaregistry=flukareg, transform=transform
-        )
+        b = body.ARB(name, vertices, facenumbers, flukaregistry=flukareg, transform=transform)
     elif body_type == "QUA":
         # This slightly more convoluted unit conversion is to account
         # for the different order of the terms.  Converting to mm

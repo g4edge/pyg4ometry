@@ -57,8 +57,6 @@ def MakeECamelAssembly(reg, margin=1, separation=1):
     assembly = _g4.AssemblyVolume("assembly1", reg)
     xo = (dx + tt) * 0.5 - tt
     epv = _g4.PhysicalVolume([0, 0, 0], [xo, 0, 0], eLV, "e_pv", assembly, reg)
-    cpv = _g4.PhysicalVolume(
-        [0, 0, 0], [xo + separation, 0, 0], camelLV, "camel_pv", assembly, reg
-    )
+    cpv = _g4.PhysicalVolume([0, 0, 0], [xo + separation, 0, 0], camelLV, "camel_pv", assembly, reg)
 
     return assembly

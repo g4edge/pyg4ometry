@@ -112,9 +112,7 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
     """
     greg = _g4.Registry()
     f2g4mat = _makeFlukaToG4MaterialsMap(flukareg, greg)
-    wlv = _makeWorldVolume(
-        _getWorldDimensions(worldinfo.dimensions), worldinfo.material, greg
-    )
+    wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions), worldinfo.material, greg)
     regionNamesToLVs = {}
     for region in regions:
         name = region.name
@@ -145,9 +143,7 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
             greg,
         )
     try:
-        _convertLatticeCells(
-            greg, flukareg, wlv, aabbinfo.regionZoneAABBs, regionNamesToLVs
-        )
+        _convertLatticeCells(greg, flukareg, wlv, aabbinfo.regionZoneAABBs, regionNamesToLVs)
     except UnboundLocalError:
         pass
     greg.setWorld(wlv.name)
@@ -271,8 +267,7 @@ def _filterRegionNullZones(region, aabbs):
             yield zone
         else:
             logger.warning(
-                f"Filtering null zone {zone.dumps()} in region "
-                f"{region.name} from conversion"
+                f"Filtering null zone {zone.dumps()} in region {region.name} from conversion"
             )
 
 
@@ -372,9 +367,7 @@ def _getContentsOfLatticeCells(flukaregistry, regionAABBs):
         cellContents[cellName] = []
         for regionName in overlappingExents:
             region = regions[regionName]
-            overlapping = _isTransformedCellRegionIntersectingWithRegion(
-                region, lattice
-            )
+            overlapping = _isTransformedCellRegionIntersectingWithRegion(region, lattice)
             if overlapping:
                 cellContents[cellName].append(regionName)
 
@@ -495,10 +488,7 @@ def _filterHalfSpaces(flukareg, regionZoneAABBs):
                 # region.
                 if d > 1.025 * aabbCornerDistance:
                     logger.debug(
-                        (
-                            "Filtering %s from region %s."
-                            "  aabb = %s, aabbMax = %s, d=%s"
-                        ),
+                        ("Filtering %s from region %s. aabb = %s, aabbMax = %s, d=%s"),
                         body,
                         region_name,
                         regionAABB,
@@ -602,9 +592,7 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
                 if otherRegion in quadricRegionAABBs:
                     otherAABB = quadricRegionAABBs[otherRegion]
                     currentAABB = regionSharedAABBs[regionName]
-                    regionSharedAABBs[regionName] = _getMaximalOfTwoAABBs(
-                        otherAABB, currentAABB
-                    )
+                    regionSharedAABBs[regionName] = _getMaximalOfTwoAABBs(otherAABB, currentAABB)
     return regionSharedAABBs
 
 

@@ -31,9 +31,7 @@ def Test(vis=False, interactive=False, write=False):
         ],
     )
 
-    target = RCC(
-        "target", [0.0, 0.0, -50.0], [0.0, 0.0, 100.0], 50.0, flukaregistry=freg
-    )
+    target = RCC("target", [0.0, 0.0, -50.0], [0.0, 0.0, 100.0], 50.0, flukaregistry=freg)
     ztarget = Zone()
     ztarget.addIntersection(target)
 

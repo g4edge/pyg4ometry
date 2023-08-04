@@ -45,14 +45,10 @@ def Test(vis=False, interactive=False):
     vertices = [vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8]
     facenumbers = [face1, face2, face3, face4, face5, face6]
 
-    rtrans = rotoTranslationFromTra2(
-        "rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
-    arb = ARB(
-        "ARB_BODY", vertices, facenumbers, transform=transform, flukaregistry=freg
-    )
+    arb = ARB("ARB_BODY", vertices, facenumbers, transform=transform, flukaregistry=freg)
 
     z = Zone()
     z.addIntersection(arb)

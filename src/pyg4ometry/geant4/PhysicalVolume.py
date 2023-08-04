@@ -111,12 +111,7 @@ class PhysicalVolume:
 
     def __repr__(self):
         return (
-            "Physical Volume : "
-            + self.name
-            + " "
-            + str(self.rotation)
-            + " "
-            + str(self.position)
+            "Physical Volume : " + self.name + " " + str(self.rotation) + " " + str(self.position)
         )
 
     def extent(self, includeBoundingSolid=True):

@@ -78,9 +78,7 @@ def Test(printOut=False):
     comp6 = pyg4ometry.compare.assemblyVolumes(a_ass, e_ass, tests, testsAlreadyDone=[])
     if printOut:
         comp6.print()
-    assert (
-        len(comp6) == 3
-    )  # 1 pv pos fail, 1x bounding box min fail, 1x bounding box max fail
+    assert len(comp6) == 3  # 1 pv pos fail, 1x bounding box min fail, 1x bounding box max fail
 
     # different values of lv material inside pvs inside avs
     r6 = _g4.Registry()

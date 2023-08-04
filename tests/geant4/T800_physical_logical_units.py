@@ -35,13 +35,9 @@ def Test(vis=False, interactive=False):
     bp2 = _g4.PhysicalVolume([0, 0, 0, "mrad"], [0, 0, 0, "m"], bl, "b_pv2", rl, reg)
     bp3 = _g4.PhysicalVolume([0, 0, 0, "urad"], [bx, 0, 0, "mm"], bl, "b_pv3", rl, reg)
 
-    rp1 = _g4.PhysicalVolume(
-        [0, 0, 0, "rad"], [0, -bx / 3, 0, "cm"], rl, "r_pv1", ll, reg
-    )
+    rp1 = _g4.PhysicalVolume([0, 0, 0, "rad"], [0, -bx / 3, 0, "cm"], rl, "r_pv1", ll, reg)
     rp2 = _g4.PhysicalVolume([0, 0, 0, "mrad"], [0, 0, 0, "um"], rl, "r_pv2", ll, reg)
-    rp3 = _g4.PhysicalVolume(
-        [100, 0, 0, "urad"], [0, bx, 0, "mm"], rl, "r_pv3", ll, reg
-    )
+    rp3 = _g4.PhysicalVolume([100, 0, 0, "urad"], [0, bx, 0, "mm"], rl, "r_pv3", ll, reg)
 
     lp1 = _g4.PhysicalVolume([0, 0, 0, "rad"], [0, 0, -bx, "mm"], ll, "l_pv1", cl, reg)
     lp2 = _g4.PhysicalVolume([0, 0, 0, "mrad"], [0, 0, 0, "um"], ll, "l_pv2", cl, reg)
@@ -58,9 +54,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T800_physical_logical_units.gdml")
-    )
+    w.write(_os.path.join(_os.path.dirname(__file__), "T800_physical_logical_units.gdml"))
 
     # test __repr__
     str(bl)

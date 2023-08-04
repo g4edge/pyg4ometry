@@ -46,9 +46,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     assert ts.evaluateParameterWithUnits("zlen") == tz
     assert ts.evaluateParameterWithUnits("phi") == tphi
     assert ts.evaluateParameterWithUnits("twistedangle") == ttwist
-    ts2 = _g4.solid.TwistedTubs(
-        "ts2", trmin, trmax, tz, tphi_deg, ttwist_deg, reg, "cm", "deg"
-    )
+    ts2 = _g4.solid.TwistedTubs("ts2", trmin, trmax, tz, tphi_deg, ttwist_deg, reg, "cm", "deg")
     assert ts2.evaluateParameterWithUnits("endinnerrad") == 10 * trmin
     assert ts2.evaluateParameterWithUnits("endouterrad") == 10 * trmax
     assert ts2.evaluateParameterWithUnits("zlen") == 10 * tz

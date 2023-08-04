@@ -9,15 +9,11 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "trcTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("trcTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     # big face (r=5) is at the origin, smaller face (r=2) is at [5, 5, 5].
-    trc = TRC(
-        "TRC_BODY", [0, 0, 0], [5, 5, 5], 5, 2, transform=transform, flukaregistry=freg
-    )
+    trc = TRC("TRC_BODY", [0, 0, 0], [5, 5, 5], 5, 2, transform=transform, flukaregistry=freg)
     z = Zone()
     z.addIntersection(trc)
     region = Region("TRC_REG")

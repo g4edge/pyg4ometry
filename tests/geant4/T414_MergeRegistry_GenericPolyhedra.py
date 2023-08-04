@@ -14,12 +14,10 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
+    l2 = T014_GenericPolyhedra.Test(vis=False, interactive=False, outputPath=outputPath)[
         "logicalVolume"
     ]
-    l2 = T014_GenericPolyhedra.Test(
-        vis=False, interactive=False, outputPath=outputPath
-    )["logicalVolume"]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)

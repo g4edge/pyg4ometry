@@ -97,9 +97,7 @@ class Reader:
 
     def setLogicalVolumeMaterial(self, logicalVolumeName, material="G4_Galactic"):
         if not logicalVolumeName in self._registry.logicalVolumeList:
-            raise ValueError(
-                "Logical volume " + logicalVolumeName + " not found in registry"
-            )
+            raise ValueError("Logical volume " + logicalVolumeName + " not found in registry")
         else:
             if isinstance(material, _Material):
                 self.material = material
@@ -168,12 +166,8 @@ class Reader:
                 # global rotation
                 if isinstance(globalRotation, _fc.Rotation):
                     if globalRotation.Angle != 0:
-                        globalPlacement.Base = globalRotation.multVec(
-                            globalPlacement.Base
-                        )
-                        globalPlacement.Rotation = globalRotation.multiply(
-                            globalPlacement.Rotation
-                        )
+                        globalPlacement.Base = globalRotation.multVec(globalPlacement.Base)
+                        globalPlacement.Rotation = globalRotation.multiply(globalPlacement.Rotation)
 
                 # info log output
                 _log.info(
@@ -232,9 +226,7 @@ class Reader:
                 vn = MeshShrink(m, meshShrinkFactor)
 
                 #                print obj.Label, obj.TypeId, len(m[0])
-                if (
-                    len(m[0]) == 0
-                ):  # skip empty meshes (can happen with compound objects)
+                if len(m[0]) == 0:  # skip empty meshes (can happen with compound objects)
                     continue
 
                 # Mesh analysis
@@ -344,9 +336,7 @@ class Reader:
             # set attributes
             try:
                 if len(self.solidAux.keys()) != 0:
-                    p.visOptions.representation = self.solidAux[names[i]][
-                        "representation"
-                    ]
+                    p.visOptions.representation = self.solidAux[names[i]]["representation"]
                     p.visOptions.color = self.solidAux[names[i]]["color"][0:3]
                     p.visOptions.alpha = self.solidAux[names[i]]["color"][3]
             except AttributeError:
@@ -371,18 +361,14 @@ class Reader:
                     print(obj.Label + "\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic")
                 else:
                     if not randomColors:
-                        f.write(
-                            obj.Label
-                            + "\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n"
-                        )
+                        f.write(obj.Label + "\t\t 1.0,0.0,0.0,1.0 \t surface \t G4_Galactic\n")
                     else:
                         r = _random.uniform(0, 1)
                         g = _random.uniform(0, 1)
                         b = _random.uniform(0, 1)
                         a = _random.uniform(0, 1)
                         f.write(
-                            obj.Label
-                            + f"\t\t {r:f},{g:f},{b:f},{a:f}\t surface \t G4_Galactic\n"
+                            obj.Label + f"\t\t {r:f},{g:f},{b:f},{a:f}\t surface \t G4_Galactic\n"
                         )
         if fileName != None:
             f.close()
@@ -408,9 +394,7 @@ class Reader:
         import pyg4ometry.geant4.PhysicalVolume
         import pyg4ometry.gdml.Defines
 
-        if (
-            obj.TypeId == "App::Part"
-        ):  # mapped to logical volume, group objects mapped to physical
+        if obj.TypeId == "App::Part":  # mapped to logical volume, group objects mapped to physical
             _log.info(
                 "freecad.reader.recurseObjectTree> App::Part label=%s grouplen=%d placement=%s"
                 % (obj.Label, len(obj.Group), obj.Placement)
@@ -486,9 +470,7 @@ class Reader:
             # f =  MeshToFacetList(m)
 
             # solid
-            s = pyg4ometry.geant4.solid.TessellatedSolid(
-                obj.Label, m, registry=self._registry
-            )
+            s = pyg4ometry.geant4.solid.TessellatedSolid(obj.Label, m, registry=self._registry)
 
             # logical
             l = pyg4ometry.geant4.LogicalVolume(
@@ -596,9 +578,7 @@ def FacetListAxisAlignedExtent(facetList):
 
 def PartFeatureGlobalPlacement(obj, placement):
     if len(obj.InList) != 0:
-        return PartFeatureGlobalPlacement(
-            obj.InList[0], obj.Placement.multiply(placement)
-        )
+        return PartFeatureGlobalPlacement(obj.InList[0], obj.Placement.multiply(placement))
     else:
         return obj.Placement.multiply(placement)
 

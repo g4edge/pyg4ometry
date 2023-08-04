@@ -71,9 +71,7 @@ class EllipticalTube(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "EllipticalTube : {} {} {} {}".format(
-            self.name, self.pDx, self.pDy, self.pDz
-        )
+        return f"EllipticalTube : {self.name} {self.pDx} {self.pDy} {self.pDz}"
 
     def __str__(self):
         return "EllipticalTube : name={} dx={} dy={} dz={}".format(

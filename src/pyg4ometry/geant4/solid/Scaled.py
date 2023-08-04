@@ -38,9 +38,7 @@ class Scaled(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Scaled : {} {} {} {} {}".format(
-            self.name, self.solid, self.pX, self.pY, self.pZ
-        )
+        return f"Scaled : {self.name} {self.solid} {self.pX} {self.pY} {self.pZ}"
 
     def __str__(self):
         return "Scaled : name={} solid={} x={} y={} z={}".format(

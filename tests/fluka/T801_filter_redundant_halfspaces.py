@@ -22,9 +22,7 @@ def Test(vis=False, interactive=False):
     xypsub = XYP("XYPsub", -faraway, flukaregistry=freg)
 
     pla = PLA("PLA", [1, 1, 1], [faraway, faraway, faraway], flukaregistry=freg)
-    plasub = PLA(
-        "PLAsub", [1, 1, 1], [-faraway, -faraway, -faraway], flukaregistry=freg
-    )
+    plasub = PLA("PLAsub", [1, 1, 1], [-faraway, -faraway, -faraway], flukaregistry=freg)
 
     plaDoesIntersect = PLA("PLAint", [1, 1, 1], [3, 3, 3], flukaregistry=freg)
 

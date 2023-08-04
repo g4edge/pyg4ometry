@@ -14,12 +14,8 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
-        "logicalVolume"
-    ]
-    l2 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
-        "logicalVolume"
-    ]
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
+    l2 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
     av1 = l1.assemblyVolume()
     av2 = l2.assemblyVolume()
 

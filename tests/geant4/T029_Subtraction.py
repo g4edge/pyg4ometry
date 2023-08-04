@@ -42,9 +42,7 @@ def Test(
     bs1 = _g4.solid.Box("bs1", 2 * bx, 2 * by, 2 * bz, reg, "mm")
 
     if not nullMesh:
-        ss = _g4.solid.Subtraction(
-            "ss", bs, bs, [[0.1, 0.2, 0.3], [bx / 2, by / 2, bz / 2]], reg
-        )
+        ss = _g4.solid.Subtraction("ss", bs, bs, [[0.1, 0.2, 0.3], [bx / 2, by / 2, bz / 2]], reg)
         assert ss.evaluateParameterWithUnits("tra2") == [[0.1, 0.2, 0.3], [5, 5, 5]]
         ss2 = _g4.solid.Subtraction(
             "ss2",

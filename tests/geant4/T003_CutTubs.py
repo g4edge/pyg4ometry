@@ -106,9 +106,7 @@ def Test(
     assert cts2.evaluateParameterWithUnits("pSPhi") == ctstartphi
     assert cts2.evaluateParameterWithUnits("pDPhi") == ctdeltaphi
     assert cts2.evaluateParameterWithUnits("pLowNorm") == [10 * i for i in expected_low]
-    assert cts2.evaluateParameterWithUnits("pHighNorm") == [
-        10 * i for i in expected_high
-    ]
+    assert cts2.evaluateParameterWithUnits("pHighNorm") == [10 * i for i in expected_high]
     assert cts2.evaluateParameterWithUnits("nslice") == n_slice
 
     # structure

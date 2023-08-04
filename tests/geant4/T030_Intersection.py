@@ -9,9 +9,7 @@ normal = 1
 non_intersecting = 2
 
 
-def Test(
-    vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None
-):
+def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -38,9 +36,7 @@ def Test(
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
     bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
     if type == normal:
-        ns = _g4.solid.Intersection(
-            "ns", bs, bs, [[0.1, 0.2, 0.3], [bx / 2, by / 2, bz / 2]], reg
-        )
+        ns = _g4.solid.Intersection("ns", bs, bs, [[0.1, 0.2, 0.3], [bx / 2, by / 2, bz / 2]], reg)
         assert ns.evaluateParameterWithUnits("tra2") == [[0.1, 0.2, 0.3], [5, 5, 5]]
         ns2 = _g4.solid.Intersection(
             "ns2",
@@ -54,9 +50,7 @@ def Test(
         )
         assert ns2.evaluateParameterWithUnits("tra2") == [[0.1, 0.2, 0.3], [50, 50, 50]]
     elif type == non_intersecting:
-        ns = _g4.solid.Intersection(
-            "ns", bs, bs, [[0.1, 0.2, 0.3], [bx * 2, by * 2, bz * 22]], reg
-        )
+        ns = _g4.solid.Intersection("ns", bs, bs, [[0.1, 0.2, 0.3], [bx * 2, by * 2, bz * 22]], reg)
         assert ns.evaluateParameterWithUnits("tra2") == [[0.1, 0.2, 0.3], [20, 20, 220]]
 
     # structure

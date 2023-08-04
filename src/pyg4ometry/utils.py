@@ -36,18 +36,12 @@ class Samples:
     def means(self, exclude=None):
         if exclude is None:
             exclude = []
-        return {
-            key: np.mean(val) for key, val in self.times.items() if key not in exclude
-        }
+        return {key: np.mean(val) for key, val in self.times.items() if key not in exclude}
 
     def stds(self, exclude=None):
         if exclude is None:
             exclude = []
-        return {
-            key: np.std(val, ddof=1)
-            for key, val in self.times.items()
-            if key not in exclude
-        }
+        return {key: np.std(val, ddof=1) for key, val in self.times.items() if key not in exclude}
 
     @classmethod
     def from_existing(cls, *samples):

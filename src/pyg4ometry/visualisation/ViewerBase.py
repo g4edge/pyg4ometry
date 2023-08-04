@@ -144,9 +144,7 @@ class ViewerBase:
         for pv in lv.daughterVolumes:
             if pv.type == "placement":
                 # pv transform
-                pvmrot = _np.linalg.inv(
-                    _transformation.tbxyz2matrix(pv.rotation.eval())
-                )
+                pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
                 if pv.scale:
                     pvmsca = _np.diag(pv.scale.eval())
                 else:
@@ -183,9 +181,7 @@ class ViewerBase:
                     self.addInstance(pv.name, new_mtra, new_tra, pv.name)
                     self.addVisOptions(pv.name, pv.visOptions)
             elif pv.type == "parametrised":
-                for mesh, trans, i in zip(
-                    pv.meshes, pv.transforms, range(0, len(pv.meshes), 1)
-                ):
+                for mesh, trans, i in zip(pv.meshes, pv.transforms, range(0, len(pv.meshes), 1)):
                     pv_name = pv.name + "_param_" + str(i)
 
                     # pv transform
@@ -408,9 +404,7 @@ class ViewerBase:
                 VEC3,
             )
         except ImportError:
-            print(
-                "pygltflib needs to be installed for export : 'pip install pygltflib'"
-            )
+            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
             return
 
         materials = []
@@ -472,11 +466,7 @@ class ViewerBase:
             buffers.append(
                 Buffer(
                     uri="data:application/octet-stream;base64,"
-                    + str(
-                        _base64.b64encode(tris_binary_blob + verts_binary_blob).decode(
-                            "utf-8"
-                        )
-                    ),
+                    + str(_base64.b64encode(tris_binary_blob + verts_binary_blob).decode("utf-8")),
                     byteLength=len(tris_binary_blob) + len(verts_binary_blob),
                 )
             )
@@ -593,9 +583,7 @@ class ViewerBase:
 
         self.exportGLTFScene(gltfFileName, singleInstance=True)
 
-    def exportThreeJSScene(
-        self, fileNameBase="test", lightBoxHDR="concrete_tunnel_02_4k.hdr"
-    ):
+    def exportThreeJSScene(self, fileNameBase="test", lightBoxHDR="concrete_tunnel_02_4k.hdr"):
         """
         html based on https://threejs.org/examples/#webgl_loader_gltf
         HRDI https://polyhaven.com/a/concrete_tunnel_02

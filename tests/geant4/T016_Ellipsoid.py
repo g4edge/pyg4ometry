@@ -40,9 +40,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    es = _g4.solid.Ellipsoid(
-        "es", eax, eby, ecz, ebc, etc, reg, nslice=n_slice, nstack=n_stack
-    )
+    es = _g4.solid.Ellipsoid("es", eax, eby, ecz, ebc, etc, reg, nslice=n_slice, nstack=n_stack)
     assert es.evaluateParameterWithUnits("pxSemiAxis") == eax
     assert es.evaluateParameterWithUnits("pySemiAxis") == eby
     assert es.evaluateParameterWithUnits("pzSemiAxis") == ecz

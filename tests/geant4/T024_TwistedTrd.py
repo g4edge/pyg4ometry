@@ -45,9 +45,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     assert ts.evaluateParameterWithUnits("pDy1") == ty1
     assert ts.evaluateParameterWithUnits("pDy2") == ty2
     assert ts.evaluateParameterWithUnits("pDz") == tz
-    ts2 = _g4.solid.TwistedTrd(
-        "ts2", ttwist_deg, tx1, tx2, ty1, ty2, tz, reg, "cm", "deg"
-    )
+    ts2 = _g4.solid.TwistedTrd("ts2", ttwist_deg, tx1, tx2, ty1, ty2, tz, reg, "cm", "deg")
     assert ts2.evaluateParameterWithUnits("twistedAngle") == ttwist
     assert ts2.evaluateParameterWithUnits("pDx1") == 10 * tx1
     assert ts2.evaluateParameterWithUnits("pDx2") == 10 * tx2

@@ -6,9 +6,7 @@ from pyg4ometry.fluka import SPH, Region, Zone, FlukaRegistry, Transform
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    sph = SPH(
-        "SPH_BODY", [5, 5, 5], 5, transform=Transform(expansion=2.0), flukaregistry=freg
-    )
+    sph = SPH("SPH_BODY", [5, 5, 5], 5, transform=Transform(expansion=2.0), flukaregistry=freg)
 
     z = Zone()
     z.addIntersection(sph)

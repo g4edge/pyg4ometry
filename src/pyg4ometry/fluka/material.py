@@ -251,9 +251,7 @@ class Compound(_MatProp):
             frac, name = _formatFlukaMaterialPair(first, namePrefix, fractionPrefix)
             card = _Card("COMPOUND", what1=frac, what2=name, sdum=compoundName)
             if second is not None:
-                frac, name = _formatFlukaMaterialPair(
-                    second, namePrefix, fractionPrefix
-                )
+                frac, name = _formatFlukaMaterialPair(second, namePrefix, fractionPrefix)
                 card.what3 = frac
                 card.what4 = name
 
@@ -299,9 +297,7 @@ class Compound(_MatProp):
         # Map the material names to material/compound instances via the FlukaRegistry.
         fractions = [(flukareg.getMaterial(name), f) for name, f in fractions]
 
-        return cls(
-            compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg
-        )
+        return cls(compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg)
 
     def __repr__(self):
         return "<Compound: {}, density={}*g/cm3, nparts={}>".format(

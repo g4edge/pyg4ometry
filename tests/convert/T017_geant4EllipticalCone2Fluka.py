@@ -11,9 +11,7 @@ normal = 1
 zcut_outofrange = 2
 
 
-def Test(
-    vis=False, interactive=False, fluka=True, type=normal, n_slice=16, outputPath=None
-):
+def Test(vis=False, interactive=False, fluka=True, type=normal, n_slice=16, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -40,9 +38,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    es = _g4.solid.EllipticalCone(
-        "es", edx, edy, ezmax, ezcut, reg, "mm", nslice=n_slice
-    )
+    es = _g4.solid.EllipticalCone("es", edx, edy, ezmax, ezcut, reg, "mm", nslice=n_slice)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

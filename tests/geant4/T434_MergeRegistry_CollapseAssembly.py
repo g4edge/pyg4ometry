@@ -31,9 +31,7 @@ def MakeGeometry():
     bp1 = _g4.PhysicalVolume([0, 0, 0, "deg"], [0, -35, 0, "mm"], bl, "b_pv1", al, reg)
     bp2 = _g4.PhysicalVolume([0, 0, 90, "deg"], [35, 0, 0, "mm"], bl, "b_pv2", al, reg)
     bp3 = _g4.PhysicalVolume([0, 0, 180, "deg"], [0, 35, 0, "mm"], bl, "b_pv3", al, reg)
-    bp4 = _g4.PhysicalVolume(
-        [0, 0, 270, "deg"], [-35, 0, 0, "mm"], bl, "b_pv4", al, reg
-    )
+    bp4 = _g4.PhysicalVolume([0, 0, 270, "deg"], [-35, 0, 0, "mm"], bl, "b_pv4", al, reg)
 
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     ap1 = _g4.PhysicalVolume([0, 0, 0, "deg"], [0, 0, -100, "mm"], al, "a_pv1", wl, reg)
@@ -66,12 +64,8 @@ def Test(vis=False, interactive=False, outputPath=None):
             pvname = f"a_pv{i}_b_pv{j}"
             assert pvname in wl._daughterVolumesDict
             pv = wl._daughterVolumesDict[pvname]
-            assert round(float(pv.rotation[2]), 6) == round(
-                (j - 1) * 90 * _gd.Units.unit("deg"), 6
-            )
-            assert round(float(pv.position[2]), 1) == round(
-                (i - 3) * 50 * _gd.Units.unit("mm"), 1
-            )
+            assert round(float(pv.rotation[2]), 6) == round((j - 1) * 90 * _gd.Units.unit("deg"), 6)
+            assert round(float(pv.position[2]), 1) == round((i - 3) * 50 * _gd.Units.unit("mm"), 1)
 
     # check for overlaps
     wl.checkOverlaps(recursive=True, coplanar=False)

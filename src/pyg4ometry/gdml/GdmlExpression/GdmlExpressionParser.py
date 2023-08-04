@@ -210,9 +210,7 @@ class GdmlExpressionParser(Parser):
     class EquationContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -220,9 +218,7 @@ class GdmlExpressionParser(Parser):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.ExpressionContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.ExpressionContext, i)
 
         def relop(self):
             return self.getTypedRuleContext(GdmlExpressionParser.RelopContext, 0)
@@ -266,17 +262,13 @@ class GdmlExpressionParser(Parser):
     class ExpressionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def multiplyingExpression(self, i: int = None):
             if i is None:
-                return self.getTypedRuleContexts(
-                    GdmlExpressionParser.MultiplyingExpressionContext
-                )
+                return self.getTypedRuleContexts(GdmlExpressionParser.MultiplyingExpressionContext)
             else:
                 return self.getTypedRuleContext(
                     GdmlExpressionParser.MultiplyingExpressionContext, i
@@ -284,13 +276,9 @@ class GdmlExpressionParser(Parser):
 
         def operatorAddSub(self, i: int = None):
             if i is None:
-                return self.getTypedRuleContexts(
-                    GdmlExpressionParser.OperatorAddSubContext
-                )
+                return self.getTypedRuleContexts(GdmlExpressionParser.OperatorAddSubContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.OperatorAddSubContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.OperatorAddSubContext, i)
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_expression
@@ -340,31 +328,21 @@ class GdmlExpressionParser(Parser):
     class MultiplyingExpressionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def powExpression(self, i: int = None):
             if i is None:
-                return self.getTypedRuleContexts(
-                    GdmlExpressionParser.PowExpressionContext
-                )
+                return self.getTypedRuleContexts(GdmlExpressionParser.PowExpressionContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.PowExpressionContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.PowExpressionContext, i)
 
         def operatorMulDiv(self, i: int = None):
             if i is None:
-                return self.getTypedRuleContexts(
-                    GdmlExpressionParser.OperatorMulDivContext
-                )
+                return self.getTypedRuleContexts(GdmlExpressionParser.OperatorMulDivContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.OperatorMulDivContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.OperatorMulDivContext, i)
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_multiplyingExpression
@@ -384,9 +362,7 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def multiplyingExpression(self):
-        localctx = GdmlExpressionParser.MultiplyingExpressionContext(
-            self, self._ctx, self.state
-        )
+        localctx = GdmlExpressionParser.MultiplyingExpressionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_multiplyingExpression)
         self._la = 0  # Token type
         try:
@@ -416,9 +392,7 @@ class GdmlExpressionParser(Parser):
     class OperatorAddSubContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -446,18 +420,14 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def operatorAddSub(self):
-        localctx = GdmlExpressionParser.OperatorAddSubContext(
-            self, self._ctx, self.state
-        )
+        localctx = GdmlExpressionParser.OperatorAddSubContext(self, self._ctx, self.state)
         self.enterRule(localctx, 6, self.RULE_operatorAddSub)
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 52
             _la = self._input.LA(1)
-            if not (
-                _la == GdmlExpressionParser.PLUS or _la == GdmlExpressionParser.MINUS
-            ):
+            if not (_la == GdmlExpressionParser.PLUS or _la == GdmlExpressionParser.MINUS):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -473,9 +443,7 @@ class GdmlExpressionParser(Parser):
     class OperatorMulDivContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -503,18 +471,14 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def operatorMulDiv(self):
-        localctx = GdmlExpressionParser.OperatorMulDivContext(
-            self, self._ctx, self.state
-        )
+        localctx = GdmlExpressionParser.OperatorMulDivContext(self, self._ctx, self.state)
         self.enterRule(localctx, 8, self.RULE_operatorMulDiv)
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 54
             _la = self._input.LA(1)
-            if not (
-                _la == GdmlExpressionParser.TIMES or _la == GdmlExpressionParser.DIV
-            ):
+            if not (_la == GdmlExpressionParser.TIMES or _la == GdmlExpressionParser.DIV):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -530,9 +494,7 @@ class GdmlExpressionParser(Parser):
     class PowExpressionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -540,9 +502,7 @@ class GdmlExpressionParser(Parser):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.SignedAtomContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.SignedAtomContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.SignedAtomContext, i)
 
         def POW(self, i: int = None):
             if i is None:
@@ -568,9 +528,7 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def powExpression(self):
-        localctx = GdmlExpressionParser.PowExpressionContext(
-            self, self._ctx, self.state
-        )
+        localctx = GdmlExpressionParser.PowExpressionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_powExpression)
         self._la = 0  # Token type
         try:
@@ -600,9 +558,7 @@ class GdmlExpressionParser(Parser):
     class SignedAtomContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -703,9 +659,7 @@ class GdmlExpressionParser(Parser):
     class AtomContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -713,9 +667,7 @@ class GdmlExpressionParser(Parser):
             return self.getTypedRuleContext(GdmlExpressionParser.ScientificContext, 0)
 
         def matrixElement(self):
-            return self.getTypedRuleContext(
-                GdmlExpressionParser.MatrixElementContext, 0
-            )
+            return self.getTypedRuleContext(GdmlExpressionParser.MatrixElementContext, 0)
 
         def variable(self):
             return self.getTypedRuleContext(GdmlExpressionParser.VariableContext, 0)
@@ -801,9 +753,7 @@ class GdmlExpressionParser(Parser):
     class ScientificContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -845,9 +795,7 @@ class GdmlExpressionParser(Parser):
     class MatrixElementContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -861,9 +809,7 @@ class GdmlExpressionParser(Parser):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.ExpressionContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.ExpressionContext, i)
 
         def RBRACKET(self):
             return self.getToken(GdmlExpressionParser.RBRACKET, 0)
@@ -892,9 +838,7 @@ class GdmlExpressionParser(Parser):
                 return visitor.visitChildren(self)
 
     def matrixElement(self):
-        localctx = GdmlExpressionParser.MatrixElementContext(
-            self, self._ctx, self.state
-        )
+        localctx = GdmlExpressionParser.MatrixElementContext(self, self._ctx, self.state)
         self.enterRule(localctx, 18, self.RULE_matrixElement)
         self._la = 0  # Token type
         try:
@@ -930,9 +874,7 @@ class GdmlExpressionParser(Parser):
     class ConstantContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -997,9 +939,7 @@ class GdmlExpressionParser(Parser):
     class VariableContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -1041,9 +981,7 @@ class GdmlExpressionParser(Parser):
     class FuncContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -1057,9 +995,7 @@ class GdmlExpressionParser(Parser):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
-                return self.getTypedRuleContext(
-                    GdmlExpressionParser.ExpressionContext, i
-                )
+                return self.getTypedRuleContext(GdmlExpressionParser.ExpressionContext, i)
 
         def RPAREN(self):
             return self.getToken(GdmlExpressionParser.RPAREN, 0)
@@ -1124,9 +1060,7 @@ class GdmlExpressionParser(Parser):
     class FuncnameContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -1227,9 +1161,7 @@ class GdmlExpressionParser(Parser):
     class RelopContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 

@@ -27,9 +27,7 @@ def Test(vis=False, interactive=False):
     for xi in range(nX):
         for yi in range(nX):
             pos = [x0 + xi * dX, x0 + yi * dX, 0]
-            _g4.PhysicalVolume(
-                [0, 0, 0], pos, ddlv, "ddpv_" + str(xi) + str(yi), dlv, reg
-            )
+            _g4.PhysicalVolume([0, 0, 0], pos, ddlv, "ddpv_" + str(xi) + str(yi), dlv, reg)
 
     _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], dlv, "dlv_pv", wl, reg)
 

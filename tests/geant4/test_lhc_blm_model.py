@@ -147,13 +147,9 @@ def electrode_profile():
         cyr = (ele_cut_pos + ele_tap_rad) * _np.cos(right_tap_angle)
 
         offs = 0.1
-        taper_points_left = circle_points(
-            ele_tap_rad, cxl, cyl, offs, _np.pi / 2 - offs
-        )
+        taper_points_left = circle_points(ele_tap_rad, cxl, cyl, offs, _np.pi / 2 - offs)
 
-        cutout_points = circle_points(
-            ele_cut_rad, cx, cy, 3 * _np.pi / 2 - offs, _np.pi / 2 + offs
-        )
+        cutout_points = circle_points(ele_cut_rad, cx, cy, 3 * _np.pi / 2 - offs, _np.pi / 2 + offs)
 
         taper_points_right = circle_points(
             ele_tap_rad, cxr, cyr, 3 * _np.pi / 2 + offs, 2 * _np.pi - offs
@@ -290,9 +286,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     # Active gas dimensions - gas between electrodes
     # No gas outside the outer two electrodes
-    active_gas_r = (
-        38.25  # Gives 4% larger volume than the one covered by the electrodes
-    )
+    active_gas_r = 38.25  # Gives 4% larger volume than the one covered by the electrodes
     active_gas_l = 31 * electrode_l + 31 * spacer_a_l
     active_gas_zpos = -tank_len / 2 + active_gas_l / 2.0 + 55 + electrode_l
     # active_gas_zpos = 0#-tank_len/2. + active_gas_l/2. + 55 + spacer_a_l
@@ -302,9 +296,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
     n = _g4.ElementSimple("nitrogen", "N", 7, 14.0)
     blm_gas_material.add_element_natoms(n, 2)
 
-    blm_active_gas_material = _g4.MaterialCompound(
-        "BLM_Nitrogen_Active", 0.0012506, 1, reg
-    )
+    blm_active_gas_material = _g4.MaterialCompound("BLM_Nitrogen_Active", 0.0012506, 1, reg)
     blm_active_gas_material.add_element_natoms(n, 2)
 
     insulator_material = _g4.MaterialCompound("Al203", 3.98, 2, reg)
@@ -364,9 +356,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
     )
 
     active_gas_material = blm_active_gas_material
-    active_gas_lv = _g4.LogicalVolume(
-        active_gas_solid, active_gas_material, "active_gas_lv", reg
-    )
+    active_gas_lv = _g4.LogicalVolume(active_gas_solid, active_gas_material, "active_gas_lv", reg)
     assign_colour(active_gas_lv, "nitrogen")
     gas_pv = _g4.PhysicalVolume(
         [0, 0, 0], [0, 0, active_gas_zpos], active_gas_lv, "active_gas_pv1", gas_lv, reg
@@ -415,9 +405,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     endcap_s_material = _g4.Material(name="G4_STAINLESS-STEEL")
 
-    endcap_s_lv = _g4.LogicalVolume(
-        endcap_s_solid, endcap_s_material, "endcap_s_lv", reg
-    )
+    endcap_s_lv = _g4.LogicalVolume(endcap_s_solid, endcap_s_material, "endcap_s_lv", reg)
     assign_colour(endcap_s_lv, "steel")
 
     endcap_s_pos = [0, 0, -tank_len / 2.0 - endcap_s_len / 2.0]
@@ -444,9 +432,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     endcap_e_material = _g4.Material(name="G4_STAINLESS-STEEL")
 
-    endcap_e_lv = _g4.LogicalVolume(
-        endcap_e_solid, endcap_e_material, "endcap_e_lv", reg
-    )
+    endcap_e_lv = _g4.LogicalVolume(endcap_e_solid, endcap_e_material, "endcap_e_lv", reg)
     assign_colour(endcap_e_lv, "steel")
 
     endcap_e_pos = [0, 0, +tank_len / 2.0 + endcap_e_len / 2.0]
@@ -519,21 +505,14 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
         "mm",
     )
 
-    insulator_lv = _g4.LogicalVolume(
-        insulator_solid, insulator_material, "insulator_lv", reg
-    )
+    insulator_lv = _g4.LogicalVolume(insulator_solid, insulator_material, "insulator_lv", reg)
     assign_colour(insulator_lv, "aluminium_oxide")
 
     insulator_pos1 = [0, 0, -tank_len / 2.0 + ins_l / 2.0 + 43.0 - safety]
     insulator_pos2 = [
         0,
         0,
-        -tank_len / 2.0
-        + ins_l / 2.0
-        + 43.0
-        + 31 * electrode_l
-        + 32 * spacer_a_l
-        + safety,
+        -tank_len / 2.0 + ins_l / 2.0 + 43.0 + 31 * electrode_l + 32 * spacer_a_l + safety,
     ]
     insulator_pv1 = _g4.PhysicalVolume(
         [0, 0, 0], insulator_pos1, insulator_lv, "insulator_pv1", gas_lv, reg
@@ -588,9 +567,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
         )
     ##########################################################################################
     electrode_material = _g4.Material(name="G4_Al")
-    electrode_lv = _g4.LogicalVolume(
-        electrode_solid, electrode_material, "electrode_lv", reg
-    )
+    electrode_lv = _g4.LogicalVolume(electrode_solid, electrode_material, "electrode_lv", reg)
     assign_colour(electrode_lv, "aluminium")
 
     # Outgassed spacer
@@ -626,9 +603,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
 
     # In reality, this is a AlMgSi alloy, but it is ~97.5% Al
     spacer_a_material = _g4.Material(name="G4_Al")
-    spacer_a_lv = _g4.LogicalVolume(
-        spacer_a_solid, spacer_a_material, "spacer_a_lv", reg
-    )
+    spacer_a_lv = _g4.LogicalVolume(spacer_a_solid, spacer_a_material, "spacer_a_lv", reg)
     assign_colour(spacer_a_lv, "iron")
 
     # Spacer steel core (nominally those are long support rods that also intesect the electrodes)
@@ -662,11 +637,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
             x = electrode_cut_pos * _np.sin(j * step_angle + step_angle / 2.0)
             y = electrode_cut_pos * _np.cos(j * step_angle + step_angle / 2.0)
             # spacer_zpos = -tank_len/2. + start_pos + i*(spacer_a_l + electrode_l) + spacer_a_l/2.
-            spacer_zpos = (
-                -active_gas_len / 2.0
-                + i * (spacer_a_l + electrode_l)
-                + spacer_a_l / 2.0
-            )
+            spacer_zpos = -active_gas_len / 2.0 + i * (spacer_a_l + electrode_l) + spacer_a_l / 2.0
             spacer_pos = [x, y, spacer_zpos]
             spacer_pv = _g4.PhysicalVolume(
                 [0, 0, 0],
@@ -691,10 +662,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
         # electrode_zpos = -tank_len/2. + start_pos + i * (spacer_a_l + electrode_l) \
         #                  + spacer_a_l + electrode_l/2.
         electrode_zpos = (
-            -active_gas_len / 2.0
-            + i * (spacer_a_l + electrode_l)
-            + spacer_a_l
-            + electrode_l / 2.0
+            -active_gas_len / 2.0 + i * (spacer_a_l + electrode_l) + spacer_a_l + electrode_l / 2.0
         )
 
         electrode_pos = [0, 0, electrode_zpos]
@@ -709,9 +677,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
         )
 
     # Make the second set of electrodes and spacers
-    offset = (
-        5.8  # The 5 is nominally a smaller, non-outgassed spacer, but those are ignored
-    )
+    offset = 5.8  # The 5 is nominally a smaller, non-outgassed spacer, but those are ignored
     start_angle = _np.pi / 3
     electrode_cut_pos = 63 / 2.0
     step_angle = _np.deg2rad(120)
@@ -719,12 +685,8 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
         for j in range(3):
             if i == 30:
                 break
-            x = electrode_cut_pos * _np.sin(
-                start_angle + j * step_angle + step_angle / 2.0
-            )
-            y = electrode_cut_pos * _np.cos(
-                start_angle + j * step_angle + step_angle / 2.0
-            )
+            x = electrode_cut_pos * _np.sin(start_angle + j * step_angle + step_angle / 2.0)
+            y = electrode_cut_pos * _np.cos(start_angle + j * step_angle + step_angle / 2.0)
             spacer_zpos = (
                 -active_gas_len / 2.0
                 + offset
@@ -752,10 +714,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
             )
 
         electrode_zpos = (
-            -active_gas_len / 2.0
-            + i * (spacer_a_l + electrode_l)
-            + electrode_l / 2.0
-            + offset
+            -active_gas_len / 2.0 + i * (spacer_a_l + electrode_l) + electrode_l / 2.0 + offset
         )
         electrode_pos = [0, 0, electrode_zpos]
 

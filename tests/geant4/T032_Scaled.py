@@ -41,9 +41,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     bl = _g4.LogicalVolume(bs, bm, "bl", reg)
     blScaled = _g4.LogicalVolume(bsScaled, bm, "blScaled", reg)
     bp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], bl, "b_pv1", wl, reg)
-    bpScaled = _g4.PhysicalVolume(
-        [0, 0, 0], [0, 0, 50], blScaled, "bscaled_pv1", wl, reg
-    )
+    bpScaled = _g4.PhysicalVolume([0, 0, 0], [0, 0, 50], blScaled, "bscaled_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)

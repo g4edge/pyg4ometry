@@ -9,14 +9,10 @@ from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "rccTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("rccTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
-    rcc = RCC(
-        "RCC_BODY", [0, 0, 0], [5, 5, 5], 2.5, transform=transform, flukaregistry=freg
-    )
+    rcc = RCC("RCC_BODY", [0, 0, 0], [5, 5, 5], 2.5, transform=transform, flukaregistry=freg)
     z = Zone()
     z.addIntersection(rcc)
     region = Region("RCC_REG")

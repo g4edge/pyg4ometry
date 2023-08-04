@@ -41,9 +41,7 @@ def _solid2tessellated(solid):
     name = solid.name + "_asTesselated"
     reg = solid.registry
     mesh_type = _solid.TessellatedSolid.MeshType.Stl
-    tesselated_solid = _solid.TessellatedSolid(
-        name, meshTriangular, reg, meshtype=mesh_type
-    )
+    tesselated_solid = _solid.TessellatedSolid(name, meshTriangular, reg, meshtype=mesh_type)
 
     return tesselated_solid
 
@@ -65,9 +63,7 @@ class LogicalVolume:
 
     """
 
-    def __init__(
-        self, solid, material, name, registry=None, addRegistry=True, **kwargs
-    ):
+    def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
         super().__init__()
 
         self.type = "logical"
@@ -88,9 +84,7 @@ class LogicalVolume:
             if registry and material in registry.materialDict:
                 self.material = registry.materialDict[material]
             else:  # This will work out if it is a valid NIST and set the type appropriately
-                self.material = _mat.MaterialPredefined(
-                    name=material, registry=registry
-                )
+                self.material = _mat.MaterialPredefined(name=material, registry=registry)
         else:
             msg = f"Unsupported type for material: {type(material)}"
             raise ValueError(msg)
@@ -113,14 +107,7 @@ class LogicalVolume:
         self.overlapChecked = False
 
     def __repr__(self):
-        return (
-            "Logical volume : "
-            + self.name
-            + " "
-            + str(self.solid)
-            + " "
-            + str(self.material)
-        )
+        return "Logical volume : " + self.name + " " + str(self.solid) + " " + str(self.material)
 
     def reMesh(self, recursive=False):
         """
@@ -160,9 +147,7 @@ class LogicalVolume:
         # cannot currently deal with replica, division and parametrised
         if pv.type != "placement":
             if warn:
-                print(
-                    "Cannot generate specific daughter mesh for replica, division, parameterised"
-                )
+                print("Cannot generate specific daughter mesh for replica, division, parameterised")
             return None
         # cannot currently deal with assembly
         if pv.logicalVolume.type == "assembly":
@@ -228,14 +213,10 @@ class LogicalVolume:
             else:
                 toKeep.append(True)
 
-        self.daughterVolumes = [
-            pv for pv, keep in zip(self.daughterVolumes, toKeep) if keep
-        ]
+        self.daughterVolumes = [pv for pv, keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name: pv for pv in self.daughterVolumes}
 
-    def transformDaughters(
-        self, rotation=(0, 0, 0), position=(0, 0, 0), runit="rad", punit="mm"
-    ):
+    def transformDaughters(self, rotation=(0, 0, 0), position=(0, 0, 0), runit="rad", punit="mm"):
         """
         Transform the daugter volumes (without clipping)
 
@@ -367,9 +348,7 @@ class LogicalVolume:
             solidUsageCount[solid1.name] += 1
             solidNewName = solid1.name + "_n_" + str(solidUsageCount[solid1.name])
 
-            rotationInv = _trans.matrix2tbxyz(
-                _np.linalg.inv(_trans.tbxyz2matrix(rotation))
-            )
+            rotationInv = _trans.matrix2tbxyz(_np.linalg.inv(_trans.tbxyz2matrix(rotation)))
             positionInv = list(-_np.array(position))
 
             _trans.matrix2tbxyz(_np.linalg.inv(_trans.tbxyz2matrix(rotation)))
@@ -403,9 +382,7 @@ class LogicalVolume:
             if pvInterMesh.isNull():
                 # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is outside")
                 outside.append(pvmesh)
-            elif (
-                not pvInterMesh.isNull()
-            ):  # intersection of new solid and existing solid
+            elif not pvInterMesh.isNull():  # intersection of new solid and existing solid
                 # print(i,pv.position.eval(),pvmesh.vertexCount(),pvInterMesh.vertexCount(), pvInterMesh.hash(), pvmesh.hash(),"pv solid is intersecting")
                 intersections.append(pvInterMesh)
                 intersectionsPV.append(pv)
@@ -430,9 +407,7 @@ class LogicalVolume:
             pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
 
             if pvi.logicalVolume.type == "assembly":
-                lvNew = _pyg4ometry.geant4.AssemblyVolume(
-                    pvNewName, pvi.logicalVolume.registry
-                )
+                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
             else:
                 lvNew = _pyg4ometry.geant4.LogicalVolume(
                     pvi.logicalVolume.solid,
@@ -521,9 +496,7 @@ class LogicalVolume:
             if toKeep[-1]:
                 intersectionMeshes[pv] = intersectionMesh
         # do the culling
-        self.daughterVolumes = [
-            pv for pv, keep in zip(self.daughterVolumes, toKeep) if keep
-        ]
+        self.daughterVolumes = [pv for pv, keep in zip(self.daughterVolumes, toKeep) if keep]
         self._daughterVolumesDict = {pv.name: pv for pv in self.daughterVolumes}
 
         if len(self.daughterVolumes) == 0:
@@ -611,11 +584,7 @@ class LogicalVolume:
                 oldLVSolid = oldLV.solid
                 solidUsageCount[oldLVSolid] += 1
                 newSolidName = (
-                    oldLVSolid.name
-                    + "_n_"
-                    + newSolid.name
-                    + "_"
-                    + str(solidUsageCount[oldLVSolid])
+                    oldLVSolid.name + "_n_" + newSolid.name + "_" + str(solidUsageCount[oldLVSolid])
                 )
                 newDSolid = Intersection(
                     newSolidName,
@@ -717,9 +686,7 @@ class LogicalVolume:
             if pv.scale:
                 s = pv.scale.eval()
             t = pv.position.eval()
-            for mesh, boundingmesh, name in zip(
-                tempMeshes, tempBoundingMeshes, tempMeshesNames
-            ):
+            for mesh, boundingmesh, name in zip(tempMeshes, tempBoundingMeshes, tempMeshesNames):
                 # rotate
                 mesh.rotate(aa[0], _trans.rad2deg(aa[1]))
                 boundingmesh.rotate(aa[0], _trans.rad2deg(aa[1]))
@@ -790,15 +757,10 @@ class LogicalVolume:
                         transformedBoundingMeshes[j]
                     )
                     print(cullIntersection.vertexCount(), cullCoplanar.vertexCount())
-                    if (
-                        cullIntersection.vertexCount() == 0
-                        and cullCoplanar.vertexCount() == 0
-                    ):
+                    if cullIntersection.vertexCount() == 0 and cullCoplanar.vertexCount() == 0:
                         continue
 
-                    coplanarMesh = transformedMeshes[i].coplanarIntersection(
-                        transformedMeshes[j]
-                    )
+                    coplanarMesh = transformedMeshes[i].coplanarIntersection(transformedMeshes[j])
                     if coplanarMesh.vertexCount() != 0:
                         nOverlapsDetected[0] += 1
                         print(
@@ -813,9 +775,7 @@ class LogicalVolume:
                     f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}"
                 )
 
-            cullIntersection = transformedBoundingMeshes[i].subtract(
-                self.mesh.localboundingmesh
-            )
+            cullIntersection = transformedBoundingMeshes[i].subtract(self.mesh.localboundingmesh)
             if cullIntersection.vertexCount() == 0:
                 continue
 
@@ -1110,9 +1070,7 @@ class LogicalVolume:
         wm = _g4.MaterialPredefined(worldMaterial)
 
         wl = _g4.LogicalVolume(ws, wm, "wl", self.registry)
-        cp = _g4.PhysicalVolume(
-            [0, 0, 0], [0, 0, 0], self, self.name + "_pv1", wl, self.registry
-        )
+        cp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], self, self.name + "_pv1", wl, self.registry)
 
         self.registry.setWorld(wl.name)
 

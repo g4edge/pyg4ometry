@@ -24,9 +24,7 @@ class Wedge(_SolidBase):
     :type zlength: float
     """
 
-    def __init__(
-        self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000, nslice=None
-    ):
+    def __init__(self, name, pRMax=1000, pSPhi=0, pDPhi=1.5, halfzlength=10000, nslice=None):
         super().__init__(name, "InfiniteWedge", None)
 
         self.pRMax = float(pRMax)
@@ -72,9 +70,7 @@ class Wedge(_SolidBase):
                 # bottom triangle
                 polygons.append(_Polygon([_dc(vZero1), _dc(p1[i]), _dc(p1[i + 1])]))
                 # end square
-                polygons.append(
-                    _Polygon([_dc(p1[i]), _dc(p1[i + 1]), _dc(p2[i + 1]), _dc(p2[i])])
-                )
+                polygons.append(_Polygon([_dc(p1[i]), _dc(p1[i + 1]), _dc(p2[i + 1]), _dc(p2[i])]))
 
         # first end face
         polygons.append(_Polygon([_dc(vZero1), _dc(p1[0]), _dc(p2[0]), _dc(vZero2)]))
