@@ -125,10 +125,12 @@ select = [
   "NPY",         # NumPy specific rules
   # "PD",          # pandas-vet
 ]
+
 extend-ignore = [
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
   "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
+  "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
 ]
 target-version = "py37"
 src = ["src"]
