@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 try:
     import vtk.qt
 
@@ -170,7 +172,7 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
     """
 
     # Map between VTK and Qt cursors.
-    _CURSOR_MAP = {
+    _CURSOR_MAP: ClassVar[list[str]] = {
         0: Qt.ArrowCursor,  # VTK_CURSOR_DEFAULT
         1: Qt.ArrowCursor,  # VTK_CURSOR_ARROW
         2: Qt.SizeBDiagCursor,  # VTK_CURSOR_SIZENE

@@ -1,11 +1,12 @@
+from typing import ClassVar
 from .SolidBase import SolidBase as _SolidBase
 import warnings
 
 
 class OpticalSurface(_SolidBase):
     # from G4OpticalSurface.hh and G4SurfaceProperty.hh of Geant4 11.0
-    allowed_models = ["glisur", "unified", "LUT", "DAVIS", "dichroic"]
-    allowed_types = [
+    allowed_models: ClassVar[list[str]] = ["glisur", "unified", "LUT", "DAVIS", "dichroic"]
+    allowed_types: ClassVar[list[str]] = [
         "dielectric_metal",
         "dielectric_dielectric",
         "dielectric_LUT",
@@ -14,7 +15,7 @@ class OpticalSurface(_SolidBase):
         "firsov",
         "x_ray",
     ]
-    allowed_finishes = [
+    allowed_finishes: ClassVar[list[str]] = [
         "polished",
         "polishedfrontpainted",
         "polishedbackpainted",

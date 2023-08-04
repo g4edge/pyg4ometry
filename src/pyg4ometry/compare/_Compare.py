@@ -1,3 +1,4 @@
+from typing import ClassVar
 from collections import defaultdict as _defaultdict
 from copy import deepcopy as _deepcopy
 import enum as _enum
@@ -21,7 +22,7 @@ class Tests:
     >>> t = Tests("nDaughters", "shapeArea") # only nDaughters and shapeArea will be tested
     """
 
-    _testNames = [
+    _testNames: ClassVar[list[str]] = [
         "names",
         "namesIgnorePointer",
         "nDaughters",

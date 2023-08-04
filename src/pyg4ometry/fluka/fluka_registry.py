@@ -1,3 +1,4 @@
+from typing import ClassVar
 import sys as _sys
 from collections import OrderedDict as _OrderedDict
 from collections.abc import MutableMapping as _MutableMapping
@@ -460,7 +461,7 @@ class FlukaBodyStore(_MutableMapping):
 
 
 class BaseCacher:
-    COLUMNS = ["name", "body"]
+    COLUMNS: ClassVar[list[str]] = ["name", "body"]
 
     def __init__(self, df):
         self.df = df
@@ -530,7 +531,7 @@ class Cacheable(BaseCacher):
 
 
 class HalfSpaceCacher(Cacheable):
-    COLUMNS = ["name", "body", "planeNormal", "pointOnPlane"]
+    COLUMNS: ClassVar[list[str]] = ["name", "body", "planeNormal", "pointOnPlane"]
 
     def append(self, body):
         name = body.name
@@ -545,7 +546,7 @@ class HalfSpaceCacher(Cacheable):
 
 
 class InfiniteCylinderCacher(Cacheable):
-    COLUMNS = ["name", "body", "direction", "pointOnLine", "radius"]
+    COLUMNS: ClassVar[list[str]] = ["name", "body", "direction", "pointOnLine", "radius"]
 
     def append(self, body):
         super().appendData(

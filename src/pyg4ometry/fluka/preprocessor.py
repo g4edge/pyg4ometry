@@ -1,3 +1,4 @@
+from typing import ClassVar
 import ast
 import operator
 import os.path
@@ -198,7 +199,7 @@ def _parse_preprocessor_include(directory, directive, split_line, line_stack):
 
 
 class _Calc(ast.NodeVisitor):
-    op_map = {
+    op_map: ClassVar[list] = {
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.Mult: operator.mul,
