@@ -125,10 +125,12 @@ select = [
   "NPY",         # NumPy specific rules
   # "PD",          # pandas-vet
 ]
+
 extend-ignore = [
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
   "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
+  "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
 ]
 target-version = "py37"
 src = ["src"]
@@ -152,5 +154,5 @@ manylinux-x86_64-image = "g4edge/pyg4ometry-manylinux2014_x86_64:latest"
 archs = ["auto"]
 
 [tool.cibuildwheel.macos]
-archs = ["x86_64", "arm64"]
+archs = ["x86_64"] #, "arm64"]
 before-all = ".github/bin/install-deps-macos.sh"
