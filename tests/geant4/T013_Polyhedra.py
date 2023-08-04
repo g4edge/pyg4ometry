@@ -49,9 +49,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ps = _g4.solid.Polyhedra(
-        "ps", psphi, pdphi, pnsid, len(pz), pz, prmin, prmax, reg, "mm", "rad"
-    )
+    ps = _g4.solid.Polyhedra("ps", psphi, pdphi, pnsid, len(pz), pz, prmin, prmax, reg, "mm", "rad")
     assert ps.evaluateParameterWithUnits("pSPhi") == psphi
     assert ps.evaluateParameterWithUnits("pDPhi") == pdphi
     assert ps.evaluateParameterWithUnits("numSide") == pnsid

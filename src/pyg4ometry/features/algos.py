@@ -82,9 +82,9 @@ class Plane:
     def intersectLine(self, line):
         """Intersection between plane (self) and line"""
 
-        par = _np.dot(
-            self.normal, _np.array(self.point) - _np.array(line.point)
-        ) / _np.dot(self.normal, line.dir)
+        par = _np.dot(self.normal, _np.array(self.point) - _np.array(line.point)) / _np.dot(
+            self.normal, line.dir
+        )
         return line.eval(par)
 
     def intersectPlane(self, plane):
@@ -207,9 +207,7 @@ class CoordinateSystem:
         return Plane(self.origin, np)
 
     def transform(self, points):
-        pointsPrime = (
-            _np.dot(_la.inv(self.rot), points.transpose()).transpose() + self.origin
-        )
+        pointsPrime = _np.dot(_la.inv(self.rot), points.transpose()).transpose() + self.origin
         return pointsPrime
 
     def __repr__(self):
@@ -485,9 +483,7 @@ def _vtkPolydataEdgeInformation(polydata, bPlot=False):
 
             if pid >= 0 and pid < ps.GetNumberOfPoints() - 1:
                 p2 = ps.GetPoint(pid + 1)
-                circum += _np.sqrt(
-                    (p2[0] - p[0]) ** 2 + (p2[1] - p[1]) ** 2 + (p2[2] - p[2]) ** 2
-                )
+                circum += _np.sqrt((p2[0] - p[0]) ** 2 + (p2[1] - p[1]) ** 2 + (p2[2] - p[2]) ** 2)
         if p not in uniquePoints:
             uniquePoints[p] = 1
         else:
@@ -701,9 +697,7 @@ def extract(
                     edge,
                     [0, 0, 1, 1],
                     label=str(id),
-                    labelPos=info["uniquepoints"][
-                        _rand.randrange(0, len(info["uniquepoints"]))
-                    ],
+                    labelPos=info["uniquepoints"][_rand.randrange(0, len(info["uniquepoints"]))],
                 )
                 v.addAxis(info["centre"], info["range"])
             else:
@@ -712,9 +706,7 @@ def extract(
                     edge,
                     [0, 1, 0, 1],
                     label=str(id),
-                    labelPos=info["uniquepoints"][
-                        _rand.randrange(0, len(info["uniquepoints"]))
-                    ],
+                    labelPos=info["uniquepoints"][_rand.randrange(0, len(info["uniquepoints"]))],
                 )
         else:
             v.addPolydata(
@@ -722,9 +714,7 @@ def extract(
                 edge,
                 [1, 0, 0, 1],
                 label=str(id),
-                labelPos=info["uniquepoints"][
-                    _rand.randrange(0, len(info["uniquepoints"]))
-                ],
+                labelPos=info["uniquepoints"][_rand.randrange(0, len(info["uniquepoints"]))],
             )
 
     for cut, info, id in zip(cpdList, cpdiList, range(0, len(cpdList), 1)):
@@ -733,9 +723,7 @@ def extract(
             cut,
             [0, 0, 0, 1],
             label=str(id),
-            labelPos=info["uniquepoints"][
-                _rand.randrange(0, len(info["uniquepoints"]))
-            ],
+            labelPos=info["uniquepoints"][_rand.randrange(0, len(info["uniquepoints"]))],
         )
 
     v.addAxis([0, 0, 0], [250, 250, 250])
@@ -811,17 +799,13 @@ class FeatureData:
         for feature in cutDataFeatures:
             featureUXY = feature["uniquepointsxy"]
             _plt.plot(
-                featureUXY[:, 0]
-                - (featureUXY[:, 0].max() + featureUXY[:, 0].min()) / 2.0,
-                featureUXY[:, 1]
-                - (featureUXY[:, 1].max() + featureUXY[:, 1].min()) / 2.0,
+                featureUXY[:, 0] - (featureUXY[:, 0].max() + featureUXY[:, 0].min()) / 2.0,
+                featureUXY[:, 1] - (featureUXY[:, 1].max() + featureUXY[:, 1].min()) / 2.0,
                 "+",
             )
 
 
-def test(
-    fileName, featureIndexList=[], planeQuality=0.1, circumference=300, bPlotRadii=False
-):
+def test(fileName, featureIndexList=[], planeQuality=0.1, circumference=300, bPlotRadii=False):
     p = vtkLoadStl(fileName)
     e = vtkPolydataToConnectedEdges(p, 89)
     i = vtkPolydataEdgeInformation(e)

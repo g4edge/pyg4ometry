@@ -47,9 +47,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     assert ps.evaluateParameterWithUnits("pAlpha") == pAlpha
     assert ps.evaluateParameterWithUnits("pPhi") == pPhi
     assert ps.evaluateParameterWithUnits("pTheta") == pTheta
-    ps2 = _g4.solid.Para(
-        "ps2", px, py, pz, pAlpha_deg, pTheta_deg, pPhi_deg, reg, "cm", "deg"
-    )
+    ps2 = _g4.solid.Para("ps2", px, py, pz, pAlpha_deg, pTheta_deg, pPhi_deg, reg, "cm", "deg")
     assert ps2.evaluateParameterWithUnits("pX") == 10 * px
     assert ps2.evaluateParameterWithUnits("pY") == 10 * py
     assert ps2.evaluateParameterWithUnits("pZ") == 10 * pz

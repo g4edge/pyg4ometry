@@ -38,9 +38,7 @@ def convertMeshToPolyTriangulation(m):
 
 def convertMeshToShapeUsingMakeShapeOnMesh(m):
     shape_triangulation = convertMeshToPolyTriangulation(m)
-    shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(
-        shape_triangulation
-    )
+    shape = pyg4ometry.pyoce.BRepBuilder.BRepBuilderAPI_MakeShapeOnMesh(shape_triangulation)
     return shape.Shape()
 
 
@@ -85,9 +83,7 @@ def vis2oce(vis, stepFileName="output.step"):
     app = pyg4ometry.pyoce.XCAFApp.XCAFApp_Application.GetApplication()
 
     # create new document
-    doc = app.NewDocument(
-        pyg4ometry.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF")
-    )
+    doc = app.NewDocument(pyg4ometry.pyoce.TCollection.TCollection_ExtendedString("MDTV-CAF"))
 
     # top label
     top_label = doc.Main()

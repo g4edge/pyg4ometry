@@ -33,9 +33,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     b2p2 = _g4.PhysicalVolume([0, 0, 0], [0, -15, 0], b2l, "b2_pv2", b1l, reg)
 
     b1p1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, -300], b1l, "b1_pv1", wl, reg)
-    b1p2 = _g4.PhysicalVolume(
-        [_np.pi / 4.0, 0, 0], [0, 0, -100], b1l, "b1_pv2", wl, reg
-    )
+    b1p2 = _g4.PhysicalVolume([_np.pi / 4.0, 0, 0], [0, 0, -100], b1l, "b1_pv2", wl, reg)
     b1p3 = _g4.PhysicalVolume([0, _np.pi / 4.0, 0], [0, 0, 100], b1l, "b1_pv3", wl, reg)
     b1p4 = _g4.PhysicalVolume([0, 0, _np.pi / 4.0], [0, 0, 300], b1l, "b1_pv4", wl, reg)
 

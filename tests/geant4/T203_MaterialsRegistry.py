@@ -19,9 +19,7 @@ def Test_MaterialsRegistry(outputPath=None):
     wm = _g4.MaterialPredefined("G4_Galactic", reg)
 
     bm1 = _g4.MaterialPredefined("G4_Fe", reg)
-    bm2 = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, reg
-    )  # iron at near room temp
+    bm2 = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, reg)  # iron at near room temp
 
     bm3 = _g4.MaterialCompound("air", 1.290e-3, 2, reg)
     ne = _g4.ElementSimple("nitrogen", "N", 7, 14.01, reg)
@@ -66,9 +64,7 @@ def Test_MaterialsRegistry(outputPath=None):
     bl2 = _g4.LogicalVolume(bs, bm2, "bl2", reg)
     bl3 = _g4.LogicalVolume(bs, bm3, "bl3", reg)
     bl4 = _g4.LogicalVolume(bs, bm4, "bl4", reg)  # Material specified by object
-    bl5 = _g4.LogicalVolume(
-        bs, "natural_uranium", "bl5", reg
-    )  # Material specified by name
+    bl5 = _g4.LogicalVolume(bs, "natural_uranium", "bl5", reg)  # Material specified by name
     bl6 = _g4.LogicalVolume(bs, "RadioactiveBrass", "bl6", reg)
 
     bp1 = _g4.PhysicalVolume([0, 0, 0], [40, 0, 0], bl1, "b_pv1", wl, reg)

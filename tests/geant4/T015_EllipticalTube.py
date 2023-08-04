@@ -5,9 +5,7 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 
 
-def Test(
-    vis=False, interactive=False, n_slice=30, writeNISTMaterials=False, outputPath=None
-):
+def Test(vis=False, interactive=False, n_slice=30, writeNISTMaterials=False, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

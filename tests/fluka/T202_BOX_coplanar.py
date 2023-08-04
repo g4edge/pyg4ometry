@@ -7,13 +7,9 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     # trivially coplanar:
-    box1 = BOX(
-        "BOX1_BODY", [0, 0, 0], [0, 0, 10], [0, 10, 0], [10, 0, 0], flukaregistry=freg
-    )
+    box1 = BOX("BOX1_BODY", [0, 0, 0], [0, 0, 10], [0, 10, 0], [10, 0, 0], flukaregistry=freg)
 
-    box2 = BOX(
-        "BOX2_BODY", [2, 2, 2], [0, 0, 6], [0, 6, 0], [6, 0, 0], flukaregistry=freg
-    )
+    box2 = BOX("BOX2_BODY", [2, 2, 2], [0, 0, 6], [0, 6, 0], [6, 0, 0], flukaregistry=freg)
 
     z1 = Zone()
     z2 = Zone()

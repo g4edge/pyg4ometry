@@ -234,15 +234,11 @@ class FlukaRegistry:
         self.addCard(c1)
         self.addCard(c2)
 
-    def addRotprBin(
-        self, precision=0, rotDefi=0, printEventBin=0, lowerBin=None, upperBin=None
-    ):
+    def addRotprBin(self, precision=0, rotDefi=0, printEventBin=0, lowerBin=None, upperBin=None):
         if upperBin is None:
             upperBin = lowerBin
 
-        c = _card.Card(
-            "ROTPRBIN", precision, rotDefi, printEvent, lowerBin, upperBin=None
-        )
+        c = _card.Card("ROTPRBIN", precision, rotDefi, printEvent, lowerBin, upperBin=None)
 
     def addUsrBdx(
         self,
@@ -303,15 +299,11 @@ class FlukaRegistry:
         coreDump=None,
         eachHistoryOutput=None,
     ):
-        c = _card.Card(
-            "START", maxPrimHistories, None, timeTermSec, coreDump, eachHistoryOutput
-        )
+        c = _card.Card("START", maxPrimHistories, None, timeTermSec, coreDump, eachHistoryOutput)
         self.addCard(c)
 
     def addLowPwxs(self, lowerMaterial=None, upperMaterial=None):
-        c = _card.Card(
-            "LOW-PWXS", what1=10010, what4=lowerMaterial, what5=upperMaterial
-        )
+        c = _card.Card("LOW-PWXS", what1=10010, what4=lowerMaterial, what5=upperMaterial)
         self.addCard(c)
 
     def printDumps(self, detail=1):
@@ -532,9 +524,7 @@ class Cacheable(BaseCacher):
         mask = _np.full_like(self.df["name"], True, dtype=bool)
         for column, value, predicate in zip(columns, values, predicates):
             mask &= self.df[column].apply(
-                lambda x, value=value, predicate=predicate: predicate(
-                    x, _np.array(value)
-                ).all()
+                lambda x, value=value, predicate=predicate: predicate(x, _np.array(value)).all()
             )
         return mask
 
@@ -571,9 +561,7 @@ class InfiniteCylinderCacher(Cacheable):
 
     @staticmethod
     def _cylinderPoint(body):
-        return _vector.pointOnLineClosestToPoint(
-            [0, 0, 0], body.point(), body.direction()
-        )
+        return _vector.pointOnLineClosestToPoint([0, 0, 0], body.point(), body.direction())
 
 
 class FlukaBodyStoreExact:

@@ -196,15 +196,11 @@ class GenericTrap(_SolidBase):
 
         # Mesh top and bottom pieces
         polygons.append(
-            _Polygon(
-                [all_verts[0][3], all_verts[0][2], all_verts[0][1], all_verts[0][0]]
-            )
+            _Polygon([all_verts[0][3], all_verts[0][2], all_verts[0][1], all_verts[0][0]])
         )  # Bot
 
         polygons.append(
-            _Polygon(
-                [all_verts[-1][0], all_verts[-1][1], all_verts[-1][2], all_verts[-1][3]]
-            )
+            _Polygon([all_verts[-1][0], all_verts[-1][1], all_verts[-1][2], all_verts[-1][3]])
         )  # Top
 
         # Mesh the sides

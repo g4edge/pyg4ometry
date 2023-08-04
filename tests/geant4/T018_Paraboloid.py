@@ -42,9 +42,7 @@ def Test(
     assert ps.evaluateParameterWithUnits("pDz") == pz
     assert ps.evaluateParameterWithUnits("pR1") == prlo
     assert ps.evaluateParameterWithUnits("pR2") == prhi
-    ps2 = _g4.solid.Paraboloid(
-        "ps2", pz, prlo, prhi, reg, "cm", nslice=n_slice, nstack=n_stack
-    )
+    ps2 = _g4.solid.Paraboloid("ps2", pz, prlo, prhi, reg, "cm", nslice=n_slice, nstack=n_stack)
     assert ps2.evaluateParameterWithUnits("pDz") == 10 * pz
     assert ps2.evaluateParameterWithUnits("pR1") == 10 * prlo
     assert ps2.evaluateParameterWithUnits("pR2") == 10 * prhi

@@ -56,9 +56,7 @@ class OpticalSurface(_SolidBase):
         "Detector_LUT",
     ]
 
-    def __init__(
-        self, name, finish, model, surf_type, value, registry, addRegistry=True
-    ):
+    def __init__(self, name, finish, model, surf_type, value, registry, addRegistry=True):
         """
         Construct an optical surface.
 
@@ -84,21 +82,15 @@ class OpticalSurface(_SolidBase):
         if not self.model in self.allowed_models and (
             not self.model.isdigit() or not int(self.model) in range(0, 5)
         ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface model {self.model}"
-            )
+            warnings.warn(f"OpticalSurface {self.name} has unkown surface model {self.model}")
         if not self.osType in self.allowed_types and (
             not self.osType.isdigit() or not int(self.osType) in range(0, 39)
         ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface type {self.osType}"
-            )
+            warnings.warn(f"OpticalSurface {self.name} has unkown surface type {self.osType}")
         if not self.finish in self.allowed_finishes and (
             not self.finish.isdigit() or not int(self.finish) in range(0, 7)
         ):
-            warnings.warn(
-                f"OpticalSurface {self.name} has unkown surface finish {self.finish}"
-            )
+            warnings.warn(f"OpticalSurface {self.name} has unkown surface finish {self.finish}")
 
         if addRegistry:
             registry.addSolid(self)

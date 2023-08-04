@@ -37,14 +37,10 @@ from . import T110_geant4ReplicaRho2Fluka
 
 class Geant42FlukaConversionTests(_unittest.TestCase):
     def test_Geant42FlukaConversion_T001_Box(self):
-        T001_geant4Box2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T001_geant4Box2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T002_Tubs(self):
-        T002_geant4Tubs2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T002_geant4Tubs2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T003_CutTubs(self):
         T003_geant4CutTubs2Fluka.Test(
@@ -52,24 +48,16 @@ class Geant42FlukaConversionTests(_unittest.TestCase):
         )
 
     def test_Geant42FlukaConversion_T004_Cons(self):
-        T004_geant4Cons2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T004_geant4Cons2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T005_Para(self):
-        T005_geant4Para2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T005_geant4Para2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T006_Tdr(self):
-        T006_geant4Trd2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T006_geant4Trd2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T007_Trap(self):
-        T007_geant4Trap2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T007_geant4Trap2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T008_Sphere(self):
         T008_geant4Sphere2Fluka.Test(
@@ -77,14 +65,10 @@ class Geant42FlukaConversionTests(_unittest.TestCase):
         )
 
     def test_Geant42FlukaConversion_T009_Orb(self):
-        T009_geant4Orb2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T009_geant4Orb2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T010_Torus(self):
-        T010_geant4Torus2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T010_geant4Torus2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T011_Polycone(self):
         T011_geant4Polycone2Fluka.Test(
@@ -132,9 +116,7 @@ class Geant42FlukaConversionTests(_unittest.TestCase):
         )
 
     def test_Geant42FlukaConversion_T020_Tet(self):
-        T020_geant4Tet2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T020_geant4Tet2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T021_ExtrudedSolid(self):
         T021_geant4ExtrudedSolid2Fluka.Test(
@@ -145,9 +127,7 @@ class Geant42FlukaConversionTests(_unittest.TestCase):
     #        T026_geant4GenericTrap2Fluka.Test(False,False,True)
 
     def test_Geant42FlukaConversion_T028_Union(self):
-        T028_geant4Union2Fluka.Test(
-            vis=False, interactive=False, fluka=True, outputPath=tmptestdir
-        )
+        T028_geant4Union2Fluka.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
     def test_Geant42FlukaConversion_T029_Subtraction(self):
         T029_geant4Subtraction2Fluka.Test(

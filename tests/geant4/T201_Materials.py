@@ -58,12 +58,8 @@ def Test_MaterialSingleElement(outputPath=None):
     bz = _gd.Constant("bz", "10", reg, True)
 
     #######################################################################################
-    wm = _g4.MaterialSingleElement(
-        "galactic", 1, 1.008, 1e-25, reg
-    )  # low density hydrogen
-    bm = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, reg
-    )  # iron at near room temp
+    wm = _g4.MaterialSingleElement("galactic", 1, 1.008, 1e-25, reg)  # low density hydrogen
+    bm = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, reg)  # iron at near room temp
     #######################################################################################
 
     # solids
@@ -105,9 +101,7 @@ def Test_MaterialCompoundMassFraction(outputPath=None):
     oe = _g4.ElementSimple("oxygen", "O", 8, 16.0)
     wm.add_element_massfraction(ne, 0.7)
     wm.add_element_massfraction(oe, 0.3)
-    bm = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, reg
-    )  # iron at near room temp
+    bm = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, reg)  # iron at near room temp
     #######################################################################################
 
     # solids
@@ -298,9 +292,7 @@ def Test_MaterialPressureTemperature(outputPath=None):
     assert wm.state_variables["pressure"] == 1100
     assert wm.state_variables["pressure_unit"] == "pascal"
 
-    bm = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, reg
-    )  # iron at near room temp
+    bm = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, reg)  # iron at near room temp
     #######################################################################################
 
     # solids
@@ -347,9 +339,7 @@ def Test_MaterialState(outputPath=None):
     # Enure the state is set properly
     assert wm.state == "liquid"
 
-    bm = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, reg
-    )  # iron at near room temp
+    bm = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, reg)  # iron at near room temp
     #######################################################################################
 
     # solids

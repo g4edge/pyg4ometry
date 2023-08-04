@@ -84,9 +84,7 @@ class SolidBase:
         v = self.evaluateParameter(getattr(self, attribute)) * (_Units.unit(aunit))
         # note no abs() on this check on purpose
         if (v - 2 * _np.pi) > _config.twoPiComparisonTolerance:
-            raise ValueError(
-                'pDPhi is strictly greater than 2 x pi in solid "' + self.name + '"'
-            )
+            raise ValueError('pDPhi is strictly greater than 2 x pi in solid "' + self.name + '"')
 
     @property
     def name(self):
@@ -139,9 +137,7 @@ class SolidBase:
         newName = self.name + "_asTesselated"
         reg = self.registry
         mesh_type = TessellatedSolid.MeshType.Stl
-        tesselated_solid = TessellatedSolid(
-            newName, meshTriangular, reg, meshtype=mesh_type
-        )
+        tesselated_solid = TessellatedSolid(newName, meshTriangular, reg, meshtype=mesh_type)
 
         return tesselated_solid
 

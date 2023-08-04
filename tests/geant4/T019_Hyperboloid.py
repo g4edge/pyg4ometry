@@ -55,9 +55,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    hs = _g4.solid.Hype(
-        "hs", hrmin, hrmax, hinst, houtst, hz, reg, nslice=n_slice, nstack=n_stack
-    )
+    hs = _g4.solid.Hype("hs", hrmin, hrmax, hinst, houtst, hz, reg, nslice=n_slice, nstack=n_stack)
     assert hs.evaluateParameterWithUnits("innerRadius") == hrmin
     assert hs.evaluateParameterWithUnits("outerRadius") == hrmax
     assert hs.evaluateParameterWithUnits("innerStereo") == hinst

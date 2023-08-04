@@ -7,13 +7,9 @@ def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
     # trivially coplanar:
-    rec1 = REC(
-        "REC_BODY1", [0, 0, 0], [20, 0, 0], [0, 0, 5], [0, 10, 0], flukaregistry=freg
-    )
+    rec1 = REC("REC_BODY1", [0, 0, 0], [20, 0, 0], [0, 0, 5], [0, 10, 0], flukaregistry=freg)
 
-    rec2 = REC(
-        "REC_BODY2", [5, 0, 0], [10, 0, 0], [0, 0, 2.5], [0, 5, 0], flukaregistry=freg
-    )
+    rec2 = REC("REC_BODY2", [5, 0, 0], [10, 0, 0], [0, 0, 2.5], [0, 5, 0], flukaregistry=freg)
 
     z1 = Zone()
     z2 = Zone()

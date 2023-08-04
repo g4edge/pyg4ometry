@@ -119,9 +119,7 @@ def loadNISTMaterialDict():
                     eleLineSplit = eleLine.split()
                     eleName = eleLine[0]
                     z = int(eleLineSplit[1])
-                    nAtoms = int(
-                        eleLineSplit[2]
-                    )  # may not be right from Geant4... don't trust
+                    nAtoms = int(eleLineSplit[2])  # may not be right from Geant4... don't trust
                     massFrac = float(eleLineSplit[3])
                     elements.append([z, nAtoms, massFrac])
                 nist_materials_dict[name] = {
@@ -331,9 +329,7 @@ class MaterialBase:
         try:
             self.registry.addMaterial(self)
 
-            if hasattr(
-                self, "components"
-            ):  # Recursively set the registry for all components
+            if hasattr(self, "components"):  # Recursively set the registry for all components
                 for comp in self.components:
                     comp[0].set_registry(registry)
         except _exceptions.IdenticalNameError as err:
@@ -406,11 +402,7 @@ class Material(MaterialBase):
         elif self.density:
             if self.number_of_components and not self.atomic_number:
                 self.type = "composite"
-            elif (
-                self.atomic_number
-                and self.atomic_weight
-                and not self.number_of_components
-            ):
+            elif self.atomic_number and self.atomic_weight and not self.number_of_components:
                 self.type = "simple"
             else:
                 msg = f"Material : '{self.name}' Cannot use both atomic number/weight and number_of_components."
@@ -433,16 +425,12 @@ class Material(MaterialBase):
         # After the material type is determined, set the temperature and pressure if provided
         if "temperature" in kwargs:
             temperature = kwargs["temperature"]
-            temperature_unit = kwargs.get(
-                "temperature_unit", "K"
-            )  # The unit is optional
+            temperature_unit = kwargs.get("temperature_unit", "K")  # The unit is optional
             self.set_temperature(temperature, temperature_unit)
 
         if "pressure" in kwargs:
             pressure = kwargs["pressure"]
-            pressure_unit = kwargs.get(
-                "pressure_unit", "pascal"
-            )  # The unit is optional
+            pressure_unit = kwargs.get("pressure_unit", "pascal")  # The unit is optional
             self.set_pressure(pressure, pressure_unit)
 
         self._addToRegistry()

@@ -10,9 +10,7 @@ from . import pythonHelpers as _ph
 class Reader:
     def __init__(self, fileName):
         self.app = _XCAFApp.XCAFApp_Application.GetApplication()
-        self.doc = self.app.NewDocument(
-            _TCollection.TCollection_ExtendedString("MDTV-CAF")
-        )
+        self.doc = self.app.NewDocument(_TCollection.TCollection_ExtendedString("MDTV-CAF"))
 
         self.readStepFile(fileName)
 

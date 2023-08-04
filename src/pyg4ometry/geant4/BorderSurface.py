@@ -3,9 +3,7 @@ from .SurfaceBase import SurfaceBase
 
 
 class BorderSurface(SurfaceBase):
-    def __init__(
-        self, name, physref1, physref2, surface_property, registry, addRegistry=True
-    ):
+    def __init__(self, name, physref1, physref2, surface_property, registry, addRegistry=True):
         """
         :param name: of the border surface
         :type name: str
@@ -22,6 +20,4 @@ class BorderSurface(SurfaceBase):
         self.physref2 = self._chkType(physref2, PhysicalVolume, "physref2")
 
     def __repr__(self):
-        return "BorderSurface {} : physvol  {}, {}".format(
-            self.name, self.physref1, self.physref2
-        )
+        return f"BorderSurface {self.name} : physvol  {self.physref1}, {self.physref2}"

@@ -52,9 +52,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     for i in range(0, nbox, 1):
         for j in range(0, 2, 1):
             for k in range(0, 3, 1):
-                assert round(mu_trans[i][j][k], 6) == round(
-                    (10.0**j) * transforms[i][j][k], 6
-                )
+                assert round(mu_trans[i][j][k], 6) == round((10.0**j) * transforms[i][j][k], 6)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

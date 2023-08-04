@@ -46,16 +46,12 @@ def Test(
     # solids
     ubox = _g4.solid.Box("boxxx", 500, 500, 500, reg, "mm")
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    es = _g4.solid.EllipticalCone(
-        "es", edx, edy, ezmax, ezcut, reg, "mm", nslice=n_slice
-    )
+    es = _g4.solid.EllipticalCone("es", edx, edy, ezmax, ezcut, reg, "mm", nslice=n_slice)
     assert es.evaluateParameterWithUnits("pxSemiAxis") == edx
     assert es.evaluateParameterWithUnits("pySemiAxis") == edy
     assert es.evaluateParameterWithUnits("zMax") == ezmax
     assert es.evaluateParameterWithUnits("pzTopCut") == ezcut
-    es2 = _g4.solid.EllipticalCone(
-        "es2", edx, edy, ezmax, ezcut, reg, "cm", nslice=n_slice
-    )
+    es2 = _g4.solid.EllipticalCone("es2", edx, edy, ezmax, ezcut, reg, "cm", nslice=n_slice)
     assert es2.evaluateParameterWithUnits("pxSemiAxis") == 10 * edx
     assert es2.evaluateParameterWithUnits("pySemiAxis") == 10 * edy
     assert es2.evaluateParameterWithUnits("zMax") == 10 * ezmax

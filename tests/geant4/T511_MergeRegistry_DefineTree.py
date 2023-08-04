@@ -10,12 +10,10 @@ import T0034_CutTubs_DefineTree
 def Test(vis=False, interactive=False):
     reg0 = _g4.Registry()
 
-    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)[
+    l1 = T001_Box.Test(vis=False, interactive=False, outputPath=outputPath)["logicalVolume"]
+    l2 = T0034_CutTubs_DefineTree.Test(vis=False, interactive=False, outputPath=outputPath)[
         "logicalVolume"
     ]
-    l2 = T0034_CutTubs_DefineTree.Test(
-        vis=False, interactive=False, outputPath=outputPath
-    )["logicalVolume"]
 
     wx0 = _gd.Constant("wx0", "200", reg0, True)
     wy0 = _gd.Constant("wy0", "200", reg0, True)
@@ -36,9 +34,7 @@ def Test(vis=False, interactive=False):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg0)
-    w.write(
-        _os.path.join(_os.path.dirname(__file__), "T511_MergeRegistry_DefineTree.gdml")
-    )
+    w.write(_os.path.join(_os.path.dirname(__file__), "T511_MergeRegistry_DefineTree.gdml"))
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

@@ -34,12 +34,10 @@ def rootMatrix2pyg4ometry(matrix, reader):
         reader.matrices[_ROOT.addressof(matrix)]["count"] += 1
         return [boolRotPyG4, boolTraPyG4, boolScaPyG4, rotation, translation]
     else:
-        rotation = _np.frombuffer(
-            matrix.GetRotationMatrix(), dtype=_np.float64, count=9
-        ).reshape((3, 3))
-        translation = _np.frombuffer(
-            matrix.GetTranslation(), dtype=_np.float64, count=3
+        rotation = _np.frombuffer(matrix.GetRotationMatrix(), dtype=_np.float64, count=9).reshape(
+            (3, 3)
         )
+        translation = _np.frombuffer(matrix.GetTranslation(), dtype=_np.float64, count=3)
         scale = [1, 1, 1]
         if matrix.IsReflection():
             q, r = _np.linalg.qr(rotation)
@@ -463,14 +461,10 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
                 ]
             )
 
-        shapePyG4 = _g4.solid.ExtrudedSolid(
-            shapeName, polygon, slices, registry, lunit="cm"
-        )
+        shapePyG4 = _g4.solid.ExtrudedSolid(shapeName, polygon, slices, registry, lunit="cm")
     elif shapeClass == "TGeoScaledShape":
         scale = shape.GetScale().GetScale()
-        shapePyG4Unscaled = rootShape2pyg4ometry(
-            shape.GetShape(), reader, warnAboutBadShapes
-        )
+        shapePyG4Unscaled = rootShape2pyg4ometry(shape.GetShape(), reader, warnAboutBadShapes)
         shapePyG4 = _g4.solid.Scaled(
             shapeName, shapePyG4Unscaled, scale[0], scale[1], scale[2], registry
         )
@@ -517,12 +511,8 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
         boolNodeLeftMatrix = boolNode.GetLeftMatrix()
         boolNodeRightMatrix = boolNode.GetRightMatrix()
 
-        boolLeftShapePyG4 = rootShape2pyg4ometry(
-            boolNodeLeftShape, reader, warnAboutBadShapes
-        )
-        boolRightShapePyG4 = rootShape2pyg4ometry(
-            boolNodeRightShape, reader, warnAboutBadShapes
-        )
+        boolLeftShapePyG4 = rootShape2pyg4ometry(boolNodeLeftShape, reader, warnAboutBadShapes)
+        boolRightShapePyG4 = rootShape2pyg4ometry(boolNodeRightShape, reader, warnAboutBadShapes)
 
         [
             boolNodeLeftRotPyG4,
@@ -572,11 +562,7 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             print("rootShape2pyg4ometry> Unknown boolean")
             raise ValueError
     else:
-        print(
-            "ROOT.Reader.rootShape2pyg4ometry> {} not implemented ".format(
-                shape.Class_Name()
-            )
-        )
+        print(f"ROOT.Reader.rootShape2pyg4ometry> {shape.Class_Name()} not implemented ")
         shape.ComputeBBox()
         shapePyG4 = _g4.solid.Box(
             shapeName, shape.GetDX(), shape.GetDY(), shape.GetDZ(), registry, lunit="cm"
@@ -778,9 +764,7 @@ class Reader:
         if not rootElement.HasIsotopes():
             Z = rootElement.Z()
             A = rootElement.A()
-            return _g4.ElementSimple(
-                elemName, elemFormula, Z, A, registry=self._registry
-            )
+            return _g4.ElementSimple(elemName, elemFormula, Z, A, registry=self._registry)
 
         elemNisotopes = rootElement.GetNisotopes()
 
@@ -864,9 +848,7 @@ class Reader:
         else:
             if volumeClass == "TGeoVolume":
                 # make logical volume
-                volumePyG4 = _g4.LogicalVolume(
-                    shapePyG4, thisMaterial, volumeName, self._registry
-                )
+                volumePyG4 = _g4.LogicalVolume(shapePyG4, thisMaterial, volumeName, self._registry)
             elif volumeClass == "TGeoVolumeAssembly":
                 volumePyG4 = _g4.AssemblyVolume(volumeName, self._registry)
             else:
@@ -889,11 +871,7 @@ class Reader:
                     # root has it's own layered geometry where it allows overlaps
                     if node.IsOverlapping() and dontLoadOverlapNodes:
                         if warnAboutBadShapes:
-                            print(
-                                "ROOT overlap node named {}, not building".format(
-                                    node.GetName()
-                                )
-                            )
+                            print(f"ROOT overlap node named {node.GetName()}, not building")
                         continue  # to next node / volume
 
                     matrix = node.GetMatrix()

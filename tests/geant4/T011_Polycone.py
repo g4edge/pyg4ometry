@@ -5,9 +5,7 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 
 
-def Test(
-    vis=False, interactive=False, n_slice=64, writeNISTMaterials=False, outputPath=None
-):
+def Test(vis=False, interactive=False, n_slice=64, writeNISTMaterials=False, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -54,9 +52,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ps = _g4.solid.Polycone(
-        "ps", psphi, pdphi, pz, prmin, prmax, reg, "mm", "rad", nslice=n_slice
-    )
+    ps = _g4.solid.Polycone("ps", psphi, pdphi, pz, prmin, prmax, reg, "mm", "rad", nslice=n_slice)
     assert ps.evaluateParameterWithUnits("pSPhi") == psphi
     assert ps.evaluateParameterWithUnits("pDPhi") == pdphi
     assert ps.evaluateParameterWithUnits("pZpl") == [-10, 0, 10]

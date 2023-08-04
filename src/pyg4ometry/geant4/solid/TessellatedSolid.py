@@ -36,9 +36,7 @@ class TessellatedSolid(_SolidBase):
         Gdml = 2
         Stl = 3
 
-    def __init__(
-        self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True
-    ):
+    def __init__(self, name, meshTess, registry, meshtype=MeshType.Freecad, addRegistry=True):
         super().__init__(name, "TessellatedSolid", registry)
 
         if meshTess is None:

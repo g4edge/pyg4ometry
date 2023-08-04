@@ -25,9 +25,7 @@ class Reader:
     predefined material by name only.
     """
 
-    def __init__(
-        self, fileName, registryOn=True, reduceNISTMaterialsToPredefined=False
-    ):
+    def __init__(self, fileName, registryOn=True, reduceNISTMaterialsToPredefined=False):
         super().__init__()
         self.filename = fileName
         self.registryOn = registryOn
@@ -300,9 +298,7 @@ class Reader:
                     elif chNode.tagName == "T":
                         def_attrs["temperature"] = chNode.attributes["value"].value
                         try:
-                            def_attrs["temperature_unit"] = chNode.attributes[
-                                "unit"
-                            ].value
+                            def_attrs["temperature_unit"] = chNode.attributes["unit"].value
                         except KeyError:
                             def_attrs["temperature_unit"] = "K"
 
@@ -332,16 +328,16 @@ class Reader:
 
                     elif chNode.tagName == "property":
                         try:
-                            properties[
-                                chNode.attributes["name"].value
-                            ] = chNode.attributes["value"].value
+                            properties[chNode.attributes["name"].value] = chNode.attributes[
+                                "value"
+                            ].value
                         except KeyError:
                             pass
 
                         try:
-                            properties[
-                                chNode.attributes["name"].value
-                            ] = chNode.attributes["ref"].value
+                            properties[chNode.attributes["name"].value] = chNode.attributes[
+                                "ref"
+                            ].value
                         except KeyError:
                             pass
 
@@ -389,9 +385,7 @@ class Reader:
 
             else:
                 n_comp = len(element["components"])
-                ele = _g4.ElementIsotopeMixture(
-                    name, symbol, n_comp, registry=self._registry
-                )
+                ele = _g4.ElementIsotopeMixture(name, symbol, n_comp, registry=self._registry)
 
                 for comp in element["components"]:
                     ref = str(comp.get("ref", ""))
@@ -403,10 +397,7 @@ class Reader:
 
             nameNoPointer = _StripPointer(name)
             # check if it's a NIST one and whether to simplify it
-            if (
-                nameNoPointer in nistMaterialDict
-                and self._reduceNISTMaterialsToPredefined
-            ):
+            if nameNoPointer in nistMaterialDict and self._reduceNISTMaterialsToPredefined:
                 _g4.MaterialPredefined(nameNoPointer, self._registry)
                 substitueDictionary[name] = nameNoPointer
                 continue
@@ -472,9 +463,7 @@ class Reader:
 
             # Set the optional variables of state
             if "temperature" in material:
-                mat.set_temperature(
-                    float(material["temperature"]), material["temperature_unit"]
-                )
+                mat.set_temperature(float(material["temperature"]), material["temperature_unit"])
 
             if "pressure" in material:
                 mat.set_pressure(float(material["pressure"]), material["pressure_unit"])
@@ -542,9 +531,7 @@ class Reader:
                 self.parseTube(node)
             elif solid_type == "cutTube":  # solid test 003
                 self.parseCutTube(node)
-            elif (
-                solid_type == "cone"
-            ):  # solid test 004 (problem when rmin1 == rmin2 != 0)
+            elif solid_type == "cone":  # solid test 004 (problem when rmin1 == rmin2 != 0)
                 self.parseCone(node)
             elif solid_type == "para":  # solid test 005
                 self.parsePara(node)
@@ -647,9 +634,7 @@ class Reader:
         rmax = _defines.Expression(
             solid_name + "_pRMax", node.attributes["rmax"].value, self._registry
         )
-        z = _defines.Expression(
-            solid_name + "_pDz", node.attributes["z"].value, self._registry
-        )
+        z = _defines.Expression(solid_name + "_pDz", node.attributes["z"].value, self._registry)
         dphi = _defines.Expression(
             solid_name + "_pDPhi", node.attributes["deltaphi"].value, self._registry
         )
@@ -664,9 +649,7 @@ class Reader:
         except KeyError:
             aunit = "rad"
 
-        _g4.solid.Tubs(
-            solid_name, rmin, rmax, z, sphi, dphi, self._registry, lunit, aunit
-        )
+        _g4.solid.Tubs(solid_name, rmin, rmax, z, sphi, dphi, self._registry, lunit, aunit)
 
     def parseCutTube(self, node):
         solid_name = node.attributes["name"].value
@@ -681,9 +664,7 @@ class Reader:
         rmax = _defines.Expression(
             solid_name + "_pRMax", node.attributes["rmax"].value, self._registry
         )
-        dz = _defines.Expression(
-            solid_name + "_pDz", node.attributes["z"].value, self._registry
-        )
+        dz = _defines.Expression(solid_name + "_pDz", node.attributes["z"].value, self._registry)
         try:
             sphi = _defines.Expression(
                 solid_name + "_pSPhi", node.attributes["startphi"].value, self._registry
@@ -768,9 +749,7 @@ class Reader:
         rmax2 = _defines.Expression(
             solid_name + "_pRMax2", node.attributes["rmax2"].value, self._registry
         )
-        dz = _defines.Expression(
-            solid_name + "_pDz", node.attributes["z"].value, self._registry
-        )
+        dz = _defines.Expression(solid_name + "_pDz", node.attributes["z"].value, self._registry)
         dphi = _defines.Expression(
             solid_name + "_pDPhi", node.attributes["deltaphi"].value, self._registry
         )
@@ -802,15 +781,9 @@ class Reader:
     def parsePara(self, node):
         solid_name = node.attributes["name"].value
 
-        x = _defines.Expression(
-            solid_name + "_pX", node.attributes["x"].value, self._registry
-        )
-        y = _defines.Expression(
-            solid_name + "_pY", node.attributes["y"].value, self._registry
-        )
-        z = _defines.Expression(
-            solid_name + "_pZ", node.attributes["z"].value, self._registry
-        )
+        x = _defines.Expression(solid_name + "_pX", node.attributes["x"].value, self._registry)
+        y = _defines.Expression(solid_name + "_pY", node.attributes["y"].value, self._registry)
+        z = _defines.Expression(solid_name + "_pZ", node.attributes["z"].value, self._registry)
         phi = _defines.Expression(
             solid_name + "_pPhi", node.attributes["phi"].value, self._registry
         )
@@ -831,28 +804,16 @@ class Reader:
         except KeyError:
             aunit = "rad"
 
-        _g4.solid.Para(
-            solid_name, x, y, z, alpha, theta, phi, self._registry, lunit, aunit
-        )
+        _g4.solid.Para(solid_name, x, y, z, alpha, theta, phi, self._registry, lunit, aunit)
 
     def parseTrd(self, node):
         solid_name = node.attributes["name"].value
 
-        x1 = _defines.Expression(
-            solid_name + "_px1", node.attributes["x1"].value, self._registry
-        )
-        x2 = _defines.Expression(
-            solid_name + "_px2", node.attributes["x2"].value, self._registry
-        )
-        y1 = _defines.Expression(
-            solid_name + "_py1", node.attributes["y1"].value, self._registry
-        )
-        y2 = _defines.Expression(
-            solid_name + "_py2", node.attributes["y2"].value, self._registry
-        )
-        z = _defines.Expression(
-            solid_name + "_z", node.attributes["z"].value, self._registry
-        )
+        x1 = _defines.Expression(solid_name + "_px1", node.attributes["x1"].value, self._registry)
+        x2 = _defines.Expression(solid_name + "_px2", node.attributes["x2"].value, self._registry)
+        y1 = _defines.Expression(solid_name + "_py1", node.attributes["y1"].value, self._registry)
+        y2 = _defines.Expression(solid_name + "_py2", node.attributes["y2"].value, self._registry)
+        z = _defines.Expression(solid_name + "_z", node.attributes["z"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -864,33 +825,19 @@ class Reader:
     def parseTrap(self, node):
         solid_name = node.attributes["name"].value
 
-        dz = _defines.Expression(
-            solid_name + "_pDz", node.attributes["z"].value, self._registry
-        )
+        dz = _defines.Expression(solid_name + "_pDz", node.attributes["z"].value, self._registry)
         theta = _defines.Expression(
             solid_name + "_pTheta", node.attributes["theta"].value, self._registry
         )
         dphi = _defines.Expression(
             solid_name + "_pDphi", node.attributes["phi"].value, self._registry
         )
-        dx1 = _defines.Expression(
-            solid_name + "_pDx1", node.attributes["x1"].value, self._registry
-        )
-        dx2 = _defines.Expression(
-            solid_name + "_pDx2", node.attributes["x2"].value, self._registry
-        )
-        dx3 = _defines.Expression(
-            solid_name + "_pDx3", node.attributes["x3"].value, self._registry
-        )
-        dx4 = _defines.Expression(
-            solid_name + "_pDx4", node.attributes["x4"].value, self._registry
-        )
-        dy1 = _defines.Expression(
-            solid_name + "_pDy1", node.attributes["y1"].value, self._registry
-        )
-        dy2 = _defines.Expression(
-            solid_name + "_pDy2", node.attributes["y2"].value, self._registry
-        )
+        dx1 = _defines.Expression(solid_name + "_pDx1", node.attributes["x1"].value, self._registry)
+        dx2 = _defines.Expression(solid_name + "_pDx2", node.attributes["x2"].value, self._registry)
+        dx3 = _defines.Expression(solid_name + "_pDx3", node.attributes["x3"].value, self._registry)
+        dx4 = _defines.Expression(solid_name + "_pDx4", node.attributes["x4"].value, self._registry)
+        dy1 = _defines.Expression(solid_name + "_pDy1", node.attributes["y1"].value, self._registry)
+        dy2 = _defines.Expression(solid_name + "_pDy2", node.attributes["y2"].value, self._registry)
         alp1 = _defines.Expression(
             solid_name + "_pAlp1", node.attributes["alpha1"].value, self._registry
         )
@@ -948,9 +895,7 @@ class Reader:
                 self._registry,
             )
         except KeyError:
-            starttheta = _defines.Expression(
-                solid_name + "_pSTheta", "0", self._registry
-            )
+            starttheta = _defines.Expression(solid_name + "_pSTheta", "0", self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -988,9 +933,7 @@ class Reader:
     def parseOrb(self, node):
         solid_name = node.attributes["name"].value
 
-        r = _defines.Expression(
-            solid_name + "_pRMax", node.attributes["r"].value, self._registry
-        )
+        r = _defines.Expression(solid_name + "_pRMax", node.attributes["r"].value, self._registry)
 
         _g4.solid.Orb(solid_name, r, self._registry)
 
@@ -1023,9 +966,7 @@ class Reader:
         except KeyError:
             aunit = "rad"
 
-        _g4.solid.Torus(
-            solid_name, rmin, rmax, rtor, sphi, dphi, self._registry, lunit, aunit
-        )
+        _g4.solid.Torus(solid_name, rmin, rmax, rtor, sphi, dphi, self._registry, lunit, aunit)
 
     def parsePolycone(self, node):
         solid_name = node.attributes["name"].value
@@ -1080,9 +1021,7 @@ class Reader:
             Z.append(z)
             i += 1
 
-        _g4.solid.Polycone(
-            solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry, lunit, aunit
-        )
+        _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry, lunit, aunit)
 
     def parseGenericPolycone(self, node):
         solid_name = node.attributes["name"].value
@@ -1129,9 +1068,7 @@ class Reader:
             Z.append(z)
             i += 1
 
-        _g4.solid.GenericPolycone(
-            solid_name, sphi, dphi, R, Z, self._registry, lunit, aunit
-        )
+        _g4.solid.GenericPolycone(solid_name, sphi, dphi, R, Z, self._registry, lunit, aunit)
 
     def parsePolyhedra(self, node):
         solid_name = node.attributes["name"].value
@@ -1195,9 +1132,7 @@ class Reader:
             Z.append(z)
             i += 1
 
-        nzplane = _defines.Expression(
-            f"{solid_name}_numZplanes", len(Z), self._registry
-        )
+        nzplane = _defines.Expression(f"{solid_name}_numZplanes", len(Z), self._registry)
 
         _g4.solid.Polyhedra(
             solid_name,
@@ -1272,15 +1207,9 @@ class Reader:
     def parseEllipticalTube(self, node):
         solid_name = node.attributes["name"].value
 
-        dx = _defines.Expression(
-            solid_name + "_dx", node.attributes["dx"].value, self._registry
-        )
-        dy = _defines.Expression(
-            solid_name + "_dy", node.attributes["dy"].value, self._registry
-        )
-        dz = _defines.Expression(
-            solid_name + "_dz", node.attributes["dz"].value, self._registry
-        )
+        dx = _defines.Expression(solid_name + "_dx", node.attributes["dx"].value, self._registry)
+        dy = _defines.Expression(solid_name + "_dy", node.attributes["dy"].value, self._registry)
+        dz = _defines.Expression(solid_name + "_dz", node.attributes["dz"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -1299,15 +1228,9 @@ class Reader:
         except KeyError:
             bcut = _defines.Expression(solid_name + "_zcut1", "-1E20", self._registry)
 
-        ax = _defines.Expression(
-            solid_name + "_ax", node.attributes["ax"].value, self._registry
-        )
-        by = _defines.Expression(
-            solid_name + "_by", node.attributes["by"].value, self._registry
-        )
-        cz = _defines.Expression(
-            solid_name + "_cz", node.attributes["cz"].value, self._registry
-        )
+        ax = _defines.Expression(solid_name + "_ax", node.attributes["ax"].value, self._registry)
+        by = _defines.Expression(solid_name + "_by", node.attributes["by"].value, self._registry)
+        cz = _defines.Expression(solid_name + "_cz", node.attributes["cz"].value, self._registry)
         tcut = _defines.Expression(
             solid_name + "_zcut2", node.attributes["zcut2"].value, self._registry
         )
@@ -1353,15 +1276,9 @@ class Reader:
     def parseParaboloid(self, node):
         solid_name = node.attributes["name"].value
 
-        Dz = _defines.Expression(
-            solid_name + "_Dz", node.attributes["dz"].value, self._registry
-        )
-        R1 = _defines.Expression(
-            solid_name + "_R1", node.attributes["rlo"].value, self._registry
-        )
-        R2 = _defines.Expression(
-            solid_name + "_R2", node.attributes["rhi"].value, self._registry
-        )
+        Dz = _defines.Expression(solid_name + "_Dz", node.attributes["dz"].value, self._registry)
+        R1 = _defines.Expression(solid_name + "_R1", node.attributes["rlo"].value, self._registry)
+        R2 = _defines.Expression(solid_name + "_R2", node.attributes["rhi"].value, self._registry)
 
         _g4.solid.Paraboloid(solid_name, Dz, R1, R2, self._registry)
 
@@ -1375,9 +1292,7 @@ class Reader:
                 self._registry,
             )
         except KeyError:
-            innerStereo = _defines.Expression(
-                solid_name + "_innerStereo", "0", self._registry
-            )
+            innerStereo = _defines.Expression(solid_name + "_innerStereo", "0", self._registry)
 
         innerRadius = _defines.Expression(
             solid_name + "_innerRadius", node.attributes["rmin"].value, self._registry
@@ -1480,9 +1395,7 @@ class Reader:
         except KeyError:
             lunit = "mm"
 
-        _g4.solid.ExtrudedSolid(
-            solid_name, pPolygon, zSection, self._registry, lunit=lunit
-        )
+        _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection, self._registry, lunit=lunit)
         # print 'extruded solid NOT IMPLEMENTED'
 
     def parseTwistedBox(self, node):
@@ -1491,15 +1404,9 @@ class Reader:
         twistedAngle = _defines.Expression(
             solid_name + "_PhiTwist", node.attributes["PhiTwist"].value, self._registry
         )
-        x = _defines.Expression(
-            solid_name + "_x", node.attributes["x"].value, self._registry
-        )
-        y = _defines.Expression(
-            solid_name + "_y", node.attributes["y"].value, self._registry
-        )
-        z = _defines.Expression(
-            solid_name + "_z", node.attributes["z"].value, self._registry
-        )
+        x = _defines.Expression(solid_name + "_x", node.attributes["x"].value, self._registry)
+        y = _defines.Expression(solid_name + "_y", node.attributes["y"].value, self._registry)
+        z = _defines.Expression(solid_name + "_z", node.attributes["z"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -1511,9 +1418,7 @@ class Reader:
         except KeyError:
             aunit = "rad"
 
-        _g4.solid.TwistedBox(
-            solid_name, twistedAngle, x, y, z, self._registry, lunit, aunit
-        )
+        _g4.solid.TwistedBox(solid_name, twistedAngle, x, y, z, self._registry, lunit, aunit)
 
     def parseTwistedTrap(self, node):
         solid_name = node.attributes["name"].value
@@ -1524,33 +1429,17 @@ class Reader:
         Theta = _defines.Expression(
             solid_name + "_Theta", node.attributes["Theta"].value, self._registry
         )
-        Phi = _defines.Expression(
-            solid_name + "_Phi", node.attributes["Phi"].value, self._registry
-        )
+        Phi = _defines.Expression(solid_name + "_Phi", node.attributes["Phi"].value, self._registry)
         Alph = _defines.Expression(
             solid_name + "_Alph", node.attributes["Alph"].value, self._registry
         )
-        x1 = _defines.Expression(
-            solid_name + "_x1", node.attributes["x1"].value, self._registry
-        )
-        x2 = _defines.Expression(
-            solid_name + "_x2", node.attributes["x2"].value, self._registry
-        )
-        x3 = _defines.Expression(
-            solid_name + "_x3", node.attributes["x3"].value, self._registry
-        )
-        x4 = _defines.Expression(
-            solid_name + "_x4", node.attributes["x4"].value, self._registry
-        )
-        y1 = _defines.Expression(
-            solid_name + "_y1", node.attributes["y1"].value, self._registry
-        )
-        y2 = _defines.Expression(
-            solid_name + "_y2", node.attributes["y2"].value, self._registry
-        )
-        z = _defines.Expression(
-            solid_name + "_z", node.attributes["z"].value, self._registry
-        )
+        x1 = _defines.Expression(solid_name + "_x1", node.attributes["x1"].value, self._registry)
+        x2 = _defines.Expression(solid_name + "_x2", node.attributes["x2"].value, self._registry)
+        x3 = _defines.Expression(solid_name + "_x3", node.attributes["x3"].value, self._registry)
+        x4 = _defines.Expression(solid_name + "_x4", node.attributes["x4"].value, self._registry)
+        y1 = _defines.Expression(solid_name + "_y1", node.attributes["y1"].value, self._registry)
+        y2 = _defines.Expression(solid_name + "_y2", node.attributes["y2"].value, self._registry)
+        z = _defines.Expression(solid_name + "_z", node.attributes["z"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -1586,21 +1475,11 @@ class Reader:
         twistedAngle = _defines.Expression(
             solid_name + "_PhiTwist", node.attributes["PhiTwist"].value, self._registry
         )
-        x1 = _defines.Expression(
-            solid_name + "_x1", node.attributes["x1"].value, self._registry
-        )
-        x2 = _defines.Expression(
-            solid_name + "_x2", node.attributes["x2"].value, self._registry
-        )
-        y1 = _defines.Expression(
-            solid_name + "_y1", node.attributes["y1"].value, self._registry
-        )
-        y2 = _defines.Expression(
-            solid_name + "_y2", node.attributes["y2"].value, self._registry
-        )
-        z = _defines.Expression(
-            solid_name + "_z", node.attributes["z"].value, self._registry
-        )
+        x1 = _defines.Expression(solid_name + "_x1", node.attributes["x1"].value, self._registry)
+        x2 = _defines.Expression(solid_name + "_x2", node.attributes["x2"].value, self._registry)
+        y1 = _defines.Expression(solid_name + "_y1", node.attributes["y1"].value, self._registry)
+        y2 = _defines.Expression(solid_name + "_y2", node.attributes["y2"].value, self._registry)
+        z = _defines.Expression(solid_name + "_z", node.attributes["z"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -1640,9 +1519,7 @@ class Reader:
         zlen = _defines.Expression(
             solid_name + "_zlen", node.attributes["zlen"].value, self._registry
         )
-        phi = _defines.Expression(
-            solid_name + "_phi", node.attributes["phi"].value, self._registry
-        )
+        phi = _defines.Expression(solid_name + "_phi", node.attributes["phi"].value, self._registry)
 
         try:
             lunit = node.attributes["lunit"].value
@@ -1688,9 +1565,7 @@ class Reader:
         except KeyError:
             lunit = "mm"
 
-        dz = _defines.Expression(
-            solid_name + "_dz", node.attributes["dz"].value, self._registry
-        )
+        dz = _defines.Expression(solid_name + "_dz", node.attributes["dz"].value, self._registry)
         args.extend([dz, self._registry, True, lunit])
 
         _g4.solid.GenericTrap(*args)
@@ -1725,22 +1600,16 @@ class Reader:
         first = node.getElementsByTagName("first")[0].attributes["ref"].value
         second = node.getElementsByTagName("second")[0].attributes["ref"].value
         try:
-            position = self.parseVector(
-                node.getElementsByTagName("position")[0], "position", False
-            )
+            position = self.parseVector(node.getElementsByTagName("position")[0], "position", False)
         except IndexError:
             try:
                 position = self.parseVector(
                     node.getElementsByTagName("positionref")[0], "positionref", False
                 )
             except IndexError:
-                position = _defines.Position(
-                    "zero", "0", "0", "0", "mm", self._registry, False
-                )
+                position = _defines.Position("zero", "0", "0", "0", "mm", self._registry, False)
         try:
-            rotation = self.parseVector(
-                node.getElementsByTagName("rotation")[0], "rotation", False
-            )
+            rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
         except IndexError:
             try:
                 rotation = self.parseVector(
@@ -1764,22 +1633,16 @@ class Reader:
         first = node.getElementsByTagName("first")[0].attributes["ref"].value
         second = node.getElementsByTagName("second")[0].attributes["ref"].value
         try:
-            position = self.parseVector(
-                node.getElementsByTagName("position")[0], "position", False
-            )
+            position = self.parseVector(node.getElementsByTagName("position")[0], "position", False)
         except IndexError:
             try:
                 position = self.parseVector(
                     node.getElementsByTagName("positionref")[0], "positionref", False
                 )
             except IndexError:
-                position = _defines.Position(
-                    "zero", "0", "0", "0", "mm", self._registry, False
-                )
+                position = _defines.Position("zero", "0", "0", "0", "mm", self._registry, False)
         try:
-            rotation = self.parseVector(
-                node.getElementsByTagName("rotation")[0], "rotation", False
-            )
+            rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
         except IndexError:
             try:
                 rotation = self.parseVector(
@@ -1803,22 +1666,16 @@ class Reader:
         first = node.getElementsByTagName("first")[0].attributes["ref"].value
         second = node.getElementsByTagName("second")[0].attributes["ref"].value
         try:
-            position = self.parseVector(
-                node.getElementsByTagName("position")[0], "position", False
-            )
+            position = self.parseVector(node.getElementsByTagName("position")[0], "position", False)
         except IndexError:
             try:
                 position = self.parseVector(
                     node.getElementsByTagName("positionref")[0], "positionref", False
                 )
             except IndexError:
-                position = _defines.Position(
-                    "zero", "0", "0", "0", "mm", self._registry, False
-                )
+                position = _defines.Position("zero", "0", "0", "0", "mm", self._registry, False)
         try:
-            rotation = self.parseVector(
-                node.getElementsByTagName("rotation")[0], "rotation", False
-            )
+            rotation = self.parseVector(node.getElementsByTagName("rotation")[0], "rotation", False)
         except IndexError:
             try:
                 rotation = self.parseVector(
@@ -1886,9 +1743,7 @@ class Reader:
                 muSolids.append(muNodeSolid)
                 transformations.append([rotation, position])
 
-        _g4.solid.MultiUnion(
-            solid_name, muSolids, transformations, self._registry, True
-        )
+        _g4.solid.MultiUnion(solid_name, muSolids, transformations, self._registry, True)
 
     def parseOpticalSurface(self, node):
         solid_name = node.attributes["name"].value
@@ -1910,9 +1765,7 @@ class Reader:
                 continue  # comment
             if chNode.tagName == "property":
                 try:
-                    properties[chNode.attributes["name"].value] = chNode.attributes[
-                        "ref"
-                    ].value
+                    properties[chNode.attributes["name"].value] = chNode.attributes["ref"].value
                 except KeyError:
                     pass
         for pname, pref in properties.items():
@@ -1927,24 +1780,18 @@ class Reader:
         solid_name = node.getElementsByTagName("solidref")[0].attributes["ref"].value
 
         try:
-            scale = self.parseVector(
-                node.getElementsByTagName("scale")[0], "scale", False
-            )
+            scale = self.parseVector(node.getElementsByTagName("scale")[0], "scale", False)
         except IndexError:
             try:
                 scale = self.parseVector(
                     node.getElementsByTagName("scaleref")[0], "scaleref", False
                 )
             except IndexError:
-                scale = _defines.Scale(
-                    "zero", "0", "0", "0", "mm", self._registry, False
-                )
+                scale = _defines.Scale("zero", "0", "0", "0", "mm", self._registry, False)
 
         solid = self._registry.solidDict[solid_name]
 
-        _g4.solid.Scaled(
-            scaledSolid_name, solid, scale.x, scale.y, scale.z, self._registry
-        )
+        _g4.solid.Scaled(scaledSolid_name, solid, scale.x, scale.y, scale.z, self._registry)
 
     def parseSolidLoop(self, node):
         pass
@@ -1968,9 +1815,7 @@ class Reader:
 
             if node_name == "volume":
                 name = node.attributes["name"].value
-                material = (
-                    node.getElementsByTagName("materialref")[0].attributes["ref"].value
-                )
+                material = node.getElementsByTagName("materialref")[0].attributes["ref"].value
                 solid = node.getElementsByTagName("solidref")[0].attributes["ref"].value
 
                 # see if it should be substituted on load for another name, i.e. predefined NIST one
@@ -2018,23 +1863,15 @@ class Reader:
             elif node_name == "bordersurface":
                 name = node.attributes["name"].value
                 surf_property = node.attributes["surfaceproperty"].value
-                pvol1 = (
-                    node.getElementsByTagName("physvolref")[0].attributes["ref"].value
-                )
-                pvol2 = (
-                    node.getElementsByTagName("physvolref")[1].attributes["ref"].value
-                )
+                pvol1 = node.getElementsByTagName("physvolref")[0].attributes["ref"].value
+                pvol2 = node.getElementsByTagName("physvolref")[1].attributes["ref"].value
 
-                surf = _g4.BorderSurface(
-                    name, pvol1, pvol2, surf_property, self._registry
-                )
+                surf = _g4.BorderSurface(name, pvol1, pvol2, surf_property, self._registry)
 
             elif node_name == "skinsurface":
                 name = node.attributes["name"].value
                 surf_property = node.attributes["surfaceproperty"].value
-                volref = (
-                    node.getElementsByTagName("volumeref")[0].attributes["ref"].value
-                )
+                volref = node.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 surf = _g4.SkinSurface(name, volref, surf_property, self._registry)
 
@@ -2046,9 +1883,7 @@ class Reader:
     def parsePhysicalVolumeChildren(self, node, vol):
         for chNode in node.childNodes:
             if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol":
-                volref = (
-                    chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-                )
+                volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name
                 try:
@@ -2064,14 +1899,10 @@ class Reader:
                 _log.info("Reader.extractStructureNodeData> %s" % (pvol_name))
 
                 # Position
-                _log.info(
-                    "Reader.extractStructureNodeData> pv position %s" % (pvol_name)
-                )
+                _log.info("Reader.extractStructureNodeData> pv position %s" % (pvol_name))
                 try:
                     position = self._registry.defineDict[
-                        chNode.getElementsByTagName("positionref")[0]
-                        .attributes["ref"]
-                        .value
+                        chNode.getElementsByTagName("positionref")[0].attributes["ref"].value
                     ]
                 except IndexError:
                     try:
@@ -2095,9 +1926,7 @@ class Reader:
                 _log.info("Reader.extractStructureNodeData> pv rotation %s", pvol_name)
                 try:
                     rotation = self._registry.defineDict[
-                        chNode.getElementsByTagName("rotationref")[0]
-                        .attributes["ref"]
-                        .value
+                        chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value
                     ]
                 except IndexError:
                     try:
@@ -2121,9 +1950,7 @@ class Reader:
                 _log.info("Reader.extractStructureNodeData> pv scale %s " % (pvol_name))
                 try:
                     scale = self._registry.defineDict[
-                        chNode.getElementsByTagName("scaleref")[0]
-                        .attributes["ref"]
-                        .value
+                        chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value
                     ]
                 except IndexError:
                     try:
@@ -2134,9 +1961,7 @@ class Reader:
                         scale = None
 
                 # Create physical volume
-                _log.info(
-                    "Reader.extractStructureNodeData> construct % s" % (pvol_name)
-                )
+                _log.info("Reader.extractStructureNodeData> construct % s" % (pvol_name))
 
                 try:
                     copyNumber = int(chNode.attributes["copynumber"].value)
@@ -2154,13 +1979,9 @@ class Reader:
                     scale=scale,
                 )
 
-            elif (
-                chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol"
-            ):
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol":
                 nreplica = chNode.attributes["number"].value
-                volref = (
-                    chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-                )
+                volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name
                 try:
@@ -2189,9 +2010,7 @@ class Reader:
                     False,
                 )
 
-                width_u = (
-                    repNode.getElementsByTagName("offset")[0].attributes["unit"].value
-                )
+                width_u = repNode.getElementsByTagName("offset")[0].attributes["unit"].value
                 width = _defines.Expression(
                     pvol_name + "_width",
                     repNode.getElementsByTagName("width")[0].attributes["value"].value,
@@ -2199,9 +2018,7 @@ class Reader:
                     False,
                 )
 
-                offset_u = (
-                    repNode.getElementsByTagName("offset")[0].attributes["unit"].value
-                )
+                offset_u = repNode.getElementsByTagName("offset")[0].attributes["unit"].value
                 offset = _defines.Expression(
                     pvol_name + "offset",
                     repNode.getElementsByTagName("offset")[0].attributes["value"].value,
@@ -2224,9 +2041,7 @@ class Reader:
                 )
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "paramvol":
-                volref = (
-                    chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-                )
+                volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name
                 try:
@@ -2326,9 +2141,7 @@ class Reader:
                             try:
                                 pSPhi = _defines.Expression(
                                     pvol_name + "_Tubs_SPhi",
-                                    "{}".format(
-                                        ppsChNodeTag.attributes["StartPhi"].value
-                                    ),
+                                    "{}".format(ppsChNodeTag.attributes["StartPhi"].value),
                                     self._registry,
                                     False,
                                 )
@@ -2409,9 +2222,7 @@ class Reader:
                             try:
                                 pSPhi = _defines.Expression(
                                     pvol_name + "_Tubs_SPhi",
-                                    "{}".format(
-                                        ppsChNodeTag.attributes["startphi"].value
-                                    ),
+                                    "{}".format(ppsChNodeTag.attributes["startphi"].value),
                                     self._registry,
                                     False,
                                 )
@@ -2484,9 +2295,7 @@ class Reader:
                             try:
                                 pSPhi = _defines.Expression(
                                     pvol_name + "_Sphere_sPhi",
-                                    "{}".format(
-                                        ppsChNodeTag.attributes["startphi"].value
-                                    ),
+                                    "{}".format(ppsChNodeTag.attributes["startphi"].value),
                                     self._registry,
                                     False,
                                 )
@@ -2506,9 +2315,7 @@ class Reader:
                             try:
                                 pSTheta = _defines.Expression(
                                     pvol_name + "_Sphere_sTheta",
-                                    "{}".format(
-                                        ppsChNodeTag.attributes["starttheta"].value
-                                    ),
+                                    "{}".format(ppsChNodeTag.attributes["starttheta"].value),
                                     self._registry,
                                     False,
                                 )
@@ -2521,9 +2328,7 @@ class Reader:
                                 )
                             pDTheta = _defines.Expression(
                                 pvol_name + "_Sphere_sTheta",
-                                "{}".format(
-                                    ppsChNodeTag.attributes["deltatheta"].value
-                                ),
+                                "{}".format(ppsChNodeTag.attributes["deltatheta"].value),
                                 self._registry,
                                 False,
                             )
@@ -2570,9 +2375,7 @@ class Reader:
                             try:
                                 pSPhi = _defines.Expression(
                                     pvol_name + "_Torus_sPhi",
-                                    "{}".format(
-                                        ppsChNodeTag.attributes["startphi"].value
-                                    ),
+                                    "{}".format(ppsChNodeTag.attributes["startphi"].value),
                                     self._registry,
                                     False,
                                 )
@@ -3019,12 +2822,8 @@ class Reader:
                     addRegistry=True,
                 )
 
-            elif (
-                chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol"
-            ):
-                volref = (
-                    chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-                )
+            elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "divisionvol":
+                volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
 
                 # Name
                 try:
@@ -3040,17 +2839,13 @@ class Reader:
                     offs = chNode.attributes["offset"].value
                 except KeyError:
                     offs = 0
-                offset = _defines.Expression(
-                    pvol_name + "_offset", offs, self._registry, False
-                )
+                offset = _defines.Expression(pvol_name + "_offset", offs, self._registry, False)
 
                 try:
                     wdt = chNode.attributes["width"].value
                 except KeyError:
                     wdt = -1
-                width = _defines.Expression(
-                    pvol_name + "_width", wdt, self._registry, False
-                )
+                width = _defines.Expression(pvol_name + "_width", wdt, self._registry, False)
 
                 try:
                     num = chNode.attributes["number"].value

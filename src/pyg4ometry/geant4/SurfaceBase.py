@@ -8,9 +8,7 @@ class SurfaceBase:
         self.name = name
         self.type = type
         self.registry = registry
-        self.surface_property = self._chkType(
-            surface_property, OpticalSurface, "surface_property"
-        )
+        self.surface_property = self._chkType(surface_property, OpticalSurface, "surface_property")
 
         if addRegistry:
             registry.addSurface(self)

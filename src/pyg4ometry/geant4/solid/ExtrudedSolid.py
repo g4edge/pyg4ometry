@@ -41,9 +41,7 @@ class ExtrudedSolid(_SolidBase):
     zSlices  = [[z1,[offsx1, offsy1],scale1],[z2,[offsx2, offsy2],scale2]]
     """
 
-    def __init__(
-        self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True
-    ):
+    def __init__(self, name, pPolygon, pZslices, registry, lunit="mm", addRegistry=True):
         super().__init__(name, "ExtrudedSolid", registry)
 
         self.lunit = lunit
@@ -83,9 +81,7 @@ class ExtrudedSolid(_SolidBase):
 
         if varName == "pPolygon":
             pPolygons = self.evaluateParameter(self.pPolygon)
-            vertices = [
-                [pPolygon[0] * luval, pPolygon[1] * luval] for pPolygon in pPolygons
-            ]
+            vertices = [[pPolygon[0] * luval, pPolygon[1] * luval] for pPolygon in pPolygons]
             return vertices
         elif varName == "pZslices":
             pZslices = self.evaluateParameter(self.pZslices)

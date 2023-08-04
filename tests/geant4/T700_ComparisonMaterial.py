@@ -24,9 +24,7 @@ def Test(printOut=False):
     assert len(comp2) > 0
 
     # predefined vs single element
-    iron2 = _g4.MaterialSingleElement(
-        "iron", 26, 55.8452, 7.874, r
-    )  # iron at near room temp
+    iron2 = _g4.MaterialSingleElement("iron", 26, 55.8452, 7.874, r)  # iron at near room temp
     comp3 = pyg4ometry.compare.materials(galactic1, iron2, tests)
     if printOut:
         comp3.print()

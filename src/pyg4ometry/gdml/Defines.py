@@ -98,14 +98,10 @@ def upgradeToStringExpression(reg, obj):
         if obj.name in reg.defineDict:
             return obj.name  # so a scalar expression in registry
         else:
-            return (
-                obj.expression.expressionString
-            )  # so a scalar expression not in registry
+            return obj.expression.expressionString  # so a scalar expression not in registry
 
     else:
-        raise ValueError(
-            "upgradeToStringExpression> unsupported type (" + str(type(obj)) + ")"
-        )
+        raise ValueError("upgradeToStringExpression> unsupported type (" + str(type(obj)) + ")")
 
 
 def evaluateToFloat(reg, obj):
@@ -1069,16 +1065,12 @@ class Matrix:
         return a
 
     def __repr__(self):
-        return "Matrix : {} = {} {}".format(
-            self.name, str(self.coldim), str(self.values)
-        )
+        return f"Matrix : {self.name} = {self.coldim!s} {self.values!s}"
 
     def __getitem__(self, key):
         if self.name in self.registry.defineDict:
             stridx = ",".join([str(v + 1) for v in key])
-            return Expression(
-                "dummy_name", self.name + "[" + stridx + "]", self.registry, False
-            )
+            return Expression("dummy_name", self.name + "[" + stridx + "]", self.registry, False)
         else:
             return self.values_asarray[key]
 

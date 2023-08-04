@@ -129,9 +129,7 @@ class RegionParser(Parser):
     class RegionsContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -187,9 +185,7 @@ class RegionParser(Parser):
     class RegionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -200,9 +196,7 @@ class RegionParser(Parser):
             super().copyFrom(ctx)
 
     class ComplexRegionContext(RegionContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.RegionContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.RegionContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -230,9 +224,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class SimpleRegionContext(RegionContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.RegionContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.RegionContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -299,9 +291,7 @@ class RegionParser(Parser):
     class ZoneUnionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -479,9 +469,7 @@ class RegionParser(Parser):
     class ZoneContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -492,9 +480,7 @@ class RegionParser(Parser):
             super().copyFrom(ctx)
 
     class ZoneExprContext(ZoneContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ZoneContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ZoneContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -519,9 +505,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class ZoneBodyContext(ZoneContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ZoneContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ZoneContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -543,9 +527,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class ZoneSubZoneContext(ZoneContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ZoneContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ZoneContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -623,9 +605,7 @@ class RegionParser(Parser):
     class ExprContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -636,9 +616,7 @@ class RegionParser(Parser):
             super().copyFrom(ctx)
 
     class UnaryAndBooleanContext(ExprContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ExprContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ExprContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -663,9 +641,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class OneSubZoneContext(ExprContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ExprContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ExprContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -687,9 +663,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class UnaryAndSubZoneContext(ExprContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ExprContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ExprContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -714,9 +688,7 @@ class RegionParser(Parser):
                 return visitor.visitChildren(self)
 
     class SingleUnaryContext(ExprContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a RegionParser.ExprContext
+        def __init__(self, parser, ctx: ParserRuleContext):  # actually a RegionParser.ExprContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
@@ -787,9 +759,7 @@ class RegionParser(Parser):
     class SubZoneContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
@@ -865,9 +835,7 @@ class RegionParser(Parser):
     class UnaryExpressionContext(ParserRuleContext):
         __slots__ = "parser"
 
-        def __init__(
-            self, parser, parent: ParserRuleContext = None, invokingState: int = -1
-        ):
+        def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
             super().__init__(parent, invokingState)
             self.parser = parser
 

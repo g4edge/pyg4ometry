@@ -12,9 +12,7 @@ import pyg4ometry.fluka.body
 def Test(vis=False, interactive=False):
     freg = FlukaRegistry()
 
-    rtrans = rotoTranslationFromTra2(
-        "rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("rppTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     with infinity(30):

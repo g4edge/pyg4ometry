@@ -9,9 +9,7 @@ def Test(vis=False, interactive=False):
     r = _pyg4.features.extract(
         pathToStl,
         planes=[],
-        outputFileName=_os.path.join(
-            _os.path.dirname(__file__), "T720_featureExtract.dat"
-        ),
+        outputFileName=_os.path.join(_os.path.dirname(__file__), "T720_featureExtract.dat"),
         bViewer=vis,
         bViewerInteractive=interactive,
     )

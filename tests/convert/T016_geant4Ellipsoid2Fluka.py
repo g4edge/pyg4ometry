@@ -8,9 +8,7 @@ import pyg4ometry.visualisation as _vi
 import numpy as _np
 
 
-def Test(
-    vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outputPath=None
-):
+def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -35,9 +33,7 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    es = _g4.solid.Ellipsoid(
-        "es", eax, eby, ecz, ebc, etc, reg, nslice=n_slice, nstack=n_stack
-    )
+    es = _g4.solid.Ellipsoid("es", eax, eby, ecz, ebc, etc, reg, nslice=n_slice, nstack=n_stack)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)

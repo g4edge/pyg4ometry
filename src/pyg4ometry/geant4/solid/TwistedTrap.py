@@ -131,9 +131,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
             self.name, self.twistedAngle, self.pDz
         )
 
-    def makeLayers(
-        self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twist, theta, nsl
-    ):
+    def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twist, theta, nsl):
         dz = 2 * pDz / float(nsl)
         dtwist = twist / float(nsl)
         z = -pDz

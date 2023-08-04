@@ -12,9 +12,7 @@ def Test(vis=False, interactive=False):
     # verifying the resulting body is of the correct length and radius
     # is trivial.
 
-    rtrans = rotoTranslationFromTra2(
-        "zccTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]]
-    )
+    rtrans = rotoTranslationFromTra2("zccTRF", [[np.pi / 4, np.pi / 4, np.pi / 4], [0, 0, 20]])
     transform = Transform(rotoTranslation=rtrans)
 
     zcc = ZCC("ZCC_BODY", 0, 0, 20, transform=transform, flukaregistry=freg)
