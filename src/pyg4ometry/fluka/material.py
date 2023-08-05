@@ -190,6 +190,7 @@ class Material(_MatProp):
         self.name = newName + format(iIndex, "02")
         return iIndex
 
+
 class Compound(_MatProp):
     """
     A FLUKA compound material. This corresponds to the case in
@@ -312,13 +313,14 @@ class Compound(_MatProp):
             return sum(x[1] for x in self.fractions)
         return sum(x[0].density * x[1] for x in self.fractions)
 
-    def rename(self, newName, recursive=True, iIndex = 0):
+    def rename(self, newName, recursive=True, iIndex=0):
         self.name = newName + format(iIndex, "02")
         if recursive:
             for frac in self.fractions:
                 iIndex += 1
                 iIndex = frac[0].rename(newName, recursive=True, iIndex=iIndex)
         return iIndex
+
 
 def _appendFractionPairs(card, fractions, fractionTypes):
     if card.what1 is not None and card.what2 is not None:

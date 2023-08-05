@@ -2,6 +2,8 @@
 
 ## latest
 
+## v1.1.0
+
 - Fluka viewer geometry viewer
 - Ability to write visualiser geometry to STEP file
 - 2d extruder to avoid subtractions of decomposed solids

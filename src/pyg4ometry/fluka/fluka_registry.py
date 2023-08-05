@@ -20,7 +20,7 @@ from .material import (
     BuiltIn,
     predefinedMaterialNames,
     Material,
-    Compound
+    Compound,
 )
 from . import body as _body
 from . import vector as _vector
@@ -338,7 +338,7 @@ class FlukaRegistry:
 
         maxIndex = -1
         for bodyKey in self.bodyDict.keys():
-            if bodyKey == 'BLKBODY':
+            if bodyKey == "BLKBODY":
                 continue
 
             maxIndex = max(maxIndex, int(bodyKey[1:5]))
@@ -352,7 +352,7 @@ class FlukaRegistry:
 
         maxIndex = -1
         for regionKey in self.regionDict.keys():
-            if regionKey == 'BLKHOLE':
+            if regionKey == "BLKHOLE":
                 continue
 
             maxIndex = max(maxIndex, int(regionKey[1:]))
@@ -366,7 +366,7 @@ class FlukaRegistry:
 
         maxIndex = -1
         for materialKey in self.materials.keys():
-            if materialKey == 'BLCKHOLE' or materialKey.find("0") == -1:
+            if materialKey == "BLCKHOLE" or materialKey.find("0") == -1:
                 continue
 
             maxIndex = max(maxIndex, int(materialKey[1:4]))
@@ -376,28 +376,33 @@ class FlukaRegistry:
     def findLastTransformationIndex(self):
         pass
 
-
     def checkBodyName(self, bodyName):
         if bodyName in self.bodyDict:
-            return True, 'C'+str(self.iMergeBodies)
+            return True, "C" + str(self.iMergeBodies)
         else:
-            return False,bodyName
+            return False, bodyName
 
     def checkRegionName(self, regionName):
         if regionName in self.regionDict:
-            return True, 'S'+str(self.iMergeRegions)
+            return True, "S" + str(self.iMergeRegions)
         else:
             return False, regionName
 
     def checkMaterialName(self, materialName):
         if materialName in self.materials:
-            return True, 'N'+str(self.iMergeRegions)
+            return True, "N" + str(self.iMergeRegions)
         else:
             return False, materialName
 
-    def addRegistry(self, flukaRegistry, outerRegion=None, rotation=[0,0,0], translation=[0,0,0],
-                    removeRegions=[], removeRegionDependents=False):
-
+    def addRegistry(
+        self,
+        flukaRegistry,
+        outerRegion=None,
+        rotation=[0, 0, 0],
+        translation=[0, 0, 0],
+        removeRegions=[],
+        removeRegionDependents=False,
+    ):
         def bodySetRename(body_set, old_name, new_name):
             for b in body_set:
                 if b.name == old_name:
@@ -405,13 +410,12 @@ class FlukaRegistry:
 
         # bodies (loop over solids)
         for body in flukaRegistry.bodyDict:
-
             # check body name
             old_body_name = body.name
             updated, new_body_name = self.checkBodyName(body.name)
             body.name = new_body_name
 
-            print('body name replacement', old_body_name, new_body_name)
+            print("body name replacement", old_body_name, new_body_name)
 
             # transform body
             mat4d = body.transform.to4DMatrix()
@@ -422,9 +426,10 @@ class FlukaRegistry:
             compRotation = _matrix2tbxyz(comp[0:3, 0:3])
             compPosition = comp[3, 0:3]
 
-            rotoTranslation = _rotoTranslationFromTra2("BBROTDEF", [compRotation, compPosition], flukaregistry=flukaRegistry)
+            rotoTranslation = _rotoTranslationFromTra2(
+                "BBROTDEF", [compRotation, compPosition], flukaregistry=flukaRegistry
+            )
             body.transform = rotoTranslation
-
 
             # add body in self
             self.addBody(body)
@@ -433,16 +438,15 @@ class FlukaRegistry:
             if updated:
                 # update regions if body name has changed
                 for regionKey in flukaRegistry.regionDict:
-                    bodySetRename(flukaRegistry.regionDict[regionKey].bodies(),
-                                  old_body_name,
-                                  new_body_name)
+                    bodySetRename(
+                        flukaRegistry.regionDict[regionKey].bodies(), old_body_name, new_body_name
+                    )
 
             # update merged counter
             self.iMergeBodies += 1
 
         # regions (loop over regions) and also do assignmas at same time
         for regionKey in flukaRegistry.regionDict:
-
             region = flukaRegistry.regionDict[regionKey]
 
             # check body name
@@ -450,7 +454,7 @@ class FlukaRegistry:
             updated, new_region_name = self.checkRegionName(region.name)
             region.name = new_region_name
 
-            print('region name replacement', old_region_name, new_region_name)
+            print("region name replacement", old_region_name, new_region_name)
 
             # add body in self
             self.addRegion(region)
@@ -461,7 +465,7 @@ class FlukaRegistry:
             updated, new_material_name = self.checkMaterialName(material.name)
 
             if updated and type(material) != BuiltIn:
-                material.rename('N'+format(self.iMergeMaterials, "03"))
+                material.rename("N" + format(self.iMergeMaterials, "03"))
                 self.iMergeMaterials += 1
 
             self.addMaterial(material, recursive=True)
