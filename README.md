@@ -14,44 +14,42 @@ Carlo (Geant4 and Fluka) geometries.
 ![License](https://img.shields.io/github/license/g4edge/pyg4ometry)
 [![Read the Docs](https://img.shields.io/readthedocs/pyg4ometry?logo=readthedocs)](https://pyg4ometry.readthedocs.io)
 
-> **Warning**
->
-> Work-in-progress repackaging of https://bitbucket.org/jairhul/pyg4ometry. Report issues and pull requests there.
+## Installing from PyPI
 
-## Installing
+```console
+> pip install pyg4ometry
+```
 
-- `pip install pyg4ometry`
-
-> **Warning**
+> **Note**
 > Most dependencies are available from pip but you will need to install OpenCASCADE
-> cgal, mpfr, gmp, ROOT
+> cgal, mpfr, gmp, ROOT. Find [here](https://github.com/g4edge/pyg4ometry/tree/main/.github/bin)
+> installers for Ubuntu and MacOS.
 
 ## Building
 
-- `git clone https://github.com/g4edge/pyg4ometry.git`
-- `cd pyg4ometry`
-- `pip install . ` or
-- `pip install --editable .` for a version which you can edit
+```console
+> git clone https://github.com/g4edge/pyg4ometry.git
+> cd pyg4ometry
+> pip install . # add --editable for a version which you can edit
+```
 
-> **Warning**
-> If you update your git clone and the pybind11 C++ has changes you will need
-> to reinstall and this trigger a rebuild
+> **Note**
+> If you update your Git clone and the pybind11 C++ has changes you will need
+> to reinstall and thus trigger a rebuild.
 
 ## Manual
 
-Online manual
-
-- https://pyg4ometry.readthedocs.io/en/latest/
+Online manual available at https://pyg4ometry.readthedocs.io
 
 ## Developer commands (for detailed developer notes see readthedocs)
 
 - Building the manual
-  - `pip install '.[docs]'` to install doc building dependencies
+  - `pip install '.[docs]'` to install docs building dependencies
   - `cd pyg4ometry/docs`
   - `make`
+  - `<your browser> build/html/index.html` to view the docs
 - Running tests
   - `pip install '.[test]'` to install test running dependencies
-  - `cd pyg4ometry/tests`
   - `pytest`
 - Git commit
   - pre-commit
@@ -61,7 +59,7 @@ Online manual
   - messages
     - Start commit message with `submodule : (type of change) detailed notes`
     - e.g `pycgal : (extra functionality) more 2d mesh processing`
-- Pull request
+- Pull requests
   - PR messages should just explain the change in a concise way as they will form part of the change log
     - e.g `FLUKA region viewer`
   - Update the CHANGELOG.md file for generating the release notes
