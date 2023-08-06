@@ -47,7 +47,7 @@ jobs:
   test-in-container:
     name: Test in Docker container
     runs-on: ubuntu-latest
-    container: docker://g4edge/pyg4ometry:latest
+    container: docker://g4edge/ubuntu:latest
     steps:
       - uses: actions/checkout@v3
       - name: Get number of CPU cores

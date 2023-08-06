@@ -150,7 +150,7 @@ build = ["*macosx*", "*manylinux_x86_64"]
 skip = ["pp*", "cp36-*"]
 
 [tool.cibuildwheel.linux]
-manylinux-x86_64-image = "g4edge/pyg4ometry-manylinux2014_x86_64:latest"
+manylinux-x86_64-image = "g4edge/manylinux2014_x86_64:latest"
 archs = ["auto"]
 
 [tool.cibuildwheel.macos]
