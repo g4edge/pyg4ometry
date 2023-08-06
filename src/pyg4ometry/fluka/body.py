@@ -1436,6 +1436,8 @@ class XZP(_HalfSpaceMixin):
 
         self.transform = self._setTransform(transform)
 
+        self.comment = comment
+
         self.addToRegistry(flukaregistry)
 
     def __repr__(self):
@@ -1619,7 +1621,7 @@ class XCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + self._infCylinderFreestringHelper(self.y, self.z)
+        return prefix + self._infCylinderFreestringHelper(self.y, self.z, self.radius)
 
     def hash(self):
         return hash(("XCC", self.y, self.z, self.radius)) ^ self.transform.hash()
@@ -1684,7 +1686,7 @@ class YCC(_InfiniteCylinderMixin, _ShiftableCylinderMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + self._infCylinderFreestringHelper(self.z, self.x)
+        return prefix + self._infCylinderFreestringHelper(self.z, self.x, self.radius)
 
     def hash(self):
         return hash(("YCC", self.z, self.x, self.radius)) ^ self.transform.hash()
