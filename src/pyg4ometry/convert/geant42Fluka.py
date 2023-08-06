@@ -309,6 +309,7 @@ def geant4Solid2FlukaRegion(
     rotation = _transformation.matrix2tbxyz(rotation)
     position = tra
 
+    tra = tra * gdmlReflection
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
 
     commentName = commentName + " " + solid.name
