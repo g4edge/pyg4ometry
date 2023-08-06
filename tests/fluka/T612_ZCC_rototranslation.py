@@ -1,12 +1,16 @@
+import pathlib as _pl
 import numpy as np
 
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import ZCC, XYP, Region, Zone, FlukaRegistry, Transform
+from pyg4ometry.fluka import ZCC, XYP, Region, Zone, FlukaRegistry, Transform, Writer
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     freg = FlukaRegistry()
     # I pick 20 because that's the length of the axes added below, so
     # verifying the resulting body is of the correct length and radius
@@ -34,6 +38,10 @@ def Test(vis=False, interactive=False):
 
     greg = convert.fluka2Geant4(freg)
 
+    w = Writer()
+    w.addDetector(freg)
+    w.write(outputPath / "T612_ZCC_rototranslation.inp")
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -41,7 +49,13 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {
+        "testStatus": True,
+        "logicalVolume": greg.getWorldVolume(),
+        "vtkViewer": v,
+        "flukaRegistry": freg,
+        "geant4Registry": greg,
+    }
 
 
 if __name__ == "__main__":

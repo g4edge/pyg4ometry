@@ -1,10 +1,15 @@
+import pathlib as _pl
+
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import PLA, Region, Zone, FlukaRegistry, Transform, infinity
+from pyg4ometry.fluka import PLA, Region, Zone, FlukaRegistry, Transform, infinity, Writer
 import pyg4ometry.fluka.body
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     freg = FlukaRegistry()
 
     with infinity(30):
@@ -28,6 +33,10 @@ def Test(vis=False, interactive=False):
 
         greg = convert.fluka2Geant4(freg)
 
+    w = Writer()
+    w.addDetector(freg)
+    w.write(outputPath / "T511_PLA_translation.inp")
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -35,7 +44,13 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {
+        "testStatus": True,
+        "logicalVolume": greg.getWorldVolume(),
+        "vtkViewer": v,
+        "flukaRegistry": freg,
+        "geant4Registry": greg,
+    }
 
 
 if __name__ == "__main__":

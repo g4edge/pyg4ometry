@@ -1,10 +1,15 @@
+import pathlib as _pl
+
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import XYP, YZP, XZP, Region, Zone, FlukaRegistry
+from pyg4ometry.fluka import XYP, YZP, XZP, Region, Zone, FlukaRegistry, Writer
 from pyg4ometry.fluka.body import INFINITY
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     freg = FlukaRegistry()
     # I pick 20 because that's the length of the axes added below, so
     # verifying the resulting cube is of the correct length is trivial.
@@ -52,6 +57,10 @@ def Test(vis=False, interactive=False):
         assert greg.solidDict[name].pY < INFINITY - 10
         assert greg.solidDict[name].pZ < INFINITY - 10
 
+    w = Writer()
+    w.addDetector(freg)
+    w.write(outputPath / "T710_XYP_ZXP_YZP_minimiation.inp")
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -59,7 +68,13 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {
+        "testStatus": True,
+        "logicalVolume": greg.getWorldVolume(),
+        "vtkViewer": v,
+        "flukaRegistry": freg,
+        "geant4Registry": greg,
+    }
 
 
 if __name__ == "__main__":

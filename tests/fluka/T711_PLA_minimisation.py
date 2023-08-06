@@ -1,10 +1,15 @@
+import pathlib as _pl
+
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import PLA, Region, Zone, FlukaRegistry
+from pyg4ometry.fluka import PLA, Region, Zone, FlukaRegistry, Writer
 from pyg4ometry.fluka.body import INFINITY
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     freg = FlukaRegistry()
 
     # Bigger cube.
@@ -52,6 +57,10 @@ def Test(vis=False, interactive=False):
     wlv = greg.getWorldVolume()
     wlv.checkOverlaps()
 
+    w = Writer()
+    w.addDetector(freg)
+    w.write(outputPath / "T711_PLA_minimisation.inp")
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -59,7 +68,13 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(wlv)
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {
+        "testStatus": True,
+        "logicalVolume": greg.getWorldVolume(),
+        "vtkViewer": v,
+        "flukaRegistry": freg,
+        "geant4Registry": greg,
+    }
 
 
 if __name__ == "__main__":
