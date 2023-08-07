@@ -153,7 +153,7 @@ class ViewerBase:
                 pvtra = _np.array(pv.position.eval())
 
                 # pv compound transform
-                mtra_new = mtra @ pvmsca @ pvmrot
+                mtra_new = mtra @ pvmrot @ pvmsca
                 tra_new = mtra @ pvtra + tra
 
                 # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
