@@ -485,8 +485,7 @@ def main():
         featureData=featureData,
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
         gltfScale=options.__dict__["gltfScale"],
-        verbose=verbose,
-        citation=options.__dict__["citation"]
+        verbose=verbose
     )
 
 
