@@ -9,7 +9,7 @@ import filecmp as _fc
 import g4edgetestdata as _g4td
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -111,9 +111,10 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    g4td = _g4td.G4EdgeTestData()
-    testDataPath = g4td["convert/T021_geant4ExtrudedSolid2Fluka.inp"]
-    assert _fc.cmp(testDataPath, outputPath / "T021_geant4ExtrudedSolid2Fluka.inp")
+    if refFilePath is not None:
+        assert _fc.cmp(
+            refFilePath, outputPath / "T021_geant4ExtrudedSolid2Fluka.inp", shallow=False
+        )
 
     return {"greg": reg, "freg": freg}
 

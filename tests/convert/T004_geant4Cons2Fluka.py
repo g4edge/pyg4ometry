@@ -7,7 +7,6 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import filecmp as _fc
-import g4edgetestdata as _g4td
 
 normal = 1
 r1min_gt_r1max = 2
@@ -18,7 +17,7 @@ cone_up = 6
 inner_cylinder = 7
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -94,9 +93,8 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    g4td = _g4td.G4EdgeTestData()
-    testDataPath = g4td["convert/T004_geant4Cons2Fluka.inp"]
-    assert _fc.cmp(testDataPath, outputPath / "T004_geant4Cons2Fluka.inp")
+    if refFilePath is not None:
+        assert _fc.cmp(refFilePath, outputPath / "T004_geant4Cons2Fluka.inp", shallow=False)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ import filecmp as _fc
 import g4edgetestdata as _g4td
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -70,8 +70,8 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         w.write(outputPath / "T203_extrudedReflectionRotation.inp")
 
         # flair output file
-        f = _fluka.Flair("T202_extrudedReflectionRotation.inp", extentBB)
-        f.write(outputPath / "T202_extrudedReflectionRotation.flair")
+        f = _fluka.Flair("T203_extrudedReflectionRotation.inp", extentBB)
+        f.write(outputPath / "T203_extrudedReflectionRotation.flair")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
@@ -85,9 +85,10 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    g4td = _g4td.G4EdgeTestData()
-    testDataPath = g4td["convert/T202_extrudedReflectionRotation.inp"]
-    assert _fc.cmp(testDataPath, outputPath / "T202_extrudedReflectionRotation.inp")
+    if refFilePath is not None:
+        assert _fc.cmp(
+            refFilePath, outputPath / "T203_extrudedReflectionRotation.inp", shallow=False
+        )
 
     return {"greg": reg, "freg": freg}
 

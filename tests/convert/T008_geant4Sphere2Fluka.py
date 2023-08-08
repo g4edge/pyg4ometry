@@ -6,10 +6,17 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import filecmp as _fc
-import g4edgetestdata as _g4td
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outputPath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    n_slice=10,
+    n_stack=10,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -80,9 +87,8 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outpu
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    g4td = _g4td.G4EdgeTestData()
-    testDataPath = g4td["convert/T008_geant4Sphere2Fluka.inp"]
-    assert _fc.cmp(testDataPath, outputPath / "T008_geant4Sphere2Fluka.inp")
+    if refFilePath is not None:
+        assert _fc.cmp(refFilePath, outputPath / "T008_geant4Sphere2Fluka.inp", shallow=False)
 
     return {"greg": reg, "freg": freg}
 
