@@ -76,13 +76,14 @@ def _parseStrPythonAsDict(strPython):
     exec("d= " + strPython, globals(), locals)
     return locals["d"]
 
+
 def _printCitation():
-    s =  "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
+    s = "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
     s += "pyg4ometry: A Python library for the creation of Monte Carlo radiation\n"
     s += "transport physical geometries, Computer Physics Communications **272** 108228 (2022)."
     print(s)
     print("Bibtex entry:")
-    s =  "@article{Boogert:2020cmn,\n"
+    s = "@article{Boogert:2020cmn,\n"
     s += '    author = "Boogert, Stewart and Abramov, Andrey and Nevay, Laurence and Shields, William and Walker, Stuart",\n'
     s += '    title = "{Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries}",\n'
     s += '    eprint = "2010.01109",\n'
@@ -93,33 +94,35 @@ def _printCitation():
     s += '    volume = "272",\n'
     s += '    pages = "108228",\n'
     s += '    year = "2022"\n'
-    s += '}'
+    s += "}"
     print(s)
 
 
-def cli(inputFileName=None,
-        view=False,
-        bounding=False,
-        checkOverlaps=False,
-        analysis=False,
-        nullMeshException=False,
-        compareFileName=None,
-        appendFileName=None,
-        lvName=None,
-        info=None,
-        exchangeLvName=None,
-        clip=None,
-        solid=None,
-        translation=None,
-        rotation=None,
-        materials=None,
-        outputFileName=None,
-        planeCutterData=None,
-        planeCutterOutputFileName=None,
-        featureData=None,
-        featureDataOutputFileName=None,
-        gltfScale=None,
-        verbose=None):
+def cli(
+    inputFileName=None,
+    view=False,
+    bounding=False,
+    checkOverlaps=False,
+    analysis=False,
+    nullMeshException=False,
+    compareFileName=None,
+    appendFileName=None,
+    lvName=None,
+    info=None,
+    exchangeLvName=None,
+    clip=None,
+    solid=None,
+    translation=None,
+    rotation=None,
+    materials=None,
+    outputFileName=None,
+    planeCutterData=None,
+    planeCutterOutputFileName=None,
+    featureData=None,
+    featureDataOutputFileName=None,
+    gltfScale=None,
+    verbose=None,
+):
     print("pyg4 - command line interface")
 
     # switch on file type
@@ -382,20 +385,8 @@ def main():
         dest="translation",
         metavar="X,Y,Z",
     )
-    parser.add_option(
-        "-v",
-        "--view",
-        help="view geometry",
-        action="store_true",
-        dest="view"
-    )
-    parser.add_option(
-        "-V",
-        "--verbose",
-        help="verbose script",
-        dest="verbose",
-        action="store_true"
-    )
+    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
+    parser.add_option("-V", "--verbose", help="verbose script", dest="verbose", action="store_true")
     parser.add_option(
         "-x",
         "--exchange",
@@ -404,13 +395,9 @@ def main():
         metavar="LVNAME",
     )
     parser.add_option(
-        "-z",
-        "--citation",
-        help="print citation text",
-        dest="citation",
-        action="store_true"
+        "-z", "--citation", help="print citation text", dest="citation", action="store_true"
     )
-    
+
     # features
     (options, args) = parser.parse_args()
 
@@ -486,7 +473,7 @@ def main():
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
         gltfScale=options.__dict__["gltfScale"],
         verbose=verbose,
-        citation=options.__dict__["citation"]
+        citation=options.__dict__["citation"],
     )
 
 
