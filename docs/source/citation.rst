@@ -14,7 +14,7 @@ Run: ::
   pyg4ometry --citation
 
 to get the citation text in a human-readable and bibtex format.
-  
+
 * `<https://doi.org/10.1016/j.cpc.2021.108228>`_
 * Preprint was: `<https://arxiv.org/abs/2010.01109>`_, but the above should be used.
 

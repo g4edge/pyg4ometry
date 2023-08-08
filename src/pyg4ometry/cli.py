@@ -76,6 +76,7 @@ def _parseStrPythonAsDict(strPython):
     exec("d= " + strPython, globals(), locals)
     return locals["d"]
 
+
 def _printCitation():
     s =  "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
     s += "pyg4ometry: A Python library for the creation of Monte Carlo radiation\n"
@@ -93,7 +94,7 @@ def _printCitation():
     s += '    volume = "272",\n'
     s += '    pages = "108228",\n'
     s += '    year = "2022"\n'
-    s += '}'
+    s += "}"
     print(s)
 
 
@@ -382,20 +383,8 @@ def main():
         dest="translation",
         metavar="X,Y,Z",
     )
-    parser.add_option(
-        "-v",
-        "--view",
-        help="view geometry",
-        action="store_true",
-        dest="view"
-    )
-    parser.add_option(
-        "-V",
-        "--verbose",
-        help="verbose script",
-        dest="verbose",
-        action="store_true"
-    )
+    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
+    parser.add_option("-V", "--verbose", help="verbose script", dest="verbose", action="store_true")
     parser.add_option(
         "-x",
         "--exchange",
@@ -410,7 +399,7 @@ def main():
         dest="citation",
         action="store_true"
     )
-    
+
     # features
     (options, args) = parser.parse_args()
 
