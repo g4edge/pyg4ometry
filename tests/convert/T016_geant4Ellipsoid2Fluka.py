@@ -6,6 +6,8 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import numpy as _np
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 
 def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outputPath=None):
@@ -67,3 +69,13 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outpu
         v.addLogicalVolume(wl)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T016_geant4Ellipsoid2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T016_geant4Ellipsoid2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

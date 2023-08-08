@@ -6,6 +6,8 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import os as _os
 import pathlib as _pl
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 normal = 1
 non_intersecting = 2
@@ -50,6 +52,12 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
 
+    if fluka:
+        freg = _convert.geant4Reg2FlukaReg(reg)
+        w = _fluka.Writer()
+        w.addDetector(freg)
+        w.write(outputPath / "T030_geant4Intersection2Fluka.inp")
+
     # visualisation
     v = None
     if vis:
@@ -58,11 +66,11 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
-        w = _fluka.Writer()
-        w.addDetector(freg)
-        w.write(outputPath / "T030_geant4Intersection2Fluka.inp")
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T021_geant4ExtrudedSolid2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T021_geant4ExtrudedSolid2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":

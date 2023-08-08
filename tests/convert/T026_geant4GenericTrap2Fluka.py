@@ -6,6 +6,8 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import numpy as _np
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 normal = 1
 zero_area_quad = 2
@@ -111,3 +113,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addLogicalVolume(wl)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T026_geant4GenericTrap2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T026_geant4GenericTrap2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

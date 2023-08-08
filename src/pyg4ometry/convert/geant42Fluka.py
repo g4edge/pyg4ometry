@@ -117,11 +117,11 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
     for dv in logicalVolume.daughterVolumes:
         pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
         pvtra = _np.array(dv.position.eval())
-        reflection = _np.diag([1, 1, 1])
+        pvreflection = _np.diag([1, 1, 1])
         if dv.scale:
-            reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
-        new_mtra = mtra @ pvmrot @ reflection
-        new_tra = mtra @ reflection @ pvtra + tra
+            pvreflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
+        new_mtra = mtra @ pvmrot @ pvreflection
+        new_tra = mtra @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
             dv, new_mtra, new_tra, flukaRegistry, flukaNameCount
@@ -220,11 +220,13 @@ def geant4PhysicalVolume2Fluka(
         for dv in daughterVolumes:
             pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
             pvtra = _np.array(dv.position.eval())
-            reflection = _np.diag([1, 1, 1])
+            pvreflection = _np.diag([1, 1, 1])
             if dv.scale:
-                reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
-            new_mtra = mtra @ pvmrot @ reflection
-            new_tra = mtra @ reflection @ pvtra + tra
+                pvreflection = _np.diag(
+                    [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
+                )
+            new_mtra = mtra @ pvmrot @ pvreflection
+            new_tra = mtra @ pvreflection @ pvtra + tra
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
                 new_mtra,
@@ -247,11 +249,13 @@ def geant4PhysicalVolume2Fluka(
             # placement information for daughter
             pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
             pvtra = _np.array(dv.position.eval())
-            reflection = _np.diag([1, 1, 1])
+            pvreflection = _np.diag([1, 1, 1])
             if dv.scale:
-                reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
-            new_mtra = mtra @ pvmrot @ reflection
-            new_tra = mtra @ reflection @ pvtra + tra
+                pvreflection = _np.diag(
+                    [dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]]
+                )
+            new_mtra = mtra @ pvmrot @ pvreflection
+            new_tra = mtra @ pvreflection @ pvtra + tra
 
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
@@ -299,19 +303,10 @@ def geant4Solid2FlukaRegion(
     fregion = None
     fbodies = []
 
-    rotation, reflection = _np.linalg.qr(mtra)
-    gdmlReflection = [
-        reflection.item(0, 0),
-        reflection.item(1, 1),
-        reflection.item(2, 2),
-    ]
+    pseudoVector = _np.linalg.det(mtra)
+    rotation = _transformation.matrix2tbxyz(mtra)
 
-    rotation = _transformation.matrix2tbxyz(rotation)
-    position = tra
-
-    tra = tra * gdmlReflection
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
-
     commentName = commentName + " " + solid.name
 
     # print 'geant4Solid2FlukaRegion',flukaNameCount,name,solid.type, rotation,position,transform
@@ -1675,9 +1670,9 @@ def geant4Solid2FlukaRegion(
             fbody1 = flukaRegistry.makeBody(
                 PLA,
                 "B" + name + format(ibody, "02"),
-                [0, 0, -1 * gdmlReflection[2]],
-                [0, 0, zi1 * gdmlReflection[2]],
-                transform=transform,
+                mtra @ [0, 0, -1],
+                mtra @ [0, 0, zi1] + tra / 10,
+                transform=None,
                 flukaregistry=flukaRegistry,
                 comment=commentName,
             )
@@ -1685,9 +1680,9 @@ def geant4Solid2FlukaRegion(
             fbody2 = flukaRegistry.makeBody(
                 PLA,
                 "B" + name + format(ibody, "02"),
-                [0, 0, 1 * gdmlReflection[2]],
-                [0, 0, zi2 * gdmlReflection[2]],
-                transform=transform,
+                mtra @ [0, 0, 1],
+                mtra @ [0, 0, zi2] + tra / 10,
+                transform=None,
                 flukaregistry=flukaRegistry,
                 comment=commentName,
             )
@@ -1739,20 +1734,30 @@ def geant4Solid2FlukaRegion(
                     ny = dx2 * dz1 - dx1 * dz2
                     nz = dx1 * dy2 - dy1 * dx2
 
+                    n = mtra @ [nx, ny, nz]
+                    nx = n[0]
+                    ny = n[1]
+                    nz = n[2]
+
+                    r = mtra @ [x0, y0, z0] + tra / 10
+                    x0 = r[0]
+                    y0 = r[1]
+                    z0 = r[2]
+
                     fbody = flukaRegistry.makeBody(
                         PLA,
                         "B" + name + format(ibody, "02"),
                         [
-                            -nx * gdmlReflection[0],
-                            -ny * gdmlReflection[1],
-                            -nz * gdmlReflection[2],
+                            -nx,
+                            -ny,
+                            -nz,
                         ],
                         [
-                            x0 * gdmlReflection[0],
-                            y0 * gdmlReflection[1],
-                            z0 * gdmlReflection[2],
+                            x0,
+                            y0,
+                            z0,
                         ],
-                        transform=transform,
+                        transform=None,
                         flukaregistry=flukaRegistry,
                         comment=commentName,
                     )

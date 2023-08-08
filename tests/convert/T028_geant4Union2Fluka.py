@@ -6,6 +6,8 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import os as _os
 import pathlib as _pl
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 
 def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None):
@@ -55,9 +57,20 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
     # set world volume
     reg.setWorld(wl.name)
 
+    # gdml output
+    w = _gd.Writer()
+    w.addDetector(reg)
+    w.write(outputPath / "T028_geant4Union2Fluka.gdml")
+
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
+
+    if fluka:
+        freg = _convert.geant4Reg2FlukaReg(reg)
+        w = _fluka.Writer()
+        w.addDetector(freg)
+        w.write(outputPath / "T028_geant4Union2Fluka.inp")
 
     # visualisation
     v = None
@@ -67,11 +80,11 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
-        w = _fluka.Writer()
-        w.addDetector(freg)
-        w.write(outputPath / "T028_geant4Union2Fluka.inp")
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T028_geant4Union2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T028_geant4Union2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":

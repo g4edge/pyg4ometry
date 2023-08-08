@@ -6,6 +6,8 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
@@ -43,6 +45,11 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
 
+    # gdml output
+    w = _gd.Writer()
+    w.addDetector(reg)
+    w.write(outputPath / "T015_geant4EllipticalTube2Fluka.gdml")
+
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
@@ -57,3 +64,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)
+
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T015_geant4EllipticalTube2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T015_geant4EllipticalTube2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

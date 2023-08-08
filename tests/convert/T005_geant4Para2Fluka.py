@@ -5,6 +5,8 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None):
@@ -105,6 +107,10 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addLogicalVolume(reg.getWorldVolume())
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T005_geant4Para2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T005_geant4Para2Fluka.inp")
 
 
 if __name__ == "__main__":

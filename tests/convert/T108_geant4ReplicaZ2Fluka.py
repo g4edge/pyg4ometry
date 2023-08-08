@@ -5,9 +5,11 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
+import filecmp as _fc
+import g4edgetestdata as _g4td
 
 
-def Test(vis=False, interactive=False, fluka=False, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -51,7 +53,7 @@ def Test(vis=False, interactive=False, fluka=False, outputPath=None):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T108_geant4ReplicaY2Fluka.gdml")
+    w.write(outputPath / "T108_geant4ReplicaZ2Fluka.gdml")
 
     # test __repr__
     str(mbl)
@@ -79,7 +81,11 @@ def Test(vis=False, interactive=False, fluka=False, outputPath=None):
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": wl, "vtkViewer": v}
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T108_geant4ReplicaZ2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T108_geant4ReplicaZ2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":
