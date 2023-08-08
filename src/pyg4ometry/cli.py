@@ -78,12 +78,12 @@ def _parseStrPythonAsDict(strPython):
 
 
 def _printCitation():
-    s =  "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
+    s = "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
     s += "pyg4ometry: A Python library for the creation of Monte Carlo radiation\n"
     s += "transport physical geometries, Computer Physics Communications **272** 108228 (2022)."
     print(s)
     print("Bibtex entry:")
-    s =  "@article{Boogert:2020cmn,\n"
+    s = "@article{Boogert:2020cmn,\n"
     s += '    author = "Boogert, Stewart and Abramov, Andrey and Nevay, Laurence and Shields, William and Walker, Stuart",\n'
     s += '    title = "{Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries}",\n'
     s += '    eprint = "2010.01109",\n'
@@ -98,29 +98,31 @@ def _printCitation():
     print(s)
 
 
-def cli(inputFileName=None,
-        view=False,
-        bounding=False,
-        checkOverlaps=False,
-        analysis=False,
-        nullMeshException=False,
-        compareFileName=None,
-        appendFileName=None,
-        lvName=None,
-        info=None,
-        exchangeLvName=None,
-        clip=None,
-        solid=None,
-        translation=None,
-        rotation=None,
-        materials=None,
-        outputFileName=None,
-        planeCutterData=None,
-        planeCutterOutputFileName=None,
-        featureData=None,
-        featureDataOutputFileName=None,
-        gltfScale=None,
-        verbose=None):
+def cli(
+    inputFileName=None,
+    view=False,
+    bounding=False,
+    checkOverlaps=False,
+    analysis=False,
+    nullMeshException=False,
+    compareFileName=None,
+    appendFileName=None,
+    lvName=None,
+    info=None,
+    exchangeLvName=None,
+    clip=None,
+    solid=None,
+    translation=None,
+    rotation=None,
+    materials=None,
+    outputFileName=None,
+    planeCutterData=None,
+    planeCutterOutputFileName=None,
+    featureData=None,
+    featureDataOutputFileName=None,
+    gltfScale=None,
+    verbose=None,
+):
     print("pyg4 - command line interface")
 
     # switch on file type
@@ -393,11 +395,7 @@ def main():
         metavar="LVNAME",
     )
     parser.add_option(
-        "-z",
-        "--citation",
-        help="print citation text",
-        dest="citation",
-        action="store_true"
+        "-z", "--citation", help="print citation text", dest="citation", action="store_true"
     )
 
     # features
@@ -474,7 +472,7 @@ def main():
         featureData=featureData,
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
         gltfScale=options.__dict__["gltfScale"],
-        verbose=verbose
+        verbose=verbose,
     )
 
 
