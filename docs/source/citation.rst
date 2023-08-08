@@ -8,6 +8,13 @@ Any publications including simulations made using pyg4ometry **must** cite:
   pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries,
   Computer Physics Communications **272** 108228 (2022).
 
+
+Run: ::
+
+  pyg4ometry --citation
+
+to get the citation text in a human-readable and bibtex format.
+  
 * `<https://doi.org/10.1016/j.cpc.2021.108228>`_
 * Preprint was: `<https://arxiv.org/abs/2010.01109>`_, but the above should be used.
 
