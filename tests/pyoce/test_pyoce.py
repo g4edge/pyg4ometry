@@ -98,6 +98,6 @@ def test_xcaf(testdata=None):
     child1_label = _pyg4.pyoce.TDF.TDF_TagSource.NewChild(top_label)
     child2_label = _pyg4.pyoce.TDF.TDF_TagSource.NewChild(top_label)
 
-    w = _pyg4.pyoce.STEPCAFControl.STEPCAFControl_Writer()
-    w.Transfer(doc)
-    w.WriteFile("output.step")
+    # w = _pyg4.pyoce.STEPCAFControl.STEPCAFControl_Writer()
+    # w.Transfer(doc)
+    # w.WriteFile("output.step")

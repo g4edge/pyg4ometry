@@ -35,5 +35,5 @@ def pytest_sessionfinish(session, exitstatus):
 @pytest.fixture(scope="session")
 def testdata():
     g4data = G4EdgeTestData()
-    g4data.checkout("4b0f21f")
+    g4data.checkout("a15b07a")
     return g4data
