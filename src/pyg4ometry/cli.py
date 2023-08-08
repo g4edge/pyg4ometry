@@ -77,6 +77,27 @@ def _parseStrPythonAsDict(strPython):
     return locals["d"]
 
 
+def _printCitation():
+    s = "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
+    s += "pyg4ometry: A Python library for the creation of Monte Carlo radiation\n"
+    s += "transport physical geometries, Computer Physics Communications **272** 108228 (2022)."
+    print(s)
+    print("Bibtex entry:")
+    s = "@article{Boogert:2020cmn,\n"
+    s += '    author = "Boogert, Stewart and Abramov, Andrey and Nevay, Laurence and Shields, William and Walker, Stuart",\n'
+    s += '    title = "{Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries}",\n'
+    s += '    eprint = "2010.01109",\n'
+    s += '    archivePrefix = "arXiv",\n'
+    s += '    primaryClass = "physics.comp-ph",\n'
+    s += '    doi = "10.1016/j.cpc.2021.108228",\n'
+    s += '    journal = "Comput. Phys. Commun.",\n'
+    s += '    volume = "272",\n'
+    s += '    pages = "108228",\n'
+    s += '    year = "2022"\n'
+    s += "}"
+    print(s)
+
+
 def cli(
     inputFileName=None,
     view=False,
@@ -228,20 +249,19 @@ def cli(
 
 def main():
     parser = OptionParser()
-    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
-    parser.add_option(
-        "-b",
-        "--bounding",
-        help="calculate bounding box",
-        action="store_true",
-        dest="bounding",
-    )
     parser.add_option(
         "-a",
         "--analysis",
         help="geometry information",
         action="store_true",
         dest="analysis",
+    )
+    parser.add_option(
+        "-b",
+        "--bounding",
+        help="calculate bounding box",
+        action="store_true",
+        dest="bounding",
     )
     parser.add_option(
         "-c",
@@ -251,11 +271,78 @@ def main():
         action="store_true",
     )
     parser.add_option(
+        "-C",
+        "--clip",
+        help="clip to mother world solid. Or exchanged solid if specified",
+        action="store_true",
+        dest="clip",
+    )
+    parser.add_option(
+        "-d",
+        "--compare",
+        help="comp(a)re geometry",
+        dest="compareFileName",
+        metavar="COMPAREFILE",
+    )
+    parser.add_option(
+        "-e",
+        "--append",
+        help="app(e)nd geometry",
+        dest="appendFileName",
+        metavar="APPENDFILE",
+    )
+    parser.add_option(
+        "-f",
+        "--feature",
+        help="feature extraction from simple geometry (planeQuality,circumference)",
+        dest="featureData",
+    )
+    parser.add_option(
+        "-F",
+        "--featureExtractOutput",
+        help="feature extract output",
+        dest="featureExtactOutputFileName",
+        metavar="FEATUREFILE",
+    )
+    parser.add_option(
+        "-i",
+        "--file",
+        dest="inputFileName",
+        help="(i)nput file (gdml, stl, inp, step)",
+        metavar="INFILE",
+    )
+    parser.add_option(
+        "-I",
+        "--info",
+        help="information on geometry (tree, reg, instance)",
+        dest="info",
+    )
+    parser.add_option(
+        "-l",
+        "--logical",
+        help="extract logical LVNAME",
+        dest="lvName",
+        metavar="LVNAME",
+    )
+    parser.add_option(
+        "-m",
+        "--material",
+        help='material dictionary ("lvname":"nist")',
+        dest="material",
+    )
+    parser.add_option(
         "-n",
         "--nullmesh",
         help="disable null mesh exception",
         action="store_true",
         dest="nullmesh",
+    )
+    parser.add_option(
+        "-o",
+        "--output",
+        dest="outputFileName",
+        help="(o)utout file (gdml, inp, usd, vtp)",
+        metavar="OUTFILE",
     )
     parser.add_option(
         "-p",
@@ -271,59 +358,11 @@ def main():
         metavar="CUTTERFILE",
     )
     parser.add_option(
-        "-I",
-        "--info",
-        help="information on geometry (tree, reg, instance)",
-        dest="info",
-    )
-    parser.add_option(
-        "-i",
-        "--file",
-        dest="inputFileName",
-        help="(i)nput file (gdml, stl, inp, step)",
-        metavar="INFILE",
-    )
-    parser.add_option(
-        "-o",
-        "--output",
-        dest="outputFileName",
-        help="(o)utout file (gdml, inp, usd, vtp)",
-        metavar="OUTFILE",
-    )
-    parser.add_option(
-        "-d",
-        "--compare",
-        help="comp(a)re geometry",
-        dest="compareFileName",
-        metavar="COMPAREFILE",
-    )
-    parser.add_option(
-        "-l",
-        "--logical",
-        help="extract logical LVNAME",
-        dest="lvName",
-        metavar="LVNAME",
-    )
-    parser.add_option(
-        "-e",
-        "--append",
-        help="app(e)nd geometry",
-        dest="appendFileName",
-        metavar="APPENDFILE",
-    )
-    parser.add_option(
-        "-x",
-        "--exchange",
-        help="replace solid for logical volume, LVNAME is logical volume name",
-        dest="exchangeLvName",
-        metavar="LVNAME",
-    )
-    parser.add_option(
-        "-C",
-        "--clip",
-        help="clip to mother world solid. Or exchanged solid if specified",
-        action="store_true",
-        dest="clip",
+        "-r",
+        "--rotation",
+        help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)",
+        dest="rotation",
+        metavar="TX,TY,TZ",
     )
     parser.add_option(
         "-s",
@@ -333,46 +372,32 @@ def main():
         metavar="PYTHONSOLID",
     )
     parser.add_option(
-        "-t",
-        "--translation",
-        help="translation x,y,z (used with append/exchange)",
-        dest="translation",
-        metavar="X,Y,Z",
-    )
-    parser.add_option(
-        "-r",
-        "--rotation",
-        help="rotation (Tait-Bryan) tx,ty,tz (used with append/exchange)",
-        dest="rotation",
-        metavar="TX,TY,TZ",
-    )
-    parser.add_option(
-        "-m",
-        "--material",
-        help='material dictionary ("lvname":"nist")',
-        dest="material",
-    )
-    parser.add_option(
-        "-f",
-        "--feature",
-        help="feature extraction from simple geometry (planeQuality,circumference)",
-        dest="featureData",
-    )
-    parser.add_option(
-        "-F",
-        "--featureExtractOutput",
-        help="feature extract output",
-        dest="featureExtactOutputFileName",
-        metavar="FEATUREFILE",
-    )
-    parser.add_option("-V", "--verbose", help="verbose script", dest="verbose", action="store_true")
-    parser.add_option(
         "-S",
         "--gltfScale",
         help="scale factor for gltf conversion",
         dest="gltfScale",
         metavar="SCALE",
     )
+    parser.add_option(
+        "-t",
+        "--translation",
+        help="translation x,y,z (used with append/exchange)",
+        dest="translation",
+        metavar="X,Y,Z",
+    )
+    parser.add_option("-v", "--view", help="view geometry", action="store_true", dest="view")
+    parser.add_option("-V", "--verbose", help="verbose script", dest="verbose", action="store_true")
+    parser.add_option(
+        "-x",
+        "--exchange",
+        help="replace solid for logical volume, LVNAME is logical volume name",
+        dest="exchangeLvName",
+        metavar="LVNAME",
+    )
+    parser.add_option(
+        "-z", "--citation", help="print citation text", dest="citation", action="store_true"
+    )
+
     # features
     (options, args) = parser.parse_args()
 
@@ -380,6 +405,10 @@ def main():
     if verbose:
         print("pyg4> options")
         print(options)
+
+    if options.__dict__["citation"]:
+        _printCitation()
+        exit(0)
 
     # absolutely need a file name
     if options.__dict__["inputFileName"] is None:
