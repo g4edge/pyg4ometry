@@ -5,7 +5,7 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import filecmp as _fc
+import pyg4ometry.misc as _mi
 
 
 def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=None):
@@ -69,11 +69,12 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
     w.write(outputPath / "T003_geant4CutTubs2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T003_geant4CutTubs2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T003_geant4CutTubs2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
     f = _fluka.Flair("T003_geant4CutTubs2Fluka.inp", extentBB)
@@ -84,8 +85,7 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)
 
-    if refFilePath is not None:
-        assert _fc.cmp(refFilePath, outputPath / "T003_geant4CutTubs2Fluka.inp", shallow=False)
+    _mi.compareFilesWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 
