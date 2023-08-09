@@ -767,12 +767,12 @@ def test_addRotoTranslation():
     #    store.addRotoTranslation(rtrans5)
 
 
-def test_fluka_vis():
-    r = T902_cube_from_six_PLAs.Test(False, False)["flukaRegistry"]
+def test_fluka_vis(tmptestdir):
+    r = T902_cube_from_six_PLAs.Test(False, False, outputPath=tmptestdir)["flukaRegistry"]
     v = _VtkViewerNew()
     v.addFlukaRegions(r)
     v.buildPipelinesAppend()
 
 
-def test_PythonFluka_T1000_extruder():
-    T1000_extruder.Test(False)
+def test_PythonFluka_T1000_extruder(tmptestdir):
+    T1000_extruder.Test(False, outputPath=tmptestdir)
