@@ -6,7 +6,7 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import filecmp as _fc
-import g4edgetestdata as _g4td
+import pyg4ometry.misc as _mi
 
 
 def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
@@ -93,11 +93,12 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.write(outputPath / "T021_geant4ExtrudedSolid2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T021_geant4ExtrudedSolid2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T021_geant4ExtrudedSolid2Fluka.inp")
+        w.write(outputFile)
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
@@ -111,10 +112,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if refFilePath is not None:
-        assert _fc.cmp(
-            refFilePath, outputPath / "T021_geant4ExtrudedSolid2Fluka.inp", shallow=False
-        )
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

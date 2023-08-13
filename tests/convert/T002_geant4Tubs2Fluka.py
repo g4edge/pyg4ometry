@@ -68,7 +68,7 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)
 
-    _mi.compareFilesWithAssert(refFilePath, outputFile)
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

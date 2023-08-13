@@ -5,12 +5,10 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import numpy as _np
-import filecmp as _fc
-import g4edgetestdata as _g4td
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -55,11 +53,12 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     w.write(outputPath / "T025_geant4TwistedTubs2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T025_geant4TwistedTubs2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T025_geant4TwistedTubs2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
     f = _fluka.Flair("T025_geant4TwiistedTubs2Fluka.inp", extentBB)
@@ -71,9 +70,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    g4td = _g4td.G4EdgeTestData()
-    testDataPath = g4td["convert/T025_geant4TwiistedTubs2Fluka.inp"]
-    assert _fc.cmp(testDataPath, outputPath / "T025_geant4TwiistedTubs2Fluka.inp")
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

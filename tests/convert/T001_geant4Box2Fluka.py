@@ -79,7 +79,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    _mi.compareFilesWithAssert(refFilePath, outputFile)
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

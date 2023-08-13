@@ -5,8 +5,8 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import numpy as _np
-import filecmp as _fc
+import pyg4ometry.misc as _mi
+
 
 normal = 1
 zcut_outofrange = 2
@@ -66,15 +66,16 @@ def Test(
     w.write(outputPath / "T017_geant4EllipticalCone2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T017_geant4EllipticalCone2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T017_geant4EllipticalCone2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
-    f = _fluka.Flair("T017_geant4EllipticalCone2Fluka.inp", extentBB)
-    f.write(outputPath / "T017_geant4EllipticalCone2Fluka.flair")
+    f = _fluka.Flair(outputFile, extentBB)
+    f.write(str(outputPath / "T017_geant4EllipticalCone2Fluka.flair"))
 
     if vis:
         v = _vi.VtkViewer()
@@ -82,10 +83,7 @@ def Test(
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if refFilePath is not None:
-        assert _fc.cmp(
-            refFilePath, outputPath / "T017_geant4EllipticalCone2Fluka.inp", shallow=False
-        )
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

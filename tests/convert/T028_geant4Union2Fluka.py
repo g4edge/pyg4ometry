@@ -4,7 +4,7 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import os as _os
+import pyg4ometry.misc as _mi
 import pathlib as _pl
 import filecmp as _fc
 
@@ -67,11 +67,12 @@ def Test(
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
 
+    outputFile = outputPath / "T028_geant4Union2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T028_geant4Union2Fluka.inp")
+        w.write(outputFile)
 
     # visualisation
     v = None
@@ -81,8 +82,7 @@ def Test(
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if refFilePath is not None:
-        assert _fc.cmp(refFilePath, outputPath / "T028_geant4Union2Fluka.inp", shallow=False)
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

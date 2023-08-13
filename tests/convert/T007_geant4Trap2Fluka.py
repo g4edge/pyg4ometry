@@ -71,8 +71,8 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
         w.write(outputFile)
 
     # flair output file
-    f = _fluka.Flair("T007_geant4Trap2Fluka.inp", extentBB)
-    f.write(outputFile)
+    f = _fluka.Flair(outputFile, extentBB)
+    f.write(str(outputPath / "T007_geant4Trap2Fluka.flair"))
 
     if vis:
         v = _vi.VtkViewer()
@@ -80,7 +80,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    _mi.compareFilesWithAssert(refFilePath, outputFile)
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 

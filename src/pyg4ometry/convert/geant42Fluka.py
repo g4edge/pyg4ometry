@@ -306,7 +306,7 @@ def geant4Solid2FlukaRegion(
         reflection.item(2, 2),
     ]
 
-    rotation = _transformation.matrix2tbxyz(rotation)
+    rotation = _transformation.matrix2tbxyz(mtra)
     position = tra
 
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)

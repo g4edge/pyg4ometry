@@ -73,7 +73,7 @@ def Test(
     w.write(outputPath / "T008_geant4Sphere2Fluka.gdml")
 
     # fluka conversion
-    outputPath = outputPath / "T008_geant4Sphere2Fluka.inp"
+    outputFile = outputPath / "T008_geant4Sphere2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
@@ -88,7 +88,7 @@ def Test(
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    _mi.compareFilesWithAssert(refFilePath, outputFile)
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     return {"greg": reg, "freg": freg}
 
