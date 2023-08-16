@@ -4,9 +4,10 @@ import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import XYP, YZP, XZP, Region, Zone, FlukaRegistry, Writer
 from pyg4ometry.fluka.body import INFINITY
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -57,9 +58,13 @@ def Test(vis=False, interactive=False, outputPath=None):
         assert greg.solidDict[name].pY < INFINITY - 10
         assert greg.solidDict[name].pZ < INFINITY - 10
 
+    outputFile = outputPath / "T710_XYP_ZXP_YZP_minimiation.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T710_XYP_ZXP_YZP_minimiation.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

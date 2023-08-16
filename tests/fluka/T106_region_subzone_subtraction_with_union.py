@@ -3,12 +3,13 @@ import pathlib as _pl
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import RPP, ZCC, Region, Zone, FlukaRegistry, Writer
+import pyg4ometry.misc as _mi
 
 # This is same as T105_REGION_SUBZONE_SUBTRACTION.py but with a union
 # as well.
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -46,9 +47,13 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     greg = convert.fluka2Geant4(freg)
 
+    outputFile = outputPath / "T106_region_subzone_subtraction_with_union.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T106_region_subzone_subtraction_with_union.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

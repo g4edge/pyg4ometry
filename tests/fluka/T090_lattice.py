@@ -17,9 +17,10 @@ from pyg4ometry.fluka import (
     Writer,
 )
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -66,9 +67,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     greg = convert.fluka2Geant4(freg, worldDimensions=[100, 100, 100])
     # assert len(greg.logicalVolumeDict) == 2
 
+    outputFile = outputPath / "T090_lattice.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T090_lattice.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

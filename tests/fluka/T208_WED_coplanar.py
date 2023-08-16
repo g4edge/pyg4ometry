@@ -3,11 +3,10 @@ import pathlib as _pl
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import WED, Region, Zone, FlukaRegistry, Writer
+import pyg4ometry.misc as _mi
 
-import numpy as np
 
-
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -58,9 +57,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     wlv = greg.getWorldVolume()
     wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
 
+    outputFile = outputPath / "T208_WED_coplanar.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T208_WED_coplanar.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

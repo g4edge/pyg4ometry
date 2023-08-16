@@ -4,9 +4,10 @@ import logging
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import XZP, YZP, XYP, PLA, RPP, Region, Zone, FlukaRegistry, Writer
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -60,9 +61,13 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     greg.getWorldVolume().clipSolid()
 
+    outputFile = outputPath / "T801_filter_redundant_halfspace.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T801_filter_redundant_halfspace.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

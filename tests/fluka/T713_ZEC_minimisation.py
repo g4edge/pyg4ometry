@@ -4,9 +4,10 @@ import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
 from pyg4ometry.fluka import ZEC, XYP, Region, Zone, FlukaRegistry, Writer
 from pyg4ometry.fluka.body import INFINITY
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -37,9 +38,13 @@ def Test(vis=False, interactive=False, outputPath=None):
 
     assert greg.solidDict["ZEC_BODY_s"].pDz < INFINITY
 
+    outputFile = outputPath / "T713_ZEC_minimisation.inp"
+
     w = Writer()
     w.addDetector(freg)
-    w.write(outputPath / "T713_ZEC_minimisation.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

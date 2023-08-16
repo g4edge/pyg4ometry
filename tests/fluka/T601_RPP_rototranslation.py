@@ -9,9 +9,10 @@ from pyg4ometry.fluka import RPP, Region, Zone, FlukaRegistry, Transform
 from pyg4ometry.fluka.directive import rotoTranslationFromTra2
 from pyg4ometry.fluka import Writer as flukaWriter
 from pyg4ometry.gdml import Writer as gdmlWriter
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None, gdmlWrite=False):
+def Test(vis=False, interactive=False, outputPath=None, gdmlWrite=False, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -38,9 +39,13 @@ def Test(vis=False, interactive=False, outputPath=None, gdmlWrite=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
+    outputFile = outputPath / "T601_RPP_rototranslation.inp"
+
     w = flukaWriter()
     w.addDetector(freg)
-    w.write(outputPath / "T601_RPP_rototranslation.inp")
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
 
     if gdmlWrite:
         w = gdmlWriter()
