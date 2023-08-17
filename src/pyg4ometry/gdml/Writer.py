@@ -700,7 +700,10 @@ option, preprocessGDML=0;
 
         # Expression, Constant, Quantity or Variable
         elif isinstance(var, _Defines.ScalarBase):
-            return str(var.expression.expressionString)
+            if var.name in self.registry.defineDict:
+                return var.name
+            else:
+                return str(var.expression.expressionString)
         else:
             return str(var)
 
