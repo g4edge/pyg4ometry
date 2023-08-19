@@ -1,4 +1,5 @@
 import hashlib as _hl
+import subprocess as _sp
 import difflib as _dl
 import filecmp as _fc
 import subprocess as _sp
@@ -37,6 +38,23 @@ def compareNumericallyWithAssert(file1, file2):
     if file1 is not None and file2 is not None:
         r = _sp.run(
             ["numdiff", "-s", ", \n", "-a", "1e-6", str(file1), str(file2)],
+            capture_output=True,
+        )
+
+        output = r.stdout.decode("utf-8")
+
+        if output.find("equal") != -1:
+            pass
+        else:
+            print(output)
+
+        assert output.find("equal") != -1
+
+
+def compareGdmlNumericallyWithAssert(file1, file2):
+    if file1 is not None and file2 is not None:
+        r = _sp.run(
+            ["numdiff", "-s", ', \n"', "-a", "1e-6", str(file1), str(file2)],
             capture_output=True,
         )
 

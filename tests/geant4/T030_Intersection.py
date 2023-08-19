@@ -4,12 +4,21 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import numpy as _np
+import pyg4ometry.misc as _mi
+
 
 normal = 1
 non_intersecting = 2
 
 
-def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, outputPath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    type=normal,
+    writeNISTMaterials=False,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -62,9 +71,13 @@ def Test(vis=False, interactive=False, type=normal, writeNISTMaterials=False, ou
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T030_Intersection.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T030_Intersection.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(ns)

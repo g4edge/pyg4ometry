@@ -2,9 +2,10 @@ import os as _os
 import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
+import pyg4ometry.misc as _mi
 
 
-def Test_MaterialPredefined(outputPath=None):
+def Test_MaterialPredefined(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -37,12 +38,16 @@ def Test_MaterialPredefined(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialPredefined.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T201_MaterialPredefined.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
-def Test_MaterialSingleElement(outputPath=None):
+def Test_MaterialSingleElement(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -75,12 +80,16 @@ def Test_MaterialSingleElement(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialSingleElement.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T201_MaterialSingleElement.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
-def Test_MaterialCompoundMassFraction(outputPath=None):
+def Test_MaterialCompoundMassFraction(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -117,12 +126,16 @@ def Test_MaterialCompoundMassFraction(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialCompoundMassFraction.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T201_MaterialCompoundMassFraction.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
-def Test_MaterialCompoundAtoms(outputPath=None):
+def Test_MaterialCompoundAtoms(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -167,13 +180,16 @@ def Test_MaterialCompoundAtoms(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialCompoundNumberAtoms.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
+    w.write(outputFile)
 
-    w.write(outputPath / "T201_MaterialCompoundNumberAtoms.gdml")
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
-def Test_MaterialMixture(outputPath=None):
+def Test_MaterialMixture(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -210,13 +226,16 @@ def Test_MaterialMixture(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialMixture.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
+    w.write(outputFile)
 
-    w.write(outputPath / "T201_MaterialMixture.gdml")
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
-def Test_MaterialIsotopes(outputPath=None):
+def Test_MaterialIsotopes(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -257,9 +276,13 @@ def Test_MaterialIsotopes(outputPath=None):
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T201_MaterialIsotopes.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T201_MaterialIsotopes.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
 
 def Test_MaterialPressureTemperature(outputPath=None):

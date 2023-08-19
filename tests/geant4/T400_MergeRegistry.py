@@ -1,7 +1,9 @@
 import os as _os
+import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
+import pyg4ometry.misc as _mi
 
 
 def MakeGeometry(size=50, lowOxygen=False):
@@ -51,7 +53,7 @@ def MakeGeometry(size=50, lowOxygen=False):
     return reg
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -83,9 +85,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     reg0.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T400_MergeRegistry.gdml"
     w = _gd.Writer()
     w.addDetector(reg0)
-    w.write(outputPath / "T400_MergeRegistry.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

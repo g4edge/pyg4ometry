@@ -1,10 +1,11 @@
 import os as _os
-
+import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
+import pyg4ometry.misc as _mi
 
 
-def Test_NIST_Element(outputPath=None):
+def Test_NIST_Element(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -40,7 +41,9 @@ def Test_NIST_Element(outputPath=None):
     assert len(reg.materialList) > 0  # Ensure the material list is populated
 
     # gdml output
+    name = "T204_NIST_Element.gdml"
+    outputFile = outputPath / name
     w = _gd.Writer()
     w.addDetector(reg)
-    name = "T204_NIST_Element"
-    w.write(outputPath / (name + ".gdml"))
+
+    w.write(outputFile)
