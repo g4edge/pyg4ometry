@@ -5,10 +5,10 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import numpy as _np
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -49,14 +49,15 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     w.write(outputPath / "T022_geant4TwistedBox2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T022_geant4TwistedBox2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T022_geant4TwistedBox2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
-    f = _fluka.Flair("T022_geant4TwistedBox2Fluka.inp", extentBB)
+    f = _fluka.Flair(outputFile, extentBB)
     f.write(outputPath / "T022_geant4TwistedBox2Fluka.flair")
 
     if vis:
@@ -64,3 +65,11 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addLogicalVolume(wl)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

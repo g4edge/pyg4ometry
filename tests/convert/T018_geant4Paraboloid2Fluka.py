@@ -6,9 +6,18 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import numpy as _np
+import filecmp as _fc
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outputPath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    n_slice=16,
+    n_stack=16,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -58,10 +67,19 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=16, n_stack=16, outpu
 
     # flair output file
     f = _fluka.Flair("T018_geant4Paraboloid2Fluka.inp", extentBB)
-    f.write(outputPath / "T001_geant4Paraboloid2Fluka.flair")
+    f.write(outputPath / "T018_geant4Paraboloid2Fluka.flair")
 
     if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    if refFilePath is not None:
+        assert _fc.cmp(refFilePath, outputPath / "T018_geant4Paraboloid2Fluka.inp", shallow=False)
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

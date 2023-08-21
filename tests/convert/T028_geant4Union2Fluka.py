@@ -4,11 +4,14 @@ import pyg4ometry.convert as _convert
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
-import os as _os
+import pyg4ometry.misc as _mi
 import pathlib as _pl
+import filecmp as _fc
 
 
-def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None):
+def Test(
+    vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None, refFilePath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -55,9 +58,21 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
     # set world volume
     reg.setWorld(wl.name)
 
+    # gdml output
+    w = _gd.Writer()
+    w.addDetector(reg)
+    w.write(outputPath / "T028_geant4Union2Fluka.gdml")
+
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
+
+    outputFile = outputPath / "T028_geant4Union2Fluka.inp"
+    if fluka:
+        freg = _convert.geant4Reg2FlukaReg(reg)
+        w = _fluka.Writer()
+        w.addDetector(freg)
+        w.write(outputFile)
 
     # visualisation
     v = None
@@ -67,11 +82,9 @@ def Test(vis=False, interactive=False, fluka=True, disjoint=False, outputPath=No
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
-        w = _fluka.Writer()
-        w.addDetector(freg)
-        w.write(outputPath / "T028_geant4Union2Fluka.inp")
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":

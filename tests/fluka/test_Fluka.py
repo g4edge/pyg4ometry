@@ -147,527 +147,1172 @@ import T902_cube_from_six_PLAs
 import T1000_extruder
 
 
-def test_PythonFluka_T001_RPP():
-    T001_RPP.Test(False, False)
+def test_PythonFluka_T001_RPP(tmptestdir, testdata):
+    T001_RPP.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T001_RPP.inp"],
+    )
 
 
-def test_PythonFluka_T002_BOX():
-    T002_BOX.Test(False, False)
+def test_PythonFluka_T002_BOX(tmptestdir, testdata):
+    T002_BOX.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T002_BOX.inp"],
+    )
 
 
-def test_PythonFluka_T003_SPH():
-    T003_SPH.Test(False, False)
+def test_PythonFluka_T003_SPH(tmptestdir, testdata):
+    T003_SPH.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T003_SPH.inp"],
+    )
 
 
-def test_PythonFluka_T004_RCC():
-    T004_RCC.Test(False, False)
+def test_PythonFluka_T004_RCC(tmptestdir, testdata):
+    T004_RCC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T004_RCC.inp"],
+    )
 
 
-def test_PythonFluka_T005_REC():
-    T005_REC.Test(False, False)
+def test_PythonFluka_T005_REC(tmptestdir, testdata):
+    T005_REC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T005_REC.inp"],
+    )
 
 
-def test_PythonFluka_T006_TRC():
-    T006_TRC.Test(False, False)
+def test_PythonFluka_T006_TRC(tmptestdir, testdata):
+    T006_TRC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T006_TRC.inp"],
+    )
 
 
-def test_PythonFluka_T007_ELL():
-    T007_ELL.Test(False, False)
+def test_PythonFluka_T007_ELL(tmptestdir, testdata):
+    T007_ELL.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T007_ELL.inp"],
+    )
 
 
-def test_PythonFluka_T008_RAW():
-    T008_RAW.Test(False, False)
+def test_PythonFluka_T008_RAW(tmptestdir, testdata):
+    T008_RAW.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T008_RAW.inp"],
+    )
 
 
-def test_PythonFluka_T008_WED():
-    T008_WED.Test(False, False)
+def test_PythonFluka_T008_WED(tmptestdir, testdata):
+    T008_WED.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T008_WED.inp"],
+    )
 
 
-def test_PythonFluka_T009_ARB():
-    T009_ARB.Test(False, False)
+def test_PythonFluka_T009_ARB(tmptestdir, testdata):
+    T009_ARB.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T009_ARB.inp"],
+    )
 
 
-def test_PythonFluka_T010_XYP():
-    T010_XYP.Test(False, False)
+def test_PythonFluka_T010_XYP(tmptestdir, testdata):
+    T010_XYP.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T010_XYP.inp"],
+    )
 
 
-def test_PythonFluka_T010_XZP():
-    T010_XZP.Test(False, False)
+def test_PythonFluka_T010_XZP(tmptestdir, testdata):
+    T010_XZP.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T010_XZP.inp"],
+    )
 
 
-def test_PythonFluka_T010_YZP():
-    T010_YZP.Test(False, False)
+def test_PythonFluka_T010_YZP(tmptestdir, testdata):
+    T010_YZP.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T010_YZP.inp"],
+    )
 
 
-def test_PythonFluka_T011_PLA():
-    T011_PLA.Test(False, False)
+def test_PythonFluka_T011_PLA(tmptestdir, testdata):
+    T011_PLA.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T011_PLA.inp"],
+    )
 
 
-def test_PythonFluka_T012_XCC():
-    T012_XCC.Test(False, False)
+def test_PythonFluka_T012_XCC(tmptestdir, testdata):
+    T012_XCC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T012_XCC.inp"],
+    )
 
 
-def test_PythonFluka_T012_YCC():
-    T012_YCC.Test(False, False)
+def test_PythonFluka_T012_YCC(tmptestdir, testdata):
+    T012_YCC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T012_YCC.inp"],
+    )
 
 
-def test_PythonFluka_T012_ZCC():
-    T012_ZCC.Test(False, False)
+def test_PythonFluka_T012_ZCC(tmptestdir, testdata):
+    T012_ZCC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T012_ZCC.inp"],
+    )
 
 
-def test_PythonFluka_T013_XEC():
-    T013_XEC.Test(False, False)
+def test_PythonFluka_T013_XEC(tmptestdir, testdata):
+    T013_XEC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T013_XEC.inp"],
+    )
 
 
-def test_PythonFluka_T013_YEC():
-    T013_YEC.Test(False, False)
+def test_PythonFluka_T013_YEC(tmptestdir, testdata):
+    T013_YEC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T013_YEC.inp"],
+    )
 
 
-def test_PythonFluka_T013_ZEC():
-    T013_ZEC.Test(False, False)
+def test_PythonFluka_T013_ZEC(tmptestdir, testdata):
+    T013_ZEC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T013_ZEC.inp"],
+    )
 
 
-def test_PythonFluka_T014_QUA():
-    T014_QUA.Test(False, False)
+def test_PythonFluka_T014_QUA(tmptestdir, testdata):
+    T014_QUA.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T014_QUA.inp"],
+    )
 
 
-def test_PythonFluka_T051_expansion():
-    T051_expansion.Test(False, False)
+def test_PythonFluka_T051_expansion(tmptestdir, testdata):
+    T051_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T051_expansion.inp"],
+    )
 
 
-def test_PythonFluka_T052_translation():
-    T052_translation.Test(False, False)
+def test_PythonFluka_T052_translation(tmptestdir, testdata):
+    T052_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T052_translation.inp"],
+    )
 
 
-def test_PythonFluka_T090_lattice():
-    T090_lattice.Test(False, False)
+def test_PythonFluka_T090_lattice(tmptestdir, testdata):
+    T090_lattice.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T090_lattice.inp"],
+    )
 
 
 # 1111111111
-def test_PythonFluka_T101_region_one_body():
-    T101_region_one_body.Test(False, False)
+def test_PythonFluka_T101_region_one_body(tmptestdir, testdata):
+    T101_region_one_body.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T101_region_one_body.inp"],
+    )
 
 
-def test_PythonFluka_T102_region_intersection_two_bodies():
-    T102_region_intersection_two_bodies.Test(False, False)
+def test_PythonFluka_T102_region_intersection_two_bodies(tmptestdir, testdata):
+    T102_region_intersection_two_bodies.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T102_region_intersection_two_bodies.inp"],
+    )
 
 
-def test_PythonFluka_T103_region_subtraction_two_bodies():
-    T103_region_subtraction_two_bodies.Test(False, False)
+def test_PythonFluka_T103_region_subtraction_two_bodies(tmptestdir, testdata):
+    T103_region_subtraction_two_bodies.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T103_region_subtraction_two_bodies.inp"],
+    )
 
 
-def test_PythonFluka_T103_region_subtraction_two_bodies_RCC():
-    T103_region_subtraction_two_bodies_RCC.Test(False, False)
+def test_PythonFluka_T103_region_subtraction_two_bodies_RCC(tmptestdir, testdata):
+    T103_region_subtraction_two_bodies_RCC.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T103_region_subtraction_two_bodies_RCC.inp"],
+    )
 
 
-def test_PythonFluka_T104_region_union_two_zones():
-    T104_region_union_two_zones.Test(False, False)
+def test_PythonFluka_T104_region_union_two_zones(tmptestdir, testdata):
+    T104_region_union_two_zones.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T104_region_union_two_zones.inp"],
+    )
 
 
-def test_PythonFluka_T104_region_union_two_zones_2():
-    T104_region_union_two_zones_2.Test(False, False)
+def test_PythonFluka_T104_region_union_two_zones_2(tmptestdir, testdata):
+    T104_region_union_two_zones_2.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T104_region_union_two_zones_2.inp"],
+    )
 
 
-def test_PythonFluka_T105_region_subzone_subtraction():
-    T105_region_subzone_subtraction.Test(False, False)
+def test_PythonFluka_T105_region_subzone_subtraction(tmptestdir, testdata):
+    T105_region_subzone_subtraction.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T105_region_subzone_subtraction.inp"],
+    )
 
 
-def test_PythonFluka_T106_region_subzone_subtraction_with_union():
-    T106_region_subzone_subtraction_with_union.Test(False, False)
+def test_PythonFluka_T106_region_subzone_subtraction_with_union(tmptestdir, testdata):
+    T106_region_subzone_subtraction_with_union.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T106_region_subzone_subtraction_with_union.inp"],
+    )
 
 
-def test_PythonFluka_T107_region_union_with_reused_bodies():
-    T107_region_union_with_reused_bodies.Test(False, False)
+def test_PythonFluka_T107_region_union_with_reused_bodies(tmptestdir, testdata):
+    T107_region_union_with_reused_bodies.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T107_region_union_with_reused_bodies.inp"],
+    )
 
 
 # 2222222222
-def test_PythonFluka_T201_RPP_coplanar():
-    T201_RPP_coplanar.Test(False, False)
+def test_PythonFluka_T201_RPP_coplanar(tmptestdir, testdata):
+    T201_RPP_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T201_RPP_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T202_BOX_coplanar():
-    T202_BOX_coplanar.Test(False, False)
+def test_PythonFluka_T202_BOX_coplanar(tmptestdir, testdata):
+    T202_BOX_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T202_BOX_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T203_SPH_coplanar():
-    T203_SPH_coplanar.Test(False, False)
+def test_PythonFluka_T203_SPH_coplanar(tmptestdir, testdata):
+    T203_SPH_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T203_SPH_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T204_RCC_coplanar():
-    T204_RCC_coplanar.Test(False, False)
+def test_PythonFluka_T204_RCC_coplanar(tmptestdir, testdata):
+    T204_RCC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T204_RCC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T205_REC_coplanar():
-    T205_REC_coplanar.Test(False, False)
+def test_PythonFluka_T205_REC_coplanar(tmptestdir, testdata):
+    T205_REC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T205_REC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T206_TRC_coplanar():
-    T206_TRC_coplanar.Test(False, False)
+def test_PythonFluka_T206_TRC_coplanar(tmptestdir, testdata):
+    T206_TRC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T206_TRC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T207_ELL_coplanar():
-    T207_ELL_coplanar.Test(False, False)
+def test_PythonFluka_T207_ELL_coplanar(tmptestdir, testdata):
+    T207_ELL_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T207_ELL_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T208_RAW_coplanar():
-    T208_RAW_coplanar.Test(False, False)
+def test_PythonFluka_T208_RAW_coplanar(tmptestdir, testdata):
+    T208_RAW_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T208_RAW_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T208_WED_coplanar():
-    T208_WED_coplanar.Test(False, False)
+def test_PythonFluka_T208_WED_coplanar(tmptestdir, testdata):
+    T208_WED_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T208_WED_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T209_ARB_coplanar():
-    T209_ARB_coplanar.Test(False, False)
+def test_PythonFluka_T209_ARB_coplanar(tmptestdir, testdata):
+    T209_ARB_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T209_ARB_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T210_PLA_coplanar():
-    T210_PLA_coplanar.Test(False, False)
+def test_PythonFluka_T210_PLA_coplanar(tmptestdir, testdata):
+    T210_PLA_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T210_PLA_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T210_XYP_coplanar():
-    T210_XYP_coplanar.Test(False, False)
+def test_PythonFluka_T210_XYP_coplanar(tmptestdir, testdata):
+    T210_XYP_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T210_XYP_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T210_XZP_coplanar():
-    T210_XZP_coplanar.Test(False, False)
+def test_PythonFluka_T210_XZP_coplanar(tmptestdir, testdata):
+    T210_XZP_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T210_ZXP_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T210_YZP_coplanar():
-    T210_YZP_coplanar.Test(False, False)
+def test_PythonFluka_T210_YZP_coplanar(tmptestdir, testdata):
+    T210_YZP_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T210_YZP_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T212_XCC_coplanar():
-    T212_XCC_coplanar.Test(False, False)
+def test_PythonFluka_T212_XCC_coplanar(tmptestdir, testdata):
+    T212_XCC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T212_XCC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T212_YCC_coplanar():
-    T212_YCC_coplanar.Test(False, False)
+def test_PythonFluka_T212_YCC_coplanar(tmptestdir, testdata):
+    T212_YCC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T212_YCC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T212_ZCC_coplanar():
-    T212_ZCC_coplanar.Test(False, False)
+def test_PythonFluka_T212_ZCC_coplanar(tmptestdir, testdata):
+    T212_ZCC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T212_ZCC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T213_XEC_coplanar():
-    T213_XEC_coplanar.Test(False, False)
+def test_PythonFluka_T213_XEC_coplanar(tmptestdir, testdata):
+    T213_XEC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T213_XEC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T213_YEC_coplanar():
-    T213_YEC_coplanar.Test(False, False)
+def test_PythonFluka_T213_YEC_coplanar(tmptestdir, testdata):
+    T213_YEC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T213_YEC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T213_ZEC_coplanar():
-    T213_ZEC_coplanar.Test(False, False)
+def test_PythonFluka_T213_ZEC_coplanar(tmptestdir, testdata):
+    T213_ZEC_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T213_ZEC_coplanar.inp"],
+    )
 
 
-def test_PythonFluka_T214_QUA_coplanar():
-    T214_QUA_coplanar.Test(False, False)
+def test_PythonFluka_T214_QUA_coplanar(tmptestdir, testdata):
+    T214_QUA_coplanar.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T214_QUA_coplanar.inp"],
+    )
 
 
 # 4444444444
-def test_PythonFluka_T401_RPP_expansion():
-    T401_RPP_expansion.Test(False, False)
-
-
-def test_PythonFluka_T402_BOX_expansion():
-    T402_BOX_expansion.Test(False, False)
-
-
-def test_PythonFluka_T403_SPH_expansion():
-    T403_SPH_expansion.Test(False, False)
-
-
-def test_PythonFluka_T404_RCC_expansion():
-    T404_RCC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T405_REC_expansion():
-    T405_REC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T406_TRC_expansion():
-    T406_TRC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T407_ELL_expansion():
-    T407_ELL_expansion.Test(False, False)
-
-
-def test_PythonFluka_T408_RAW_expansion():
-    T408_RAW_expansion.Test(False, False)
-
-
-def test_PythonFluka_T408_WED_expansion():
-    T408_WED_expansion.Test(False, False)
-
-
-def test_PythonFluka_T409_ARB_expansion():
-    T409_ARB_expansion.Test(False, False)
-
-
-def test_PythonFluka_T410_XYP_expansion():
-    T410_XYP_expansion.Test(False, False)
-
-
-def test_PythonFluka_T410_XZP_expansion():
-    T410_XZP_expansion.Test(False, False)
-
-
-def test_PythonFluka_T410_YZP_expansion():
-    T410_YZP_expansion.Test(False, False)
-
-
-def test_PythonFluka_T411_PLA_expansion():
-    T411_PLA_expansion.Test(False, False)
-
-
-def test_PythonFluka_T412_XCC_expansion():
-    T412_XCC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T412_YCC_expansion():
-    T412_YCC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T412_ZCC_expansion():
-    T412_ZCC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T413_XEC_expansion():
-    T413_XEC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T413_YEC_expansion():
-    T413_YEC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T413_ZEC_expansion():
-    T413_ZEC_expansion.Test(False, False)
-
-
-def test_PythonFluka_T414_QUA_expansion():
-    T414_QUA_expansion.Test(False, False)
-
-
-def test_PythonFluka_T501_RPP_translation():
-    T501_RPP_translation.Test(False, False)
-
-
-def test_PythonFluka_T502_BOX_translation():
-    T502_BOX_translation.Test(False, False)
-
-
-def test_PythonFluka_T503_SPH_translation():
-    T503_SPH_translation.Test(False, False)
-
-
-def test_PythonFluka_T504_RCC_translation():
-    T504_RCC_translation.Test(False, False)
-
-
-def test_PythonFluka_T505_REC_translation():
-    T505_REC_translation.Test(False, False)
-
-
-def test_PythonFluka_T506_TRC_translation():
-    T506_TRC_translation.Test(False, False)
-
-
-def test_PythonFluka_T507_ELL_translation():
-    T507_ELL_translation.Test(False, False)
-
-
-def test_PythonFluka_T508_RAW_translation():
-    T508_RAW_translation.Test(False, False)
-
-
-def test_PythonFluka_T508_WED_translation():
-    T508_WED_translation.Test(False, False)
-
-
-def test_PythonFluka_T509_ARB_translation():
-    T509_ARB_translation.Test(False, False)
-
-
-def test_PythonFluka_T510_XYP_translation():
-    T510_XYP_translation.Test(False, False)
-
-
-def test_PythonFluka_T510_XZP_translation():
-    T510_XZP_translation.Test(False, False)
-
-
-def test_PythonFluka_T510_YZP_translation():
-    T510_YZP_translation.Test(False, False)
-
-
-def test_PythonFluka_T511_PLA_translation():
-    T511_PLA_translation.Test(False, False)
-
-
-def test_PythonFluka_T512_XCC_translation():
-    T512_XCC_translation.Test(False, False)
-
-
-def test_PythonFluka_T512_YCC_translation():
-    T512_YCC_translation.Test(False, False)
-
-
-def test_PythonFluka_T512_ZCC_translation():
-    T512_ZCC_translation.Test(False, False)
-
-
-def test_PythonFluka_T513_XEC_translation():
-    T513_XEC_translation.Test(False, False)
-
-
-def test_PythonFluka_T513_YEC_translation():
-    T513_YEC_translation.Test(False, False)
-
-
-def test_PythonFluka_T513_ZEC_translation():
-    T513_ZEC_translation.Test(False, False)
-
-
-def test_PythonFluka_T514_QUA_translation():
-    T514_QUA_translation.Test(False, False)
+def test_PythonFluka_T401_RPP_expansion(tmptestdir, testdata):
+    T401_RPP_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T401_RPP_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T402_BOX_expansion(tmptestdir, testdata):
+    T402_BOX_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T402_BOX_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T403_SPH_expansion(tmptestdir, testdata):
+    T403_SPH_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T403_SPH_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T404_RCC_expansion(tmptestdir, testdata):
+    T404_RCC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T404_RCC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T405_REC_expansion(tmptestdir, testdata):
+    T405_REC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T404_REC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T406_TRC_expansion(tmptestdir, testdata):
+    T406_TRC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T406_TRC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T407_ELL_expansion(tmptestdir, testdata):
+    T407_ELL_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T407_ELL_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T408_RAW_expansion(tmptestdir, testdata):
+    T408_RAW_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T408_RAW_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T408_WED_expansion(tmptestdir, testdata):
+    T408_WED_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T408_WED_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T409_ARB_expansion(tmptestdir, testdata):
+    T409_ARB_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T409_ARB_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T410_XYP_expansion(tmptestdir, testdata):
+    T410_XYP_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T410_XYP_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T410_XZP_expansion(tmptestdir, testdata):
+    T410_XZP_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T410_XZP_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T410_YZP_expansion(tmptestdir, testdata):
+    T410_YZP_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T410_YZP_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T411_PLA_expansion(tmptestdir, testdata):
+    T411_PLA_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T411_PLA_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T412_XCC_expansion(tmptestdir, testdata):
+    T412_XCC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T412_XCC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T412_YCC_expansion(tmptestdir, testdata):
+    T412_YCC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T412_YCC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T412_ZCC_expansion(tmptestdir, testdata):
+    T412_ZCC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T412_ZCC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T413_XEC_expansion(tmptestdir, testdata):
+    T413_XEC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T413_XEC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T413_YEC_expansion(tmptestdir, testdata):
+    T413_YEC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T413_YEC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T413_ZEC_expansion(tmptestdir, testdata):
+    T413_ZEC_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T413_ZEC_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T414_QUA_expansion(tmptestdir, testdata):
+    T414_QUA_expansion.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T414_QUA_expansion.inp"],
+    )
+
+
+def test_PythonFluka_T501_RPP_translation(tmptestdir, testdata):
+    T501_RPP_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T501_RPP_translation.inp"],
+    )
+
+
+def test_PythonFluka_T502_BOX_translation(tmptestdir, testdata):
+    T502_BOX_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T502_BOX_translation.inp"],
+    )
+
+
+def test_PythonFluka_T503_SPH_translation(tmptestdir, testdata):
+    T503_SPH_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T503_SPH_translation.inp"],
+    )
+
+
+def test_PythonFluka_T504_RCC_translation(tmptestdir, testdata):
+    T504_RCC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T504_RCC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T505_REC_translation(tmptestdir, testdata):
+    T505_REC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T505_REC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T506_TRC_translation(tmptestdir, testdata):
+    T506_TRC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T506_TRC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T507_ELL_translation(tmptestdir, testdata):
+    T507_ELL_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T507_ELL_translation.inp"],
+    )
+
+
+def test_PythonFluka_T508_RAW_translation(tmptestdir, testdata):
+    T508_RAW_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T508_RAW_translation.inp"],
+    )
+
+
+def test_PythonFluka_T508_WED_translation(tmptestdir, testdata):
+    T508_WED_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T508_WED_translation.inp"],
+    )
+
+
+def test_PythonFluka_T509_ARB_translation(tmptestdir, testdata):
+    T509_ARB_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T509_ARB_translation.inp"],
+    )
+
+
+def test_PythonFluka_T510_XYP_translation(tmptestdir, testdata):
+    T510_XYP_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T510_XYP_translation.inp"],
+    )
+
+
+def test_PythonFluka_T510_XZP_translation(tmptestdir, testdata):
+    T510_XZP_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T510_XZP_translation.inp"],
+    )
+
+
+def test_PythonFluka_T510_YZP_translation(tmptestdir, testdata):
+    T510_YZP_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T510_YZP_translation.inp"],
+    )
+
+
+def test_PythonFluka_T511_PLA_translation(tmptestdir, testdata):
+    T511_PLA_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T511_PLA_translation.inp"],
+    )
+
+
+def test_PythonFluka_T512_XCC_translation(tmptestdir, testdata):
+    T512_XCC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T512_XCC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T512_YCC_translation(tmptestdir, testdata):
+    T512_YCC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T512_YCC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T512_ZCC_translation(tmptestdir, testdata):
+    T512_ZCC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T512_ZCC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T513_XEC_translation(tmptestdir, testdata):
+    T513_XEC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T513_XEC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T513_YEC_translation(tmptestdir, testdata):
+    T513_YEC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T513_YEC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T513_ZEC_translation(tmptestdir, testdata):
+    T513_ZEC_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T513_ZEC_translation.inp"],
+    )
+
+
+def test_PythonFluka_T514_QUA_translation(tmptestdir, testdata):
+    T514_QUA_translation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T514_QUA_translation.inp"],
+    )
 
 
 # 6666666666
-def test_PythonFluka_T601_RPP_rototranslation():
-    T601_RPP_rototranslation.Test(False, False)
+def test_PythonFluka_T601_RPP_rototranslation(tmptestdir, testdata):
+    T601_RPP_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T601_RPP_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T602_BOX_rototranslation():
-    T602_BOX_rototranslation.Test(False, False)
+def test_PythonFluka_T602_BOX_rototranslation(tmptestdir, testdata):
+    T602_BOX_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T602_BOX_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T603_SPH_rototranslation():
-    T603_SPH_rototranslation.Test(False, False)
+def test_PythonFluka_T603_SPH_rototranslation(tmptestdir, testdata):
+    T603_SPH_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T603_SPH_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T604_RCC_rototranslation():
-    T604_RCC_rototranslation.Test(False, False)
+def test_PythonFluka_T604_RCC_rototranslation(tmptestdir, testdata):
+    T604_RCC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T604_RCC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T605_REC_rototranslation():
-    T605_REC_rototranslation.Test(False, False)
+def test_PythonFluka_T605_REC_rototranslation(tmptestdir, testdata):
+    T605_REC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T605_REC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T606_TRC_rototranslation():
-    T606_TRC_rototranslation.Test(False, False)
+def test_PythonFluka_T606_TRC_rototranslation(tmptestdir, testdata):
+    T606_TRC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T606_TRC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T607_ELL_rototranslation():
-    T607_ELL_rototranslation.Test(False, False)
+def test_PythonFluka_T607_ELL_rototranslation(tmptestdir, testdata):
+    T607_ELL_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T607_ELL_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T608_RAW_rototranslation():
-    T608_RAW_rototranslation.Test(False, False)
+def test_PythonFluka_T608_RAW_rototranslation(tmptestdir, testdata):
+    T608_RAW_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T608_RAW_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T608_WED_rototranslation():
-    T608_WED_rototranslation.Test(False, False)
+def test_PythonFluka_T608_WED_rototranslation(tmptestdir, testdata):
+    T608_WED_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T608_WED_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T609_ARB_rototranslation():
-    T609_ARB_rototranslation.Test(False, False)
+def test_PythonFluka_T609_ARB_rototranslation(tmptestdir, testdata):
+    T609_ARB_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T609_ARB_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T610_XYP_rototranslation():
-    T610_XYP_rototranslation.Test(False, False)
+def test_PythonFluka_T610_XYP_rototranslation(tmptestdir, testdata):
+    T610_XYP_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T610_XYP_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T610_XZP_rototranslation():
-    T610_XZP_rototranslation.Test(False, False)
+def test_PythonFluka_T610_XZP_rototranslation(tmptestdir, testdata):
+    T610_XZP_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T610_XZP_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T610_YZP_rototranslation():
-    T610_YZP_rototranslation.Test(False, False)
+def test_PythonFluka_T610_YZP_rototranslation(tmptestdir, testdata):
+    T610_YZP_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T610_YZP_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T611_PLA_rototranslation():
-    T611_PLA_rototranslation.Test(False, False)
+def test_PythonFluka_T611_PLA_rototranslation(tmptestdir, testdata):
+    T611_PLA_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T610_PLA_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T612_XCC_rototranslation():
-    T612_XCC_rototranslation.Test(False, False)
+def test_PythonFluka_T612_XCC_rototranslation(tmptestdir, testdata):
+    T612_XCC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T612_XCC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T612_YCC_rototranslation():
-    T612_YCC_rototranslation.Test(False, False)
+def test_PythonFluka_T612_YCC_rototranslation(tmptestdir, testdata):
+    T612_YCC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T612_YCC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T612_ZCC_rototranslation():
-    T612_ZCC_rototranslation.Test(False, False)
+def test_PythonFluka_T612_ZCC_rototranslation(tmptestdir, testdata):
+    T612_ZCC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T612_ZCC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T613_XEC_rototranslation():
-    T613_XEC_rototranslation.Test(False, False)
+def test_PythonFluka_T613_XEC_rototranslation(tmptestdir, testdata):
+    T613_XEC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T613_XEC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T613_YEC_rototranslation():
-    T613_YEC_rototranslation.Test(False, False)
+def test_PythonFluka_T613_YEC_rototranslation(tmptestdir, testdata):
+    T613_YEC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T613_YEC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T613_ZEC_rototranslation():
-    T613_ZEC_rototranslation.Test(False, False)
+def test_PythonFluka_T613_ZEC_rototranslation(tmptestdir, testdata):
+    T613_ZEC_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T613_ZEC_rototranslation.inp"],
+    )
 
 
-def test_PythonFluka_T614_QUA_rototranslation():
-    T614_QUA_rototranslation.Test(False, False)
+def test_PythonFluka_T614_QUA_rototranslation(tmptestdir, testdata):
+    T614_QUA_rototranslation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T614_QUA_rototranslation.inp"],
+    )
 
 
 # 7777777777
-def test_PythonFluka_T710_XYP_XZP_YZP_minimisation():
-    T710_XYP_XZP_YZP_minimisation.Test(False, False)
+def test_PythonFluka_T710_XYP_XZP_YZP_minimisation(tmptestdir, testdata):
+    T710_XYP_XZP_YZP_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T710_XYP_ZXP_YZP_minimiation.inp"],
+    )
 
 
-def test_PythonFluka_T711_PLA_minimisation():
-    T711_PLA_minimisation.Test(False, False)
+def test_PythonFluka_T711_PLA_minimisation(tmptestdir, testdata):
+    T711_PLA_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T711_PLA_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T712_XCC_minimisation():
-    T712_XCC_minimisation.Test(False, False)
+def test_PythonFluka_T712_XCC_minimisation(tmptestdir, testdata):
+    T712_XCC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T712_XCC_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T712_YCC_minimisation():
-    T712_YCC_minimisation.Test(False, False)
+def test_PythonFluka_T712_YCC_minimisation(tmptestdir, testdata):
+    T712_YCC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T713_YCC_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T712_ZCC_minimisation():
-    T712_ZCC_minimisation.Test(False, False)
+def test_PythonFluka_T712_ZCC_minimisation(tmptestdir, testdata):
+    T712_ZCC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T713_ZCC_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T713_XEC_minimisation():
-    T713_XEC_minimisation.Test(False, False)
+def test_PythonFluka_T713_XEC_minimisation(tmptestdir, testdata):
+    T713_XEC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T713_XEC_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T713_YEC_minimisation():
-    T713_YEC_minimisation.Test(False, False)
+def test_PythonFluka_T713_YEC_minimisation(tmptestdir, testdata):
+    T713_YEC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T713_YEC_minimisation.inp"],
+    )
 
 
-def test_PythonFluka_T713_ZEC_minimisation():
-    T713_ZEC_minimisation.Test(False, False)
+def test_PythonFluka_T713_ZEC_minimisation(tmptestdir, testdata):
+    T713_ZEC_minimisation.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T713_ZEC_minimisation.inp"],
+    )
 
 
 # 8888888888
-def test_PythonFluka_T801_filter_redundant_halfspaces():
-    T801_filter_redundant_halfspaces.Test(False, False)
+def test_PythonFluka_T801_filter_redundant_halfspaces(tmptestdir, testdata):
+    T801_filter_redundant_halfspaces.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T801_filter_redundant_halfspace.inp"],
+    )
 
 
-def test_PythonFluka_T803_material_element():
-    T803_material_element.Test(False, False)
+def test_PythonFluka_T803_material_element(tmptestdir, testdata):
+    T803_material_element.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T803_material_element.inp"],
+    )
 
 
 # 9999999999
-def test_PythonFluka_T901_cube_from_XYP_XZP_YZP():
-    T901_cube_from_XYP_XZP_YZP.Test(False, False)
+def test_PythonFluka_T901_cube_from_XYP_XZP_YZP(tmptestdir, testdata):
+    T901_cube_from_XYP_XZP_YZP.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T901_cube_from_XYP_ZXP_YZP.inp"],
+    )
 
 
-def test_PythonFluka_T902_cube_from_six_PLAs():
-    T902_cube_from_six_PLAs.Test(False, False)
+def test_PythonFluka_T902_cube_from_six_PLAs(tmptestdir, testdata):
+    T902_cube_from_six_PLAs.Test(
+        vis=False,
+        interactive=False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T902_cube_from_six_PLAs.inp"],
+    )
 
 
 def test_PythonFluka_empyRegistry():
@@ -765,12 +1410,17 @@ def test_addRotoTranslation():
     #    store.addRotoTranslation(rtrans5)
 
 
-def test_fluka_vis():
-    r = T902_cube_from_six_PLAs.Test(False, False)["flukaRegistry"]
+def test_fluka_vis(tmptestdir, testdata):
+    r = T902_cube_from_six_PLAs.Test(
+        False,
+        False,
+        outputPath=tmptestdir,
+        refFilePath=testdata["fluka/T902_cube_from_six_PLAs.inp"],
+    )["flukaRegistry"]
     v = _VtkViewerNew()
     v.addFlukaRegions(r)
     v.buildPipelinesAppend()
 
 
-def test_PythonFluka_T1000_extruder():
-    T1000_extruder.Test(False)
+def test_PythonFluka_T1000_extruder(tmptestdir, testdata):
+    T1000_extruder.Test(False, outputPath=tmptestdir)

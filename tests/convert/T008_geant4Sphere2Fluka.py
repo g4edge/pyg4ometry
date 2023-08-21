@@ -5,9 +5,18 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outputPath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    n_slice=10,
+    n_stack=10,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -64,11 +73,12 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outpu
     w.write(outputPath / "T008_geant4Sphere2Fluka.gdml")
 
     # fluka conversion
+    outputFile = outputPath / "T008_geant4Sphere2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T008_geant4Sphere2Fluka.inp")
+        w.write(outputFile)
 
     # visualisation
     v = None
@@ -77,6 +87,10 @@ def Test(vis=False, interactive=False, fluka=True, n_slice=10, n_stack=10, outpu
         v.addLogicalVolume(reg.getWorldVolume())
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":

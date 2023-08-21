@@ -4,14 +4,14 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
-import os as _os
 import pathlib as _pl
+import pyg4ometry.misc as _mi
 
 normal = 1
 non_intersecting = 2
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -50,6 +50,13 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
 
+    outputFile = outputPath / "T030_geant4Intersection2Fluka.inp"
+    if fluka:
+        freg = _convert.geant4Reg2FlukaReg(reg)
+        w = _fluka.Writer()
+        w.addDetector(freg)
+        w.write(outputFile)
+
     # visualisation
     v = None
     if vis:
@@ -58,11 +65,9 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
-        w = _fluka.Writer()
-        w.addDetector(freg)
-        w.write(outputPath / "T030_geant4Intersection2Fluka.inp")
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
+    return {"greg": reg, "freg": freg}
 
 
 if __name__ == "__main__":

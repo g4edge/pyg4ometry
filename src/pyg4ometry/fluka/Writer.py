@@ -20,6 +20,7 @@
 """
 
 from pyg4ometry.fluka import material as _material
+from pyg4ometry.fluka.directive import RecursiveRotoTranslation, Transform
 
 
 class Writer:
@@ -71,24 +72,38 @@ class Writer:
 
         # loop over bodies
         for bk in self.flukaRegistry.bodyDict.keys():
-            # f.write("$Start_translat {} {} {}\n".format(self.flukaRegistry.bodyDict[bk].translation[0],
-            #                                            self.flukaRegistry.bodyDict[bk].translation[1],
-            #                                            self.flukaRegistry.bodyDict[bk].translation[2]))
             transform = self.flukaRegistry.bodyDict[bk].transform
 
-            if len(transform) != 0:
-                if transform.flukaFreeString() != "":
-                    f.write("$start_transform " + transform.name + "\n")
-                    try:
-                        rotdefi[transform.name] = transform
-                    except KeyError:
-                        pass
+            if type(transform) is RecursiveRotoTranslation:
+                if len(transform) != 0:
+                    if transform.flukaFreeString() != "":
+                        f.write("$start_transform " + transform.name + "\n")
+                        try:
+                            rotdefi[transform.name] = transform
+                        except KeyError:
+                            pass
 
-            f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString() + "\n")
+                f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString() + "\n")
 
-            if len(transform) != 0:
-                if transform.flukaFreeString() != "":
-                    f.write("$end_transform\n")
+                if len(transform) != 0:
+                    if transform.flukaFreeString() != "":
+                        f.write("$end_transform\n")
+            elif type(transform) is Transform:
+                if transform.rotoTranslation:
+                    if len(transform.rotoTranslation) != 0:
+                        if transform.rotoTranslation.flukaFreeString() != "":
+                            f.write("$start_transform " + transform.rotoTranslation.name + "\n")
+                            try:
+                                rotdefi[transform.rotoTranslation.name] = transform.rotoTranslation
+                            except KeyError:
+                                pass
+
+                f.write(self.flukaRegistry.bodyDict[bk].flukaFreeString() + "\n")
+
+                if transform.rotoTranslation:
+                    if len(transform.rotoTranslation) != 0:
+                        if transform.rotoTranslation.flukaFreeString() != "":
+                            f.write("$end_transform\n")
         f.write("END\n")
 
         # loop over regions

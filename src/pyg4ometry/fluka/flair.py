@@ -29,7 +29,7 @@ class Flair:
         for l in inputFile:
             # replace file name
             if l.find("_FLUKA_INPUT_FILENAME_") != -1:
-                newl = l.replace("_FLUKA_INPUT_FILENAME_", self.flukaInputFileName)
+                newl = l.replace("_FLUKA_INPUT_FILENAME_", str(self.flukaInputFileName))
                 outputFile.write(newl)
             elif l.find("_FLUKA_CUSTOM_MATERIAL_INFORMATION_") != -1:
                 # Material: PORTLAND

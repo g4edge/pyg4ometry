@@ -186,6 +186,10 @@ class Material(_MatProp):
             flukaregistry=flukaregistry,
         )
 
+    def rename(self, newName, recursive=False, iIndex=0):
+        self.name = newName + format(iIndex, "02")
+        return iIndex
+
 
 class Compound(_MatProp):
     """
@@ -308,6 +312,14 @@ class Compound(_MatProp):
         if not densityWeighted:
             return sum(x[1] for x in self.fractions)
         return sum(x[0].density * x[1] for x in self.fractions)
+
+    def rename(self, newName, recursive=True, iIndex=0):
+        self.name = newName + format(iIndex, "02")
+        if recursive:
+            for frac in self.fractions:
+                iIndex += 1
+                iIndex = frac[0].rename(newName, recursive=True, iIndex=iIndex)
+        return iIndex
 
 
 def _appendFractionPairs(card, fractions, fractionTypes):

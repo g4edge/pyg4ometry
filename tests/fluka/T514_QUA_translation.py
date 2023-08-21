@@ -1,9 +1,15 @@
+import pathlib as _pl
+
 import pyg4ometry.convert as convert
 import pyg4ometry.visualisation as vi
-from pyg4ometry.fluka import QUA, Region, Zone, FlukaRegistry, AABB, XYP, XZP, Transform
+from pyg4ometry.fluka import QUA, Region, Zone, FlukaRegistry, AABB, XYP, XZP, Transform, Writer
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     freg = FlukaRegistry()
 
     translation = Transform(translation=[0, 0, -1000])
@@ -44,6 +50,14 @@ def Test(vis=False, interactive=False):
 
     greg = convert.fluka2Geant4(freg, quadricRegionAABBs=quaAABB)
 
+    outputFile = outputPath / "T514_QUA_translation.inp"
+
+    w = Writer()
+    w.addDetector(freg)
+    w.write(outputFile)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
     v = None
     if vis:
         v = vi.VtkViewer()
@@ -52,7 +66,13 @@ def Test(vis=False, interactive=False):
         v.addLogicalVolume(greg.getWorldVolume())
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": greg.getWorldVolume(), "vtkViewer": v}
+    return {
+        "testStatus": True,
+        "logicalVolume": greg.getWorldVolume(),
+        "vtkViewer": v,
+        "flukaRegistry": freg,
+        "geant4Registry": greg,
+    }
 
 
 if __name__ == "__main__":

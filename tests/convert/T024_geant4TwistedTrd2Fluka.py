@@ -68,3 +68,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
         v.addLogicalVolume(wl)
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
+
+    g4td = _g4td.G4EdgeTestData()
+    testDataPath = g4td["convert/T024_geant4TwistedTrd2Fluka.inp"]
+    assert _fc.cmp(testDataPath, outputPath / "T024_geant4TwistedTrd2Fluka.inp")
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()

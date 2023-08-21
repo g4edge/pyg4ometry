@@ -22,7 +22,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
 
     polygon = [
         [0, 0],
-        [0, 1000],
+        [0, 800],
         [1000, 1000],
         [1000, 666],
         [333, 666],
@@ -43,16 +43,11 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     xl = _g4.LogicalVolume(xs, xm, "xl", reg)
-    for i in range(0, 3):
-        for j in range(0, 3):
-            xp = _g4.PhysicalVolume(
-                [0, 0, 0],
-                [(i - 1) * 2000, (j - 1) * 2000, 0],
-                xl,
-                "x_pv_" + str(i) + "_" + str(j),
-                wl,
-                reg,
-            )
+
+    xp1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], xl, "xp1", wl, reg, scale=[1, 1, 1])
+    xp2 = _g4.PhysicalVolume([0, 0, 0.2], [1500, 0, 0], xl, "xp2", wl, reg, scale=[1, -1, 1])
+    xp3 = _g4.PhysicalVolume([0, 0, 0], [-1000, 1000, 0], xl, "xp3", wl, reg, scale=[1, -1, 1])
+    xp4 = _g4.PhysicalVolume([0, 0, 0], [1000, 1000, 0], xl, "xp4", wl, reg, scale=[-1, -1, 1])
 
     # set world volume
     reg.setWorld(wl.name)
@@ -60,14 +55,14 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T201_extrudedSubtraction.gdml")
+    w.write(outputPath / "T203_extrudedReflectionRotation.gdml")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
     extent = wl.extent(includeBoundingSolid=False)
 
     # fluka conversion
-    outputFile = outputPath / "T201_extrudedSubtraction.inp"
+    outputFile = outputPath / "T203_extrudedReflectionRotation.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
@@ -76,7 +71,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
 
         # flair output file
         f = _fluka.Flair(outputFile, extentBB)
-        f.write(outputPath / "T201_extrudedSubtraction.flair")
+        f.write(outputPath / "T203_extrudedReflectionRotation.flair")
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

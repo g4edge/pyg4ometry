@@ -6,9 +6,10 @@ import pyg4ometry.gdml as _gd
 import pyg4ometry.convert as _convert
 import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -43,17 +44,31 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None):
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
 
+    # gdml output
+    w = _gd.Writer()
+    w.addDetector(reg)
+    w.write(outputPath / "T015_geant4EllipticalTube2Fluka.gdml")
+
+    outputFile = outputPath / "T015_geant4EllipticalTube2Fluka.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T015_geant4EllipticalTube2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
-    f = _fluka.Flair("T015_geant4EllipticalTube2Fluka.inp", extentBB)
-    f.write(outputPath / "T015_geant4EllipticalTube2Fluka.flair")
+    f = _fluka.Flair(outputFile, extentBB)
+    f.write(str(outputPath / "T015_geant4EllipticalTube2Fluka.flair"))
 
     if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
         v.view(interactive=interactive)
+
+    _mi.compareNumericallyWithAssert(refFilePath, outputFile)
+
+    return {"greg": reg, "freg": freg}
+
+
+if __name__ == "__main__":
+    Test()
