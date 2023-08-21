@@ -48,3 +48,13 @@ def compareNumericallyWithAssert(file1, file2):
             print(output)
 
         assert output.find("equal") != -1
+
+
+def compareMeshInfo(meshInfo1, meshInfo2):
+    for k in meshInfo1:
+        if type(meshInfo1[k]) is float:
+            assert abs(meshInfo1[k] - meshInfo2[k]) < 1e-5
+        elif type(meshInfo1[k]) is bool:
+            assert meshInfo1[k] == meshInfo2[k]
+        elif type(meshInfo1[k]) is int:
+            assert meshInfo1[k] == meshInfo2[k]

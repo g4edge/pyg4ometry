@@ -61,7 +61,26 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     # assert file_hash == "cb0f7eff60314dcf5ca9a7540713f11a"
 
     # test __repr__
-    str(bs)
+    assert str(bs) == "Box : name=bs x=10.0 y=10.0 z=10.0"
+
+    # test
+    meshInfo = bl.mesh.localmesh.info()
+    # print(meshInfo)
+    _mi.compareMeshInfo(
+        meshInfo,
+        {
+            "null": False,
+            "closed": True,
+            "triangle": True,
+            "outward": True,
+            "volume": 1000.0,
+            "area": 600.0,
+            "numberfaces": 12,
+            "numbervertices": 8,
+            "minEdge": 10.0,
+            "maxEdge": 14.142135623730951,
+        },
+    )
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)
@@ -75,7 +94,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": wl, "vtkViewer": v, "registry": reg}
+    return {"meshInfo": meshInfo, "logicalVolume": wl, "vtkViewer": v, "registry": reg}
 
 
 if __name__ == "__main__":

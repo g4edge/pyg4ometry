@@ -110,6 +110,9 @@ class CSG:
     def getNumberPolys(self):
         return self.sm.number_of_faces()
 
+    def getNumberVertices(self):
+        return self.sm.number_of_vertices()
+
     def vertexCount(self):
         return self.sm.number_of_vertices()
 
@@ -359,14 +362,23 @@ class CSG:
         ]
         return CSG.fromPolygons(polygons)
 
-    def isNull(self):
-        return self.sm.number_of_faces() == 0
-
     def volume(self):
         return Polygon_mesh_processing.volume(self.sm)
 
     def area(self):
         return Polygon_mesh_processing.area(self.sm)
+
+    def isNull(self):
+        return self.sm.number_of_faces() == 0
+
+    def isClosed(self):
+        return CGAL.is_closed(self.sm)
+
+    def isTriangleMesh(self):
+        return CGAL.is_triangle_mesh(self.sm)
+
+    def isOutwardOriented(self):
+        return CGAL.is_outward_oriented(self.sm)
 
     def info(self):
         vAp = self.toVerticesAndPolygons()
@@ -391,7 +403,18 @@ class CSG:
                 if mdv > maxEdge:
                     maxEdge = mdv
 
-        return {"minEdge": minEdge, "maxEdge": maxEdge}
+        return {
+            "null": self.isNull(),
+            "closed": self.isClosed(),
+            "triangle": self.isTriangleMesh(),
+            "outward": self.isOutwardOriented(),
+            "volume": self.volume(),
+            "area": self.area(),
+            "numberfaces": self.getNumberPolys(),
+            "numbervertices": self.getNumberVertices(),
+            "minEdge": minEdge,
+            "maxEdge": maxEdge,
+        }
 
 
 def do_intersect(csg1, csg2):
