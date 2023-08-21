@@ -28,3 +28,24 @@ def geant4Solid2Geant4Tessellated(solid):
     tesselated_solid = _solid.TessellatedSolid(name, meshTriangular, reg, meshtype=mesh_type)
 
     return tesselated_solid
+
+
+def geant4Solid2Geant4Tessellated_NoVTK(solid):
+    pycsg_mesh = solid.mesh()
+
+    meshTriangular = []
+
+    vAndP = pycsg_mesh.toVerticesAndPolygons()
+
+    for t in vAndP[1]:
+        vert = [vAndP[0][idx] for idx in t]
+        vert = [vert, (None, None, None)]
+        # print(vert)
+        meshTriangular.append(vert)
+
+    name = solid.name + "_asTesselated"
+    reg = solid.registry
+    mesh_type = _solid.TessellatedSolid.MeshType.Stl
+    tesselated_solid = _solid.TessellatedSolid(name, meshTriangular, reg, meshtype=mesh_type)
+
+    return tesselated_solid
