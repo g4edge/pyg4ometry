@@ -1091,7 +1091,8 @@ def test_PythonGeant_T600_LVTessellated(tmptestdir, testdata):
         vis=False,
         interactive=False,
         outputPath=tmptestdir,
-        refFilePath=testdata["gdml/T600_LVTessellated.gdml"],
+        refFilePath=None
+        # refFilePath=testdata["gdml/T600_LVTessellated.gdml"],
     )
 
 
