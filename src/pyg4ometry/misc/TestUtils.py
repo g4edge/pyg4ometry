@@ -64,5 +64,13 @@ def compareGdmlNumericallyWithAssert(file1, file2):
             pass
         else:
             print(output)
+            # echo reference file
+            with open(file1) as f:
+                for l in f:
+                    print(l)
+
+            with open(file2) as f:
+                for l in f:
+                    print(l)
 
         assert output.find("equal") != -1
