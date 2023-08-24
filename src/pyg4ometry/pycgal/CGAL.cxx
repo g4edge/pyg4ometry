@@ -7,6 +7,8 @@ namespace py = pybind11;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Extended_cartesian.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -15,8 +17,11 @@ namespace py = pybind11;
 #include <CGAL/Surface_mesh/IO/OFF.h>
 #include <CGAL/partition_2.h>
 
+typedef CGAL::Exact_rational ER;
+typedef CGAL::Extended_cartesian<ER> Kernel_ECER;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_EPICK;
 typedef CGAL::Partition_traits_2<Kernel_EPICK> Partition_traits_2_EPICK;
+
 typedef Partition_traits_2_EPICK::Point_2 Partition_traits_2_Point_2_EPICK;
 typedef Partition_traits_2_EPICK::Polygon_2 Partition_traits_2_Polygon_2_EPICK;
 typedef Kernel_EPICK::Point_2 Point_2_EPICK;
@@ -40,6 +45,11 @@ typedef CGAL::Polygon_with_holes_2<Kernel_EPECK> Polygon_with_holes_2_EPECK;
 typedef CGAL::Polyhedron_3<Kernel_EPECK> Polyhedron_3_EPECK;
 typedef CGAL::Surface_mesh<Kernel_EPECK::Point_3> Surface_mesh_EPECK;
 typedef CGAL::Nef_polyhedron_3<Kernel_EPECK> Nef_polyhedron_3_EPECK;
+
+typedef Kernel_ECER::Point_3 Point_ECER;
+typedef Kernel_ECER::Vector_3 Vector_ECER;
+typedef CGAL::Polyhedron_3<Kernel_ECER> Polyhedron_3_ECER;
+typedef CGAL::Surface_mesh<Point_ECER> Surface_mesh_ECER;
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/aff_transformation_tags.h>
@@ -187,6 +197,13 @@ PYBIND11_MODULE(CGAL, m) {
   m.def("copy_face_graph", [](Polyhedron_3_EPECK &p1, Polyhedron_3_EPICK &p2) {
     return CGAL::copy_face_graph(p1, p2);
   });
+  m.def("copy_face_graph", [](Polyhedron_3_ECER &p1, Surface_mesh_ECER &sm2) {
+    return CGAL::copy_face_graph(p1, sm2);
+  });
+  // m.def("copy_face_graph", [](Polyhedron_3_ECER &p1, Polyhedron_3_EPICK &p2)
+  // {
+  //   return CGAL::copy_face_graph(p1, p2);
+  // });
 
   /* 2D boolean */
   m.def("do_intersect", [](Polygon_2_EPECK &p1, Polygon_2_EPECK &p2) {

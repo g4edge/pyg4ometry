@@ -8,6 +8,8 @@ namespace py = pybind11;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Extended_cartesian.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -23,6 +25,12 @@ typedef Kernel_EPICK::Point_3 Point_EPICK;
 typedef Kernel_EPICK::Vector_3 Vector_EPICK;
 typedef CGAL::Polyhedron_3<Kernel_EPICK> Polyhedron_3_EPICK;
 typedef Polyhedron_3_EPICK::HalfedgeDS HalfedgeDS_EPICK;
+
+typedef CGAL::Exact_rational ER;
+typedef CGAL::Extended_cartesian<ER> Kernel_ECER;
+typedef Kernel_ECER::Point_3 Point_ECER;
+typedef Kernel_ECER::Vector_3 Vector_ECER;
+typedef CGAL::Polyhedron_3<Kernel_ECER> Polyhedron_3_ECER;
 
 PYBIND11_MAKE_OPAQUE(std::vector<Polyhedron_3_EPICK>);
 PYBIND11_MAKE_OPAQUE(std::vector<Polyhedron_3_EPECK>);
@@ -220,4 +228,9 @@ PYBIND11_MODULE(Polyhedron_3, m) {
                                                    "Vector_Polyhedron_3_EPECK");
   py::bind_vector<std::vector<Polyhedron_3_EPICK>>(m,
                                                    "Vector_Polyhedron_3_EPICK");
+
+  py::class_<Polyhedron_3_ECER>(m, "Polyhedron_3_ECER")
+      .def(py::init<>())
+      .def("size_of_vertices", &Polyhedron_3_ECER::size_of_vertices)
+      .def("size_of_facets", &Polyhedron_3_ECER::size_of_facets);
 }

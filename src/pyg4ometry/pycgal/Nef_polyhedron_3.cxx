@@ -1,3 +1,4 @@
+#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
 #include <pybind11/stl.h>
@@ -5,6 +6,8 @@ namespace py = pybind11;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Extended_cartesian.h>
 
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -12,6 +15,7 @@ namespace py = pybind11;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel_EPECK;
 typedef Kernel_EPECK::Point_3 Point_EPECK;
 typedef Kernel_EPECK::Vector_3 Vector_EPECK;
+typedef Kernel_EPECK::Plane_3 Plane_EPECK;
 typedef CGAL::Polyhedron_3<Kernel_EPECK> Polyhedron_3_EPECK;
 typedef CGAL::Nef_polyhedron_3<Kernel_EPECK> Nef_polyhedron_3_EPECK;
 typedef Nef_polyhedron_3_EPECK::Volume_const_iterator
@@ -22,6 +26,7 @@ typedef Nef_polyhedron_3_EPECK::Shell_entry_const_iterator
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_EPICK;
 typedef Kernel_EPICK::Point_3 Point_EPICK;
 typedef Kernel_EPICK::Vector_3 Vector_EPICK;
+typedef Kernel_EPICK::Plane_3 Plane_EPICK;
 typedef CGAL::Polyhedron_3<Kernel_EPICK> Polyhedron_3_EPICK;
 typedef CGAL::Nef_polyhedron_3<Kernel_EPICK> Nef_polyhedron_3_EPICK;
 typedef Nef_polyhedron_3_EPICK::Volume_const_iterator
@@ -29,10 +34,17 @@ typedef Nef_polyhedron_3_EPICK::Volume_const_iterator
 typedef Nef_polyhedron_3_EPICK::Shell_entry_const_iterator
     Nef_polyhedron_3_EPICK_Shell_entry_iterator;
 
+typedef CGAL::Exact_rational ER;
+typedef CGAL::Extended_cartesian<ER> Kernel_ECER;
+typedef CGAL::Nef_polyhedron_3<Kernel_ECER> Nef_polyhedron_3_ECER;
+typedef Kernel_ECER::Plane_3 Plane_3_ECER;
+typedef CGAL::Polyhedron_3<Kernel_ECER> Polyhedron_3_ECER;
+
 PYBIND11_MODULE(Nef_polyhedron_3, m) {
   py::class_<Nef_polyhedron_3_EPECK>(m, "Nef_polyhedron_3_EPECK")
       .def(py::init<>())
       .def(py::init<Polyhedron_3_EPECK &>())
+      .def(py::init<Plane_EPECK &>())
       /* Access Member Functions */
       .def("is_simple", &Nef_polyhedron_3_EPECK::is_simple)
       .def("is_valid", &Nef_polyhedron_3_EPECK::is_valid)
@@ -92,6 +104,7 @@ PYBIND11_MODULE(Nef_polyhedron_3, m) {
   py::class_<Nef_polyhedron_3_EPICK>(m, "Nef_polyhedron_3_EPICK")
       .def(py::init<>())
       .def(py::init<Polyhedron_3_EPICK &>())
+      .def(py::init<Plane_EPICK &>())
       /* Access Member Functions */
       .def("is_simple", &Nef_polyhedron_3_EPICK::is_simple)
       .def("is_valid", &Nef_polyhedron_3_EPICK::is_valid)
@@ -141,4 +154,28 @@ PYBIND11_MODULE(Nef_polyhedron_3, m) {
                         Nef_polyhedron_3_EPICK_Shell_entry_iterator i2) {
         return i1 != i2;
       });
+
+  py::class_<Nef_polyhedron_3_ECER>(m, "Nef_polyhedron_3_ECER")
+      .def(py::init<>())
+      .def(py::init<Plane_3_ECER &>())
+      .def("is_simple", &Nef_polyhedron_3_ECER::is_simple)
+      .def("is_valid", &Nef_polyhedron_3_ECER::is_valid)
+      .def("number_of_vertices", &Nef_polyhedron_3_ECER::number_of_vertices)
+      .def("number_of_halfedges", &Nef_polyhedron_3_ECER::number_of_halfedges)
+      .def("number_of_edges", &Nef_polyhedron_3_ECER::number_of_edges)
+      .def("number_of_halffacets", &Nef_polyhedron_3_ECER::number_of_halffacets)
+      .def("number_of_facets", &Nef_polyhedron_3_ECER::number_of_facets)
+      .def("number_of_volumes", &Nef_polyhedron_3_ECER::number_of_volumes)
+
+      .def("convert_to_polyhedron",
+           [](Nef_polyhedron_3_ECER &np, Polyhedron_3_ECER &p) {
+             np.convert_to_polyhedron(p);
+           })
+
+      .def(py::self * py::self)
+      .def(py::self *= py::self)
+      .def(py::self + py::self)
+      .def(py::self += py::self)
+      .def(py::self - py::self)
+      .def(py::self -= py::self);
 }
