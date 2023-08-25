@@ -19,6 +19,7 @@ from .material import (
     defineBuiltInFlukaMaterials,
     BuiltIn,
     predefinedMaterialNames,
+    multiGroupNeutronCrossSections,
     Material,
     Compound,
 )
@@ -51,6 +52,7 @@ class FlukaRegistry:
         self.iMaterials = 0
         self.materialShortName = _OrderedDict()
         self.latticeDict = _OrderedDict()
+        self.mgnFieldDict = _OrderedDict()
         self.cardDict = _OrderedDict()
         self.assignmas = _OrderedDict()
         self._predefinedMaterialNames = set(predefinedMaterialNames())
@@ -152,7 +154,7 @@ class FlukaRegistry:
     def getMaterial(self, name):
         return self.materials[name]
 
-    def addMaterialAssignments(self, mat, *regions):
+    def addMaterialAssignments(self, mat, *regions, elc=None, mgn=None):
         if isinstance(mat, _Region):
             msg = "A Region instance has been provided as a material"
             raise TypeError(msg)
@@ -179,7 +181,7 @@ class FlukaRegistry:
             except AttributeError:
                 name = region
 
-            self.assignmas[name] = materialName
+            self.assignmas[name] = (materialName, elc, mgn)
 
     def assignma(self, material, *regions):
         return self.addMaterialAssignments(material, *regions)
@@ -201,8 +203,8 @@ class FlukaRegistry:
     def addGlobal(self):
         pass
 
-    def addBeam(self, energy):
-        c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, "ELECTRON")
+    def addBeam(self, energy, particle="ELECTRON"):
+        c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, particle)
         self.addCard(c)
 
     def addBeamPos(self, xpos=0, ypos=0, zpos=0, xdc=0, ydc=0):
@@ -215,12 +217,33 @@ class FlukaRegistry:
         self.addCard(c)
 
     def addLowMatAllMaterials(self):
+        """
+        Add LOWMAT card to all materials
+        """
+        mgXS = multiGroupNeutronCrossSections()
+
         for mat_name in self.materials:
             mat = self.materials[mat_name]
             if type(mat) is Material:
-                self.addLowMat(mat.name, round(mat.atomicNumber), -2, 296)
+                ident = mgXS.findMaterial(round(mat.atomicNumber), round(mat.massNumber), 296)
+                self.addLowMat(mat.name, ident[0], ident[1], ident[2])
 
-    def addUserBin(
+    def addLowPwxs(self, what1=None, lowerMaterial=None, upperMaterial=None):
+        if not what1:
+            what1 = 0
+        c = _card.Card("LOW-PWXS", what1=what1, what4=lowerMaterial, what5=upperMaterial)
+        self.addCard(c)
+
+    def addMgnCreat(self):
+        pass
+
+    def addMgnField(self):
+        pass
+
+    def addElcField(self):
+        pass
+
+    def addUsrBin(
         self,
         mesh=0,
         particle="ENERGY",
@@ -263,11 +286,11 @@ class FlukaRegistry:
         scoringDir,
         scoringType,
         type,
-        lunOutput,
         reg1,
         reg2,
-        area,
         name,
+        area=1.0,
+        lunOutput=-22,
         maxKE=None,
         minKE=None,
         nKEbin=None,
@@ -285,7 +308,7 @@ class FlukaRegistry:
             area,
             name,
         )
-        c2 = _card.Card("USRBDX", maxKE, minKE, nKEbin, maxSa, minSA, nSEbin, "&")
+        c2 = _card.Card("USRBDX", maxKE, minKE, nKEbin, maxSA, minSA, nSEbin, "&")
 
         self.addCard(c1)
         self.addCard(c2)
@@ -298,7 +321,7 @@ class FlukaRegistry:
         c = _card.Card("USROCALL")
         self.addCard(c)
 
-    def addUserDump(self, mgdraw=100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
+    def addUsrDump(self, mgdraw=100, lun=70, mgdrawOpt=-1, what4=0, sdum=None):
         if not sdum:
             c = _card.Card("USERDUMP", mgdraw, lun, mgdrawOpt, sdum=sdum)
             self.addCard(c)
@@ -319,8 +342,52 @@ class FlukaRegistry:
         c = _card.Card("START", maxPrimHistories, None, timeTermSec, coreDump, eachHistoryOutput)
         self.addCard(c)
 
-    def addLowPwxs(self, lowerMaterial=None, upperMaterial=None):
-        c = _card.Card("LOW-PWXS", what1=10010, what4=lowerMaterial, what5=upperMaterial)
+    def addPhotonuc(self, what1, mat_low, mat_high, mat_step, sdum=""):
+        c = _card.Card(
+            "PHOTONUC", what1=what1, what4=mat_low, what5=mat_high, what6=mat_step, sdum=sdum
+        )
+        self.addCard(c)
+
+    def addMuphoton(self, what1, mat_low, mat_high, mat_step):
+        c = _card.Card("MUPHOTON", what1=what1, what4=mat_low, what5=mat_high, what6=mat_step)
+        self.addCard(c)
+
+    def addPairbrem(self, what1, what2, what3, mat_low, mat_high, mat_step):
+        c = _card.Card(
+            "PAIRBREM",
+            what1=what1,
+            what2=what2,
+            what3=what3,
+            what4=mat_low,
+            what5=mat_high,
+            what6=mat_step,
+        )
+        self.addCard(c)
+
+    def addDeltaRay(self, what1, what2, what3, mat_low, mat_high, mat_step, dsum="NOPRINT"):
+        c = _card.Card(
+            "DELTARAY",
+            what1=what1,
+            what2=what2,
+            what3=what3,
+            what4=mat_low,
+            what5=mat_high,
+            what6=mat_step,
+            dsum=dsum,
+        )
+        self.addCard(c)
+
+    def addIonFluct(self, what1, what2, what3, mat_low, mat_high, mat_step, dsum="PRIM-ION"):
+        c = _card.Card(
+            "IONFLUCT",
+            what1=what1,
+            what2=what2,
+            what3=what3,
+            what4=mat_low,
+            what5=mat_high,
+            what6=mat_step,
+            dsum=dsum,
+        )
         self.addCard(c)
 
     def printDumps(self, detail=1):

@@ -421,6 +421,48 @@ class VtkViewerNew(_ViewerBase):
     def __repr__(self):
         return ""
 
+    def addTracks(self, pd):
+        mapper = _vtk.vtkPolyDataMapper()
+        if _vtk.VTK_MAJOR_VERSION <= 5:
+            # mapper.SetInput(reader.GetOutput())
+            mapper.SetInput(pd)
+        else:
+            mapper.SetInputData(pd)
+
+        mapper.ScalarVisibilityOff()
+        actor = _vtk.vtkActor()
+        actor.SetMapper(mapper)
+        actor.GetProperty().SetRepresentationToWireframe()
+        actor.GetProperty().SetColor(1, 0, 0)
+        actor.GetProperty().SetOpacity(0.5)
+        actor.GetProperty().SetLineWidth(2)
+
+        self.ren.AddActor(actor)
+
+    def addScoringMesh(self, gd):
+        colorFunc = _vtk.vtkColorTransferFunction()
+        colorFunc.AddRGBPoint(-10, 1, 1, 1)
+        colorFunc.AddRGBPoint(0, 0, 1, 0)
+
+        opacity = _vtk.vtkPiecewiseFunction()
+
+        volumeProperty = _vtk.vtkVolumeProperty()
+        volumeProperty.SetColor(colorFunc)
+        volumeProperty.SetScalarOpacity(opacity)
+        volumeProperty.SetInterpolationTypeToLinear()
+        volumeProperty.SetIndependentComponents(2)
+
+        volumeMapper = _vtk.vtkOpenGLGPUVolumeRayCastMapper()
+        volumeMapper.SetInputData(gd)
+        volumeMapper.SetBlendModeToMaximumIntensity()
+
+        volume = _vtk.vtkVolume()
+        volume.SetMapper(volumeMapper)
+        volume.SetProperty(volumeProperty)
+        volume.RotateY(-90)
+
+        self.ren.AddVolume(volume)
+
 
 class VtkViewerColouredNew(VtkViewerNew):
     """

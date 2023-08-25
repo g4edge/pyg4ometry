@@ -94,6 +94,66 @@ def defineBuiltInFlukaMaterials(flukaregistry=None):
     return out
 
 
+class multiGroupNeutronCrossSections:
+    def __init__(self, fileName=None):
+        from importlib_resources import files
+
+        if not fileName:
+            self.lowmatElements_FileName = files("pyg4ometry.fluka").joinpath(
+                "fluka_lowenergyneut.txt"
+            )
+
+        self.data_list = []
+        self._readFile()
+
+    def _readFile(self):
+        with open(self.lowmatElements_FileName) as f:
+            for l in f:
+                if len(l.strip()) == 0:
+                    continue
+                split_line = l.split(",")
+                split_list = [token.strip() for token in split_line]
+
+                split_list_new = []
+                for token in split_list:
+                    try:
+                        split_list_new.append(int(token))
+                    except ValueError:
+                        split_list_new.append(token)
+
+                split_list = split_list_new
+
+                self.data_list.append(split_list)
+
+    def findMaterial(self, Z, A, T, selfShield=False):
+        # loop over Z initially
+        data_list_Z = []
+        data_list_A = []
+        data_list_T = []
+
+        for m in self.data_list:
+            if m[6] == Z:
+                data_list_Z.append(m)
+
+        for m in data_list_Z:
+            if m[7] == A:
+                data_list_A.append(m)
+
+        if len(data_list_A) == 0:
+            for m in data_list_Z:
+                if m[7] == -2:
+                    data_list_A.append(m)
+
+        for m in data_list_A:
+            if m[8] == T:
+                data_list_T.append(m)
+
+        if len(data_list_T) == 0:
+            data_list_T.append(data_list_A[0])
+
+        return (data_list_T[0][6], data_list_T[0][7], data_list_T[0][8])
+
+
 class _MatProp:
     def isGas(self):
         return self.density < 0.01 or self.pressure

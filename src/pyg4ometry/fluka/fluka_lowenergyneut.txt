@@ -1,0 +1,73 @@
+H, H2O bound natural Hydrogen,     296 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -2,    296, ✓
+H, CH2 bound natural Hydrogen,     296 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -3,    296, ✓
+H, Free gas natural Hydrogen,      296 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -5,    296, ✓
+H, Free gas natural Hydrogen,       87 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -2,     87, ✓
+H, Free gas natural Hydrogen,        4 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -5,      4, ✓
+H, Free gas natural Hydrogen,      430 K, ENDF/B-VIIR0, ✓, HYDROGEN, 1, -5,    430, ✓
+1H, H2O bound Hydrogen 1,          296 K, ENDF/B-VIIR0, ✓, HYDROG-1, 1, +1,    296, ✓
+1H, H2 bound Hydrogen 1,           296 K, ENDF/B-VIIR0, ✓, HYDROG-1, 1, +11,   296, ✓
+1H, Free gas Hydrogen 1,           296 K, ENDF/B-VIIR0, ✓, HYDROG-1, 1, +31,   296, ✓
+1H, Free gas Hydrogen 1,            87 K, ENDF/B-VIIR0, ✓, HYDROG-1, 1, +1,     87, ✓
+2H, D2O bound Deuterium,           296 K, ENDF/B-VIIR0, ✓, DEUTERIU, 1, +2,    296, ✓
+2H, Free gas Deuterium,            296 K, ENDF/B-VIIR0, ✓, DEUTERIU, 1, +32,   296, x
+2H, Free gas Deuterium,             87 K, ENDF/B-VIIR0, ✓, DEUTERIU, 1, +2,     87, ✓
+
+Li, Natural Lithium, 296 K, JENDL-3.3, ✓, LITHIUM, 3, -2, 296, ✓
+Li, Natural Lithium, 87 K, JENDL-3.3, ✓, LITHIUM, 3, -2, 87, ✓
+6Li, Lithium 6, 296 K, JENDL-3.3, ✓, LITHIU-6, 3, 6, 296, ✓
+6Li, Lithium 6, 87 K, JENDL-3.3, ✓, LITHIU-6, 3, 6, 87, ✓
+7Li, Lithium 7, 296 K, JENDL-3.3, ✓, LITHIU-7, 3, 7, 296, ✓
+7Li, Lithium 7, 87 K, JENDL-3.3, ✓, LITHIU-7, 3, 7, 87, ✓
+
+C, Free gas natural Carbon,       296 K, ENDF/B-VIIR1, ✓, CARBON, 6, -2, 296, ✓
+C, Free gas natural Carbon,        87 K, ENDF/B-VIIR1, ✓, CARBON, 6, -2,  87, ✓
+C, Free gas natural Carbon,         4 K, ENDF/B-VIIR1, ✓, CARBON, 6, -2,   4, ✓
+C, Free gas natural Carbon,       430 K, ENDF/B-VIIR0, ✓, CARBON, 6, -2, 430, ✓
+C, Graphite bound natural Carbon, 296 K, ENDF/B-VIIR0, ✓, CARBON, 6, -3, 296, ✓
+
+Mg, Natural Magnesium, 296 K, JENDL-3.3, ✓, MAGNESIU, 12, -2, 296, ✓
+Mg, Natural Magnesium, 87 K, JENDL-3.3, ✓, MAGNESIU, 12, -2, 87, ✓
+
+27Al, Aluminium 27,                296 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 27,   296, ✓
+27Al, Aluminium 27,                 87 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 27,    87, ✓
+27Al, Aluminium 27,                  4 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 27,     4, ✓
+27Al, Aluminium 27,                430 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 27,   430, ✓
+27Al, Aluminium 27 self-shielded,  296 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 1027, 296, ✓
+27Al, Aluminium 27 self-shielded,   87 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 1027,  87, ✓
+27Al, Aluminium 27 self-shielded,    4 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 1027,   4, ✓
+27Al, Aluminium 27 self-shielded,  430 K, ENDF/B-VIIR1, ✓, ALUMINUM, 13, 1027, 430, ✓
+
+Cu, Natural Copper               , 296 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -2, 296, ✓
+Cu, Natural Copper               ,  87 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -2,  87, ✓
+Cu, Natural Copper               ,   4 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -2,   4, ✓
+Cu, Natural Copper               , 430 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -2, 430, ✓
+Cu, Natural Copper self-shielded,  296 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -4, 296, ✓
+Cu, Natural Copper self-shielded,   87 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -4,  87, ✓
+Cu, Natural Copper self-shielded,    4 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -4,   4, ✓
+Cu, Natural Copper self-shielded,  430 K, ENDF/B-VIR8,  ✓, COPPER,   29,   -4, 430, ✓
+
+Fe, Natural Iron,                      296 K, ENDF/B-VIR8, ✓, IRON, 26, -2, 296, ✓
+Fe, Natural Iron,                       87 K, ENDF/B-VIR8, ✓, IRON, 26, -2,  87, ✓
+Fe, Natural Iron,                        4 K, ENDF/B-VIR8, ✓, IRON, 26, -2,   4, ✓
+Fe, Natural Iron,                      430 K, ENDF/B-VIR8, ✓, IRON, 26, -2, 430, ✓
+Fe, Natural Iron self-shielded,        296 K, ENDF/B-VIR8, ✓, IRON, 26, -4, 296, ✓
+Fe, Natural Iron self-shielded,         87 K, ENDF/B-VIR8, ✓, IRON, 26, -4,  87, ✓
+Fe, Natural Iron self-shielded,          4 K, ENDF/B-VIR8, ✓, IRON, 26, -4,   4, ✓
+Fe, Natural Iron self-shielded,        430 K, ENDF/B-VIR8, ✓, IRON, 26, -4, 430, ✓
+Fe, Shielding Fe (5% C) self-shielded, 296 K, ENDF/B-VIR8, ✓, IRON, 26, -8, 296, ✓
+Fe, Shielding Fe (5% C) self-shielded,  87 K, ENDF/B-VIR8, ✓, IRON, 26, -8,  87, ✓
+Fe, Shielding Fe (5% C) self-shielded,   4 K, ENDF/B-VIR8, ✓, IRON, 26, -8,   4, ✓
+Fe, Shielding Fe (5% C), self-shielded,430 K, ENDF/B-VIR8, ✓, IRON, 26, -8, 430, ✓
+
+197Au, Gold 197,                     296 K, ENDF/B-VIIR1, ✓, GOLD, 79,  197, 296, ✓
+197Au, Gold 197,                      87 K, ENDF/B-VIIR1, ✓, GOLD, 79,  197,  87, ✓
+197Au, Gold 197 self-shielded,       296 K, ENDF/B-VIIR1, ✓, GOLD, 79, 1197, 296, ✓
+197Au, Gold 197 self-shielded,        87 K, ENDF/B-VIIR1, ✓, GOLD, 79, 1197,  87, ✓
+197Au, Gold 197 0.1mm self-shielded, 296 K, ENDF/B-VIIR1, ✓, GOLD, 79, 2197, 296, ✓
+
+Pb,   Natural Lead,                  296 K, ENDF/B-VIR8,  ✓, LEAD,     82,   -2, 296, ✓
+Pb,   Natural Lead,                   87 K, ENDF/B-VIR8,  ✓, LEAD,     82,   -2,  87, ✓
+Pb,   Natural Lead self-shielded,    296 K, ENDF/B-VIR8,  ✓, LEAD,     82,   -4, 296, ✓
+Pb,   Natural Lead self-shielded,     87 K, ENDF/B-VIR8,  ✓, LEAD,     82,   -4,  87, ✓
+208Pb, Lead 208,                     296 K, ENDF/B-VIR8,  ✓,208-PB,    82,  208, 296, ✓
+208Pb, Lead 208, self-shielded,      296 K, ENDF/B-VIR8,  ✓,208-PB,    82, 1208, 296, ✓
