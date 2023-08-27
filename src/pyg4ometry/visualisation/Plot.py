@@ -3,7 +3,9 @@ import matplotlib.pyplot as _plt
 from .Convert import vtkPolyDataToNumpy as _vtkPolyDataToNumpy
 
 
-def AddCutterDataToPlot(filename, projection="zx", ax=None, unitsFactor=1.0, colour='k', linewidth=0.5, alpha=1.0):
+def AddCutterDataToPlot(
+    filename, projection="zx", ax=None, unitsFactor=1.0, colour="k", linewidth=0.5, alpha=1.0
+):
     """
     Add cutter data to a plot or draw in a new figure if no axis object given.
 
@@ -38,17 +40,25 @@ def AddCutterDataToPlot(filename, projection="zx", ax=None, unitsFactor=1.0, col
         ylim = ax.get_ylim()
 
     if len(projection) != 2:
-        raise ValueError("projection must be 2 letters including x, y, z")
-        
-    dims = ['x','y','z']
+        msg = "projection must be 2 letters including x, y, z"
+        raise ValueError(msg)
+
+    dims = ["x", "y", "z"]
     ind1 = dims.index(projection[0])
     ind2 = dims.index(projection[1])
     if ind1 == ind2:
-        raise ValueError("projection must contain 2 unique letters")
-    
+        msg = "projection must contain 2 unique letters"
+        raise ValueError(msg)
+
     polyData = _vtkPolyDataToNumpy(filename)
     for poly in polyData:
-        ax.plot(poly[:,ind1]*unitsFactor, poly[:,ind2]*unitsFactor, c=colour, lw=linewidth, alpha=alpha)
+        ax.plot(
+            poly[:, ind1] * unitsFactor,
+            poly[:, ind2] * unitsFactor,
+            c=colour,
+            lw=linewidth,
+            alpha=alpha,
+        )
 
     if reapplyLims:
         ax.set_xlim(*xlim)

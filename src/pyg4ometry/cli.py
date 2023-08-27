@@ -259,7 +259,10 @@ def cli(
         v.addCutter("cli-cutter", o, n)
         v.buildPipelinesAppend()
         v.exportCutter("cli-cutter", planeCutterOutputFileName)
-        print("pyg4> cutter with " + str(o) + ", " + str(n) + " written to: ", planeCutterOutputFileName)
+        print(
+            "pyg4> cutter with " + str(o) + ", " + str(n) + " written to: ",
+            planeCutterOutputFileName,
+        )
 
     if featureData is not None or featureDataOutputFileName is not None:
         # TBC!!!
