@@ -7,12 +7,18 @@ namespace py = pybind11;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Extended_cartesian.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_EPICK;
 typedef Kernel_EPICK::Plane_3 Plane_3_EPICK;
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel_EPECK;
 typedef Kernel_EPECK::Plane_3 Plane_3_EPECK;
+
+typedef CGAL::Exact_rational ER;
+typedef CGAL::Extended_cartesian<ER> Kernel_ECER;
+typedef Kernel_ECER::Plane_3 Plane_3_ECER;
 
 PYBIND11_MODULE(Plane_3, m) {
   py::class_<Plane_3_EPICK>(m, "Plane_3_EPICK")
@@ -135,6 +141,9 @@ PYBIND11_MODULE(Plane_3, m) {
 
       /* Miscellaneous */
       .def("transform", &Plane_3_EPECK::transform);
+
+  py::class_<Plane_3_ECER>(m, "Plane_3_ECER")
+      .def(py::init<const Kernel_ECER::Point_3, const Kernel_ECER::Vector_3>());
 
   /* pybdind11 only */
 }
