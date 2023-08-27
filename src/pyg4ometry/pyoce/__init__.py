@@ -22,6 +22,6 @@ from . import STEPCAFControl
 from . import Standard
 
 from . import pythonHelpers
-from .Reader import *
+from .Reader import Reader
 
 # https://gitlab.com/ssv/lessons
