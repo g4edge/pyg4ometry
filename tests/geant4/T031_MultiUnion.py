@@ -5,9 +5,10 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import random as _rand
 import numpy as _np
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
+def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -33,6 +34,8 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "cm")
     bs = _g4.solid.Box("bs", bx, by, bz, reg, "cm")
+
+    _rand.seed(1234567890)
 
     nbox = 15
     solids = []
@@ -63,9 +66,13 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T031_MultiUnion.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T031_MultiUnion.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(mu)

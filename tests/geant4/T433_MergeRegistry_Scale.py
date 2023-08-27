@@ -2,9 +2,10 @@ import pyg4ometry
 
 import os as _os
 import pathlib as _pl
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -43,9 +44,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     )
 
     # gdml output
+    outputFile = outputPath / "T433_MergeRegistry_Scale.gdml"
     w = pyg4ometry.gdml.Writer()
     w.addDetector(reg1)
-    w.write(outputPath / "T433_MergeRegistry_Scale.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     v = None
     if vis:

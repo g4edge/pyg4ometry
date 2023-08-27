@@ -5,9 +5,10 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _misc
 import numpy as _np
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -55,9 +56,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     reg.setWorld(wl)
 
     # gdml output
+    outputFile = outputPath / "T607_LvChangeAndClipSolid.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T607_LvChangeAndClipSolid.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # visualisation
     v = None

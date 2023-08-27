@@ -8,7 +8,7 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
+def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -51,14 +51,13 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T001_Box.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T001_Box.gdml")
+    w.write(outputFile)
 
     # check file
-    file_hash = _mi.md5_file(outputPath / "T001_Box.gdml")
-    # print(file_hash)
-    # assert file_hash == "cb0f7eff60314dcf5ca9a7540713f11a"
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(bs)

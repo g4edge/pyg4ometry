@@ -6,9 +6,10 @@ import pyg4ometry.visualisation as _vi
 
 import T001_Box
 import T022_TwistedBox
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, outputPath=None):
+def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -34,9 +35,13 @@ def Test(vis=False, interactive=False, outputPath=None):
     reg0.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T422_MergeRegistry_TwistedBox.gdml"
     w = _gd.Writer()
     w.addDetector(reg0)
-    w.write(outputPath / "T422_MergeRegistry_TwistedBox.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test extent of physical volume
     extentBB = wl.extent(includeBoundingSolid=True)

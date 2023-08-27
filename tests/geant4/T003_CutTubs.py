@@ -3,6 +3,8 @@ import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
+import pyg4ometry.misc as _mi
+
 
 normal = 1
 flat_ends = 2
@@ -15,9 +17,16 @@ def Test(
     n_slice=16,
     writeNISTMaterials=False,
     outputPath=None,
+    outputFile=None,
+    refFilePath=None,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
+
+    if not outputFile:
+        outputFile = "T003_CutTubs.gdml"
+    else:
+        outputFile = _pl.Path(outputFile)
 
     reg = _g4.Registry()
 
@@ -118,9 +127,13 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / outputFile
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T003_CutTubs.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(cts)
