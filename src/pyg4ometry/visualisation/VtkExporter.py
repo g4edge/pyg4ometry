@@ -1,13 +1,9 @@
 import numpy as _np
 import vtk as _vtk
 import pyg4ometry.transformation as _transformation
-from pyg4ometry.visualisation import OverlapType as _OverlapType
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 from pyg4ometry.visualisation import Convert as _Convert
 from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
-from pyg4ometry.visualisation import (
-    getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
-)
+from pyg4ometry.visualisation import getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions
 import logging as _logging
 
 _WITH_PARAVIEW = True
