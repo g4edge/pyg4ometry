@@ -1103,9 +1103,9 @@ class VtkViewerColoured(VtkViewer):
     Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
 
     :Keyword Arguments:
-        * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
-        * **interpolation** (str): see :class:`VtkViewer`
-        * **defaultColour** (str): "random" or [r,g,b]
+    * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
+    * **interpolation** (str): see :class:`VtkViewer`
+    * **defaultColour** (str): "random" or [r,g,b]
 
     :Examples:
 

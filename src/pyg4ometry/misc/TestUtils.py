@@ -1,4 +1,5 @@
 import hashlib as _hl
+import subprocess as _sp
 import difflib as _dl
 import filecmp as _fc
 import subprocess as _sp
@@ -58,3 +59,28 @@ def compareMeshInfo(meshInfo1, meshInfo2):
             assert meshInfo1[k] == meshInfo2[k]
         elif type(meshInfo1[k]) is int:
             assert meshInfo1[k] == meshInfo2[k]
+
+def compareGdmlNumericallyWithAssert(file1, file2):
+    if file1 is not None and file2 is not None:
+        r = _sp.run(
+            ["numdiff", "-s", ', \n"', "-a", "1e-6", str(file1), str(file2)],
+            capture_output=True,
+        )
+
+        output = r.stdout.decode("utf-8")
+
+        if output.find("equal") != -1:
+            pass
+        else:
+            print(output)
+            # echo reference file
+            with open(file1) as f:
+                for l in f:
+                    print(l)
+
+            with open(file2) as f:
+                for l in f:
+                    print(l)
+
+        assert output.find("equal") != -1
+

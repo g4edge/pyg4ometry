@@ -1,6 +1,7 @@
 import pytest
 
 import os as _os
+import pathlib as _pl
 import numpy as _np
 import pyg4ometry.gdml as _gd
 
@@ -196,7 +197,10 @@ def electrode_profile():
 
 
 @pytest.fixture(scope="session")
-def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
+def lhc_blm(vis=False, interactive=False, n_slice=16, outputPath=None):
+    if not outputPath:
+        outputPath = _pl.Path(__file__).parent
+
     import math as _math
     import pyg4ometry.gdml as _gd
     import pyg4ometry.geant4 as _g4
@@ -737,7 +741,7 @@ def lhc_blm(tmptestdir, vis=False, interactive=False, n_slice=16):
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(tmptestdir / "blm_model_colours.gdml")
+    w.write(outputPath / "blm_model_colours.gdml")
 
     # visualisation
     v = 1

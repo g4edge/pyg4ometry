@@ -3,9 +3,17 @@ import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
+import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, n_slice=30, writeNISTMaterials=False, outputPath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    n_slice=30,
+    writeNISTMaterials=False,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -49,9 +57,13 @@ def Test(vis=False, interactive=False, n_slice=30, writeNISTMaterials=False, out
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T015_EllipticalTube.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T015_EllipticalTube.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(es)

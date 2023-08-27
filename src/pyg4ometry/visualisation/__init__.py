@@ -9,6 +9,7 @@ from .VtkViewerNew import *
 from .RenderWriter import *
 from .Convert import *
 from .VtkExporter import *
+from . import Plot
 
 # from Viewer import viewLogicalVolume, viewWorld, Viewer
 # from Viewer import Viewer

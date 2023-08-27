@@ -1,10 +1,11 @@
 import os as _os
-
+import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
+import pyg4ometry.misc as _mi
 
 
-def Test_MaterialsRegistry(outputPath=None):
+def Test_MaterialsRegistry(outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -82,6 +83,10 @@ def Test_MaterialsRegistry(outputPath=None):
     assert len(reg.materialList) > 0  # Ensure the material list is populated
 
     # gdml output
+    outputFile = outputPath / "T203_MaterialsRegistry.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T203_MaterialsRegistry.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)

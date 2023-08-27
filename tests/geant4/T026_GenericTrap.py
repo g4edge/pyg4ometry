@@ -3,12 +3,13 @@ import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
+import pyg4ometry.misc as _mi
 
 normal = 1
 zero_area_quad = 2
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None):
+def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None, refFilePath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -145,9 +146,13 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     reg.setWorld(wl.name)
 
     # gdml output
+    outputFile = outputPath / "T026_GenericTrap.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T026_GenericTrap.gdml")
+    w.write(outputFile)
+
+    # check file
+    _mi.compareGdmlNumericallyWithAssert(refFilePath, outputFile)
 
     # test __repr__
     str(ts)

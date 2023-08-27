@@ -6,9 +6,12 @@ namespace py = pybind11;
 #include <TopoDS.hxx>
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_CompSolid.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Solid.hxx>
 #include <TopoDS_TCompSolid.hxx>
 #include <TopoDS_TCompound.hxx>
 #include <TopoDS_TEdge.hxx>
@@ -16,6 +19,7 @@ namespace py = pybind11;
 #include <TopoDS_TShape.hxx>
 #include <TopoDS_TVertex.hxx>
 #include <TopoDS_TWire.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <TopoDS_Wire.hxx>
 
 /*********************************************
@@ -25,12 +29,22 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(TopoDS, m) {
   py::class_<TopoDS>(m, "TopoDSClass")
+      .def_static("CompSolid",
+                  [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); })
+      .def_static("Compound",
+                  [](TopoDS_Shape &shape) { return TopoDS::Compound(shape); })
       .def_static("Edge",
                   [](TopoDS_Shape &shape) { return TopoDS::Edge(shape); })
       .def_static("Face",
                   [](TopoDS_Shape &shape) { return TopoDS::Face(shape); })
+      .def_static("Shell",
+                  [](TopoDS_Shape &shape) { return TopoDS::Shell(shape); })
+      .def_static("Solid",
+                  [](TopoDS_Shape &shape) { return TopoDS::Solid(shape); })
       .def_static("Wire",
-                  [](TopoDS_Shape &shape) { return TopoDS::Wire(shape); });
+                  [](TopoDS_Shape &shape) { return TopoDS::Wire(shape); })
+      .def_static("Vertex",
+                  [](TopoDS_Shape &shape) { return TopoDS::Vertex(shape); });
 
   py::class_<TopoDS_Builder>(m, "TopoDS_Builder")
       .def(py::init<>())
@@ -62,17 +76,25 @@ PYBIND11_MODULE(TopoDS, m) {
       .def("TShape", [](TopoDS_Shape &ts) { return ts.TShape(); })
       .def("ShapeType", &TopoDS_Shape::ShapeType)
       .def("NbChildren", &TopoDS_Shape::NbChildren)
-      .def("DumpJson", [](TopoDS_Shape &shape) {
-        py::scoped_ostream_redirect output;
-        shape.DumpJson(std::cout);
+      .def("DumpJson",
+           [](TopoDS_Shape &shape) {
+             py::scoped_ostream_redirect output;
+             shape.DumpJson(std::cout);
+           })
+      .def("TopoDS_Face", [](TopoDS_Shape &shape) {
+        return reinterpret_cast<TopoDS_Face &>(shape);
       });
 
   py::class_<TopoDS_CompSolid, TopoDS_Shape>(m, "TopoDS_CompSolid")
       .def(py::init<>());
+
   py::class_<TopoDS_Compound, TopoDS_Shape>(m, "TopoDS_Compound")
       .def(py::init<>());
+
   py::class_<TopoDS_Edge, TopoDS_Shape>(m, "TopoDS_Edge").def(py::init<>());
+
   py::class_<TopoDS_Face, TopoDS_Shape>(m, "TopoDS_Face").def(py::init<>());
+
   py::class_<TopoDS_Wire, TopoDS_Shape>(m, "TopoDS_Wire").def(py::init<>());
 
   py::class_<TopoDS_TShape>(m, "TopoDS_TShape");

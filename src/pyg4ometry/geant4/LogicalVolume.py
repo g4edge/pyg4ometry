@@ -38,6 +38,7 @@ def _solid2tessellated(solid):
         # The last 3-tuple is a dummy normal to make it look like STL data
         meshTriangular.append((vertices, (None, None, None)))
 
+    print(meshTriangular)
     name = solid.name + "_asTesselated"
     reg = solid.registry
     mesh_type = _solid.TessellatedSolid.MeshType.Stl
@@ -847,7 +848,12 @@ class LogicalVolume:
         """
         Make solid tesselated. Sometimes useful when a boolean cannot be visualised in Geant4
         """
-        tesselated_lv_solid = _solid2tessellated(self.solid)
+        # tesselated_lv_solid = _solid2tessellated(self.solid)
+
+        tesselated_lv_solid = _pyg4ometry.convert.geant42Geant4.geant4Solid2Geant4Tessellated_NoVTK(
+            self.solid
+        )
+
         self.setSolid(tesselated_lv_solid)
 
     def addAuxiliaryInfo(self, auxiliary):

@@ -1,21 +1,13 @@
-import base64 as _base64
-import random as _random
-
 import vtk as _vtk
-import numpy as _np
 
 import pyg4ometry.transformation as _transformation
 import pyg4ometry.visualisation.ViewerBase as _ViewerBase
 import pyg4ometry.visualisation.Convert as _Convert
-from pyg4ometry.visualisation.VisualisationOptions import (
-    VisualisationOptions as _VisOptions,
-)
+from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions as _VisOptions
 from .VisualisationOptions import (
     getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
 )
-from pyg4ometry.pycgal.Polygon_mesh_processing import (
-    isotropic_remeshing as _isotropic_remeshing,
-)
+from pyg4ometry.pycgal.Polygon_mesh_processing import isotropic_remeshing as _isotropic_remeshing
 
 
 class VtkViewerNew(_ViewerBase):
