@@ -246,6 +246,26 @@ def cli(
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
         v.view(interactive=True)
 
+    if planeCutterData is not None:
+        if planeCutterOutputFileName is None:
+            print("pyg4> must specify -P or --planeCutterOutput file")
+            exit(1)
+        # up the quality of meshes
+        _pyg4.config.setGlobalMeshSliceAndStack(56)
+        v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
+        v.addLogicalVolume(wl)
+        o = planeCutterData[:3]
+        n = planeCutterData[3:]
+        v.addCutter("cli-cutter", o, n)
+        v.buildPipelinesAppend()
+        v.exportCutter("cli-cutter", planeCutterOutputFileName)
+        print("pyg4> cutter with " + str(o) + ", " + str(n) + " written to: ", planeCutterOutputFileName)
+
+    if featureData is not None or featureDataOutputFileName is not None:
+        # TBC!!!
+        print("feature data has not yet been implemented in the command line interface")
+        exit(1)
+
 
 def main():
     parser = OptionParser()
