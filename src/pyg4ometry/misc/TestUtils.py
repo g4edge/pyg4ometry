@@ -51,6 +51,16 @@ def compareNumericallyWithAssert(file1, file2):
         assert output.find("equal") != -1
 
 
+def compareMeshInfo(meshInfo1, meshInfo2):
+    for k in meshInfo1:
+        if type(meshInfo1[k]) is float:
+            assert abs(meshInfo1[k] - meshInfo2[k]) < 1e-5
+        elif type(meshInfo1[k]) is bool:
+            assert meshInfo1[k] == meshInfo2[k]
+        elif type(meshInfo1[k]) is int:
+            assert meshInfo1[k] == meshInfo2[k]
+
+
 def compareGdmlNumericallyWithAssert(file1, file2):
     if file1 is not None and file2 is not None:
         r = _sp.run(
