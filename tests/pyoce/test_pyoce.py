@@ -16,6 +16,8 @@ def commonCode(fileName, mats={}, skip=[], mesh={}):
     reg = _pyg4.convert.oce2Geant4(r.shapeTool, worldName, mats, skip, mesh)
     wa = reg.logicalVolumeDict[worldName]
 
+    return r
+
 
 def test_1_BasicSolids_Bodies(testdata):
     commonCode(testdata["step/1_BasicSolids_Bodies.step"])
@@ -81,7 +83,7 @@ def test_14_MonolithicConversion(testdata):
     _pyg4.convert.oceShape_Geant4_Tessellated("world", worldShape, greg)
 
 
-def test_xcaf(testdata=None):
+def test_15_xcaf(testdata):
     # create application
     app = _pyg4.pyoce.XCAFApp.XCAFApp_Application.GetApplication()
 
@@ -101,3 +103,76 @@ def test_xcaf(testdata=None):
     # w = _pyg4.pyoce.STEPCAFControl.STEPCAFControl_Writer()
     # w.Transfer(doc)
     # w.WriteFile("output.step")
+
+
+def test_16_CurveAndSurface_Extraction(testdata):
+    from pyg4ometry.pyoce.TopAbs import TopAbs_ShapeEnum
+    from pyg4ometry.pyoce.TopExp import TopExp_Explorer
+    from pyg4ometry.pyoce.BRep import BRep_Tool
+    from pyg4ometry.pyoce.TopLoc import TopLoc_Location
+    from pyg4ometry.pyoce.TopoDS import TopoDSClass
+    from pyg4ometry.pyoce.Poly import Poly_MeshPurpose
+
+    if type(testdata) is not str:
+        r = commonCode(testdata["step/1_BasicSolids_Bodies.step"])
+    else:
+        r = commonCode(testdata)
+    # root label
+    freeShapeLabels = r.freeShapes()
+
+    # recursive shape decent
+    def extractSurfacesAndCurvesFromShape(shape):
+        print(shape.ShapeType())
+
+        # set up explorer
+        e = None
+        if shape.ShapeType() == TopAbs_ShapeEnum.TopAbs_COMPOUND:
+            e = TopExp_Explorer(
+                shape,
+                TopAbs_ShapeEnum.TopAbs_SOLID,
+                TopAbs_ShapeEnum.TopAbs_FACE,
+            )
+        elif shape.ShapeType() == TopAbs_ShapeEnum.TopAbs_SOLID:
+            e = TopExp_Explorer(
+                shape,
+                TopAbs_ShapeEnum.TopAbs_FACE,
+                TopAbs_ShapeEnum.TopAbs_VERTEX,
+            )
+        elif shape.ShapeType() == TopAbs_ShapeEnum.TopAbs_FACE:
+            e = TopExp_Explorer(
+                shape,
+                TopAbs_ShapeEnum.TopAbs_WIRE,
+                TopAbs_ShapeEnum.TopAbs_VERTEX,
+            )
+            location = TopLoc_Location()
+            face = TopoDSClass.Face(shape)
+            surface = BRep_Tool.Surface(face, location)
+            mesh = BRep_Tool.Triangulation(face, location, Poly_MeshPurpose.Poly_MeshPurpose_NONE)
+            print(surface, location, mesh)
+        elif shape.ShapeType() == TopAbs_ShapeEnum.TopAbs_WIRE:
+            e = TopExp_Explorer(
+                shape,
+                TopAbs_ShapeEnum.TopAbs_EDGE,
+                TopAbs_ShapeEnum.TopAbs_VERTEX,
+            )
+        elif shape.ShapeType() == TopAbs_ShapeEnum.TopAbs_EDGE:
+            e = TopExp_Explorer(
+                shape,
+                TopAbs_ShapeEnum.TopAbs_VERTEX,
+                TopAbs_ShapeEnum.TopAbs_FACE,
+            )
+        if e is None:
+            return
+
+        # loop over shapes
+        while e.More():
+            currentShape = e.Current()
+            extractSurfacesAndCurvesFromShape(currentShape)
+            e.Next()
+
+    # loop over free shapes
+    for freeShapeLabel in freeShapeLabels:
+        shape = r.shapeTool.GetShape(freeShapeLabel)
+
+        print(freeShapeLabel, shape, shape.ShapeType())
+        extractSurfacesAndCurvesFromShape(shape)
