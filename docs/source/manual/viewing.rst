@@ -17,9 +17,9 @@ Visualiser Classes
 Several visualiser classes are provided but ultimately, the only difference is the default colouring
 of volumes.
 
-* :code:`VtkViewer` - all in grey
-* :code:`VtkViewerColoured` - user-provided dictionary of materials to colours
-* :code:`VtkViewerColouredMaterial` - default dictionary of material colours included
+* :class:`pyg4ometry.visualisation.VtkViewer` - all in grey
+* :class:`pyg4ometry.visualisation.VtkViewerColoured` - user-provided dictionary of materials to colours
+* :class:`pyg4ometry.visualisation.VtkViewerColouredMaterial` - default dictionary of material colours included
 
 Both :code:`VtkViewerColoured` and :code:`VtkViewerColouredMaterial` inherit :code:`VtkViewer`
 and have the same functionality and differ only in colouring of volumes.
@@ -33,6 +33,8 @@ Generally:
     v.view()  # or
     v.view(interactive=False)  # to not block the terminal
 
+
+For FLUKA, ROOT, STL, STEP visualisation, see :ref:`loading` where each example has visualisation.
 
 Exact documentation can be found in :ref:`module-docs-visualisation`.
 
@@ -245,19 +247,33 @@ successively adding them to the scene.
 Logical Volume Difference
 *************************
 
-The function :code:`pyg4ometry.visualisation.viewLogicalVolumeDifference` is provided that will
+The function :meth:`pyg4ometry.visualisation.viewLogicalVolumeDifference` is provided that will
 view two :code:`pyg4ometry.geant4.LogicalVolume` instances. It will also calculate the difference
 mesh between the two and visualise that also on top of the two with a different colour to highlight it.
 
-Viewing FLUKA geometry
-----------------------
+Plotting Cutter Outlines From Files
+-----------------------------------
 
-The viewer can be used to view FLUKA geometry.
+Cutters are a feature in the visualiser to generate the usually red, green, blue lines
+that intercept the edges of the geometry in a given plane. By default, these are along
+each axis aligned with 0,0,0. These can be plotted or added to an existing plot as follows:
 
-.. code-block::
+:: code-block::
 
-    r = pyg4ometry.fluka.Reader("./FLUKA_FILE.inp")
-    v = pyg4ometry.visualisation.VtkViewerNew()
-    v.addFlukaRegions(r.getRegistry())
-    v.buildPipelinesAppend()
-    v.view()
+    pyg4ometry.visualisation.Plot.AddCutterDataToPlot("crosssection-ZX.dat",
+                                                      "zx",
+                                                      unitsFactor=0.001)
+
+
+An optional Matplotlib axes instance can be given if there is one from an existing plot.
+
+:: code-block::
+
+    f = matplotlib.pyplot.figure()
+    ax = f.add_subplot(111)
+    ax.plot([0,1],[0,1])
+    pyg4ometry.visualisation.Plot.AddCutterDataToPlot("crosssection-ZX.dat",
+                                                      "zx", ax,
+                                                      unitsFactor=0.001)
+
+The full documentation can be found for :meth:`pyg4ometry.visualisation.Plot.AddCutterDataToPlot`.
