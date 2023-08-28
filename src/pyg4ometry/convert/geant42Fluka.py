@@ -296,6 +296,9 @@ def geant4Solid2FlukaRegion(
 
     name = format(flukaNameCount, "04")
 
+    # add PV -> region map
+    flukaRegistry.PhysVolToRegionMap[commentName] = "R" + name
+
     fregion = None
     fbodies = []
 

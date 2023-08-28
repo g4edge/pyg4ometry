@@ -67,6 +67,8 @@ class FlukaRegistry:
 
         self._bodiesAndRegions = {}
 
+        self.PhysVolToRegionMap = {}
+
     def addBody(self, body):
         if body.name in self.bodyDict:
             raise _IdenticalNameError(body.name)
