@@ -234,6 +234,52 @@ class VtkViewerNew(_ViewerBase):
                 self.actors[k + str(i)] = actor
                 self.ren.AddActor(actor)
 
+                #################
+                # Cutters
+                #################
+                normFlt = _vtk.vtkPolyDataNormals()  #
+                normFlt.SetFeatureAngle(179)
+                normFlt.SetInputConnection(triFlt.GetOutputPort())
+
+                normFlt = triFlt  # bypass the normal filter
+
+                # Add cutters
+                for ck in self.cutterOrigins:
+                    p = self.cutterOrigins[ck]
+                    n = self.cutterNormals[ck]
+
+                    plane = _vtk.vtkPlane()
+                    plane.SetOrigin(*p)
+                    plane.SetNormal(*n)
+
+                    cutTransFlt = _vtk.vtkTransformPolyDataFilter()
+                    vtransCut = _vtk.vtkTransform()
+                    vtransCut.SetMatrix(vtrans)
+                    cutTransFlt.SetTransform(vtransCut)
+                    cutTransFlt.SetInputConnection(normFlt.GetOutputPort())
+
+                    cutFlt = _vtk.vtkCutter()
+                    cutFlt.SetCutFunction(plane)
+                    cutFlt.SetInputConnection(cutTransFlt.GetOutputPort())
+
+                    try:
+                        self.cutters[ck].append(cutFlt)
+                    except KeyError:
+                        self.cutters[ck] = []
+                        self.cutters[ck].append(cutFlt)
+
+                    cutMap = _vtk.vtkPolyDataMapper()
+                    cutMap.ScalarVisibilityOff()
+                    cutMap.SetInputConnection(cutFlt.GetOutputPort())
+
+                    cutActor = _vtk.vtkActor()  # vtk(Actor)
+                    cutActor.SetMapper(cutMap)
+                    cutActor.GetProperty().SetLineWidth(4)
+                    cutActor.GetProperty().SetColor(*[1, 0, 0])
+                    cutActor.GetProperty().SetRepresentationToSurface()
+                    self.actors[k + "_" + ck] = cutActor
+                    self.ren.AddActor(cutActor)
+
         self.bBuiltPipelines = True
 
     def buildPipelinesAppend(self):
@@ -289,6 +335,8 @@ class VtkViewerNew(_ViewerBase):
                 n = self.cutterNormals[ck]
 
                 plane = _vtk.vtkPlane()
+                print(p)
+                print(n)
                 plane.SetOrigin(*p)
                 plane.SetNormal(*n)
 

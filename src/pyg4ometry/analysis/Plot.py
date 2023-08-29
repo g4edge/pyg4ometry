@@ -20,9 +20,9 @@ def plotScoringMeshSection(
     v = _VtkViewerNew()
     r = _GdmlReader(geometryFile)
     l = r.getRegistry().getWorldVolume()
-    v.addCutter("c1", [0, 0, 100], [0, 1, 0])
+    v.addCutter("c1", [0, 0, 0], [0, 1, 0])
     v.addLogicalVolume(l)
-    v.buildPipelinesAppend()
+    v.buildPipelinesSeparate()
     v.view()
     cut = _vtkPolyDataToNumpy(v.getCutterPolydata("c1"))
 

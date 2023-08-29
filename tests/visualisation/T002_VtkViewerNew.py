@@ -5,6 +5,7 @@ from ast import literal_eval as _literal_eval
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
+from pyg4ometry.visualisation import VtkViewerNew as _VtkViewerNew
 import pyg4ometry.misc as _mi
 
 
@@ -59,8 +60,19 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
     if vis:
         v = _vi.VtkViewerNew()
         v.addLogicalVolume(reg.getWorldVolume())
+        v.addCutter("c1", [0, 0, 0], [0, 1, 0])
+        v.addClipper([0, 0, 0], [1, 0, 0])
         v.buildPipelinesAppend()
-        v.exportGLTFScene()
+        v.exportGLTFScene("test.gltf")
+        v.addAxes(_vi.axesFromExtents(extentBB)[0])
+        v.view(interactive=interactive)
+        v.exportCutter("c1", "test.vtp")
+
+        v = _vi.VtkViewerNew()
+        v.addLogicalVolume(reg.getWorldVolume())
+        v.addCutter("c1", [0, 0, 0], [0, 1, 0])
+        v.addClipper([0, 0, 0], [1, 0, 0])
+        v.buildPipelinesSeparate()
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
