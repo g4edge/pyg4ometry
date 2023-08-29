@@ -143,104 +143,165 @@ class Usrbin(_FlukaDataFile):
         self.detector = []
 
         super().read_header(fd)
-        self.read_header(fd, read_data=read_data)
+        self.read_file(fd)
 
-    def read_header(self, fd, read_data=False):
-        while True:
-            data = fortran_read(fd)
+    def read_file(self, fd):
+        while self.read_header(fd):
+            self.read_data(fd)
+        print(f"Read {len(self.detector)} detectors")
 
-            if data is None:
-                break
-
-            # find file location of statistics
-
-            self.stat_pos = None
-            if len(data) == 14 and data[0:10] == b"STATISTICS":
-                self.stat_pos = fd.tell()
-                print("stats found")
-                break
-
-            # Parse header
-            header = _struct.unpack("=i10siiffifffifffififff", data)
-
-            print(header)
-
-            idet = header[0]
-            name = str(header[1]).replace("'", "").strip(" ")
-            mesh = int(header[2])
-            e1low = float(header[4])
-            e1high = float(header[5])
-            e1n = int(header[6])
-            e1d = float(header[7])
-
-            e2low = float(header[8])
-            e2high = float(header[9])
-            e2n = int(header[10])
-            e2d = float(header[11])
-
-            e3low = float(header[12])
-            e3high = float(header[13])
-            e3n = int(header[14])
-            e3d = float(header[15])
-
-            print(e1low, e1high, e1n, e1d)
-            print(e2low, e2high, e2n, e2d)
-            print(e3low, e3high, e3n, e3d)
-
-            data_size = e1n * e2n * e3n * 4
-
-            fluka_data = FlukaBinData(idet, name, "bin")
-            fluka_data.mesh = mesh
-            fluka_data.e1low = e1low
-            fluka_data.e1high = e1high
-            fluka_data.e2low = e2low
-            fluka_data.e2high = e2high
-            fluka_data.e3low = e3low
-            fluka_data.e3high = e3high
-            fluka_data.e1n = e1n
-            fluka_data.e2n = e2n
-            fluka_data.e3n = e3n
-
-            if read_data:
-                fluka_data.data = _np.reshape(
-                    _np.frombuffer(fortran_read(fd), _np.float32),
-                    (e1n, e2n, e3n),
-                    order="F",
-                )
-
-            else:
-                fortran_skip(fd)
-
-            self.detector.append(fluka_data)
+        self.read_stats(fd)
 
     def read_data(self, fd):
-        pass
+        self.detector[-1].data = _np.reshape(
+            _np.frombuffer(fortran_read(fd), _np.float32),
+            (self.detector[-1].e1n, self.detector[-1].e2n, self.detector[-1].e3n),
+            order="F",
+        )
+
+    def read_stats(self, fd):
+        data = fortran_read(fd)
+        if data is None:
+            print("No statistics")
+            return
+
+        if len(data) == 14 and data[0:10] == b"STATISTICS":
+            self.stat_pos = fd.tell()
+
+        print("Statistics present")
+        for det in self.detector:
+            data = fortran_read(fd)
+            det.errors = _np.reshape(
+                _np.frombuffer(data, _np.float32), (det.e1n, det.e2n, det.e3n), order="F"
+            )
+
+    def read_header(self, fd):
+        pos = fd.tell()
+        data = fortran_read(fd)
+
+        if data is None:
+            return False
+
+        if len(data) != 86:
+            fd.seek(pos)  # return to statistics
+            return False
+
+        # Parse header
+        header = _struct.unpack("=i10siiffifffifffififff", data)
+
+        idet = header[0]
+        name = str(header[1]).replace("'", "").strip(" ")
+        mesh = int(header[2])
+        e1low = float(header[4])
+        e1high = float(header[5])
+        e1n = int(header[6])
+        e1d = float(header[7])
+
+        e2low = float(header[8])
+        e2high = float(header[9])
+        e2n = int(header[10])
+        e2d = float(header[11])
+
+        e3low = float(header[12])
+        e3high = float(header[13])
+        e3n = int(header[14])
+        e3d = float(header[15])
+
+        # print(e1low, e1high, e1n, e1d)
+        # print(e2low, e2high, e2n, e2d)
+        # print(e3low, e3high, e3n, e3d)
+
+        data_size = e1n * e2n * e3n * 4
+
+        fluka_data = FlukaBinData(idet, name, "bin")
+
+        fluka_data.ncase = self.ncase
+        fluka_data.nbatch = self.nbatch
+        fluka_data.weight = self.weight
+        fluka_data.mesh = mesh
+
+        fluka_data.e1low = e1low
+        fluka_data.e1high = e1high
+
+        fluka_data.e2low = e2low
+        fluka_data.e2high = e2high
+
+        fluka_data.e3low = e3low
+        fluka_data.e3high = e3high
+
+        fluka_data.e1n = e1n
+        fluka_data.e2n = e2n
+        fluka_data.e3n = e3n
+
+        self.detector.append(fluka_data)
+
+        return True
 
     def print_header(self):
         super().print_header()
 
 
 class Usrbdx(_FlukaDataFile):
-    def __init__(self, fd):
+    def __init__(self, file):
         self.detector = []
+
+        if type(file) is str:
+            fd = open(file, "rb")
+        else:
+            fd = file
 
         super().read_header(fd)
         self.read_file(fd)
 
     def read_file(self, fd):
         while self.read_header(fd):
+            self.read_data(fd)
+
+        self.read_stats(fd)
+
+    def read_data(self, fd):
+        self.detector[-1].data = _np.reshape(
+            _np.frombuffer(fortran_read(fd), _np.float32),
+            (self.detector[-1].ne, self.detector[-1].na),
+            order="F",
+        )
+
+    def read_stats(self, fd):
+        data = fortran_read(fd)
+        if data is None:
+            print("No statistics")
+            return
+
+        if len(data) == 14 and data[0:10] == b"STATISTICS":
+            self.stat_pos = fd.tell()
+
+        # 6 data records
+        # 0 : total, error
+        # 1 :
+
+        for det in self.detector:
             data = fortran_read(fd)
 
-            self.detector[-1].data = _np.reshape(
-                _np.frombuffer(data, _np.float32),
-                (self.detector[-1].ne, self.detector[-1].na),
-                order="F",
-            )
+            data = _struct.unpack("=%df" % (len(data) // 4), data)
+            det.total = data[0]
+            det.totalError = data[1]
+
+            det.error = []
+            for i in range(6):
+                data = fortran_read(fd)
+                det.error.append(_struct.unpack("=%df" % (len(data) // 4), data))
 
     def read_header(self, fd):
+        pos = fd.tell()
+
         data = fortran_read(fd)
         if not data:
             return False
+
+        if len(data) != 78:
+            fd.seek(pos)  # return to statistics
+            return False
+
         header = _struct.unpack("=i10siiiifiiiffifffif", data)
 
         num = header[0]
@@ -269,25 +330,25 @@ class Usrbdx(_FlukaDataFile):
 
         return True
 
-    def read_data(sef, fd):
-        pass
 
-
-class UserDump(_FlukaDataFile):
-    def __init__(self, fd):
+class Usrdump(_FlukaDataFile):
+    def __init__(self, fd, iEventHeaderToRead=10000):
         self.event_seek = []
-        self.read_structure(fd)
+        self.read_structure(fd, iEventHeaderToRead)
 
         self.track_data = []
         self.energy_data = []
         self.source_data = []
 
-    def read_structure(self, fd):
+    def read_structure(self, fd, iEventHeaderToRead=10000):
+        print("read_header")
+
         # start of file
         fd.seek(0)
 
         # count of file records
         iRecord = 0
+        iEvent = 0
 
         while True:
             # file position for later recording
@@ -303,16 +364,24 @@ class UserDump(_FlukaDataFile):
             # entry header
             if len(data) == 20:
                 ndum, mdum, jdum, edum, wdum = _struct.unpack("=iiiff", data)
+
                 # print(ndum, mdum, jdum, edum, wdum)
                 if ndum < 0:
                     print(iRecord, file_pos, "read source")
                     self.event_seek.append(file_pos)
+                    if iEvent > iEventHeaderToRead:
+                        break
+
+                    iEvent += 1
+                    iRecord += 1
+
                 # skip data
                 fortran_read(fd)
-                iRecord += 1
+
         self.event_seek.append(100000000000)
 
     def read_event(self, fd, ievent=0):
+        print("read_event")
         # clear event data
         self.track_data.clear()
         self.energy_data.clear()
