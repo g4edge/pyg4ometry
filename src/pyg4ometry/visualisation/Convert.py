@@ -42,12 +42,16 @@ def pycsgMeshToVtkPolyData(mesh):
     return meshPolyData
 
 
-def vtkPolyDataToNumpy(fileName):
-    r = _vtk.vtkPolyDataReader()
-    r.SetFileName(fileName)
-    r.Update()
+def vtkPolyDataToNumpy(data):
     conFlt = _vtk.vtkConnectivityFilter()
-    conFlt.SetInputConnection(r.GetOutputPort())
+    if type(data) is str:
+        r = _vtk.vtkPolyDataReader()
+        r.SetFileName(data)
+        r.Update()
+        conFlt.SetInputConnection(r.GetOutputPort())
+    else:
+        conFlt.SetInputData(data)
+
     conFlt.SetExtractionModeToAllRegions()
     conFlt.ColorRegionsOn()
     conFlt.Update()

@@ -130,6 +130,16 @@ class VtkViewerNew(_ViewerBase):
         w.SetInputConnection(self.cuttersAppFlt.GetOutputPort())
         w.Write()
 
+    def getCutterPolydata(self, name):
+        self.cuttersAppFlt = _vtk.vtkAppendPolyData()
+
+        for c in self.cutters[name]:
+            self.cuttersAppFlt.AddInputConnection(c.GetOutputPort())
+
+        self.cuttersAppFlt.Update()
+
+        return self.cuttersAppFlt.GetOutput()
+
     def addClipper(self, origin, normal, bClipperCutter=False, bClipperCloseCuts=True):
         if self.bBuiltPipelines:
             print("Need to add clipper before pipelines are built")
