@@ -125,7 +125,7 @@ class ViewerBase:
 
             # add overlap meshes
             for [overlapmesh, overlaptype], i in zip(
-                lv.mesh.overlapmeshes, range(0, len(lv.mesh.overlapmeshes))
+                lv.mesh.overlapmeshes, range(len(lv.mesh.overlapmeshes))
             ):
                 visOptions = self.getOverlapVisOptions(overlaptype)
                 visOptions.depth = depth + 10

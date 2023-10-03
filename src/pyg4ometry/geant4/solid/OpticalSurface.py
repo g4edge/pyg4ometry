@@ -80,15 +80,15 @@ class OpticalSurface(_SolidBase):
 
         # numeric values are also allowed: G4GDMLReadSolids.cc
         if not self.model in self.allowed_models and (
-            not self.model.isdigit() or not int(self.model) in range(0, 5)
+            not self.model.isdigit() or not int(self.model) in range(5)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface model {self.model}")
         if not self.osType in self.allowed_types and (
-            not self.osType.isdigit() or not int(self.osType) in range(0, 39)
+            not self.osType.isdigit() or not int(self.osType) in range(39)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface type {self.osType}")
         if not self.finish in self.allowed_finishes and (
-            not self.finish.isdigit() or not int(self.finish) in range(0, 7)
+            not self.finish.isdigit() or not int(self.finish) in range(7)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface finish {self.finish}")
 

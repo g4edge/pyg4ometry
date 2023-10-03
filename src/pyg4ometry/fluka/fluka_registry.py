@@ -165,8 +165,8 @@ class FlukaRegistry:
             self.addMaterialAssignments(material)
         elif mat not in self.materials.values():
             msg = (
-                'Mismatch between provided FLUKA material "{}" for '
-                "assignment and existing found in registry".format(mat.name)
+                f'Mismatch between provided FLUKA material "{mat.name}" for '
+                "assignment and existing found in registry"
             )
             raise _FLUKAError(msg)
 

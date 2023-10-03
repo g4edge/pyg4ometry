@@ -8,7 +8,7 @@ def MeshShrink(m, shrinkFactor=1e-5):
     vertnormals = []
     nvertnormals = []
 
-    for i in range(0, len(verts)):
+    for i in range(len(verts)):
         vertnormals.append([0, 0, 0])
         nvertnormals.append(0)
 
@@ -44,7 +44,7 @@ def MeshShrink(m, shrinkFactor=1e-5):
         nvertnormals[i2] = nvertnormals[i2] + 1
         nvertnormals[i3] = nvertnormals[i3] + 1
 
-    for i in range(0, len(vertnormals)):
+    for i in range(len(vertnormals)):
         vertnormalmag = _np.sqrt(
             vertnormals[i][0] ** 2 + vertnormals[i][1] ** 2 + vertnormals[i][2] ** 2
         )
@@ -53,7 +53,7 @@ def MeshShrink(m, shrinkFactor=1e-5):
         vertnormals[i][2] = vertnormals[i][2] / nvertnormals[i] / vertnormalmag
         # print vertnormalmag, vertnormals[i]
 
-    for i in range(0, len(verts)):
+    for i in range(len(verts)):
         verts[i][0] = verts[i][0] - shrinkFactor * vertnormals[i][0]
         verts[i][1] = verts[i][1] - shrinkFactor * vertnormals[i][1]
         verts[i][2] = verts[i][2] - shrinkFactor * vertnormals[i][2]

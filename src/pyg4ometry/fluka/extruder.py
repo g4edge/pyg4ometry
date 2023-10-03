@@ -68,7 +68,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
 
             pgonList = self.decomposed[region]
 
-            for pgon, idecomp in zip(pgonList, range(0, len(pgonList))):
+            for pgon, idecomp in zip(pgonList, range(len(pgonList))):
                 g4e = pyg4ometry.geant4.solid.ExtrudedSolid(
                     region + "_" + str(idecomp),
                     _np.array(pgon),

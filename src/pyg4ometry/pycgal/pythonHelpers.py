@@ -5,7 +5,7 @@ import pyg4ometry as _pyg4
 def polygon_to_numpy(polygon):
     ptns = []
 
-    for i in range(0, polygon.size()):
+    for i in range(polygon.size()):
         v = polygon.vertex(i)
         ptns.append([v.x(), v.y()])
 

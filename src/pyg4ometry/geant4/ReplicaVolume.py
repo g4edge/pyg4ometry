@@ -89,7 +89,7 @@ class ReplicaVolume(_PhysicalVolume):
             mt.translate(tra)
             tempMeshes.append(mt)
 
-        for i in range(0, len(tempMeshes)):
+        for i in range(len(tempMeshes)):
             if debugIO:
                 print(
                     f"ReplicaVolume.checkOverlaps> full daughter-mother intersection test {self.meshes[i]}"
@@ -109,7 +109,7 @@ class ReplicaVolume(_PhysicalVolume):
                 self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.protrusion])
 
         # daughter-daughter overlap check
-        for i in range(0, len(tempMeshes)):
+        for i in range(len(tempMeshes)):
             for j in range(i + 1, len(tempMeshes)):
                 if debugIO:
                     print(

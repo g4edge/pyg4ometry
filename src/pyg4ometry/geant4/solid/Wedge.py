@@ -60,10 +60,10 @@ class Wedge(_SolidBase):
         vZero1 = _Vertex(_Vector(0, 0, -d), None)
         vZero2 = _Vertex(_Vector(0, 0, d), None)
 
-        p1 = [_Vertex(_Vector(x[i], y[i], -d), None) for i in range(0, len(x))]
-        p2 = [_Vertex(_Vector(x[i], y[i], d), None) for i in range(0, len(x))]
+        p1 = [_Vertex(_Vector(x[i], y[i], -d), None) for i in range(len(x))]
+        p2 = [_Vertex(_Vector(x[i], y[i], d), None) for i in range(len(x))]
 
-        for i in range(0, len(x)):
+        for i in range(len(x)):
             if i != len(x) - 1:
                 # top triangle
                 polygons.append(_Polygon([_dc(vZero2), _dc(p2[i]), _dc(p2[i + 1])]))

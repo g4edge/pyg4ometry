@@ -712,7 +712,7 @@ class LogicalVolume:
                 transformedMeshesNames.append(name)
 
         # overlap daughter pv checks
-        for i in range(0, len(transformedMeshes)):
+        for i in range(len(transformedMeshes)):
             for j in range(i + 1, len(transformedMeshes)):
                 if debugIO:
                     print(
@@ -743,7 +743,7 @@ class LogicalVolume:
         # print 'coplanar with pvs'
         # print "LogicalVolume.checkOverlaps> daughter coplanar overlaps"
         if coplanar:
-            for i in range(0, len(transformedMeshes)):
+            for i in range(len(transformedMeshes)):
                 for j in range(i + 1, len(transformedMeshes)):
                     if debugIO:
                         print(
@@ -770,7 +770,7 @@ class LogicalVolume:
                         self.mesh.addOverlapMesh([coplanarMesh, _OverlapType.coplanar])
 
         # protrusion from mother solid
-        for i in range(0, len(transformedMeshes)):
+        for i in range(len(transformedMeshes)):
             if debugIO:
                 print(
                     f"LogicalVolume.checkOverlaps> full daughter-mother intersection test {transformedMeshesNames[i]}"
@@ -796,7 +796,7 @@ class LogicalVolume:
         # coplanar with solid
         # print 'coplanar with solid'
         if coplanar:
-            for i in range(0, len(transformedMeshes)):
+            for i in range(len(transformedMeshes)):
                 if debugIO:
                     print(
                         f"LogicalVolume.checkOverlaps> full daughter-mother coplanar test {transformedMeshesNames[i]}"

@@ -110,7 +110,7 @@ class EllipticalCone(_SolidBase):
         centreSmall = _Vertex([0, 0, +pzTopCut])
 
         dTheta = 2 * _np.pi / self.nslice
-        for i1 in range(0, self.nslice):
+        for i1 in range(self.nslice):
             i2 = i1 + 1
             # Rectangular strips from one face to the other.
             z1 = pzTopCut

@@ -134,42 +134,42 @@ class VtkViewer:
         self.axesWidget.InteractiveOn()
 
     def setOpacity(self, v, iActor=-1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actors, range(len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetOpacity(v)
             elif iActor == -1:
                 a.GetProperty().SetOpacity(v)
 
     def setWireframe(self, iActor=-1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actors, range(len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToWireframe()
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToWireframe()
 
     def setSurface(self, iActor=-1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actors, range(len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToSurface()
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToSurface()
 
     def setOpacityOverlap(self, v, iActor=-1):
-        for a, i in zip(self.actorsOverlap, range(0, len(self.actorsOverlap))):
+        for a, i in zip(self.actorsOverlap, range(len(self.actorsOverlap))):
             if i == iActor:
                 a.GetProperty().SetOpacity(v)
             elif iActor == -1:
                 a.GetProperty().SetOpacity(v)
 
     def setWireframeOverlap(self, iActor=-1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actors, range(len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToWireframe()
             elif iActor == -1:
                 a.GetProperty().SetRepresentationToWireframe()
 
     def setSurfaceOverlap(self, iActor=-1):
-        for a, i in zip(self.actors, range(0, len(self.actors))):
+        for a, i in zip(self.actors, range(len(self.actors))):
             if i == iActor:
                 a.GetProperty().SetRepresentationToSurface()
             elif iActor == -1:
@@ -335,7 +335,7 @@ class VtkViewer:
             if addWorld:
                 self.addLogicalVolumeBounding(logical)
             for [overlapmesh, overlaptype], i in zip(
-                logical.mesh.overlapmeshes, range(0, len(logical.mesh.overlapmeshes))
+                logical.mesh.overlapmeshes, range(len(logical.mesh.overlapmeshes))
             ):
                 visOptions = self.getOverlapVisOptions(overlaptype)
                 self.addMesh(
@@ -593,7 +593,7 @@ class VtkViewer:
                     # overlap meshes
                     for [overlapmesh, overlaptype], i in zip(
                         pv.logicalVolume.mesh.overlapmeshes,
-                        range(0, len(pv.logicalVolume.mesh.overlapmeshes)),
+                        range(len(pv.logicalVolume.mesh.overlapmeshes)),
                     ):
                         visOptions = self.getOverlapVisOptions(overlaptype)
 

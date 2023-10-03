@@ -146,7 +146,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         dY = 2 * pDy / ny
 
         # +y
-        for i in range(0, ny + 1):
+        for i in range(ny + 1):
             x.append(-pDx)
             y.append(-pDy + i * dY)
 

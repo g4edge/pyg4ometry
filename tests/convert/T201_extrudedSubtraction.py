@@ -43,8 +43,8 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     xl = _g4.LogicalVolume(xs, xm, "xl", reg)
-    for i in range(0, 3):
-        for j in range(0, 3):
+    for i in range(3):
+        for j in range(3):
             xp = _g4.PhysicalVolume(
                 [0, 0, 0],
                 [(i - 1) * 2000, (j - 1) * 2000, 0],

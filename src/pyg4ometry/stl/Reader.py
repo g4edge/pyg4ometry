@@ -139,7 +139,7 @@ class Reader:
             vec = struct.unpack("<fff", d)
             return tuple([self.scale * v for v in vec])
 
-        for fc in range(0, faces):
+        for fc in range(faces):
             fo = 84 + fc * 50  # offset of the current facet
             facet = _Facet(extractVector(data[fo : fo + 12]))
             for v in range(1, 4):

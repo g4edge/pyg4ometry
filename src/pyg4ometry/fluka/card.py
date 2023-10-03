@@ -99,7 +99,7 @@ def _attempt_float_coercion(string):
 def freeFormatStringSplit(string):
     """Method to split a string in FLUKA FREE format into its components."""
     # Split the string along non-black separators [,;:/\]
-    partial_split = re.split(";|,|\\/|:|\\\|\n", rf"{string}")
+    partial_split = re.split(";|,|\\/|:|\\\\|\n", rf"{string}")
 
     # Populate zeros between consequtive non-blank separators as per
     # the FLUKA manual.

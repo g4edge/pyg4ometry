@@ -28,7 +28,7 @@ def pycsgMeshToVtkPolyData(mesh):
     for p in cells:
         polys.InsertNextCell(mkVtkIdList(p))
 
-    for i in range(0, count):
+    for i in range(count):
         scalars.InsertTuple1(i, 1)
 
     meshPolyData.SetPoints(points)
@@ -55,7 +55,7 @@ def vtkPolyDataToNumpy(fileName):
     # print(conFlt.GetNumberOfExtractedRegions())
 
     retnSortedPnts = []
-    for i in range(0, conFlt.GetNumberOfExtractedRegions()):
+    for i in range(conFlt.GetNumberOfExtractedRegions()):
         conFlt.SetExtractionModeToSpecifiedRegions()
         conFlt.InitializeSpecifiedRegionList()
         conFlt.AddSpecifiedRegion(i)
@@ -70,7 +70,7 @@ def vtkPolyDataToNumpy(fileName):
             ids.append(pointId)
             vidl = _vtk.vtkIdList()
             pd.GetPointCells(pointId, vidl)
-            for ci in range(0, vidl.GetNumberOfIds()):
+            for ci in range(vidl.GetNumberOfIds()):
                 c = pd.GetCell(vidl.GetId(ci))
                 if c.GetPointId(0) == pointId and len(ids) < nlim:
                     # print(nlim,len(ids))

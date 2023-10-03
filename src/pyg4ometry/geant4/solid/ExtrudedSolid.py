@@ -160,7 +160,7 @@ class ExtrudedSolid(_SolidBase):
 
         maxn = len(vertices)
 
-        for l in range(0, nslices - 1):
+        for l in range(nslices - 1):
             l_curr = l
             l_next = l + 1
 
