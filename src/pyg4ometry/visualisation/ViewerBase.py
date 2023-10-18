@@ -112,7 +112,10 @@ class ViewerBase:
             self.addInstance(lv.name, mtra, tra, name)
 
             materialName = lv.material.name
-            materialName = materialName[0 : materialName.find("0x")]
+
+            pointerLoc = materialName.find("0x")
+            if pointerLoc != -1:
+                materialName = materialName[0 : materialName.find("0x")]
 
             # add vis options
             if materialName in self.materialVisOptions:
