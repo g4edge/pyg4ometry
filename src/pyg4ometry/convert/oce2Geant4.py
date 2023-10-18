@@ -236,6 +236,7 @@ def _oce2Geant4_traverse(
                 meshQualityMap,
                 badCADLabels,
                 addBoundingSolids,
+                oceName=oceName,
             )
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
@@ -261,6 +262,7 @@ def _oce2Geant4_traverse(
             meshQualityMap,
             badCADLabels,
             addBoundingSolids,
+            oceName=oceName,
         )
 
         if not logicalVolume:
@@ -356,7 +358,9 @@ def _oce2Geant4_traverse(
         print(name, "missing compound 2")
 
 
-def oce2Geant4(shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQualityMap={}):
+def oce2Geant4(
+    shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQualityMap={}, oceName=False
+):
     """
     Convert CAD geometry starting from shapeName
 
@@ -388,6 +392,7 @@ def oce2Geant4(shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQua
         labelToSkipList,
         meshQualityMap,
         badCADLabels=["COMPOUND", "SOLID"],
+        oceName=oceName,
     )
 
     # convert to LV and make world
