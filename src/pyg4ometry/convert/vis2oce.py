@@ -24,12 +24,12 @@ def convertMeshToPolyTriangulation(m):
     )
 
     # fill vertices
-    for vert, ivert in zip(verts, range(0, len(verts))):
+    for vert, ivert in zip(verts, range(len(verts))):
         p = pyg4ometry.pyoce.gp.gp_Pnt(vert[0], vert[1], vert[2])
         poly_triangulation.SetNode(ivert + 1, p)
 
     # fill triangles
-    for tri, itri in zip(triangles, range(0, len(triangles))):
+    for tri, itri in zip(triangles, range(len(triangles))):
         tri = pyg4ometry.pyoce.Poly.Poly_Triangle(tri[0] + 1, tri[1] + 1, tri[2] + 1)
         poly_triangulation.SetTriangle(itri + 1, tri)
 

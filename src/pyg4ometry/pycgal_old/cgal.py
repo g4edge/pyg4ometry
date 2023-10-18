@@ -123,9 +123,9 @@ def pycsgmesh2NefPolyhedron(mesh):
     verts = _np.array(verts)
     polyarray = _np.zeros((len(polys), 30), dtype=int)
     npolyvert = []
-    for p, i in zip(polys, range(0, len(polys))):
+    for p, i in zip(polys, range(len(polys))):
         npolyvert.append(len(p))
-        for j in range(0, len(p)):
+        for j in range(len(p)):
             polyarray[i][j] = p[j]
 
     npolyvert = _np.array(npolyvert)
@@ -159,9 +159,9 @@ def pycsgmeshWritePolygon(mesh, fileName="mesh.pol"):
     verts = _np.array(verts)
     polyarray = _np.zeros((len(polys), 4), dtype=int)
     npolyvert = []
-    for p, i in zip(polys, range(0, len(polys))):
+    for p, i in zip(polys, range(len(polys))):
         npolyvert.append(len(p))
-        for j in range(0, len(p)):
+        for j in range(len(p)):
             polyarray[i][j] = p[j]
 
     npolyvert = _np.array(npolyvert)
@@ -207,7 +207,7 @@ def numpyPolygonConvex(polygonnp):
 
     polygonList = []
 
-    for i in range(0, nconvex.value):
+    for i in range(nconvex.value):
         polygon_to_vertex(polygons[i], polyvertspp, _ctypes.byref(nverts))
 
         # no idea why this copy is needed

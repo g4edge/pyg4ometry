@@ -44,23 +44,14 @@ class Beam:
 
     def bdsimString(self):
         s = (
-            "beam, particle={},\n"
-            "      energy={}*GeV,\n"
-            "      X0={}*mm,\n"
-            "      Y0={}*mm,\n"
-            "      Z0={}*mm,\n"
-            "      Xp0={}\n"
-            "      Yp0={}\n"
-            "      Zp0={};\n".format(
-                self.particleType,
-                self.energy,
-                self.pos[0],
-                self.pos[1],
-                self.pos[2],
-                self.dir[0],
-                self.dir[1],
-                self.dir[2],
-            )
+            f"beam, particle={self.particleType},\n"
+            f"      energy={self.energy}*GeV,\n"
+            f"      X0={self.pos[0]}*mm,\n"
+            f"      Y0={self.pos[1]}*mm,\n"
+            f"      Z0={self.pos[2]}*mm,\n"
+            f"      Xp0={self.dir[0]}\n"
+            f"      Yp0={self.dir[1]}\n"
+            f"      Zp0={self.dir[2]};\n"
         )
 
         return s

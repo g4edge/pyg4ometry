@@ -135,14 +135,14 @@ class Ellipsoid(_SolidBase):
 
         polygons = []
 
-        for i in range(0, slices):
+        for i in range(slices):
             i1 = i
             i2 = i + 1
 
             p1 = dPhi * i1
             p2 = dPhi * i2
 
-            for j in range(0, stacks):
+            for j in range(stacks):
                 j1 = j
                 j2 = j + 1
 

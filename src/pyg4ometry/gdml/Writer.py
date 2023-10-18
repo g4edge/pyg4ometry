@@ -44,7 +44,7 @@ class Writer:
             # Geant4 version earlier than 10.1 do not support userinfo
             # If no user info is specified, remove the userinfo tag from the GDML document
             # This is done here, because the registry is not available at construction time
-            self.top.removeChild([n for n in self.top.childNodes if n.tagName == "userinfo"][0])
+            self.top.removeChild(next(n for n in self.top.childNodes if n.tagName == "userinfo"))
 
         # Set the world again to force a refresh on the
         # ordering of logical volumes
@@ -104,14 +104,12 @@ class Writer:
         f.close()
 
     def writeGMADTesterNoBeamline(self, gmad, gdml):
-        text = """test: placement, geometryFile="gdml:{}";
+        text = f"""test: placement, geometryFile="gdml:{gdml}";
         beam, particle="e-",
         energy=250*GeV;
         option, physicsList="em";
         option, preprocessGDML=0;
-        """.format(
-            gdml
-        )
+        """
 
         with open(gmad, "w") as f:
             f.write(text)
@@ -139,7 +137,7 @@ class Writer:
                 s += '", l=' + str(dz) + "*mm;\n"
             except IndexError:
                 s += '", l=20*m;\n'
-        s += """l1: line = (e1);
+        s += f"""l1: line = (e1);
 use, period=l1;
 
 sample, all;
@@ -147,9 +145,7 @@ beam, particle="e-",
       energy={energy}*GeV;
 option, physicsList="em";
 option, preprocessGDML=0;
-""".format(
-            energy=energy
-        )
+"""
         if not preprocessGDML:
             s += "option, preprocessGDML=0;\n"
         f = open(filenameGmad, "w")

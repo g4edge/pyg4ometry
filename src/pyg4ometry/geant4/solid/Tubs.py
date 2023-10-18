@@ -136,7 +136,6 @@ class Tubs(_SolidBase):
             # wedge ends
             ###########################
             if pDPhi != 2 * _np.pi and i == 0:
-                pass
                 vWedg = []
                 vWedg.append(_Vertex([xRMinP1, yRMinP1, -pDz]))
                 vWedg.append(_Vertex([xRMinP1, yRMinP1, pDz]))
@@ -146,7 +145,6 @@ class Tubs(_SolidBase):
                 polygons.append(_Polygon(vWedg))
 
             if pDPhi != 2 * _np.pi and i == self.nslice - 1:
-                pass
                 vWedg = []
                 vWedg.append(_Vertex([xRMinP2, yRMinP2, -pDz]))
                 vWedg.append(_Vertex([xRMaxP2, yRMaxP2, -pDz]))

@@ -1835,9 +1835,7 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "XEC {} {} {} {} {}".format(
-            self.name, self.y, self.z, self.ysemi, self.zsemi
-        )
+        return prefix + f"XEC {self.name} {self.y} {self.z} {self.ysemi} {self.zsemi}"
 
     def hash(self):
         return hash(("XEC", self.y, self.z, self.ysemi, self.zsemi)) ^ self.transform.hash()
@@ -1914,9 +1912,7 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "YEC {} {} {} {} {}".format(
-            self.name, self.z, self.x, self.zsemi, self.xsemi
-        )
+        return prefix + f"YEC {self.name} {self.z} {self.x} {self.zsemi} {self.xsemi}"
 
     def hash(self):
         return hash(("YEC", self.x, self.z, self.xsemi, self.zsemi)) ^ self.transform.hash()
@@ -1993,9 +1989,7 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "ZEC {} {} {} {} {}".format(
-            self.name, self.x, self.y, self.xsemi, self.ysemi
-        )
+        return prefix + f"ZEC {self.name} {self.x} {self.y} {self.xsemi} {self.ysemi}"
 
     def hash(self):
         return hash(("ZEC", self.x, self.y, self.xsemi, self.ysemi)) ^ self.transform.hash()

@@ -45,9 +45,7 @@ class Subtraction(_SolidBase):
         return "Subtraction : (" + self.obj1.name + ") - (" + str(self.obj2.name) + ")"
 
     def __str__(self):
-        return "Intersection {} {} {}".format(
-            self.name, str(self.obj1.name), str(self.obj2.name), repr(self.tra2)
-        )
+        return f"Intersection {self.name} {self.obj1.name!s} {self.obj2.name!s}"
 
     def mesh(self):
         _log.info("subtraction.pycsgmesh>")

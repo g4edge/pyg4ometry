@@ -200,7 +200,7 @@ class Zone(vis.ViewableMixin):
         r = Region("temp")
         r.addZone(zone)
 
-        for para, i in zip(paraToDNF, range(0, len(paraToDNF))):
+        for para, i in zip(paraToDNF, range(len(paraToDNF))):
             zone.addSubtraction(para.body)
             sympy_expr = region_to_sympy(r)
             sympy_expr_dnf = _sympy.to_dnf(sympy_expr)
@@ -581,7 +581,7 @@ class Region(vis.ViewableMixin):
         # print('removeNullZones')
         zones = []
 
-        for z, i in zip(self.zones, range(0, len(self.zones))):
+        for z, i in zip(self.zones, range(len(self.zones))):
             m = z.mesh()
             # print(i, z)
             if m.vertexCount() != 0:

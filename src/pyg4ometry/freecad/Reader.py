@@ -178,7 +178,7 @@ class Reader:
                 placement = obj.Placement.inverse()
 
                 # mesh includes placement and rotation (so it needs to be removed)
-                for i in range(0, len(m[0])):
+                for i in range(len(m[0])):
                     m[0][i] = placement.multVec(m[0][i])
 
                     # global mesh vector
@@ -285,7 +285,7 @@ class Reader:
             bSolid, "G4_Galactic", "worldLogical", registry=self._registry
         )
 
-        for i in range(0, len(logicals)):
+        for i in range(len(logicals)):
             # logical volume
             a1 = placements[i][0][0]
             a2 = placements[i][0][1]
@@ -463,7 +463,7 @@ class Reader:
             placement = obj.Placement.inverse()
 
             # mesh includes placement and rotation (so it needs to be removed)
-            for i in range(0, len(m[0])):
+            for i in range(len(m[0])):
                 m[0][i] = placement.multVec(m[0][i])
 
             # facet list

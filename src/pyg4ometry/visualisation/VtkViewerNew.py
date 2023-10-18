@@ -171,7 +171,7 @@ class VtkViewerNew(_ViewerBase):
 
         plaRep = _vtk.vtkImplicitPlaneRepresentation()
         # plaRep.SetPlaceFactor(1.25)
-        plaRep.PlaceWidget(list(self.actors.values())[0].GetBounds())
+        plaRep.PlaceWidget(next(iter(self.actors.values())).GetBounds())
         plaRep.SetNormal(self.clippers[0].GetClipFunction().GetNormal())
         plaRep.SetOrigin(self.clippers[0].GetClipFunction().GetOrigin())
 
@@ -205,7 +205,7 @@ class VtkViewerNew(_ViewerBase):
             ips = self.instancePlacements[k]  # (i)nstance (p)placement(s)
             vos = self.instanceVisOptions[k]  # (v)isualisation (o)ption(s)
             pd = self.polydata[k]
-            for ip, i in zip(ips, range(0, len(ips))):
+            for ip, i in zip(ips, range(len(ips))):
                 triFlt = _vtk.vtkTriangleFilter()  # (tri)angle (F)i(lt)er
                 triFlt.AddInputData(pd)
                 map = _vtk.vtkPolyDataMapper()  # vtkPolyData(Map)per
@@ -244,7 +244,7 @@ class VtkViewerNew(_ViewerBase):
             ips = self.instancePlacements[k]  # (i)nstance (p)placement(s)
             pd = self.polydata[k]
 
-            for ip, i in zip(ips, range(0, len(ips))):
+            for ip, i in zip(ips, range(len(ips))):
                 if str(vos[i]) in appFltDict:
                     appFlt = appFltDict[str(vos[i])]
                 else:

@@ -295,7 +295,7 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
             bodyRegionAABBs.append(regionAABBs[region_name])
 
         if len(regionAABBs) == 1:
-            aabb = list(regionAABBs.values())[0]
+            aabb = next(iter(regionAABBs.values()))
         elif len(regionAABBs) > 1:
             aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
             logger.debug("Minimum aabb = %s", aabb)

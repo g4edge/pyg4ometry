@@ -138,8 +138,8 @@ class AABB:
 
     def __repr__(self):
         return (
-            "<AABB: Lower({lower.x}, {lower.y}, {lower.z}),"
-            " Upper({upper.x}, {upper.y}, {upper.z})>".format(upper=self.upper, lower=self.lower)
+            f"<AABB: Lower({self.lower.x}, {self.lower.y}, {self.lower.z}),"
+            f" Upper({self.upper.x}, {self.upper.y}, {self.upper.z})>"
         )
 
     def __eq__(self, other):

@@ -448,7 +448,7 @@ class PolygonProcessing:
         pgon = [[p[0], p[1], 0] for p in pgon]
         pgon = _np.array(pgon)
 
-        for pi in range(0, len(pgon)):
+        for pi in range(len(pgon)):
             mpi = pi % len(pgon)
             mpj = (pi + 1) % len(pgon)
             mpk = (pi + 2) % len(pgon)
@@ -509,7 +509,7 @@ class PolygonProcessing:
         """
 
         polyCoords = []
-        for ppi in range(0, pgon.size()):
+        for ppi in range(pgon.size()):
             pnt = pgon.vertex(ppi)
             polyCoords.append([pnt.x(), pnt.y()])
 
@@ -540,7 +540,7 @@ class PolygonProcessing:
 
         for pp in partPoly:
             partPolyCoords = []
-            for ppi in range(0, pp.size()):
+            for ppi in range(pp.size()):
                 pnt = pp.vertex(ppi)
                 partPolyCoords.append([pnt.x(), pnt.y()])
 

@@ -2102,7 +2102,7 @@ def geant4Material2Fluka(
                 flukaComponentFractions.append(compFraction)
                 iComp += 1
 
-            flukaComposition = [(c, f) for c, f in zip(flukaComponents, flukaComponentFractions)]
+            flukaComposition = list(zip(flukaComponents, flukaComponentFractions))
 
             mat = _fluka.Compound(
                 materialNameShort,
