@@ -25,11 +25,14 @@ class Reader:
     predefined material by name only.
     """
 
-    def __init__(self, fileName, registryOn=True, reduceNISTMaterialsToPredefined=False):
+    def __init__(
+        self, fileName, registryOn=True, skipMaterials=False, reduceNISTMaterialsToPredefined=False
+    ):
         super().__init__()
         self.filename = fileName
         self.registryOn = registryOn
         self._reduceNISTMaterialsToPredefined = reduceNISTMaterialsToPredefined
+        self._skipMaterials = skipMaterials
 
         if self.registryOn:
             self._registry = _g4.Registry()
@@ -113,9 +116,13 @@ class Reader:
 
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
-        materialSubstitutionNames = self.parseMaterials(xmldoc)
+        if self._skipMaterials:
+            materialSubstitutionNames = None
+        else:
+            materialSubstitutionNames = self.parseMaterials(xmldoc)
         self.parseSolids(xmldoc)
         self.parseStructure(xmldoc, materialSubstitutionNames)
+
         self.parseUserInfo(xmldoc)
 
         data.close()
