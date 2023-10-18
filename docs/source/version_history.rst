@@ -73,7 +73,7 @@ General
 * Improved documentation and docstrings.
 * Refactored registry for transfer and object versus simply adding an object.
 * Optimised imports.
-* Cleanded up private imports throughout code to make tab complete cleaner.
+* Cleaned up private imports throughout code to make tab complete cleaner.
 * Simplified code in solids by using base class.
 
 Bug Fixes
