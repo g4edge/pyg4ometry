@@ -11,6 +11,8 @@ class SolidBase:
         self.name = name
         self.type = type
         self.registry = registry
+        # TODO check G4 behaviour (skip name restrictions on solids)
+        return
         for ch in ["+", "-", "/", "*"]:
             if ch in name:
                 raise ValueError(
@@ -80,6 +82,10 @@ class SolidBase:
         Raises a ValueError if the attribute is over pyg4ometry.config.twoPiComparisonTolerance **over** 2 x pi.
         """
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        import pyg4ometry.gdml.Defines as _Defines
+
+        if type(getattr(self, attribute)) is _Defines.Quantity:
+            aunit = getattr(self, attribute).unit
 
         v = self.evaluateParameter(getattr(self, attribute)) * (_Units.unit(aunit))
         # note no abs() on this check on purpose
