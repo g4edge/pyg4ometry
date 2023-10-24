@@ -819,7 +819,14 @@ class Quantity(ScalarBase):
         )
 
     def eval(self):
-        return super().eval() * _Units.unit(self.unit)
+        # it is possible for a quantity not to have a unit and it uses the units of variables in the expression
+        if self.unit:
+            uval = _Units.unit(self.unit)
+        else:
+            uval = 1.0
+
+        # evaluate quantity with units baked in
+        return super().eval() * uval
 
 
 class Variable(ScalarBase):
