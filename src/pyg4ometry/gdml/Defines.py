@@ -209,6 +209,100 @@ def upgradeToTransformation(var, reg, addRegistry=False):
     return [rot, tra]
 
 
+def operationReturnType(name, strExpr, v1, v2, type1, type2, reg):
+    if type1 == Constant and type2 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif (type1 == Constant and type2 == Variable) or (type1 == Variable and type2 == Constant):
+        v = Variable(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Constant and type2 == Quantity:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Constant:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v1.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Variable and type2 == Variable:
+        v = Variable(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Variable and type2 == Quantity:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Variable:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v1.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Quantity:
+        # TODO check if units match
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type2 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+
+
 class DefineBase:
     """
     Common bits for a define. Must have a name and a registry. Adding
@@ -283,7 +377,7 @@ class ScalarBase(DefineBase):
         return self._typeName + f" : {self.name} = {self.expression!s}"
 
     def __float__(self):
-        return self.expression.eval()
+        return self.eval()
 
     def __add__(self, other):
         v1 = upgradeToStringExpression(self.registry, self)
@@ -296,6 +390,11 @@ class ScalarBase(DefineBase):
             addRegistry=False,
         )
         return v
+
+        # return operationReturnType(f"var_{v1}_add_{v2}",
+        #                           f"({v1}) + ({v2})",
+        #                           self, other,
+        #                           type(self), type(other), self.registry)
 
     def __sub__(self, other):
         v1 = upgradeToStringExpression(self.registry, self)
@@ -682,6 +781,9 @@ class Quantity(ScalarBase):
         return self._typeName + " : {} = {} [{}] {}".format(
             self.name, str(self.expression), self.unit, self.type
         )
+
+    def eval(self):
+        return super().eval() * _Units.unit(self.unit)
 
 
 class Variable(ScalarBase):

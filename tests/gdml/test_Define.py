@@ -390,9 +390,9 @@ def test_GdmlDefine_PowerOperator():
 # #############################
 def test_GdmlDefine_Quantity():
     r = pyg4ometry.geant4.Registry()
-    xq = pyg4ometry.gdml.Quantity("xq", "0.1", "mass", "kg", r)
-    assert xq.eval() == 0.1
-    assert float(xq) == 0.1
+    xq = pyg4ometry.gdml.Quantity("xq", "0.1", "kg", "mass", r)
+    assert xq.eval() == 100
+    assert float(xq) == 100
     str(xq)
 
 
