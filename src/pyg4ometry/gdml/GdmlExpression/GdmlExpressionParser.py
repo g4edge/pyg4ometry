@@ -1,9 +1,8 @@
-# ruff: noqa
-
-# Generated from GdmlExpression.g4 by ANTLR 4.9.3
+# Generated from GdmlExpression.g4 by ANTLR 4.13.1
 from antlr4 import *
 from io import StringIO
 import sys
+from typing import Optional
 
 if sys.version_info[1] > 5:
     from typing import TextIO
@@ -12,45 +11,987 @@ else:
 
 
 def serializedATN():
-    with StringIO() as buf:
-        buf.write('\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3"')
-        buf.write("w\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
-        buf.write("\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t")
-        buf.write("\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3")
-        buf.write("\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\7\4\62\n\4")
-        buf.write("\f\4\16\4\65\13\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\7\7>\n\7")
-        buf.write("\f\7\16\7A\13\7\3\b\3\b\3\b\3\b\3\b\3\b\5\bI\n\b\3\t\3")
-        buf.write("\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tS\n\t\3\n\3\n\3\13\3\13")
-        buf.write("\3\13\3\13\3\13\7\13\\\n\13\f\13\16\13_\13\13\3\13\3\13")
-        buf.write("\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\7\16l\n\16\f")
-        buf.write("\16\16\16o\13\16\3\16\3\16\3\17\3\17\3\20\3\20\3\20\2")
-        buf.write("\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2\7\3\2\23")
-        buf.write("\24\3\2\25\26\3\2\35\37\3\2\3\16\3\2\27\31\2s\2 \3\2\2")
-        buf.write("\2\4$\3\2\2\2\6-\3\2\2\2\b\66\3\2\2\2\n8\3\2\2\2\f:\3")
-        buf.write("\2\2\2\16H\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2\24V\3\2\2\2")
-        buf.write("\26b\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34r\3\2\2\2\36t\3")
-        buf.write('\2\2\2 !\5\4\3\2!"\5\36\20\2"#\5\4\3\2#\3\3\2\2\2$*')
-        buf.write("\5\6\4\2%&\5\b\5\2&'\5\6\4\2')\3\2\2\2(%\3\2\2\2),\3")
-        buf.write("\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2,*\3\2\2\2-\63\5")
-        buf.write("\f\7\2./\5\n\6\2/\60\5\f\7\2\60\62\3\2\2\2\61.\3\2\2\2")
-        buf.write("\62\65\3\2\2\2\63\61\3\2\2\2\63\64\3\2\2\2\64\7\3\2\2")
-        buf.write("\2\65\63\3\2\2\2\66\67\t\2\2\2\67\t\3\2\2\289\t\3\2\2")
-        buf.write("9\13\3\2\2\2:?\5\16\b\2;<\7\34\2\2<>\5\16\b\2=;\3\2\2")
-        buf.write("\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@\r\3\2\2\2A?\3\2\2\2")
-        buf.write("BC\7\23\2\2CI\5\16\b\2DE\7\24\2\2EI\5\16\b\2FI\5\32\16")
-        buf.write("\2GI\5\20\t\2HB\3\2\2\2HD\3\2\2\2HF\3\2\2\2HG\3\2\2\2")
-        buf.write("I\17\3\2\2\2JS\5\22\n\2KS\5\24\13\2LS\5\30\r\2MS\5\26")
-        buf.write("\f\2NO\7\17\2\2OP\5\4\3\2PQ\7\20\2\2QS\3\2\2\2RJ\3\2\2")
-        buf.write("\2RK\3\2\2\2RL\3\2\2\2RM\3\2\2\2RN\3\2\2\2S\21\3\2\2\2")
-        buf.write("TU\7!\2\2U\23\3\2\2\2VW\5\30\r\2WX\7\21\2\2X]\5\4\3\2")
-        buf.write("YZ\7\32\2\2Z\\\5\4\3\2[Y\3\2\2\2\\_\3\2\2\2][\3\2\2\2")
-        buf.write("]^\3\2\2\2^`\3\2\2\2_]\3\2\2\2`a\7\22\2\2a\25\3\2\2\2")
-        buf.write("bc\t\4\2\2c\27\3\2\2\2de\7 \2\2e\31\3\2\2\2fg\5\34\17")
-        buf.write("\2gh\7\17\2\2hm\5\4\3\2ij\7\32\2\2jl\5\4\3\2ki\3\2\2\2")
-        buf.write("lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7")
-        buf.write("\20\2\2q\33\3\2\2\2rs\t\5\2\2s\35\3\2\2\2tu\t\6\2\2u\37")
-        buf.write("\3\2\2\2\t*\63?HR]m")
-        return buf.getvalue()
+    return [
+        4,
+        1,
+        34,
+        117,
+        2,
+        0,
+        7,
+        0,
+        2,
+        1,
+        7,
+        1,
+        2,
+        2,
+        7,
+        2,
+        2,
+        3,
+        7,
+        3,
+        2,
+        4,
+        7,
+        4,
+        2,
+        5,
+        7,
+        5,
+        2,
+        6,
+        7,
+        6,
+        2,
+        7,
+        7,
+        7,
+        2,
+        8,
+        7,
+        8,
+        2,
+        9,
+        7,
+        9,
+        2,
+        10,
+        7,
+        10,
+        2,
+        11,
+        7,
+        11,
+        2,
+        12,
+        7,
+        12,
+        2,
+        13,
+        7,
+        13,
+        2,
+        14,
+        7,
+        14,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        5,
+        1,
+        39,
+        8,
+        1,
+        10,
+        1,
+        12,
+        1,
+        42,
+        9,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        5,
+        2,
+        48,
+        8,
+        2,
+        10,
+        2,
+        12,
+        2,
+        51,
+        9,
+        2,
+        1,
+        3,
+        1,
+        3,
+        1,
+        4,
+        1,
+        4,
+        1,
+        5,
+        1,
+        5,
+        1,
+        5,
+        5,
+        5,
+        60,
+        8,
+        5,
+        10,
+        5,
+        12,
+        5,
+        63,
+        9,
+        5,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        3,
+        6,
+        71,
+        8,
+        6,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        1,
+        7,
+        3,
+        7,
+        81,
+        8,
+        7,
+        1,
+        8,
+        1,
+        8,
+        1,
+        9,
+        1,
+        9,
+        1,
+        9,
+        1,
+        9,
+        1,
+        9,
+        5,
+        9,
+        90,
+        8,
+        9,
+        10,
+        9,
+        12,
+        9,
+        93,
+        9,
+        9,
+        1,
+        9,
+        1,
+        9,
+        1,
+        10,
+        1,
+        10,
+        1,
+        11,
+        1,
+        11,
+        1,
+        12,
+        1,
+        12,
+        1,
+        12,
+        1,
+        12,
+        1,
+        12,
+        5,
+        12,
+        106,
+        8,
+        12,
+        10,
+        12,
+        12,
+        12,
+        109,
+        9,
+        12,
+        1,
+        12,
+        1,
+        12,
+        1,
+        13,
+        1,
+        13,
+        1,
+        14,
+        1,
+        14,
+        1,
+        14,
+        0,
+        0,
+        15,
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        0,
+        5,
+        1,
+        0,
+        17,
+        18,
+        1,
+        0,
+        19,
+        20,
+        1,
+        0,
+        27,
+        29,
+        2,
+        0,
+        1,
+        12,
+        30,
+        31,
+        1,
+        0,
+        21,
+        23,
+        113,
+        0,
+        30,
+        1,
+        0,
+        0,
+        0,
+        2,
+        34,
+        1,
+        0,
+        0,
+        0,
+        4,
+        43,
+        1,
+        0,
+        0,
+        0,
+        6,
+        52,
+        1,
+        0,
+        0,
+        0,
+        8,
+        54,
+        1,
+        0,
+        0,
+        0,
+        10,
+        56,
+        1,
+        0,
+        0,
+        0,
+        12,
+        70,
+        1,
+        0,
+        0,
+        0,
+        14,
+        80,
+        1,
+        0,
+        0,
+        0,
+        16,
+        82,
+        1,
+        0,
+        0,
+        0,
+        18,
+        84,
+        1,
+        0,
+        0,
+        0,
+        20,
+        96,
+        1,
+        0,
+        0,
+        0,
+        22,
+        98,
+        1,
+        0,
+        0,
+        0,
+        24,
+        100,
+        1,
+        0,
+        0,
+        0,
+        26,
+        112,
+        1,
+        0,
+        0,
+        0,
+        28,
+        114,
+        1,
+        0,
+        0,
+        0,
+        30,
+        31,
+        3,
+        2,
+        1,
+        0,
+        31,
+        32,
+        3,
+        28,
+        14,
+        0,
+        32,
+        33,
+        3,
+        2,
+        1,
+        0,
+        33,
+        1,
+        1,
+        0,
+        0,
+        0,
+        34,
+        40,
+        3,
+        4,
+        2,
+        0,
+        35,
+        36,
+        3,
+        6,
+        3,
+        0,
+        36,
+        37,
+        3,
+        4,
+        2,
+        0,
+        37,
+        39,
+        1,
+        0,
+        0,
+        0,
+        38,
+        35,
+        1,
+        0,
+        0,
+        0,
+        39,
+        42,
+        1,
+        0,
+        0,
+        0,
+        40,
+        38,
+        1,
+        0,
+        0,
+        0,
+        40,
+        41,
+        1,
+        0,
+        0,
+        0,
+        41,
+        3,
+        1,
+        0,
+        0,
+        0,
+        42,
+        40,
+        1,
+        0,
+        0,
+        0,
+        43,
+        49,
+        3,
+        10,
+        5,
+        0,
+        44,
+        45,
+        3,
+        8,
+        4,
+        0,
+        45,
+        46,
+        3,
+        10,
+        5,
+        0,
+        46,
+        48,
+        1,
+        0,
+        0,
+        0,
+        47,
+        44,
+        1,
+        0,
+        0,
+        0,
+        48,
+        51,
+        1,
+        0,
+        0,
+        0,
+        49,
+        47,
+        1,
+        0,
+        0,
+        0,
+        49,
+        50,
+        1,
+        0,
+        0,
+        0,
+        50,
+        5,
+        1,
+        0,
+        0,
+        0,
+        51,
+        49,
+        1,
+        0,
+        0,
+        0,
+        52,
+        53,
+        7,
+        0,
+        0,
+        0,
+        53,
+        7,
+        1,
+        0,
+        0,
+        0,
+        54,
+        55,
+        7,
+        1,
+        0,
+        0,
+        55,
+        9,
+        1,
+        0,
+        0,
+        0,
+        56,
+        61,
+        3,
+        12,
+        6,
+        0,
+        57,
+        58,
+        5,
+        26,
+        0,
+        0,
+        58,
+        60,
+        3,
+        12,
+        6,
+        0,
+        59,
+        57,
+        1,
+        0,
+        0,
+        0,
+        60,
+        63,
+        1,
+        0,
+        0,
+        0,
+        61,
+        59,
+        1,
+        0,
+        0,
+        0,
+        61,
+        62,
+        1,
+        0,
+        0,
+        0,
+        62,
+        11,
+        1,
+        0,
+        0,
+        0,
+        63,
+        61,
+        1,
+        0,
+        0,
+        0,
+        64,
+        65,
+        5,
+        17,
+        0,
+        0,
+        65,
+        71,
+        3,
+        12,
+        6,
+        0,
+        66,
+        67,
+        5,
+        18,
+        0,
+        0,
+        67,
+        71,
+        3,
+        12,
+        6,
+        0,
+        68,
+        71,
+        3,
+        24,
+        12,
+        0,
+        69,
+        71,
+        3,
+        14,
+        7,
+        0,
+        70,
+        64,
+        1,
+        0,
+        0,
+        0,
+        70,
+        66,
+        1,
+        0,
+        0,
+        0,
+        70,
+        68,
+        1,
+        0,
+        0,
+        0,
+        70,
+        69,
+        1,
+        0,
+        0,
+        0,
+        71,
+        13,
+        1,
+        0,
+        0,
+        0,
+        72,
+        81,
+        3,
+        16,
+        8,
+        0,
+        73,
+        81,
+        3,
+        18,
+        9,
+        0,
+        74,
+        81,
+        3,
+        22,
+        11,
+        0,
+        75,
+        81,
+        3,
+        20,
+        10,
+        0,
+        76,
+        77,
+        5,
+        13,
+        0,
+        0,
+        77,
+        78,
+        3,
+        2,
+        1,
+        0,
+        78,
+        79,
+        5,
+        14,
+        0,
+        0,
+        79,
+        81,
+        1,
+        0,
+        0,
+        0,
+        80,
+        72,
+        1,
+        0,
+        0,
+        0,
+        80,
+        73,
+        1,
+        0,
+        0,
+        0,
+        80,
+        74,
+        1,
+        0,
+        0,
+        0,
+        80,
+        75,
+        1,
+        0,
+        0,
+        0,
+        80,
+        76,
+        1,
+        0,
+        0,
+        0,
+        81,
+        15,
+        1,
+        0,
+        0,
+        0,
+        82,
+        83,
+        5,
+        33,
+        0,
+        0,
+        83,
+        17,
+        1,
+        0,
+        0,
+        0,
+        84,
+        85,
+        3,
+        22,
+        11,
+        0,
+        85,
+        86,
+        5,
+        15,
+        0,
+        0,
+        86,
+        91,
+        3,
+        2,
+        1,
+        0,
+        87,
+        88,
+        5,
+        24,
+        0,
+        0,
+        88,
+        90,
+        3,
+        2,
+        1,
+        0,
+        89,
+        87,
+        1,
+        0,
+        0,
+        0,
+        90,
+        93,
+        1,
+        0,
+        0,
+        0,
+        91,
+        89,
+        1,
+        0,
+        0,
+        0,
+        91,
+        92,
+        1,
+        0,
+        0,
+        0,
+        92,
+        94,
+        1,
+        0,
+        0,
+        0,
+        93,
+        91,
+        1,
+        0,
+        0,
+        0,
+        94,
+        95,
+        5,
+        16,
+        0,
+        0,
+        95,
+        19,
+        1,
+        0,
+        0,
+        0,
+        96,
+        97,
+        7,
+        2,
+        0,
+        0,
+        97,
+        21,
+        1,
+        0,
+        0,
+        0,
+        98,
+        99,
+        5,
+        32,
+        0,
+        0,
+        99,
+        23,
+        1,
+        0,
+        0,
+        0,
+        100,
+        101,
+        3,
+        26,
+        13,
+        0,
+        101,
+        102,
+        5,
+        13,
+        0,
+        0,
+        102,
+        107,
+        3,
+        2,
+        1,
+        0,
+        103,
+        104,
+        5,
+        24,
+        0,
+        0,
+        104,
+        106,
+        3,
+        2,
+        1,
+        0,
+        105,
+        103,
+        1,
+        0,
+        0,
+        0,
+        106,
+        109,
+        1,
+        0,
+        0,
+        0,
+        107,
+        105,
+        1,
+        0,
+        0,
+        0,
+        107,
+        108,
+        1,
+        0,
+        0,
+        0,
+        108,
+        110,
+        1,
+        0,
+        0,
+        0,
+        109,
+        107,
+        1,
+        0,
+        0,
+        0,
+        110,
+        111,
+        5,
+        14,
+        0,
+        0,
+        111,
+        25,
+        1,
+        0,
+        0,
+        0,
+        112,
+        113,
+        7,
+        3,
+        0,
+        0,
+        113,
+        27,
+        1,
+        0,
+        0,
+        0,
+        114,
+        115,
+        7,
+        4,
+        0,
+        0,
+        115,
+        29,
+        1,
+        0,
+        0,
+        0,
+        7,
+        40,
+        49,
+        61,
+        70,
+        80,
+        91,
+        107,
+    ]
 
 
 class GdmlExpressionParser(Parser):
@@ -93,6 +1034,8 @@ class GdmlExpressionParser(Parser):
         "'pi'",
         "<INVALID>",
         "'i'",
+        "'min'",
+        "'max'",
     ]
 
     symbolicNames = [
@@ -126,6 +1069,8 @@ class GdmlExpressionParser(Parser):
         "PI",
         "EULER",
         "I",
+        "MIN",
+        "MAX",
         "VARIABLE",
         "SCIENTIFIC_NUMBER",
         "WS",
@@ -195,13 +1140,15 @@ class GdmlExpressionParser(Parser):
     PI = 27
     EULER = 28
     I = 29
-    VARIABLE = 30
-    SCIENTIFIC_NUMBER = 31
-    WS = 32
+    MIN = 30
+    MAX = 31
+    VARIABLE = 32
+    SCIENTIFIC_NUMBER = 33
+    WS = 34
 
     def __init__(self, input: TokenStream, output: TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.9.3")
+        self.checkVersion("4.13.1")
         self._interp = ParserATNSimulator(
             self, self.atn, self.decisionsToDFA, self.sharedContextCache
         )
@@ -214,7 +1161,7 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def expression(self, i: int = None):
+        def expression(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -225,14 +1172,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_equation
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterEquation"):
-                listener.enterEquation(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitEquation"):
-                listener.exitEquation(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitEquation"):
@@ -266,7 +1205,7 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def multiplyingExpression(self, i: int = None):
+        def multiplyingExpression(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.MultiplyingExpressionContext)
             else:
@@ -274,7 +1213,7 @@ class GdmlExpressionParser(Parser):
                     GdmlExpressionParser.MultiplyingExpressionContext, i
                 )
 
-        def operatorAddSub(self, i: int = None):
+        def operatorAddSub(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.OperatorAddSubContext)
             else:
@@ -282,14 +1221,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_expression
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterExpression"):
-                listener.enterExpression(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitExpression"):
-                listener.exitExpression(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitExpression"):
@@ -308,7 +1239,7 @@ class GdmlExpressionParser(Parser):
             self.state = 40
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la == GdmlExpressionParser.PLUS or _la == GdmlExpressionParser.MINUS:
+            while _la == 17 or _la == 18:
                 self.state = 35
                 self.operatorAddSub()
                 self.state = 36
@@ -332,13 +1263,13 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def powExpression(self, i: int = None):
+        def powExpression(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.PowExpressionContext)
             else:
                 return self.getTypedRuleContext(GdmlExpressionParser.PowExpressionContext, i)
 
-        def operatorMulDiv(self, i: int = None):
+        def operatorMulDiv(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.OperatorMulDivContext)
             else:
@@ -346,14 +1277,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_multiplyingExpression
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterMultiplyingExpression"):
-                listener.enterMultiplyingExpression(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitMultiplyingExpression"):
-                listener.exitMultiplyingExpression(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMultiplyingExpression"):
@@ -372,7 +1295,7 @@ class GdmlExpressionParser(Parser):
             self.state = 49
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la == GdmlExpressionParser.TIMES or _la == GdmlExpressionParser.DIV:
+            while _la == 19 or _la == 20:
                 self.state = 44
                 self.operatorMulDiv()
                 self.state = 45
@@ -405,14 +1328,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorAddSub
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterOperatorAddSub"):
-                listener.enterOperatorAddSub(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitOperatorAddSub"):
-                listener.exitOperatorAddSub(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitOperatorAddSub"):
                 return visitor.visitOperatorAddSub(self)
@@ -427,7 +1342,7 @@ class GdmlExpressionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 52
             _la = self._input.LA(1)
-            if not (_la == GdmlExpressionParser.PLUS or _la == GdmlExpressionParser.MINUS):
+            if not (_la == 17 or _la == 18):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -456,14 +1371,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_operatorMulDiv
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterOperatorMulDiv"):
-                listener.enterOperatorMulDiv(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitOperatorMulDiv"):
-                listener.exitOperatorMulDiv(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitOperatorMulDiv"):
                 return visitor.visitOperatorMulDiv(self)
@@ -478,7 +1385,7 @@ class GdmlExpressionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 54
             _la = self._input.LA(1)
-            if not (_la == GdmlExpressionParser.TIMES or _la == GdmlExpressionParser.DIV):
+            if not (_la == 19 or _la == 20):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -498,13 +1405,13 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def signedAtom(self, i: int = None):
+        def signedAtom(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.SignedAtomContext)
             else:
                 return self.getTypedRuleContext(GdmlExpressionParser.SignedAtomContext, i)
 
-        def POW(self, i: int = None):
+        def POW(self, i: Optional[int] = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.POW)
             else:
@@ -512,14 +1419,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_powExpression
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterPowExpression"):
-                listener.enterPowExpression(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitPowExpression"):
-                listener.exitPowExpression(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitPowExpression"):
@@ -538,7 +1437,7 @@ class GdmlExpressionParser(Parser):
             self.state = 61
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la == GdmlExpressionParser.POW:
+            while _la == 26:
                 self.state = 57
                 self.match(GdmlExpressionParser.POW)
                 self.state = 58
@@ -580,14 +1479,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_signedAtom
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterSignedAtom"):
-                listener.enterSignedAtom(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitSignedAtom"):
-                listener.exitSignedAtom(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSignedAtom"):
                 return visitor.visitSignedAtom(self)
@@ -601,50 +1492,26 @@ class GdmlExpressionParser(Parser):
             self.state = 70
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [GdmlExpressionParser.PLUS]:
+            if token in [17]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 64
                 self.match(GdmlExpressionParser.PLUS)
                 self.state = 65
                 self.signedAtom()
-                pass
-            elif token in [GdmlExpressionParser.MINUS]:
+            elif token in [18]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 66
                 self.match(GdmlExpressionParser.MINUS)
                 self.state = 67
                 self.signedAtom()
-                pass
-            elif token in [
-                GdmlExpressionParser.COS,
-                GdmlExpressionParser.SIN,
-                GdmlExpressionParser.TAN,
-                GdmlExpressionParser.ACOS,
-                GdmlExpressionParser.ASIN,
-                GdmlExpressionParser.ATAN,
-                GdmlExpressionParser.LN,
-                GdmlExpressionParser.LOG,
-                GdmlExpressionParser.SQRT,
-                GdmlExpressionParser.EXP,
-                GdmlExpressionParser.POWER,
-                GdmlExpressionParser.ABS,
-            ]:
+            elif token in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 30, 31]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 68
                 self.func()
-                pass
-            elif token in [
-                GdmlExpressionParser.LPAREN,
-                GdmlExpressionParser.PI,
-                GdmlExpressionParser.EULER,
-                GdmlExpressionParser.I,
-                GdmlExpressionParser.VARIABLE,
-                GdmlExpressionParser.SCIENTIFIC_NUMBER,
-            ]:
+            elif token in [13, 27, 28, 29, 32, 33]:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 69
                 self.atom()
-                pass
             else:
                 raise NoViableAltException(self)
 
@@ -687,14 +1554,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_atom
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterAtom"):
-                listener.enterAtom(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitAtom"):
-                listener.exitAtom(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitAtom"):
                 return visitor.visitAtom(self)
@@ -712,25 +1571,21 @@ class GdmlExpressionParser(Parser):
                 self.enterOuterAlt(localctx, 1)
                 self.state = 72
                 self.scientific()
-                pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 73
                 self.matrixElement()
-                pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 74
                 self.variable()
-                pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 75
                 self.constant()
-                pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
@@ -740,7 +1595,6 @@ class GdmlExpressionParser(Parser):
                 self.expression()
                 self.state = 78
                 self.match(GdmlExpressionParser.RPAREN)
-                pass
 
         except RecognitionException as re:
             localctx.exception = re
@@ -762,14 +1616,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_scientific
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterScientific"):
-                listener.enterScientific(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitScientific"):
-                listener.exitScientific(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitScientific"):
@@ -805,7 +1651,7 @@ class GdmlExpressionParser(Parser):
         def LBRACKET(self):
             return self.getToken(GdmlExpressionParser.LBRACKET, 0)
 
-        def expression(self, i: int = None):
+        def expression(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -814,7 +1660,7 @@ class GdmlExpressionParser(Parser):
         def RBRACKET(self):
             return self.getToken(GdmlExpressionParser.RBRACKET, 0)
 
-        def COMMA(self, i: int = None):
+        def COMMA(self, i: Optional[int] = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:
@@ -822,14 +1668,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_matrixElement
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterMatrixElement"):
-                listener.enterMatrixElement(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitMatrixElement"):
-                listener.exitMatrixElement(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMatrixElement"):
@@ -852,7 +1690,7 @@ class GdmlExpressionParser(Parser):
             self.state = 91
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la == GdmlExpressionParser.COMMA:
+            while _la == 24:
                 self.state = 87
                 self.match(GdmlExpressionParser.COMMA)
                 self.state = 88
@@ -890,14 +1728,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_constant
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterConstant"):
-                listener.enterConstant(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitConstant"):
-                listener.exitConstant(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitConstant"):
                 return visitor.visitConstant(self)
@@ -912,18 +1742,7 @@ class GdmlExpressionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 96
             _la = self._input.LA(1)
-            if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.PI)
-                        | (1 << GdmlExpressionParser.EULER)
-                        | (1 << GdmlExpressionParser.I)
-                    )
-                )
-                != 0
-            ):
+            if not (((_la) & ~0x3F) == 0 and ((1 << _la) & 939524096) != 0):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -948,14 +1767,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_variable
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterVariable"):
-                listener.enterVariable(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitVariable"):
-                listener.exitVariable(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitVariable"):
@@ -991,7 +1802,7 @@ class GdmlExpressionParser(Parser):
         def LPAREN(self):
             return self.getToken(GdmlExpressionParser.LPAREN, 0)
 
-        def expression(self, i: int = None):
+        def expression(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -1000,7 +1811,7 @@ class GdmlExpressionParser(Parser):
         def RPAREN(self):
             return self.getToken(GdmlExpressionParser.RPAREN, 0)
 
-        def COMMA(self, i: int = None):
+        def COMMA(self, i: Optional[int] = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:
@@ -1008,14 +1819,6 @@ class GdmlExpressionParser(Parser):
 
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_func
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterFunc"):
-                listener.enterFunc(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitFunc"):
-                listener.exitFunc(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitFunc"):
@@ -1038,7 +1841,7 @@ class GdmlExpressionParser(Parser):
             self.state = 107
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la == GdmlExpressionParser.COMMA:
+            while _la == 24:
                 self.state = 103
                 self.match(GdmlExpressionParser.COMMA)
                 self.state = 104
@@ -1100,16 +1903,14 @@ class GdmlExpressionParser(Parser):
         def ABS(self):
             return self.getToken(GdmlExpressionParser.ABS, 0)
 
+        def MIN(self):
+            return self.getToken(GdmlExpressionParser.MIN, 0)
+
+        def MAX(self):
+            return self.getToken(GdmlExpressionParser.MAX, 0)
+
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_funcname
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterFuncname"):
-                listener.enterFuncname(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitFuncname"):
-                listener.exitFuncname(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitFuncname"):
@@ -1125,27 +1926,7 @@ class GdmlExpressionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 112
             _la = self._input.LA(1)
-            if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.COS)
-                        | (1 << GdmlExpressionParser.SIN)
-                        | (1 << GdmlExpressionParser.TAN)
-                        | (1 << GdmlExpressionParser.ACOS)
-                        | (1 << GdmlExpressionParser.ASIN)
-                        | (1 << GdmlExpressionParser.ATAN)
-                        | (1 << GdmlExpressionParser.LN)
-                        | (1 << GdmlExpressionParser.LOG)
-                        | (1 << GdmlExpressionParser.SQRT)
-                        | (1 << GdmlExpressionParser.EXP)
-                        | (1 << GdmlExpressionParser.POWER)
-                        | (1 << GdmlExpressionParser.ABS)
-                    )
-                )
-                != 0
-            ):
+            if not (((_la) & ~0x3F) == 0 and ((1 << _la) & 3221233662) != 0):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -1177,14 +1958,6 @@ class GdmlExpressionParser(Parser):
         def getRuleIndex(self):
             return GdmlExpressionParser.RULE_relop
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterRelop"):
-                listener.enterRelop(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitRelop"):
-                listener.exitRelop(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitRelop"):
                 return visitor.visitRelop(self)
@@ -1199,18 +1972,7 @@ class GdmlExpressionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 114
             _la = self._input.LA(1)
-            if not (
-                ((_la) & ~0x3F) == 0
-                and (
-                    (1 << _la)
-                    & (
-                        (1 << GdmlExpressionParser.GT)
-                        | (1 << GdmlExpressionParser.LT)
-                        | (1 << GdmlExpressionParser.EQ)
-                    )
-                )
-                != 0
-            ):
+            if not (((_la) & ~0x3F) == 0 and ((1 << _la) & 14680064) != 0):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)

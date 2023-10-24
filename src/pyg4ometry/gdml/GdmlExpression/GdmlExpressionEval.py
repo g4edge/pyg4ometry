@@ -8,6 +8,7 @@ from ..Units import units as _units
 
 import math
 import numpy
+import builtins
 
 # from IPython import embed
 # import traceback
@@ -72,6 +73,18 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
         return base
 
+    def visitMinExpression(self, ctx):
+        print(ctx.signedAtom(0), ctx.signedAtom(1))
+        v1 = float(self.visit(ctx.signedAtom(0)))
+        v2 = float(self.visit(ctx.signedAtom(1)))
+        return min(v1, v2)
+
+    def visitMaxExpression(self, ctx):
+        print(ctx.signedAtom(0), ctx.signedAtom(1))
+        v1 = float(self.visit(ctx.signedAtom(0)))
+        v2 = float(self.visit(ctx.signedAtom(1)))
+        return max(v1, v2)
+
     def visitMatrixElement(self, ctx):
         matrix = self.visit(ctx.variable())
         indices = [int(self.visit(ctx.expression(0))) - 1]  # at least one index
@@ -116,12 +129,14 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitFunc(self, ctx):
         function_name = str(self.visit(ctx.funcname()))
-        if hasattr(math, function_name):
+        if hasattr(builtins, function_name):
+            function = getattr(builtins, function_name)
+        elif hasattr(math, function_name):
             function = getattr(math, function_name)
         elif hasattr(numpy, function_name):
             function = getattr(numpy, function_name)
         else:
-            msg = f"Function {function_name} not found in 'numpy' or 'math'"
+            msg = f"Function {function_name} not found in 'builtins', 'numpy' or 'math'"
             raise ValueError(msg)
 
         arguments = [self.visit(expr) for expr in ctx.expression()]
@@ -141,6 +156,8 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
             "SQRT",
             "POWER",
             "ABS",
+            "MIN",
+            "MAX",
         ]
         for f in funcs:
             function = getattr(ctx, f)
