@@ -1088,7 +1088,6 @@ class RegionParser(Parser):
                     if not (_la == 10):
                         break
 
-
             elif la_ == 2:
                 localctx = RegionParser.SingleUnionContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
