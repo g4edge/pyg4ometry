@@ -688,6 +688,42 @@ def abs(arg):
     return v
 
 
+def min(arg1, arg2):
+    """
+    absolute value of arg
+
+    :param arg: Argument of abs(arg)
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
+    v1 = upgradeToStringExpression(arg1.registry, arg1)
+    v2 = upgradeToStringExpression(arg1.registry, arg2)
+    v = Constant(
+        f"min_{v1}_{v2}",
+        f"min({v1},{v2})",
+        registry=arg1.registry,
+        addRegistry=False,
+    )
+    return v
+
+
+def max(arg1, arg2):
+    """
+    absolute value of arg
+
+    :param arg: Argument of abs(arg)
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
+    v1 = upgradeToStringExpression(arg1.registry, arg1)
+    v2 = upgradeToStringExpression(arg1.registry, arg2)
+    v = Constant(
+        f"min_{v1}_{v2}",
+        f"max({v1},{v2})",
+        registry=arg1.registry,
+        addRegistry=False,
+    )
+    return v
+
+
 class Constant(ScalarBase):
     """
     GDML constant define wrapper object
