@@ -749,6 +749,8 @@ class VectorBase:
         )
 
     def __add__(self, other):
+        other = upgradeToVector(other, self.registry, "position", "", False)
+
         p = Position(
             f"vec_{self.name}_add_{other.name}",
             f"({self.x.expressionString})+({other.x.expressionString})",
