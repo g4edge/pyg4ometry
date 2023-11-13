@@ -1,0 +1,64 @@
+cff-version: 1.2.0
+title: "pyg4ometry"
+doi: UPDATEME
+date-released: 2000-01-01
+url: https://github.com/github-linguist/linguist
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Boogert
+    given-names: Stewart
+    orcid:
+  - family-names: Abramov
+    given-names: Andrey
+    orcid:
+  - family-names: Nevay
+    given-names: Laurence
+    orcid:
+  - family-names: Shields
+    given-names: William
+    orcid:
+  - family-names: Walker
+    given-names: Stuart
+    orcid:
+  - family-names: Butcher
+    given-names: Alistar
+    orcid:
+  - family-names: Hernalsteens
+    given-names: Cedric
+    orcid:
+  - family-names: Shellswell
+    given-names: Ben
+    orcid:
+  - family-names: Ramoisiaux
+    given-names: Eliott
+    orcid:
+  - family-names: Pertoldi
+    given-names: Luigi
+    orcid: https://orcid.org/0000-0002-0467-2571
+  - family-names: Huber
+    given-names: Manuel
+    email: ich@manuelhu.de
+
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Boogert"
+    given-names: "Stewart"
+    orcid:
+  - family-names: "Abramov"
+    given-names: "Andrey"
+    orcid:
+  - family-names: "Nevay"
+    given-names: "Laurence"
+    orcid:
+  - family-names: "Shields"
+    given-names: "William"
+    orcid:
+  - family-names: "Walker"
+    given-names: "Stuart"
+    orcid:
+  doi: 10.1016/j.cpc.2021.108228
+  journal: "Comput. Phys. Commun."
+  title: "Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries"
+  volume: 272
+  year: 2022
