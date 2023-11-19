@@ -124,7 +124,7 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
             _warnings.warn(f"Setting region {name} with no material to IRON.")
             materialName = "IRON"
 
-        material = f2g4mat[materialName]
+        material = f2g4mat[materialName[0]]
 
         region_lv = _g4.LogicalVolume(region_solid, material, f"{name}_lv", greg)
 
@@ -418,12 +418,15 @@ def _isTransformedCellRegionIntersectingWithRegion(region, lattice):
 
 def _checkQuadricRegionAABBs(flukareg, quadricRegionAABBs):
     """Loop over the regions looking for quadrics and for any quadrics we
-    find, make sure that that whregion has a defined region aabb in
+    find, make sure that the region has a defined region aabb in
     quadricRegionAABBs.
     """
     for regionName, region in flukareg.regionDict.items():
         regionBodies = region.bodies()
         quadrics = {r for r in regionBodies if isinstance(r, _fluka.QUA)}
+
+        print(regionName)
+        print(quadricRegionAABBs)
 
         # If this region has no Quadrics then all is well
         if not quadrics:
