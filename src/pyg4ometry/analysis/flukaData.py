@@ -30,6 +30,8 @@ def fortran_read(f):
 
 
 def debugDumpFile(fd, limit=10000000):
+    fd.seek(0)
+
     iData = 0
     data = True
 
@@ -138,6 +140,8 @@ class FlukaBdxData:
 
 class Usrbin(_FlukaDataFile):
     def __init__(self, fd, read_data=False):
+        fd.seek(0)
+
         self.stat_pos = -1
 
         self.detector = []
@@ -249,6 +253,7 @@ class Usrbdx(_FlukaDataFile):
             fd = open(file, "rb")
         else:
             fd = file
+            fd.seek(0)
 
         super().read_header(fd)
         self.read_file(fd)
