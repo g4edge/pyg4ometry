@@ -146,6 +146,9 @@ import T902_cube_from_six_PLAs
 
 import T1000_extruder
 
+import T1200_flukaRun
+import T1200_flukaLoad
+
 
 def test_PythonFluka_T001_RPP(tmptestdir, testdata):
     T001_RPP.Test(
@@ -1424,3 +1427,9 @@ def test_fluka_vis(tmptestdir, testdata):
 
 def test_PythonFluka_T1000_extruder(tmptestdir, testdata):
     T1000_extruder.Test(False, outputPath=tmptestdir)
+
+
+def test_PythonFluka_T1200(tmptestdir, testdata):
+    print(tmptestdir)
+    T1200_flukaRun.Test(False, False, True, outputPath=tmptestdir)
+    T1200_flukaLoad.Test(testdata)
