@@ -4,10 +4,7 @@ from io import StringIO
 import sys
 from typing import Optional
 
-if sys.version_info[1] > (3, 5, 0):
-    from typing import TextIO
-else:
-    from typing.io import TextIO
+from typing import TextIO
 
 
 def serializedATN():

@@ -3,10 +3,7 @@ from antlr4 import *
 from io import StringIO
 import sys
 
-if sys.version_info[1] > (3, 5, 0):
-    from typing import TextIO
-else:
-    from typing.io import TextIO
+from typing import TextIO
 
 
 def serializedATN():
