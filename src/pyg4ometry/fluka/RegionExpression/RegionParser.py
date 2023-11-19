@@ -1,48 +1,768 @@
-# ruff: noqa
-
-# Generated from RegionParser.g4 by ANTLR 4.9.3
+# Generated from RegionParser.g4 by ANTLR 4.13.1
 from antlr4 import *
 from io import StringIO
 import sys
+from typing import Optional
 
-if sys.version_info[1] > 5:
-    from typing import TextIO
-else:
-    from typing.io import TextIO
+from typing import TextIO
 
 
 def serializedATN():
-    with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16")
-        buf.write("V\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
-        buf.write("\t\b\3\2\6\2\22\n\2\r\2\16\2\23\3\3\3\3\3\3\3\3\3\3\3")
-        buf.write('\3\5\3\34\n\3\3\4\3\4\3\4\3\4\6\4"\n\4\r\4\16\4#\3\4')
-        buf.write("\3\4\3\4\3\4\3\4\3\4\3\4\7\4-\n\4\f\4\16\4\60\13\4\3\4")
-        buf.write("\3\4\5\4\64\n\4\3\5\5\5\67\n\5\3\5\3\5\5\5;\n\5\3\5\3")
-        buf.write("\5\5\5?\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6I\n\6\3")
-        buf.write("\7\3\7\3\7\5\7N\n\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\2\2\t")
-        buf.write("\2\4\6\b\n\f\16\2\3\3\2\n\13\2\\\2\21\3\2\2\2\4\33\3\2")
-        buf.write("\2\2\6\63\3\2\2\2\b>\3\2\2\2\nH\3\2\2\2\fJ\3\2\2\2\16")
-        buf.write("R\3\2\2\2\20\22\5\4\3\2\21\20\3\2\2\2\22\23\3\2\2\2\23")
-        buf.write("\21\3\2\2\2\23\24\3\2\2\2\24\3\3\2\2\2\25\26\7\b\2\2\26")
-        buf.write("\27\7\7\2\2\27\34\5\b\5\2\30\31\7\b\2\2\31\32\7\7\2\2")
-        buf.write("\32\34\5\6\4\2\33\25\3\2\2\2\33\30\3\2\2\2\34\5\3\2\2")
-        buf.write('\2\35\36\7\f\2\2\36!\5\b\5\2\37 \7\f\2\2 "\5\b\5\2!\37')
-        buf.write('\3\2\2\2"#\3\2\2\2#!\3\2\2\2#$\3\2\2\2$\64\3\2\2\2%&')
-        buf.write("\7\f\2\2&\64\5\b\5\2'(\5\b\5\2(.\7\f\2\2)*\5\b\5\2*+")
-        buf.write("\7\f\2\2+-\3\2\2\2,)\3\2\2\2-\60\3\2\2\2.,\3\2\2\2./\3")
-        buf.write("\2\2\2/\61\3\2\2\2\60.\3\2\2\2\61\62\5\b\5\2\62\64\3\2")
-        buf.write("\2\2\63\35\3\2\2\2\63%\3\2\2\2\63'\3\2\2\2\64\7\3\2\2")
-        buf.write("\2\65\67\7\t\2\2\66\65\3\2\2\2\66\67\3\2\2\2\678\3\2\2")
-        buf.write("\28?\5\n\6\29;\7\t\2\2:9\3\2\2\2:;\3\2\2\2;<\3\2\2\2<")
-        buf.write("?\5\f\7\2=?\7\t\2\2>\66\3\2\2\2>:\3\2\2\2>=\3\2\2\2?\t")
-        buf.write("\3\2\2\2@I\5\16\b\2AB\5\16\b\2BC\5\n\6\2CI\3\2\2\2DE\5")
-        buf.write("\f\7\2EF\5\n\6\2FI\3\2\2\2GI\5\f\7\2H@\3\2\2\2HA\3\2\2")
-        buf.write("\2HD\3\2\2\2HG\3\2\2\2I\13\3\2\2\2JK\t\2\2\2KM\7\r\2\2")
-        buf.write("LN\7\t\2\2ML\3\2\2\2MN\3\2\2\2NO\3\2\2\2OP\5\n\6\2PQ\7")
-        buf.write("\16\2\2Q\r\3\2\2\2RS\t\2\2\2ST\7\t\2\2T\17\3\2\2\2\f\23")
-        buf.write("\33#.\63\66:>HM")
-        return buf.getvalue()
+    return [
+        4,
+        1,
+        12,
+        84,
+        2,
+        0,
+        7,
+        0,
+        2,
+        1,
+        7,
+        1,
+        2,
+        2,
+        7,
+        2,
+        2,
+        3,
+        7,
+        3,
+        2,
+        4,
+        7,
+        4,
+        2,
+        5,
+        7,
+        5,
+        2,
+        6,
+        7,
+        6,
+        1,
+        0,
+        4,
+        0,
+        16,
+        8,
+        0,
+        11,
+        0,
+        12,
+        0,
+        17,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        26,
+        8,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        4,
+        2,
+        32,
+        8,
+        2,
+        11,
+        2,
+        12,
+        2,
+        33,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        5,
+        2,
+        43,
+        8,
+        2,
+        10,
+        2,
+        12,
+        2,
+        46,
+        9,
+        2,
+        1,
+        2,
+        1,
+        2,
+        3,
+        2,
+        50,
+        8,
+        2,
+        1,
+        3,
+        3,
+        3,
+        53,
+        8,
+        3,
+        1,
+        3,
+        1,
+        3,
+        3,
+        3,
+        57,
+        8,
+        3,
+        1,
+        3,
+        1,
+        3,
+        3,
+        3,
+        61,
+        8,
+        3,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        1,
+        4,
+        3,
+        4,
+        71,
+        8,
+        4,
+        1,
+        5,
+        1,
+        5,
+        1,
+        5,
+        3,
+        5,
+        76,
+        8,
+        5,
+        1,
+        5,
+        1,
+        5,
+        1,
+        5,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        1,
+        6,
+        0,
+        0,
+        7,
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        0,
+        1,
+        1,
+        0,
+        8,
+        9,
+        90,
+        0,
+        15,
+        1,
+        0,
+        0,
+        0,
+        2,
+        25,
+        1,
+        0,
+        0,
+        0,
+        4,
+        49,
+        1,
+        0,
+        0,
+        0,
+        6,
+        60,
+        1,
+        0,
+        0,
+        0,
+        8,
+        70,
+        1,
+        0,
+        0,
+        0,
+        10,
+        72,
+        1,
+        0,
+        0,
+        0,
+        12,
+        80,
+        1,
+        0,
+        0,
+        0,
+        14,
+        16,
+        3,
+        2,
+        1,
+        0,
+        15,
+        14,
+        1,
+        0,
+        0,
+        0,
+        16,
+        17,
+        1,
+        0,
+        0,
+        0,
+        17,
+        15,
+        1,
+        0,
+        0,
+        0,
+        17,
+        18,
+        1,
+        0,
+        0,
+        0,
+        18,
+        1,
+        1,
+        0,
+        0,
+        0,
+        19,
+        20,
+        5,
+        6,
+        0,
+        0,
+        20,
+        21,
+        5,
+        5,
+        0,
+        0,
+        21,
+        26,
+        3,
+        6,
+        3,
+        0,
+        22,
+        23,
+        5,
+        6,
+        0,
+        0,
+        23,
+        24,
+        5,
+        5,
+        0,
+        0,
+        24,
+        26,
+        3,
+        4,
+        2,
+        0,
+        25,
+        19,
+        1,
+        0,
+        0,
+        0,
+        25,
+        22,
+        1,
+        0,
+        0,
+        0,
+        26,
+        3,
+        1,
+        0,
+        0,
+        0,
+        27,
+        28,
+        5,
+        10,
+        0,
+        0,
+        28,
+        31,
+        3,
+        6,
+        3,
+        0,
+        29,
+        30,
+        5,
+        10,
+        0,
+        0,
+        30,
+        32,
+        3,
+        6,
+        3,
+        0,
+        31,
+        29,
+        1,
+        0,
+        0,
+        0,
+        32,
+        33,
+        1,
+        0,
+        0,
+        0,
+        33,
+        31,
+        1,
+        0,
+        0,
+        0,
+        33,
+        34,
+        1,
+        0,
+        0,
+        0,
+        34,
+        50,
+        1,
+        0,
+        0,
+        0,
+        35,
+        36,
+        5,
+        10,
+        0,
+        0,
+        36,
+        50,
+        3,
+        6,
+        3,
+        0,
+        37,
+        38,
+        3,
+        6,
+        3,
+        0,
+        38,
+        44,
+        5,
+        10,
+        0,
+        0,
+        39,
+        40,
+        3,
+        6,
+        3,
+        0,
+        40,
+        41,
+        5,
+        10,
+        0,
+        0,
+        41,
+        43,
+        1,
+        0,
+        0,
+        0,
+        42,
+        39,
+        1,
+        0,
+        0,
+        0,
+        43,
+        46,
+        1,
+        0,
+        0,
+        0,
+        44,
+        42,
+        1,
+        0,
+        0,
+        0,
+        44,
+        45,
+        1,
+        0,
+        0,
+        0,
+        45,
+        47,
+        1,
+        0,
+        0,
+        0,
+        46,
+        44,
+        1,
+        0,
+        0,
+        0,
+        47,
+        48,
+        3,
+        6,
+        3,
+        0,
+        48,
+        50,
+        1,
+        0,
+        0,
+        0,
+        49,
+        27,
+        1,
+        0,
+        0,
+        0,
+        49,
+        35,
+        1,
+        0,
+        0,
+        0,
+        49,
+        37,
+        1,
+        0,
+        0,
+        0,
+        50,
+        5,
+        1,
+        0,
+        0,
+        0,
+        51,
+        53,
+        5,
+        7,
+        0,
+        0,
+        52,
+        51,
+        1,
+        0,
+        0,
+        0,
+        52,
+        53,
+        1,
+        0,
+        0,
+        0,
+        53,
+        54,
+        1,
+        0,
+        0,
+        0,
+        54,
+        61,
+        3,
+        8,
+        4,
+        0,
+        55,
+        57,
+        5,
+        7,
+        0,
+        0,
+        56,
+        55,
+        1,
+        0,
+        0,
+        0,
+        56,
+        57,
+        1,
+        0,
+        0,
+        0,
+        57,
+        58,
+        1,
+        0,
+        0,
+        0,
+        58,
+        61,
+        3,
+        10,
+        5,
+        0,
+        59,
+        61,
+        5,
+        7,
+        0,
+        0,
+        60,
+        52,
+        1,
+        0,
+        0,
+        0,
+        60,
+        56,
+        1,
+        0,
+        0,
+        0,
+        60,
+        59,
+        1,
+        0,
+        0,
+        0,
+        61,
+        7,
+        1,
+        0,
+        0,
+        0,
+        62,
+        71,
+        3,
+        12,
+        6,
+        0,
+        63,
+        64,
+        3,
+        12,
+        6,
+        0,
+        64,
+        65,
+        3,
+        8,
+        4,
+        0,
+        65,
+        71,
+        1,
+        0,
+        0,
+        0,
+        66,
+        67,
+        3,
+        10,
+        5,
+        0,
+        67,
+        68,
+        3,
+        8,
+        4,
+        0,
+        68,
+        71,
+        1,
+        0,
+        0,
+        0,
+        69,
+        71,
+        3,
+        10,
+        5,
+        0,
+        70,
+        62,
+        1,
+        0,
+        0,
+        0,
+        70,
+        63,
+        1,
+        0,
+        0,
+        0,
+        70,
+        66,
+        1,
+        0,
+        0,
+        0,
+        70,
+        69,
+        1,
+        0,
+        0,
+        0,
+        71,
+        9,
+        1,
+        0,
+        0,
+        0,
+        72,
+        73,
+        7,
+        0,
+        0,
+        0,
+        73,
+        75,
+        5,
+        11,
+        0,
+        0,
+        74,
+        76,
+        5,
+        7,
+        0,
+        0,
+        75,
+        74,
+        1,
+        0,
+        0,
+        0,
+        75,
+        76,
+        1,
+        0,
+        0,
+        0,
+        76,
+        77,
+        1,
+        0,
+        0,
+        0,
+        77,
+        78,
+        3,
+        8,
+        4,
+        0,
+        78,
+        79,
+        5,
+        12,
+        0,
+        0,
+        79,
+        11,
+        1,
+        0,
+        0,
+        0,
+        80,
+        81,
+        7,
+        0,
+        0,
+        0,
+        81,
+        82,
+        5,
+        7,
+        0,
+        0,
+        82,
+        13,
+        1,
+        0,
+        0,
+        0,
+        10,
+        17,
+        25,
+        33,
+        44,
+        49,
+        52,
+        56,
+        60,
+        70,
+        75,
+    ]
 
 
 class RegionParser(Parser):
@@ -94,15 +814,7 @@ class RegionParser(Parser):
     RULE_subZone = 5
     RULE_unaryExpression = 6
 
-    ruleNames = [
-        "regions",
-        "region",
-        "zoneUnion",
-        "zone",
-        "expr",
-        "subZone",
-        "unaryExpression",
-    ]
+    ruleNames = ["regions", "region", "zoneUnion", "zone", "expr", "subZone", "unaryExpression"]
 
     EOF = Token.EOF
     Whitespace = 1
@@ -120,7 +832,7 @@ class RegionParser(Parser):
 
     def __init__(self, input: TokenStream, output: TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.9.3")
+        self.checkVersion("4.13.1")
         self._interp = ParserATNSimulator(
             self, self.atn, self.decisionsToDFA, self.sharedContextCache
         )
@@ -133,7 +845,7 @@ class RegionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def region(self, i: int = None):
+        def region(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.RegionContext)
             else:
@@ -141,14 +853,6 @@ class RegionParser(Parser):
 
         def getRuleIndex(self):
             return RegionParser.RULE_regions
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterRegions"):
-                listener.enterRegions(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitRegions"):
-                listener.exitRegions(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitRegions"):
@@ -171,7 +875,7 @@ class RegionParser(Parser):
                 self.state = 17
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (_la == RegionParser.RegionName):
+                if not (_la == 6):
                     break
 
         except RecognitionException as re:
@@ -209,14 +913,6 @@ class RegionParser(Parser):
         def zoneUnion(self):
             return self.getTypedRuleContext(RegionParser.ZoneUnionContext, 0)
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterComplexRegion"):
-                listener.enterComplexRegion(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitComplexRegion"):
-                listener.exitComplexRegion(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitComplexRegion"):
                 return visitor.visitComplexRegion(self)
@@ -236,14 +932,6 @@ class RegionParser(Parser):
 
         def zone(self):
             return self.getTypedRuleContext(RegionParser.ZoneContext, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterSimpleRegion"):
-                listener.enterSimpleRegion(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitSimpleRegion"):
-                listener.exitSimpleRegion(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSimpleRegion"):
@@ -267,7 +955,6 @@ class RegionParser(Parser):
                 self.match(RegionParser.Integer)
                 self.state = 21
                 self.zone()
-                pass
 
             elif la_ == 2:
                 localctx = RegionParser.ComplexRegionContext(self, localctx)
@@ -278,7 +965,6 @@ class RegionParser(Parser):
                 self.match(RegionParser.Integer)
                 self.state = 24
                 self.zoneUnion()
-                pass
 
         except RecognitionException as re:
             localctx.exception = re
@@ -308,25 +994,17 @@ class RegionParser(Parser):
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def zone(self, i: int = None):
+        def zone(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.ZoneContext)
             else:
                 return self.getTypedRuleContext(RegionParser.ZoneContext, i)
 
-        def Bar(self, i: int = None):
+        def Bar(self, i: Optional[int] = None):
             if i is None:
                 return self.getTokens(RegionParser.Bar)
             else:
                 return self.getToken(RegionParser.Bar, i)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterMultipleUnion2"):
-                listener.enterMultipleUnion2(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitMultipleUnion2"):
-                listener.exitMultipleUnion2(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMultipleUnion2"):
@@ -341,25 +1019,17 @@ class RegionParser(Parser):
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def Bar(self, i: int = None):
+        def Bar(self, i: Optional[int] = None):
             if i is None:
                 return self.getTokens(RegionParser.Bar)
             else:
                 return self.getToken(RegionParser.Bar, i)
 
-        def zone(self, i: int = None):
+        def zone(self, i: Optional[int] = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.ZoneContext)
             else:
                 return self.getTypedRuleContext(RegionParser.ZoneContext, i)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterMultipleUnion"):
-                listener.enterMultipleUnion(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitMultipleUnion"):
-                listener.exitMultipleUnion(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitMultipleUnion"):
@@ -379,14 +1049,6 @@ class RegionParser(Parser):
 
         def zone(self):
             return self.getTypedRuleContext(RegionParser.ZoneContext, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterSingleUnion"):
-                listener.enterSingleUnion(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitSingleUnion"):
-                listener.exitSingleUnion(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSingleUnion"):
@@ -420,10 +1082,8 @@ class RegionParser(Parser):
                     self.state = 33
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if not (_la == RegionParser.Bar):
+                    if not (_la == 10):
                         break
-
-                pass
 
             elif la_ == 2:
                 localctx = RegionParser.SingleUnionContext(self, localctx)
@@ -432,7 +1092,6 @@ class RegionParser(Parser):
                 self.match(RegionParser.Bar)
                 self.state = 36
                 self.zone()
-                pass
 
             elif la_ == 3:
                 localctx = RegionParser.MultipleUnion2Context(self, localctx)
@@ -456,7 +1115,6 @@ class RegionParser(Parser):
 
                 self.state = 47
                 self.zone()
-                pass
 
         except RecognitionException as re:
             localctx.exception = re
@@ -490,14 +1148,6 @@ class RegionParser(Parser):
         def BodyName(self):
             return self.getToken(RegionParser.BodyName, 0)
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterZoneExpr"):
-                listener.enterZoneExpr(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitZoneExpr"):
-                listener.exitZoneExpr(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitZoneExpr"):
                 return visitor.visitZoneExpr(self)
@@ -511,14 +1161,6 @@ class RegionParser(Parser):
 
         def BodyName(self):
             return self.getToken(RegionParser.BodyName, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterZoneBody"):
-                listener.enterZoneBody(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitZoneBody"):
-                listener.exitZoneBody(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitZoneBody"):
@@ -536,14 +1178,6 @@ class RegionParser(Parser):
 
         def BodyName(self):
             return self.getToken(RegionParser.BodyName, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterZoneSubZone"):
-                listener.enterZoneSubZone(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitZoneSubZone"):
-                listener.exitZoneSubZone(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitZoneSubZone"):
@@ -565,13 +1199,12 @@ class RegionParser(Parser):
                 self.state = 52
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la == RegionParser.BodyName:
+                if _la == 7:
                     self.state = 51
                     self.match(RegionParser.BodyName)
 
                 self.state = 54
                 self.expr()
-                pass
 
             elif la_ == 2:
                 localctx = RegionParser.ZoneSubZoneContext(self, localctx)
@@ -579,20 +1212,18 @@ class RegionParser(Parser):
                 self.state = 56
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la == RegionParser.BodyName:
+                if _la == 7:
                     self.state = 55
                     self.match(RegionParser.BodyName)
 
                 self.state = 58
                 self.subZone()
-                pass
 
             elif la_ == 3:
                 localctx = RegionParser.ZoneBodyContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 59
                 self.match(RegionParser.BodyName)
-                pass
 
         except RecognitionException as re:
             localctx.exception = re
@@ -626,14 +1257,6 @@ class RegionParser(Parser):
         def expr(self):
             return self.getTypedRuleContext(RegionParser.ExprContext, 0)
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterUnaryAndBoolean"):
-                listener.enterUnaryAndBoolean(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitUnaryAndBoolean"):
-                listener.exitUnaryAndBoolean(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitUnaryAndBoolean"):
                 return visitor.visitUnaryAndBoolean(self)
@@ -647,14 +1270,6 @@ class RegionParser(Parser):
 
         def subZone(self):
             return self.getTypedRuleContext(RegionParser.SubZoneContext, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterOneSubZone"):
-                listener.enterOneSubZone(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitOneSubZone"):
-                listener.exitOneSubZone(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitOneSubZone"):
@@ -673,14 +1288,6 @@ class RegionParser(Parser):
         def expr(self):
             return self.getTypedRuleContext(RegionParser.ExprContext, 0)
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterUnaryAndSubZone"):
-                listener.enterUnaryAndSubZone(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitUnaryAndSubZone"):
-                listener.exitUnaryAndSubZone(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitUnaryAndSubZone"):
                 return visitor.visitUnaryAndSubZone(self)
@@ -694,14 +1301,6 @@ class RegionParser(Parser):
 
         def unaryExpression(self):
             return self.getTypedRuleContext(RegionParser.UnaryExpressionContext, 0)
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterSingleUnary"):
-                listener.enterSingleUnary(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitSingleUnary"):
-                listener.exitSingleUnary(self)
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSingleUnary"):
@@ -721,7 +1320,6 @@ class RegionParser(Parser):
                 self.enterOuterAlt(localctx, 1)
                 self.state = 62
                 self.unaryExpression()
-                pass
 
             elif la_ == 2:
                 localctx = RegionParser.UnaryAndBooleanContext(self, localctx)
@@ -730,7 +1328,6 @@ class RegionParser(Parser):
                 self.unaryExpression()
                 self.state = 64
                 self.expr()
-                pass
 
             elif la_ == 3:
                 localctx = RegionParser.UnaryAndSubZoneContext(self, localctx)
@@ -739,14 +1336,12 @@ class RegionParser(Parser):
                 self.subZone()
                 self.state = 67
                 self.expr()
-                pass
 
             elif la_ == 4:
                 localctx = RegionParser.OneSubZoneContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 69
                 self.subZone()
-                pass
 
         except RecognitionException as re:
             localctx.exception = re
@@ -784,14 +1379,6 @@ class RegionParser(Parser):
         def getRuleIndex(self):
             return RegionParser.RULE_subZone
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterSubZone"):
-                listener.enterSubZone(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitSubZone"):
-                listener.exitSubZone(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitSubZone"):
                 return visitor.visitSubZone(self)
@@ -806,7 +1393,7 @@ class RegionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 72
             _la = self._input.LA(1)
-            if not (_la == RegionParser.Plus or _la == RegionParser.Minus):
+            if not (_la == 8 or _la == 9):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -816,7 +1403,7 @@ class RegionParser(Parser):
             self.state = 75
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la == RegionParser.BodyName:
+            if _la == 7:
                 self.state = 74
                 self.match(RegionParser.BodyName)
 
@@ -851,14 +1438,6 @@ class RegionParser(Parser):
         def getRuleIndex(self):
             return RegionParser.RULE_unaryExpression
 
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterUnaryExpression"):
-                listener.enterUnaryExpression(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitUnaryExpression"):
-                listener.exitUnaryExpression(self)
-
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitUnaryExpression"):
                 return visitor.visitUnaryExpression(self)
@@ -873,7 +1452,7 @@ class RegionParser(Parser):
             self.enterOuterAlt(localctx, 1)
             self.state = 80
             _la = self._input.LA(1)
-            if not (_la == RegionParser.Plus or _la == RegionParser.Minus):
+            if not (_la == 8 or _la == 9):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)

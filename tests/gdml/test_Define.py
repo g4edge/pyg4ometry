@@ -385,14 +385,28 @@ def test_GdmlDefine_PowerOperator():
     assert (xc**2).eval() == 4
 
 
+def test_GdmlDefine_Min():
+    r = pyg4ometry.geant4.Registry()
+    a = pyg4ometry.gdml.Constant("a", "-2", r)
+    b = pyg4ometry.gdml.Constant("b", "2", r)
+    assert pyg4ometry.gdml.min(a, b).eval() == -2
+
+
+def test_GdmlDefine_Max():
+    r = pyg4ometry.geant4.Registry()
+    a = pyg4ometry.gdml.Constant("a", "-2", r)
+    b = pyg4ometry.gdml.Constant("b", "2", r)
+    assert pyg4ometry.gdml.max(a, b).eval() == 2
+
+
 # #############################
 # Quantity
 # #############################
 def test_GdmlDefine_Quantity():
     r = pyg4ometry.geant4.Registry()
-    xq = pyg4ometry.gdml.Quantity("xq", "0.1", "mass", "kg", r)
-    assert xq.eval() == 0.1
-    assert float(xq) == 0.1
+    xq = pyg4ometry.gdml.Quantity("xq", "0.1", "kg", "mass", r)
+    assert xq.eval() == 100
+    assert float(xq) == 100
     str(xq)
 
 

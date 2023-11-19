@@ -5,6 +5,15 @@ import xml.parsers.expat as _expat
 from . import Defines as _defines
 import logging as _log
 import pyg4ometry.geant4 as _g4
+import os as _os
+
+
+def isComment(node):
+    # TODO must be a better way to find comments
+    if node.attributes:
+        return False
+    else:
+        return True
 
 
 class Reader:
@@ -71,6 +80,8 @@ class Reader:
             if "ENTITY" in en:
                 name = en.split()[1]
                 filename = _re.search(r"[^\"]+", " ".join(en.split()[3:])).group(0)
+                filename = _os.path.dirname(self.filename) + "/" + filename
+
                 with open(filename) as content_file:
                     # ensure the contents are properly prepared for parsing
                     contents = ""
@@ -131,7 +142,12 @@ class Reader:
         return self._registry
 
     def parseDefines(self, xmldoc):
-        self.xmldefines = xmldoc.getElementsByTagName("define")[0]
+        # might not have a define tag
+        definetag = xmldoc.getElementsByTagName("define")
+        if len(definetag) > 0:
+            self.xmldefines = definetag[0]
+        else:
+            return
 
         for df in self.xmldefines.childNodes:
             try:
@@ -169,8 +185,14 @@ class Reader:
                 _defines.Constant(name, value, self._registry, True)
             elif define_type == "quantity":
                 value = def_attrs["value"]
-                unit = def_attrs["unit"]
-                qtype = def_attrs["type"]
+                try:
+                    unit = def_attrs["unit"]
+                except KeyError:
+                    unit = None
+                try:
+                    qtype = def_attrs["type"]
+                except KeyError:
+                    qtype = None
                 _defines.Quantity(name, value, unit, qtype, self._registry, True)
             elif define_type == "variable":
                 value = def_attrs["value"]
@@ -1008,26 +1030,30 @@ class Reader:
 
         i = 0
         for chNode in node.childNodes:
-            rmin = _defines.Expression(
-                solid_name + "_zplane_rmin" + str(i),
-                chNode.attributes["rmin"].value,
-                self._registry,
-            )
-            rmax = _defines.Expression(
-                solid_name + "_zplane_rmax" + str(i),
-                chNode.attributes["rmax"].value,
-                self._registry,
-            )
-            z = _defines.Expression(
-                solid_name + "_zplane_z" + str(i),
-                chNode.attributes["z"].value,
-                self._registry,
-            )
-            Rmin.append(rmin)
-            Rmax.append(rmax)
-            Z.append(z)
-            i += 1
-
+            if isComment(chNode):
+                continue
+            try:
+                rmin = _defines.Expression(
+                    solid_name + "_zplane_rmin" + str(i),
+                    chNode.attributes["rmin"].value,
+                    self._registry,
+                )
+                rmax = _defines.Expression(
+                    solid_name + "_zplane_rmax" + str(i),
+                    chNode.attributes["rmax"].value,
+                    self._registry,
+                )
+                z = _defines.Expression(
+                    solid_name + "_zplane_z" + str(i),
+                    chNode.attributes["z"].value,
+                    self._registry,
+                )
+                Rmin.append(rmin)
+                Rmax.append(rmax)
+                Z.append(z)
+                i += 1
+            except:
+                print("error reading solid ", "polycone", solid_name, chNode)
         _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry, lunit, aunit)
 
     def parseGenericPolycone(self, node):
@@ -1890,18 +1916,36 @@ class Reader:
     def parsePhysicalVolumeChildren(self, node, vol):
         for chNode in node.childNodes:
             if chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "physvol":
-                volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
-
-                # Name
                 try:
-                    pvol_name = chNode.attributes["name"].value
-                except KeyError:
-                    # no name given - in the Geant4 GDML reader it would be <lv name> + _PV
-                    # here we do the same but we truly require unique names, so we count them
-                    count = self._physVolumeNameCount[volref]
-                    suffix = "_" + str(count) if count > 0 else ""
-                    pvol_name = volref + suffix + "_PV"
-                    self._physVolumeNameCount[volref] += 1
+                    volref = chNode.getElementsByTagName("volumeref")[0].attributes["ref"].value
+                    fileLV = None
+
+                    # Name
+                    try:
+                        pvol_name = chNode.attributes["name"].value
+                    except KeyError:
+                        # no name given - in the Geant4 GDML reader it would be <lv name> + _PV
+                        # here we do the same but we truly require unique names, so we count them
+                        count = self._physVolumeNameCount[volref]
+                        suffix = "_" + str(count) if count > 0 else ""
+                        pvol_name = volref + suffix + "_PV"
+                        self._physVolumeNameCount[volref] += 1
+
+                    # check if physical volume already in registry
+                    if pvol_name in self._registry.physicalVolumeDict:
+                        count = self._physVolumeNameCount[volref]
+                        suffix = "_" + str(count) if count > 0 else ""
+                        pvol_name = volref + suffix + "_PV"
+                        self._physVolumeNameCount[volref] += 1
+
+                except IndexError:
+                    fileref = chNode.getElementsByTagName("file")[0].attributes["name"].value
+                    print(fileref)
+                    r = Reader(fileref, skipMaterials=self._skipMaterials)
+                    fileReg = r.getRegistry()
+                    fileReg.name = fileref
+                    fileLV = r.getRegistry().getWorldVolume()
+                    pvol_name = fileLV.name + "_PV"
 
                 _log.info("Reader.extractStructureNodeData> %s" % (pvol_name))
 
@@ -1975,16 +2019,30 @@ class Reader:
                 except KeyError:
                     copyNumber = 0
 
-                physvol = _g4.PhysicalVolume(
-                    rotation,
-                    position,
-                    self._registry.logicalVolumeDict[volref],
-                    pvol_name,
-                    vol,
-                    registry=self._registry,
-                    copyNumber=copyNumber,
-                    scale=scale,
-                )
+                if fileLV:
+                    # Transfer the LV over to the main registry (TODO do we want this into the future)
+                    self._registry.addVolumeRecursive(fileLV)
+                    physvol = _g4.PhysicalVolume(
+                        rotation,
+                        position,
+                        fileLV,
+                        pvol_name,
+                        vol,
+                        registry=self._registry,
+                        copyNumber=copyNumber,
+                        scale=scale,
+                    )
+                else:
+                    physvol = _g4.PhysicalVolume(
+                        rotation,
+                        position,
+                        self._registry.logicalVolumeDict[volref],
+                        pvol_name,
+                        vol,
+                        registry=self._registry,
+                        copyNumber=copyNumber,
+                        scale=scale,
+                    )
 
             elif chNode.nodeType == node.ELEMENT_NODE and chNode.tagName == "replicavol":
                 nreplica = chNode.attributes["number"].value
