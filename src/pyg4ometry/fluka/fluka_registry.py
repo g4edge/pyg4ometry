@@ -296,7 +296,7 @@ class FlukaRegistry:
         nKEbin=None,
         maxSA=None,
         minSA=None,
-        nSEbin=None,
+        nSAbin=None,
     ):
         c1 = _card.Card(
             "USRBDX",
@@ -308,7 +308,7 @@ class FlukaRegistry:
             area,
             name,
         )
-        c2 = _card.Card("USRBDX", maxKE, minKE, nKEbin, maxSA, minSA, nSEbin, "&")
+        c2 = _card.Card("USRBDX", maxKE, minKE, nKEbin, maxSA, minSA, nSAbin, "&")
 
         self.addCard(c1)
         self.addCard(c2)
