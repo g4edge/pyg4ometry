@@ -58,8 +58,16 @@ class Writer:
 
         # loop over (init cards)
         for c in self.flukaRegistry.cardDict.keys():
-            if c == "TITLE" or c == "DEFAULTS" or c == "BEAM" or c == "BEAMPOS" or c == "":
-                print(self.flukaRegistry.cardDict[c])
+            if (
+                c == "TITLE"
+                or c == "DEFAULTS"
+                or c == "BEAM"
+                or c == "BEAMPOS"
+                or c == "PHOTONUC"
+                or c == "MUPHOTON"
+                or c == "PAIRBREM"
+                or c == ""
+            ):
                 if type(self.flukaRegistry.cardDict[c]) is list:
                     for cc in self.flukaRegistry.cardDict[c]:
                         cardstr = cc.toFreeString()
@@ -130,10 +138,16 @@ class Writer:
         for rk in self.flukaRegistry.regionDict.keys():
             try:
                 # print(self.flukaRegistry.assignmas[rk])
-                assignmaString = "ASSIGNMA " + self.flukaRegistry.assignmas[rk] + " " + rk
+                assignmaString = "ASSIGNMA " + self.flukaRegistry.assignmas[rk][0] + " " + rk
                 f.write(assignmaString + "\n")
+
+                # now electric field
+
+                # now magnetic field
             except KeyError:
                 print("Region does not have an assigned material", rk)
+
+        # loop over magnetic fields
 
         # loop over rotdefis
         for rotdefi in rotdefi.values():

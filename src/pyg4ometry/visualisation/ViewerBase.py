@@ -570,9 +570,9 @@ class ViewerBase:
             materials=materials,
         )
 
-        if gltfFileName.find("gltf") != -1:
+        if str(gltfFileName).find("gltf") != -1:
             gltf.save_json(gltfFileName)
-        elif gltfFileName.find("glb") != -1:
+        elif str(gltfFileName).find("glb") != -1:
             glb = b"".join(gltf.save_to_bytes())
             f = open(gltfFileName, "wb")
             f.write(glb)
@@ -645,4 +645,4 @@ class ViewerBase:
                 print(localmeshkey)
 
     def __repr__(self):
-        pass
+        return "ViewerBase"

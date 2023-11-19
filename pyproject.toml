@@ -79,7 +79,7 @@ zip-safe = false
 
 [tool.setuptools.package-data]
 "pyg4ometry.convert" = ["src/pyg4ometry/convert/*.csv"]
-"pyg4ometry.fluka" = ["src/pyg4ometry/fluka/*.flair"]
+"pyg4ometry.fluka" = ["src/pyg4ometry/fluka/*.flair","src/pyg4ometry/fluka/fluka_lowenergyneut.txt"]
 "pyg4ometry.geant4" = ["src/pyg4ometry/geant4/*.txt"]
 "pyg4ometry.visualisation" = ["src/pyg4ometry/visualisation/*.ini"]
 

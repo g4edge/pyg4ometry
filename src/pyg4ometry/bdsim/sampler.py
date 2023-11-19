@@ -1,10 +1,12 @@
 class Sampler:
-    def __init__(self, name, position, rotation, apertype, apers):
-        self.name = name
-        self.position = position
-        self.rotation = rotation
-        self.apertype = apertype
-        self.apers = apers
-        if len(apers) != 4:
-            msg = "apers1-4 must be provided."
-            raise ValueError(msg)
+    def __init__(self, range=None, type=None):
+        self.range = range
+        self.type = type
+
+    def write(self, fd):
+        if self.range is not None and self.type is None:
+            sampler_string = f"sample, range={self.range};\n"
+        elif self.range is None and self.type is not None:
+            sampler_string = f"sample, {self.type};\n"
+
+        fd.write(sampler_string)
