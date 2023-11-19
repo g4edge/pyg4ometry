@@ -75,6 +75,22 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
         freg.addBeamPos()
         freg.addUsrBin(name="bin1")
         freg.addUsrBin(name="bin2")
+        freg.addUsrBdx(
+            1,
+            0,
+            1,
+            "ALL-PART",
+            freg.PhysVolToRegionMap["wl"],
+            freg.PhysVolToRegionMap["qp1"],
+            "qp1_all_part",
+            area=1,
+            minKE=0.1,
+            maxKE=1.0,
+            nKEbin=100,
+            minSA=0,
+            maxSA=4 * 3.14159,
+            nSAbin=100,
+        )
         freg.addLowMatAllMaterials()
         freg.addUsrDump(mgdraw=100, lun=23, mgdrawOpt=-1)
         freg.addRandomiz()
