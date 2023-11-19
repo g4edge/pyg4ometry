@@ -645,4 +645,4 @@ class ViewerBase:
                 print(localmeshkey)
 
     def __repr__(self):
-        pass
+        return "ViewerBase"
