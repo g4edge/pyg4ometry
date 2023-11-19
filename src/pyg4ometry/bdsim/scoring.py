@@ -21,9 +21,7 @@ class Scorer:
                 scorer_string += f', {k}="{self.parameters[k]}" '
 
         if self.conversionFactorFile:
-            scorer_string += ", conversionFactorFile={conversionFactorFile}".format(
-                conversionFactorFile=self.conversionFactorFile
-            )
+            scorer_string += f", conversionFactorFile={self.conversionFactorFile}"
 
         if self.conversionFactorPath:
             scorer_string += ", conversionFactorFile={conversionFactorFile}".format(

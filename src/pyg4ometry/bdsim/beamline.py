@@ -15,9 +15,7 @@ class Beamline:
             else:
                 elements_string += e.name + ","
 
-        line_string = "{name}: line = ({elements});\n".format(
-            name=self.name, elements=elements_string
-        )
+        line_string = f"{self.name}: line = ({elements_string});\n"
         fd.write(line_string)
 
         use_string = f"use, period={self.name};\n"
