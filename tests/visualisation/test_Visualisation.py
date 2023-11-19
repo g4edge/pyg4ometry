@@ -5,7 +5,7 @@ def test_VtkViewer(testdata):
     r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
     v = _pyg4.visualisation.VtkViewer()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
-    v.view(interactive=False)
+    # v.view(interactive=False)
 
 
 def test_VtkViewerNew(testdata, tmptestdir):
@@ -24,5 +24,5 @@ def test_VtkViewerNew(testdata, tmptestdir):
     v.exportCutter("c1", tmptestdir / "cutter.vtp")
     v.getCutterPolydata("c1")
 
-    v.view(interactive=False)
+    # v.view(interactive=False)
     v.exportGLTFScene(tmptestdir / "test.gltf")
