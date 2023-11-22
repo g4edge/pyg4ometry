@@ -39,6 +39,13 @@ from . import T201_extrudedSubtraction
 from . import T202_extrudedReflection
 from . import T203_extrudedReflectionRotation
 
+from . import T300_Box
+from . import T301_Tubs
+
+from . import T400_extruder
+from . import T401_flukaRun
+from . import T402_flukaLoad
+
 
 def test_Geant42FlukaConversion_T001_Box(tmptestdir, testdata):
     T001_geant4Box2Fluka.Test(
@@ -362,3 +369,21 @@ def test_Geant42FlukaConversion_T201_extrudedSubtraction(tmptestdir, testdata):
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T201_extrudedSubtraction.inp"],
     )
+
+
+def test_Geant42FlukaConversion_T300_Box(tmptestdir, testdata):
+    T300_Box.Test(False, False)
+
+
+def test_Geant42FlukaConversion_T301_Tubs(tmptestdir, testdata):
+    T301_Tubs.Test(False, False)
+
+
+def test_PythonFluka_T400_extruder(tmptestdir, testdata):
+    T400_extruder.Test(False, outputPath=tmptestdir)
+
+
+def test_PythonFluka_T401(tmptestdir, testdata):
+    print(tmptestdir)
+    T401_flukaRun.Test(False, False, True, outputPath=tmptestdir)
+    T402_flukaLoad.Test(testdata)
