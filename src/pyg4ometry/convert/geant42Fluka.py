@@ -269,7 +269,10 @@ def geant4PhysicalVolume2Fluka(
                 for daughterZones in flukaDaughterOuterRegion.zones:
                     flukaMotherOuterRegion.addZone(daughterZones)
 
-        if physicalVolume.logicalVolume.type == "logical":
+        if (
+            physicalVolume.logicalVolume.type == "logical"
+            and physicalVolume.logicalVolume.solid.type != "extruder"
+        ):
             flukaRegistry.addRegion(flukaMotherRegion)
             materialName = physicalVolume.logicalVolume.material.name
             materialNameShort = flukaRegistry.materialShortName[materialName]
@@ -1966,7 +1969,7 @@ def geant4Solid2FlukaRegion(
             fregion.addZone(zone1)
 
     elif solid.type == "extruder":
-        fregion, flukaNamecount = geant4Solid2FlukaRegion(
+        fregion, flukaNameCount = geant4Solid2FlukaRegion(
             flukaNameCount,
             solid.g4_extrusions[solid.boundary],
             mtra=mtra,
@@ -1975,13 +1978,25 @@ def geant4Solid2FlukaRegion(
             addRegistry=True,
             commentName=solid.name,
         )
-        # flukaRegistry.regionDict.pop(fregion.name)
-        print(fregion.name, flukaRegistry.regionDict.keys())
+        flukaNameCount += 1
+
+        for sk in solid.g4_decomposed_extrusions:
+            for s in solid.g4_decomposed_extrusions[sk]:
+                temp, flukaNameCount = geant4Solid2FlukaRegion(
+                    flukaNameCount,
+                    s,
+                    mtra=mtra,
+                    tra=tra,
+                    flukaRegistry=flukaRegistry,
+                    addRegistry=True,
+                    commentName=solid.name + "_" + sk,
+                )
+                # flukaNameCount += 1
+                flukaRegistry.addRegion(temp)
+                flukaRegistry.addMaterialAssignments("COPPER", temp.name)
     else:
         fregion = _fluka.Region("R" + name)
         print(solid.type)
-
-    # print solid.name, name, solid.type, len(fregion.zones)
 
     return fregion, flukaNameCount
 

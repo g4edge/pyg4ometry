@@ -68,7 +68,7 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
 
         w = pyg4ometry.fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T1000_extruder.inp")
+        w.write(outputPath / "T400_extruder.inp")
 
     if vis:
         es.plot()
