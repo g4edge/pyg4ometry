@@ -1981,6 +1981,7 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
         for sk in solid.g4_decomposed_extrusions:
+            material = solid.getRegionMaterial(sk)
             for s in solid.g4_decomposed_extrusions[sk]:
                 temp, flukaNameCount = geant4Solid2FlukaRegion(
                     flukaNameCount,
@@ -1993,7 +1994,15 @@ def geant4Solid2FlukaRegion(
                 )
                 # flukaNameCount += 1
                 flukaRegistry.addRegion(temp)
-                flukaRegistry.addMaterialAssignments("COPPER", temp.name)
+
+                materialName = material.name
+                materialNameShort = flukaRegistry.materialShortName[materialName]
+
+                try:
+                    flukaMaterial = flukaRegistry.materials[materialNameShort]
+                    flukaRegistry.addMaterialAssignments(flukaMaterial, temp.name)
+                except KeyError:
+                    pass
     else:
         fregion = _fluka.Region("R" + name)
         print(solid.type)
