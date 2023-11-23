@@ -122,7 +122,10 @@ def test_FlairLoad_T020_ZEC(testdata):
 
 
 def test_FlairLoad_T021_QUA(testdata):
-    quaAABB = {"QUA_REG": _fluka.AABB([-150.0, 100.0, 0], [150.0, 200.0, 1000.0])}
+    quaAABB = {
+        "QUA_REG": _fluka.AABB([-150.0, 100.0, 0], [150.0, 200.0, 1000.0]),
+        "blackhol": _fluka.AABB([-150.0, 100.0, 0], [150.0, 200.0, 1000.0]),
+    }
     flairLoadWriteTest(testdata["fluka/021_QUA.inp"], False, False, quadricRegionAABBs=quaAABB)
 
 
@@ -247,7 +250,10 @@ def test_FlairLoad_T313_ZEC_transform(testdata):
 
 
 def test_FlairLoad_T314_QUA_transform(testdata):
-    quaAABB = {"QUA_REG": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0])}
+    quaAABB = {
+        "QUA_REG": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+        "blackhol": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+    }
     flairLoadWriteTest(
         testdata["fluka/314_QUA_transform.inp"],
         False,
@@ -265,7 +271,10 @@ def test_FlairLoad_T321_cube_from_plas_transform(testdata):
 
 
 def test_FlairLoad_T514_QUA_expansion(testdata):
-    quaAABB = {"QUA_REG": _fluka.AABB([-70.0, 50.0, 0], [70.0, 100.0, 500.0])}
+    quaAABB = {
+        "QUA_REG": _fluka.AABB([-70.0, 50.0, 0], [70.0, 100.0, 500.0]),
+        "blackhol": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+    }
     flairLoadWriteTest(
         testdata["fluka/514_QUA_expansion.inp"],
         False,
@@ -275,7 +284,10 @@ def test_FlairLoad_T514_QUA_expansion(testdata):
 
 
 def test_FlairLoad_T514_QUA_translation(testdata):
-    quaAABB = {"QUA_REG": _fluka.AABB([-150.0, 100.0, -1000.0], [150.0, 200.0, 0.0])}
+    quaAABB = {
+        "QUA_REG": _fluka.AABB([-150.0, 100.0, -1000.0], [150.0, 200.0, 0.0]),
+        "blackhol": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+    }
     flairLoadWriteTest(
         testdata["fluka/514_QUA_translation.inp"],
         False,
@@ -285,7 +297,10 @@ def test_FlairLoad_T514_QUA_translation(testdata):
 
 
 def test_FlairLoad_T514_QUA_rototranslation(testdata):
-    quaAABB = {"QUA_REG": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0])}
+    quaAABB = {
+        "QUA_REG": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+        "blackhol": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
+    }
     flairLoadWriteTest(
         testdata["fluka/514_QUA_rototranslation.inp"],
         False,
@@ -298,6 +313,7 @@ def test_FlairLoad_T514_QUA_coplanar(testdata):
     quaAABB = {
         "OUTER": _fluka.AABB([-200.0, 0.0, 0.0], [200, 200, 1100]),
         "INNER": _fluka.AABB([-100.0, 50.0, 250], [100.0, 150.0, 850.0]),
+        "blackhol": _fluka.AABB([-190.0, 40.0, 0], [50.0, 200.0, 1000.0]),
     }
     flairLoadWriteTest(
         testdata["fluka/514_QUA_coplanar.inp"], False, False, quadricRegionAABBs=quaAABB

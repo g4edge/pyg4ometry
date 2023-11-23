@@ -56,7 +56,7 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None):
         freg.addDefaults(default="PRECISIO")
         freg.addBeam(energy=100)
         freg.addBeamPos()
-        freg.addUserBin(
+        freg.addUsrBin(
             name="bin1",
             e1max=100,
             e2max=100,

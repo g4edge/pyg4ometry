@@ -28,6 +28,9 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+antlr4 -Dlanguage=Python3 -no-listener -visitor GdmlExpression.g4
+
 */
 
 grammar GdmlExpression;
@@ -103,6 +106,8 @@ funcname
    | SQRT
    | POWER
    | ABS
+   | MIN
+   | MAX
    ;
 
 relop
@@ -251,6 +256,13 @@ I
    : 'i'
    ;
 
+MIN
+   : 'min'
+   ;
+
+MAX
+   : 'max'
+   ;
 
 VARIABLE
    : VALID_ID_START VALID_ID_CHAR*
@@ -273,7 +285,10 @@ SCIENTIFIC_NUMBER
 
 
 fragment NUMBER
-   : ('0' .. '9') + POINT? (('0' .. '9') +)?
+   : POINT ('0' .. '9')+
+   | ('0' .. '9')+ POINT
+   | ('0' .. '9')+ POINT ('0' .. '9')+
+   | ('0' .. '9')+
    ;
 
 

@@ -130,6 +130,16 @@ class VtkViewerNew(_ViewerBase):
         w.SetInputConnection(self.cuttersAppFlt.GetOutputPort())
         w.Write()
 
+    def getCutterPolydata(self, name):
+        self.cuttersAppFlt = _vtk.vtkAppendPolyData()
+
+        for c in self.cutters[name]:
+            self.cuttersAppFlt.AddInputConnection(c.GetOutputPort())
+
+        self.cuttersAppFlt.Update()
+
+        return self.cuttersAppFlt.GetOutput()
+
     def addClipper(self, origin, normal, bClipperCutter=False, bClipperCloseCuts=True):
         if self.bBuiltPipelines:
             print("Need to add clipper before pipelines are built")
@@ -224,6 +234,52 @@ class VtkViewerNew(_ViewerBase):
                 self.actors[k + str(i)] = actor
                 self.ren.AddActor(actor)
 
+                #################
+                # Cutters
+                #################
+                normFlt = _vtk.vtkPolyDataNormals()  #
+                normFlt.SetFeatureAngle(179)
+                normFlt.SetInputConnection(triFlt.GetOutputPort())
+
+                normFlt = triFlt  # bypass the normal filter
+
+                # Add cutters
+                for ck in self.cutterOrigins:
+                    p = self.cutterOrigins[ck]
+                    n = self.cutterNormals[ck]
+
+                    plane = _vtk.vtkPlane()
+                    plane.SetOrigin(*p)
+                    plane.SetNormal(*n)
+
+                    cutTransFlt = _vtk.vtkTransformPolyDataFilter()
+                    vtransCut = _vtk.vtkTransform()
+                    vtransCut.SetMatrix(vtrans)
+                    cutTransFlt.SetTransform(vtransCut)
+                    cutTransFlt.SetInputConnection(normFlt.GetOutputPort())
+
+                    cutFlt = _vtk.vtkCutter()
+                    cutFlt.SetCutFunction(plane)
+                    cutFlt.SetInputConnection(cutTransFlt.GetOutputPort())
+
+                    try:
+                        self.cutters[ck].append(cutFlt)
+                    except KeyError:
+                        self.cutters[ck] = []
+                        self.cutters[ck].append(cutFlt)
+
+                    cutMap = _vtk.vtkPolyDataMapper()
+                    cutMap.ScalarVisibilityOff()
+                    cutMap.SetInputConnection(cutFlt.GetOutputPort())
+
+                    cutActor = _vtk.vtkActor()  # vtk(Actor)
+                    cutActor.SetMapper(cutMap)
+                    cutActor.GetProperty().SetLineWidth(4)
+                    cutActor.GetProperty().SetColor(*[1, 0, 0])
+                    cutActor.GetProperty().SetRepresentationToSurface()
+                    self.actors[k + "_" + ck] = cutActor
+                    self.ren.AddActor(cutActor)
+
         self.bBuiltPipelines = True
 
     def buildPipelinesAppend(self):
@@ -279,6 +335,8 @@ class VtkViewerNew(_ViewerBase):
                 n = self.cutterNormals[ck]
 
                 plane = _vtk.vtkPlane()
+                print(p)
+                print(n)
                 plane.SetOrigin(*p)
                 plane.SetNormal(*n)
 
@@ -420,6 +478,48 @@ class VtkViewerNew(_ViewerBase):
 
     def __repr__(self):
         return ""
+
+    def addTracks(self, pd):
+        mapper = _vtk.vtkPolyDataMapper()
+        if _vtk.VTK_MAJOR_VERSION <= 5:
+            # mapper.SetInput(reader.GetOutput())
+            mapper.SetInput(pd)
+        else:
+            mapper.SetInputData(pd)
+
+        mapper.ScalarVisibilityOff()
+        actor = _vtk.vtkActor()
+        actor.SetMapper(mapper)
+        actor.GetProperty().SetRepresentationToWireframe()
+        actor.GetProperty().SetColor(1, 0, 0)
+        actor.GetProperty().SetOpacity(0.5)
+        actor.GetProperty().SetLineWidth(2)
+
+        self.ren.AddActor(actor)
+
+    def addScoringMesh(self, gd):
+        colorFunc = _vtk.vtkColorTransferFunction()
+        colorFunc.AddRGBPoint(-10, 1, 1, 1)
+        colorFunc.AddRGBPoint(0, 0, 1, 0)
+
+        opacity = _vtk.vtkPiecewiseFunction()
+
+        volumeProperty = _vtk.vtkVolumeProperty()
+        volumeProperty.SetColor(colorFunc)
+        volumeProperty.SetScalarOpacity(opacity)
+        volumeProperty.SetInterpolationTypeToLinear()
+        volumeProperty.SetIndependentComponents(2)
+
+        volumeMapper = _vtk.vtkOpenGLGPUVolumeRayCastMapper()
+        volumeMapper.SetInputData(gd)
+        volumeMapper.SetBlendModeToMaximumIntensity()
+
+        volume = _vtk.vtkVolume()
+        volume.SetMapper(volumeMapper)
+        volume.SetProperty(volumeProperty)
+        volume.RotateY(-90)
+
+        self.ren.AddVolume(volume)
 
 
 class VtkViewerColouredNew(VtkViewerNew):

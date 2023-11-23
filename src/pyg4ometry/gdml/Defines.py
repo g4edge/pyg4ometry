@@ -209,6 +209,100 @@ def upgradeToTransformation(var, reg, addRegistry=False):
     return [rot, tra]
 
 
+def operationReturnType(name, strExpr, v1, v2, type1, type2, reg):
+    if type1 == Constant and type2 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif (type1 == Constant and type2 == Variable) or (type1 == Variable and type2 == Constant):
+        v = Variable(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Constant and type2 == Quantity:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Constant:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v1.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Variable and type2 == Variable:
+        v = Variable(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Variable and type2 == Quantity:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Variable:
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v1.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Quantity and type2 == Quantity:
+        # TODO check if units match
+        v = Quantity(
+            name,
+            strExpr,
+            unit=v2.unit,
+            type=v2.type,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type1 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+    elif type2 == Constant:
+        v = Constant(
+            name,
+            strExpr,
+            registry=reg,
+            addRegistry=False,
+        )
+        return v
+
+
 class DefineBase:
     """
     Common bits for a define. Must have a name and a registry. Adding
@@ -283,7 +377,7 @@ class ScalarBase(DefineBase):
         return self._typeName + f" : {self.name} = {self.expression!s}"
 
     def __float__(self):
-        return self.expression.eval()
+        return self.eval()
 
     def __add__(self, other):
         v1 = upgradeToStringExpression(self.registry, self)
@@ -296,6 +390,11 @@ class ScalarBase(DefineBase):
             addRegistry=False,
         )
         return v
+
+        # return operationReturnType(f"var_{v1}_add_{v2}",
+        #                           f"({v1}) + ({v2})",
+        #                           self, other,
+        #                           type(self), type(other), self.registry)
 
     def __sub__(self, other):
         v1 = upgradeToStringExpression(self.registry, self)
@@ -589,6 +688,42 @@ def abs(arg):
     return v
 
 
+def min(arg1, arg2):
+    """
+    absolute value of arg
+
+    :param arg: Argument of abs(arg)
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
+    v1 = upgradeToStringExpression(arg1.registry, arg1)
+    v2 = upgradeToStringExpression(arg1.registry, arg2)
+    v = Constant(
+        f"min_{v1}_{v2}",
+        f"min({v1},{v2})",
+        registry=arg1.registry,
+        addRegistry=False,
+    )
+    return v
+
+
+def max(arg1, arg2):
+    """
+    absolute value of arg
+
+    :param arg: Argument of abs(arg)
+    :type  arg: Constant, Quantity, Variable or Expression
+    """
+    v1 = upgradeToStringExpression(arg1.registry, arg1)
+    v2 = upgradeToStringExpression(arg1.registry, arg2)
+    v = Constant(
+        f"min_{v1}_{v2}",
+        f"max({v1},{v2})",
+        registry=arg1.registry,
+        addRegistry=False,
+    )
+    return v
+
+
 class Constant(ScalarBase):
     """
     GDML constant define wrapper object
@@ -682,6 +817,16 @@ class Quantity(ScalarBase):
         return self._typeName + " : {} = {} [{}] {}".format(
             self.name, str(self.expression), self.unit, self.type
         )
+
+    def eval(self):
+        # it is possible for a quantity not to have a unit and it uses the units of variables in the expression
+        if self.unit:
+            uval = _Units.unit(self.unit)
+        else:
+            uval = 1.0
+
+        # evaluate quantity with units baked in
+        return super().eval() * uval
 
 
 class Variable(ScalarBase):
