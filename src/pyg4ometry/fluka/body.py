@@ -1366,8 +1366,8 @@ class ARB(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "{}\n{}\n{}\n{}\n{}".format(
-            itfs(line1), itfs(line2), itfs(line3), itfs(line4), itfs(self.facenumbers)
+        return prefix + "ARB {} {}\n{}\n{}\n{}\n{}".format(
+            self.name, itfs(line1), itfs(line2), itfs(line3), itfs(line4), itfs(self.facenumbers)
         )
 
     def hash(self):

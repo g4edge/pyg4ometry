@@ -1636,7 +1636,6 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Tet":
-        print("calling pycsgmesh2FlakaRegion tet")
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
@@ -1787,28 +1786,48 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
-        print("calling pycsgmesh2FlakaRegion TwistedBox")
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrap":
-        print("calling pycsgmesh2FlakaRegion TwistedTrap")
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrd":
-        print("calling pycsgmesh2FlakaRegion TwistedTrd")
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "TwistedTubs":
-        print("calling pycsgmesh2FlakaRegion TwistedTubs")
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
-        print("calling pycsgmesh2FlakaRegion GenericTrap")
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+        uval = _Units.unit(solid.lunit)
+
+        verts = []
+        for i in range(1, 9):
+            vert = [x / 10 for x in list(solid.get_vertex(i))]
+            verts.append(vert)
+
+        print(verts)
+        fbody1 = _fluka.ARB(
+            "B" + name + "01",
+            verts,
+            # [1234., 8765., 1562., 2673., 3487., 1485.],
+            [4321.0, 5678.0, 2651.0, 3762.0, 7843.0, 5841.0],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fregion = _fluka.Region("R" + name)
+        fregion.addZone(fzone)
+
+        # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "Union":
