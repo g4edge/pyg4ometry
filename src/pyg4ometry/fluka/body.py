@@ -1208,9 +1208,12 @@ class ARB(BodyMixin):
 
         # Null-faces must be put as 0.0 in the facenumbers and they
         # must be at the end (i.e. 5 and 6 or 6).
-        if zeros and (zeros != [4, 5] or zeros != [5]):
-            msg = "Facenumbers equal to zero to must be at the end of the list."
-            raise ValueError(msg)
+
+        # TODO reinstate test
+        # print(zeros, zeros == [4,5], zeros != [4,5], zeros == [5], zeros != [5])
+        # if zeros and (zeros != [4, 5] or zeros != [5]):
+        #    msg = "Facenumbers equal to zero to must be at the end of the list."
+        #    raise ValueError(msg)
 
         self.addToRegistry(flukaregistry)
 

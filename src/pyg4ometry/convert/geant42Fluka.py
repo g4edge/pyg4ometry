@@ -1636,7 +1636,35 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "Tet":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+        uval = _Units.unit(solid.lunit)
+
+        verts = []
+        verts.append([x / 10 for x in solid.anchor.eval()])
+        verts.append([x / 10 for x in solid.p2.eval()])
+        verts.append([x / 10 for x in solid.p3.eval()])
+        verts.append([x / 10 for x in solid.p4.eval()])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+
+        fbody1 = _fluka.ARB(
+            "B" + name + "01",
+            verts,
+            [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(fbody1)
+        fregion = _fluka.Region("R" + name)
+        fregion.addZone(fzone)
+
+        # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
@@ -1811,7 +1839,6 @@ def geant4Solid2FlukaRegion(
             vert = [x / 10 for x in list(solid.get_vertex(i))]
             verts.append(vert)
 
-        print(verts)
         fbody1 = _fluka.ARB(
             "B" + name + "01",
             verts,
@@ -1827,7 +1854,6 @@ def geant4Solid2FlukaRegion(
         fregion = _fluka.Region("R" + name)
         fregion.addZone(fzone)
 
-        # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
 
     elif solid.type == "Union":
