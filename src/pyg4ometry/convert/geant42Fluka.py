@@ -1855,15 +1855,38 @@ def geant4Solid2FlukaRegion(
             vert = [x / 10 for x in list(solid.get_vertex(i))]
             verts.append(vert)
 
-        fbody1 = _fluka.ARB(
-            "B" + name + "01",
-            verts,
-            # [1234., 8765., 1562., 2673., 3487., 1485.],
-            [4321.0, 5678.0, 2651.0, 3762.0, 7843.0, 5841.0],
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
+        verts_tuple = tuple(tuple(vert) for vert in verts)
+        verts_set = set(verts_tuple)
+
+        if len(verts_set) == 8:
+            fbody1 = _fluka.ARB(
+                "B" + name + "01",
+                verts,
+                [4321.0, 5678.0, 2651.0, 3762.0, 7843.0, 5841.0],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        elif len(verts_set) == 6:
+            fbody1 = _fluka.WED(
+                "B" + name + "01",
+                verts[0],
+                [v1 - v2 for v1, v2 in zip(verts[1], verts[0])],
+                [v1 - v2 for v1, v2 in zip(verts[3], verts[0])],
+                [v1 - v2 for v1, v2 in zip(verts[4], verts[0])],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        elif len(verts_set) == 4:
+            fbody1 = _fluka.ARB(
+                "B" + name + "01",
+                verts,
+                [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
 
         fzone = _fluka.Zone()
         fzone.addIntersection(fbody1)
