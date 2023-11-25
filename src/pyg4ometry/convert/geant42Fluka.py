@@ -599,67 +599,83 @@ def geant4Solid2FlukaRegion(
         dir = pDz * _transformation.tbxyz2matrix(rotation).dot(_np.array([0, 0, 1]))
         base = -dir / 2.0
 
-        fbody1 = _fluka.TRC(
-            "B" + name + "01",
-            base,
-            dir,
-            pRmax1,
-            pRmax2,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
+        if pRmin1 == 0 and pRmin2 == 0 and pSPhi == 0 and pDPhi == 2 * _np.pi:
+            fzone = _fluka.Zone()
 
-        if pRmin1 != 0 and pRmin2 != 0:
-            fbody2 = _fluka.TRC(
-                "B" + name + "02",
+            fbody1 = flukaRegistry.makeBody(
+                TRC,
+                name="B" + name + "01",
+                major_centre=[0, 0, -pDz / 2],
+                direction=[0, 0, 1],
+                major_radius=pRmax1,
+                minor_radius=pRmax2,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+            fzone.addIntersection(fbody1)
+        else:
+            fbody1 = _fluka.TRC(
+                "B" + name + "01",
                 base,
                 dir,
-                pRmin1,
-                pRmin2,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-            )
-
-        # phi cuts
-        if pDPhi != 2 * _np.pi:
-            fbody3 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "03",
-                [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
-                [0, 0, 0],
+                pRmax1,
+                pRmax2,
                 transform=transform,
                 flukaregistry=flukaRegistry,
                 comment=commentName,
             )
 
-            fbody4 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "04",
-                [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
-                [0, 0, 0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
+            if pRmin1 != 0 and pRmin2 != 0:
+                fbody2 = _fluka.TRC(
+                    "B" + name + "02",
+                    base,
+                    dir,
+                    pRmin1,
+                    pRmin2,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                )
 
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
+            # phi cuts
+            if pDPhi != 2 * _np.pi:
+                fbody3 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "03",
+                    [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
+                    [0, 0, 0],
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
 
-        if pRmin1 != 0 and pRmin2 != 0:
-            fzone.addSubtraction(fbody2)
+                fbody4 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "04",
+                    [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
+                    [0, 0, 0],
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
 
-        if pDPhi != 2 * _np.pi:
-            if pDPhi < _np.pi:
-                fzone.addSubtraction(fbody3)
-                fzone.addIntersection(fbody4)
-            elif pDPhi == _np.pi:
-                fzone.addSubtraction(fbody3)
-            else:
-                fzone1 = _fluka.Zone()
-                fzone1.addIntersection(fbody3)
-                fzone1.addSubtraction(fbody4)
-                fzone.addSubtraction(fzone1)
+            fzone = _fluka.Zone()
+            fzone.addIntersection(fbody1)
+
+            if pRmin1 != 0 and pRmin2 != 0:
+                fzone.addSubtraction(fbody2)
+
+            if pDPhi != 2 * _np.pi:
+                if pDPhi < _np.pi:
+                    fzone.addSubtraction(fbody3)
+                    fzone.addIntersection(fbody4)
+                elif pDPhi == _np.pi:
+                    fzone.addSubtraction(fbody3)
+                else:
+                    fzone1 = _fluka.Zone()
+                    fzone1.addIntersection(fbody3)
+                    fzone1.addSubtraction(fbody4)
+                    fzone.addSubtraction(fzone1)
 
         fregion = _fluka.Region("R" + name)
         fregion.addZone(fzone)
