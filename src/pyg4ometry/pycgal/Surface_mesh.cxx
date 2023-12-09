@@ -27,6 +27,8 @@ typedef Kernel_ECER::Point_3 Point_3_ECER;
 typedef Kernel_ECER::Vector_3 Vector_3_ECER;
 typedef CGAL::Surface_mesh<Kernel_ECER::Point_3> Surface_mesh_ECER;
 
+#include <CGAL/Surface_mesh/IO/OFF.h>
+
 #include "geom.h"
 
 namespace std {
@@ -54,20 +56,48 @@ template <> struct hash<Surface_mesh_EPICK> {
       std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.y())));
       std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.z())));
     }
-
-    // loop over faces
-    /*
-    for(Surface_mesh::Face_index fd : sm->faces()) {
-      for(Surface_mesh::Halfedge_index hd :
-    CGAL::halfedges_around_face(sm->halfedge(fd),*sm)) {
-        // std::hash_combine(h,std::hash<int>()((int)sm->source(hd)));
-      }
-    }
-    */
-
     return h;
   }
 };
+
+template <> struct hash<Surface_mesh_EPECK> {
+  std::size_t operator()(const Surface_mesh_EPECK &sm) const {
+    using std::hash;
+    using std::size_t;
+
+    std::size_t h = 0;
+
+    // loop over vertices
+    Surface_mesh_EPECK::Point p;
+    for (Surface_mesh_EPECK::Vertex_index vd : sm.vertices()) {
+      p = sm.point(vd);
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.x())));
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.y())));
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.z())));
+    }
+    return h;
+  }
+};
+
+template <> struct hash<Surface_mesh_ECER> {
+  std::size_t operator()(const Surface_mesh_ECER &sm) const {
+    using std::hash;
+    using std::size_t;
+
+    std::size_t h = 0;
+
+    // loop over vertices
+    Surface_mesh_ECER::Point p;
+    for (Surface_mesh_EPECK::Vertex_index vd : sm.vertices()) {
+      p = sm.point(vd);
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.x())));
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.y())));
+      std::hash_combine(h, std::hash<double>()(CGAL::to_double(p.z())));
+    }
+    return h;
+  }
+};
+
 } // namespace std
 
 /**********************************************************************
@@ -398,6 +428,18 @@ PYBIND11_MODULE(Surface_mesh, m) {
            [](Surface_mesh_EPICK &sm) {
              return std::hash<Surface_mesh_EPICK>{}(sm);
            })
+      .def("loadOff",
+           [](Surface_mesh_EPICK &sm, const std::string &fn) {
+             std::ifstream ifstr(fn);
+             CGAL::IO::read_OFF(ifstr, sm);
+             ifstr.close();
+           })
+      .def("writeOff",
+           [](Surface_mesh_EPICK &sm, const std::string &fn) {
+             std::ofstream ofstr(fn);
+             CGAL::IO::write_OFF(ofstr, sm);
+             ofstr.close();
+           })
 
       /* Adding Vertices, Edges, and Faces */
       .def("add_vertex", [](Surface_mesh_EPICK &sm) { return sm.add_vertex(); })
@@ -466,8 +508,22 @@ PYBIND11_MODULE(Surface_mesh, m) {
       /* Not part of the CGAL API */
       .def("clone",
            [](Surface_mesh_EPECK &sm) { return Surface_mesh_EPECK(sm); })
-      //.def("hash",[](Surface_mesh_EPECK &sm) {return
-      // std::hash<Surface_mesh_EPECK>{}(sm);})
+      .def("hash",
+           [](Surface_mesh_EPECK &sm) {
+             return std::hash<Surface_mesh_EPECK>{}(sm);
+           })
+      .def("loadOff",
+           [](Surface_mesh_EPECK &sm, const std::string &fn) {
+             std::ifstream ifstr(fn);
+             CGAL::IO::read_OFF(ifstr, sm);
+             ifstr.close();
+           })
+      .def("writeOff",
+           [](Surface_mesh_EPECK &sm, const std::string &fn) {
+             std::ofstream ofstr(fn);
+             CGAL::IO::write_OFF(ofstr, sm);
+             ofstr.close();
+           })
 
       /* Adding Vertices, Edges, and Faces */
       .def("add_vertex", [](Surface_mesh_EPECK &sm) { return sm.add_vertex(); })
@@ -611,7 +667,26 @@ PYBIND11_MODULE(Surface_mesh, m) {
   /**********************************************************************
   ECER
   **********************************************************************/
-  py::class_<Surface_mesh_ECER>(m, "Surface_mesh_ECER").def(py::init<>());
+  py::class_<Surface_mesh_ECER>(m, "Surface_mesh_ECER")
+      .def(py::init<>())
+      /* Not part of the CGAL API */
+      .def("clone", [](Surface_mesh_ECER &sm) { return Surface_mesh_ECER(sm); })
+      .def("hash",
+           [](Surface_mesh_EPER &sm) {
+             return std::hash<Surface_mesh_ECER>{}(sm);
+           })
+      .def("loadOff",
+           [](Surface_mesh_ECER &sm, const std::string &fn) {
+             std::ifstream ifstr(fn);
+             CGAL::IO::read_OFF(ifstr, sm);
+             ifstr.close();
+           })
+      .def("writeOff", [](Surface_mesh_ECER &sm, const std::string &fn) {
+        std::ofstream ofstr(fn);
+        CGAL::IO::write_OFF(ofstr, sm);
+        ofstr.close();
+      });
+
   // m.def("toCGALSurfaceMesh", [](Surface_mesh_ECER &sm, py::list &polygons)
   // {toCGALSurfaceMesh(sm, polygons);});
   m.def("toVerticesAndPolygons",

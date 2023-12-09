@@ -107,11 +107,11 @@ class CSG:
         scal = Aff_transformation_3.Aff_transformation_3_EPECK(x, 0, 0, 0, y, 0, 0, 0, z, 1)
         Polygon_mesh_processing.transform(scal, self.sm)
 
-    def getNumberPolys(self):
-        return self.sm.number_of_faces()
-
     def getNumberVertices(self):
         return self.sm.number_of_vertices()
+
+    def getNumberPolys(self):
+        return self.sm.number_of_faces()
 
     def vertexCount(self):
         return self.sm.number_of_vertices()
@@ -415,6 +415,12 @@ class CSG:
             "minEdge": minEdge,
             "maxEdge": maxEdge,
         }
+
+    def loadOff(self, fileName):
+        self.sm.loadOff(fileName)
+
+    def writeOff(self, fileName):
+        self.sm.writeOff(fileName)
 
 
 def do_intersect(csg1, csg2):
