@@ -27,6 +27,7 @@ typedef Kernel_ECER::Point_3 Point_3_ECER;
 typedef Kernel_ECER::Vector_3 Vector_3_ECER;
 typedef CGAL::Surface_mesh<Kernel_ECER::Point_3> Surface_mesh_ECER;
 
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Surface_mesh/IO/OFF.h>
 
 #include "geom.h"
@@ -440,7 +441,15 @@ PYBIND11_MODULE(Surface_mesh, m) {
              CGAL::IO::write_OFF(ofstr, sm);
              ofstr.close();
            })
-
+      .def("number_of_border_cycles",
+           [](Surface_mesh_EPICK &sm) {
+             std::vector<
+                 boost::graph_traits<Surface_mesh_EPICK>::halfedge_descriptor>
+                 border_cycles;
+             CGAL::Polygon_mesh_processing::extract_boundary_cycles(
+                 sm, std::back_inserter(border_cycles));
+             return border_cycles.size();
+           })
       /* Adding Vertices, Edges, and Faces */
       .def("add_vertex", [](Surface_mesh_EPICK &sm) { return sm.add_vertex(); })
       .def("add_vertex", [](Surface_mesh_EPICK &sm,
@@ -524,7 +533,15 @@ PYBIND11_MODULE(Surface_mesh, m) {
              CGAL::IO::write_OFF(ofstr, sm);
              ofstr.close();
            })
-
+      .def("number_of_border_cycles",
+           [](Surface_mesh_EPECK &sm) {
+             std::vector<
+                 boost::graph_traits<Surface_mesh_EPICK>::halfedge_descriptor>
+                 border_cycles;
+             CGAL::Polygon_mesh_processing::extract_boundary_cycles(
+                 sm, std::back_inserter(border_cycles));
+             return border_cycles.size();
+           })
       /* Adding Vertices, Edges, and Faces */
       .def("add_vertex", [](Surface_mesh_EPECK &sm) { return sm.add_vertex(); })
       .def("add_vertex", [](Surface_mesh_EPECK &sm,
@@ -672,7 +689,7 @@ PYBIND11_MODULE(Surface_mesh, m) {
       /* Not part of the CGAL API */
       .def("clone", [](Surface_mesh_ECER &sm) { return Surface_mesh_ECER(sm); })
       .def("hash",
-           [](Surface_mesh_EPER &sm) {
+           [](Surface_mesh_ECER &sm) {
              return std::hash<Surface_mesh_ECER>{}(sm);
            })
       .def("loadOff",
@@ -681,10 +698,18 @@ PYBIND11_MODULE(Surface_mesh, m) {
              CGAL::IO::read_OFF(ifstr, sm);
              ifstr.close();
            })
-      .def("writeOff", [](Surface_mesh_ECER &sm, const std::string &fn) {
-        std::ofstream ofstr(fn);
-        CGAL::IO::write_OFF(ofstr, sm);
-        ofstr.close();
+      .def("writeOff",
+           [](Surface_mesh_ECER &sm, const std::string &fn) {
+             std::ofstream ofstr(fn);
+             CGAL::IO::write_OFF(ofstr, sm);
+             ofstr.close();
+           })
+      .def("number_of_border_cycles", [](Surface_mesh_ECER &sm) {
+        std::vector<boost::graph_traits<Surface_mesh_ECER>::halfedge_descriptor>
+            border_cycles;
+        CGAL::Polygon_mesh_processing::extract_boundary_cycles(
+            sm, std::back_inserter(border_cycles));
+        return border_cycles.size();
       });
 
   // m.def("toCGALSurfaceMesh", [](Surface_mesh_ECER &sm, py::list &polygons)
