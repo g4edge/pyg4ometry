@@ -380,6 +380,9 @@ class CSG:
     def isOutwardOriented(self):
         return CGAL.is_outward_oriented(self.sm)
 
+    def doesSelfIntersect(self):
+        return Polygon_mesh_processing.does_self_intersect(self.sm)
+
     def info(self):
         vAp = self.toVerticesAndPolygons()
 
