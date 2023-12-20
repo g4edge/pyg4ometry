@@ -368,6 +368,50 @@ class CSG:
     def area(self):
         return Polygon_mesh_processing.area(self.sm)
 
+    def minEdgeLength(self):
+        vAp = self.toVerticesAndPolygons()
+        v = vAp[0]
+        p = vAp[1]
+        n = vAp[2]
+
+        minEdge = 9e99
+        maxEdge = -9e99
+
+        for i, tri in enumerate(p):
+            for j, vertInd in enumerate(tri):
+                v1 = _np.array(v[j])
+                v2 = _np.array(v[(j + 1) % 3])
+                dv = v2 - v1
+                mdv = _np.sqrt((dv * dv).sum())
+
+                if mdv < minEdge:
+                    minEdge = mdv
+                if mdv > maxEdge:
+                    maxEdge = mdv
+        return minEdge
+
+    def maxEdgeLength(self):
+        vAp = self.toVerticesAndPolygons()
+        v = vAp[0]
+        p = vAp[1]
+        n = vAp[2]
+
+        minEdge = 9e99
+        maxEdge = -9e99
+
+        for i, tri in enumerate(p):
+            for j, vertInd in enumerate(tri):
+                v1 = _np.array(v[j])
+                v2 = _np.array(v[(j + 1) % 3])
+                dv = v2 - v1
+                mdv = _np.sqrt((dv * dv).sum())
+
+                if mdv < minEdge:
+                    minEdge = mdv
+                if mdv > maxEdge:
+                    maxEdge = mdv
+        return maxEdge
+
     def isNull(self):
         return self.sm.number_of_faces() == 0
 
@@ -384,28 +428,6 @@ class CSG:
         return Polygon_mesh_processing.does_self_intersect(self.sm)
 
     def info(self):
-        vAp = self.toVerticesAndPolygons()
-
-        v = vAp[0]
-        p = vAp[1]
-        n = vAp[2]
-
-        minEdge = 1e9
-        maxEdge = -1e9
-
-        for i, tri in enumerate(p):
-            for j, vertInd in enumerate(tri):
-                v1 = _np.array(v[j])
-                v2 = _np.array(v[(j + 1) % 3])
-                dv = v2 - v1
-                mdv = _np.sqrt((dv * dv).sum())
-                # print(j,(j+1)%3,v1,v2,dv, mdv)
-
-                if mdv < minEdge:
-                    minEdge = mdv
-                if mdv > maxEdge:
-                    maxEdge = mdv
-
         return {
             "null": self.isNull(),
             "closed": self.isClosed(),
@@ -415,8 +437,8 @@ class CSG:
             "area": self.area(),
             "numberfaces": self.getNumberPolys(),
             "numbervertices": self.getNumberVertices(),
-            "minEdge": minEdge,
-            "maxEdge": maxEdge,
+            "minEdge": self.minEdgeLength(),
+            "maxEdge": self.maxEdgeLength(),
         }
 
     def loadOff(self, fileName):
