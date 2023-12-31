@@ -49,7 +49,7 @@ repos:
     rev: "v2.2.5"
     hooks:
       - id: codespell
-        args: ["-L", "commun,"]
+        args: ["-L", "commun,precess"]
         types_or: [rst]
 
   - repo: https://github.com/pre-commit/pygrep-hooks
