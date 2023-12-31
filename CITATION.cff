@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "pyg4ometry"
+title: pyg4ometry
 doi: UPDATEME
 date-released: 2000-01-01
 url: https://github.com/github-linguist/linguist
@@ -7,56 +7,56 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: Boogert
     given-names: Stewart
-    orcid:
+    orcid: https://orcid.org/0000-0002-7742-4237
   - family-names: Abramov
     given-names: Andrey
-    orcid:
+    orcid: https://orcid.org/0000-0003-4764-771X
   - family-names: Nevay
     given-names: Laurence
-    orcid:
+    orcid: https://orcid.org/0000-0001-7225-9327
   - family-names: Shields
     given-names: William
-    orcid:
+    orcid: https://orcid.org/0000-0002-4825-0303
   - family-names: Walker
     given-names: Stuart
-    orcid:
+    orcid: https://orcid.org/0000-0003-1301-2724
   - family-names: Butcher
     given-names: Alistar
-    orcid:
+    affiliation: "Royal Holloway, University of London"
   - family-names: Hernalsteens
     given-names: Cedric
-    orcid:
+    orcid: https://orcid.org/0000-0003-4038-6246
   - family-names: Shellswell
-    given-names: Ben
-    orcid:
+    given-names: Benjamin
+    affiliation: "Royal Holloway, University of London"
   - family-names: Ramoisiaux
     given-names: Eliott
-    orcid:
+    orcid: https://orcid.org/0000-0001-6523-2337
   - family-names: Pertoldi
     given-names: Luigi
     orcid: https://orcid.org/0000-0002-0467-2571
   - family-names: Huber
     given-names: Manuel
-    email: ich@manuelhu.de
+    email: info@manuelhu.de
 
 preferred-citation:
   type: article
   authors:
-  - family-names: "Boogert"
-    given-names: "Stewart"
-    orcid:
-  - family-names: "Abramov"
-    given-names: "Andrey"
-    orcid:
-  - family-names: "Nevay"
-    given-names: "Laurence"
-    orcid:
-  - family-names: "Shields"
-    given-names: "William"
-    orcid:
-  - family-names: "Walker"
-    given-names: "Stuart"
-    orcid:
+  - family-names: Boogert
+    given-names: Stewart
+    orcid: https://orcid.org/0000-0002-7742-4237
+  - family-names: Abramov
+    given-names: Andrey
+    orcid: https://orcid.org/0000-0003-4764-771X
+  - family-names: Nevay
+    given-names: Laurence
+    orcid: https://orcid.org/0000-0001-7225-9327
+  - family-names: Shields
+    given-names: William
+    orcid: https://orcid.org/0000-0002-4825-0303
+  - family-names: Walker
+    given-names: Stuart
+    orcid: https://orcid.org/0000-0003-1301-2724
   doi: 10.1016/j.cpc.2021.108228
   journal: "Comput. Phys. Commun."
   title: "Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries"

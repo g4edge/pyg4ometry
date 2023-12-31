@@ -22,7 +22,6 @@ particle tracking simulations.
 
    Source Code <https://github.com/g4edge/pyg4ometry>
    License <https://github.com/g4edge/pyg4ometry/blob/main/LICENSE>
-   authorship
    citation
    Changelog <https://github.com/g4edge/pyg4ometry/releases>
    version_history
