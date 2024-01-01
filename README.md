@@ -12,6 +12,7 @@ Carlo (Geant4 and Fluka) geometries.
 ![GitHub issues](https://img.shields.io/github/issues/g4edge/pyg4ometry?logo=github)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/g4edge/pyg4ometry?logo=github)
 ![License](https://img.shields.io/github/license/g4edge/pyg4ometry)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10449301.svg)](https://doi.org/10.5281/zenodo.10449301)
 [![Read the Docs](https://img.shields.io/readthedocs/pyg4ometry?logo=readthedocs)](https://pyg4ometry.readthedocs.io)
 
 ## Installing from PyPI
@@ -20,7 +21,7 @@ Carlo (Geant4 and Fluka) geometries.
 > pip install pyg4ometry
 ```
 
-> **Note**
+> [!NOTE]
 > Most dependencies are available from pip but you will need to install OpenCASCADE
 > cgal, mpfr, gmp, ROOT. Find [here](https://github.com/g4edge/pyg4ometry/tree/main/.github/bin)
 > installers for Ubuntu and MacOS.
@@ -33,7 +34,7 @@ Carlo (Geant4 and Fluka) geometries.
 > pip install . # add --editable for a version which you can edit
 ```
 
-> **Note**
+> [!NOTE]
 > If you update your Git clone and the pybind11 C++ has changes you will need
 > to reinstall and thus trigger a rebuild.
 

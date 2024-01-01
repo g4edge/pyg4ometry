@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: pyg4ometry
-doi: UPDATEME
-date-released: 2000-01-01
+doi: 10.5281/zenodo.10449301
+date-released: 2024-01-01
 url: https://github.com/github-linguist/linguist
 message: "If you use this software, please cite it as below."
 authors:

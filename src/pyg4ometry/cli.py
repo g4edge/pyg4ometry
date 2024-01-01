@@ -78,24 +78,7 @@ def _parseStrPythonAsDict(strPython):
 
 
 def _printCitation():
-    s = "S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,\n"
-    s += "pyg4ometry: A Python library for the creation of Monte Carlo radiation\n"
-    s += "transport physical geometries, Computer Physics Communications **272** 108228 (2022)."
-    print(s)
-    print("Bibtex entry:")
-    s = "@article{Boogert:2020cmn,\n"
-    s += '    author = "Boogert, Stewart and Abramov, Andrey and Nevay, Laurence and Shields, William and Walker, Stuart",\n'
-    s += '    title = "{Pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries}",\n'
-    s += '    eprint = "2010.01109",\n'
-    s += '    archivePrefix = "arXiv",\n'
-    s += '    primaryClass = "physics.comp-ph",\n'
-    s += '    doi = "10.1016/j.cpc.2021.108228",\n'
-    s += '    journal = "Comput. Phys. Commun.",\n'
-    s += '    volume = "272",\n'
-    s += '    pages = "108228",\n'
-    s += '    year = "2022"\n'
-    s += "}"
-    print(s)
+    print("https://zenodo.org/doi/10.5281/zenodo.10449301")
 
 
 def cli(
