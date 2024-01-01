@@ -22,7 +22,7 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         os: [ubuntu-latest, macOS-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install non-pip dependencies on Ubuntu
         if: runner.os == 'Linux'
         run: sudo .github/bin/install-deps-ubuntu.sh
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://g4edge/ubuntu:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get number of CPU cores
         uses: SimenB/github-actions-cpu-cores@v2
         id: cpu-cores
@@ -65,7 +65,7 @@ jobs:
     name: Calculate and upload test coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Install non-pip dependencies on Ubuntu
