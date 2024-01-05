@@ -9182,1192 +9182,1207 @@ static PyObject *__pyx_pf_10pyg4ometry_5pycsg_4core_3CSG_26saveVTK(
     __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2);
     __pyx_t_2 = 0;
-    /*try:*/ {{__Pyx_PyThreadState_declare __Pyx_PyThreadState_assign
-                   __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
-    __Pyx_XGOTREF(__pyx_t_6);
-    __Pyx_XGOTREF(__pyx_t_7);
-    __Pyx_XGOTREF(__pyx_t_8);
     /*try:*/ {
-      __pyx_v_f = __pyx_t_4;
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":240
-       *         """
-       *         with open(filename, 'w') as f:
-       *             f.write('# vtk DataFile Version 3.0\n')             #
-       * <<<<<<<<<<<<<< f.write('pycsg output\n') f.write('ASCII\n')
-       */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 240, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_4 =
-          (__pyx_t_1)
-              ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
-                                         __pyx_kp_u_vtk_DataFile_Version_3_0)
-              : __Pyx_PyObject_CallOneArg(__pyx_t_2,
-                                          __pyx_kp_u_vtk_DataFile_Version_3_0);
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 240, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":241
-       *         with open(filename, 'w') as f:
-       *             f.write('# vtk DataFile Version 3.0\n')
-       *             f.write('pycsg output\n')             # <<<<<<<<<<<<<<
-       *             f.write('ASCII\n')
-       *             f.write('DATASET POLYDATA\n')
-       */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 241, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_4 =
-          (__pyx_t_1)
-              ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
-                                         __pyx_kp_u_pycsg_output)
-              : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_kp_u_pycsg_output);
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 241, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":242
-       *             f.write('# vtk DataFile Version 3.0\n')
-       *             f.write('pycsg output\n')
-       *             f.write('ASCII\n')             # <<<<<<<<<<<<<<
-       *             f.write('DATASET POLYDATA\n')
-       *
-       */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 242, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_4 =
-          (__pyx_t_1)
-              ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_n_u_ASCII)
-              : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_n_u_ASCII);
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 242, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":243
-       *             f.write('pycsg output\n')
-       *             f.write('ASCII\n')
-       *             f.write('DATASET POLYDATA\n')             # <<<<<<<<<<<<<<
-       *
-       *             verts, cells, count = self.toVerticesAndPolygons()
-       */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 243, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_4 = (__pyx_t_1)
-                      ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
-                                                 __pyx_kp_u_DATASET_POLYDATA)
-                      : __Pyx_PyObject_CallOneArg(__pyx_t_2,
-                                                  __pyx_kp_u_DATASET_POLYDATA);
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 243, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":245
-       *             f.write('DATASET POLYDATA\n')
-       *
-       *             verts, cells, count = self.toVerticesAndPolygons() #
-       * <<<<<<<<<<<<<<
-       *
-       *             f.write('POINTS {0} float\n'.format(len(verts)))
-       */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self,
-                                            __pyx_n_s_toVerticesAndPolygons);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 245, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_4 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1)
-                              : __Pyx_PyObject_CallNoArg(__pyx_t_2);
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 245, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      if ((likely(PyTuple_CheckExact(__pyx_t_4))) ||
-          (PyList_CheckExact(__pyx_t_4))) {
-        PyObject *sequence = __pyx_t_4;
-        Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-        if (unlikely(size != 3)) {
-          if (size > 3)
-            __Pyx_RaiseTooManyValuesError(3);
-          else if (size >= 0)
-            __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        }
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        if (likely(PyTuple_CheckExact(sequence))) {
-          __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
-          __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
-          __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2);
-        } else {
-          __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
-          __pyx_t_1 = PyList_GET_ITEM(sequence, 1);
-          __pyx_t_5 = PyList_GET_ITEM(sequence, 2);
-        }
-        __Pyx_INCREF(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_t_5);
-#else
-        __pyx_t_2 = PySequence_ITEM(sequence, 0);
-        if (unlikely(!__pyx_t_2))
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_1 = PySequence_ITEM(sequence, 1);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_5 = PySequence_ITEM(sequence, 2);
-        if (unlikely(!__pyx_t_5))
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_5);
-#endif
-        __Pyx_DECREF(__pyx_t_4);
-        __pyx_t_4 = 0;
-      } else {
-        Py_ssize_t index = -1;
-        __pyx_t_9 = PyObject_GetIter(__pyx_t_4);
-        if (unlikely(!__pyx_t_9))
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __Pyx_DECREF(__pyx_t_4);
-        __pyx_t_4 = 0;
-        __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
-        index = 0;
-        __pyx_t_2 = __pyx_t_10(__pyx_t_9);
-        if (unlikely(!__pyx_t_2))
-          goto __pyx_L13_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_2);
-        index = 1;
-        __pyx_t_1 = __pyx_t_10(__pyx_t_9);
-        if (unlikely(!__pyx_t_1))
-          goto __pyx_L13_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_1);
-        index = 2;
-        __pyx_t_5 = __pyx_t_10(__pyx_t_9);
-        if (unlikely(!__pyx_t_5))
-          goto __pyx_L13_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_5);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 3) < 0)
-          __PYX_ERR(0, 245, __pyx_L7_error)
-        __pyx_t_10 = NULL;
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-        goto __pyx_L14_unpacking_done;
-      __pyx_L13_unpacking_failed:;
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-        __pyx_t_10 = NULL;
-        if (__Pyx_IterFinish() == 0)
-          __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 245, __pyx_L7_error)
-      __pyx_L14_unpacking_done:;
-      }
-      __pyx_v_verts = __pyx_t_2;
-      __pyx_t_2 = 0;
-      __pyx_v_cells = __pyx_t_1;
-      __pyx_t_1 = 0;
-      __pyx_v_count = __pyx_t_5;
-      __pyx_t_5 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":247
-       *             verts, cells, count = self.toVerticesAndPolygons()
-       *
-       *             f.write('POINTS {0} float\n'.format(len(verts))) #
-       * <<<<<<<<<<<<<< for v in verts: f.write('{0} {1} {2}\n'.format(v[0],
-       * v[1], v[2]))
-       */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_5))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_POINTS_0_float,
-                                            __pyx_n_s_format);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_11 = PyObject_Length(__pyx_v_verts);
-      if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1)))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __pyx_t_9 = PyInt_FromSsize_t(__pyx_t_11);
-      if (unlikely(!__pyx_t_9))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_12 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_12)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_12);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-        }
-      }
-      __pyx_t_1 =
-          (__pyx_t_12)
-              ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_12, __pyx_t_9)
-              : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_9);
-      __Pyx_XDECREF(__pyx_t_12);
-      __pyx_t_12 = 0;
-      __Pyx_DECREF(__pyx_t_9);
-      __pyx_t_9 = 0;
-      if (unlikely(!__pyx_t_1))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __pyx_t_2 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
-        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_5);
-        if (likely(__pyx_t_2)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_5);
-          __Pyx_INCREF(__pyx_t_2);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_5, function);
-        }
-      }
-      __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_2,
-                                                         __pyx_t_1)
-                              : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_1);
-      __Pyx_XDECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 247, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_5);
-      __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":248
-       *
-       *             f.write('POINTS {0} float\n'.format(len(verts)))
-       *             for v in verts:             # <<<<<<<<<<<<<<
-       *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
-       *             numCells = len(cells)
-       */
-      if (likely(PyList_CheckExact(__pyx_v_verts)) ||
-          PyTuple_CheckExact(__pyx_v_verts)) {
-        __pyx_t_4 = __pyx_v_verts;
-        __Pyx_INCREF(__pyx_t_4);
-        __pyx_t_11 = 0;
-        __pyx_t_13 = NULL;
-      } else {
-        __pyx_t_11 = -1;
-        __pyx_t_4 = PyObject_GetIter(__pyx_v_verts);
-        if (unlikely(!__pyx_t_4))
-          __PYX_ERR(0, 248, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_13 = Py_TYPE(__pyx_t_4)->tp_iternext;
-        if (unlikely(!__pyx_t_13))
-          __PYX_ERR(0, 248, __pyx_L7_error)
-      }
-      for (;;) {
-        if (likely(!__pyx_t_13)) {
-          if (likely(PyList_CheckExact(__pyx_t_4))) {
-            if (__pyx_t_11 >= PyList_GET_SIZE(__pyx_t_4))
-              break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_5 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_11);
-            __Pyx_INCREF(__pyx_t_5);
-            __pyx_t_11++;
-            if (unlikely(0 < 0))
-              __PYX_ERR(0, 248, __pyx_L7_error)
-#else
-            __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
-            __pyx_t_11++;
-            if (unlikely(!__pyx_t_5))
-              __PYX_ERR(0, 248, __pyx_L7_error)
-            __Pyx_GOTREF(__pyx_t_5);
-#endif
-          } else {
-            if (__pyx_t_11 >= PyTuple_GET_SIZE(__pyx_t_4))
-              break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_11);
-            __Pyx_INCREF(__pyx_t_5);
-            __pyx_t_11++;
-            if (unlikely(0 < 0))
-              __PYX_ERR(0, 248, __pyx_L7_error)
-#else
-            __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
-            __pyx_t_11++;
-            if (unlikely(!__pyx_t_5))
-              __PYX_ERR(0, 248, __pyx_L7_error)
-            __Pyx_GOTREF(__pyx_t_5);
-#endif
-          }
-        } else {
-          __pyx_t_5 = __pyx_t_13(__pyx_t_4);
-          if (unlikely(!__pyx_t_5)) {
-            PyObject *exc_type = PyErr_Occurred();
-            if (exc_type) {
-              if (likely(__Pyx_PyErr_GivenExceptionMatches(
-                      exc_type, PyExc_StopIteration)))
-                PyErr_Clear();
-              else
-                __PYX_ERR(0, 248, __pyx_L7_error)
-            }
-            break;
-          }
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __Pyx_XDECREF_SET(__pyx_v_v, __pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":249
-         *             f.write('POINTS {0} float\n'.format(len(verts)))
-         *             for v in verts:
-         *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2])) #
-         * <<<<<<<<<<<<<< numCells = len(cells) f.write('POLYGONS {0}
-         * {1}\n'.format(numCells, count + numCells))
-         */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 =
-            __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0_1_2, __pyx_n_s_format);
-        if (unlikely(!__pyx_t_9))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_12 = __Pyx_GetItemInt(__pyx_v_v, 0, long, 1,
-                                      __Pyx_PyInt_From_long, 0, 0, 1);
-        if (unlikely(!__pyx_t_12))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_v, 1, long, 1,
-                                      __Pyx_PyInt_From_long, 0, 0, 1);
-        if (unlikely(!__pyx_t_14))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_15 = __Pyx_GetItemInt(__pyx_v_v, 2, long, 1,
-                                      __Pyx_PyInt_From_long, 0, 0, 1);
-        if (unlikely(!__pyx_t_15))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_16 = NULL;
-        __pyx_t_17 = 0;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
-          __pyx_t_16 = PyMethod_GET_SELF(__pyx_t_9);
-          if (likely(__pyx_t_16)) {
-            PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_9);
-            __Pyx_INCREF(__pyx_t_16);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_9, function);
-            __pyx_t_17 = 1;
-          }
-        }
-#if CYTHON_FAST_PYCALL
-        if (PyFunction_Check(__pyx_t_9)) {
-          PyObject *__pyx_temp[4] = {__pyx_t_16, __pyx_t_12, __pyx_t_14,
-                                     __pyx_t_15};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(
-              __pyx_t_9, __pyx_temp + 1 - __pyx_t_17, 3 + __pyx_t_17);
-          if (unlikely(!__pyx_t_2))
-            __PYX_ERR(0, 249, __pyx_L7_error)
-          __Pyx_XDECREF(__pyx_t_16);
-          __pyx_t_16 = 0;
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_12);
-          __pyx_t_12 = 0;
-          __Pyx_DECREF(__pyx_t_14);
-          __pyx_t_14 = 0;
-          __Pyx_DECREF(__pyx_t_15);
-          __pyx_t_15 = 0;
-        } else
-#endif
-#if CYTHON_FAST_PYCCALL
-            if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
-          PyObject *__pyx_temp[4] = {__pyx_t_16, __pyx_t_12, __pyx_t_14,
-                                     __pyx_t_15};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(
-              __pyx_t_9, __pyx_temp + 1 - __pyx_t_17, 3 + __pyx_t_17);
-          if (unlikely(!__pyx_t_2))
-            __PYX_ERR(0, 249, __pyx_L7_error)
-          __Pyx_XDECREF(__pyx_t_16);
-          __pyx_t_16 = 0;
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_12);
-          __pyx_t_12 = 0;
-          __Pyx_DECREF(__pyx_t_14);
-          __pyx_t_14 = 0;
-          __Pyx_DECREF(__pyx_t_15);
-          __pyx_t_15 = 0;
-        } else
-#endif
-        {
-          __pyx_t_18 = PyTuple_New(3 + __pyx_t_17);
-          if (unlikely(!__pyx_t_18))
-            __PYX_ERR(0, 249, __pyx_L7_error)
-          __Pyx_GOTREF(__pyx_t_18);
-          if (__pyx_t_16) {
-            __Pyx_GIVEREF(__pyx_t_16);
-            PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_16);
-            __pyx_t_16 = NULL;
-          }
-          __Pyx_GIVEREF(__pyx_t_12);
-          PyTuple_SET_ITEM(__pyx_t_18, 0 + __pyx_t_17, __pyx_t_12);
-          __Pyx_GIVEREF(__pyx_t_14);
-          PyTuple_SET_ITEM(__pyx_t_18, 1 + __pyx_t_17, __pyx_t_14);
-          __Pyx_GIVEREF(__pyx_t_15);
-          PyTuple_SET_ITEM(__pyx_t_18, 2 + __pyx_t_17, __pyx_t_15);
-          __pyx_t_12 = 0;
-          __pyx_t_14 = 0;
-          __pyx_t_15 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_18, NULL);
-          if (unlikely(!__pyx_t_2))
-            __PYX_ERR(0, 249, __pyx_L7_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_18);
-          __pyx_t_18 = 0;
-        }
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-        __pyx_t_9 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-          __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
-          if (likely(__pyx_t_9)) {
-            PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
-            __Pyx_INCREF(__pyx_t_9);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_1, function);
-          }
-        }
-        __pyx_t_5 =
-            (__pyx_t_9)
-                ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_9, __pyx_t_2)
-                : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2);
-        __Pyx_XDECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-        __Pyx_DECREF(__pyx_t_2);
-        __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_5))
-          __PYX_ERR(0, 249, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1);
-        __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":248
-         *
-         *             f.write('POINTS {0} float\n'.format(len(verts)))
-         *             for v in verts:             # <<<<<<<<<<<<<<
-         *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
-         *             numCells = len(cells)
-         */
-      }
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":250
-       *             for v in verts:
-       *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
-       *             numCells = len(cells)             # <<<<<<<<<<<<<<
-       *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
-       * numCells)) for cell in cells:
-       */
-      __pyx_t_11 = PyObject_Length(__pyx_v_cells);
-      if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1)))
-        __PYX_ERR(0, 250, __pyx_L7_error)
-      __pyx_t_4 = PyInt_FromSsize_t(__pyx_t_11);
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 250, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_v_numCells = __pyx_t_4;
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":251
-       *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
-       *             numCells = len(cells)
-       *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
-       * numCells))             # <<<<<<<<<<<<<< for cell in cells: f.write('{0}
-       * '.format(len(cell)))
-       */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-      if (unlikely(!__pyx_t_5))
-        __PYX_ERR(0, 251, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_2 =
-          __Pyx_PyObject_GetAttrStr(__pyx_kp_u_POLYGONS_0_1, __pyx_n_s_format);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 251, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_9 = PyNumber_Add(__pyx_v_count, __pyx_v_numCells);
-      if (unlikely(!__pyx_t_9))
-        __PYX_ERR(0, 251, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_18 = NULL;
-      __pyx_t_17 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_18)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_18);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-          __pyx_t_17 = 1;
-        }
-      }
-#if CYTHON_FAST_PYCALL
-      if (PyFunction_Check(__pyx_t_2)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_18, __pyx_v_numCells, __pyx_t_9};
-        __pyx_t_1 = __Pyx_PyFunction_FastCall(
-            __pyx_t_2, __pyx_temp + 1 - __pyx_t_17, 2 + __pyx_t_17);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 251, __pyx_L7_error)
-        __Pyx_XDECREF(__pyx_t_18);
-        __pyx_t_18 = 0;
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-      } else
-#endif
-#if CYTHON_FAST_PYCCALL
-          if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_18, __pyx_v_numCells, __pyx_t_9};
-        __pyx_t_1 = __Pyx_PyCFunction_FastCall(
-            __pyx_t_2, __pyx_temp + 1 - __pyx_t_17, 2 + __pyx_t_17);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 251, __pyx_L7_error)
-        __Pyx_XDECREF(__pyx_t_18);
-        __pyx_t_18 = 0;
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-      } else
-#endif
       {
-        __pyx_t_15 = PyTuple_New(2 + __pyx_t_17);
-        if (unlikely(!__pyx_t_15))
-          __PYX_ERR(0, 251, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_15);
-        if (__pyx_t_18) {
-          __Pyx_GIVEREF(__pyx_t_18);
-          PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_18);
-          __pyx_t_18 = NULL;
-        }
-        __Pyx_INCREF(__pyx_v_numCells);
-        __Pyx_GIVEREF(__pyx_v_numCells);
-        PyTuple_SET_ITEM(__pyx_t_15, 0 + __pyx_t_17, __pyx_v_numCells);
-        __Pyx_GIVEREF(__pyx_t_9);
-        PyTuple_SET_ITEM(__pyx_t_15, 1 + __pyx_t_17, __pyx_t_9);
-        __pyx_t_9 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_15, NULL);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 251, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15);
-        __pyx_t_15 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __pyx_t_2 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
-        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_5);
-        if (likely(__pyx_t_2)) {
-          PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_5);
-          __Pyx_INCREF(__pyx_t_2);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_5, function);
-        }
-      }
-      __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_2,
-                                                         __pyx_t_1)
-                              : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_1);
-      __Pyx_XDECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_4))
-        __PYX_ERR(0, 251, __pyx_L7_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_5);
-      __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
+        __Pyx_PyThreadState_declare __Pyx_PyThreadState_assign
+            __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_8);
+        /*try:*/ {
+          __pyx_v_f = __pyx_t_4;
+          __pyx_t_4 = 0;
 
-      /* "pyg4ometry/pycsg/core.pyx":252
-       *             numCells = len(cells)
-       *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
-       * numCells)) for cell in cells:             # <<<<<<<<<<<<<< f.write('{0}
-       * '.format(len(cell))) for index in cell:
-       */
-      if (likely(PyList_CheckExact(__pyx_v_cells)) ||
-          PyTuple_CheckExact(__pyx_v_cells)) {
-        __pyx_t_4 = __pyx_v_cells;
-        __Pyx_INCREF(__pyx_t_4);
-        __pyx_t_11 = 0;
-        __pyx_t_13 = NULL;
-      } else {
-        __pyx_t_11 = -1;
-        __pyx_t_4 = PyObject_GetIter(__pyx_v_cells);
-        if (unlikely(!__pyx_t_4))
-          __PYX_ERR(0, 252, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_13 = Py_TYPE(__pyx_t_4)->tp_iternext;
-        if (unlikely(!__pyx_t_13))
-          __PYX_ERR(0, 252, __pyx_L7_error)
-      }
-      for (;;) {
-        if (likely(!__pyx_t_13)) {
-          if (likely(PyList_CheckExact(__pyx_t_4))) {
-            if (__pyx_t_11 >= PyList_GET_SIZE(__pyx_t_4))
-              break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_5 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_11);
-            __Pyx_INCREF(__pyx_t_5);
-            __pyx_t_11++;
-            if (unlikely(0 < 0))
-              __PYX_ERR(0, 252, __pyx_L7_error)
-#else
-            __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
-            __pyx_t_11++;
-            if (unlikely(!__pyx_t_5))
-              __PYX_ERR(0, 252, __pyx_L7_error)
-            __Pyx_GOTREF(__pyx_t_5);
-#endif
-          } else {
-            if (__pyx_t_11 >= PyTuple_GET_SIZE(__pyx_t_4))
-              break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_11);
-            __Pyx_INCREF(__pyx_t_5);
-            __pyx_t_11++;
-            if (unlikely(0 < 0))
-              __PYX_ERR(0, 252, __pyx_L7_error)
-#else
-            __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
-            __pyx_t_11++;
-            if (unlikely(!__pyx_t_5))
-              __PYX_ERR(0, 252, __pyx_L7_error)
-            __Pyx_GOTREF(__pyx_t_5);
-#endif
-          }
-        } else {
-          __pyx_t_5 = __pyx_t_13(__pyx_t_4);
-          if (unlikely(!__pyx_t_5)) {
-            PyObject *exc_type = PyErr_Occurred();
-            if (exc_type) {
-              if (likely(__Pyx_PyErr_GivenExceptionMatches(
-                      exc_type, PyExc_StopIteration)))
-                PyErr_Clear();
-              else
-                __PYX_ERR(0, 252, __pyx_L7_error)
-            }
-            break;
-          }
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __Pyx_XDECREF_SET(__pyx_v_cell, __pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":253
-         *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
-         * numCells)) for cell in cells: f.write('{0} '.format(len(cell))) #
-         * <<<<<<<<<<<<<< for index in cell: f.write('{0} '.format(index))
-         */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0, __pyx_n_s_format);
-        if (unlikely(!__pyx_t_15))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_19 = PyObject_Length(__pyx_v_cell);
-        if (unlikely(__pyx_t_19 == ((Py_ssize_t)-1)))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __pyx_t_9 = PyInt_FromSsize_t(__pyx_t_19);
-        if (unlikely(!__pyx_t_9))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_18 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_15))) {
-          __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_15);
-          if (likely(__pyx_t_18)) {
-            PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_15);
-            __Pyx_INCREF(__pyx_t_18);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_15, function);
-          }
-        }
-        __pyx_t_2 =
-            (__pyx_t_18)
-                ? __Pyx_PyObject_Call2Args(__pyx_t_15, __pyx_t_18, __pyx_t_9)
-                : __Pyx_PyObject_CallOneArg(__pyx_t_15, __pyx_t_9);
-        __Pyx_XDECREF(__pyx_t_18);
-        __pyx_t_18 = 0;
-        __Pyx_DECREF(__pyx_t_9);
-        __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_2))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_15);
-        __pyx_t_15 = 0;
-        __pyx_t_15 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-          __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_1);
-          if (likely(__pyx_t_15)) {
-            PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
-            __Pyx_INCREF(__pyx_t_15);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_1, function);
-          }
-        }
-        __pyx_t_5 =
-            (__pyx_t_15)
-                ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_15, __pyx_t_2)
-                : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2);
-        __Pyx_XDECREF(__pyx_t_15);
-        __pyx_t_15 = 0;
-        __Pyx_DECREF(__pyx_t_2);
-        __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_5))
-          __PYX_ERR(0, 253, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1);
-        __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":254
-         *             for cell in cells:
-         *                 f.write('{0} '.format(len(cell)))
-         *                 for index in cell:             # <<<<<<<<<<<<<<
-         *                     f.write('{0} '.format(index))
-         *                 f.write('\n')
-         */
-        if (likely(PyList_CheckExact(__pyx_v_cell)) ||
-            PyTuple_CheckExact(__pyx_v_cell)) {
-          __pyx_t_5 = __pyx_v_cell;
-          __Pyx_INCREF(__pyx_t_5);
-          __pyx_t_19 = 0;
-          __pyx_t_20 = NULL;
-        } else {
-          __pyx_t_19 = -1;
-          __pyx_t_5 = PyObject_GetIter(__pyx_v_cell);
-          if (unlikely(!__pyx_t_5))
-            __PYX_ERR(0, 254, __pyx_L7_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_20 = Py_TYPE(__pyx_t_5)->tp_iternext;
-          if (unlikely(!__pyx_t_20))
-            __PYX_ERR(0, 254, __pyx_L7_error)
-        }
-        for (;;) {
-          if (likely(!__pyx_t_20)) {
-            if (likely(PyList_CheckExact(__pyx_t_5))) {
-              if (__pyx_t_19 >= PyList_GET_SIZE(__pyx_t_5))
-                break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_19);
+          /* "pyg4ometry/pycsg/core.pyx":240
+           *         """
+           *         with open(filename, 'w') as f:
+           *             f.write('# vtk DataFile Version 3.0\n')             #
+           * <<<<<<<<<<<<<< f.write('pycsg output\n') f.write('ASCII\n')
+           */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 240, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
               __Pyx_INCREF(__pyx_t_1);
-              __pyx_t_19++;
-              if (unlikely(0 < 0))
-                __PYX_ERR(0, 254, __pyx_L7_error)
-#else
-              __pyx_t_1 = PySequence_ITEM(__pyx_t_5, __pyx_t_19);
-              __pyx_t_19++;
-              if (unlikely(!__pyx_t_1))
-                __PYX_ERR(0, 254, __pyx_L7_error)
-              __Pyx_GOTREF(__pyx_t_1);
-#endif
-            } else {
-              if (__pyx_t_19 >= PyTuple_GET_SIZE(__pyx_t_5))
-                break;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_19);
-              __Pyx_INCREF(__pyx_t_1);
-              __pyx_t_19++;
-              if (unlikely(0 < 0))
-                __PYX_ERR(0, 254, __pyx_L7_error)
-#else
-              __pyx_t_1 = PySequence_ITEM(__pyx_t_5, __pyx_t_19);
-              __pyx_t_19++;
-              if (unlikely(!__pyx_t_1))
-                __PYX_ERR(0, 254, __pyx_L7_error)
-              __Pyx_GOTREF(__pyx_t_1);
-#endif
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
             }
-          } else {
-            __pyx_t_1 = __pyx_t_20(__pyx_t_5);
-            if (unlikely(!__pyx_t_1)) {
-              PyObject *exc_type = PyErr_Occurred();
-              if (exc_type) {
-                if (likely(__Pyx_PyErr_GivenExceptionMatches(
-                        exc_type, PyExc_StopIteration)))
-                  PyErr_Clear();
-                else
-                  __PYX_ERR(0, 254, __pyx_L7_error)
-              }
-              break;
-            }
-            __Pyx_GOTREF(__pyx_t_1);
           }
-          __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_1);
+          __pyx_t_4 = (__pyx_t_1)
+                          ? __Pyx_PyObject_Call2Args(
+                                __pyx_t_2, __pyx_t_1,
+                                __pyx_kp_u_vtk_DataFile_Version_3_0)
+                          : __Pyx_PyObject_CallOneArg(
+                                __pyx_t_2, __pyx_kp_u_vtk_DataFile_Version_3_0);
+          __Pyx_XDECREF(__pyx_t_1);
           __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 240, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
 
-          /* "pyg4ometry/pycsg/core.pyx":255
-           *                 f.write('{0} '.format(len(cell)))
-           *                 for index in cell:
-           *                     f.write('{0} '.format(index))             #
-           * <<<<<<<<<<<<<< f.write('\n')
+          /* "pyg4ometry/pycsg/core.pyx":241
+           *         with open(filename, 'w') as f:
+           *             f.write('# vtk DataFile Version 3.0\n')
+           *             f.write('pycsg output\n')             # <<<<<<<<<<<<<<
+           *             f.write('ASCII\n')
+           *             f.write('DATASET POLYDATA\n')
+           */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 241, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+            }
+          }
+          __pyx_t_4 = (__pyx_t_1)
+                          ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
+                                                     __pyx_kp_u_pycsg_output)
+                          : __Pyx_PyObject_CallOneArg(__pyx_t_2,
+                                                      __pyx_kp_u_pycsg_output);
+          __Pyx_XDECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 241, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":242
+           *             f.write('# vtk DataFile Version 3.0\n')
+           *             f.write('pycsg output\n')
+           *             f.write('ASCII\n')             # <<<<<<<<<<<<<<
+           *             f.write('DATASET POLYDATA\n')
            *
            */
           __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
           if (unlikely(!__pyx_t_2))
-            __PYX_ERR(0, 255, __pyx_L7_error)
+            __PYX_ERR(0, 242, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0, __pyx_n_s_format);
-          if (unlikely(!__pyx_t_9))
-            __PYX_ERR(0, 255, __pyx_L7_error)
-          __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_18 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
-            __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_9);
-            if (likely(__pyx_t_18)) {
-              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_9);
-              __Pyx_INCREF(__pyx_t_18);
+          __pyx_t_1 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_1);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_9, function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
             }
           }
-          __pyx_t_15 =
-              (__pyx_t_18)
-                  ? __Pyx_PyObject_Call2Args(__pyx_t_9, __pyx_t_18,
-                                             __pyx_v_index)
-                  : __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_index);
-          __Pyx_XDECREF(__pyx_t_18);
-          __pyx_t_18 = 0;
-          if (unlikely(!__pyx_t_15))
-            __PYX_ERR(0, 255, __pyx_L7_error)
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_DECREF(__pyx_t_9);
-          __pyx_t_9 = 0;
-          __pyx_t_9 = NULL;
+          __pyx_t_4 =
+              (__pyx_t_1)
+                  ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
+                                             __pyx_n_u_ASCII)
+                  : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_n_u_ASCII);
+          __Pyx_XDECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 242, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":243
+           *             f.write('pycsg output\n')
+           *             f.write('ASCII\n')
+           *             f.write('DATASET POLYDATA\n')             #
+           * <<<<<<<<<<<<<<
+           *
+           *             verts, cells, count = self.toVerticesAndPolygons()
+           */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 243, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-            __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_2);
-            if (likely(__pyx_t_9)) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
               PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
-              __Pyx_INCREF(__pyx_t_9);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+            }
+          }
+          __pyx_t_4 =
+              (__pyx_t_1)
+                  ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1,
+                                             __pyx_kp_u_DATASET_POLYDATA)
+                  : __Pyx_PyObject_CallOneArg(__pyx_t_2,
+                                              __pyx_kp_u_DATASET_POLYDATA);
+          __Pyx_XDECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 243, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":245
+           *             f.write('DATASET POLYDATA\n')
+           *
+           *             verts, cells, count = self.toVerticesAndPolygons() #
+           * <<<<<<<<<<<<<<
+           *
+           *             f.write('POINTS {0} float\n'.format(len(verts)))
+           */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(
+              __pyx_v_self, __pyx_n_s_toVerticesAndPolygons);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 245, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+            }
+          }
+          __pyx_t_4 = (__pyx_t_1)
+                          ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1)
+                          : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+          __Pyx_XDECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 245, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          if ((likely(PyTuple_CheckExact(__pyx_t_4))) ||
+              (PyList_CheckExact(__pyx_t_4))) {
+            PyObject *sequence = __pyx_t_4;
+            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+            if (unlikely(size != 3)) {
+              if (size > 3)
+                __Pyx_RaiseTooManyValuesError(3);
+              else if (size >= 0)
+                __Pyx_RaiseNeedMoreValuesError(size);
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            }
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+            if (likely(PyTuple_CheckExact(sequence))) {
+              __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
+              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2);
+            } else {
+              __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyList_GET_ITEM(sequence, 1);
+              __pyx_t_5 = PyList_GET_ITEM(sequence, 2);
+            }
+            __Pyx_INCREF(__pyx_t_2);
+            __Pyx_INCREF(__pyx_t_1);
+            __Pyx_INCREF(__pyx_t_5);
+#else
+            __pyx_t_2 = PySequence_ITEM(sequence, 0);
+            if (unlikely(!__pyx_t_2))
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_1 = PySequence_ITEM(sequence, 1);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_5 = PySequence_ITEM(sequence, 2);
+            if (unlikely(!__pyx_t_5))
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+#endif
+            __Pyx_DECREF(__pyx_t_4);
+            __pyx_t_4 = 0;
+          } else {
+            Py_ssize_t index = -1;
+            __pyx_t_9 = PyObject_GetIter(__pyx_t_4);
+            if (unlikely(!__pyx_t_9))
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_9);
+            __Pyx_DECREF(__pyx_t_4);
+            __pyx_t_4 = 0;
+            __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
+            index = 0;
+            __pyx_t_2 = __pyx_t_10(__pyx_t_9);
+            if (unlikely(!__pyx_t_2))
+              goto __pyx_L13_unpacking_failed;
+            __Pyx_GOTREF(__pyx_t_2);
+            index = 1;
+            __pyx_t_1 = __pyx_t_10(__pyx_t_9);
+            if (unlikely(!__pyx_t_1))
+              goto __pyx_L13_unpacking_failed;
+            __Pyx_GOTREF(__pyx_t_1);
+            index = 2;
+            __pyx_t_5 = __pyx_t_10(__pyx_t_9);
+            if (unlikely(!__pyx_t_5))
+              goto __pyx_L13_unpacking_failed;
+            __Pyx_GOTREF(__pyx_t_5);
+            if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 3) < 0)
+              __PYX_ERR(0, 245, __pyx_L7_error)
+            __pyx_t_10 = NULL;
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+            goto __pyx_L14_unpacking_done;
+          __pyx_L13_unpacking_failed:;
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+            __pyx_t_10 = NULL;
+            if (__Pyx_IterFinish() == 0)
+              __Pyx_RaiseNeedMoreValuesError(index);
+            __PYX_ERR(0, 245, __pyx_L7_error)
+          __pyx_L14_unpacking_done:;
+          }
+          __pyx_v_verts = __pyx_t_2;
+          __pyx_t_2 = 0;
+          __pyx_v_cells = __pyx_t_1;
+          __pyx_t_1 = 0;
+          __pyx_v_count = __pyx_t_5;
+          __pyx_t_5 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":247
+           *             verts, cells, count = self.toVerticesAndPolygons()
+           *
+           *             f.write('POINTS {0} float\n'.format(len(verts))) #
+           * <<<<<<<<<<<<<< for v in verts: f.write('{0} {1} {2}\n'.format(v[0],
+           * v[1], v[2]))
+           */
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+          if (unlikely(!__pyx_t_5))
+            __PYX_ERR(0, 247, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_POINTS_0_float,
+                                                __pyx_n_s_format);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 247, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_11 = PyObject_Length(__pyx_v_verts);
+          if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1)))
+            __PYX_ERR(0, 247, __pyx_L7_error)
+          __pyx_t_9 = PyInt_FromSsize_t(__pyx_t_11);
+          if (unlikely(!__pyx_t_9))
+            __PYX_ERR(0, 247, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_9);
+          __pyx_t_12 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_12)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_12);
               __Pyx_INCREF(function);
               __Pyx_DECREF_SET(__pyx_t_2, function);
             }
           }
           __pyx_t_1 =
-              (__pyx_t_9)
-                  ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_9, __pyx_t_15)
-                  : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_15);
-          __Pyx_XDECREF(__pyx_t_9);
+              (__pyx_t_12)
+                  ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_12, __pyx_t_9)
+                  : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_9);
+          __Pyx_XDECREF(__pyx_t_12);
+          __pyx_t_12 = 0;
+          __Pyx_DECREF(__pyx_t_9);
           __pyx_t_9 = 0;
-          __Pyx_DECREF(__pyx_t_15);
-          __pyx_t_15 = 0;
           if (unlikely(!__pyx_t_1))
-            __PYX_ERR(0, 255, __pyx_L7_error)
+            __PYX_ERR(0, 247, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2);
           __pyx_t_2 = 0;
+          __pyx_t_2 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_5);
+            if (likely(__pyx_t_2)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_5);
+              __Pyx_INCREF(__pyx_t_2);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_5, function);
+            }
+          }
+          __pyx_t_4 =
+              (__pyx_t_2)
+                  ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_2, __pyx_t_1)
+                  : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_1);
+          __Pyx_XDECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_1);
           __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 247, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_5);
+          __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
 
-          /* "pyg4ometry/pycsg/core.pyx":254
-           *             for cell in cells:
-           *                 f.write('{0} '.format(len(cell)))
-           *                 for index in cell:             # <<<<<<<<<<<<<<
-           *                     f.write('{0} '.format(index))
-           *                 f.write('\n')
+          /* "pyg4ometry/pycsg/core.pyx":248
+           *
+           *             f.write('POINTS {0} float\n'.format(len(verts)))
+           *             for v in verts:             # <<<<<<<<<<<<<<
+           *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
+           *             numCells = len(cells)
+           */
+          if (likely(PyList_CheckExact(__pyx_v_verts)) ||
+              PyTuple_CheckExact(__pyx_v_verts)) {
+            __pyx_t_4 = __pyx_v_verts;
+            __Pyx_INCREF(__pyx_t_4);
+            __pyx_t_11 = 0;
+            __pyx_t_13 = NULL;
+          } else {
+            __pyx_t_11 = -1;
+            __pyx_t_4 = PyObject_GetIter(__pyx_v_verts);
+            if (unlikely(!__pyx_t_4))
+              __PYX_ERR(0, 248, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_4);
+            __pyx_t_13 = Py_TYPE(__pyx_t_4)->tp_iternext;
+            if (unlikely(!__pyx_t_13))
+              __PYX_ERR(0, 248, __pyx_L7_error)
+          }
+          for (;;) {
+            if (likely(!__pyx_t_13)) {
+              if (likely(PyList_CheckExact(__pyx_t_4))) {
+                if (__pyx_t_11 >= PyList_GET_SIZE(__pyx_t_4))
+                  break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                __pyx_t_5 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_11);
+                __Pyx_INCREF(__pyx_t_5);
+                __pyx_t_11++;
+                if (unlikely(0 < 0))
+                  __PYX_ERR(0, 248, __pyx_L7_error)
+#else
+                __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
+                __pyx_t_11++;
+                if (unlikely(!__pyx_t_5))
+                  __PYX_ERR(0, 248, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_5);
+#endif
+              } else {
+                if (__pyx_t_11 >= PyTuple_GET_SIZE(__pyx_t_4))
+                  break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_11);
+                __Pyx_INCREF(__pyx_t_5);
+                __pyx_t_11++;
+                if (unlikely(0 < 0))
+                  __PYX_ERR(0, 248, __pyx_L7_error)
+#else
+                __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
+                __pyx_t_11++;
+                if (unlikely(!__pyx_t_5))
+                  __PYX_ERR(0, 248, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_5);
+#endif
+              }
+            } else {
+              __pyx_t_5 = __pyx_t_13(__pyx_t_4);
+              if (unlikely(!__pyx_t_5)) {
+                PyObject *exc_type = PyErr_Occurred();
+                if (exc_type) {
+                  if (likely(__Pyx_PyErr_GivenExceptionMatches(
+                          exc_type, PyExc_StopIteration)))
+                    PyErr_Clear();
+                  else
+                    __PYX_ERR(0, 248, __pyx_L7_error)
+                }
+                break;
+              }
+              __Pyx_GOTREF(__pyx_t_5);
+            }
+            __Pyx_XDECREF_SET(__pyx_v_v, __pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":249
+             *             f.write('POINTS {0} float\n'.format(len(verts)))
+             *             for v in verts:
+             *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
+             * #
+             * <<<<<<<<<<<<<< numCells = len(cells) f.write('POLYGONS {0}
+             * {1}\n'.format(numCells, count + numCells))
+             */
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_9 =
+                __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0_1_2, __pyx_n_s_format);
+            if (unlikely(!__pyx_t_9))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_9);
+            __pyx_t_12 = __Pyx_GetItemInt(__pyx_v_v, 0, long, 1,
+                                          __Pyx_PyInt_From_long, 0, 0, 1);
+            if (unlikely(!__pyx_t_12))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_v, 1, long, 1,
+                                          __Pyx_PyInt_From_long, 0, 0, 1);
+            if (unlikely(!__pyx_t_14))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_14);
+            __pyx_t_15 = __Pyx_GetItemInt(__pyx_v_v, 2, long, 1,
+                                          __Pyx_PyInt_From_long, 0, 0, 1);
+            if (unlikely(!__pyx_t_15))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_15);
+            __pyx_t_16 = NULL;
+            __pyx_t_17 = 0;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
+              __pyx_t_16 = PyMethod_GET_SELF(__pyx_t_9);
+              if (likely(__pyx_t_16)) {
+                PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_9);
+                __Pyx_INCREF(__pyx_t_16);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_9, function);
+                __pyx_t_17 = 1;
+              }
+            }
+#if CYTHON_FAST_PYCALL
+            if (PyFunction_Check(__pyx_t_9)) {
+              PyObject *__pyx_temp[4] = {__pyx_t_16, __pyx_t_12, __pyx_t_14,
+                                         __pyx_t_15};
+              __pyx_t_2 = __Pyx_PyFunction_FastCall(
+                  __pyx_t_9, __pyx_temp + 1 - __pyx_t_17, 3 + __pyx_t_17);
+              if (unlikely(!__pyx_t_2))
+                __PYX_ERR(0, 249, __pyx_L7_error)
+              __Pyx_XDECREF(__pyx_t_16);
+              __pyx_t_16 = 0;
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_12);
+              __pyx_t_12 = 0;
+              __Pyx_DECREF(__pyx_t_14);
+              __pyx_t_14 = 0;
+              __Pyx_DECREF(__pyx_t_15);
+              __pyx_t_15 = 0;
+            } else
+#endif
+#if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
+              PyObject *__pyx_temp[4] = {__pyx_t_16, __pyx_t_12, __pyx_t_14,
+                                         __pyx_t_15};
+              __pyx_t_2 = __Pyx_PyCFunction_FastCall(
+                  __pyx_t_9, __pyx_temp + 1 - __pyx_t_17, 3 + __pyx_t_17);
+              if (unlikely(!__pyx_t_2))
+                __PYX_ERR(0, 249, __pyx_L7_error)
+              __Pyx_XDECREF(__pyx_t_16);
+              __pyx_t_16 = 0;
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_12);
+              __pyx_t_12 = 0;
+              __Pyx_DECREF(__pyx_t_14);
+              __pyx_t_14 = 0;
+              __Pyx_DECREF(__pyx_t_15);
+              __pyx_t_15 = 0;
+            } else
+#endif
+            {
+              __pyx_t_18 = PyTuple_New(3 + __pyx_t_17);
+              if (unlikely(!__pyx_t_18))
+                __PYX_ERR(0, 249, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_18);
+              if (__pyx_t_16) {
+                __Pyx_GIVEREF(__pyx_t_16);
+                PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_16);
+                __pyx_t_16 = NULL;
+              }
+              __Pyx_GIVEREF(__pyx_t_12);
+              PyTuple_SET_ITEM(__pyx_t_18, 0 + __pyx_t_17, __pyx_t_12);
+              __Pyx_GIVEREF(__pyx_t_14);
+              PyTuple_SET_ITEM(__pyx_t_18, 1 + __pyx_t_17, __pyx_t_14);
+              __Pyx_GIVEREF(__pyx_t_15);
+              PyTuple_SET_ITEM(__pyx_t_18, 2 + __pyx_t_17, __pyx_t_15);
+              __pyx_t_12 = 0;
+              __pyx_t_14 = 0;
+              __pyx_t_15 = 0;
+              __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_18, NULL);
+              if (unlikely(!__pyx_t_2))
+                __PYX_ERR(0, 249, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_18);
+              __pyx_t_18 = 0;
+            }
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+            __pyx_t_9 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_9)) {
+                PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_9);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            __pyx_t_5 =
+                (__pyx_t_9)
+                    ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_9, __pyx_t_2)
+                    : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+            __Pyx_DECREF(__pyx_t_2);
+            __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_5))
+              __PYX_ERR(0, 249, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __Pyx_DECREF(__pyx_t_1);
+            __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":248
+             *
+             *             f.write('POINTS {0} float\n'.format(len(verts)))
+             *             for v in verts:             # <<<<<<<<<<<<<<
+             *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
+             *             numCells = len(cells)
+             */
+          }
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":250
+           *             for v in verts:
+           *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
+           *             numCells = len(cells)             # <<<<<<<<<<<<<<
+           *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
+           * numCells)) for cell in cells:
+           */
+          __pyx_t_11 = PyObject_Length(__pyx_v_cells);
+          if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1)))
+            __PYX_ERR(0, 250, __pyx_L7_error)
+          __pyx_t_4 = PyInt_FromSsize_t(__pyx_t_11);
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 250, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __pyx_v_numCells = __pyx_t_4;
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":251
+           *                 f.write('{0} {1} {2}\n'.format(v[0], v[1], v[2]))
+           *             numCells = len(cells)
+           *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
+           * numCells))             # <<<<<<<<<<<<<< for cell in cells:
+           * f.write('{0}
+           * '.format(len(cell)))
+           */
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+          if (unlikely(!__pyx_t_5))
+            __PYX_ERR(0, 251, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_POLYGONS_0_1,
+                                                __pyx_n_s_format);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 251, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_9 = PyNumber_Add(__pyx_v_count, __pyx_v_numCells);
+          if (unlikely(!__pyx_t_9))
+            __PYX_ERR(0, 251, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_9);
+          __pyx_t_18 = NULL;
+          __pyx_t_17 = 0;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_18)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_18);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+              __pyx_t_17 = 1;
+            }
+          }
+#if CYTHON_FAST_PYCALL
+          if (PyFunction_Check(__pyx_t_2)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_18, __pyx_v_numCells, __pyx_t_9};
+            __pyx_t_1 = __Pyx_PyFunction_FastCall(
+                __pyx_t_2, __pyx_temp + 1 - __pyx_t_17, 2 + __pyx_t_17);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 251, __pyx_L7_error)
+            __Pyx_XDECREF(__pyx_t_18);
+            __pyx_t_18 = 0;
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+          } else
+#endif
+#if CYTHON_FAST_PYCCALL
+              if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_18, __pyx_v_numCells, __pyx_t_9};
+            __pyx_t_1 = __Pyx_PyCFunction_FastCall(
+                __pyx_t_2, __pyx_temp + 1 - __pyx_t_17, 2 + __pyx_t_17);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 251, __pyx_L7_error)
+            __Pyx_XDECREF(__pyx_t_18);
+            __pyx_t_18 = 0;
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+          } else
+#endif
+          {
+            __pyx_t_15 = PyTuple_New(2 + __pyx_t_17);
+            if (unlikely(!__pyx_t_15))
+              __PYX_ERR(0, 251, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_15);
+            if (__pyx_t_18) {
+              __Pyx_GIVEREF(__pyx_t_18);
+              PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_18);
+              __pyx_t_18 = NULL;
+            }
+            __Pyx_INCREF(__pyx_v_numCells);
+            __Pyx_GIVEREF(__pyx_v_numCells);
+            PyTuple_SET_ITEM(__pyx_t_15, 0 + __pyx_t_17, __pyx_v_numCells);
+            __Pyx_GIVEREF(__pyx_t_9);
+            PyTuple_SET_ITEM(__pyx_t_15, 1 + __pyx_t_17, __pyx_t_9);
+            __pyx_t_9 = 0;
+            __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_15, NULL);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 251, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_15);
+            __pyx_t_15 = 0;
+          }
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __pyx_t_2 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_5);
+            if (likely(__pyx_t_2)) {
+              PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_5);
+              __Pyx_INCREF(__pyx_t_2);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_5, function);
+            }
+          }
+          __pyx_t_4 =
+              (__pyx_t_2)
+                  ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_2, __pyx_t_1)
+                  : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_1);
+          __Pyx_XDECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_4))
+            __PYX_ERR(0, 251, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_5);
+          __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":252
+           *             numCells = len(cells)
+           *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
+           * numCells)) for cell in cells:             # <<<<<<<<<<<<<<
+           * f.write('{0}
+           * '.format(len(cell))) for index in cell:
+           */
+          if (likely(PyList_CheckExact(__pyx_v_cells)) ||
+              PyTuple_CheckExact(__pyx_v_cells)) {
+            __pyx_t_4 = __pyx_v_cells;
+            __Pyx_INCREF(__pyx_t_4);
+            __pyx_t_11 = 0;
+            __pyx_t_13 = NULL;
+          } else {
+            __pyx_t_11 = -1;
+            __pyx_t_4 = PyObject_GetIter(__pyx_v_cells);
+            if (unlikely(!__pyx_t_4))
+              __PYX_ERR(0, 252, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_4);
+            __pyx_t_13 = Py_TYPE(__pyx_t_4)->tp_iternext;
+            if (unlikely(!__pyx_t_13))
+              __PYX_ERR(0, 252, __pyx_L7_error)
+          }
+          for (;;) {
+            if (likely(!__pyx_t_13)) {
+              if (likely(PyList_CheckExact(__pyx_t_4))) {
+                if (__pyx_t_11 >= PyList_GET_SIZE(__pyx_t_4))
+                  break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                __pyx_t_5 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_11);
+                __Pyx_INCREF(__pyx_t_5);
+                __pyx_t_11++;
+                if (unlikely(0 < 0))
+                  __PYX_ERR(0, 252, __pyx_L7_error)
+#else
+                __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
+                __pyx_t_11++;
+                if (unlikely(!__pyx_t_5))
+                  __PYX_ERR(0, 252, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_5);
+#endif
+              } else {
+                if (__pyx_t_11 >= PyTuple_GET_SIZE(__pyx_t_4))
+                  break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_11);
+                __Pyx_INCREF(__pyx_t_5);
+                __pyx_t_11++;
+                if (unlikely(0 < 0))
+                  __PYX_ERR(0, 252, __pyx_L7_error)
+#else
+                __pyx_t_5 = PySequence_ITEM(__pyx_t_4, __pyx_t_11);
+                __pyx_t_11++;
+                if (unlikely(!__pyx_t_5))
+                  __PYX_ERR(0, 252, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_5);
+#endif
+              }
+            } else {
+              __pyx_t_5 = __pyx_t_13(__pyx_t_4);
+              if (unlikely(!__pyx_t_5)) {
+                PyObject *exc_type = PyErr_Occurred();
+                if (exc_type) {
+                  if (likely(__Pyx_PyErr_GivenExceptionMatches(
+                          exc_type, PyExc_StopIteration)))
+                    PyErr_Clear();
+                  else
+                    __PYX_ERR(0, 252, __pyx_L7_error)
+                }
+                break;
+              }
+              __Pyx_GOTREF(__pyx_t_5);
+            }
+            __Pyx_XDECREF_SET(__pyx_v_cell, __pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":253
+             *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
+             * numCells)) for cell in cells: f.write('{0} '.format(len(cell))) #
+             * <<<<<<<<<<<<<< for index in cell: f.write('{0} '.format(index))
+             */
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_15 =
+                __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0, __pyx_n_s_format);
+            if (unlikely(!__pyx_t_15))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_15);
+            __pyx_t_19 = PyObject_Length(__pyx_v_cell);
+            if (unlikely(__pyx_t_19 == ((Py_ssize_t)-1)))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __pyx_t_9 = PyInt_FromSsize_t(__pyx_t_19);
+            if (unlikely(!__pyx_t_9))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_9);
+            __pyx_t_18 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_15))) {
+              __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_15);
+              if (likely(__pyx_t_18)) {
+                PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_15);
+                __Pyx_INCREF(__pyx_t_18);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_15, function);
+              }
+            }
+            __pyx_t_2 = (__pyx_t_18)
+                            ? __Pyx_PyObject_Call2Args(__pyx_t_15, __pyx_t_18,
+                                                       __pyx_t_9)
+                            : __Pyx_PyObject_CallOneArg(__pyx_t_15, __pyx_t_9);
+            __Pyx_XDECREF(__pyx_t_18);
+            __pyx_t_18 = 0;
+            __Pyx_DECREF(__pyx_t_9);
+            __pyx_t_9 = 0;
+            if (unlikely(!__pyx_t_2))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_15);
+            __pyx_t_15 = 0;
+            __pyx_t_15 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_15)) {
+                PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_15);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            __pyx_t_5 =
+                (__pyx_t_15)
+                    ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_15, __pyx_t_2)
+                    : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_15);
+            __pyx_t_15 = 0;
+            __Pyx_DECREF(__pyx_t_2);
+            __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_5))
+              __PYX_ERR(0, 253, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __Pyx_DECREF(__pyx_t_1);
+            __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":254
+             *             for cell in cells:
+             *                 f.write('{0} '.format(len(cell)))
+             *                 for index in cell:             # <<<<<<<<<<<<<<
+             *                     f.write('{0} '.format(index))
+             *                 f.write('\n')
+             */
+            if (likely(PyList_CheckExact(__pyx_v_cell)) ||
+                PyTuple_CheckExact(__pyx_v_cell)) {
+              __pyx_t_5 = __pyx_v_cell;
+              __Pyx_INCREF(__pyx_t_5);
+              __pyx_t_19 = 0;
+              __pyx_t_20 = NULL;
+            } else {
+              __pyx_t_19 = -1;
+              __pyx_t_5 = PyObject_GetIter(__pyx_v_cell);
+              if (unlikely(!__pyx_t_5))
+                __PYX_ERR(0, 254, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_5);
+              __pyx_t_20 = Py_TYPE(__pyx_t_5)->tp_iternext;
+              if (unlikely(!__pyx_t_20))
+                __PYX_ERR(0, 254, __pyx_L7_error)
+            }
+            for (;;) {
+              if (likely(!__pyx_t_20)) {
+                if (likely(PyList_CheckExact(__pyx_t_5))) {
+                  if (__pyx_t_19 >= PyList_GET_SIZE(__pyx_t_5))
+                    break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                  __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_19);
+                  __Pyx_INCREF(__pyx_t_1);
+                  __pyx_t_19++;
+                  if (unlikely(0 < 0))
+                    __PYX_ERR(0, 254, __pyx_L7_error)
+#else
+                  __pyx_t_1 = PySequence_ITEM(__pyx_t_5, __pyx_t_19);
+                  __pyx_t_19++;
+                  if (unlikely(!__pyx_t_1))
+                    __PYX_ERR(0, 254, __pyx_L7_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+#endif
+                } else {
+                  if (__pyx_t_19 >= PyTuple_GET_SIZE(__pyx_t_5))
+                    break;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                  __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_19);
+                  __Pyx_INCREF(__pyx_t_1);
+                  __pyx_t_19++;
+                  if (unlikely(0 < 0))
+                    __PYX_ERR(0, 254, __pyx_L7_error)
+#else
+                  __pyx_t_1 = PySequence_ITEM(__pyx_t_5, __pyx_t_19);
+                  __pyx_t_19++;
+                  if (unlikely(!__pyx_t_1))
+                    __PYX_ERR(0, 254, __pyx_L7_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+#endif
+                }
+              } else {
+                __pyx_t_1 = __pyx_t_20(__pyx_t_5);
+                if (unlikely(!__pyx_t_1)) {
+                  PyObject *exc_type = PyErr_Occurred();
+                  if (exc_type) {
+                    if (likely(__Pyx_PyErr_GivenExceptionMatches(
+                            exc_type, PyExc_StopIteration)))
+                      PyErr_Clear();
+                    else
+                      __PYX_ERR(0, 254, __pyx_L7_error)
+                  }
+                  break;
+                }
+                __Pyx_GOTREF(__pyx_t_1);
+              }
+              __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_1);
+              __pyx_t_1 = 0;
+
+              /* "pyg4ometry/pycsg/core.pyx":255
+               *                 f.write('{0} '.format(len(cell)))
+               *                 for index in cell:
+               *                     f.write('{0} '.format(index))             #
+               * <<<<<<<<<<<<<< f.write('\n')
+               *
+               */
+              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+              if (unlikely(!__pyx_t_2))
+                __PYX_ERR(0, 255, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __pyx_t_9 =
+                  __Pyx_PyObject_GetAttrStr(__pyx_kp_u_0, __pyx_n_s_format);
+              if (unlikely(!__pyx_t_9))
+                __PYX_ERR(0, 255, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_9);
+              __pyx_t_18 = NULL;
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
+                __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_9);
+                if (likely(__pyx_t_18)) {
+                  PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_9);
+                  __Pyx_INCREF(__pyx_t_18);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_9, function);
+                }
+              }
+              __pyx_t_15 =
+                  (__pyx_t_18)
+                      ? __Pyx_PyObject_Call2Args(__pyx_t_9, __pyx_t_18,
+                                                 __pyx_v_index)
+                      : __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_index);
+              __Pyx_XDECREF(__pyx_t_18);
+              __pyx_t_18 = 0;
+              if (unlikely(!__pyx_t_15))
+                __PYX_ERR(0, 255, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_15);
+              __Pyx_DECREF(__pyx_t_9);
+              __pyx_t_9 = 0;
+              __pyx_t_9 = NULL;
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+                __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_2);
+                if (likely(__pyx_t_9)) {
+                  PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                  __Pyx_INCREF(__pyx_t_9);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_2, function);
+                }
+              }
+              __pyx_t_1 =
+                  (__pyx_t_9)
+                      ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_9,
+                                                 __pyx_t_15)
+                      : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_15);
+              __Pyx_XDECREF(__pyx_t_9);
+              __pyx_t_9 = 0;
+              __Pyx_DECREF(__pyx_t_15);
+              __pyx_t_15 = 0;
+              if (unlikely(!__pyx_t_1))
+                __PYX_ERR(0, 255, __pyx_L7_error)
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_DECREF(__pyx_t_2);
+              __pyx_t_2 = 0;
+              __Pyx_DECREF(__pyx_t_1);
+              __pyx_t_1 = 0;
+
+              /* "pyg4ometry/pycsg/core.pyx":254
+               *             for cell in cells:
+               *                 f.write('{0} '.format(len(cell)))
+               *                 for index in cell:             # <<<<<<<<<<<<<<
+               *                     f.write('{0} '.format(index))
+               *                 f.write('\n')
+               */
+            }
+            __Pyx_DECREF(__pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":256
+             *                 for index in cell:
+             *                     f.write('{0} '.format(index))
+             *                 f.write('\n')             # <<<<<<<<<<<<<<
+             *
+             *     def union(self, csg):
+             */
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
+            if (unlikely(!__pyx_t_1))
+              __PYX_ERR(0, 256, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_2 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_2)) {
+                PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_2);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            __pyx_t_5 =
+                (__pyx_t_2)
+                    ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2,
+                                               __pyx_kp_u__4)
+                    : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_u__4);
+            __Pyx_XDECREF(__pyx_t_2);
+            __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_5))
+              __PYX_ERR(0, 256, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __Pyx_DECREF(__pyx_t_1);
+            __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_5);
+            __pyx_t_5 = 0;
+
+            /* "pyg4ometry/pycsg/core.pyx":252
+             *             numCells = len(cells)
+             *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
+             * numCells)) for cell in cells:             # <<<<<<<<<<<<<<
+             *                 f.write('{0} '.format(len(cell)))
+             *                 for index in cell:
+             */
+          }
+          __Pyx_DECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+
+          /* "pyg4ometry/pycsg/core.pyx":239
+           *         Save polygons in VTK file.
+           *         """
+           *         with open(filename, 'w') as f:             # <<<<<<<<<<<<<<
+           *             f.write('# vtk DataFile Version 3.0\n')
+           *             f.write('pycsg output\n')
            */
         }
-        __Pyx_DECREF(__pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":256
-         *                 for index in cell:
-         *                     f.write('{0} '.format(index))
-         *                 f.write('\n')             # <<<<<<<<<<<<<<
-         *
-         *     def union(self, csg):
-         */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write);
-        if (unlikely(!__pyx_t_1))
-          __PYX_ERR(0, 256, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_2 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-          __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
-          if (likely(__pyx_t_2)) {
-            PyObject *function = PyMethod_GET_FUNCTION(__pyx_t_1);
-            __Pyx_INCREF(__pyx_t_2);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_1, function);
-          }
-        }
-        __pyx_t_5 =
-            (__pyx_t_2)
-                ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_kp_u__4)
-                : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_u__4);
+        __Pyx_XDECREF(__pyx_t_6);
+        __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_7);
+        __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_8);
+        __pyx_t_8 = 0;
+        goto __pyx_L12_try_end;
+      __pyx_L7_error:;
+        __Pyx_XDECREF(__pyx_t_1);
+        __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_12);
+        __pyx_t_12 = 0;
+        __Pyx_XDECREF(__pyx_t_14);
+        __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15);
+        __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16);
+        __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_18);
+        __pyx_t_18 = 0;
         __Pyx_XDECREF(__pyx_t_2);
         __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_5))
-          __PYX_ERR(0, 256, __pyx_L7_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1);
-        __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "pyg4ometry/pycsg/core.pyx":252
-         *             numCells = len(cells)
-         *             f.write('POLYGONS {0} {1}\n'.format(numCells, count +
-         * numCells)) for cell in cells:             # <<<<<<<<<<<<<<
-         *                 f.write('{0} '.format(len(cell)))
-         *                 for index in cell:
-         */
-      }
-      __Pyx_DECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyg4ometry/pycsg/core.pyx":239
-       *         Save polygons in VTK file.
-       *         """
-       *         with open(filename, 'w') as f:             # <<<<<<<<<<<<<<
-       *             f.write('# vtk DataFile Version 3.0\n')
-       *             f.write('pycsg output\n')
-       */
-    }
-    __Pyx_XDECREF(__pyx_t_6);
-    __pyx_t_6 = 0;
-    __Pyx_XDECREF(__pyx_t_7);
-    __pyx_t_7 = 0;
-    __Pyx_XDECREF(__pyx_t_8);
-    __pyx_t_8 = 0;
-    goto __pyx_L12_try_end;
-  __pyx_L7_error:;
-    __Pyx_XDECREF(__pyx_t_1);
-    __pyx_t_1 = 0;
-    __Pyx_XDECREF(__pyx_t_12);
-    __pyx_t_12 = 0;
-    __Pyx_XDECREF(__pyx_t_14);
-    __pyx_t_14 = 0;
-    __Pyx_XDECREF(__pyx_t_15);
-    __pyx_t_15 = 0;
-    __Pyx_XDECREF(__pyx_t_16);
-    __pyx_t_16 = 0;
-    __Pyx_XDECREF(__pyx_t_18);
-    __pyx_t_18 = 0;
-    __Pyx_XDECREF(__pyx_t_2);
-    __pyx_t_2 = 0;
-    __Pyx_XDECREF(__pyx_t_4);
-    __pyx_t_4 = 0;
-    __Pyx_XDECREF(__pyx_t_5);
-    __pyx_t_5 = 0;
-    __Pyx_XDECREF(__pyx_t_9);
-    __pyx_t_9 = 0;
-    /*except:*/ {
-      __Pyx_AddTraceback("pyg4ometry.pycsg.core.CSG.saveVTK", __pyx_clineno,
-                         __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_1) < 0)
-        __PYX_ERR(0, 239, __pyx_L9_except_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_5, __pyx_t_1);
-      if (unlikely(!__pyx_t_2))
-        __PYX_ERR(0, 239, __pyx_L9_except_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_21 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, NULL);
-      __Pyx_DECREF(__pyx_t_3);
-      __pyx_t_3 = 0;
-      __Pyx_DECREF(__pyx_t_2);
-      __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_21))
-        __PYX_ERR(0, 239, __pyx_L9_except_error)
-      __Pyx_GOTREF(__pyx_t_21);
-      __pyx_t_22 = __Pyx_PyObject_IsTrue(__pyx_t_21);
-      __Pyx_DECREF(__pyx_t_21);
-      __pyx_t_21 = 0;
-      if (__pyx_t_22 < 0)
-        __PYX_ERR(0, 239, __pyx_L9_except_error)
-      __pyx_t_23 = ((!(__pyx_t_22 != 0)) != 0);
-      if (__pyx_t_23) {
-        __Pyx_GIVEREF(__pyx_t_4);
-        __Pyx_GIVEREF(__pyx_t_5);
-        __Pyx_XGIVEREF(__pyx_t_1);
-        __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_5, __pyx_t_1);
+        __Pyx_XDECREF(__pyx_t_4);
         __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_5);
         __pyx_t_5 = 0;
-        __pyx_t_1 = 0;
-        __PYX_ERR(0, 239, __pyx_L9_except_error)
+        __Pyx_XDECREF(__pyx_t_9);
+        __pyx_t_9 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("pyg4ometry.pycsg.core.CSG.saveVTK", __pyx_clineno,
+                             __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_1) < 0)
+            __PYX_ERR(0, 239, __pyx_L9_except_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_2 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_5, __pyx_t_1);
+          if (unlikely(!__pyx_t_2))
+            __PYX_ERR(0, 239, __pyx_L9_except_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_21 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, NULL);
+          __Pyx_DECREF(__pyx_t_3);
+          __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_2);
+          __pyx_t_2 = 0;
+          if (unlikely(!__pyx_t_21))
+            __PYX_ERR(0, 239, __pyx_L9_except_error)
+          __Pyx_GOTREF(__pyx_t_21);
+          __pyx_t_22 = __Pyx_PyObject_IsTrue(__pyx_t_21);
+          __Pyx_DECREF(__pyx_t_21);
+          __pyx_t_21 = 0;
+          if (__pyx_t_22 < 0)
+            __PYX_ERR(0, 239, __pyx_L9_except_error)
+          __pyx_t_23 = ((!(__pyx_t_22 != 0)) != 0);
+          if (__pyx_t_23) {
+            __Pyx_GIVEREF(__pyx_t_4);
+            __Pyx_GIVEREF(__pyx_t_5);
+            __Pyx_XGIVEREF(__pyx_t_1);
+            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_5, __pyx_t_1);
+            __pyx_t_4 = 0;
+            __pyx_t_5 = 0;
+            __pyx_t_1 = 0;
+            __PYX_ERR(0, 239, __pyx_L9_except_error)
+          }
+          __Pyx_XDECREF(__pyx_t_4);
+          __pyx_t_4 = 0;
+          __Pyx_XDECREF(__pyx_t_5);
+          __pyx_t_5 = 0;
+          __Pyx_XDECREF(__pyx_t_1);
+          __pyx_t_1 = 0;
+          goto __pyx_L8_exception_handled;
+        }
+      __pyx_L9_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        goto __pyx_L1_error;
+      __pyx_L8_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+      __pyx_L12_try_end:;
       }
-      __Pyx_XDECREF(__pyx_t_4);
-      __pyx_t_4 = 0;
-      __Pyx_XDECREF(__pyx_t_5);
-      __pyx_t_5 = 0;
-      __Pyx_XDECREF(__pyx_t_1);
-      __pyx_t_1 = 0;
-      goto __pyx_L8_exception_handled;
     }
-  __pyx_L9_except_error:;
-    __Pyx_XGIVEREF(__pyx_t_6);
-    __Pyx_XGIVEREF(__pyx_t_7);
-    __Pyx_XGIVEREF(__pyx_t_8);
-    __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+    /*finally:*/ {
+      /*normal exit:*/ {
+        if (__pyx_t_3) {
+          __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__5, NULL);
+          __Pyx_DECREF(__pyx_t_3);
+          __pyx_t_3 = 0;
+          if (unlikely(!__pyx_t_8))
+            __PYX_ERR(0, 239, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_8);
+          __pyx_t_8 = 0;
+        }
+        goto __pyx_L6;
+      }
+    __pyx_L6:;
+    }
+    goto __pyx_L24;
+  __pyx_L3_error:;
+    __Pyx_DECREF(__pyx_t_3);
+    __pyx_t_3 = 0;
     goto __pyx_L1_error;
-  __pyx_L8_exception_handled:;
-    __Pyx_XGIVEREF(__pyx_t_6);
-    __Pyx_XGIVEREF(__pyx_t_7);
-    __Pyx_XGIVEREF(__pyx_t_8);
-    __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
-  __pyx_L12_try_end:;
+  __pyx_L24:;
   }
-}
-/*finally:*/ {
-  /*normal exit:*/ {
-    if (__pyx_t_3) {
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__5, NULL);
-      __Pyx_DECREF(__pyx_t_3);
-      __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_8))
-        __PYX_ERR(0, 239, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_DECREF(__pyx_t_8);
-      __pyx_t_8 = 0;
-    }
-    goto __pyx_L6;
-  }
-__pyx_L6:;
-}
-goto __pyx_L24;
-__pyx_L3_error:;
-__Pyx_DECREF(__pyx_t_3);
-__pyx_t_3 = 0;
-goto __pyx_L1_error;
-__pyx_L24:;
-}
 
-/* "pyg4ometry/pycsg/core.pyx":235
- *         return verts, polys, count
- *
- *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
- *         """
- *         Save polygons in VTK file.
- */
+  /* "pyg4ometry/pycsg/core.pyx":235
+   *         return verts, polys, count
+   *
+   *     def saveVTK(self, filename):             # <<<<<<<<<<<<<<
+   *         """
+   *         Save polygons in VTK file.
+   */
 
-/* function exit code */
-__pyx_r = Py_None;
-__Pyx_INCREF(Py_None);
-goto __pyx_L0;
+  /* function exit code */
+  __pyx_r = Py_None;
+  __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
 __pyx_L1_error:;
-__Pyx_XDECREF(__pyx_t_1);
-__Pyx_XDECREF(__pyx_t_2);
-__Pyx_XDECREF(__pyx_t_4);
-__Pyx_XDECREF(__pyx_t_5);
-__Pyx_XDECREF(__pyx_t_9);
-__Pyx_XDECREF(__pyx_t_12);
-__Pyx_XDECREF(__pyx_t_14);
-__Pyx_XDECREF(__pyx_t_15);
-__Pyx_XDECREF(__pyx_t_16);
-__Pyx_XDECREF(__pyx_t_18);
-__Pyx_AddTraceback("pyg4ometry.pycsg.core.CSG.saveVTK", __pyx_clineno,
-                   __pyx_lineno, __pyx_filename);
-__pyx_r = NULL;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_XDECREF(__pyx_t_14);
+  __Pyx_XDECREF(__pyx_t_15);
+  __Pyx_XDECREF(__pyx_t_16);
+  __Pyx_XDECREF(__pyx_t_18);
+  __Pyx_AddTraceback("pyg4ometry.pycsg.core.CSG.saveVTK", __pyx_clineno,
+                     __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
 __pyx_L0:;
-__Pyx_XDECREF(__pyx_v_f);
-__Pyx_XDECREF(__pyx_v_verts);
-__Pyx_XDECREF(__pyx_v_cells);
-__Pyx_XDECREF(__pyx_v_count);
-__Pyx_XDECREF(__pyx_v_v);
-__Pyx_XDECREF(__pyx_v_numCells);
-__Pyx_XDECREF(__pyx_v_cell);
-__Pyx_XDECREF(__pyx_v_index);
-__Pyx_XGIVEREF(__pyx_r);
-__Pyx_RefNannyFinishContext();
-return __pyx_r;
+  __Pyx_XDECREF(__pyx_v_f);
+  __Pyx_XDECREF(__pyx_v_verts);
+  __Pyx_XDECREF(__pyx_v_cells);
+  __Pyx_XDECREF(__pyx_v_count);
+  __Pyx_XDECREF(__pyx_v_v);
+  __Pyx_XDECREF(__pyx_v_numCells);
+  __Pyx_XDECREF(__pyx_v_cell);
+  __Pyx_XDECREF(__pyx_v_index);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
 }
 
 /* "pyg4ometry/pycsg/core.pyx":258
@@ -29036,7 +29051,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #if CYTHON_PEP489_MULTI_PHASE_INIT
     0, /* m_size */
 #else
-    -1,   /* m_size */
+    -1, /* m_size */
 #endif
     __pyx_methods /* m_methods */,
 #if CYTHON_PEP489_MULTI_PHASE_INIT
@@ -29044,9 +29059,9 @@ static struct PyModuleDef __pyx_moduledef = {
 #else
     NULL, /* m_reload */
 #endif
-    NULL,                  /* m_traverse */
-    NULL,                  /* m_clear */
-    NULL                   /* m_free */
+    NULL, /* m_traverse */
+    NULL, /* m_clear */
+    NULL  /* m_free */
 };
 #endif
 #ifndef CYTHON_SMALL_CODE

@@ -15963,7 +15963,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #if CYTHON_PEP489_MULTI_PHASE_INIT
     0, /* m_size */
 #else
-    -1,   /* m_size */
+    -1, /* m_size */
 #endif
     __pyx_methods /* m_methods */,
 #if CYTHON_PEP489_MULTI_PHASE_INIT
@@ -15971,9 +15971,9 @@ static struct PyModuleDef __pyx_moduledef = {
 #else
     NULL, /* m_reload */
 #endif
-    NULL,                  /* m_traverse */
-    NULL,                  /* m_clear */
-    NULL                   /* m_free */
+    NULL, /* m_traverse */
+    NULL, /* m_clear */
+    NULL  /* m_free */
 };
 #endif
 #ifndef CYTHON_SMALL_CODE
