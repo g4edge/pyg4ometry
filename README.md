@@ -19,9 +19,11 @@ Carlo (Geant4 and Fluka) geometries.
 
 Pre-built pyg4ometry wheels can be installed [from PyPI](https://pypi.org/project/pyg4ometry)
 using pip:
+
 ```
 pip install pyg4ometry
 ```
+
 If you cannot find wheels for your operating system / architecture,
 please [open an issue](https://github.com/g4edge/pyg4ometry/issues).
 Building from source requires some non-Python software dependencies.
