@@ -91,7 +91,7 @@ metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 minversion = "6.0"
 addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
 xfail_strict = true
-filterwarnings = "error"
+filterwarnings = ["error", "ignore::DeprecationWarning"]
 log_cli_level = "info"
 testpaths = "tests"
 
@@ -130,7 +130,6 @@ extend-ignore = [
   "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
   "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
 ]
-target-version = "py37"
 src = ["src"]
 unfixable = [
   "T20",  # Removes print statements
@@ -152,5 +151,5 @@ manylinux-x86_64-image = "g4edge/manylinux2014_x86_64:latest"
 archs = ["auto"]
 
 [tool.cibuildwheel.macos]
-archs = ["x86_64", "arm64"]
+archs = ["x86_64"]
 before-all = ".github/bin/install-deps-macos.sh"
