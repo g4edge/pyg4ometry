@@ -335,8 +335,6 @@ class VtkViewerNew(_ViewerBase):
                 n = self.cutterNormals[ck]
 
                 plane = _vtk.vtkPlane()
-                print(p)
-                print(n)
                 plane.SetOrigin(*p)
                 plane.SetNormal(*n)
 
@@ -449,7 +447,7 @@ class VtkViewerNew(_ViewerBase):
 
     def render(self):
         if not self.bBuiltPipelines:
-            print("Not built pipelines")
+            print("Pipelines have not been built")
             return
 
         # Render
@@ -457,7 +455,7 @@ class VtkViewerNew(_ViewerBase):
 
     def view(self, interactive=True, resetCamera=False):
         if not self.bBuiltPipelines:
-            print("Not built pipelines")
+            print("Pipelines have not been built")
             return
 
         # enable user interface interactor
