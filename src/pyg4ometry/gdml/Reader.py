@@ -10,10 +10,7 @@ import os as _os
 
 def isComment(node):
     # TODO must be a better way to find comments
-    if node.attributes:
-        return False
-    else:
-        return True
+    return not node.attributes
 
 
 class Reader:
