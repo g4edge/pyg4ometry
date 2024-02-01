@@ -44,7 +44,7 @@ jobs:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: wheelhouse/*.whl
 
