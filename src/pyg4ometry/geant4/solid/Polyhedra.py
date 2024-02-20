@@ -1,6 +1,7 @@
 from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 from .SolidBase import SolidBase as _SolidBase
 import logging as _log
+import numpy as _np
 
 
 class Polyhedra(_SolidBase):
@@ -104,9 +105,10 @@ class Polyhedra(_SolidBase):
 
         numSide = int(self.evaluateParameter(self.numSide))
         numZPlanes = int(self.numZPlanes)
+        tanAngle = phiTotal / numSide / 2
         zPlane = [val * luval for val in self.evaluateParameter(self.zPlane)]
-        rInner = [val * luval for val in self.evaluateParameter(self.rInner)]
-        rOuter = [val * luval for val in self.evaluateParameter(self.rOuter)]
+        rInner = [val * luval / _np.cos(tanAngle) for val in self.evaluateParameter(self.rInner)]
+        rOuter = [val * luval / _np.cos(tanAngle) for val in self.evaluateParameter(self.rOuter)]
 
         pZ = []
         pR = []
