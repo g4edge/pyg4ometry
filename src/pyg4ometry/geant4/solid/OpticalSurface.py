@@ -3,7 +3,7 @@ import warnings
 
 
 class OpticalSurface(_SolidBase):
-    # from G4OpticalSurface.hh and G4SurfaceProperty.hh of Geant4 11.0
+    # from G4OpticalSurface.hh and G4SurfaceProperty.hh of Geant4 11.1
     allowed_models = ["glisur", "unified", "LUT", "DAVIS", "dichroic"]
     allowed_types = [
         "dielectric_metal",
@@ -13,6 +13,7 @@ class OpticalSurface(_SolidBase):
         "dielectric_dichroic",
         "firsov",
         "x_ray",
+        "coated",
     ]
     allowed_finishes = [
         "polished",
@@ -80,15 +81,15 @@ class OpticalSurface(_SolidBase):
 
         # numeric values are also allowed: G4GDMLReadSolids.cc
         if not self.model in self.allowed_models and (
-            not self.model.isdigit() or not int(self.model) in range(5)
+            not self.model.isdigit() or not int(self.model) in range(len(allowed_models) + 1)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface model {self.model}")
         if not self.osType in self.allowed_types and (
-            not self.osType.isdigit() or not int(self.osType) in range(39)
+            not self.osType.isdigit() or not int(self.osType) in range(len(allowed_types) + 1)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface type {self.osType}")
         if not self.finish in self.allowed_finishes and (
-            not self.finish.isdigit() or not int(self.finish) in range(7)
+            not self.finish.isdigit() or not int(self.finish) in range(len(allowed_finishes) + 1)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface finish {self.finish}")
 
