@@ -89,7 +89,8 @@ class OpticalSurface(_SolidBase):
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface type {self.osType}")
         if not self.finish in self.allowed_finishes and (
-            not self.finish.isdigit() or not int(self.finish) in range(len(self.allowed_finishes) + 1)
+            not self.finish.isdigit()
+            or not int(self.finish) in range(len(self.allowed_finishes) + 1)
         ):
             warnings.warn(f"OpticalSurface {self.name} has unkown surface finish {self.finish}")
 
