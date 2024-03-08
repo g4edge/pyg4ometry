@@ -84,6 +84,6 @@ jobs:
           MAKEFLAGS=-j${{ steps.cpu-cores.outputs.count }} python -m pip install --upgrade --verbose .[test]
           python -m pytest --runxfail --cov=pyg4ometry --cov-report=xml
       - name: Upload Coverage to codecov.io
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
