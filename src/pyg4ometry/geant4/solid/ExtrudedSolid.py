@@ -1,6 +1,7 @@
 from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
+from pyg4ometry.gdml.Defines import Expression as _Expression
 
 if _config.meshing == _config.meshingType.pycsg:
     from pyg4ometry.pycsg.core import CSG as _CSG
@@ -45,6 +46,11 @@ class ExtrudedSolid(_SolidBase):
         super().__init__(name, "ExtrudedSolid", registry)
 
         self.lunit = lunit
+
+        if self.polygon_area(pPolygon) < 0 and not isinstance(pPolygon[0][0], _Expression):
+            tmpPolygon = list(pPolygon)
+            tmpPolygon.reverse()
+            pPolygon = _np.array(tmpPolygon)
 
         self.dependents = []
 

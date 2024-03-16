@@ -59,13 +59,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # gdml output
     w = _gd.Writer()
     w.addDetector(reg)
-    w.write(outputPath / "T1200_flukaRun.gdml")
+    w.write(outputPath / "T401_flukaRun.gdml")
 
     vbase = _vi.ViewerBase()
     vbase.addLogicalVolume(wl)
 
     # fluka conversion
-    outputFile = outputPath / "T1200_flukaRun.inp"
+    outputFile = outputPath / "T401_flukaRun.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

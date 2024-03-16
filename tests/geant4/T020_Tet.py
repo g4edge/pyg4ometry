@@ -75,7 +75,7 @@ def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None
         v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
-    return {"testStatus": True, "logicalVolume": wl, "vtkViewer": v}
+    return {"solid": ts, "testStatus": True, "logicalVolume": wl, "vtkViewer": v}
 
 
 if __name__ == "__main__":

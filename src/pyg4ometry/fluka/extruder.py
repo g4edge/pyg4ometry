@@ -17,14 +17,16 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
 
         self.length = length
         self.regions = regions
+        self.materials = {}
         self.cgalpolys = {}
         self.extrusions = {}
         self.decomposed = {}
         self.g4_extrusions = {}
         self.g4_decomposed_extrusions = {}
 
-    def addRegion(self, name):
+    def addRegion(self, name, material=None):
         self.regions[name] = []
+        self.materials[name] = material
         return self.regions[name]
 
     def addPointToRegion(self, name, pntIndx):
@@ -32,6 +34,12 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
 
     def setRegionToOuterBoundary(self, name):
         self.boundary = name
+
+    def setRegionMaterial(self, name, material):
+        self.materials[name] = material
+
+    def getRegionMaterial(self, name):
+        return self.materials[name]
 
     def buildCgalPolygons(self):
         # build a CGAL polygon (without holes for each region)

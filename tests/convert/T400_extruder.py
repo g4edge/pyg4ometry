@@ -2,7 +2,7 @@ import pathlib as _pl
 import pyg4ometry
 
 
-def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, outputPath=None):
+def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=True, outputPath=None):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -18,7 +18,6 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
         wm = pyg4ometry.geant4.nist_material_2geant4Material("G4_Galactic", reg)
         em1 = pyg4ometry.geant4.nist_material_2geant4Material("G4_Au", reg)
         em2 = pyg4ometry.geant4.nist_material_2geant4Material("G4_Fe", reg)
-
     else:
         wm = pyg4ometry.geant4.MaterialPredefined("G4_Galactic")
         em1 = pyg4ometry.geant4.MaterialPredefined("G4_Au")
@@ -28,6 +27,7 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
     es = pyg4ometry.fluka.Extruder("Magnet", length=500, registry=reg)
 
     r1 = es.addRegion("outer")
+    es.setRegionMaterial("outer", em1)
     r1.append([-100, -100])
     r1.append([-100, 100])
     r1.append([100, 100])
@@ -35,6 +35,7 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
     es.setRegionToOuterBoundary("outer")
 
     r2 = es.addRegion("pole")
+    es.setRegionMaterial("pole", em2)
     r2.append([-50, -50])
     r2.append([-50, 50])
     r2.append([50, 50])
@@ -68,7 +69,7 @@ def Test(vis=False, interactive=False, fluka=True, writeNISTMaterials=False, out
 
         w = pyg4ometry.fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T1000_extruder.inp")
+        w.write(outputPath / "T400_extruder.inp")
 
     if vis:
         es.plot()
