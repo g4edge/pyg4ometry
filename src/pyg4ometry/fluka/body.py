@@ -362,6 +362,7 @@ class BOX(BodyMixin):
         edge3,
         transform=None,
         flukaregistry=None,
+        addRegistry=True,
         comment="",
     ):
         self.name = name
@@ -378,7 +379,8 @@ class BOX(BodyMixin):
             self.edge1, self.edge2, self.edge3, "Edges are not all mutally orthogonal."
         )
 
-        self.addToRegistry(flukaregistry)
+        if addRegistry and flukaregistry:
+            self.addToRegistry(flukaregistry)
 
     def centre(self, aabb=None):
         return self.transform.leftMultiplyVector(
