@@ -305,18 +305,10 @@ def geant4Solid2FlukaRegion(
     fregion = None
     fbodies = []
 
-    rotation, reflection = _np.linalg.qr(mtra)
-    gdmlReflection = [
-        reflection.item(0, 0),
-        reflection.item(1, 1),
-        reflection.item(2, 2),
-    ]
-
+    pseudoVector = _np.linalg.det(mtra)
     rotation = _transformation.matrix2tbxyz(mtra)
-    position = tra
 
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
-
     commentName = commentName + " " + solid.name
 
     # print 'geant4Solid2FlukaRegion',flukaNameCount,name,solid.type, rotation,position,transform
