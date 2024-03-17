@@ -358,13 +358,19 @@ def geant4Solid2FlukaRegion(
             bakeTransform=False,
         )
     elif solid.type == "Para":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
     elif solid.type == "Trd":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
     elif solid.type == "Trap":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
     elif solid.type == "Sphere":
         luval = _Units.unit(solid.lunit) / 10.0
@@ -1454,19 +1460,27 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "TwistedBox":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrap":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
 
     elif solid.type == "TwistedTrd":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
 
     elif solid.type == "TwistedTubs":
-        fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+        fregion = pycsgmesh2FlukaRegion(
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+        )
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
@@ -2366,6 +2380,7 @@ def geant4CutTubs2Fluka(
                 flukaregistry=flukaRegistry,
                 comment=commentName,
             )
+
     fzone = _fluka.Zone()
     fzone.addIntersection(fbody1)
     fzone.addSubtraction(fbody2)
@@ -2591,7 +2606,18 @@ def geant4Cons2Fluka(
     return fregion, flukaNameCount
 
 
-def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName):
+def pycsgmesh2FlukaRegion(
+    mesh,
+    name,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    commentName="",
+    bakeTransform=False,
+):
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
     polyhedron = _pycgal.Polyhedron_3.Polyhedron_3_EPECK()
     _pycgal.CGAL.copy_face_graph(mesh.sm, polyhedron)
     nef = _pycgal.Nef_polyhedron_3.Nef_polyhedron_3_EPECK(polyhedron)
@@ -2601,26 +2627,46 @@ def pycsgmesh2FlukaRegion(mesh, name, transform, flukaRegistry, commentName):
 
     ibody = 0
 
-    for convex_polyhedron in convex_polyhedra:
-        planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(convex_polyhedron)
+    if not bakeTransform:
+        for convex_polyhedron in convex_polyhedra:
+            planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(convex_polyhedron)
 
-        fzone = _fluka.Zone()
+            fzone = _fluka.Zone()
 
-        for plane in planes:
-            fbody = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + format(ibody, "02"),
-                -plane[3:] / _np.sqrt((plane[3:] ** 2).sum()),
-                plane[0:3] / 10.0,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            fzone.addSubtraction(fbody)
-            ibody += 1
+            for plane in planes:
+                fbody = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + format(ibody, "02"),
+                    -plane[3:] / _np.sqrt((plane[3:] ** 2).sum()),
+                    plane[0:3] / 10.0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+                fzone.addSubtraction(fbody)
+                ibody += 1
 
-        fregion.addZone(fzone)
+            fregion.addZone(fzone)
+    else:
+        for convex_polyhedron in convex_polyhedra:
+            planes = _pycgal.PolyhedronProcessing.polyhedron_to_numpyArrayPlanes(convex_polyhedron)
 
+            fzone = _fluka.Zone()
+
+            for plane in planes:
+                fbody = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + format(ibody, "02"),
+                    mtra @ -plane[3:] / _np.sqrt((plane[3:] ** 2).sum()),
+                    mtra @ plane[0:3] / 10.0 + tra / 10,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+                fzone.addSubtraction(fbody)
+                ibody += 1
+
+            fregion.addZone(fzone)
     return fregion
 
 
