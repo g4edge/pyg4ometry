@@ -260,6 +260,17 @@ def test_Geant42FlukaConversion_T007_Trap(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T007_Trap_baked(tmptestdir, testdata):
+    T007_geant4Trap2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T007_geant4Trap2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T008_Sphere(tmptestdir, testdata):
     T008_geant4Sphere2Fluka.Test(
         vis=False,
