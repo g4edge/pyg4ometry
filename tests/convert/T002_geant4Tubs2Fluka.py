@@ -1,4 +1,4 @@
-import os as _os
+import numpy as _np
 import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
@@ -8,7 +8,15 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=True,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    cuts=False,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -29,7 +37,10 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
+    if cuts:
+        ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
+    else:
+        ts = _g4.solid.Tubs("ts", 0, trmax, tz, 0, 2 * _np.pi, reg, "mm", "rad")
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
@@ -38,7 +49,7 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     tl = _g4.LogicalVolume(ts, bm, "tl", reg)
-    tp = _g4.PhysicalVolume([0, 0.0, 0.0], [0, 0, 0], tl, "t_pv1", wl, reg)
+    tp = _g4.PhysicalVolume([_np.pi / 4, 0.0, 0.0], [0, 25, 0], tl, "t_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -52,9 +63,17 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
     w.write(outputPath / "T002_geant4Tubs2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T002_geant4Tubs2Fluka.inp"
+    if not cuts and not bakeTransforms:
+        outputFile = outputPath / "T002_geant4Tubs2Fluka.inp"
+    elif cuts and not bakeTransforms:
+        outputFile = outputPath / "T002_geant4Tubs2Fluka_cuts.inp"
+    elif not cuts and bakeTransforms:
+        outputFile = outputPath / "T002_geant4Tubs2Fluka_baked.inp"
+    elif cuts and bakeTransforms:
+        outputFile = outputPath / "T002_geant4Tubs2Fluka_cuts_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

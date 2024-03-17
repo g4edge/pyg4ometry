@@ -9,7 +9,9 @@ import pyg4ometry.misc as _mi
 import numpy as _np
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None, bakeTransform=False
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
     # registry
@@ -42,9 +44,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.write(outputPath / "T001_geant4Box2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T001_geant4Box2Fluka.inp"
+    if not bakeTransform:
+        outputFile = outputPath / "T001_geant4Box2Fluka.inp"
+    else:
+        outputFile = outputPath / "T001_geant4Box2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransform)
 
         # fluka running
         freg.addDefaults(default="PRECISIO")
