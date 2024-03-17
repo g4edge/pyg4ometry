@@ -347,103 +347,16 @@ def geant4Solid2FlukaRegion(
             bakeTransform=False,
         )
     elif solid.type == "Cons":
-        luval = _Units.unit(solid.lunit) / 10.0
-        auval = _Units.unit(solid.aunit)
-
-        pRmin1 = solid.evaluateParameter(solid.pRmin1) * luval
-        pRmax1 = solid.evaluateParameter(solid.pRmax1) * luval
-        pRmin2 = solid.evaluateParameter(solid.pRmin2) * luval
-        pRmax2 = solid.evaluateParameter(solid.pRmax2) * luval
-        pDz = solid.evaluateParameter(solid.pDz) * luval
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
-
-        dir = pDz * _transformation.tbxyz2matrix(rotation).dot(_np.array([0, 0, 1]))
-        base = -dir / 2.0
-
-        if pRmin1 == 0 and pRmin2 == 0 and pSPhi == 0 and pDPhi == 2 * _np.pi:
-            fzone = _fluka.Zone()
-
-            fbody1 = flukaRegistry.makeBody(
-                TRC,
-                name="B" + name + "01",
-                major_centre=[0, 0, -pDz / 2],
-                direction=[0, 0, 1],
-                major_radius=pRmax1,
-                minor_radius=pRmax2,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            fzone.addIntersection(fbody1)
-        else:
-            fbody1 = _fluka.TRC(
-                "B" + name + "01",
-                base,
-                dir,
-                pRmax1,
-                pRmax2,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-            if pRmin1 != 0 and pRmin2 != 0:
-                fbody2 = _fluka.TRC(
-                    "B" + name + "02",
-                    base,
-                    dir,
-                    pRmin1,
-                    pRmin2,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                )
-
-            # phi cuts
-            if pDPhi != 2 * _np.pi:
-                fbody3 = flukaRegistry.makeBody(
-                    PLA,
-                    "B" + name + "03",
-                    [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
-                    [0, 0, 0],
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-                fbody4 = flukaRegistry.makeBody(
-                    PLA,
-                    "B" + name + "04",
-                    [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
-                    [0, 0, 0],
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-            fzone = _fluka.Zone()
-            fzone.addIntersection(fbody1)
-
-            if pRmin1 != 0 and pRmin2 != 0:
-                fzone.addSubtraction(fbody2)
-
-            if pDPhi != 2 * _np.pi:
-                if pDPhi < _np.pi:
-                    fzone.addSubtraction(fbody3)
-                    fzone.addIntersection(fbody4)
-                elif pDPhi == _np.pi:
-                    fzone.addSubtraction(fbody3)
-                else:
-                    fzone1 = _fluka.Zone()
-                    fzone1.addIntersection(fbody3)
-                    fzone1.addSubtraction(fbody4)
-                    fzone.addSubtraction(fzone1)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
+        fregion, flukaNameCount = geant4Cons2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=False,
+        )
     elif solid.type == "Para":
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
@@ -2523,6 +2436,203 @@ def geant4CutTubs2Fluka(
             fzone1.addIntersection(fbody5)
             fzone1.addSubtraction(fbody6)
             fzone.addSubtraction(fzone1)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Cons2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    fregion = None
+    fbodies = []
+
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    luval = _Units.unit(solid.lunit) / 10.0
+    auval = _Units.unit(solid.aunit)
+
+    pRmin1 = solid.evaluateParameter(solid.pRmin1) * luval
+    pRmax1 = solid.evaluateParameter(solid.pRmax1) * luval
+    pRmin2 = solid.evaluateParameter(solid.pRmin2) * luval
+    pRmax2 = solid.evaluateParameter(solid.pRmax2) * luval
+    pDz = solid.evaluateParameter(solid.pDz) * luval
+    pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+    pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+
+    if not bakeTransform:
+        if pRmin1 == 0 and pRmin2 == 0 and pSPhi == 0 and pDPhi == 2 * _np.pi:
+            fzone = _fluka.Zone()
+
+            fbody1 = flukaRegistry.makeBody(
+                TRC,
+                name="B" + name + "01",
+                major_centre=[0, 0, -pDz / 2],
+                direction=[0, 0, pDz],
+                major_radius=pRmax1,
+                minor_radius=pRmax2,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+            fzone.addIntersection(fbody1)
+        else:
+            fbody1 = _fluka.TRC(
+                "B" + name + "01",
+                major_centre=[0, 0, -pDz / 2],
+                direction=[0, 0, pDz],
+                major_radius=pRmax1,
+                minor_radius=pRmax2,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            if pRmin1 != 0 and pRmin2 != 0:
+                fbody2 = _fluka.TRC(
+                    "B" + name + "02",
+                    major_centre=[0, 0, -pDz / 2],
+                    direction=[0, 0, pDz],
+                    major_radius=pRmin1,
+                    minor_radius=pRmin2,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                )
+
+            # phi cuts
+            if pDPhi != 2 * _np.pi:
+                fbody3 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "03",
+                    [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
+                    [0, 0, 0],
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+                fbody4 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "04",
+                    [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
+                    [0, 0, 0],
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            fzone = _fluka.Zone()
+            fzone.addIntersection(fbody1)
+
+            if pRmin1 != 0 and pRmin2 != 0:
+                fzone.addSubtraction(fbody2)
+
+            if pDPhi != 2 * _np.pi:
+                if pDPhi < _np.pi:
+                    fzone.addSubtraction(fbody3)
+                    fzone.addIntersection(fbody4)
+                elif pDPhi == _np.pi:
+                    fzone.addSubtraction(fbody3)
+                else:
+                    fzone1 = _fluka.Zone()
+                    fzone1.addIntersection(fbody3)
+                    fzone1.addSubtraction(fbody4)
+                    fzone.addSubtraction(fzone1)
+    else:
+        if pRmin1 == 0 and pRmin2 == 0 and pSPhi == 0 and pDPhi == 2 * _np.pi:
+            fzone = _fluka.Zone()
+
+            fbody1 = flukaRegistry.makeBody(
+                TRC,
+                name="B" + name + "01",
+                major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra,
+                direction=mtra @ _np.array([0, 0, pDz]),
+                major_radius=pRmax1,
+                minor_radius=pRmax2,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+            fzone.addIntersection(fbody1)
+        else:
+            fbody1 = _fluka.TRC(
+                "B" + name + "01",
+                major_centre=mtra @ _np.array([0, 0, -pDz / 2]),
+                direction=mtra @ _np.array([0, 0, pDz]),
+                major_radius=pRmax1,
+                minor_radius=pRmax2,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            if pRmin1 != 0 and pRmin2 != 0:
+                fbody2 = _fluka.TRC(
+                    "B" + name + "02",
+                    major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra,
+                    direction=mtra @ _np.array([0, 0, pDz]),
+                    major_radius=pRmin1,
+                    minor_radius=pRmin2,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                )
+
+            # phi cuts
+            if pDPhi != 2 * _np.pi:
+                fbody3 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "03",
+                    mtra @ _np.array([-_np.sin(pSPhi), _np.cos(pSPhi), 0]),
+                    mtra @ _np.array([0, 0, 0]) + tra,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+                fbody4 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "04",
+                    mtra @ _np.array([-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0]),
+                    mtra @ _np.array([0, 0, 0]) + tra,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            fzone = _fluka.Zone()
+            fzone.addIntersection(fbody1)
+
+            if pRmin1 != 0 and pRmin2 != 0:
+                fzone.addSubtraction(fbody2)
+
+            if pDPhi != 2 * _np.pi:
+                if pDPhi < _np.pi:
+                    fzone.addSubtraction(fbody3)
+                    fzone.addIntersection(fbody4)
+                elif pDPhi == _np.pi:
+                    fzone.addSubtraction(fbody3)
+                else:
+                    fzone1 = _fluka.Zone()
+                    fzone1.addIntersection(fbody3)
+                    fzone1.addSubtraction(fbody4)
+                    fzone.addSubtraction(fzone1)
 
     fregion = _fluka.Region("R" + name)
     fregion.addZone(fzone)
