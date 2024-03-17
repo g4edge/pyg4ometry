@@ -373,194 +373,27 @@ def geant4Solid2FlukaRegion(
         )
         flukaNameCount += 1
     elif solid.type == "Sphere":
-        luval = _Units.unit(solid.lunit) / 10.0
-        auval = _Units.unit(solid.aunit)
-
-        pRmin = solid.evaluateParameter(solid.pRmin) * luval
-        pRmax = solid.evaluateParameter(solid.pRmax) * luval
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
-        pSTheta = solid.evaluateParameter(solid.pSTheta) * auval
-        pDTheta = solid.evaluateParameter(solid.pDTheta) * auval
-
-        fbody1 = _fluka.SPH(
-            "B" + name + "01",
-            [0, 0, 0],
-            pRmax,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4Sphere2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=False,
         )
-
-        if pRmin != 0:
-            fbody2 = _fluka.SPH(
-                "B" + name + "02",
-                [0, 0, 0],
-                pRmin,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-        # phi cuts
-        if pDPhi != 2 * _np.pi:
-            fbody3 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "03",
-                [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
-                [0, 0, 0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-            fbody4 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "04",
-                [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
-                [0, 0, 0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-        pTheta1 = pSTheta
-        pTheta2 = pSTheta + pDTheta
-
-        if pTheta1 != 0:
-            if pTheta1 < _np.pi / 2.0:
-                r = _np.tan(pTheta1) * pRmax
-
-                fbody5 = _fluka.TRC(
-                    "B" + name + "05",
-                    [0, 0, pRmax],
-                    [0, 0, -pRmax],
-                    r,
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-            elif pTheta1 > _np.pi / 2.0:
-                r = _np.tan(pTheta1) * pRmax
-
-                fbody5 = _fluka.TRC(
-                    "B" + name + "05",
-                    [0, 0, -pRmax],
-                    [0, 0, pRmax],
-                    r,
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-            else:
-                fbody5 = flukaRegistry.makeBody(
-                    XYP,
-                    "B" + name + "05",
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-        if pTheta2 != _np.pi:
-            if pTheta2 < _np.pi / 2.0:
-                r = abs(_np.tan(pTheta2) * pRmax)
-
-                fbody6 = _fluka.TRC(
-                    "B" + name + "06",
-                    [0, 0, pRmax],
-                    [0, 0, -pRmax],
-                    r,
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-            elif pTheta2 > _np.pi / 2.0:
-                r = abs(_np.tan(pTheta2) * pRmax)
-                fbody6 = _fluka.TRC(
-                    "B" + name + "06",
-                    [0, 0, -pRmax],
-                    [0, 0, pRmax],
-                    r,
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-            else:
-                fbody6 = flukaRegistry.makeBody(
-                    XYP,
-                    "B" + name + "06",
-                    0,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-
-        if pRmin != 0:
-            fzone.addSubtraction(fbody2)
-
-        if pDPhi != 2 * _np.pi:
-            if pDPhi < _np.pi:
-                fzone.addSubtraction(fbody3)
-                fzone.addIntersection(fbody4)
-            elif pDPhi == _np.pi:
-                fzone.addSubtraction(fbody3)
-            else:
-                fzone1 = _fluka.Zone()
-                fzone1.addIntersection(fbody3)
-                fzone1.addSubtraction(fbody4)
-                fzone.addSubtraction(fzone1)
-
-        if pTheta1 != 0:
-            if pTheta1 < _np.pi / 2.0:
-                fzone.addSubtraction(fbody5)
-            elif pTheta1 > _np.pi / 2.0:
-                fzone.addIntersection(fbody5)
-            else:
-                fzone.addIntersection(fbody5)
-
-        if pTheta2 != _np.pi:
-            if pTheta2 > _np.pi / 2.0:
-                fzone.addSubtraction(fbody6)
-            elif pTheta2 < _np.pi / 2.0:
-                fzone.addIntersection(fbody6)
-            else:
-                fzone.addIntersection(fbody6)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
     elif solid.type == "Orb":
-        luval = _Units.unit(solid.lunit)
-
-        pRmax = solid.evaluateParameter(solid.pRMax) * luval / 10.0
-
-        fbody1 = _fluka.SPH(
-            "B" + name + "01",
-            [0, 0, 0],
-            pRmax,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4Orb2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=False,
         )
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
 
     elif solid.type == "Torus":
         luval = _Units.unit(solid.lunit)
@@ -2668,6 +2501,367 @@ def pycsgmesh2FlukaRegion(
 
             fregion.addZone(fzone)
     return fregion
+
+
+def geant4Sphere2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    luval = _Units.unit(solid.lunit) / 10.0
+    auval = _Units.unit(solid.aunit)
+
+    pRmin = solid.evaluateParameter(solid.pRmin) * luval
+    pRmax = solid.evaluateParameter(solid.pRmax) * luval
+    pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+    pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+    pSTheta = solid.evaluateParameter(solid.pSTheta) * auval
+    pDTheta = solid.evaluateParameter(solid.pDTheta) * auval
+
+    if not bakeTransform:
+        fbody1 = _fluka.SPH(
+            "B" + name + "01",
+            [0, 0, 0],
+            pRmax,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+        if pRmin != 0:
+            fbody2 = _fluka.SPH(
+                "B" + name + "02",
+                [0, 0, 0],
+                pRmin,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+        # phi cuts
+        if pDPhi != 2 * _np.pi:
+            fbody3 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "03",
+                [-_np.sin(pSPhi), _np.cos(pSPhi), 0],
+                [0, 0, 0],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            fbody4 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "04",
+                [-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0],
+                [0, 0, 0],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        pTheta1 = pSTheta
+        pTheta2 = pSTheta + pDTheta
+
+        if pTheta1 != 0:
+            if pTheta1 < _np.pi / 2.0:
+                r = _np.tan(pTheta1) * pRmax
+
+                fbody5 = _fluka.TRC(
+                    "B" + name + "05",
+                    [0, 0, pRmax],
+                    [0, 0, -pRmax],
+                    r,
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            elif pTheta1 > _np.pi / 2.0:
+                r = _np.tan(pTheta1) * pRmax
+
+                fbody5 = _fluka.TRC(
+                    "B" + name + "05",
+                    [0, 0, -pRmax],
+                    [0, 0, pRmax],
+                    r,
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+            else:
+                fbody5 = flukaRegistry.makeBody(
+                    XYP,
+                    "B" + name + "05",
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+        if pTheta2 != _np.pi:
+            if pTheta2 < _np.pi / 2.0:
+                r = abs(_np.tan(pTheta2) * pRmax)
+
+                fbody6 = _fluka.TRC(
+                    "B" + name + "06",
+                    [0, 0, pRmax],
+                    [0, 0, -pRmax],
+                    r,
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            elif pTheta2 > _np.pi / 2.0:
+                r = abs(_np.tan(pTheta2) * pRmax)
+                fbody6 = _fluka.TRC(
+                    "B" + name + "06",
+                    [0, 0, -pRmax],
+                    [0, 0, pRmax],
+                    r,
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+            else:
+                fbody6 = flukaRegistry.makeBody(
+                    XYP,
+                    "B" + name + "06",
+                    0,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+    else:
+        fbody1 = _fluka.SPH(
+            "B" + name + "01",
+            mtra @ _np.array([0, 0, 0]) + tra,
+            pRmax,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+        if pRmin != 0:
+            fbody2 = _fluka.SPH(
+                "B" + name + "02",
+                mtra @ _np.array([0, 0, 0]) + tra,
+                pRmin,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+        # phi cuts
+        if pDPhi != 2 * _np.pi:
+            fbody3 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "03",
+                mtra @ _np.array([-_np.sin(pSPhi), _np.cos(pSPhi), 0]),
+                mtra @ _np.array([0, 0, 0]) + tra,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            fbody4 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "04",
+                mtra @ _np.array([-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0]),
+                mtra @ _np.array([0, 0, 0]) + tra,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        pTheta1 = pSTheta
+        pTheta2 = pSTheta + pDTheta
+
+        if pTheta1 != 0:
+            if pTheta1 < _np.pi / 2.0:
+                r = _np.tan(pTheta1) * pRmax
+
+                fbody5 = _fluka.TRC(
+                    "B" + name + "05",
+                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    r,
+                    0,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            elif pTheta1 > _np.pi / 2.0:
+                r = _np.tan(pTheta1) * pRmax
+
+                fbody5 = _fluka.TRC(
+                    "B" + name + "05",
+                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    r,
+                    0,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+            else:
+                fbody5 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "05",
+                    mtra @ _np.array([0, 0, 1]),
+                    mtra @ _np.array([0, 0, 0]) + tra,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+        if pTheta2 != _np.pi:
+            if pTheta2 < _np.pi / 2.0:
+                r = abs(_np.tan(pTheta2) * pRmax)
+
+                fbody6 = _fluka.TRC(
+                    "B" + name + "06",
+                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    r,
+                    0,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+            elif pTheta2 > _np.pi / 2.0:
+                r = abs(_np.tan(pTheta2) * pRmax)
+                fbody6 = _fluka.TRC(
+                    "B" + name + "06",
+                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    r,
+                    0,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+            else:
+                fbody6 = flukaRegistry.makeBody(
+                    PLA,
+                    "B" + name + "06",
+                    mtra @ _np.array([0, 0, 1]),
+                    mtra @ _np.array([0, 0, 0]) + tra,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+    fzone = _fluka.Zone()
+    fzone.addIntersection(fbody1)
+
+    if pRmin != 0:
+        fzone.addSubtraction(fbody2)
+
+    if pDPhi != 2 * _np.pi:
+        if pDPhi < _np.pi:
+            fzone.addSubtraction(fbody3)
+            fzone.addIntersection(fbody4)
+        elif pDPhi == _np.pi:
+            fzone.addSubtraction(fbody3)
+        else:
+            fzone1 = _fluka.Zone()
+            fzone1.addIntersection(fbody3)
+            fzone1.addSubtraction(fbody4)
+            fzone.addSubtraction(fzone1)
+
+    if pTheta1 != 0:
+        if pTheta1 < _np.pi / 2.0:
+            fzone.addSubtraction(fbody5)
+        elif pTheta1 > _np.pi / 2.0:
+            fzone.addIntersection(fbody5)
+        else:
+            fzone.addIntersection(fbody5)
+
+    if pTheta2 != _np.pi:
+        if pTheta2 > _np.pi / 2.0:
+            fzone.addSubtraction(fbody6)
+        elif pTheta2 < _np.pi / 2.0:
+            fzone.addIntersection(fbody6)
+        else:
+            fzone.addIntersection(fbody6)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Orb2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    luval = _Units.unit(solid.lunit)
+
+    pRmax = solid.evaluateParameter(solid.pRMax) * luval / 10.0
+
+    if not bakeTransform:
+        fbody1 = _fluka.SPH(
+            "B" + name + "01",
+            [0, 0, 0],
+            pRmax,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody1 = _fluka.SPH(
+            "B" + name + "01",
+            mtra @ _np.array([0, 0, 0]) + tra,
+            pRmax,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+    fzone = _fluka.Zone()
+    fzone.addIntersection(fbody1)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
 
 
 def makeStripName(mn):
