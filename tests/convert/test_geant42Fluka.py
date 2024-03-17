@@ -218,6 +218,17 @@ def test_Geant42FlukaConversion_T005_Para(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T005_Para_baked(tmptestdir, testdata):
+    T005_geant4Para2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T005_geant4Para2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T006_Tdr(tmptestdir, testdata):
     T006_geant4Trd2Fluka.Test(
         vis=False,
