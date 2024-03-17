@@ -2662,7 +2662,7 @@ def geant4Sphere2Fluka(
     else:
         fbody1 = _fluka.SPH(
             "B" + name + "01",
-            mtra @ _np.array([0, 0, 0]) + tra,
+            mtra @ _np.array([0, 0, 0]) + tra / 10,
             pRmax,
             transform=None,
             flukaregistry=flukaRegistry,
@@ -2672,7 +2672,7 @@ def geant4Sphere2Fluka(
         if pRmin != 0:
             fbody2 = _fluka.SPH(
                 "B" + name + "02",
-                mtra @ _np.array([0, 0, 0]) + tra,
+                mtra @ _np.array([0, 0, 0]) + tra / 10,
                 pRmin,
                 transform=None,
                 flukaregistry=flukaRegistry,
@@ -2685,7 +2685,7 @@ def geant4Sphere2Fluka(
                 PLA,
                 "B" + name + "03",
                 mtra @ _np.array([-_np.sin(pSPhi), _np.cos(pSPhi), 0]),
-                mtra @ _np.array([0, 0, 0]) + tra,
+                mtra @ _np.array([0, 0, 0]) + tra / 10,
                 transform=None,
                 flukaregistry=flukaRegistry,
                 comment=commentName,
@@ -2695,8 +2695,8 @@ def geant4Sphere2Fluka(
                 PLA,
                 "B" + name + "04",
                 mtra @ _np.array([-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0]),
-                mtra @ _np.array([0, 0, 0]) + tra,
-                transform=transform,
+                mtra @ _np.array([0, 0, 0]) + tra / 10,
+                transform=None,
                 flukaregistry=flukaRegistry,
                 comment=commentName,
             )
@@ -2709,8 +2709,8 @@ def geant4Sphere2Fluka(
 
                 fbody5 = _fluka.TRC(
                     "B" + name + "05",
-                    mtra @ _np.array([0, 0, pRmax]) + tra,
-                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    mtra @ _np.array([0, 0, pRmax]) + tra / 10,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra / 10,
                     r,
                     0,
                     transform=None,
@@ -2723,8 +2723,8 @@ def geant4Sphere2Fluka(
 
                 fbody5 = _fluka.TRC(
                     "B" + name + "05",
-                    mtra @ _np.array([0, 0, -pRmax]) + tra,
-                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra / 10,
+                    mtra @ _np.array([0, 0, pRmax]) + tra / 10,
                     r,
                     0,
                     transform=None,
@@ -2736,7 +2736,7 @@ def geant4Sphere2Fluka(
                     PLA,
                     "B" + name + "05",
                     mtra @ _np.array([0, 0, 1]),
-                    mtra @ _np.array([0, 0, 0]) + tra,
+                    mtra @ _np.array([0, 0, 0]) + tra / 10,
                     transform=None,
                     flukaregistry=flukaRegistry,
                     comment=commentName,
@@ -2748,8 +2748,8 @@ def geant4Sphere2Fluka(
 
                 fbody6 = _fluka.TRC(
                     "B" + name + "06",
-                    mtra @ _np.array([0, 0, pRmax]) + tra,
-                    mtra @ _np.array([0, 0, -pRmax]) + tra,
+                    mtra @ _np.array([0, 0, pRmax]) + tra / 10,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra / 10,
                     r,
                     0,
                     transform=None,
@@ -2761,8 +2761,8 @@ def geant4Sphere2Fluka(
                 r = abs(_np.tan(pTheta2) * pRmax)
                 fbody6 = _fluka.TRC(
                     "B" + name + "06",
-                    mtra @ _np.array([0, 0, -pRmax]) + tra,
-                    mtra @ _np.array([0, 0, pRmax]) + tra,
+                    mtra @ _np.array([0, 0, -pRmax]) + tra / 10,
+                    mtra @ _np.array([0, 0, pRmax]) + tra / 10,
                     r,
                     0,
                     transform=None,
@@ -2774,7 +2774,7 @@ def geant4Sphere2Fluka(
                     PLA,
                     "B" + name + "06",
                     mtra @ _np.array([0, 0, 1]),
-                    mtra @ _np.array([0, 0, 0]) + tra,
+                    mtra @ _np.array([0, 0, 0]) + tra / 10,
                     transform=None,
                     flukaregistry=flukaRegistry,
                     comment=commentName,

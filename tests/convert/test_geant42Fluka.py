@@ -281,6 +281,40 @@ def test_Geant42FlukaConversion_T008_Sphere(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T008_Sphere_cuts(tmptestdir, testdata):
+    T008_geant4Sphere2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T008_geant4Sphere2Fluka_cuts.inp"],
+        cuts=True,
+    )
+
+
+def test_Geant42FlukaConversion_T008_Sphere_baked(tmptestdir, testdata):
+    T008_geant4Sphere2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T008_geant4Sphere2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
+def test_Geant42FlukaConversion_T008_Sphere_cuts_baked(tmptestdir, testdata):
+    T008_geant4Sphere2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T008_geant4Sphere2Fluka_cuts_baked.inp"],
+        cuts=True,
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T009_Orb(tmptestdir, testdata):
     T009_geant4Orb2Fluka.Test(
         vis=False,
