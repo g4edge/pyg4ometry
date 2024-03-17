@@ -2369,7 +2369,7 @@ def geant4Cons2Fluka(
             fbody1 = flukaRegistry.makeBody(
                 TRC,
                 name="B" + name + "01",
-                major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra,
+                major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra / 10,
                 direction=mtra @ _np.array([0, 0, pDz]),
                 major_radius=pRmax1,
                 minor_radius=pRmax2,
@@ -2381,7 +2381,7 @@ def geant4Cons2Fluka(
         else:
             fbody1 = _fluka.TRC(
                 "B" + name + "01",
-                major_centre=mtra @ _np.array([0, 0, -pDz / 2]),
+                major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra / 10,
                 direction=mtra @ _np.array([0, 0, pDz]),
                 major_radius=pRmax1,
                 minor_radius=pRmax2,
@@ -2393,7 +2393,7 @@ def geant4Cons2Fluka(
             if pRmin1 != 0 and pRmin2 != 0:
                 fbody2 = _fluka.TRC(
                     "B" + name + "02",
-                    major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra,
+                    major_centre=mtra @ _np.array([0, 0, -pDz / 2]) + tra / 10,
                     direction=mtra @ _np.array([0, 0, pDz]),
                     major_radius=pRmin1,
                     minor_radius=pRmin2,
@@ -2407,7 +2407,7 @@ def geant4Cons2Fluka(
                     PLA,
                     "B" + name + "03",
                     mtra @ _np.array([-_np.sin(pSPhi), _np.cos(pSPhi), 0]),
-                    mtra @ _np.array([0, 0, 0]) + tra,
+                    mtra @ _np.array([0, 0, 0]) + tra / 10,
                     transform=None,
                     flukaregistry=flukaRegistry,
                     comment=commentName,
@@ -2417,7 +2417,7 @@ def geant4Cons2Fluka(
                     PLA,
                     "B" + name + "04",
                     mtra @ _np.array([-_np.sin(pSPhi + pDPhi), _np.cos(pSPhi + pDPhi), 0]),
-                    mtra @ _np.array([0, 0, 0]) + tra,
+                    mtra @ _np.array([0, 0, 0]) + tra / 10,
                     transform=None,
                     flukaregistry=flukaRegistry,
                     comment=commentName,

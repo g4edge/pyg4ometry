@@ -172,6 +172,42 @@ def test_Geant42FlukaConversion_T004_Cons(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T004_Cons_cuts(tmptestdir, testdata):
+    T004_geant4Cons2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T004_geant4Cons2Fluka_cuts.inp"],
+        cuts=True,
+        bakeTransforms=False,
+    )
+
+
+def test_Geant42FlukaConversion_T004_Cons_baked(tmptestdir, testdata):
+    T004_geant4Cons2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T004_geant4Cons2Fluka_baked.inp"],
+        cuts=False,
+        bakeTransforms=True,
+    )
+
+
+def test_Geant42FlukaConversion_T004_Cons_cuts_baked(tmptestdir, testdata):
+    T004_geant4Cons2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T004_geant4Cons2Fluka_cuts_baked.inp"],
+        cuts=True,
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T005_Para(tmptestdir, testdata):
     T005_geant4Para2Fluka.Test(
         vis=False,
