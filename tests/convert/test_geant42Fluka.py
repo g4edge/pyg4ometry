@@ -346,6 +346,40 @@ def test_Geant42FlukaConversion_T010_Torus(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T010_Torus_cuts(tmptestdir, testdata):
+    T010_geant4Torus2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T010_geant4Torus2Fluka_cuts.inp"],
+        cuts=True,
+    )
+
+
+def test_Geant42FlukaConversion_T010_Torus_baked(tmptestdir, testdata):
+    T010_geant4Torus2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T010_geant4Torus2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
+def test_Geant42FlukaConversion_T010_Torus_cuts_baked(tmptestdir, testdata):
+    T010_geant4Torus2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T010_geant4Torus2Fluka_cuts_baked.inp"],
+        cuts=True,
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T011_Polycone(tmptestdir, testdata):
     T011_geant4Polycone2Fluka.Test(
         vis=False,

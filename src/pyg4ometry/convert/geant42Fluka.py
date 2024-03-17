@@ -406,101 +406,16 @@ def geant4Solid2FlukaRegion(
         )
 
     elif solid.type == "Torus":
-        luval = _Units.unit(solid.lunit)
-        auval = _Units.unit(solid.aunit)
-
-        pRmin = solid.evaluateParameter(solid.pRmin) * luval / 10.0
-        pRmax = solid.evaluateParameter(solid.pRmax) * luval / 10.0
-        pRtor = solid.evaluateParameter(solid.pRtor) * luval / 10.0
-        pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
-        pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
-
-        dPhi = pDPhi / solid.nstack
-
-        # create region
-        fregion = _fluka.Region("R" + name)
-
-        d = pDPhi * pRtor / solid.nstack / 2 * 1.35
-
-        for i in range(0, solid.nstack, 1):
-            x0 = pRtor * _np.cos(i * dPhi + pSPhi)
-            y0 = pRtor * _np.sin(i * dPhi + pSPhi)
-            z0 = 0
-
-            nx0 = d * _np.cos(i * dPhi + pSPhi + _np.pi / 2.0)
-            ny0 = d * _np.sin(i * dPhi + pSPhi + _np.pi / 2.0)
-            nz0 = 0
-
-            x1 = pRtor * _np.cos((i + 0.5) * dPhi + pSPhi)
-            y1 = pRtor * _np.sin((i + 0.5) * dPhi + pSPhi)
-            z1 = 0
-
-            nx1 = d * _np.cos((i + 0.5) * dPhi + pSPhi + _np.pi / 2.0)
-            ny1 = d * _np.sin((i + 0.5) * dPhi + pSPhi + _np.pi / 2.0)
-            nz1 = 0
-
-            x1 = x1 - nx1
-            y1 = y1 - ny1
-
-            x2 = pRtor * _np.cos((i + 1) * dPhi + pSPhi)
-            y2 = pRtor * _np.sin((i + 1) * dPhi + pSPhi)
-            z2 = 0
-
-            nx2 = d * _np.cos((i + 1) * dPhi + pSPhi + _np.pi / 2.0)
-            ny2 = d * _np.sin((i + 1) * dPhi + pSPhi + _np.pi / 2.0)
-            nz2 = 0
-
-            body1 = _fluka.RCC(
-                "B" + name + "" + format(4 * i, "02"),
-                [x1, y1, z1],
-                [2 * nx1, 2 * ny1, 2 * nz1],
-                pRmax,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            body2 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "" + format(4 * i + 1, "02"),
-                [nx0, ny0, nz0],
-                [x0, y0, z0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-            body3 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + "" + format(4 * i + 2, "02"),
-                [nx2, ny2, nz2],
-                [x2, y2, z2],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-            if pRmin != 0:
-                body4 = _fluka.RCC(
-                    "B" + name + format(4 * i + 3, "02"),
-                    [x1, y1, z1],
-                    [2 * nx1, 2 * ny1, 2 * nz1],
-                    pRmin,
-                    transform=transform,
-                    flukaregistry=flukaRegistry,
-                    comment=commentName,
-                )
-
-            fzone = _fluka.Zone()
-            fzone.addIntersection(body1)
-            fzone.addSubtraction(body2)
-            fzone.addIntersection(body3)
-            if pRmin != 0:
-                fzone.addSubtraction(body4)
-
-            fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
+        fregion, flukaNameCount = geant4Torus2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
+        )
     elif solid.type == "GenericPolycone" or solid.type == "Polycone":
         if solid.type == "GenericPolycone":
             import pyg4ometry.gdml.Units as _Units  # TODO move circular import
@@ -2868,6 +2783,179 @@ def geant4Orb2Fluka(
 
     fregion = _fluka.Region("R" + name)
     fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Torus2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    luval = _Units.unit(solid.lunit)
+    auval = _Units.unit(solid.aunit)
+
+    pRmin = solid.evaluateParameter(solid.pRmin) * luval / 10.0
+    pRmax = solid.evaluateParameter(solid.pRmax) * luval / 10.0
+    pRtor = solid.evaluateParameter(solid.pRtor) * luval / 10.0
+    pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+    pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+
+    dPhi = pDPhi / solid.nstack
+
+    # create region
+    fregion = _fluka.Region("R" + name)
+
+    d = pDPhi * pRtor / solid.nstack / 2 * 1.35
+
+    luval = _Units.unit(solid.lunit)
+    auval = _Units.unit(solid.aunit)
+
+    pRmin = solid.evaluateParameter(solid.pRmin) * luval / 10.0
+    pRmax = solid.evaluateParameter(solid.pRmax) * luval / 10.0
+    pRtor = solid.evaluateParameter(solid.pRtor) * luval / 10.0
+    pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
+    pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
+
+    dPhi = pDPhi / solid.nstack
+
+    # create region
+    fregion = _fluka.Region("R" + name)
+
+    d = pDPhi * pRtor / solid.nstack / 2 * 1.35
+
+    for i in range(0, solid.nstack, 1):
+        x0 = pRtor * _np.cos(i * dPhi + pSPhi)
+        y0 = pRtor * _np.sin(i * dPhi + pSPhi)
+        z0 = 0
+
+        nx0 = d * _np.cos(i * dPhi + pSPhi + _np.pi / 2.0)
+        ny0 = d * _np.sin(i * dPhi + pSPhi + _np.pi / 2.0)
+        nz0 = 0
+
+        x1 = pRtor * _np.cos((i + 0.5) * dPhi + pSPhi)
+        y1 = pRtor * _np.sin((i + 0.5) * dPhi + pSPhi)
+        z1 = 0
+
+        nx1 = d * _np.cos((i + 0.5) * dPhi + pSPhi + _np.pi / 2.0)
+        ny1 = d * _np.sin((i + 0.5) * dPhi + pSPhi + _np.pi / 2.0)
+        nz1 = 0
+
+        x1 = x1 - nx1
+        y1 = y1 - ny1
+
+        x2 = pRtor * _np.cos((i + 1) * dPhi + pSPhi)
+        y2 = pRtor * _np.sin((i + 1) * dPhi + pSPhi)
+        z2 = 0
+
+        nx2 = d * _np.cos((i + 1) * dPhi + pSPhi + _np.pi / 2.0)
+        ny2 = d * _np.sin((i + 1) * dPhi + pSPhi + _np.pi / 2.0)
+        nz2 = 0
+
+        if not bakeTransform:
+            body1 = _fluka.RCC(
+                "B" + name + "" + format(4 * i, "02"),
+                [x1, y1, z1],
+                [2 * nx1, 2 * ny1, 2 * nz1],
+                pRmax,
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+            body2 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "" + format(4 * i + 1, "02"),
+                [nx0, ny0, nz0],
+                [x0, y0, z0],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            body3 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "" + format(4 * i + 2, "02"),
+                [nx2, ny2, nz2],
+                [x2, y2, z2],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            if pRmin != 0:
+                body4 = _fluka.RCC(
+                    "B" + name + format(4 * i + 3, "02"),
+                    [x1, y1, z1],
+                    [2 * nx1, 2 * ny1, 2 * nz1],
+                    pRmin,
+                    transform=transform,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+        else:
+            body1 = _fluka.RCC(
+                "B" + name + "" + format(4 * i, "02"),
+                mtra @ _np.array([x1, y1, z1]) + tra / 10,
+                mtra @ [2 * nx1, 2 * ny1, 2 * nz1],
+                pRmax,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+            body2 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "" + format(4 * i + 1, "02"),
+                mtra @ _np.array([nx0, ny0, nz0]),
+                mtra @ _np.array([x0, y0, z0]) + tra / 10,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            body3 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + "" + format(4 * i + 2, "02"),
+                mtra @ _np.array([nx2, ny2, nz2]),
+                mtra @ _np.array([x2, y2, z2]) + tra / 10,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+
+            if pRmin != 0:
+                body4 = _fluka.RCC(
+                    "B" + name + format(4 * i + 3, "02"),
+                    mtra @ _np.array([x1, y1, z1]) + tra / 10,
+                    mtra @ _np.array([2 * nx1, 2 * ny1, 2 * nz1]),
+                    pRmin,
+                    transform=None,
+                    flukaregistry=flukaRegistry,
+                    comment=commentName,
+                )
+
+        fzone = _fluka.Zone()
+        fzone.addIntersection(body1)
+        fzone.addSubtraction(body2)
+        fzone.addIntersection(body3)
+        if pRmin != 0:
+            fzone.addSubtraction(body4)
+
+        fregion.addZone(fzone)
 
     flukaNameCount += 1
 
