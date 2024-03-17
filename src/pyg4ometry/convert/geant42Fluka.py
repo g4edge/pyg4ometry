@@ -16,7 +16,7 @@ from pyg4ometry.fluka.body import *
 # import matplotlib.pyplot as _plt
 
 
-def geant4Reg2FlukaReg(greg, logicalVolumeName=""):
+def geant4Reg2FlukaReg(greg, logicalVolumeName="", bakeTransforms=False):
     """
     Convert a Geant4 model to a FLUKA one. This is done by handing over a complete
     pyg4ometry.geant4.Registry instance.
@@ -34,12 +34,12 @@ def geant4Reg2FlukaReg(greg, logicalVolumeName=""):
     else:
         logi = greg.logicalVolumeDict[logicalVolumeName]
     freg = geant4MaterialDict2Fluka(greg.materialDict, freg)
-    freg = geant4Logical2Fluka(logi, freg)
+    freg = geant4Logical2Fluka(logi, freg, bakeTransforms)
 
     return freg
 
 
-def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
+def geant4Logical2Fluka(logicalVolume, flukaRegistry=None, bakeTransforms=False):
     """
     Convert a single logical volume - not the main entry point for the conversion.
     """
@@ -83,6 +83,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
             tra,
             flukaRegistry,
             commentName=logicalVolume.name,
+            bakeTransforms=bakeTransforms,
         )
     elif logicalVolume.type == "assembly":
         e = logicalVolume.extent()
@@ -96,7 +97,13 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
             False,
         )
         flukaMotherOuterRegion, flukaNameCount = geant4Solid2FlukaRegion(
-            flukaNameCount, b, mtra, tra, flukaRegistry, commentName=logicalVolume.name
+            flukaNameCount,
+            b,
+            mtra,
+            tra,
+            flukaRegistry,
+            commentName=logicalVolume.name,
+            bakeTransforms=bakeTransforms,
         )
     else:
         # avoid warning about flukaMotherOuterRegion being used without assignment
@@ -124,7 +131,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None):
         new_tra = mtra @ reflection @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
-            dv, new_mtra, new_tra, flukaRegistry, flukaNameCount
+            dv, new_mtra, new_tra, flukaRegistry, flukaNameCount, bakeTransforms=bakeTransforms
         )
 
         # subtract daughters from black body
@@ -170,6 +177,7 @@ def geant4PhysicalVolume2Fluka(
     tra=_np.array([0, 0, 0]),
     flukaRegistry=None,
     flukaNameCount=0,
+    bakeTransforms=False,
 ):
     # logical volume (outer and complete)
     if physicalVolume.logicalVolume.type == "logical":
@@ -181,6 +189,7 @@ def geant4PhysicalVolume2Fluka(
             tra,
             flukaRegistry,
             commentName=physicalVolume.name,
+            bakeTransforms=bakeTransforms,
         )
     elif physicalVolume.logicalVolume.type == "assembly":
         name = "R" + format(flukaNameCount, "04")
@@ -294,6 +303,7 @@ def geant4Solid2FlukaRegion(
     flukaRegistry=None,
     addRegistry=True,
     commentName="",
+    bakeTransforms=False,
 ):
     import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
@@ -322,7 +332,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
     elif solid.type == "Tubs":
         fregion, flukaNameCount = geant4Tubs2Fluka(
@@ -333,7 +343,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
     elif solid.type == "CutTubs":
         fregion, flukaNameCount = geant4CutTubs2Fluka(
@@ -344,7 +354,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
     elif solid.type == "Cons":
         fregion, flukaNameCount = geant4Cons2Fluka(
@@ -355,21 +365,21 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
     elif solid.type == "Para":
         fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, bakeTransforms
         )
         flukaNameCount += 1
     elif solid.type == "Trd":
         fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, bakeTransforms
         )
         flukaNameCount += 1
     elif solid.type == "Trap":
         fregion = pycsgmesh2FlukaRegion(
-            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
+            solid.mesh(), name, mtra, tra, flukaRegistry, commentName, bakeTransforms
         )
         flukaNameCount += 1
     elif solid.type == "Sphere":
@@ -381,7 +391,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
     elif solid.type == "Orb":
         fregion, flukaNameCount = geant4Orb2Fluka(
@@ -392,7 +402,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry,
             addRegistry=True,
             commentName=commentName,
-            bakeTransform=False,
+            bakeTransform=bakeTransforms,
         )
 
     elif solid.type == "Torus":
