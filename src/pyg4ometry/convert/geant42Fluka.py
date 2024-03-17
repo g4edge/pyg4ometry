@@ -2501,8 +2501,8 @@ def pycsgmesh2FlukaRegion(
                     PLA,
                     "B" + name + format(ibody, "02"),
                     mtra @ -plane[3:] / _np.sqrt((plane[3:] ** 2).sum()),
-                    mtra @ plane[0:3] / 10.0 + tra / 10,
-                    transform=transform,
+                    mtra @ plane[0:3] / 10 + tra / 10,
+                    transform=None,
                     flukaregistry=flukaRegistry,
                     comment=commentName,
                 )
