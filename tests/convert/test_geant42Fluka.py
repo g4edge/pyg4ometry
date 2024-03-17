@@ -325,6 +325,17 @@ def test_Geant42FlukaConversion_T009_Orb(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T009_Orb_baked(tmptestdir, testdata):
+    T009_geant4Orb2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T009_geant4Orb2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T010_Torus(tmptestdir, testdata):
     T010_geant4Torus2Fluka.Test(
         vis=False,

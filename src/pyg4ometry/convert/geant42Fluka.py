@@ -2856,7 +2856,7 @@ def geant4Orb2Fluka(
     else:
         fbody1 = _fluka.SPH(
             "B" + name + "01",
-            mtra @ _np.array([0, 0, 0]) + tra,
+            mtra @ _np.array([0, 0, 0]) + tra / 10,
             pRmax,
             transform=None,
             flukaregistry=flukaRegistry,

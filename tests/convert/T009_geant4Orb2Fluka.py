@@ -16,6 +16,7 @@ def Test(
     n_stack=16,
     outputPath=None,
     refFilePath=None,
+    bakeTransforms=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
@@ -41,7 +42,7 @@ def Test(
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     ol = _g4.LogicalVolume(os, om, "ol", reg)
-    op = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], ol, "o_pv1", wl, reg)
+    op = _g4.PhysicalVolume([0, 0, 0], [0, 15, 0], ol, "o_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -55,9 +56,13 @@ def Test(
     w.write(outputPath / "T009_geant4Orb2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T009_geant4Orb2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T009_geant4Orb2Fluka.inp"
+    else:
+        outputFile = outputPath / "T009_geant4Orb2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)
