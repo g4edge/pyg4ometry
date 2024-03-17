@@ -404,7 +404,6 @@ def geant4Solid2FlukaRegion(
             commentName=commentName,
             bakeTransform=bakeTransforms,
         )
-
     elif solid.type == "Torus":
         fregion, flukaNameCount = geant4Torus2Fluka(
             flukaNameCount,
