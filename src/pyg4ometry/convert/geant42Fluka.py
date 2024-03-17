@@ -360,63 +360,12 @@ def geant4Solid2FlukaRegion(
     elif solid.type == "Para":
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
-        """
-
-        luval = _Units.unit(solid.lunit)/10.0/2.0
-        auval = _Units.unit(solid.aunit)
-
-        pX     = solid.evaluateParameter(solid.pX)*luval
-        pY     = solid.evaluateParameter(solid.pY)*luval
-        pZ     = solid.evaluateParameter(solid.pZ)*luval
-        pAlpha = solid.evaluateParameter(solid.pAlpha)*auval
-        pTheta = solid.evaluateParameter(solid.pTheta)*auval
-        pPhi   = solid.evaluateParameter(solid.pPhi)*auval
-
-        mTheta = _transformation.tbxyz2matrix([0,pTheta,0])
-        mAlpha = _transformation.tbxyz2matrix([0,0,pAlpha])
-        n1     = mAlpha.dot(mTheta).dot(_np.array([-1,0,0]))
-        n2     = mAlpha.dot(mTheta).dot(_np.array([1,0,0]))
-        fbody1 = flukaRegistry.makeBody(PLA, "B"+name+"_01",n1,[-pX,0,0],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-        fbody2 = flukaRegistry.makeBody(PLA, "B"+name+"_02",n2,[pX,0,0],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-        fbody3 = flukaRegistry.makeBody(PLA, "B"+name+"_03",[0,-_np.cos(pPhi),_np.sin(pPhi)],[0,-pY,0],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-        fbody4 = flukaRegistry.makeBody(PLA, "B"+name+"_04",[0,_np.cos(pPhi),-_np.sin(pPhi)],[0,pY,0],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-        fbody5 = flukaRegistry.makeBody(PLA, "B"+name+"_05",[0,0,-1],[0,0,-pZ],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-        fbody6 = flukaRegistry.makeBody(PLA, "B"+name+"_06",[0,0,1],[0,0,pZ],
-                            transform=transform,flukaregistry=flukaRegistry,
-                            comment=commentName)
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-        fzone.addIntersection(fbody2)
-        fzone.addIntersection(fbody3)
-        fzone.addIntersection(fbody4)
-        fzone.addIntersection(fbody5)
-        fzone.addIntersection(fbody6)
-
-        fregion = _fluka.Region("R"+name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-        """
-
     elif solid.type == "Trd":
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
-
     elif solid.type == "Trap":
         fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
         flukaNameCount += 1
-
     elif solid.type == "Sphere":
         luval = _Units.unit(solid.lunit) / 10.0
         auval = _Units.unit(solid.aunit)
