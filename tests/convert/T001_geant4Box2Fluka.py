@@ -30,7 +30,7 @@ def Test(
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     bl = _g4.LogicalVolume(bs, bm1, "b1l", reg)
 
-    bp = _g4.PhysicalVolume([0, 0, _np.pi / 4], [0, 75 / 2, 0], bl, "bp", wl, reg, scale=[-1, 1, 1])
+    bp = _g4.PhysicalVolume([0, 0, _np.pi / 4], [0, 75 / 2, 0], bl, "bp", wl, reg, scale=[1, 1, 1])
 
     # set world volume
     reg.setWorld(wl.name)
