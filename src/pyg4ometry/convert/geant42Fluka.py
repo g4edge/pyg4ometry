@@ -930,151 +930,16 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "ExtrudedSolid":
-        import pyg4ometry.gdml.Units as _Units
-
-        luval = _Units.unit(solid.lunit) / 10.0
-
-        pZslices = solid.evaluateParameter(solid.pZslices)
-        pPolygon = solid.evaluateParameter(solid.pPolygon)
-
-        zpos = [zslice[0] * luval for zslice in pZslices]
-        x_offs = [zslice[1][0] * luval for zslice in pZslices]
-        y_offs = [zslice[1][1] * luval for zslice in pZslices]
-        scale = [zslice[2] for zslice in pZslices]
-        vertices = [[pPolygon[0] * luval, pPolygon[1] * luval] for pPolygon in pPolygon]
-        nslices = len(pZslices)
-
-        vertices = list(reversed(vertices))
-        polyListConvex = _PolygonProcessing.decomposePolygon2d(vertices)
-
-        fregion = _fluka.Region("R" + name)
-
-        ibody = 0
-        # loop over planes
-        for i in range(0, nslices - 1, 1):
-            i1 = i
-            i2 = i + 1
-
-            zi1 = zpos[i1]
-            zi2 = zpos[i2]
-
-            # build i'th and i+1'th layers
-            i1PolyListConvex = []
-            i2PolyListConvex = []
-
-            for j in range(0, len(polyListConvex), 1):
-                i1PolyListConvex.append(
-                    [
-                        [
-                            scale[i1] * vert[0] + x_offs[i1],
-                            scale[i1] * vert[1] + y_offs[i1],
-                        ]
-                        for vert in polyListConvex[j]
-                    ]
-                )
-
-                i2PolyListConvex.append(
-                    [
-                        [
-                            scale[i2] * vert[0] + x_offs[i2],
-                            scale[i2] * vert[1] + y_offs[i2],
-                        ]
-                        for vert in polyListConvex[j]
-                    ]
-                )
-
-            # end planes
-            fbody1 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + format(ibody, "02"),
-                [0, 0, -1],
-                [0, 0, zi1],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            ibody += 1
-            fbody2 = flukaRegistry.makeBody(
-                PLA,
-                "B" + name + format(ibody, "02"),
-                [0, 0, 1],
-                [0, 0, zi2],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            ibody += 1
-
-            for j in range(0, len(i1PolyListConvex), 1):
-                fzone = _fluka.Zone()
-
-                fzone.addIntersection(fbody1)
-                fzone.addIntersection(fbody2)
-
-                for k in range(0, len(i1PolyListConvex[j]), 1):
-                    k1 = k
-                    k2 = (k + 1) % len(i1PolyListConvex[j])
-
-                    x0 = i1PolyListConvex[j][k1][0]
-                    y0 = i1PolyListConvex[j][k1][1]
-                    z0 = zi1
-
-                    x1 = i2PolyListConvex[j][k1][0]
-                    y1 = i2PolyListConvex[j][k1][1]
-                    z1 = zi2
-
-                    x2 = i1PolyListConvex[j][k2][0]
-                    y2 = i1PolyListConvex[j][k2][1]
-                    z2 = zi1
-
-                    dx1 = x1 - x0
-                    dy1 = y1 - y0
-                    dz1 = z1 - z0
-
-                    ld1 = _np.sqrt(dx1**2 + dy1**2 + dz1**2)
-
-                    dx1 = dx1 / ld1
-                    dy1 = dy1 / ld1
-                    dz1 = dz1 / ld1
-
-                    dx2 = x2 - x0
-                    dy2 = y2 - y0
-                    dz2 = z2 - z0
-
-                    ld2 = _np.sqrt(dx2**2 + dy2**2 + dz2**2)
-
-                    dx2 = dx2 / ld2
-                    dy2 = dy2 / ld2
-                    dz2 = dz2 / ld2
-
-                    nx = dy1 * dz2 - dz1 * dy2
-                    ny = dx2 * dz1 - dx1 * dz2
-                    nz = dx1 * dy2 - dy1 * dx2
-
-                    fbody = flukaRegistry.makeBody(
-                        PLA,
-                        "B" + name + format(ibody, "02"),
-                        [
-                            -nx,
-                            -ny,
-                            -nz,
-                        ],
-                        [
-                            x0,
-                            y0,
-                            z0,
-                        ],
-                        transform=transform,
-                        flukaregistry=flukaRegistry,
-                        comment=commentName,
-                    )
-                    ibody += 1
-                    fzone.addIntersection(fbody)
-                fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-        flukaNameCount += 1
-
+        fregion, flukaNameCount = geant4Extruded2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
+        )
     elif solid.type == "TwistedBox":
         fregion = pycsgmesh2FlukaRegion(
             solid.mesh(), name, mtra, tra, flukaRegistry, commentName, False
@@ -3026,6 +2891,219 @@ def geant4Polycone2Fluka(
 
             fregion.addZone(fzone)
 
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Extruded2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    luval = _Units.unit(solid.lunit) / 10
+
+    pZslices = solid.evaluateParameter(solid.pZslices)
+    pPolygon = solid.evaluateParameter(solid.pPolygon)
+
+    zpos = [zslice[0] * luval for zslice in pZslices]
+    x_offs = [zslice[1][0] * luval for zslice in pZslices]
+    y_offs = [zslice[1][1] * luval for zslice in pZslices]
+    scale = [zslice[2] for zslice in pZslices]
+    vertices = [[pPolygon[0] * luval, pPolygon[1] * luval] for pPolygon in pPolygon]
+    nslices = len(pZslices)
+
+    vertices = list(reversed(vertices))
+    polyListConvex = _PolygonProcessing.decomposePolygon2d(vertices)
+
+    fregion = _fluka.Region("R" + name)
+
+    ibody = 0
+    # loop over planes
+    for i in range(0, nslices - 1, 1):
+        i1 = i
+        i2 = i + 1
+
+        zi1 = zpos[i1]
+        zi2 = zpos[i2]
+
+        # build i'th and i+1'th layers
+        i1PolyListConvex = []
+        i2PolyListConvex = []
+
+        for j in range(0, len(polyListConvex), 1):
+            i1PolyListConvex.append(
+                [
+                    [
+                        scale[i1] * vert[0] + x_offs[i1],
+                        scale[i1] * vert[1] + y_offs[i1],
+                    ]
+                    for vert in polyListConvex[j]
+                ]
+            )
+
+            i2PolyListConvex.append(
+                [
+                    [
+                        scale[i2] * vert[0] + x_offs[i2],
+                        scale[i2] * vert[1] + y_offs[i2],
+                    ]
+                    for vert in polyListConvex[j]
+                ]
+            )
+
+        # end planes
+        if not bakeTransform:
+            fbody1 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + format(ibody, "02"),
+                [0, 0, -1],
+                [0, 0, zi1],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        else:
+            fbody1 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + format(ibody, "02"),
+                mtra @ _np.array([0, 0, -1]),
+                mtra @ _np.array([0, 0, zi1]) + tra / 10,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        ibody += 1
+
+        if not bakeTransform:
+            fbody2 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + format(ibody, "02"),
+                [0, 0, 1],
+                [0, 0, zi2],
+                transform=transform,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        else:
+            fbody2 = flukaRegistry.makeBody(
+                PLA,
+                "B" + name + format(ibody, "02"),
+                mtra @ _np.array([0, 0, 1]),
+                mtra @ _np.array([0, 0, zi2]) + tra / 10,
+                transform=None,
+                flukaregistry=flukaRegistry,
+                comment=commentName,
+            )
+        ibody += 1
+
+        for j in range(0, len(i1PolyListConvex), 1):
+            fzone = _fluka.Zone()
+
+            fzone.addIntersection(fbody1)
+            fzone.addIntersection(fbody2)
+
+            for k in range(0, len(i1PolyListConvex[j]), 1):
+                k1 = k
+                k2 = (k + 1) % len(i1PolyListConvex[j])
+
+                x0 = i1PolyListConvex[j][k1][0]
+                y0 = i1PolyListConvex[j][k1][1]
+                z0 = zi1
+
+                x1 = i2PolyListConvex[j][k1][0]
+                y1 = i2PolyListConvex[j][k1][1]
+                z1 = zi2
+
+                x2 = i1PolyListConvex[j][k2][0]
+                y2 = i1PolyListConvex[j][k2][1]
+                z2 = zi1
+
+                dx1 = x1 - x0
+                dy1 = y1 - y0
+                dz1 = z1 - z0
+
+                ld1 = _np.sqrt(dx1**2 + dy1**2 + dz1**2)
+
+                dx1 = dx1 / ld1
+                dy1 = dy1 / ld1
+                dz1 = dz1 / ld1
+
+                dx2 = x2 - x0
+                dy2 = y2 - y0
+                dz2 = z2 - z0
+
+                ld2 = _np.sqrt(dx2**2 + dy2**2 + dz2**2)
+
+                dx2 = dx2 / ld2
+                dy2 = dy2 / ld2
+                dz2 = dz2 / ld2
+
+                nx = dy1 * dz2 - dz1 * dy2
+                ny = dx2 * dz1 - dx1 * dz2
+                nz = dx1 * dy2 - dy1 * dx2
+
+                if not bakeTransform:
+                    fbody = flukaRegistry.makeBody(
+                        PLA,
+                        "B" + name + format(ibody, "02"),
+                        [
+                            -nx,
+                            -ny,
+                            -nz,
+                        ],
+                        [
+                            x0,
+                            y0,
+                            z0,
+                        ],
+                        transform=transform,
+                        flukaregistry=flukaRegistry,
+                        comment=commentName,
+                    )
+                else:
+                    fbody = flukaRegistry.makeBody(
+                        PLA,
+                        "B" + name + format(ibody, "02"),
+                        mtra
+                        @ _np.array(
+                            [
+                                -nx,
+                                -ny,
+                                -nz,
+                            ]
+                        ),
+                        mtra
+                        @ _np.array(
+                            [
+                                x0,
+                                y0,
+                                z0,
+                            ]
+                        )
+                        + tra / 10,
+                        transform=None,
+                        flukaregistry=flukaRegistry,
+                        comment=commentName,
+                    )
+                ibody += 1
+                fzone.addIntersection(fbody)
+            fregion.addZone(fzone)
+
+    # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
     flukaNameCount += 1
 
     return fregion, flukaNameCount
