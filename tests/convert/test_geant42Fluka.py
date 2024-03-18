@@ -647,6 +647,27 @@ def test_Geant42FlukaConversion_T201_extrudedSubtraction(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T202_extrudedReflection(tmptestdir, testdata):
+    T202_extrudedReflection.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T202_extrudedReflection.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T202_extrudedReflection_baked(tmptestdir, testdata):
+    T202_extrudedReflection.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T202_extrudedReflection_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T300_Box(tmptestdir, testdata):
     T300_Box.Test(False, False)
 
