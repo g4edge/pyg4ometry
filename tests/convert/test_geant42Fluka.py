@@ -390,6 +390,17 @@ def test_Geant42FlukaConversion_T011_Polycone(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T011_Polycone_baked(tmptestdir, testdata):
+    T011_geant4Polycone2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T011_geant4Polycone2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T012_GenericPolycone(tmptestdir, testdata):
     T012_geant4GenericPolycone2Fluka.Test(
         vis=False,
@@ -397,6 +408,17 @@ def test_Geant42FlukaConversion_T012_GenericPolycone(tmptestdir, testdata):
         fluka=True,
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T012_geant4GenericPolycone2Fluka.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T012_GenericPolycone_baked(tmptestdir, testdata):
+    T012_geant4GenericPolycone2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T012_geant4GenericPolycone2Fluka_baked.inp"],
+        bakeTransforms=True,
     )
 
 
