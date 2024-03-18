@@ -128,7 +128,7 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None, bakeTransforms=False)
         if dv.scale:
             reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
         new_mtra = mtra @ pvmrot @ reflection
-        new_tra = mtra @ reflection @ pvtra + tra
+        new_tra = mtra @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
             dv, new_mtra, new_tra, flukaRegistry, flukaNameCount, bakeTransforms=bakeTransforms
@@ -233,7 +233,7 @@ def geant4PhysicalVolume2Fluka(
             if dv.scale:
                 reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
             new_mtra = mtra @ pvmrot @ reflection
-            new_tra = mtra @ reflection @ pvtra + tra
+            new_tra = mtra @ pvtra + tra
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
                 new_mtra,
@@ -260,7 +260,7 @@ def geant4PhysicalVolume2Fluka(
             if dv.scale:
                 reflection = _np.diag([dv.scale.eval()[0], dv.scale.eval()[1], dv.scale.eval()[2]])
             new_mtra = mtra @ pvmrot @ reflection
-            new_tra = mtra @ reflection @ pvtra + tra
+            new_tra = mtra @ pvtra + tra
 
             flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
                 dv,
