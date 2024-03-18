@@ -9,7 +9,14 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -68,7 +75,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # fluka conversion
     outputFile = outputPath / "T202_extrudedReflection.inp"
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)
