@@ -35,13 +35,19 @@ def Test(
     by = _gd.Constant("by", "40", reg, True)
     bz = _gd.Constant("bz", "40", reg, True)
 
-    crmin1 = _gd.Constant("crmin1", "0", reg, True)
-    crmax1 = _gd.Constant("crmax1", "20", reg, True)
-    crmin2 = _gd.Constant("crmin2", "0", reg, True)
-    crmax2 = _gd.Constant("crmax2", "10", reg, True)
-    cz = _gd.Constant("cz", "50", reg, True)
-    cdp = _gd.Constant("cdp", "2*pi", reg, True)
-    zero = _gd.Constant("zero", "0.0", reg, False)
+    trmin = _gd.Constant("trmin", "0", reg, True)
+    trmax = _gd.Constant("trmax", "51.0", reg, True)
+    tz = _gd.Constant("tz", "51", reg, True)
+    tstartphi = _gd.Constant("startphi", "0", reg, True)
+    tdeltaphi = _gd.Constant("deltaphi", "2*pi", reg, True)
+    ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
+
+    trmin2 = _gd.Constant("trmin2", "25", reg, True)
+    trmax2 = _gd.Constant("trmax2", "50.0", reg, True)
+    tz2 = _gd.Constant("tz2", "50", reg, True)
+    tstartphi2 = _gd.Constant("startphi2", "0", reg, True)
+    tdeltaphi2 = _gd.Constant("deltaphi2", "3*pi/2", reg, True)
+    ts2 = _g4.solid.Tubs("ts2", trmin2, trmax2, tz2, tstartphi2, tdeltaphi2, reg, "mm", "rad")
 
     # materials
     if writeNISTMaterials:
@@ -54,17 +60,20 @@ def Test(
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
     bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
-    cs = _g4.solid.Cons("cs", crmin1, crmax1, crmin2, crmax2, cz, zero, cdp, reg, "mm")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    bl = _g4.LogicalVolume(bs, bm, "bl", reg)
-    cl = _g4.LogicalVolume(cs, bm, "cl", reg)
+    tl = _g4.LogicalVolume(ts, bm, "bl", reg)
+    tl2 = _g4.LogicalVolume(ts2, bm, "bl2", reg)
+
+    bp2 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], tl2, "b2_pv", tl, reg)
 
     a = _random.random() * 2 * _np.pi
     b = _random.random() * 2 * _np.pi
     c = _random.random() * 2 * _np.pi
 
+    iP = 0
+    iMax = 125
     for i in range(0, 5, 1):
         for j in range(0, 5, 1):
             for k in range(0, 5, 1):
@@ -72,20 +81,22 @@ def Test(
                 b = _random.random() * 2 * _np.pi
                 c = _random.random() * 2 * _np.pi
 
-                bp = _g4.PhysicalVolume(
-                    [a, b, c],
-                    [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
-                    cl,
-                    "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
-                    wl,
-                    reg,
-                )
+                if iP < iMax:
+                    bp = _g4.PhysicalVolume(
+                        [a, b, c],
+                        [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
+                        tl,
+                        "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
+                        wl,
+                        reg,
+                    )
+                iP = iP + 1
 
     # set world volume
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T304_Cons.gdml"
+    outputFile = outputPath / "T301_ManyTubs.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -103,7 +114,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T304_Cons.inp"
+    outputFile = outputPath / "T301_ManyTubs.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

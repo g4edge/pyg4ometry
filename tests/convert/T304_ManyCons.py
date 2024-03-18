@@ -35,28 +35,13 @@ def Test(
     by = _gd.Constant("by", "40", reg, True)
     bz = _gd.Constant("bz", "40", reg, True)
 
-    gt = _g4.solid.GenericTrap(
-        "gt",
-        -30,
-        -20,
-        -20,
-        20,
-        20,
-        20,
-        30,
-        -20,
-        -30,
-        -20,
-        -20,
-        20,
-        20,
-        20,
-        30,
-        -20,
-        20,
-        reg,
-        lunit="mm",
-    )
+    crmin1 = _gd.Constant("crmin1", "0", reg, True)
+    crmax1 = _gd.Constant("crmax1", "20", reg, True)
+    crmin2 = _gd.Constant("crmin2", "0", reg, True)
+    crmax2 = _gd.Constant("crmax2", "10", reg, True)
+    cz = _gd.Constant("cz", "50", reg, True)
+    cdp = _gd.Constant("cdp", "2*pi", reg, True)
+    zero = _gd.Constant("zero", "0.0", reg, False)
 
     # materials
     if writeNISTMaterials:
@@ -68,43 +53,39 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
+    bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
+    cs = _g4.solid.Cons("cs", crmin1, crmax1, crmin2, crmax2, cz, zero, cdp, reg, "mm")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    gtl = _g4.LogicalVolume(gt, bm, "gtl", reg)
+    bl = _g4.LogicalVolume(bs, bm, "bl", reg)
+    cl = _g4.LogicalVolume(cs, bm, "cl", reg)
 
     a = _random.random() * 2 * _np.pi
     b = _random.random() * 2 * _np.pi
     c = _random.random() * 2 * _np.pi
 
-    iP = 0
-    iMax = 125
     for i in range(0, 5, 1):
         for j in range(0, 5, 1):
             for k in range(0, 5, 1):
                 a = _random.random() * 2 * _np.pi
                 b = _random.random() * 2 * _np.pi
                 c = _random.random() * 2 * _np.pi
-                # a = 0
-                # b = 0
-                # c = 0
 
-                if iP < iMax:
-                    bp = _g4.PhysicalVolume(
-                        [a, b, c],
-                        [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
-                        gtl,
-                        "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
-                        wl,
-                        reg,
-                    )
-                iP = iP + 1
+                bp = _g4.PhysicalVolume(
+                    [a, b, c],
+                    [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
+                    cl,
+                    "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
+                    wl,
+                    reg,
+                )
 
     # set world volume
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T326_GenericTrap.gdml"
+    outputFile = outputPath / "T304_ManyCons.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -122,7 +103,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T326_GenericTrap.inp"
+    outputFile = outputPath / "T304_ManyCons.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

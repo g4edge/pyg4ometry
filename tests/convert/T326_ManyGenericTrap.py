@@ -35,19 +35,28 @@ def Test(
     by = _gd.Constant("by", "40", reg, True)
     bz = _gd.Constant("bz", "40", reg, True)
 
-    trmin = _gd.Constant("trmin", "0", reg, True)
-    trmax = _gd.Constant("trmax", "51.0", reg, True)
-    tz = _gd.Constant("tz", "51", reg, True)
-    tstartphi = _gd.Constant("startphi", "0", reg, True)
-    tdeltaphi = _gd.Constant("deltaphi", "2*pi", reg, True)
-    ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
-
-    trmin2 = _gd.Constant("trmin2", "25", reg, True)
-    trmax2 = _gd.Constant("trmax2", "50.0", reg, True)
-    tz2 = _gd.Constant("tz2", "50", reg, True)
-    tstartphi2 = _gd.Constant("startphi2", "0", reg, True)
-    tdeltaphi2 = _gd.Constant("deltaphi2", "3*pi/2", reg, True)
-    ts2 = _g4.solid.Tubs("ts2", trmin2, trmax2, tz2, tstartphi2, tdeltaphi2, reg, "mm", "rad")
+    gt = _g4.solid.GenericTrap(
+        "gt",
+        -30,
+        -20,
+        -20,
+        20,
+        20,
+        20,
+        30,
+        -20,
+        -30,
+        -20,
+        -20,
+        20,
+        20,
+        20,
+        30,
+        -20,
+        20,
+        reg,
+        lunit="mm",
+    )
 
     # materials
     if writeNISTMaterials:
@@ -59,14 +68,10 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    tl = _g4.LogicalVolume(ts, bm, "bl", reg)
-    tl2 = _g4.LogicalVolume(ts2, bm, "bl2", reg)
-
-    bp2 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], tl2, "b2_pv", tl, reg)
+    gtl = _g4.LogicalVolume(gt, bm, "gtl", reg)
 
     a = _random.random() * 2 * _np.pi
     b = _random.random() * 2 * _np.pi
@@ -80,12 +85,15 @@ def Test(
                 a = _random.random() * 2 * _np.pi
                 b = _random.random() * 2 * _np.pi
                 c = _random.random() * 2 * _np.pi
+                # a = 0
+                # b = 0
+                # c = 0
 
                 if iP < iMax:
                     bp = _g4.PhysicalVolume(
                         [a, b, c],
                         [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
-                        tl,
+                        gtl,
                         "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
                         wl,
                         reg,
@@ -96,7 +104,7 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T1002_Tubs.gdml"
+    outputFile = outputPath / "T326_ManyGenericTrap.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -114,7 +122,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T1002_Tubs.inp"
+    outputFile = outputPath / "T326_ManyGenericTrap.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

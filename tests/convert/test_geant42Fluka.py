@@ -40,8 +40,12 @@ from . import T201_extrudedSubtraction
 from . import T202_extrudedReflection
 from . import T203_extrudedReflectionRotation
 
-from . import T300_Box
-from . import T301_Tubs
+from . import T300_ManyBox
+from . import T301_ManyTubs
+from . import T304_ManyCons
+from . import T320_ManyTet
+from . import T326_ManyGenericTrap
+from . import T326_ManyGenericTrap_Wed
 
 from . import T400_extruder
 from . import T401_flukaRun
@@ -668,16 +672,68 @@ def test_Geant42FlukaConversion_T202_extrudedReflection_baked(tmptestdir, testda
     )
 
 
-def test_Geant42FlukaConversion_T300_Box(tmptestdir, testdata):
-    T300_Box.Test(False, False)
+def test_Geant42FlukaConversion_T300_ManyBox(tmptestdir, testdata):
+    T300_ManyBox.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T300_ManyBox.inp"],
+    )
 
 
-def test_Geant42FlukaConversion_T301_Tubs(tmptestdir, testdata):
-    T301_Tubs.Test(False, False)
+def test_Geant42FlukaConversion_T301_ManyTubs(tmptestdir, testdata):
+    T301_ManyTubs.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T301_ManyTubs.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T304_ManyCons(tmptestdir, testdata):
+    T304_ManyCons.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T304_ManyCons.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T320_ManyTet(tmptestdir, testdata):
+    T320_ManyTet.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T320_ManyTet.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T326_ManyGenericTrap(tmptestdir, testdata):
+    T326_ManyGenericTrap.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T326_ManyGenericTrap.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T326_ManyGenericTrap_Wed(tmptestdir, testdata):
+    T326_ManyGenericTrap_Wed.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T326_ManyGenericTrap_Wed.inp"],
+    )
 
 
 def test_PythonFluka_T400_extruder(tmptestdir, testdata):
-    T400_extruder.Test(False, outputPath=tmptestdir)
+    T400_extruder.Test(vis=False, interactive=False, fluka=True, outputPath=tmptestdir)
 
 
 def test_PythonFluka_T401(tmptestdir, testdata):
