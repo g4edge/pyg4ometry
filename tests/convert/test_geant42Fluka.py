@@ -436,6 +436,17 @@ def test_Geant42FlukaConversion_T013_Polyhedra(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T013_Polyhedra_baked(tmptestdir, testdata):
+    T013_geant4Polyhedra2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T013_geant4Polyhedra2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T014_GenericPolyhedra(tmptestdir, testdata):
     T014_geant4GenericPolyhedra2Fluka.Test(
         vis=False,
@@ -443,6 +454,17 @@ def test_Geant42FlukaConversion_T014_GenericPolyhedra(tmptestdir, testdata):
         fluka=True,
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T014_geant4GenericPolyhedra2Fluka.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T014_GenericPolyhedra(tmptestdir, testdata):
+    T014_geant4GenericPolyhedra2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T014_geant4GenericPolyhedra2Fluka_baked.inp"],
+        bakeTransforms=True,
     )
 
 
