@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 import pathlib as _pl
 
 import pyg4ometry.geant4 as _g4
@@ -9,7 +10,14 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -36,7 +44,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     el = _g4.LogicalVolume(es, em, "el", reg)
-    ep = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], el, "e_pv1", wl, reg)
+    ep = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 15, 0], el, "e_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -49,9 +57,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.addDetector(reg)
     w.write(outputPath / "T015_geant4EllipticalTube2Fluka.gdml")
 
-    outputFile = outputPath / "T015_geant4EllipticalTube2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T015_geant4EllipticalTube2Fluka.inp"
+    else:
+        outputFile = outputPath / "T015_geant4EllipticalTube2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)
@@ -63,6 +75,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     if vis:
         v = _vi.VtkViewer()
         v.addLogicalVolume(wl)
+        v.addAxes(_vi.axesFromExtents(extentBB)[0])
         v.view(interactive=interactive)
 
     _mi.compareNumericallyWithAssert(refFilePath, outputFile)

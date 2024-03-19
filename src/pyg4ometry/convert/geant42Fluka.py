@@ -437,57 +437,17 @@ def geant4Solid2FlukaRegion(
             commentName=commentName,
             bakeTransform=bakeTransforms,
         )
-
     elif solid.type == "EllipticalTube":
-        uval = _Units.unit(solid.lunit) / 10.0
-
-        pDx = solid.evaluateParameter(solid.pDx) * uval
-        pDy = solid.evaluateParameter(solid.pDy) * uval
-        pDz = solid.evaluateParameter(solid.pDz) * uval
-
-        # main elliptical cylinder
-        fbody1 = _fluka.ZEC(
-            "B" + name + "01",
-            0,
-            0,
-            pDx,
-            pDy,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4EllipticalTube2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
         )
-
-        # low z cut
-        fbody2 = flukaRegistry.makeBody(
-            XYP,
-            "B" + name + "02",
-            -pDz / 2,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-
-        # high z cut
-        fbody3 = flukaRegistry.makeBody(
-            XYP,
-            "B" + name + "03",
-            pDz / 2,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-        fzone.addSubtraction(fbody2)
-        fzone.addIntersection(fbody3)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.pycsgmesh(), name,transform, flukaRegistry,commentName)
-        flukaNameCount += 1
-
     elif solid.type == "Ellipsoid":
         uval = _Units.unit(solid.lunit) / 10.0
 
@@ -3162,6 +3122,64 @@ def geant4Polyhedra2Fluka(
             ibody += 1
 
             fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4EllipticalTube2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uval = _Units.unit(solid.lunit) / 10
+
+    pDx = solid.evaluateParameter(solid.pDx) * uval
+    pDy = solid.evaluateParameter(solid.pDy) * uval
+    pDz = solid.evaluateParameter(solid.pDz) * uval
+
+    # main elliptical cylinder
+    if not bakeTransform:
+        fbody1 = _fluka.REC(
+            "B" + name + "01",
+            [0, 0, -pDz / 2],
+            [0, 0, pDz],
+            [pDx / 2, 0, 0],
+            [0, pDy / 2, 0],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody1 = _fluka.REC(
+            "B" + name + "01",
+            mtra @ _np.array([0, 0, -pDz / 2]) + tra / 10,
+            mtra @ _np.array([0, 0, pDz]),
+            mtra @ _np.array([pDx / 2, 0, 0]),
+            mtra @ _np.array([0, pDy / 2, 0]),
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    fzone = _fluka.Zone()
+    fzone.addIntersection(fbody1)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
 
     flukaNameCount += 1
 

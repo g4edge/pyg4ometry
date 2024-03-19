@@ -43,6 +43,7 @@ from . import T203_extrudedReflectionRotation
 from . import T300_ManyBox
 from . import T301_ManyTubs
 from . import T304_ManyCons
+from . import T315_ManyEllipticalTube
 from . import T320_ManyTet
 from . import T326_ManyGenericTrap
 from . import T326_ManyGenericTrap_Wed
@@ -478,6 +479,17 @@ def test_Geant42FlukaConversion_T015_EllipticalTube(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T015_EllipticalTube_baked(tmptestdir, testdata):
+    T015_geant4EllipticalTube2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T015_geant4EllipticalTube2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T016_Ellipsoid(tmptestdir, testdata):
     T016_geant4Ellipsoid2Fluka.Test(
         vis=False,
@@ -721,6 +733,16 @@ def test_Geant42FlukaConversion_T304_ManyCons(tmptestdir, testdata):
         fluka=True,
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T304_ManyCons.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T304_ManyEllipticalTube(tmptestdir, testdata):
+    T315_ManyEllipticalTube.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T315_ManyEllipticalTube.inp"],
     )
 
 
