@@ -48,7 +48,7 @@ def Test(
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     el = _g4.LogicalVolume(es, em, "el", reg)
-    ep = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 0, 0], el, "e_pv1", wl, reg)
+    ep = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 10, 0], el, "e_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)

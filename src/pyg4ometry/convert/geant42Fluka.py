@@ -460,68 +460,16 @@ def geant4Solid2FlukaRegion(
             bakeTransform=bakeTransforms,
         )
     elif solid.type == "EllipticalCone":
-        uval = _Units.unit(solid.lunit) / 10.0
-
-        # xsemi and ysemi are unitless
-        xsemi = solid.evaluateParameter(solid.pxSemiAxis)
-        ysemi = solid.evaluateParameter(solid.pySemiAxis)
-        zheight = solid.evaluateParameter(solid.zMax) * uval
-        zcut = solid.evaluateParameter(solid.pzTopCut) * uval
-
-        # (x/xSemiAxis)^2 + (y/ySemiAxis)^2 = (zheight - z)^2
-        cxx = xsemi**-2
-        cyy = ysemi**-2
-        czz = -1
-        cz = 2 * zheight
-        c = -(zheight**2)
-
-        fzone = _fluka.Zone()
-        # Cone from general quadric
-        fbody1 = _fluka.QUA(
-            f"B{name}_01",
-            cxx,
-            cyy,
-            czz,
-            0,
-            0,
-            0,
-            0,
-            0,
-            cz,
-            c,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4EllipticalCone2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
         )
-        fzone.addIntersection(fbody1)
-
-        # Do the cuts on the infinite cone to make it finite
-        zcut = min(zcut, zheight)
-        fbody2 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_02",
-            zcut,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addIntersection(fbody2)
-
-        fbody3 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_03",
-            -zcut,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addSubtraction(fbody3)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
     elif solid.type == "Paraboloid":
         uval = _Units.unit(solid.lunit) / 10.0
 
@@ -3170,10 +3118,10 @@ def geant4Ellipsoid2Fluka(
     cz = 0
     c = -1
 
-    print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
     if bakeTransform:
+        print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
         cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c = transformQuadricFluka(
-            cxx, cyy, czz, 0, 0, 0, 0, 0, 0, -1, mtra, tra
+            cxx, cyy, czz, 0, 0, 0, 0, 0, 0, -1, mtra, tra / 10
         )
         print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
         transform = None
@@ -3254,6 +3202,126 @@ def geant4Ellipsoid2Fluka(
     return fregion, flukaNameCount
 
 
+def geant4EllipticalCone2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uval = _Units.unit(solid.lunit) / 10.0
+
+    # xsemi and ysemi are unitless
+    xsemi = solid.evaluateParameter(solid.pxSemiAxis)
+    ysemi = solid.evaluateParameter(solid.pySemiAxis)
+    zheight = solid.evaluateParameter(solid.zMax) * uval
+    zcut = solid.evaluateParameter(solid.pzTopCut) * uval
+
+    # (x/xSemiAxis)^2 + (y/ySemiAxis)^2 = (zheight - z)^2
+    cxx = xsemi**-2
+    cyy = ysemi**-2
+    czz = -1
+    cxy = 0
+    cxz = 0
+    cyz = 0
+    cx = 0
+    cy = 0
+    cz = 2 * zheight
+    c = -(zheight**2)
+
+    print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
+
+    if bakeTransform:
+        cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c = transformQuadricFluka(
+            cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c, mtra, tra / 10
+        )
+        print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
+        transform = None
+
+    fzone = _fluka.Zone()
+    # Cone from general quadric
+    fbody1 = _fluka.QUA(
+        f"B{name}_01",
+        cxx,
+        cyy,
+        czz,
+        cxy,
+        cxz,
+        cyz,
+        cx,
+        cy,
+        cz,
+        c,
+        transform=transform,
+        flukaregistry=flukaRegistry,
+        comment=commentName,
+    )
+    fzone.addIntersection(fbody1)
+
+    # Do the cuts on the infinite cone to make it finite
+    zcut = min(zcut, zheight)
+    if not bakeTransform:
+        fbody2 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_02",
+            zcut,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody2 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_02",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, zcut]) + tra / 10,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    fzone.addIntersection(fbody2)
+
+    if not bakeTransform:
+        fbody3 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_03",
+            -zcut,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody3 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_03",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, -zcut]) + tra / 10,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+    fzone.addSubtraction(fbody3)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
 def makeStripName(mn):
     if mn.find("0x") != -1:
         mnStrip = mn[0 : mn.find("0x")]
@@ -3276,7 +3344,7 @@ def makeShortName(mn):
 
 
 def transformQuadricFluka(axx, ayy, azz, axy, axz, ayz, ax, ay, az, a, M, T):
-    Q = _np.array([[axx, axy, axz], [0, ayy, ayz], [0, 0, azz]])
+    Q = _np.array([[axx, axy / 2, axz / 2], [axy / 2, ayy, ayz / 2], [axz / 2, ayz / 2, azz]])
     P = _np.array([ax, ay, az])
     R = a
 
@@ -3286,9 +3354,9 @@ def transformQuadricFluka(axx, ayy, azz, axy, axz, ayz, ax, ay, az, a, M, T):
         Qprime[0, 0],
         Qprime[1, 1],
         Qprime[2, 2],
-        Qprime[0, 1],
-        Qprime[0, 2],
-        Qprime[1, 2],
+        Qprime[0, 1] * 2,
+        Qprime[0, 2] * 2,
+        Qprime[1, 2] * 2,
         Pprime[0],
         Pprime[1],
         Pprime[2],
@@ -3298,9 +3366,9 @@ def transformQuadricFluka(axx, ayy, azz, axy, axz, ayz, ax, ay, az, a, M, T):
 
 def transformQuadricMatrix(Q, P, R, M, T):
     M = _np.linalg.inv(M)
-    T = -T
+    T = -M @ T
     Qprime = M.T @ Q @ M
-    Pprime = T + P @ M
-    Rprime = P @ T + R
+    Pprime = M.T @ Q @ T + M.T @ Q.T @ T + M.T @ P
+    Rprime = R + T @ Q @ T + P @ T
 
     return Qprime, Pprime, Rprime
