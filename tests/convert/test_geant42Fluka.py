@@ -584,6 +584,17 @@ def test_Geant42FlukaConversion_T020_Tet(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T020_Tet_baked(tmptestdir, testdata):
+    T020_geant4Tet2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T020_geant4Tet2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T021_ExtrudedSolid(tmptestdir, testdata):
     T021_geant4ExtrudedSolid2Fluka.Test(
         vis=False,

@@ -493,37 +493,16 @@ def geant4Solid2FlukaRegion(
             bakeTransform=bakeTransforms,
         )
     elif solid.type == "Tet":
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-
-        uval = _Units.unit(solid.lunit)
-
-        verts = []
-        verts.append([x / 10 for x in solid.anchor.eval()])
-        verts.append([x / 10 for x in solid.p2.eval()])
-        verts.append([x / 10 for x in solid.p3.eval()])
-        verts.append([x / 10 for x in solid.p4.eval()])
-        verts.append([0, 0, 0])
-        verts.append([0, 0, 0])
-        verts.append([0, 0, 0])
-        verts.append([0, 0, 0])
-
-        fbody1 = _fluka.ARB(
-            "B" + name + "01",
-            verts,
-            [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4Tet2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
         )
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
-        flukaNameCount += 1
-
     elif solid.type == "ExtrudedSolid":
         fregion, flukaNameCount = geant4Extruded2Fluka(
             flukaNameCount,
@@ -3475,6 +3454,67 @@ def geant4Hype2Fluka(
     fregion = _fluka.Region("R" + name)
     fregion.addZone(fzone)
 
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Tet2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uval = _Units.unit(solid.lunit)
+
+    verts = []
+    if not bakeTransform:
+        verts.append([x / 10 for x in solid.anchor.eval()])
+        verts.append([x / 10 for x in solid.p2.eval()])
+        verts.append([x / 10 for x in solid.p3.eval()])
+        verts.append([x / 10 for x in solid.p4.eval()])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+        verts.append([0, 0, 0])
+    else:
+        verts.append(mtra @ _np.array(solid.anchor.eval()) / 10 + tra / 10)
+        verts.append(mtra @ _np.array(solid.p2.eval()) / 10 + tra / 10)
+        verts.append(mtra @ _np.array(solid.p3.eval()) / 10 + tra / 10)
+        verts.append(mtra @ _np.array(solid.p4.eval()) / 10 + tra / 10)
+        verts.append([0, 0, 0] + tra / 10)
+        verts.append([0, 0, 0] + tra / 10)
+        verts.append([0, 0, 0] + tra / 10)
+        verts.append([0, 0, 0] + tra / 10)
+        transform = None
+
+    fbody1 = _fluka.ARB(
+        "B" + name + "01",
+        verts,
+        [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
+        transform=transform,
+        flukaregistry=flukaRegistry,
+        comment=commentName,
+    )
+
+    fzone = _fluka.Zone()
+    fzone.addIntersection(fbody1)
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
     flukaNameCount += 1
 
     return fregion, flukaNameCount
