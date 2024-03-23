@@ -500,6 +500,17 @@ def test_Geant42FlukaConversion_T016_Ellipsoid(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T016_Ellipsoid_baked(tmptestdir, testdata):
+    T016_geant4Ellipsoid2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T016_geant4Ellipsoid2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T017_EllipticalCone(tmptestdir, testdata):
     T017_geant4EllipticalCone2Fluka.Test(
         vis=False,
