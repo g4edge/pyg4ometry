@@ -471,63 +471,16 @@ def geant4Solid2FlukaRegion(
             bakeTransform=bakeTransforms,
         )
     elif solid.type == "Paraboloid":
-        uval = _Units.unit(solid.lunit) / 10.0
-
-        halflength = solid.evaluateParameter(solid.pDz) * uval
-        rlow = solid.evaluateParameter(solid.pR1) * uval
-        rhigh = solid.evaluateParameter(solid.pR2) * uval
-
-        # Equation:
-        # x^2 + y^2 + bz + c = 0;
-
-        cz = (rlow**2 - rhigh**2) / (2 * halflength)
-        c = (-(rhigh**2) - rlow**2) / 2
-
-        fzone = _fluka.Zone()
-        # Tip points in -ve z direction.  larger face is +ve z.
-        fbody1 = _fluka.QUA(
-            f"B{name}_01",
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            cz,
-            c,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4Paraboloid2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
         )
-        fzone.addIntersection(fbody1)
-        # cut at positive z.
-        fbody2 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_02",
-            halflength,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addIntersection(fbody2)
-        # cut at negative z
-        fbody3 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_03",
-            -halflength,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addSubtraction(fbody3)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
     elif solid.type == "Hype":
         uvalL = _Units.unit(solid.lunit) / 10
         uvalA = _Units.unit(solid.aunit)
@@ -3308,6 +3261,123 @@ def geant4EllipticalCone2Fluka(
             mtra @ _np.array([0, 0, 1]),
             mtra @ _np.array([0, 0, -zcut]) + tra / 10,
             transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+    fzone.addSubtraction(fbody3)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Paraboloid2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uval = _Units.unit(solid.lunit) / 10.0
+
+    halflength = solid.evaluateParameter(solid.pDz) * uval / 2
+    rlow = solid.evaluateParameter(solid.pR1) * uval
+    rhigh = solid.evaluateParameter(solid.pR2) * uval
+
+    # Equation:
+    # x^2 + y^2 + bz + c = 0;
+
+    cxx = 1
+    cyy = 1
+    czz = 0
+    cxy = 0
+    cxz = 0
+    cyz = 0
+    cx = 0
+    cy = 0
+    cz = (rlow**2 - rhigh**2) / (2 * halflength)
+    c = (-(rhigh**2) - rlow**2) / 2
+
+    if bakeTransform:
+        cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c = transformQuadricFluka(
+            cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c, mtra, tra / 10
+        )
+        print(cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c)
+        transform = None
+
+    fzone = _fluka.Zone()
+    # Tip points in -ve z direction.  larger face is +ve z.
+    fbody1 = _fluka.QUA(
+        f"B{name}_01",
+        cxx,
+        cyy,
+        czz,
+        cxy,
+        cxz,
+        cyz,
+        cx,
+        cy,
+        cz,
+        c,
+        transform=transform,
+        flukaregistry=flukaRegistry,
+        comment=commentName,
+    )
+    fzone.addIntersection(fbody1)
+
+    # cut at positive z.
+    if not bakeTransform:
+        fbody2 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_02",
+            halflength,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody2 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_02",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, halflength]) + tra / 10,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    fzone.addIntersection(fbody2)
+    # cut at negative z
+    if not bakeTransform:
+        fbody3 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_03",
+            -halflength,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody3 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_03",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, -halflength]) + tra / 10,
+            transform=transform,
             flukaregistry=flukaRegistry,
             comment=commentName,
         )

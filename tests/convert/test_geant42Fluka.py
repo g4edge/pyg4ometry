@@ -521,6 +521,17 @@ def test_Geant42FlukaConversion_T017_EllipticalCone(tmptestdir, testdata):
     )
 
 
+def test_Geant42FlukaConversion_T017_EllipticalCone_baked(tmptestdir, testdata):
+    T017_geant4EllipticalCone2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T017_geant4EllipticalCone2Fluka_baked.inp"],
+        bakeTransforms=True,
+    )
+
+
 def test_Geant42FlukaConversion_T018_Paraboloid(tmptestdir, testdata):
     T018_geant4Paraboloid2Fluka.Test(
         vis=False,
@@ -528,6 +539,17 @@ def test_Geant42FlukaConversion_T018_Paraboloid(tmptestdir, testdata):
         fluka=True,
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T018_geant4Paraboloid2Fluka.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T018_Paraboloid_baked(tmptestdir, testdata):
+    T018_geant4Paraboloid2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T018_geant4Paraboloid2Fluka_baked.inp"],
+        bakeTransforms=True,
     )
 
 
