@@ -482,89 +482,16 @@ def geant4Solid2FlukaRegion(
             bakeTransform=bakeTransforms,
         )
     elif solid.type == "Hype":
-        uvalL = _Units.unit(solid.lunit) / 10
-        uvalA = _Units.unit(solid.aunit)
-
-        outerRadius = solid.evaluateParameter(solid.outerRadius) * uvalL
-        innerRadius = solid.evaluateParameter(solid.innerRadius) * uvalL
-        outerStereo = solid.evaluateParameter(solid.outerStereo) * uvalA
-        innerStereo = solid.evaluateParameter(solid.innerStereo) * uvalA
-        lenZ = solid.evaluateParameter(solid.lenZ) * uvalL
-        # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
-        cOuter = -(outerRadius**2)
-        cInner = -(innerRadius**2)
-        czzOuter = -_np.tan(outerStereo) ** 2
-        czzInner = -_np.tan(innerStereo) ** 2
-
-        fzone = _fluka.Zone()
-        # Outer QUA
-        fbody1 = _fluka.QUA(
-            f"B{name}_01",
-            1,
-            1,
-            czzOuter,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            cOuter,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
+        fregion, flukaNameCount = geant4Hype2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
         )
-        fzone.addIntersection(fbody1)
-
-        ihype = 2
-        # Only build if it is not null
-        if innerRadius != 0 or innerStereo != 0:
-            # Inner QUA
-            fbody2 = _fluka.QUA(
-                f"B{name}_0{ihype}",
-                1,
-                1,
-                czzInner,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                cInner,
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-            fzone.addSubtraction(fbody2)
-            ihype += 1
-
-        fbody3 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_0{ihype}",
-            lenZ / 2.0,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addIntersection(fbody3)
-        ihype += 1
-
-        fbody4 = flukaRegistry.makeBody(
-            XYP,
-            f"B{name}_0{ihype}",
-            -lenZ / 2.0,
-            transform=transform,
-            flukaregistry=flukaRegistry,
-            comment=commentName,
-        )
-        fzone.addSubtraction(fbody4)
-
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
     elif solid.type == "Tet":
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import
 
@@ -3383,6 +3310,167 @@ def geant4Paraboloid2Fluka(
         )
 
     fzone.addSubtraction(fbody3)
+
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4Hype2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uvalL = _Units.unit(solid.lunit) / 10
+    uvalA = _Units.unit(solid.aunit)
+
+    outerRadius = solid.evaluateParameter(solid.outerRadius) * uvalL
+    innerRadius = solid.evaluateParameter(solid.innerRadius) * uvalL
+    outerStereo = solid.evaluateParameter(solid.outerStereo) * uvalA
+    innerStereo = solid.evaluateParameter(solid.innerStereo) * uvalA
+    lenZ = solid.evaluateParameter(solid.lenZ) * uvalL
+    # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
+    cOuter = -(outerRadius**2)
+    cInner = -(innerRadius**2)
+    czzOuter = -_np.tan(outerStereo) ** 2
+    czzInner = -_np.tan(innerStereo) ** 2
+
+    cxx = 1
+    cyy = 1
+    czz = czzOuter
+    cxy = 0
+    cxz = 0
+    cyz = 0
+    cx = 0
+    cy = 0
+    cz = 0
+    c = cOuter
+
+    if bakeTransform:
+        cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c = transformQuadricFluka(
+            cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c, mtra, tra / 10
+        )
+        transform = None
+
+    fzone = _fluka.Zone()
+    # Outer QUA
+    fbody1 = _fluka.QUA(
+        f"B{name}_01",
+        cxx,
+        cyy,
+        czz,
+        cxy,
+        cxz,
+        cyz,
+        cx,
+        cy,
+        cz,
+        c,
+        transform=transform,
+        flukaregistry=flukaRegistry,
+        comment=commentName,
+    )
+    fzone.addIntersection(fbody1)
+
+    cxx = 1
+    cyy = 1
+    czz = czzInner
+    cxy = 0
+    cxz = 0
+    cyz = 0
+    cx = 0
+    cy = 0
+    cz = 0
+    c = cInner
+
+    if bakeTransform:
+        cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c = transformQuadricFluka(
+            cxx, cyy, czz, cxy, cxz, cyz, cx, cy, cz, c, mtra, tra / 10
+        )
+        transform = None
+
+    ihype = 2
+    # Only build if it is not null
+    if innerRadius != 0 or innerStereo != 0:
+        # Inner QUA
+        fbody2 = _fluka.QUA(
+            f"B{name}_0{ihype}",
+            cxx,
+            cyy,
+            czz,
+            cxy,
+            cxz,
+            cyz,
+            cx,
+            cy,
+            cz,
+            c,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+        fzone.addSubtraction(fbody2)
+        ihype += 1
+
+    if not bakeTransform:
+        fbody3 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_0{ihype}",
+            lenZ / 2.0,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody3 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_0{ihype}",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, lenZ / 2.0]) + tra / 10,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+    fzone.addIntersection(fbody3)
+    ihype += 1
+
+    if not bakeTransform:
+        fbody4 = flukaRegistry.makeBody(
+            XYP,
+            f"B{name}_0{ihype}",
+            -lenZ / 2.0,
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    else:
+        fbody4 = flukaRegistry.makeBody(
+            PLA,
+            f"B{name}_0{ihype}",
+            mtra @ _np.array([0, 0, 1]),
+            mtra @ _np.array([0, 0, -lenZ / 2.0]) + tra / 10,
+            transform=None,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    fzone.addSubtraction(fbody4)
 
     fregion = _fluka.Region("R" + name)
     fregion.addZone(fzone)
