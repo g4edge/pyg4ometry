@@ -539,55 +539,16 @@ def geant4Solid2FlukaRegion(
         flukaNameCount += 1
 
     elif solid.type == "GenericTrap":
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-
-        uval = _Units.unit(solid.lunit)
-
-        verts = []
-        for i in range(1, 9):
-            vert = [x / 10 for x in list(solid.get_vertex(i))]
-            verts.append(vert)
-
-        verts_tuple = tuple(tuple(vert) for vert in verts)
-        verts_set = set(verts_tuple)
-
-        if len(verts_set) == 8:
-            fbody1 = _fluka.ARB(
-                "B" + name + "01",
-                verts,
-                [4321.0, 5678.0, 2651.0, 3762.0, 7843.0, 5841.0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-        elif len(verts_set) == 6:
-            fbody1 = _fluka.WED(
-                "B" + name + "01",
-                verts[0],
-                [v1 - v2 for v1, v2 in zip(verts[1], verts[0])],
-                [v1 - v2 for v1, v2 in zip(verts[3], verts[0])],
-                [v1 - v2 for v1, v2 in zip(verts[4], verts[0])],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-        elif len(verts_set) == 4:
-            fbody1 = _fluka.ARB(
-                "B" + name + "01",
-                verts,
-                [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
-                transform=transform,
-                flukaregistry=flukaRegistry,
-                comment=commentName,
-            )
-
-        fzone = _fluka.Zone()
-        fzone.addIntersection(fbody1)
-        fregion = _fluka.Region("R" + name)
-        fregion.addZone(fzone)
-
-        flukaNameCount += 1
-
+        fregion, flukaNameCount = geant4GenericTrap2Fluka(
+            flukaNameCount,
+            solid,
+            mtra,
+            tra,
+            flukaRegistry,
+            addRegistry=True,
+            commentName=commentName,
+            bakeTransform=bakeTransforms,
+        )
     elif solid.type == "Union":
         # build both solids to regions
         # take zones from 2 and add as zones to 1
@@ -3515,6 +3476,82 @@ def geant4Tet2Fluka(
     fregion.addZone(fzone)
 
     # fregion = pycsgmesh2FlukaRegion(solid.mesh(), name, transform, flukaRegistry, commentName)
+    flukaNameCount += 1
+
+    return fregion, flukaNameCount
+
+
+def geant4GenericTrap2Fluka(
+    flukaNameCount,
+    solid,
+    mtra=_np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    tra=_np.array([0, 0, 0]),
+    flukaRegistry=None,
+    addRegistry=True,
+    commentName="",
+    bakeTransform=False,
+):
+    pseudoVector = _np.linalg.det(mtra)
+    name = format(flukaNameCount, "04")
+
+    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+
+    rotation = _transformation.matrix2tbxyz(mtra)
+    transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
+
+    uval = _Units.unit(solid.lunit) / 10
+
+    verts = []
+    for i in range(1, 9):
+        if not bakeTransform:
+            vert = [x * uval for x in list(solid.get_vertex(i))]
+        else:
+            vert = mtra @ _np.array(list(solid.get_vertex(i))) * uval + tra / 10
+            print(vert)
+
+        verts.append(vert)
+
+    if bakeTransform:
+        transform = None
+
+    verts_tuple = tuple(tuple(vert) for vert in verts)
+    verts_set = set(verts_tuple)
+
+    if len(verts_set) == 8:
+        fbody1 = _fluka.ARB(
+            "B" + name + "01",
+            verts,
+            [4321.0, 5678.0, 2651.0, 3762.0, 7843.0, 5841.0],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    elif len(verts_set) == 6:
+        fbody1 = _fluka.WED(
+            "B" + name + "01",
+            verts[0],
+            [v1 - v2 for v1, v2 in zip(verts[1], verts[0])],
+            [v1 - v2 for v1, v2 in zip(verts[3], verts[0])],
+            [v1 - v2 for v1, v2 in zip(verts[4], verts[0])],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+    elif len(verts_set) == 4:
+        fbody1 = _fluka.ARB(
+            "B" + name + "01",
+            verts,
+            [123.0, 134.0, 243.0, 142.0, 0.0, 0.0],
+            transform=transform,
+            flukaregistry=flukaRegistry,
+            comment=commentName,
+        )
+
+    fzone = _fluka.Zone()
+    fzone.addIntersection(fbody1)
+    fregion = _fluka.Region("R" + name)
+    fregion.addZone(fzone)
+
     flukaNameCount += 1
 
     return fregion, flukaNameCount
