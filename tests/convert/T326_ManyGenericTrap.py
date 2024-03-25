@@ -38,21 +38,21 @@ def Test(
     gt = _g4.solid.GenericTrap(
         "gt",
         -30,
-        -30,
-        -30,
+        -20,
+        -20,
+        20,
+        20,
+        20,
         30,
+        -20,
+        -30,
+        -20,
+        -20,
+        20,
+        20,
+        20,
         30,
-        30,
-        30,
-        -30,
-        -30,
-        -30,
-        -30,
-        -30,
-        30,
-        -30,
-        30,
-        -30,
+        -20,
         20,
         reg,
         lunit="mm",
@@ -73,6 +73,10 @@ def Test(
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     gtl = _g4.LogicalVolume(gt, bm, "gtl", reg)
 
+    a = _random.random() * 2 * _np.pi
+    b = _random.random() * 2 * _np.pi
+    c = _random.random() * 2 * _np.pi
+
     iP = 0
     iMax = 125
     for i in range(0, 5, 1):
@@ -81,9 +85,9 @@ def Test(
                 a = _random.random() * 2 * _np.pi
                 b = _random.random() * 2 * _np.pi
                 c = _random.random() * 2 * _np.pi
-                a = 0
-                b = 0
-                c = 0
+                # a = 0
+                # b = 0
+                # c = 0
 
                 if iP < iMax:
                     bp = _g4.PhysicalVolume(
@@ -100,7 +104,7 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T326_GenericTrap_Wed.gdml"
+    outputFile = outputPath / "T326_ManyGenericTrap.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -118,7 +122,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T326_GenericTrap_Wed.inp"
+    outputFile = outputPath / "T326_ManyGenericTrap.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

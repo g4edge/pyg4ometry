@@ -17,6 +17,7 @@ def Test(
     n_stack=16,
     outputPath=None,
     refFilePath=None,
+    bakeTransforms=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
@@ -25,9 +26,9 @@ def Test(
     reg = _g4.Registry()
 
     # defines
-    wx = _gd.Constant("wx", "100", reg, True)
-    wy = _gd.Constant("wy", "100", reg, True)
-    wz = _gd.Constant("wz", "100", reg, True)
+    wx = _gd.Constant("wx", "200", reg, True)
+    wy = _gd.Constant("wy", "200", reg, True)
+    wz = _gd.Constant("wz", "200", reg, True)
 
     # pi   = _gd.Constant("pi","3.1415926",reg,True)
     prlo = _gd.Constant("prlo", "2", reg, True)
@@ -45,7 +46,7 @@ def Test(
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     pl = _g4.LogicalVolume(ps, pm, "pl", reg)
-    pp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], pl, "p_pv1", wl, reg)
+    pp = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 25, 0], pl, "p_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -59,11 +60,16 @@ def Test(
     w.write(outputPath / "T018_geant4Paraboloid2Fluka.gdml")
 
     # fluka conversion
+    if not bakeTransforms:
+        outputFile = outputPath / "T018_geant4Paraboloid2Fluka.inp"
+    else:
+        outputFile = outputPath / "T018_geant4Paraboloid2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
-        w.write(outputPath / "T018_geant4Paraboloid2Fluka.inp")
+        w.write(outputFile)
 
     # flair output file
     f = _fluka.Flair("T018_geant4Paraboloid2Fluka.inp", extentBB)
@@ -76,7 +82,7 @@ def Test(
         v.view(interactive=interactive)
 
     if refFilePath is not None:
-        assert _fc.cmp(refFilePath, outputPath / "T018_geant4Paraboloid2Fluka.inp", shallow=False)
+        assert _fc.cmp(refFilePath, outputPath / outputFile, shallow=False)
 
     return {"greg": reg, "freg": freg}
 

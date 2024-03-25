@@ -35,31 +35,26 @@ def Test(
     by = _gd.Constant("by", "40", reg, True)
     bz = _gd.Constant("bz", "40", reg, True)
 
-    crmin1 = _gd.Constant("crmin1", "0", reg, True)
-    crmax1 = _gd.Constant("crmax1", "20", reg, True)
-    crmin2 = _gd.Constant("crmin2", "0", reg, True)
-    crmax2 = _gd.Constant("crmax2", "10", reg, True)
-    cz = _gd.Constant("cz", "50", reg, True)
-    cdp = _gd.Constant("cdp", "2*pi", reg, True)
-    zero = _gd.Constant("zero", "0.0", reg, False)
+    v1 = _gd.Position("v1", "20", "20", "0", "mm", reg, True)
+    v2 = _gd.Position("v2", "-20", "20", "0", "mm", reg, True)
+    v3 = _gd.Position("v3", "-20", "-20", "0", "mm", reg, True)
+    v4 = _gd.Position("v4", "0", "0", "20", "mm", reg, True)
 
     # materials
     if writeNISTMaterials:
         wm = _g4.nist_material_2geant4Material("G4_Galactic", reg)
-        bm = _g4.nist_material_2geant4Material("G4_Au", reg)
+        tm = _g4.nist_material_2geant4Material("G4_Au", reg)
     else:
         wm = _g4.MaterialPredefined("G4_Galactic")
-        bm = _g4.MaterialPredefined("G4_Au")
+        tm = _g4.MaterialPredefined("G4_Au")
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
-    cs = _g4.solid.Cons("cs", crmin1, crmax1, crmin2, crmax2, cz, zero, cdp, reg, "mm")
+    ts = _g4.solid.Tet("ts", v1, v2, v3, v4, reg)
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    bl = _g4.LogicalVolume(bs, bm, "bl", reg)
-    cl = _g4.LogicalVolume(cs, bm, "cl", reg)
+    tl = _g4.LogicalVolume(ts, tm, "tl", reg)
 
     a = _random.random() * 2 * _np.pi
     b = _random.random() * 2 * _np.pi
@@ -75,7 +70,7 @@ def Test(
                 bp = _g4.PhysicalVolume(
                     [a, b, c],
                     [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
-                    cl,
+                    tl,
                     "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
                     wl,
                     reg,
@@ -85,7 +80,7 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T304_Cons.gdml"
+    outputFile = outputPath / "T320_ManyTet.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -103,7 +98,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T304_Cons.inp"
+    outputFile = outputPath / "T320_ManyTet.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

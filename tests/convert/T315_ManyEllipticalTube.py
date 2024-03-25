@@ -35,19 +35,10 @@ def Test(
     by = _gd.Constant("by", "40", reg, True)
     bz = _gd.Constant("bz", "40", reg, True)
 
-    trmin = _gd.Constant("trmin", "0", reg, True)
-    trmax = _gd.Constant("trmax", "51.0", reg, True)
-    tz = _gd.Constant("tz", "51", reg, True)
-    tstartphi = _gd.Constant("startphi", "0", reg, True)
-    tdeltaphi = _gd.Constant("deltaphi", "2*pi", reg, True)
-    ts = _g4.solid.Tubs("ts", trmin, trmax, tz, tstartphi, tdeltaphi, reg, "mm", "rad")
-
-    trmin2 = _gd.Constant("trmin2", "25", reg, True)
-    trmax2 = _gd.Constant("trmax2", "50.0", reg, True)
-    tz2 = _gd.Constant("tz2", "50", reg, True)
-    tstartphi2 = _gd.Constant("startphi2", "0", reg, True)
-    tdeltaphi2 = _gd.Constant("deltaphi2", "3*pi/2", reg, True)
-    ts2 = _g4.solid.Tubs("ts2", trmin2, trmax2, tz2, tstartphi2, tdeltaphi2, reg, "mm", "rad")
+    r1 = _gd.Constant("r1", "20", reg, True)
+    r2 = _gd.Constant("r2", "20", reg, True)
+    dz = _gd.Constant("dz", "50", reg, True)
+    es = _g4.solid.EllipticalTube("es", r1, r1, dz, reg)
 
     # materials
     if writeNISTMaterials:
@@ -59,14 +50,10 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    bs = _g4.solid.Box("bs", bx, by, bz, reg, "mm")
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    tl = _g4.LogicalVolume(ts, bm, "bl", reg)
-    tl2 = _g4.LogicalVolume(ts2, bm, "bl2", reg)
-
-    bp2 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], tl2, "b2_pv", tl, reg)
+    etl = _g4.LogicalVolume(es, bm, "bl", reg)
 
     a = _random.random() * 2 * _np.pi
     b = _random.random() * 2 * _np.pi
@@ -85,7 +72,7 @@ def Test(
                     bp = _g4.PhysicalVolume(
                         [a, b, c],
                         [5 * bx * (i - 2), 5 * by * (j - 2), 5 * bz * (k - 2)],
-                        tl,
+                        etl,
                         "b_pv_" + str(i) + "_" + str(j) + "_" + str(k),
                         wl,
                         reg,
@@ -96,7 +83,7 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T1002_Tubs.gdml"
+    outputFile = outputPath / "T315_ManyEllipticalTube.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -114,7 +101,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T1002_Tubs.inp"
+    outputFile = outputPath / "T315_ManyEllipticalTube.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

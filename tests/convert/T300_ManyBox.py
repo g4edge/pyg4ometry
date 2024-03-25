@@ -75,7 +75,7 @@ def Test(
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T1001_Box.gdml"
+    outputFile = outputPath / "T300_ManyBox.gdml"
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
@@ -93,7 +93,7 @@ def Test(
         v.view(interactive=interactive)
 
     # fluka conversion
-    outputFile = outputPath / "T1001_Box.inp"
+    outputFile = outputPath / "T300_ManyBox.inp"
     if fluka:
         freg = _convert.geant4Reg2FlukaReg(reg)
 

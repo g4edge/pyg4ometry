@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 import pathlib as _pl
 import pyg4ometry.gdml as _gd
 import pyg4ometry.geant4 as _g4
@@ -8,7 +9,14 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -20,12 +28,12 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     wz = _gd.Constant("wz", "200", reg, True)
 
     # pi     = _gd.Constant("pi","3.1415926",reg,True)
-    px = _gd.Constant("px", "2.5", reg, True)
-    py = _gd.Constant("py", "5", reg, True)
-    pz = _gd.Constant("pz", "7.5", reg, True)
-    pAlpha = _gd.Constant("pAlpha", "0.2", reg, True)
-    pTheta = _gd.Constant("pTheta", "0.4", reg, True)
-    pPhi = _gd.Constant("pPhi", "0", reg, True)
+    px = _gd.Constant("px", "50", reg, True)
+    py = _gd.Constant("py", "75", reg, True)
+    pz = _gd.Constant("pz", "100", reg, True)
+    pAlpha = _gd.Constant("pAlpha", "0.4", reg, True)
+    pTheta = _gd.Constant("pTheta", "0.0", reg, True)
+    pPhi = _gd.Constant("pPhi", "0.0", reg, True)
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
@@ -34,51 +42,18 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
 
-    pad = 4.0
-    nx = 2
-    ny = 2
-    nz = 2
-    for iAlpha in range(0, nx, 1):
-        dx = iAlpha * px * pad - (nx - 1) * px * pad / 2.0
-        dAlpha = iAlpha * 0.2
-        for iTheta in range(0, ny, 1):
-            dy = iTheta * py * 4 - (ny - 1) * py * pad / 2.0
-            dTheta = iTheta * 0.2
-            for iPhi in range(0, nz, 1):
-                dz = iPhi * pz * 4 - (nz - 1) * pz * pad / 2.0
-                dPhi = iPhi * 0.2
-                # print iAlpha, iTheta, iPhi
+    ps = _g4.solid.Para("ps", px, py, pz, pAlpha, pTheta, pPhi, reg, "mm", "rad")
 
-                ps = _g4.solid.Para(
-                    "ps_" + str(iAlpha) + "_" + str(iTheta) + "_" + str(iPhi),
-                    px,
-                    py,
-                    pz,
-                    dAlpha,
-                    dTheta,
-                    dPhi,
-                    reg,
-                    "mm",
-                    "rad",
-                )
-
-                # structure
-                pl = _g4.LogicalVolume(
-                    ps,
-                    pm,
-                    "pl_" + str(iAlpha) + "_" + str(iTheta) + "_" + str(iPhi),
-                    reg,
-                )
-                pp = _g4.PhysicalVolume(
-                    [0, 0, 0],
-                    [dx, dy, dz],
-                    pl,
-                    "p_pv1_" + str(iAlpha) + "_" + str(iTheta) + "_" + str(iPhi),
-                    wl,
-                    reg,
-                )
-
-    # wl.clipSolid()
+    # structure
+    pl = _g4.LogicalVolume(ps, pm, "pl", reg)
+    pp = _g4.PhysicalVolume(
+        [_np.pi / 4, 0, 0],
+        [0, 25, 0],
+        pl,
+        "pl",
+        wl,
+        reg,
+    )
 
     # set world volume
     reg.setWorld(wl.name)
@@ -93,9 +68,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.write(outputPath / "T005_geant4Para2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T005_geant4Para2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T005_geant4Para2Fluka.inp"
+    else:
+        outputFile = outputPath / "T005_geant4Para2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

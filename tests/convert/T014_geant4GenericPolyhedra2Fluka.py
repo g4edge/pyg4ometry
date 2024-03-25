@@ -11,7 +11,15 @@ normal = 1
 two_planes = 2
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    type=normal,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -81,9 +89,13 @@ def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None,
     w.write(outputPath / "T014_geant4GenericPolyhedra2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T014_geant4GenericPolyhedra2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T014_geant4GenericPolyhedra2Fluka.inp"
+    else:
+        outputFile = outputPath / "T014_geant4GenericPolyhedra2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

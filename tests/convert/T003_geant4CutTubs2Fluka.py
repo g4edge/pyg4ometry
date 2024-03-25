@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
@@ -8,16 +9,24 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=True,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    cuts=False,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
     reg = _g4.Registry()
 
     # defines
-    wx = _gd.Constant("wx", "100", reg, True)
-    wy = _gd.Constant("wy", "100", reg, True)
-    wz = _gd.Constant("wz", "100", reg, True)
+    wx = _gd.Constant("wx", "200", reg, True)
+    wy = _gd.Constant("wy", "200", reg, True)
+    wz = _gd.Constant("wz", "200", reg, True)
 
     # pi        = _gd.Constant("pi","3.1415926",reg,True)
     trmin = _gd.Constant("trmin", "2.5", reg, True)
@@ -38,24 +47,39 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ts = _g4.solid.CutTubs(
-        "ts",
-        trmin,
-        trmax,
-        tz,
-        tstartphi,
-        tdeltaphi,
-        [tlowx, tlowy, tlowz],
-        [thighx, thighy, thighz],
-        reg,
-        "mm",
-        "rad",
-    )
+    if cuts:
+        ts = _g4.solid.CutTubs(
+            "ts",
+            trmin,
+            trmax,
+            tz,
+            tstartphi,
+            tdeltaphi,
+            [tlowx, tlowy, tlowz],
+            [thighx, thighy, thighz],
+            reg,
+            "mm",
+            "rad",
+        )
+    else:
+        ts = _g4.solid.CutTubs(
+            "ts",
+            0,
+            trmax,
+            tz,
+            0,
+            2 * _np.pi,
+            [0, 0, -1],
+            [0, 0, 1],
+            reg,
+            "mm",
+            "rad",
+        )
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     tl = _g4.LogicalVolume(ts, bm, "tl", reg)
-    tp = _g4.PhysicalVolume([0, 0.0, 0.0], [0, 0, 0], tl, "t_pv1", wl, reg)
+    tp = _g4.PhysicalVolume([_np.pi / 4, 0.0, 0.0], [0, 25, 0], tl, "t_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -69,9 +93,17 @@ def Test(vis=True, interactive=False, fluka=True, outputPath=None, refFilePath=N
     w.write(outputPath / "T003_geant4CutTubs2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T003_geant4CutTubs2Fluka.inp"
+    if not cuts and not bakeTransforms:
+        outputFile = outputPath / "T003_geant4CutTubs2Fluka.inp"
+    elif cuts and not bakeTransforms:
+        outputFile = outputPath / "T003_geant4CutTubs2Fluka_cuts.inp"
+    elif not cuts and bakeTransforms:
+        outputFile = outputPath / "T003_geant4CutTubs2Fluka_baked.inp"
+    elif cuts and bakeTransforms:
+        outputFile = outputPath / "T003_geant4CutTubs2Fluka_cuts_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)
