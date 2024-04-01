@@ -240,6 +240,7 @@ def geant4PhysicalVolume2Fluka(
                 new_tra,
                 flukaRegistry=flukaRegistry,
                 flukaNameCount=flukaNameCount,
+                bakeTransforms=bakeTransforms,
             )
 
         materialName = daughterVolumes[0].logicalVolume.material.name
@@ -268,6 +269,7 @@ def geant4PhysicalVolume2Fluka(
                 new_tra,
                 flukaRegistry=flukaRegistry,
                 flukaNameCount=flukaNameCount,
+                bakeTransforms=bakeTransforms,
             )
             if physicalVolume.logicalVolume.type == "logical":
                 for motherZones in flukaMotherRegion.zones:
@@ -3509,7 +3511,6 @@ def geant4GenericTrap2Fluka(
             vert = [x * uval for x in list(solid.get_vertex(i))]
         else:
             vert = mtra @ _np.array(list(solid.get_vertex(i))) * uval + tra / 10
-            print(vert)
 
         verts.append(vert)
 
