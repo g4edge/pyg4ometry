@@ -404,7 +404,7 @@ class RecursiveRotoTranslation(MutableSequence, MatrixConvertibleMixin):
             del rtrans.transformationIndex
 
 
-def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
+def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None, allowZero=False):
     """tbxyz = trait bryan angles in radians"""
     # Reverse it's because different convention in FLUKA (passive vs
     # active angles).
@@ -413,7 +413,7 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     # Don't append a RotoTranslation for 0-angle rotations.
     # Note that we are converting from radians to degrees here.
 
-    if tbxyz.x:
+    if tbxyz.x or allowZero:
         result.append(
             RotoTranslation(
                 name,
@@ -423,7 +423,7 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
             )
         )
 
-    if tbxyz.y:
+    if tbxyz.y or allowZero:
         result.append(
             RotoTranslation(
                 name,
@@ -433,7 +433,7 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
             )
         )
 
-    if tbxyz.z:
+    if tbxyz.z or allowZero:
         result.append(
             RotoTranslation(
                 name,
@@ -446,12 +446,14 @@ def rotoTranslationFromTBxyz(name, tbxyz, flukaregistry=None):
     return result
 
 
-def rotoTranslationFromTra2(name, tra2, flukaregistry=None):
+def rotoTranslationFromTra2(name, tra2, flukaregistry=None, allowZero=False):
     rotation = tra2[0]
     translation = tra2[1]
 
     # Start with rotation
-    result = rotoTranslationFromTBxyz(name, rotation, flukaregistry=flukaregistry)
+    result = rotoTranslationFromTBxyz(
+        name, rotation, flukaregistry=flukaregistry, allowZero=allowZero
+    )
 
     if any(translation):  # Don't append a translation of zeros
         result.append(RotoTranslation(name, translation=translation, flukaregistry=flukaregistry))

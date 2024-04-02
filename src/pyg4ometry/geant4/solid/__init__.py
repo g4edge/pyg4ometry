@@ -37,4 +37,5 @@ from .TessellatedSolid import *
 from .MultiUnion import *
 from .OpticalSurface import *
 from .Scaled import *
+from .HalfSpace import *
 from .SolidBase import SolidBase

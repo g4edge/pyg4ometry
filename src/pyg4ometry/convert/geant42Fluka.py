@@ -3515,7 +3515,9 @@ def geant4GenericTrap2Fluka(
         verts.append(vert)
 
     if bakeTransform:
-        transform = None
+        transform = _rotoTranslationFromTra2(
+            "IDENT", [[0.0, 0, 0], [0, 0, 0]], flukaregistry=flukaRegistry, allowZero=True
+        )
 
     verts_tuple = tuple(tuple(vert) for vert in verts)
     verts_set = set(verts_tuple)
