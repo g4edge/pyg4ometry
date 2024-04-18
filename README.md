@@ -15,52 +15,30 @@ Carlo (Geant4 and Fluka) geometries.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10449301.svg)](https://doi.org/10.5281/zenodo.10449301)
 [![Read the Docs](https://img.shields.io/readthedocs/pyg4ometry?logo=readthedocs)](https://pyg4ometry.readthedocs.io)
 
-## Installing from PyPI
+## How to Install
 
-```console
-> pip install pyg4ometry
+Pre-built pyg4ometry wheels can be installed [from PyPI](https://pypi.org/project/pyg4ometry)
+using pip:
+
+```
+pip install pyg4ometry
 ```
 
-> [!NOTE]
-> Most dependencies are available from pip but you will need to install OpenCASCADE
-> cgal, mpfr, gmp, ROOT. Find [here](https://github.com/g4edge/pyg4ometry/tree/main/.github/bin)
-> installers for Ubuntu and MacOS.
+If you cannot find wheels for your operating system / architecture,
+please [open an issue](https://github.com/g4edge/pyg4ometry/issues).
+Building from source requires some non-Python software dependencies.
+More documentation can be found in the developer's guide.
 
-## Building
+## Referencing and Citation
 
-```console
-> git clone https://github.com/g4edge/pyg4ometry.git
-> cd pyg4ometry
-> pip install . # add --editable for a version which you can edit
-```
+To support the development and maintenance of pyg4ometry, please cite it!
+Any publications including simulations made using this software must cite
+the pyg4ometry paper:
 
-> [!NOTE]
-> If you update your Git clone and the pybind11 C++ has changes you will need
-> to reinstall and thus trigger a rebuild.
+> S.D. Walker, A. Abramov, L.J. Nevay, W. Shields, S.T. Boogert,
+> “pyg4ometry: A Python library for the creation of Monte Carlo radiation transport physical geometries”,
+> Computer Physics Communications 272 108228 (2022). DOI: [10.1016/j.cpc.2021.108228](https://doi.org/10.1016/j.cpc.2021.108228)
 
-## Manual
+and the Zenodo release: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10449301.svg)](https://doi.org/10.5281/zenodo.10449301)
 
-Online manual available at https://pyg4ometry.readthedocs.io
-
-## Developer commands (for detailed developer notes see readthedocs)
-
-- Building the manual
-  - `pip install '.[docs]'` to install docs building dependencies
-  - `cd pyg4ometry/docs`
-  - `make`
-  - `<your browser> build/html/index.html` to view the docs
-- Running tests
-  - `pip install '.[test]'` to install test running dependencies
-  - `pytest`
-- Git commit
-  - pre-commit
-    - `pre-commit install` to setup pre-commit in source dir (only once)
-    - `pre-commit run --all-files` run pre-commit locally
-    - `pre-commit run --all-files black` run only black
-  - messages
-    - Start commit message with `submodule : (type of change) detailed notes`
-    - e.g `pycgal : (extra functionality) more 2d mesh processing`
-- Pull requests
-  - PR messages should just explain the change in a concise way as they will form part of the change log
-    - e.g `FLUKA region viewer`
-  - Update the CHANGELOG.md file for generating the release notes
+Citation information can be also obtained on GitHub by selecting “Cite this repository” in the sidebar on the right.
