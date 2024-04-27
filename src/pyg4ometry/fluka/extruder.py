@@ -47,7 +47,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
         if name in self.regions:
             raise NameError(name+" already in "+self.name)
         if dxdy:
-            pointList = [[x + dxdy[0], y + dxdy[0]] for x, y in pointList]
+            pointList = [[x + dxdy[0], y + dxdy[1]] for [x, y] in pointList]
         self.materials[name] = material
         if not scale:
             self.regions[name] = pointList
