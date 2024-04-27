@@ -12,12 +12,12 @@ import numpy as _np
 
 
 class Extruder(pyg4ometry.geant4.solid.SolidBase):
-    def __init__(self, name="", length=1000, regions={}, registry=None):
+    def __init__(self, name, length, regions=None, materials=None, registry=None):
         super().__init__(name, "extruder", registry)
 
         self.length = length
-        self.regions = regions
-        self.materials = {}
+        self.regions = regions if regions is not None else dict()
+        self.materials = materials if materials is not None else dict()
         self.cgalpolys = {}
         self.extrusions = {}
         self.decomposed = {}
