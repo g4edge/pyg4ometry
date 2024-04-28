@@ -434,7 +434,12 @@ class BOX(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"BOX {self.name} {param_string}"
+        # return prefix + f"BOX {self.name} {param_string}"
+        return prefix + "BOX {} {}\n {}".format(
+            self.name,
+            _iterablesToFreeString(self.vertex, self.edge1),
+            _iterablesToFreeString(self.edge2, self.edge3),
+        )
 
     def hash(self):
         return (
@@ -601,7 +606,7 @@ class RCC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + "RCC {} {} {} {}".format(
+        return prefix + "RCC {} {} \n {} {}".format(
             self.name,
             _iterablesToFreeString(self.face),
             _iterablesToFreeString(self.direction),
