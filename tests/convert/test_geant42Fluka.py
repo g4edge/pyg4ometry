@@ -563,7 +563,7 @@ def test_Geant42FlukaConversion_T019_Hyperboloid(tmptestdir, testdata):
     )
 
 
-def test_Geant42FlukaConversion_T019_Hyperboloid(tmptestdir, testdata):
+def test_Geant42FlukaConversion_T019_Hyperboloid_baked(tmptestdir, testdata):
     T019_geant4Hyperboloid2Fluka.Test(
         vis=False,
         interactive=False,
