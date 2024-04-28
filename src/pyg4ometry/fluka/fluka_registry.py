@@ -203,8 +203,26 @@ class FlukaRegistry:
     def addGlobal(self):
         pass
 
-    def addBeam(self, energy, particle="ELECTRON"):
-        c = _card.Card("BEAM", energy, 0.1, 0, 0.1, 0.0, -1, particle)
+    def addBeam(
+        self,
+        energy,
+        energySpread=0.1,
+        beamDivergence=0,
+        beamWidthX=0.1,
+        beamWidthY=0.0,
+        annular=-1,
+        particleType="ELECTRON",
+    ):
+        c = _card.Card(
+            "BEAM",
+            energy,
+            energySpread,
+            beamDivergence,
+            beamWidthX,
+            beamWidthY,
+            annular,
+            particleType,
+        )
         self.addCard(c)
 
     def addBeamPos(self, xpos=0, ypos=0, zpos=0, xdc=0, ydc=0):

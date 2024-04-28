@@ -71,7 +71,7 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
 
         # fluka running
         freg.addDefaults(default="PRECISIO")
-        freg.addBeam(energy=1, particle="ELECTRON")
+        freg.addBeam(energy=1, particleType="ELECTRON")
         freg.addBeamPos()
         freg.addUsrBin(name="bin1")
         freg.addUsrBin(name="bin2")
