@@ -18,8 +18,8 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
         super().__init__(name, "extruder", registry)
 
         self.length = length
-        self.regions = regions if regions is not None else dict()
-        self.materials = materials if materials is not None else dict()
+        self.regions = regions if regions is not None else {}
+        self.materials = materials if materials is not None else {}
         self.cgalpolys = {}
         self.extrusions = {}
         self.decomposed = {}
@@ -45,7 +45,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
         :type dxdy: None, [float, float]
         """
         if name in self.regions:
-            raise NameError(name+" already in "+self.name)
+            raise NameError(name + " already in " + self.name)
         if dxdy:
             pointList = [[x + dxdy[0], y + dxdy[1]] for [x, y] in pointList]
         self.materials[name] = material
@@ -53,8 +53,8 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
             self.regions[name] = pointList
         else:
             # product of +-1 (sign of) scale gives winding order
-            winding = int(_functools.reduce(lambda x, y: x*_math.copysign(1.0, y), scale))
-            pointListScaled = [[x*scale[0], y*scale[1]] for [x,y] in pointList]
+            winding = int(_functools.reduce(lambda x, y: x * _math.copysign(1.0, y), scale))
+            pointListScaled = [[x * scale[0], y * scale[1]] for [x, y] in pointList]
             self.regions[name] = pointListScaled[::winding]
 
     def addPointToRegion(self, name, pntIndx):
