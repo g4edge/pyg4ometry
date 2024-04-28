@@ -35,15 +35,15 @@ def plotScoringMeshSection(
     return (cut, v)
 
 
-def flukaEventDisplay(gdmlFile, dumpFile):
+def flukaEventDisplay(gdmlFile, dumpFile, iEvent, nEventToRead=1000000):
     r = _GdmlReader(gdmlFile)
     v = _VtkViewerNew()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
     v.buildPipelinesAppend()
 
     fd = open(dumpFile, "rb")
-    ud = _Usrdump(fd, 5)
-    ud.read_event(fd, 0)
+    ud = _Usrdump(fd, nEventToRead)
+    ud.read_event(fd, iEvent)
 
     pd = ud.trackDataToPolydata()
     v.addTracks(pd)
