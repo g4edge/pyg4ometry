@@ -715,7 +715,7 @@ def geant4Solid2FlukaRegion(
             flukaRegistry=flukaRegistry,
             addRegistry=True,
             commentName=solid.name,
-            bakeTransforms=bakeTransforms
+            bakeTransforms=bakeTransforms,
         )
         flukaNameCount += 1
 
@@ -730,7 +730,7 @@ def geant4Solid2FlukaRegion(
                     flukaRegistry=flukaRegistry,
                     addRegistry=True,
                     commentName=solid.name + "_" + sk,
-                    bakeTransforms=bakeTransforms
+                    bakeTransforms=bakeTransforms,
                 )
                 # flukaNameCount += 1
                 flukaRegistry.addRegion(temp)
