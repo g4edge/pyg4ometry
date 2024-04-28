@@ -14,7 +14,9 @@ import numpy as _np
 
 
 class Extruder(pyg4ometry.geant4.solid.SolidBase):
-    def __init__(self, name="", length=1000, angle=0.0, regions={}, materials=None, registry=None):
+    def __init__(
+        self, name="", length=1000, angle=0.0, regions=None, materials=None, registry=None
+    ):
         super().__init__(name, "extruder", registry)
 
         self.length = length
@@ -76,7 +78,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
         return self.materials[name]
 
     def buildCgalPolygons(self):
-        # first loop over extruders
+        # first loop over extruIders
         for extruderName, extruder in self.extruders.items():
             extruder.buildCgalPolygons()
 
