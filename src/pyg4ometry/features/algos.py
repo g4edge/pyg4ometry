@@ -224,7 +224,6 @@ class CoordinateSystem:
 
 
 class vtkViewer:
-
     """
     Simple visualiser for feature extraction only
     """

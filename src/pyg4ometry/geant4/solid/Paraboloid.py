@@ -73,9 +73,7 @@ class Paraboloid(_SolidBase):
         return f"Paraboloid : {self.name} {self.pDz} {self.pR1} {self.pR2}"
 
     def __str__(self):
-        return "Paraboloid : name={} dz={} r1={} r2={}".format(
-            self.name, float(self.pDz), float(self.pR1), float(self.pR2)
-        )
+        return f"Paraboloid : name={self.name} dz={float(self.pDz)} r1={float(self.pR1)} r2={float(self.pR2)}"
 
     def mesh(self):
         import pyg4ometry.gdml.Units as _Units  # TODO move circular import

@@ -315,7 +315,8 @@ enum { __pyx_check_sizeof_voidp = 1 / (int)(SIZEOF_VOID_P == sizeof(void *)) };
 #endif
 #ifndef CYTHON_MAYBE_UNUSED_VAR
 #if defined(__cplusplus)
-template <class T> void CYTHON_MAYBE_UNUSED_VAR(const T &) {}
+template <class T>
+void CYTHON_MAYBE_UNUSED_VAR(const T &){}
 #else
 #define CYTHON_MAYBE_UNUSED_VAR(x) (void)(x)
 #endif
@@ -1277,7 +1278,7 @@ __Pyx_PyObject_SetAttrStr(PyObject *obj, PyObject *attr_name, PyObject *value);
 
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-#define __PYX_DICT_VERSION_INIT ((PY_UINT64_T)-1)
+#define __PYX_DICT_VERSION_INIT ((PY_UINT64_T) - 1)
 #define __PYX_GET_DICT_VERSION(dict) (((PyDictObject *)(dict))->ma_version_tag)
 #define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)           \
   (version_var) = __PYX_GET_DICT_VERSION(dict);                                \
@@ -33805,72 +33806,72 @@ static PyObject *__Pyx_CyFunction_CallAsMethod(PyObject *func, PyObject *args,
   return result;
 }
 static PyTypeObject __pyx_CyFunctionType_type = {
-  PyVarObject_HEAD_INIT(0, 0) "cython_function_or_method",
-  sizeof(__pyx_CyFunctionObject),
-  0,
-  (destructor)__Pyx_CyFunction_dealloc,
-  0,
-  0,
-  0,
+    PyVarObject_HEAD_INIT(0, 0) "cython_function_or_method",
+    sizeof(__pyx_CyFunctionObject),
+    0,
+    (destructor)__Pyx_CyFunction_dealloc,
+    0,
+    0,
+    0,
 #if PY_MAJOR_VERSION < 3
-  0,
+    0,
 #else
-  0,
+    0,
 #endif
-  (reprfunc)__Pyx_CyFunction_repr,
-  0,
-  0,
-  0,
-  0,
-  __Pyx_CyFunction_CallAsMethod,
-  0,
-  0,
-  0,
-  0,
-  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
-  0,
-  (traverseproc)__Pyx_CyFunction_traverse,
-  (inquiry)__Pyx_CyFunction_clear,
-  0,
+    (reprfunc)__Pyx_CyFunction_repr,
+    0,
+    0,
+    0,
+    0,
+    __Pyx_CyFunction_CallAsMethod,
+    0,
+    0,
+    0,
+    0,
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+    0,
+    (traverseproc)__Pyx_CyFunction_traverse,
+    (inquiry)__Pyx_CyFunction_clear,
+    0,
 #if PY_VERSION_HEX < 0x030500A0
-  offsetof(__pyx_CyFunctionObject, func_weakreflist),
+    offsetof(__pyx_CyFunctionObject, func_weakreflist),
 #else
-  offsetof(PyCFunctionObject, m_weakreflist),
+    offsetof(PyCFunctionObject, m_weakreflist),
 #endif
-  0,
-  0,
-  __pyx_CyFunction_methods,
-  __pyx_CyFunction_members,
-  __pyx_CyFunction_getsets,
-  0,
-  0,
-  __Pyx_CyFunction_descr_get,
-  0,
-  offsetof(__pyx_CyFunctionObject, func_dict),
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
+    0,
+    0,
+    __pyx_CyFunction_methods,
+    __pyx_CyFunction_members,
+    __pyx_CyFunction_getsets,
+    0,
+    0,
+    __Pyx_CyFunction_descr_get,
+    0,
+    offsetof(__pyx_CyFunctionObject, func_dict),
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
 #if PY_VERSION_HEX >= 0x030400a1
-  0,
+    0,
 #endif
 #if PY_VERSION_HEX >= 0x030800b1 &&                                            \
     (!CYTHON_COMPILING_IN_PYPY || PYPY_VERSION_NUM >= 0x07030800)
-  0,
+    0,
 #endif
 #if PY_VERSION_HEX >= 0x030800b4 && PY_VERSION_HEX < 0x03090000
-  0,
+    0,
 #endif
 #if CYTHON_COMPILING_IN_PYPY && PY_VERSION_HEX >= 0x03090000
-  0,
+    0,
 #endif
 };
 static int __pyx_CyFunction_init(void) {
@@ -35510,8 +35511,8 @@ static CYTHON_INLINE PyObject *__Pyx_PyInt_From_long(long value) {
     if (sizeof(target_type) < sizeof(func_type)) {                             \
       if (unlikely(value != (func_type)(target_type)value)) {                  \
         func_type zero = 0;                                                    \
-        if (exc && unlikely(value == (func_type)-1 && PyErr_Occurred()))       \
-          return (target_type)-1;                                              \
+        if (exc && unlikely(value == (func_type) - 1 && PyErr_Occurred()))     \
+          return (target_type) - 1;                                            \
         if (is_unsigned && unlikely(value < zero))                             \
           goto raise_neg_overflow;                                             \
         else                                                                   \

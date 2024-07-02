@@ -69,18 +69,10 @@ class EllipticalCone(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "EllipticalCone : {} {} {} {} {}".format(
-            self.name, self.pxSemiAxis, self.pySemiAxis, self.zMax, self.pzTopCut
-        )
+        return f"EllipticalCone : {self.name} {self.pxSemiAxis} {self.pySemiAxis} {self.zMax} {self.pzTopCut}"
 
     def __str__(self):
-        return "EllipticalCone : name={} xSemiAxis={} ySemiAxis={} zMax={} zTopCut={}".format(
-            self.name,
-            float(self.pxSemiAxis),
-            float(self.pySemiAxis),
-            float(self.zMax),
-            float(self.pzTopCut),
-        )
+        return f"EllipticalCone : name={self.name} xSemiAxis={float(self.pxSemiAxis)} ySemiAxis={float(self.pySemiAxis)} zMax={float(self.zMax)} zTopCut={float(self.pzTopCut)}"
 
     def mesh(self):
         _log.info("ellipticalcone.antlr>")

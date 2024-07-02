@@ -107,9 +107,9 @@ class _FlukaToG4MaterialConverter:
             z, a = self.periodicTable.atomicNumberAndMassFromSymbol(symbol)
             elementName = self._mangleElementName(flukaName)
             m = _g4.ElementSimple(elementName, symbol, z, a, registry=self.greg)
-            self.g4elements[
-                flukaName
-            ] = m  # this has to be the name as it would be in the input for composing compounds
+            self.g4elements[flukaName] = (
+                m  # this has to be the name as it would be in the input for composing compounds
+            )
             self.g4elementKeysMangled[elementName] = m
 
     def convertAll(self):

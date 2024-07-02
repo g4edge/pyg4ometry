@@ -49,7 +49,7 @@ Vector::Vector(py::array_t<double> array) {
   _z = ptr[2];
 }
 
-Vector::~Vector(){};
+Vector::~Vector() {};
 
 double Vector::x() const { return _x; }
 
@@ -176,7 +176,7 @@ std::string Vertex::toString() const {
   return std::string("<Vertex pos=") + pos().toString() + ">";
 }
 
-Vertex::~Vertex(){};
+Vertex::~Vertex() {};
 
 Vector Vertex::pos() const { return _pos; }
 

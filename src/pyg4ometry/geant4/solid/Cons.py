@@ -116,28 +116,10 @@ class Cons(_SolidBase):
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
-        return "Cons : {} {} {} {} {} {} {} {}".format(
-            self.name,
-            self.pRmin1,
-            self.pRmax1,
-            self.pRmin2,
-            self.pRmax2,
-            self.pDz,
-            self.pSPhi,
-            self.pDPhi,
-        )
+        return f"Cons : {self.name} {self.pRmin1} {self.pRmax1} {self.pRmin2} {self.pRmax2} {self.pDz} {self.pSPhi} {self.pDPhi}"
 
     def __str__(self):
-        return "Cons : name={} rmin1={} rmax1={} rmin2={} rmax2={} dz={} sphi={} dphi={}".format(
-            self.name,
-            float(self.pRmin1),
-            float(self.pRmax1),
-            float(self.pRmin2),
-            float(self.pRmax2),
-            float(self.pDz),
-            float(self.pSPhi),
-            float(self.pDPhi),
-        )
+        return f"Cons : name={self.name} rmin1={float(self.pRmin1)} rmax1={float(self.pRmax1)} rmin2={float(self.pRmin2)} rmax2={float(self.pRmax2)} dz={float(self.pDz)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)}"
 
     def mesh(self):
         _log.info("cons.antlr>")

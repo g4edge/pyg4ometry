@@ -315,7 +315,8 @@ enum { __pyx_check_sizeof_voidp = 1 / (int)(SIZEOF_VOID_P == sizeof(void *)) };
 #endif
 #ifndef CYTHON_MAYBE_UNUSED_VAR
 #if defined(__cplusplus)
-template <class T> void CYTHON_MAYBE_UNUSED_VAR(const T &) {}
+template <class T>
+void CYTHON_MAYBE_UNUSED_VAR(const T &){}
 #else
 #define CYTHON_MAYBE_UNUSED_VAR(x) (void)(x)
 #endif
@@ -1316,7 +1317,7 @@ __Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
 
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-#define __PYX_DICT_VERSION_INIT ((PY_UINT64_T)-1)
+#define __PYX_DICT_VERSION_INIT ((PY_UINT64_T) - 1)
 #define __PYX_GET_DICT_VERSION(dict) (((PyDictObject *)(dict))->ma_version_tag)
 #define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)           \
   (version_var) = __PYX_GET_DICT_VERSION(dict);                                \
@@ -21421,8 +21422,8 @@ static CYTHON_INLINE PyObject *__Pyx_PyInt_From_long(long value) {
     if (sizeof(target_type) < sizeof(func_type)) {                             \
       if (unlikely(value != (func_type)(target_type)value)) {                  \
         func_type zero = 0;                                                    \
-        if (exc && unlikely(value == (func_type)-1 && PyErr_Occurred()))       \
-          return (target_type)-1;                                              \
+        if (exc && unlikely(value == (func_type) - 1 && PyErr_Occurred()))     \
+          return (target_type) - 1;                                            \
         if (is_unsigned && unlikely(value < zero))                             \
           goto raise_neg_overflow;                                             \
         else                                                                   \

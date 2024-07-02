@@ -117,36 +117,10 @@ class Trap(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Trap : {} {} {} {} {} {} {} {} {} {} {} {}".format(
-            self.name,
-            self.pDz,
-            self.pTheta,
-            self.pDPhi,
-            self.pDy1,
-            self.pDx1,
-            self.pDx2,
-            self.pAlp1,
-            self.pDy2,
-            self.pDx3,
-            self.pDx4,
-            self.pAlp2,
-        )
+        return f"Trap : {self.name} {self.pDz} {self.pTheta} {self.pDPhi} {self.pDy1} {self.pDx1} {self.pDx2} {self.pAlp1} {self.pDy2} {self.pDx3} {self.pDx4} {self.pAlp2}"
 
     def __str__(self):
-        return "Trap : name={} dz={} theta={} dphi={} dy1={} {} {} {} {} {} {} {}".format(
-            self.name,
-            self.pDz,
-            self.pTheta,
-            self.pDPhi,
-            self.pDy1,
-            self.pDx1,
-            self.pDx2,
-            self.pAlp1,
-            self.pDy2,
-            self.pDx3,
-            self.pDx4,
-            self.pAlp2,
-        )
+        return f"Trap : name={self.name} dz={self.pDz} theta={self.pTheta} dphi={self.pDPhi} dy1={self.pDy1} {self.pDx1} {self.pDx2} {self.pAlp1} {self.pDy2} {self.pDx3} {self.pDx4} {self.pAlp2}"
 
     def mesh(self):
         _log.info("trap.antlr>")

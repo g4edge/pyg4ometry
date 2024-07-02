@@ -17,7 +17,6 @@ from PyQt5.QtCore import QEvent
 
 
 class QVTKRenderWindowInteractor(QWidget):
-
     """A QVTKRenderWindowInteractor for Python and Qt.  Uses a
     vtkGenericRenderWindowInteractor to handle the interactions.  Use
     GetRenderWindow() to get the vtkRenderWindow.  Create with the

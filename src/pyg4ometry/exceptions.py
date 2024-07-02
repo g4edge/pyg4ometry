@@ -9,13 +9,9 @@ class NullMeshError(Exception):
         if isinstance(arg, pyg4ometry.geant4.solid.SolidBase):
             self.solid = arg
             if isinstance(self.solid, pyg4ometry.geant4.solid.Intersection):
-                self.message = "Null mesh in intersection between solids: {}, {}.".format(
-                    self.solid.obj1.name, self.solid.obj2.name
-                )
+                self.message = f"Null mesh in intersection between solids: {self.solid.obj1.name}, {self.solid.obj2.name}."
             elif isinstance(self.solid, pyg4ometry.geant4.solid.Subtraction):
-                self.message = "Null mesh in subtraction between solids: {}, {}.".format(
-                    self.solid.obj1.name, self.solid.obj2.name
-                )
+                self.message = f"Null mesh in subtraction between solids: {self.solid.obj1.name}, {self.solid.obj2.name}."
             else:
                 self.message = f"Null mesh in {type(self.solid)}."
             super(Exception, self).__init__(str(self))
