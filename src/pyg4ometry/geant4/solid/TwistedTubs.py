@@ -82,26 +82,10 @@ class TwistedTubs(_SolidBase):
         # self.checkParameters()
 
     def __repr__(self):
-        return "TwistedTubs : {} {} {} {} {} {} {}".format(
-            self.name,
-            self.endinnerrad,
-            self.endouterrad,
-            self.zlen,
-            self.twistedangle,
-            self.nslice,
-            self.nstack,
-        )
+        return f"TwistedTubs : {self.name} {self.endinnerrad} {self.endouterrad} {self.zlen} {self.twistedangle} {self.nslice} {self.nstack}"
 
     def __str__(self):
-        return "TwistedTubs : name={} endinnerrad={} endouterrad={} zlen={} twistedangle={} nslice={} nstack={}".format(
-            self.name,
-            self.endinnerrad,
-            self.endouterrad,
-            self.zlen,
-            self.twistedangle,
-            self.nslice,
-            self.nstack,
-        )
+        return f"TwistedTubs : name={self.name} endinnerrad={self.endinnerrad} endouterrad={self.endouterrad} zlen={self.zlen} twistedangle={self.twistedangle} nslice={self.nslice} nstack={self.nstack}"
 
     def makeLayers(self, verts_bot, verts_top):
         layers = []

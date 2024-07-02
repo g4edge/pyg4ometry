@@ -69,14 +69,10 @@ class Tet(_SolidBase):
             registry.addSolid(self)  # Always need the registry
 
     def __repr__(self):
-        return "Tet : {} Vertexes: {}, {}, {}, {}".format(
-            self.name, str(self.anchor), str(self.p2), str(self.p3), str(self.p4)
-        )
+        return f"Tet : {self.name} Vertexes: {self.anchor!s}, {self.p2!s}, {self.p3!s}, {self.p4!s}"
 
     def __str__(self):
-        return "Tet : name={} Vertexes: a={}, p2={}, p3={}, p4={}".format(
-            self.name, str(self.anchor), str(self.p2), str(self.p3), str(self.p4)
-        )
+        return f"Tet : name={self.name} Vertexes: a={self.anchor!s}, p2={self.p2!s}, p3={self.p3!s}, p4={self.p4!s}"
 
     def mesh(self):
         _log.info("tet.pycsgmesh> antlr")

@@ -720,9 +720,7 @@ class DivisionVolume(_PhysicalVolume):
         return [meshes, transforms]
 
     def __repr__(self):
-        return "Division volume : {} {} {} {} {}".format(
-            self.name, self.axis, self.ndivisions, self.offset, self.width
-        )
+        return f"Division volume : {self.name} {self.axis} {self.ndivisions} {self.offset} {self.width}"
 
     def extent(self, includeBoundingSolid=True):
         _log.info("ReplicaVolume.extent> %s" % (self.name))
