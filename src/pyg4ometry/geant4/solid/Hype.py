@@ -90,24 +90,10 @@ class Hype(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Hype : {} {} {} {} {} {}".format(
-            self.name,
-            self.innerRadius,
-            self.outerRadius,
-            self.innerStereo,
-            self.outerStereo,
-            self.lenZ,
-        )
+        return f"Hype : {self.name} {self.innerRadius} {self.outerRadius} {self.innerStereo} {self.outerStereo} {self.lenZ}"
 
     def __str__(self):
-        return "Hype : name={} innerRadius={} outerRadius={} innerStereo={} outerStereo={} lenZ={}".format(
-            self.name,
-            float(self.innerRadius),
-            float(self.outerRadius),
-            float(self.innerStereo),
-            float(self.outerStereo),
-            float(self.lenZ),
-        )
+        return f"Hype : name={self.name} innerRadius={float(self.innerRadius)} outerRadius={float(self.outerRadius)} innerStereo={float(self.innerStereo)} outerStereo={float(self.outerStereo)} lenZ={float(self.lenZ)}"
 
     def checkParameters(self):
         if float(self.innerRadius) > float(self.outerRadius):

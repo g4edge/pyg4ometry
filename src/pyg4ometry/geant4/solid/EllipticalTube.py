@@ -74,9 +74,7 @@ class EllipticalTube(_SolidBase):
         return f"EllipticalTube : {self.name} {self.pDx} {self.pDy} {self.pDz}"
 
     def __str__(self):
-        return "EllipticalTube : name={} dx={} dy={} dz={}".format(
-            self.name, float(self.pDx), float(self.pDy), float(self.pDz)
-        )
+        return f"EllipticalTube : name={self.name} dx={float(self.pDx)} dy={float(self.pDy)} dz={float(self.pDz)}"
 
     def mesh(self):
         """new meshing based of Tubs meshing"""

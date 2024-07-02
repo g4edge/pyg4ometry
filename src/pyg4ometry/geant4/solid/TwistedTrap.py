@@ -127,9 +127,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         return f"Twisted Trap : {self.name} {self.twistedAngle} {self.pDz}"
 
     def __str__(self):
-        return "Twisted Trap : name={} twistedAngle={} dz={}".format(
-            self.name, self.twistedAngle, self.pDz
-        )
+        return f"Twisted Trap : name={self.name} twistedAngle={self.twistedAngle} dz={self.pDz}"
 
     def makeLayers(self, pl1, pl2, pl3, pl4, pu1, pu2, pu3, pu4, pDz, twist, theta, nsl):
         dz = 2 * pDz / float(nsl)

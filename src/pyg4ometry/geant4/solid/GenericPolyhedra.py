@@ -73,14 +73,10 @@ class GenericPolyhedra(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Generic Polyhedra : {} {} {} {}".format(
-            self.name, self.pSPhi, self.pDPhi, self.numSide
-        )
+        return f"Generic Polyhedra : {self.name} {self.pSPhi} {self.pDPhi} {self.numSide}"
 
     def __str__(self):
-        return "Generic Polyhedra : name={} sphi={} dphi={} numside={}".format(
-            self.name, float(self.pSPhi), float(self.pDPhi), float(self.numSide)
-        )
+        return f"Generic Polyhedra : name={self.name} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)} numside={float(self.numSide)}"
 
     def checkParameters(self):
         if len(self.pR) < 3:

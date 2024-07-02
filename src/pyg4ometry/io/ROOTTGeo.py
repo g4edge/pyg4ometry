@@ -898,9 +898,7 @@ class Reader:
                         vol = node.GetVolume()
                         if warnAboutBadShapes:
                             print(
-                                "unable to form daughter ({}) shape: {}".format(
-                                    node.GetName(), vol.GetShape().GetName()
-                                )
+                                f"unable to form daughter ({node.GetName()}) shape: {vol.GetShape().GetName()}"
                             )
                         continue
 

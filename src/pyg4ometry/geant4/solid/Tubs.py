@@ -79,21 +79,10 @@ class Tubs(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Tubs : {} {} {} {} {} {}".format(
-            self.name, self.pRMin, self.pRMax, self.pDz, self.pSPhi, self.pDPhi
-        )
+        return f"Tubs : {self.name} {self.pRMin} {self.pRMax} {self.pDz} {self.pSPhi} {self.pDPhi}"
 
     def __str__(self):
-        return "Tubs : {} rmin={} rmax={} dz={} sphi={} dphi={} lunit={} aunit={}".format(
-            self.name,
-            float(self.pRMin),
-            float(self.pRMax),
-            float(self.pDz),
-            float(self.pSPhi),
-            float(self.pDPhi),
-            self.lunit,
-            self.aunit,
-        )
+        return f"Tubs : {self.name} rmin={float(self.pRMin)} rmax={float(self.pRMax)} dz={float(self.pDz)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)} lunit={self.lunit} aunit={self.aunit}"
 
     def mesh(self):
         _log.info("tubs.pycsgmesh> antlr")

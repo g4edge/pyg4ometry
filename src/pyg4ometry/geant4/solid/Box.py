@@ -110,9 +110,7 @@ class Box(_SolidBase):
         return f"Box : {self.name} {self.pX} {self.pY} {self.pZ}"
 
     def __str__(self):
-        return "Box : name={} x={} y={} z={}".format(
-            self.name, float(self.pX), float(self.pY), float(self.pZ)
-        )
+        return f"Box : name={self.name} x={float(self.pX)} y={float(self.pY)} z={float(self.pZ)}"
 
     def mesh(self):
         _log.info("box.pycsgmesh> antlr")

@@ -19,7 +19,6 @@ import numpy as _np
 
 
 class Ellipsoid(_SolidBase):
-
     """
     Constructs an ellipsoid optinoally cut by planes perpendicular to the z-axis.
 
@@ -84,24 +83,10 @@ class Ellipsoid(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Ellipsoid : {} {} {} {} {} {}".format(
-            self.name,
-            self.pxSemiAxis,
-            self.pySemiAxis,
-            self.pzSemiAxis,
-            self.pzBottomCut,
-            self.pzTopCut,
-        )
+        return f"Ellipsoid : {self.name} {self.pxSemiAxis} {self.pySemiAxis} {self.pzSemiAxis} {self.pzBottomCut} {self.pzTopCut}"
 
     def __str__(self):
-        return "Ellipsoid : name={} xSemiAxis={} ySemiAxis={} zSemiAxis={} zBottomCut={} zTopCut={}".format(
-            self.name,
-            float(self.pxSemiAxis),
-            float(self.pySemiAxis),
-            float(self.pzSemiAxis),
-            float(self.pzBottomCut),
-            float(self.pzTopCut),
-        )
+        return f"Ellipsoid : name={self.name} xSemiAxis={float(self.pxSemiAxis)} ySemiAxis={float(self.pySemiAxis)} zSemiAxis={float(self.pzSemiAxis)} zBottomCut={float(self.pzBottomCut)} zTopCut={float(self.pzTopCut)}"
 
     def mesh(self):
         _log.info("ellipsoid.antlr>")
