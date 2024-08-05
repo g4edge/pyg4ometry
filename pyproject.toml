@@ -45,8 +45,7 @@ dependencies = [
     "scipy",
     "sympy>=1.7",
     "testtools",
-    "vtk",
-    "pygltflib"
+    "vtk"
 ]
 
 [project.scripts]
