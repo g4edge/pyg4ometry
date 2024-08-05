@@ -18,7 +18,7 @@ class Writer:
         self.top.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
         self.top.setAttribute(
             "xsi:noNamespaceSchemaLocation",
-            "http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd",
+            "http://cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd",
         )
 
         self.defines = self.top.appendChild(self.doc.createElement("define"))

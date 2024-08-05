@@ -10,9 +10,16 @@ normal = 1
 flat_ends = 2
 
 
-def Test(vis=False, interactive=False, type=normal, outputPath=None, refFilePath=None):
+def Test(
+    vis=False, interactive=False, type=normal, outputPath=None, outputFile=None, refFilePath=None
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
+
+    if not outputFile:
+        outputFile = "T0032_CutTubs_string.gdml"
+    else:
+        outputFile = _pl.Path(outputFile)
 
     reg = _g4.Registry()
 
@@ -70,7 +77,7 @@ def Test(vis=False, interactive=False, type=normal, outputPath=None, refFilePath
     reg.setWorld(wl.name)
 
     # gdml output
-    outputFile = outputPath / "T0032_CutTubs_string.gdml"
+    outputFile = outputPath / outputFile
     w = _gd.Writer()
     w.addDetector(reg)
     w.write(outputFile)
