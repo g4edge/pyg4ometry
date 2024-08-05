@@ -310,7 +310,10 @@ class RPP(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"RPP {self.name} {self.lower[0]!s} {self.upper[0]!s} {self.lower[1]!s} {self.upper[1]!s} {self.lower[2]!s} {self.upper[2]!s}"
+        return (
+            prefix
+            + f"RPP {self.name} {self.lower[0]!s} {self.upper[0]!s} {self.lower[1]!s} {self.upper[1]!s} {self.lower[2]!s} {self.upper[2]!s}"
+        )
 
     def hash(self):
         return (
@@ -398,7 +401,7 @@ class BOX(BodyMixin):
         )
 
     def __repr__(self):
-        return (f"<BOX: {self.name}, v={list(self.vertex)}, e1={list(self.edge1)}, e2={list(self.edge2)}, e3={list(self.edge3)}>")
+        return f"<BOX: {self.name}, v={list(self.vertex)}, e1={list(self.edge1)}, e2={list(self.edge2)}, e3={list(self.edge3)}>"
 
     def _withLengthSafety(self, safety, reg):
         u1 = self.edge1.unit()
@@ -421,7 +424,10 @@ class BOX(BodyMixin):
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
         # return prefix + f"BOX {self.name} {param_string}"
-        return prefix + f"BOX {self.name} {_iterablesToFreeString(self.vertex, self.edge1)}\n {_iterablesToFreeString(self.edge2, self.edge3)}"
+        return (
+            prefix
+            + f"BOX {self.name} {_iterablesToFreeString(self.vertex, self.edge1)}\n {_iterablesToFreeString(self.edge2, self.edge3)}"
+        )
 
     def hash(self):
         return (
@@ -586,7 +592,10 @@ class RCC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"RCC {self.name} {_iterablesToFreeString(self.face)} \n {_iterablesToFreeString(self.direction)} {self.radius!s}"
+        return (
+            prefix
+            + f"RCC {self.name} {_iterablesToFreeString(self.face)} \n {_iterablesToFreeString(self.direction)} {self.radius!s}"
+        )
 
     def hash(self):
         return (
@@ -679,7 +688,7 @@ class REC(BodyMixin):
         )
 
     def __repr__(self):
-        return (f"<REC: {self.name}, face={list(self.face)}, dir={list(self.direction)}, semimin={list(self.semiminor)}, semimaj={list(self.semimajor)}>")
+        return f"<REC: {self.name}, face={list(self.face)}, dir={list(self.direction)}, semimin={list(self.semiminor)}, semimaj={list(self.semimajor)}>"
 
     def _withLengthSafety(self, safety, reg):
         direction_unit = self.direction.unit()
@@ -703,7 +712,10 @@ class REC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
+        return (
+            prefix
+            + f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
+        )
 
     def hash(self):
         return (
@@ -793,7 +805,7 @@ class TRC(BodyMixin):
         )
 
     def __repr__(self):
-        return (f"<TRC: {self.name}, major={list(self.major_centre)} direction={list(self.direction)} rmaj={self.major_radius}, rmin={self.minor_radius}>")
+        return f"<TRC: {self.name}, major={list(self.major_centre)} direction={list(self.direction)} rmaj={self.major_radius}, rmin={self.minor_radius}>"
 
     def _withLengthSafety(self, safety, reg):
         unit = self.direction.unit()
@@ -813,7 +825,10 @@ class TRC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"TRC {self.name} {_iterablesToFreeString(self.major_centre, self.direction)} {self.major_radius} {self.minor_radius}"
+        return (
+            prefix
+            + f"TRC {self.name} {_iterablesToFreeString(self.major_centre, self.direction)} {self.major_radius} {self.minor_radius}"
+        )
 
     def hash(self):
         return (
@@ -936,7 +951,10 @@ class ELL(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"ELL {self.name} {_iterablesToFreeString(self.focus1, self.focus2)} {self.length}"
+        return (
+            prefix
+            + f"ELL {self.name} {_iterablesToFreeString(self.focus1, self.focus2)} {self.length}"
+        )
 
     def hash(self):
         return (
@@ -1053,7 +1071,10 @@ class _WED_RAW(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"{typename} {self.name} {_iterablesToFreeString(self.vertex, self.edge1, self.edge2, self.edge3)}"
+        return (
+            prefix
+            + f"{typename} {self.name} {_iterablesToFreeString(self.vertex, self.edge1, self.edge2, self.edge3)}"
+        )
 
     def hash(self):
         return (
@@ -1325,7 +1346,10 @@ class ARB(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
-        return prefix + f"ARB {self.name} {itfs(line1)}\n{itfs(line2)}\n{itfs(line3)}\n{itfs(line4)}\n{itfs(self.facenumbers)}"
+        return (
+            prefix
+            + f"ARB {self.name} {itfs(line1)}\n{itfs(line2)}\n{itfs(line3)}\n{itfs(line4)}\n{itfs(self.facenumbers)}"
+        )
 
     def hash(self):
         # TODO check this is all that is required

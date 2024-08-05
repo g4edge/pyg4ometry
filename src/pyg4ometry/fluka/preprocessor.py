@@ -115,7 +115,7 @@ class _IfInfo:
         self.read_until_next = read_until_next
 
     def __repr__(self):
-        return (f"<IfInfo: any_branch_satisfied={self.any_branch_satisfied}, read_until_next={self.read_until_next}>")
+        return f"<IfInfo: any_branch_satisfied={self.any_branch_satisfied}, read_until_next={self.read_until_next}>"
 
 
 def _parse_preprocessor_define(directive, split_line, defines):

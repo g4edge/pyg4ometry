@@ -92,7 +92,9 @@ class Torus(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return f"Torus : {self.name} {self.pRmin} {self.pRmax} {self.pRtor} {self.pSPhi} {self.pDPhi}"
+        return (
+            f"Torus : {self.name} {self.pRmin} {self.pRmax} {self.pRtor} {self.pSPhi} {self.pDPhi}"
+        )
 
     def __str__(self):
         return f"Torus : name={self.name} rmin={float(self.pRmin)} rmax={float(self.pRmax)} rtor={float(self.pRtor)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)}"

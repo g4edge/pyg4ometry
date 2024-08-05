@@ -96,7 +96,9 @@ class CutTubs(_SolidBase):
 
     def __repr__(self):
         # Low norm and high norm excluded as they are lists
-        return f"Cut tubs : {self.name} {self.pRMin} {self.pRMax} {self.pDz} {self.pSPhi} {self.pDPhi}"
+        return (
+            f"Cut tubs : {self.name} {self.pRMin} {self.pRMax} {self.pDz} {self.pSPhi} {self.pDPhi}"
+        )
 
     def __str__(self):
         # Low norm and high norm excluded as they are lists

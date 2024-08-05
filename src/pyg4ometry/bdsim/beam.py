@@ -6,7 +6,5 @@ class Beam:
         self.dir = dir
 
     def write(self, fd):
-        beam_string = (
-            f'beam, particle="{self.particleName}", energy={self.energy}, X0={self.pos[0]}, Y0={self.pos[1]}, Z0={self.pos[2]};\n'
-        )
+        beam_string = f'beam, particle="{self.particleName}", energy={self.energy}, X0={self.pos[0]}, Y0={self.pos[1]}, Z0={self.pos[2]};\n'
         fd.write(beam_string)

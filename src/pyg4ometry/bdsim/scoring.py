@@ -56,14 +56,20 @@ class ScorerMesh:
         scorer_mesh_string = (
             f'{self.name}: scorermesh, scoreQuantity="{self.scorer}", geometryType="{self.mesh}",\n'
         )
-        scorer_mesh_string += f"\t\tx={self.position[0]}*mm, y={self.position[1]}*mm, z={self.position[2]}*mm,\n"
+        scorer_mesh_string += (
+            f"\t\tx={self.position[0]}*mm, y={self.position[1]}*mm, z={self.position[2]}*mm,\n"
+        )
         if self.mesh == "box":
-            scorer_mesh_string += f"\t\tnx={self.nbins[0]}, ny={self.nbins[1]}, nz={self.nbins[2]},\n"
+            scorer_mesh_string += (
+                f"\t\tnx={self.nbins[0]}, ny={self.nbins[1]}, nz={self.nbins[2]},\n"
+            )
             scorer_mesh_string += (
                 f"\t\txsize={self.size[0]}*mm, ysize={self.size[1]}*mm, zsize={self.size[2]}*mm;\n"
             )
         elif self.mesh == "cyclindrical":
-            scorer_mesh_string += f"\t\tnr={self.nbins[0]}, nphi={self.nbins[1]}, nz={self.nbins[2]},\n"
+            scorer_mesh_string += (
+                f"\t\tnr={self.nbins[0]}, nphi={self.nbins[1]}, nz={self.nbins[2]},\n"
+            )
             scorer_mesh_string += f"\t\trsize={self.size[0]}*mm, zsize={self.size[2]}*mm;\n"
 
         fd.write(scorer_mesh_string)
