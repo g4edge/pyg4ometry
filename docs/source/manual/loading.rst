@@ -47,7 +47,7 @@ used for visualisation or other operations.
 
     geantRegistry = pyg4ometry.convert.fluka2Geant4(flukaRegistry)
 
-    l = geantRegsitry.getWorldVolume()
+    l = geantRegistry.getWorldVolume()
     v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
     v.addLogicalVolume(l)
     v.view()
