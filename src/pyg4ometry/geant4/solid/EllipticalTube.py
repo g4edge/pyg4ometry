@@ -85,9 +85,9 @@ class EllipticalTube(_SolidBase):
 
         luval = _Units.unit(self.lunit)
 
-        pDx = self.evaluateParameter(self.pDx) * luval / 2.0
-        pDy = self.evaluateParameter(self.pDy) * luval / 2.0
-        pDz = self.evaluateParameter(self.pDz) * luval / 2.0
+        pDx = self.evaluateParameter(self.pDx) * luval
+        pDy = self.evaluateParameter(self.pDy) * luval
+        pDz = self.evaluateParameter(self.pDz) * luval
 
         _log.info("ellipticaltube.pycsgmesh>")
 
