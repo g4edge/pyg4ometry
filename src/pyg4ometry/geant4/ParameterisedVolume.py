@@ -482,7 +482,7 @@ class ParameterisedVolume(_ReplicaVolume):
         return ""
 
     def extent(self, includeBoundingSolid=True):
-        _log.info("ParametrisedVolume.extent> %s" % (self.name))
+        _log.info(f"ParametrisedVolume.extent> {self.name}")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

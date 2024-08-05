@@ -1041,14 +1041,7 @@ class _WED_RAW(BodyMixin):
         )
 
     def __repr__(self):
-        return ("<{}: {}, v={}, e1={}, e2={}, e3={}>").format(
-            type(self).__name__,  # Can be either WED or RAW
-            self.name,
-            list(self.vertex),
-            list(self.edge1),
-            list(self.edge2),
-            list(self.edge3),
-        )
+        return f"<{type(self).__name__}: {self.name}, v={list(self.vertex)}, e1={list(self.edge1)}, e2={list(self.edge2)}, e3={list(self.edge3)}>"
 
     def _withLengthSafety(self, safety, reg):
         ctor = type(self)  # return WED or RAW, not _WED_RAW.

@@ -334,7 +334,7 @@ class ReplicaVolume(_PhysicalVolume):
         )
 
     def extent(self, includeBoundingSolid=True):
-        _log.info("ReplicaVolume.extent> %s" % (self.name))
+        _log.info(f"ReplicaVolume.extent> {self.name}")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

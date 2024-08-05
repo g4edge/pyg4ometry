@@ -723,7 +723,7 @@ class DivisionVolume(_PhysicalVolume):
         return f"Division volume : {self.name} {self.axis} {self.ndivisions} {self.offset} {self.width}"
 
     def extent(self, includeBoundingSolid=True):
-        _log.info("ReplicaVolume.extent> %s" % (self.name))
+        _log.info(f"ReplicaVolume.extent> {self.name}")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

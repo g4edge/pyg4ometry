@@ -67,7 +67,7 @@ class MultiUnion(_SolidBase):
             _log.info(f"MulUnion.mesh> rot={rot!s} tlate={tlate!s}")
 
             # get meshes
-            _log.info("union.mesh> mesh %s" % str(idx))
+            _log.info(f"union.mesh> mesh {idx}")
             mesh = solid.mesh()
 
             # apply transform to second mesh

@@ -254,7 +254,7 @@ class AssemblyVolume:
         return
 
     def extent(self, includeBoundingSolid=True):
-        _log.info("AssemblyVolume.extent> %s " % (self.name))
+        _log.info(f"AssemblyVolume.extent> {self.name} ")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

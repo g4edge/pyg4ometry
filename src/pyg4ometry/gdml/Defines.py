@@ -77,7 +77,7 @@ def upgradeToStringExpression(reg, obj):
     """
     if isinstance(obj, _numbers.Number):
         # return str(obj)                  # number like so return string
-        return "%.15f" % obj
+        return f"{obj:.15f}"
 
     elif isinstance(obj, str):  # or isinstance(obj,unicode) :
         if obj in reg.defineDict:  # not sure if this is needed
