@@ -77,7 +77,7 @@ def upgradeToStringExpression(reg, obj):
     """
     if isinstance(obj, _numbers.Number):
         # return str(obj)                  # number like so return string
-        return "%.15f" % obj
+        return f"{obj:.15f}"
 
     elif isinstance(obj, str):  # or isinstance(obj,unicode) :
         if obj in reg.defineDict:  # not sure if this is needed
@@ -814,9 +814,7 @@ class Quantity(ScalarBase):
             registry.addDefine(self)
 
     def __repr__(self):
-        return self._typeName + " : {} = {} [{}] {}".format(
-            self.name, str(self.expression), self.unit, self.type
-        )
+        return self._typeName + f" : {self.name} = {self.expression!s} [{self.unit}] {self.type}"
 
     def eval(self):
         # it is possible for a quantity not to have a unit and it uses the units of variables in the expression
@@ -889,9 +887,7 @@ class VectorBase:
         self.unit = None
 
     def __repr__(self):
-        return self._typeName + " : {} = [{} {} {}]".format(
-            self.name, str(self.x), str(self.y), str(self.z)
-        )
+        return self._typeName + f" : {self.name} = [{self.x!s} {self.y!s} {self.z!s}]"
 
     def __add__(self, other):
         other = upgradeToVector(other, self.registry, "position", "", False)

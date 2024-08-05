@@ -481,7 +481,7 @@ class Reader:
             return [l, obj.Placement]
 
         else:
-            print("freecad.reader> unprocessed %s" % (obj.TypeId))
+            print(f"freecad.reader> unprocessed {obj.TypeId}")
 
 
 def MeshToFacetList(mesh):

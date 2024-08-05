@@ -101,7 +101,6 @@ else:
 
 
 class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
-
     """A QVTKRenderWindowInteractor for Python and Qt.  Uses a
     vtkGenericRenderWindowInteractor to handle the interactions.  Use
     GetRenderWindow() to get the vtkRenderWindow.  Create with the

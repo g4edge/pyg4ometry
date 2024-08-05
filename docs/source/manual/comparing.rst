@@ -15,7 +15,7 @@ geometry to validate work. Examples of use include:
 pyg4ometry provides a set of tests for comparing two geometry "trees" that
 are loaded into memory. Each hierarchy of geometry is navigated and a variety
 of user-selectable tests are carried out. A result class with details of tests
-carried out and their outcome is produced and can be easily printed or inpsected
+carried out and their outcome is produced and can be easily printed or inspected
 programmatically.
 
 When we compare 2 things, we use the terminology **reference** and **other** for

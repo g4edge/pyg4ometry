@@ -232,9 +232,7 @@ class Material(_MatProp):
         massNumber = ""
         if self.massNumber is not None:
             massNumber = f", A={self.massNumber}"
-        return '<Material: "{}", Z={}, density={}*g/cm3{}>'.format(
-            self.name, self.atomicNumber, self.density, massNumber
-        )
+        return f'<Material: "{self.name}", Z={self.atomicNumber}, density={self.density}*g/cm3{massNumber}>'
 
     @classmethod
     def fromCard(cls, card, flukaregistry):
@@ -364,8 +362,8 @@ class Compound(_MatProp):
         return cls(compoundName, density, fractions, fractionTypes[0], flukaregistry=flukareg)
 
     def __repr__(self):
-        return "<Compound: {}, density={}*g/cm3, nparts={}>".format(
-            self.name, self.density, len(self.fractions)
+        return (
+            f"<Compound: {self.name}, density={self.density}*g/cm3, nparts={len(self.fractions)}>"
         )
 
     def totalWeighting(self, densityWeighted=False):

@@ -105,26 +105,10 @@ class Sphere(_SolidBase):
         self._twoPiValueCheck("pDPhi", self.aunit)
 
     def __repr__(self):
-        return "Sphere : {} {} {} {} {} {} {}".format(
-            self.name,
-            self.pRmin,
-            self.pRmax,
-            self.pSPhi,
-            self.pDPhi,
-            self.pSTheta,
-            self.pDTheta,
-        )
+        return f"Sphere : {self.name} {self.pRmin} {self.pRmax} {self.pSPhi} {self.pDPhi} {self.pSTheta} {self.pDTheta}"
 
     def __str__(self):
-        return "Sphere : name={} rmin={} rmax={} sphi={} dphi={} stheta={} dtheta={}".format(
-            self.name,
-            float(self.pRmin),
-            float(self.pRmax),
-            float(self.pSPhi),
-            float(self.pDPhi),
-            float(self.pSTheta),
-            float(self.pDTheta),
-        )
+        return f"Sphere : name={self.name} rmin={float(self.pRmin)} rmax={float(self.pRmax)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)} stheta={float(self.pSTheta)} dtheta={float(self.pDTheta)}"
 
     def mesh(self):
         """
@@ -316,12 +300,6 @@ class Sphere(_SolidBase):
         mesh = _CSG.fromPolygons(polygons)
         mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         _log.info(
-            "Sphere.pycsgmesh> profile {} {} {} {} {}".format(
-                self.nstack,
-                self.nslice,
-                mesh.getNumberPolys(),
-                mAfter - mBefore,
-                tAfter - tBefore,
-            )
+            f"Sphere.pycsgmesh> profile {self.nstack} {self.nslice} {mesh.getNumberPolys()} {mAfter - mBefore} {tAfter - tBefore}"
         )
         return mesh

@@ -79,18 +79,10 @@ class Polyhedra(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Polyhedra : {} {} {} {} {}".format(
-            self.name, self.pSPhi, self.pDPhi, self.numSide, self.numZPlanes
-        )
+        return f"Polyhedra : {self.name} {self.pSPhi} {self.pDPhi} {self.numSide} {self.numZPlanes}"
 
     def __str__(self):
-        return "Polyhedra : name={} sphi={} dphi={} numside={} numzplanes={}".format(
-            self.name,
-            str(self.pSPhi),
-            str(self.pDPhi),
-            str(self.numSide),
-            str(self.numZPlanes),
-        )
+        return f"Polyhedra : name={self.name} sphi={self.pSPhi!s} dphi={self.pDPhi!s} numside={self.numSide!s} numzplanes={self.numZPlanes!s}"
 
     def mesh(self):
         _log.info("polyhedra.antlr>")

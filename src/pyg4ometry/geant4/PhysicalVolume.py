@@ -115,7 +115,7 @@ class PhysicalVolume:
         )
 
     def extent(self, includeBoundingSolid=True):
-        _log.info("PhysicalVolume.extent> %s" % (self.name))
+        _log.info(f"PhysicalVolume.extent> {self.name}")
 
         # transform daughter meshes to parent coordinates
         dvmrot = _trans.tbxyz2matrix(self.rotation.eval())
