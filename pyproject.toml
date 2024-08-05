@@ -2,7 +2,7 @@
 requires = [
     "cython",
     "pybind11>=2.6",
-    "setuptools>=42",
+    "setuptools>=70",
     "packaging>=20",
     "setuptools_scm[toml]>=3.4",
     "scikit-build-core==0.5",
