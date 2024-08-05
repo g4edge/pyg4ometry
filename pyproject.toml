@@ -45,8 +45,7 @@ dependencies = [
     "scipy",
     "sympy>=1.7",
     "testtools",
-    "vtk",
-    "pygltflib==1.15.0" # pinned at this version as setuptools error for 1.16.2, 1.16.1, 1.16.0
+    "vtk"
 ]
 
 [project.scripts]
