@@ -2110,8 +2110,9 @@ def geant4Torus2Fluka(
         ny0 = d * _np.sin(i * dPhi + pSPhi + _np.pi / 2.0)
         nz0 = 0
 
-        x1 = pRtor * _np.cos((i + 0.5) * dPhi + pSPhi)
-        y1 = pRtor * _np.sin((i + 0.5) * dPhi + pSPhi)
+        # _np.cos(dPhi/2) factor is due chord vs point on perimeter
+        x1 = pRtor * _np.cos(dPhi / 2) * _np.cos((i + 0.5) * dPhi + pSPhi)
+        y1 = pRtor * _np.cos(dPhi / 2) * _np.sin((i + 0.5) * dPhi + pSPhi)
         z1 = 0
 
         nx1 = d * _np.cos((i + 0.5) * dPhi + pSPhi + _np.pi / 2.0)
