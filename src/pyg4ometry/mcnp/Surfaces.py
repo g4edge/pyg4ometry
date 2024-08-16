@@ -45,6 +45,7 @@ class PZ:
     def __repr__(self):
         return f"PZ: {self.D}"
 
+
 class SO:
     """
     Sphere (centered at origin)
@@ -55,6 +56,7 @@ class SO:
 
     def __repr__(self):
         return f"SO: {self.R}"
+
 
 class S:
     """
@@ -70,6 +72,7 @@ class S:
     def __repr__(self):
         return f"S: {self.x} {self.y} {self.z} {self.R}"
 
+
 class SX:
     """
     Sphere (centered on x-axis)
@@ -82,6 +85,7 @@ class SX:
     def __repr__(self):
         return f"SX: {self.x} {self.R}"
 
+
 class SY:
     """
     Sphere (centered on y-axis)
@@ -93,6 +97,7 @@ class SY:
 
     def __repr__(self):
         return f"SY: {self.y} {self.R}"
+
 
 class SZ:
     """
