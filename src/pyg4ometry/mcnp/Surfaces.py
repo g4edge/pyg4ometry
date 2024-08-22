@@ -12,7 +12,6 @@ class P:
     def __repr__(self):
         return f"P: {self.A} {self.B} {self.C} {self.D}"
 
-
 class PX:
     """
     Plane (normal to x-axis)
@@ -24,7 +23,6 @@ class PX:
     def __repr__(self):
         return f"PX: {self.D}"
 
-
 class PY:
     """
     Plane (normal to y-axis)
@@ -35,7 +33,6 @@ class PY:
 
     def __repr__(self):
         return f"PY: {self.D}"
-
 
 class PZ:
     """
@@ -104,3 +101,68 @@ class SZ:
     def __repr__(self):
         return f"SZ: {self.z} {self.R}"
 
+class C_X:
+    """
+    Cylinder (parallel to x-axis)
+    """
+    def __init__(self, y, z, R):
+        self.y = y
+        self.z = z
+        self.R = R
+
+    def __repr__(self):
+        return f"C_X: {self.y} {self.z} {self.R}"
+
+class C_Y:
+    """
+    Cylinder (parallel to y-axis)
+    """
+    def __init__(self, x, z, R):
+        self.x = x
+        self.z = z
+        self.R = R
+
+    def __repr__(self):
+        return f"C_Y: {self.x} {self.z} {self.R}"
+
+class C_Z:
+    """
+    Cylinder (parallel to z-axis)
+    """
+    def __init__(self, x, y, R):
+        self.x = x
+        self.y = y
+        self.R = R
+
+    def __repr__(self):
+        return f"C_Z: {self.x} {self.y} {self.R}"
+
+class CX:
+    """
+    Cylinder (on x-axis)
+    """
+    def __init__(self, R):
+        self.R = R
+
+    def __repr__(self):
+        return f"CX: {self.R}"
+
+class CY:
+    """
+    Cylinder (on y-axis)
+    """
+    def __init__(self, R):
+        self.R = R
+
+    def __repr__(self):
+        return f"CY: {self.R}"
+
+class CZ:
+    """
+    Cylinder (on z-axis)
+    """
+    def __init__(self, R):
+        self.R = R
+
+    def __repr__(self):
+        return f"CZ: {self.R}"
