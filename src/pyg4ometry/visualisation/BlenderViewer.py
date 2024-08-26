@@ -34,8 +34,8 @@ class BlenderViewer(_ViewerBase):
                 mesh = self.localmeshes[motherKey].clone()
 
                 axisAndAngle = _transformation.matrix2axisangle(placement["transformation"])
-                mesh.rotate(axisAndAngle[0], -_transformation.rad2deg(axisAndAngle[1]))
-                mesh.translate(placement["translation"])
+                # mesh.rotate(axisAndAngle[0], -_transformation.rad2deg(axisAndAngle[1]))
+                # mesh.translate(placement["translation"])
 
                 vertsAndPolys = mesh.toVerticesAndPolygons()
 
@@ -46,6 +46,9 @@ class BlenderViewer(_ViewerBase):
                 # make object
                 object_blender = _bpy.data.objects.new(placement["name"], mesh_blender)
                 object_blender.scale = (0.001, 0.001, 0.001)
+                object_blender.location = placement["translation"] * 0.001
+                object_blender.rotation_mode = "AXIS_ANGLE"
+                object_blender.rotation_axis_angle = (axisAndAngle[1], *axisAndAngle[0])
 
                 # make random color material
                 material_blender = _bpy.data.materials.new(placement["name"])
