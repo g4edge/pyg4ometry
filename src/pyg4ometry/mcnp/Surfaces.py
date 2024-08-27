@@ -206,6 +206,7 @@ in the positive direction of the coordinate axis to which the cone axis is paral
 The converse is true for a negative entry.
 """
 
+
 class K_X:
     """
     Cone (parallel to x-axis)
