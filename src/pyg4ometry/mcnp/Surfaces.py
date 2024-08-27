@@ -12,6 +12,7 @@ class P:
     def __repr__(self):
         return f"P: {self.A} {self.B} {self.C} {self.D}"
 
+
 class PX:
     """
     Plane (normal to x-axis)
@@ -23,6 +24,7 @@ class PX:
     def __repr__(self):
         return f"PX: {self.D}"
 
+
 class PY:
     """
     Plane (normal to y-axis)
@@ -33,6 +35,7 @@ class PY:
 
     def __repr__(self):
         return f"PY: {self.D}"
+
 
 class PZ:
     """
@@ -111,6 +114,7 @@ class SZ:
     def __repr__(self):
         return f"SZ: {self.z} {self.R}"
 
+
 class C_X:
     """
     Cylinder (parallel to x-axis)
@@ -123,6 +127,7 @@ class C_X:
 
     def __repr__(self):
         return f"C_X: {self.y} {self.z} {self.R}"
+
 
 class C_Y:
     """
@@ -137,6 +142,7 @@ class C_Y:
     def __repr__(self):
         return f"C_Y: {self.x} {self.z} {self.R}"
 
+
 class C_Z:
     """
     Cylinder (parallel to z-axis)
@@ -150,6 +156,7 @@ class C_Z:
     def __repr__(self):
         return f"C_Z: {self.x} {self.y} {self.R}"
 
+
 class CX:
     """
     Cylinder (on x-axis)
@@ -160,6 +167,7 @@ class CX:
 
     def __repr__(self):
         return f"CX: {self.R}"
+
 
 class CY:
     """
@@ -172,6 +180,7 @@ class CY:
     def __repr__(self):
         return f"CY: {self.R}"
 
+
 class CZ:
     """
     Cylinder (on z-axis)
@@ -182,3 +191,125 @@ class CZ:
 
     def __repr__(self):
         return f"CZ: {self.R}"
+
+
+""" surface: Cone
+
+:param sign: choice positive slope or negative slope.
+
+The quadratic equation for a cone describes a cone of two sheets. One sheet is a
+cone of positive slope, and the other has a negative slope. The parameter sign
+provides the option to select either of the two sheets. The +1 or the -1 entry on
+the cone surface card causes the one sheet cone treatment to be used. If the sign
+of the entry is positive, the specified sheet is the one that extends to infinity
+in the positive direction of the coordinate axis to which the cone axis is parallel.
+The converse is true for a negative entry.
+"""
+
+class K_X:
+    """
+    Cone (parallel to x-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, x, y, z, t_sqr, sign):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"K_X: {self.x} {self.y} {self.z} {self.t_sqr} {self.sign}"
+
+
+class K_Y:
+    """
+    Cone (parallel to y-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, x, y, z, t_sqr, sign):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"K_Y: {self.x} {self.y} {self.z} {self.t_sqr} {self.sign}"
+
+
+class K_Z:
+    """
+    Cone (parallel to z-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, x, y, z, t_sqr, sign):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"K_Z: {self.x} {self.y} {self.z} {self.t_sqr} {self.sign}"
+
+
+class KX:
+    """
+    Cone (on x-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, x, t_sqr, sign):
+        self.x = x
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"KX: {self.x} {self.t_sqr} {self.sign}"
+
+
+class KY:
+    """
+    Cone (on y-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, y, t_sqr, sign):
+        self.y = y
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"KY: {self.y} {self.t_sqr} {self.sign}"
+
+
+class KZ:
+    """
+    Cone (on z-axis)
+
+    :param t_sqr: t squared
+    :param sign: choice positive slope or negative slope.
+    """
+
+    def __init__(self, z, t_sqr, sign):
+        self.z = z
+        self.t_sqr = t_sqr
+        self.sign = sign
+
+    def __repr__(self):
+        return f"KZ: {self.z} {self.t_sqr} {self.sign}"
+
