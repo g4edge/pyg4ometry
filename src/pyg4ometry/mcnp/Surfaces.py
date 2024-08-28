@@ -419,3 +419,141 @@ class TZ:
     def __repr__(self):
         return f"TZ: {self.x} {self.y} {self.z} " \
                f"{self.A} {self.B} {self.C} "
+
+
+class BOX:
+    """
+    Macrobody: Box
+    arbitrarily oriented orthogonal box
+    all corner angels are 90 degrees
+
+    :param vx, vy, vz: the x,y,z coordinates of a corner of the box
+    :param a1x, a1y, a1z: vector of 1st side from the specified corner coordinates
+    :param a2x, a2y, a2z: vector of 2nd side from the specified corner coordinates
+    :param a3x, a3y, a3z: vector of 3rd side from the specified corner coordinates
+    """
+
+    def __init__(self, vx, vy, vz, a1x, a1y, a1z, a2x, a2y, a2z, a3x, a3y, a3z):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.a1x = a1x
+        self.a1y = a1y
+        self.a1z = a1z
+        self.a2x = a2x
+        self.a2y = a2y
+        self.a2z = a2z
+        self.a3x = a3x
+        self.a3y = a3y
+        self.a3z = a3z
+
+    def __repr__(self):
+        return f"BOX: {self.x} {self.y} {self.z} {self.a1x} {self.a1y} {self.a1z}" \
+               f"{self.a2x} {self.a2y} {self.a2z} {self.a3x} {self.a3y} {self.a3z}"
+
+
+class RPP:
+    """
+    Macrobody: Rectangular parallelepiped
+    RPP surfaces will only be normal to the x-, y-, and z-axes
+    x,y,z values are relative to the origin
+
+    :param xmin, xmax: termini of box sides normal to the x-axis
+    :param ymin, ymax: termini of box sides normal to the y-axis
+    :param zmin, zmax: termini of box sides normal to the z-axis
+    """
+
+    def __init__(self, xmin, xmax, ymin, ymax, zmin, zmax):
+        self.xmin = xmin
+        self.xmax = xmax
+        self.ymin = ymin
+        self.ymax = ymax
+        self.zmin = zmin
+        self.zmax = zmax
+
+    def __repr__(self):
+        return f"RPP: {self.xmin} {self.xmax} {self.ymin} " \
+               f"{self.ymin} {self.ymax} {self.zmin} {self.zmax}"
+
+
+class SPH:
+    """
+    Macrobody: Sphere
+
+    :param vx, vy, vz: the x,y,z coordinates of the center of the sphere
+    :param r: radius of sphere
+    """
+
+    def __init__(self, vx, vy, vz, r):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.r = r
+
+
+    def __repr__(self):
+        return f"SPH: {self.vx} {self.vy} {self.vz} {self.r}"
+
+
+class RCC:
+    """
+    Macrobody: Right circular cylinder
+
+    :param vx, vy, vz: the x,y,z coordinates at the center of the base for the right circular cylinder
+    :param hx, hy, hz: right circular cylinder axis vector, which provides both the orientation and the \
+    height of the cylinder
+    :param r: radius of right circular cylinder
+    """
+
+    def __init__(self, vx, vy, vz, hx, hy, hz, r):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.hx = hx
+        self.hy = hy
+        self.hz = hz
+        self.r = r
+
+
+    def __repr__(self):
+        return f"RCC: {self.vx} {self.vy} {self.vz} " \
+               f"{self.hx} {self.hy} {self.hz} {self.r}"
+
+
+class RHP_HEX:
+    """
+    Macrobody: Right hexagonal prism
+
+    :param vx, vy, vz: the x,y,z coordinates of the bottom of the hexagonal prism
+    :param h1, h2, h3: vector from the bottom to the top of the hexagonal prism. \
+    For a z-hex with height h, h1, h2, and h3= 0 0 h
+    :param r1, r2, r3: vector from the axis to the center of the 1st facet. \
+    For a pitch 2p facet normal to y-axis, r1, r2, and r3= 0 p 0
+    :param s1, s2, s3: vector to center of the 2nd facet
+    :param t1, t2, t3: vector to center of the 3rd facet
+    """
+
+    def __init__(self, vx, vy, vz, h1, h2, h3, r1, r2, r3, s1, s2, s3, t1, t2, t3):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.h1 = h1
+        self.h2 = h2
+        self.h3 = h3
+        self.r1 = r1
+        self.r2 = r2
+        self.r3 = r3
+        self.s1 = s1
+        self.s2 = s2
+        self.s3 = s3
+        self.t1 = t1
+        self.t2 = t2
+        self.t3 = t3
+
+    def __repr__(self):
+        return f"RHP_HEX: {self.vx} {self.vy} {self.vz} " \
+               f"{self.h1} {self.h2} {self.h3} "\
+               f"{self.r1} {self.r2} {self.r3} "\
+               f"{self.s1} {self.s2} {self.s3} "\
+               f"{self.t1} {self.t2} {self.t3} "
+
