@@ -313,3 +313,108 @@ class KZ:
     def __repr__(self):
         return f"KZ: {self.z} {self.t_sqr} {self.sign}"
 
+
+class SQ:
+    """
+    Ellipsoid, Hyperboloid, Paraboloid
+    (axes parallel to x-, y-, or z-axis)
+    """
+
+    def __init__(self, A, B, C, D, E, F, G, x, y, z):
+        self.A = A
+        self.B = B
+        self.C = C
+        self.D = D
+        self.E = E
+        self.F = F
+        self.G = G
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __repr__(self):
+        return f"SQ: {self.A} {self.B} {self.C} {self.D} {self.E} " \
+               f"{self.F} {self.G} {self.x} {self.y} {self.z}"
+
+
+class GQ:
+    """
+    Cylinder, Cone, Ellipsoid, Hyperboloid, Paraboloid
+    (axes not parallel to x-, y-, or z-axis)
+    """
+
+    def __init__(self, A, B, C, D, E, F, G, H, J, K):
+        self.A = A
+        self.B = B
+        self.C = C
+        self.D = D
+        self.E = E
+        self.F = F
+        self.G = G
+        self.H = H
+        self.J = J
+        self.K = K
+
+    def __repr__(self):
+        return f"GQ: {self.A} {self.B} {self.C} {self.D} {self.E} " \
+               f"{self.F} {self.G} {self.H} {self.J} {self.K}"
+
+
+class TX:
+    """
+    Elliptical or Circular Torus
+    (axis is parallel to x-, y-, or z-axis)
+    rotationally symmetric about axes parallel to the x-axes
+    """
+
+    def __init__(self, x, y, z, A, B, C):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.A = A
+        self.B = B
+        self.C = C
+
+    def __repr__(self):
+        return f"TX: {self.x} {self.y} {self.z} " \
+               f"{self.A} {self.B} {self.C} "
+
+
+class TY:
+    """
+    Elliptical or Circular Torus
+    (axis is parallel to x-, y-, or z-axis)
+    rotationally symmetric about axes parallel to the y-axes
+    """
+
+    def __init__(self, x, y, z, A, B, C):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.A = A
+        self.B = B
+        self.C = C
+
+    def __repr__(self):
+        return f"TY: {self.x} {self.y} {self.z} " \
+               f"{self.A} {self.B} {self.C} "
+
+
+class TZ:
+    """
+    Elliptical or Circular Torus
+    (axis is parallel to x-, y-, or z-axis)
+    rotationally symmetric about axes parallel to the z-axes
+    """
+
+    def __init__(self, x, y, z, A, B, C):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.A = A
+        self.B = B
+        self.C = C
+
+    def __repr__(self):
+        return f"TZ: {self.x} {self.y} {self.z} " \
+               f"{self.A} {self.B} {self.C} "
