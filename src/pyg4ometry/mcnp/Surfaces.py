@@ -334,8 +334,10 @@ class SQ:
         self.z = z
 
     def __repr__(self):
-        return f"SQ: {self.A} {self.B} {self.C} {self.D} {self.E} " \
-               f"{self.F} {self.G} {self.x} {self.y} {self.z}"
+        return (
+            f"SQ: {self.A} {self.B} {self.C} {self.D} {self.E} "
+            f"{self.F} {self.G} {self.x} {self.y} {self.z}"
+        )
 
 
 class GQ:
@@ -357,8 +359,10 @@ class GQ:
         self.K = K
 
     def __repr__(self):
-        return f"GQ: {self.A} {self.B} {self.C} {self.D} {self.E} " \
-               f"{self.F} {self.G} {self.H} {self.J} {self.K}"
+        return (
+            f"GQ: {self.A} {self.B} {self.C} {self.D} {self.E} "
+            f"{self.F} {self.G} {self.H} {self.J} {self.K}"
+        )
 
 
 class TX:
@@ -377,8 +381,7 @@ class TX:
         self.C = C
 
     def __repr__(self):
-        return f"TX: {self.x} {self.y} {self.z} " \
-               f"{self.A} {self.B} {self.C} "
+        return f"TX: {self.x} {self.y} {self.z} {self.A} {self.B} {self.C} "
 
 
 class TY:
@@ -397,8 +400,7 @@ class TY:
         self.C = C
 
     def __repr__(self):
-        return f"TY: {self.x} {self.y} {self.z} " \
-               f"{self.A} {self.B} {self.C} "
+        return f"TY: {self.x} {self.y} {self.z} {self.A} {self.B} {self.C} "
 
 
 class TZ:
@@ -417,8 +419,7 @@ class TZ:
         self.C = C
 
     def __repr__(self):
-        return f"TZ: {self.x} {self.y} {self.z} " \
-               f"{self.A} {self.B} {self.C} "
+        return f"TZ: {self.x} {self.y} {self.z} {self.A} {self.B} {self.C} "
 
 
 class BOX:
