@@ -449,8 +449,10 @@ class BOX:
         self.a3z = a3z
 
     def __repr__(self):
-        return f"BOX: {self.x} {self.y} {self.z} {self.a1x} {self.a1y} {self.a1z}" \
-               f"{self.a2x} {self.a2y} {self.a2z} {self.a3x} {self.a3y} {self.a3z}"
+        return (
+            f"BOX: {self.x} {self.y} {self.z} {self.a1x} {self.a1y} {self.a1z}"
+            f"{self.a2x} {self.a2y} {self.a2z} {self.a3x} {self.a3y} {self.a3z}"
+        )
 
 
 class RPP:
@@ -473,8 +475,10 @@ class RPP:
         self.zmax = zmax
 
     def __repr__(self):
-        return f"RPP: {self.xmin} {self.xmax} {self.ymin} " \
-               f"{self.ymin} {self.ymax} {self.zmin} {self.zmax}"
+        return (
+            f"RPP: {self.xmin} {self.xmax} {self.ymin} "
+            f"{self.ymin} {self.ymax} {self.zmin} {self.zmax}"
+        )
 
 
 class SPH:
@@ -490,7 +494,6 @@ class SPH:
         self.vy = vy
         self.vz = vz
         self.r = r
-
 
     def __repr__(self):
         return f"SPH: {self.vx} {self.vy} {self.vz} {self.r}"
@@ -515,10 +518,8 @@ class RCC:
         self.hz = hz
         self.r = r
 
-
     def __repr__(self):
-        return f"RCC: {self.vx} {self.vy} {self.vz} " \
-               f"{self.hx} {self.hy} {self.hz} {self.r}"
+        return f"RCC: {self.vx} {self.vy} {self.vz} {self.hx} {self.hy} {self.hz} {self.r}"
 
 
 class RHP_HEX:
@@ -552,12 +553,13 @@ class RHP_HEX:
         self.t3 = t3
 
     def __repr__(self):
-        return f"RHP_HEX: {self.vx} {self.vy} {self.vz} " \
-               f"{self.h1} {self.h2} {self.h3} "\
-               f"{self.r1} {self.r2} {self.r3} "\
-               f"{self.s1} {self.s2} {self.s3} "\
-               f"{self.t1} {self.t2} {self.t3} "
-
+        return (
+            f"RHP_HEX: {self.vx} {self.vy} {self.vz} "
+            f"{self.h1} {self.h2} {self.h3} "
+            f"{self.r1} {self.r2} {self.r3} "
+            f"{self.s1} {self.s2} {self.s3} "
+            f"{self.t1} {self.t2} {self.t3} "
+        )
 
 class REC:
     """
