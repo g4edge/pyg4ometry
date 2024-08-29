@@ -622,6 +622,7 @@ class TRC:
             f" {self.r1} {self.r2}"
         )
 
+
 class ELL:
     """
     Macrobody: Ellipsoid
@@ -649,9 +650,9 @@ class ELL:
 
     def __repr__(self):
         return (
-            f"ELL: {self.v1x} {self.v1y} {self.v1z}"
-            f" {self.v2x} {self.v2y} {self.v2z} {self.rm}"
+            f"ELL: {self.v1x} {self.v1y} {self.v1z} {self.v2x} {self.v2y} {self.v2z} {self.rm}"
         )
+
 
 class WED:
     """
@@ -684,6 +685,7 @@ class WED:
             f" {self.v2x} {self.v2y} {self.v2z}"
             f" {self.v3x} {self.v3y} {self.v3z}"
         )
+
 
 class ARB:
     """
