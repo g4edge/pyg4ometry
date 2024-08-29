@@ -561,6 +561,7 @@ class RHP_HEX:
             f" {self.t1} {self.t2} {self.t3}"
         )
 
+
 class REC:
     """
     Macrobody: Right Elliptical Cylinder
@@ -585,7 +586,6 @@ class REC:
         self.v2y = v2y
         self.v2z = v2z
 
-
     def __repr__(self):
         return (
             f"REC: {self.vx} {self.vy} {self.vz}"
@@ -599,10 +599,10 @@ class TRC:
     """
     Macrobody: Truncated Right-Angle Cone
 
-    :param vx, vy, vz: The x,y,z coordinates of the cone bottom.
-    :param hx, hy, hz: Cone axis height vector.
-    :param r1: Radius of lower cone base.
-    :param r2: Radius of upper cone base, where r1>r2.
+    :param vx, vy, vz: the x,y,z coordinates of the cone bottom
+    :param hx, hy, hz: cone axis height vector
+    :param r1: radius of lower cone base
+    :param r2: radius of upper cone base, where r1>r2
     """
 
     def __init__(self, vx, vy, vz, hx, hy, hz, r1, r2):
@@ -627,15 +627,15 @@ class ELL:
     Macrobody: Ellipsoid
 
     :param v1x, v1y, v1z: /
-        If rm>0, the coordinates of the 1st focus. /
-        If rm<0, the coordinates of the center of the ellipsoid.
+        if rm>0, the coordinates of the 1st focus /
+        if rm<0, the coordinates of the center of the ellipsoid
     :param v2x, v2y, v2z:
-        If rm>0, the coordinates of the 2nd focus. /
-        If rm<0, major axis vector (vector from the center of the ellipsoid through a focus to the vertex; /
-        length = major radius).
+        if rm>0, the coordinates of the 2nd focus /
+        if rm<0, major axis vector (vector from the center of the ellipsoid through a focus to the vertex; /
+        length = major radius)
     :param rm:
-        If rm>0, major radius length. /
-        If rm<0, minor radius length.
+        if rm>0, major radius length /
+        if rm<0, minor radius length
     """
 
     def __init__(self, v1x, v1y, v1z, v2x, v2y, v2z, rm):
@@ -657,10 +657,10 @@ class WED:
     """
     Macrobody: Wedge
 
-    :param vx, vy, vz: The x,y,z coordinates of wedge vertex.
-    :param v1x, v1y, v1z: Vector of 1st side of triangular base.
-    :param v2x, v2y, v2z: Vector of 2nd side of triangular base.
-    :param v3x, v3y, v3z: Height vector.
+    :param vx, vy, vz: the x,y,z coordinates of wedge vertex
+    :param v1x, v1y, v1z: vector of 1st side of triangular base
+    :param v2x, v2y, v2z: vector of 2nd side of triangular base
+    :param v3x, v3y, v3z: height vector
     """
 
     def __init__(self, vx, vy, vz, v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z):
@@ -698,8 +698,39 @@ class ARB:
     E.g., n1=1278 is a plane/side bounded by corners 1, 2, 7, and 8 (a, b, g, and h).
     """
 
-    def __init__(self, ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez,
-                 fx, fy, fz, gx, gy, gz, hx, hy, hz, n1, n2, n3, n4, n5, n6):
+    def __init__(
+        self,
+        ax,
+        ay,
+        az,
+        bx,
+        by,
+        bz,
+        cx,
+        cy,
+        cz,
+        dx,
+        dy,
+        dz,
+        ex,
+        ey,
+        ez,
+        fx,
+        fy,
+        fz,
+        gx,
+        gy,
+        gz,
+        hx,
+        hy,
+        hz,
+        n1,
+        n2,
+        n3,
+        n4,
+        n5,
+        n6,
+    ):
         self.ax = ax
         self.ay = ay
         self.az = az
