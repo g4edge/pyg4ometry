@@ -455,7 +455,7 @@ class BOX:
 
 class RPP:
     """
-    Macrobody: Rectangular parallelepiped
+    Macrobody: Rectangular Parallelepiped
     RPP surfaces will only be normal to the x-, y-, and z-axes
     x,y,z values are relative to the origin
 
@@ -498,7 +498,7 @@ class SPH:
 
 class RCC:
     """
-    Macrobody: Right circular cylinder
+    Macrobody: Right Circular Cylinder
 
     :param vx, vy, vz: the x,y,z coordinates at the center of the base for the right circular cylinder
     :param hx, hy, hz: right circular cylinder axis vector, which provides both the orientation and the \
@@ -523,7 +523,7 @@ class RCC:
 
 class RHP_HEX:
     """
-    Macrobody: Right hexagonal prism
+    Macrobody: Right Hexagonal Prism
 
     :param vx, vy, vz: the x,y,z coordinates of the bottom of the hexagonal prism
     :param h1, h2, h3: vector from the bottom to the top of the hexagonal prism. \
@@ -558,3 +558,177 @@ class RHP_HEX:
                f"{self.s1} {self.s2} {self.s3} "\
                f"{self.t1} {self.t2} {self.t3} "
 
+
+class REC:
+    """
+    Macrobody: Right Elliptical Cylinder
+
+    :param vx, vy, vz: the x,y,z coordinates of the cylinder bottom
+    :param hx, hy, hz: cylinder axis height vector
+    :param v1x, v1y, v1z: ellipse major axis vector (normal to hx hy hz)
+    :param v1x, v1y, v1z: ellipse minor axis vector (orthogonal to vectors h and v1)
+    """
+
+    def __init__(self, vx, vy, vz, hx, hy, hz, v1x, v1y, v1z, v2x, v2y, v2z):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.hx = hx
+        self.hy = hy
+        self.hz = hz
+        self.v1x = v1x
+        self.v1y = v1y
+        self.v1z = v1z
+        self.v2x = v2x
+        self.v2y = v2y
+        self.v2z = v2z
+
+
+    def __repr__(self):
+        return f"REC: {self.vx} {self.vy} {self.vz} " \
+               f"{self.hx} {self.hy} {self.hz} " \
+               f"{self.v1x} {self.v1y} {self.v1z} " \
+               f"{self.v2x} {self.v2y} {self.v2z} "
+
+
+class TRC:
+    """
+    Macrobody: Truncated Right-Angle Cone
+
+    :param vx, vy, vz: the x,y,z coordinates of the cone bottom
+    :param hx, hy, hz: cone axis height vector
+    :param r1: radius of lower cone base
+    :param r2: radius of upper cone base, where r1>r2
+    """
+
+    def __init__(self, vx, vy, vz, hx, hy, hz, r1, r2):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.hx = hx
+        self.hy = hy
+        self.hz = hz
+        self.r1 = r1
+        self.r2 = r2
+
+    def __repr__(self):
+        return f"TRC: {self.vx} {self.vy} {self.vz} " \
+               f"{self.hx} {self.hy} {self.hz} " \
+               f"{self.r1} {self.r2} "
+
+class ELL:
+    """
+    Macrobody: Ellipsoid
+
+    :param v1x, v1y, v1z: /
+        if rm>0, the coordinates of the 1st focus /
+        if rm<0, the coordinates of the center of the ellipsoid
+    :param v2x, v2y, v2z:
+        if rm>0, the coordinates of the 2nd focus /
+        if rm<0, major axis vector (vector from the center of the ellipsoid through a focus to the vertex; /
+        length = major radius)
+    :param rm:
+        if rm>0, major radius length /
+        if rm<0, minor radius length
+    """
+
+    def __init__(self, v1x, v1y, v1z, v2x, v2y, v2z, rm):
+        self.v1x = v1x
+        self.v1y = v1y
+        self.v1z = v1z
+        self.v2x = v2x
+        self.v2y = v2y
+        self.v2z = v2z
+        self.rm = rm
+
+    def __repr__(self):
+        return f"ELL: {self.v1x} {self.v1y} {self.v1z}" \
+               f"{self.v2x} {self.v2y} {self.v2z} {self.rm} "
+
+class WED:
+    """
+    Macrobody: Wedge
+
+    :param vx, vy, vz: the x,y,z coordinates of wedge vertex
+    :param v1x, v1y, v1z: vector of 1st side of triangular base
+    :param v2x, v2y, v2z: vector of 2nd side of triangular base
+    :param v3x, v3y, v3z: height vector
+    """
+
+    def __init__(self, vx, vy, vz, v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z):
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.vx = v1x
+        self.vy = v1y
+        self.vz = v1z
+        self.vx = v2x
+        self.vy = v2y
+        self.vz = v2z
+        self.vx = v3x
+        self.vy = v3y
+        self.vz = v3z
+
+    def __repr__(self):
+        return f"WED: {self.vx} {self.vy} {self.vz} " \
+               f"{self.v1x} {self.v1y} {self.v1z} " \
+               f"{self.v2x} {self.v2y} {self.v2z} " \
+               f"{self.v3x} {self.v3y} {self.v3z} "
+
+class ARB:
+    """
+    Macrobody: Arbitrary Polyhedron
+
+    :param ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, /
+    ex, ey, ez, fx, fy, fz, gx, gy, gz, hx, hy, hz: /
+    the x-, y-, z-coordinates of the 1st through 8th corners of the polyhedron. \
+    There must be eight x,y,z triplets to describe the eight corners of the polyhedron.
+    :param n1, n2, n3, n4, n5, n6: /
+    four-digit numbers describing a side of the polyhedron in terms of its corresponding corners. /
+    e.g., n1=1278 is a plane/side bounded by corners 1, 2, 7, and 8 (a, b, g, and h)
+    """
+
+    def __init__(self, ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez,
+                 fx, fy, fz, gx, gy, gz, hx, hy, hz, n1, n2, n3, n4, n5, n6):
+        self.ax = ax
+        self.ay = ay
+        self.az = az
+        self.bx = bx
+        self.by = by
+        self.bz = bz
+        self.cx = cx
+        self.cy = cy
+        self.cz = cz
+        self.dx = dx
+        self.dy = dy
+        self.dz = dz
+        self.ex = ex
+        self.ey = ey
+        self.ez = ez
+        self.fx = fx
+        self.fy = fy
+        self.fz = fz
+        self.gx = gx
+        self.gy = gy
+        self.gz = gz
+        self.hx = hx
+        self.hy = hy
+        self.hz = hz
+        self.n1 = n1
+        self.n2 = n2
+        self.n3 = n3
+        self.n4 = n4
+        self.n5 = n5
+        self.n6 = n6
+
+    def __repr__(self):
+        return f"ARB: {self.ax} {self.ay} {self.az} " \
+               f"{self.bx} {self.by} {self.bz} " \
+               f"{self.cx} {self.cy} {self.cz} " \
+               f"{self.dx} {self.dy} {self.dz} " \
+               f"{self.ex} {self.ey} {self.ez} " \
+               f"{self.fx} {self.fy} {self.fz} " \
+               f"{self.gx} {self.gy} {self.gz} " \
+               f"{self.hx} {self.hy} {self.hz} " \
+               f"{self.n1} {self.n2} {self.n3} " \
+               f"{self.n4} {self.n5} {self.n6} "
