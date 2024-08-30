@@ -3,12 +3,14 @@ class P:
     Plane (general)
     """
 
-    def __init__(self, A, B, C, D, surfaceNumber=None):
+    def __init__(self, A, B, C, D, reg=None, surfaceNumber=None):
         self.A = A
         self.B = B
         self.C = C
         self.D = D
         self.surfaceNumber = surfaceNumber
+        if reg:
+            reg.addSurface(self)
 
     def __repr__(self):
         return f"P: {self.A} {self.B} {self.C} {self.D}"
@@ -19,9 +21,11 @@ class PX:
     Plane (normal to x-axis)
     """
 
-    def __init__(self, D, surfaceNumber=None):
+    def __init__(self, D, reg=None, surfaceNumber=None):
         self.D = D
         self.surfaceNumber = surfaceNumber
+        if reg:
+            reg.addSurface(self)
 
     def __repr__(self):
         return f"PX: {self.D}"
