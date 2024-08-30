@@ -3,7 +3,7 @@ class P:
     Plane (general)
     """
 
-    def __init__(self, surfaceNumber, A, B, C, D):
+    def __init__(self, A, B, C, D, surfaceNumber=None):
         self.A = A
         self.B = B
         self.C = C
@@ -19,7 +19,7 @@ class PX:
     Plane (normal to x-axis)
     """
 
-    def __init__(self, surfaceNumber, D):
+    def __init__(self, D, surfaceNumber=None):
         self.D = D
         self.surfaceNumber = surfaceNumber
 
@@ -32,7 +32,7 @@ class PY:
     Plane (normal to y-axis)
     """
 
-    def __init__(self, surfaceNumber, D):
+    def __init__(self, D, surfaceNumber=None):
         self.D = D
         self.surfaceNumber = surfaceNumber
 
@@ -45,7 +45,7 @@ class PZ:
     Plane (normal to z-axis)
     """
 
-    def __init__(self, surfaceNumber, D):
+    def __init__(self, D, surfaceNumber=None):
         self.D = D
         self.surfaceNumber = surfaceNumber
 
@@ -58,7 +58,7 @@ class SO:
     Sphere (centered at origin)
     """
 
-    def __init__(self, surfaceNumber, R):
+    def __init__(self, R, surfaceNumber=None):
         self.R = R
         self.surfaceNumber = surfaceNumber
 
@@ -71,7 +71,7 @@ class S:
     Sphere (general)
     """
 
-    def __init__(self, surfaceNumber, x, y, z, R):
+    def __init__(self, x, y, z, R, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -87,7 +87,7 @@ class SX:
     Sphere (centered on x-axis)
     """
 
-    def __init__(self, surfaceNumber, x, R):
+    def __init__(self, x, R, surfaceNumber=None):
         self.x = x
         self.R = R
         self.surfaceNumber = surfaceNumber
@@ -101,7 +101,7 @@ class SY:
     Sphere (centered on y-axis)
     """
 
-    def __init__(self, surfaceNumber, y, R):
+    def __init__(self, y, R, surfaceNumber=None):
         self.y = y
         self.R = R
         self.surfaceNumber = surfaceNumber
@@ -115,7 +115,7 @@ class SZ:
     Sphere (centered on z-axis)
     """
 
-    def __init__(self, surfaceNumber, z, R):
+    def __init__(self, z, R, surfaceNumber=None):
         self.z = z
         self.R = R
         self.surfaceNumber = surfaceNumber
@@ -129,7 +129,7 @@ class C_X:
     Cylinder (parallel to x-axis)
     """
 
-    def __init__(self, surfaceNumber, y, z, R):
+    def __init__(self, y, z, R, surfaceNumber=None):
         self.y = y
         self.z = z
         self.R = R
@@ -144,7 +144,7 @@ class C_Y:
     Cylinder (parallel to y-axis)
     """
 
-    def __init__(self, surfaceNumber, x, z, R):
+    def __init__(self, x, z, R, surfaceNumber=None):
         self.x = x
         self.z = z
         self.R = R
@@ -159,7 +159,7 @@ class C_Z:
     Cylinder (parallel to z-axis)
     """
 
-    def __init__(self, surfaceNumber, x, y, R):
+    def __init__(self, x, y, R, surfaceNumber=None):
         self.x = x
         self.y = y
         self.R = R
@@ -174,7 +174,7 @@ class CX:
     Cylinder (on x-axis)
     """
 
-    def __init__(self, surfaceNumber, R):
+    def __init__(self, R, surfaceNumber=None):
         self.R = R
         self.surfaceNumber = surfaceNumber
 
@@ -187,7 +187,7 @@ class CY:
     Cylinder (on y-axis)
     """
 
-    def __init__(self, surfaceNumber, R):
+    def __init__(self, R, surfaceNumber=None):
         self.R = R
         self.surfaceNumber = surfaceNumber
 
@@ -200,7 +200,7 @@ class CZ:
     Cylinder (on z-axis)
     """
 
-    def __init__(self, surfaceNumber, R):
+    def __init__(self, R, surfaceNumber=None):
         self.R = R
         self.surfaceNumber = surfaceNumber
 
@@ -230,7 +230,7 @@ class K_X:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, x, y, z, t_sqr, sign):
+    def __init__(self, x, y, z, t_sqr, sign, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -250,7 +250,7 @@ class K_Y:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, x, y, z, t_sqr, sign):
+    def __init__(self, x, y, z, t_sqr, sign, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -270,7 +270,7 @@ class K_Z:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, x, y, z, t_sqr, sign):
+    def __init__(self, x, y, z, t_sqr, sign, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -290,7 +290,7 @@ class KX:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, x, t_sqr, sign):
+    def __init__(self, x, t_sqr, sign, surfaceNumber=None):
         self.x = x
         self.t_sqr = t_sqr
         self.sign = sign
@@ -308,7 +308,7 @@ class KY:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, y, t_sqr, sign):
+    def __init__(self, y, t_sqr, sign, surfaceNumber=None):
         self.y = y
         self.t_sqr = t_sqr
         self.sign = sign
@@ -326,7 +326,7 @@ class KZ:
     :param sign: Choice positive slope or negative slope.
     """
 
-    def __init__(self, surfaceNumber, z, t_sqr, sign):
+    def __init__(self, z, t_sqr, sign, surfaceNumber=None):
         self.z = z
         self.t_sqr = t_sqr
         self.sign = sign
@@ -342,7 +342,7 @@ class SQ:
     (axes parallel to x-, y-, or z-axis)
     """
 
-    def __init__(self, surfaceNumber, A, B, C, D, E, F, G, x, y, z):
+    def __init__(self, A, B, C, D, E, F, G, x, y, z, surfaceNumber=None):
         self.A = A
         self.B = B
         self.C = C
@@ -368,7 +368,7 @@ class GQ:
     (axes not parallel to x-, y-, or z-axis)
     """
 
-    def __init__(self, surfaceNumber, A, B, C, D, E, F, G, H, J, K):
+    def __init__(self, A, B, C, D, E, F, G, H, J, K, surfaceNumber=None):
         self.A = A
         self.B = B
         self.C = C
@@ -395,7 +395,7 @@ class TX:
     rotationally symmetric about axes parallel to the x-axes
     """
 
-    def __init__(self, surfaceNumber, x, y, z, A, B, C):
+    def __init__(self, x, y, z, A, B, C, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -415,7 +415,7 @@ class TY:
     rotationally symmetric about axes parallel to the y-axes
     """
 
-    def __init__(self, surfaceNumber, x, y, z, A, B, C):
+    def __init__(self, x, y, z, A, B, C, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -435,7 +435,7 @@ class TZ:
     rotationally symmetric about axes parallel to the z-axes
     """
 
-    def __init__(self, surfaceNumber, x, y, z, A, B, C):
+    def __init__(self, x, y, z, A, B, C, surfaceNumber=None):
         self.x = x
         self.y = y
         self.z = z
@@ -460,7 +460,7 @@ class BOX:
     :param a3x, a3y, a3z: Vector of 3rd side from the specified corner coordinates.
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, a1x, a1y, a1z, a2x, a2y, a2z, a3x, a3y, a3z):
+    def __init__(self, vx, vy, vz, a1x, a1y, a1z, a2x, a2y, a2z, a3x, a3y, a3z, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -493,7 +493,7 @@ class RPP:
     :param zmin, zmax: Termini of box sides normal to the z-axis.
     """
 
-    def __init__(self, surfaceNumber, xmin, xmax, ymin, ymax, zmin, zmax):
+    def __init__(self, xmin, xmax, ymin, ymax, zmin, zmax, surfaceNumber=None):
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
@@ -517,7 +517,7 @@ class SPH:
     :param r: Radius of sphere.
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, r):
+    def __init__(self, vx, vy, vz, r, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -538,7 +538,7 @@ class RCC:
     :param r: Radius of right circular cylinder.
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, hx, hy, hz, r):
+    def __init__(self, vx, vy, vz, hx, hy, hz, r, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -565,7 +565,9 @@ class RHP_HEX:
     :param t1, t2, t3: Vector to center of the 3rd facet.
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, h1, h2, h3, r1, r2, r3, s1, s2, s3, t1, t2, t3):
+    def __init__(
+        self, vx, vy, vz, h1, h2, h3, r1, r2, r3, s1, s2, s3, t1, t2, t3, surfaceNumber=None
+    ):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -603,7 +605,7 @@ class REC:
     :param v1x, v1y, v1z: Ellipse minor axis vector (orthogonal to vectors h and v1).
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, hx, hy, hz, v1x, v1y, v1z, v2x, v2y, v2z):
+    def __init__(self, vx, vy, vz, hx, hy, hz, v1x, v1y, v1z, v2x, v2y, v2z, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -637,7 +639,7 @@ class TRC:
     :param r2: radius of upper cone base, where r1>r2
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, hx, hy, hz, r1, r2):
+    def __init__(self, vx, vy, vz, hx, hy, hz, r1, r2, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -672,7 +674,7 @@ class ELL:
         if rm<0, minor radius length
     """
 
-    def __init__(self, surfaceNumber, v1x, v1y, v1z, v2x, v2y, v2z, rm):
+    def __init__(self, v1x, v1y, v1z, v2x, v2y, v2z, rm, surfaceNumber=None):
         self.v1x = v1x
         self.v1y = v1y
         self.v1z = v1z
@@ -696,7 +698,7 @@ class WED:
     :param v3x, v3y, v3z: height vector
     """
 
-    def __init__(self, surfaceNumber, vx, vy, vz, v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z):
+    def __init__(self, vx, vy, vz, v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, surfaceNumber=None):
         self.vx = vx
         self.vy = vy
         self.vz = vz
@@ -735,7 +737,6 @@ class ARB:
 
     def __init__(
         self,
-        surfaceNumber,
         ax,
         ay,
         az,
@@ -766,6 +767,7 @@ class ARB:
         n4,
         n5,
         n6,
+        surfaceNumber=None,
     ):
         self.ax = ax
         self.ay = ay
