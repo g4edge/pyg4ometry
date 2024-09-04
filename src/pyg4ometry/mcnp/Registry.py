@@ -1,7 +1,7 @@
 class Registry:
     def __init__(self):
         self.surfaceDict = {}
-        self.macroBodyDict = {}
+        self.macrobodyDict = {}
         self.transformationDict = {}
         self.materialDict = {}
         self.cellDict = {}
