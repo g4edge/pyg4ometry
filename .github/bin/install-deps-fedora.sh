@@ -6,7 +6,7 @@ yum -y install boost boost-devel gmp  gmp-devel  mpfr  mpfr-devel vtk-devel || e
 # Install CGAL from source
 wget https://github.com/CGAL/cgal/releases/download/v5.6.1/CGAL-5.6.1.tar.xz
 tar xf CGAL-5.6.1.tar.xz
-cd CGAL-5.6.1
+cd CGAL-5.6.1 || exit 1
 cmake -DCMAKE_BUILD_TYPE=Release .
 make install || exit 1
 rm -rf cd CGAL-5.6.1
