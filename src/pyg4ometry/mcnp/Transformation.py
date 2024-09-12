@@ -33,6 +33,7 @@ class TR:
         rotyz=0,
         rotzz=1,
         displacementOrigin=1,
+        reg=None,
         transformationNumber=None,
     ):
         self.o1 = o1
@@ -50,6 +51,9 @@ class TR:
         self.rotationMatrix[2][2] = rotzz
         self.displacementOrigin = displacementOrigin
         self.transformationNumber = transformationNumber
+        if reg:
+            reg.addTransformation(self)
+            self.reg = reg
 
     def __repr__(self):
         return (
@@ -58,4 +62,41 @@ class TR:
             f"{self.rotxy} {self.rotyy} {self.rotzy}"
             f"{self.rotxz} {self.rotyz} {self.rotzz}"
             f"{self.displacementOrigin}"
+        )
+
+
+class TRCL(TR):
+    def __init__(
+        self,
+        o1=0,
+        o2=0,
+        o3=0,
+        rotxx=1,
+        rotyx=0,
+        rotzx=0,
+        rotxy=0,
+        rotyy=1,
+        rotzy=0,
+        rotxz=0,
+        rotyz=0,
+        rotzz=1,
+        displacementOrigin=1,
+        reg=None,
+        transformationNumber=None,
+    ):
+        super().__init__(
+            o1,
+            o2,
+            o3,
+            rotxx,
+            rotyx,
+            rotzx,
+            rotxy,
+            rotyy,
+            rotzy,
+            rotxz,
+            rotyz,
+            rotzz,
+            displacementOrigin,
+            transformationNumber,
         )
