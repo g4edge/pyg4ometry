@@ -533,7 +533,7 @@ class BOX:
 
     def __repr__(self):
         return (
-            f"BOX: {self.x} {self.y} {self.z} {self.a1x} {self.a1y} {self.a1z} "
+            f"BOX: {self.vx} {self.vy} {self.vz} {self.a1x} {self.a1y} {self.a1z} "
             f" {self.a2x} {self.a2y} {self.a2z} {self.a3x} {self.a3y} {self.a3z}"
         )
 
