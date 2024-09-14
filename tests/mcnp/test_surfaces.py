@@ -56,3 +56,39 @@ def test_SphereZ():
     reg = pyg4ometry.mcnp.Registry()
     sz = pyg4ometry.mcnp.SZ(1.3, 1.5, reg=reg)
     print(sz)
+
+
+def test_Cylinder_X():
+    reg = pyg4ometry.mcnp.Registry()
+    c_x = pyg4ometry.mcnp.C_X(1.2, 1.3, 1.5, reg=reg)
+    print(c_x)
+
+
+def test_Cylinder_Y():
+    reg = pyg4ometry.mcnp.Registry()
+    c_y = pyg4ometry.mcnp.C_Y(1.1, 1.3, 1.5, reg=reg)
+    print(c_y)
+
+
+def test_Cylinder_Z():
+    reg = pyg4ometry.mcnp.Registry()
+    c_z = pyg4ometry.mcnp.C_Z(1.1, 1.2, 1.5, reg=reg)
+    print(c_z)
+
+
+def test_CylinderX():
+    reg = pyg4ometry.mcnp.Registry()
+    cx = pyg4ometry.mcnp.CX(1.5)
+    print(cx)
+
+
+def test_CylinderY():
+    reg = pyg4ometry.mcnp.Registry()
+    cy = pyg4ometry.mcnp.CY(1.5)
+    print(cy)
+
+
+def test_CylinderZ():
+    reg = pyg4ometry.mcnp.Registry()
+    cz = pyg4ometry.mcnp.CZ(1.5)
+    print(cz)
