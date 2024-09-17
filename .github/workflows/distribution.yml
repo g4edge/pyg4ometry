@@ -7,7 +7,7 @@ on:
       - published
 
 jobs:
-  make_sdist:
+  build_sdist:
     name: Make SDist
     runs-on: ubuntu-latest
     steps:
@@ -22,13 +22,11 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-  build_wheels:
-    name: Wheel on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  build_linux_wheels:
+    name: Wheel on linux
+    runs-on: unbuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -43,13 +41,97 @@ jobs:
         env:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
 
-      - name: Upload wheels
+  build_macos_wheels:
+    name: Wheel on macos
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-13, macOS-14]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install non-pip (brew) dependencies on MacOS
+        if: runner.os == 'macOS'
+        run: .github/bin/install-deps-macos.sh
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+
+      - name: Build MacOS wheel ${{ matrix.python-version }}
+        run: pipx run build --wheel
+
+  build_windows_wheels:
+    name: Wheel on windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install conda on Windows
+        if: runner.os == 'Windows'
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install non-pip (conda) dependencies on windows
+        if: runner.os == 'windows'
+        run: .github/bin/install-deps-windows.cmd
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+
+      - name: Build MacOS wheel ${{ matrix.python-version }}
+        run: pipx run build --wheel
+
+  gather_artifacts:
+    needs:
+      [
+        build_linux_wheels,
+        build_macos_wheels,
+        build_windows_wheels,
+        build_sdist,
+      ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Gather and upload pipx build wheels
+      - uses: actions/upload-artifact@v4
+        with:
+          path: dist/*.whl
+
+      - name: Gather and upload cibuildwheel wheels
         uses: actions/upload-artifact@v4
         with:
           path: wheelhouse/*.whl
 
   upload_all:
-    needs: [build_wheels, make_sdist]
+    needs: [gather_artifacts]
+
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
