@@ -5,7 +5,8 @@ requires = [
     "setuptools>=42",
     "setuptools_scm[toml]>=3.4",
     "scikit-build-core==0.5",
-    "antlr4-tools==0.2.1",]
+    "antlr4-tools==0.2.1",
+    "build"]
 build-backend = "scikit_build_core.build"
 
 [tool.setuptools_scm]
@@ -142,13 +143,18 @@ isort.required-imports = ["from __future__ import annotations"]
 "tests/**" = ["T20"]
 
 [tool.cibuildwheel]
-build = ["*macosx*", "*manylinux_x86_64"]
-skip = ["pp*", "cp36-*"]
+build = ["*macosx*", "*manylinux_x86_64", "*windows*"]
+skip = ["pp*", "cp36-*", "cp37-*"]
 
 [tool.cibuildwheel.linux]
-manylinux-x86_64-image = "g4edge/manylinux2014_x86_64:latest"
 archs = ["auto"]
+manylinux-x86_64-image = "g4edge/manylinux2014_x86_64:latest"
+
 
 [tool.cibuildwheel.macos]
-archs = ["x86_64"]
+archs = ["x86_64", "arm64"]
 before-all = ".github/bin/install-deps-macos.sh"
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+before-all = ".github/bin/install-deps-windows.cmd"

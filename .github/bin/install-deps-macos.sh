@@ -12,3 +12,7 @@ brew install --overwrite node@18
 brew link node@18
 
 brew install boost cgal gmp mpfr opencascade vtk root numdiff
+
+# needed for cibuildwheel on macos
+export GMP_LIBRARIES=/opt/lib/
+export GMP_INCLUDE_DIR=/opt/include/

@@ -7,7 +7,7 @@ on:
       - published
 
 jobs:
-  make_sdist:
+  build_sdist:
     name: Make SDist
     runs-on: ubuntu-latest
     steps:
@@ -18,17 +18,17 @@ jobs:
       - name: Build SDist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload sdist artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: dist/*.tar.gz
 
-  build_wheels:
-    name: Wheel on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  build_linux_wheels:
+    name: Wheel on linux
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -43,20 +43,109 @@ jobs:
         env:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
 
-      - name: Upload wheels
+      - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
+          name: linux_wheels
           path: wheelhouse/*.whl
 
+  build_macos_wheels:
+    name: Wheel on macos
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-13, macOS-14]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install non-pip (brew) dependencies on MacOS
+        if: runner.os == 'macOS'
+        run: .github/bin/install-deps-macos.sh
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+
+      - name: Build MacOS wheel ${{ matrix.python-version }}
+        run: pipx run build --wheel
+
+      - name: Upload macos artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}_${{ matrix.python-version }}
+          path: dist/*.whl
+
+  build_windows_wheels:
+    name: Wheel on windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install conda on Windows
+        if: runner.os == 'Windows'
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install non-pip (conda) dependencies on windows
+        if: runner.os == 'windows'
+        run: .github/bin/install-deps-windows.cmd
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+
+      - name: Build windows wheel ${{ matrix.python-version }}
+        run: |
+          ${{ steps.setup-python.outputs.python-path}} -m pip install build
+          ${{ steps.setup-python.outputs.python-path}} -m build .
+
+      - name: Upload windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows_${{ matrix.python-version }}
+          path: dist/*.whl
+
   upload_all:
-    needs: [build_wheels, make_sdist]
+    needs:
+      [
+        build_linux_wheels,
+        build_macos_wheels,
+        build_windows_wheels,
+        build_sdist,
+      ]
+
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: artifact
           path: dist
+          merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:

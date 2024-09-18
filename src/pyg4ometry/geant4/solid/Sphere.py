@@ -19,7 +19,7 @@ from copy import deepcopy as _dc
 import numpy as _np
 import logging as _log
 
-import resource as _resource
+# import resource as _resource
 import time as _time
 
 
@@ -296,10 +296,10 @@ class Sphere(_SolidBase):
                         polygons.append(_Polygon(vEnd))
         tAfter = _time.process_time()
 
-        mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        # mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         mesh = _CSG.fromPolygons(polygons)
-        mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
-        _log.info(
-            f"Sphere.pycsgmesh> profile {self.nstack} {self.nslice} {mesh.getNumberPolys()} {mAfter - mBefore} {tAfter - tBefore}"
-        )
+        # mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        # _log.info(
+        #    f"Sphere.pycsgmesh> profile {self.nstack} {self.nslice} {mesh.getNumberPolys()} {mAfter - mBefore} {tAfter - tBefore}"
+        # )
         return mesh
