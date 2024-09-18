@@ -116,7 +116,7 @@ jobs:
 
     steps:
       - name: Gather and upload pipx build wheels
-      - uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: dist/*.whl
 
