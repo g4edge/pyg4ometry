@@ -120,7 +120,9 @@ jobs:
         id: cpu-cores
 
       - name: Build windows wheel ${{ matrix.python-version }}
-        run: ${{ steps.setup-python.outputs.python-path}} -m build .
+        run: |
+          ${{ steps.setup-python.outputs.python-path}} -m pip install build
+          ${{ steps.setup-python.outputs.python-path}} -m build .
 
       - name: Upload windows artifacts
         uses: actions/upload-artifact@v4
