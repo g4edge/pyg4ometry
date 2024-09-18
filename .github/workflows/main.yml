@@ -1,10 +1,10 @@
 name: pyg4ometry
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-      - windowsRunners
       - "releases/**"
   pull_request:
   release:
