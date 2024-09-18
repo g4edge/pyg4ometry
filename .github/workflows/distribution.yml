@@ -18,6 +18,11 @@ jobs:
       - name: Build SDist
         run: pipx run build --sdist
 
+      - name: Upload sdist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/*.whl
+
   build_linux_wheels:
     name: Wheel on linux
     runs-on: unbuntu-latest
@@ -36,6 +41,11 @@ jobs:
       - uses: pypa/cibuildwheel@v2.19.2
         env:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
+
+      - name: Upload sdist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: wheelhouse/*.whl
 
   build_macos_wheels:
     name: Wheel on macos
@@ -66,6 +76,11 @@ jobs:
 
       - name: Build MacOS wheel ${{ matrix.python-version }}
         run: pipx run build --wheel
+
+      - name: Upload macos artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/*.whl
 
   build_windows_wheels:
     name: Wheel on windows
@@ -103,7 +118,12 @@ jobs:
       - name: Build MacOS wheel ${{ matrix.python-version }}
         run: pipx run build --wheel
 
-  gather_artifacts:
+      - name: Upload windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/*.whl
+
+  upload_all:
     needs:
       [
         build_linux_wheels,
@@ -111,22 +131,6 @@ jobs:
         build_windows_wheels,
         build_sdist,
       ]
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Gather and upload pipx build wheels
-        uses: actions/upload-artifact@v4
-        with:
-          path: dist/*.whl
-
-      - name: Gather and upload cibuildwheel wheels
-        uses: actions/upload-artifact@v4
-        with:
-          path: wheelhouse/*.whl
-
-  upload_all:
-    needs: [gather_artifacts]
 
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
