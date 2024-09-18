@@ -21,6 +21,7 @@ jobs:
       - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: sdist/*.tar.gz
 
   build_linux_wheels:
@@ -45,6 +46,7 @@ jobs:
       - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
+          name: linux_wheels
           path: wheelhouse/*.whl
 
   build_macos_wheels:
@@ -80,6 +82,7 @@ jobs:
       - name: Upload macos artifact
         uses: actions/upload-artifact@v4
         with:
+          name: ${{ matrix.os }}_${{ matrix.python-version }}
           path: dist/*.whl
 
   build_windows_wheels:
@@ -121,6 +124,7 @@ jobs:
       - name: Upload windows artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: windows_${{ matrix.python-version }}
           path: dist/*.whl
 
   upload_all:
