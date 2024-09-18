@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: sdist/*.tar.gz
+          path: dist/*.tar.gz
 
   build_linux_wheels:
     name: Wheel on linux
