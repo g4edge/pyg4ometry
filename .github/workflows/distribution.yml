@@ -21,7 +21,7 @@ jobs:
       - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
-          path: dist/*.whl
+          path: sdist/*.tar.gz
 
   build_linux_wheels:
     name: Wheel on linux
