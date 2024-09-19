@@ -61,12 +61,15 @@ class Writer:
             if (
                 c == "TITLE"
                 or c == "DEFAULTS"
+                or c == "GLOBAL"
                 or c == "BEAM"
                 or c == "BEAMPOS"
+                or c == "BEAMAXES"
                 or c == "PHOTONUC"
                 or c == "MUPHOTON"
                 or c == "PAIRBREM"
                 or c == ""
+                or len(c) > 8
             ):
                 if type(self.flukaRegistry.cardDict[c]) is list:
                     for cc in self.flukaRegistry.cardDict[c]:
@@ -156,7 +159,15 @@ class Writer:
 
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys():
-            if c != "TITLE" and c != "DEFAULTS" and c != "BEAM" and c != "BEAMPOS" and c != "":
+            if (
+                c != "TITLE"
+                and c != "GLOBAL"
+                and c != "DEFAULTS"
+                and c != "BEAM"
+                and c != "BEAMPOS"
+                and c != "BEAMAXES"
+                and c != ""
+            ):
                 for card in self.flukaRegistry.cardDict[c]:
                     cardstr = card.toFreeString()
                     f.write(f"{cardstr}\n")

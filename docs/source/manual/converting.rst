@@ -137,3 +137,36 @@ larger than formally necessary to ensure a correct conversion.  Providing
 the bounding box ensures that an efficient and accurate mesh of the QUA
 bodies can be generated meaning that the conversion to be performed in a
 tractable amount of time as well giving more performant tracking in Geant4.
+
+CAD To GDML
+-----------
+
+CAD (STEP, IGES) files can be converted to GDML. This is based on
+the OpenCASCADE libraries (the same as those used in FreeCAD).
+The solids are in general tessellated and care must be taken with this type of conversion.
+Depending on the complexity of the geometry the FreeCAD tessellation can
+fail. In general there is not a requirement for CAD files to contain non-overlapping
+solids (bodies). The mesh generation can be controlled by a dictionary (``mesh`` in the
+example below) whose keys are the body name and values are parameters associated with the
+tessellation.
+
+.. code-block :: python
+   :linenos:
+
+   import pyg4ometry
+   reader = pyg4ometry.pyoce.Reader("./file.stp”) # read the cad file
+   fs = reader.freeShapes() # this is a little like the CAD equivalent of the world volume
+   worldName = pyg4ometry.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(fs.Value(1)) # get the actual string of the name
+   mats={} # assignment of material to named objects
+   mesh={} # control of the mesh generated for a named object
+   skip=[] # list of named objects to skip
+   reg = pyg4ometry.convert.oce2Geant4(reader.shapeTool, worldName, mats, skip, mesh, oceName=True) # oceName is essential as there are lots of degenerate names in the CAD
+
+   # to write to GDML
+   writer = pyg4ometry.gdml.Writer()
+   writer.addDetector(reg)
+   writer.write("./file.gdml”)
+
+The conversion code is very similar to other format conversions. ``mats`` is a dictionary with key of body name and value of the
+material name. The list ``skip`` is a list of body names to bypass the
+conversion, for example if it is not required.

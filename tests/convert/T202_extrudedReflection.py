@@ -9,7 +9,14 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -46,12 +53,6 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
 
     xp1 = _g4.PhysicalVolume([0, 0, 0], [-1000, -1000, 0], xl, "xp1", wl, reg, scale=[1, 1, 1])
     xp2 = _g4.PhysicalVolume([0, 0, 0.25], [1000, -1000, 0], xl, "xp2", wl, reg, scale=[1, -1, 1])
-    # xp3 = _g4.PhysicalVolume(
-    #    [0, 0, 0],
-    #    [-1000,  1000, 0], xl, "xp3", wl, reg, scale=[1, -1, 1])
-    # xp4 = _g4.PhysicalVolume(
-    #    [0, 0, 0],
-    #    [ 1000, 1000, 0], xl, "xp4", wl, reg, scale=[-1, -1, 1])
 
     # set world volume
     reg.setWorld(wl.name)
@@ -66,9 +67,12 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     extent = wl.extent(includeBoundingSolid=False)
 
     # fluka conversion
-    outputFile = outputPath / "T202_extrudedReflection.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T202_extrudedReflection.inp"
+    else:
+        outputFile = outputPath / "T202_extrudedReflection_baked.inp"
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

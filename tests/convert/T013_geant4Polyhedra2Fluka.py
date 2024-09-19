@@ -8,7 +8,14 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransforms=False,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
@@ -62,9 +69,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.write(outputPath / "T013_geant4Polyhedra2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T013_geant4Polyhedra2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T013_geant4Polyhedra2Fluka.inp"
+    else:
+        outputFile = outputPath / "T013_geant4Polyhedra2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

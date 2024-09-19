@@ -10,10 +10,7 @@ import os as _os
 
 def isComment(node):
     # TODO must be a better way to find comments
-    if node.attributes:
-        return False
-    else:
-        return True
+    return not node.attributes
 
 
 class Reader:
@@ -1947,10 +1944,10 @@ class Reader:
                     fileLV = r.getRegistry().getWorldVolume()
                     pvol_name = fileLV.name + "_PV"
 
-                _log.info("Reader.extractStructureNodeData> %s" % (pvol_name))
+                _log.info(f"Reader.extractStructureNodeData> {pvol_name}")
 
                 # Position
-                _log.info("Reader.extractStructureNodeData> pv position %s" % (pvol_name))
+                _log.info(f"Reader.extractStructureNodeData> pv position {pvol_name}")
                 try:
                     position = self._registry.defineDict[
                         chNode.getElementsByTagName("positionref")[0].attributes["ref"].value
@@ -1998,7 +1995,7 @@ class Reader:
                         )
 
                 # Scale
-                _log.info("Reader.extractStructureNodeData> pv scale %s " % (pvol_name))
+                _log.info(f"Reader.extractStructureNodeData> pv scale {pvol_name}")
                 try:
                     scale = self._registry.defineDict[
                         chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value
@@ -2012,7 +2009,7 @@ class Reader:
                         scale = None
 
                 # Create physical volume
-                _log.info("Reader.extractStructureNodeData> construct % s" % (pvol_name))
+                _log.info(f"Reader.extractStructureNodeData> construct {pvol_name}")
 
                 try:
                     copyNumber = int(chNode.attributes["copynumber"].value)

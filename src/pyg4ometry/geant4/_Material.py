@@ -412,9 +412,7 @@ class Material(MaterialBase):
                 # this behaviour is to match Geant4's tolerance of 0 density which if forbids
                 # if loaded in Geant4, it would enforce a minimum without an exception
                 print(
-                    "Warning in Material : '{}' density set to 0, ensuring minimum of 1e-20".format(
-                        self.name
-                    )
+                    f"Warning in Material : '{self.name}' density set to 0, ensuring minimum of 1e-20"
                 )
                 self.density = 1e-20
                 self.type = "simple"
@@ -569,6 +567,8 @@ class Material(MaterialBase):
         """
         import pyg4ometry.gdml.Defines as defines
 
+        if vunit.find("/") != -1:
+            print("Please use 1/unit.")
         vunit = "*" + vunit if vunit != "" else ""
         matrix_name = self.name + "_" + name
         m = defines.Matrix(matrix_name, 1, [str(value) + vunit], self.registry)

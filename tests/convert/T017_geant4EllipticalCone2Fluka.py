@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
@@ -20,6 +21,7 @@ def Test(
     n_slice=16,
     outputPath=None,
     refFilePath=None,
+    bakeTransforms=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
@@ -28,9 +30,9 @@ def Test(
     reg = _g4.Registry()
 
     # defines
-    wx = _gd.Constant("wx", "100", reg, True)
-    wy = _gd.Constant("wy", "100", reg, True)
-    wz = _gd.Constant("wz", "100", reg, True)
+    wx = _gd.Constant("wx", "200", reg, True)
+    wy = _gd.Constant("wy", "200", reg, True)
+    wz = _gd.Constant("wz", "200", reg, True)
 
     # pi     = _gd.Constant("pi","3.1415926",reg,True)
     edx = _gd.Constant("eax", "0.5", reg, True)
@@ -52,7 +54,7 @@ def Test(
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     el = _g4.LogicalVolume(es, em, "el", reg)
-    ep = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], el, "e_pv1", wl, reg)
+    ep = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 15, 0], el, "e_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -66,9 +68,13 @@ def Test(
     w.write(outputPath / "T017_geant4EllipticalCone2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T017_geant4EllipticalCone2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T017_geant4EllipticalCone2Fluka.inp"
+    else:
+        outputFile = outputPath / "T017_geant4EllipticalCone2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

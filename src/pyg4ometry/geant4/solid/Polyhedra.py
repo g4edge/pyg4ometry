@@ -1,6 +1,7 @@
 from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 from .SolidBase import SolidBase as _SolidBase
 import logging as _log
+import numpy as _np
 
 
 class Polyhedra(_SolidBase):
@@ -78,18 +79,10 @@ class Polyhedra(_SolidBase):
             registry.addSolid(self)
 
     def __repr__(self):
-        return "Polyhedra : {} {} {} {} {}".format(
-            self.name, self.pSPhi, self.pDPhi, self.numSide, self.numZPlanes
-        )
+        return f"Polyhedra : {self.name} {self.pSPhi} {self.pDPhi} {self.numSide} {self.numZPlanes}"
 
     def __str__(self):
-        return "Polyhedra : name={} sphi={} dphi={} numside={} numzplanes={}".format(
-            self.name,
-            str(self.pSPhi),
-            str(self.pDPhi),
-            str(self.numSide),
-            str(self.numZPlanes),
-        )
+        return f"Polyhedra : name={self.name} sphi={self.pSPhi!s} dphi={self.pDPhi!s} numside={self.numSide!s} numzplanes={self.numZPlanes!s}"
 
     def mesh(self):
         _log.info("polyhedra.antlr>")
@@ -104,9 +97,10 @@ class Polyhedra(_SolidBase):
 
         numSide = int(self.evaluateParameter(self.numSide))
         numZPlanes = int(self.numZPlanes)
+        tanAngle = phiTotal / numSide / 2
         zPlane = [val * luval for val in self.evaluateParameter(self.zPlane)]
-        rInner = [val * luval for val in self.evaluateParameter(self.rInner)]
-        rOuter = [val * luval for val in self.evaluateParameter(self.rOuter)]
+        rInner = [val * luval / _np.cos(tanAngle) for val in self.evaluateParameter(self.rInner)]
+        rOuter = [val * luval / _np.cos(tanAngle) for val in self.evaluateParameter(self.rOuter)]
 
         pZ = []
         pR = []

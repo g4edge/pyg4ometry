@@ -175,6 +175,7 @@ def test_PythonGeant_T003_CutTubs(tmptestdir, testdata):
         vis=False,
         interactive=False,
         outputPath=tmptestdir,
+        outputFile="T0031_CutTubs_numbers.gdml",
         refFilePath=testdata["gdml/T0031_CutTubs_numbers.gdml"],
     )
 
@@ -182,6 +183,7 @@ def test_PythonGeant_T003_CutTubs(tmptestdir, testdata):
         vis=False,
         interactive=False,
         outputPath=tmptestdir,
+        outputFile="T0032_CutTubs_string.gdml",
         refFilePath=testdata["gdml/T0032_CutTubs_string.gdml"],
     )
 
@@ -192,6 +194,7 @@ def test_PythonGeant_T003_CutTubs(tmptestdir, testdata):
         vis=False,
         interactive=False,
         outputPath=tmptestdir,
+        outputFile="T0034_CutTubs_DefineTree.gdml",
         refFilePath=testdata["gdml/T0034_CutTubs_DefineTree.gdml"],
     )
 
@@ -1091,7 +1094,7 @@ def test_PythonGeant_T600_LVTessellated(tmptestdir, testdata):
         vis=False,
         interactive=False,
         outputPath=tmptestdir,
-        refFilePath=None
+        refFilePath=None,
         # refFilePath=testdata["gdml/T600_LVTessellated.gdml"], TODO put back in
     )
 

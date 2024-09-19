@@ -209,7 +209,7 @@ public:
     _w = _normal.dot(a);
   }
 
-  ~Plane(){};
+  ~Plane() {};
 };
 
 class Polygon {
@@ -224,7 +224,7 @@ public:
                    _vertices[2].cast<Vertex &>());
   }
 
-  ~Polygon(){};
+  ~Polygon() {};
 
   py::list vertices() { return _vertices; }
 };

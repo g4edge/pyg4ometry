@@ -177,4 +177,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+run-fluka
 fluka-run
+flair_autosave.pickle
+
+*interp
+*tokens

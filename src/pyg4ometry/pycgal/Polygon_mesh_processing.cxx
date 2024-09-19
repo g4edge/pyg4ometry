@@ -80,6 +80,9 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
     CGAL::Polygon_mesh_processing::corefine_and_compute_difference(pm1, pm2,
                                                                    out);
   });
+  m.def("does_self_intersect", [](Surface_mesh_EPICK &pm) {
+    return CGAL::Polygon_mesh_processing::does_self_intersect(pm);
+  });
   m.def("do_intersect", [](Surface_mesh_EPICK &pm1, Surface_mesh_EPICK &pm2) {
     return CGAL::Polygon_mesh_processing::do_intersect(pm1, pm2);
   });
@@ -147,6 +150,9 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
                                               Surface_mesh_EPECK &out) {
     CGAL::Polygon_mesh_processing::corefine_and_compute_difference(pm1, pm2,
                                                                    out);
+  });
+  m.def("does_self_intersect", [](Surface_mesh_EPECK &pm) {
+    return CGAL::Polygon_mesh_processing::does_self_intersect(pm);
   });
   m.def("do_intersect", [](Surface_mesh_EPECK &pm1, Surface_mesh_EPECK &pm2) {
     return CGAL::Polygon_mesh_processing::do_intersect(pm1, pm2);

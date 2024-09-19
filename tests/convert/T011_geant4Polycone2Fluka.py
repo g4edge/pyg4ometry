@@ -1,4 +1,5 @@
 import os as _os
+import numpy as _np
 import pathlib as _pl
 import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
@@ -15,6 +16,7 @@ def Test(
     n_slice=10,
     outputPath=None,
     refFilePath=None,
+    bakeTransforms=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
@@ -58,7 +60,7 @@ def Test(
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     pl = _g4.LogicalVolume(ps, pm, "pl", reg)
-    tp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], pl, "p_pv1", wl, reg)
+    tp = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 10, 0], pl, "p_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -72,9 +74,13 @@ def Test(
     w.write(outputPath / "T011_geant4Polycone2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T011_geant4Polycone2Fluka.inp"
+    if not bakeTransforms:
+        outputFile = outputPath / "T011_geant4Polycone2Fluka.inp"
+    else:
+        outputFile = outputPath / "T011_geant4Polycone2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)

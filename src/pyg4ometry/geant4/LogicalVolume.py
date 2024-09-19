@@ -662,7 +662,7 @@ class LogicalVolume:
             # in the case of say replicas
             if pv.type != "placement":
                 continue
-            _log.info("LogicalVolume.checkOverlaps> %s" % (pv.name))
+            _log.info(f"LogicalVolume.checkOverlaps> {pv.name}")
 
             # an assembly will generate more than one mesh, but a regular LV just one - in either case
             # use a list of meshes for applying transforms into this LV frame
@@ -878,7 +878,7 @@ class LogicalVolume:
         :param includeBoundingSolid: Include the bounding solid or not
         :type includeBoundingSolid: bool
         """
-        _log.info("LogicalVolume.extent> %s " % (self.name))
+        _log.info(f"LogicalVolume.extent> {self.name} ")
 
         if includeBoundingSolid:
             [vMin, vMax] = self.mesh.getBoundingBox()

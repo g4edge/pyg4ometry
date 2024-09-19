@@ -1,3 +1,5 @@
+import vtk as _vtk
+import numpy as _np
 import matplotlib.pyplot as _plt
 
 from .Convert import vtkPolyDataToNumpy as _vtkPolyDataToNumpy
@@ -63,3 +65,43 @@ def AddCutterDataToPlot(
     if reapplyLims:
         ax.set_xlim(*xlim)
         ax.set_ylim(*ylim)
+
+
+def AddCutterDataToPlotNoConectivity(
+    filename, projection="zx", ax=None, unitsFactor=1.0, colour="k", linewidth=0.5, alpha=1.0
+):
+    r = _vtk.vtkPolyDataReader()
+    r.SetFileName(filename)
+    r.Update()
+
+    pd = r.GetOutput()
+
+    reapplyLims = False
+    if not ax:
+        f = _plt.figure()
+        ax = f.add_subplot(111)
+    else:
+        reapplyLims = True
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+
+    for i in range(pd.GetNumberOfCells()):
+        line = pd.GetCell(i)
+        pnts = line.GetPoints()
+        pnt0 = pnts.GetPoint(0)
+        pnt1 = pnts.GetPoint(1)
+
+        if projection == "xz" or projection == "zx":
+            x = [pnt0[0], pnt1[0]]
+            y = [pnt0[2], pnt1[2]]
+        elif projection == "xy" or projection == "yx":
+            x = [pnt0[0], pnt1[0]]
+            y = [pnt0[1], pnt1[1]]
+        elif projection == "yz" or projection == "zy":
+            x = [pnt0[1], pnt1[1]]
+            y = [pnt0[2], pnt1[2]]
+
+        x = _np.array(x) * unitsFactor
+        y = _np.array(y) * unitsFactor
+
+        ax.plot(x, y, c=colour, lw=linewidth, alpha=alpha)

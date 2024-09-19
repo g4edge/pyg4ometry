@@ -9,16 +9,17 @@ import pyg4ometry.misc as _mi
 import numpy as _np
 
 
-def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None):
+def Test(
+    vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None, bakeTransform=False
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
     # registry
     reg = _g4.Registry()
 
     # solids
-    ws = _g4.solid.Box("ws", 1000, 1000, 1000, reg, "mm")
-    b1s = _g4.solid.Box("b1s", 50, 75, 100, reg, "mm")
-    b2s = _g4.solid.Box("b2s", 5, 10, 15, reg, "mm")
+    ws = _g4.solid.Box("ws", 200, 200, 200, reg, "mm")
+    bs = _g4.solid.Box("b1s", 50, 75, 100, reg, "mm")
 
     # materials
     wm = _g4.nist_material_2geant4Material("G4_Galactic")
@@ -27,16 +28,9 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
-    b1l = _g4.LogicalVolume(b1s, bm1, "b1l", reg)
-    b2l = _g4.LogicalVolume(b2s, bm2, "b2l", reg)
+    bl = _g4.LogicalVolume(bs, bm1, "b1l", reg)
 
-    b2p1 = _g4.PhysicalVolume([0, 0, _np.pi / 4.0], [0, 15, 0], b2l, "b2_pv1", b1l, reg)
-    b2p2 = _g4.PhysicalVolume([0, 0, 0], [0, -15, 0], b2l, "b2_pv2", b1l, reg)
-
-    b1p1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, -300], b1l, "b1_pv1", wl, reg)
-    b1p2 = _g4.PhysicalVolume([_np.pi / 4.0, 0, 0], [0, 0, -100], b1l, "b1_pv2", wl, reg)
-    b1p3 = _g4.PhysicalVolume([0, _np.pi / 4.0, 0], [0, 0, 100], b1l, "b1_pv3", wl, reg)
-    b1p4 = _g4.PhysicalVolume([0, 0, _np.pi / 4.0], [0, 0, 300], b1l, "b1_pv4", wl, reg)
+    bp = _g4.PhysicalVolume([0, 0, _np.pi / 4], [0, 75 / 2, 0], bl, "bp", wl, reg, scale=[1, 1, 1])
 
     # set world volume
     reg.setWorld(wl.name)
@@ -50,9 +44,13 @@ def Test(vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=
     w.write(outputPath / "T001_geant4Box2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T001_geant4Box2Fluka.inp"
+    if not bakeTransform:
+        outputFile = outputPath / "T001_geant4Box2Fluka.inp"
+    else:
+        outputFile = outputPath / "T001_geant4Box2Fluka_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransform)
 
         # fluka running
         freg.addDefaults(default="PRECISIO")

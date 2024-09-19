@@ -17,6 +17,8 @@ def Test(
     n_stack=30,
     outputPath=None,
     refFilePath=None,
+    cuts=False,
+    bakeTransforms=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
@@ -42,24 +44,39 @@ def Test(
 
     # solids
     ws = _g4.solid.Box("ws", wx, wy, wz, reg, "mm")
-    ts = _g4.solid.Torus(
-        "ts",
-        trmin,
-        trmax,
-        trtor,
-        tsphi,
-        tdphi,
-        reg,
-        "mm",
-        "rad",
-        nslice=n_slice,
-        nstack=n_stack,
-    )
+    if cuts:
+        ts = _g4.solid.Torus(
+            "ts",
+            trmin,
+            trmax,
+            trtor,
+            tsphi,
+            tdphi,
+            reg,
+            "mm",
+            "rad",
+            nslice=n_slice,
+            nstack=n_stack,
+        )
+    else:
+        ts = _g4.solid.Torus(
+            "ts",
+            0,
+            trmax,
+            trtor,
+            0,
+            2 * _np.pi,
+            reg,
+            "mm",
+            "rad",
+            nslice=n_slice,
+            nstack=n_stack,
+        )
 
     # structure
     wl = _g4.LogicalVolume(ws, wm, "wl", reg)
     tl = _g4.LogicalVolume(ts, tm, "tl", reg)
-    tp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], tl, "t_pv1", wl, reg)
+    tp = _g4.PhysicalVolume([_np.pi / 4, 0, 0], [0, 25, 0], tl, "t_pv1", wl, reg)
 
     # set world volume
     reg.setWorld(wl.name)
@@ -73,9 +90,17 @@ def Test(
     w.write(outputPath / "T010_geant4Torus2Fluka.gdml")
 
     # fluka conversion
-    outputFile = outputPath / "T010_geant4Torus2Fluka.inp"
+    if not cuts and not bakeTransforms:
+        outputFile = outputPath / "T010_geant4Torus2Fluka.inp"
+    elif cuts and not bakeTransforms:
+        outputFile = outputPath / "T010_geant4Torus2Fluka_cuts.inp"
+    elif not cuts and bakeTransforms:
+        outputFile = outputPath / "T010_geant4Torus2Fluka_baked.inp"
+    elif cuts and bakeTransforms:
+        outputFile = outputPath / "T010_geant4Torus2Fluka_cuts_baked.inp"
+
     if fluka:
-        freg = _convert.geant4Reg2FlukaReg(reg)
+        freg = _convert.geant4Reg2FlukaReg(reg, bakeTransforms=bakeTransforms)
         w = _fluka.Writer()
         w.addDetector(freg)
         w.write(outputFile)
