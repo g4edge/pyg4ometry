@@ -92,3 +92,39 @@ def test_CylinderZ():
     reg = pyg4ometry.mcnp.Registry()
     cz = pyg4ometry.mcnp.CZ(1.5, reg=reg)
     print(cz)
+
+
+def test_Cone_X():
+    reg = pyg4ometry.mcnp.Registry()
+    k_x = pyg4ometry.mcnp.K_X(1.1, 1.2, 1.3, 25, -1, reg=reg)
+    print(k_x)
+
+
+def test_Cone_Y():
+    reg = pyg4ometry.mcnp.Registry()
+    k_y = pyg4ometry.mcnp.K_Y(1.1, 1.2, 1.3, 25, -1, reg=reg)
+    print(k_y)
+
+
+def test_Cone_Z():
+    reg = pyg4ometry.mcnp.Registry()
+    k_z = pyg4ometry.mcnp.K_Z(1.1, 1.2, 1.3, 25, -1, reg=reg)
+    print(k_z)
+
+
+def test_ConeX():
+    reg = pyg4ometry.mcnp.Registry()
+    kx = pyg4ometry.mcnp.KX(1.1, 25, -1, reg=reg)
+    print(kx)
+
+
+def test_ConeY():
+    reg = pyg4ometry.mcnp.Registry()
+    ky = pyg4ometry.mcnp.KY(1.2, 25, -1, reg=reg)
+    print(ky)
+
+
+def test_ConeZ():
+    reg = pyg4ometry.mcnp.Registry()
+    kz = pyg4ometry.mcnp.KY(1.3, 25, -1, reg=reg)
+    print(kz)
