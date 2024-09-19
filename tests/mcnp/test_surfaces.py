@@ -78,17 +78,17 @@ def test_Cylinder_Z():
 
 def test_CylinderX():
     reg = pyg4ometry.mcnp.Registry()
-    cx = pyg4ometry.mcnp.CX(1.5)
+    cx = pyg4ometry.mcnp.CX(1.5, reg=reg)
     print(cx)
 
 
 def test_CylinderY():
     reg = pyg4ometry.mcnp.Registry()
-    cy = pyg4ometry.mcnp.CY(1.5)
+    cy = pyg4ometry.mcnp.CY(1.5, reg=reg)
     print(cy)
 
 
 def test_CylinderZ():
     reg = pyg4ometry.mcnp.Registry()
-    cz = pyg4ometry.mcnp.CZ(1.5)
+    cz = pyg4ometry.mcnp.CZ(1.5, reg=reg)
     print(cz)
