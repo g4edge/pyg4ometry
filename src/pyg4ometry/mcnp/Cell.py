@@ -2,6 +2,7 @@ class Cell:
     def __init__(self, surfaces=[], reg=None, cellNumber=None):
         self.surfaceList = surfaces
         self.cellNumber = cellNumber
+        # self.geometry = geometry
         if reg:
             reg.addCell(self)
             self.reg = reg
@@ -31,6 +32,9 @@ class Intersection:
         self.left = left
         self.right = right
 
+    def toOutputString(self):
+        return self.left.toOutputString() + " " + self.right.toOutputString()
+
 
 class Union:
     """
@@ -42,6 +46,9 @@ class Union:
         self.left = left
         self.right = right
 
+    def toOutputString(self):
+        return self.left.toOutputString() + ":" + self.right.toOutputString()
+
 
 class Complement:
     """
@@ -51,3 +58,19 @@ class Complement:
 
     def __init__(self, item):
         self.item = item
+
+    def toOutputString(self):
+        return "#" + self.item.toOutputString()
+
+
+class Identity:
+    """
+    mcnp : no operator
+    pyg4 : no operator
+    """
+
+    def __init__(self, item):
+        self.item = item
+
+    def toOutputString(self):
+        return str(self.item.surfaceNumber)
