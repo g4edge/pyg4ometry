@@ -38,22 +38,26 @@ must be supplied.
    # make a quick bdsim job for the one component in a beam line
    w.writeGmadTester('file.gmad', 'file.gdml')
 
-
-
-
-Export scene to paraview/vtk
+Export scene to Paraview/Vtk
 ----------------------------
+
+The viewers can export to the VTK/Paraview VTP file format
 
 .. code-block :: python
    :linenos:
 
    import pyg4ometry
+   r = pyg4ometry.gdml.Reader("./Chamber.gdml")
+   l = r.getRegistry().getWorldVolume()
+   v = pyg4ometry.visualisation.VtkViewer()
+   v.addLogicalVolume(l)
+   v.exportVTPScene("Chamber")
 
 
-Export scene to unity/unreal
-----------------------------
+Export scene to unity/unreal/blender
+------------------------------------
 
-The quickest way to get geometry to Unity/Unreal is to use a standard asset
+The quickest way to get geometry to Unity/Unreal/blender etc is to use a standard asset
 format. This takes a vtkRenderer and creates a OBJ file. The vtkRenderer
 managed within pyg4ometry from the VtkViewer class, once a geometry is created
 (either from any source) then an OBJ file can be created. Taking the
