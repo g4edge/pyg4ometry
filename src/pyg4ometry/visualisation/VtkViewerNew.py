@@ -140,6 +140,33 @@ class VtkViewerNew(_ViewerBase):
 
         return self.cuttersAppFlt.GetOutput()
 
+    def exportOBJScene(self, fileName="scene"):
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkOBJExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.SetFilePrefix("./" + fileName)  # create mtl and obj file.
+        exporter.Write()
+
+    def exportVRMLScene(self, fileName="scene"):
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkVRMLExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.SetFileName("./" + fileName)  # create mtl and obj file.
+        exporter.Write()
+
+    def exportVTPScene(self, fileName="scene.vtp"):
+        rw = _vtk.vtkRenderWindow()
+        rw.AddRenderer(self.renWin.GetRenderers().GetFirstRenderer())
+
+        exporter = _vtk.vtkSingleVTPExporter()
+        exporter.SetRenderWindow(rw)
+        exporter.SetFileName("./" + fileName)  # create mtl and obj file.
+        exporter.Write()
+
     def addClipper(self, origin, normal, bClipperCutter=False, bClipperCloseCuts=True):
         if self.bBuiltPipelines:
             print("Need to add clipper before pipelines are built")
