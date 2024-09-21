@@ -483,9 +483,9 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             if facet.GetNvert() == 3:
                 facets.append(
                     [
-                        facet.GetVertexIndex(0),
-                        facet.GetVertexIndex(1),
-                        facet.GetVertexIndex(2),
+                        facet[0],
+                        facet[1],
+                        facet[2],
                     ]
                 )
             elif facet.GetNvert() == 4:
