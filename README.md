@@ -15,6 +15,31 @@ Carlo (Geant4 and Fluka) geometries.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10449301.svg)](https://doi.org/10.5281/zenodo.10449301)
 [![Read the Docs](https://img.shields.io/readthedocs/pyg4ometry?logo=readthedocs)](https://pyg4ometry.readthedocs.io)
 
+## Introduction
+
+Pyg4ometry is a very capable python package to do many tasks related
+to Geant4/Fluka/MCNP geometry
+
+- Python scripting to create and assemble geometries
+- Loading, editing and writing GDML
+- Load and tessellate CAD geometry and export to GDML
+- Load ROOT geometry and convert to GDML
+- Powerful VTK viewer of geometries
+- Converting from GDML to FLUKA and MCNP
+- Exporting mesh geometries from GDML to VTP, OBJ, VRML etc
+- Python bindings to CGAL allowing complex mesh manipulation (e.g. hole filling, remeshing)
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/OPvQFZsFvhs/0.jpg)](https://www.youtube.com/watch?v=OPvQFZsFvhs)
+
+Many people and groups have used it for various tasks
+
+- Geometries for BDSIM Geant4 simulation of accelerators
+- [Legend experiment](https://indico.cern.ch/event/1252095/contributions/5592424/attachments/2730430/4746429/202310-PyHEP.pdf)
+- [FASER2 detector](https://cds.cern.ch/record/2893550)
+- CERN North area
+- [Moller](https://www.lucbarrett.info/Poster.pdf)
+- Proton therapy beam lines
+
 ## How to Install
 
 Pre-built pyg4ometry wheels can be installed [from PyPI](https://pypi.org/project/pyg4ometry)
@@ -27,7 +52,8 @@ pip install pyg4ometry
 If you cannot find wheels for your operating system / architecture,
 please [open an issue](https://github.com/g4edge/pyg4ometry/issues).
 Building from source requires some non-Python software dependencies.
-More documentation can be found in the developer's guide.
+More documentation can be found in the
+[installation guide](https://pyg4ometry.readthedocs.io/en/stable/manual/installation.html) in the manual.
 
 ## Referencing and Citation
 
