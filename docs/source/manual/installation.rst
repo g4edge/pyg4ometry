@@ -2,18 +2,37 @@
 Installation
 ============
 
+Installing from PyPi
+--------------------
+
+The easiest way to install pyg4ometry is to install from PyPi. Pyg4ometry
+has many external requirements which need to be provided by a package
+manager on your system. To install using PyPi::
+
+    pip install pyg4ometry
+
+If installing for MacOS you will need to install (opencascade, cgal, gmp, mpfr, boost, vtk)::
+
+    brew install opencascade cgal gmp mpfr boost vtk
+
+If installing for Windows you will need to install (opencascade, cgal)::
+
+    conda install occt cgal-cpp
+
+Building from source
+--------------------
 
 Requirements
-------------
+^^^^^^^^^^^^
 
 pyg4ometry is developed exclusively for Python 3 (Python2 is deprecated). It is developed on Python 3.9 and 3.10.
-
 
  * `VTK (Visualisation toolkit) <https://vtk.org>`_ (including Python bindings)
  * `antlr4 <https://www.antlr.org>`_
  * `cython <https://cython.org>`_
  * `CGAL <https://www.cgal.org>`_
  * pybind11
+ * cmake
 
 Packages that are required but will be found through PIP automatically:
 
@@ -25,11 +44,7 @@ Packages that are required but will be found through PIP automatically:
  * numpy
  * sympy
 
-**Optional**
-
- * `Freecad  <https://www.freecadweb.org>`_ for CAD conversion.
-
-.. note:: A full list can be found in :code:`pyg4ometry/setup.py`.
+.. note:: A full list can be found in :code:`pyg4ometry/pyproject.toml`.
 
 .. note:: if you are choosing a python version, it is worth choosing according to which
 	  version VTK provides a python build of through PIP if you use that. See
@@ -37,36 +52,38 @@ Packages that are required but will be found through PIP automatically:
 	  for M1 Mac (ARM64).
 
 
-Installation
-------------
+Building
+^^^^^^^^
 
 To install pyg4ometry, simply run ``make install`` from the root pyg4ometry
 directory::
 
-  cd /my/path/to/repositories/
-  git clone http://bitbucket.org/jairhul/pyg4ometry
-  git checkout develop
-  cd pyg4ometry
+    cd /my/path/to/repositories/
+    git clone https://github.com/g4edge/pyg4ometry
+    cd pyg4ometry
 
-  make install
+    pip install .
+
+If you wish to develop an extension or modify pyg4ometry then run::
+
+    pip install -e .
+
+as this will not install pyg4ometry, but the git repository directory will
+be used for the package. To confirm the install location run::
+
+    pip list | grep pyg4ometry
 
 .. note::
-   To build using the git directory and not installing into /usr/local use ``make develop``
-   instead of ``make install``
+    The building uses skikit-build which required cmake. Build errors
+    or warnings are typically from cmake and can help determining the
+    missing dependency
 
-To build pycsg with cpython::
+.. note::
+    If you are building for windows you are going to need Visual Studio and
+    the appropriate command line tools
 
-  make build_ext
-
-Or install from pypi::
-
-  pip install pyg4ometry
-
-or alternatively, run ``make develop`` from the same directory to ensure
-that any local changes are picked up.
-
-Docker image
-------------
+Docker image (needs updating)
+-----------------------------
 
 #. Download and install `Docker desktop <https://www.docker.com/products/docker-desktop>`_
 #. open a terminal (linux) or cmd (windows)
@@ -100,38 +117,6 @@ installation for each of these OSes.
 * `Ubuntu 20.02 <https://bitbucket.org/jairhul/pyg4ometry/raw/82373218033874607f682a77be33e03d5b6706aa/docker/Dockerfile-ubuntu-pyg4ometry>`_
 * `Centos 7 <https://bitbucket.org/jairhul/pyg4ometry/raw/befcd36c1213670830b854d02c671ef14b3f0f5c/docker/Dockerfile-centos-pyg4ometry>`_
 
-
-FreeCAD support for CAD to GDML conversion
-------------------------------------------
-
-For FreeCAD support and you already have it installed you need to add library to PYTHONPATH, for example
-
-.. code-block :: console
-
-   export PYTHONPATH=/opt/local/libexec/freecad/lib/
-
-Building FreeCAD can be a pain for MAC so
-
-.. code-block :: console
-
-   mkdir FreeCAD
-   cd FreeCAD
-   set FCROOT=$pwd
-   wget  https://github.com/FreeCAD/FreeCAD/archive/refs/tags/0.19.4.tar.gz
-   tar zxf 0.19.4.tar.gz
-   mkdir build
-   mkdir install
-   cd build
-   cmake ../FreeCAD-0.19.4 -DCMAKE_INSTALL_PREFIX=../install \
-   -DCOIN3D_LIBRARIES=/opt/local/Library/Frameworks/Inventor.framework/Libraries/libCoin.dylib -DBUILD_FEM=0 \
-   -DBUILD_MATERIAL=0 -DBUILD_SHIP=0 -DBUILD_DRAFT=0 -DBUILD_TUX=0 -DBUILD_ARCH=0 -DBUILD_PLOT=0 \
-   -DBUILD_OPENSCAD=0
-   make -jN
-   make install
-   export PYTHONPATH=$PYTHONPATH:$FCROOT/install
-
-
-
 Python 3.9
 ----------
 
@@ -145,3 +130,47 @@ as you know you can :code:`import vtk` ok in your Python installation.
 	     ANRLR version that the one the parser was generated with. It should work
 	     though. We are trying to include multiple versions of the ANTLR parser
 	     to avoid this in future.
+
+Developer notes
+---------------
+
+Building the manual
+^^^^^^^^^^^^^^^^^^^
+
+To build the documentation ::
+
+    pip install '.[docs]' # to install docs building dependencies
+    cd pyg4ometry/docs
+    make
+    <your browser> build/html/index.html` # to view the docs
+
+Running tests
+^^^^^^^^^^^^^
+
+Running tests ::
+
+    pip install '.[test]' # to install test running dependencies
+    pytest
+
+
+Git
+^^^
+
+pre-commit::
+
+    pre-commit install  # to setup pre-commit in source dir (only once)
+    pre-commit run --all-files # run pre-commit locally
+    pre-commit run --all-files black  #run only black
+
+Start commit message with the submodule or area changes::
+
+    submodule : (type of change) detailed notes
+
+for example::
+
+    pycgal : (extra functionality) more 2d mesh processing
+
+Pull requests. PR messages should just explain the change in a concise way as they will form part of the change log
+e.g::
+
+    FLUKA region viewer
