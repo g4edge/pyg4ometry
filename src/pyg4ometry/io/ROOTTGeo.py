@@ -481,22 +481,41 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
         for iFacet in range(0, nFacet, 1):
             facet = shape.GetFacet(iFacet)
             if facet.GetNvert() == 3:
-                facets.append(
-                    [
-                        facet[0],
-                        facet[1],
-                        facet[2],
-                    ]
-                )
+                if _ROOT.gROOT.GetVersionInt() >= 63301:
+                    facets.append(
+                        [
+                            facet[0],
+                            facet[1],
+                            facet[2],
+                        ]
+                    )
+                else:
+                    facets.append(
+                        [
+                            facet.GetVertexIndex(0),
+                            facet.GetVertexIndex(1),
+                            facet.GetVertexIndex(2),
+                        ]
+                    )
             elif facet.GetNvert() == 4:
-                facets.append(
-                    [
-                        facet.GetVertexIndex(0),
-                        facet.GetVertexIndex(1),
-                        facet.GetVertexIndex(2),
-                        facet.GetVertexIndex(3),
-                    ]
-                )
+                if _ROOT.gROOT.GetVersionInt() >= 63301:
+                    facets.append(
+                        [
+                            facet[0],
+                            facet[1],
+                            facet[2],
+                            facet[3],
+                        ]
+                    )
+                else:
+                    facets.append(
+                        [
+                            facet.GetVertexIndex(0),
+                            facet.GetVertexIndex(1),
+                            facet.GetVertexIndex(2),
+                            facet.GetVertexIndex(3),
+                        ]
+                    )
         shapePyG4 = _g4.solid.TessellatedSolid(
             shapeName,
             [verts, facets],
