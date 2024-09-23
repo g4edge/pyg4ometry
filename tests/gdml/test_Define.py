@@ -405,8 +405,8 @@ def test_GdmlDefine_Max():
 def test_GdmlDefine_Quantity():
     r = pyg4ometry.geant4.Registry()
     xq = pyg4ometry.gdml.Quantity("xq", "0.1", "kg", "mass", r)
-    assert xq.eval() == 100
-    assert float(xq) == 100
+    assert xq.eval() == 6.241506363094027e23
+    assert float(xq) == 6.241506363094027e23
     str(xq)
 
 

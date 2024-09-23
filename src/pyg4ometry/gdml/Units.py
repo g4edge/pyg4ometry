@@ -1,36 +1,257 @@
 import numpy as _np
 
-units = {
-    # Length units
-    "nm": 1.0e-6,
-    "um": 1.0e-3,
-    "mm": 1.0,
-    "cm": 1.0e1,
-    "m": 1.0e3,
-    "km": 1.0e6,
-    # Angle units
-    "deg": _np.pi / 180.0,
-    "degree": _np.pi / 180.0,
-    "rad": 1.0,
-    "radian": 1.0,
-    "mrad": 1.0e-3,
-    "urad": 1.0e-6,
-    # Energy units
-    "eV": 1.0e-3,
-    "keV": 1,
-    "MeV": 1.0e3,
-    "GeV": 1.0e6,
-    # Other
-    "none": 1.0,
-    # Time units
-    "ns": 1.0e-9,
-    "us": 1.0e-6,
-    "ms": 1.0e-3,
-    "s": 1.0,
-    "in": 25.4,
-    "kg": 1000.0,
-}
+
+def _define_gdml_units():
+    units = {}
+    m = 1e3
+    units["meter"] = m
+    units["metre"] = m
+    units["m"] = m
+    kg = 1 / 1.60217733e-25
+    units["kilogram"] = kg
+    units["kg"] = kg
+    s = 1e9
+    units["second"] = s
+    units["s"] = s
+    A = 1 / 1.60217733e-10
+    units["ampere"] = A
+    units["amp"] = A
+    units["A"] = A
+    K = 1
+    units["kelvin"] = K
+    units["K"] = K
+    mol = 1
+    units["mole"] = mol
+    units["mol"] = mol
+    cd = 1
+    units["candela"] = cd
+    units["cd"] = cd
+    rad = 1.0
+    units["radian"] = rad
+    units["rad"] = rad
+    units["milliradian"] = 1e-03 * rad
+    units["mrad"] = 1e-03 * rad
+    pi = 3.14159265358979323846
+    deg = rad * pi / 180.0
+    units["degree"] = deg
+    units["deg"] = deg
+    sr = 1.0
+    units["steradian"] = sr
+    units["sr"] = sr
+    Hz = 1.0 / s
+    units["hertz"] = Hz
+    units["Hz"] = Hz
+    N = m * kg / (s * s)
+    units["newton"] = N
+    units["N"] = N
+    Pa = N / (m * m)
+    units["pascal"] = Pa
+    units["Pa"] = Pa
+    atm = 101325.0 * Pa
+    units["atmosphere"] = atm
+    units["atm"] = atm
+    bar = 100000 * Pa
+    units["bar"] = bar
+    J = N * m
+    units["joule"] = J
+    units["J"] = J
+    W = J / s
+    units["watt"] = W
+    units["W"] = W
+    C = A * s
+    units["coulomb"] = C
+    units["C"] = C
+    V = J / C
+    units["volt"] = V
+    units["V"] = V
+    ohm = V / A
+    units["ohm"] = ohm
+    S = 1.0 / ohm
+    units["siemens"] = S
+    units["S"] = S
+    F = C / V
+    units["farad"] = F
+    units["F"] = F
+    T = V * s / (m * m)
+    units["tesla"] = T
+    units["T"] = T
+    Gs = 1.0e-4 * T
+    units["gauss"] = Gs
+    units["Gs"] = Gs
+    Wb = V * s
+    units["weber"] = Wb
+    units["Wb"] = Wb
+    H = Wb / A
+    units["henry"] = H
+    units["H"] = H
+    lm = cd * sr
+    units["lumen"] = lm
+    units["lm"] = lm
+    lx = lm / (m * m)
+    units["lux"] = lx
+    units["lx"] = lx
+    Bq = 1.0 / s
+    units["becquerel"] = Bq
+    units["Bq"] = Bq
+    units["kilobecquerel"] = 1e03 * Bq
+    units["kBq"] = 1e03 * Bq
+    units["megabecquerel"] = 1e06 * Bq
+    units["MBq"] = 1e06 * Bq
+    units["gigabecquerel"] = 1e09 * Bq
+    units["GBq"] = 1e09 * Bq
+    units["curie"] = 3.7e10 * Bq
+    units["Ci"] = 3.7e10 * Bq
+    units["millicurie"] = 1e-03 * 3.7e10 * Bq
+    units["mCi"] = 1e-03 * 3.7e10 * Bq
+    units["microcurie"] = 1e-06 * 3.7e10 * Bq
+    units["uCi"] = 1e-06 * 3.7e10 * Bq
+    Gy = J / kg
+    units["gray"] = Gy
+    units["Gy"] = Gy
+    units["kilogray"] = 1e03 * Gy
+    units["milligray"] = 1e-03 * Gy
+    units["microgray"] = 1e-06 * Gy
+    Sv = J / kg
+    units["sievert"] = Sv
+    units["Sv"] = Sv
+    mm = 1e-03 * m
+    units["millimeter"] = mm
+    units["mm"] = mm
+    cm = 1e-02 * m
+    units["centimeter"] = cm
+    units["cm"] = cm
+    units["decimeter"] = 1e-01 * m
+    km = 1e03 * m
+    units["kilometer"] = km
+    units["km"] = km
+    units["micrometer"] = 1e-06 * m
+    units["micron"] = 1e-06 * m
+    units["um"] = 1e-06 * m
+    units["nanometer"] = 1e-09 * m
+    units["nm"] = 1e-09 * m
+    parsec = 3.0856775807e16 * m
+    units["parsec"] = parsec
+    units["pc"] = parsec
+    units["angstrom"] = 1.0e-10 * m
+    units["fermi"] = 1.0e-15 * m
+    units["m2"] = m * m
+    units["mm2"] = mm * mm
+    units["cm2"] = cm * cm
+    units["km2"] = km * km
+    barn = 1.0e-28 * m * m
+    units["barn"] = barn
+    units["millibarn"] = 1e-03 * barn
+    units["mbarn"] = 1e-03 * barn
+    units["microbarn"] = 1e-06 * barn
+    units["nanobarn"] = 1e-09 * barn
+    units["picobarn"] = 1e-12 * barn
+    units["m3"] = m * m * m
+    units["mm3"] = mm * mm * mm
+    units["cm3"] = cm * cm * cm
+    units["cc"] = cm * cm * cm
+    units["km3"] = km * km * km
+    L = 1.0e-3 * m * m * m
+    units["liter"] = L
+    units["litre"] = L
+    units["L"] = L
+    units["centiliter"] = 1e-02 * L
+    units["cL"] = 1e-02 * L
+    units["milliliter"] = 1e-03 * L
+    units["mL"] = 1e-03 * L
+    dpt = 1.0 / m
+    units["diopter"] = dpt
+    units["dioptre"] = dpt
+    units["dpt"] = dpt
+    g = 0.001 * kg
+    units["gram"] = g
+    units["g"] = g
+    units["milligram"] = 1e-03 * g
+    units["mg"] = 1e-03 * g
+    units["millisecond"] = 1e-03 * s
+    units["ms"] = 1e-03 * s
+    units["microsecond"] = 1e-06 * s
+    units["us"] = 1e-06 * s
+    units["nanosecond"] = 1e-09 * s
+    units["ns"] = 1e-09 * s
+    units["picosecond"] = 1e-12 * s
+    units["ps"] = 1e-12 * s
+    minute = 60 * s
+    units["minute"] = minute
+    hour = 60 * minute
+    units["hour"] = hour
+    day = 24 * hour
+    units["day"] = day
+    year = 365 * day
+    units["year"] = year
+    units["milliampere"] = 1e-03 * A
+    units["mA"] = 1e-03 * A
+    units["microampere"] = 1e-06 * A
+    units["nanoampere"] = 1e-09 * A
+    units["kilohertz"] = 1e03 * Hz
+    units["kHz"] = 1e03 * Hz
+    units["megahertz"] = 1e06 * Hz
+    units["MHz"] = 1e06 * Hz
+    units["kilonewton"] = 1e03 * N
+    units["kN"] = 1e03 * N
+    units["kilobar"] = 1e03 * bar
+    units["kbar"] = 1e03 * bar
+    units["millibar"] = 1e-03 * bar
+    units["mbar"] = 1e-03 * bar
+    units["kilojoule"] = 1e03 * J
+    units["kJ"] = 1e03 * J
+    units["megajoule"] = 1e06 * J
+    units["MJ"] = 1e06 * J
+    units["gigajoule"] = 1e09 * J
+    units["GJ"] = 1e09 * J
+    e_SI = 1.602176634e-19
+    ePlus = e_SI * C
+    eV = ePlus * V
+    units["electronvolt"] = eV
+    units["eV"] = eV
+    units["millielectronvolt"] = 1e-03 * eV
+    units["kiloelectronvolt"] = 1e03 * eV
+    units["keV"] = 1e03 * eV
+    units["megaelectronvolt"] = 1e06 * eV
+    units["MeV"] = 1e06 * eV
+    units["gigaelectronvolt"] = 1e09 * eV
+    units["GeV"] = 1e09 * eV
+    units["teraelectronvolt"] = 1e12 * eV
+    units["TeV"] = 1e12 * eV
+    units["petaelectronvolt"] = 1e15 * eV
+    units["PeV"] = 1e15 * eV
+    units["kilowatt"] = 1e03 * W
+    units["kW"] = 1e03 * W
+    units["megawatt"] = 1e06 * W
+    units["MW"] = 1e06 * W
+    units["gigawatt"] = 1e09 * W
+    units["GW"] = 1e09 * W
+    units["kilovolt"] = 1e03 * V
+    units["kV"] = 1e03 * V
+    units["megavolt"] = 1e06 * V
+    units["MV"] = 1e06 * V
+    units["millifarad"] = 1e-03 * F
+    units["mF"] = 1e-03 * F
+    units["microfarad"] = 1e-06 * F
+    units["uF"] = 1e-06 * F
+    units["nanofarad"] = 1e-09 * F
+    units["nF"] = 1e-09 * F
+    units["picofarad"] = 1e-12 * F
+    units["pF"] = 1e-12 * F
+    units["kilogauss"] = 1e03 * Gs
+    units["kGs"] = 1e03 * Gs
+
+    # not in Geant4, but might work in some apps?
+    units["in"] = 2.54 * units["cm"]
+
+    return units
+
+
+units = _define_gdml_units()
 
 
 def unit(unitString):
+    # not in Geant4, but used throughout the code base as placeholder for "no unit".
+    if unitString == "none":
+        return 1.0
+
     return units.get(unitString, None)
