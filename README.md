@@ -40,7 +40,6 @@ g4data = G4EdgeTestData()
 reg = pg4.geant4.Registry()
 
 # build the world volume
-# NOTE: syntax in the geant4 subpackage matches the Geant4 API!
 world_s = pg4.geant4.solid.Box("WorldAir", 10, 10, 10, reg, lunit="cm")
 world_l = pg4.geant4.LogicalVolume(world_s, "G4_AIR", "WorldAir", reg)
 reg.setWorld(world_l)
