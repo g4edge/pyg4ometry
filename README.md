@@ -46,13 +46,12 @@ world_l = pg4.geant4.LogicalVolume(world_s, "G4_AIR", "WorldAir", reg)
 reg.setWorld(world_l)
 
 # import an STL file
-reader = pg4.stl.Reader(g4data["stl/utah_teapot.stl"], reg)
+reader = pg4.stl.Reader(g4data["stl/utah_teapot.stl"], registry=reg)
 teapot_s = reader.getSolid()
 
 # place the teapot in the world
 teapot_l = pg4.geant4.LogicalVolume(teapot_s, "G4_Cu", "UtahTeapot", reg)
 pg4.geant4.PhysicalVolume([0, 0, 0], [0, 0, 0], teapot_l, "UtahTeapot", world_l, reg)
-reg.setWorldVolume(teapot_l)
 
 # export to GDML file "geometry.gdml"
 writer = pg4.gdml.Writer()
