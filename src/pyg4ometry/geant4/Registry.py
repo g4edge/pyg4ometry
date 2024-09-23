@@ -375,8 +375,10 @@ class Registry:
         :type define: Constant, Quantity, Variable, Matrix
         """
         from pyg4ometry.gdml.Units import units as _units
+        import pyg4ometry.gdml.Defines as _Defines
 
-        if define.name in _units:
+        # units names are only checked for duplicates when redefining scalar defines.
+        if isinstance(define, _Defines.ScalarBase) and define.name in _units:
             msg = f"Redefinition of a constant unit : {define.name}"
             raise ValueError(msg)
 
