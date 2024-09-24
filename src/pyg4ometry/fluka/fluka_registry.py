@@ -2,8 +2,6 @@ import sys as _sys
 from collections import OrderedDict as _OrderedDict
 from collections.abc import MutableMapping as _MutableMapping
 
-from itertools import count as _count
-
 import numpy as _np
 import pandas as _pd
 import pyg4ometry.geant4 as _g4
@@ -566,9 +564,8 @@ class RotoTranslationStore(_MutableMapping):
 
     def __init__(self):
         self._nameMap = _OrderedDict()
-        # internal infinite counter generating new unique
-        # transformation indices.
-        self._counter = _count(start=2000, step=1000)
+        # internal counter generating new unique transformation indices.
+        self._counter = 2000
 
     def __getitem__(self, name):
         return self._nameMap[name]
@@ -603,7 +600,8 @@ class RotoTranslationStore(_MutableMapping):
             # adding of RotoTranslations easier.
             recur = _RecursiveRotoTranslation(name, [rtrans])
             if not rtrans.transformationIndex:
-                recur.transformationIndex = next(self._counter)
+                recur.transformationIndex = self._counter
+                self._counter += 1000
             elif rtrans.transformationIndex in self.allTransformationIndices():
                 msg = "transformation index matches another ROT-DEFI with a different name.  Change the transformationIndex and try again."
                 raise KeyError(msg)
