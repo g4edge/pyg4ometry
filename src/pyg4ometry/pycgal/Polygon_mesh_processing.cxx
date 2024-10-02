@@ -92,13 +92,13 @@ PYBIND11_MODULE(Polygon_mesh_processing, m) {
   m.def("volume", [](Surface_mesh_EPICK &pm1) {
     return CGAL::to_double(CGAL::Polygon_mesh_processing::volume(pm1));
   });
-  m.def("isotropic_remeshing", [](Surface_mesh_EPICK &pm1,
-                                  double target_mesh_length, int nb_iter) {
-    return CGAL::Polygon_mesh_processing::isotropic_remeshing(
-        faces(pm1), target_mesh_length, pm1,
-        CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(
-            true));
-  });
+  //  m.def("isotropic_remeshing", [](Surface_mesh_EPICK &pm1,
+  //                                  double target_mesh_length, int nb_iter) {
+  //    return CGAL::Polygon_mesh_processing::isotropic_remeshing(
+  //        faces(pm1), target_mesh_length, pm1,
+  //        CGAL::parameters::number_of_iterations(nb_iter).protect_constraints(
+  //            true));
+  //  });
   /*
   m.def("angle_and_area_smoothing", [](Surface_mesh_EPICK &pm1, int nb_iter) {
     return CGAL::Polygon_mesh_processing::angle_and_area_smoothing(pm1,
