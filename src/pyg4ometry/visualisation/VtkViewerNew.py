@@ -7,7 +7,8 @@ from pyg4ometry.visualisation.VisualisationOptions import VisualisationOptions a
 from .VisualisationOptions import (
     getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
 )
-from pyg4ometry.pycgal.Polygon_mesh_processing import isotropic_remeshing as _isotropic_remeshing
+
+# from pyg4ometry.pycgal.Polygon_mesh_processing import isotropic_remeshing as _isotropic_remeshing
 
 
 class VtkViewerNew(_ViewerBase):
