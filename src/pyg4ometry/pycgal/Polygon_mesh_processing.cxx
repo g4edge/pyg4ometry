@@ -40,7 +40,7 @@ typedef CGAL::Aff_transformation_3<Kernel_ECER> Aff_transformation_3_ECER;
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 // #include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+// #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
 PYBIND11_MODULE(Polygon_mesh_processing, m) {
