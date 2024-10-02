@@ -598,7 +598,8 @@ class ViewerBase:
         open test.html
         """
 
-        import pkg_resources
+        import importlib_resources
+
         from jinja2 import Template
 
         gltfFileName = fileNameBase + ".gltf"
@@ -613,8 +614,12 @@ class ViewerBase:
             "css_file": cssFileName,
         }
 
-        threeHTMLTemplate = pkg_resources.resource_filename(__name__, "threejs.html")
-        threeCSSTemplate = pkg_resources.resource_filename(__name__, "threejs.css")
+        threeHTMLTemplate = importlib_resources.as_file(
+            importlib_resources.files(__name__) / "threejs.html"
+        )
+        threeCSSTemplate = importlib_resources.as_file(
+            importlib_resources.files(__name__) / "threejs.css"
+        )
 
         with open(threeHTMLTemplate) as file:
             template = Template(file.read())
