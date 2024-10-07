@@ -3,12 +3,12 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.gdml as _gd
 
 
-@pytest.fixture()
+@pytest.fixture
 def registry():
     return _g4.Registry()
 
 
-@pytest.fixture()
+@pytest.fixture
 def two_materials(registry):
     def _two_materials(nist_materials=False):
         if nist_materials:
@@ -23,7 +23,7 @@ def two_materials(registry):
     return _two_materials
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_world(registry):
     wx = _gd.Constant("wx", "100", registry, True)
     wy = _gd.Constant("wy", "100", registry, True)
@@ -34,7 +34,7 @@ def geant4_world(registry):
     return ws
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_box(registry):
     bx = _gd.Constant("bx", "10", registry, True)
     by = _gd.Constant("by", "10", registry, True)
@@ -45,7 +45,7 @@ def geant4_box(registry):
     return bs
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_tubs(registry):
     trmin = _gd.Constant("trmin", "2.5", registry, True)
     trmax = _gd.Constant("trmax", "10.0", registry, True)
@@ -63,7 +63,7 @@ def geant4_tubs(registry):
     return ts
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_cuttubs(registry):
     ctrmin = _gd.Constant("trmin", "2.5", registry, True)
     ctrmax = _gd.Constant("trmax", "10.0", registry, True)
@@ -94,7 +94,7 @@ def geant4_cuttubs(registry):
     return cts
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_cons(registry):
     crmin1 = _gd.Constant("crmin1", "6", registry, True)
     crmax1 = _gd.Constant("crmax1", "20", registry, True)
@@ -124,7 +124,7 @@ def geant4_cons(registry):
     return cs
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_para(registry):
     px = _gd.Constant("px", "10", registry, True)
     py = _gd.Constant("py", "20", registry, True)
@@ -142,7 +142,7 @@ def geant4_para(registry):
     return ps
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_trd(registry):
     tx1 = _gd.Constant("tx1", "20", registry, True)
     ty1 = _gd.Constant("ty1", "25", registry, True)
@@ -155,7 +155,7 @@ def geant4_trd(registry):
     return ts
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_trap(registry):
     tx1 = _gd.Constant("tx1", "5", registry, True)
     tx2 = _gd.Constant("tx2", "5", registry, True)
@@ -198,7 +198,7 @@ def geant4_trap(registry):
     return ts
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_sphere(registry):
     srmin = _gd.Constant("rmin", "8", registry, True)
     srmax = _gd.Constant("rmax", "10", registry, True)
@@ -225,7 +225,7 @@ def geant4_sphere(registry):
     return ss
 
 
-@pytest.fixture()
+@pytest.fixture
 def geant4_structure():
     def _geant4_structure(solid, registry, two_materials, geant4_world):
         wl = _g4.LogicalVolume(geant4_world, two_materials()["wm"], "wl", registry)

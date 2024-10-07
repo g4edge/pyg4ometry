@@ -557,12 +557,12 @@ PYBIND11_MODULE(algo, m) {
       .def(py::init<py::list &, py::list &>())
       .def(py::init<std::string &>())
       .def("add_vertex", &SurfaceMesh::add_vertex)
-      .def("add_face", (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t,
-                                                    std::size_t)) &
-                           SurfaceMesh::add_face)
-      .def("add_face", (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t,
-                                                    std::size_t, std::size_t)) &
-                           SurfaceMesh::add_face)
+      .def("add_face",
+           (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t,
+                                        std::size_t))&SurfaceMesh::add_face)
+      .def("add_face",
+           (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t, std::size_t,
+                                        std::size_t))&SurfaceMesh::add_face)
       .def("translate", &SurfaceMesh::translate)
       .def("transform", &SurfaceMesh::transform)
       .def("union", &SurfaceMesh::unioN)
