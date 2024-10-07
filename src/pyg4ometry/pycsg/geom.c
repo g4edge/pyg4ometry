@@ -27,7 +27,7 @@ END: Cython Metadata */
 #define CYTHON_FUTURE_DIVISION 0
 #include <stddef.h>
 #ifndef offsetof
-#define offsetof(type, member) ((size_t) & ((type *)0)->member)
+#define offsetof(type, member) ((size_t)&((type *)0)->member)
 #endif
 #if !defined(WIN32) && !defined(MS_WINDOWS)
 #ifndef __stdcall
@@ -819,7 +819,9 @@ static CYTHON_INLINE float __PYX_NAN() {
     (void)__pyx_clineno;                                                       \
   }
 #define __PYX_ERR(f_index, lineno, Ln_error)                                   \
-  { __PYX_MARK_ERR_POS(f_index, lineno) goto Ln_error; }
+  {                                                                            \
+    __PYX_MARK_ERR_POS(f_index, lineno) goto Ln_error;                         \
+  }
 
 #ifndef __PYX_EXTERN_C
 #ifdef __cplusplus
