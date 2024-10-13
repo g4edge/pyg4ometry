@@ -177,7 +177,7 @@ class Registry:
             # transfer material properties
             if hasattr(material, "properties"):
                 for key, value in material.properties.items():
-                    self.transferDefines(value, incrementRenameDict, userRenameDict)
+                    self.transferDefine(value, incrementRenameDict, userRenameDict)
 
         self.materialDict[material.name] = material
         material.registry = self
@@ -460,6 +460,7 @@ class Registry:
                 )  # probably best to reuse here
 
         elif isinstance(var, _Defines.Matrix):
+            print(otherRegistry)
             for v in var.values:
                 if v.name in otherRegistry.defineDict:
                     self.transferDefine(v, incrementRenameDict, userRenameDict)
