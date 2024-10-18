@@ -85,20 +85,23 @@ class UsdViewer(_ViewerHierarchyBase):
             print("volume mesh>", meshPrim.GetPath())
 
             m = volume.mesh.localmesh.toVerticesAndPolygons()
-            meshPrim.GetAttribute("points").Set(m[0])
+
+            pointsInMeters = _np.array(m[0])
+            pointsInMeters = pointsInMeters / 1000.0
+            meshPrim.GetAttribute("points").Set(pointsInMeters)
             meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
-            a = _np.array(m[1])
-            a.reshape(a.shape[0] * a.shape[1])
-            meshPrim.GetAttribute("faceVertexIndices").Set(a)
+            inds = _np.array(m[1])
+            inds.reshape(inds.shape[0] * inds.shape[1])
+            meshPrim.GetAttribute("faceVertexIndices").Set(inds)
 
             for daughter in volume.daughterVolumes:
                 daughterPrim = self.traverseHierarchy2(daughter, motherPrim=prim)
 
                 # daughter pos
                 if daughter.type == "placement":
-                    pos = _np.array(daughter.position.eval())
+                    pos = _np.array(daughter.position.eval()) / 1000.0  # convert to metres from mm
                     # daughter rot
-                    rot = -_np.array(daughter.rotation.eval()) * 180 / _np.pi
+                    rot = -_np.array(daughter.rotation.eval()) * 180 / _np.pi  # convert to degrees
 
                     # Transformation
                     xform = UsdGeom.Xformable(daughterPrim)
