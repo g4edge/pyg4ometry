@@ -11,36 +11,36 @@ geometry flies.
 Need for programmatic geometry generation
 -----------------------------------------
 
- * Non-expert user creation and maintenance of geometry
- * Reduce time spent creating geometry
- * Reproducibility
- * Lower number of errors
- * Parameterisation of geometry
- * Visualisation of geometry
- * Overlap checking
- * Import from other geometry packages
+* Non-expert user creation and maintenance of geometry
+* Reduce time spent creating geometry
+* Reproducibility
+* Lower number of errors
+* Parameterisation of geometry
+* Visualisation of geometry
+* Overlap checking
+* Import from other geometry packages
 
 Geant4 key concepts
 -------------------
 
- * **solid** - describes shape only.
- * **logical volume** - a solid (shape) plus a material. Practically, in Geant4
-   it can include fields, regions, visualisation attributes and user limits.
- * **physical volume** - a placement of a logical volume. A 'stamp' out of the logical volume. It
-   is uniquely identified by an associated integer called "copy number".
- * **placement** - the term placement is used often to describe a physical volume. They
-   are one and the same.
- * **geometry reuse** - individual solids and logical volumes are encouraged to be reused. For
-   example a row of copper boxes all the same would require only 1x solid and 1x logical volume
-   with `N` placements (also known as physical volumes).
+* **solid** - describes shape only.
+* **logical volume** - a solid (shape) plus a material. Practically, in Geant4
+  it can include fields, regions, visualisation attributes and user limits.
+* **physical volume** - a placement of a logical volume. A 'stamp' out of the logical volume. It
+  is uniquely identified by an associated integer called "copy number".
+* **placement** - the term placement is used often to describe a physical volume. They
+  are one and the same.
+* **geometry reuse** - individual solids and logical volumes are encouraged to be reused. For
+  example a row of copper boxes all the same would require only 1x solid and 1x logical volume
+  with `N` placements (also known as physical volumes).
 
 Geometry key concepts
 ---------------------
 
- * Constructive Solid Geometry (CSG)
- * Boolean operations
- * Boundary representation (B-REP)
- * Boundary mesh
+* Constructive Solid Geometry (CSG)
+* Boolean operations
+* Boundary representation (B-REP)
+* Boundary mesh
 
 Implementation concepts
 -----------------------
@@ -68,6 +68,6 @@ a top volume.
 It is possible to merge two registries and all the name conflicts will be explicitly resolved.
 See :ref:`combining`.
 
- * Parameter
- * ParameterVector
- * Pycsg
+* Parameter
+* ParameterVector
+* Pycsg
