@@ -25,6 +25,7 @@ particle tracking simulations.
    citation
    Changelog <https://github.com/g4edge/pyg4ometry/releases>
    version_history
+   devmanual
 
 
 Indices and tables
