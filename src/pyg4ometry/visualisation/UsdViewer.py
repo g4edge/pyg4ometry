@@ -17,51 +17,7 @@ class UsdViewer(_ViewerHierarchyBase):
 
         self.lvDict = {}
 
-    def traverseHierarchy(self, LV=None, motherPrim=None):
-        if not LV:
-            LV = self.worldLV
-
-        print("LV name", LV.name)
-
-        if not motherPrim:
-            primName = "/" + LV.name
-            lvPrim = self.stage.DefinePrim(primName, "Xform")
-        else:
-            primName = LV.name
-            lvPrim = self.stage.DefinePrim(motherPrim.GetPath().AppendPath(primName), "Xform")
-
-        print("Xform Prim path", lvPrim.GetPath())
-
-        # add mesh prim
-        meshPrim = self.stage.DefinePrim(lvPrim.GetPath().AppendPath(LV.name + "_mesh"), "Mesh")
-        print("Mesh Prim path", meshPrim.GetPath())
-
-        m = LV.mesh.localmesh.toVerticesAndPolygons()
-        meshPrim.GetAttribute("points").Set(m[0])
-        meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
-        a = _np.array(m[1])
-        a.reshape(a.shape[0] * a.shape[1])
-        meshPrim.GetAttribute("faceVertexIndices").Set(a)
-
-        for daughter in LV.daughterVolumes:
-            daughterPrim = self.traverseHierarchy(daughter.logicalVolume, motherPrim=lvPrim)
-
-            # daughter pos
-            pos = daughter.position.eval()
-            # daughter rot
-            rot = daughter.rotation.eval()
-
-            print(pos, rot)
-            # Transformation
-            xform = UsdGeom.Xformable(daughterPrim)
-            # Translation
-            xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
-            # Rotate
-            xform.AddRotateXYZOp().Set(Gf.Vec3d(*rot))
-
-        return lvPrim
-
-    def traverseHierarchy2(self, volume=None, motherPrim=None):
+    def traverseHierarchy(self, volume=None, motherPrim=None):
 
         if not volume:
             volume = self.worldLV
