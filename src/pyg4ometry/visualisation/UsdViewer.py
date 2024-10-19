@@ -22,7 +22,7 @@ class UsdViewer(_ViewerHierarchyBase):
         if not volume:
             volume = self.worldLV
 
-        print("volume name>", volume.name, type(volume))
+        print("traverseHierarchy> volume name : ", volume.name, volume.type)
 
         # if volume is a logical/physical
         if not motherPrim:
@@ -32,13 +32,13 @@ class UsdViewer(_ViewerHierarchyBase):
 
         if type(volume) is _pyg4.geant4.LogicalVolume:
 
-            print("logical")
+            print("traverseHierarchy> process logical volume")
 
             # add mesh prim
             meshPrim = self.stage.DefinePrim(
                 prim.GetPath().AppendPath(volume.name + "_mesh"), "Mesh"
             )
-            print("volume mesh>", meshPrim.GetPath())
+            print("traverseHierarchy> volume mesh prim : ", meshPrim.GetPath())
 
             m = volume.mesh.localmesh.toVerticesAndPolygons()
 
@@ -57,7 +57,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 # existing prim
                 if daughter.logicalVolume.name in self.lvNameToPrimDict:
                     daughterPrim = self.lvNameToPrimDict[daughter.logicalVolume.name]
-                    print("primToInstance> ", daughterPrim)
+                    print("traverseHierarchy> primToInstance : ", daughterPrim)
                     daughterPrim.SetInstanceable(True)
 
                     instancePrim = self.stage.DefinePrim(
@@ -97,10 +97,16 @@ class UsdViewer(_ViewerHierarchyBase):
                         xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
 
         elif type(volume) is _pyg4.geant4.PhysicalVolume:
-            print("physical")
+            print("traverseHierarchy> process physical volume ")
             self.traverseHierarchy(volume.logicalVolume, motherPrim=prim)
+        elif type(volume) is _pyg4.geant4.DivisionVolume:
+            print("traverseHierarchy> process division volume")
+        elif type(volume) is _pyg4.geant4.ReplicaVolume:
+            print("traverseHierarchy> process replica volume")
+        elif type(volume) is _pyg4.geant4.ParametrisedVolume:
+            print("traverseHierarchy> process parametrised volume")
         else:
-            print("other")
+            print("traverseHierarchy> other")
 
         # make dict of LV/PV to prims for instancing
         if type(volume) is _pyg4.geant4.LogicalVolume:
