@@ -7,6 +7,17 @@ from pxr import Usd, Gf, UsdGeom
 import numpy as _np
 
 
+def mesh2Prim(mesh, meshPrim):
+    m = mesh.toVerticesAndPolygons()
+    pointsInMeters = _np.array(m[0])
+    pointsInMeters = pointsInMeters / 1000.0
+    meshPrim.GetAttribute("points").Set(pointsInMeters)
+    meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
+    inds = _np.array(m[1])
+    inds.reshape(inds.shape[0] * inds.shape[1])
+    meshPrim.GetAttribute("faceVertexIndices").Set(inds)
+
+
 class UsdViewer(_ViewerHierarchyBase):
 
     def __init__(self, filePath="./test.usd"):
@@ -40,15 +51,8 @@ class UsdViewer(_ViewerHierarchyBase):
             )
             print("traverseHierarchy> volume mesh prim : ", meshPrim.GetPath())
 
-            m = volume.mesh.localmesh.toVerticesAndPolygons()
-
-            pointsInMeters = _np.array(m[0])
-            pointsInMeters = pointsInMeters / 1000.0
-            meshPrim.GetAttribute("points").Set(pointsInMeters)
-            meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
-            inds = _np.array(m[1])
-            inds.reshape(inds.shape[0] * inds.shape[1])
-            meshPrim.GetAttribute("faceVertexIndices").Set(inds)
+            # fill mesh prim
+            mesh2Prim(volume.mesh.localmesh, meshPrim)
 
             # loop over all daughters
             for daughter in volume.daughterVolumes:
