@@ -1,10 +1,13 @@
-import pyg4ometry as _pyg4
+try:
+    from pxr import Usd, Gf, UsdGeom
+
+    print("Openusd pyg4ometry imported")
+except ImportError:
+    pass
+
 from .ViewerHierarchyBase import ViewerHierarchyBase as _ViewerHierarchyBase
-
-from pathlib import Path
-from pxr import Usd, Gf, UsdGeom
-
 import numpy as _np
+import pyg4ometry as _pyg4
 
 
 def mesh2Prim(mesh, meshPrim, scale=1000):
