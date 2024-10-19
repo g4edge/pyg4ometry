@@ -107,8 +107,27 @@ class UsdViewer(_ViewerHierarchyBase):
             print("traverseHierarchy> process division volume")
         elif type(volume) is _pyg4.geant4.ReplicaVolume:
             print("traverseHierarchy> process replica volume")
-        elif type(volume) is _pyg4.geant4.ParametrisedVolume:
+        elif type(volume) is _pyg4.geant4.ParameterisedVolume:
             print("traverseHierarchy> process parametrised volume")
+            for i, m, t in zip(range(len(volume.meshes)), volume.meshes, volume.transforms):
+                print(i, m, t)
+
+                paramPrim = self.stage.DefinePrim(
+                    prim.GetPath().AppendPath(volume.name + "_mesh" + str(i)), "Mesh"
+                )
+                mesh2Prim(m.localmesh, paramPrim)
+
+                pos = _np.array(t[1].eval()) / 1000.0  # convert to metres from mm
+                # daughter rot
+                rot = _np.array(t[0].eval()) * 180 / _np.pi  # convert to degrees
+
+                # Transformation
+                xform = UsdGeom.Xformable(paramPrim)
+                # Translation
+                xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
+                # Rotate
+                xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
+
         else:
             print("traverseHierarchy> other")
 
