@@ -15,7 +15,7 @@ class UsdViewer(_ViewerHierarchyBase):
         print(f"USD Stage file path: {layer_path}")
         self.stage = Usd.Stage.CreateNew(layer_path)
 
-        self.lvDict = {}
+        self.lvNameToPrimDict = {}
 
     def traverseHierarchy(self, volume=None, motherPrim=None):
 
@@ -50,27 +50,61 @@ class UsdViewer(_ViewerHierarchyBase):
             inds.reshape(inds.shape[0] * inds.shape[1])
             meshPrim.GetAttribute("faceVertexIndices").Set(inds)
 
+            # loop over all daughters
             for daughter in volume.daughterVolumes:
-                daughterPrim = self.traverseHierarchy2(daughter, motherPrim=prim)
 
-                # daughter pos
-                if daughter.type == "placement":
+                # check if lv and we have already encountered, if so use
+                # existing prim
+                if daughter.logicalVolume.name in self.lvNameToPrimDict:
+                    daughterPrim = self.lvNameToPrimDict[daughter.logicalVolume.name]
+                    print("primToInstance> ", daughterPrim)
+                    daughterPrim.SetInstanceable(True)
+
+                    instancePrim = self.stage.DefinePrim(
+                        str(prim.GetPath()) + "/" + daughter.name, "Xform"
+                    )
+                    instancePrim.GetReferences().AddReference("", daughterPrim.GetPath())
+
                     pos = _np.array(daughter.position.eval()) / 1000.0  # convert to metres from mm
                     # daughter rot
                     rot = -_np.array(daughter.rotation.eval()) * 180 / _np.pi  # convert to degrees
 
                     # Transformation
-                    xform = UsdGeom.Xformable(daughterPrim)
+                    xform = UsdGeom.Xformable(instancePrim)
                     # Translation
                     xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
                     # Rotate
                     xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
 
+                else:
+                    daughterPrim = self.traverseHierarchy(daughter, motherPrim=prim)
+
+                    # daughter pos
+                    if daughter.type == "placement":
+                        pos = (
+                            _np.array(daughter.position.eval()) / 1000.0
+                        )  # convert to metres from mm
+                        # daughter rot
+                        rot = (
+                            -_np.array(daughter.rotation.eval()) * 180 / _np.pi
+                        )  # convert to degrees
+
+                        # Transformation
+                        xform = UsdGeom.Xformable(daughterPrim)
+                        # Translation
+                        xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
+                        # Rotate
+                        xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
+
         elif type(volume) is _pyg4.geant4.PhysicalVolume:
             print("physical")
-            self.traverseHierarchy2(volume.logicalVolume, motherPrim=prim)
+            self.traverseHierarchy(volume.logicalVolume, motherPrim=prim)
         else:
             print("other")
+
+        # make dict of LV/PV to prims for instancing
+        if type(volume) is _pyg4.geant4.LogicalVolume:
+            self.lvNameToPrimDict[volume.name] = prim
 
         return prim
 
