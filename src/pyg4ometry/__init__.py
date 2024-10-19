@@ -29,3 +29,8 @@ from . import cli
 from . import misc
 from . import analysis
 from . import montecarlo
+
+try:
+    from . import usd
+except ImportError:
+    print("Failed to import open usd")
