@@ -7,10 +7,10 @@ from pxr import Usd, Gf, UsdGeom
 import numpy as _np
 
 
-def mesh2Prim(mesh, meshPrim):
+def mesh2Prim(mesh, meshPrim, scale=1000):
     m = mesh.toVerticesAndPolygons()
     pointsInMeters = _np.array(m[0])
-    pointsInMeters = pointsInMeters / 1000.0
+    pointsInMeters = pointsInMeters / scale
     meshPrim.GetAttribute("points").Set(pointsInMeters)
     meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
     inds = _np.array(m[1])
