@@ -6,9 +6,10 @@ class Box(SolidBase):
 
     def __init__(self, stage, path):
         super().__init__(stage, path)
-        self.SetCustomFloatAttribute("x", 1)
-        self.SetCustomFloatAttribute("y", 1)
-        self.SetCustomFloatAttribute("z", 1)
+        self.CreateCustomStingAttribute("name", "b1")
+        self.CreateCustomFloatAttribute("x", 1)
+        self.CreateCustomFloatAttribute("y", 1)
+        self.CreateCustomFloatAttribute("z", 1)
 
     @staticmethod
     def Define(stage, path):
