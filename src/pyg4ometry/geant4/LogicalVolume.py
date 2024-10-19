@@ -1084,5 +1084,5 @@ class LogicalVolume:
         print(depth * "-" + self.name + " " + self.solid.type + " (lv)")
 
         for d in self.daughterVolumes:
-            print(2 * depth * "-" + d.name + " (pv)")
+            print(2 * depth * "-" + d.name + " " + d.type + " (pv)")
             d.logicalVolume.dumpStructure(depth + 2)
