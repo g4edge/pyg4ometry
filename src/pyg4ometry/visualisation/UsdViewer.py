@@ -7,6 +7,7 @@ except ImportError:
 
 from .ViewerHierarchyBase import ViewerHierarchyBase as _ViewerHierarchyBase
 import numpy as _np
+import os as _os
 import pyg4ometry as _pyg4
 
 
@@ -24,12 +25,18 @@ def mesh2Prim(mesh, meshPrim, scale=1000):
 class UsdViewer(_ViewerHierarchyBase):
 
     def __init__(self, filePath="./test.usd"):
+
+        self.filePath = filePath
+
         print(Usd.GetVersion())
         layer_path = str(filePath)
         print(f"USD Stage file path: {layer_path}")
         self.stage = Usd.Stage.CreateNew(layer_path)
 
         self.lvNameToPrimDict = {}
+
+    def setUsdviewPath(self, usdViewPath):
+        self.usdViewPath = usdViewPath
 
     def traverseHierarchy(self, volume=None, motherPrim=None):
 
@@ -178,3 +185,6 @@ class UsdViewer(_ViewerHierarchyBase):
 
     def save(self):
         self.stage.Save()
+
+    def view(self):
+        _os.system(self.usdViewPath + " " + self.filePath)
