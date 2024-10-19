@@ -1,4 +1,3 @@
-from pxr import Usd, UsdGeom, Sdf, Gf
 from .SolidBase import SolidBase
 
 
