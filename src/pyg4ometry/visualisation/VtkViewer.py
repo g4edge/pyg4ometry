@@ -1091,13 +1091,19 @@ class VtkViewer:
             if "0x" in materialName:
                 materialName = materialName[0 : materialName.find("0x")]
             # get with default
-            v = self.materialVisOptions.get(materialName, pv.visOptions)
+            if pv.visOptions:
+                v = self.materialVisOptions.get(materialName, pv.visOptions)
+            else:
+                v = self.materialVisOptions.get(materialName, pv.logicalVolume.visOptions)
         else:
             v = self._getDefaultVis(pv)
         return v
 
     def _getDefaultVis(self, pv):
-        return pv.visOptions
+        if not pv.visOptions:
+            return pv.logicalVolume.visOptions
+        else:
+            return pv.visOptions
 
     def printViewParameters(self):
         activeCamera = self.ren.GetActiveCamera()

@@ -102,7 +102,7 @@ class PhysicalVolume:
         self.copyNumber = copyNumber
 
         # physical visualisation options
-        self.visOptions = _VisOptions()
+        self.visOptions = None
 
         # registry logic
         if registry and addRegistry:

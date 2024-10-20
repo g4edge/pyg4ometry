@@ -213,7 +213,7 @@ class ParameterisedVolume(_ReplicaVolume):
         self.registry = registry
 
         # physical visualisation options
-        self.visOptions = _VisOptions()
+        self.visOptions = None
 
         # Create parameterised meshes
         self.meshes = self.createParameterisedMeshes()

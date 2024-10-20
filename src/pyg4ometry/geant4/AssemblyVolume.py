@@ -2,6 +2,8 @@ import pyg4ometry as _pyg4ometry
 import pyg4ometry.transformation as _trans
 import pyg4ometry.geant4.solid as _solid
 from pyg4ometry.visualisation import Mesh as _Mesh
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+
 
 import numpy as _np
 import logging as _log
@@ -30,6 +32,9 @@ class AssemblyVolume:
         self.registry = registry
         if addRegistry:
             registry.addLogicalVolume(self)
+
+        # physical visualisation options
+        self.visOptions = _VisOptions()
 
         self.overlapChecked = False
 
