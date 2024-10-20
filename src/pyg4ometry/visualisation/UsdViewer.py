@@ -35,10 +35,12 @@ class UsdViewer(_ViewerHierarchyBase):
 
         self.lvNameToPrimDict = {}
 
+        self.scaleFactor = 0.9999
+
     def setUsdviewPath(self, usdViewPath):
         self.usdViewPath = usdViewPath
 
-    def traverseHierarchy(self, volume=None, motherPrim=None):
+    def traverseHierarchy(self, volume=None, motherPrim=None, scale=1000.00):
 
         if not volume:
             volume = self.worldLV
@@ -62,7 +64,7 @@ class UsdViewer(_ViewerHierarchyBase):
             print("traverseHierarchy> volume mesh prim : ", meshPrim.GetPath())
 
             # fill mesh prim
-            mesh2Prim(volume.mesh.localmesh, meshPrim)
+            mesh2Prim(volume.mesh.localmesh, meshPrim, scale=scale)
 
             # loop over all daughters
             for daughter in volume.daughterVolumes:
@@ -91,7 +93,9 @@ class UsdViewer(_ViewerHierarchyBase):
                     xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
 
                 else:
-                    daughterPrim = self.traverseHierarchy(daughter, motherPrim=prim)
+                    daughterPrim = self.traverseHierarchy(
+                        daughter, motherPrim=prim, scale=scale * self.scaleFactor
+                    )
 
                     # daughter pos
                     if daughter.type == "placement":
@@ -112,7 +116,9 @@ class UsdViewer(_ViewerHierarchyBase):
 
         elif type(volume) is _pyg4.geant4.PhysicalVolume:
             print("traverseHierarchy> process physical volume ")
-            self.traverseHierarchy(volume.logicalVolume, motherPrim=prim)
+            self.traverseHierarchy(
+                volume.logicalVolume, motherPrim=prim, scale=scale * self.scaleFactor
+            )
         elif type(volume) is _pyg4.geant4.DivisionVolume:
             print("traverseHierarchy> process division volume")
             for i, m, t in zip(range(len(volume.meshes)), volume.meshes, volume.transforms):
@@ -121,7 +127,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 paramPrim = self.stage.DefinePrim(
                     prim.GetPath().AppendPath(volume.name + "_mesh" + str(i)), "Mesh"
                 )
-                mesh2Prim(m.localmesh, paramPrim)
+                mesh2Prim(m.localmesh, paramPrim, scale=scale * self.scaleFactor)
 
                 pos = _np.array(t[1]) / 1000.0  # convert to metres from mm
                 # daughter rot
@@ -141,7 +147,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 paramPrim = self.stage.DefinePrim(
                     prim.GetPath().AppendPath(volume.name + "_mesh" + str(i)), "Mesh"
                 )
-                mesh2Prim(m.localmesh, paramPrim)
+                mesh2Prim(m.localmesh, paramPrim, scale=scale * self.scaleFactor)
 
                 pos = _np.array(t[1]) / 1000.0  # convert to metres from mm
                 # daughter rot
@@ -161,7 +167,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 paramPrim = self.stage.DefinePrim(
                     prim.GetPath().AppendPath(volume.name + "_mesh" + str(i)), "Mesh"
                 )
-                mesh2Prim(m.localmesh, paramPrim)
+                mesh2Prim(m.localmesh, paramPrim, scale=scale * self.scaleFactor)
 
                 pos = _np.array(t[1].eval()) / 1000.0  # convert to metres from mm
                 # daughter rot
