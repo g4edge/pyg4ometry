@@ -1,5 +1,5 @@
 try:
-    from pxr import Usd, Gf, UsdGeom
+    from pxr import Usd, Gf, UsdGeom, UsdShade, Sdf
 
     print("Openusd pyg4ometry imported")
 except ImportError:
@@ -22,6 +22,21 @@ def mesh2Prim(mesh, meshPrim, scale=1000):
     meshPrim.GetAttribute("faceVertexIndices").Set(inds)
 
 
+def visOptions2MaterialPrim(stage, visOptions, materialPrim):
+
+    # create shader
+    shader = UsdShade.Shader.Define(stage, materialPrim.GetPath().AppendPath("PreviewShader"))
+    shader.CreateIdAttr("UsdPreviewSurface")
+    shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(
+        Gf.Vec3f(0.18, 0.6, 0.18)
+    )  # Green color
+    shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.4)  # Roughness value
+    shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.1)  # Low metallic
+
+    # connect shader to material
+    materialPrim.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
+
+
 class UsdViewer(_ViewerHierarchyBase):
 
     def __init__(self, filePath="./test.usd"):
@@ -34,6 +49,9 @@ class UsdViewer(_ViewerHierarchyBase):
         self.stage = Usd.Stage.CreateNew(layer_path)
 
         self.lvNameToPrimDict = {}
+        self.lvNameToMaterialPrimDict = {}
+
+        self.materialRootPath = "/Materials"
 
         self.scaleFactor = 0.9999
 
@@ -65,6 +83,13 @@ class UsdViewer(_ViewerHierarchyBase):
 
             # fill mesh prim
             mesh2Prim(volume.mesh.localmesh, meshPrim, scale=scale)
+
+            # material for logical
+            materialPrim = UsdShade.Material.Define(
+                self.stage, self.materialRootPath + "/" + volume.name + "_mat"
+            )
+            visOptions2MaterialPrim(self.stage, None, materialPrim)
+            UsdShade.MaterialBindingAPI(meshPrim).Bind(materialPrim)
 
             # loop over all daughters
             for daughter in volume.daughterVolumes:
@@ -113,7 +138,6 @@ class UsdViewer(_ViewerHierarchyBase):
                         xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
                         # Rotate
                         xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
-
         elif type(volume) is _pyg4.geant4.PhysicalVolume:
             print("traverseHierarchy> process physical volume ")
             self.traverseHierarchy(
