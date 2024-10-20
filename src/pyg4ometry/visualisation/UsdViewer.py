@@ -28,7 +28,7 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
     shader = UsdShade.Shader.Define(stage, materialPrim.GetPath().AppendPath("PreviewShader"))
     shader.CreateIdAttr("UsdPreviewSurface")
     shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(
-        Gf.Vec3f(0.18, 0.6, 0.18)
+        Gf.Vec3f(*visOptions.colour)
     )  # Green color
     shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.4)  # Roughness value
     shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.1)  # Low metallic
@@ -88,7 +88,8 @@ class UsdViewer(_ViewerHierarchyBase):
             materialPrim = UsdShade.Material.Define(
                 self.stage, self.materialRootPath + "/" + volume.name + "_mat"
             )
-            visOptions2MaterialPrim(self.stage, None, materialPrim)
+
+            visOptions2MaterialPrim(self.stage, volume.visOptions, materialPrim)
             UsdShade.MaterialBindingAPI(meshPrim).Bind(materialPrim)
 
             # loop over all daughters
