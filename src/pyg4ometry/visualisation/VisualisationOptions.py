@@ -141,8 +141,8 @@ class UsdPreviewSurfaceOptions:
         self.emissiveColor = [0, 0, 0.0]
         self.useSpecularWorkflow = 0
         self.specularColor = [0.5, 0.5, 0.5]
-        self.metallic = 1.0
-        self.roughness = 0.0
+        self.metallic = 0.0
+        self.roughness = 1.0
         self.clearcoat = 0.0
         self.clearcoatRoughness = 0.0
         self.opacity = 1.0
