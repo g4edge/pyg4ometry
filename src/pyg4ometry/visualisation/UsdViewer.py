@@ -27,11 +27,40 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
     # create shader
     shader = UsdShade.Shader.Define(stage, materialPrim.GetPath().AppendPath("PreviewShader"))
     shader.CreateIdAttr("UsdPreviewSurface")
+    print(visOptions.usdOptions.diffuseColor)
     shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(
-        Gf.Vec3f(*visOptions.colour)
-    )  # Green color
-    shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.4)  # Roughness value
-    shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.1)  # Low metallic
+        Gf.Vec3f(*visOptions.usdOptions.diffuseColor)
+    )
+    print(visOptions.usdOptions.emissiveColor)
+    shader.CreateInput("emissiveColor", Sdf.ValueTypeNames.Color3f).Set(
+        Gf.Vec3f(*visOptions.usdOptions.emissiveColor)
+    )
+    shader.CreateInput("useSpecularWorkflow", Sdf.ValueTypeNames.Int).Set(
+        visOptions.usdOptions.useSpecularWorkflow
+    )
+    shader.CreateInput("specularColor", Sdf.ValueTypeNames.Color3f).Set(
+        Gf.Vec3f(*visOptions.usdOptions.specularColor)
+    )
+    shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(visOptions.usdOptions.metallic)
+    shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(visOptions.usdOptions.roughness)
+    shader.CreateInput("clearcoat", Sdf.ValueTypeNames.Float).Set(visOptions.usdOptions.clearcoat)
+    shader.CreateInput("clearcoatRoughness", Sdf.ValueTypeNames.Float).Set(
+        visOptions.usdOptions.clearcoatRoughness
+    )  #
+    shader.CreateInput("opacity", Sdf.ValueTypeNames.Float).Set(visOptions.usdOptions.opacity)  #
+    shader.CreateInput("opacityThreshold", Sdf.ValueTypeNames.Float).Set(
+        visOptions.usdOptions.opacityThreshold
+    )  #
+    shader.CreateInput("ior", Sdf.ValueTypeNames.Float).Set(visOptions.usdOptions.ior)  #
+    shader.CreateInput("normal", Sdf.ValueTypeNames.Color3f).Set(
+        Gf.Vec3f(*visOptions.usdOptions.normal)
+    )
+    shader.CreateInput("displacement", Sdf.ValueTypeNames.Float).Set(
+        visOptions.usdOptions.displacement
+    )  #
+    shader.CreateInput("occlusion", Sdf.ValueTypeNames.Float).Set(
+        visOptions.usdOptions.occlusion
+    )  #
 
     # connect shader to material
     materialPrim.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")

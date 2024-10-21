@@ -137,15 +137,15 @@ class UsdPreviewSurfaceOptions:
     """
 
     def __init__(self):
-        self.diffuseColor = [0.5, 0.5, 0.5]
-        self.emissiveColor = [0, 5, 0.5, 0.5]
+        self.diffuseColor = [1, 0.0, 0.0]
+        self.emissiveColor = [0, 0, 0.0]
         self.useSpecularWorkflow = 0
         self.specularColor = [0.5, 0.5, 0.5]
-        self.metallic = 0.0
-        self.roughness = 0.5
+        self.metallic = 1.0
+        self.roughness = 0.0
         self.clearcoat = 0.0
         self.clearcoatRoughness = 0.0
-        self.opacity = 0.0
+        self.opacity = 1.0
         self.opacityThreshold = 0.0
         self.ior = 1.5
         self.normal = [0, 0, 1]
