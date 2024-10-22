@@ -326,7 +326,7 @@ def test_Python_VisualisationVtk_setWireframe_VisualisationOptions(simple_box):
     r = simple_box
     lv = r["logicalVolume"]
     dv = lv.daughterVolumes[0]
-    dv.visOptions.representation = "wireframe"
+    # dv.visOptions.representation = "wireframe"
 
     v = pyg4ometry.visualisation.VtkViewer()
     v.addLogicalVolume(lv)
