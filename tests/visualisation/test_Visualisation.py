@@ -31,6 +31,6 @@ def test_VtkViewerNew(testdata, tmptestdir):
 def test_UsdViewer(testdata, tmptestdir):
     r = _pyg4.gdml.Reader(testdata["gdml/ChargeExchangeMC/lht.gdml"])
     reg = r.getRegistry()
-    v = _pyg4.visualisation.UsdViewer(tmptestdir / "test.uda")
+    v = _pyg4.visualisation.UsdViewer()
     v.traverseHierarchy(reg.getWorldVolume())
     v.save()
