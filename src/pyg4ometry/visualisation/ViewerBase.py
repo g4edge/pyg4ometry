@@ -159,12 +159,17 @@ class ViewerBase:
                 mtra_new = mtra @ pvmrot @ pvmsca
                 tra_new = mtra @ pvtra + tra
 
+                if not pv.visOptions:
+                    vo = pv.logicalVolume.visOptions
+                else:
+                    vo = pv.visOptions
+
                 # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(
                     pv.logicalVolume,
                     mtra_new,
                     tra_new,
-                    pv.visOptions,
+                    vo,
                     depth + 1,
                     pv.name,
                 )

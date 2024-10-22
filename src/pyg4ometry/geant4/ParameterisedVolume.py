@@ -213,7 +213,7 @@ class ParameterisedVolume(_ReplicaVolume):
         self.registry = registry
 
         # physical visualisation options
-        self.visOptions = _VisOptions()
+        self.visOptions = None
 
         # Create parameterised meshes
         self.meshes = self.createParameterisedMeshes()
@@ -513,3 +513,6 @@ class ParameterisedVolume(_ReplicaVolume):
                 vMin[2] = vMinDaughter[2]
 
         return [vMin, vMax]
+
+    def __repr__(self):
+        return "Parametrised volume : " + self.name

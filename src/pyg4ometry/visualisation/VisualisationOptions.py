@@ -15,6 +15,19 @@ def hexRGBToRGBTriplet(value):
     return [int(h, 16) / 255 for h in hexes]
 
 
+# Vtk
+#   ambientColour, coatColour, diffuseColour, specularColour
+#   anisotropy, anisotropyRotation, anisotropyTexture
+#   coatIOR, coatNormalScale, coatNormalTexture, coatRoughness, coatStrength
+#   emissiveFactor, emissiveTesxture
+#   metallic
+#   normalScale, normalTexture
+#   ORMTexture??
+#   roughness
+#   specularPower
+#   texture
+
+
 class VisualisationOptions:
     """
     Basic holder for visualisation parameters, i.e. colour and opacity.
@@ -38,6 +51,9 @@ class VisualisationOptions:
         self.lineWidth = lineWidth
         self.randomColour = randomColour
         self.depth = depth
+
+        # vis options for pbr shaders
+        self.usdOptions = UsdPreviewSurfaceOptions()
 
     def __repr__(self):
         rgba = [*self.getColour(), self.alpha]
@@ -113,3 +129,25 @@ def makeVisualisationOptionsDictFromPredefined(ColourMap):
             ColourMap[material].visible = False
 
     return ColourMap
+
+
+class UsdPreviewSurfaceOptions:
+    """
+    Usd preview shader options
+    """
+
+    def __init__(self):
+        self.diffuseColor = [1, 0.0, 0.0]
+        self.emissiveColor = [0, 0, 0.0]
+        self.useSpecularWorkflow = 0
+        self.specularColor = [0.5, 0.5, 0.5]
+        self.metallic = 0.0
+        self.roughness = 1.0
+        self.clearcoat = 0.0
+        self.clearcoatRoughness = 0.0
+        self.opacity = 1.0
+        self.opacityThreshold = 0.0
+        self.ior = 1.5
+        self.normal = [0, 0, 1]
+        self.displacement = 0.0
+        self.occlusion = 1.0

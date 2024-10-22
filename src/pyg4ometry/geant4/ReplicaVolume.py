@@ -66,7 +66,7 @@ class ReplicaVolume(_PhysicalVolume):
         self.registry = registry
 
         # physical visualisation options
-        self.visOptions = _VisOptions()
+        self.visOptions = None
 
         # Create replica meshes
         [self.meshes, self.transforms] = self.createReplicaMeshes()

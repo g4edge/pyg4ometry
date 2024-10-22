@@ -12,6 +12,7 @@ from . import solid as _solid
 from . import _Material as _mat
 import pyg4ometry.transformation as _trans
 import vtk as _vtk
+from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
 
 from collections import defaultdict as _defaultdict
 import numpy as _np
@@ -103,6 +104,9 @@ class LogicalVolume:
         if registry and addRegistry:
             registry.addLogicalVolume(self)
         self.registry = registry
+
+        # physical visualisation options
+        self.visOptions = _VisOptions()
 
         # efficient overlap checking
         self.overlapChecked = False
@@ -1084,5 +1088,5 @@ class LogicalVolume:
         print(depth * "-" + self.name + " " + self.solid.type + " (lv)")
 
         for d in self.daughterVolumes:
-            print(2 * depth * "-" + d.name + " (pv)")
+            print(2 * depth * "-" + d.name + " " + d.type + " (pv)")
             d.logicalVolume.dumpStructure(depth + 2)

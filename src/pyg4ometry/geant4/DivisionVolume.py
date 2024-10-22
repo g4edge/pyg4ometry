@@ -53,7 +53,7 @@ class DivisionVolume(_PhysicalVolume):
         self.offset = offset
         self.unit = unit
 
-        self.visOptions = _VisOptions()
+        self.visOptions = None
 
         # NOT PART OF NORMAL DIVISION VOLUME BUT USEFUL FOR CONVERSION TO FLUKA
         # need to determine type or rotation and position, as should be Position or Rotation type

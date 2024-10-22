@@ -46,7 +46,8 @@ dependencies = [
     "scipy",
     "sympy>=1.7",
     "testtools",
-    "vtk"
+    "vtk",
+    "usd-core"
 ]
 
 [project.scripts]
