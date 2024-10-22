@@ -47,7 +47,7 @@ dependencies = [
     "sympy>=1.7",
     "testtools",
     "vtk",
-    "open-usd"
+    "usd-core"
 ]
 
 [project.scripts]
