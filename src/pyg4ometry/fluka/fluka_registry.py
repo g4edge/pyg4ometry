@@ -4,15 +4,15 @@ from collections.abc import MutableMapping as _MutableMapping
 
 import numpy as _np
 import pandas as _pd
-import pyg4ometry.geant4 as _g4
+from .. import geant4 as _g4
 from .region import Region as _Region
 from .region import bracket_depth as _bracket_depth
 from .region import bracket_number as _bracket_number
 from .directive import RecursiveRotoTranslation as _RecursiveRotoTranslation
 from .directive import RotoTranslation as _RotoTranslation
 from .directive import rotoTranslationFromTra2 as _rotoTranslationFromTra2
-from pyg4ometry.exceptions import IdenticalNameError as _IdenticalNameError
-from pyg4ometry.exceptions import FLUKAError as _FLUKAError
+from ..exceptions import IdenticalNameError as _IdenticalNameError
+from ..exceptions import FLUKAError as _FLUKAError
 from .material import (
     defineBuiltInFlukaMaterials,
     BuiltIn,

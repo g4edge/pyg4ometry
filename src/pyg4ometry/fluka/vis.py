@@ -1,5 +1,5 @@
-from pyg4ometry.visualisation import VtkViewer
-from pyg4ometry.exceptions import NullMeshError
+from ..visualisation import VtkViewer
+from ..exceptions import NullMeshError
 
 
 class ViewableMixin:

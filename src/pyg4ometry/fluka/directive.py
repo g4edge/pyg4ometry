@@ -5,8 +5,8 @@ from operator import mul
 
 import numpy as np
 
-from pyg4ometry.transformation import reverse
-from pyg4ometry.exceptions import FLUKAError
+from ..transformation import reverse
+from ..exceptions import FLUKAError
 from .vector import Three
 from .card import Card
 

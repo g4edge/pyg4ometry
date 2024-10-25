@@ -5,7 +5,7 @@ import sys
 
 import numpy as np
 
-from pyg4ometry.exceptions import FLUKAError
+from ..exceptions import FLUKAError
 
 
 def _degree_input(f):
