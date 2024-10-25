@@ -15,6 +15,7 @@ User Manual
    combining
    comparing
    analysing
+   rendering
 
 
 Indices and tables
