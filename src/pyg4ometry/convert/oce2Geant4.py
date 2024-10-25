@@ -1,5 +1,5 @@
 import pyg4ometry as _pyg4
-import pyg4ometry.pyoce as _oce
+from .. import pyoce as _oce
 
 defaultLinDef = 0.5
 deftaulAngDef = 0.5

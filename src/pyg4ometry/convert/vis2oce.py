@@ -1,12 +1,13 @@
-import numpy as _np
-import pyg4ometry.transformation as _transformation
-import pyg4ometry.pyoce
-from pyg4ometry.pyoce.gp import gp_XYZ, gp_Pnt, gp_Dir, gp_Vec, gp_Trsf, gp_Ax1
-from pyg4ometry.pyoce.BRepBuilder import (
+from .. import transformation as _transformation
+from .. import pyoce
+from ..pyoce.gp import gp_XYZ, gp_Pnt, gp_Dir, gp_Vec, gp_Trsf, gp_Ax1
+from ..pyoce.BRepBuilder import (
     BRepBuilderAPI_MakePolygon,
     BRepBuilderAPI_MakeFace,
     BRepBuilderAPI_Sewing,
 )
+
+import numpy as _np
 
 
 def convertMeshToPolyTriangulation(m):

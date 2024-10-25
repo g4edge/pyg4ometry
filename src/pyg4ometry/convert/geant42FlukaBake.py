@@ -1,9 +1,9 @@
-import pyg4ometry.transformation as _transformation
-import pyg4ometry.geant4 as _geant4
-import pyg4ometry.fluka as _fluka
-import pyg4ometry.pycgal as _pycgal
-from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
-from pyg4ometry.fluka.directive import (
+from .. import transformation as _transformation
+from .. import geant4 as _geant4
+from .. import fluka as _fluka
+from .. import pycgal as _pycgal
+from ..pycgal.core import PolygonProcessing as _PolygonProcessing
+from ..fluka.directive import (
     rotoTranslationFromTra2 as _rotoTranslationFromTra2,
 )
 import numpy as _np

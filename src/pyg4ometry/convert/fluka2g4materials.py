@@ -1,5 +1,5 @@
-import pyg4ometry.geant4 as _g4
-from pyg4ometry.exceptions import FLUKAError as _FLUKAError
+from .. import geant4 as _g4
+from ..exceptions import FLUKAError as _FLUKAError
 
 _periodicTable = None
 

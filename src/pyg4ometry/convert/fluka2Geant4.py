@@ -7,10 +7,10 @@ import types as _types
 import warnings as _warnings
 
 from .fluka2g4materials import makeFlukaToG4MaterialsMap as _makeFlukaToG4MaterialsMap
-from pyg4ometry.fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
-import pyg4ometry.fluka as _fluka
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.transformation as _trans
+from ..fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
+from .. import fluka as _fluka
+from .. import geant4 as _g4
+from .. import transformation as _trans
 
 import pyg4ometry.config as _config
 

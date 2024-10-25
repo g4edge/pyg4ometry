@@ -1,4 +1,4 @@
-import pyg4ometry.fluka as _fluka
+from .. import fluka as _fluka
 
 
 def freecadDoc2Fluka(fcd):
