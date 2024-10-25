@@ -54,6 +54,8 @@ class VisualisationOptions:
 
         # vis options for pbr shaders
         self.usdOptions = UsdPreviewSurfaceOptions()
+        self.usdOptions.diffuseColor = colour
+        self.usdOptions.opacity = alpha
 
     def __repr__(self):
         rgba = [*self.getColour(), self.alpha]
