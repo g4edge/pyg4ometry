@@ -1,8 +1,8 @@
-import pyg4ometry as _pyg4ometry
-import pyg4ometry.transformation as _trans
-import pyg4ometry.geant4.solid as _solid
-from pyg4ometry.visualisation import Mesh as _Mesh
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from .. import geant4 as _geant4
+from .. import transformation as _trans
+from . import solid as _solid
+from ..visualisation import Mesh as _Mesh
+from ..visualisation import VisualisationOptions as _VisOptions
 
 
 import numpy as _np
@@ -229,9 +229,9 @@ class AssemblyVolume:
             pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
 
             if pvi.logicalVolume.type == "assembly":
-                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
+                lvNew = _geant4.AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
             else:
-                lvNew = _pyg4ometry.geant4.LogicalVolume(
+                lvNew = _geant4.LogicalVolume(
                     pvi.logicalVolume.solid,
                     pvi.logicalVolume.material,
                     pvNewName,
@@ -322,7 +322,7 @@ class AssemblyVolume:
         extent = self.extent(True)
 
         # create world box
-        solid = _pyg4ometry.geant4.solid.Box(
+        solid = _geant4.solid.Box(
             "worldSolid",
             2.1 * max([abs(extent[1][0]), abs(extent[0][0])]),
             2.1 * max([abs(extent[1][1]), abs(extent[0][1])]),

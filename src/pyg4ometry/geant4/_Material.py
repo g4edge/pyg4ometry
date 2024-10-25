@@ -1,4 +1,4 @@
-from pyg4ometry import exceptions as _exceptions
+from .. import exceptions as _exceptions
 
 _nistMaterialDict = None
 _nistMaterialList = None

@@ -1,12 +1,11 @@
 from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
-import pyg4ometry.geant4.solid as _solid
-from pyg4ometry.visualisation import Mesh as _Mesh
-from pyg4ometry.visualisation import OverlapType as _OverlapType
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-import pyg4ometry.transformation as _trans
+from . import solid as _solid
+from ..visualisation import Mesh as _Mesh
+from ..visualisation import OverlapType as _OverlapType
+from ..visualisation import VisualisationOptions as _VisOptions
+from .. import transformation as _trans
 
 import numpy as _np
-import copy as _copy
 import logging as _log
 
 

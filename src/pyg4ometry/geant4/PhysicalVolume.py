@@ -1,7 +1,7 @@
-import pyg4ometry.transformation as _trans
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-import pyg4ometry.geant4.solid as _solid
-from pyg4ometry.visualisation import Mesh as _Mesh
+from .. import transformation as _trans
+from ..visualisation import VisualisationOptions as _VisOptions
+from . import solid as _solid
+from ..visualisation import Mesh as _Mesh
 
 import numpy as _np
 import logging as _log

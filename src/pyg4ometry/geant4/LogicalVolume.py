@@ -4,15 +4,17 @@ from pyg4ometry.pycsg.core import CSG as _CSG
 # from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
 
 import pyg4ometry as _pyg4ometry
-from pyg4ometry import config as _config
-from pyg4ometry.visualisation import Mesh as _Mesh
-from pyg4ometry.visualisation import Convert as _Convert
-from pyg4ometry.visualisation import OverlapType as _OverlapType
+from .. import config as _config
+from ..visualisation import Mesh as _Mesh
+from ..visualisation import Convert as _Convert
+from ..visualisation import OverlapType as _OverlapType
 from . import solid as _solid
 from . import _Material as _mat
-import pyg4ometry.transformation as _trans
+from .. import transformation as _trans
 import vtk as _vtk
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from ..visualisation import VisualisationOptions as _VisOptions
+from .. import exceptions as _exceptions
+
 
 from collections import defaultdict as _defaultdict
 import numpy as _np
@@ -124,7 +126,7 @@ class LogicalVolume:
             if recursive:
                 for d in self.daughterVolumes:
                     d.logicalVolume.reMesh(recursive)
-        except _pyg4ometry.exceptions.NullMeshError:
+        except _exceptions.NullMeshError:
             self.mesh = None
             print(f"geant4.LogicalVolume> meshing error {self.name}")
         except ValueError:

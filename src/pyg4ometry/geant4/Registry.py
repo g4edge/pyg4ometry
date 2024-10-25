@@ -1,7 +1,8 @@
-from collections import defaultdict as _defaultdict
-import pyg4ometry.exceptions as _exceptions
+from .. import exceptions as _exceptions
 from . import _Material as _mat
 from . import solid
+
+from collections import defaultdict as _defaultdict
 
 
 def solidName(var):
