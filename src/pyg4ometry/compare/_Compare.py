@@ -3,10 +3,9 @@ from copy import deepcopy as _deepcopy
 import enum as _enum
 import re as _re
 
-from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
-from pyg4ometry.geant4 import Material as _Material
-from pyg4ometry.geant4 import Element as _Element
-from pyg4ometry.gdml import Units as _Units
+from ..geant4 import Material as _Material
+from ..geant4 import Element as _Element
+from ..gdml import Units as _Units
 
 
 class Tests:
