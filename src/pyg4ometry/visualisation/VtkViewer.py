@@ -1,13 +1,13 @@
 import numpy as _np
 import vtk as _vtk
-import pyg4ometry.exceptions as _exceptions
-import pyg4ometry.transformation as _transformation
-from pyg4ometry.visualisation import OverlapType as _OverlapType
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
+from .. import exceptions as _exceptions
+from .. import transformation as _transformation
+from . import OverlapType as _OverlapType
+from . import VisualisationOptions as _VisOptions
 from .VisualisationOptions import (
     getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
 )
-from pyg4ometry.visualisation import Convert as _Convert
+from . import Convert as _Convert
 import logging as _log
 import random as _random
 

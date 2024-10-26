@@ -1,9 +1,9 @@
 import numpy as _np
 import vtk as _vtk
-import pyg4ometry.transformation as _transformation
-from pyg4ometry.visualisation import Convert as _Convert
-from pyg4ometry.visualisation import makeVisualisationOptionsDictFromPredefined
-from pyg4ometry.visualisation import (
+from .. import transformation as _transformation
+from . import Convert as _Convert
+from . import makeVisualisationOptionsDictFromPredefined
+from . import (
     getPredefinedMaterialVisOptions as _getPredefinedMaterialVisOptions,
 )
 import logging as _logging

@@ -1,12 +1,12 @@
 import base64 as _base64
 import numpy as _np
 import random as _random
-import pyg4ometry.pycgal as _pycgal
-import pyg4ometry.transformation as _transformation
-from pyg4ometry.visualisation.VisualisationOptions import (
+from .. import pycgal as _pycgal
+from .. import transformation as _transformation
+from .VisualisationOptions import (
     VisualisationOptions as _VisOptions,
 )
-from pyg4ometry.visualisation import OverlapType as _OverlapType
+from .Mesh import OverlapType as _OverlapType
 
 
 def _daughterSubtractedMesh(lv):

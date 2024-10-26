@@ -8,7 +8,7 @@ except ImportError:
 from .ViewerHierarchyBase import ViewerHierarchyBase as _ViewerHierarchyBase
 import numpy as _np
 import os as _os
-import pyg4ometry as _pyg4
+from .. import geant4 as _g4
 
 
 def mesh2Prim(mesh, meshPrim, scale=1000):
@@ -100,7 +100,7 @@ class UsdViewer(_ViewerHierarchyBase):
         else:
             prim = self.stage.DefinePrim(motherPrim.GetPath().AppendPath(volume.name), "Xform")
 
-        if type(volume) is _pyg4.geant4.LogicalVolume:
+        if type(volume) is _g4.LogicalVolume:
 
             print("traverseHierarchy> process logical volume")
 
@@ -168,12 +168,12 @@ class UsdViewer(_ViewerHierarchyBase):
                         xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
                         # Rotate
                         xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
-        elif type(volume) is _pyg4.geant4.PhysicalVolume:
+        elif type(volume) is _g4.PhysicalVolume:
             print("traverseHierarchy> process physical volume ")
             self.traverseHierarchy(
                 volume.logicalVolume, motherPrim=prim, scale=scale * self.scaleFactor
             )
-        elif type(volume) is _pyg4.geant4.DivisionVolume:
+        elif type(volume) is _g4.DivisionVolume:
             print("traverseHierarchy> process division volume")
             for i, m, t in zip(range(len(volume.meshes)), volume.meshes, volume.transforms):
                 print(i, m, t)
@@ -193,7 +193,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
                 # Rotate
                 xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
-        elif type(volume) is _pyg4.geant4.ReplicaVolume:
+        elif type(volume) is _g4.ReplicaVolume:
             print("traverseHierarchy> process replica volume")
             for i, m, t in zip(range(len(volume.meshes)), volume.meshes, volume.transforms):
                 print(i, m, t)
@@ -213,7 +213,7 @@ class UsdViewer(_ViewerHierarchyBase):
                 xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
                 # Rotate
                 xform.AddRotateZYXOp().Set(Gf.Vec3d(*rot))
-        elif type(volume) is _pyg4.geant4.ParameterisedVolume:
+        elif type(volume) is _g4.ParameterisedVolume:
             print("traverseHierarchy> process parametrised volume")
             for i, m, t in zip(range(len(volume.meshes)), volume.meshes, volume.transforms):
                 print(i, m, t)
@@ -238,7 +238,7 @@ class UsdViewer(_ViewerHierarchyBase):
             print("traverseHierarchy> other")
 
         # make dict of LV/PV to prims for instancing
-        if type(volume) is _pyg4.geant4.LogicalVolume:
+        if type(volume) is _g4.LogicalVolume:
             self.lvNameToPrimDict[volume.name] = prim
 
         return prim

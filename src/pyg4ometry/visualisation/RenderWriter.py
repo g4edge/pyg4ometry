@@ -1,7 +1,7 @@
 import os as _os
 import shutil as _shutil
 import numpy as _np
-import pyg4ometry.transformation as _transformation
+from .. import transformation as _transformation
 from . import Convert as _convert
 
 
