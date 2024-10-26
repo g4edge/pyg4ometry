@@ -4,9 +4,9 @@ import warnings as _warnings
 import struct
 import io
 
-import pyg4ometry.visualisation as _vi
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.gdml as _gd
+from .. import visualisation as _vi
+from .. import geant4 as _g4
+from .. import gdml as _gd
 
 
 class _Facet:
