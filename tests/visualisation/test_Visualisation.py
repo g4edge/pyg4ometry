@@ -66,7 +66,7 @@ def test_VtkViewerColouredMaterial(testdata, tmptestdir):
     v.addAxes(20, (0, 0, 0))
 
 
-def test_VtkViewerNew(testdata, tmptestdir):
+def test_VtkViewerNewAppend(testdata, tmptestdir):
     r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
     v = _pyg4.visualisation.VtkViewerNew()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
@@ -86,9 +86,33 @@ def test_VtkViewerNew(testdata, tmptestdir):
     v.exportGLTFScene(tmptestdir / "test.gltf")
 
 
+def test_VtkViewerColouredNewAppend(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
+    v = _pyg4.visualisation.VtkViewerColouredNew()
+    v.addLogicalVolume(r.getRegistry().getWorldVolume())
+
+    v.buildPipelinesAppend()
+
+
+def test_VtkViewerColouredMaterialNewAppend(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
+    v = _pyg4.visualisation.VtkViewerColouredNew()
+    v.addLogicalVolume(r.getRegistry().getWorldVolume())
+
+    v.buildPipelinesAppend()
+
+
 def test_UsdViewer(testdata, tmptestdir):
     r = _pyg4.gdml.Reader(testdata["gdml/ChargeExchangeMC/lht.gdml"])
     reg = r.getRegistry()
     v = _pyg4.visualisation.UsdViewer()
     v.traverseHierarchy(reg.getWorldVolume())
     v.save()
+
+
+def test_RenderWriter(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/ChargeExchangeMC/lht.gdml"])
+    reg = r.getRegistry()
+    v = _pyg4.visualisation.RenderWriter()
+    v.addLogicalVolumeRecursive(reg.getWorldVolume())
+    v.write(str(tmptestdir))
