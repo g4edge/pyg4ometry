@@ -1,25 +1,69 @@
 import pyg4ometry as _pyg4
 
 
-def test_VtkViewer(tmptestdir, testdata):
-    r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
+def test_VtkViewer(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/104_overlap_volu.gdml"])
+    l = r.getRegistry().getWorldVolume()
+    l.checkOverlaps()
+
     v = _pyg4.visualisation.VtkViewer()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
     v.addAxes(20, (0, 0, 0))
 
+    # individual actors
     v.setOpacity(0, 0)
     v.setWireframe(0)
     v.setSurface(0)
     v.setOpacityOverlap(0, 0)
     v.setWireframeOverlap(0)
+
+    # set random colours
     v.setRandomColours()
 
+    # cutter settings
+    v.setCutterOrigin("x", (0, 0, 0))
+    v.setCutterOrigin("y", (0, 0, 0))
+    v.setCutterOrigin("z", (0, 0, 0))
+    v.setCutterNormal("x", (0, 0, 1))
+    v.setCutterNormal("y", (0, 1, 0))
+    v.setCutterNormal("z", (1, 0, 0))
+
+    # camera
+    v.setCameraFocusPosition([0, 0, 0], [100, 100, 100])
+
+    # export 3d
     v.exportOBJScene(fileName=str(tmptestdir / "test.obj"))
     v.exportVRMLScene(fileName=str(tmptestdir / "temp.vrml"))
     v.exportGLTFScene(fileName=str(tmptestdir / "temp.gltf"))
     v.exportVTPScene(fileName=str(tmptestdir / "temp.vtp"))
 
+    # export screenshots
+    # v.exportScreenShot(fileName=str(tmptestdir / "test.bmp"))
+    # v.exportScreenShot(fileName=str(tmptestdir / "test.jpg"))
+    # v.exportScreenShot(fileName=str(tmptestdir / "test.pnm"))
+    # v.exportScreenShot(fileName=str(tmptestdir / "test.ps"))
+
     # v.view(interactive=False)
+
+
+def test_VtkViewerColoured(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/104_overlap_volu.gdml"])
+    l = r.getRegistry().getWorldVolume()
+    l.checkOverlaps()
+
+    v = _pyg4.visualisation.VtkViewerColoured()
+    v.addLogicalVolume(r.getRegistry().getWorldVolume())
+    v.addAxes(20, (0, 0, 0))
+
+
+def test_VtkViewerColouredMaterial(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/104_overlap_volu.gdml"])
+    l = r.getRegistry().getWorldVolume()
+    l.checkOverlaps()
+
+    v = _pyg4.visualisation.VtkViewerColouredMaterial()
+    v.addLogicalVolume(r.getRegistry().getWorldVolume())
+    v.addAxes(20, (0, 0, 0))
 
 
 def test_VtkViewerNew(testdata, tmptestdir):
