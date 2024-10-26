@@ -1,6 +1,6 @@
 from .SolidBase import SolidBase as _SolidBase
-import pyg4ometry.exceptions
-from pyg4ometry.transformation import *
+from ... import exceptions
+from ...transformation import *
 
 import copy as _copy
 import logging as _log

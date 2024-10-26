@@ -1,7 +1,7 @@
 from ... import config as _config
 from .SolidBase import SolidBase as _SolidBase
-import pyg4ometry.exceptions
-from pyg4ometry.transformation import *
+from ... import exceptions
+from ...transformation import *
 
 import logging as _log
 
@@ -76,7 +76,7 @@ class Subtraction(_SolidBase):
         if mesh.isNull():
             print("Warning> Subtraction null mesh solid name : ", self.name)
             if _config.meshingNullException:
-                raise pyg4ometry.exceptions.NullMeshError(self)
+                raise exceptions.NullMeshError(self)
 
         return mesh
 

@@ -1,5 +1,5 @@
 import numpy as _np
-from pyg4ometry import config as _config
+from ... import config as _config
 
 
 class SolidBase:

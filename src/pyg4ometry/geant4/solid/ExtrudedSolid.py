@@ -4,16 +4,16 @@ from .SolidBase import SolidBase as _SolidBase
 from pyg4ometry.gdml.Defines import Expression as _Expression
 
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG as _CSG
-    from pyg4ometry.pycsg.geom import Vector as _Vector
-    from pyg4ometry.pycsg.geom import Vertex as _Vertex
-    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+    from ...pycsg.core import CSG as _CSG
+    from ...pycsg.geom import Vector as _Vector
+    from ...pycsg.geom import Vertex as _Vertex
+    from ...pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import CSG as _CSG
-    from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
-    from pyg4ometry.pycgal.geom import Vector as _Vector
-    from pyg4ometry.pycgal.geom import Vertex as _Vertex
-    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+    from ...pycgal.core import CSG as _CSG
+    from ...pycgal.core import PolygonProcessing as _PolygonProcessing
+    from ...pycgal.geom import Vector as _Vector
+    from ...pycgal.geom import Vertex as _Vertex
+    from ...pycgal.geom import Polygon as _Polygon
 
 import pyg4ometry.pycgal as _pycgal
 

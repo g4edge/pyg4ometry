@@ -1,16 +1,13 @@
-from pyg4ometry.pycsg.geom import Vector as _Vector
-from pyg4ometry.pycsg.core import CSG as _CSG
-
-# from   pyg4ometry.gdml.Defines import Auxiliary as _Auxiliary
-
-import pyg4ometry as _pyg4ometry
 from .. import config as _config
 from ..visualisation import Mesh as _Mesh
-from ..visualisation import Convert as _Convert
 from ..visualisation import OverlapType as _OverlapType
 from . import solid as _solid
 from . import _Material as _mat
 from .. import transformation as _trans
+from .AssemblyVolume import AssemblyVolume as _AssemblyVolume
+from ..gdml import Constant as _Constant
+from .. import convert as _convert
+
 import vtk as _vtk
 from ..visualisation import VisualisationOptions as _VisOptions
 from .. import exceptions as _exceptions
@@ -28,7 +25,7 @@ def _solid2tessellated(solid):
     # Use VTK to reduce all polygons to triangles
     # as CSG operations can produce arbitrary polygons
     # which cannot be used in Tessellated Solid
-    meshVTKPD = _Convert.pycsgMeshToVtkPolyData(pycsg_mesh)
+    meshVTKPD = _convert.pycsgMeshToVtkPolyData(pycsg_mesh)
     vtkFLT = _vtk.vtkTriangleFilter()
     vtkFLT.AddInputData(meshVTKPD)
     vtkFLT.Update()
@@ -359,7 +356,7 @@ class LogicalVolume:
             positionInv = list(-_np.array(position))
 
             _trans.matrix2tbxyz(_np.linalg.inv(_trans.tbxyz2matrix(rotation)))
-            solidIntersection = _pyg4ometry.geant4.solid.Intersection(
+            solidIntersection = _solid.Intersection(
                 solidNewName,
                 solid1,
                 solid2,
@@ -414,9 +411,9 @@ class LogicalVolume:
             pvNewName = pvi.name + "_n_" + str(lvUsageCount[pvi.name])
 
             if pvi.logicalVolume.type == "assembly":
-                lvNew = _pyg4ometry.geant4.AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
+                lvNew = _AssemblyVolume(pvNewName, pvi.logicalVolume.registry)
             else:
-                lvNew = _pyg4ometry.geant4.LogicalVolume(
+                lvNew = LogicalVolume(
                     pvi.logicalVolume.solid,
                     pvi.logicalVolume.material,
                     pvNewName,
@@ -825,7 +822,7 @@ class LogicalVolume:
         # recursively check entire tree
         if recursive:
             for d in self.daughterVolumes:
-                if type(d.logicalVolume) is _pyg4ometry.geant4.AssemblyVolume:
+                if type(d.logicalVolume) is _AssemblyVolume:
                     continue  # no specific overlap check - handled by the PV of an assembly
                 # don't make any summary print out for a recursive call
                 d.logicalVolume.checkOverlaps(
@@ -856,9 +853,7 @@ class LogicalVolume:
         """
         # tesselated_lv_solid = _solid2tessellated(self.solid)
 
-        tesselated_lv_solid = _pyg4ometry.convert.geant42Geant4.geant4Solid2Geant4Tessellated_NoVTK(
-            self.solid
-        )
+        tesselated_lv_solid = _convert.geant42Geant4.geant4Solid2Geant4Tessellated_NoVTK(self.solid)
 
         self.setSolid(tesselated_lv_solid)
 
@@ -970,15 +965,9 @@ class LogicalVolume:
 
         # cuboidal solid
         if self.solid.type == "Box":
-            self.solid.pX = _pyg4ometry.gdml.Constant(
-                self.solid.name + "_rescaled_x", diff[0], self.registry, True
-            )
-            self.solid.pY = _pyg4ometry.gdml.Constant(
-                self.solid.name + "_rescaled_y", diff[1], self.registry, True
-            )
-            self.solid.pZ = _pyg4ometry.gdml.Constant(
-                self.solid.name + "_rescaled_z", diff[2], self.registry, True
-            )
+            self.solid.pX = _Constant(self.solid.name + "_rescaled_x", diff[0], self.registry, True)
+            self.solid.pY = _Constant(self.solid.name + "_rescaled_y", diff[1], self.registry, True)
+            self.solid.pZ = _Constant(self.solid.name + "_rescaled_z", diff[2], self.registry, True)
         else:
             print(
                 "Warning: only Box container volume supported: all daughter placements have been recentred but container solid has not"

@@ -1,9 +1,9 @@
 from .SolidBase import SolidBase as _SolidBase
-from pyg4ometry.transformation import *
+from ...transformation import *
 
 import logging as _log
 
-import pyg4ometry.exceptions
+from ... import exceptions
 
 
 class Intersection(_SolidBase):
@@ -84,7 +84,7 @@ class Intersection(_SolidBase):
         _log.info("Intersection.pycsgmesh> intersect")
         mesh = m1.intersect(m2)
         if mesh.isNull():
-            raise pyg4ometry.exceptions.NullMeshError(self)
+            raise exceptions.NullMeshError(self)
 
         # print 'intersection mesh ', self.name
         return mesh

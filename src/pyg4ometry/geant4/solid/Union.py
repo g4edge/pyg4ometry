@@ -1,5 +1,5 @@
 from .SolidBase import SolidBase as _SolidBase
-import pyg4ometry.exceptions
+from ... import exceptions
 from ...transformation import *
 
 import copy as _copy
