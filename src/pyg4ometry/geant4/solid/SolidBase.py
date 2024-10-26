@@ -24,7 +24,7 @@ class SolidBase:
                 )
 
     def evaluateParameter(self, obj):
-        from pyg4ometry.gdml.Defines import evaluateToFloat
+        from ...gdml.Defines import evaluateToFloat
 
         return evaluateToFloat(self.registry, obj)
 
@@ -120,8 +120,8 @@ class SolidBase:
         """
         pycsg_mesh = self.mesh()
 
-        from pyg4ometry.geant4.solid import TessellatedSolid
-        from pyg4ometry.visualisation import Convert as _Convert
+        from . import TessellatedSolid
+        from ...visualisation import Convert as _Convert
         import vtk as _vtk
 
         # Use VTK to reduce all polygons to triangles
