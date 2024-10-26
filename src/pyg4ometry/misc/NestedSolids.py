@@ -1,4 +1,4 @@
-import pyg4ometry.geant4.solid.Box as _box
+from ..geant4.solid import Box as _box
 
 
 def NestedBoxes(nameBase, bx, by, bz, registry, lunit="mm", dx=0, dy=0, dz=0, N=0):
