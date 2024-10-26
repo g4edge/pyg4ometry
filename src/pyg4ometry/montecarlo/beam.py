@@ -1,4 +1,4 @@
-import pyg4ometry.fluka as _fluka
+from .. import fluka as _fluka
 
 
 class Beam:
