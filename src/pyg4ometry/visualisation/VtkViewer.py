@@ -1,5 +1,6 @@
 import numpy as _np
 import vtk as _vtk
+from .. import geant4 as _g4
 from .. import exceptions as _exceptions
 from .. import transformation as _transformation
 from . import OverlapType as _OverlapType
@@ -718,15 +719,11 @@ class VtkViewer:
                 clipper_c_y = (clipper_max_y + clipper_min_y) / 2.0
                 clipper_c_z = (clipper_max_z + clipper_min_z) / 2.0
 
-                import pyg4ometry
-
-                reg = pyg4ometry.geant4.Registry()
-                b = pyg4ometry.geant4.solid.Box(
-                    "b", clipper_d_x, clipper_d_y, clipper_d_z, reg, "mm", False
-                )
+                reg = _g4.Registry()
+                b = _g4.solid.Box("b", clipper_d_x, clipper_d_y, clipper_d_z, reg, "mm", False)
                 bm = b.mesh()
                 bm.translate([clipper_c_x, clipper_c_y, clipper_c_z])
-                aa = pyg4ometry.transformation.matrix2axisangle(mtra)
+                aa = _transformation.matrix2axisangle(mtra)
                 meshclone = mesh.clone()
                 meshclone.rotate(aa[0], -aa[1] / _np.pi * 180.0)
                 meshclone.translate([tra[0], tra[1], tra[2]])
@@ -1293,7 +1290,6 @@ def viewLogicalVolumeDifference(
     if viewDifference:
         oMeshClone = lvo.mesh.localmesh.clone()
         # aa = oRotation
-        import pyg4ometry
 
         # print(pyg4ometry.pycgal.geom.Vector(aa[0]))
         aa = _transformation.matrix2axisangle(oRotation)

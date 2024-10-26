@@ -129,7 +129,7 @@ class OpticalSurface(_SolidBase):
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import pyg4ometry.gdml.Defines as defines
+        from ...gdml import Defines as defines
 
         matrix_name = self.name + "_" + name
         m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
@@ -147,7 +147,7 @@ class OpticalSurface(_SolidBase):
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import pyg4ometry.gdml.Defines as defines
+        from ...gdml import Defines as defines
 
         vunit = "*" + vunit if vunit != "" else ""
         matrix_name = self.name + "_" + name

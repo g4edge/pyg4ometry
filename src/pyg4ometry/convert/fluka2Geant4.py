@@ -11,8 +11,7 @@ from ..fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
 from .. import fluka as _fluka
 from .. import geant4 as _g4
 from .. import transformation as _trans
-
-import pyg4ometry.config as _config
+from .. import config as _config
 
 if _config.meshing == _config.meshingType.cgal_sm:
     from pyg4ometry.pycgal.core import do_intersect as _do_intersect

@@ -1,8 +1,9 @@
-import pyg4ometry.geant4
-import pyg4ometry.gdml
-import pyg4ometry.stl
-import pyg4ometry.freecad
-import pyg4ometry.fluka
+from .. import geant4 as _g4
+from .. import gdml as _gdml
+from .. import stl as _stl
+from .. import freecad as _freecad
+from .. import fluka as _fluka
+from .. import visualisation as _vis
 
 import os.path
 
@@ -22,7 +23,7 @@ class GeometryModel:
         self.vtkDict = {}
 
     def createNewRegistry(self, name, type):
-        reg = pyg4ometry.geant4.Registry()
+        reg = _g4.Registry()
         self.registryDict[name] = reg
 
     def loadNewRegistry(self, fileName):
@@ -30,28 +31,28 @@ class GeometryModel:
         type = extensionFromPath(fileName)
 
         if type == "gdml":
-            r = pyg4ometry.gdml.Reader(fileName)
+            r = _gdml.Reader(fileName)
             self.registryDict[name] = r.getRegistry()
             self.worldLogicalDict[name] = self.registryDict[name].getWorldVolume()
         elif type == "step" or type == "stp":
-            r = pyg4ometry.freecad.Reader(fileName)
+            r = _freecad.Reader(fileName)
             r.relabelModel()
             r.convertFlat()
             self.registryDict[name] = r.getRegistry()
             self.worldLogicalDict[name] = self.registryDict[name].getWorldVolume()
         elif type == "stl":
-            r = pyg4ometry.stl.Reader(fileName)
-            reg = pyg4ometry.geant4.Registry()
+            r = _stl.Reader(fileName)
+            reg = _g4.Registry()
             log = r.logicalVolume(name, "G4_Galactic", reg)
             self.registryDict[name] = reg
             self.worldLogicalDict[name] = log
         elif type == "inp":
-            r = pyg4ometry.fluka.Reader(fileName)
+            r = _luka.Reader(fileName)
         elif type == "py":
             # load and execute python to create registry
             pass
 
-        v = pyg4ometry.visualisation.VtkViewer()
+        v = _vis.VtkViewer()
         l = self.worldLogicalDict[name]
         v.addLogicalVolume(l)
         self.vtkDict[name] = v

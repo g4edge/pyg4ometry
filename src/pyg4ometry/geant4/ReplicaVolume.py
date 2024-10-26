@@ -134,8 +134,8 @@ class ReplicaVolume(_PhysicalVolume):
                     self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.overlap])
 
     def createReplicaMeshes(self):
-        import pyg4ometry.gdml.Units as _Units
-        from pyg4ometry.gdml.Defines import evaluateToFloat
+        from ..gdml import Units as _Units
+        from ..gdml.Defines import evaluateToFloat
 
         nreplicas = int(evaluateToFloat(self.registry, self.nreplicas))
         offset = evaluateToFloat(self.registry, self.offset) * _Units.unit(self.ounit)
@@ -210,10 +210,10 @@ class ReplicaVolume(_PhysicalVolume):
         """
         result = []
         transforms = []
-        import pyg4ometry.gdml.Units as _Units
-        from pyg4ometry.gdml.Defines import evaluateToFloat
-        from pyg4ometry.geant4 import PhysicalVolume
-        from pyg4ometry.geant4 import LogicalVolume
+        from ..gdml import Units as _Units
+        from ..gdml.Defines import evaluateToFloat
+        from ..geant4 import PhysicalVolume
+        from ..geant4 import LogicalVolume
 
         nreplicas = int(evaluateToFloat(self.registry, self.nreplicas))
         offset = evaluateToFloat(self.registry, self.offset) * _Units.unit(self.ounit)

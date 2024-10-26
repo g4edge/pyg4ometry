@@ -3,7 +3,7 @@ from .Vector_3 import Vector_3_ECER as _Vector_3_ECER
 from .Plane_3 import Plane_3_ECER as _Plane_3_ECER
 from .Nef_polyhedron_3 import Nef_polyhedron_3_ECER as _Nef_polyhedron_3_ECER
 from .Polyhedron_3 import Polyhedron_3_ECER as _Polyhedron_3_ECER
-import pyg4ometry.pycgal.Surface_mesh
+from . import Surface_mesh as _Surface_mesh
 from .Surface_mesh import Surface_mesh_ECER as _Surface_mesh_ECER
 from .Surface_mesh import Surface_mesh_EPECK as _Surface_mesh_EPECK
 from .CGAL import copy_face_graph as _copy_face_graph
@@ -26,6 +26,6 @@ def halfPlaneMesh(planes=None):
     sm_epeck = _Surface_mesh_EPECK()
 
     _copy_face_graph(p, sm_ecer)
-    pyg4ometry.pycgal.Surface_mesh.toCGALSurfaceMesh(sm_epeck, sm_ecer)
+    _Surface_mesh.toCGALSurfaceMesh(sm_epeck, sm_ecer)
 
     return sm_epeck

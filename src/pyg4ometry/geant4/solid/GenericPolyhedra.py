@@ -14,8 +14,6 @@ elif _config.meshing == _config.meshingType.cgal_sm:
     from ...pycgal.geom import Vertex as _Vertex
     from ...pycgal.geom import Polygon as _Polygon
 
-import pyg4ometry.pycgal as _pycgal
-
 import logging as _log
 import numpy as _np
 
@@ -86,7 +84,7 @@ class GenericPolyhedra(_SolidBase):
     def mesh(self):
         _log.info("genericpolyhedra.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)

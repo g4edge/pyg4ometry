@@ -16,11 +16,10 @@ from .body import BodyMixin
 from .vector import Three, AABB, areAABBsOverlapping
 from . import boolean_algebra
 from ..transformation import tbxyz2axisangle
-
-import pyg4ometry.config as _config
+from .. import config as _config
 
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG, do_intersect
+    from ..pycsg.core import CSG, do_intersect
 elif _config.meshing == _config.meshingType.cgal_sm:
     pass
     # TODO reinstate intersecting meshes

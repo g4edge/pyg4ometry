@@ -176,7 +176,7 @@ class AssemblyVolume:
         # increment the recursion depth
         depth += 1
 
-        import pyg4ometry.gdml.Units as _Units
+        from ..gdml import Units as _Units
 
         puval = _Units.unit(punit)
         ruval = _Units.unit(runit)
@@ -317,7 +317,7 @@ class AssemblyVolume:
         all of the relative daughter placements.
         """
 
-        import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
+        from . import LogicalVolume as _LogicalVolume
 
         extent = self.extent(True)
 

@@ -44,7 +44,7 @@ class Scaled(_SolidBase):
         return f"Scaled : name={self.name} solid={self.solid} x={float(self.pX)} y={float(self.pY)} z={float(self.pZ)}"
 
     def mesh(self):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         _log.info("scaled.pycsgmesh> antlr")
 

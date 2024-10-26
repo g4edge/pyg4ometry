@@ -129,7 +129,7 @@ class GenericTrap(_SolidBase):
         return signed_area
 
     def get_vertex(self, index):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         uval = _Units.unit(self.lunit)
 
@@ -142,7 +142,7 @@ class GenericTrap(_SolidBase):
         return vertex
 
     def makeLayers(self, verts_bot, verts_top):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         uval = _Units.unit(self.lunit)
 

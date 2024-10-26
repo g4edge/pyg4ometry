@@ -255,9 +255,8 @@ class LogicalVolume:
         :type punit: str
         """
         # need to determine type or rotation and position, as should be Position or Rotation type
-        from pyg4ometry.gdml import Defines as _Defines
-
-        import pyg4ometry.gdml.Units as _Units
+        from ..gdml import Defines as _Defines
+        from ..gdml import Units as _Units
 
         puval = _Units.unit(punit)
         ruval = _Units.unit(runit)
@@ -336,7 +335,7 @@ class LogicalVolume:
 
         clipMesh = _Mesh(newSolid[depth - 1]).localmesh
 
-        import pyg4ometry.gdml.Units as _Units
+        from ..gdml import Units as _Units
 
         puval = _Units.unit(punit)
         ruval = _Units.unit(runit)
@@ -1034,7 +1033,7 @@ class LogicalVolume:
         removing the solid and material of this logical volume, but retaining
         all of the relative daughter placements.
         """
-        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
+        from . import AssemblyVolume as _AssemblyVolume
 
         # prepend the name because the name might have a pointer in it
         # therefore geant4 will just strip off everything after 0x
@@ -1054,7 +1053,7 @@ class LogicalVolume:
         by name) and assigned as the world volume (outermost) of the registry according
         to this logical volume.
         """
-        import pyg4ometry.geant4 as _g4
+        from .. import geant4 as _g4
 
         extent = self.extent(True)
 

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as _plt
-import pyg4ometry as _pyg4
+from .. import pycgal as _pycgal
 
 
 def polygon_to_numpy(polygon):
@@ -30,9 +30,9 @@ def _draw_polygon_2(p2):
 
 def draw_polygon_2_list(pl):
     for p in pl:
-        poly2 = _pyg4.pycgal.Polygon_2.Polygon_2_EPECK()
+        poly2 = _pycgal.Polygon_2.Polygon_2_EPECK()
         for v in p:
-            poly2.push_back(_pyg4.pycgal.Point_2.Point_2_EPECK(v[0], v[1]))
+            poly2.push_back(_pycgal.Point_2.Point_2_EPECK(v[0], v[1]))
 
         draw_polygon_2(poly2)
 
@@ -46,26 +46,26 @@ def draw_polygon_2(p2):
     """
 
     if (
-        type(p2) == _pyg4.pycgal.Polygon_2.Polygon_2_EPECK
-        or type(p2) == _pyg4.pycgal.Polygon_2.Polygon_2_EPICK
+        type(p2) == _pycgal.Polygon_2.Polygon_2_EPECK
+        or type(p2) == _pycgal.Polygon_2.Polygon_2_EPICK
     ):
         _draw_polygon_2(p2)
     elif (
-        type(p2) == _pyg4.pycgal.Polygon_with_holes_2.Polygon_with_holes_2_EPECK
-        or type(p2) == _pyg4.pycgal.Polygon_with_holes_2.Polygon_with_holes_2_EPICK
+        type(p2) == _pycgal.Polygon_with_holes_2.Polygon_with_holes_2_EPECK
+        or type(p2) == _pycgal.Polygon_with_holes_2.Polygon_with_holes_2_EPICK
     ):
         _draw_polygon_2(p2.outer_boundary())
         for h in p2.holes():
             _draw_polygon_2(h)
     elif (
-        type(p2) == _pyg4.pycgal.Polygon_with_holes_2.List_Polygon_with_holes_2_EPECK
-        or type(p2) == _pyg4.pycgal.Polygon_with_holes_2.List_Polygon_with_holes_2_EPICK
+        type(p2) == _pycgal.Polygon_with_holes_2.List_Polygon_with_holes_2_EPECK
+        or type(p2) == _pycgal.Polygon_with_holes_2.List_Polygon_with_holes_2_EPICK
     ):
         for p in p2:
             draw_polygon_2(p)
     elif (
-        type(p2) == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK
-        or type(p2) == _pyg4.pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPICK
+        type(p2) == _pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPECK
+        or type(p2) == _pycgal.Partition_traits_2_Polygon_2.Partition_traits_2_Polygon_2_EPICK
     ):
         _draw_polygon_2(p2)
     else:

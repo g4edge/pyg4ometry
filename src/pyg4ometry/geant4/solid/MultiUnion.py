@@ -23,8 +23,8 @@ class MultiUnion(_SolidBase):
     def __init__(self, name, objects, transformations, registry, addRegistry=True):
         super().__init__(name, "MultiUnion", registry)
         # circular import
-        import pyg4ometry.gdml.Defines as _defines
-        import pyg4ometry.geant4 as _g4
+        from ...gdml import Defines as _defines
+        from ... import geant4 as _g4
 
         self.objects = objects
         self.transformations = [

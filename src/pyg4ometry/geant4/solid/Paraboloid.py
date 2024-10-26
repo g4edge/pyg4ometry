@@ -76,7 +76,7 @@ class Paraboloid(_SolidBase):
         return f"Paraboloid : name={self.name} dz={float(self.pDz)} r1={float(self.pR1)} r2={float(self.pR2)}"
 
     def mesh(self):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         _log.info("paraboloid.antlr>")
 

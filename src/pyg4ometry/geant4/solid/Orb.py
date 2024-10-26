@@ -84,7 +84,7 @@ class Orb(_SolidBase):
     def mesh(self):
         _log.info("orb.antlr>")
 
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
 

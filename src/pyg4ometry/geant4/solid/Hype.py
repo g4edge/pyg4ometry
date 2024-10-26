@@ -103,7 +103,7 @@ class Hype(_SolidBase):
     def mesh(self):
         _log.info("hype.pycsgmesh> antlr")
 
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)

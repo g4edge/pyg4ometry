@@ -29,7 +29,7 @@ class SolidBase:
         return evaluateToFloat(self.registry, obj)
 
     def evaluateParameterWithUnits(self, varName):
-        import pyg4ometry.gdml.Units as _Units
+        from ...gdml import Units as _Units
 
         var = getattr(self, varName)
         varVal = self.evaluateParameter(var)
@@ -81,8 +81,8 @@ class SolidBase:
         """
         Raises a ValueError if the attribute is over pyg4ometry.config.twoPiComparisonTolerance **over** 2 x pi.
         """
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        import pyg4ometry.gdml.Defines as _Defines
+        from ...gdml import Units as _Units
+        from ...gdml import Defines as _Defines
 
         if type(getattr(self, attribute)) is _Defines.Quantity:
             aunit = getattr(self, attribute).unit

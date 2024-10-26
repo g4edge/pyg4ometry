@@ -93,7 +93,7 @@ class Sphere(_SolidBase):
             registry.addSolid(self)
 
     def checkParameters(self):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         auval = _Units.unit(self.aunit)
         if self.evaluateParameter(self.pRmin) > self.evaluateParameter(self.pRmax):
@@ -120,7 +120,7 @@ class Sphere(_SolidBase):
         tBefore = _time.process_time()
 
         _log.info("sphere.antlr>")
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
         auval = _Units.unit(self.aunit)
