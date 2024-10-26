@@ -14,9 +14,9 @@ from .. import transformation as _trans
 from .. import config as _config
 
 if _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import do_intersect as _do_intersect
+    from ..pycgal.core import do_intersect as _do_intersect
 elif _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import do_intersect as _do_intersect
+    from ..pycsg.core import do_intersect as _do_intersect
 
 logger = _logging.getLogger(__name__)
 logger.setLevel(_logging.INFO)

@@ -11,7 +11,7 @@ import copy as _copy
 import scipy.linalg as _la
 
 # this should be refactored to rename namespaced (privately)
-from pyg4ometry.fluka.body import *
+from ..fluka.body import *
 
 # import matplotlib.pyplot as _plt
 

@@ -4,9 +4,9 @@ from .. import config as _config
 from .. import exceptions
 
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG as _CSG
+    from ..pycsg.core import CSG as _CSG
 elif _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import CSG as _CSG
+    from ..pycgal.core import CSG as _CSG
 
 
 import logging as _log

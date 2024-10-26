@@ -43,7 +43,7 @@ class PhysicalVolume:
         self.type = "placement"
 
         # need to determine type or rotation and position, as should be Position or Rotation type
-        from pyg4ometry.gdml import Defines as _Defines
+        from ..gdml import Defines as _Defines
 
         if isinstance(position, list) or isinstance(position, _np.ndarray):
             if len(position) == 3:

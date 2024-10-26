@@ -1,7 +1,7 @@
 from ... import config as _config
 
 from .SolidBase import SolidBase as _SolidBase
-from pyg4ometry.gdml.Defines import Expression as _Expression
+from ...gdml.Defines import Expression as _Expression
 
 if _config.meshing == _config.meshingType.pycsg:
     from ...pycsg.core import CSG as _CSG

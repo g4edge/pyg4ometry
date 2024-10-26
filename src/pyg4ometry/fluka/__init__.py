@@ -23,7 +23,7 @@ from .body import (
     infinity,
 )
 from .reader import Reader
-from pyg4ometry.fluka.Writer import Writer
+from .Writer import Writer
 from .fluka_registry import FlukaRegistry
 from .fluka_registry import FlukaBodyStoreExact
 from .vector import Three, AABB

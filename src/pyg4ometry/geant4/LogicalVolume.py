@@ -511,9 +511,9 @@ class LogicalVolume:
         # else some daughters remain - check them - if they intersect (judged by the mesh intersection)
         # then reform their solids to  include that intersection
 
-        from pyg4ometry.gdml.Defines import Position, Rotation, upgradeToVector
-        from pyg4ometry.geant4.solid import Intersection
-        from pyg4ometry import transformation as _transformation
+        from ..gdml.Defines import Position, Rotation, upgradeToVector
+        from .solid import Intersection
+        from .. import transformation as _transformation
 
         p, r = position, rotation
 
@@ -636,7 +636,7 @@ class LogicalVolume:
         :param printOut: bool - (internal) Whether to print out a summary of N overlaps detected
         :param nOverlapsDetected: [int] - (internal) counter for recursion - ignore
         """
-        from pyg4ometry.geant4 import IsAReplica as _IsAReplica
+        from ..geant4 import IsAReplica as _IsAReplica
 
         if printOut:
             print("LogicalVolume.checkOverlaps> ", self.name)
