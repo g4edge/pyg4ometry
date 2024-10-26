@@ -1,6 +1,6 @@
 import numbers as _numbers
 import numpy as _np
-from pyg4ometry.gdml import Units as _Units
+from . import Units as _Units
 
 
 class BasicExpression:
