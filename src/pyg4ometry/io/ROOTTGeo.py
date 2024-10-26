@@ -1,6 +1,6 @@
 import ROOT as _ROOT
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.transformation as _transformation
+from .. import geant4 as _g4
+from .. import transformation as _transformation
 import numpy as _np
 import scipy.linalg as _la
 
