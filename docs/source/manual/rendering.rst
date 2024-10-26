@@ -30,11 +30,17 @@ can set via the `VisualisationOptions` stored in logical volumes
 
     r = pyg4ometry.gdml.Reader("lht.gdml")
     reg = r.getRegistry()
-    reg.logicalVolumeDict["vCalorimeter"].visOptions.colour = [1, 0, 0]
+    reg.logicalVolumeDict["vCalorimeter"].visOptions.color = [1, 0, 0]
     v = pyg4ometry.visualisation.UsdViewer("lht.usd")
     v.traverseHierarchy(reg.getWorldVolume())
     v.save()
 
-`visOptions.color` and `visOptions.alpha` are passed though to the
+`visOptions.colour` and `visOptions.alpha` are passed though to the
 USD shader. There are many more options for shading in USD which can
 be accessed via `visOptions.usdOptions`
+
+Here is an example of opening the usd file in `usdview`
+
+.. figure:: tutorials/usdview.jpg
+   :width: 80%
+   :align: center
