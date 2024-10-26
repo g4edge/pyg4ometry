@@ -1,10 +1,24 @@
 import pyg4ometry as _pyg4
 
 
-def test_VtkViewer(testdata):
+def test_VtkViewer(tmptestdir, testdata):
     r = _pyg4.gdml.Reader(testdata["gdml/001_box.gdml"])
     v = _pyg4.visualisation.VtkViewer()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
+    v.addAxes(20, (0, 0, 0))
+
+    v.setOpacity(0, 0)
+    v.setWireframe(0)
+    v.setSurface(0)
+    v.setOpacityOverlap(0, 0)
+    v.setWireframeOverlap(0)
+    v.setRandomColours()
+
+    v.exportOBJScene(fileName=str(tmptestdir / "test.obj"))
+    v.exportVRMLScene(fileName=str(tmptestdir / "temp.vrml"))
+    v.exportGLTFScene(fileName=str(tmptestdir / "temp.gltf"))
+    v.exportVTPScene(fileName=str(tmptestdir / "temp.vtp"))
+
     # v.view(interactive=False)
 
 
