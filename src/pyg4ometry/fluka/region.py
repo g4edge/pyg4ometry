@@ -9,18 +9,17 @@ import networkx as nx
 import sympy as _sympy
 
 from . import vis
-from pyg4ometry.exceptions import FLUKAError, NullMeshError
-import pyg4ometry.geant4 as g4
-from pyg4ometry.transformation import matrix2tbxyz, tbxyz2matrix, reverse
-from pyg4ometry.fluka.body import BodyMixin
+from ..exceptions import FLUKAError, NullMeshError
+from .. import geant4 as g4
+from ..transformation import matrix2tbxyz, tbxyz2matrix, reverse
+from .body import BodyMixin
 from .vector import Three, AABB, areAABBsOverlapping
 from . import boolean_algebra
-from pyg4ometry.transformation import tbxyz2axisangle
-
-import pyg4ometry.config as _config
+from ..transformation import tbxyz2axisangle
+from .. import config as _config
 
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG, do_intersect
+    from ..pycsg.core import CSG, do_intersect
 elif _config.meshing == _config.meshingType.cgal_sm:
     pass
     # TODO reinstate intersecting meshes

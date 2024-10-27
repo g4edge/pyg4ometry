@@ -4,7 +4,7 @@ from xml.dom import minidom as _minidom
 import xml.parsers.expat as _expat
 from . import Defines as _defines
 import logging as _log
-import pyg4ometry.geant4 as _g4
+from .. import geant4 as _g4
 import os as _os
 
 

@@ -1,7 +1,7 @@
 import vtk as _vtk
 
-import pyg4ometry.transformation as _transformation
-import pyg4ometry.visualisation.ViewerBase as _ViewerBase
+from .. import transformation as _transformation
+from . import ViewerBase as _ViewerBase
 
 import random as _random
 

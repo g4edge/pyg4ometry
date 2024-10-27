@@ -19,8 +19,8 @@
     END
 """
 
-from pyg4ometry.fluka import material as _material
-from pyg4ometry.fluka.directive import RecursiveRotoTranslation, Transform
+from . import material as _material
+from .directive import RecursiveRotoTranslation, Transform
 
 
 class Writer:

@@ -7,17 +7,16 @@ import types as _types
 import warnings as _warnings
 
 from .fluka2g4materials import makeFlukaToG4MaterialsMap as _makeFlukaToG4MaterialsMap
-from pyg4ometry.fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
-import pyg4ometry.fluka as _fluka
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.transformation as _trans
-
-import pyg4ometry.config as _config
+from ..fluka.vector import areAABBsOverlapping as _areAABBsOverlapping
+from .. import fluka as _fluka
+from .. import geant4 as _g4
+from .. import transformation as _trans
+from .. import config as _config
 
 if _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import do_intersect as _do_intersect
+    from ..pycgal.core import do_intersect as _do_intersect
 elif _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import do_intersect as _do_intersect
+    from ..pycsg.core import do_intersect as _do_intersect
 
 logger = _logging.getLogger(__name__)
 logger.setLevel(_logging.INFO)

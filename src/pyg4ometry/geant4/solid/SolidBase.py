@@ -1,5 +1,5 @@
 import numpy as _np
-from pyg4ometry import config as _config
+from ... import config as _config
 
 
 class SolidBase:
@@ -24,12 +24,12 @@ class SolidBase:
                 )
 
     def evaluateParameter(self, obj):
-        from pyg4ometry.gdml.Defines import evaluateToFloat
+        from ...gdml.Defines import evaluateToFloat
 
         return evaluateToFloat(self.registry, obj)
 
     def evaluateParameterWithUnits(self, varName):
-        import pyg4ometry.gdml.Units as _Units
+        from ...gdml import Units as _Units
 
         var = getattr(self, varName)
         varVal = self.evaluateParameter(var)
@@ -81,8 +81,8 @@ class SolidBase:
         """
         Raises a ValueError if the attribute is over pyg4ometry.config.twoPiComparisonTolerance **over** 2 x pi.
         """
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
-        import pyg4ometry.gdml.Defines as _Defines
+        from ...gdml import Units as _Units
+        from ...gdml import Defines as _Defines
 
         if type(getattr(self, attribute)) is _Defines.Quantity:
             aunit = getattr(self, attribute).unit
@@ -120,8 +120,8 @@ class SolidBase:
         """
         pycsg_mesh = self.mesh()
 
-        from pyg4ometry.geant4.solid import TessellatedSolid
-        from pyg4ometry.visualisation import Convert as _Convert
+        from . import TessellatedSolid
+        from ...visualisation import Convert as _Convert
         import vtk as _vtk
 
         # Use VTK to reduce all polygons to triangles

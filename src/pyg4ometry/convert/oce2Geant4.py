@@ -1,5 +1,6 @@
-import pyg4ometry as _pyg4
-import pyg4ometry.pyoce as _oce
+from .. import geant4 as _g4
+from .. import pyoce as _pyoce
+from .. import transformation as _transformation
 
 defaultLinDef = 0.5
 deftaulAngDef = 0.5
@@ -23,7 +24,7 @@ def oceShape_Geant4_LogicalVolume(name, solid, material, greg):
     except:
         pass
 
-    return _pyg4.geant4.LogicalVolume(solid, material, name, greg)
+    return _g4.LogicalVolume(solid, material, name, greg)
 
 
 def oceShape_Geant4_Assembly(name, greg):
@@ -40,7 +41,7 @@ def oceShape_Geant4_Assembly(name, greg):
     except:
         pass
 
-    return _pyg4.geant4.AssemblyVolume(name, greg, True)
+    return _g4.AssemblyVolume(name, greg, True)
 
 
 def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
@@ -66,7 +67,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     ##############################################
     # G4 tessellated solid
     ##############################################
-    g4t = _pyg4.geant4.solid.TessellatedSolid(name, None, greg)
+    g4t = _g4.solid.TessellatedSolid(name, None, greg)
 
     nbVerties = 0
     nbTriangles = 0
@@ -74,7 +75,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     ##############################################
     # create triangulation
     ##############################################
-    aMesher = _oce.BRepMesh.BRepMesh_IncrementalMesh(shape, linDef, False, angDef, True)
+    aMesher = _pyoce.BRepMesh.BRepMesh_IncrementalMesh(shape, linDef, False, angDef, True)
 
     ##############################################
     # Count total number of nodes and triangles
@@ -82,15 +83,17 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     mergedNbNodes = 0
     mergedNbTriangles = 0
 
-    topoExp = _oce.TopExp.TopExp_Explorer(shape, _oce.TopAbs.TopAbs_FACE, _oce.TopAbs.TopAbs_VERTEX)
-    location = _oce.TopLoc.TopLoc_Location()
+    topoExp = _pyoce.TopExp.TopExp_Explorer(
+        shape, _pyoce.TopAbs.TopAbs_FACE, _pyoce.TopAbs.TopAbs_VERTEX
+    )
+    location = _pyoce.TopLoc.TopLoc_Location()
 
     while topoExp.More():
         # print(topoExp.Current().ShapeType())
-        triangulation = _oce.BRep.BRep_Tool.Triangulation(
-            _oce.TopoDS.TopoDSClass.Face(topoExp.Current()),
+        triangulation = _pyoce.BRep.BRep_Tool.Triangulation(
+            _pyoce.TopoDS.TopoDSClass.Face(topoExp.Current()),
             location,
-            _oce.Poly.Poly_MeshPurpose_NONE,
+            _pyoce.Poly.Poly_MeshPurpose_NONE,
         )
         # TODO why is the triangulation none?
         if triangulation is None:
@@ -113,18 +116,18 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
     ##############################################
     # Merge triangles from faces
     ##############################################
-    mergedMesh = _oce.Poly.Poly_Triangulation(mergedNbNodes, mergedNbTriangles, False, False)
+    mergedMesh = _pyoce.Poly.Poly_Triangulation(mergedNbNodes, mergedNbTriangles, False, False)
 
-    topoExp.Init(shape, _oce.TopAbs.TopAbs_FACE, _oce.TopAbs.TopAbs_VERTEX)
+    topoExp.Init(shape, _pyoce.TopAbs.TopAbs_FACE, _pyoce.TopAbs.TopAbs_VERTEX)
 
     nodeCounter = 0
     triangleCounter = 0
 
     while topoExp.More():
-        triangulation = _oce.BRep.BRep_Tool.Triangulation(
-            _oce.TopoDS.TopoDSClass.Face(topoExp.Current()),
+        triangulation = _pyoce.BRep.BRep_Tool.Triangulation(
+            _pyoce.TopoDS.TopoDSClass.Face(topoExp.Current()),
             location,
-            _oce.Poly.Poly_MeshPurpose_NONE,
+            _pyoce.Poly.Poly_MeshPurpose_NONE,
         )
 
         # TODO why is the triangulation none?
@@ -147,7 +150,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.5, angDef=0.5):
             i2 += nodeCounter
             i3 += nodeCounter
 
-            if orientation == _oce.TopAbs.TopAbs_Orientation.TopAbs_REVERSED:
+            if orientation == _pyoce.TopAbs.TopAbs_Orientation.TopAbs_REVERSED:
                 aTri.Set(i2, i1, i3)
                 g4t.addTriangle([i2 - 1, i1 - 1, i3 - 1])
             else:
@@ -177,9 +180,9 @@ def _oce2Geant4_traverse(
     addBoundingSolids=False,
     oceName=False,
 ):
-    name = _oce.pythonHelpers.get_TDataStd_Name_From_Label(label)
-    node = _pyg4.pyoce.TCollection.TCollection_AsciiString()
-    _oce.TDF.TDF_Tool.Entry(label, node)
+    name = _pyoce.pythonHelpers.get_TDataStd_Name_From_Label(label)
+    node = _pyoce.TCollection.TCollection_AsciiString()
+    _pyoce.TDF.TDF_Tool.Entry(label, node)
 
     if (
         name is None or name in badCADLabels or oceName
@@ -190,7 +193,7 @@ def _oce2Geant4_traverse(
     if name.find("-") != -1:
         name = name.replace("-", "_")
 
-    loc = _oce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
+    loc = _pyoce.pythonHelpers.get_XCAFDoc_Location_From_Label(label)
 
     if name in meshQualityMap:
         meshQuality = meshQualityMap[name]
@@ -249,7 +252,7 @@ def _oce2Geant4_traverse(
     elif shapeTool.IsComponent(label):
         # print("Component")
 
-        rlabel = _oce.TDF.TDF_Label()
+        rlabel = _pyoce.TDF.TDF_Label()
         shapeTool.GetReferredShape(label, rlabel)
 
         # Create solid
@@ -268,7 +271,7 @@ def _oce2Geant4_traverse(
         if not logicalVolume:
             return
 
-        ax = _pyg4.pyoce.gp.gp_XYZ()
+        ax = _pyoce.gp.gp_XYZ()
         an = 0
 
         trsf = locShape.Transformation()
@@ -277,12 +280,12 @@ def _oce2Geant4_traverse(
         trans = trsf.TranslationPart()
         b, ax, an = trsf.GetRotation(ax, an)
 
-        trans = _oce.pythonHelpers.gp_XYZ_numpy(trans)
-        ax = _oce.pythonHelpers.gp_XYZ_numpy(ax)
-        rot = _pyg4.transformation.axisangle2tbxyz(ax, -an)
+        trans = _pyoce.pythonHelpers.gp_XYZ_numpy(trans)
+        ax = _pyoce.pythonHelpers.gp_XYZ_numpy(ax)
+        rot = _transformation.axisangle2tbxyz(ax, -an)
 
         # make physical volume
-        physicalVolume = _pyg4.geant4.PhysicalVolume(rot, trans, logicalVolume, name, None, greg)
+        physicalVolume = _g4.PhysicalVolume(rot, trans, logicalVolume, name, None, greg)
 
         return physicalVolume
 
@@ -327,7 +330,7 @@ def _oce2Geant4_traverse(
             if not logicalVolume:  # logical could be None
                 continue
 
-            ax = _pyg4.pyoce.gp.gp_XYZ()
+            ax = _pyoce.gp.gp_XYZ()
             an = 0
 
             childShape = shapeTool.GetShape(child)
@@ -339,11 +342,11 @@ def _oce2Geant4_traverse(
             trans = trsf.TranslationPart()
             b, ax, an = trsf.GetRotation(ax, an)
 
-            trans = _oce.pythonHelpers.gp_XYZ_numpy(trans)
-            ax = _oce.pythonHelpers.gp_XYZ_numpy(ax)
-            rot = _pyg4.transformation.axisangle2tbxyz(ax, -an)
+            trans = _pyoce.pythonHelpers.gp_XYZ_numpy(trans)
+            ax = _pyoce.pythonHelpers.gp_XYZ_numpy(ax)
+            rot = _transformation.axisangle2tbxyz(ax, -an)
 
-            physicalVolume = _pyg4.geant4.PhysicalVolume(
+            physicalVolume = _g4.PhysicalVolume(
                 list(rot),
                 list(trans),
                 logicalVolume,
@@ -373,15 +376,15 @@ def oce2Geant4(
     :param meshQualityMap: dictionary to map shape name to meshing quality str:[LinDef,AngDef]
     :type meshQualityMap: dict
     """
-    greg = _pyg4.geant4.Registry()
+    greg = _g4.Registry()
 
-    label = _oce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
+    label = _pyoce.pythonHelpers.findOCCShapeByName(shapeTool, shapeName)
     if label is None:
-        fsl = _oce.TDF.TDF_LabelSequence()
+        fsl = _pyoce.TDF.TDF_LabelSequence()
         shapeTool.GetFreeShapes(fsl)
 
         freeShapeLabel = fsl.Value(1)
-        label = _oce.pythonHelpers.findOCCShapeByTreeNode(freeShapeLabel, shapeName)
+        label = _pyoce.pythonHelpers.findOCCShapeByTreeNode(freeShapeLabel, shapeName)
 
     # traverse cad and make geant4 geometry
     av = _oce2Geant4_traverse(

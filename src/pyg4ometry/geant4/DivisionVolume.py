@@ -1,8 +1,8 @@
 from .PhysicalVolume import PhysicalVolume as _PhysicalVolume
-import pyg4ometry.geant4.solid as _solid
-from pyg4ometry.visualisation import Mesh as _Mesh
-from pyg4ometry.visualisation import VisualisationOptions as _VisOptions
-import pyg4ometry.transformation as _trans
+from . import solid as _solid
+from ..visualisation import Mesh as _Mesh
+from ..visualisation import VisualisationOptions as _VisOptions
+from .. import transformation as _trans
 
 import numpy as _np
 import copy as _copy
@@ -57,7 +57,7 @@ class DivisionVolume(_PhysicalVolume):
 
         # NOT PART OF NORMAL DIVISION VOLUME BUT USEFUL FOR CONVERSION TO FLUKA
         # need to determine type or rotation and position, as should be Position or Rotation type
-        from pyg4ometry.gdml import Defines as _Defines
+        from ..gdml import Defines as _Defines
 
         self.position = _Defines.Position(name + "_pos", 0, 0, 0, "mm", registry, False)
         self.rotation = _Defines.Rotation(name + "_rot", 0, 0, 0, "rad", registry, False)

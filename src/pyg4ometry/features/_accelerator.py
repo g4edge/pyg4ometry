@@ -1,7 +1,10 @@
 import numpy as _np
-import pyg4ometry as _pyg4
 
-# import pyg4ometry.pyoce as _oce
+from .algos import FeatureData as _FeatureData
+from .algos import CoordinateSystem as _CoordinateSystem
+from .algos import Plane as _Plane
+from .algos import extract as _extract
+from .. import pyoce as _oce
 
 
 def beamPipeCADFeature(shape):
@@ -50,7 +53,7 @@ def beamPipe(
         vis = True
         interactive = True
 
-    v = _pyg4.features.extract(
+    v = _extract(
         stlFileName,
         angle=46,
         circumference=2 * _np.pi * 8,
@@ -60,7 +63,7 @@ def beamPipe(
         bViewerInteractive=interactive,
     )
 
-    fd = _pyg4.features.algos.FeatureData()
+    fd = _FeatureData()
     fd.readFile(datFileName)
 
     if feature1 == -1:
@@ -69,11 +72,11 @@ def beamPipe(
     p1 = fd.features[feature1]["plane"]
     p2 = fd.features[feature2]["plane"]
 
-    pp1 = _pyg4.features.Plane(p1[0:3], p1[3:])
-    pp2 = _pyg4.features.Plane(p2[0:3], p2[3:])
-    pp3 = _pyg4.features.Plane([0, 0, 0], [0, 0, 1])
+    pp1 = _Plane(p1[0:3], p1[3:])
+    pp2 = _Plane(p2[0:3], p2[3:])
+    pp3 = _Plane([0, 0, 0], [0, 0, 1])
 
-    cs = _pyg4.features.CoordinateSystem()
+    cs = _CoordinateSystem()
     cs.makeFromPlanes(pp1, pp2, pp3)
 
     csa = [cs.coordinateSystem(ang[0], ang[1], ang[2]) for ang in planeAngles]
@@ -83,7 +86,7 @@ def beamPipe(
         v.addAxis(cs.origin, [cs.dist, cs.dist, cs.dist], cs.rot, label=True, disableCone=True)
         v.view(interactive=True)
 
-    v = _pyg4.features.extract(
+    v = _extract(
         stlFileName,
         angle=46,
         circumference=2 * _np.pi * 8,

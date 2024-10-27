@@ -1,9 +1,9 @@
-import pyg4ometry.transformation as _transformation
-import pyg4ometry.geant4 as _geant4
-import pyg4ometry.fluka as _fluka
-import pyg4ometry.pycgal as _pycgal
-from pyg4ometry.pycgal.core import PolygonProcessing as _PolygonProcessing
-from pyg4ometry.fluka.directive import (
+from .. import transformation as _transformation
+from .. import geant4 as _geant4
+from .. import fluka as _fluka
+from .. import pycgal as _pycgal
+from ..pycgal.core import PolygonProcessing as _PolygonProcessing
+from ..fluka.directive import (
     rotoTranslationFromTra2 as _rotoTranslationFromTra2,
 )
 import numpy as _np
@@ -11,7 +11,7 @@ import copy as _copy
 import scipy.linalg as _la
 
 # this should be refactored to rename namespaced (privately)
-from pyg4ometry.fluka.body import *
+from ..fluka.body import *
 
 # import matplotlib.pyplot as _plt
 
@@ -307,7 +307,7 @@ def geant4Solid2FlukaRegion(
     commentName="",
     bakeTransforms=False,
 ):
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     name = format(flukaNameCount, "04")
 
@@ -932,7 +932,7 @@ def geant4Box2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -1009,7 +1009,7 @@ def geant4Tubs2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -1240,7 +1240,7 @@ def geant4CutTubs2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -1445,7 +1445,7 @@ def geant4Cons2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -1703,7 +1703,7 @@ def geant4Sphere2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2012,7 +2012,7 @@ def geant4Orb2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2064,7 +2064,7 @@ def geant4Torus2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2238,7 +2238,7 @@ def geant4Polycone2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2449,7 +2449,7 @@ def geant4Extruded2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2662,7 +2662,7 @@ def geant4Polyhedra2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2861,7 +2861,7 @@ def geant4EllipticalTube2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -2919,7 +2919,7 @@ def geant4Ellipsoid2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -3040,7 +3040,7 @@ def geant4EllipticalCone2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -3160,7 +3160,7 @@ def geant4Paraboloid2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -3277,7 +3277,7 @@ def geant4Hype2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -3438,7 +3438,7 @@ def geant4Tet2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)
@@ -3499,7 +3499,7 @@ def geant4GenericTrap2Fluka(
     pseudoVector = _np.linalg.det(mtra)
     name = format(flukaNameCount, "04")
 
-    import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+    from ..gdml import Units as _Units  # TODO move circular import
 
     rotation = _transformation.matrix2tbxyz(mtra)
     transform = _rotoTranslationFromTra2("T" + name, [rotation, tra], flukaregistry=flukaRegistry)

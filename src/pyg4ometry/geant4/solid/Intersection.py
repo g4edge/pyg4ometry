@@ -1,9 +1,9 @@
 from .SolidBase import SolidBase as _SolidBase
-from pyg4ometry.transformation import *
+from ...transformation import *
 
 import logging as _log
 
-import pyg4ometry.exceptions
+from ... import exceptions
 
 
 class Intersection(_SolidBase):
@@ -26,7 +26,7 @@ class Intersection(_SolidBase):
     def __init__(self, name, obj1, obj2, tra2, registry, addRegistry=True):
         super().__init__(name, "Intersection", registry)
         # circular import
-        import pyg4ometry.gdml.Defines as _defines
+        from ...gdml import Defines as _defines
 
         self.obj1 = obj1
         self.obj2 = obj2
@@ -59,7 +59,7 @@ class Intersection(_SolidBase):
         return f"Intersection {self.name} {self.obj1.name!s} {self.obj2.name!s}"
 
     def mesh(self):
-        import pyg4ometry.geant4 as _g4
+        from ... import geant4 as _g4
 
         _log.info("Intersection.pycsgmesh>>")
 
@@ -84,7 +84,7 @@ class Intersection(_SolidBase):
         _log.info("Intersection.pycsgmesh> intersect")
         mesh = m1.intersect(m2)
         if mesh.isNull():
-            raise pyg4ometry.exceptions.NullMeshError(self)
+            raise exceptions.NullMeshError(self)
 
         # print 'intersection mesh ', self.name
         return mesh
@@ -96,11 +96,11 @@ class Intersection(_SolidBase):
         return self.tra2[0].eval()
 
     def object1(self):
-        import pyg4ometry.geant4 as _g4
+        from ... import geant4 as _g4
 
         return self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
 
     def object2(self):
-        import pyg4ometry.geant4 as _g4
+        from ... import geant4 as _g4
 
         return self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)

@@ -1,5 +1,5 @@
 import numpy as _np
-import pyg4ometry.transformation as _trf
+from .. import transformation as _trf
 
 
 class Three(_np.ndarray):

@@ -17,13 +17,13 @@ from .fluka_registry import FlukaRegistry
 from .lattice import Lattice
 from .preprocessor import preprocess
 from .region import Zone, Region
-from pyg4ometry.fluka.RegionExpression import (
+from .RegionExpression import (
     RegionParserVisitor,
     RegionParser,
     RegionLexer,
 )
 from .vector import Three
-from pyg4ometry.exceptions import FLUKAError, FLUKAInputError
+from ..exceptions import FLUKAError, FLUKAInputError
 from .material import Material, Compound
 
 

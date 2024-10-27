@@ -3,15 +3,15 @@ from ... import config as _config
 from .SolidBase import SolidBase as _SolidBase
 
 if _config.meshing == _config.meshingType.pycsg:
-    from pyg4ometry.pycsg.core import CSG as _CSG
-    from pyg4ometry.pycsg.geom import Vector as _Vector
-    from pyg4ometry.pycsg.geom import Vertex as _Vertex
-    from pyg4ometry.pycsg.geom import Polygon as _Polygon
+    from ...pycsg.core import CSG as _CSG
+    from ...pycsg.geom import Vector as _Vector
+    from ...pycsg.geom import Vertex as _Vertex
+    from ...pycsg.geom import Polygon as _Polygon
 elif _config.meshing == _config.meshingType.cgal_sm:
-    from pyg4ometry.pycgal.core import CSG as _CSG
-    from pyg4ometry.pycgal.geom import Vector as _Vector
-    from pyg4ometry.pycgal.geom import Vertex as _Vertex
-    from pyg4ometry.pycgal.geom import Polygon as _Polygon
+    from ...pycgal.core import CSG as _CSG
+    from ...pycgal.geom import Vector as _Vector
+    from ...pycgal.geom import Vertex as _Vertex
+    from ...pycgal.geom import Polygon as _Polygon
 
 import logging as _log
 import numpy as _np
@@ -76,7 +76,7 @@ class Paraboloid(_SolidBase):
         return f"Paraboloid : name={self.name} dz={float(self.pDz)} r1={float(self.pR1)} r2={float(self.pR2)}"
 
     def mesh(self):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         _log.info("paraboloid.antlr>")
 

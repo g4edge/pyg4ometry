@@ -1,7 +1,8 @@
-from collections import defaultdict as _defaultdict
-import pyg4ometry.exceptions as _exceptions
+from .. import exceptions as _exceptions
 from . import _Material as _mat
 from . import solid
+
+from collections import defaultdict as _defaultdict
 
 
 def solidName(var):
@@ -104,7 +105,7 @@ class Registry:
 
     def getExpressionParser(self):
         if not self.expressionParser:
-            from pyg4ometry.gdml.GdmlExpression import ExpressionParser
+            from ..gdml.GdmlExpression import ExpressionParser
 
             self.expressionParser = ExpressionParser()
 
@@ -374,8 +375,8 @@ class Registry:
         :param define: Definition object for storage
         :type define: Constant, Quantity, Variable, Matrix
         """
-        from pyg4ometry.gdml.Units import units as _units
-        import pyg4ometry.gdml.Defines as _Defines
+        from ..gdml.Units import units as _units
+        from ..gdml import Defines as _Defines
 
         # units names are only checked for duplicates when redefining scalar defines.
         if isinstance(define, _Defines.ScalarBase) and define.name in _units:
@@ -426,7 +427,7 @@ class Registry:
 
         In "3x + 2", "x" would be a variable".  In "3.5*2" there would be no variables.
         """
-        import pyg4ometry.gdml.Defines as _Defines
+        from ..gdml import Defines as _Defines
 
         # If the variable is a position, rotation or scale
         if isinstance(var, _Defines.VectorBase):
@@ -570,9 +571,9 @@ class Registry:
         In the case where some object or variable has a name (e.g. 'X') that already exists
         in this registry, it will be incremented to 'X_1'.
         """
-        import pyg4ometry.geant4.LogicalVolume as _LogicalVolume
-        import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
-        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
+        from . import LogicalVolume as _LogicalVolume
+        from . import PhysicalVolume as _PhysicalVolume
+        from . import AssemblyVolume as _AssemblyVolume
 
         if (
             incrementRenameDict is None
@@ -681,10 +682,10 @@ class Registry:
         :param userRenameDict: a dictionary of find/replace regex strings to be used to rename volumes/materials/etc.
         """
         import numpy as _np
-        import pyg4ometry.geant4.PhysicalVolume as _PhysicalVolume
-        import pyg4ometry.geant4.AssemblyVolume as _AssemblyVolume
-        import pyg4ometry.transformation as _transformation
-        import pyg4ometry.gdml.Defines as _Defines
+        from . import PhysicalVolume as _PhysicalVolume
+        from . import AssemblyVolume as _AssemblyVolume
+        from .. import transformation as _transformation
+        from ..gdml import Defines as _Defines
 
         positions.append(assemblyPV.position)
         rotations.append(assemblyPV.rotation)

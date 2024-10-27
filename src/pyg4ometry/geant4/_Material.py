@@ -1,4 +1,4 @@
-from pyg4ometry import exceptions as _exceptions
+from .. import exceptions as _exceptions
 
 _nistMaterialDict = None
 _nistMaterialList = None
@@ -547,7 +547,7 @@ class Material(MaterialBase):
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import pyg4ometry.gdml.Defines as defines
+        from ..gdml import Defines as defines
 
         matrix_name = self.name + "_" + name
         m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
@@ -565,7 +565,7 @@ class Material(MaterialBase):
         :param vunit: unit for the value vector (default: unitless)
         :type vunit: str
         """
-        import pyg4ometry.gdml.Defines as defines
+        from ..gdml import Defines as defines
 
         if vunit.find("/") != -1:
             print("Please use 1/unit.")

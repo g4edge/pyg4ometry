@@ -8,10 +8,10 @@ import numpy as _np
 import logging as _log
 import random as _random
 
-import pyg4ometry.geant4 as _g4
-import pyg4ometry.transformation as _trans
-from pyg4ometry.geant4._Material import Material as _Material
-from pyg4ometry.meshutils import MeshShrink
+from .. import geant4 as _g4
+from .. import transformation as _trans
+from ..geant4 import Material as _Material
+from ..meshutils import MeshShrink as _MeshShrink
 
 
 class Reader:
@@ -223,7 +223,7 @@ class Reader:
                 # print 'Removed triangles',mc
 
                 # Mesh shrinking
-                vn = MeshShrink(m, meshShrinkFactor)
+                vn = _MeshShrink(m, meshShrinkFactor)
 
                 #                print obj.Label, obj.TypeId, len(m[0])
                 if len(m[0]) == 0:  # skip empty meshes (can happen with compound objects)

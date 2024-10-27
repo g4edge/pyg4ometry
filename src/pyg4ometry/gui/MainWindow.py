@@ -13,8 +13,7 @@ from PyQt5.QtWidgets import (
 )
 from .QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-import pyg4ometry.visualisation.VtkViewer
-
+from ..visualisation import VtkViewer as _VtkViewer
 from .GeometryModel import GeometryModel
 
 

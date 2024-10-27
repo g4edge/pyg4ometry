@@ -1,19 +1,20 @@
-import pyg4ometry.geant4
-import pyg4ometry.geant4.solid
-import pyg4ometry.pycgal.CGAL
-import pyg4ometry.pycgal.pythonHelpers
+from .. import geant4
+from ..geant4 import solid
+from ..pycgal import CGAL
+from ..pycgal import pythonHelpers
 
 from ..pycgal import PolygonProcessing
 from ..pycgal import Polygon_2
 from ..pycgal import Polygon_with_holes_2
 from ..pycgal import Point_2
+
 import functools as _functools
 import math as _math
 import matplotlib.pyplot as _plt
 import numpy as _np
 
 
-class Extruder(pyg4ometry.geant4.solid.SolidBase):
+class Extruder(solid.SolidBase):
     def __init__(
         self, name="", length=1000, angle=0.0, regions=None, materials=None, registry=None
     ):
@@ -119,7 +120,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
     def _buildStraightExtrustions(self):
         # normal geant4 extrusions
         for region in self.regions:
-            g4e = pyg4ometry.geant4.solid.ExtrudedSolid(
+            g4e = solid.ExtrudedSolid(
                 region,
                 self.regions[region],
                 [[-self.length / 2, [0, 0], 1], [self.length / 2, [0, 0], 1]],
@@ -136,7 +137,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
             pgonList = self.decomposed[region]
 
             for pgon, idecomp in zip(pgonList, range(len(pgonList))):
-                g4e = pyg4ometry.geant4.solid.ExtrudedSolid(
+                g4e = solid.ExtrudedSolid(
                     region + "_" + str(idecomp),
                     _np.array(pgon),
                     [[-self.length / 2, [0, 0], 1], [self.length / 2, [0, 0], 1]],
@@ -150,7 +151,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
     def _buildCurvedExtrusions(self):
         # normal geant4 extrusions
         for region in self.regions:
-            g4e = pyg4ometry.geant4.solid.ExtrudedSolid(
+            g4e = solid.ExtrudedSolid(
                 region,
                 self.regions[region],
                 [[-self.length / 2, [0, 0], 1], [self.length / 2, [0, 0], 1]],
@@ -167,7 +168,7 @@ class Extruder(pyg4ometry.geant4.solid.SolidBase):
             pgonList = self.decomposed[region]
             print(region)
             for pgon, idecomp in zip(pgonList, range(len(pgonList))):
-                g4e = pyg4ometry.geant4.solid.HalfSpace(region + str(idecomp))
+                g4e = solid.HalfSpace(region + str(idecomp))
 
                 if self.polygon_area(pgon) < 0:
                     pgon = list(reversed(pgon))

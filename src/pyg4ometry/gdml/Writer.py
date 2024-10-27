@@ -3,7 +3,7 @@ from ..geant4._Material import Material as _Material
 from ..geant4._Material import Element as _Element
 from ..geant4._Material import Isotope as _Isotope
 from ..gdml import Defines as _Defines
-import pyg4ometry.geant4 as _g4
+from .. import geant4 as _g4
 import logging as _log
 
 

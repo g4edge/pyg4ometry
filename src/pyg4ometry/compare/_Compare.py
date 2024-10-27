@@ -3,10 +3,9 @@ from copy import deepcopy as _deepcopy
 import enum as _enum
 import re as _re
 
-from pyg4ometry.gdml.Defines import evaluateToFloat as _evaluateToFloat
-from pyg4ometry.geant4 import Material as _Material
-from pyg4ometry.geant4 import Element as _Element
-from pyg4ometry.gdml import Units as _Units
+from ..geant4 import Material as _Material
+from ..geant4 import Element as _Element
+from ..gdml import Units as _Units
 
 
 class Tests:
@@ -268,7 +267,7 @@ def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=Fal
     :param includeAllTestResults: document all tests attempted in result.
     :type  includeAllTestResults: bool.
     """
-    import pyg4ometry.gdml as gd
+    from .. import gdml as gd
 
     referenceReader = gd.Reader(referenceFile)
     referenceReg = referenceReader.getRegistry()
@@ -1233,7 +1232,7 @@ def _copyNumber(pvname, c1, c2, tests, includeAllTestResults=False):
 def _getBoundingBox(obj):
     # not the full actual path as Mesh is imported one level higher up...
     # so not Mesh.Mesh as it actually exists
-    import pyg4ometry.visualisation as _vis
+    from .. import visualisation as _vis
 
     if type(obj) is _vis.Mesh:
         return obj.getBoundingBox()
@@ -1242,7 +1241,7 @@ def _getBoundingBox(obj):
 
 
 def _getRawMesh(obj):
-    import pyg4ometry.visualisation as _vis
+    from .. import visualisation as _vis
 
     if type(obj) is _vis.Mesh:
         return obj.localmesh

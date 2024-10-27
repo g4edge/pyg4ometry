@@ -1,5 +1,5 @@
 from .SolidBase import SolidBase as _SolidBase
-from pyg4ometry.pycsg.core import CSG as _CSG
+from ...pycsg.core import CSG as _CSG
 
 import logging as _log
 
@@ -44,7 +44,7 @@ class Scaled(_SolidBase):
         return f"Scaled : name={self.name} solid={self.solid} x={float(self.pX)} y={float(self.pY)} z={float(self.pZ)}"
 
     def mesh(self):
-        import pyg4ometry.gdml.Units as _Units  # TODO move circular import
+        from ...gdml import Units as _Units
 
         _log.info("scaled.pycsgmesh> antlr")
 

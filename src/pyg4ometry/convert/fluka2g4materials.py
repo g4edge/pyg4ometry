@@ -1,5 +1,5 @@
-import pyg4ometry.geant4 as _g4
-from pyg4ometry.exceptions import FLUKAError as _FLUKAError
+from .. import geant4 as _g4
+from ..exceptions import FLUKAError as _FLUKAError
 
 _periodicTable = None
 
@@ -114,7 +114,7 @@ class _FlukaToG4MaterialConverter:
 
     def convertAll(self):
         # delayed import as possibly heavy
-        from pyg4ometry.fluka import material as _fluMat
+        from ..fluka import material as _fluMat
 
         for name, material in self.freg.materials.items():
             if isinstance(material, _fluMat.BuiltIn):

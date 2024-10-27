@@ -1,6 +1,6 @@
 import vtk as _vtk
-from pyg4ometry.visualisation import Convert as _Convert
-from pyg4ometry.geant4 import solid as _solid
+from ..visualisation import Convert as _Convert
+from ..geant4 import solid as _solid
 
 
 def geant4Solid2Geant4Tessellated(solid):

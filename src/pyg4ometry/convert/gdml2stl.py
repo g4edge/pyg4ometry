@@ -1,4 +1,4 @@
-import pyg4ometry as _pyg4
+from .. import convert as _convert
 
 
 def gdml2stl(gdmlFileName, stlFileName="output.gdml", solidName="ws"):
@@ -6,4 +6,4 @@ def gdml2stl(gdmlFileName, stlFileName="output.gdml", solidName="ws"):
     reg = r.getRegistry()
     s = reg.solidDict[solidName]
 
-    _pyg4.convert.pycsgMeshToStl(s.mesh(), stlFileName)
+    _convert.pycsgMeshToStl(s.mesh(), stlFileName)
