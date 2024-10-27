@@ -62,7 +62,6 @@ def test_VtkViewer_overlap(testdata, tmptestdir):
     wl.checkOverlaps(recursive=True)
     v = _pyg4.visualisation.VtkViewer()
     v.addLogicalVolume(wl)
-    v.view()
 
 
 def test_VtkViewer_addBooleanSolidRecursive(testdata, tmptestdir):
@@ -71,7 +70,6 @@ def test_VtkViewer_addBooleanSolidRecursive(testdata, tmptestdir):
     u = reg.solidDict["union1"]
     v = _pyg4.visualisation.VtkViewer()
     v.addBooleanSolidRecursive(u)
-    v.view()
 
 
 def test_VtkViewerColoured(testdata, tmptestdir):
