@@ -67,7 +67,7 @@ def test_VtkViewer_overlap(testdata, tmptestdir):
 def test_VtkViewer_addBooleanSolidRecursive(testdata, tmptestdir):
     r = _pyg4.gdml.Reader(testdata["gdml/T028_union.gdml"])
     reg = r.getRegistry()
-    u = reg.solidDict["union1"]
+    u = reg.solidDict["us"]
     v = _pyg4.visualisation.VtkViewer()
     v.addBooleanSolidRecursive(u)
 
