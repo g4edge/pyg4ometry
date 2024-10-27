@@ -46,6 +46,12 @@ def test_vtkPolyDataToNumpy(testdata, tmptestdir):
 
     pdNumpy = _vis.vtkPolyDataToNumpy(v.polydata["bl"])
 
+    pdw = _vtk.vtkPolyDataWriter()
+    pdw.SetInputData(v.polydata["bl"])
+    pdw.SetFileName(str(tmptestdir / "temp.vtk"))
+
+    pdNumpy = _vis.vtkPolyDataToNumpy(str(tmptestdir / "temp.vtk"))
+
 
 def test_Convert_vtkTransformation2PyG4(testdata, tmptestdir):
     vt = _vtk.vtkTransform()
