@@ -47,9 +47,9 @@ def test_VtkViewer(testdata, tmptestdir):
 
 
 def test_VtkViewer_addSolid(testdata, tmptestdir):
-    r = _pyg4.gdml.Reader(testdata["gdml/001_Box.gdml"])
+    r = _pyg4.gdml.Reader(testdata["gdml/T001_Box.gdml"])
     reg = r.getRegistry()
-    s = reg.solidDict["box1"]
+    s = reg.solidDict["bs"]
     v = _pyg4.visualisation.VtkViewer()
     v.addSolid(s)
 
@@ -65,7 +65,7 @@ def test_VtkViewer_overlap(testdata, tmptestdir):
 
 
 def test_VtkViewer_addBooleanSolidRecursive(testdata, tmptestdir):
-    r = _pyg4.gdml.Reader(testdata["gdml/T028_union.gdml"])
+    r = _pyg4.gdml.Reader(testdata["gdml/T028_Union.gdml"])
     reg = r.getRegistry()
     u = reg.solidDict["us"]
     v = _pyg4.visualisation.VtkViewer()
@@ -93,7 +93,7 @@ def test_VtkViewerColouredMaterial(testdata, tmptestdir):
 
 
 def test_VtkViewerNewAppend(testdata, tmptestdir):
-    r = _pyg4.gdml.Reader(testdata["gdml/T001_box.gdml"])
+    r = _pyg4.gdml.Reader(testdata["gdml/T001_Box.gdml"])
     v = _pyg4.visualisation.VtkViewerNew()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
 
@@ -113,7 +113,7 @@ def test_VtkViewerNewAppend(testdata, tmptestdir):
 
 
 def test_VtkViewerColouredNewAppend(testdata, tmptestdir):
-    r = _pyg4.gdml.Reader(testdata["gdml/T001_box.gdml"])
+    r = _pyg4.gdml.Reader(testdata["gdml/T001_Box.gdml"])
     v = _pyg4.visualisation.VtkViewerColouredNew()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
 
@@ -121,7 +121,7 @@ def test_VtkViewerColouredNewAppend(testdata, tmptestdir):
 
 
 def test_VtkViewerColouredMaterialNewAppend(testdata, tmptestdir):
-    r = _pyg4.gdml.Reader(testdata["gdml/T001_box.gdml"])
+    r = _pyg4.gdml.Reader(testdata["gdml/T001_Box.gdml"])
     v = _pyg4.visualisation.VtkViewerColouredNew()
     v.addLogicalVolume(r.getRegistry().getWorldVolume())
 
