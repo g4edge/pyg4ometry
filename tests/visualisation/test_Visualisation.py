@@ -15,7 +15,9 @@ def test_VtkViewer(testdata, tmptestdir):
     v.setWireframe(0)
     v.setSurface(0)
     v.setOpacityOverlap(0, 0)
+    v.setOpacityOverlap(-1, 0)
     v.setWireframeOverlap(0)
+    v.setWireframeOverlap(-1)
 
     # set random colours
     v.setRandomColours()
@@ -44,6 +46,27 @@ def test_VtkViewer(testdata, tmptestdir):
     # v.exportScreenShot(fileName=str(tmptestdir / "test.ps"))
 
     # v.view(interactive=False)
+
+
+def test_VtkViewer_replica(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/T106_replica_x.gdml"])
+    reg = r.getRegistry()
+    v = _pyg4.visualisation.VtkViewer()
+    v.addLogicalVolumeRecursive(reg.getWorldVolume())
+
+
+def test_VtkViewer_division(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/124_division_box_x.gdml"])
+    reg = r.getRegistry()
+    v = _pyg4.visualisation.VtkViewer()
+    v.addLogicalVolumeRecursive(reg.getWorldVolume())
+
+
+def test_VtkViewer_param(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/T111_parameterised_box.gdml"])
+    reg = r.getRegistry()
+    v = _pyg4.visualisation.VtkViewer()
+    v.addLogicalVolumeRecursive(reg.getWorldVolume())
 
 
 def test_VtkViewer_addSolid(testdata, tmptestdir):

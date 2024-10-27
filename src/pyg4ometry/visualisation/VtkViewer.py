@@ -648,7 +648,7 @@ class VtkViewer:
                         self.physicalMapperMap,
                         self.actors,
                         self.physicalActorMap,
-                        visOptions=pv.visOptions,
+                        visOptions=pv.logicalVolume.visOptions,
                         overlap=False,
                     )
             elif pv.type == "parametrised":
@@ -659,7 +659,7 @@ class VtkViewer:
 
                     # pv compound transform
                     new_mtra = mtra @ pvmrot
-                    new_tra = _np.array @ pvtra + tra
+                    new_tra = mtra @ pvtra + tra
 
                     # TBC - should pv.visOptions be used exclusively?
                     self.addMesh(
@@ -674,7 +674,7 @@ class VtkViewer:
                         self.physicalMapperMap,
                         self.actors,
                         self.physicalActorMap,
-                        visOptions=pv.visOptions,
+                        visOptions=pv.logicalVolume.visOptions,
                         overlap=False,
                     )
 
