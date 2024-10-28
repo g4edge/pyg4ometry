@@ -5,6 +5,7 @@ import numpy as _np
 
 
 def _loadFile(fileName):
+    reg, wl = None, None
     if fileName.find(".gdml") != -1:
         r = _pyg4.gdml.Reader(fileName)
         reg = r.getRegistry()
@@ -35,7 +36,9 @@ def _loadFile(fileName):
 
         reg.setWorld(wl)
     elif fileName.find(".stp") != -1:
-        pass
+        raise NotImplementedError(".stp file loading not yet implement in command line interface")
+    else:
+        raise IOError("unknown format: '"+fileName.split('.')[-1]+"'")
 
     return reg, wl
 
