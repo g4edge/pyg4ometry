@@ -166,12 +166,16 @@ class _FlukaToG4MaterialConverter:
     def convertCompound(self, flukaCompound):
         name = flukaCompound.name
         fractionType = flukaCompound.fractionType
-        if fractionType == "atomic":
-            self.convertAtomicFractionCompound(name, flukaCompound)
-        elif fractionType == "mass":
-            self.convertMassFractionCompound(name, flukaCompound)
-        elif fractionType == "volume":
-            self.convertVolumeFractionCompound(name, flukaCompound)
+        try:
+            if fractionType == "atomic":
+                self.convertAtomicFractionCompound(name, flukaCompound)
+            elif fractionType == "mass":
+                self.convertMassFractionCompound(name, flukaCompound)
+            elif fractionType == "volume":
+                self.convertVolumeFractionCompound(name, flukaCompound)
+        except Exception as ex:
+            print("Error in material definition: ", name)
+            raise ex
 
     def _makeBaseCompoundMaterial(self, name, flukaCompound):
         assert name == flukaCompound.name
