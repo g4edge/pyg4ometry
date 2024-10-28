@@ -38,7 +38,7 @@ def _loadFile(fileName):
     elif fileName.find(".stp") != -1:
         raise NotImplementedError(".stp file loading not yet implement in command line interface")
     else:
-        raise IOError("unknown format: '"+fileName.split('.')[-1]+"'")
+        raise OSError("unknown format: '" + fileName.split(".")[-1] + "'")
 
     return reg, wl
 
