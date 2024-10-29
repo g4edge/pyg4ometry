@@ -58,6 +58,7 @@ def _writeFile(fileName, reg):
     else:
         raise OSError("unknown format: '" + fileName.split(".")[-1] + "'")
 
+
 def _parseStrMultipletAsFloat(strTriplet):
     return list(map(float, strTriplet.split(",")))
 
@@ -252,7 +253,9 @@ def cli(
         )
 
     if featureData is not None or featureDataOutputFileName is not None:
-        raise NotImplementedError("feature data has not yet been implemented in the command line interface")
+        raise NotImplementedError(
+            "feature data has not yet been implemented in the command line interface"
+        )
         # TBC!!!
 
 
