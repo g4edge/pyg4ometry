@@ -1361,7 +1361,7 @@ option, physicsList="em";
         oe.setAttribute("name", self.prepend + instance.name)
 
         srf = self.doc.createElement("solidref")
-        srf.setAttribute("ref", instance.solid.name)
+        srf.setAttribute("ref", self.prepend + instance.solid.name)
         oe.appendChild(srf)
 
         scl = self.doc.createElement("scale")
