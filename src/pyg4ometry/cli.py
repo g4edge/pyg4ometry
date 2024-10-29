@@ -1,8 +1,27 @@
 import sys
-from optparse import OptionParser
+from optparse import OptionParser, OptParseError
 import pyg4ometry as _pyg4
 import numpy as _np
 
+class OptionParserTestable(OptionParser):
+    def __init__(self, *args, noExit=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.noExit = noExit
+
+    def exit(self, status=0, msg=None):
+        if msg:
+            sys.stderr.write(msg)
+        if self.noExit:
+            raise OptParseError(f"Status:{status}  {msg}")
+        else:
+            sys.exit(status)
+
+    def error(self, msg):
+        self.print_usage(sys.stderr)
+        if self.noExit:
+            raise OptParseError(f"Status:2 {self.get_prog_name()}: error: {msg}\n")
+        else:
+            self.exit(2, "%s: error: %s\n" % (self.get_prog_name(), msg))
 
 def _loadFile(fileName):
     reg, wl = None, None
@@ -263,8 +282,8 @@ def cli(
         # TBC!!!
 
 
-def main():
-    parser = OptionParser()
+def main(testArgs=None, noExit=True):
+    parser = OptionParserTestable(noExit=True)
     parser.add_option(
         "-a",
         "--analysis",
@@ -415,7 +434,7 @@ def main():
     )
 
     # features
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args(args=testArgs)
 
     verbose = options.__dict__["verbose"]
     if verbose:
