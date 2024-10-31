@@ -5,6 +5,7 @@ import numpy as _np
 
 
 def _loadFile(fileName):
+    reg, wl = None, None
     if fileName.find(".gdml") != -1:
         r = _pyg4.gdml.Reader(fileName)
         reg = r.getRegistry()
@@ -35,7 +36,11 @@ def _loadFile(fileName):
 
         reg.setWorld(wl)
     elif fileName.find(".stp") != -1:
-        pass
+        errMsg = ".stp file loading not yet implement in command line interface"
+        raise NotImplementedError(errMsg)
+    else:
+        errMsg = "unknown format: '" + fileName.split(".")[-1] + "'"
+        raise OSError(errMsg)
 
     return reg, wl
 
@@ -51,7 +56,11 @@ def _writeFile(fileName, reg):
         ow.addDetector(freg)
         ow.write(fileName)
     elif fileName.find(".usd") != -1:
-        pass
+        errMsg = ".usd file writing not yet implement in command line interface"
+        raise NotImplementedError(errMsg)
+    else:
+        errMsg = "unknown format: '" + fileName.split(".")[-1] + "'"
+        raise OSError(errMsg)
 
 
 def _parseStrMultipletAsFloat(strTriplet):
@@ -197,7 +206,8 @@ def cli(
         wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
 
     if materials is not None:
-        pass
+        errMsg = "materials flag is not implemented yet"
+        raise NotImplementedError(errMsg)
 
     if outputFileName is not None:
         if outputFileName.find(".gl") != -1:
@@ -248,9 +258,9 @@ def cli(
         )
 
     if featureData is not None or featureDataOutputFileName is not None:
+        errMsg = "feature data has not yet been implemented in the command line interface"
+        raise NotImplementedError(errMsg)
         # TBC!!!
-        print("feature data has not yet been implemented in the command line interface")
-        exit(1)
 
 
 def main():
