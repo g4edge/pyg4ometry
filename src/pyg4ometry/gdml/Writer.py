@@ -1333,7 +1333,7 @@ option, physicsList="em";
             ce.setAttribute("name", nodename)
 
             cse = self.doc.createElement("solid")
-            cse.setAttribute("ref", solid.name)
+            cse.setAttribute("ref", self.prepend + solid.name)
             ce.appendChild(cse)
 
             position = trans[1]
