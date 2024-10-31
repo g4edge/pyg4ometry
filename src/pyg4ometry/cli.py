@@ -36,9 +36,11 @@ def _loadFile(fileName):
 
         reg.setWorld(wl)
     elif fileName.find(".stp") != -1:
-        raise NotImplementedError(".stp file loading not yet implement in command line interface")
+        errMsg = ".stp file loading not yet implement in command line interface"
+        raise NotImplementedError(errMsg)
     else:
-        raise OSError("unknown format: '" + fileName.split(".")[-1] + "'")
+        errMsg = "unknown format: '" + fileName.split(".")[-1] + "'"
+        raise OSError(errMsg)
 
     return reg, wl
 
@@ -54,9 +56,11 @@ def _writeFile(fileName, reg):
         ow.addDetector(freg)
         ow.write(fileName)
     elif fileName.find(".usd") != -1:
-        raise NotImplementedError(".usd file writing not yet implement in command line interface")
+        errMsg = ".usd file writing not yet implement in command line interface"
+        raise NotImplementedError(errMsg)
     else:
-        raise OSError("unknown format: '" + fileName.split(".")[-1] + "'")
+        errMsg = "unknown format: '" + fileName.split(".")[-1] + "'"
+        raise OSError(errMsg)
 
 
 def _parseStrMultipletAsFloat(strTriplet):
@@ -202,7 +206,8 @@ def cli(
         wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
 
     if materials is not None:
-        raise NotImplementedError("materials flag is not implemented yet")
+        errMsg = "materials flag is not implemented yet"
+        raise NotImplementedError(errMsg)
 
     if outputFileName is not None:
         if outputFileName.find(".gl") != -1:
@@ -253,9 +258,8 @@ def cli(
         )
 
     if featureData is not None or featureDataOutputFileName is not None:
-        raise NotImplementedError(
-            "feature data has not yet been implemented in the command line interface"
-        )
+        errMsg = "feature data has not yet been implemented in the command line interface"
+        raise NotImplementedError(errMsg)
         # TBC!!!
 
 
