@@ -39,7 +39,7 @@ jobs:
         uses: SimenB/github-actions-cpu-cores@v2
         id: cpu-cores
 
-      - uses: pypa/cibuildwheel@v2.21.1
+      - uses: pypa/cibuildwheel@v2.21.3
         env:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
 
