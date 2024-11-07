@@ -573,7 +573,7 @@ def geant4Solid2FlukaRegion(
             mtra,
             tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
         r2, flukaNameCount = geant4Solid2FlukaRegion(
@@ -582,7 +582,7 @@ def geant4Solid2FlukaRegion(
             new_mtra,
             new_tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
 
@@ -625,7 +625,7 @@ def geant4Solid2FlukaRegion(
             mtra,
             tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
         r2, flukaNameCount = geant4Solid2FlukaRegion(
@@ -634,7 +634,7 @@ def geant4Solid2FlukaRegion(
             new_mtra,
             new_tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
 
@@ -679,7 +679,7 @@ def geant4Solid2FlukaRegion(
             mtra,
             tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
         r2, flukaNameCount = geant4Solid2FlukaRegion(
@@ -688,7 +688,7 @@ def geant4Solid2FlukaRegion(
             new_mtra,
             new_tra,
             flukaRegistry,
-            False,
+            bakeTransforms=bakeTransforms,
             commentName=commentName,
         )
 
