@@ -26,6 +26,7 @@ from . import T026_geant4GenericTrap2Fluka
 from . import T028_geant4Union2Fluka
 from . import T029_geant4Subtraction2Fluka
 from . import T030_geant4Intersection2Fluka
+from . import T031_geant4MultiUnion2Fluka
 
 from . import T101_physical_logical
 from . import T105_geant4Assembly2Fluka
@@ -664,6 +665,16 @@ def test_Geant42FlukaConversion_T030_Intersection(tmptestdir, testdata):
         fluka=True,
         outputPath=tmptestdir,
         refFilePath=testdata["convert/T030_geant4Intersection2Fluka.inp"],
+    )
+
+
+def test_Geant42FlukaConversion_T031_MultiUnion(tmptestdir, testdata):
+    T031_geant4MultiUnion2Fluka.Test(
+        vis=False,
+        interactive=False,
+        fluka=True,
+        outputPath=tmptestdir,
+        refFilePath=testdata["convert/T031_geant4MultiUnion2Fluka.inp"],
     )
 
 

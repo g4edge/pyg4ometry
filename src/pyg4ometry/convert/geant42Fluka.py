@@ -708,6 +708,47 @@ def geant4Solid2FlukaRegion(
                 zone1.addIntersection(zone2)
             fregion.addZone(zone1)
 
+    elif solid.type == "MultiUnion":
+
+        fregion = _fluka.Region("R" + name)
+
+        r1, flukaNameCount = geant4Solid2FlukaRegion(
+            flukaNameCount,
+            solid.objects[0],
+            mtra,
+            tra,
+            flukaRegistry,
+            bakeTransforms=bakeTransforms,
+            commentName=commentName,
+        )
+
+        for zone in r1.zones:
+            fregion.addZone(zone)
+
+        for solid, trans in zip(solid.objects[1:], solid.transformations):
+
+            bsrot = trans[0].eval()
+            bspos = trans[1].eval()
+
+            bsmtra = _transformation.tbxyz2matrix(bsrot)
+            bstra = bspos
+
+            new_mtra = mtra @ bsmtra
+            new_tra = mtra @ bstra + tra
+
+            r2, flukaNameCount = geant4Solid2FlukaRegion(
+                flukaNameCount,
+                solid,
+                new_mtra,
+                new_tra,
+                flukaRegistry,
+                bakeTransforms=bakeTransforms,
+                commentName=commentName,
+            )
+
+            for zone in r2.zones:
+                fregion.addZone(zone)
+
     elif solid.type == "extruder":
         fregion, flukaNameCount = geant4Solid2FlukaRegion(
             flukaNameCount,
