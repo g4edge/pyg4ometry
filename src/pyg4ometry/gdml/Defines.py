@@ -1,5 +1,6 @@
 import numbers as _numbers
 import numpy as _np
+import re as _re
 from . import Units as _Units
 
 
@@ -28,6 +29,10 @@ class BasicExpression:
         self.registry = registry
 
     def eval(self):
+        # short-cut for expressions only having a numeric path
+        if _re.match(r"-?[0-9]+(?:\.[0-9]+)$", self.expressionString):
+            return float(self.expressionString)
+
         expressionParser = self.registry.getExpressionParser()
         self.parseTree = expressionParser.parse(self.expressionString)
         value = expressionParser.evaluate(self.parseTree, self.registry.defineDict)
