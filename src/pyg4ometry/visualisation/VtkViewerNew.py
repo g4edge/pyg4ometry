@@ -56,7 +56,6 @@ class VtkViewerNew(_ViewerBase):
         self.clippers = []  # clip filters
         self.axes = []  # axes actors
 
-        self.pdNameDict = {}  # polydata to LV name
         self.instanceNameDict = {}  # instance transformation to PV name
 
         self.bBuiltPipelines = False
@@ -326,7 +325,6 @@ class VtkViewerNew(_ViewerBase):
             pd = _Convert.pycsgMeshToVtkPolyData(self.localmeshes[k])
             # pd.SetObjectName(k)
             self.polydata[k] = pd
-            self.pdNameDict[pd] = k
 
         appFltDict = {}
         visOptDict = {}
@@ -708,7 +706,9 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
                 pdmin = pd
                 pdamin = pda
 
-        lvName = self.vtkviewer.pdNameDict[pdamin.GetInputAlgorithm().GetInput()]
+        for name, pd in self.vtkviewer.polydata.items():
+            if pd == pdamin.GetInputAlgorithm().GetInput():
+                lvName = name
         pvName = self.vtkviewer.instanceNameDict[pdamin]
         pvTrans = pdamin.GetTransform()
         [mtra, tra] = _Convert.vtkTransformation2PyG4(pvTrans.GetConcatenatedTransform(0))
