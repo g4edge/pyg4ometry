@@ -1,14 +1,16 @@
+import logging
 import numpy as _np
 import matplotlib.pyplot as _plt
 from ..analysis.flukaData import FlukaBdxData as _FlukaBdxData
 from ..analysis.flukaData import FlukaBinData as _FlukaBinData
 
+_import_failed = []
 try:
     from pybdsim.Data import TH1 as _TH1
     from pybdsim.Data import TH2 as _TH2
     from pybdsim.Data import TH3 as _TH3
 except ImportError:
-    print("Failed to find pybdsim")
+    _import_failed.append("pybdsim")
 
 try:
     from ROOT import TH1D as _TH1D
@@ -18,7 +20,17 @@ try:
     from ROOT import TH2F as _TH2F
     from ROOT import TH3F as _TH3F
 except ImportError:
-    print("Failed to find ROOT")
+    _import_failed.append("ROOT")
+
+_log = logging.getLogger(__name__)
+
+
+def _warn_import_failed():
+    global _import_failed
+    if _import_failed != []:
+        msg = f"Failed to import {_import_failed}"
+        _log.warning(msg)
+        _import_failed = []
 
 
 class TH1:
@@ -32,6 +44,8 @@ class TH1:
         self.xedges = None
         self.xlowedges = None
         self.xhighedges = None
+
+        _warn_import_failed()
 
         if type(data) is _FlukaBdxData:
             print("flukaBdxData")
@@ -80,6 +94,8 @@ class TH1:
 
 class TH2:
     def __init__(self, data, nPrimary=1):
+        _warn_import_failed()
+
         if type(data) is _TH2:
             self.name = data.name
             self.nPrimary = nPrimary
@@ -114,6 +130,8 @@ class TH2:
 
 class TH3:
     def __init__(self, data, nPrimary=1):
+        _warn_import_failed()
+
         if type(data) is _FlukaBinData:
             self.name = data.name.strip()
             self.nPrimary = data

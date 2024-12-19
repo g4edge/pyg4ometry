@@ -1,9 +1,7 @@
 try:
     from pxr import Usd, Gf, UsdGeom, UsdShade, Sdf
-
-    print("Openusd pyg4ometry imported")
 except ImportError:
-    pass
+    Usd = None
 
 from .ViewerHierarchyBase import ViewerHierarchyBase as _ViewerHierarchyBase
 import numpy as _np
@@ -69,6 +67,9 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
 class UsdViewer(_ViewerHierarchyBase):
 
     def __init__(self, filePath="./test.usd"):
+        if Usd is None:
+            msg = "Failed to import open usd"
+            raise RuntimeError(msg)
 
         self.filePath = filePath
 
