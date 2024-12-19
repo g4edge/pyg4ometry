@@ -25,6 +25,14 @@ except ImportError:
 _log = logging.getLogger(__name__)
 
 
+def _warn_import_failed():
+    global _import_failed
+    if _import_failed != []:
+        msg = f"Failed to import {_import_failed}"
+        log.warning(msg)
+        _import_failed = []
+
+
 class TH1:
     def __init__(self, data, nPrimary=1, flukaBdxVariable="energy"):
         self.name = None
@@ -37,10 +45,7 @@ class TH1:
         self.xlowedges = None
         self.xhighedges = None
 
-        if _import_failed != []:
-            msg = f"Failed to import {_import_failed}"
-            log.warning(msg)
-            _import_failed = []
+        _warn_import_failed()
 
         if type(data) is _FlukaBdxData:
             print("flukaBdxData")
@@ -89,10 +94,7 @@ class TH1:
 
 class TH2:
     def __init__(self, data, nPrimary=1):
-        if _import_failed != []:
-            msg = f"Failed to import {_import_failed}"
-            log.warning(msg)
-            _import_failed = []
+        _warn_import_failed()
 
         if type(data) is _TH2:
             self.name = data.name
@@ -128,10 +130,7 @@ class TH2:
 
 class TH3:
     def __init__(self, data, nPrimary=1):
-        if _import_failed != []:
-            msg = f"Failed to import {_import_failed}"
-            log.warning(msg)
-            _import_failed = []
+        _warn_import_failed()
 
         if type(data) is _FlukaBinData:
             self.name = data.name.strip()
