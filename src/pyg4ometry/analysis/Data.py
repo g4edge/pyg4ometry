@@ -29,7 +29,7 @@ def _warn_import_failed():
     global _import_failed
     if _import_failed != []:
         msg = f"Failed to import {_import_failed}"
-        log.warning(msg)
+        _log.warning(msg)
         _import_failed = []
 
 
