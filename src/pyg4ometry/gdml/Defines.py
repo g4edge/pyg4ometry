@@ -29,9 +29,18 @@ class BasicExpression:
         self.registry = registry
 
     def eval(self):
-        # short-cut for expressions only having a numeric path
-        if _re.match(r"-?[0-9]+(?:\.[0-9]+)$", self.expressionString):
+        # short-cut for expressions only having a numeric part.
+        num_re = r"-?[0-9]+(?:\.[0-9]+)?(?:e-?[0-9]{1,2})?"
+        if _re.match(num_re + "$", self.expressionString):
             return float(self.expressionString)
+
+        # short-cut for expressions only having a numeric part and a unit.
+        num_w_unit_re = "(" + num_re + r")(?:\*([a-zA-Z]+))?$"
+        match_w_unit = _re.match(num_w_unit_re, self.expressionString)
+        if match_w_unit:
+            unit = _Units.unit(match_w_unit.group(2))
+            if unit is not None:
+                return float(match_w_unit.group(1)) * unit
 
         expressionParser = self.registry.getExpressionParser()
         self.parseTree = expressionParser.parse(self.expressionString)
