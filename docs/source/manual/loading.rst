@@ -132,7 +132,7 @@ An instance of the test data can be used to access any file.
     import g4edgetestdata
 
     d = g4edgetestdata.G4EdgeTestData()
-    r = pyg4ometry.pyoce.Reader(d["step)
+    r = pyg4ometry.pyoce.Reader(d["step/1_BasicSolids_Bodies.step"])
     ls = r.freeShapes()
     worldName = pyg4ometry.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(ls.Value(1))
     mats, skip, mesh = {}, [], {}
