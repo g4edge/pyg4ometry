@@ -194,6 +194,8 @@ def cli(
             _pyg4.geant4.DumpGeometryStructureTree(wl, 0)
         elif info == "instances":
             print("pyg4> Not yet implemented")
+        else:
+            raise ValueError("Accepted info keys are 'reg', 'tree', 'instances'")
 
     if checkOverlaps:
         print("pyg4> checkoverlaps")
