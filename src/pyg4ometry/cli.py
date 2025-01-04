@@ -17,16 +17,18 @@ class OptionParserTestable(OptionParser):
         if msg:
             sys.stderr.write(msg)
         if self.noExit:
-            raise OptParseError(f"Status:{status}  {msg}")
+            msg2 = f"Status:{status}  {msg}"
+            raise OptParseError(msg2)
         else:
             sys.exit(status)
 
     def error(self, msg):
         self.print_usage(sys.stderr)
+        msg2 = f"Status:2 {self.get_prog_name()}: error: {msg}\n"
         if self.noExit:
-            raise OptParseError(f"Status:2 {self.get_prog_name()}: error: {msg}\n")
+            raise OptParseError(msg2)
         else:
-            self.exit(2, "%s: error: %s\n" % (self.get_prog_name(), msg))
+            self.exit(2, msg2)
 
 def _loadFile(fileName):
     # convert to string for possible pathlib path object from testing data
@@ -201,7 +203,8 @@ def cli(
         elif info == "instances":
             print("pyg4> Not yet implemented")
         else:
-            raise ValueError("Accepted info keys are 'reg', 'tree', 'instances'")
+            errMsg = "Accepted info keys are 'reg', 'tree', 'instances'"
+            raise ValueError(errMsg)
 
     if checkOverlaps:
         print("pyg4> checkoverlaps")
@@ -236,7 +239,8 @@ def cli(
     if solid is not None:
         newSolid = _parseStrPythonAsSolid(reg, solid)
         if exchangeLvName is None:
-            raise ValueError("pyg4> must specify the LV with -x to exchange the solid in.")
+            errMsg = "pyg4> must specify the LV with -x to exchange the solid in."
+            raise ValueError(errMsg)
         lvToChange = reg.logicalVolumeDict[exchangeLvName]
         lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
         lvToChange.reMesh()
@@ -292,7 +296,8 @@ def cli(
 
     if planeCutterData is not None:
         if planeCutterOutputFileName is None:
-            raise ValueError("pyg4> must specify -P or --planeCutterOutput file")
+            errMsg = "pyg4> must specify -P or --planeCutterOutput file"
+            raise ValueError(errMsg)
         # up the quality of meshes
         _pyg4.config.setGlobalMeshSliceAndStack(56)
         v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
@@ -506,7 +511,8 @@ def main(testArgs=None, testing=False):
     # this must be done when we have a registry
     solid = options.__dict__["solidCode"]
     if solid is not None:
-        raise NotImplementedError("solid is not implemented yet")
+        errMsg = "pyg4> solid is not implemented yet"
+        raise NotImplementedError(errMsg)
 
     # parse feature data
     featureData = options.__dict__["featureData"]
