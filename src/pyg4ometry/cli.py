@@ -60,11 +60,14 @@ def _loadFile(fileName):
         stl_phy = _pyg4.geant4.PhysicalVolume(
             [0, 0, 0], list(-stl_cext), stl_log, "stl_phy", wl, reg
         )
-
         reg.setWorld(wl)
-    elif fileName.find(".stp") != -1:
-        errMsg = ".stp file loading not yet implement in command line interface"
-        raise NotImplementedError(errMsg)
+    elif fileName.find(".stp") != -1 or fileName.find(".step") != -1:
+        r = _pyg4.pyoce.Reader(str(fileName))
+        ls = r.freeShapes()
+        worldName = _pyg4.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(ls.Value(1))
+        mats, skip, mesh = {}, [], {}
+        reg = _pyg4.convert.oce2Geant4(r.shapeTool, worldName, mats, skip, mesh)
+        wl = reg.logicalVolumeDict[worldName]
     else:
         errMsg = "unknown format: '" + fileName.split(".")[-1] + "'"
         raise OSError(errMsg)
