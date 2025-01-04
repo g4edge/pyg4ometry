@@ -87,6 +87,7 @@ def _writeFile(fileName, reg):
         ow.addDetector(freg)
         ow.write(fileName)
     elif fileName.find(".usd") != -1:
+        # TODO
         errMsg = ".usd file writing not yet implement in command line interface"
         raise NotImplementedError(errMsg)
     else:
@@ -103,6 +104,7 @@ def _parseStrMultipletAsFloat(strTriplet):
 
 
 def _parseStrPythonAsSolid(reg, strPython):
+    # TODO = finish locals
     locals = {}
     solid = exec(
         "s = _pyg4.geant4.solid." + strPython,
