@@ -265,7 +265,8 @@ def cli(
 
         if bounding:
             v.addAxes(_pyg4.visualisation.axesFromExtents(bbExtent)[0])
-        v.view(interactive=True)
+        interactive = not testing
+        v.view(interactive=interactive)
 
     if planeCutterData is not None:
         if planeCutterOutputFileName is None:
