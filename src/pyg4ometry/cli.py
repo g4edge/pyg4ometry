@@ -160,15 +160,6 @@ def cli(
 
     reg, wl = _loadFile(inputFileName)
 
-    # extract lv in new registry etc
-    if lvName is not None:
-        lv = reg.logicalVolumeDict[lvName]
-        reg1 = _pyg4.geant4.Registry()
-        reg1.addVolumeRecursive(lv)
-        reg = reg1
-        reg.setWorld(lv)
-        lw = reg.getWorldVolume()
-
     if bounding:
         bbExtent = _np.array(wl.extent())
         bbDExtent = bbExtent[1] - bbExtent[0]
@@ -219,6 +210,15 @@ def cli(
         wp1 = _pyg4.geant4.PhysicalVolume(rotation, translation, wl1, "l1_pv", wl, reg)
         print("pyg4> append")
         reg.addVolumeRecursive(wp1)
+
+    # extract lv in new registry etc
+    if lvName is not None:
+        lv = reg.logicalVolumeDict[lvName]
+        reg1 = _pyg4.geant4.Registry()
+        reg1.addVolumeRecursive(lv)
+        reg = reg1
+        reg.setWorld(lv)
+        wl = reg.getWorldVolume()
 
     # parse solid
     newSolid = None
