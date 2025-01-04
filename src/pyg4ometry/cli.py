@@ -151,7 +151,8 @@ def cli(
         print("pyg4> need input file name")
 
     try:
-        open(inputFileName)
+        f = open(inputFileName)
+        f.close()
     except FileNotFoundError:
         print("pyg4> input file not found")
         return
