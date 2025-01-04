@@ -4,6 +4,18 @@ from optparse import OptParseError
 import os
 import pytest
 
+_skip_root_tests = False
+try:
+    import ROOT
+except ImportError:
+    _skip_root_tests = False
+
+_skip_html_tests = False
+try:
+    import jinja2
+except ImportError:
+    _skip_html_tests
+
 
 def _pj(filename):
     """
@@ -35,7 +47,6 @@ def test_cli_help_long():
 
 
 # these are done in the order of the definitions added to the parser object in the main function
-
 
 def test_cli_no_input():
     with pytest.raises(SystemExit) as ex:
@@ -117,6 +128,7 @@ def test_cli_feature_extract_long(testdata):
 
 
 # gdml loading is tested in every other example
+@pytest.mark.skipif(_skip_root_tests, reason="requires ROOT to run")
 def test_cli_load_root(testdata):
     _cli.main(["-i", testdata["root/T001_Box.root"]], testing=True)
 
@@ -201,6 +213,7 @@ def test_cli_output_short_gl(testdata):
     _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", "o.gl"], testing=True)
 
 
+@pytest.mark.skipif(_skip_html_tests, reason="requires jinja2 to run")
 def test_cli_output_short_html(testdata):
     _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", "o.html"], testing=True)
 

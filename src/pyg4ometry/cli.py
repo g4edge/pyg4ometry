@@ -283,7 +283,11 @@ def cli(
             if gltfScale is not None:
                 v.scaleScene(float(gltfScale))
             v.buildPipelinesAppend()
-            v.exportThreeJSScene(str(outputFileName).split(".")[0])
+            try:
+                v.exportThreeJSScene(str(outputFileName).split(".")[0])
+            except ModuleNotFoundError:
+                errMsg = "pyg4> html export requires the jinja2 package that is not a formal dependency"
+                raise ModuleNotFoundError(errMsg)
         else:
             _writeFile(outputFileName, reg)
 
