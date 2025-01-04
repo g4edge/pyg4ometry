@@ -95,7 +95,11 @@ def _writeFile(fileName, reg):
 
 
 def _parseStrMultipletAsFloat(strTriplet):
-    return list(map(float, strTriplet.split(",")))
+    def evalulate(str):
+        reg = _pyg4.geant4.Registry()
+        e = _pyg4.gdml.Expression('temp', str, reg)
+        return e.eval()
+    return list(map(evalulate, strTriplet.split(",")))
 
 
 def _parseStrPythonAsSolid(reg, strPython):
