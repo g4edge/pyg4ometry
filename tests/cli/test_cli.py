@@ -225,7 +225,7 @@ def test_cli_output_short_usd(testdata):
 
 
 def test_cli_output_short_wrong(testdata):
-    with pytest.raises(OSError) as ex:
+    with pytest.raises(OSError, match="unknown format:") as ex:
         _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", "o.rarara"], testing=True)
     assert ex.type is OSError
 
@@ -259,7 +259,7 @@ def test_cli_planecutter_long2(testdata):
 
 
 def test_cli_planecutter_short_wrong(testdata):
-    with pytest.raises(ValueError) as ex:
+    with pytest.raises(ValueError, match="pyg4> must specify -P or --planeCutterOutput file") as ex:
         # no -P given for output - should complain
         _cli.main(["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-V"], testing=True)
     assert ex.type is ValueError
