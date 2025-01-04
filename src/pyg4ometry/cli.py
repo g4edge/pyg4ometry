@@ -284,8 +284,7 @@ def cli(
 
     if planeCutterData is not None:
         if planeCutterOutputFileName is None:
-            print("pyg4> must specify -P or --planeCutterOutput file")
-            exit(1)
+            raise ValueError("pyg4> must specify -P or --planeCutterOutput file")
         # up the quality of meshes
         _pyg4.config.setGlobalMeshSliceAndStack(56)
         v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
