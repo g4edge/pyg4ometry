@@ -29,6 +29,9 @@ class OptionParserTestable(OptionParser):
             self.exit(2, "%s: error: %s\n" % (self.get_prog_name(), msg))
 
 def _loadFile(fileName):
+    # convert to string for possible pathlib path object from testing data
+    if type(fileName) != str:
+        fileName = str(fileName)
     reg, wl = None, None
     if fileName.find(".gdml") != -1:
         r = _pyg4.gdml.Reader(fileName)
