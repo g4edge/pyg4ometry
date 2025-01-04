@@ -233,12 +233,10 @@ def cli(
         reg.setWorld(lv)
         wl = reg.getWorldVolume()
 
-    # parse solid
-    newSolid = None
     if solid is not None:
         newSolid = _parseStrPythonAsSolid(reg, solid)
-
-    if exchangeLvName is not None:
+        if exchangeLvName is None:
+            raise ValueError("pyg4> must specify the LV with -x to exchange the solid in.")
         lvToChange = reg.logicalVolumeDict[exchangeLvName]
         lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
         lvToChange.reMesh()
@@ -249,6 +247,16 @@ def cli(
     if materials is not None:
         # TODO - implement
         errMsg = "materials flag is not implemented yet"
+        raise NotImplementedError(errMsg)
+
+    if rotation is not None:
+        # TODO - implement
+        errMsg = "rotation is not implemented yet"
+        raise NotImplementedError(errMsg)
+
+    if translation is not None:
+        # TODO - implement
+        errMsg = "translation is not implemented yet"
         raise NotImplementedError(errMsg)
 
     if outputFileName is not None:
@@ -477,7 +485,8 @@ def main(testArgs=None, testing=False):
     planeData = options.__dict__["planeCutter"]
     if planeData is not None:
         planeData = _parseStrMultipletAsFloat(planeData)
-        print("pyg4> clipper plane data", planeData)
+        if verbose:
+            print("pyg4> clipper plane data", planeData)
 
     # parse translation
     translation = options.__dict__["translation"]
@@ -495,6 +504,9 @@ def main(testArgs=None, testing=False):
 
     # parse solid
     # this must be done when we have a registry
+    solid = options.__dict__["solidCode"]
+    if solid is not None:
+        raise NotImplementedError("solid is not implemented yet")
 
     # parse feature data
     featureData = options.__dict__["featureData"]
