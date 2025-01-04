@@ -9,16 +9,22 @@ load a file, and it creates a Registry object (see :ref:`introduction-registry`)
 the model. The registry is the final object from a reader, and its top-most volume can be
 used for visualisation or other operations.
 
-.. tab:: GDML
+Here, we use example files provided in the g4edge-testdata package that can be installed with:
+::
+  pip install g4edge-testdata
 
-  In directory :code:`pyg4ometry/test/gdmlG4examples/ChargeExchangeMC/`
+An instance of the test data can be used to access any file.
+
+.. tab:: GDML
 
   .. code-block:: python
     :linenos:
 
     import pyg4ometry
+    import g4edgetestdata
 
-    r = pyg4ometry.gdml.Reader("lht.gdml")
+    d = g4edgetestdata.G4EdgeTestData()
+    r = pyg4ometry.gdml.Reader(d["gdml/ChargeExchangeMC/lht.gdml"])
     l = r.getRegistry().getWorldVolume()
     v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
     v.addLogicalVolume(l)
@@ -32,17 +38,18 @@ used for visualisation or other operations.
 
 .. tab:: FLUKA
 
-  In directory :code:`pyg4ometry/test/flukaCompoundExamples`
-
   **Note** FLUKA geometry can be loaded but cannot be visualised directly without
-  conversion to a Geant4 model. This is not necessary for loading, but shown here.
+  conversion to a Geant4 model. This is not necessary for simiply loading, but it is
+  shown here.
 
   .. code-block:: python
     :linenos:
 
     import pyg4ometry
+    import g4edgetestdata
 
-    r = pyg4ometry.fluka.Reader("corrector-dipole2.inp")
+    d = g4edgetestdata.G4EdgeTestData()
+    r = pyg4ometry.fluka.Reader(d["fluka/ex-geometry.inp"])
     flukaRegistry = r.flukaregistry
 
     geantRegistry = pyg4ometry.convert.fluka2Geant4(flukaRegistry)
@@ -56,18 +63,18 @@ used for visualisation or other operations.
       :width: 80%
       :align: center
 
-      FLUKA example of a dipole magnet.
+      FLUKA example.
 
 .. tab:: ROOT
-
-  In directory :code:`pyg4ometry/test/root2Gdml`
 
   .. code-block:: python
     :linenos:
 
     import pyg4ometry
+    import g4edgetestdata
 
-    r = pyg4ometry.io.ROOTTGeo.Reader("example.root")
+    d = g4edgetestdata.G4EdgeTestData()
+    r = pyg4ometry.io.ROOTTGeo.Reader(d["root/lht.root"])
     l = r.getRegistry().getWorldVolume()
     v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
     v.addLogicalVolume(l)
@@ -82,18 +89,19 @@ used for visualisation or other operations.
 
 .. tab:: STL
 
-  In directory :code:`pyg4ometry/test/stl`
-
   STL files are typically used for a single watertight solid mesh. This mesh is
   converted to a TesselatedSolid and then a logical volume which can be placed
-  in a geometry. In directory :code:`pyg4ometry/test/stl`.
+  in a geometry.
 
   .. code-block:: python
+    :linenos:
 
     import pyg4ometry
+    import g4edgetestdata
 
+    d = g4edgetestdata.G4EdgeTestData()
     reg = pyg4ometry.geant4.Registry()
-    r = pyg4ometry.stl.Reader("utahteapot.stl", reg)
+    r = pyg4ometry.stl.Reader(d["stl/utah_teapot.stl"], reg)
     s = r.getSolid()
     copper = pyg4ometry.geant4.MaterialPredefined("G4_Cu", reg)
     l = pyg4ometry.geant4.LogicalVolume(s, copper, "utahteapot_lv", reg)
@@ -102,26 +110,43 @@ used for visualisation or other operations.
     v.view()
 
   .. figure:: tutorials/tutorial2.png
- :alt: Example of STL loading in pyg4ometry
+        :width: 80%
+        :align: center
+        :alt: Example of STL loading in pyg4ometry
+
+        Example of STL loading in pyg4ometry. Pressing :code:`s` on the keyboard
+        when in the visualiser will switch to solid mode. :code:`w`, conversely will
+        switch to wireframe.
 
 
 .. tab:: STEP
 
-
-  In directory :code:`pyg4ometry/test/freecad`
+  STEP file loading is possible in pyg4ometry. Note, here only a basic loading is shown
+  without material assignment, which normally is not information contained in a STEP file
+  but is necessary for Geant4 or FLUKA simulations.
 
   .. code-block:: python
     :linenos:
 
     import pyg4ometry
+    import g4edgetestdata
 
-    r = pyg4ometry.freecad.Reader("08_AshTray.step")
-    r.relabelModel()
-    r.convertFlat()
-    l = r.getRegistry().getWorldVolume()
-    v = pyg4ometry.visualisation.VtkViewer()
-    v.addLogicalVolume(l)
+    d = g4edgetestdata.G4EdgeTestData()
+    r = pyg4ometry.pyoce.Reader(d["step)
+    ls = r.freeShapes()
+    worldName = pyg4ometry.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(ls.Value(1))
+    mats, skip, mesh = {}, [], {}
+    reg = pyg4ometry.convert.oce2Geant4(r.shapeTool, worldName, mats, skip, mesh)
+    wl = reg.logicalVolumeDict[worldName]
+    v = pyg4ometry.visualisation.VtkViewerColouredMaterial()
+    v.addLogicalVolume(wl)
     v.view()
 
-  .. figure:: tutorials/tutorial3.png
-      :alt: Example of STEP loading in pyg4ometry
+  .. figure:: figures/viewing-step.png
+        :width: 80%
+        :align: center
+        :alt: Example of STEP loading in pyg4ometry
+
+        STEP file loading example in pyg4ometry. Pressing :code:`s` on the keyboard
+        when in the visualiser will switch to solid mode. :code:`w`, conversely will
+        switch to wireframe.
