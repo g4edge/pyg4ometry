@@ -3,12 +3,14 @@ from optparse import OptionParser, OptParseError
 import pyg4ometry as _pyg4
 import numpy as _np
 
+
 class OptionParserTestable(OptionParser):
     """
     This class wraps the general OptionParser and if the flag
     for noExit is set to True, then it throws an exception instead
     of the default sys.exit(). This allows testing of the parser.
     """
+
     def __init__(self, *args, noExit=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.noExit = noExit
@@ -29,6 +31,7 @@ class OptionParserTestable(OptionParser):
             raise OptParseError(msg2)
         else:
             self.exit(2, msg2)
+
 
 def _loadFile(fileName):
     # convert to string for possible pathlib path object from testing data
@@ -100,8 +103,9 @@ def _writeFile(fileName, reg):
 def _parseStrMultipletAsFloat(strTriplet):
     def evalulate(str):
         reg = _pyg4.geant4.Registry()
-        e = _pyg4.gdml.Expression('temp', str, reg)
+        e = _pyg4.gdml.Expression("temp", str, reg)
         return e.eval()
+
     return list(map(evalulate, strTriplet.split(",")))
 
 
@@ -153,7 +157,7 @@ def cli(
     featureDataOutputFileName=None,
     gltfScale=None,
     verbose=None,
-        testing=False,
+    testing=False,
 ):
     print("pyg4 - command line interface")
 
@@ -550,7 +554,7 @@ def main(testArgs=None, testing=False):
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
         gltfScale=options.__dict__["gltfScale"],
         verbose=verbose,
-        testing=testing
+        testing=testing,
     )
 
 
