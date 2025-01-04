@@ -26,7 +26,7 @@ class Reader:
     STL file reader
 
     :param filename: Input STL filename
-    :type filename: str
+    :type filename: str, pathlib.Path
     :param solidname: Name of the solid to be created
     :type solidname: str
     :param scale: Scaling of STL (e.g. for units)
