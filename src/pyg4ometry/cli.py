@@ -73,6 +73,7 @@ def _loadFile(fileName):
 
 
 def _writeFile(fileName, reg):
+    # this assumes we have always converted to Geant4 beforehand.
     if fileName.find(".gdml") != -1:
         ow = _pyg4.gdml.Writer(fileName)
         ow.addDetector(reg)
@@ -234,6 +235,7 @@ def cli(
         wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
 
     if materials is not None:
+        # TODO - implement
         errMsg = "materials flag is not implemented yet"
         raise NotImplementedError(errMsg)
 
@@ -289,7 +291,7 @@ def cli(
     if featureData is not None or featureDataOutputFileName is not None:
         errMsg = "feature data has not yet been implemented in the command line interface"
         raise NotImplementedError(errMsg)
-        # TBC!!!
+        # TODO
 
 
 def main(testArgs=None, testing=False):
