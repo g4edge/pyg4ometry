@@ -4,6 +4,11 @@ import pyg4ometry as _pyg4
 import numpy as _np
 
 class OptionParserTestable(OptionParser):
+    """
+    This class wraps the general OptionParser and if the flag
+    for noExit is set to True, then it throws an exception instead
+    of the default sys.exit(). This allows testing of the parser.
+    """
     def __init__(self, *args, noExit=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.noExit = noExit
@@ -133,6 +138,7 @@ def cli(
     featureDataOutputFileName=None,
     gltfScale=None,
     verbose=None,
+        testing=False,
 ):
     print("pyg4 - command line interface")
 
@@ -282,8 +288,8 @@ def cli(
         # TBC!!!
 
 
-def main(testArgs=None, noExit=True):
-    parser = OptionParserTestable(noExit=True)
+def main(testArgs=None, testing=False):
+    parser = OptionParserTestable(noExit=testing)
     parser.add_option(
         "-a",
         "--analysis",
@@ -508,6 +514,7 @@ def main(testArgs=None, noExit=True):
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
         gltfScale=options.__dict__["gltfScale"],
         verbose=verbose,
+        testing=testing
     )
 
 
