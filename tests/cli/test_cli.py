@@ -48,6 +48,7 @@ def test_cli_help_long():
 
 # these are done in the order of the definitions added to the parser object in the main function
 
+
 def test_cli_no_input():
     with pytest.raises(SystemExit) as ex:
         _cli.main([], testing=True)

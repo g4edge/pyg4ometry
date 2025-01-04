@@ -286,7 +286,9 @@ def cli(
             try:
                 v.exportThreeJSScene(str(outputFileName).split(".")[0])
             except ModuleNotFoundError:
-                errMsg = "pyg4> html export requires the jinja2 package that is not a formal dependency"
+                errMsg = (
+                    "pyg4> html export requires the jinja2 package that is not a formal dependency"
+                )
                 raise ModuleNotFoundError(errMsg)
         else:
             _writeFile(outputFileName, reg)
