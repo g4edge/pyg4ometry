@@ -283,22 +283,6 @@ def test_cli_planecutter_short_wrong(testdata):
     assert ex.type is ValueError
 
 
-def test_cli_rotation_short_gdml(testdata):
-    # TODO - change once implemented
-    with pytest.raises(NotImplementedError) as ex:
-        _cli.main(["-i", testdata["gdml/001_box.gdml"], "-r", "0,pi,0", "-V"], testing=True)
-    assert ex.type is NotImplementedError
-
-
-def test_cli_rotation_long_gdml(testdata):
-    # TODO - change once implemented
-    with pytest.raises(NotImplementedError) as ex:
-        _cli.main(
-            ["-i", testdata["gdml/001_box.gdml"], "--rotation", "0,-pi/2,0", "-V"], testing=True
-        )
-    assert ex.type is NotImplementedError
-
-
 def test_cli_solid_substitution_short_gdml(testdata):
     # TODO - change once implemented
     with pytest.raises(NotImplementedError) as ex:
@@ -323,22 +307,6 @@ def test_cli_solid_substitution_long_gdml(testdata):
                 "-V",
             ],
             testing=True,
-        )
-    assert ex.type is NotImplementedError
-
-
-def test_cli_translation_short_gdml(testdata):
-    # TODO - change once implemented
-    with pytest.raises(NotImplementedError) as ex:
-        _cli.main(["-i", testdata["gdml/001_box.gdml"], "-t", "0,2,0", "-V"], testing=True)
-    assert ex.type is NotImplementedError
-
-
-def test_cli_translation_long_gdml(testdata):
-    # TODO - change once implemented
-    with pytest.raises(NotImplementedError) as ex:
-        _cli.main(
-            ["-i", testdata["gdml/001_box.gdml"], "--translation", "0,-3,0", "-V"], testing=True
         )
     assert ex.type is NotImplementedError
 

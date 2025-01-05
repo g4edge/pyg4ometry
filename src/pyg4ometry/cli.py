@@ -188,10 +188,13 @@ def cli(
         bbExtent = _np.array(wl.extent())
         bbDExtent = bbExtent[1] - bbExtent[0]
         bbCentre = bbExtent[0] + bbExtent[1]
-
         print("pyg4> extent        ", bbExtent)
         print("pyg4> extent size   ", bbDExtent)
         print("pyg4> extent centre ", bbCentre)
+
+    # these are not used on their own but possibly as part of other commands in multiple places
+    r = rotation if rotation else [0, 0, 0]
+    t = translation if translation else [0, 0, 0]
 
     if info:
         if info == "reg":
@@ -253,7 +256,7 @@ def cli(
             errMsg = "pyg4> must specify the LV with -x to exchange the solid in."
             raise ValueError(errMsg)
         lvToChange = reg.logicalVolumeDict[exchangeLvName]
-        lvToChange.replaceSolid(newSolid, rotation=rotation, position=translation)
+        lvToChange.replaceSolid(newSolid, r, t)
         lvToChange.reMesh()
 
     if clip is not None:
@@ -262,16 +265,6 @@ def cli(
     if materials is not None:
         # TODO - implement
         errMsg = "materials flag is not implemented yet"
-        raise NotImplementedError(errMsg)
-
-    if rotation is not None:
-        # TODO - implement
-        errMsg = "rotation is not implemented yet"
-        raise NotImplementedError(errMsg)
-
-    if translation is not None:
-        # TODO - implement
-        errMsg = "translation is not implemented yet"
         raise NotImplementedError(errMsg)
 
     if outputFileName is not None:
