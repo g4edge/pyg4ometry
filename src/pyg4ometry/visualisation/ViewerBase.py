@@ -602,8 +602,7 @@ class ViewerBase:
         python -m http.server 8000
         open test.html
         """
-
-        import importlib_resources
+        from importlib_resources import files
 
         from jinja2 import Template
 
@@ -619,12 +618,8 @@ class ViewerBase:
             "css_file": cssFileName,
         }
 
-        threeHTMLTemplate = importlib_resources.as_file(
-            importlib_resources.files(__name__) / "threejs.html"
-        )
-        threeCSSTemplate = importlib_resources.as_file(
-            importlib_resources.files(__name__) / "threejs.css"
-        )
+        threeHTMLTemplate = files(__name__).joinpath("threejs.html")
+        threeCSSTemplate = files(__name__).joinpath("threejs.css")
 
         with open(threeHTMLTemplate) as file:
             template = Template(file.read())
