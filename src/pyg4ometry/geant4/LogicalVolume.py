@@ -309,10 +309,10 @@ class LogicalVolume:
         lvUsageCount=_defaultdict(int),
     ):
         """
-        Clip the geometry to newSolid, placed with rotation and position.
+        Clip the geometry to a (nested) box, placed with rotation and position.
 
-        :param newSolid: object to clip the geometry to
-        :type newSolid: pyg4ometry.geant4.solid
+        :param newSolid: nested boxes to clip geometry to
+        :type newSolid: pyg4ometry.misc.NestedBoxes
         :param rotation: Tait-Bryan angles for rotation of the solid w.r.t. this lv
         :type  rotation: list(float, float, float) or None - 3 values in radians
         :param position: translation of the solid w.r.t. this lv
