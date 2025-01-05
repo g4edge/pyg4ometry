@@ -5,6 +5,7 @@ import xml.parsers.expat as _expat
 from . import Defines as _defines
 import logging as _log
 from .. import geant4 as _g4
+from ..visualisation import VisualisationOptions as _VisOptions
 import os as _os
 
 
@@ -1862,11 +1863,14 @@ class Reader:
                         mat = _g4.MaterialArbitrary(material)
 
                 aux_list = []
+                visOptions = None
                 try:
                     for aux_node in node.childNodes:
                         try:
                             if aux_node.tagName == "auxiliary":
                                 aux = self._parseAuxiliary(aux_node, register=False)
+                                if aux.auxtype == "bds_vrgba":
+                                    visOptions = _BDSIM_VRGBA(aux.auxvalue)
                                 aux_list.append(aux)
                         except AttributeError:
                             pass  # probably a comment
@@ -1880,9 +1884,9 @@ class Reader:
                     registry=self._registry,
                     auxiliary=aux_list,
                 )
+                if visOptions:
+                    vol.visOptions = visOptions
                 self.parsePhysicalVolumeChildren(node, vol)
-
-                # vol.checkOverlaps()
 
             elif node_name == "assembly":
                 name = node.attributes["name"].value
@@ -2940,3 +2944,10 @@ def _StripPointer(name):
     pattern = r"(0x\w{7,})"
     rNameToObject = _re.sub(pattern, "", name)
     return rNameToObject
+
+def _BDSIM_VRGBA(s):
+    sl = s.split()
+    visible = bool(sl[0])
+    rgb = map(float, sl[1:3])
+    a = float(sl[4])
+    return _VisOptions(colour=rgb, alpha=a, visible=visible)
