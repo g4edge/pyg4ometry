@@ -857,9 +857,9 @@ class LogicalVolume:
 
     def addAuxiliaryInfo(self, auxiliary):
         """
-        Add auxilary information to logical volume
+        Add auxiliary information to logical volume
         :param auxiliary: auxiliary information for the logical volume
-        :type auxiliary: tuple or list
+        :type auxiliary: pyg4ometry.gdml.Defines.Auxiliary, list(pyg4ometry.gdml.Defines.Auxiliary), tuple(pyg4ometry.gdml.Defines.Auxiliary)
         """
         # if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):
         #    raise ValueError("Auxiliary information must be a gdml.Defines.Auxiliary instance.")
