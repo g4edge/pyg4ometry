@@ -166,11 +166,12 @@ def cli(
         print("pyg4> need input file name")
 
     try:
-        if str(inputFileName).startswith('g4edgetestdata/'):
+        if str(inputFileName).startswith("g4edgetestdata/"):
             try:
                 import g4edgetestdata
+
                 d = g4edgetestdata.G4EdgeTestData()
-                inputFileName = d[inputFileName.replace('g4edgetestdata/','')]
+                inputFileName = d[inputFileName.replace("g4edgetestdata/", "")]
             except ImportError:
                 print("pyg4> g4edgetestdata package not available - install with pip")
         f = open(inputFileName)
@@ -263,8 +264,9 @@ def cli(
         if len(clip) != 3:
             errMsg = "pyg4> clip must be supplied with exactly 3 numbers"
             raise ValueError(errMsg)
-        clipBoxes = _pyg4.misc.NestedBoxes("clipper", clip[0], clip[1], clip[2],
-                                           reg, "mm", 1e-3, 1e-3, 1e-3, wl.depth())
+        clipBoxes = _pyg4.misc.NestedBoxes(
+            "clipper", clip[0], clip[1], clip[2], reg, "mm", 1e-3, 1e-3, 1e-3, wl.depth()
+        )
         wl.clipGeometry(clipBoxes, r, t)
 
     if materials is not None:
@@ -361,7 +363,7 @@ def main(testArgs=None, testing=False):
         "--clip",
         help="clip to a box of full widths px,py,pz in mm",
         dest="clip",
-        metavar="CLIP"
+        metavar="CLIP",
     )
     parser.add_option(
         "-d",
