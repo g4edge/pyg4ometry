@@ -90,12 +90,12 @@ def test_cli_clip_long(testdata):
 
 def test_cli_clip_short_rot_tra(testdata):
     _cli.main(["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "-C", "50,70,200",
-               "-r", "0,pi/6,0", "-t", "0,0,100"], testing=True)
+               "-r", "0,pi/6,0", "-t", "0,0,100", "-V"], testing=True)
 
 
 def test_cli_clip_short_rot_tra_long(testdata):
     _cli.main(["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "-C", "50,70,200",
-               "--rotation", "0.001,-pi/6,0.0002", "--translation", "0,-20,-100"], testing=True)
+               "--rotation", "0.001,-pi/6,0.0002", "--translation", "0,-20,-100", "-V"], testing=True)
 
 
 def test_cli_compare_short(testdata):
@@ -260,7 +260,7 @@ def test_cli_output_short_wrong(testdata):
 
 def test_cli_planecutter_short(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-P", "box_cut.vtkp"],
+        ["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-P", "box_cut.vtkp", "-V"],
         testing=True,
     )
 
