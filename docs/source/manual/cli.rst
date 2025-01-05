@@ -25,7 +25,7 @@ The following commands are available: ::
       -d COMPAREFILE, --compare=COMPAREFILE
                             comp(a)re geometry
       -e APPENDFILE, --append=APPENDFILE
-                            app(e)nd geometry
+                            append geometry
       -f FEATUREDATA, --feature=FEATUREDATA
                             feature extraction from simple geometry
                             (planeQuality,circumference)

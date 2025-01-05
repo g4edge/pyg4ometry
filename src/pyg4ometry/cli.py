@@ -375,7 +375,7 @@ def main(testArgs=None, testing=False):
     parser.add_option(
         "-e",
         "--append",
-        help="app(e)nd geometry",
+        help="append geometry",
         dest="appendFileName",
         metavar="APPENDFILE",
     )
