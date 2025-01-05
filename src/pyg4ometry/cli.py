@@ -260,8 +260,9 @@ def cli(
         lvToChange.reMesh()
 
     if clip is not None:
-        if len(clip) !=3:
-            raise ValueError("pyg4> clip must be supplied with exactly 3 numbers")
+        if len(clip) != 3:
+            errMsg = "pyg4> clip must be supplied with exactly 3 numbers"
+            raise ValueError(errMsg)
         clipBoxes = _pyg4.misc.NestedBoxes("clipper", clip[0], clip[1], clip[2],
                                            reg, "mm", 1e-3, 1e-3, 1e-3, wl.depth())
         wl.clipGeometry(clipBoxes, r, t)
