@@ -545,7 +545,7 @@ def main(testArgs=None, testing=False):
     # parse gltf scale
     gltfScale = options.__dict__["gltfScale"]
     if gltfScale is not None:
-        gltfScale = _parseStrMultipletAsFloat(gltfScale)
+        gltfScale = _parseStrMultipletAsFloat(gltfScale)[0]
 
     cli(
         inputFileName=options.__dict__["inputFileName"],
