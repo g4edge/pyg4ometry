@@ -166,6 +166,13 @@ def cli(
         print("pyg4> need input file name")
 
     try:
+        if str(inputFileName).startswith('g4edgetestdata/'):
+            try:
+                import g4edgetestdata
+                d = g4edgetestdata.G4EdgeTestData()
+                inputFileName = d[inputFileName.replace('g4edgetestdata/','')]
+            except ImportError:
+                print("pyg4> g4edgetestdata package not available - install with pip")
         f = open(inputFileName)
         f.close()
     except FileNotFoundError:

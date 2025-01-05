@@ -146,6 +146,10 @@ def test_cli_load_stp(testdata):
     _cli.main(["-i", testdata["step/1_BasicSolids_Bodies.step"]], testing=True)
 
 
+def test_cli_load_g4edgetestdata():
+    _cli.main(["-i", "g4edgetestdata/gdml/001_box.gdml"], testing=True)
+
+
 def test_cli_info_short(testdata):
     _cli.main(["-i", testdata["gdml/001_box.gdml"], "-I", "reg"], testing=True)
 
