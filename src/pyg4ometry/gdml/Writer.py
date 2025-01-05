@@ -8,9 +8,16 @@ import logging as _log
 
 
 class Writer:
-    def __init__(self, prepend=""):
+    """
+    :param writeColour: whether to write the VisOptions of each LogicalVolume.
+    :type writeColour: bool
+
+    """
+
+    def __init__(self, prepend="", writeColour=True):
         super().__init__()
         self.prepend = prepend
+        self._writeColour = writeColour
 
         self.imp = getDOMImplementation()
         self.doc = self.imp.createDocument(None, "gdml", None)
@@ -372,9 +379,19 @@ option, physicsList="em";
         sr.setAttribute("ref", f"{self.prepend}{lv.solid.name}")
         we.appendChild(sr)
 
+        aux = []
+        # lv.auxiliary could be None, Auxiliary or list(Auxiliary) or tuple(Auxiliary)
+        # ensure it's a list, even if empty
         if lv.auxiliary:
-            for aux in lv.auxiliary:
-                self.writeAuxiliary(aux, parent=we)
+            if type(lv.auxiliary) in (list, tuple):
+                aux = list(*lv.auxiliary)
+            else:
+                aux = [lv.auxiliary]
+        if self._writeColour:
+            cAux = VisOptionsToAuxiliary(lv.visOptions)
+            aux.append(cAux)
+        for aux in lv.auxiliary:
+            self.writeAuxiliary(aux, parent=we)
 
         for dv in lv.daughterVolumes:
             if dv.type == "placement":
@@ -1373,3 +1390,8 @@ option, physicsList="em";
         oe.appendChild(scl)
 
         self.solids.appendChild(oe)
+
+
+def VisOptionsToAuxiliary(visOptions):
+    result = _Defines.Auxiliary("bds_vrgba", visOptions.getBDSIMVRGBA())
+    return result
