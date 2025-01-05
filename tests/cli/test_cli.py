@@ -8,13 +8,13 @@ _skip_root_tests = False
 try:
     import ROOT
 except ImportError:
-    _skip_root_tests = False
+    _skip_root_tests = True
 
 _skip_html_tests = False
 try:
     import jinja2
 except ImportError:
-    _skip_html_tests
+    _skip_html_tests = True
 
 
 def _pj(filename):
