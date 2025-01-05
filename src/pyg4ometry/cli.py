@@ -558,7 +558,7 @@ def main(testArgs=None, testing=False):
         planeCutterOutputFileName=options.__dict__["planeCutterOutputFileName"],
         featureData=featureData,
         featureDataOutputFileName=options.__dict__["featureExtactOutputFileName"],
-        gltfScale=options.__dict__["gltfScale"],
+        gltfScale=gltfScale,
         verbose=verbose,
         testing=testing,
     )
