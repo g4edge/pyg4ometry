@@ -178,7 +178,9 @@ class Registry:
             # transfer material properties
             if hasattr(material, "properties"):
                 for key, value in material.properties.items():
-                    self.transferDefines(value, material.registry, incrementRenameDict, userRenameDict)
+                    self.transferDefines(
+                        value, material.registry, incrementRenameDict, userRenameDict
+                    )
 
         self.materialDict[material.name] = material
         material.registry = self
