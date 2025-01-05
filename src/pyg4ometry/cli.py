@@ -237,7 +237,7 @@ def cli(
 
     if appendFileName is not None:
         reg1, wl1 = _loadFile(appendFileName)
-        wp1 = _pyg4.geant4.PhysicalVolume(rotation, translation, wl1, "l1_pv", wl, reg)
+        wp1 = _pyg4.geant4.PhysicalVolume(r, t, wl1, "l1_pv", wl, reg)
         print("pyg4> append")
         reg.addVolumeRecursive(wp1)
 
