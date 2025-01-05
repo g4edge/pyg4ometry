@@ -260,7 +260,11 @@ def cli(
         lvToChange.reMesh()
 
     if clip is not None:
-        wl.clipGeometry(wl.solid, (0, 0, 0), (0, 0, 0))
+        if len(clip) !=3:
+            raise ValueError("pyg4> clip must be supplied with exactly 3 numbers")
+        clipBoxes = _pyg4.misc.NestedBoxes("clipper", clip[0], clip[1], clip[2],
+                                           reg, "mm", 1e-3, 1e-3, 1e-3, wl.depth())
+        wl.clipGeometry(clipBoxes, r, t)
 
     if materials is not None:
         # TODO - implement
@@ -354,9 +358,9 @@ def main(testArgs=None, testing=False):
     parser.add_option(
         "-C",
         "--clip",
-        help="clip to mother world solid. Or exchanged solid if specified",
-        action="store_true",
+        help="clip to a box of full widths px,py,pz in mm",
         dest="clip",
+        metavar="CLIP"
     )
     parser.add_option(
         "-d",
@@ -517,6 +521,13 @@ def main(testArgs=None, testing=False):
         if verbose:
             print("pyg4> rotation ", rotation)
 
+    # parse clip box
+    clipbox = options.__dict__["clip"]
+    if clipbox is not None:
+        clipbox = _parseStrMultipletAsFloat(clipbox)
+        if verbose:
+            print("pyg4> clip ", clipbox)
+
     # parse solid
     # this must be done when we have a registry
     solid = options.__dict__["solidCode"]
@@ -548,7 +559,7 @@ def main(testArgs=None, testing=False):
         lvName=options.__dict__["lvName"],
         info=options.__dict__["info"],
         exchangeLvName=options.__dict__["exchangeLvName"],
-        clip=options.__dict__["clip"],
+        clip=clipbox,
         solid=options.__dict__["solidCode"],
         translation=translation,
         rotation=rotation,
