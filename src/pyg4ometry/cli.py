@@ -177,8 +177,8 @@ def cli(
         f = open(inputFileName)
         f.close()
     except FileNotFoundError:
-        print("pyg4> input file not found")
-        return
+        errMsg = "pyg4> input file not found"
+        raise FileNotFoundError(errMsg)
 
     if nullMeshException:
         _pyg4.config.meshingNullException = not nullMeshException
