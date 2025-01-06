@@ -1,27 +1,27 @@
 """Set of classes for FLUKA bodies."""
 
 __all__ = [
-    "RPP",
+    "ARB",
     "BOX",
-    "SPH",
+    "ELL",
+    "PLA",
+    "QUA",
+    "RAW",
     "RCC",
     "REC",
+    "RPP",
+    "SPH",
     "TRC",
-    "ELL",
     "WED",
-    "RAW",
-    "ARB",
+    "XCC",
+    "XEC",
     "XYP",
     "XZP",
-    "YZP",
-    "PLA",
-    "XCC",
     "YCC",
-    "ZCC",
-    "XEC",
     "YEC",
+    "YZP",
+    "ZCC",
     "ZEC",
-    "QUA",
 ]
 
 from math import degrees
