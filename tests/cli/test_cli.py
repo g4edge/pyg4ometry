@@ -174,6 +174,19 @@ def test_cli_load_root(testdata):
     _cli.main(["-i", testdata["root/T001_Box.root"]], testing=True)
 
 
+def test_cli_load_bad_file_type(testdata):
+    # we need a file that definitely exists (in the testdata), but isn't one we can load
+    with pytest.raises(OSError, match="unknown format:") as ex:
+        _cli.main(["-i", testdata["fluka/preprocessor_fragment.geom"]], testing=True)
+    assert ex.type == OSError
+
+
+def test_cli_load_file_not_found():
+    with pytest.raises(FileNotFoundError, match="pyg4> input file") as ex:
+        _cli.main(["-i", "bananas.gdml"], testing=True)
+    assert ex.type == FileNotFoundError
+
+
 def test_cli_load_fluka(testdata):
     _cli.main(["-i", testdata["fluka/T001_RPP.inp"]], testing=True)
 
@@ -290,14 +303,14 @@ def test_cli_output_short_wrong(testdata):
 
 def test_cli_planecutter_short(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-P", "box_cut.vtkp", "-V"],
+        ["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-P", "o.vtkp", "-V"],
         testing=True,
     )
 
 
 def test_cli_planecutter_long(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "--planeCutter", "0,0,0,0,1,0", "-P", "box_cut.vtkp"],
+        ["-i", testdata["gdml/001_box.gdml"], "--planeCutter", "0,0,0,0,1,0", "-P", "o.vtkp"],
         testing=True,
     )
 
