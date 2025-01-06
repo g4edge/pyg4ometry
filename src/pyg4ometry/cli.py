@@ -335,6 +335,15 @@ def cli(
         # TODO
 
 
+def mainNoExceptions(testArgs=None, testing=False):
+    """A separate function to nicely wrap exception catching in one place."""
+    try:
+        main(testArgs, testing)
+    except Exception as ex:
+        print(*ex.args)
+        exit(1)
+
+
 def main(testArgs=None, testing=False):
     parser = OptionParserTestable(noExit=testing)
     parser.add_option(
@@ -576,7 +585,3 @@ def main(testArgs=None, testing=False):
         verbose=verbose,
         testing=testing,
     )
-
-
-if __name__ == "__main__":
-    main()
