@@ -107,7 +107,7 @@ class multiGroupNeutronCrossSections:
         self._readFile()
 
     def _readFile(self):
-        with open(self.lowmatElements_FileName, encoding='utf-8') as f:
+        with open(self.lowmatElements_FileName, encoding="utf-8") as f:
             for l in f:
                 if len(l.strip()) == 0:
                     continue
