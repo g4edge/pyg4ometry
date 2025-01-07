@@ -18,7 +18,7 @@ class Reader:
     Read a GDML file.
 
     :param fileName: path to gdml file to load
-    :type fileName: str
+    :type fileName: str, pathlib.Path
     :param registryOn: whether to build a registry
     :type registryOn: bool
     :param reduceNISTMaterialsToPredefined: change NIST-named materials to predefined ones
