@@ -609,7 +609,7 @@ class Reader:
     ):
         """
         :param fileName: Name of root file to load as Geometry.
-        :type  fileName: str
+        :type  fileName: str, pathlib.Path
         :param upgradeVacuumToG4Galactic: If true, 'upgrade' any illegal 0 density materials to valid G4_Galactic.
         :type  upgradeVacuumToG4Galactic: bool
         :param solidsToTessellate: List of solids ('shapes') by name that should be replaced by a tessellated version.
@@ -633,7 +633,7 @@ class Reader:
         self.suffixSeparator = suffixSeparator
         self.maximumDepth = maximumDepth
 
-        self.tgm = _ROOT.TGeoManager.Import(fileName)
+        self.tgm = _ROOT.TGeoManager.Import(str(fileName))
         self.first = True
         self._registry = _g4.Registry()
         self._g4Galactic = None  # fall back material

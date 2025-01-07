@@ -8,11 +8,18 @@ from . import pythonHelpers as _ph
 
 
 class Reader:
+    """
+    STEP file reader.
+
+    :param fileName: path to file to read.
+    :type fileName: str, pathlib.Path
+    """
+
     def __init__(self, fileName):
         self.app = _XCAFApp.XCAFApp_Application.GetApplication()
         self.doc = self.app.NewDocument(_TCollection.TCollection_ExtendedString("MDTV-CAF"))
 
-        self.readStepFile(fileName)
+        self.readStepFile(str(fileName))
 
         self.main = self.doc.Main()
         self.shapeTool = _XCAFDoc.XCAFDoc_DocumentTool.ShapeTool(self.main)

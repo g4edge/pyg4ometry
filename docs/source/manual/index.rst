@@ -16,6 +16,7 @@ User Manual
    comparing
    analysing
    rendering
+   cli
 
 
 Indices and tables

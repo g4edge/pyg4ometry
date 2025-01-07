@@ -51,7 +51,7 @@ dependencies = [
 ]
 
 [project.scripts]
-pyg4ometry = "pyg4ometry.cli:main"
+pyg4ometry = "pyg4ometry.cli:mainNoExceptions"
 
 [project.urls]
 Homepage = "https://github.com/g4edge/pyg4ometry"
