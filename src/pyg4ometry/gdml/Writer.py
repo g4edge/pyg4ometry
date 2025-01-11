@@ -1102,9 +1102,9 @@ option, physicsList="em";
     def createPosition(self, name, x, y, z):
         p = self.doc.createElement("position")
         p.setAttribute("name", str(name))
-        p.setAttribute("x", x.expressionString)
-        p.setAttribute("y", y.expressionString)
-        p.setAttribute("z", z.expressionString)
+        p.setAttribute("x", self.getValueOrExpr(x))
+        p.setAttribute("y", self.getValueOrExpr(y))
+        p.setAttribute("z", self.getValueOrExpr(z))
         return p
 
     def writeTet(self, instance):
