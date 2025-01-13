@@ -3,6 +3,7 @@ import pyg4ometry.cli as _cli
 from optparse import OptParseError
 import os
 import pytest
+import sys
 
 _skip_root_tests = False
 try:
@@ -195,6 +196,7 @@ def test_cli_load_stl(testdata):
     _cli.main(["-i", testdata["stl/dog.stl"]], testing=True)
 
 
+@pytest.mark.skipif(sys.platform == "linux", reason="Test not supported on Linux")
 def test_cli_load_stp(testdata):
     _cli.main(["-i", testdata["step/1_BasicSolids_Bodies.step"]], testing=True)
 

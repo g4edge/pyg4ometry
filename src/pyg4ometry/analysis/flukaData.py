@@ -287,14 +287,14 @@ class Usrbdx(_FlukaDataFile):
         for det in self.detector:
             data = fortran_read(fd)
 
-            data = _struct.unpack("=%df" % (len(data) // 4), data)
+            data = _struct.unpack(f"={len(data) // 4}f", data)
             det.total = data[0]
             det.totalError = data[1]
 
             det.error = []
             for i in range(6):
                 data = fortran_read(fd)
-                det.error.append(_struct.unpack("=%df" % (len(data) // 4), data))
+                det.error.append(_struct.unpack(f"={len(data) // 4}f", data))
 
     def read_header(self, fd):
         pos = fd.tell()
@@ -424,7 +424,7 @@ class Usrdump(_FlukaDataFile):
                     etrack = edum
                     wtrack = wdum
                     data = fortran_read(fd)
-                    data = list(_struct.unpack("=%df" % (3 * (ntrack + 1) + mtrack + 1), data))
+                    data = list(_struct.unpack(f"={3 * (ntrack + 1) + mtrack + 1}f", data))
                     self.track_data.append(data)
                 # energy
                 elif ndum == 0:

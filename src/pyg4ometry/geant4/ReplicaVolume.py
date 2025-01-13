@@ -96,8 +96,7 @@ class ReplicaVolume(_PhysicalVolume):
 
             interMesh = tempMeshes[i].subtract(self.motherVolume.mesh.localboundingmesh)
             _log.info(
-                "ReplicaVolume.checkOverlaps> daughter container %d %d %d"
-                % (i, interMesh.vertexCount(), interMesh.polygonCount())
+                f"ReplicaVolume.checkOverlaps> daughter container {i} {interMesh.vertexCount()} {interMesh.polygonCount()}"
             )
 
             if interMesh.vertexCount() != 0:
@@ -123,8 +122,7 @@ class ReplicaVolume(_PhysicalVolume):
                 # bounding meshes collide, so check full mesh properly
                 interMesh = tempMeshes[i].intersect(tempMeshes[j])
                 _log.info(
-                    "ReplicaVolume.checkOverlaps> full daughter-daughter intersection test: %d %d %d %d"
-                    % (i, j, interMesh.vertexCount(), interMesh.polygonCount())
+                    f"ReplicaVolume.checkOverlaps> full daughter-daughter intersection test: {i} {j} {interMesh.vertexCount()} {interMesh.polygonCount()}"
                 )
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
