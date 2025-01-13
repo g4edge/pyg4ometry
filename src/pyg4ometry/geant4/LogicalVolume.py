@@ -732,8 +732,7 @@ class LogicalVolume:
                 # bounding meshes collide, so check full mesh properly
                 interMesh = transformedMeshes[i].intersect(transformedMeshes[j])
                 _log.info(
-                    "LogicalVolume.checkOverlaps> full daughter-daughter intersection test: %d %d %d %d"
-                    % (i, j, interMesh.vertexCount(), interMesh.polygonCount())
+                    f"LogicalVolume.checkOverlaps> full daughter-daughter intersection test: {i} {j} {interMesh.vertexCount()} {interMesh.polygonCount()}"
                 )
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
@@ -785,8 +784,7 @@ class LogicalVolume:
 
             interMesh = transformedMeshes[i].subtract(self.mesh.localmesh)
             _log.info(
-                "LogicalVolume.checkOverlaps> daughter container %d %d %d"
-                % (i, interMesh.vertexCount(), interMesh.polygonCount())
+                f"LogicalVolume.checkOverlaps> daughter container {i} {interMesh.vertexCount()} {interMesh.polygonCount()}"
             )
 
             if interMesh.vertexCount() != 0:
