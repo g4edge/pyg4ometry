@@ -396,8 +396,7 @@ class Reader:
 
         if obj.TypeId == "App::Part":  # mapped to logical volume, group objects mapped to physical
             _log.info(
-                "freecad.reader.recurseObjectTree> App::Part label=%s grouplen=%d placement=%s"
-                % (obj.Label, len(obj.Group), obj.Placement)
+                f"freecad.reader.recurseObjectTree> App::Part label={obj.Label} grouplen={len(obj.Group)} placement={obj.Placement}"
             )
 
             bSolid = pyg4ometry.geant4.solid.Box(
@@ -515,18 +514,18 @@ def WriteSMeshFile(mesh, filename):
     wind = mesh[1]
 
     f.write("# part 1 - node list\n")
-    f.write("%i  3  0  0 \n" % (len(verts)))
+    f.write(f"{len(verts)}  3  0  0 \n")
     iv = 0
     for v in verts:
-        f.write("%i %f %f %f\n" % (iv, v[0], v[1], v[2]))
+        f.write(f"{iv} {v[0]} {v[1]} {v[2]}\n")
         iv = iv + 1
 
     f.write("# part 2 - facet list\n")
-    f.write("%i 0\n" % (len(wind)))
+    f.write(f"{len(wind)} 0\n")
 
     iw = 0
     for w in wind:
-        f.write("3 %i %i %i\n" % (w[0], w[1], w[2]))
+        f.write(f"3 {w[0]} {w[1]} {w[2]}\n")
 
     f.write("# part 3 - hole list\n")
     f.write("0\n")
