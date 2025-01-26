@@ -566,6 +566,7 @@ class VtkViewer:
                     f"VtkViewer.addLogicalVolume> Daughter {pv.name} {pv.logicalVolume.name} {pv.logicalVolume.solid.name} "
                 )
 
+            visOptions = self.getVisOptions(pv)
             if pv.type == "placement":
                 # pv transform
                 pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
@@ -580,7 +581,6 @@ class VtkViewer:
                 new_tra = mtra @ pvtra + tra
 
                 if pv.logicalVolume.type != "assembly" and pv.logicalVolume.mesh is not None:
-                    visOptions = self.getVisOptions(pv)
                     if visOptions.visible:
                         mesh = (
                             pv.logicalVolume.mesh.localmesh
@@ -607,7 +607,7 @@ class VtkViewer:
                         pv.logicalVolume.mesh.overlapmeshes,
                         range(len(pv.logicalVolume.mesh.overlapmeshes)),
                     ):
-                        visOptions = self.getOverlapVisOptions(overlaptype)
+                        visOptionsOverlap = self.getOverlapVisOptions(overlaptype)
 
                         self.addMesh(
                             pv_name,
@@ -621,64 +621,64 @@ class VtkViewer:
                             self.physicalMapperMapOverlap,
                             self.actorsOverlap,
                             self.physicalActorMapOverlap,
-                            visOptions=visOptions,
+                            visOptions=visOptionsOverlap,
                             overlap=True,
                         )
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume, new_mtra, new_tra)
 
             elif pv.type == "replica" or pv.type == "division":
-                for mesh, trans in zip(pv.meshes, pv.transforms):
-                    # pv transform
-                    pvmrot = _transformation.tbxyz2matrix(trans[0])
-                    pvtra = _np.array(trans[1])
+                if visOptions.visible:
+                    for mesh, trans in zip(pv.meshes, pv.transforms):
+                        # pv transform
+                        pvmrot = _transformation.tbxyz2matrix(trans[0])
+                        pvtra = _np.array(trans[1])
 
-                    # pv compound transform
-                    new_mtra = mtra @ pvmrot
-                    new_tra = mtra @ pvtra + tra
+                        # pv compound transform
+                        new_mtra = mtra @ pvmrot
+                        new_tra = mtra @ pvtra + tra
 
-                    # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(
-                        pv_name,
-                        mesh.solid.name,
-                        mesh.localmesh,
-                        new_mtra,
-                        new_tra,
-                        self.localmeshes,
-                        self.filters,
-                        self.mappers,
-                        self.physicalMapperMap,
-                        self.actors,
-                        self.physicalActorMap,
-                        visOptions=pv.logicalVolume.visOptions,
-                        overlap=False,
-                    )
+                        self.addMesh(
+                            pv_name,
+                            mesh.solid.name,
+                            mesh.localmesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshes,
+                            self.filters,
+                            self.mappers,
+                            self.physicalMapperMap,
+                            self.actors,
+                            self.physicalActorMap,
+                            visOptions=visOptions,
+                            overlap=False,
+                        )
             elif pv.type == "parametrised":
-                for mesh, trans in zip(pv.meshes, pv.transforms):
-                    # pv transform
-                    pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
-                    pvtra = _np.array(trans[1].eval())
+                if visOptions.visible:
+                    for mesh, trans in zip(pv.meshes, pv.transforms):
+                        # pv transform
+                        pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
+                        pvtra = _np.array(trans[1].eval())
 
-                    # pv compound transform
-                    new_mtra = mtra @ pvmrot
-                    new_tra = mtra @ pvtra + tra
+                        # pv compound transform
+                        new_mtra = mtra @ pvmrot
+                        new_tra = mtra @ pvtra + tra
 
-                    # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(
-                        pv_name,
-                        mesh.solid.name,
-                        mesh.localmesh,
-                        new_mtra,
-                        new_tra,
-                        self.localmeshes,
-                        self.filters,
-                        self.mappers,
-                        self.physicalMapperMap,
-                        self.actors,
-                        self.physicalActorMap,
-                        visOptions=pv.logicalVolume.visOptions,
-                        overlap=False,
-                    )
+                        self.addMesh(
+                            pv_name,
+                            mesh.solid.name,
+                            mesh.localmesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshes,
+                            self.filters,
+                            self.mappers,
+                            self.physicalMapperMap,
+                            self.actors,
+                            self.physicalActorMap,
+                            visOptions=visOptions,
+                            overlap=False,
+                        )
 
     def addMesh(
         self,
