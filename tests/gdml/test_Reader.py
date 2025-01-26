@@ -943,4 +943,4 @@ def test_GdmlLoad_BDSIM_colour_force_visible(testdata):
 
     reader = pyg4ometry.gdml.Reader(filepath, makeAllVisible=True)
     wlv = reader.getRegistry().getWorldVolume()
-    assert wlv.daughterVolumes[0].logicalVolume.visible
+    assert wlv.daughterVolumes[0].logicalVolume.visOptions.visible
