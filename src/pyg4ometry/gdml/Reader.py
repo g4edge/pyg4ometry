@@ -2947,7 +2947,7 @@ def _StripPointer(name):
 
 def _BDSIM_VRGBA(s):
     sl = s.split()
-    visible = bool(sl[0])
-    rgb = map(float, sl[1:3])
+    visible = bool(int(sl[0]))
+    rgb = list(map(float, sl[1:4]))
     a = float(sl[4])
     return _VisOptions(colour=rgb, alpha=a, visible=visible)
