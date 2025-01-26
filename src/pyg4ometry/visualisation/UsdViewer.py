@@ -65,8 +65,8 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
 
 
 class UsdViewer(_ViewerHierarchyBase):
-
     def __init__(self, filePath="./test.usd"):
+        super().__init__()
         if Usd is None:
             msg = "Failed to import open usd"
             raise RuntimeError(msg)
@@ -119,7 +119,8 @@ class UsdViewer(_ViewerHierarchyBase):
                 self.stage, self.materialRootPath + "/" + volume.name + "_mat"
             )
 
-            visOptions2MaterialPrim(self.stage, volume.visOptions, materialPrim)
+            vo = self.getVisOptionsLV(volume)
+            visOptions2MaterialPrim(self.stage, vo, materialPrim)
             UsdShade.MaterialBindingAPI(meshPrim).Bind(materialPrim)
 
             # loop over all daughters

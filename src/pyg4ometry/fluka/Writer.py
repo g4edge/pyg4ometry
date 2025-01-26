@@ -28,7 +28,7 @@ class Writer:
     Class to write FLUKA input files from a fluka registry object.
 
     >>> f = Writer()
-    >>> f.addDetectro(flukaRegObject)
+    >>> f.addDetector(flukaRegObject)
     >>> f.write("model.inp")
     """
 

@@ -5,6 +5,7 @@ import xml.parsers.expat as _expat
 from . import Defines as _defines
 import logging as _log
 from .. import geant4 as _g4
+from ..visualisation import VisualisationOptions as _VisOptions
 import os as _os
 
 
@@ -23,6 +24,8 @@ class Reader:
     :type registryOn: bool
     :param reduceNISTMaterialsToPredefined: change NIST-named materials to predefined ones
     :type reduceNISTMaterialsToPredefined: bool
+    :param makeAllVisible: loaded volumes with aux info to make them invisible will be ignored and made visible
+    :type makeAllVisible: bool
 
     When loading a GDML file that was exported by Geant4, the NIST materials may be
     fully expanded to include their full element / isotope composition. With the
@@ -32,12 +35,19 @@ class Reader:
     """
 
     def __init__(
-        self, fileName, registryOn=True, skipMaterials=False, reduceNISTMaterialsToPredefined=False
+        self,
+        fileName,
+        registryOn=True,
+        skipMaterials=False,
+        reduceNISTMaterialsToPredefined=False,
+        makeAllVisible=False,
     ):
         super().__init__()
         self.filename = fileName
         self.registryOn = registryOn
         self._reduceNISTMaterialsToPredefined = reduceNISTMaterialsToPredefined
+        self._makeAllVisible = makeAllVisible
+        self._forcedVisibleOptions = _VisOptions(alpha=0.1)
         self._skipMaterials = skipMaterials
 
         if self.registryOn:
@@ -1862,11 +1872,16 @@ class Reader:
                         mat = _g4.MaterialArbitrary(material)
 
                 aux_list = []
+                visOptions = None
                 try:
                     for aux_node in node.childNodes:
                         try:
                             if aux_node.tagName == "auxiliary":
                                 aux = self._parseAuxiliary(aux_node, register=False)
+                                if aux.auxtype == "bds_vrgba":
+                                    visOptions = _BDSIM_VRGBA(aux.auxvalue)
+                                    if not visOptions.visible and self._makeAllVisible:
+                                        visOptions = self._forcedVisibleOptions
                                 aux_list.append(aux)
                         except AttributeError:
                             pass  # probably a comment
@@ -1880,9 +1895,9 @@ class Reader:
                     registry=self._registry,
                     auxiliary=aux_list,
                 )
+                if visOptions:
+                    vol.visOptions = visOptions
                 self.parsePhysicalVolumeChildren(node, vol)
-
-                # vol.checkOverlaps()
 
             elif node_name == "assembly":
                 name = node.attributes["name"].value
@@ -2940,3 +2955,11 @@ def _StripPointer(name):
     pattern = r"(0x\w{7,})"
     rNameToObject = _re.sub(pattern, "", name)
     return rNameToObject
+
+
+def _BDSIM_VRGBA(s):
+    sl = s.split()
+    visible = bool(int(sl[0]))
+    rgb = list(map(float, sl[1:4]))
+    a = float(sl[4])
+    return _VisOptions(colour=rgb, alpha=a, visible=visible)

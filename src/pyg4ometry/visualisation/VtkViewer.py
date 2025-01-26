@@ -99,6 +99,8 @@ class VtkViewer:
             raise ValueError(msg)
         self.interpolation = interpolation
 
+        self._defaultVis = _VisOptions()
+
     def addAxes(self, length=20.0, origin=(0, 0, 0)):
         """
         Add x,y,z axis to the scene.
@@ -564,6 +566,7 @@ class VtkViewer:
                     f"VtkViewer.addLogicalVolume> Daughter {pv.name} {pv.logicalVolume.name} {pv.logicalVolume.solid.name} "
                 )
 
+            visOptions = self.getVisOptions(pv)
             if pv.type == "placement":
                 # pv transform
                 pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
@@ -578,34 +581,33 @@ class VtkViewer:
                 new_tra = mtra @ pvtra + tra
 
                 if pv.logicalVolume.type != "assembly" and pv.logicalVolume.mesh is not None:
-                    mesh = (
-                        pv.logicalVolume.mesh.localmesh
-                    )  # TODO implement a check if mesh has changed
-                    # mesh = _Mesh(pv.logicalVolume.solid).localmesh
-
-                    visOptions = self.getMaterialVisOptions(pv)
-                    self.addMesh(
-                        pv_name,
-                        solid_name,
-                        mesh,
-                        new_mtra,
-                        new_tra,
-                        self.localmeshes,
-                        self.filters,
-                        self.mappers,
-                        self.physicalMapperMap,
-                        self.actors,
-                        self.physicalActorMap,
-                        visOptions=visOptions,
-                        overlap=False,
-                    )
+                    if visOptions.visible:
+                        mesh = (
+                            pv.logicalVolume.mesh.localmesh
+                        )  # TODO implement a check if mesh has changed
+                        # mesh = _Mesh(pv.logicalVolume.solid).localmesh
+                        self.addMesh(
+                            pv_name,
+                            solid_name,
+                            mesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshes,
+                            self.filters,
+                            self.mappers,
+                            self.physicalMapperMap,
+                            self.actors,
+                            self.physicalActorMap,
+                            visOptions=visOptions,
+                            overlap=False,
+                        )
 
                     # overlap meshes
                     for [overlapmesh, overlaptype], i in zip(
                         pv.logicalVolume.mesh.overlapmeshes,
                         range(len(pv.logicalVolume.mesh.overlapmeshes)),
                     ):
-                        visOptions = self.getOverlapVisOptions(overlaptype)
+                        visOptionsOverlap = self.getOverlapVisOptions(overlaptype)
 
                         self.addMesh(
                             pv_name,
@@ -619,64 +621,64 @@ class VtkViewer:
                             self.physicalMapperMapOverlap,
                             self.actorsOverlap,
                             self.physicalActorMapOverlap,
-                            visOptions=visOptions,
+                            visOptions=visOptionsOverlap,
                             overlap=True,
                         )
 
                 self.addLogicalVolumeRecursive(pv.logicalVolume, new_mtra, new_tra)
 
             elif pv.type == "replica" or pv.type == "division":
-                for mesh, trans in zip(pv.meshes, pv.transforms):
-                    # pv transform
-                    pvmrot = _transformation.tbxyz2matrix(trans[0])
-                    pvtra = _np.array(trans[1])
+                if visOptions.visible:
+                    for mesh, trans in zip(pv.meshes, pv.transforms):
+                        # pv transform
+                        pvmrot = _transformation.tbxyz2matrix(trans[0])
+                        pvtra = _np.array(trans[1])
 
-                    # pv compound transform
-                    new_mtra = mtra @ pvmrot
-                    new_tra = mtra @ pvtra + tra
+                        # pv compound transform
+                        new_mtra = mtra @ pvmrot
+                        new_tra = mtra @ pvtra + tra
 
-                    # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(
-                        pv_name,
-                        mesh.solid.name,
-                        mesh.localmesh,
-                        new_mtra,
-                        new_tra,
-                        self.localmeshes,
-                        self.filters,
-                        self.mappers,
-                        self.physicalMapperMap,
-                        self.actors,
-                        self.physicalActorMap,
-                        visOptions=pv.logicalVolume.visOptions,
-                        overlap=False,
-                    )
+                        self.addMesh(
+                            pv_name,
+                            mesh.solid.name,
+                            mesh.localmesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshes,
+                            self.filters,
+                            self.mappers,
+                            self.physicalMapperMap,
+                            self.actors,
+                            self.physicalActorMap,
+                            visOptions=visOptions,
+                            overlap=False,
+                        )
             elif pv.type == "parametrised":
-                for mesh, trans in zip(pv.meshes, pv.transforms):
-                    # pv transform
-                    pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
-                    pvtra = _np.array(trans[1].eval())
+                if visOptions.visible:
+                    for mesh, trans in zip(pv.meshes, pv.transforms):
+                        # pv transform
+                        pvmrot = _transformation.tbxyz2matrix(trans[0].eval())
+                        pvtra = _np.array(trans[1].eval())
 
-                    # pv compound transform
-                    new_mtra = mtra @ pvmrot
-                    new_tra = mtra @ pvtra + tra
+                        # pv compound transform
+                        new_mtra = mtra @ pvmrot
+                        new_tra = mtra @ pvtra + tra
 
-                    # TBC - should pv.visOptions be used exclusively?
-                    self.addMesh(
-                        pv_name,
-                        mesh.solid.name,
-                        mesh.localmesh,
-                        new_mtra,
-                        new_tra,
-                        self.localmeshes,
-                        self.filters,
-                        self.mappers,
-                        self.physicalMapperMap,
-                        self.actors,
-                        self.physicalActorMap,
-                        visOptions=pv.logicalVolume.visOptions,
-                        overlap=False,
-                    )
+                        self.addMesh(
+                            pv_name,
+                            mesh.solid.name,
+                            mesh.localmesh,
+                            new_mtra,
+                            new_tra,
+                            self.localmeshes,
+                            self.filters,
+                            self.mappers,
+                            self.physicalMapperMap,
+                            self.actors,
+                            self.physicalActorMap,
+                            visOptions=visOptions,
+                            overlap=False,
+                        )
 
     def addMesh(
         self,
@@ -1080,27 +1082,30 @@ class VtkViewer:
 
         return visOptions
 
-    def getMaterialVisOptions(self, pv):
+    def getVisOptions(self, pv):
+        """
+        Return a set of vis options according to the precedence of pv, lv, material, default.
+        """
+
         # a dict evaluates to True if not empty
+        materialVis = None
         if self.materialVisOptions:
             materialName = pv.logicalVolume.material.name
             # if 0x is in name, strip the appended pointer (common in exported GDML)
             if "0x" in materialName:
                 materialName = materialName[0 : materialName.find("0x")]
             # get with default
-            if pv.visOptions:
-                v = self.materialVisOptions.get(materialName, pv.visOptions)
-            else:
-                v = self.materialVisOptions.get(materialName, pv.logicalVolume.visOptions)
-        else:
-            v = self._getDefaultVis(pv)
-        return v
+            materialVis = v = self.materialVisOptions.get(materialName, self._defaultVis)
 
-    def _getDefaultVis(self, pv):
-        if not pv.visOptions:
-            return pv.logicalVolume.visOptions
-        else:
-            return pv.visOptions
+        # take the first non-None set of visOptions
+        orderOfPrecedence = [
+            pv.visOptions,
+            pv.logicalVolume.visOptions,
+            materialVis,
+            self._defaultVis,
+        ]
+
+        return next(item for item in orderOfPrecedence if item is not None)
 
     def printViewParameters(self):
         activeCamera = self.ren.GetActiveCamera()
@@ -1113,18 +1118,23 @@ class VtkViewer:
 class VtkViewerColoured(VtkViewer):
     """
     Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
+    Already existing visOptions in logical volumes and physics volumes are first respected.
 
     :Keyword Arguments:
-    * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
-    * **interpolation** (str): see :class:`VtkViewer`
-    * **defaultColour** (str): "random" or [r,g,b]
+    :param materialVisOptions: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
+    :param interpolation: see :class:`VtkViewer`
+    :type interpolation: str
+    :param defaultColour: "random" or [r,g,b]
+    :type defaultColour: str, list(float, float, float)
+    :param defaultAlpha: default alpha (0 to 1) for any volume
+    :type defaultAlpha: float, int
 
     :Examples:
 
     >>> vMaterialMap = VtkViewerColoured(materialVisOptions={"G4_WATER":[0,0,1]})
     >>> vRandom = VtkViewerColoured(defaultColour="random")
     >>> vColoured = VtkViewerColoured(defaultColour=[0.1,0.1,0.1])
-    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1,0.5])
+    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1], defaultAlpha=0.2)
 
     of use visualisation options instances
 
@@ -1138,12 +1148,14 @@ class VtkViewerColoured(VtkViewer):
     to a :class:`VisualisationOptions` instance.
     """
 
-    def __init__(self, *args, defaultColour=None, materialVisOptions=None, **kwargs):
+    def __init__(
+        self, *args, defaultColour=None, defaultAlpha=0.5, materialVisOptions=None, **kwargs
+    ):
         kwargs["interpolation"] = kwargs.get("interpolation", "flat")
         super().__init__(*args, **kwargs)
         self.materialVisOptions = {}
 
-        self._defaultVis = _VisOptions()
+        self._defaultVis = _VisOptions(alpha=defaultAlpha)
         self._defaultVis.randomColour = defaultColour == "random"
         if type(defaultColour) is list:
             self._defaultVis.colour = defaultColour
@@ -1163,9 +1175,6 @@ class VtkViewerColoured(VtkViewer):
                     self.materialVisOptions[k] = vi
                 else:
                     self.materialVisOptions[k] = v
-
-    def _getDefaultVis(self, pv):
-        return self._defaultVis
 
 
 # for backwards compatibility for old name

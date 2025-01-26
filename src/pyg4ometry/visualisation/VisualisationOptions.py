@@ -64,6 +64,10 @@ class VisualisationOptions:
             f"vis={self.visible}, linewidth={self.lineWidth}, depth={self.depth}>"
         )
 
+    def getBDSIMVRGBA(self):
+        c = self.colour
+        return f"{int(self.visible)} {c[0]} {c[1]} {c[2]} {self.alpha}"
+
     def getColour(self):
         """
         Return the colour and generate a random colour if flagged.
