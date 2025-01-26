@@ -24,6 +24,8 @@ class Reader:
     :type registryOn: bool
     :param reduceNISTMaterialsToPredefined: change NIST-named materials to predefined ones
     :type reduceNISTMaterialsToPredefined: bool
+    :param makeAllVisible: loaded volumes with aux info to make them invisible will be ignored and made visible
+    :type makeAllVisible: bool
 
     When loading a GDML file that was exported by Geant4, the NIST materials may be
     fully expanded to include their full element / isotope composition. With the
@@ -33,12 +35,15 @@ class Reader:
     """
 
     def __init__(
-        self, fileName, registryOn=True, skipMaterials=False, reduceNISTMaterialsToPredefined=False
+        self, fileName, registryOn=True, skipMaterials=False, reduceNISTMaterialsToPredefined=False,
+            makeAllVisible=False
     ):
         super().__init__()
         self.filename = fileName
         self.registryOn = registryOn
         self._reduceNISTMaterialsToPredefined = reduceNISTMaterialsToPredefined
+        self._makeAllVisible = makeAllVisible
+        self._forcedVisibleOptions = _VisOptions(alpha=0.1)
         self._skipMaterials = skipMaterials
 
         if self.registryOn:
@@ -1871,6 +1876,8 @@ class Reader:
                                 aux = self._parseAuxiliary(aux_node, register=False)
                                 if aux.auxtype == "bds_vrgba":
                                     visOptions = _BDSIM_VRGBA(aux.auxvalue)
+                                    if not visOptions.visible and self._makeAllVisible:
+                                        visOptions = self._forcedVisibleOptions
                                 aux_list.append(aux)
                         except AttributeError:
                             pass  # probably a comment
