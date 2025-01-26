@@ -387,7 +387,7 @@ option, physicsList="em";
                 aux = list(*lv.auxiliary)
             else:
                 aux = [lv.auxiliary]
-        if self._writeColour:
+        if self._writeColour and lv.visOptions:
             cAux = VisOptionsToAuxiliary(lv.visOptions)
             aux.append(cAux)
         for aux in lv.auxiliary:
