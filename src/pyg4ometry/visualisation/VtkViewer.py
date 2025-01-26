@@ -1113,18 +1113,23 @@ class VtkViewer:
 class VtkViewerColoured(VtkViewer):
     """
     Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
+    Already existing visOptions in logical volumes and physics volumes are first respected.
 
     :Keyword Arguments:
-    * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
-    * **interpolation** (str): see :class:`VtkViewer`
-    * **defaultColour** (str): "random" or [r,g,b]
+    :param materialVisOptions: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
+    :param interpolation: see :class:`VtkViewer`
+    :type interpolation: str
+    :param defaultColour: "random" or [r,g,b]
+    :type defaultColour: str, list(float, float, float)
+    :param defaultAlpha: default alpha (0 to 1) for any volume
+    :type defaultAlpha: float, int
 
     :Examples:
 
     >>> vMaterialMap = VtkViewerColoured(materialVisOptions={"G4_WATER":[0,0,1]})
     >>> vRandom = VtkViewerColoured(defaultColour="random")
     >>> vColoured = VtkViewerColoured(defaultColour=[0.1,0.1,0.1])
-    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1,0.5])
+    >>> vColourAlpha = VtkViewerColoured(defaultColour=[0.1,0.1,0.1], defaultAlpha=0.2)
 
     of use visualisation options instances
 

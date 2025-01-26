@@ -62,6 +62,8 @@ class LogicalVolume:
     :param addRegistry:
     :type addRegistry: bool
 
+    Acceptable kwargs: "auxiliary", "visOptions".
+
     """
 
     def __init__(self, solid, material, name, registry=None, addRegistry=True, **kwargs):
