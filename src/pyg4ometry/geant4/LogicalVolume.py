@@ -108,7 +108,7 @@ class LogicalVolume:
         self.registry = registry
 
         # physical visualisation options
-        self.visOptions = _VisOptions()
+        self.visOptions = kwargs.get("visOptions", None)
 
         # efficient overlap checking
         self.overlapChecked = False
