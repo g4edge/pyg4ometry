@@ -11,7 +11,9 @@ used for visualisation or other operations.
 
 Here, we use example files provided in the g4edge-testdata package that can be installed with:
 ::
-  pip install g4edge-testdata
+
+    pip install g4edge-testdata
+
 
 An instance of the test data can be used to access any file.
 

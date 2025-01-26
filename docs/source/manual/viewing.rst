@@ -157,12 +157,12 @@ a matrix with:
 .. code-block:: python
     :linenos:
 
-   import numpy as np
-   rotation = [0, np.pi/2, 0] # for example
-   matrix = np.linalg.inv(pyg4ometry.transformation.tbxyz2matrix(rotation))
-   l # a pyg4ometry.geant4.LogicalVolume instance
-   v = pyg4ometry.visualisation.VtkViewer()
-   v.addLogicalVolume(l, mtra=rotation, tra=[0,0,500])
+    import numpy as np
+    rotation = [0, np.pi/2, 0] # for example
+    matrix = np.linalg.inv(pyg4ometry.transformation.tbxyz2matrix(rotation))
+    l # a pyg4ometry.geant4.LogicalVolume instance
+    v = pyg4ometry.visualisation.VtkViewer()
+    v.addLogicalVolume(l, mtra=rotation, tra=[0,0,500])
 
 
 .. note::

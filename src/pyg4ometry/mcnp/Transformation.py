@@ -2,20 +2,44 @@ import numpy as np
 
 
 class TR:
-    """
+    r"""
     Coordinate Transformation
 
-    :param o1, o2, o3: Displacement vector of the transformation. DEFAULT: (0, 0, 0).
-    :param rotation Matrix: The rotation Matrix default is /
-      [xx' yx' zx']   [1 0 0]
-      [xy' yy' zy'] = [0 1 0]
-      [xz' yz' zz']   [0 0 1]
-    :param displacementOrigin: Displacement vector origin /
-      If = positive 1 the displacement vector is the location of the origin of the auxiliary coordinate system, /
-            defined in the main system. (DEFAULT)
-      If = negative 1 the displacement vector is the location of the origin of the main coordinate system, /
-             defined in the auxiliary system.
+    :param o1: x-component of displacement vector of the transformation
+    :type o1: float
+    :param o2: y-component of displacement vector of the transformation
+    :type o2: float
+    :param o3: z-component of displacement vector of the transformation
+    :type o3: float
+    :param rotxx: x x' component of rotation matrix. Other parameters are as below in the default matrix.
+    :type rotxx: float
+    :param displacementOrigin: Displacement vector origin - either 1 or -1
+    :type displacementOrigin: int
     :param transformationNumber: Number assigned to the transformation.
+
+    The default rotation matrix is:
+
+    .. math::
+
+        \begin{equation}
+        \begin{bmatrix}
+        xx' & yx' & zx' \\
+        xy' & yy' & zy' \\
+        xz' & yz' & zz'
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        0 & 0 & 1
+        \end{bmatrix}
+        \end{equation}
+
+    For `displacementOrigin = 1` the displacement vector is the location of the origin of the
+    auxiliary coordinate system, defined in the main system. (DEFAULT). For `displacementOrigin = -1`,
+    the displacement vector is the location of the origin of the main coordinate system, defined
+    in the auxiliary system.
+
     """
 
     def __init__(
