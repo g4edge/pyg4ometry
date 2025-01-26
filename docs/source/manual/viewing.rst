@@ -135,8 +135,7 @@ It is possible to view the logical volume with an offset (i.e. translation) and
 rotation. This is purely for adding the scene of the viewer and does not affect
 the logical volume itself or anything it is used in. We can see the docstring:
 
-.. code-block:: python
-    :linenos:
+::
 
     v = pyg4ometry.visualisation.VtkViewer()
     v.addLogicalVolume?
@@ -190,8 +189,7 @@ Similarly to a logical volume, an individual solid has no concept of placement p
 and will by default be placed at the centre of the scene. It is also possible to add it
 to the scene with a rotation and translation.
 
-.. code-block:: python
-    :linenos:
+::
 
     v.addSolid?
     Signature:
