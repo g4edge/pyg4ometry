@@ -138,8 +138,8 @@ the logical volume itself or anything it is used in. We can see the docstring:
 .. code-block:: python
     :linenos:
 
-    >>> v = pyg4ometry.visualisation.VtkViewer()
-    >>> v.addLogicalVolume?
+    v = pyg4ometry.visualisation.VtkViewer()
+    v.addLogicalVolume?
     Signature:
     v.addLogicalVolume(
     logical,
@@ -193,7 +193,7 @@ to the scene with a rotation and translation.
 .. code-block:: python
     :linenos:
 
-    >>> v.addSolid?
+    v.addSolid?
     Signature:
     v.addSolid(
     solid,
