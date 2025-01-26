@@ -934,16 +934,16 @@ def test_GdmlLoad_Par02FullDetector(testdata):
 
 def test_GdmlLoad_BDSIM_colour(testdata):
     registry, writtenFilename = pyg4ometryLoadWriteTest(
-        #testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
+        # testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
         "/Users/lnevay/physics/reps/bdsim-gdml-colour-writing-build/examples/features/geometry/4_magnets/vkickers-coloured.gdml"
     )
 
+
 def test_GdmlLoad_BDSIM_colour_force_visible(testdata):
-    #fn = testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
+    # fn = testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
     fn = "/Users/lnevay/physics/reps/bdsim-gdml-colour-writing-build/examples/features/geometry/4_magnets/vkickers-coloured.gdml"
     filepath = _pj(fn)
 
     reader = pyg4ometry.gdml.Reader(filepath, makeAllVisible=True)
     wlv = reader.getRegistry().getWorldVolume()
     assert wlv.daughterVolumes[0].logicalVolume.visible
-

@@ -35,8 +35,12 @@ class Reader:
     """
 
     def __init__(
-        self, fileName, registryOn=True, skipMaterials=False, reduceNISTMaterialsToPredefined=False,
-            makeAllVisible=False
+        self,
+        fileName,
+        registryOn=True,
+        skipMaterials=False,
+        reduceNISTMaterialsToPredefined=False,
+        makeAllVisible=False,
     ):
         super().__init__()
         self.filename = fileName
@@ -2951,6 +2955,7 @@ def _StripPointer(name):
     pattern = r"(0x\w{7,})"
     rNameToObject = _re.sub(pattern, "", name)
     return rNameToObject
+
 
 def _BDSIM_VRGBA(s):
     sl = s.split()

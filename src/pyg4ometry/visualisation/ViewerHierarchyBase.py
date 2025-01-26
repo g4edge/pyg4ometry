@@ -1,5 +1,6 @@
 from . import VisualisationOptions as _VisOptions
 
+
 class ViewerHierarchyBase:
     """
     Base class for all viewers and exporters. Handles unique meshes and their instances

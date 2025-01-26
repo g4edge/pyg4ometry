@@ -1098,7 +1098,12 @@ class VtkViewer:
             materialVis = v = self.materialVisOptions.get(materialName, self._defaultVis)
 
         # take the first non-None set of visOptions
-        orderOfPrecedence = [pv.visOptions, pv.logicalVolume.visOptions, materialVis, self._defaultVis]
+        orderOfPrecedence = [
+            pv.visOptions,
+            pv.logicalVolume.visOptions,
+            materialVis,
+            self._defaultVis,
+        ]
 
         return next(item for item in orderOfPrecedence if item is not None)
 
@@ -1143,7 +1148,9 @@ class VtkViewerColoured(VtkViewer):
     to a :class:`VisualisationOptions` instance.
     """
 
-    def __init__(self, *args, defaultColour=None, defaultAlpha=0.5, materialVisOptions=None, **kwargs):
+    def __init__(
+        self, *args, defaultColour=None, defaultAlpha=0.5, materialVisOptions=None, **kwargs
+    ):
         kwargs["interpolation"] = kwargs.get("interpolation", "flat")
         super().__init__(*args, **kwargs)
         self.materialVisOptions = {}
@@ -1168,7 +1175,6 @@ class VtkViewerColoured(VtkViewer):
                     self.materialVisOptions[k] = vi
                 else:
                     self.materialVisOptions[k] = v
-
 
 
 # for backwards compatibility for old name

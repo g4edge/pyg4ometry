@@ -384,7 +384,7 @@ option, physicsList="em";
         # ensure it's a list, even if empty
         if lv.auxiliary:
             if type(lv.auxiliary) in (list, tuple):
-                aux = list(lv.auxiliary) # ensure it's of type list
+                aux = list(lv.auxiliary)  # ensure it's of type list
             else:
                 aux = [lv.auxiliary]
         if self._writeColour and lv.visOptions:

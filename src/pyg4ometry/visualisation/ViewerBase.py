@@ -73,7 +73,7 @@ class ViewerBase:
         if self.materialVisOptions:
             # if 0x is in name, strip the appended pointer (common in exported GDML)
             if "0x" in materialName:
-                materialName = materialName[0: materialName.find("0x")]
+                materialName = materialName[0 : materialName.find("0x")]
             # get with default
             materialVis = v = self.materialVisOptions.get(materialName, self.defaultVisOptions)
         return materialVis
@@ -84,7 +84,12 @@ class ViewerBase:
         """
         materialVis = self._getMaterialVis(pv.logicalVolume.material.name)
         # take the first non-None set of visOptions
-        orderOfPrecedence = [pv.visOptions, pv.logicalVolume.visOptions, materialVis, self.defaultVisOptions]
+        orderOfPrecedence = [
+            pv.visOptions,
+            pv.logicalVolume.visOptions,
+            materialVis,
+            self.defaultVisOptions,
+        ]
         return next(item for item in orderOfPrecedence if item is not None)
 
     def getVisOptionsLV(self, lv):
