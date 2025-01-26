@@ -865,12 +865,13 @@ class LogicalVolume:
         """
         # if auxiliary is not None and not isinstance(auxiliary, _Auxiliary):
         #    raise ValueError("Auxiliary information must be a gdml.Defines.Auxiliary instance.")
+        if auxiliary == None:
+            return
         if isinstance(auxiliary, list) or isinstance(auxiliary, tuple):
             for aux in auxiliary:
                 self.addAuxiliaryInfo(aux)
         else:
-            if auxiliary:
-                self.auxiliary.append(auxiliary)
+            self.auxiliary.append(auxiliary)
 
     def extent(self, includeBoundingSolid=False):
         """
