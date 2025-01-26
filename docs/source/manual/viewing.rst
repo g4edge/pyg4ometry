@@ -157,11 +157,12 @@ a matrix with:
     :linenos:
 
     import numpy as np
-    rotation = [0, np.pi/2, 0] # for example
+
+    rotation = [0, np.pi / 2, 0]  # for example
     matrix = np.linalg.inv(pyg4ometry.transformation.tbxyz2matrix(rotation))
-    l # a pyg4ometry.geant4.LogicalVolume instance
+    l  # a pyg4ometry.geant4.LogicalVolume instance
     v = pyg4ometry.visualisation.VtkViewer()
-    v.addLogicalVolume(l, mtra=rotation, tra=[0,0,500])
+    v.addLogicalVolume(l, mtra=rotation, tra=[0, 0, 500])
 
 
 .. note::
@@ -216,7 +217,7 @@ a Boolean solid on its own.
 .. code-block:: python
     :linenos:
 
-    s # e.g. a pyg4ometry.geant4.solid.Subtraction instance
+    s  # e.g. a pyg4ometry.geant4.solid.Subtraction instance
     v = pyg4ometry.visualisation.VtkViewer()
     v.addBooleanSolidRecursive(s)
     v.view()
@@ -272,9 +273,9 @@ each axis aligned with 0,0,0. These can be plotted or added to an existing plot 
 .. code-block:: python
     :linenos:
 
-    pyg4ometry.visualisation.Plot.AddCutterDataToPlot("crosssection-ZX.dat",
-                                                      "zx",
-                                                      unitsFactor=0.001)
+    pyg4ometry.visualisation.Plot.AddCutterDataToPlot(
+        "crosssection-ZX.dat", "zx", unitsFactor=0.001
+    )
 
 
 An optional Matplotlib axes instance can be given if there is one from an existing plot.
@@ -284,10 +285,10 @@ An optional Matplotlib axes instance can be given if there is one from an existi
 
     f = matplotlib.pyplot.figure()
     ax = f.add_subplot(111)
-    ax.plot([0,1],[0,1])
-    pyg4ometry.visualisation.Plot.AddCutterDataToPlot("crosssection-ZX.dat",
-                                                      "zx", ax,
-                                                      unitsFactor=0.001)
+    ax.plot([0, 1], [0, 1])
+    pyg4ometry.visualisation.Plot.AddCutterDataToPlot(
+        "crosssection-ZX.dat", "zx", ax, unitsFactor=0.001
+    )
 
 
 The full documentation can be found for :meth:`pyg4ometry.visualisation.Plot.AddCutterDataToPlot`.
