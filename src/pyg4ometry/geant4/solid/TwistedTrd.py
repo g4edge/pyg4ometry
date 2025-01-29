@@ -8,6 +8,8 @@ from .TwistedSolid import TwistedSolid as _TwistedSolid
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class TwistedTrd(_SolidBase, _TwistedSolid):
     """
@@ -115,7 +117,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         return layers
 
     def mesh(self):
-        _log.info("twistedtrd.pycsgmesh> antlr")
+        _log.debug("twistedtrd.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -129,7 +131,7 @@ class TwistedTrd(_SolidBase, _TwistedSolid):
         pDy2 = self.evaluateParameter(self.pDy2) / 2.0 * luval
         pDz = self.evaluateParameter(self.pDz) / 2.0 * luval
 
-        _log.info("twistedtrd.mesh> mesh")
+        _log.debug("twistedtrd.mesh> mesh")
         pl1 = _TwoVector(-pDx1, -pDy1)  # , pDz]
         pl2 = _TwoVector(pDx1, -pDy1)  # pDz]
         pl3 = _TwoVector(pDx1, pDy1)  # pDz]

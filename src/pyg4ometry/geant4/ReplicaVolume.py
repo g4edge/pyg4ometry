@@ -8,6 +8,8 @@ from .. import transformation as _trans
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class ReplicaVolume(_PhysicalVolume):
     """

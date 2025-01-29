@@ -2,8 +2,9 @@ from .SolidBase import SolidBase as _SolidBase
 from ... import exceptions
 from ...transformation import *
 
-import copy as _copy
 import logging as _log
+
+_log = _log.getLogger(__name__)
 
 
 class Union(_SolidBase):
@@ -51,7 +52,7 @@ class Union(_SolidBase):
         return f"Union {self.name} {self.obj1.name} {self.obj2.name}"
 
     def mesh(self):
-        _log.info("union.pycsgmesh>")
+        _log.debug("union.pycsgmesh>")
 
         # look up solids in registry
         from ... import geant4 as _g4
@@ -62,19 +63,19 @@ class Union(_SolidBase):
         # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        _log.info(f"Union.pycsgmesh> rot={rot!s} tlate={tlate!s}")
+        _log.debug(f"Union.pycsgmesh> rot={rot!s} tlate={tlate!s}")
 
         # get meshes
-        _log.info("union.mesh> mesh1")
+        _log.debug("union.mesh> mesh1")
         m1 = obj1.mesh()
-        _log.info("union.mesh> mesh2")
+        _log.debug("union.mesh> mesh2")
         m2 = obj2.mesh().clone()
 
         # apply transform to second mesh
         m2.rotate(rot[0], -rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.info("union.pycsgmesh> union")
+        _log.debug("union.pycsgmesh> union")
         mesh = m1.union(m2)
 
         return mesh

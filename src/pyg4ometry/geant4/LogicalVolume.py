@@ -15,8 +15,10 @@ from .. import exceptions as _exceptions
 
 from collections import defaultdict as _defaultdict
 import numpy as _np
-import logging as _log
+import logging as _logging
 import copy as _copy
+
+_log = _logging.getLogger(__name__)
 
 
 def _solid2tessellated(solid):
@@ -38,7 +40,6 @@ def _solid2tessellated(solid):
         # The last 3-tuple is a dummy normal to make it look like STL data
         meshTriangular.append((vertices, (None, None, None)))
 
-    print(meshTriangular)
     name = solid.name + "_asTesselated"
     reg = solid.registry
     mesh_type = _solid.TessellatedSolid.MeshType.Stl
@@ -128,10 +129,10 @@ class LogicalVolume:
                     d.logicalVolume.reMesh(recursive)
         except _exceptions.NullMeshError:
             self.mesh = None
-            print(f"geant4.LogicalVolume> meshing error {self.name}")
+            _log.error("geant4.LogicalVolume> meshing error %s", self.name)
         except ValueError:
             self.mesh = None
-            print(f"geant4.LogicalVolume> meshing error {self.name}")
+            _log.error(f"geant4.LogicalVolume> meshing error %s", self.name)
 
     def add(self, physicalVolume):
         """
@@ -154,7 +155,9 @@ class LogicalVolume:
         # cannot currently deal with replica, division and parametrised
         if pv.type != "placement":
             if warn:
-                print("Cannot generate specific daughter mesh for replica, division, parameterised")
+                _log.error(
+                    "Cannot generate specific daughter mesh for replica, division, parameterised"
+                )
             return None
         # cannot currently deal with assembly
         if pv.logicalVolume.type == "assembly":
@@ -506,7 +509,7 @@ class LogicalVolume:
         self._daughterVolumesDict = {pv.name: pv for pv in self.daughterVolumes}
 
         if len(self.daughterVolumes) == 0:
-            print("Warning> no remaining daughters")
+            _log.warning("no remaining daughters")
             # if there are no daughters remaining, then there's no need to update
             # the placement transforms
             self.solid = newSolid
@@ -527,7 +530,7 @@ class LogicalVolume:
 
             pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
             if pv.scale:
-                print("Warning> this does not work with scale")
+                _log.warning("this does not work with scale")
                 pvmsca = _np.diag(pv.scale.eval())
             else:
                 pvmsca = _np.diag([1, 1, 1])
@@ -880,7 +883,7 @@ class LogicalVolume:
         :param includeBoundingSolid: Include the bounding solid or not
         :type includeBoundingSolid: bool
         """
-        _log.info(f"LogicalVolume.extent> {self.name} ")
+        _log.debug(f"LogicalVolume.extent> {self.name} ")
 
         if includeBoundingSolid:
             [vMin, vMax] = self.mesh.getBoundingBox()
@@ -970,7 +973,7 @@ class LogicalVolume:
             self.solid.pY = _Constant(self.solid.name + "_rescaled_y", diff[1], self.registry, True)
             self.solid.pZ = _Constant(self.solid.name + "_rescaled_z", diff[2], self.registry, True)
         else:
-            print(
+            _log.warning(
                 "Warning: only Box container volume supported: all daughter placements have been recentred but container solid has not"
             )
 
@@ -1077,8 +1080,8 @@ class LogicalVolume:
         self.registry.setWorld(wl.name)
 
     def dumpStructure(self, depth=0):
-        print(depth * "-" + self.name + " " + self.solid.type + " (lv)")
+        print(depth * "-" + self.name + " " + self.solid.type + " (lv)")  # noqa: T201
 
         for d in self.daughterVolumes:
-            print(2 * depth * "-" + d.name + " " + d.type + " (pv)")
+            print(2 * depth * "-" + d.name + " " + d.type + " (pv)")  # noqa: T201
             d.logicalVolume.dumpStructure(depth + 2)

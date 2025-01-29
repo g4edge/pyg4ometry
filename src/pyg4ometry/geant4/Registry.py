@@ -2,6 +2,7 @@ from .. import exceptions as _exceptions
 from . import _Material as _mat
 from . import solid
 
+import logging as _log
 from collections import defaultdict as _defaultdict
 
 
@@ -653,7 +654,7 @@ class Registry:
             # add members from logical volume
             self.transferLogicalVolume(volume, incrementRenameDict, userRenameDict)
         else:
-            print(f"Volume type not supported yet for merging type='{volume.type}'")
+            _log.error(f"Volume type not supported yet for merging type='{volume.type}'")
 
         return incrementRenameDict
 
@@ -860,8 +861,8 @@ class Registry:
         return self.worldVolume
 
     def printStats(self):
-        print(self.solidTypeCountDict)
-        print(self.logicalVolumeUsageCountDict)
+        print(self.solidTypeCountDict)  # noqa: T201
+        print(self.logicalVolumeUsageCountDict)  # noqa: T201
 
     def structureAnalysis(self, lv_name=None, debug=False, level=0, df=None):
         return AnalyseGeometryStructure(self, lv_name, debug, level, df)
@@ -917,28 +918,28 @@ class GeometryComplexityInformation:
         self.booleanDepth = _defaultdict(int)
 
     def printSummary(self, boolDepthLimit=3):
-        print("Types of solids")
+        print("Types of solids")  # noqa: T201
         solidsSorted = sorted(self.solids.items(), key=lambda x: x[1], reverse=True)
         for solidName, number in solidsSorted:
-            print(solidName.ljust(20), ":", number)
+            print(solidName.ljust(20), ":", number)  # noqa: T201
 
-        print(" ")
-        print("# of daughters".ljust(20), "count")
+        print(" ")  # noqa: T201
+        print("# of daughters".ljust(20), "count")  # noqa: T201
         for nDaughters in sorted(self.nDaughtersPerLV.keys()):
-            print(str(nDaughters).ljust(20), ":", self.nDaughtersPerLV[nDaughters])
+            print(str(nDaughters).ljust(20), ":", self.nDaughtersPerLV[nDaughters])  # noqa: T201
 
-        print(" ")
-        print("Depth of booleans".ljust(20), "count")
+        print(" ")  # noqa: T201
+        print("Depth of booleans".ljust(20), "count")  # noqa: T201
         for boolDepth in sorted(self.booleanDepthCount.keys()):
-            print(str(boolDepth).ljust(20), ":", self.booleanDepthCount[boolDepth])
+            print(str(boolDepth).ljust(20), ":", self.booleanDepthCount[boolDepth])  # noqa: T201
 
-        print(" ")
-        print("Booleans width depth over ", boolDepthLimit)
-        print("Solid name".ljust(40), ":", "n Booleans")
+        print(" ")  # noqa: T201
+        print("Booleans width depth over ", boolDepthLimit)  # noqa: T201
+        print("Solid name".ljust(40), ":", "n Booleans")  # noqa: T201
         boolDepthSorted = sorted(self.booleanDepth.items(), key=lambda x: x[1], reverse=True)
         for solidName, boolDepth in boolDepthSorted:
             if boolDepth > boolDepthLimit:
-                print(solidName.ljust(40), ":", boolDepth)
+                print(solidName.ljust(40), ":", boolDepth)  # noqa: T201
 
 
 def AnalyseGeometryComplexity(logicalVolume):
@@ -1045,9 +1046,9 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
     )
 
     if debug:
-        print("\nlevel:", level)
-        print("mother:", mother)
-        print("daughters: ", len(daughters), " ", daughters)
+        _log.debug("\nlevel: %s", level)
+        _log.debug("mother: %s", mother)
+        _log.debug("daughters: %d %s", len(daughters), daughters)
 
     level += 1
 
@@ -1063,9 +1064,9 @@ def AnalyseGeometryStructure(registry, lv_name=None, debug=False, level=0, df=No
 
 
 def DumpGeometryStructureTree(lv, depth=0):
-    print(4 * (depth - 1) * " " + 4 * "-" + ">" + lv.name)
+    print(4 * (depth - 1) * " " + 4 * "-" + ">" + lv.name)  # noqa: T201
 
     for dv in lv.daughterVolumes:
-        print(4 * (depth + 1) * " " + 4 * "-" + ">" + dv.name + " (pv)")
+        print(4 * (depth + 1) * " " + 4 * "-" + ">" + dv.name + " (pv)")  # noqa: T201
 
         DumpGeometryStructureTree(dv.logicalVolume, depth + 3)

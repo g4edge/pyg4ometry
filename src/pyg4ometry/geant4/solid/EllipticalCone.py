@@ -17,6 +17,8 @@ import logging as _log
 
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class EllipticalCone(_SolidBase):
     """
@@ -75,7 +77,7 @@ class EllipticalCone(_SolidBase):
         return f"EllipticalCone : name={self.name} xSemiAxis={float(self.pxSemiAxis)} ySemiAxis={float(self.pySemiAxis)} zMax={float(self.zMax)} zTopCut={float(self.pzTopCut)}"
 
     def mesh(self):
-        _log.info("ellipticalcone.antlr>")
+        _log.debug("ellipticalcone.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -87,7 +89,7 @@ class EllipticalCone(_SolidBase):
         pzTopCut = self.evaluateParameter(self.pzTopCut) * luval
         pzTopCut = min(zMax, pzTopCut)  # Accounting for if cut > zmax.
 
-        _log.info("ellipticalcone.pycsgmesh>")
+        _log.debug("ellipticalcone.pycsgmesh>")
         polygons = []
 
         # smaller face semi-axis (at z=ztopcut)

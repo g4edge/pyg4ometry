@@ -3,6 +3,8 @@ from ...pycsg.core import CSG as _CSG
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Scaled(_SolidBase):
     """
@@ -46,7 +48,7 @@ class Scaled(_SolidBase):
     def mesh(self):
         from ...gdml import Units as _Units
 
-        _log.info("scaled.pycsgmesh> antlr")
+        _log.debug("scaled.pycsgmesh> antlr")
 
         pX = self.evaluateParameter(self.pX)
         pY = self.evaluateParameter(self.pY)
@@ -55,5 +57,5 @@ class Scaled(_SolidBase):
         mesh = self.solid.mesh()
         mesh.scale([pX, pY, pZ])
 
-        _log.info("scaled.pycsgmesh> mesh")
+        _log.debug("scaled.pycsgmesh> mesh")
         return mesh

@@ -130,6 +130,7 @@ lint.extend-ignore = [
   "E501",   # Line too long
   "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
   "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
+  "RUF100", # unused noqa TODO: remove after print() migration
 ]
 src = ["src"]
 lint.unfixable = [

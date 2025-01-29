@@ -5,6 +5,8 @@ import logging as _log
 
 from ... import exceptions
 
+_log = _log.getLogger(__name__)
+
 
 class Intersection(_SolidBase):
     """
@@ -61,7 +63,7 @@ class Intersection(_SolidBase):
     def mesh(self):
         from ... import geant4 as _g4
 
-        _log.info("Intersection.pycsgmesh>>")
+        _log.debug("Intersection.pycsgmesh>>")
 
         # look up solids in registry
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
@@ -72,21 +74,20 @@ class Intersection(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes
-        _log.info("Intersection.mesh> mesh1")
+        _log.debug("Intersection.mesh> mesh1")
         m1 = obj1.mesh()
-        _log.info("Intersection.mesh> mesh2")
+        _log.debug("Intersection.mesh> mesh2")
         m2 = obj2.mesh().clone()
 
         # apply transform to second mesh
         m2.rotate(rot[0], -rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.info("Intersection.pycsgmesh> intersect")
+        _log.debug("Intersection.pycsgmesh> intersect")
         mesh = m1.intersect(m2)
         if mesh.isNull():
             raise exceptions.NullMeshError(self)
 
-        # print 'intersection mesh ', self.name
         return mesh
 
     def translation(self):

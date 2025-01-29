@@ -22,6 +22,8 @@ import logging as _log
 # import resource as _resource
 import time as _time
 
+_log = _log.getLogger(__name__)
+
 
 class Sphere(_SolidBase):
     """
@@ -119,7 +121,7 @@ class Sphere(_SolidBase):
 
         tBefore = _time.process_time()
 
-        _log.info("sphere.antlr>")
+        _log.debug("sphere.antlr>")
         from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
@@ -132,7 +134,7 @@ class Sphere(_SolidBase):
         pSTheta = self.evaluateParameter(self.pSTheta) * auval
         pDTheta = self.evaluateParameter(self.pDTheta) * auval
 
-        _log.info("Sphere.pycsgmesh>")
+        _log.debug("Sphere.pycsgmesh>")
 
         polygons = []
 
@@ -299,7 +301,7 @@ class Sphere(_SolidBase):
         # mBefore = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
         mesh = _CSG.fromPolygons(polygons)
         # mAfter = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
-        # _log.info(
+        # _log.debug(
         #    f"Sphere.pycsgmesh> profile {self.nstack} {self.nslice} {mesh.getNumberPolys()} {mAfter - mBefore} {tAfter - tBefore}"
         # )
         return mesh
