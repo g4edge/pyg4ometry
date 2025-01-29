@@ -105,7 +105,7 @@ class Tests:
         Print all tests names - the exact strings that can be used to turn them off or on.
         """
         for name in cls._testNames:
-            print('"' + name + '"')
+            print('"' + name + '"')  # noqa: T201
 
     def __repr__(self):
         s = ""
@@ -238,22 +238,22 @@ class ComparisonResult:
         >>> cr.print(testResultsToPrint=TestResult.All())
         >>> cr.print(allTests=True)
         """
-        print("Overall result> ", self.result)
+        print("Overall result> ", self.result)  # noqa: T201
         if allTests:
             testResultsToPrint = TestResult.All()
         if testName is None:
             for tn, results in self.test.items():
-                print("Test> ", tn)
+                print("Test> ", tn)  # noqa: T201
                 for result in results:
                     # only print if required
                     if result.testResult in testResultsToPrint:
-                        print(result)
-                print(" ")
+                        print(result)  # noqa: T201
+                print(" ")  # noqa: T201
         else:
-            print("Test> ", testName)
+            print("Test> ", testName)  # noqa: T201
             for result in self.test[testName]:
-                print(result)
-            print(" ")  # for a new line
+                print(result)  # noqa: T201
+            print(" ")  # for a new line  # noqa: T201
 
 
 def gdmlFiles(referenceFile, otherFile, tests=Tests(), includeAllTestResults=False):

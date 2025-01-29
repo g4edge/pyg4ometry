@@ -123,12 +123,12 @@ lint.select = [
   "EXE",         # flake8-executable
   "NPY",         # NumPy specific rules
   # "PD",          # pandas-vet
+  "T201",
 ]
 
 lint.extend-ignore = [
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
-  "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
   "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
   "RUF100", # unused noqa TODO: remove after print() migration
 ]
@@ -147,6 +147,10 @@ lint.isort.required-imports = ["from __future__ import annotations"]
 "src/pyg4ometry/misc/TestUtils.py" = ["T201"]
 "src/pyg4ometry/compare/_Compare.py" = ["T201"]
 # further ignores, TODO: should be removed.
+"src/pyg4ometry/gui/**" = ["T201"]
+"src/pyg4ometry/{fluka,convert}/**" = ["T201"]
+"src/pyg4ometry/{io,analysis,features}/**" = ["T201"]
+"src/pyg4ometry/{freecad,pycgal,pyoce}/**" = ["T201"]
 "src/pyg4ometry/visualisation/{UsdViewer,ViewerHierarchyBase}.py" = ["T201"]
 
 [tool.cibuildwheel]
