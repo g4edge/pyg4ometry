@@ -85,7 +85,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     bp14 = _g4.PhysicalVolume([0, 0, 0], [+1.5 * wx / 2 - bx / 4, 0, 0], bl, "b_pv14", wl, reg)
 
     # check for overlaps
-    wl.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
+    wl.checkOverlaps(recursive=True, coplanar=True)
 
     # set world volume
     reg.setWorld(wl.name)

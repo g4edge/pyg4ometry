@@ -21,7 +21,7 @@ def Test(vis=False, interactive=False):
     boxPV1 = _g4.PhysicalVolume([0, 0, 0], [0, 0, 20], aBoxLV, "abox_pv1", worldLV, reg)
 
     # check for overlaps
-    worldLV.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
+    worldLV.checkOverlaps(recursive=True, coplanar=True)
 
     # set world volume
     reg.setWorld(worldLV)
