@@ -142,7 +142,12 @@ lint.flake8-unused-arguments.ignore-variadic-names = true
 lint.isort.required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
+# ignores because of tests.
 "tests/**" = ["T20"]
+"src/pyg4ometry/misc/TestUtils.py" = ["T201"]
+"src/pyg4ometry/compare/_Compare.py" = ["T201"]
+# further ignores, TODO: should be removed.
+"src/pyg4ometry/visualisation/{UsdViewer,ViewerHierarchyBase}.py" = ["T201"]
 
 [tool.cibuildwheel]
 build = ["*macosx*", "*manylinux_x86_64", "*windows*"]

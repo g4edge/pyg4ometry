@@ -12,6 +12,8 @@ from . import Convert as _Convert
 import logging as _log
 import random as _random
 
+_log = _log.getLogger(__name__)
+
 
 class VtkViewer:
     """
@@ -480,7 +482,7 @@ class VtkViewer:
                     )
                     first = False
                 except _exceptions.NullMeshError:
-                    print(solid.name, "> null mesh... continuing")
+                    _log.debug(f"{solid.name} > null mesh... continuing")
 
             obj1 = solid.object1()
             obj2 = solid.object2()
@@ -562,7 +564,7 @@ class VtkViewer:
             pv_name = pv.name
 
             if pv.logicalVolume.type == "logical":
-                _log.info(
+                _log.debug(
                     f"VtkViewer.addLogicalVolume> Daughter {pv.name} {pv.logicalVolume.name} {pv.logicalVolume.solid.name} "
                 )
 
@@ -699,7 +701,7 @@ class VtkViewer:
         clippers=False,
     ):
         # VtkPolyData : check if mesh is in localmeshes dict
-        _log.info("VtkViewer.addLogicalVolume> vtkPD")
+        _log.debug("VtkViewer.addLogicalVolume> vtkPD")
 
         if solid_name in localmeshes:
             vtkPD = localmeshes[solid_name]
@@ -754,7 +756,7 @@ class VtkViewer:
             vtkPD = normal_generator.GetOutput()
 
         # Filter : check if filter is in the filters dict
-        _log.info("VtkViewer.addLogicalVolume> vtkFLT")
+        _log.debug("VtkViewer.addLogicalVolume> vtkFLT")
         filtername = solid_name + "_filter"
         if filtername in filters:
             vtkFLT = filters[filtername]
@@ -764,7 +766,7 @@ class VtkViewer:
             filters[filtername] = vtkFLT
 
         # Mapper
-        _log.info("VtkViewer.addLogicalVolume> vtkMAP")
+        _log.debug("VtkViewer.addLogicalVolume> vtkMAP")
         mappername = pv_name + "_mapper"
         vtkMAP = _vtk.vtkPolyDataMapper()
         vtkMAP.ScalarVisibilityOff()
@@ -1109,10 +1111,10 @@ class VtkViewer:
 
     def printViewParameters(self):
         activeCamera = self.ren.GetActiveCamera()
-        print("Window size     ", self.renWin.GetSize())
-        print("Focal point     ", activeCamera.GetFocalPoint())
-        print("Camera position ", activeCamera.GetPosition())
-        print("Focal distance  ", activeCamera.GetDistance())
+        print("Window size     ", self.renWin.GetSize())  # noqa: T201
+        print("Focal point     ", activeCamera.GetFocalPoint())  # noqa: T201
+        print("Camera position ", activeCamera.GetPosition())  # noqa: T201
+        print("Focal distance  ", activeCamera.GetDistance())  # noqa: T201
 
 
 class VtkViewerColoured(VtkViewer):
@@ -1216,7 +1218,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
                 pass
             else:
                 name = name[: name.find("_actor")]
-                print(f"{type(self.vtkviewer).__name__}> selected> {name}")
+                _log.debug(f"{type(self.vtkviewer).__name__}> selected> {name}")
 
 
 def axesFromExtents(extent):

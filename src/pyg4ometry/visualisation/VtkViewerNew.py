@@ -105,7 +105,8 @@ class VtkViewerNew(_ViewerBase):
 
     def addCutter(self, name, origin, normal):
         if self.bBuiltPipelines:
-            print("Need to add cutter before pipelines are built")
+            msg = "Need to add cutter before pipelines are built"
+            raise RuntimeError(msg)
 
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
@@ -179,7 +180,8 @@ class VtkViewerNew(_ViewerBase):
 
     def addClipper(self, origin, normal, bClipperCutter=False, bClipperCloseCuts=True):
         if self.bBuiltPipelines:
-            print("Need to add clipper before pipelines are built")
+            msg = "Need to add clipper before pipelines are built"
+            raise RuntimeError(msg)
 
         self.bClipper = True
         self.clipperOrigin = origin
@@ -205,16 +207,14 @@ class VtkViewerNew(_ViewerBase):
 
     def addClipperWidget(self):
         if not self.bBuiltPipelines:
-            print(
+            msg = (
                 "Need to build pipelines before adding clipper widget e.g. v.bulidPipelinesAppend()"
             )
-            return
+            raise RuntimeError(msg)
 
         if len(self.clippers) == 0:
-            print(
-                "Need to add a clipping plane adding clipper widget e.g. v.addClipper([0, 0, 0], [0, 0, 1], True"
-            )
-            return
+            msg = "Need to add a clipping plane adding clipper widget e.g. v.addClipper([0, 0, 0], [0, 0, 1], True"
+            raise RuntimeError(msg)
 
         plaRep = _vtk.vtkImplicitPlaneRepresentation()
         # plaRep.SetPlaceFactor(1.25)
@@ -483,16 +483,16 @@ class VtkViewerNew(_ViewerBase):
 
     def render(self):
         if not self.bBuiltPipelines:
-            print("Pipelines have not been built")
-            return
+            msg = "Pipelines have not been built"
+            raise RuntimeError(msg)
 
         # Render
         self.renWin.Render()
 
     def view(self, interactive=True, resetCamera=False):
         if not self.bBuiltPipelines:
-            print("Pipelines have not been built")
-            return
+            msg = "Pipelines have not been built"
+            raise RuntimeError(msg)
 
         # enable user interface interactor
         self.iren.Initialize()
@@ -649,7 +649,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
             self.ren.RemoveActor(self.highLightActor)
 
         clickPos = self.GetInteractor().GetEventPosition()
-        print("clickPos> ", clickPos)
+        # print("clickPos> ", clickPos)
 
         picker = _vtk.vtkPropPicker()
         picker.Pick(clickPos[0], clickPos[1], 0, self.ren)
@@ -657,7 +657,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
 
         pointPicker = _vtk.vtkPointPicker()
         pointPicker.Pick(clickPos[0], clickPos[1], 0, self.ren)
-        print("pointId>", pointPicker.GetPointId())
+        # print("pointId>", pointPicker.GetPointId())
 
         cellPicker = _vtk.vtkCellPicker()
         cellPicker.SetPickClippingPlanes(False)
@@ -684,10 +684,10 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
                 .GetInputAlgorithm()
             )
 
-        print(self.inalgo.GetClassName(), appPolyData.GetClassName())
+        # print(self.inalgo.GetClassName(), appPolyData.GetClassName())
 
         point = self.inalgo.GetOutput().GetPoint(cellPicker.GetPointId())
-        print("pointPos>", point)
+        # print("pointPos>", point)
 
         # loop over appendPolyData and find closest
         dmin = 1e99
@@ -717,7 +717,7 @@ class MouseInteractorNamePhysicalVolume(_vtk.vtkInteractorStyleTrackballCamera):
 
         tba = _transformation.matrix2tbxyz(mtra)
 
-        print("minimum pd>", di, dmin, lvName, pvName, tba, tra, localExtent, globalExtent)
+        # print("minimum pd>", di, dmin, lvName, pvName, tba, tra, localExtent, globalExtent)
 
         if self.highLightActor:
             self.ren.RemoveActor(self.highLightActor)
