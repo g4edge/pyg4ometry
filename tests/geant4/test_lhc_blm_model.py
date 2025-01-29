@@ -36,8 +36,8 @@ materialToColour = {
 def assign_colour(lv, colour):
     colour_val = COLOURS.get(colour, (128, 128, 128, 1))
     colour_norm = [v / 255.0 for v in colour_val[:3]] + [colour_val[3]]
-    col_string = "{} {} {} {}".format(*colour_norm)
-    aux_tag = _gd.Auxiliary("colour", col_string, registry=lv.registry)
+    col_string = "1 {} {} {} {}".format(*colour_norm)
+    aux_tag = _gd.Auxiliary("bds_vrgba", col_string, registry=lv.registry)
     lv.addAuxiliaryInfo(aux_tag)
 
 

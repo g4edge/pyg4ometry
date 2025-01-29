@@ -930,3 +930,17 @@ def test_GdmlLoad_Par02FullDetector(testdata):
         testdata["gdml/Par02/Par02FullDetector.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Overlaps in the orignal file
+
+
+def test_GdmlLoad_BDSIM_colour(testdata):
+    registry, writtenFilename = pyg4ometryLoadWriteTest(
+        testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
+    )
+
+
+def test_GdmlLoad_BDSIM_colour_force_visible(testdata):
+    filepath = _pj(testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"])
+
+    reader = pyg4ometry.gdml.Reader(filepath, makeAllVisible=True)
+    wlv = reader.getRegistry().getWorldVolume()
+    assert wlv.daughterVolumes[0].logicalVolume.visOptions.visible

@@ -1,4 +1,5 @@
 import base64 as _base64
+import copy as _copy
 import numpy as _np
 import random as _random
 from .. import pycgal as _pycgal
@@ -47,7 +48,7 @@ class ViewerBase:
         self.bSubtractDaughters = False
 
         # default vis options
-        self.defaultVisOptions = None
+        self.defaultVisOptions = _VisOptions()
         self.defaultOverlapVisOptions = None
         self.defaultCoplanarVisOptions = None
         self.defaultProtusionVisOptions = None
@@ -65,6 +66,40 @@ class ViewerBase:
         self.instancePlacements = {}  # instance placements
         self.instanceVisOptions = {}  # instance vis options
         self.instancePbrOptions = {}  # instance pbr options
+
+    def _getMaterialVis(self, materialName):
+        materialVis = None
+        # a dict evaluates to True if not empty
+        if self.materialVisOptions:
+            # if 0x is in name, strip the appended pointer (common in exported GDML)
+            if "0x" in materialName:
+                materialName = materialName[0 : materialName.find("0x")]
+            # get with default
+            materialVis = v = self.materialVisOptions.get(materialName, self.defaultVisOptions)
+        return materialVis
+
+    def getVisOptions(self, pv):
+        """
+        Return a set of vis options according to the precedence of pv, lv, material, default.
+        """
+        materialVis = self._getMaterialVis(pv.logicalVolume.material.name)
+        # take the first non-None set of visOptions
+        orderOfPrecedence = [
+            pv.visOptions,
+            pv.logicalVolume.visOptions,
+            materialVis,
+            self.defaultVisOptions,
+        ]
+        return next(item for item in orderOfPrecedence if item is not None)
+
+    def getVisOptionsLV(self, lv):
+        """
+        Return a set of vis options according to the precedence of pv, lv, material, default.
+        """
+        materialVis = self._getMaterialVis(lv.material.name)
+        # take the first non-None set of visOptions
+        orderOfPrecedence = [lv.visOptions, materialVis, self.defaultVisOptions]
+        return next(item for item in orderOfPrecedence if item is not None)
 
     def setSubtractDaughters(self, subtractDaughters=True):
         self.bSubtractDaughters = subtractDaughters
@@ -111,20 +146,8 @@ class ViewerBase:
                 name = "world"
             self.addInstance(lv.name, mtra, tra, name)
 
-            materialName = lv.material.name
-
-            pointerLoc = materialName.find("0x")
-            if pointerLoc != -1:
-                materialName = materialName[0 : materialName.find("0x")]
-
-            # add vis options
-            if materialName in self.materialVisOptions:
-                visOptions = self.materialVisOptions[materialName]
-                visOptions.depth = depth
-                self.addVisOptions(lv.name, visOptions)
-            else:
-                visOptions.depth = depth
-                self.addVisOptions(lv.name, visOptions)
+            vo = self.getVisOptionsLV(lv)
+            self.addVisOptions(lv.name, vo)
 
             # add overlap meshes
             for [overlapmesh, overlaptype], i in zip(
@@ -145,6 +168,7 @@ class ViewerBase:
             print("Unknown logical volume type or null mesh")
 
         for pv in lv.daughterVolumes:
+            vo = self.getVisOptions(pv)
             if pv.type == "placement":
                 # pv transform
                 pvmrot = _np.linalg.inv(_transformation.tbxyz2matrix(pv.rotation.eval()))
@@ -159,12 +183,6 @@ class ViewerBase:
                 mtra_new = mtra @ pvmrot @ pvmsca
                 tra_new = mtra @ pvtra + tra
 
-                if not pv.visOptions:
-                    vo = pv.logicalVolume.visOptions
-                else:
-                    vo = pv.visOptions
-
-                # pv.visOptions.colour = [_random.random(), _random.random(), _random.random()]
                 self.addLogicalVolume(
                     pv.logicalVolume,
                     mtra_new,
@@ -183,11 +201,12 @@ class ViewerBase:
                     new_mtra = mtra @ pvmrot
                     new_tra = mtra @ pvtra + tra
 
-                    pv.visOptions.depth = depth + 2
+                    vo2 = _copy.deepcopy(vo)
+                    vo2.depth += 1
 
                     self.addMesh(pv.name, mesh.localmesh)
                     self.addInstance(pv.name, new_mtra, new_tra, pv.name)
-                    self.addVisOptions(pv.name, pv.visOptions)
+                    self.addVisOptions(pv.name, vo2)
             elif pv.type == "parametrised":
                 for mesh, trans, i in zip(pv.meshes, pv.transforms, range(0, len(pv.meshes), 1)):
                     pv_name = pv.name + "_param_" + str(i)
@@ -200,11 +219,12 @@ class ViewerBase:
                     new_mtra = mtra @ pvmrot
                     new_tra = mtra @ pvtra + tra
 
-                    pv.visOptions.depth = depth + 2
+                    vo2 = _copy.deepcopy(vo)
+                    vo2.depth += 1
 
                     self.addMesh(pv_name, mesh.localmesh)
                     self.addInstance(pv_name, new_mtra, new_tra, pv_name)
-                    self.addVisOptions(pv_name, pv.visOptions)
+                    self.addVisOptions(pv_name, vo2)
 
     def addFlukaRegions(self, fluka_registry, max_region=1000000, debugIO=False):
         icount = 0
