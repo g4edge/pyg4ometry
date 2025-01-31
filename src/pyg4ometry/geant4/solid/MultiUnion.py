@@ -5,6 +5,8 @@ from ...transformation import *
 import copy as _copy
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class MultiUnion(_SolidBase):
     """
@@ -49,7 +51,7 @@ class MultiUnion(_SolidBase):
         return f"Multi Union {self.name}"
 
     def mesh(self):
-        _log.info("MultiUnion.pycsgmesh>")
+        _log.debug("MultiUnion.pycsgmesh>")
 
         result = self.objects[0].mesh()
         tra2 = self.transformations[0]
@@ -64,17 +66,17 @@ class MultiUnion(_SolidBase):
             # tranformation
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()
-            _log.info(f"MulUnion.mesh> rot={rot!s} tlate={tlate!s}")
+            _log.debug(f"MulUnion.mesh> rot={rot!s} tlate={tlate!s}")
 
             # get meshes
-            _log.info(f"union.mesh> mesh {idx}")
+            _log.debug(f"union.mesh> mesh {idx}")
             mesh = solid.mesh()
 
             # apply transform to second mesh
             mesh.rotate(rot[0], -rad2deg(rot[1]))
             mesh.translate(tlate)
 
-            _log.info("MultiUnion.mesh> union")
+            _log.debug("MultiUnion.mesh> union")
             result = result.union(mesh)
 
         return result

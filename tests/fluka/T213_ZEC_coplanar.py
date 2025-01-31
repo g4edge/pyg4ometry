@@ -50,7 +50,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     greg = convert.fluka2Geant4(freg, withLengthSafety=True)
 
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
+    wlv.checkOverlaps(recursive=False, coplanar=True)
 
     outputFile = outputPath / "T213_ZEC_coplanar.inp"
 

@@ -6,6 +6,8 @@ from ..gdml import Defines as _Defines
 from .. import geant4 as _g4
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Writer:
     """

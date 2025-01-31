@@ -46,7 +46,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
 
     greg = convert.fluka2Geant4(freg)
     wlv = greg.getWorldVolume()
-    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
+    wlv.checkOverlaps(recursive=False, coplanar=True)
 
     outputFile = outputPath / "T207_ELL_coplanar.inp"
 

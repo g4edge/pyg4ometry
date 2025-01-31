@@ -20,6 +20,8 @@ from .Layer import Layer as _Layer
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class TwistedBox(_SolidBase, _TwistedSolid):
     """
@@ -113,7 +115,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         return layers
 
     def mesh_old(self):
-        _log.info("twistedbox.pycsgmesh> antlr")
+        _log.debug("twistedbox.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -176,7 +178,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         return [x, y]
 
     def mesh(self):
-        _log.info("twistedbox.pycsgmesh> antlr")
+        _log.debug("twistedbox.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -189,7 +191,7 @@ class TwistedBox(_SolidBase, _TwistedSolid):
         pDz = self.evaluateParameter(self.pDz) / 2.0 * luval
         refine = self.evaluateParameter(self.refine)
 
-        _log.info("twistedbox.mesh> mesh")
+        _log.debug("twistedbox.mesh> mesh")
 
         dTwist = twistedAngle / self.nstack
         dZ = 2 * pDz / self.nstack

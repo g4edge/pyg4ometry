@@ -3,6 +3,8 @@ from .SolidBase import SolidBase as _SolidBase
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class Polyhedra(_SolidBase):
     """
@@ -85,7 +87,7 @@ class Polyhedra(_SolidBase):
         return f"Polyhedra : name={self.name} sphi={self.pSPhi!s} dphi={self.pDPhi!s} numside={self.numSide!s} numzplanes={self.numZPlanes!s}"
 
     def mesh(self):
-        _log.info("polyhedra.antlr>")
+        _log.debug("polyhedra.antlr>")
 
         from ...gdml import Units as _Units
 

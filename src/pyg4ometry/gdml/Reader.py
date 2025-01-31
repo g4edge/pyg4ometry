@@ -8,6 +8,8 @@ from .. import geant4 as _g4
 from ..visualisation import VisualisationOptions as _VisOptions
 import os as _os
 
+_log = _log.getLogger(__name__)
+
 
 def isComment(node):
     # TODO must be a better way to find comments
@@ -120,17 +122,16 @@ class Reader:
                 fs += l + end
 
         # parse xml
-        _log.info("Reader.load> minidom parse")
+        _log.debug("Reader.load> minidom parse")
         try:
             xmldoc = _minidom.parseString(fs)
         except _expat.ExpatError as ee:
-            print(ee.args)
-            print(ee.args[0])
+            _log.error(ee.args)
             column = int(ee.args[0].split()[-1])
-            print(column, fs[column - 10 : min(len(fs), column + 100)])
-            print("        ^^^^ ")
-            raise _expat.ExpatError()
-        _log.info("Reader.load> parse")
+            _log.error("%s %s", column, fs[column - 10 : min(len(fs), column + 100)])
+            _log.error("        ^^^^ ")
+            raise ee
+        _log.debug("Reader.load> parse")
 
         # parse xml for defines, materials, solids and structure (#TODO optical surfaces?)
         self.parseDefines(xmldoc)
@@ -223,7 +224,7 @@ class Reader:
                 (coldim, values) = getMatrix(def_attrs)
                 _defines.Matrix(name, coldim, values, self._registry, True)
             else:
-                print("Warning : unrecognised define: ", define_type)
+                _log.warning("unrecognised define: %s", define_type)
 
     def parseVector(self, node, type="position", addRegistry=True):
         try:
@@ -382,7 +383,7 @@ class Reader:
                 materials.append(def_attrs)
 
             else:
-                print("Unrecognised define: ", mat_type)
+                _log.warning("Unrecognised define: %s", mat_type)
 
         materialSubstitutionNames = self._makeMaterials(materials, elements, isotopes)
         return materialSubstitutionNames
@@ -631,7 +632,9 @@ class Reader:
                 pass
                 # self.parseSolidLoop(node)
             else:
-                print(solid_type, node.attributes["name"].value)
+                _log.warning(
+                    "unrecognized solid %s (name=%s)", solid_type, node.attributes["name"].value
+                )
 
     def parseBox(self, node):
         solid_name = node.attributes["name"].value
@@ -1060,7 +1063,7 @@ class Reader:
                 Z.append(z)
                 i += 1
             except:
-                print("error reading solid ", "polycone", solid_name, chNode)
+                _log.error("error reading solid polycone %s %s", solid_name, chNode)
         _g4.solid.Polycone(solid_name, sphi, dphi, Z, Rmin, Rmax, self._registry, lunit, aunit)
 
     def parseGenericPolycone(self, node):
@@ -1436,7 +1439,6 @@ class Reader:
             lunit = "mm"
 
         _g4.solid.ExtrudedSolid(solid_name, pPolygon, zSection, self._registry, lunit=lunit)
-        # print 'extruded solid NOT IMPLEMENTED'
 
     def parseTwistedBox(self, node):
         solid_name = node.attributes["name"].value
@@ -1921,9 +1923,9 @@ class Reader:
                 surf = _g4.SkinSurface(name, volref, surf_property, self._registry)
 
             elif node_name == "loop":
-                print("Reader> loop not implemented")
+                _log.error("Reader> loop not implemented")
             else:
-                print("Unrecognised node: ", node_name)
+                _log.warning("Unrecognised node: %s", node_name)
 
     def parsePhysicalVolumeChildren(self, node, vol):
         for chNode in node.childNodes:
@@ -1952,17 +1954,17 @@ class Reader:
 
                 except IndexError:
                     fileref = chNode.getElementsByTagName("file")[0].attributes["name"].value
-                    print(fileref)
+                    _log.debug("got filref %s", fileref)
                     r = Reader(fileref, skipMaterials=self._skipMaterials)
                     fileReg = r.getRegistry()
                     fileReg.name = fileref
                     fileLV = r.getRegistry().getWorldVolume()
                     pvol_name = fileLV.name + "_PV"
 
-                _log.info(f"Reader.extractStructureNodeData> {pvol_name}")
+                _log.debug(f"Reader.extractStructureNodeData> {pvol_name}")
 
                 # Position
-                _log.info(f"Reader.extractStructureNodeData> pv position {pvol_name}")
+                _log.debug(f"Reader.extractStructureNodeData> pv position {pvol_name}")
                 try:
                     position = self._registry.defineDict[
                         chNode.getElementsByTagName("positionref")[0].attributes["ref"].value
@@ -1986,7 +1988,7 @@ class Reader:
                         )
 
                 # Rotation
-                _log.info("Reader.extractStructureNodeData> pv rotation %s", pvol_name)
+                _log.debug("Reader.extractStructureNodeData> pv rotation %s", pvol_name)
                 try:
                     rotation = self._registry.defineDict[
                         chNode.getElementsByTagName("rotationref")[0].attributes["ref"].value
@@ -2010,7 +2012,7 @@ class Reader:
                         )
 
                 # Scale
-                _log.info(f"Reader.extractStructureNodeData> pv scale {pvol_name}")
+                _log.debug(f"Reader.extractStructureNodeData> pv scale {pvol_name}")
                 try:
                     scale = self._registry.defineDict[
                         chNode.getElementsByTagName("scaleref")[0].attributes["ref"].value
@@ -2024,7 +2026,7 @@ class Reader:
                         scale = None
 
                 # Create physical volume
-                _log.info(f"Reader.extractStructureNodeData> construct {pvol_name}")
+                _log.debug(f"Reader.extractStructureNodeData> construct {pvol_name}")
 
                 try:
                     copyNumber = int(chNode.attributes["copynumber"].value)

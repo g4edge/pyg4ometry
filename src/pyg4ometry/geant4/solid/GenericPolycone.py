@@ -6,6 +6,8 @@ from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class GenericPolycone(_SolidBase):
     """
@@ -79,7 +81,7 @@ class GenericPolycone(_SolidBase):
             raise ValueError(msg)
 
     def mesh(self):
-        _log.info("genericpolycone.antlr>")
+        _log.debug("genericpolycone.antlr>")
 
         from ...gdml import Units as _Units
 

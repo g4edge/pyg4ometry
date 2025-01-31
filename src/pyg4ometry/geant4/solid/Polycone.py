@@ -5,6 +5,8 @@ from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Polycone(_SolidBase):
     """
@@ -78,9 +80,9 @@ class Polycone(_SolidBase):
         return f"Polycone : name={self.name} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)}"
 
     def mesh(self):
-        _log.info("polycone.pycsgmesh>")
+        _log.debug("polycone.pycsgmesh>")
 
-        _log.info("polycone.antlr>")
+        _log.debug("polycone.antlr>")
 
         from ...gdml import Units as _Units
 

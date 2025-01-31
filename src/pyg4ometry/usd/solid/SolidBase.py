@@ -1,9 +1,17 @@
-from pxr import Usd, UsdGeom, Sdf, Gf
+try:
+    from pxr import Usd, Gf, Sdf
+    from pxr.UsdGeom import Mesh as UsdGeomMesh
+except ImportError:
+    UsdGeomMesh = object
 
 
-class SolidBase(UsdGeom.Mesh):
+class SolidBase(UsdGeomMesh):
 
     def __init__(self, stage, path):
+        if UsdGeomMesh is object:
+            msg = "Failed to import open usd"
+            raise RuntimeError(msg)
+
         super().__init__(stage.GetPrimAtPath(path))
 
     def CreateCustomStingAttribute(self, name, value=""):

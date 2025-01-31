@@ -15,6 +15,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Trd(_SolidBase):
     """
@@ -57,7 +59,7 @@ class Trd(_SolidBase):
             registry.addSolid(self)
 
     def mesh(self):
-        _log.info("trd.pycsgmesh> antlr")
+        _log.debug("trd.pycsgmesh> antlr")
         from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
@@ -68,7 +70,7 @@ class Trd(_SolidBase):
         pY2 = self.evaluateParameter(self.pY2) * luval / 2.0
         pZ = self.evaluateParameter(self.pZ) * luval / 2.0
 
-        _log.info("trd.pycsgmesh> mesh")
+        _log.debug("trd.pycsgmesh> mesh")
         mesh = _CSG.fromPolygons(
             [
                 _Polygon(

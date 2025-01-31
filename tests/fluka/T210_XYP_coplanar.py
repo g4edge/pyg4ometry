@@ -64,7 +64,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
 
     wlv = greg.getWorldVolume()
 
-    wlv.checkOverlaps(recursive=False, coplanar=True, debugIO=False)
+    wlv.checkOverlaps(recursive=False, coplanar=True)
 
     outputFile = outputPath / "T210_XYP_coplanar.inp"
 

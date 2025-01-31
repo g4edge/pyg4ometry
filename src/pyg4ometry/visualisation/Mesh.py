@@ -12,6 +12,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class OverlapType:
     protrusion = 1
@@ -71,7 +73,7 @@ def _getBoundingBox(aMesh, rotationMatrix=None, translation=None, nameForError="
     """
     vertices, _, _ = aMesh.toVerticesAndPolygons()
     if not vertices:
-        print("Warning> getBoundingBox null mesh error : ", nameForError)
+        _log.warning("getBoundingBox null mesh error : %s", nameForError)
         if _config.meshingNullException:
             raise exceptions.NullMeshError(nameForError)
         else:
@@ -88,7 +90,7 @@ def _getBoundingBox(aMesh, rotationMatrix=None, translation=None, nameForError="
     vMin = [min(vertices[..., 0]), min(vertices[..., 1]), min(vertices[..., 2])]
     vMax = [max(vertices[..., 0]), max(vertices[..., 1]), max(vertices[..., 2])]
 
-    _log.info("visualisation.Mesh.getBoundingBox> %s %s", vMin, vMax)
+    _log.debug("visualisation.Mesh.getBoundingBox> %s %s", vMin, vMax)
 
     return [vMin, vMax]
 
@@ -107,7 +109,7 @@ def _getBoundingBoxMesh(boundingBox):
     pY = dy / 2.0
     pZ = dz / 2.0
 
-    _log.info("box.pycsgmesh> getBoundingBoxMesh")
+    _log.debug("box.pycsgmesh> getBoundingBoxMesh")
 
     mesh = _CSG.cube(center=[x0, y0, z0], radius=[pX, pY, pZ])
     return mesh

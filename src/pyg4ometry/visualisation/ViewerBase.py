@@ -2,12 +2,15 @@ import base64 as _base64
 import copy as _copy
 import numpy as _np
 import random as _random
+import logging as _log
 from .. import pycgal as _pycgal
 from .. import transformation as _transformation
 from .VisualisationOptions import (
     VisualisationOptions as _VisOptions,
 )
 from .Mesh import OverlapType as _OverlapType
+
+_log = _log.getLogger(__name__)
 
 
 def _daughterSubtractedMesh(lv):
@@ -165,7 +168,7 @@ class ViewerBase:
             pass
 
         else:
-            print("Unknown logical volume type or null mesh")
+            _log.warning("Unknown logical volume type or null mesh")
 
         for pv in lv.daughterVolumes:
             vo = self.getVisOptions(pv)
@@ -226,11 +229,10 @@ class ViewerBase:
                     self.addInstance(pv_name, new_mtra, new_tra, pv_name)
                     self.addVisOptions(pv_name, vo2)
 
-    def addFlukaRegions(self, fluka_registry, max_region=1000000, debugIO=False):
+    def addFlukaRegions(self, fluka_registry, max_region=1000000):
         icount = 0
         for k in fluka_registry.regionDict:
-            if debugIO:
-                print("ViewerBase.addFlukaRegions>", k)
+            _log.debug("ViewerBase.addFlukaRegions> %s", k)
             m = fluka_registry.regionDict[k].mesh()
 
             if m is not None:
@@ -432,7 +434,7 @@ class ViewerBase:
                 VEC3,
             )
         except ImportError:
-            print("pygltflib needs to be installed for export : 'pip install pygltflib'")
+            _log.error("pygltflib needs to be installed for export : 'pip install pygltflib'")
             return
 
         materials = []
@@ -603,7 +605,7 @@ class ViewerBase:
             f.write(glb)
             f.close()
         else:
-            print("ViewerBase::exportGLTFScene> unknown gltf extension")
+            _log.error("ViewerBase::exportGLTFScene> unknown gltf extension")
 
     def exportGLTFAssets(self, gltfFileName="test.gltf"):
         """Export all the assets (meshes) without all the instances. The position of the asset is
@@ -658,7 +660,7 @@ class ViewerBase:
             mesh = self.localmeshes[localmeshkey]
 
             if _pycgal.CGAL.is_triangle_mesh(mesh.sm):
-                print(
+                print(  # noqa: T201
                     localmeshkey,
                     mesh,
                     mesh.polygonCount(),
@@ -667,7 +669,7 @@ class ViewerBase:
                     mesh.volume(),
                 )
             else:
-                print(localmeshkey)
+                print(localmeshkey)  # noqa: T201
 
     def __repr__(self):
         return "ViewerBase"

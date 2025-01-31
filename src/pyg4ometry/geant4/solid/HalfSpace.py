@@ -15,6 +15,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class HalfSpace(_SolidBase):
     def __init__(self, name, registry=None):

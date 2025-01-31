@@ -16,6 +16,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class CutTubs(_SolidBase):
     """
@@ -106,7 +108,7 @@ class CutTubs(_SolidBase):
 
     def mesh(self):
         # 0.00943803787231 66
-        _log.info("tubs.pycsgmesh> antlr")
+        _log.debug("tubs.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -122,7 +124,7 @@ class CutTubs(_SolidBase):
         pHighNorm = [val * luval for val in self.evaluateParameter(self.pHighNorm)]
         pLowNorm = [val * luval for val in self.evaluateParameter(self.pLowNorm)]
 
-        _log.info("tubs.pycsgmesh> mesh")
+        _log.debug("tubs.pycsgmesh> mesh")
 
         polygons = []
 

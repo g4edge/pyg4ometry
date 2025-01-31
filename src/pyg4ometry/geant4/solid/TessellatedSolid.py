@@ -14,6 +14,9 @@ elif _config.meshing == _config.meshingType.cgal_sm:
     from ...pycgal.geom import Polygon as _Polygon
 
 import numpy as _np
+import logging as _log
+
+_log = _log.getLogger(__name__)
 
 
 class TessellatedSolid(_SolidBase):
@@ -75,10 +78,8 @@ class TessellatedSolid(_SolidBase):
         self.meshtess[1].append(triangle)
 
     def removeDuplicateVertices(self):
-        # print("removeDuplicateVertices")
-
         if self.meshtype != TessellatedSolid.MeshType.Freecad:
-            print("Cannot run on this mesh type")
+            _log.warning("Cannot run on this mesh type")
             return
 
         vertexmap = {}

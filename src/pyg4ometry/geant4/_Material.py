@@ -411,8 +411,8 @@ class Material(MaterialBase):
             if kwargs.get("tolerateZeroDensity", False):
                 # this behaviour is to match Geant4's tolerance of 0 density which if forbids
                 # if loaded in Geant4, it would enforce a minimum without an exception
-                print(
-                    f"Warning in Material : '{self.name}' density set to 0, ensuring minimum of 1e-20"
+                _log.warning(
+                    "Material : '%s' density set to 0, ensuring minimum of 1e-20", self.name
                 )
                 self.density = 1e-20
                 self.type = "simple"
@@ -549,6 +549,9 @@ class Material(MaterialBase):
         """
         from ..gdml import Defines as defines
 
+        if vunit.find("/") == 0:
+            msg = f"invalid unit format: use 1/unit instead of /unit in {vunit}."
+            raise ValueError(msg)
         matrix_name = self.name + "_" + name
         m = defines.MatrixFromVectors(e, v, matrix_name, self.registry, eunit, vunit)
         self.addProperty(name, m)
@@ -567,8 +570,9 @@ class Material(MaterialBase):
         """
         from ..gdml import Defines as defines
 
-        if vunit.find("/") != -1:
-            print("Please use 1/unit.")
+        if vunit.find("/") == 0:
+            msg = f"invalid unit format: use 1/unit instead of /unit in {vunit}."
+            raise ValueError(msg)
         vunit = "*" + vunit if vunit != "" else ""
         matrix_name = self.name + "_" + name
         m = defines.Matrix(matrix_name, 1, [str(value) + vunit], self.registry)

@@ -17,6 +17,8 @@ import logging as _log
 
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class EllipticalTube(_SolidBase):
     """
@@ -79,7 +81,7 @@ class EllipticalTube(_SolidBase):
     def mesh(self):
         """new meshing based of Tubs meshing"""
 
-        _log.info("ellipticaltube.antlr>")
+        _log.debug("ellipticaltube.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -89,7 +91,7 @@ class EllipticalTube(_SolidBase):
         pDy = self.evaluateParameter(self.pDy) * luval
         pDz = self.evaluateParameter(self.pDz) * luval
 
-        _log.info("ellipticaltube.pycsgmesh>")
+        _log.debug("ellipticaltube.pycsgmesh>")
 
         polygons = []
 

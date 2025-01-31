@@ -6,6 +6,8 @@ from .. import transformation as _trans
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class ParameterisedVolume(_ReplicaVolume):
     """ParametrisedVolume
@@ -480,7 +482,7 @@ class ParameterisedVolume(_ReplicaVolume):
         return ""
 
     def extent(self, includeBoundingSolid=True):
-        _log.info(f"ParametrisedVolume.extent> {self.name}")
+        _log.debug(f"ParametrisedVolume.extent> {self.name}")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

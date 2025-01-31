@@ -18,6 +18,8 @@ import logging as _log
 import numpy as _np
 import math as _math
 
+_log = _log.getLogger(__name__)
+
 
 class Trap(_SolidBase):
     """
@@ -123,7 +125,7 @@ class Trap(_SolidBase):
         return f"Trap : name={self.name} dz={self.pDz} theta={self.pTheta} dphi={self.pDPhi} dy1={self.pDy1} {self.pDx1} {self.pDx2} {self.pAlp1} {self.pDy2} {self.pDx3} {self.pDx4} {self.pAlp2}"
 
     def mesh(self):
-        _log.info("trap.antlr>")
+        _log.debug("trap.antlr>")
         from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)

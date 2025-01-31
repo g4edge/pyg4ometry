@@ -16,6 +16,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Torus(_SolidBase):
     """
@@ -100,7 +102,7 @@ class Torus(_SolidBase):
         return f"Torus : name={self.name} rmin={float(self.pRmin)} rmax={float(self.pRmax)} rtor={float(self.pRtor)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)}"
 
     def mesh(self):
-        _log.info("torus.antlr>")
+        _log.debug("torus.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -113,7 +115,7 @@ class Torus(_SolidBase):
         pSPhi = self.evaluateParameter(self.pSPhi) * auval
         pDPhi = self.evaluateParameter(self.pDPhi) * auval
 
-        _log.info("torus.pycsgmesh>")
+        _log.debug("torus.pycsgmesh>")
         polygons = []
 
         nstack = self.nstack

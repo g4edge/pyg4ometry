@@ -8,6 +8,8 @@ import numpy as _np
 import copy as _copy
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class DivisionVolume(_PhysicalVolume):
     """
@@ -723,7 +725,7 @@ class DivisionVolume(_PhysicalVolume):
         return f"Division volume : {self.name} {self.axis} {self.ndivisions} {self.offset} {self.width}"
 
     def extent(self, includeBoundingSolid=True):
-        _log.info(f"ReplicaVolume.extent> {self.name}")
+        _log.debug(f"ReplicaVolume.extent> {self.name}")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]

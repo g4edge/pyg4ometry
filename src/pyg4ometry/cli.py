@@ -130,7 +130,7 @@ def _parseStrPythonAsDict(strPython):
 
 
 def _printCitation():
-    print("https://zenodo.org/doi/10.5281/zenodo.10449301")
+    print("https://zenodo.org/doi/10.5281/zenodo.10449301")  # noqa: T201
 
 
 def cli(
@@ -159,11 +159,11 @@ def cli(
     verbose=None,
     testing=False,
 ):
-    print("pyg4 - command line interface")
+    print("pyg4 - command line interface")  # noqa: T201
 
     # switch on file type
     if not inputFileName:
-        print("pyg4> need input file name")
+        print("pyg4> need input file name")  # noqa: T201
 
     try:
         if str(inputFileName).startswith("g4edgetestdata/"):
@@ -173,7 +173,7 @@ def cli(
                 d = g4edgetestdata.G4EdgeTestData()
                 inputFileName = d[inputFileName.replace("g4edgetestdata/", "")]
             except ImportError:
-                print("pyg4> g4edgetestdata package not available - install with pip")
+                print("pyg4> g4edgetestdata package not available - install with pip")  # noqa: T201
         f = open(inputFileName)
         f.close()
     except FileNotFoundError:
@@ -189,9 +189,9 @@ def cli(
         bbExtent = _np.array(wl.extent())
         bbDExtent = bbExtent[1] - bbExtent[0]
         bbCentre = bbExtent[0] + bbExtent[1]
-        print("pyg4> extent        ", bbExtent)
-        print("pyg4> extent size   ", bbDExtent)
-        print("pyg4> extent centre ", bbCentre)
+        print("pyg4> extent        ", bbExtent)  # noqa: T201
+        print("pyg4> extent size   ", bbDExtent)  # noqa: T201
+        print("pyg4> extent centre ", bbCentre)  # noqa: T201
 
     # these are not used on their own but possibly as part of other commands in multiple places
     r = rotation if rotation else [0, 0, 0]
@@ -199,47 +199,47 @@ def cli(
 
     if info:
         if info == "reg":
-            print("pyg4> registry defines")
-            print(list(reg.defineDict.keys()))
-            print("pyg4> registry materials")
-            print(list(reg.materialDict.keys()))
-            print("pyg4> registry solids")
-            print(list(reg.solidDict.keys()))
-            print("pyg4> registry logical volumes")
-            print(list(reg.logicalVolumeDict.keys()))
-            print("pyg4> registry assembly volumes")
-            print(list(reg.assemblyVolumeDict.keys()))
-            print("pyg4> registry physical volumes")
-            print(list(reg.physicalVolumeDict.keys()))
-            print("pyg4> registry optical surfaces")
-            print(list(reg.surfaceDict.keys()))
+            print("pyg4> registry defines")  # noqa: T201
+            print(list(reg.defineDict.keys()))  # noqa: T201
+            print("pyg4> registry materials")  # noqa: T201
+            print(list(reg.materialDict.keys()))  # noqa: T201
+            print("pyg4> registry solids")  # noqa: T201
+            print(list(reg.solidDict.keys()))  # noqa: T201
+            print("pyg4> registry logical volumes")  # noqa: T201
+            print(list(reg.logicalVolumeDict.keys()))  # noqa: T201
+            print("pyg4> registry assembly volumes")  # noqa: T201
+            print(list(reg.assemblyVolumeDict.keys()))  # noqa: T201
+            print("pyg4> registry physical volumes")  # noqa: T201
+            print(list(reg.physicalVolumeDict.keys()))  # noqa: T201
+            print("pyg4> registry optical surfaces")  # noqa: T201
+            print(list(reg.surfaceDict.keys()))  # noqa: T201
         elif info == "tree":
             _pyg4.geant4.DumpGeometryStructureTree(wl, 0)
         elif info == "instances":
-            print("pyg4> Not yet implemented")
+            print("pyg4> Not yet implemented")  # noqa: T201
         else:
             errMsg = "Accepted info keys are 'reg', 'tree', 'instances'"
             raise ValueError(errMsg)
 
     if checkOverlaps:
-        print("pyg4> checkoverlaps")
+        print("pyg4> checkoverlaps")  # noqa: T201
         wl.checkOverlaps(True)
 
     if analysis:
-        print("pyg4> analysis")
+        print("pyg4> analysis")  # noqa: T201
         a = _pyg4.geant4.AnalyseGeometryComplexity(reg.getWorldVolume())
         a.printSummary()
 
     if compareFileName is not None:
         creg, cwl = _loadFile(compareFileName)
         comparision = _pyg4.compare.geometry(wl, cwl, _pyg4.compare.Tests(), False)
-        print("pyg4> compare")
+        print("pyg4> compare")  # noqa: T201
         comparision.print()
 
     if appendFileName is not None:
         reg1, wl1 = _loadFile(appendFileName)
         wp1 = _pyg4.geant4.PhysicalVolume(r, t, wl1, "l1_pv", wl, reg)
-        print("pyg4> append")
+        print("pyg4> append")  # noqa: T201
         reg.addVolumeRecursive(wp1)
 
     # extract lv in new registry etc
@@ -324,7 +324,7 @@ def cli(
         v.addCutter("cli-cutter", o, n)
         v.buildPipelinesAppend()
         v.exportCutter("cli-cutter", planeCutterOutputFileName)
-        print(
+        print(  # noqa: T201
             "pyg4> cutter with " + str(o) + ", " + str(n) + " written to: ",
             planeCutterOutputFileName,
         )
@@ -340,7 +340,7 @@ def mainNoExceptions(testArgs=None, testing=False):
     try:
         main(testArgs, testing)
     except Exception as ex:
-        print(*ex.args)
+        print(*ex.args)  # noqa: T201
         exit(1)
 
 
@@ -500,8 +500,8 @@ def main(testArgs=None, testing=False):
 
     verbose = options.__dict__["verbose"]
     if verbose:
-        print("pyg4> options")
-        print(options)
+        print("pyg4> options")  # noqa: T201
+        print(options)  # noqa: T201
 
     if options.__dict__["citation"]:
         _printCitation()
@@ -509,7 +509,7 @@ def main(testArgs=None, testing=False):
 
     # absolutely need a file name
     if options.__dict__["inputFileName"] is None:
-        print("pyg4> need an input file")
+        print("pyg4> need an input file")  # noqa: T201
         exit(1)
 
     # parse plane
@@ -517,28 +517,28 @@ def main(testArgs=None, testing=False):
     if planeData is not None:
         planeData = _parseStrMultipletAsFloat(planeData)
         if verbose:
-            print("pyg4> clipper plane data", planeData)
+            print("pyg4> clipper plane data", planeData)  # noqa: T201
 
     # parse translation
     translation = options.__dict__["translation"]
     if translation is not None:
         translation = _parseStrMultipletAsFloat(translation)
         if verbose:
-            print("pyg4> translation ", translation)
+            print("pyg4> translation ", translation)  # noqa: T201
 
     # parse rotation
     rotation = options.__dict__["rotation"]
     if rotation is not None:
         rotation = _parseStrMultipletAsFloat(rotation)
         if verbose:
-            print("pyg4> rotation ", rotation)
+            print("pyg4> rotation ", rotation)  # noqa: T201
 
     # parse clip box
     clipbox = options.__dict__["clip"]
     if clipbox is not None:
         clipbox = _parseStrMultipletAsFloat(clipbox)
         if verbose:
-            print("pyg4> clip ", clipbox)
+            print("pyg4> clip ", clipbox)  # noqa: T201
 
     # parse solid
     # this must be done when we have a registry
@@ -552,7 +552,7 @@ def main(testArgs=None, testing=False):
     if featureData is not None:
         featureData = _parseStrMultipletAsFloat(featureData)
         if verbose:
-            print("pyg4> feature data", featureData)
+            print("pyg4> feature data", featureData)  # noqa: T201
 
     # parse gltf scale
     gltfScale = options.__dict__["gltfScale"]

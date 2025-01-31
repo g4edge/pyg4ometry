@@ -17,6 +17,8 @@ import logging as _log
 
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class Ellipsoid(_SolidBase):
     """
@@ -89,7 +91,7 @@ class Ellipsoid(_SolidBase):
         return f"Ellipsoid : name={self.name} xSemiAxis={float(self.pxSemiAxis)} ySemiAxis={float(self.pySemiAxis)} zSemiAxis={float(self.pzSemiAxis)} zBottomCut={float(self.pzBottomCut)} zTopCut={float(self.pzTopCut)}"
 
     def mesh(self):
-        _log.info("ellipsoid.antlr>")
+        _log.debug("ellipsoid.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -101,7 +103,7 @@ class Ellipsoid(_SolidBase):
         pzBottomCut = float(self.pzBottomCut) * luval
         pzTopCut = float(self.pzTopCut) * luval
 
-        _log.info("ellipsoid.pycsgmesh>")
+        _log.debug("ellipsoid.pycsgmesh>")
 
         slices = self.nslice
         stacks = self.nstack

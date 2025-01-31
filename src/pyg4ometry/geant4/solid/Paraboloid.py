@@ -16,6 +16,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class Paraboloid(_SolidBase):
     """
@@ -78,14 +80,14 @@ class Paraboloid(_SolidBase):
     def mesh(self):
         from ...gdml import Units as _Units
 
-        _log.info("paraboloid.antlr>")
+        _log.debug("paraboloid.antlr>")
 
         uval = _Units.unit(self.lunit)
         pDz = self.evaluateParameter(self.pDz) / 2.0 * uval
         pR1 = self.evaluateParameter(self.pR1) * uval
         pR2 = self.evaluateParameter(self.pR2) * uval
 
-        _log.info("paraboloid.pycsgmesh>")
+        _log.debug("paraboloid.pycsgmesh>")
         polygons = []
 
         sz = -pDz

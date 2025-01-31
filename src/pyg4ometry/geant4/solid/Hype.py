@@ -13,10 +13,11 @@ elif _config.meshing == _config.meshingType.cgal_sm:
     from ...pycgal.geom import Vertex as _Vertex
     from ...pycgal.geom import Polygon as _Polygon
 
-from copy import deepcopy as _dc
 import logging as _log
 
 import numpy as _np
+
+_log = _log.getLogger(__name__)
 
 
 class Hype(_SolidBase):
@@ -101,7 +102,7 @@ class Hype(_SolidBase):
             raise ValueError(msg)
 
     def mesh(self):
-        _log.info("hype.pycsgmesh> antlr")
+        _log.debug("hype.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -115,7 +116,7 @@ class Hype(_SolidBase):
         LenZ = self.evaluateParameter(self.lenZ) * luval
         halfLenZ = self.evaluateParameter(self.lenZ) / 2.0 * luval
 
-        _log.info("hype.pycsgmesh> mesh")
+        _log.debug("hype.pycsgmesh> mesh")
 
         dz = LenZ / self.nstack
         sz = -halfLenZ

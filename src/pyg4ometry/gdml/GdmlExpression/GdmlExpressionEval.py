@@ -10,9 +10,6 @@ import math
 import numpy
 import builtins
 
-# from IPython import embed
-# import traceback
-
 
 class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
     def __init__(self):
@@ -37,7 +34,7 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
 
     def visitPrintExpr(self, ctx):
         value = self.visit(ctx.expr())
-        print(value)
+        print(value)  # noqa: T201
         return 0
 
     def visitScientific(self, ctx):
@@ -74,13 +71,11 @@ class GdmlExpressionEvalVisitor(GdmlExpressionVisitor):
         return base
 
     def visitMinExpression(self, ctx):
-        print(ctx.signedAtom(0), ctx.signedAtom(1))
         v1 = float(self.visit(ctx.signedAtom(0)))
         v2 = float(self.visit(ctx.signedAtom(1)))
         return min(v1, v2)
 
     def visitMaxExpression(self, ctx):
-        print(ctx.signedAtom(0), ctx.signedAtom(1))
         v1 = float(self.visit(ctx.signedAtom(0)))
         v2 = float(self.visit(ctx.signedAtom(1)))
         return max(v1, v2)

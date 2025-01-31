@@ -18,6 +18,8 @@ import logging as _log
 import numpy as _np
 import math as _math
 
+_log = _log.getLogger(__name__)
+
 
 class Para(_SolidBase):
     """
@@ -87,7 +89,7 @@ class Para(_SolidBase):
         return f"Para : name={self.name} x={float(self.pX)} y={float(self.pY)} z={float(self.pZ)} alpha={float(self.pAlpha)} theta={float(self.pTheta)} phi={float(self.pPhi)}"
 
     def mesh(self):
-        _log.info("para.antlr>")
+        _log.debug("para.antlr>")
         from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
@@ -100,7 +102,7 @@ class Para(_SolidBase):
         pTheta = self.evaluateParameter(self.pTheta) * auval
         pPhi = self.evaluateParameter(self.pPhi) * auval
 
-        _log.info("para.pycsgmesh>")
+        _log.debug("para.pycsgmesh>")
 
         va = _Vector(pX, 0, 0)
         vb = pY / _math.cos(pAlpha) * _Vector(_math.sin(pAlpha), _math.cos(pAlpha), 0)

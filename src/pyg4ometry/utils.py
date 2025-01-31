@@ -2,6 +2,9 @@ import pickle
 import time
 import numpy as np
 from copy import deepcopy
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 def _write_pickle(obj, path):
@@ -78,14 +81,14 @@ class Samples:
             existing = _load_pickle(path)
 
             if verbose:
-                print(f"Appending samples to {path}")
-                print(self.n_samples_description())
+                _log.info(f"Appending samples to {path}")
+                _log.info(f"{self.n_samples_description()}")
             new = Samples.from_existing(existing, self)
 
             _write_pickle(new, path)
         except FileNotFoundError:
             if verbose:
-                print(f"Writing new samples to {path}")
+                _log.info(f"Writing new samples to {path}")
             self.write(path)
 
     def __getitem__(self, key):

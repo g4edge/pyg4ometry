@@ -17,6 +17,8 @@ import logging as _log
 
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class GenericTrap(_SolidBase):
     """
@@ -123,8 +125,7 @@ class GenericTrap(_SolidBase):
         signed_area = 0.5 * (_np.dot(x, _np.roll(y, 1)) - _np.dot(y, _np.roll(x, 1)))
         if not signed_area:
             return 0
-            print("vertices: ", vertices)
-            msg = f"GenericTrap: '{self.name}' Zero area quadrilateral not allowed."
+            msg = f"GenericTrap: '{self.name}' Zero area quadrilateral not allowed. vertices: {vertices!s}"
             raise ValueError(msg)  # TODO TODO
         return signed_area
 
@@ -171,7 +172,7 @@ class GenericTrap(_SolidBase):
         return layers
 
     def mesh(self):
-        _log.info("arb8.mesh> antlr")
+        _log.debug("arb8.mesh> antlr")
 
         verts_top = []
         verts_bot = []
@@ -191,7 +192,7 @@ class GenericTrap(_SolidBase):
 
         all_verts = self.makeLayers(verts_bot, verts_top)
 
-        _log.info("arb8.mesh> mesh")
+        _log.debug("arb8.mesh> mesh")
         polygons = []
 
         # Mesh top and bottom pieces

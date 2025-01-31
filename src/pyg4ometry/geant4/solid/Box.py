@@ -15,6 +15,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 def cubeNet(vecList):
     return _CSG.fromPolygons(
@@ -113,7 +115,7 @@ class Box(_SolidBase):
         return f"Box : name={self.name} x={float(self.pX)} y={float(self.pY)} z={float(self.pZ)}"
 
     def mesh(self):
-        _log.info("box.pycsgmesh> antlr")
+        _log.debug("box.pycsgmesh> antlr")
         from ...gdml import Units as _Units
 
         uval = _Units.unit(self.lunit)

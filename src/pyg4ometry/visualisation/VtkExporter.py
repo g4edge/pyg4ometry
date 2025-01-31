@@ -8,14 +8,13 @@ from . import (
 )
 import logging as _logging
 
+_log = _logging.getLogger(__name__)
+
 _WITH_PARAVIEW = True
 try:
     import paraview.simple as paras
 except (ImportError, ImportWarning):
     _WITH_PARAVIEW = False
-    msg = "paraview is required for this module to have full functionalities.\n"
-    msg += "Not all methods will be available."
-    _logging.log(20, msg)
 
 
 class VtkExporter:
@@ -81,7 +80,7 @@ class VtkExporter:
                 )
                 paras.Show(xml, MapScalars=0)
                 index += 1
-                print((index / len(self.elements)) * 100, " %")
+                _log.info("%.2f %%", (index / len(self.elements)) * 100)
 
             paras.Render()
 
@@ -195,7 +194,7 @@ class VtkExporter:
             writer = _vtk.vtkXMLMultiBlockDataWriter()
             writer.SetDataModeToAscii()
             writer.SetInputData(self.mbdico[element])
-            print(f"Trying to write file {element}.vtm")
+            _log.info(f"Trying to write file {element}.vtm")
             writer.SetFileName(f"{self.path}/{element}.vtm")
             writer.Write()
 
@@ -332,8 +331,8 @@ class VtkExporter:
         if namestrip in self.materialVisualisationOptions.keys():
             return self.materialVisualisationOptions[namestrip]
         else:
-            print(
-                f"Warning, missing {namestrip} in materialVisualisationOptions, replace by default color"
+            _log.warning(
+                f"missing {namestrip} in materialVisualisationOptions, replace by default color"
             )
             return self.materialVisualisationOptions["G4_C"]
 

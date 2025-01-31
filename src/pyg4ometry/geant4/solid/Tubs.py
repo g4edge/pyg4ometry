@@ -16,6 +16,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Tubs(_SolidBase):
     """
@@ -85,7 +87,7 @@ class Tubs(_SolidBase):
         return f"Tubs : {self.name} rmin={float(self.pRMin)} rmax={float(self.pRMax)} dz={float(self.pDz)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)} lunit={self.lunit} aunit={self.aunit}"
 
     def mesh(self):
-        _log.info("tubs.pycsgmesh> antlr")
+        _log.debug("tubs.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -98,7 +100,7 @@ class Tubs(_SolidBase):
         pDz = self.evaluateParameter(self.pDz) * luval / 2
         pRMax = self.evaluateParameter(self.pRMax) * luval
 
-        _log.info("tubs.pycsgmesh> mesh")
+        _log.debug("tubs.pycsgmesh> mesh")
 
         polygons = []
 

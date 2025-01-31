@@ -17,6 +17,8 @@ import logging as _log
 
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class TwistedTubs(_SolidBase):
     """
@@ -113,7 +115,7 @@ class TwistedTubs(_SolidBase):
         return layers
 
     def mesh(self):
-        _log.info("polycone.antlr>")
+        _log.debug("polycone.antlr>")
         from ...gdml import Units as _Units
 
         luval = _Units.unit(self.lunit)
@@ -126,7 +128,7 @@ class TwistedTubs(_SolidBase):
         phi = self.evaluateParameter(self.phi) * auval
         twistedangle = self.evaluateParameter(self.twistedangle) * auval
 
-        _log.info("polycone.basicmesh>")
+        _log.debug("polycone.basicmesh>")
         polygons = []
 
         stacks = self.nstack

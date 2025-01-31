@@ -10,6 +10,8 @@ import numpy as _np
 
 # from memory_profiler import profile as _profile
 
+_log = _log.getLogger(__name__)
+
 
 class TwistedTrap(_SolidBase, _TwistedSolid):
     """
@@ -170,7 +172,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
 
     # @_profile
     def mesh(self):
-        _log.info("twistedtrap.pycsgmesh> antlr")
+        _log.debug("twistedtrap.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -189,7 +191,7 @@ class TwistedTrap(_SolidBase, _TwistedSolid):
         pDx4 = self.evaluateParameter(self.pDx4) / 2.0 * luval
         pAlp = self.evaluateParameter(self.pAlp) * auval
 
-        _log.info("twistedtrap.pycsgmesh> mesh")
+        _log.debug("twistedtrap.pycsgmesh> mesh")
         # Bottom plane coordinates:
         pl1 = _TwoVector(-pDx1, -pDy1)
         pl2 = _TwoVector(pDx1, -pDy1)

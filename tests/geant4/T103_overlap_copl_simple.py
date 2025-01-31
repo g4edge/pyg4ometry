@@ -35,7 +35,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     bp2 = _g4.PhysicalVolume([0, 0.3, 0], [0, bx, 0], bl, "b_pv2", wl, reg)
 
     # check for overlaps
-    wl.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
+    wl.checkOverlaps(recursive=True, coplanar=True)
 
     # set world volume
     reg.setWorld(wl.name)

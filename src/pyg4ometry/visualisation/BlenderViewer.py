@@ -7,14 +7,16 @@ import random as _random
 
 try:
     import bpy as _bpy
-
-    print("Blender pyg4ometry imported")
 except ImportError:
-    pass
+    _bpy = None
 
 
 class BlenderViewer(_ViewerBase):
     def __init__(self):
+        if _bpy is None:
+            msg = "blender python library not imported"
+            raise RuntimeError(msg)
+
         super().__init__()
         self.instanceBlenderOptions = {}
 
@@ -25,8 +27,6 @@ class BlenderViewer(_ViewerBase):
     def createBlenderObjectsUnique(self):
 
         for motherKey in self.instancePlacements:
-            print(motherKey)
-            # print(self.instancePlacements[motherKey])
 
             placements = self.instancePlacements[motherKey]
 

@@ -19,6 +19,8 @@ import numpy as _np
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class ExtrudedSolid(_SolidBase):
     """
@@ -103,7 +105,7 @@ class ExtrudedSolid(_SolidBase):
             raise RuntimeError(msg)
 
     def mesh(self):
-        _log.info("xtru.pycsgmesh> antlr")
+        _log.debug("xtru.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -119,7 +121,7 @@ class ExtrudedSolid(_SolidBase):
         vertices = [[pPolygon[0] * luval, pPolygon[1] * luval] for pPolygon in pPolygon]
         nslices = len(pZslices)
 
-        _log.info("xtru.pycsgmesh> mesh")
+        _log.debug("xtru.pycsgmesh> mesh")
         polygons = []
         polygonsT = []
         polygonsB = []

@@ -16,6 +16,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class Orb(_SolidBase):
     """
@@ -68,21 +70,21 @@ class Orb(_SolidBase):
 
     """'
     def pycsgmeshOld(self):
-        _log.info("orb.antlr>")
+        _log.debug("orb.antlr>")
 
         import pyg4ometry.gdml.Units as _Units #TODO move circular import
         luval = _Units.unit(self.lunit)
 
         pRMax = self.evaluateParameter(self.pRMax)*luval
 
-        _log.info("orb.pycsgmesh>")
+        _log.debug("orb.pycsgmesh>")
         mesh = _CSG.sphere(center=[0,0,0], radius=pRMax,
                            slices=self.nslice, stacks=self.nstack)
         return mesh
     """
 
     def mesh(self):
-        _log.info("orb.antlr>")
+        _log.debug("orb.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -92,7 +94,7 @@ class Orb(_SolidBase):
 
         polygons = []
 
-        _log.info("orb.pycsgmesh>")
+        _log.debug("orb.pycsgmesh>")
 
         dPhi = 2 * _np.pi / self.nslice
         dTheta = _np.pi / self.nstack
