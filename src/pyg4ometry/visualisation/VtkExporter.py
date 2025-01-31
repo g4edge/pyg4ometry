@@ -15,9 +15,6 @@ try:
     import paraview.simple as paras
 except (ImportError, ImportWarning):
     _WITH_PARAVIEW = False
-    msg = "paraview is required for this module to have full functionalities.\n"
-    msg += "Not all methods will be available."
-    _log.warning(msg)
 
 
 class VtkExporter:
