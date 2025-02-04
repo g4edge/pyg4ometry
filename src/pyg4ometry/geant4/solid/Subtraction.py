@@ -5,6 +5,8 @@ from ...transformation import *
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Subtraction(_SolidBase):
     """
@@ -48,7 +50,7 @@ class Subtraction(_SolidBase):
         return f"Intersection {self.name} {self.obj1.name!s} {self.obj2.name!s}"
 
     def mesh(self):
-        _log.info("subtraction.pycsgmesh>")
+        _log.debug("subtraction.pycsgmesh>")
 
         # look up solids in registry
         from ... import geant4 as _g4
@@ -61,9 +63,9 @@ class Subtraction(_SolidBase):
         tlate = self.tra2[1].eval()
 
         # get meshes
-        _log.info("subtraction.mesh> mesh1")
+        _log.debug("subtraction.mesh> mesh1")
         m1 = obj1.mesh()
-        _log.info("subtraction.mesh> mesh2")
+        _log.debug("subtraction.mesh> mesh2")
         m2 = obj2.mesh().clone()
 
         m2.rotate(rot[0], -rad2deg(rot[1]))
@@ -71,10 +73,10 @@ class Subtraction(_SolidBase):
 
         self.obj2mesh = m2
 
-        _log.info("subtraction.pycshmsh> subtraction")
+        _log.debug("subtraction.pycshmsh> subtraction")
         mesh = m1.subtract(m2)
         if mesh.isNull():
-            print("Warning> Subtraction null mesh solid name : ", self.name)
+            _log.warning("subtraction.pycshmsh> Subtraction null mesh solid name : %s", self.name)
             if _config.meshingNullException:
                 raise exceptions.NullMeshError(self)
 

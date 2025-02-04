@@ -17,6 +17,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 import logging as _log
 import numpy as _np
 
+_log = _log.getLogger(__name__)
+
 
 class GenericPolyhedra(_SolidBase):
     """
@@ -82,7 +84,7 @@ class GenericPolyhedra(_SolidBase):
             raise ValueError(msg)
 
     def mesh(self):
-        _log.info("genericpolyhedra.antlr>")
+        _log.debug("genericpolyhedra.antlr>")
 
         from ...gdml import Units as _Units
 

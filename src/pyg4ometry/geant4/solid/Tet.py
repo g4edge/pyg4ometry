@@ -15,7 +15,8 @@ elif _config.meshing == _config.meshingType.cgal_sm:
 
 import numpy as _np
 import logging as _log
-from copy import deepcopy as _dc
+
+_log = _log.getLogger(__name__)
 
 
 class Tet(_SolidBase):
@@ -75,7 +76,7 @@ class Tet(_SolidBase):
         return f"Tet : name={self.name} Vertexes: a={self.anchor!s}, p2={self.p2!s}, p3={self.p3!s}, p4={self.p4!s}"
 
     def mesh(self):
-        _log.info("tet.pycsgmesh> antlr")
+        _log.debug("tet.pycsgmesh> antlr")
 
         from ...gdml import Units as _Units
 
@@ -86,7 +87,7 @@ class Tet(_SolidBase):
         p3 = [val * luval for val in self.evaluateParameter(self.p3)]
         p4 = [val * luval for val in self.evaluateParameter(self.p4)]
 
-        _log.info("tet.pycsgmesh> mesh")
+        _log.debug("tet.pycsgmesh> mesh")
         vert_ancr = _Vertex(_Vector(p4[0], p4[1], p4[2]))
         base = [anchor, p2, p3]
         vert_base = []

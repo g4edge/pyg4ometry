@@ -44,7 +44,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     rp = _g4.PhysicalVolume([0, 0, 0], [0, 0, 0], rl, "r_pv1", wl, reg)
 
     # check for overlaps
-    wl.checkOverlaps(recursive=True, coplanar=True, debugIO=False)
+    wl.checkOverlaps(recursive=True, coplanar=True)
 
     # set world volume
     reg.setWorld(wl.name)

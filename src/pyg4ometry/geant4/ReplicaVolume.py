@@ -8,6 +8,8 @@ from .. import transformation as _trans
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class ReplicaVolume(_PhysicalVolume):
     """
@@ -74,7 +76,7 @@ class ReplicaVolume(_PhysicalVolume):
         names = {1: "kXAxis", 2: "kYAxis", 3: "kZAxis", 4: "kRho", 5: "kPhi"}
         return names[self.axis]
 
-    def _checkInternalOverlaps(self, debugIO=False, nOverlapsDetected=[0]):
+    def _checkInternalOverlaps(self, nOverlapsDetected=[0]):
         """
         Check if there are overlaps with the nominal mother volume. ie it possible to provide
         an incorrect mother volume / logical volume and parameterisation.
@@ -89,30 +91,28 @@ class ReplicaVolume(_PhysicalVolume):
             tempMeshes.append(mt)
 
         for i in range(len(tempMeshes)):
-            if debugIO:
-                print(
-                    f"ReplicaVolume.checkOverlaps> full daughter-mother intersection test {self.meshes[i]}"
-                )
+            _log.debug(
+                f"ReplicaVolume.checkOverlaps> full daughter-mother intersection test {self.meshes[i]}"
+            )
 
             interMesh = tempMeshes[i].subtract(self.motherVolume.mesh.localboundingmesh)
-            _log.info(
+            _log.debug(
                 f"ReplicaVolume.checkOverlaps> daughter container {i} {interMesh.vertexCount()} {interMesh.polygonCount()}"
             )
 
             if interMesh.vertexCount() != 0:
                 nOverlapsDetected[0] += 1
-                print(
-                    f"\033[1mOVERLAP DETECTED> overlap with mother \033[0m {tempMeshes[i]} {interMesh.vertexCount()}"
+                _log.error(
+                    f"OVERLAP DETECTED> overlap with mother {tempMeshes[i]} {interMesh.vertexCount()}"
                 )
                 self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.protrusion])
 
         # daughter-daughter overlap check
         for i in range(len(tempMeshes)):
             for j in range(i + 1, len(tempMeshes)):
-                if debugIO:
-                    print(
-                        f"ReplicaVolume.checkOverlaps> daughter-daughter bounding mesh intersection test: #{i} #{j}"
-                    )
+                _log.debug(
+                    f"ReplicaVolume.checkOverlaps> daughter-daughter bounding mesh intersection test: #{i} #{j}"
+                )
 
                 # first check if bounding mesh intersects
                 cullIntersection = tempMeshes[i].intersect(tempMeshes[j])
@@ -121,13 +121,13 @@ class ReplicaVolume(_PhysicalVolume):
 
                 # bounding meshes collide, so check full mesh properly
                 interMesh = tempMeshes[i].intersect(tempMeshes[j])
-                _log.info(
+                _log.debug(
                     f"ReplicaVolume.checkOverlaps> full daughter-daughter intersection test: {i} {j} {interMesh.vertexCount()} {interMesh.polygonCount()}"
                 )
                 if interMesh.vertexCount() != 0:
                     nOverlapsDetected[0] += 1
-                    print(
-                        f"\033[1mOVERLAP DETECTED> overlap between daughters of {self.name} \033[0m #{i} #{j} {interMesh.vertexCount()}"
+                    _log.error(
+                        f"OVERLAP DETECTED> overlap between daughters of {self.name} #{i} #{j} {interMesh.vertexCount()}"
                     )
                     self.motherVolume.mesh.addOverlapMesh([interMesh, _OverlapType.overlap])
 

@@ -17,6 +17,8 @@ import numpy as _np
 
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class Cons(_SolidBase):
     """
@@ -122,7 +124,7 @@ class Cons(_SolidBase):
         return f"Cons : name={self.name} rmin1={float(self.pRmin1)} rmax1={float(self.pRmax1)} rmin2={float(self.pRmin2)} rmax2={float(self.pRmax2)} dz={float(self.pDz)} sphi={float(self.pSPhi)} dphi={float(self.pDPhi)}"
 
     def mesh(self):
-        _log.info("cons.antlr>")
+        _log.debug("cons.antlr>")
 
         from ...gdml import Units as _Units
 
@@ -137,7 +139,7 @@ class Cons(_SolidBase):
         pSPhi = self.evaluateParameter(self.pSPhi) * auval
         pDPhi = self.evaluateParameter(self.pDPhi) * auval
 
-        _log.info("cons.pycsgmesh>")
+        _log.debug("cons.pycsgmesh>")
 
         from .GenericPolyhedra import GenericPolyhedra as _GenericPolyhedra
 

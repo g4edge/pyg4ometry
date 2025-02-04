@@ -6,6 +6,8 @@ from ..visualisation import Mesh as _Mesh
 import numpy as _np
 import logging as _log
 
+_log = _log.getLogger(__name__)
+
 
 class PhysicalVolume:
     """
@@ -115,7 +117,7 @@ class PhysicalVolume:
         )
 
     def extent(self, includeBoundingSolid=True):
-        _log.info(f"PhysicalVolume.extent> {self.name}")
+        _log.debug(f"PhysicalVolume.extent> {self.name}")
 
         # transform daughter meshes to parent coordinates
         dvmrot = _trans.tbxyz2matrix(self.rotation.eval())

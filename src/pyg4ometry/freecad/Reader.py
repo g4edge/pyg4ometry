@@ -13,6 +13,8 @@ from .. import transformation as _trans
 from ..geant4 import Material as _Material
 from ..meshutils import MeshShrink as _MeshShrink
 
+_log = _log.getLogger(__name__)
+
 
 class Reader:
     def __init__(self, fileName, registryOn=True, fileNameAux=None):
@@ -170,7 +172,7 @@ class Reader:
                         globalPlacement.Rotation = globalRotation.multiply(globalPlacement.Rotation)
 
                 # info log output
-                _log.info(
+                _log.debug(
                     f"freecad.reader.convertFlat> Part::Feature label={obj.Label} typeid={obj.TypeId} placement={obj.Placement}"
                 )
 
@@ -379,7 +381,7 @@ class Reader:
 
     def recursePrintObjectTree(self, obj):
         if obj.TypeId == "App::Part":
-            _log.info(
+            _log.debug(
                 f"freecad.Reader.recursePrintObjectTree> App::Part {obj.TypeId} {obj.Label} {obj.Placement}"
             )
             for gobj in obj.Group:
@@ -395,7 +397,7 @@ class Reader:
         import pyg4ometry.gdml.Defines
 
         if obj.TypeId == "App::Part":  # mapped to logical volume, group objects mapped to physical
-            _log.info(
+            _log.debug(
                 f"freecad.reader.recurseObjectTree> App::Part label={obj.Label} grouplen={len(obj.Group)} placement={obj.Placement}"
             )
 
@@ -451,7 +453,7 @@ class Reader:
 
             return objects
         elif obj.TypeId == "Part::Feature":  # mapped to logical volumes
-            _log.info(
+            _log.debug(
                 f"freecad.reader.recurseObjectTree> Part::Feature label={obj.Label} placement={obj.Placement}"
             )
 

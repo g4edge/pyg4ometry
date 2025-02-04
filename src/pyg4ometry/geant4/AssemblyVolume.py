@@ -4,11 +4,12 @@ from . import solid as _solid
 from ..visualisation import Mesh as _Mesh
 from ..visualisation import VisualisationOptions as _VisOptions
 
-
 import numpy as _np
 import logging as _log
 from collections import defaultdict as _defaultdict
 import copy as _copy
+
+_log = _log.getLogger(__name__)
 
 
 class AssemblyVolume:
@@ -131,7 +132,9 @@ class AssemblyVolume:
         # cannot currently deal with replica, division and parametrised
         if pv.type != "placement":
             if warn:
-                print("Cannot generate specific daughter mesh for replica, division, parameterised")
+                _log.error(
+                    "Cannot generate specific daughter mesh for replica, division, parameterised"
+                )
             return None
         if pv.logicalVolume.type == "assembly":
             mesh = pv.logicalVolume.getAABBMesh()
@@ -259,7 +262,7 @@ class AssemblyVolume:
         return
 
     def extent(self, includeBoundingSolid=True):
-        _log.info(f"AssemblyVolume.extent> {self.name} ")
+        _log.debug(f"AssemblyVolume.extent> {self.name} ")
 
         vMin = [1e99, 1e99, 1e99]
         vMax = [-1e99, -1e99, -1e99]
@@ -346,8 +349,8 @@ class AssemblyVolume:
         return wl
 
     def dumpStructure(self, depth=0):
-        print(depth * "-" + self.name + " (lv)")
+        print(depth * "-" + self.name + " (lv)")  # noqa: T201
 
         for d in self.daughterVolumes:
-            print(2 * depth * "-" + d.name + " (pv)")
+            print(2 * depth * "-" + d.name + " (pv)")  # noqa: T201
             d.logicalVolume.dumpStructure(depth + 2)

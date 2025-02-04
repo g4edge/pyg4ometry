@@ -38,10 +38,10 @@ def debugDumpFile(fd, limit=10000000):
     while data:
         data = fortran_read(fd)
         if data and iData < limit:
-            print(iData, len(data))
+            print(iData, len(data))  # noqa: T201
         iData += 1
 
-    print("total records", iData)
+    print("total records", iData)  # noqa: T201
 
 
 class _FlukaDataFile:
@@ -84,11 +84,11 @@ class _FlukaDataFile:
         pass
 
     def print_header(self):
-        print("title  : ", self.title)
-        print("time   : ", self.time)
-        print("weight : ", self.weight)
-        print("ncase  : ", self.ncase)
-        print("nbatch : ", self.nbatch)
+        print("title  : ", self.title)  # noqa: T201
+        print("time   : ", self.time)  # noqa: T201
+        print("weight : ", self.weight)  # noqa: T201
+        print("ncase  : ", self.ncase)  # noqa: T201
+        print("nbatch : ", self.nbatch)  # noqa: T201
 
 
 class FlukaBinData:

@@ -1,7 +1,10 @@
 import numbers as _numbers
 import numpy as _np
 import re as _re
+import logging as _log
 from . import Units as _Units
+
+_log = _log.getLogger(__name__)
 
 
 class BasicExpression:
@@ -182,7 +185,7 @@ def upgradeToVector(var, reg, type="position", unit="", addRegistry=False):
         elif type == "scale":
             return Scale("", var[0], var[1], var[2], "none", reg, addRegistry)
         else:
-            print("type not defined")
+            _log.warning(f"vector type {type} not defined")
 
 
 def upgradeToTransformation(var, reg, addRegistry=False):
