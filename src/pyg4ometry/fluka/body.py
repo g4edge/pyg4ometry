@@ -56,7 +56,6 @@ elif _config.meshing == _config.meshingType.cgal_sm:
     from ..pycgal.geom import Polygon as _Polygon
 
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
