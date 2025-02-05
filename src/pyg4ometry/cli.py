@@ -1,4 +1,5 @@
 import sys
+import logging
 from optparse import OptionParser, OptParseError
 import pyg4ometry as _pyg4
 import numpy as _np
@@ -159,6 +160,8 @@ def cli(
     verbose=None,
     testing=False,
 ):
+    logging.basicConfig()
+
     print("pyg4 - command line interface")  # noqa: T201
 
     # switch on file type
