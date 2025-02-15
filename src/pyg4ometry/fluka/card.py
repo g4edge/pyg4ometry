@@ -64,10 +64,9 @@ class Card:
 
     @classmethod
     def fromFree(cls, line):
-        card_bits = freeFormatStringSplit(line)
-        while len(card_bits) != 8:
-            card_bits.append(None)
-        return cls(*card_bits)
+        cards = freeFormatStringSplit(line)
+        cards = (cards + 8 * [None])[:8]  # ensure at least 8
+        return cls(*cards)
 
     @classmethod
     def fromFixed(cls, line):
