@@ -790,18 +790,21 @@ class SensitiveErrorListener(ErrorListener.ErrorListener):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         msgf = f"At ({line}, {column}), Error: {msg}.  Warning: The provided line number is in this section."
-        msg2a = recognizer._input.strdata[e.startIndex - 50 : e.startIndex]
-        msg2b = recognizer._input.strdata[e.startIndex : e.startIndex + 1]
-        msg2c = recognizer._input.strdata[e.startIndex + 1 : e.startIndex + 50]
-        msgf += (
-            '\nSurrounding text +- 50 characaters\n"'
-            + msg2a
-            + "\033[1m"
-            + msg2b
-            + "\033[0m"
-            + msg2c
-            + '"'
-        )
+        try:
+            msg2a = recognizer._input.strdata[e.startIndex - 50 : e.startIndex]
+            msg2b = recognizer._input.strdata[e.startIndex : e.startIndex + 1]
+            msg2c = recognizer._input.strdata[e.startIndex + 1 : e.startIndex + 50]
+            msgf += (
+                '\nSurrounding text +- 50 characaters\n"'
+                + msg2a
+                + "\033[1m"
+                + msg2b
+                + "\033[0m"
+                + msg2c
+                + '"'
+            )
+        except:
+            pass
         raise antlr4.error.Errors.ParseCancellationException(msgf)
 
 
