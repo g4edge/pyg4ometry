@@ -392,8 +392,8 @@ option, physicsList="em";
         if self._writeColour and lv.visOptions:
             cAux = VisOptionsToAuxiliary(lv.visOptions)
             aux.append(cAux)
-        for aux in lv.auxiliary:
-            self.writeAuxiliary(aux, parent=we)
+        for _aux in aux:
+            self.writeAuxiliary(_aux, parent=we)
 
         for dv in lv.daughterVolumes:
             if dv.type == "placement":

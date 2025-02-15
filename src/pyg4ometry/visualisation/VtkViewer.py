@@ -1091,7 +1091,7 @@ class VtkViewer:
 
         # a dict evaluates to True if not empty
         materialVis = None
-        if self.materialVisOptions:
+        if self.materialVisOptions and pv.logicalVolume.type == "logical":
             materialName = pv.logicalVolume.material.name
             # if 0x is in name, strip the appended pointer (common in exported GDML)
             if "0x" in materialName:
