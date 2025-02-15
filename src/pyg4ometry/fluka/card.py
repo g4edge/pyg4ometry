@@ -115,12 +115,3 @@ def freeFormatStringSplit(string):
         components.extend(chunk.split())
 
     return components
-
-
-def main(filein):
-    c = Card(TEST_STRING)
-    m = rotdefini_to_matrix(c)
-
-
-if __name__ == "__main__":
-    main("asdasd")  # sys.argv[1])
