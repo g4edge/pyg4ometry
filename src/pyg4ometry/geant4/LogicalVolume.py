@@ -155,7 +155,7 @@ class LogicalVolume:
         """
         if type(colour) == str:
             hex = colour.lstrip("#")
-            colour = list(int(hex[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
+            colour = [int(hex[i : i + 2], 16) / 255.0 for i in (0, 2, 4)]
         if not self.visOptions:
             self.visOptions = _VisOptions(colour=colour, alpha=alpha)
         else:
