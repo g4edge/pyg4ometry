@@ -97,21 +97,12 @@ def _attempt_float_coercion(string):
 
 
 def freeFormatStringSplit(string):
-    """Method to split a string in FLUKA FREE format into its components."""
-    # Split the string along non-black separators [,;:/\]
-    partial_split = re.split(";|,|\\/|:|\\\\|\n", rf"{string}")
-
-    # Populate zeros between consequtive non-blank separators as per
-    # the FLUKA manual.
-    is_blank = lambda s: not set(s) or set(s) == {" "}
-    noblanks_split = [chunk if not is_blank(chunk) else None for chunk in partial_split]
-
-    # Strip whitespace
-    components = []
-    for chunk in noblanks_split:
-        if chunk is None:
-            components.append(None)
-            continue
-        components.extend(chunk.split())
-
+    """
+    Method to split a string in FLUKA FREE format into its components.
+    The delimiter can be 1 or more spaces but also single ',' ':' ';' '\'.
+    First, replace all with commas then split on those.
+    """
+    ensure_commas = re.sub(r" *[,:;\\] *", ",", string.strip())
+    ensure_commas = re.sub(r" +", ",", ensure_commas).split(',')
+    components = [s if len(s) > 0 else None for s in ensure_commas]
     return components
