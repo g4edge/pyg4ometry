@@ -105,6 +105,18 @@ def test_VtkViewerColoured(testdata, tmptestdir):
     v.addAxes(20, (0, 0, 0))
 
 
+def test_VtkViewerColoured_setColour(testdata, tmptestdir):
+    r = _pyg4.gdml.Reader(testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"])
+    reg = r.getRegistry()
+    coil = reg.logicalVolumeDict['m3_coil_lv0x7fc499f68a00']
+    coil.setColour("f5ee2f")  # yellow
+    yoke = reg.logicalVolumeDict['m6_yoke_lv0x7fc49c0168c0']
+    yoke.setColour([0.9607843137254902, 0.9333333333333333, 0.1843137254901961])  # yellow but rgb normalised
+    
+    v = _pyg4.visualisation.VtkViewerColoured()
+    v.addLogicalVolume(r.getRegistry().getWorldVolume())
+
+
 def test_VtkViewerColouredMaterial(testdata, tmptestdir):
     r = _pyg4.gdml.Reader(testdata["gdml/T104_overlap_volu.gdml"])
     l = r.getRegistry().getWorldVolume()

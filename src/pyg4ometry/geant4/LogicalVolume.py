@@ -144,6 +144,24 @@ class LogicalVolume:
         self.daughterVolumes.append(physicalVolume)
         self._daughterVolumesDict[physicalVolume.name] = physicalVolume
 
+    def setColour(self, colour, alpha=1.0):
+        """
+        Set the visualisation colour of a logical volume. Takes either #hexrgb or [r,g,b] (normalised)
+
+        :param colour: hexrgb code or list of normalised rgb components
+        :type colour: str, [float, float, float]
+        :param alpha: optional transparency from 0 (invisible) to 1 (visible)
+        :type alpha: float
+        """
+        if type(colour) == str:
+            hex = colour.lstrip('#')
+            colour = list(int(hex[i:i + 2], 16)/255.0 for i in (0, 2, 4))
+        if not self.visOptions:
+            self.visOptions = _VisOptions(colour=colour, alpha=alpha)
+        else:
+            self.visOptions.colour = colour
+            self.visOptions.alpha = alpha
+
     def addBDSIMObject(self, bdsimobject):
         self.bdsimObjects.append(bdsimobject)
 
