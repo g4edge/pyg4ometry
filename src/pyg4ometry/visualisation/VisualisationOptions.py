@@ -66,7 +66,7 @@ class VisualisationOptions:
 
     def getBDSIMVRGBA(self):
         c = self.colour
-        return f"{int(self.visible)} {c[0]} {c[1]} {c[2]} {self.alpha}"
+        return f"{int(self.visible)} {c[0]:.4f} {c[1]:.4f} {c[2]:.4f} {self.alpha}"
 
     def getColour(self):
         """
