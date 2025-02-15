@@ -102,6 +102,6 @@ def freeFormatStringSplit(string):
     First, replace all with commas then split on those.
     """
     ensure_commas = re.sub(r" *[,:;\\] *", ",", string.strip())
-    ensure_commas = re.sub(r" +", ",", ensure_commas).split(',')
+    ensure_commas = re.sub(r" +", ",", ensure_commas).split(",")
     components = [s if len(s) > 0 else None for s in ensure_commas]
     return components
