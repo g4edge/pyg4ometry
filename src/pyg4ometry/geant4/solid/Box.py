@@ -79,11 +79,11 @@ class Box(_SolidBase):
 
     :param name: of solid for registry
     :type name: str
-    :param pX: length along x
+    :param pX: full length along x
     :type pX: float, Constant, Quantity, Variable, Expression
-    :param pY: length along y
+    :param pY: full length along y
     :type pY: float, Constant, Quantity, Variable, Expression
-    :param pZ: length along z
+    :param pZ: full length along z
     :type pZ: float, Constant, Quantity, Variable, Expression
     :param registry: for storing solid
     :type registry: Registry
