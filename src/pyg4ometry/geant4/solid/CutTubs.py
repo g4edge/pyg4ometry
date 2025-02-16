@@ -30,7 +30,7 @@ class CutTubs(_SolidBase):
     :type pRMin: float, Constant, Quantity, Variable
     :param pRMax: Outer radius
     :type pRMax: float, Constant, Quantity, Variable
-    :param pDz: length along z
+    :param pDz: full length along z
     :type pDz: float, Constant, Quantity, Variable
     :param pSPhi: starting phi angle
     :type pSPhi: float, Constant, Quantity, Variable
