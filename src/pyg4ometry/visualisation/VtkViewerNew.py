@@ -12,7 +12,15 @@ from .VisualisationOptions import (
 
 
 class VtkViewerNew(_ViewerBase):
-    def __init__(self):
+    """
+    Visualiser.
+
+    :param defaultCutters: whether to overlay the default red, green, blue outlines throughout the geometry
+    :type defaultCutters: bool
+    :param axisCubeWidget: whether to add the orientation cube in the bottom left or not
+    :type axisCubeWidget: bool
+    """
+    def __init__(self, defaultCutters=True, axisCubeWidget=True):
         super().__init__()
 
         self.initVtk()
@@ -28,6 +36,11 @@ class VtkViewerNew(_ViewerBase):
         self.clipperNormal = None
 
         self.clipperPlaneWidget = None
+
+        if defaultCutters:
+            self.addCutterXYZ()
+        if axisCubeWidget:
+            self.addAxesWidget()
 
     def initVtk(self):
         # create a renderer
@@ -114,6 +127,11 @@ class VtkViewerNew(_ViewerBase):
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
         self.cutterColors[name] = rgb
+
+    def addCutterXYZ(self):
+        self.addCutter('yz', [0, 0, 0], [1, 0, 0], [0.8, 0, 0])
+        self.addCutter('xz', [0, 0, 0], [0, 1, 0], [0, 0.8, 0])
+        self.addCutter('xy', [0, 0, 0], [0, 0, 1], [0, 0, 0.8])
 
     def setCutter(self, name, origin, normal):
         for c in self.cutters[name]:
