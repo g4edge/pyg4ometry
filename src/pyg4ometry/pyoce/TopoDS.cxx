@@ -28,6 +28,8 @@ PYBIND
 PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(TopoDS, m) {
+
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR <= 8
   py::class_<TopoDS>(m, "TopoDSClass")
       .def_static("CompSolid",
                   [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); })
@@ -45,7 +47,19 @@ PYBIND11_MODULE(TopoDS, m) {
                   [](TopoDS_Shape &shape) { return TopoDS::Wire(shape); })
       .def_static("Vertex",
                   [](TopoDS_Shape &shape) { return TopoDS::Vertex(shape); });
-
+#else
+  auto m_ns = m.def_submodule("TopoDSClass", "TopoDS namespace");
+  m_ns.def("CompSolid",
+           [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); });
+  m_ns.def("Compound",
+           [](TopoDS_Shape &shape) { return TopoDS::Compound(shape); });
+  m_ns.def("Edge", [](TopoDS_Shape &shape) { return TopoDS::Edge(shape); });
+  m_ns.def("Face", [](TopoDS_Shape &shape) { return TopoDS::Face(shape); });
+  m_ns.def("Shell", [](TopoDS_Shape &shape) { return TopoDS::Shell(shape); });
+  m_ns.def("Solid", [](TopoDS_Shape &shape) { return TopoDS::Solid(shape); });
+  m_ns.def("Wire", [](TopoDS_Shape &shape) { return TopoDS::Wire(shape); });
+  m_ns.def("Vertex", [](TopoDS_Shape &shape) { return TopoDS::Vertex(shape); });
+#endif
   py::class_<TopoDS_Builder>(m, "TopoDS_Builder")
       .def(py::init<>())
       .def("MakeWire", &TopoDS_Builder::MakeWire)
