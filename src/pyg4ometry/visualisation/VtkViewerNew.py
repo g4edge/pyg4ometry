@@ -20,6 +20,7 @@ class VtkViewerNew(_ViewerBase):
 
         self.cutterOrigins = {}
         self.cutterNormals = {}
+        self.cutterColors = {}
 
         self.bClipper = False
         self.bClipperCutter = False
@@ -103,13 +104,16 @@ class VtkViewerNew(_ViewerBase):
         self.axesWidget.EnabledOn()
         self.axesWidget.InteractiveOn()
 
-    def addCutter(self, name, origin, normal):
+    def addCutter(self, name, origin, normal, rgb=None):
         if self.bBuiltPipelines:
             msg = "Need to add cutter before pipelines are built"
             raise RuntimeError(msg)
 
+        if rgb is None:
+            rgb = [0.8, 0, 0]
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
+        self.cutterColors[name] = rgb
 
     def setCutter(self, name, origin, normal):
         for c in self.cutters[name]:
@@ -311,8 +315,9 @@ class VtkViewerNew(_ViewerBase):
 
                     cutActor = _vtk.vtkActor()  # vtk(Actor)
                     cutActor.SetMapper(cutMap)
-                    cutActor.GetProperty().SetLineWidth(4)
-                    cutActor.GetProperty().SetColor(*[1, 0, 0])
+                    cutActor.GetProperty().SetLineWidth(2)
+                    cc = self.cutterColors[ck]
+                    cutActor.GetProperty().SetColor(*cc)
                     cutActor.GetProperty().SetRepresentationToSurface()
                     self.actors[k + "_" + ck] = cutActor
                     self.ren.AddActor(cutActor)
@@ -390,8 +395,9 @@ class VtkViewerNew(_ViewerBase):
 
                 cutActor = _vtk.vtkActor()  # vtk(Actor)
                 cutActor.SetMapper(cutMap)
-                cutActor.GetProperty().SetLineWidth(4)
-                cutActor.GetProperty().SetColor(*[1, 0, 0])
+                cutActor.GetProperty().SetLineWidth(2)
+                cc = self.cutterColors[ck]
+                cutActor.GetProperty().SetColor(*cc)
                 cutActor.GetProperty().SetRepresentationToSurface()
                 self.actors[k + "_" + ck] = cutActor
                 self.ren.AddActor(cutActor)
