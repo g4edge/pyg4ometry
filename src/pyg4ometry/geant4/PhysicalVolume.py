@@ -47,7 +47,7 @@ class PhysicalVolume:
         # need to determine type or rotation and position, as should be Position or Rotation type
         from ..gdml import Defines as _Defines
 
-        if isinstance(position, list) or isinstance(position, _np.ndarray):
+        if isinstance(position, (list, tuple)) or isinstance(position, _np.ndarray):
             if len(position) == 3:
                 unit = "mm"
             elif len(position) == 4:
@@ -65,7 +65,7 @@ class PhysicalVolume:
                 registry,
                 False,
             )
-        if isinstance(rotation, list) or isinstance(position, _np.ndarray):
+        if isinstance(rotation, (list, tuple)) or isinstance(position, _np.ndarray):
             if len(rotation) == 3:
                 unit = "rad"
             elif len(rotation) == 4:
