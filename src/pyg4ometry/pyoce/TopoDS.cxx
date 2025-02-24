@@ -48,10 +48,9 @@ PYBIND11_MODULE(TopoDS, m) {
       .def_static("Vertex",
                   [](TopoDS_Shape &shape) { return TopoDS::Vertex(shape); });
 #else
-  auto m_ns = m.def_submodule("TopoDS", "TopoDS namespace")
-                  m_ns.def("CompSolid", [](TopoDS_Shape &shape) {
-                    return TopoDS::CompSolid(shape);
-                  });
+  auto m_ns = m.def_submodule("TopoDS", "TopoDS namespace");
+  m_ns.def("CompSolid",
+           [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); });
   m_ns.def("Compound",
            [](TopoDS_Shape &shape) { return TopoDS::Compound(shape); });
   m_ns.def("Edge", [](TopoDS_Shape &shape) { return TopoDS::Edge(shape); });
