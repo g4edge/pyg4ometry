@@ -28,6 +28,8 @@ PYBIND
 PYBIND11_DECLARE_HOLDER_TYPE(T, opencascade::handle<T>, true)
 
 PYBIND11_MODULE(TopoDS, m) {
+
+#if OCC_VERSION_MAJOR == 7 && OCC_VERSION_MINOR <= 8
   py::class_<TopoDS>(m, "TopoDSClass")
       .def_static("CompSolid",
                   [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); })
@@ -45,7 +47,12 @@ PYBIND11_MODULE(TopoDS, m) {
                   [](TopoDS_Shape &shape) { return TopoDS::Wire(shape); })
       .def_static("Vertex",
                   [](TopoDS_Shape &shape) { return TopoDS::Vertex(shape); });
-
+#else
+  // py::module topods_ns = m.def_submodule("TopoDS", "Submodule for TopoDS
+  // functions");
+  m.def("CompSolid",
+        [](TopoDS_Shape &shape) { return TopoDS::CompSolid(shape); });
+#endif
   py::class_<TopoDS_Builder>(m, "TopoDS_Builder")
       .def(py::init<>())
       .def("MakeWire", &TopoDS_Builder::MakeWire)
