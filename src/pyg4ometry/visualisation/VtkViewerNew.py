@@ -20,6 +20,7 @@ class VtkViewerNew(_ViewerBase):
     :param axisCubeWidget: whether to add the orientation cube in the bottom left or not
     :type axisCubeWidget: bool
     """
+
     def __init__(self, defaultCutters=True, axisCubeWidget=True):
         super().__init__()
 
@@ -129,9 +130,9 @@ class VtkViewerNew(_ViewerBase):
         self.cutterColors[name] = rgb
 
     def addCutterXYZ(self):
-        self.addCutter('yz', [0, 0, 0], [1, 0, 0], [0.8, 0, 0])
-        self.addCutter('xz', [0, 0, 0], [0, 1, 0], [0, 0.8, 0])
-        self.addCutter('xy', [0, 0, 0], [0, 0, 1], [0, 0, 0.8])
+        self.addCutter("yz", [0, 0, 0], [1, 0, 0], [0.8, 0, 0])
+        self.addCutter("xz", [0, 0, 0], [0, 1, 0], [0, 0.8, 0])
+        self.addCutter("xy", [0, 0, 0], [0, 0, 1], [0, 0, 0.8])
 
     def setCutter(self, name, origin, normal):
         for c in self.cutters[name]:
