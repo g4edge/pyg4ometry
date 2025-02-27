@@ -583,11 +583,10 @@ class VtkViewerNew(_ViewerBase):
 
 class VtkViewerColouredNew(VtkViewerNew):
     """
-    Visualiser that extends VtkViewer. Uses "flat" interpolation and introduces control over colours.
+    Visualiser that extends VtkViewer. Introduces control over colours.
 
     :Keyword Arguments:
         * **materialVisOptions**: {"materialName": :class:`VisualisationOptions` or list or tuple, ...}
-        * **interpolation** (str): see :class:`VtkViewer`
         * **defaultColour** (str): "random" or [r,g,b]
 
     :Examples:
@@ -610,8 +609,7 @@ class VtkViewerColouredNew(VtkViewerNew):
     """
 
     def __init__(self, *args, defaultColour=None, materialVisOptions=None, **kwargs):
-        kwargs["interpolation"] = kwargs.get("interpolation", "flat")
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self._defaultVis = _VisOptions()
         self._defaultVis.randomColour = defaultColour == "random"
