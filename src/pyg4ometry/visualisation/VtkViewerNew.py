@@ -12,7 +12,16 @@ from .VisualisationOptions import (
 
 
 class VtkViewerNew(_ViewerBase):
-    def __init__(self):
+    """
+    Visualiser.
+
+    :param defaultCutters: whether to overlay the default red, green, blue outlines throughout the geometry
+    :type defaultCutters: bool
+    :param axisCubeWidget: whether to add the orientation cube in the bottom left or not
+    :type axisCubeWidget: bool
+    """
+
+    def __init__(self, defaultCutters=True, axisCubeWidget=True):
         super().__init__()
 
         self.initVtk()
@@ -20,6 +29,7 @@ class VtkViewerNew(_ViewerBase):
 
         self.cutterOrigins = {}
         self.cutterNormals = {}
+        self.cutterColors = {}
 
         self.bClipper = False
         self.bClipperCutter = False
@@ -27,6 +37,11 @@ class VtkViewerNew(_ViewerBase):
         self.clipperNormal = None
 
         self.clipperPlaneWidget = None
+
+        if defaultCutters:
+            self.addCutterXYZ()
+        if axisCubeWidget:
+            self.addAxesWidget()
 
     def initVtk(self):
         # create a renderer
@@ -103,13 +118,21 @@ class VtkViewerNew(_ViewerBase):
         self.axesWidget.EnabledOn()
         self.axesWidget.InteractiveOn()
 
-    def addCutter(self, name, origin, normal):
+    def addCutter(self, name, origin, normal, rgb=None):
         if self.bBuiltPipelines:
             msg = "Need to add cutter before pipelines are built"
             raise RuntimeError(msg)
 
+        if rgb is None:
+            rgb = [0.8, 0, 0]
         self.cutterOrigins[name] = origin
         self.cutterNormals[name] = normal
+        self.cutterColors[name] = rgb
+
+    def addCutterXYZ(self):
+        self.addCutter("yz", [0, 0, 0], [1, 0, 0], [0.8, 0, 0])
+        self.addCutter("xz", [0, 0, 0], [0, 1, 0], [0, 0.8, 0])
+        self.addCutter("xy", [0, 0, 0], [0, 0, 1], [0, 0, 0.8])
 
     def setCutter(self, name, origin, normal):
         for c in self.cutters[name]:
@@ -311,8 +334,9 @@ class VtkViewerNew(_ViewerBase):
 
                     cutActor = _vtk.vtkActor()  # vtk(Actor)
                     cutActor.SetMapper(cutMap)
-                    cutActor.GetProperty().SetLineWidth(4)
-                    cutActor.GetProperty().SetColor(*[1, 0, 0])
+                    cutActor.GetProperty().SetLineWidth(2)
+                    cc = self.cutterColors[ck]
+                    cutActor.GetProperty().SetColor(*cc)
                     cutActor.GetProperty().SetRepresentationToSurface()
                     self.actors[k + "_" + ck] = cutActor
                     self.ren.AddActor(cutActor)
@@ -390,8 +414,9 @@ class VtkViewerNew(_ViewerBase):
 
                 cutActor = _vtk.vtkActor()  # vtk(Actor)
                 cutActor.SetMapper(cutMap)
-                cutActor.GetProperty().SetLineWidth(4)
-                cutActor.GetProperty().SetColor(*[1, 0, 0])
+                cutActor.GetProperty().SetLineWidth(2)
+                cc = self.cutterColors[ck]
+                cutActor.GetProperty().SetColor(*cc)
                 cutActor.GetProperty().SetRepresentationToSurface()
                 self.actors[k + "_" + ck] = cutActor
                 self.ren.AddActor(cutActor)
