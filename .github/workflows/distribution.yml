@@ -25,30 +25,30 @@ jobs:
           path: dist/*.tar.gz
 
   build_linux_wheels:
-    name: Wheel on ${{ matrix.os }}
+    name: Wheel on ${{ matrix.arch }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
-    runs-on: ${{ matrix.os }}
-    
+    matrix:
+      arch: [ubuntu-latest, ubuntu-24.04-arm]
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Get number of CPU cores
         uses: SimenB/github-actions-cpu-cores@v2
         id: cpu-cores
-        
+
       - uses: pypa/cibuildwheel@v2.22.0
         env:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
-          
-      - name: Upload wheels artifact
+
+      - name: Upload sdist artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux_wheels_${{ matrix.os }}
+          name: linux_wheels_${{ matrix.arch }}
           path: wheelhouse/*.whl
 
   build_macos_wheels:
