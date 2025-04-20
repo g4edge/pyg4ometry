@@ -599,6 +599,9 @@ class SPH(BodyMixin):
     def _axisAlignRotation(self):
         return np.eyes(3)
 
+    def _scale(self, scale):
+        self.radius = self.radius * scale
+
 
 class RCC(BodyMixin):
     """
