@@ -370,6 +370,10 @@ class RPP(BodyMixin):
     def _axisAlignRotation(self):
         return np.eye(3)
 
+    def _scale(self, scale):
+        self.lower = self.lower * scale
+        self.upper = self.upper * scale
+
 
 class BOX(BodyMixin):
     """
