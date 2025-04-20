@@ -522,6 +522,12 @@ class BOX(BodyMixin):
 
         return R
 
+    def _scale(self, scale):
+        self.vertex = self.vertex * scale
+        self.edge1 = self.edge1 * scale
+        self.edge2 = self.edge2 * scale
+        self.edge3 = self.edge3 * scale
+
 
 class SPH(BodyMixin):
     """
