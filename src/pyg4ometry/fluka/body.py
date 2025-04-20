@@ -862,6 +862,40 @@ class REC(BodyMixin):
             ^ self.transform.hash()
         )
 
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # REC -> REC
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        vp = rotation @ self.face + translation
+        hp = rotation @ self.direction
+        r1 = rotation @ self.semiminor
+        r2 = rotation @ self.semimajor
+
+        return RCC(self.name, vp, hp, r1, r2)
+
+    def _centreTranslation(self):
+        return -(self.face + self.direction / 2.0)
+
+    def _axisAlignRotation(self):
+        hnorm = self.direction / np.linalg.norm(self.direction)
+        r1norm = self.semiminor / np.linalg.norm(self.semiminor)
+        r2norm = self.semiminor / np.linalg.norm(self.semiminor)
+
+        h = np.vstack([r1norm, r2norm, hnorm]).T
+        hp = np.vstack([[1, 0, 0], [0, 1, 0], [0, 0, 1]]).T
+
+        R = hp @ h.T
+
+        return R
+
+    def _scale(self, scale):
+        self.face = self.face * scale
+        self.direction = self.direction * scale
+        self.semiminor = self.semiminor * scale
+        self.semimajor = self.semimajor * scale
+
 
 class TRC(BodyMixin):
     """
