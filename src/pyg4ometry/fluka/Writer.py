@@ -157,6 +157,11 @@ class Writer:
             rotstr = rotdefi.flukaFreeString()
             f.write(f"{rotstr}\n")
 
+        # loop over rotdefis added outside of bodies
+        for rotdefi in self.flukaRegistry.rotoTranslations.values():
+            rotstr = rotdefi.flukaFreeString()
+            f.write(f"{rotstr}\n")
+
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys():
             if (
