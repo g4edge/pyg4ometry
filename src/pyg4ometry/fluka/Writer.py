@@ -153,8 +153,8 @@ class Writer:
         # loop over magnetic fields
 
         # loop over rotdefis
-        for rotdefi in rotdefi.values():
-            rotstr = rotdefi.flukaFreeString()
+        for rd in rotdefi.values():
+            rotstr = rd.flukaFreeString()
             f.write(f"{rotstr}\n")
 
         # loop over rotdefis added outside of bodies
