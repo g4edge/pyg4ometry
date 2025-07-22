@@ -184,6 +184,14 @@ class FlukaRegistry:
     def assignma(self, material, *regions):
         return self.addMaterialAssignments(material, *regions)
 
+    def assignmaAddMagnetic(self, region, mgn_name):
+        old = self.assignmas[region]
+        self.assignmas[region] = (old[0], mgn_name, old[2])
+
+    def assignmaAddMagnetic(self, region, ele_name):
+        old = self.assignmas[region]
+        self.assignmas[region] = (old[0], old[1], ele_name)
+
     def addCard(self, card):
         if card.keyword in self.cardDict:
             self.cardDict[card.keyword].append(card)
