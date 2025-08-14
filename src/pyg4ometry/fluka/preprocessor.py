@@ -99,7 +99,19 @@ def preprocess(filein):
 
 def _process_line_define(line, defines):
     for k in defines:
-        line = line.replace("$" + k, str(defines[k]))
+        if defines[k] != "":
+            str_tofind = "$" + k
+            pos = line.find(str_tofind)
+            if pos != -1:
+                print(pos)
+                end_pos = pos + len(str_tofind)
+                start_pos = end_pos - len(str(defines[k]))
+                line = line[:start_pos] + str(defines[k]) + line[end_pos:]
+
+    for k in defines:
+        str_tofind = "$" + k
+        if line.find(str_tofind) != -1:
+            line = _process_line_define(line, defines)
 
     return line
 
