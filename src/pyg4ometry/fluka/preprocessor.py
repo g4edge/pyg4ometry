@@ -92,9 +92,16 @@ def preprocess(filein):
         if if_stack and not all(e.read_until_next for e in if_stack):
             continue
 
-        preprocessed_lines.append(line)
+        preprocessed_lines.append(_process_line_define(line, defines))
 
     return preprocessed_lines, lines
+
+
+def _process_line_define(line, defines):
+    for k in defines:
+        line = line.replace("$" + k, str(defines[k]))
+
+    return line
 
 
 class _IfInfo:
