@@ -60,7 +60,7 @@ Using the Visualiser
 Rotating
 ********
 
-.. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/pan-rotate-v1.gif
+.. figure:: https://g4edge.github.io/pyg4ometry/manual-animations/pan-rotate-v1.gif
    :width: 80%
    :align: center
 
@@ -70,7 +70,7 @@ Rotate by clicking and dragging, then release.
 Zooming
 *******
 
-.. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/zooming-v1.gif
+.. figure:: https://g4edge.github.io/pyg4ometry/manual-animations/zooming-v1.gif
    :width: 80%
    :align: center
 
@@ -80,7 +80,7 @@ Scroll in and out on a mouse or trackpad whilst pointing at the visualiser.
 Panning And Rotating
 ********************
 
-.. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/pan-rotate-v1.gif
+.. figure:: https://g4edge.github.io/pyg4ometry/manual-animations/pan-rotate-v1.gif
    :width: 80%
    :align: center
 
@@ -90,7 +90,7 @@ and drag to pan.
 When we rotate the geometry it may twist in multiple angles. To rotate in a specific
 way we can click and drag and draw it small circles where the geometry will precess.
 
-.. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/precessing-v1.gif
+.. figure:: https://g4edge.github.io/pyg4ometry/manual-animations/precessing-v1.gif
    :width: 80%
    :align: center
 
@@ -101,7 +101,7 @@ Picking
 If you right click on a volume and look at the terminal, if pyg4ometry can find
 a volume behind the point clicked it will print out the name.
 
-.. figure:: http://www.pp.rhul.ac.uk/bdsim/pyg4ometry-uploads/picking-v1.gif
+.. figure:: https://g4edge.github.io/pyg4ometry/manual-animations/picking-v1.gif
    :width: 80%
    :align: center
 
