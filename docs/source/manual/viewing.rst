@@ -298,7 +298,7 @@ Viewing FLUKA geometry
 
 The viewer can be used to view FLUKA geometry.
 
-.. code-block::
+.. code-block:: python
 
     r = pyg4ometry.fluka.Reader("./FLUKA_FILE.inp")
     v = pyg4ometry.visualisation.VtkViewerNew()
@@ -312,16 +312,16 @@ New viewer
 There is a new development viewer which is significantly faster than the current ``vtkViewer``. The API of the new viewer
 is very similar to that of the old viewer but a pipeline building step is required (after all geometry has been added)
 
-.. code-block::
+.. code-block:: python
 
     v = pyg4ometry.visualisation.VtkViewerNew()
     v.addLogicalVolume(lv)
-    v.buildPipelinesSeparate() # (old behaviour) or
-    v.buildPipelinesAppend() # (much faster) or
-    v.buildPipelinesTransformed() # (alternative faster)
+    v.buildPipelinesSeparate()  # (old behaviour) or
+    v.buildPipelinesAppend()  # (much faster) or
+    v.buildPipelinesTransformed()  # (alternative faster)
     v.view()  # or
     v.view(interactive=False)
 
 .. warning::
     The new viewer API is not as complete as the default viewer. The functionality can be quickly
-    added. Please submit a issue in github
+    added. Please submit an issue in github
