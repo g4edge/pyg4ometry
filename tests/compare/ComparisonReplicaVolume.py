@@ -1,8 +1,11 @@
+import pytest
+
 import pyg4ometry
 import pyg4ometry.geant4 as _g4
 
 
-def test(printOut=False):
+@pytest.mark.parametrize("printOut", [False])
+def test(printOut):
     r = _g4.Registry()
     wm = _g4.MaterialPredefined("G4_Galactic")
     bm = _g4.MaterialPredefined("G4_Fe")

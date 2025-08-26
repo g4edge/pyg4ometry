@@ -4,6 +4,7 @@ import scipy.linalg as _la
 import matplotlib.pyplot as _plt
 import random as _rand
 from scipy.spatial.transform import Rotation as _Rotation
+import pytest
 
 
 class Line:
@@ -804,7 +805,10 @@ class FeatureData:
             )
 
 
-def test(fileName, featureIndexList=[], planeQuality=0.1, circumference=300, bPlotRadii=False):
+@pytest.mark.parametrize(
+    ("featureIndexList", "planeQuality", "circumference", "bPlotRadii"), [([], 0.1, 300, False)]
+)
+def test(fileName, featureIndexList, planeQuality, circumference, bPlotRadii):
     p = vtkLoadStl(fileName)
     e = vtkPolydataToConnectedEdges(p, 89)
     i = vtkPolydataEdgeInformation(e)

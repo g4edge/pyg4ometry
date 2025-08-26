@@ -377,8 +377,8 @@ class QVTKRenderWindowInteractor(QVTKRWIBaseClass):
     def _setEventInformation(self, x, y, ctrl, shift, key, repeat=0, keysum=None):
         scale = self._getPixelRatio()
         self._Iren.SetEventInformation(
-            int(round(x * scale)),
-            int(round((self.height() - y - 1) * scale)),
+            round(x * scale),
+            round((self.height() - y - 1) * scale),
             ctrl,
             shift,
             key,
