@@ -156,7 +156,7 @@ lint.isort.required-imports = ["from __future__ import annotations"]
 "src/pyg4ometry/visualisation/{UsdViewer,ViewerHierarchyBase}.py" = ["T201"]
 
 [tool.cibuildwheel]
-build = ["*macosx*", "*manylinux_x86_64", "*windows*"]
+build = ["*macosx*", "*manylinux_x86_64", "*win*"]
 skip = ["pp*", "cp36-*", "cp37-*"]
 
 [tool.cibuildwheel.linux]
