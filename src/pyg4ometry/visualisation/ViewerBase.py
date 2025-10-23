@@ -85,7 +85,9 @@ class ViewerBase:
         """
         Return a set of vis options according to the precedence of pv, lv, material, default.
         """
-        materialVis = self._getMaterialVis(pv.logicalVolume.material.name)
+        materialVis = None
+        if pv.logicalVolume.type == "logical":
+            materialVis = self._getMaterialVis(pv.logicalVolume.material.name)
         # take the first non-None set of visOptions
         orderOfPrecedence = [
             pv.visOptions,

@@ -37,8 +37,8 @@ be quickly added. Given a LV variable named ``logical``
 
    import pyg4ometry
    reader = pyg4ometry.gdml.Reader("input.gdml")
-   logical = reader.getRegistry().getWorldVolume()
-   freg = pyg4ometry.convert.geant4Logical2Fluka(logical)
+   greg = reader.getRegistry()
+   freg = pyg4ometry.convert.geant4Reg2FlukaReg(greg)
    w = pyg4ometry.fluka.Writer()
    w.addDetector(freg)
    w.write("FileName.inp")

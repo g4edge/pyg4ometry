@@ -558,11 +558,11 @@ PYBIND11_MODULE(algo, m) {
       .def(py::init<std::string &>())
       .def("add_vertex", &SurfaceMesh::add_vertex)
       .def("add_face",
-           (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t,
-                                        std::size_t))&SurfaceMesh::add_face)
+           (std::size_t (SurfaceMesh::*)(std::size_t, std::size_t,
+                                         std::size_t))&SurfaceMesh::add_face)
       .def("add_face",
-           (std::size_t(SurfaceMesh::*)(std::size_t, std::size_t, std::size_t,
-                                        std::size_t))&SurfaceMesh::add_face)
+           (std::size_t (SurfaceMesh::*)(std::size_t, std::size_t, std::size_t,
+                                         std::size_t))&SurfaceMesh::add_face)
       .def("translate", &SurfaceMesh::translate)
       .def("transform", &SurfaceMesh::transform)
       .def("union", &SurfaceMesh::unioN)
@@ -601,10 +601,10 @@ PYBIND11_MODULE(algo, m) {
       .def(py::init<py::array_t<double> &>())
       .def(py::init<py::array_t<double> &, py::array_t<double> &>())
       .def("push_back",
-           (void(Polygon2::*)(double, double)) & Polygon2::push_back)
-      .def("push_back", (void(Polygon2::*)(py::list &)) & Polygon2::push_back)
+           (void (Polygon2::*)(double, double))&Polygon2::push_back)
+      .def("push_back", (void (Polygon2::*)(py::list &))&Polygon2::push_back)
       .def("push_back",
-           (void(Polygon2::*)(py::array_t<double> &)) & Polygon2::push_back)
+           (void (Polygon2::*)(py::array_t<double> &))&Polygon2::push_back)
       .def("__repr__", &Polygon2::toString)
       .def("__len__", &Polygon2::size)
       .def("clear", &Polygon2::clear)

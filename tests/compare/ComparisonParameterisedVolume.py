@@ -1,9 +1,11 @@
+import pytest
 import os as _os
 import pyg4ometry
 import pyg4ometry.geant4 as _g4
 
 
-def test(printOut=False):
+@pytest.mark.parametrize("printOut", [False])
+def test(printOut):
     r = _g4.Registry()
 
     tests = pyg4ometry.compare.Tests()

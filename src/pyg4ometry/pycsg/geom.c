@@ -315,8 +315,7 @@ enum { __pyx_check_sizeof_voidp = 1 / (int)(SIZEOF_VOID_P == sizeof(void *)) };
 #endif
 #ifndef CYTHON_MAYBE_UNUSED_VAR
 #if defined(__cplusplus)
-template <class T>
-void CYTHON_MAYBE_UNUSED_VAR(const T &){}
+template<class T> void CYTHON_MAYBE_UNUSED_VAR(const T &) {}
 #else
 #define CYTHON_MAYBE_UNUSED_VAR(x) (void)(x)
 #endif

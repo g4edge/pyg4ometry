@@ -92,9 +92,28 @@ def preprocess(filein):
         if if_stack and not all(e.read_until_next for e in if_stack):
             continue
 
-        preprocessed_lines.append(line)
+        preprocessed_lines.append(_process_line_define(line, defines))
 
     return preprocessed_lines, lines
+
+
+def _process_line_define(line, defines):
+    for k in defines:
+        if defines[k] != "":
+            str_tofind = "$" + k
+            pos = line.find(str_tofind)
+            if pos != -1:
+                print(pos)
+                end_pos = pos + len(str_tofind)
+                start_pos = end_pos - len(str(defines[k]))
+                line = line[:start_pos] + str(defines[k]) + line[end_pos:]
+
+    for k in defines:
+        str_tofind = "$" + k
+        if line.find(str_tofind) != -1:
+            line = _process_line_define(line, defines)
+
+    return line
 
 
 class _IfInfo:

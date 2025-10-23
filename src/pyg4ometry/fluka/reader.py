@@ -711,7 +711,7 @@ class RegionVisitor(RegionParserVisitor):
         return [sub_zone, expr]
 
     def visitSingleUnion(self, ctx):
-        zone = [(self.visit(ctx.zone()))]
+        zone = [self.visit(ctx.zone())]
         return zone
 
     def visitMultipleUnion(self, ctx):

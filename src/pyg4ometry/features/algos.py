@@ -804,7 +804,13 @@ class FeatureData:
             )
 
 
-def test(fileName, featureIndexList=[], planeQuality=0.1, circumference=300, bPlotRadii=False):
+def test(
+    fileName,
+    featureIndexList=[],  # noqa: PT028
+    planeQuality=0.1,  # noqa: PT028
+    circumference=300,  # noqa: PT028
+    bPlotRadii=False,  # noqa: PT028
+):
     p = vtkLoadStl(fileName)
     e = vtkPolydataToConnectedEdges(p, 89)
     i = vtkPolydataEdgeInformation(e)

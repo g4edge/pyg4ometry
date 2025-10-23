@@ -22,7 +22,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: "24.10.0"
+    rev: "25.1.0"
     hooks:
       - id: black-jupyter
         args: ["--line-length", "100"]
@@ -34,7 +34,7 @@ repos:
         additional_dependencies: [black==23.3.0]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.8.6"
+    rev: "v0.12.2"
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]
@@ -46,7 +46,7 @@ repos:
         stages: [manual]
 
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.3.0"
+    rev: "v2.4.1"
     hooks:
       - id: codespell
         args: ["-L", "commun,precess"]
@@ -87,7 +87,7 @@ repos:
           ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: "v19.1.6"
+    rev: "v20.1.7"
     hooks:
       - id: clang-format
         types_or: [c++, c, cuda]
