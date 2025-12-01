@@ -23,7 +23,7 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         os: [ubuntu-latest, macOS-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install conda on Windows
         if: runner.os == 'Windows'
         uses: conda-incubator/setup-miniconda@v3
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://g4edge/ubuntu:latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Get number of CPU cores
         uses: SimenB/github-actions-cpu-cores@v2
         id: cpu-cores
@@ -76,7 +76,7 @@ jobs:
     name: Calculate and upload test coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Install non-pip dependencies on Ubuntu
