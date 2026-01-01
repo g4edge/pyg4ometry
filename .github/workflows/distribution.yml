@@ -19,7 +19,7 @@ jobs:
         run: pipx run build --sdist
 
       - name: Upload sdist artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sdist
           path: dist/*.tar.gz
@@ -44,7 +44,7 @@ jobs:
           MAKEFLAGS: -j${{ steps.cpu-cores.outputs.count }}
 
       - name: Upload sdist artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux_wheels
           path: wheelhouse/*.whl
@@ -84,7 +84,7 @@ jobs:
           ${{ steps.setup-python.outputs.python-path}} -m build .
 
       - name: Upload macos artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.os }}_${{ matrix.python-version }}
           path: dist/*.whl
@@ -129,7 +129,7 @@ jobs:
           ${{ steps.setup-python.outputs.python-path}} -m build .
 
       - name: Upload windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows_${{ matrix.python-version }}
           path: dist/*.whl
