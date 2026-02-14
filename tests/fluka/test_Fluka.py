@@ -1346,16 +1346,16 @@ def test_gettingRotoTranslation():
 
 
 def test_RotoTranslation_fails_setting_with_wrong_name():
-    name, rtrans = _makeRotoTranslation()
-    store = _makeStore()
+    _name, _rtrans = _makeRotoTranslation()
+    _store = _makeStore()
     # TODO
     # with pytest.raises(ValueError):
     #    store["asdasd"] = rtrans
 
 
 def test_RotoTranslation_fails_without_rotoTranslation():
-    name, rtrans = _makeRotoTranslation()
-    store = _makeStore()
+    _name, _rtrans = _makeRotoTranslation()
+    _store = _makeStore()
     # TODO check this test
     # with pytest.raises(TypeError):
     #    store[name] = "something"
@@ -1381,10 +1381,10 @@ def test_store_del():
 
 def test_addRotoTranslation():
     name1, rtrans1 = _makeRotoTranslation(name="rtrans1")
-    name2, rtrans2 = _makeRotoTranslation(name="rtrans2")
-    name3, rtrans3 = _makeRotoTranslation(name="rtrans3")
-    name4, rtrans4 = _makeRotoTranslation(name="rtrans4")
-    name5, rtrans5 = _makeRotoTranslation(name="rtrans5")
+    _name2, rtrans2 = _makeRotoTranslation(name="rtrans2")
+    _name3, rtrans3 = _makeRotoTranslation(name="rtrans3")
+    _name4, rtrans4 = _makeRotoTranslation(name="rtrans4")
+    _name5, rtrans5 = _makeRotoTranslation(name="rtrans5")
 
     store = _makeStore()
 
