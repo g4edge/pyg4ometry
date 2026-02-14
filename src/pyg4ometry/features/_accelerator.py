@@ -24,7 +24,7 @@ def beamPipeCADFeature(shape):
             edgeLocation = _oce.TopLoc_Location()
             start = 0
             end = 0
-            curve, l, s, e = _oce.BRep_Tool.Curve(edge, edgeLocation, start, end)
+            curve, _l, s, e = _oce.BRep_Tool.Curve(edge, edgeLocation, start, end)
 
             for par in _np.linspace(s, e, 20):
                 pnt = curve.Value(par)

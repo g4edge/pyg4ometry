@@ -225,7 +225,7 @@ def geant4PhysicalVolume2Fluka(
     if itsAReplica:
         replica = physicalVolume.logicalVolume.daughterVolumes[0]
         # this unintentionally adds the PVs to the mother LV
-        daughterVolumes, transforms = replica.getPhysicalVolumes()
+        daughterVolumes, _transforms = replica.getPhysicalVolumes()
         for dv in daughterVolumes:
             pvmrot = _transformation.tbzyx2matrix(-_np.array(dv.rotation.eval()))
             pvtra = _np.array(dv.position.eval())

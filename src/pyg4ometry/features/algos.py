@@ -501,7 +501,7 @@ def _vtkPolydataEdgeInformation(polydata, bPlot=False):
     upacs = upa - centre
 
     # svd
-    [u, s, vh] = _la.svd(upacs.transpose())
+    [u, _s, _vh] = _la.svd(upacs.transpose())
 
     # normal
     n = u[:, 2]

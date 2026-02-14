@@ -234,7 +234,7 @@ def cli(
         a.printSummary()
 
     if compareFileName is not None:
-        creg, cwl = _loadFile(compareFileName)
+        _creg, cwl = _loadFile(compareFileName)
         comparision = _pyg4.compare.geometry(wl, cwl, _pyg4.compare.Tests(), False)
         print("pyg4> compare")  # noqa: T201
         comparision.print()
@@ -499,7 +499,7 @@ def main(testArgs=None, testing=False):
     )
 
     # features
-    (options, args) = parser.parse_args(args=testArgs)
+    (options, _args) = parser.parse_args(args=testArgs)
 
     verbose = options.__dict__["verbose"]
     if verbose:

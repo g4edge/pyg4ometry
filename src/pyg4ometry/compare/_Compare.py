@@ -584,8 +584,8 @@ def assemblyVolumes(
             )
 
             # even though one individual daughter, it itself might be an assembly and produce more than 1 mesh
-            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByName(daugtherName)
-            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByName(daugtherName)
+            i_rMeshes, _i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByName(daugtherName)
+            i_oMeshes, _i_oBoundingMesh, _o_rMeshName = oav._getDaughterMeshesByName(daugtherName)
             for nameToUse, rMesh, oMesh in zip(i_rMeshName, i_rMeshes, i_oMeshes):
                 result += _meshes(nameToUse, rMesh, oMesh, tests)
     else:
@@ -611,8 +611,8 @@ def assemblyVolumes(
             )
 
             # even though one individual daughter, it itself might be an assembly and produce more than 1 mesh
-            i_rMeshes, i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByIndex(i)
-            i_oMeshes, i_oBoundingMesh, o_rMeshName = oav._getDaughterMeshesByIndex(i)
+            i_rMeshes, _i_rBoundingMesh, i_rMeshName = rav._getDaughterMeshesByIndex(i)
+            i_oMeshes, _i_oBoundingMesh, _o_rMeshName = oav._getDaughterMeshesByIndex(i)
             for nameToUse, rMesh, oMesh in zip(i_rMeshName, i_rMeshes, i_oMeshes):
                 result += _meshes(nameToUse, rMesh, oMesh, tests)
 

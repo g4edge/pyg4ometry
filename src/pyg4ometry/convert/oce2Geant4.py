@@ -242,7 +242,7 @@ def _oce2Geant4_traverse(
 
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
-            b, child = label.FindChild(i, False)
+            _b, child = label.FindChild(i, False)
             component = _oce2Geant4_traverse(
                 shapeTool,
                 child,
@@ -291,7 +291,7 @@ def _oce2Geant4_traverse(
 
         scale = trsf.ScaleFactor()
         trans = trsf.TranslationPart()
-        b, ax, an = trsf.GetRotation(ax, an)
+        _b, ax, an = trsf.GetRotation(ax, an)
 
         trans = _pyoce.pythonHelpers.gp_XYZ_numpy(trans)
         ax = _pyoce.pythonHelpers.gp_XYZ_numpy(ax)
@@ -328,7 +328,7 @@ def _oce2Geant4_traverse(
 
         # Loop over children
         for i in range(1, label.NbChildren() + 1, 1):
-            b, child = label.FindChild(i, False)
+            _b, child = label.FindChild(i, False)
             logicalVolume = _oce2Geant4_traverse(
                 shapeTool,
                 child,
@@ -353,7 +353,7 @@ def _oce2Geant4_traverse(
 
             scale = trsf.ScaleFactor()
             trans = trsf.TranslationPart()
-            b, ax, an = trsf.GetRotation(ax, an)
+            _b, ax, an = trsf.GetRotation(ax, an)
 
             trans = _pyoce.pythonHelpers.gp_XYZ_numpy(trans)
             ax = _pyoce.pythonHelpers.gp_XYZ_numpy(ax)

@@ -534,18 +534,18 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
         boolRightShapePyG4 = rootShape2pyg4ometry(boolNodeRightShape, reader, warnAboutBadShapes)
 
         [
-            boolNodeLeftRotPyG4,
-            boolNodeLeftTraPyG4,
-            boolNodeLeftScaPyG4,
-            matROOT,
-            traROOT,
+            _boolNodeLeftRotPyG4,
+            _boolNodeLeftTraPyG4,
+            _boolNodeLeftScaPyG4,
+            _matROOT,
+            _traROOT,
         ] = rootMatrix2pyg4ometry(boolNodeLeftMatrix, reader)
         [
             boolNodeRightRotPyG4,
             boolNodeRightTraPyG4,
-            boolNodeRightScaPyG4,
-            matROOT,
-            traROOT,
+            _boolNodeRightScaPyG4,
+            _matROOT,
+            _traROOT,
         ] = rootMatrix2pyg4ometry(boolNodeRightMatrix, reader)
 
         # needed for nested booleans solids
@@ -899,8 +899,8 @@ class Reader:
                         nodeRotPyG4,
                         nodeTraPyG4,
                         nodeScaPyG4,
-                        matROOT,
-                        traROOT,
+                        _matROOT,
+                        _traROOT,
                     ] = rootMatrix2pyg4ometry(matrix, self)
                     nodeRotPyG4 = _transformation.matrix2tbxyz(
                         _np.linalg.inv(_transformation.tbxyz2matrix(nodeRotPyG4))

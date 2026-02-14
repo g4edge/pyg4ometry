@@ -547,7 +547,7 @@ class FlukaRegistry:
             # get material
             material = flukaRegistry.materials[flukaRegistry.assignmas[old_region_name]]
 
-            updated, new_material_name = self.checkMaterialName(material.name)
+            updated, _new_material_name = self.checkMaterialName(material.name)
 
             if updated and type(material) != BuiltIn:
                 material.rename("N" + format(self.iMergeMaterials, "03"))

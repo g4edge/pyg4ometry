@@ -76,7 +76,7 @@ class _FlukaDataFile:
                 self.time,
                 self.weight,
                 self.ncase,
-                over1b,
+                _over1b,
                 self.nbatch,
             ) = _struct.unpack("=80s32sfiii", data)
 
@@ -368,7 +368,7 @@ class Usrdump(_FlukaDataFile):
 
             # entry header
             if len(data) == 20:
-                ndum, mdum, jdum, edum, wdum = _struct.unpack("=iiiff", data)
+                ndum, _mdum, _jdum, _edum, _wdum = _struct.unpack("=iiiff", data)
 
                 # print(ndum, mdum, jdum, edum, wdum)
                 if ndum < 0:
