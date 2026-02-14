@@ -118,7 +118,7 @@ delete_polygonlist.restype = _ctypes.c_int
 
 
 def pycsgmesh2NefPolyhedron(mesh):
-    verts, polys, count = mesh.toVerticesAndPolygons()
+    verts, polys, _count = mesh.toVerticesAndPolygons()
 
     verts = _np.array(verts)
     polyarray = _np.zeros((len(polys), 30), dtype=int)
@@ -154,7 +154,7 @@ def pycsgmesh2NefPolyhedron(mesh):
 
 
 def pycsgmeshWritePolygon(mesh, fileName="mesh.pol"):
-    verts, polys, count = mesh.toVerticesAndPolygons()
+    verts, polys, _count = mesh.toVerticesAndPolygons()
 
     verts = _np.array(verts)
     polyarray = _np.zeros((len(polys), 4), dtype=int)
