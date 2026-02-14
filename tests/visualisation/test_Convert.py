@@ -56,4 +56,4 @@ def test_vtkPolyDataToNumpy(testdata, tmptestdir):
 def test_Convert_vtkTransformation2PyG4(testdata, tmptestdir):
     vt = _vtk.vtkTransform()
 
-    [rot, tra] = _pyg4.visualisation.vtkTransformation2PyG4(vt)
+    [_rot, _tra] = _pyg4.visualisation.vtkTransformation2PyG4(vt)

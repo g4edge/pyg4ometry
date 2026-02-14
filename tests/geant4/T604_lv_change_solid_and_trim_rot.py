@@ -40,7 +40,7 @@ def Test(vis=False, interactive=False):
     position = [250, 0, 0]
     clipBox = _g4.solid.Box("clipper", clipFW, clipFW, clipFW, reg, "mm")
     # dlv.changeSolidAndTrimGeometry(clipBox, rotation=rotation, position=position)
-    [outside, inside, intersections] = dlv.clipGeometry(
+    [_outside, _inside, _intersections] = dlv.clipGeometry(
         clipBox, rotation=rotation, position=position
     )
 
