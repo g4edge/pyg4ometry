@@ -361,19 +361,19 @@ def test_FlairLoad_T806_combined_translat_transform(testdata):
 
 
 def test_FlairLoad_T901_preprocessor_if(testdata):
-    freg, greg = flairLoadWriteTest(testdata["fluka/901_preprocessor_if.inp"], False, False)
+    _freg, greg = flairLoadWriteTest(testdata["fluka/901_preprocessor_if.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Cons)
 
 
 def test_FlairLoad_T902_preprocessor_elif(testdata):
-    freg, greg = flairLoadWriteTest(testdata["fluka/902_preprocessor_elif.inp"], False, False)
+    _freg, greg = flairLoadWriteTest(testdata["fluka/902_preprocessor_elif.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Box)
 
 
 def test_FlairLoad_T903_preprocessor_else(testdata):
-    freg, greg = flairLoadWriteTest(testdata["fluka/903_preprocessor_else.inp"], False, False)
+    _freg, greg = flairLoadWriteTest(testdata["fluka/903_preprocessor_else.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Tubs)
 
@@ -383,13 +383,13 @@ def test_FlairLoad_T904_preprocessor_include(testdata):
 
 
 def test_FlairLoad_T905_preprocessor_nested_if(testdata):
-    freg, greg = flairLoadWriteTest(testdata["fluka/905_preprocessor_nested_if.inp"], False, False)
+    _freg, greg = flairLoadWriteTest(testdata["fluka/905_preprocessor_nested_if.inp"], False, False)
     solids = greg.solidDict
     assert isinstance(solids["bb1_s"], pyg4ometry.geant4.solid.Cons)
 
 
 def test_FlairLoad_T906_preprocessor_nested_elif(testdata):
-    freg, greg = flairLoadWriteTest(
+    _freg, greg = flairLoadWriteTest(
         testdata["fluka/906_preprocessor_nested_elif.inp"], False, False
     )
     solids = greg.solidDict
@@ -397,7 +397,7 @@ def test_FlairLoad_T906_preprocessor_nested_elif(testdata):
 
 
 def test_FlairLoad_T907_preprocessor_nested_else(testdata):
-    freg, greg = flairLoadWriteTest(
+    _freg, greg = flairLoadWriteTest(
         testdata["fluka/907_preprocessor_nested_else.inp"], False, False
     )
     solids = greg.solidDict
