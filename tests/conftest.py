@@ -9,11 +9,6 @@ import os
 import pytest
 from g4edgetestdata import G4EdgeTestData
 
-import warnings
-from pyparsing import PyparsingDeprecationWarning
-
-warnings.filterwarnings("ignore", category=PyparsingDeprecationWarning)
-
 _tmptestdir = Path(gettempdir()) / f"pygama-tests-{getuser()}-{uuid.uuid4()!s}"
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "compare/"))
