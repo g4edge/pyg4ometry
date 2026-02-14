@@ -43,7 +43,7 @@ class Reader:
         print(name, _ph.get_shapeTypeString(self.shapeTool, label), loc)
 
         for i in range(1, label.NbChildren() + 1, 1):
-            b, child = label.FindChild(i, False)
+            _b, child = label.FindChild(i, False)
             self.traverse(child)
 
         rlabel = _TDF.TDF_Label()
