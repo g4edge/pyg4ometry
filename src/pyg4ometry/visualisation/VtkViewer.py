@@ -299,7 +299,7 @@ class VtkViewer:
 
         if fileName:
             # Select the writer to use.
-            path, ext = os.path.splitext(fileName)
+            _path, ext = os.path.splitext(fileName)
             ext = ext.lower()
             if not ext:
                 ext = ".png"
