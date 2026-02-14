@@ -175,193 +175,195 @@ def getSolidChecksum(solid):
 
 
 def test_GdmlLoad_001_BoxLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/001_box.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/001_box.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["box1"]), -1)
 
 
 def test_GdmlLoad_002_TubeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/002_tubs.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/002_tubs.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["tube1"]), -1)
 
 
 def test_GdmlLoad_003_CutTubeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/003_cut_tubs.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/003_cut_tubs.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["cuttube1"]), -1)
 
 
 def test_GdmlLoad_004_ConeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/004_cons.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/004_cons.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["cone1"]), -1)
 
 
 def test_GdmlLoad_005_ParaLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/005_para.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/005_para.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["para1"]), -1)
 
 
 def test_GdmlLoad_006_TrdLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/006_trd.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/006_trd.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["trd1"]), -1)
 
 
 def test_GdmlLoad_007_TrapLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/007_trap.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/007_trap.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["trap1"]), -1)
 
 
 def test_GdmlLoad_008_SphereLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/008_sphere.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/008_sphere.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["sphere1"]), -1)
 
 
 def test_GdmlLoad_009_OrbLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/009_orb.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/009_orb.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["orb1"]), -1)
 
 
 def test_GdmlLoad_010_TorusLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/010_torus.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/010_torus.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["torus1"]), -1)
 
 
 def test_GdmlLoad_011_PolyconeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/011_polycone.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/011_polycone.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["polycone1"]), -1)
 
 
 def test_GdmlLoad_012_GenericPolyconeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/012_generic_polycone.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/012_generic_polycone.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["genpoly1"]), -1)
 
 
 def test_GdmlLoad_013_PolyhedraLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/013_polyhedra.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/013_polyhedra.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["polyhedra1"]), -1)
 
 
 def test_GdmlLoad_014_GenericPolyhedraLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/014_generic_polyhedra.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(
+        testdata["gdml/014_generic_polyhedra.gdml"]
+    )
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["genpolyhedra1"]), -1)
 
 
 def test_GdmlLoad_015_EltubeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/015_eltube.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/015_eltube.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["eltube1"]), -1)
 
 
 def test_GdmlLoad_016_EllipsoidLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/016_ellipsoid.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/016_ellipsoid.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["ellipsoid"]), -1)
 
 
 def test_GdmlLoad_017_ElconeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/017_elcone.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/017_elcone.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["elcone1"]), -1)
 
 
 def test_GdmlLoad_018_ParaboloidLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/018_paraboloid.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/018_paraboloid.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["paraboloid1"]), -1)
 
 
 def test_GdmlLoad_019_HypeLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/019_hype.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/019_hype.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["hype1"]), -1)
 
 
 def test_GdmlLoad_020_TetLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/020_tet.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/020_tet.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["tet1"]), -1)
 
 
 def test_GdmlLoad_021_ExtrudedSolid(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/021_xtru.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/021_xtru.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["xtru1"]), -1)
 
 
 def test_GdmlLoad_022_TwistedBox(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/022_twisted_box.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/022_twisted_box.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["twistbox1"]), -1)
 
 
 def test_GdmlLoad_023_TwistedTrap(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/023_twisted_trap.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/023_twisted_trap.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["twisttrap1"]), -1)
 
 
 def test_GdmlLoad_024_TwistedTrd(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/024_twisted_trd.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/024_twisted_trd.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["twisttrd1"]), -1)
 
 
 def test_GdmlLoad_025_TwistedTubs(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/025_twisted_tube.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/025_twisted_tube.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["twisttube1"]), -1)
 
 
 def test_GdmlLoad_026_GenericTrap(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/026_generic_trap.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/026_generic_trap.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["arb81"]), -1)
 
 
 def test_GdmlLoad_027_TessellatedSolid(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/027_tesselated.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/027_tesselated.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["tessellated"]), -1)
 
 
 def test_GdmlLoad_028_UnionLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/028_union.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/028_union.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["union1"]), -1)
 
 
 def test_GdmlLoad_029_SubtractionLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/029_subtraction.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/029_subtraction.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["subtraction1"]), -1)
 
 
 def test_GdmlLoad_030_IntersetionLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/030_intersection.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/030_intersection.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["intersection1"]), -1)
 
 
 def test_GdmlLoad_031_MultiUnionLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/031_multiUnion.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/031_multiUnion.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["multiunion1"]), -1)
 
 
 def test_GdmlLoad_032_ScaledLoad(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/032_scaled.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/032_scaled.gdml"])
     assert geant4LoadTest(writtenFilename)
     # self.assertEqual(getSolidChecksum(registry.solidDict["box1Scaled"]), -1)
 
@@ -377,7 +379,7 @@ def test_GdmlLoad_106_ReplicaVolume_x(testdata):
 
 
 def test_GdmlLoad_107_ReplicaVolume_y(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/107_replica_y.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/107_replica_y.gdml"])
     assert geant4LoadTest(writtenFilename)
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -451,7 +453,9 @@ def test_GdmlLoad_113_ParameterisedVolume_cone(testdata):
 
 
 def test_GdmlLoad_114_ParameterisedVolume_orb(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/114_parameterised_orb.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
+        testdata["gdml/114_parameterised_orb.gdml"]
+    )
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -646,7 +650,7 @@ def test_GdmlLoad_131_DivisionVolume_cons_phi(testdata):
 
 
 def test_GdmlLoad_132_DivisionVolume_cons_z(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/132_division_cons_z.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/132_division_cons_z.gdml"])
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -676,7 +680,7 @@ def test_GdmlLoad_134_DivisionVolume_trd_y(testdata):
 
 
 def test_GdmlLoad_135_DivisionVolume_trd_z(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/135_division_trd_z.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/135_division_trd_z.gdml"])
     # assert(geant4LoadTest(writtenFilename))
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -686,7 +690,7 @@ def test_GdmlLoad_135_DivisionVolume_trd_z(testdata):
 
 
 def test_GdmlLoad_136_DivisionVolume_para_x(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/136_division_para_x.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/136_division_para_x.gdml"])
     # assert(geant4LoadTest(writtenFilename))  # Faulty in Geant4
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -696,7 +700,7 @@ def test_GdmlLoad_136_DivisionVolume_para_x(testdata):
 
 
 def test_GdmlLoad_137_DivisionVolume_para_y(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/137_division_para_y.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/137_division_para_y.gdml"])
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -706,7 +710,7 @@ def test_GdmlLoad_137_DivisionVolume_para_y(testdata):
 
 
 def test_GdmlLoad_138_DivisionVolume_para_z(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/138_division_para_z.gdml"])
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/138_division_para_z.gdml"])
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
 
     for volname, volume in registry.physicalVolumeDict.items():
@@ -716,7 +720,7 @@ def test_GdmlLoad_138_DivisionVolume_para_z(testdata):
 
 
 def test_GdmlLoad_139_DivisionVolume_polycone_rho(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/139_division_polycone_rho.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
@@ -728,7 +732,7 @@ def test_GdmlLoad_139_DivisionVolume_polycone_rho(testdata):
 
 
 def test_GdmlLoad_140_DivisionVolume_polycone_phi(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/140_division_polycone_phi.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Faulty gdml
@@ -740,7 +744,7 @@ def test_GdmlLoad_140_DivisionVolume_polycone_phi(testdata):
 
 
 def test_GdmlLoad_141_DivisionVolume_polycone_z(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/141_division_polycone_z.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
@@ -752,7 +756,7 @@ def test_GdmlLoad_141_DivisionVolume_polycone_z(testdata):
 
 
 def test_GdmlLoad_142_DivisionVolume_polyhedra_rho(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/142_division_polyhedra_rho.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
@@ -764,7 +768,7 @@ def test_GdmlLoad_142_DivisionVolume_polyhedra_rho(testdata):
 
 
 def test_GdmlLoad_143_DivisionVolume_polyhedra_phi(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/143_division_polyhedra_phi.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename))   # Faulty in Geant4
@@ -776,7 +780,7 @@ def test_GdmlLoad_143_DivisionVolume_polyhedra_phi(testdata):
 
 
 def test_GdmlLoad_144_DivisionVolume_polyhedra_z(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/144_division_polyhedra_z.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Faulty in Geant4
@@ -788,17 +792,17 @@ def test_GdmlLoad_144_DivisionVolume_polyhedra_z(testdata):
 
 
 def test_GdmlLoad_150_OpticalSurfaces(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/150_opticalsurfaces.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/150_opticalsurfaces.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_201_Materials(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/201_materials.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/201_materials.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_Auxiliary(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/202_auxiliary.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/202_auxiliary.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
@@ -853,89 +857,91 @@ def test_GdmlLoad_306_Tubs_Bad_Pi(testdata):
 
 
 def test_GdmlLoad_ChargeExhangeMC(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/ChargeExchangeMC/lht.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(
+        testdata["gdml/ChargeExchangeMC/lht.gdml"]
+    )
     # assert(geant4LoadTest(writtenFilename)) # Overlaps in the original file
 
 
 def test_GdmlLoad_G01assembly(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/assembly.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/assembly.gdml"])
     # assert(geant4LoadTest(writtenFilename)) # Overlaps in the original file
 
 
 def test_GdmlLoad_G01auxiliary(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/auxiliary.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/auxiliary.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01axes(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/axes.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/axes.gdml"])
     # assert(geant4LoadTest(writtenFilename)) # Overlaps in the original file
 
 
 def test_GdmlLoad_G01divisionvol(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml//G01/divisionvol.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml//G01/divisionvol.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01mat_nist(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/mat_nist.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/mat_nist.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01multiUnion(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/multiUnion.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/multiUnion.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01pTube(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/pTube.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/pTube.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01parameterized(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/parameterized.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/parameterized.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01replicated(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml//G01/replicated.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml//G01/replicated.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01scale(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/scale.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/scale.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01solids(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/solids.gdml"])
+    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/solids.gdml"])
     assert geant4LoadTest(writtenFilename)
 
 
 def test_GdmlLoad_G01tess(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/tess.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G01/tess.gdml"])
     # assert(geant4LoadTest(writtenFilename))
 
 
 def test_GdmlLoad_G02test(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G02/test.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G02/test.gdml"])
     # assert(geant4LoadTest(writtenFilename))
 
 
 def test_GdmlLoad_G04auxiliary(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G04/auxiliary.gdml"])
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/G04/auxiliary.gdml"])
     # assert(geant4LoadTest(writtenFilename))
 
 
 def test_GdmlLoad_Par02FullDetector(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/Par02/Par02FullDetector.gdml"]
     )
     # assert(geant4LoadTest(writtenFilename)) # Overlaps in the orignal file
 
 
 def test_GdmlLoad_BDSIM_colour(testdata):
-    registry, writtenFilename = pyg4ometryLoadWriteTest(
+    _registry, _writtenFilename = pyg4ometryLoadWriteTest(
         testdata["gdml/CompoundExamples/bdsim/vkickers-coloured.gdml"]
     )
 
