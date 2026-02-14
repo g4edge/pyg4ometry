@@ -169,3 +169,6 @@ before-all = ".github/bin/install-deps-macos.sh"
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 before-all = ".github/bin/install-deps-windows.cmd"
+
+[pytest]
+filterwarnings = "ignore::pyparsing.warnings.PyparsingDeprecationWarning"
