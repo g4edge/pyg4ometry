@@ -156,11 +156,11 @@ def test(fileName):
         # label attributes
         name = TDataStd_Name()
         nameGUID = TDataStd_Name.GetID()
-        found, name = l.FindAttribute(nameGUID, name)
+        _found, name = l.FindAttribute(nameGUID, name)
 
         solidName = TNaming_NamedShape()
         solidNameGUID = TNaming_NamedShape.GetID()
-        found, solidName = l.FindAttribute(solidNameGUID, solidName)
+        _found, solidName = l.FindAttribute(solidNameGUID, solidName)
 
         print(
             name.Get().ToExtString(),
