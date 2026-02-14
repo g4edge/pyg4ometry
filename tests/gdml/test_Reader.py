@@ -379,7 +379,7 @@ def test_GdmlLoad_106_ReplicaVolume_x(testdata):
 
 
 def test_GdmlLoad_107_ReplicaVolume_y(testdata):
-    _registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/107_replica_y.gdml"])
+    registry, writtenFilename = pyg4ometryLoadWriteTest(testdata["gdml/107_replica_y.gdml"])
     assert geant4LoadTest(writtenFilename)
 
     for volname, volume in registry.physicalVolumeDict.items():
