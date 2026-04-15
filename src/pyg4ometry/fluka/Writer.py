@@ -122,6 +122,11 @@ class Writer:
         for rk in self.flukaRegistry.regionDict.keys():
             f.write(self.flukaRegistry.regionDict[rk].flukaFreeString())
         f.write("END\n")
+        # TODO write lattice to output
+        # for la in self.flukaRegistry.latticeDict.keys():
+        #    f.write(self.flukaRegistry.latticeDict[la].flukaFreeString()+"\n")
+        for la in self.flukaRegistry.latticeCards:
+            f.write(la.toFreeString() + "\n")
         f.write("GEOEND\n")
 
         # loop over materials
@@ -178,6 +183,12 @@ class Writer:
                 rotdefi_name = c.what2
                 rotdefi = self.flukaRegistry.rotoTranslations.get(rotdefi_name)
                 f.write(rotdefi[0].flukaFreeString() + "\n")
+
+        # loop over lattice to write transforms
+        for c in self.flukaRegistry.latticeCards:
+            rotdefi_name = c.sdum
+            rotdefi = self.flukaRegistry.rotoTranslations.get(rotdefi_name)
+            f.write(rotdefi[0].flukaFreeString() + "\n")
 
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys():
