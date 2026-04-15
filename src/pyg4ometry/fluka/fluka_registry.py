@@ -50,6 +50,7 @@ class FlukaRegistry:
         self.iMaterials = 0
         self.materialShortName = _OrderedDict()
         self.latticeDict = _OrderedDict()
+        self.latticeCards = []
         self.mgnFieldDict = _OrderedDict()
         self.cardDict = _OrderedDict()
         self.assignmas = _OrderedDict()
@@ -103,6 +104,9 @@ class FlukaRegistry:
             msg = "LATTICE cell already been defined as a region in regionDict"
             raise ValueError(msg)
         self.latticeDict[lattice.cellRegion.name] = lattice
+
+    def addLatticeCard(self, lattice):
+        self.latticeCards.append(lattice)
 
     def getBody(self, name):
         return self.bodyDict[name]
