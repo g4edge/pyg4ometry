@@ -149,9 +149,9 @@ class Writer:
 
                 fld = None
                 if self.flukaRegistry.assignmas[rk][1]:
-                    fld = 2
-                elif self.flukaRegistry.assignmas[rk][2]:
                     fld = 1
+                elif self.flukaRegistry.assignmas[rk][2]:
+                    fld = 2
                 elif self.flukaRegistry.assignmas[rk][1] and self.flukaRegistry.assignmas[rk][2]:
                     fld = 3
 
