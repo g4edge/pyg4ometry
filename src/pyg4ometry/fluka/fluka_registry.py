@@ -196,6 +196,10 @@ class FlukaRegistry:
         old = self.assignmas[region]
         self.assignmas[region] = (old[0], old[1], ele_name)
 
+    def assignmaAddMaterial(self, region, material):
+        old = self.assignmas[region]
+        self.assignmas[region] = (material, old[1], old[2])
+
     def addCard(self, card):
         if card.keyword in self.cardDict:
             self.cardDict[card.keyword].append(card)
