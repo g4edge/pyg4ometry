@@ -192,7 +192,7 @@ class FlukaRegistry:
         old = self.assignmas[region]
         self.assignmas[region] = (old[0], mgn_name, old[2])
 
-    def assignmaAddMagnetic(self, region, ele_name):
+    def assignmaAddElectric(self, region, ele_name):
         old = self.assignmas[region]
         self.assignmas[region] = (old[0], old[1], ele_name)
 
