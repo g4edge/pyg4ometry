@@ -286,13 +286,20 @@ def geant4PhysicalVolume2Fluka(
         ):
             flukaRegistry.addRegion(flukaMotherRegion)
             materialName = physicalVolume.logicalVolume.material.name
-            materialNameShort = flukaRegistry.materialShortName[materialName]
 
-            try:
-                flukaMaterial = flukaRegistry.materials[materialNameShort]
+            # if the Geant4 materials have been converted
+            if materialName in flukaRegistry.materialShortName:
+                materialNameShort = flukaRegistry.materialShortName[materialName]
+
+                try:
+                    flukaMaterial = flukaRegistry.materials[materialNameShort]
+                    flukaRegistry.addMaterialAssignments(flukaMaterial, flukaMotherRegion)
+                except KeyError:
+                    pass
+            # if not create a fluka material and assign
+            else:
+                flukaMaterial = flukaRegistry.materials[materialName]
                 flukaRegistry.addMaterialAssignments(flukaMaterial, flukaMotherRegion)
-            except KeyError:
-                pass
 
     return flukaMotherOuterRegion, flukaNameCount
 
