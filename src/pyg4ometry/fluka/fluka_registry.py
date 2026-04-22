@@ -860,6 +860,11 @@ class FlukaBodyStoreExact:
     def values(self):
         return self.nameBody.values()
 
+    def pop(self, key):
+        b = self[key]
+        del self[key]
+        return b
+
     def __setitem__(self, key, value):
         assert key == value.name
         self.addBody(value)
