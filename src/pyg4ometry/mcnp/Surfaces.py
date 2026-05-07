@@ -513,7 +513,21 @@ class BOX:
     """
 
     def __init__(
-        self, vx, vy, vz, a1x, a1y, a1z, a2x, a2y, a2z, a3x, a3y, a3z, reg=None, surfaceNumber=None
+        self,
+        vx,
+        vy,
+        vz,
+        a1x,
+        a1y,
+        a1z,
+        a2x,
+        a2y,
+        a2z,
+        a3x,
+        a3y,
+        a3z,
+        reg=None,
+        surfaceNumber=None,
     ):
         self.vx = vx
         self.vy = vy
@@ -687,7 +701,21 @@ class REC:
     """
 
     def __init__(
-        self, vx, vy, vz, hx, hy, hz, v1x, v1y, v1z, v2x, v2y, v2z, reg=None, surfaceNumber=None
+        self,
+        vx,
+        vy,
+        vz,
+        hx,
+        hy,
+        hz,
+        v1x,
+        v1y,
+        v1z,
+        v2x,
+        v2y,
+        v2z,
+        reg=None,
+        surfaceNumber=None,
     ):
         self.vx = vx
         self.vy = vy
@@ -788,7 +816,21 @@ class WED:
     """
 
     def __init__(
-        self, vx, vy, vz, v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, reg=None, surfaceNumber=None
+        self,
+        vx,
+        vy,
+        vz,
+        v1x,
+        v1y,
+        v1z,
+        v2x,
+        v2y,
+        v2z,
+        v3x,
+        v3y,
+        v3z,
+        reg=None,
+        surfaceNumber=None,
     ):
         self.vx = vx
         self.vy = vy

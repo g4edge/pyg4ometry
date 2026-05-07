@@ -26,7 +26,11 @@ class ViewerHierarchyBase:
         Return a set of vis options according to the precedence of pv, lv, default.
         """
         # take the first non-None set of visOptions
-        orderOfPrecedence = [pv.visOptions, pv.logicalVolume.visOptions, self.defaultVisOptions]
+        orderOfPrecedence = [
+            pv.visOptions,
+            pv.logicalVolume.visOptions,
+            self.defaultVisOptions,
+        ]
         return next(item for item in orderOfPrecedence if item is not None)
 
     def getVisOptionsLV(self, lv):

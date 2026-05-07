@@ -10,7 +10,12 @@ import filecmp as _fc
 
 
 def Test(
-    vis=False, interactive=False, fluka=True, disjoint=False, outputPath=None, refFilePath=None
+    vis=False,
+    interactive=False,
+    fluka=True,
+    disjoint=False,
+    outputPath=None,
+    refFilePath=None,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent

@@ -77,7 +77,9 @@ class Card:
         # column positions are multiples of 10 up to 80 inclusive.
         positions = [10 * x for x in range(9)]
         # Split the line into a list of strings according to the positions
-        columns = [line[start:stop] for start, stop in zip(positions, positions[1:])]
+        columns = [
+            line[start:stop] for start, stop in zip(positions, positions[1:])  # noqa: RUF007
+        ]
         # remove trailing/leading whitepace
         columns = [column.strip() for column in columns]
         # Empty strings -> None

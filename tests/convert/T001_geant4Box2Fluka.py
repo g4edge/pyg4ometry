@@ -10,7 +10,12 @@ import numpy as _np
 
 
 def Test(
-    vis=False, interactive=False, fluka=True, outputPath=None, refFilePath=None, bakeTransform=False
+    vis=False,
+    interactive=False,
+    fluka=True,
+    outputPath=None,
+    refFilePath=None,
+    bakeTransform=False,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent

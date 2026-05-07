@@ -131,7 +131,12 @@ def geant4Logical2Fluka(logicalVolume, flukaRegistry=None, bakeTransforms=False)
         new_tra = mtra @ pvtra + tra
 
         flukaDaughterOuterRegion, flukaNameCount = geant4PhysicalVolume2Fluka(
-            dv, new_mtra, new_tra, flukaRegistry, flukaNameCount, bakeTransforms=bakeTransforms
+            dv,
+            new_mtra,
+            new_tra,
+            flukaRegistry,
+            flukaNameCount,
+            bakeTransforms=bakeTransforms,
         )
 
         # subtract daughters from black body
@@ -709,7 +714,6 @@ def geant4Solid2FlukaRegion(
             fregion.addZone(zone1)
 
     elif solid.type == "MultiUnion":
-
         fregion = _fluka.Region("R" + name)
 
         r1, flukaNameCount = geant4Solid2FlukaRegion(
@@ -726,7 +730,6 @@ def geant4Solid2FlukaRegion(
             fregion.addZone(zone)
 
         for solid, trans in zip(solid.objects[1:], solid.transformations):
-
             bsrot = trans[0].eval()
             bspos = trans[1].eval()
 
@@ -3334,8 +3337,8 @@ def geant4Hype2Fluka(
     # x^2 + y^2 - b^2z^2 + c = 0; r^2 = x^2+y^2.
     cOuter = -(outerRadius**2)
     cInner = -(innerRadius**2)
-    czzOuter = -_np.tan(outerStereo) ** 2
-    czzInner = -_np.tan(innerStereo) ** 2
+    czzOuter = -(_np.tan(outerStereo) ** 2)
+    czzInner = -(_np.tan(innerStereo) ** 2)
 
     cxx = 1
     cyy = 1
@@ -3558,7 +3561,10 @@ def geant4GenericTrap2Fluka(
 
     if bakeTransform:
         transform = _rotoTranslationFromTra2(
-            "IDENT", [[0.0, 0, 0], [0, 0, 0]], flukaregistry=flukaRegistry, allowZero=True
+            "IDENT",
+            [[0.0, 0, 0], [0, 0, 0]],
+            flukaregistry=flukaRegistry,
+            allowZero=True,
         )
 
     verts_tuple = tuple(tuple(vert) for vert in verts)

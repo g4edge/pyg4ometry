@@ -6,7 +6,6 @@ except ImportError:
 
 
 class SolidBase(UsdGeomMesh):
-
     def __init__(self, stage, path):
         if UsdGeomMesh is object:
             msg = "Failed to import open usd"

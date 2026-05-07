@@ -1151,7 +1151,12 @@ class VtkViewerColoured(VtkViewer):
     """
 
     def __init__(
-        self, *args, defaultColour=None, defaultAlpha=0.5, materialVisOptions=None, **kwargs
+        self,
+        *args,
+        defaultColour=None,
+        defaultAlpha=0.5,
+        materialVisOptions=None,
+        **kwargs,
     ):
         kwargs["interpolation"] = kwargs.get("interpolation", "flat")
         super().__init__(*args, **kwargs)

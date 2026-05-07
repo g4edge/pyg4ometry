@@ -1,4 +1,6 @@
 # Generated from RegionParser.g4 by ANTLR 4.13.1
+from __future__ import annotations
+
 from antlr4 import *
 from io import StringIO
 import sys
@@ -814,7 +816,15 @@ class RegionParser(Parser):
     RULE_subZone = 5
     RULE_unaryExpression = 6
 
-    ruleNames = ["regions", "region", "zoneUnion", "zone", "expr", "subZone", "unaryExpression"]
+    ruleNames = [
+        "regions",
+        "region",
+        "zoneUnion",
+        "zone",
+        "expr",
+        "subZone",
+        "unaryExpression",
+    ]
 
     EOF = Token.EOF
     Whitespace = 1
@@ -845,7 +855,7 @@ class RegionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def region(self, i: Optional[int] = None):
+        def region(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.RegionContext)
             else:
@@ -994,13 +1004,13 @@ class RegionParser(Parser):
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def zone(self, i: Optional[int] = None):
+        def zone(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.ZoneContext)
             else:
                 return self.getTypedRuleContext(RegionParser.ZoneContext, i)
 
-        def Bar(self, i: Optional[int] = None):
+        def Bar(self, i: int | None = None):
             if i is None:
                 return self.getTokens(RegionParser.Bar)
             else:
@@ -1019,13 +1029,13 @@ class RegionParser(Parser):
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def Bar(self, i: Optional[int] = None):
+        def Bar(self, i: int | None = None):
             if i is None:
                 return self.getTokens(RegionParser.Bar)
             else:
                 return self.getToken(RegionParser.Bar, i)
 
-        def zone(self, i: Optional[int] = None):
+        def zone(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(RegionParser.ZoneContext)
             else:

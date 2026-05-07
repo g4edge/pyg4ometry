@@ -375,7 +375,12 @@ def _oce2Geant4_traverse(
 
 
 def oce2Geant4(
-    shapeTool, shapeName, materialMap={}, labelToSkipList=[], meshQualityMap={}, oceName=False
+    shapeTool,
+    shapeName,
+    materialMap={},
+    labelToSkipList=[],
+    meshQualityMap={},
+    oceName=False,
 ):
     """
     Convert CAD geometry starting from shapeName

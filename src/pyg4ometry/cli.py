@@ -268,7 +268,16 @@ def cli(
             errMsg = "pyg4> clip must be supplied with exactly 3 numbers"
             raise ValueError(errMsg)
         clipBoxes = _pyg4.misc.NestedBoxes(
-            "clipper", clip[0], clip[1], clip[2], reg, "mm", 1e-3, 1e-3, 1e-3, wl.depth()
+            "clipper",
+            clip[0],
+            clip[1],
+            clip[2],
+            reg,
+            "mm",
+            1e-3,
+            1e-3,
+            1e-3,
+            wl.depth(),
         )
         wl.clipGeometry(clipBoxes, r, t)
 
@@ -495,11 +504,15 @@ def main(testArgs=None, testing=False):
         metavar="LVNAME",
     )
     parser.add_option(
-        "-z", "--citation", help="print citation text", dest="citation", action="store_true"
+        "-z",
+        "--citation",
+        help="print citation text",
+        dest="citation",
+        action="store_true",
     )
 
     # features
-    (options, _args) = parser.parse_args(args=testArgs)
+    options, _args = parser.parse_args(args=testArgs)
 
     verbose = options.__dict__["verbose"]
     if verbose:

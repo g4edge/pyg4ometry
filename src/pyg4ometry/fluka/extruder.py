@@ -16,7 +16,13 @@ import numpy as _np
 
 class Extruder(solid.SolidBase):
     def __init__(
-        self, name="", length=1000, angle=0.0, regions=None, materials=None, registry=None
+        self,
+        name="",
+        length=1000,
+        angle=0.0,
+        regions=None,
+        materials=None,
+        registry=None,
     ):
         super().__init__(name, "extruder", registry)
 

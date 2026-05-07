@@ -209,19 +209,19 @@ class Reader:
                 value = df.childNodes[0].nodeValue
                 _defines.Expression(name, value, self._registry, True)
             elif define_type == "position":
-                (x, y, z, u) = getXYZ(def_attrs)
+                x, y, z, u = getXYZ(def_attrs)
                 unit = u if u else "mm"
                 _defines.Position(name, x, y, z, unit, self._registry, True)
             elif define_type == "rotation":
-                (x, y, z, u) = getXYZ(def_attrs)
+                x, y, z, u = getXYZ(def_attrs)
                 unit = u if u else "rad"
                 _defines.Rotation(name, x, y, z, unit, self._registry, True)
             elif define_type == "scale":
-                (x, y, z, u) = getXYZ(def_attrs)
+                x, y, z, u = getXYZ(def_attrs)
                 unit = u if u else "none"
                 _defines.Scale(name, x, y, z, unit, self._registry, True)
             elif define_type == "matrix":
-                (coldim, values) = getMatrix(def_attrs)
+                coldim, values = getMatrix(def_attrs)
                 _defines.Matrix(name, coldim, values, self._registry, True)
             else:
                 _log.warning("unrecognised define: %s", define_type)
@@ -633,7 +633,9 @@ class Reader:
                 # self.parseSolidLoop(node)
             else:
                 _log.warning(
-                    "unrecognized solid %s (name=%s)", solid_type, node.attributes["name"].value
+                    "unrecognized solid %s (name=%s)",
+                    solid_type,
+                    node.attributes["name"].value,
                 )
 
     def parseBox(self, node):

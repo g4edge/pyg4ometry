@@ -7,7 +7,13 @@ import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    writeNISTMaterials=False,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

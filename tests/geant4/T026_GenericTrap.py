@@ -9,7 +9,13 @@ normal = 1
 zero_area_quad = 2
 
 
-def Test(vis=False, interactive=False, writeNISTMaterials=False, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    writeNISTMaterials=False,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 
