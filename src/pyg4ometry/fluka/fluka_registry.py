@@ -360,7 +360,12 @@ class FlukaRegistry:
 
     def addPhotonuc(self, what1, mat_low, mat_high, mat_step, sdum=""):
         c = _card.Card(
-            "PHOTONUC", what1=what1, what4=mat_low, what5=mat_high, what6=mat_step, sdum=sdum
+            "PHOTONUC",
+            what1=what1,
+            what4=mat_low,
+            what5=mat_high,
+            what6=mat_step,
+            sdum=sdum,
         )
         self.addCard(c)
 
@@ -524,7 +529,9 @@ class FlukaRegistry:
                 # update regions if body name has changed
                 for regionKey in flukaRegistry.regionDict:
                     bodySetRename(
-                        flukaRegistry.regionDict[regionKey].bodies(), old_body_name, new_body_name
+                        flukaRegistry.regionDict[regionKey].bodies(),
+                        old_body_name,
+                        new_body_name,
                     )
 
             # update merged counter

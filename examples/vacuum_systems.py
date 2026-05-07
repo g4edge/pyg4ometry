@@ -130,7 +130,15 @@ def CF_BlankFlange(name="flange1", cf_dn="DN16", reg=None, vis=False, write=True
         )
 
     cfSolid = _g4.solid.Tubs(
-        name + "_cf", 0, data["innerDiameter1"] / 2.0, data["height1"], 0, "2*pi", reg, "mm", "rad"
+        name + "_cf",
+        0,
+        data["innerDiameter1"] / 2.0,
+        data["height1"],
+        0,
+        "2*pi",
+        reg,
+        "mm",
+        "rad",
     )
     flangeSolid = _g4.solid.Subtraction(
         name + "_sub_" + str(data["holeNumber"]),
@@ -176,7 +184,15 @@ def CF_BeamPipe(
         reg = _g4.Registry()
 
     bpSolid = _g4.solid.Tubs(
-        name + "_bp", bpId / 2, bpId / 2 + bpThickness, bpLength, 0, "2*pi", reg, "mm", "rad"
+        name + "_bp",
+        bpId / 2,
+        bpId / 2 + bpThickness,
+        bpLength,
+        0,
+        "2*pi",
+        reg,
+        "mm",
+        "rad",
     )
     bpSolidInner = _g4.solid.Tubs(
         name + "_bpInner", 0, bpId / 2, bpLength, 0, "2*pi", reg, "mm", "rad"
@@ -191,7 +207,11 @@ def CF_BeamPipe(
 
         # cut through flange
         flange1Solid = _g4.solid.Subtraction(
-            flange1Solid.name + "_cut", flange1Solid, bpSolidInner, [[0, 0, 0], [0, 0, 0]], reg
+            flange1Solid.name + "_cut",
+            flange1Solid,
+            bpSolidInner,
+            [[0, 0, 0], [0, 0, 0]],
+            reg,
         )
 
         # union with beam pipe
@@ -212,7 +232,11 @@ def CF_BeamPipe(
 
         # cut through flange
         flange2Solid = _g4.solid.Subtraction(
-            flange2Solid.name + "_cut", flange2Solid, bpSolidInner, [[0, 0, 0], [0, 0, 0]], reg
+            flange2Solid.name + "_cut",
+            flange2Solid,
+            bpSolidInner,
+            [[0, 0, 0], [0, 0, 0]],
+            reg,
         )
 
         # union with beam pipe
@@ -307,7 +331,11 @@ def CF_CuboidalChamber(
         reg,
     )
     chamberBodySolid = _g4.solid.Subtraction(
-        name + "_chamberBody", chamberBodyOuter, chamberBodyInner, [[0, 0, 0], [0, 0, 0]], reg
+        name + "_chamberBody",
+        chamberBodyOuter,
+        chamberBodyInner,
+        [[0, 0, 0], [0, 0, 0]],
+        reg,
     )
 
     chamberFlangeOuter = _g4.solid.Box(
@@ -321,21 +349,31 @@ def CF_CuboidalChamber(
         reg,
     )
     chamberFlangeSolid = _g4.solid.Subtraction(
-        name + "_flangeBody", chamberFlangeOuter, chamberFlangeInner, [[0, 0, 0], [0, 0, 0]], reg
+        name + "_flangeBody",
+        chamberFlangeOuter,
+        chamberFlangeInner,
+        [[0, 0, 0], [0, 0, 0]],
+        reg,
     )
 
     chamberSolid1 = _g4.solid.Union(
         name + "_chamberSolid1",
         chamberBodySolid,
         chamberFlangeSolid,
-        [[0, 0, 0], [0, height / 2 - 2 * thickness + thickness / 2.0 - lengthSafety, 0]],
+        [
+            [0, 0, 0],
+            [0, height / 2 - 2 * thickness + thickness / 2.0 - lengthSafety, 0],
+        ],
         reg,
     )
     chamberSolid2 = _g4.solid.Union(
         name + "_chamberSolid2",
         chamberSolid1,
         chamberFlangeSolid,
-        [[0, 0, 0], [0, -(height / 2 - 2 * thickness + thickness / 2.0 - lengthSafety), 0]],
+        [
+            [0, 0, 0],
+            [0, -(height / 2 - 2 * thickness + thickness / 2.0 - lengthSafety), 0],
+        ],
         reg,
     )
 
@@ -376,7 +414,10 @@ def CF_CuboidalChamber(
             name + "_chamberSolid4_" + k,
             chamberSolid2,
             bpSolid,
-            [[0, rotn, 0], [lengthPort / 2 * _np.sin(rotn), 0, lengthPort / 2 * _np.cos(rotn)]],
+            [
+                [0, rotn, 0],
+                [lengthPort / 2 * _np.sin(rotn), 0, lengthPort / 2 * _np.cos(rotn)],
+            ],
             reg,
         )
         chamberSolid2 = _g4.solid.Subtraction(
@@ -499,7 +540,11 @@ def CF_SphericalChamber(
         )
 
         bpSolid = _g4.solid.Subtraction(
-            bpSolid.name + "_sub1", bpSolid, chamberCutSolid, [[0, 0, 0], [0, 0, -outerRadius]], reg
+            bpSolid.name + "_sub1",
+            bpSolid,
+            chamberCutSolid,
+            [[0, 0, 0], [0, 0, -outerRadius]],
+            reg,
         )
 
         pos = list(_tr.tbxyz2matrix(rotn).dot(_np.array([0, 0, outerRadius])))

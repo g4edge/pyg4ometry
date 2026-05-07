@@ -810,9 +810,11 @@ class LogicalVolume:
         # coplanar with solid
         if coplanar:
             for i in range(len(transformedMeshes)):
-                _log.debug(
-                    f"LogicalVolume.checkOverlaps> full daughter-mother coplanar test {transformedMeshesNames[i]}"
-                ),
+                (
+                    _log.debug(
+                        f"LogicalVolume.checkOverlaps> full daughter-mother coplanar test {transformedMeshesNames[i]}"
+                    ),
+                )
 
                 # cullCoplanar = self.mesh.localboundingmesh.coplanarIntersection(transformedBoundingMeshes[i])
                 # if cullCoplanar.vertexCount() == 0 :

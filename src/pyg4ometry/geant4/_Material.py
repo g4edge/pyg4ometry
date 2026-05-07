@@ -412,7 +412,8 @@ class Material(MaterialBase):
                 # this behaviour is to match Geant4's tolerance of 0 density which if forbids
                 # if loaded in Geant4, it would enforce a minimum without an exception
                 _log.warning(
-                    "Material : '%s' density set to 0, ensuring minimum of 1e-20", self.name
+                    "Material : '%s' density set to 0, ensuring minimum of 1e-20",
+                    self.name,
                 )
                 self.density = 1e-20
                 self.type = "simple"

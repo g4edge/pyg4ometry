@@ -83,14 +83,24 @@ def test_cli_checkoverlaps_long(testdata):
 
 def test_cli_clip_short(testdata):
     _cli.main(
-        ["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "-C", "50,70,200"],
+        [
+            "-i",
+            testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"],
+            "-C",
+            "50,70,200",
+        ],
         testing=True,
     )
 
 
 def test_cli_clip_long(testdata):
     _cli.main(
-        ["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "--clip", "50,70,200"],
+        [
+            "-i",
+            testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"],
+            "--clip",
+            "50,70,200",
+        ],
         testing=True,
     )
 
@@ -131,26 +141,38 @@ def test_cli_clip_short_rot_tra_long(testdata):
 
 def test_cli_compare_short(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "-d", testdata["gdml/001_box.gdml"]], testing=True
+        ["-i", testdata["gdml/001_box.gdml"], "-d", testdata["gdml/001_box.gdml"]],
+        testing=True,
     )
 
 
 def test_cli_compare_long(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "--compare", testdata["gdml/001_box.gdml"]],
+        [
+            "-i",
+            testdata["gdml/001_box.gdml"],
+            "--compare",
+            testdata["gdml/001_box.gdml"],
+        ],
         testing=True,
     )
 
 
 def test_cli_append_short(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "-e", testdata["gdml/001_box.gdml"]], testing=True
+        ["-i", testdata["gdml/001_box.gdml"], "-e", testdata["gdml/001_box.gdml"]],
+        testing=True,
     )
 
 
 def test_cli_append_long(testdata):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "--append", testdata["gdml/001_box.gdml"]],
+        [
+            "-i",
+            testdata["gdml/001_box.gdml"],
+            "--append",
+            testdata["gdml/001_box.gdml"],
+        ],
         testing=True,
     )
 
@@ -260,12 +282,16 @@ def test_cli_materials_long(testdata):
 
 
 def test_cli_nullmesh_exception_short(testdata):
-    _cli.main(["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "-n"], testing=True)
+    _cli.main(
+        ["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "-n"],
+        testing=True,
+    )
 
 
 def test_cli_nullmesh_exception_long(testdata):
     _cli.main(
-        ["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "--nullmesh"], testing=True
+        ["-i", testdata["gdml/CompoundExamples/bdsim/vkickers.gdml"], "--nullmesh"],
+        testing=True,
     )
 
 
@@ -275,28 +301,39 @@ def test_cli_output_short_gl(testdata):
 
 @pytest.mark.skipif(_skip_html_tests, reason="requires jinja2 to run")
 def test_cli_output_short_html(testdata, tmptestdir):
-    _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.html")], testing=True)
+    _cli.main(
+        ["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.html")],
+        testing=True,
+    )
 
 
 def test_cli_output_short_gdml(testdata, tmptestdir):
-    _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.gdml")], testing=True)
+    _cli.main(
+        ["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.gdml")],
+        testing=True,
+    )
 
 
 def test_cli_output_long_gdml(testdata, tmptestdir):
     _cli.main(
-        ["-i", testdata["gdml/001_box.gdml"], "--output", str(tmptestdir / "o.gdml")], testing=True
+        ["-i", testdata["gdml/001_box.gdml"], "--output", str(tmptestdir / "o.gdml")],
+        testing=True,
     )
 
 
 def test_cli_output_short_inp(testdata, tmptestdir):
-    _cli.main(["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.inp")], testing=True)
+    _cli.main(
+        ["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.inp")],
+        testing=True,
+    )
 
 
 def test_cli_output_short_usd(testdata, tmptestdir):
     # TODO - change once implemented
     with pytest.raises(NotImplementedError) as ex:
         _cli.main(
-            ["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.usd")], testing=True
+            ["-i", testdata["gdml/001_box.gdml"], "-o", str(tmptestdir / "o.usd")],
+            testing=True,
         )
     assert ex.type is NotImplementedError
 
@@ -353,7 +390,10 @@ def test_cli_planecutter_long2(testdata, tmptestdir):
 def test_cli_planecutter_short_wrong(testdata):
     with pytest.raises(ValueError, match="pyg4> must specify -P or --planeCutterOutput file") as ex:
         # no -P given for output - should complain
-        _cli.main(["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-V"], testing=True)
+        _cli.main(
+            ["-i", testdata["gdml/001_box.gdml"], "-p", "0,0,0,0,1,0", "-V"],
+            testing=True,
+        )
     assert ex.type is ValueError
 
 
@@ -361,7 +401,14 @@ def test_cli_solid_substitution_short_gdml(testdata):
     # TODO - change once implemented
     with pytest.raises(NotImplementedError) as ex:
         _cli.main(
-            ["-i", testdata["gdml/001_box.gdml"], "-s", "Box,px=10,py=20,pz=30", "-x", "box1Vol"],
+            [
+                "-i",
+                testdata["gdml/001_box.gdml"],
+                "-s",
+                "Box,px=10,py=20,pz=30",
+                "-x",
+                "box1Vol",
+            ],
             testing=True,
         )
     assert ex.type is NotImplementedError

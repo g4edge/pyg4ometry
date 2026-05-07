@@ -10,7 +10,12 @@ flat_ends = 2
 
 
 def Test(
-    vis=False, interactive=False, type=normal, outputPath=None, outputFile=None, refFilePath=None
+    vis=False,
+    interactive=False,
+    type=normal,
+    outputPath=None,
+    outputFile=None,
+    refFilePath=None,
 ):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent

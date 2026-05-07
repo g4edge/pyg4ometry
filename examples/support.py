@@ -5,14 +5,18 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vis
 import numpy as _np
 
-
 lengthSafety = 1e-8
 
 
 def SupportMagnet(
     name="supportMagnet",
     shape="polygonal",
-    parameters={"nface": 3, "thickness": 10, "angles": [-45, 0, 45], "distances": [300, 300, 300]},
+    parameters={
+        "nface": 3,
+        "thickness": 10,
+        "angles": [-45, 0, 45],
+        "distances": [300, 300, 300],
+    },
 ):
 
     pass
@@ -197,7 +201,6 @@ def SupportTable(
     )
 
     for iSupport in range(0, nSupport, 1):
-
         z = iSupport * (supportZ - sectionSize) / (nSupport - 1) - (supportZ - sectionSize) / 2.0
         supportXSectionPhysical1 = _g4.PhysicalVolume(
             [0, _np.pi / 2.0, 0],

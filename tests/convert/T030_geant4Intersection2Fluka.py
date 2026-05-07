@@ -11,7 +11,14 @@ normal = 1
 non_intersecting = 2
 
 
-def Test(vis=False, interactive=False, fluka=True, type=normal, outputPath=None, refFilePath=None):
+def Test(
+    vis=False,
+    interactive=False,
+    fluka=True,
+    type=normal,
+    outputPath=None,
+    refFilePath=None,
+):
     if not outputPath:
         outputPath = _pl.Path(__file__).parent
 

@@ -1,6 +1,12 @@
 class Gmad:
     def __init__(
-        self, beamline=None, beam=None, options=None, samplers=None, scorers=[], scorer_meshes=[]
+        self,
+        beamline=None,
+        beam=None,
+        options=None,
+        samplers=None,
+        scorers=[],
+        scorer_meshes=[],
     ):
         self.beamline = beamline
         self.beam = beam

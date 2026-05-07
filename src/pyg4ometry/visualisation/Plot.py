@@ -6,7 +6,13 @@ from .Convert import vtkPolyDataToNumpy as _vtkPolyDataToNumpy
 
 
 def AddCutterDataToPlot(
-    filename, projection="zx", ax=None, unitsFactor=1.0, colour="k", linewidth=0.5, alpha=1.0
+    filename,
+    projection="zx",
+    ax=None,
+    unitsFactor=1.0,
+    colour="k",
+    linewidth=0.5,
+    alpha=1.0,
 ):
     """
     Add cutter data to a plot or draw in a new figure if no axis object given.
@@ -68,7 +74,13 @@ def AddCutterDataToPlot(
 
 
 def AddCutterDataToPlotNoConectivity(
-    filename, projection="zx", ax=None, unitsFactor=1.0, colour="k", linewidth=0.5, alpha=1.0
+    filename,
+    projection="zx",
+    ax=None,
+    unitsFactor=1.0,
+    colour="k",
+    linewidth=0.5,
+    alpha=1.0,
 ):
     r = _vtk.vtkPolyDataReader()
     r.SetFileName(filename)

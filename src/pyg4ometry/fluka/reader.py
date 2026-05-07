@@ -26,7 +26,6 @@ from .vector import Three
 from ..exceptions import FLUKAError, FLUKAInputError
 from .material import Material, Compound
 
-
 _BODY_NAMES = {
     "RPP",
     "BOX",

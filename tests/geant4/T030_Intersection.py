@@ -6,7 +6,6 @@ import pyg4ometry.visualisation as _vi
 import numpy as _np
 import pyg4ometry.misc as _mi
 
-
 normal = 1
 non_intersecting = 2
 

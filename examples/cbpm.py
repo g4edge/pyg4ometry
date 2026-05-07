@@ -68,7 +68,11 @@ def Test(vis=False, interactive=False, gdml=True, fluka=False):
         "wg_sub3", wg_sub2, wg_cut_solid, [[0, 0, _np.pi], [-wg_centre, 0, 0]], reg
     )
     wg_sub4 = _g4.solid.Subtraction(
-        "wg_sub4", wg_sub3, wg_cut_solid, [[0, 0, 3.0 / 2.0 * _np.pi], [0, -wg_centre, 0]], reg
+        "wg_sub4",
+        wg_sub3,
+        wg_cut_solid,
+        [[0, 0, 3.0 / 2.0 * _np.pi], [0, -wg_centre, 0]],
+        reg,
     )
 
     wg_sub5 = _g4.solid.Subtraction(
@@ -86,7 +90,12 @@ def Test(vis=False, interactive=False, gdml=True, fluka=False):
 
     wg_logical = _g4.LogicalVolume(wg_sub8, "G4_Cu", "wg_logical", reg)
     wg_physical = _g4.PhysicalVolume(
-        [0, 0, 0], [0, 0, -wg_length / 2.0], wg_logical, "wg_physical", world_logical, reg
+        [0, 0, 0],
+        [0, 0, -wg_length / 2.0],
+        wg_logical,
+        "wg_physical",
+        world_logical,
+        reg,
     )
 
     ################################
@@ -121,7 +130,12 @@ def Test(vis=False, interactive=False, gdml=True, fluka=False):
     ca_solid = _g4.solid.Tubs("ca_solid", ca_innerr, wg_outerr, ca_length, 0, 2 * _np.pi, reg)
     ca_logical = _g4.LogicalVolume(ca_solid, "G4_Cu", "ca_logical", reg)
     ca_physical = _g4.PhysicalVolume(
-        [0, 0, 0], [0, 0, ca_length / 2.0 + safety], ca_logical, "ca_physical", world_logical, reg
+        [0, 0, 0],
+        [0, 0, ca_length / 2.0 + safety],
+        ca_logical,
+        "ca_physical",
+        world_logical,
+        reg,
     )
 
     ################################

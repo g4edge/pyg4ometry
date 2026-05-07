@@ -1158,7 +1158,7 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def expression(self, i: Optional[int] = None):
+        def expression(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -1202,7 +1202,7 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def multiplyingExpression(self, i: Optional[int] = None):
+        def multiplyingExpression(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.MultiplyingExpressionContext)
             else:
@@ -1210,7 +1210,7 @@ class GdmlExpressionParser(Parser):
                     GdmlExpressionParser.MultiplyingExpressionContext, i
                 )
 
-        def operatorAddSub(self, i: Optional[int] = None):
+        def operatorAddSub(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.OperatorAddSubContext)
             else:
@@ -1260,13 +1260,13 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def powExpression(self, i: Optional[int] = None):
+        def powExpression(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.PowExpressionContext)
             else:
                 return self.getTypedRuleContext(GdmlExpressionParser.PowExpressionContext, i)
 
-        def operatorMulDiv(self, i: Optional[int] = None):
+        def operatorMulDiv(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.OperatorMulDivContext)
             else:
@@ -1402,13 +1402,13 @@ class GdmlExpressionParser(Parser):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def signedAtom(self, i: Optional[int] = None):
+        def signedAtom(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.SignedAtomContext)
             else:
                 return self.getTypedRuleContext(GdmlExpressionParser.SignedAtomContext, i)
 
-        def POW(self, i: Optional[int] = None):
+        def POW(self, i: int | None = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.POW)
             else:
@@ -1648,7 +1648,7 @@ class GdmlExpressionParser(Parser):
         def LBRACKET(self):
             return self.getToken(GdmlExpressionParser.LBRACKET, 0)
 
-        def expression(self, i: Optional[int] = None):
+        def expression(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -1657,7 +1657,7 @@ class GdmlExpressionParser(Parser):
         def RBRACKET(self):
             return self.getToken(GdmlExpressionParser.RBRACKET, 0)
 
-        def COMMA(self, i: Optional[int] = None):
+        def COMMA(self, i: int | None = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:
@@ -1799,7 +1799,7 @@ class GdmlExpressionParser(Parser):
         def LPAREN(self):
             return self.getToken(GdmlExpressionParser.LPAREN, 0)
 
-        def expression(self, i: Optional[int] = None):
+        def expression(self, i: int | None = None):
             if i is None:
                 return self.getTypedRuleContexts(GdmlExpressionParser.ExpressionContext)
             else:
@@ -1808,7 +1808,7 @@ class GdmlExpressionParser(Parser):
         def RPAREN(self):
             return self.getToken(GdmlExpressionParser.RPAREN, 0)
 
-        def COMMA(self, i: Optional[int] = None):
+        def COMMA(self, i: int | None = None):
             if i is None:
                 return self.getTokens(GdmlExpressionParser.COMMA)
             else:

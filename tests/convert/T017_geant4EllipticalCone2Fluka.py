@@ -8,7 +8,6 @@ import pyg4ometry.fluka as _fluka
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
-
 normal = 1
 zcut_outofrange = 2
 

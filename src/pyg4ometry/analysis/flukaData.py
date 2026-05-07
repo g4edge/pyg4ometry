@@ -60,14 +60,14 @@ class _FlukaDataFile:
         data_size = len(data)
 
         if data_size == 116:
-            (self.title, self.time, self.weight) = _struct.unpack("=80s32sf", data)
+            self.title, self.time, self.weight = _struct.unpack("=80s32sf", data)
             self.ncase = 1
             self.nbatch = 1
         elif data_size == 120:
-            (self.title, self.time, self.weight, self.ncase) = _struct.unpack("=80s32sfi", data)
+            self.title, self.time, self.weight, self.ncase = _struct.unpack("=80s32sfi", data)
             self.nbatch = 1
         elif data_size == 124:
-            (self.title, self.time, self.weight, self.ncase, self.nbatch) = _struct.unpack(
+            self.title, self.time, self.weight, self.ncase, self.nbatch = _struct.unpack(
                 "=80s32sfii", data
             )
         elif data_size == 128:
@@ -176,7 +176,9 @@ class Usrbin(_FlukaDataFile):
         for det in self.detector:
             data = fortran_read(fd)
             det.errors = _np.reshape(
-                _np.frombuffer(data, _np.float32), (det.e1n, det.e2n, det.e3n), order="F"
+                _np.frombuffer(data, _np.float32),
+                (det.e1n, det.e2n, det.e3n),
+                order="F",
             )
 
     def read_header(self, fd):

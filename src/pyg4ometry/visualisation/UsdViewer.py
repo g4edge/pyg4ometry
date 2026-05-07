@@ -102,7 +102,6 @@ class UsdViewer(_ViewerHierarchyBase):
             prim = self.stage.DefinePrim(motherPrim.GetPath().AppendPath(volume.name), "Xform")
 
         if type(volume) is _g4.LogicalVolume:
-
             print("traverseHierarchy> process logical volume")
 
             # add mesh prim
@@ -125,7 +124,6 @@ class UsdViewer(_ViewerHierarchyBase):
 
             # loop over all daughters
             for daughter in volume.daughterVolumes:
-
                 # check if lv and we have already encountered, if so use
                 # existing prim
                 if daughter.logicalVolume.name in self.lvNameToPrimDict:

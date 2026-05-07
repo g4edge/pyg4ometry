@@ -27,7 +27,6 @@ class BlenderViewer(_ViewerBase):
     def createBlenderObjectsUnique(self):
 
         for motherKey in self.instancePlacements:
-
             placements = self.instancePlacements[motherKey]
 
             for placement in placements:

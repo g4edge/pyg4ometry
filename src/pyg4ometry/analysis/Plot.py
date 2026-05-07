@@ -15,7 +15,12 @@ def plotEventSection(geometryFile, flukaFile=None, bdsimFile=None):
 
 
 def plotScoringMeshSection(
-    geometryFile, planeAxis=1, flukaFile=None, flukaBin=None, bdsimFile=None, bdsimHisto=None
+    geometryFile,
+    planeAxis=1,
+    flukaFile=None,
+    flukaBin=None,
+    bdsimFile=None,
+    bdsimHisto=None,
 ):
     v = _VtkViewerNew()
     r = _GdmlReader(geometryFile)

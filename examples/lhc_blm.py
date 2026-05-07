@@ -157,7 +157,11 @@ def electrode_profile():
         )
 
         electrode_arc_points = circle_points(
-            ele_rad, 0, 0, right_tap_angle, ele_cut_da - cut_angle_halfspan - tap_angle_halfspan
+            ele_rad,
+            0,
+            0,
+            right_tap_angle,
+            ele_cut_da - cut_angle_halfspan - tap_angle_halfspan,
         )
 
         # Rotate the ready segment to position
@@ -312,7 +316,16 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     gas_r = _gd.Constant("gas_r", blm_rad + safety, reg)
 
     gas_solid = _g4.solid.Tubs(
-        "gas_volume", zero, gas_r, gas_len, zero, twopi, reg, "mm", "rad", nslice=n_slice
+        "gas_volume",
+        zero,
+        gas_r,
+        gas_len,
+        zero,
+        twopi,
+        reg,
+        "mm",
+        "rad",
+        nslice=n_slice,
     )
 
     gas_material = blm_gas_material
@@ -350,7 +363,16 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     tank_rout = _gd.Constant("tank_r_out", tank_r_out - safety, reg)
 
     tank_solid = _g4.solid.Tubs(
-        "tank", tank_rin, tank_rout, tank_z, zero, twopi, reg, "mm", "rad", nslice=n_slice
+        "tank",
+        tank_rin,
+        tank_rout,
+        tank_z,
+        zero,
+        twopi,
+        reg,
+        "mm",
+        "rad",
+        nslice=n_slice,
     )
 
     tank_material = _g4.Material(name="G4_STAINLESS-STEEL")
@@ -364,7 +386,16 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     endcap_s_r = _gd.Constant("encap_s_radius", endcap_s_rad - safety, reg)
 
     endcap_s_solid = _g4.solid.Tubs(
-        "endcap_s", zero, endcap_s_r, endcap_s_z, zero, twopi, reg, "mm", "rad", nslice=n_slice
+        "endcap_s",
+        zero,
+        endcap_s_r,
+        endcap_s_z,
+        zero,
+        twopi,
+        reg,
+        "mm",
+        "rad",
+        nslice=n_slice,
     )
 
     endcap_s_material = _g4.Material(name="G4_STAINLESS-STEEL")
@@ -382,7 +413,16 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     endcap_e_r = _gd.Constant("encap_e_radius", endcap_e_rad - safety, reg)
 
     endcap_e_solid = _g4.solid.Tubs(
-        "endcap_e", zero, endcap_e_r, endcap_e_z, zero, twopi, reg, "mm", "rad", nslice=n_slice
+        "endcap_e",
+        zero,
+        endcap_e_r,
+        endcap_e_z,
+        zero,
+        twopi,
+        reg,
+        "mm",
+        "rad",
+        nslice=n_slice,
     )
 
     endcap_e_material = _g4.Material(name="G4_STAINLESS-STEEL")
@@ -402,7 +442,16 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
     insulator_hole_r = _gd.Constant("insulator_hole_r", ins_hole_rad - safety, reg)
 
     insulator_base = _g4.solid.Tubs(
-        "insulator_base", zero, insulator_r, ins_l, zero, twopi, reg, "mm", "rad", nslice=n_slice
+        "insulator_base",
+        zero,
+        insulator_r,
+        ins_l,
+        zero,
+        twopi,
+        reg,
+        "mm",
+        "rad",
+        nslice=n_slice,
     )
 
     insulator_cut = _g4.solid.Tubs(
@@ -443,7 +492,12 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
         )
 
     insulator_solid = _g4.solid.Subtraction(
-        "insulator_solid", interim_solid, insulator_hole, [[0, 0, 0], [0, 0, -0.5]], reg, "mm"
+        "insulator_solid",
+        interim_solid,
+        insulator_hole,
+        [[0, 0, 0], [0, 0, -0.5]],
+        reg,
+        "mm",
     )
 
     insulator_lv = _g4.LogicalVolume(insulator_solid, insulator_material, "insulator_lv", reg)
@@ -534,7 +588,10 @@ def make_lhc_blm(vis=False, interactive=False, n_slice=16):
         "spacer_a_interim", sp_a_base, sp_a_notch, sp_a_notch1_tra, reg, "mm"
     )
 
-    sp_a_notch2_tra = [[0, 0, _np.pi / 2], [0, 0, -spacer_a_l / 2.0 + spacer_a_notch_l / 2.0]]
+    sp_a_notch2_tra = [
+        [0, 0, _np.pi / 2],
+        [0, 0, -spacer_a_l / 2.0 + spacer_a_notch_l / 2.0],
+    ]
     spacer_a_solid = _g4.solid.Subtraction(
         "spacer_a_solid", sp_a_int, sp_a_notch, sp_a_notch2_tra, reg, "mm"
     )

@@ -5,7 +5,6 @@ import pyg4ometry.geant4 as _g4
 import pyg4ometry.visualisation as _vi
 import pyg4ometry.misc as _mi
 
-
 normal = 1
 rmin_eq_zero = 2
 rmin_gt_rmax = 3
