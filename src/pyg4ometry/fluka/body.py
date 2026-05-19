@@ -29,6 +29,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 import logging
 from itertools import chain
+import textwrap as _textwrap
 
 import numpy as np
 import vtk
@@ -837,6 +838,20 @@ class REC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
+
+        recstringlines = _textwrap.wrap(
+            f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
+        )
+        recstring = ""
+        for l in recstringlines[0:-1]:
+            recstring += l + "\n"
+        recstring += recstringlines[-1]
+        return prefix + recstring
+
+    def flukaFreeStringOld(self):
+        prefix = ""
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
         return (
             prefix
             + f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
@@ -1482,6 +1497,31 @@ class ARB(BodyMixin):
         )
 
     def flukaFreeString(self):
+        line = []
+        line.extend(list(self.vertices[0]))
+        line.extend(list(self.vertices[1]))
+        line.extend(list(self.vertices[2]))
+        line.extend(list(self.vertices[3]))
+        line.extend(list(self.vertices[4]))
+        line.extend(list(self.vertices[5]))
+        line.extend(list(self.vertices[6]))
+        line.extend(list(self.vertices[7]))
+        itfs = _iterablesToFreeString
+        import textwrap
+
+        prefix = ""
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+
+        arbstringlines = _textwrap.wrap(f"ARB {self.name} " + itfs(line))
+        arbstring = ""
+        for l in arbstringlines:
+            arbstring += l + "\n"
+        arbstring += itfs(self.facenumbers)
+
+        return prefix + arbstring[0:-1]
+
+    def flukaFreeStringOld(self):
         line1 = []
         line1.extend(list(self.vertices[0]))
         line1.extend(list(self.vertices[1]))
