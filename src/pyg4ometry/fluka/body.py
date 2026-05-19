@@ -29,6 +29,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 import logging
 from itertools import chain
+import textwrap as _textwrap
 
 import numpy as np
 import vtk
@@ -330,6 +331,50 @@ class RPP(BodyMixin):
             ^ self.transform.hash()
         )
 
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # RPP -> BOX
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        if np.array_equal(rotation, np.eye(rotation.shape[0])):
+            if np.array_equal(translation, np.array([0, 0, 0])):
+                return self
+            else:
+                return RPP(
+                    self.name,
+                    self.lower[0] + translation[0],
+                    self.upper[0] + translation[0],
+                    self.lower[1] + translation[1],
+                    self.upper[1] + translation[1],
+                    self.lower[2] + translation[2],
+                    self.upper[2] + translation[2],
+                )
+        else:
+
+            v = np.array([self.lower[0], self.lower[1], self.lower[2]])
+            hx = np.array([self.upper[0] - self.lower[0], 0, 0])
+            hy = np.array([0, self.upper[1] - self.lower[1], 0])
+            hz = np.array([0, 0, self.upper[2] - self.lower[2]])
+
+            hxp = rotation @ hx
+            hyp = rotation @ hy
+            hzp = rotation @ hz
+
+            v = rotation @ v + translation
+
+            return BOX(self.name, v, hxp, hyp, hzp)
+
+    def _centreTranslation(self):
+        return -(self.lower + self.upper) / 2.0
+
+    def _axisAlignRotation(self):
+        return np.eye(3)
+
+    def _scale(self, scale):
+        self.lower = self.lower * scale
+        self.upper = self.upper * scale
+
 
 class BOX(BodyMixin):
     """
@@ -450,6 +495,40 @@ class BOX(BodyMixin):
             ^ self.transform.hash()
         )
 
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # BOX -> BOX
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        vp = rotation @ self.vertex + translation
+        hxp = rotation @ self.edge1
+        hyp = rotation @ self.edge2
+        hzp = rotation @ self.edge3
+
+        return BOX(self.name, vp, hxp, hyp, hzp)
+
+    def _centreTranslation(self):
+        return -(self.vertex + (self.edge1 + self.edge2 + self.edge3) / 2.0)
+
+    def _axisAlignRotation(self):
+        hxnorm = self.edge1 / np.linalg.norm(self.edge1)
+        hynorm = self.edge2 / np.linalg.norm(self.edge2)
+        hznorm = self.edge3 / np.linalg.norm(self.edge3)
+
+        h = np.vstack([hxnorm, hynorm, hznorm]).T
+        hp = np.vstack([[1, 0, 0], [0, 1, 0], [0, 0, 1]]).T
+
+        R = hp @ h.T
+
+        return R
+
+    def _scale(self, scale):
+        self.vertex = self.vertex * scale
+        self.edge1 = self.edge1 * scale
+        self.edge2 = self.edge2 * scale
+        self.edge3 = self.edge3 * scale
+
 
 class SPH(BodyMixin):
     """
@@ -506,6 +585,23 @@ class SPH(BodyMixin):
             hash(("SPH", self.point[0], self.point[1], self.point[2], self.radius))
             ^ self.transform.hash()
         )
+
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # SPH -> SPH
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        return SPH(self.name, self.point + translation, self.radius)
+
+    def _centreTranslation(self):
+        return -self.point
+
+    def _axisAlignRotation(self):
+        return np.eyes(3)
+
+    def _scale(self, scale):
+        self.radius = self.radius * scale
 
 
 class RCC(BodyMixin):
@@ -613,6 +709,37 @@ class RCC(BodyMixin):
             ^ self.transform.hash()
         )
 
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # RCC -> RCC
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        vp = rotation @ self.face + translation
+        hp = rotation @ self.direction
+
+        return RCC(self.name, vp, hp, self.radius)
+
+    def _centreTranslation(self):
+        return -(self.face + self.direction / 2.0)
+
+    def _axisAlignRotation(self):
+        dir_zaxis = np.array([0, 0, 1])
+        dir_norm = self.direction / np.linalg.norm(self.direction)
+
+        angle = np.arccos(float(dir_zaxis @ dir_norm))
+        axis = np.cross(dir_norm, dir_zaxis)
+
+        if np.array_equal(dir_norm, np.array([0, 0, 1])):
+            return np.eye(3)
+
+        return trans.axisangle2matrix(axis, angle)
+
+    def _scale(self, scale):
+        self.face = self.face * scale
+        self.direction = self.direction * scale
+        self.radius = self.radius * scale
+
 
 class REC(BodyMixin):
     """
@@ -711,6 +838,20 @@ class REC(BodyMixin):
         prefix = ""
         if self.comment != "":
             prefix = "* " + self.comment + "\n"
+
+        recstringlines = _textwrap.wrap(
+            f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
+        )
+        recstring = ""
+        for l in recstringlines[0:-1]:
+            recstring += l + "\n"
+        recstring += recstringlines[-1]
+        return prefix + recstring
+
+    def flukaFreeStringOld(self):
+        prefix = ""
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
         return (
             prefix
             + f"REC {self.name} {_iterablesToFreeString(self.face, self.direction, self.semiminor, self.semimajor)}"
@@ -734,6 +875,40 @@ class REC(BodyMixin):
             )
             ^ self.transform.hash()
         )
+
+    def _transform(self, rotation=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], translation=[0, 0, 0]):
+
+        # REC -> REC
+        rotation = np.array(rotation)
+        translation = np.array(translation)
+
+        vp = rotation @ self.face + translation
+        hp = rotation @ self.direction
+        r1 = rotation @ self.semiminor
+        r2 = rotation @ self.semimajor
+
+        return RCC(self.name, vp, hp, r1, r2)
+
+    def _centreTranslation(self):
+        return -(self.face + self.direction / 2.0)
+
+    def _axisAlignRotation(self):
+        hnorm = self.direction / np.linalg.norm(self.direction)
+        r1norm = self.semiminor / np.linalg.norm(self.semiminor)
+        r2norm = self.semiminor / np.linalg.norm(self.semiminor)
+
+        h = np.vstack([r1norm, r2norm, hnorm]).T
+        hp = np.vstack([[1, 0, 0], [0, 1, 0], [0, 0, 1]]).T
+
+        R = hp @ h.T
+
+        return R
+
+    def _scale(self, scale):
+        self.face = self.face * scale
+        self.direction = self.direction * scale
+        self.semiminor = self.semiminor * scale
+        self.semimajor = self.semimajor * scale
 
 
 class TRC(BodyMixin):
@@ -1322,6 +1497,31 @@ class ARB(BodyMixin):
         )
 
     def flukaFreeString(self):
+        line = []
+        line.extend(list(self.vertices[0]))
+        line.extend(list(self.vertices[1]))
+        line.extend(list(self.vertices[2]))
+        line.extend(list(self.vertices[3]))
+        line.extend(list(self.vertices[4]))
+        line.extend(list(self.vertices[5]))
+        line.extend(list(self.vertices[6]))
+        line.extend(list(self.vertices[7]))
+        itfs = _iterablesToFreeString
+        import textwrap
+
+        prefix = ""
+        if self.comment != "":
+            prefix = "* " + self.comment + "\n"
+
+        arbstringlines = _textwrap.wrap(f"ARB {self.name} " + itfs(line))
+        arbstring = ""
+        for l in arbstringlines:
+            arbstring += l + "\n"
+        arbstring += itfs(self.facenumbers)
+
+        return prefix + arbstring[0:-1]
+
+    def flukaFreeStringOld(self):
         line1 = []
         line1.extend(list(self.vertices[0]))
         line1.extend(list(self.vertices[1]))

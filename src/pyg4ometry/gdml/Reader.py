@@ -43,6 +43,7 @@ class Reader:
         skipMaterials=False,
         reduceNISTMaterialsToPredefined=False,
         makeAllVisible=False,
+        registryIn=None,
     ):
         super().__init__()
         self.filename = fileName
@@ -54,6 +55,9 @@ class Reader:
 
         if self.registryOn:
             self._registry = _g4.Registry()
+
+        if registryIn is not None:
+            self._registry = registryIn
 
         self._physVolumeNameCount = _defaultdict(int)
 

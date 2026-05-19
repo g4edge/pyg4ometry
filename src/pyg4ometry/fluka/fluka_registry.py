@@ -50,6 +50,7 @@ class FlukaRegistry:
         self.iMaterials = 0
         self.materialShortName = _OrderedDict()
         self.latticeDict = _OrderedDict()
+        self.latticeCards = []
         self.mgnFieldDict = _OrderedDict()
         self.cardDict = _OrderedDict()
         self.assignmas = _OrderedDict()
@@ -103,6 +104,9 @@ class FlukaRegistry:
             msg = "LATTICE cell already been defined as a region in regionDict"
             raise ValueError(msg)
         self.latticeDict[lattice.cellRegion.name] = lattice
+
+    def addLatticeCard(self, lattice):
+        self.latticeCards.append(lattice)
 
     def getBody(self, name):
         return self.bodyDict[name]
@@ -183,6 +187,18 @@ class FlukaRegistry:
 
     def assignma(self, material, *regions):
         return self.addMaterialAssignments(material, *regions)
+
+    def assignmaAddMagnetic(self, region, mgn_name):
+        old = self.assignmas[region]
+        self.assignmas[region] = (old[0], mgn_name, old[2])
+
+    def assignmaAddElectric(self, region, ele_name):
+        old = self.assignmas[region]
+        self.assignmas[region] = (old[0], old[1], ele_name)
+
+    def assignmaAddMaterial(self, region, material):
+        old = self.assignmas[region]
+        self.assignmas[region] = (material, old[1], old[2])
 
     def addCard(self, card):
         if card.keyword in self.cardDict:
@@ -850,6 +866,11 @@ class FlukaBodyStoreExact:
 
     def values(self):
         return self.nameBody.values()
+
+    def pop(self, key):
+        b = self[key]
+        del self[key]
+        return b
 
     def __setitem__(self, key, value):
         assert key == value.name
