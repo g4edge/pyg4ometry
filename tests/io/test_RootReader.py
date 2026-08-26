@@ -3,7 +3,10 @@ import os as _os
 
 import pyg4ometry as _pyg4ometry
 
-pytestmark = pytest.mark.xfail(run=True, reason="requires PyROOT")
+try:
+    import ROOT
+except:
+    pytestmark = pytest.mark.xfail(run=True, reason="requires PyROOT")
 
 
 def gdml2ROOT(gdmlFileName, rootFileName):
