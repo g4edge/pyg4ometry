@@ -221,39 +221,21 @@ def test_17_NativeBox(testdata):
         nativePrimitives=True,
     )
 
-    baseline_box_count = sum(
-        solid.type == "Box"
-        for solid in baseline.solidDict.values()
-    )
-    native_box_count = sum(
-        solid.type == "Box"
-        for solid in native.solidDict.values()
-    )
+    baseline_box_count = sum(solid.type == "Box" for solid in baseline.solidDict.values())
+    native_box_count = sum(solid.type == "Box" for solid in native.solidDict.values())
     baseline_tessellated_count = sum(
-        solid.type == "TessellatedSolid"
-        for solid in baseline.solidDict.values()
+        solid.type == "TessellatedSolid" for solid in baseline.solidDict.values()
     )
     native_tessellated_count = sum(
-        solid.type == "TessellatedSolid"
-        for solid in native.solidDict.values()
+        solid.type == "TessellatedSolid" for solid in native.solidDict.values()
     )
 
-    baseline_types = {
-        name: solid.type
-        for name, solid in baseline.solidDict.items()
-    }
-    native_types = {
-        name: solid.type
-        for name, solid in native.solidDict.items()
-    }
+    baseline_types = {name: solid.type for name, solid in baseline.solidDict.items()}
+    native_types = {name: solid.type for name, solid in native.solidDict.items()}
 
     assert baseline_types.keys() == native_types.keys()
 
-    changed_solids = [
-        name
-        for name in baseline_types
-        if baseline_types[name] != native_types[name]
-    ]
+    changed_solids = [name for name in baseline_types if baseline_types[name] != native_types[name]]
 
     assert len(changed_solids) == 1
     changed_name = changed_solids[0]
@@ -263,6 +245,9 @@ def test_17_NativeBox(testdata):
     assert native_box_count == baseline_box_count + 1
     assert native_tessellated_count == baseline_tessellated_count - 1
     assert native_tessellated_count > 0
+
+
+def test_18_NativeBoxHandedness():
 
     # Regression for a genuinely rotated box whose independently
     # canonicalised axes would otherwise be left-handed.
@@ -291,12 +276,7 @@ def test_17_NativeBox(testdata):
     centre = np.array([3.0, -4.0, 7.0], dtype=float)
     vertices = np.array(
         [
-            centre
-            + (
-                np.array([sx, sy, sz], dtype=float)
-                * half_lengths
-            )
-            @ physical_axes
+            centre + (np.array([sx, sy, sz], dtype=float) * half_lengths) @ physical_axes
             for sx in (-1.0, 1.0)
             for sy in (-1.0, 1.0)
             for sz in (-1.0, 1.0)

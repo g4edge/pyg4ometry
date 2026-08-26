@@ -42,7 +42,8 @@ def canonical_axis(axis: np.ndarray) -> np.ndarray:
     length = float(np.linalg.norm(axis))
 
     if length <= 0.0:
-        raise RuntimeError("Zero-length box axis.")
+        message = "Zero-length box axis."
+        raise RuntimeError(message)
 
     axis = axis / length
 
@@ -62,10 +63,7 @@ def point_set_error(
     predicted: np.ndarray,
     observed: np.ndarray,
 ) -> tuple[float, float]:
-    differences = (
-        predicted[:, None, :]
-        - observed[None, :, :]
-    )
+    differences = predicted[:, None, :] - observed[None, :, :]
     distances = np.linalg.norm(differences, axis=2)
 
     forward = np.min(distances, axis=1)
@@ -73,13 +71,7 @@ def point_set_error(
     combined = np.concatenate([forward, reverse])
 
     return (
-        float(
-            math.sqrt(
-                np.mean(
-                    np.square(combined)
-                )
-            )
-        ),
+        float(math.sqrt(np.mean(np.square(combined)))),
         float(np.max(combined)),
     )
 
@@ -88,11 +80,7 @@ def clean_vector(
     values: list[float],
     tolerance: float = 1.0e-12,
 ) -> list[float]:
-    return [
-        0.0 if abs(float(value)) < tolerance
-        else float(value)
-        for value in values
-    ]
+    return [0.0 if abs(float(value)) < tolerance else float(value) for value in values]
 
 
 def reconstruct_box_from_vertices(
@@ -104,30 +92,24 @@ def reconstruct_box_from_vertices(
     points = np.asarray(vertices, dtype=float)
 
     if points.shape != (8, 3):
-        raise RuntimeError(
+        message = (
             f"{body_name}: exact G4Box reconstruction "
             f"requires 8 unique vertices; observed "
             f"shape {points.shape}."
         )
+        raise RuntimeError(message)
 
     best: dict[str, Any] | None = None
 
     for origin_index, origin in enumerate(points):
-        other_indices = [
-            index
-            for index in range(len(points))
-            if index != origin_index
-        ]
+        other_indices = [index for index in range(len(points)) if index != origin_index]
 
         for edge_indices in combinations(
             other_indices,
             3,
         ):
             edges = np.array(
-                [
-                    points[index] - origin
-                    for index in edge_indices
-                ],
+                [points[index] - origin for index in edge_indices],
                 dtype=float,
             )
             lengths = np.linalg.norm(edges, axis=1)
@@ -138,28 +120,15 @@ def reconstruct_box_from_vertices(
             measured_axes = edges / lengths[:, None]
             gram = measured_axes @ measured_axes.T
 
-            orthogonality_residual = float(
-                np.max(
-                    np.abs(
-                        gram - np.identity(3)
-                    )
-                )
-            )
+            orthogonality_residual = float(np.max(np.abs(gram - np.identity(3))))
 
-            if (
-                orthogonality_residual
-                > orthogonality_tolerance
-            ):
+            if orthogonality_residual > orthogonality_tolerance:
                 continue
 
             predicted = np.array(
                 [
-                    origin
-                    + bit_a * edges[0]
-                    + bit_b * edges[1]
-                    + bit_c * edges[2]
-                    for bit_a, bit_b, bit_c
-                    in product((0.0, 1.0), repeat=3)
+                    origin + bit_a * edges[0] + bit_b * edges[1] + bit_c * edges[2]
+                    for bit_a, bit_b, bit_c in product((0.0, 1.0), repeat=3)
                 ],
                 dtype=float,
             )
@@ -174,9 +143,7 @@ def reconstruct_box_from_vertices(
                 "edges": edges,
                 "lengths": lengths,
                 "axes": measured_axes,
-                "orthogonality_residual": (
-                    orthogonality_residual
-                ),
+                "orthogonality_residual": (orthogonality_residual),
                 "rms": rms,
                 "maximum": maximum,
             }
@@ -184,31 +151,24 @@ def reconstruct_box_from_vertices(
             if (
                 best is None
                 or maximum < best["maximum"]
-                or (
-                    maximum == best["maximum"]
-                    and rms < best["rms"]
-                )
+                or (maximum == best["maximum"] and rms < best["rms"])
             ):
                 best = candidate
 
     if best is None:
-        raise RuntimeError(
-            f"{body_name}: eight vertices do not form "
-            "an orthogonal box."
-        )
+        message = f"{body_name}: eight vertices do not form an orthogonal box."
+        raise RuntimeError(message)
 
     if best["maximum"] > reconstruction_tolerance_mm:
-        raise RuntimeError(
+        message = (
             f"{body_name}: best box reconstruction "
             f"maximum error {best['maximum']:.12g} mm "
             f"exceeds {reconstruction_tolerance_mm:.12g} mm."
         )
+        raise RuntimeError(message)
 
     axes = np.array(
-        [
-            canonical_axis(axis)
-            for axis in best["axes"]
-        ],
+        [canonical_axis(axis) for axis in best["axes"]],
         dtype=float,
     )
     lengths = np.asarray(best["lengths"], dtype=float)
@@ -232,26 +192,22 @@ def reconstruct_box_from_vertices(
         atol=orthogonality_tolerance,
         rtol=0.0,
     ):
-        raise RuntimeError(
+        message = (
             f"{body_name}: reconstructed box basis determinant "
             f"{basis_determinant:.12g} is not orthogonal."
         )
+        raise RuntimeError(message)
     if basis_determinant < 0.0:
         # A box is invariant under an axis sign flip.  Enforce a
         # right-handed basis so the downstream correction is a proper
         # rotation rather than a reflection.
         axes[-1] = -axes[-1]
 
-    centre = (
-        np.asarray(best["origin"], dtype=float)
-        + 0.5 * np.sum(best["edges"], axis=0)
-    )
+    centre = np.asarray(best["origin"], dtype=float) + 0.5 * np.sum(best["edges"], axis=0)
 
     local_corners = np.array(
         [
-            np.asarray(signs, dtype=float)
-            * 0.5
-            * lengths
+            np.asarray(signs, dtype=float) * 0.5 * lengths
             for signs in product(
                 (-1.0, 1.0),
                 repeat=3,
@@ -267,34 +223,23 @@ def reconstruct_box_from_vertices(
     )
 
     if maximum > reconstruction_tolerance_mm:
-        raise RuntimeError(
+        message = (
             f"{body_name}: canonical G4Box "
             f"reconstruction maximum error "
             f"{maximum:.12g} mm exceeds "
             f"{reconstruction_tolerance_mm:.12g} mm."
         )
+        raise RuntimeError(message)
 
     return {
         "representation": "G4Box",
         "centre": clean_vector(centre.tolist()),
         "dimensions": clean_vector(lengths.tolist()),
-        "local_axes": [
-            clean_vector(axis.tolist())
-            for axis in axes
-        ],
-        "reconstruction_source": (
-            "in_memory_tessellated_vertices"
-        ),
+        "local_axes": [clean_vector(axis.tolist()) for axis in axes],
+        "reconstruction_source": ("in_memory_tessellated_vertices"),
         "vertex_rms_mm": rms,
         "vertex_maximum_mm": maximum,
-        "axis_orthogonality_residual": float(
-            np.max(
-                np.abs(
-                    axes @ axes.T
-                    - np.identity(3)
-                )
-            )
-        ),
+        "axis_orthogonality_residual": float(np.max(np.abs(axes @ axes.T - np.identity(3)))),
     }
 
 

@@ -1,7 +1,9 @@
 from .. import geant4 as _g4
 from .. import pyoce as _pyoce
 from .. import transformation as _transformation
-from .ocePrimitiveRecognition import recognise_box_from_shape_vertices as _recognise_box_from_shape_vertices
+from .ocePrimitiveRecognition import (
+    recognise_box_from_shape_vertices as _recognise_box_from_shape_vertices,
+)
 
 import numpy as _np
 
@@ -196,19 +198,16 @@ def oceShape_Geant4_Tessellated(
             local_basis = _np.column_stack(primitive["local_axes"])
             local_centre = _np.asarray(primitive["centre"], dtype=float)
 
-            correction_is_identity = (
-                _np.allclose(
-                    local_basis,
-                    _np.eye(3),
-                    atol=1e-12,
-                    rtol=0.0,
-                )
-                and _np.allclose(
-                    local_centre,
-                    _np.zeros(3),
-                    atol=1e-12,
-                    rtol=0.0,
-                )
+            correction_is_identity = _np.allclose(
+                local_basis,
+                _np.eye(3),
+                atol=1e-12,
+                rtol=0.0,
+            ) and _np.allclose(
+                local_centre,
+                _np.zeros(3),
+                atol=1e-12,
+                rtol=0.0,
             )
 
             if correction_is_identity or nativePlacementAvailable:
@@ -237,9 +236,8 @@ def _apply_native_local_transform(rot, trans, volume):
 
     old_rotation = _transformation.tbxyz2matrix(rot)
     new_rotation = _np.asarray(local_basis, dtype=float).T @ old_rotation
-    new_translation = (
-        old_rotation.T @ _np.asarray(local_centre, dtype=float)
-        + _np.asarray(trans, dtype=float)
+    new_translation = old_rotation.T @ _np.asarray(local_centre, dtype=float) + _np.asarray(
+        trans, dtype=float
     )
 
     if not _np.allclose(
@@ -248,9 +246,8 @@ def _apply_native_local_transform(rot, trans, volume):
         atol=1e-10,
         rtol=0.0,
     ):
-        raise RuntimeError(
-            "Composed native CAD rotation is not orthonormal."
-        )
+        message = "Composed native CAD rotation is not orthonormal."
+        raise RuntimeError(message)
 
     if not _np.isclose(
         _np.linalg.det(new_rotation),
@@ -258,9 +255,8 @@ def _apply_native_local_transform(rot, trans, volume):
         atol=1e-10,
         rtol=0.0,
     ):
-        raise RuntimeError(
-            "Composed native CAD rotation is not proper (det != +1)."
-        )
+        message = "Composed native CAD rotation is not proper (det != +1)."
+        raise RuntimeError(message)
 
     return (
         _transformation.matrix2tbxyz(new_rotation),
