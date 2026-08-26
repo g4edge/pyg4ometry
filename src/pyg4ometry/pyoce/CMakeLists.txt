@@ -27,6 +27,10 @@ if(${OpenCASCADE_VERSION} VERSION_LESS 7.7)
   message(STATUS "using patched OpenCASCADE headers")
 endif()
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 foreach(_source ${_sources})
   configure_pybind11_extension(${_source} PACKAGE pyoce OUT_TARGET X)
   target_link_libraries(${X} PRIVATE ${OpenCASCADE_DataExchange_LIBRARIES})
@@ -36,4 +40,5 @@ foreach(_source ${_sources})
   endif()
 
   target_include_directories(${X} PRIVATE "${OpenCASCADE_INCLUDE_DIR}")
+  target_compile_features(${X} PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
 endforeach()
