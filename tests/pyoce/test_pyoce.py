@@ -194,3 +194,134 @@ def test_16_CurveAndSurface_Extraction(testdata):
 
         print(freeShapeLabel, shape, shape.ShapeType())
         extractSurfacesAndCurvesFromShape(shape)
+
+
+@pytest.mark.skipif(
+    sys.platform == "linux",
+    reason="Test not supported on Linux",
+)
+def test_17_NativeBox(testdata):
+    file_name = testdata["step/1_BasicSolids_Bodies.step"]
+
+    baseline_reader = _pyg4.pyoce.Reader(str(file_name))
+    baseline_free_shapes = baseline_reader.freeShapes()
+    world_name = _pyg4.pyoce.pythonHelpers.get_TDataStd_Name_From_Label(
+        baseline_free_shapes.Value(1)
+    )
+
+    baseline = _pyg4.convert.oce2Geant4(
+        baseline_reader.shapeTool,
+        world_name,
+    )
+
+    native_reader = _pyg4.pyoce.Reader(str(file_name))
+    native = _pyg4.convert.oce2Geant4(
+        native_reader.shapeTool,
+        world_name,
+        nativePrimitives=True,
+    )
+
+    baseline_box_count = sum(
+        solid.type == "Box"
+        for solid in baseline.solidDict.values()
+    )
+    native_box_count = sum(
+        solid.type == "Box"
+        for solid in native.solidDict.values()
+    )
+    baseline_tessellated_count = sum(
+        solid.type == "TessellatedSolid"
+        for solid in baseline.solidDict.values()
+    )
+    native_tessellated_count = sum(
+        solid.type == "TessellatedSolid"
+        for solid in native.solidDict.values()
+    )
+
+    baseline_types = {
+        name: solid.type
+        for name, solid in baseline.solidDict.items()
+    }
+    native_types = {
+        name: solid.type
+        for name, solid in native.solidDict.items()
+    }
+
+    assert baseline_types.keys() == native_types.keys()
+
+    changed_solids = [
+        name
+        for name in baseline_types
+        if baseline_types[name] != native_types[name]
+    ]
+
+    assert len(changed_solids) == 1
+    changed_name = changed_solids[0]
+    assert baseline_types[changed_name] == "TessellatedSolid"
+    assert native_types[changed_name] == "Box"
+
+    assert native_box_count == baseline_box_count + 1
+    assert native_tessellated_count == baseline_tessellated_count - 1
+    assert native_tessellated_count > 0
+
+    # Regression for a genuinely rotated box whose independently
+    # canonicalised axes would otherwise be left-handed.
+    from pyg4ometry.convert.ocePrimitiveRecognition import (
+        reconstruct_box_from_vertices,
+    )
+    import numpy as np
+
+    angle = np.deg2rad(13.0)
+    c = float(np.cos(angle))
+    s = float(np.sin(angle))
+    rx = np.array(
+        [[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]],
+        dtype=float,
+    )
+    ry = np.array(
+        [[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]],
+        dtype=float,
+    )
+    rz = np.array(
+        [[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]],
+        dtype=float,
+    )
+    physical_axes = rz @ ry @ rx
+    half_lengths = np.array([5.0, 10.0, 15.0], dtype=float)
+    centre = np.array([3.0, -4.0, 7.0], dtype=float)
+    vertices = np.array(
+        [
+            centre
+            + (
+                np.array([sx, sy, sz], dtype=float)
+                * half_lengths
+            )
+            @ physical_axes
+            for sx in (-1.0, 1.0)
+            for sy in (-1.0, 1.0)
+            for sz in (-1.0, 1.0)
+        ],
+        dtype=float,
+    )
+
+    reconstructed = reconstruct_box_from_vertices(
+        "rotated_box_handedness_regression",
+        vertices,
+    )
+    reconstructed_basis = np.asarray(
+        reconstructed["local_axes"],
+        dtype=float,
+    )
+
+    assert np.isclose(
+        np.linalg.det(reconstructed_basis),
+        1.0,
+        atol=1.0e-12,
+        rtol=0.0,
+    )
+    assert np.allclose(
+        sorted(reconstructed["dimensions"]),
+        [10.0, 20.0, 30.0],
+        atol=1.0e-9,
+        rtol=0.0,
+    )
