@@ -1,6 +1,11 @@
 from .. import geant4 as _g4
 from .. import pyoce as _pyoce
 from .. import transformation as _transformation
+from .ocePrimitiveRecognition import (
+    recognise_box_from_shape_vertices as _recognise_box_from_shape_vertices,
+)
+
+import numpy as _np
 
 defaultLinDef = 0.5
 deftaulAngDef = 0.5
@@ -44,7 +49,15 @@ def oceShape_Geant4_Assembly(name, greg):
     return _g4.AssemblyVolume(name, greg, True)
 
 
-def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.01, angDef=0.01):
+def oceShape_Geant4_Tessellated(
+    name,
+    shape,
+    greg,
+    linDef=0.01,
+    angDef=0.01,
+    nativePrimitives=False,
+    nativePlacementAvailable=False,
+):
     """
     Make a tessellated solid from a OpenCascade shape
 
@@ -74,7 +87,7 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.01, angDef=0.01):
     ##############################################
     # G4 tessellated solid
     ##############################################
-    g4t = _g4.solid.TessellatedSolid(name, None, greg)
+    g4t = _g4.solid.TessellatedSolid(name, None, greg, addRegistry=False)
 
     nbVerties = 0
     nbTriangles = 0
@@ -174,7 +187,81 @@ def oceShape_Geant4_Tessellated(name, shape, greg, linDef=0.01, angDef=0.01):
 
     g4t.removeDuplicateVertices()
 
+    if nativePrimitives:
+        primitive = _recognise_box_from_shape_vertices(
+            name,
+            shape,
+            g4t.meshtess[0],
+        )
+
+        if primitive is not None:
+            local_basis = _np.column_stack(primitive["local_axes"])
+            local_centre = _np.asarray(primitive["centre"], dtype=float)
+
+            correction_is_identity = _np.allclose(
+                local_basis,
+                _np.eye(3),
+                atol=1e-12,
+                rtol=0.0,
+            ) and _np.allclose(
+                local_centre,
+                _np.zeros(3),
+                atol=1e-12,
+                rtol=0.0,
+            )
+
+            if correction_is_identity or nativePlacementAvailable:
+                native = _g4.solid.Box(
+                    name,
+                    primitive["dimensions"][0],
+                    primitive["dimensions"][1],
+                    primitive["dimensions"][2],
+                    greg,
+                    lunit="mm",
+                )
+                native._oceNativeLocalBasis = local_basis
+                native._oceNativeLocalCentre = local_centre
+                return native
+
+    greg.addSolid(g4t)
     return g4t
+
+
+def _apply_native_local_transform(rot, trans, volume):
+    local_basis = getattr(volume, "_oceNativeLocalBasis", None)
+    local_centre = getattr(volume, "_oceNativeLocalCentre", None)
+
+    if local_basis is None or local_centre is None:
+        return rot, trans
+
+    old_rotation = _transformation.tbxyz2matrix(rot)
+    new_rotation = _np.asarray(local_basis, dtype=float).T @ old_rotation
+    new_translation = old_rotation.T @ _np.asarray(local_centre, dtype=float) + _np.asarray(
+        trans, dtype=float
+    )
+
+    if not _np.allclose(
+        new_rotation.T @ new_rotation,
+        _np.eye(3),
+        atol=1e-10,
+        rtol=0.0,
+    ):
+        message = "Composed native CAD rotation is not orthonormal."
+        raise RuntimeError(message)
+
+    if not _np.isclose(
+        _np.linalg.det(new_rotation),
+        1.0,
+        atol=1e-10,
+        rtol=0.0,
+    ):
+        message = "Composed native CAD rotation is not proper (det != +1)."
+        raise RuntimeError(message)
+
+    return (
+        _transformation.matrix2tbxyz(new_rotation),
+        new_translation,
+    )
 
 
 def _oce2Geant4_traverse(
@@ -187,6 +274,8 @@ def _oce2Geant4_traverse(
     badCADLabels,
     addBoundingSolids=False,
     oceName=False,
+    nativePrimitives=False,
+    nativePlacementAvailable=False,
 ):
     name = _pyoce.pythonHelpers.get_TDataStd_Name_From_Label(label)
     node = _pyoce.TCollection.TCollection_AsciiString()
@@ -253,6 +342,8 @@ def _oce2Geant4_traverse(
                 badCADLabels,
                 addBoundingSolids,
                 oceName=oceName,
+                nativePrimitives=nativePrimitives,
+                nativePlacementAvailable=False,
             )
 
             # need to do this after to keep recursion clean (TODO consider move with extra parameter)
@@ -279,6 +370,8 @@ def _oce2Geant4_traverse(
             badCADLabels,
             addBoundingSolids,
             oceName=oceName,
+            nativePrimitives=nativePrimitives,
+            nativePlacementAvailable=True,
         )
 
         if not logicalVolume:
@@ -298,6 +391,7 @@ def _oce2Geant4_traverse(
         rot = _transformation.axisangle2tbxyz(ax, -an)
 
         # make physical volume
+        rot, trans = _apply_native_local_transform(rot, trans, logicalVolume)
         physicalVolume = _g4.PhysicalVolume(rot, trans, logicalVolume, name, None, greg)
 
         return physicalVolume
@@ -306,13 +400,24 @@ def _oce2Geant4_traverse(
         # print("_oce2Geant4_traverse: Shape with no children")
 
         # make solid
-        solid = oceShape_Geant4_Tessellated(name, shape, greg, meshQuality[0], meshQuality[1])
+        solid = oceShape_Geant4_Tessellated(
+            name,
+            shape,
+            greg,
+            meshQuality[0],
+            meshQuality[1],
+            nativePrimitives=nativePrimitives,
+            nativePlacementAvailable=nativePlacementAvailable,
+        )
 
         if solid is None:
             return None
         else:
             # make logicalVolume
             logicalVolume = oceShape_Geant4_LogicalVolume(name, solid, material, greg)
+            if hasattr(solid, "_oceNativeLocalBasis"):
+                logicalVolume._oceNativeLocalBasis = solid._oceNativeLocalBasis
+                logicalVolume._oceNativeLocalCentre = solid._oceNativeLocalCentre
 
             return logicalVolume
 
@@ -338,6 +443,8 @@ def _oce2Geant4_traverse(
                 meshQualityMap,
                 badCADLabels,
                 addBoundingSolids,
+                nativePrimitives=nativePrimitives,
+                nativePlacementAvailable=True,
             )
 
             if not logicalVolume:  # logical could be None
@@ -359,6 +466,7 @@ def _oce2Geant4_traverse(
             ax = _pyoce.pythonHelpers.gp_XYZ_numpy(ax)
             rot = _transformation.axisangle2tbxyz(ax, -an)
 
+            rot, trans = _apply_native_local_transform(rot, trans, logicalVolume)
             physicalVolume = _g4.PhysicalVolume(
                 list(rot),
                 list(trans),
@@ -381,6 +489,7 @@ def oce2Geant4(
     labelToSkipList=[],
     meshQualityMap={},
     oceName=False,
+    nativePrimitives=False,
 ):
     """
     Convert CAD geometry starting from shapeName
@@ -393,6 +502,8 @@ def oce2Geant4(
     :type materialMap: dict
     :param meshQualityMap: dictionary to map shape name to meshing quality str:[LinDef,AngDef]
     :type meshQualityMap: dict
+    :param nativePrimitives: conservatively replace supported CAD solids with native Geant4 solids
+    :type nativePrimitives: bool
     """
     greg = _g4.Registry()
 
@@ -416,6 +527,8 @@ def oce2Geant4(
         meshQualityMap,
         badCADLabels=["COMPOUND", "SOLID"],
         oceName=oceName,
+        nativePrimitives=nativePrimitives,
+        nativePlacementAvailable=False,
     )
 
     # convert to LV and make world
