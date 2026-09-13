@@ -64,11 +64,18 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
 
 
 class UsdViewer(_ViewerHierarchyBase):
-    def __init__(self, filePath="./test.usd"):
+    def __init__(self, filePath="./test.usd", mergeByMaterial=False):
         """Write the geometry to *filePath*.
 
         A ".usdz" suffix writes a usdz package, the single file format viewers on phones and
         tablets expect. Any other suffix writes a plain USD layer.
+
+        With *mergeByMaterial* the volumes are combined into one mesh per material when the
+        file is saved, in place of the hierarchy of one mesh per volume. A geometry of a few
+        thousand volumes then becomes a handful of meshes holding the same triangles. Viewers
+        on phones and tablets need this: they compile a shader for every material they are
+        given and stall, or give up, on a geometry written volume by volume. The hierarchy,
+        the volume names and the placements are lost, so merge only for viewing.
         """
         super().__init__()
         if Usd is None:
@@ -88,6 +95,8 @@ class UsdViewer(_ViewerHierarchyBase):
         UsdGeom.SetStageMetersPerUnit(self.stage, 1)
         # Geant4 geometries are z up, USD assumes y
         UsdGeom.SetStageUpAxis(self.stage, UsdGeom.Tokens.z)
+
+        self.mergeByMaterial = mergeByMaterial
 
         self.lvNameToPrimDict = {}
         self.lvNameToMaterialPrimDict = {}
@@ -259,7 +268,67 @@ class UsdViewer(_ViewerHierarchyBase):
 
         return prim
 
+    def mergeMeshesByMaterial(self):
+        """Replace the mesh of every volume with one merged mesh per material.
+
+        Reads the meshes back from the stage, so every placement is already resolved and the
+        merged points are in world coordinates. Volumes share a mesh when their shaders carry
+        the same values: a material is defined per volume here, so grouping by name would
+        merge nothing.
+        """
+        root = self.stage.GetDefaultPrim()
+        cache = UsdGeom.XformCache()
+        merged = {}
+        for prim in self.stage.Traverse(Usd.TraverseInstanceProxies()):
+            if not prim.IsA(UsdGeom.Mesh):
+                continue
+            mesh = UsdGeom.Mesh(prim)
+            material = UsdShade.MaterialBindingAPI(prim).ComputeBoundMaterial()[0]
+            points = _np.array(mesh.GetPointsAttr().Get())
+            if points.size == 0:
+                continue
+            # USD transforms a point as a row vector, hence the order here
+            xform = _np.array(cache.GetLocalToWorldTransform(prim))
+            points = points @ xform[:3, :3] + xform[3, :3]
+            counts = list(mesh.GetFaceVertexCountsAttr().Get())
+            indices = _np.array(mesh.GetFaceVertexIndicesAttr().Get()).reshape(-1)
+
+            # replicas, divisions and parameterised volumes are written without a material,
+            # so they merge together and stay unbound rather than being dropped
+            key = None
+            if material:
+                shader = UsdShade.Shader(material.GetPrim().GetChild("PreviewShader"))
+                key = tuple(
+                    (i.GetBaseName(), str(i.Get()))
+                    for i in sorted(shader.GetInputs(), key=lambda i: i.GetBaseName())
+                )
+            if key not in merged:
+                merged[key] = [material, [], [], [], 0]
+            group = merged[key]
+            group[1].append(points)
+            group[2] += counts
+            group[3].append(indices + group[4])
+            group[4] += len(points)
+
+        for child in root.GetChildren():
+            if str(child.GetPath()) != self.materialRootPath:
+                self.stage.RemovePrim(child.GetPath())
+
+        for i, (material, points, counts, indices, _) in enumerate(merged.values()):
+            mesh = UsdGeom.Mesh.Define(
+                self.stage, root.GetPath().AppendPath(f"merged_mesh_{i:03d}")
+            )
+            mesh.CreatePointsAttr(_np.concatenate(points))
+            mesh.CreateFaceVertexCountsAttr(counts)
+            mesh.CreateFaceVertexIndicesAttr(_np.concatenate(indices))
+            mesh.CreateSubdivisionSchemeAttr("none")
+            if material:
+                UsdShade.MaterialBindingAPI(mesh).Apply(mesh.GetPrim())
+                UsdShade.MaterialBindingAPI(mesh).Bind(material)
+
     def save(self):
+        if self.mergeByMaterial:
+            self.mergeMeshesByMaterial()
         self.stage.Save()
         if self.filePath.endswith(".usdz"):
             UsdUtils.CreateNewUsdzPackage(Sdf.AssetPath(self.layerPath), self.filePath)
