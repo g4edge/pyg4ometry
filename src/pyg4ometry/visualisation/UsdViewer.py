@@ -1,5 +1,5 @@
 try:
-    from pxr import Usd, Gf, UsdGeom, UsdShade, Sdf
+    from pxr import Usd, Gf, UsdGeom, UsdShade, UsdUtils, Sdf
 except ImportError:
     Usd = None
 
@@ -15,9 +15,10 @@ def mesh2Prim(mesh, meshPrim, scale=1000):
     pointsInMeters = pointsInMeters / scale
     meshPrim.GetAttribute("points").Set(pointsInMeters)
     meshPrim.GetAttribute("faceVertexCounts").Set([len(vl) for vl in m[1]])
-    inds = _np.array(m[1])
-    inds.reshape(inds.shape[0] * inds.shape[1])
-    meshPrim.GetAttribute("faceVertexIndices").Set(inds)
+    meshPrim.GetAttribute("faceVertexIndices").Set(_np.array(m[1]))
+    # a solid is a polyhedron, not the control cage of a smooth surface. USD subdivides a mesh
+    # by default, which rounds off every edge and shrinks the volume.
+    meshPrim.GetAttribute("subdivisionScheme").Set("none")
 
 
 def visOptions2MaterialPrim(stage, visOptions, materialPrim):
@@ -25,11 +26,9 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
     # create shader
     shader = UsdShade.Shader.Define(stage, materialPrim.GetPath().AppendPath("PreviewShader"))
     shader.CreateIdAttr("UsdPreviewSurface")
-    print(visOptions.usdOptions.diffuseColor)
     shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(
         Gf.Vec3f(*visOptions.usdOptions.diffuseColor)
     )
-    print(visOptions.usdOptions.emissiveColor)
     shader.CreateInput("emissiveColor", Sdf.ValueTypeNames.Color3f).Set(
         Gf.Vec3f(*visOptions.usdOptions.emissiveColor)
     )
@@ -66,21 +65,34 @@ def visOptions2MaterialPrim(stage, visOptions, materialPrim):
 
 class UsdViewer(_ViewerHierarchyBase):
     def __init__(self, filePath="./test.usd"):
+        """Write the geometry to *filePath*.
+
+        A ".usdz" suffix writes a usdz package, the single file format viewers on phones and
+        tablets expect. Any other suffix writes a plain USD layer.
+        """
         super().__init__()
         if Usd is None:
             msg = "Failed to import open usd"
             raise RuntimeError(msg)
 
-        self.filePath = filePath
-
-        print(Usd.GetVersion())
-        layer_path = str(filePath)
-        print(f"USD Stage file path: {layer_path}")
-        self.stage = Usd.Stage.CreateNew(layer_path)
+        self.filePath = str(filePath)
+        # usdz is a zip of USD layers, so write a layer first and package it in save()
+        self.layerPath = (
+            _os.path.splitext(self.filePath)[0] + ".usdc"
+            if self.filePath.endswith(".usdz")
+            else self.filePath
+        )
+        self.stage = Usd.Stage.CreateNew(self.layerPath)
+        # lengths are in mm and mesh2Prim divides by 1000, so the file is in metres. Without
+        # this USD assumes its default of cm and the geometry loads 100 times too small.
+        UsdGeom.SetStageMetersPerUnit(self.stage, 1)
+        # Geant4 geometries are z up, USD assumes y
+        UsdGeom.SetStageUpAxis(self.stage, UsdGeom.Tokens.z)
 
         self.lvNameToPrimDict = {}
         self.lvNameToMaterialPrimDict = {}
 
+        # moved below the root prim once traversal starts, so the stage has a single root
         self.materialRootPath = "/Materials"
 
         self.scaleFactor = 0.9999
@@ -98,6 +110,10 @@ class UsdViewer(_ViewerHierarchyBase):
         # if volume is a logical/physical
         if not motherPrim:
             prim = self.stage.DefinePrim("/" + volume.name, "Xform")
+            # viewers place the default prim, and usdz requires exactly one root, so keep the
+            # materials below it rather than beside it
+            self.stage.SetDefaultPrim(prim)
+            self.materialRootPath = str(prim.GetPath()) + "/Materials"
         else:
             prim = self.stage.DefinePrim(motherPrim.GetPath().AppendPath(volume.name), "Xform")
 
@@ -120,7 +136,7 @@ class UsdViewer(_ViewerHierarchyBase):
 
             vo = self.getVisOptionsLV(volume)
             visOptions2MaterialPrim(self.stage, vo, materialPrim)
-            UsdShade.MaterialBindingAPI(meshPrim).Bind(materialPrim)
+            UsdShade.MaterialBindingAPI.Apply(meshPrim).Bind(materialPrim)
 
             # loop over all daughters
             for daughter in volume.daughterVolumes:
@@ -245,6 +261,9 @@ class UsdViewer(_ViewerHierarchyBase):
 
     def save(self):
         self.stage.Save()
+        if self.filePath.endswith(".usdz"):
+            UsdUtils.CreateNewUsdzPackage(Sdf.AssetPath(self.layerPath), self.filePath)
+            _os.remove(self.layerPath)
 
     def view(self):
         _os.system(self.usdViewPath + " " + self.filePath)
