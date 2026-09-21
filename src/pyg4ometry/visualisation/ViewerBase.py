@@ -78,7 +78,7 @@ class ViewerBase:
             if "0x" in materialName:
                 materialName = materialName[0 : materialName.find("0x")]
             # get with default
-            materialVis = v = self.materialVisOptions.get(materialName, self.defaultVisOptions)
+            materialVis = self.materialVisOptions.get(materialName, self.defaultVisOptions)
         return materialVis
 
     def getVisOptions(self, pv):
