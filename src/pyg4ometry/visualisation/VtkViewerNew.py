@@ -496,7 +496,8 @@ class VtkViewerNew(_ViewerBase):
             if visOpt.representation == "wireframe":
                 actor.GetProperty().SetRepresentationToWireframe()
 
-            actor.GetProperty().SetOpacity(visOpt.alpha)
+            alf = visOpt.alpha if visOpt.visible else 0.0
+            actor.GetProperty().SetOpacity(alf)
             actor.GetProperty().SetColor(*visOpt.colour)
 
             self.ren.AddActor(actor)
