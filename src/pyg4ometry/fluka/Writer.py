@@ -21,6 +21,7 @@
 
 from . import material as _material
 from .directive import RecursiveRotoTranslation, Transform
+from .card import Card as _Card
 
 
 class Writer:
@@ -121,6 +122,11 @@ class Writer:
         for rk in self.flukaRegistry.regionDict.keys():
             f.write(self.flukaRegistry.regionDict[rk].flukaFreeString())
         f.write("END\n")
+        # TODO write lattice to output
+        # for la in self.flukaRegistry.latticeDict.keys():
+        #    f.write(self.flukaRegistry.latticeDict[la].flukaFreeString()+"\n")
+        for la in self.flukaRegistry.latticeCards:
+            f.write(la.toFreeString() + "\n")
         f.write("GEOEND\n")
 
         # loop over materials
@@ -140,22 +146,49 @@ class Writer:
         # loop over material assignments
         for rk in self.flukaRegistry.regionDict.keys():
             try:
-                # print(self.flukaRegistry.assignmas[rk])
-                assignmaString = "ASSIGNMA " + self.flukaRegistry.assignmas[rk][0] + " " + rk
-                f.write(assignmaString + "\n")
 
-                # now electric field
+                fld = None
+                if self.flukaRegistry.assignmas[rk][1]:
+                    fld = 1
+                elif self.flukaRegistry.assignmas[rk][2]:
+                    fld = 2
+                elif self.flukaRegistry.assignmas[rk][1] and self.flukaRegistry.assignmas[rk][2]:
+                    fld = 3
 
-                # now magnetic field
+                c = _Card(
+                    "ASSIGNMA", self.flukaRegistry.assignmas[rk][0], rk, None, None, fld, None, None
+                )
+                f.write(c.toFreeString() + "\n")
+
             except KeyError:
                 print("Region does not have an assigned material", rk)
 
         # loop over magnetic fields
 
         # loop over rotdefis
-        for rotdefi in rotdefi.values():
-            rotstr = rotdefi.flukaFreeString()
+        for rd in rotdefi.values():
+            rotstr = rd.flukaFreeString()
             f.write(f"{rotstr}\n")
+
+        # loop over rotdefis to write transforms
+        if "MGNFIELD" in self.flukaRegistry.cardDict:
+            for c in self.flukaRegistry.cardDict["MGNFIELD"]:
+                rotdefi_name = c.what2
+                rotdefi = self.flukaRegistry.rotoTranslations.get(rotdefi_name)
+                f.write(rotdefi[0].flukaFreeString() + "\n")
+
+        # loop over rotprbins to write transforms
+        if "ROTPRBIN" in self.flukaRegistry.cardDict:
+            for c in self.flukaRegistry.cardDict["ROTPRBIN"]:
+                rotdefi_name = c.what2
+                rotdefi = self.flukaRegistry.rotoTranslations.get(rotdefi_name)
+                f.write(rotdefi[0].flukaFreeString() + "\n")
+
+        # loop over lattice to write transforms
+        for c in self.flukaRegistry.latticeCards:
+            rotdefi_name = c.sdum
+            rotdefi = self.flukaRegistry.rotoTranslations.get(rotdefi_name)
+            f.write(rotdefi[0].flukaFreeString() + "\n")
 
         # loop over (non init cards)
         for c in self.flukaRegistry.cardDict.keys():
