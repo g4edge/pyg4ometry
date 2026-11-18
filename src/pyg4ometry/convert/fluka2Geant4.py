@@ -353,10 +353,10 @@ def _filterBlackHoleRegions(flukareg, regions):
             region.allBodiesToRegistry(freg_out)
         elif name not in regions:
             continue
-        elif (
-            isinstance(flukareg.assignmas.get(name), (tuple, list))
-            and flukareg.assignmas[name][0] == "BLCKHOLE"
-        ) or flukareg.assignmas.get(name) == "BLCKHOLE":
+        _am = flukareg.assignmas.get(name, None)
+        if isinstance(_am, (tuple, list)):
+            _am = _am[0]
+        if _am == "BLCKHOLE":
             continue
         else:
             freg_out.addRegion(region)  # add region even if no assigned material
@@ -601,6 +601,8 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
     regionSharedAABBs = {}
     bodiesToRegions = freg.getBodyToRegionsMap()
     for regionName, regionAABB in quadricRegionAABBs.items():
+        if regionName not in freg.regionDict:
+            continue
         region = freg.regionDict[regionName]
         for body in region.bodies():
             if not isinstance(body, _fluka.QUA):
