@@ -117,12 +117,15 @@ class _FlukaToG4MaterialConverter:
         from ..fluka import material as _fluMat
 
         for name, material in self.freg.materials.items():
+            if isinstance(material, _fluMat.Material):
+                self.convertElement(name, material)
+        for name, material in self.freg.materials.items():
             if isinstance(material, _fluMat.BuiltIn):
                 self.convertBuiltin(name, material)
-            elif isinstance(material, _fluMat.Material):
-                self.convertElement(name, material)
             elif isinstance(material, _fluMat.Compound):
                 self.convertCompound(material)
+            elif isinstance(material, _fluMat.Material):
+                continue
             else:
                 msg = f"Unknown material type {material}"
                 raise TypeError(msg)

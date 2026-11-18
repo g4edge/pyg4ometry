@@ -1096,3 +1096,31 @@ class LogicalVolume:
         for d in self.daughterVolumes:
             print(2 * depth * "-" + d.name + " " + d.type + " (pv)")  # noqa: T201
             d.logicalVolume.dumpStructure(depth + 2)
+
+
+# --- pyg4ometry patch P8: lazy LogicalVolume.mesh ---
+import pyg4ometry.exceptions as _p4exc_lazy
+
+_LV = LogicalVolume
+
+
+def _lazy_mesh_get(self):
+    v = self.__dict__.get("_lazy_mesh", None)
+    if v is None:
+        from ..visualisation import Mesh as _VisMesh
+
+        try:
+            v = _VisMesh(self.solid)
+        except _p4exc_lazy.NullMeshError:
+            v = False
+        self.__dict__["_lazy_mesh"] = v
+    if v is False:
+        raise _p4exc_lazy.NullMeshError(self)
+    return v
+
+
+def _lazy_mesh_set(self, val):
+    self.__dict__["_lazy_mesh"] = val
+
+
+_LV.mesh = property(_lazy_mesh_get, _lazy_mesh_set)

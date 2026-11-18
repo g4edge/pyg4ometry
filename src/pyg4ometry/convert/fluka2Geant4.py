@@ -113,17 +113,25 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
     f2g4mat = _makeFlukaToG4MaterialsMap(flukareg, greg)
     wlv = _makeWorldVolume(_getWorldDimensions(worldinfo.dimensions), worldinfo.material, greg)
     regionNamesToLVs = {}
+    skipped_null = []
     for region in regions:
         name = region.name
-        region_solid = region.geant4Solid(greg, aabb=aabbinfo.aabbMap)
-
+        try:
+            region_solid = region.geant4Solid(greg, aabb=aabbinfo.aabbMap)
+        except Exception as exc:
+            if "NullMesh" in type(exc).__name__ or "NullMesh" in str(exc):
+                skipped_null.append(name)
+                continue
+            raise
         try:
             materialName = flukareg.assignmas[name]
         except KeyError:
             _warnings.warn(f"Setting region {name} with no material to IRON.")
             materialName = "IRON"
+        if isinstance(materialName, (tuple, list)):
+            materialName = materialName[0]
 
-        material = f2g4mat[materialName[0]]
+        material = f2g4mat[materialName]
 
         region_lv = _g4.LogicalVolume(region_solid, material, f"{name}_lv", greg)
 
@@ -145,6 +153,10 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
         _convertLatticeCells(greg, flukareg, wlv, aabbinfo.regionZoneAABBs, regionNamesToLVs)
     except UnboundLocalError:
         pass
+    if skipped_null:
+        _warnings.warn(
+            f"regions with empty mesh skipped: {len(skipped_null)} ({', '.join(skipped_null[:8])})"
+        )
     greg.setWorld(wlv.name)
 
     return greg
@@ -284,6 +296,7 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
     regionAABBs = _regionZoneAABBsToRegionAABBs(regionZoneAABBs)
 
     bodies_to_minimum_aabbs = {}
+    skipped = 0
     for body_name, region_names in bodies_to_regions.items():
         logger.debug("Getting minimum aabb for body: %s", body_name)
 
@@ -293,17 +306,19 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
                 continue
             bodyRegionAABBs.append(regionAABBs[region_name])
 
-        if len(regionAABBs) == 1:
-            aabb = next(iter(regionAABBs.values()))
-        elif len(regionAABBs) > 1:
+        if len(bodyRegionAABBs) == 1:
+            aabb = bodyRegionAABBs[0]
+        elif len(bodyRegionAABBs) > 1:
             aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
             logger.debug("Minimum aabb = %s", aabb)
         else:
-            msg = "WHAT?"
-            raise ValueError(msg)
+            skipped += 1
+            continue
 
         bodies_to_minimum_aabbs[body_name] = aabb
 
+    if skipped:
+        logger.warning("bodies without AABB skipped: %d", skipped)
     return bodies_to_minimum_aabbs
 
 
@@ -338,7 +353,10 @@ def _filterBlackHoleRegions(flukareg, regions):
             region.allBodiesToRegistry(freg_out)
         elif name not in regions:
             continue
-        elif flukareg.assignmas[name] == "BLCKHOLE":
+        _am = flukareg.assignmas.get(name, None)
+        if isinstance(_am, (tuple, list)):
+            _am = _am[0]
+        if _am == "BLCKHOLE":
             continue
         else:
             freg_out.addRegion(region)  # add region even if no assigned material
@@ -583,6 +601,8 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
     regionSharedAABBs = {}
     bodiesToRegions = freg.getBodyToRegionsMap()
     for regionName, regionAABB in quadricRegionAABBs.items():
+        if regionName not in freg.regionDict:
+            continue
         region = freg.regionDict[regionName]
         for body in region.bodies():
             if not isinstance(body, _fluka.QUA):
