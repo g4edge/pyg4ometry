@@ -154,7 +154,9 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
     except UnboundLocalError:
         pass
     if skipped_null:
-        _warnings.warn(f"regions with empty mesh skipped: {len(skipped_null)} ({', '.join(skipped_null[:8])})")
+        _warnings.warn(
+            f"regions with empty mesh skipped: {len(skipped_null)} ({', '.join(skipped_null[:8])})"
+        )
     greg.setWorld(wlv.name)
 
     return greg
@@ -351,8 +353,10 @@ def _filterBlackHoleRegions(flukareg, regions):
             region.allBodiesToRegistry(freg_out)
         elif name not in regions:
             continue
-        elif (isinstance(flukareg.assignmas.get(name), (tuple, list))
-              and flukareg.assignmas[name][0] == "BLCKHOLE") or flukareg.assignmas.get(name) == "BLCKHOLE":
+        elif (
+            isinstance(flukareg.assignmas.get(name), (tuple, list))
+            and flukareg.assignmas[name][0] == "BLCKHOLE"
+        ) or flukareg.assignmas.get(name) == "BLCKHOLE":
             continue
         else:
             freg_out.addRegion(region)  # add region even if no assigned material

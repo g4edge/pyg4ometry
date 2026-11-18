@@ -1103,10 +1103,12 @@ import pyg4ometry.exceptions as _p4exc_lazy
 
 _LV = LogicalVolume
 
+
 def _lazy_mesh_get(self):
     v = self.__dict__.get("_lazy_mesh", None)
     if v is None:
         from ..visualisation import Mesh as _VisMesh
+
         try:
             v = _VisMesh(self.solid)
         except _p4exc_lazy.NullMeshError:
@@ -1116,7 +1118,9 @@ def _lazy_mesh_get(self):
         raise _p4exc_lazy.NullMeshError(self)
     return v
 
+
 def _lazy_mesh_set(self, val):
     self.__dict__["_lazy_mesh"] = val
+
 
 _LV.mesh = property(_lazy_mesh_get, _lazy_mesh_set)
