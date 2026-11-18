@@ -11,6 +11,7 @@ build-backend = "scikit_build_core.build"
 
 [tool.setuptools_scm]
 write_to = "src/pyg4ometry/_version.py"
+fallback_version = "1.4.4"
 
 [project]
 name = "pyg4ometry"
