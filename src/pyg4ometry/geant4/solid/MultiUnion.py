@@ -53,30 +53,18 @@ class MultiUnion(_SolidBase):
     def mesh(self):
         _log.debug("MultiUnion.pycsgmesh>")
 
-        result = self.objects[0].mesh()
-        tra2 = self.transformations[0]
-        rot = tbxyz2axisangle(tra2[0].eval())
-        tlate = tra2[1].eval()
-        result.rotate(rot[0], -rad2deg(rot[1]))
-        result.translate(tlate)
-
-        for idx, (solid, tra2) in enumerate(
-            zip(self.objects[1:], self.transformations[1:]), start=1
-        ):
-            # tranformation
+        result = None
+        for solid, tra2 in zip(self.objects, self.transformations):
+            try:
+                mesh = solid.mesh()
+            except exceptions.NullMeshError:
+                continue
             rot = tbxyz2axisangle(tra2[0].eval())
             tlate = tra2[1].eval()
-            _log.debug(f"MulUnion.mesh> rot={rot!s} tlate={tlate!s}")
-
-            # get meshes
-            _log.debug(f"union.mesh> mesh {idx}")
-            mesh = solid.mesh()
-
-            # apply transform to second mesh
             mesh.rotate(rot[0], -rad2deg(rot[1]))
             mesh.translate(tlate)
+            result = mesh if result is None else result.union(mesh)
 
-            _log.debug("MultiUnion.mesh> union")
-            result = result.union(mesh)
-
+        if result is None or result.isNull():
+            raise exceptions.NullMeshError(self)
         return result

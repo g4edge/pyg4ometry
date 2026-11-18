@@ -289,9 +289,12 @@ class Registry:
         :type volume: PhysicalVolume
         """
         if volume.name in self.physicalVolumeDict:
-            raise _exceptions.IdenticalNameError(volume.name, "physical volume")
-        else:
-            self.physicalVolumeDict[volume.name] = volume
+            base = volume.name
+            i = 2
+            while f"{base}_dup{i}" in self.physicalVolumeDict:
+                i += 1
+            volume.name = f"{base}_dup{i}"
+        self.physicalVolumeDict[volume.name] = volume
 
         self.physicalVolumeNameCount[volume.name] += 1
         self.volumeTypeCountDict["physicalVolume"] += 1

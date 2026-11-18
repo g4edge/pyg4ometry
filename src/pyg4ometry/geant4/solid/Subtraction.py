@@ -52,34 +52,33 @@ class Subtraction(_SolidBase):
     def mesh(self):
         _log.debug("subtraction.pycsgmesh>")
 
-        # look up solids in registry
         from ... import geant4 as _g4
 
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
-        # get meshes
-        _log.debug("subtraction.mesh> mesh1")
-        m1 = obj1.mesh()
-        _log.debug("subtraction.mesh> mesh2")
-        m2 = obj2.mesh().clone()
+        try:
+            m1 = obj1.mesh()
+        except exceptions.NullMeshError:
+            raise exceptions.NullMeshError(self)
+        try:
+            m2 = obj2.mesh().clone()
+        except exceptions.NullMeshError:
+            return m1
 
         m2.rotate(rot[0], -rad2deg(rot[1]))
         m2.translate(tlate)
 
         self.obj2mesh = m2
 
-        _log.debug("subtraction.pycshmsh> subtraction")
         mesh = m1.subtract(m2)
         if mesh.isNull():
             _log.warning("subtraction.pycshmsh> Subtraction null mesh solid name : %s", self.name)
             if _config.meshingNullException:
                 raise exceptions.NullMeshError(self)
-
         return mesh
 
     def translation(self):

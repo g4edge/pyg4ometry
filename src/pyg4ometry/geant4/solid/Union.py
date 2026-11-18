@@ -54,31 +54,32 @@ class Union(_SolidBase):
     def mesh(self):
         _log.debug("union.pycsgmesh>")
 
-        # look up solids in registry
         from ... import geant4 as _g4
 
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
-        _log.debug(f"Union.pycsgmesh> rot={rot!s} tlate={tlate!s}")
 
-        # get meshes
-        _log.debug("union.mesh> mesh1")
-        m1 = obj1.mesh()
-        _log.debug("union.mesh> mesh2")
-        m2 = obj2.mesh().clone()
-
-        # apply transform to second mesh
-        m2.rotate(rot[0], -rad2deg(rot[1]))
-        m2.translate(tlate)
-
-        _log.debug("union.pycsgmesh> union")
-        mesh = m1.union(m2)
-
-        return mesh
+        try:
+            m1 = obj1.mesh()
+        except exceptions.NullMeshError:
+            m1 = None
+        try:
+            m2 = obj2.mesh().clone()
+        except exceptions.NullMeshError:
+            m2 = None
+        if m1 is None and m2 is None:
+            raise exceptions.NullMeshError(self)
+        if m2 is not None:
+            m2.rotate(rot[0], -rad2deg(rot[1]))
+            m2.translate(tlate)
+        if m1 is None:
+            return m2
+        if m2 is None:
+            return m1
+        return m1.union(m2)
 
     def translation(self):
         return self.tra2[1].eval()
