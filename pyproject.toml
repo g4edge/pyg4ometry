@@ -159,7 +159,7 @@ skip = ["pp*", "cp36-*", "cp37-*"]
 
 [tool.cibuildwheel.linux]
 archs = ["auto"]
-manylinux-x86_64-image = "g4edge/manylinux2014_x86_64:latest"
+manylinux-x86_64-image = "g4edge/manylinux_2_28_x86_64:latest"
 
 
 [tool.cibuildwheel.macos]
