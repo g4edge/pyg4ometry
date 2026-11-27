@@ -112,3 +112,18 @@ class SolidDefaults:
 
     class Wedge:
         nslice = 16
+
+
+# Mesh settings as defined above, kept so they can be restored.
+_defaultMeshSettings = {
+    (solid, attr): getattr(solid, attr)
+    for solid in vars(SolidDefaults).values()
+    for attr in ("nslice", "nstack")
+    if hasattr(solid, attr)
+}
+
+
+def resetGlobalMeshSliceAndStack():
+    """Restore nslice and nstack of all solids in SolidDefaults to their original defaults."""
+    for (solid, attr), value in _defaultMeshSettings.items():
+        setattr(solid, attr, value)
