@@ -144,7 +144,7 @@ class Writer:
                 ext = self.registry.worldVolume.mesh.getBoundingBox()
                 dz = ext[1][2] - ext[0][2]
                 s += '", l=' + str(dz) + "*mm;\n"
-            except IndexError:
+            except (IndexError, AttributeError):  # AttributeError if meshing is turned off.
                 s += '", l=20*m;\n'
         s += f"""l1: line = (e1);
 use, period=l1;
