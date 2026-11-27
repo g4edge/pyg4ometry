@@ -1,9 +1,11 @@
 import pyg4ometry.cli as _cli
+import pyg4ometry.visualisation as _vis
 
 from optparse import OptParseError
 import os
 import pytest
 import sys
+from unittest import mock
 
 _skip_root_tests = False
 try:
@@ -460,12 +462,22 @@ def test_cli_gltf_scale_long(testdata, tmptestdir):
     )
 
 
-def test_cli_view_short(testdata):
+@pytest.fixture
+def mockView(monkeypatch):
+    # Even non-interactive, view() renders and so opens a window, so mock it out.
+    m = mock.Mock()
+    monkeypatch.setattr(_vis.VtkViewerColouredMaterialNew, "view", m)
+    return m
+
+
+def test_cli_view_short(testdata, mockView):
     _cli.main(["-i", testdata["gdml/001_box.gdml"], "-v"], testing=True)
+    mockView.assert_called_once_with(interactive=False)
 
 
-def test_cli_view_long(testdata):
+def test_cli_view_long(testdata, mockView):
     _cli.main(["-i", testdata["gdml/001_box.gdml"], "--view"], testing=True)
+    mockView.assert_called_once_with(interactive=False)
 
 
 def test_cli_citation_short(testdata):
