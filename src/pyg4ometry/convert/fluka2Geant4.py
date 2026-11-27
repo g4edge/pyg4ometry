@@ -293,14 +293,14 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
                 continue
             bodyRegionAABBs.append(regionAABBs[region_name])
 
-        if len(regionAABBs) == 1:
-            aabb = next(iter(regionAABBs.values()))
-        elif len(regionAABBs) > 1:
-            aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
-            logger.debug("Minimum aabb = %s", aabb)
-        else:
-            msg = "WHAT?"
-            raise ValueError(msg)
+        if not bodyRegionAABBs:
+            # body is only used by regions that are not being converted
+            # (e.g. omitted or blackhole regions), so it needs no aabb.
+            logger.debug("Body %s not used by any converted region", body_name)
+            continue
+
+        aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
+        logger.debug("Minimum aabb = %s", aabb)
 
         bodies_to_minimum_aabbs[body_name] = aabb
 
