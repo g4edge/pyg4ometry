@@ -30,3 +30,16 @@ def test_body_only_in_null_region_with_several_regions():
 
     daughters = {pv.logicalVolume.name for pv in greg.getWorldVolume().daughterVolumes}
     assert daughters == {"REG1_lv", "REG2_lv"}
+
+
+def test_world_encloses_regions_far_from_origin():
+    # A region about 100 m from the origin, far outside the old fixed 10 m world.
+    freg = fluka.FlukaRegistry()
+    box = fluka.RPP("FAR", 0, 100, -200, 0, 100000, 101000, flukaregistry=freg)  # mm
+    freg.assignma("COPPER", _addRegion(freg, "FARREG", box))
+
+    lower, upper = convert.fluka2Geant4(freg).getWorldVolume().mesh.getBoundingBox()
+
+    # The region spans x 0 to 100, y -200 to 0 and z 100000 to 101000 mm.
+    assert all(lo < r for lo, r in zip(lower, [0, -200, 100000]))
+    assert all(up > r for up, r in zip(upper, [100, 0, 101000]))
