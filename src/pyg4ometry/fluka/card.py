@@ -94,6 +94,11 @@ def _attempt_float_coercion(string):
         return float(string)
     # (Not a coercable string, not a coercable type)
     except (ValueError, TypeError):
+        pass
+    # FLUKA also accepts Fortran double precision exponents, e.g. 2.106D-4.
+    try:
+        return float(string.replace("D", "E").replace("d", "e"))
+    except (ValueError, TypeError, AttributeError):
         return string
 
 
