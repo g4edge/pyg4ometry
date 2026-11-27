@@ -82,4 +82,4 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
 
 
 if __name__ == "__main__":
-    Test(vis=True)
+    Test()
