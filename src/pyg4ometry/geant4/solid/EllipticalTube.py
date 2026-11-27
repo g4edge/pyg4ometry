@@ -26,11 +26,11 @@ class EllipticalTube(_SolidBase):
 
     :param name: name of the solid
     :type name:  str
-    :param pDx:  length in x
+    :param pDx:  semi-axis in x
     :type pDx:   float, Constant, Quantity, Variable, Expression
-    :param pDy:  length in y
+    :param pDy:  semi-axis in y
     :type pDy:   float, Constant, Quantity, Variable, Expression
-    :param pDz:  full length in z
+    :param pDz:  half length in z
     :type pDz:   float, Constant, Quantity, Variable, Expression
     :param registry: for storing solid
     :type registry: Registry
