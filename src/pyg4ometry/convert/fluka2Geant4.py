@@ -294,8 +294,8 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
             bodyRegionAABBs.append(regionAABBs[region_name])
 
         if not bodyRegionAABBs:
-            # body is only used by regions that are not being converted
-            # (e.g. omitted or blackhole regions), so it needs no aabb.
+            # Body is only used by regions that are not being converted (e.g. null
+            # regions dropped when minimising solids), so it needs no aabb.
             logger.debug("Body %s not used by any converted region", body_name)
             continue
 
