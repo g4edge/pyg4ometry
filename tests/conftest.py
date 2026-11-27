@@ -21,6 +21,20 @@ pytest_plugins = [
 ]
 
 
+def pytest_addoption(parser):
+    parser.addoption("--runslow", action="store_true", help="Also run tests marked slow.")
+
+
+def pytest_collection_modifyitems(config, items):
+    # Slow tests are skipped unless asked for, to keep the default suite quick.
+    if config.getoption("--runslow"):
+        return
+    skipSlow = pytest.mark.skip(reason="Slow, use --runslow to run.")
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skipSlow)
+
+
 @pytest.fixture(scope="session")
 def tmptestdir():
     _tmptestdir.mkdir()
