@@ -49,7 +49,7 @@ def fluka2Geant4(
     :type omitRegions: list
     :param worldMaterial: name of world material to be used.
     :type worldMaterial: string
-    :param worldDimensions: dimensions of world logical volume in converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
+    :param worldDimensions: full lengths [x, y, z] in mm of the world box in converted Geant4.  By default the world is sized to enclose the converted regions with a 10% margin, or is WORLD_DIMENSIONS if minimiseSolids is False.
     :type worldDimensions: list
     :param omitBlackholeRegions: whether or not to omit regions with the FLUKA material BLCKHOLE from the conversion.  By default, true.
     :type omitBlackholeRegions: bool
@@ -91,6 +91,9 @@ def fluka2Geant4(
     if kwargs["minimiseSolids"]:
         aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
         flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
+        # The region aabbs are finite once minimised, so the world can be sized to fit them.
+        if worldDimensions is None:
+            worldDimensions = _getWorldDimensionsFromAABBs(regionZoneAABBs)
 
     WorldInfo = _namedtuple("WorldInfo", ["material", "dimensions"])
     worldinfo = WorldInfo(worldMaterial, worldDimensions)
@@ -447,6 +450,15 @@ def _getWorldDimensions(worldDimensions):
     if worldDimensions is None:
         return WORLD_DIMENSIONS
     return worldDimensions
+
+
+def _getWorldDimensionsFromAABBs(regionZoneAABBs, margin=0.1):
+    """Full lengths in mm of a world box centred on the origin that encloses all the
+    region aabbs, enlarged by the fractional margin.
+    """
+    aabb = _reduce(_getMaximalOfTwoAABBs, _regionZoneAABBsToRegionAABBs(regionZoneAABBs).values())
+    # The world is centred on the origin, so it must reach the furthest face on each axis.
+    return [2 * (1 + margin) * max(abs(aabb.lower[i]), abs(aabb.upper[i])) for i in range(3)]
 
 
 def _getSelectedRegions(flukareg, regions, omitRegions):
