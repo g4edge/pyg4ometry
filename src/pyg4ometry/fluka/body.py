@@ -679,9 +679,10 @@ class REC(BodyMixin):
         exp = self.transform.netExpansion()
         return g4.solid.EllipticalTube(
             self.name,
-            2 * exp * self.semiminor.length(),
-            2 * exp * self.semimajor.length(),
-            exp * self.direction.length(),
+            # EllipticalTube takes semi-axes and a half-length.
+            exp * self.semiminor.length(),
+            exp * self.semimajor.length(),
+            0.5 * exp * self.direction.length(),
             reg,
             lunit="mm",
         )
@@ -1776,10 +1777,10 @@ class XEC(BodyMixin, _ShiftableCylinderMixin):
         scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(
             self.name,
-            # full width, not semi:
-            2 * exp * self.zsemi,
-            2 * exp * self.ysemi,
-            scale,
+            # EllipticalTube takes semi-axes and a half-length; scale is a full length.
+            exp * self.zsemi,
+            exp * self.ysemi,
+            0.5 * scale,
             reg,
             lunit="mm",
         )
@@ -1851,10 +1852,10 @@ class YEC(BodyMixin, _ShiftableCylinderMixin):
         scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(
             self.name,
-            # full width, not semi
-            2 * exp * self.xsemi,
-            2 * exp * self.zsemi,
-            scale,
+            # EllipticalTube takes semi-axes and a half-length; scale is a full length.
+            exp * self.xsemi,
+            exp * self.zsemi,
+            0.5 * scale,
             reg,
             lunit="mm",
         )
@@ -1926,10 +1927,10 @@ class ZEC(BodyMixin, _ShiftableCylinderMixin):
         scale = self._aabbToScaleFactor(aabb)
         return g4.solid.EllipticalTube(
             self.name,
-            # full width, not semi
-            2 * exp * self.xsemi,
-            2 * exp * self.ysemi,
-            scale,
+            # EllipticalTube takes semi-axes and a half-length; scale is a full length.
+            exp * self.xsemi,
+            exp * self.ysemi,
+            0.5 * scale,
             reg,
             lunit="mm",
         )

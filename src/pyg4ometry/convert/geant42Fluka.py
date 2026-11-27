@@ -2916,14 +2916,14 @@ def geant4EllipticalTube2Fluka(
     pDy = solid.evaluateParameter(solid.pDy) * uval
     pDz = solid.evaluateParameter(solid.pDz) * uval
 
-    # main elliptical cylinder
+    # Main elliptical cylinder. pDx, pDy and pDz are semi-axes and a half-length.
     if not bakeTransform:
         fbody1 = _fluka.REC(
             "B" + name + "01",
-            [0, 0, -pDz / 2],
-            [0, 0, pDz],
-            [pDx / 2, 0, 0],
-            [0, pDy / 2, 0],
+            [0, 0, -pDz],
+            [0, 0, 2 * pDz],
+            [pDx, 0, 0],
+            [0, pDy, 0],
             transform=transform,
             flukaregistry=flukaRegistry,
             comment=commentName,
@@ -2931,10 +2931,10 @@ def geant4EllipticalTube2Fluka(
     else:
         fbody1 = _fluka.REC(
             "B" + name + "01",
-            mtra @ _np.array([0, 0, -pDz / 2]) + tra / 10,
-            mtra @ _np.array([0, 0, pDz]),
-            mtra @ _np.array([pDx / 2, 0, 0]),
-            mtra @ _np.array([0, pDy / 2, 0]),
+            mtra @ _np.array([0, 0, -pDz]) + tra / 10,
+            mtra @ _np.array([0, 0, 2 * pDz]),
+            mtra @ _np.array([pDx, 0, 0]),
+            mtra @ _np.array([0, pDy, 0]),
             transform=None,
             flukaregistry=flukaRegistry,
             comment=commentName,

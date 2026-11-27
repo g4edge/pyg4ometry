@@ -397,9 +397,9 @@ def rootShape2pyg4ometry(shape, reader, warnAboutBadShapes=True):
             return None
         shapePyG4 = _g4.solid.EllipticalTube(
             shapeName,
-            shape.GetA() * 2,
-            shape.GetB() * 2,
-            shape.GetDz() * 2,
+            shape.GetA(),
+            shape.GetB(),
+            shape.GetDz(),
             registry,
             lunit="cm",
         )
