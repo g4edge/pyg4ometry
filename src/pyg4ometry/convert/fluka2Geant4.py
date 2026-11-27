@@ -121,7 +121,7 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
             materialName = flukareg.assignmas[name]
         except KeyError:
             _warnings.warn(f"Setting region {name} with no material to IRON.")
-            materialName = "IRON"
+            materialName = ("IRON", None, None)
 
         material = f2g4mat[materialName[0]]
 
