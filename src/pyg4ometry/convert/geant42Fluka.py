@@ -2718,8 +2718,8 @@ def geant4Polyhedra2Fluka(
         pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
         pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
         numSide = int(solid.evaluateParameter(solid.numSide))
-        pR = [val * luval / 10.0 for val in solid.evaluateParameter(solid.pR)]
-        pZ = [val * luval / 10.0 for val in solid.evaluateParameter(solid.pZ)]
+        pR = [val * luval for val in solid.evaluateParameter(solid.pR)]
+        pZ = [val * luval for val in solid.evaluateParameter(solid.pZ)]
     elif solid.type == "Polyhedra":
         pSPhi = solid.evaluateParameter(solid.pSPhi) * auval
         pDPhi = solid.evaluateParameter(solid.pDPhi) * auval
