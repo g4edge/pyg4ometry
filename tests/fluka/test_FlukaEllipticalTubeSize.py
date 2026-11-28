@@ -24,7 +24,7 @@ def test_infinite_elliptical_cylinder_geant4_size(bodyClass, semiAxes, transvers
     freg = fluka.FlukaRegistry()
     body = bodyClass("EC", 0, 0, *semiAxes, flukaregistry=freg)
     solid = body.geant4Solid(geant4.Registry())
-    lo, hi = _meshExtent(solid)
+    _, hi = _meshExtent(solid)
     rot = body.rotation()
     globalHi = np.abs(rot @ hi)
     assert globalHi[transverse[0]] == pytest.approx(semiAxes[0])
