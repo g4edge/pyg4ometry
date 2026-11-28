@@ -61,33 +61,28 @@ class Intersection(_SolidBase):
         return f"Intersection {self.name} {self.obj1.name!s} {self.obj2.name!s}"
 
     def mesh(self):
-        from ... import geant4 as _g4
-
         _log.debug("Intersection.pycsgmesh>>")
 
-        # look up solids in registry
+        from ... import geant4 as _g4
+
         obj1 = self.registry.solidDict.get(_g4.solidName(self.obj1), self.obj1)
         obj2 = self.registry.solidDict.get(_g4.solidName(self.obj2), self.obj2)
 
-        # transformation
         rot = tbxyz2axisangle(self.tra2[0].eval())
         tlate = self.tra2[1].eval()
 
-        # get meshes
-        _log.debug("Intersection.mesh> mesh1")
-        m1 = obj1.mesh()
-        _log.debug("Intersection.mesh> mesh2")
-        m2 = obj2.mesh().clone()
+        try:
+            m1 = obj1.mesh()
+            m2 = obj2.mesh().clone()
+        except exceptions.NullMeshError:
+            raise exceptions.NullMeshError(self)
 
-        # apply transform to second mesh
         m2.rotate(rot[0], -rad2deg(rot[1]))
         m2.translate(tlate)
 
-        _log.debug("Intersection.pycsgmesh> intersect")
         mesh = m1.intersect(m2)
         if mesh.isNull():
             raise exceptions.NullMeshError(self)
-
         return mesh
 
     def translation(self):
