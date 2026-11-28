@@ -56,7 +56,7 @@ def Test(vis=False, interactive=False, outputPath=None, refFilePath=None):
     if vis:
         v = pyg4ometry.visualisation.VtkViewer()
         v.addLogicalVolume(worldLV)
-        v.view()
+        v.view(interactive=interactive)
 
     return {"testStatus": True, "logicalVolume": worldLV, "vtkViewer": v}
 

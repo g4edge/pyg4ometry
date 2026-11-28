@@ -49,7 +49,7 @@ def fluka2Geant4(
     :type omitRegions: list
     :param worldMaterial: name of world material to be used.
     :type worldMaterial: string
-    :param worldDimensions: dimensions of world logical volume in converted Geant4.  By default this is equal to WORLD_DIMENSIONS.
+    :param worldDimensions: full lengths [x, y, z] in mm of the world box in converted Geant4.  By default the world is sized to enclose the converted regions with a 10% margin, or is WORLD_DIMENSIONS if minimiseSolids is False.
     :type worldDimensions: list
     :param omitBlackholeRegions: whether or not to omit regions with the FLUKA material BLCKHOLE from the conversion.  By default, true.
     :type omitBlackholeRegions: bool
@@ -91,6 +91,9 @@ def fluka2Geant4(
     if kwargs["minimiseSolids"]:
         aabbMap = _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions)
         flukareg = _filterHalfSpaces(flukareg, regionZoneAABBs)
+        # The region aabbs are finite once minimised, so the world can be sized to fit them.
+        if worldDimensions is None:
+            worldDimensions = _getWorldDimensionsFromAABBs(regionZoneAABBs)
 
     WorldInfo = _namedtuple("WorldInfo", ["material", "dimensions"])
     worldinfo = WorldInfo(worldMaterial, worldDimensions)
@@ -121,7 +124,7 @@ def _flukaRegistryToG4Registry(flukareg, regions, worldinfo, aabbinfo):
             materialName = flukareg.assignmas[name]
         except KeyError:
             _warnings.warn(f"Setting region {name} with no material to IRON.")
-            materialName = "IRON"
+            materialName = ("IRON", None, None)
 
         material = f2g4mat[materialName[0]]
 
@@ -293,14 +296,14 @@ def _makeBodyMinimumAABBMap(flukareg, regionZoneAABBs, regions):
                 continue
             bodyRegionAABBs.append(regionAABBs[region_name])
 
-        if len(regionAABBs) == 1:
-            aabb = next(iter(regionAABBs.values()))
-        elif len(regionAABBs) > 1:
-            aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
-            logger.debug("Minimum aabb = %s", aabb)
-        else:
-            msg = "WHAT?"
-            raise ValueError(msg)
+        if not bodyRegionAABBs:
+            # Body is only used by regions that are not being converted (e.g. null
+            # regions dropped when minimising solids), so it needs no aabb.
+            logger.debug("Body %s not used by any converted region", body_name)
+            continue
+
+        aabb = _reduce(_getMaximalOfTwoAABBs, bodyRegionAABBs)
+        logger.debug("Minimum aabb = %s", aabb)
 
         bodies_to_minimum_aabbs[body_name] = aabb
 
@@ -338,7 +341,7 @@ def _filterBlackHoleRegions(flukareg, regions):
             region.allBodiesToRegistry(freg_out)
         elif name not in regions:
             continue
-        elif flukareg.assignmas[name] == "BLCKHOLE":
+        elif flukareg.assignmas[name][0] == "BLCKHOLE":  # Entries are (material, elc, mgn).
             continue
         else:
             freg_out.addRegion(region)  # add region even if no assigned material
@@ -447,6 +450,15 @@ def _getWorldDimensions(worldDimensions):
     if worldDimensions is None:
         return WORLD_DIMENSIONS
     return worldDimensions
+
+
+def _getWorldDimensionsFromAABBs(regionZoneAABBs, margin=0.1):
+    """Full lengths in mm of a world box centred on the origin that encloses all the
+    region aabbs, enlarged by the fractional margin.
+    """
+    aabb = _reduce(_getMaximalOfTwoAABBs, _regionZoneAABBsToRegionAABBs(regionZoneAABBs).values())
+    # The world is centred on the origin, so it must reach the furthest face on each axis.
+    return [2 * (1 + margin) * max(abs(aabb.lower[i]), abs(aabb.upper[i])) for i in range(3)]
 
 
 def _getSelectedRegions(flukareg, regions, omitRegions):
@@ -583,6 +595,8 @@ def _getMaximalQuadricRegionAABBs(freg, quadricRegionAABBs):
     regionSharedAABBs = {}
     bodiesToRegions = freg.getBodyToRegionsMap()
     for regionName, regionAABB in quadricRegionAABBs.items():
+        if regionName not in freg.regionDict:
+            continue  # Region is not being converted (e.g. omitted or blackhole).
         region = freg.regionDict[regionName]
         for body in region.bodies():
             if not isinstance(body, _fluka.QUA):

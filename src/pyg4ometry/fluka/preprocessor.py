@@ -1,4 +1,5 @@
 import ast
+import re as _re
 import operator
 import os.path
 import sys
@@ -15,6 +16,8 @@ def _degree_input(f):
 def _degree_output(f):
     return lambda x: f(x) * 180 / np.pi
 
+
+_FLUKA_CONDITIONAL_DIRECTIVES = ("#if", "#ifdef", "#ifndef", "#elif", "#else", "#endif")
 
 _FLUKA_PREDEFINED_IDS = {
     "Pipipi": np.pi,
@@ -50,14 +53,29 @@ _FLUKA_PREDEFINED_FUNCTIONS = {
 }
 
 
-def preprocess(filein):
+def preprocess(filein, defines=None):
+    """
+    Apply the FLUKA preprocessor to a file.
+
+    :param filein: path of the FLUKA input file.
+    :type filein: str
+    :param defines: names to define before the file is read, as if each
+        were given by a ``#define`` at the top of the file.  Either an
+        iterable of names (flags with no value, e.g. ``["detailed"]``) or a
+        dict mapping names to values, where a value of ``None`` defines a
+        flag, a number is used as is and a string is evaluated as a
+        preprocessor expression.  ``#define`` and ``#undef`` directives in the
+        file still apply on top of these.
+    :type defines: iterable of str or dict
+    :return: (preprocessed lines, raw lines of the top level file)
+    """
     with open(filein) as f:
         lines = f.readlines()
 
     preprocessed_lines = []
     directory = os.path.dirname(filein)
 
-    defines = {}
+    defines = _initial_defines(defines)
     if_stack = []  # [_IfInfo1, _IfInfo2, ...]
     line_stack = list(reversed(lines))  # a stack of lines
 
@@ -83,7 +101,7 @@ def preprocess(filein):
                 _parse_preprocessor_define(directive, split_line, defines)
             elif directive == "#include":
                 _parse_preprocessor_include(directory, directive, split_line, line_stack)
-            elif directive in ["#if", "#elif", "#endif", "#else"]:
+            elif directive in _FLUKA_CONDITIONAL_DIRECTIVES:
                 _parse_preprocessor_conditional(directive, split_line, defines, if_stack)
             else:
                 msg = f"Unknown preprocessor directive: {directive}"
@@ -97,22 +115,54 @@ def preprocess(filein):
     return preprocessed_lines, lines
 
 
+def _format_define_value(value):
+    """Text substituted for $name: shortest round-trip repr for floats."""
+    if isinstance(value, (bool, np.bool_)):
+        return str(int(value))
+    if isinstance(value, (int, np.integer)):
+        return str(int(value))
+    if isinstance(value, (float, np.floating)):
+        return repr(float(value))
+    return str(value)
+
+
 def _process_line_define(line, defines):
-    for k in defines:
-        if defines[k] != "":
-            str_tofind = "$" + k
-            pos = line.find(str_tofind)
-            if pos != -1:
-                print(pos)
-                end_pos = pos + len(str_tofind)
-                start_pos = end_pos - len(str(defines[k]))
-                line = line[:start_pos] + str(defines[k]) + line[end_pos:]
+    """
+    Replace every ``$name`` in the line with the value of the define ``name``.
 
-    for k in defines:
-        str_tofind = "$" + k
-        if line.find(str_tofind) != -1:
-            line = _process_line_define(line, defines)
-
+    ``name`` must match a whole name (``$L`` does not match in ``$LmXC``).  To
+    keep fixed-format fields in their columns, the value is right-aligned to
+    where the token ended: a shorter value is padded with spaces on the left,
+    and a longer one takes up spaces in front of the token, always leaving at
+    least one so that free-format words stay separated.  Flags (defines
+    without a value) and unknown names are left as they are.
+    """
+    if "$" not in line:
+        return line
+    for name in sorted(defines, key=len, reverse=True):
+        value = defines[name]
+        if value is None:
+            continue
+        pattern = _re.compile(r"\$" + _re.escape(name) + r"(?![A-Za-z0-9_])")
+        pos = 0
+        while match := pattern.search(line, pos):
+            start, end = match.span()
+            sign = ""
+            if start > 0 and line[start - 1] in "+-":
+                # keep a sign attached to its value: "-$L" -> "-715"
+                start -= 1
+                sign = line[start]
+            text = sign + _format_define_value(value)
+            extra = len(text) - (end - start)
+            if extra < 0:
+                replacement = " " * -extra + text
+            else:
+                spaces = len(line[:start]) - len(line[:start].rstrip(" "))
+                take = min(extra, max(spaces - 1, 0))
+                start -= take
+                replacement = text
+            line = line[:start] + replacement + line[end:]
+            pos = start + len(replacement)
     return line
 
 
@@ -158,21 +208,49 @@ def _parse_preprocessor_define(directive, split_line, defines):
         raise ValueError(msg)
 
 
+def _initial_defines(defines):
+    """Make the starting defines dict from the user-supplied defines."""
+    if defines is None:
+        return {}
+
+    if isinstance(defines, str):
+        defines = [defines]
+
+    if isinstance(defines, dict):
+        items = defines.items()
+    else:
+        items = ((name, None) for name in defines)
+
+    result = {}
+    for name, value in items:
+        if not isinstance(name, str) or not name or len(name.split()) != 1:
+            msg = f"Invalid preprocessor define name: {name!r}"
+            raise FLUKAError(msg)
+        if isinstance(value, str):
+            value = _Calc(result).evaluate(value) if value.strip() else None
+        result[name] = value
+    return result
+
+
 def _parse_preprocessor_conditional(directive, split_line, defines, if_stack):
+    if directive not in ("#if", "#ifdef", "#ifndef") and not if_stack:
+        msg = f"Preprocessor {directive} without a matching #if."
+        raise FLUKAError(msg)
+
     read_elif = False
     if if_stack:
         read_elif = not if_stack[-1].any_branch_satisfied
 
-    if directive == "#if":
+    if directive in ("#if", "#ifdef", "#ifndef"):
         try:
             variable = split_line[1]
         except IndexError:
-            msg = "Missing expression in preprocessor #if."
+            msg = f"Missing expression in preprocessor {directive}."
             raise FLUKAError(msg)
-        if variable in defines:
-            if_stack.append(_IfInfo(any_branch_satisfied=True, read_until_next=True))
-        else:
-            if_stack.append(_IfInfo(any_branch_satisfied=False, read_until_next=False))
+        satisfied = variable in defines
+        if directive == "#ifndef":
+            satisfied = not satisfied
+        if_stack.append(_IfInfo(any_branch_satisfied=satisfied, read_until_next=satisfied))
     elif directive == "#elif" and read_elif:
         try:
             variable = split_line[1]

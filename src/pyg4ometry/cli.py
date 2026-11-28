@@ -327,15 +327,19 @@ def cli(
         if planeCutterOutputFileName is None:
             errMsg = "pyg4> must specify -P or --planeCutterOutput file"
             raise ValueError(errMsg)
-        # up the quality of meshes
+        # Up the quality of meshes for the cut only. The settings are global, so reset
+        # them afterwards, otherwise later meshing in the same process is much slower.
         _pyg4.config.setGlobalMeshSliceAndStack(56)
-        v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
-        v.addLogicalVolume(wl)
-        o = planeCutterData[:3]
-        n = planeCutterData[3:]
-        v.addCutter("cli-cutter", o, n)
-        v.buildPipelinesAppend()
-        v.exportCutter("cli-cutter", planeCutterOutputFileName)
+        try:
+            v = _pyg4.visualisation.VtkViewerColouredMaterialNew()
+            v.addLogicalVolume(wl)
+            o = planeCutterData[:3]
+            n = planeCutterData[3:]
+            v.addCutter("cli-cutter", o, n)
+            v.buildPipelinesAppend()
+            v.exportCutter("cli-cutter", planeCutterOutputFileName)
+        finally:
+            _pyg4.config.resetGlobalMeshSliceAndStack()
         print(  # noqa: T201
             "pyg4> cutter with " + str(o) + ", " + str(n) + " written to: ",
             planeCutterOutputFileName,

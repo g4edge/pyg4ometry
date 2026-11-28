@@ -54,10 +54,19 @@ _BODY_NAMES = {
 class Reader:
     """
     Class to read a FLUKA file.
+
+    :param filename: path of the FLUKA input file.
+    :type filename: str
+    :param defines: preprocessor names to define before reading the file,
+        as if given by ``#define`` at its top.  Either an iterable of flag
+        names or a dict of name to value (``None`` for a flag).  See
+        :func:`pyg4ometry.fluka.preprocessor.preprocess`.
+    :type defines: iterable of str or dict
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, defines=None):
         self.filename = filename
+        self.defines = defines
         self.flukaregistry = FlukaRegistry()
         self.cards = []
 
@@ -71,7 +80,7 @@ class Reader:
         """Load the FLUKA input file"""
 
         # parse file
-        self._lines, self._raw_lines = preprocess(self.filename)
+        self._lines, self._raw_lines = preprocess(self.filename, defines=self.defines)
         self._findLines()
         self.cards = self._parseCards()
         self._parseRotDefinis()
