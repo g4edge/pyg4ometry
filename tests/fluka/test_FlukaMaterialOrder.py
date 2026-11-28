@@ -13,9 +13,7 @@ def _noMeshing(monkeypatch):
 
 def _addBoxRegion(freg, material, name="REG"):
     zone = fluka.Zone()
-    zone.addIntersection(
-        fluka.RPP(f"{name}BOX", 0, 10, 0, 10, 0, 10, flukaregistry=freg)
-    )
+    zone.addIntersection(fluka.RPP(f"{name}BOX", 0, 10, 0, 10, 0, 10, flukaregistry=freg))
     region = fluka.Region(name)
     region.addZone(zone)
     freg.addRegion(region)
@@ -54,9 +52,7 @@ def test_redefined_builtin_compound_of_later_element_from_file(tmp_path):
     # The reader orders materials by dependency, but the registry still keeps the
     # builtin's position for WATER.
     path = tmp_path / "heavywater.inp"
-    path.write_text(
-        textwrap.dedent(
-            """\
+    path.write_text(textwrap.dedent("""\
             TITLE
             Heavy water
             FREE
@@ -72,9 +68,7 @@ def test_redefined_builtin_compound_of_later_element_from_file(tmp_path):
             COMPOUND, 2.0, DEUTER, 1.0, OXYGEN, , , WATER
             ASSIGNMA, WATER, REG
             STOP
-            """
-        )
-    )
+            """))
     freg = fluka.Reader(str(path)).flukaregistry
 
     greg = convert.fluka2Geant4(freg)
@@ -95,9 +89,7 @@ def test_redefined_builtin_compound_of_later_compound():
         fractionType="atomic",
         flukaregistry=freg,
     )
-    fluka.Compound(
-        "WATER", 1.05, [(heavy, 1.0)], fractionType="mass", flukaregistry=freg
-    )
+    fluka.Compound("WATER", 1.05, [(heavy, 1.0)], fractionType="mass", flukaregistry=freg)
 
     _addBoxRegion(freg, "WATER")
     greg = convert.fluka2Geant4(freg)
@@ -128,7 +120,5 @@ def test_redefined_builtin_used_by_earlier_compound():
     carbon = greg.logicalVolumeDict["CREG_lv"].material
     assert carbon.name == "CARBON"
     assert carbon.density == 2.0
-    mixParts = {
-        c[0].name: c[0] for c in greg.logicalVolumeDict["MIXREG_lv"].material.components
-    }
+    mixParts = {c[0].name: c[0] for c in greg.logicalVolumeDict["MIXREG_lv"].material.components}
     assert mixParts["CARBON"] is carbon
