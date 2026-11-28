@@ -220,5 +220,9 @@ def test_preprocess_dollar_substitution_external_defines(tmp_path):
     text = """\
     XYP z1    $zpos
     """
-    assert _lines(tmp_path, text, defines={"zpos": "Sqrt(4) * 10"})[0].split() == ["XYP", "z1", "20.0"]
+    assert _lines(tmp_path, text, defines={"zpos": "Sqrt(4) * 10"})[0].split() == [
+        "XYP",
+        "z1",
+        "20.0",
+    ]
     assert _lines(tmp_path, text, defines={"zpos": 3})[0].split() == ["XYP", "z1", "3"]
