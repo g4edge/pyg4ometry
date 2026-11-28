@@ -459,7 +459,7 @@ def test_Geant42FlukaConversion_T014_GenericPolyhedra(tmptestdir, testdata):
     )
 
 
-def test_Geant42FlukaConversion_T014_GenericPolyhedra(tmptestdir, testdata):
+def test_Geant42FlukaConversion_T014_GenericPolyhedra_baked(tmptestdir, testdata):
     T014_geant4GenericPolyhedra2Fluka.Test(
         vis=False,
         interactive=False,
