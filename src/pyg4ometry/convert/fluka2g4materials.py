@@ -113,19 +113,29 @@ class _FlukaToG4MaterialConverter:
             self.g4elementKeysMangled[elementName] = m
 
     def convertAll(self):
+        for material in self.freg.materials.values():
+            self._convert(material)
+
+    def _convert(self, material):
         # delayed import as possibly heavy
         from ..fluka import material as _fluMat
 
-        for name, material in self.freg.materials.items():
-            if isinstance(material, _fluMat.BuiltIn):
-                self.convertBuiltin(name, material)
-            elif isinstance(material, _fluMat.Material):
-                self.convertElement(name, material)
-            elif isinstance(material, _fluMat.Compound):
-                self.convertCompound(material)
-            else:
-                msg = f"Unknown material type {material}"
-                raise TypeError(msg)
+        # Already converted, possibly as part of an earlier compound.
+        if material.name in self.g4materials:
+            return
+        if isinstance(material, _fluMat.BuiltIn):
+            self.convertBuiltin(material.name, material)
+        elif isinstance(material, _fluMat.Material):
+            self.convertElement(material.name, material)
+        elif isinstance(material, _fluMat.Compound):
+            # Convert the parts first as a compound can be defined before its parts. Look them
+            # up by name so that a redefined builtin is used rather than the original.
+            for part, _ in material.fractions:
+                self._convert(self.freg.materials.get(part.name, part))
+            self.convertCompound(material)
+        else:
+            msg = f"Unknown material type {material}"
+            raise TypeError(msg)
 
     def convertBuiltin(self, name, flukaMaterial):
         assert name == flukaMaterial.name
