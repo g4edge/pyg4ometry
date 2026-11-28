@@ -43,6 +43,9 @@ class VtkViewerNew(_ViewerBase):
         if axisCubeWidget:
             self.addAxesWidget()
 
+        self.setCamera()
+        self.setLight()
+
     def initVtk(self):
         # create a renderer
         self.ren = _vtk.vtkRenderer()
@@ -51,7 +54,11 @@ class VtkViewerNew(_ViewerBase):
         # create a rendering window
         self.renWin = _vtk.vtkRenderWindow()
         self.renWin.AddRenderer(self.ren)
-        self.renWin.SetSize(1024, 1024)
+        # Square window 80% of the screen height. The screen size is in pixels, including
+        # on high resolution (retina) displays. Fall back to 1024 px if it is unknown.
+        screen = self.renWin.GetScreenSize()
+        side = int(0.8 * min(screen)) if min(screen) > 0 else 1024
+        self.renWin.SetSize(side, side)
 
         # create a rendering window interactor
         self.iren = _vtk.vtkRenderWindowInteractor()
@@ -117,6 +124,69 @@ class VtkViewerNew(_ViewerBase):
         self.axesWidget.SetInteractor(self.iren)
         self.axesWidget.EnabledOn()
         self.axesWidget.InteractiveOn()
+
+    def setCamera(self, direction=(1, 1, 1), viewUp=(0, 1, 0), zoom=0.9, focalPoint=None):
+        """
+        Set the camera, applied when :meth:`view` is next called once the scene is built.
+
+        :param direction: (x,y,z) vector from the focal point towards the camera
+        :param viewUp: (x,y,z) vector that appears vertical on screen
+        :param zoom: factor applied after fitting the scene to the window (<1 zooms out)
+        :param focalPoint: (x,y,z) point in mm to look at, None for the centre of the scene
+        """
+        self.cameraSettings = {
+            "direction": direction,
+            "viewUp": viewUp,
+            "zoom": zoom,
+            "focalPoint": focalPoint,
+        }
+        self.bCameraApplied = False
+
+    def setLight(self, direction=(0.3, 0.5, 1), intensity=1.0, followCamera=True):
+        """
+        Replace the lighting with a single directional light.
+
+        :param direction: (x,y,z) vector towards the light, None for a headlight along the view direction
+        :param intensity: light intensity
+        :param followCamera: if True direction is in camera coordinates (x right, y up, z towards the viewer),
+                             otherwise it is fixed in world coordinates
+        """
+        light = _vtk.vtkLight()
+        light.SetIntensity(intensity)
+        if direction is None:
+            light.SetLightTypeToHeadlight()
+        else:
+            # Directional light, so only position - focal point matters.
+            light.SetPosition(*direction)
+            light.SetFocalPoint(0, 0, 0)
+            if followCamera:
+                light.SetLightTypeToCameraLight()
+            else:
+                light.SetLightTypeToSceneLight()
+        self.ren.RemoveAllLights()
+        self.ren.AddLight(light)
+
+    def _applyCamera(self):
+        # Must be done after actors are added, otherwise the fit is to an empty scene.
+        s = self.cameraSettings
+        bounds = self.ren.ComputeVisiblePropBounds()
+        centre = [0.5 * (bounds[2 * i] + bounds[2 * i + 1]) for i in range(3)]
+        if bounds[0] > bounds[1]:
+            centre = [0, 0, 0]  # Empty scene gives invalid bounds.
+        focalPoint = centre if s["focalPoint"] is None else s["focalPoint"]
+        cam = self.ren.GetActiveCamera()
+        cam.SetFocalPoint(*focalPoint)
+        cam.SetPosition(*[f + d for f, d in zip(focalPoint, s["direction"])])
+        cam.SetViewUp(*s["viewUp"])
+        self.ren.ResetCamera()
+        # ResetCamera recentres on the scene, so restore a user-given focal point.
+        if s["focalPoint"] is not None:
+            shift = [f - c for f, c in zip(s["focalPoint"], cam.GetFocalPoint())]
+            cam.SetFocalPoint(*s["focalPoint"])
+            cam.SetPosition(*[p + d for p, d in zip(cam.GetPosition(), shift)])
+        cam.Zoom(s["zoom"])
+        self.ren.ResetCameraClippingRange()
+        self.bCameraApplied = True
 
     def addCutter(self, name, origin, normal, rgb=None):
         if self.bBuiltPipelines:
@@ -523,9 +593,9 @@ class VtkViewerNew(_ViewerBase):
         # enable user interface interactor
         self.iren.Initialize()
 
-        # Camera setup
-        if resetCamera:
-            self.ren.ResetCamera()
+        # Apply the camera on the first view, so user interaction is kept on later calls.
+        if resetCamera or not self.bCameraApplied:
+            self._applyCamera()
 
         # Render
         self.renWin.Render()
