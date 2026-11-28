@@ -51,3 +51,19 @@ USD can be imported to blender without any other conversion
 .. figure:: tutorials/blender.jpg
    :width: 80%
    :align: center
+
+Giving the file a ``.usdz`` suffix writes a usdz package instead of a plain
+layer. usdz is a single file holding the layer and any textures, and it is what
+viewers on phones and tablets read, so it is the format to use for showing a
+geometry in augmented reality.
+
+.. code-block:: python
+    :linenos:
+
+    v = pyg4ometry.visualisation.UsdViewer("lht.usdz")
+    v.traverseHierarchy(l)
+    v.save()
+
+Lengths are written in metres, and the file records that together with the z up
+axis convention that Geant4 uses. Some viewers, in particular Apple AR Quick
+Look, assume y is up and will lay the geometry on its side.
