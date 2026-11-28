@@ -134,7 +134,12 @@ class VtkViewerNew(_ViewerBase):
         :param zoom: factor applied after fitting the scene to the window (<1 zooms out)
         :param focalPoint: (x,y,z) point in mm to look at, None for the centre of the scene
         """
-        self.cameraSettings = {"direction": direction, "viewUp": viewUp, "zoom": zoom, "focalPoint": focalPoint}
+        self.cameraSettings = {
+            "direction": direction,
+            "viewUp": viewUp,
+            "zoom": zoom,
+            "focalPoint": focalPoint,
+        }
         self.bCameraApplied = False
 
     def setLight(self, direction=(0.3, 0.5, 1), intensity=1.0, followCamera=True):
